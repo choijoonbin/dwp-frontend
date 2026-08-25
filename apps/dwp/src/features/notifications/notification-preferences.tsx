@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import {
   BellRing,
   BellDot,
-  Building2,
   CalendarClock,
   Check,
   CircleAlert,
@@ -12,7 +11,6 @@ import {
   MessageSquare,
   MoonStar,
   Eye,
-  RotateCcw,
   ShieldCheck,
   Smartphone,
 } from 'lucide-react';
@@ -27,7 +25,6 @@ import {
   updateNotificationDeliveryProfile,
   type NotificationAppSetting,
   type NotificationChannel,
-  type NotificationDeliveryMode,
   type NotificationDeliveryProfile,
   type NotificationTypeSetting,
 } from '@dwp-frontend/shared-utils/api/notification-api';
@@ -46,19 +43,28 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
 import { USER_CHANNELS } from './notification-model';
+import {
+  buildNotificationSubscriptionRuleInput,
+  findNotificationTypeSetting,
+  isNotificationPreferenceConflict,
+  rebaseNotificationDeliveryProfile,
+  type NotificationRulePatch,
+} from './notification-preference-save-policy';
+import {
+  ManagedChip,
+  TypeSettingRows,
+  UnavailableChannelChip,
+} from './notification-type-setting-rows';
 import { NotificationPageHeading } from './notification-ui';
 import { useOnlineStatus } from './use-notification-runtime';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
@@ -66,7 +72,7 @@ import { usePersonalPreference } from '../../providers/personal-preference-provi
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
-type SaveState = 'idle' | 'saving' | 'saved' | 'error';
+type SaveState = 'idle' | 'saving' | 'saved' | 'recovered' | 'error';
 
 const CHANNEL_ICON: Record<NotificationChannel, LucideIcon> = {
   IN_APP: BellRing,
@@ -174,13 +180,15 @@ function AutoSaveIndicator({ state, savedAt }: { state: SaveState; savedAt?: str
       ? t('preferences.save.saving')
       : state === 'error'
         ? t('preferences.save.error')
-        : state === 'saved'
-          ? t('preferences.save.saved', {
-              time: savedAt
-                ? formatDate(savedAt, { timeStyle: 'short' })
-                : t('preferences.save.now'),
-            })
-          : t('preferences.save.auto');
+        : state === 'recovered'
+          ? t('preferences.save.recovered')
+          : state === 'saved'
+            ? t('preferences.save.saved', {
+                time: savedAt
+                  ? formatDate(savedAt, { timeStyle: 'short' })
+                  : t('preferences.save.now'),
+              })
+            : t('preferences.save.auto');
   return (
     <Stack
       role="status"
@@ -190,7 +198,11 @@ function AutoSaveIndicator({ state, savedAt }: { state: SaveState; savedAt?: str
       gap={0.75}
       alignItems="center"
       color={
-        state === 'error' ? 'error.main' : state === 'saved' ? 'success.main' : 'text.secondary'
+        state === 'error'
+          ? 'error.main'
+          : state === 'saved' || state === 'recovered'
+            ? 'success.main'
+            : 'text.secondary'
       }
       minHeight={32}
     >
@@ -198,183 +210,6 @@ function AutoSaveIndicator({ state, savedAt }: { state: SaveState; savedAt?: str
       <Typography variant="caption" color="inherit" fontWeight={700}>
         {label}
       </Typography>
-    </Stack>
-  );
-}
-
-function ManagedChip({ owner }: { owner?: string | null }) {
-  const { t } = useTranslation('notifications');
-  return (
-    <Tooltip title={owner ? t('preferences.managedBy', { owner }) : t('preferences.managed')}>
-      <Chip
-        size="small"
-        variant="outlined"
-        icon={<Building2 size={13} />}
-        label={t('preferences.managed')}
-      />
-    </Tooltip>
-  );
-}
-
-function UnavailableChannelChip() {
-  const { t } = useTranslation('notifications');
-  return <Chip size="small" variant="outlined" label={t('preferences.channelUnavailable')} />;
-}
-
-function TypeSettingRows({
-  app,
-  disabled,
-  onUpdate,
-  onReset,
-  busyType,
-  enabledChannels,
-  externalDeliveryEnabled,
-}: {
-  app: NotificationAppSetting;
-  disabled: boolean;
-  onUpdate: (
-    setting: NotificationTypeSetting,
-    patch: { mode?: NotificationDeliveryMode; channel?: NotificationChannel; enabled?: boolean }
-  ) => void;
-  onReset: (setting: NotificationTypeSetting) => void;
-  busyType: string | null;
-  enabledChannels: ReadonlySet<NotificationChannel>;
-  externalDeliveryEnabled: boolean;
-}) {
-  const { t } = useTranslation('notifications');
-  if (app.types.length === 0) {
-    return (
-      <EmptyState
-        title={t('preferences.apps.emptyTypesTitle')}
-        description={t('preferences.apps.emptyTypesDescription')}
-        size="compact"
-      />
-    );
-  }
-
-  return (
-    <Stack divider={<Divider flexItem />}>
-      {app.types.map((setting) => (
-        <Box key={setting.typeKey} sx={{ px: { xs: 1.5, sm: 2 }, py: 1.75 }}>
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            justifyContent="space-between"
-            alignItems={{ xs: 'stretch', md: 'flex-start' }}
-            gap={2}
-          >
-            <Box minWidth={0} sx={{ flex: 1 }}>
-              <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
-                <Typography component="h4" variant="subtitle2">
-                  {setting.typeName}
-                </Typography>
-                {setting.mandatory && (
-                  <Chip
-                    size="small"
-                    color="info"
-                    variant="outlined"
-                    label={t('preferences.mandatory')}
-                  />
-                )}
-                {setting.quietHoursBypass && (
-                  <Tooltip title={t('preferences.quiet.managedBypassDescription')}>
-                    <Chip
-                      size="small"
-                      color="warning"
-                      variant="outlined"
-                      label={t('preferences.quiet.managedBypass')}
-                    />
-                  </Tooltip>
-                )}
-                {setting.mode.managed && <ManagedChip owner={setting.mode.ownerLabel} />}
-              </Stack>
-              {setting.description && (
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                  {setting.description}
-                </Typography>
-              )}
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mt: 0.5 }}
-              >
-                {t('preferences.inheritedFrom', {
-                  source: t(`preferences.sources.${setting.mode.source}`),
-                })}
-              </Typography>
-            </Box>
-            <Stack gap={1.25} alignItems={{ xs: 'stretch', md: 'flex-end' }}>
-              <FormField
-                select
-                size="small"
-                value={setting.mode.effectiveValue}
-                disabled={disabled || setting.mode.managed || busyType === setting.typeKey}
-                onChange={(event) =>
-                  onUpdate(setting, { mode: event.target.value as NotificationDeliveryMode })
-                }
-                label={t('preferences.deliveryMode')}
-                sx={{ minWidth: 180 }}
-              >
-                {(externalDeliveryEnabled
-                  ? (['IMMEDIATE', 'DAILY_DIGEST', 'WEEKLY_DIGEST', 'MUTED'] as const)
-                  : (['IMMEDIATE', 'MUTED'] as const)
-                ).map((mode) => (
-                  <MenuItem key={mode} value={mode}>
-                    {t(`preferences.modes.${mode}`)}
-                  </MenuItem>
-                ))}
-              </FormField>
-              {setting.ruleId && (
-                <ActionButton
-                  intent="quiet"
-                  size="small"
-                  startIcon={<RotateCcw size={15} />}
-                  disabled={disabled || busyType === setting.typeKey}
-                  onClick={() => onReset(setting)}
-                >
-                  {t('preferences.resetToManaged')}
-                </ActionButton>
-              )}
-            </Stack>
-          </Stack>
-          <Stack direction="row" gap={1.5} flexWrap="wrap" sx={{ mt: 1.25 }}>
-            {USER_CHANNELS.map((channel) => {
-              const value = setting.channels[channel];
-              if (!value) return null;
-              const available = enabledChannels.has(channel);
-              return (
-                <FormControlLabel
-                  key={channel}
-                  control={
-                    <Switch
-                      size="small"
-                      checked={available && value.effectiveValue}
-                      disabled={
-                        disabled || !available || value.managed || busyType === setting.typeKey
-                      }
-                      onChange={(event) =>
-                        onUpdate(setting, { channel, enabled: event.target.checked })
-                      }
-                      inputProps={{
-                        'aria-label': t('preferences.channelToggle', {
-                          type: setting.typeName,
-                          channel: t(`channels.${channel}`),
-                        }),
-                      }}
-                    />
-                  }
-                  label={
-                    <Stack direction="row" gap={0.5} alignItems="center">
-                      <Typography variant="body2">{t(`channels.${channel}`)}</Typography>
-                      {!available && <UnavailableChannelChip />}
-                      {value.managed && <ManagedChip owner={value.ownerLabel} />}
-                    </Stack>
-                  }
-                />
-              );
-            })}
-          </Stack>
-        </Box>
-      ))}
     </Stack>
   );
 }
@@ -437,25 +272,44 @@ export function NotificationPreferences() {
   }, [effectiveQuery.data?.apps, selectedAppKey]);
 
   const profileMutation = useMutation({
-    mutationFn: (next: NotificationDeliveryProfile) =>
-      updateNotificationDeliveryProfile(
-        {
-          channels: next.channels,
-          quietHours: next.quietHours,
-          digest: next.digest,
-          presentation: next.presentation,
-          version: next.version,
-        },
-        createNotificationIdempotencyKey('delivery-profile')
-      ),
-    onMutate: () => setSaveState('saving'),
-    onSuccess: (saved) => {
-      setDraft(saved);
-      setSaveState('saved');
-      queryClient.setQueryData(notificationQueryKeys.preferences(), saved);
+    mutationFn: async ({
+      base,
+      next,
+    }: {
+      base: NotificationDeliveryProfile;
+      next: NotificationDeliveryProfile;
+    }) => {
+      try {
+        return {
+          saved: await updateNotificationDeliveryProfile(
+            next,
+            createNotificationIdempotencyKey('delivery-profile')
+          ),
+          recovered: false,
+        };
+      } catch (error) {
+        if (!isNotificationPreferenceConflict(error)) throw error;
+        const latest = await getNotificationDeliveryProfile();
+        const rebased = rebaseNotificationDeliveryProfile(base, next, latest);
+        return {
+          saved: await updateNotificationDeliveryProfile(
+            rebased,
+            createNotificationIdempotencyKey('delivery-profile-retry')
+          ),
+          recovered: true,
+        };
+      }
     },
-    onError: () => {
-      setDraft(profileQuery.data ?? null);
+    onMutate: () => setSaveState('saving'),
+    onSuccess: ({ saved, recovered }) => {
+      setDraft(saved);
+      setSaveState(recovered ? 'recovered' : 'saved');
+      queryClient.setQueryData(notificationQueryKeys.preferences(), saved);
+      if (recovered) toast.success(t('preferences.feedback.conflictRecovered'));
+    },
+    onError: async () => {
+      const latest = await profileQuery.refetch();
+      setDraft(latest.data ?? profileQuery.data ?? null);
       setSaveState('error');
       toast.error(t('preferences.feedback.profileError'));
     },
@@ -466,8 +320,9 @@ export function NotificationPreferences() {
       ...next,
       quietHours: { ...next.quietHours, timeZone: scheduleTimeZone },
     };
+    const base = draft ?? next;
     setDraft(synchronized);
-    profileMutation.mutate(synchronized);
+    profileMutation.mutate({ base, next: synchronized });
   };
 
   useEffect(() => {
@@ -484,50 +339,46 @@ export function NotificationPreferences() {
     }
     timeZoneSyncAttempt.current = syncKey;
     profileMutation.mutate({
-      ...persisted,
-      quietHours: { ...persisted.quietHours, timeZone: scheduleTimeZone },
+      base: persisted,
+      next: {
+        ...persisted,
+        quietHours: { ...persisted.quietHours, timeZone: scheduleTimeZone },
+      },
     });
   }, [online, profileMutation, profileQuery.data, scheduleTimeZone]);
 
   const ruleMutation = useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       app,
       setting,
       patch,
     }: {
       app: NotificationAppSetting;
       setting: NotificationTypeSetting;
-      patch: { mode?: NotificationDeliveryMode; channel?: NotificationChannel; enabled?: boolean };
+      patch: NotificationRulePatch;
     }) => {
       setBusyType(setting.typeKey);
-      const channels: Partial<Record<NotificationChannel, boolean>> = {};
-      for (const channel of USER_CHANNELS) {
-        const value = setting.channels[channel];
-        if (
-          setting.ruleId &&
-          value?.source === 'USER' &&
-          typeof value.effectiveValue === 'boolean'
-        ) {
-          channels[channel] = value.effectiveValue;
-        }
+      const save = (current: NotificationTypeSetting, retry: boolean) =>
+        putNotificationSubscriptionRule(
+          current.ruleId ?? crypto.randomUUID(),
+          buildNotificationSubscriptionRuleInput(app.appKey, current, patch),
+          createNotificationIdempotencyKey(retry ? 'subscription-rule-retry' : 'subscription-rule')
+        );
+      try {
+        return { saved: await save(setting, false), recovered: false };
+      } catch (error) {
+        if (!isNotificationPreferenceConflict(error)) throw error;
+        const latest = await getNotificationEffectiveSettings();
+        const current = findNotificationTypeSetting(latest, app.appKey, setting.typeKey);
+        if (!current) throw error;
+        return { saved: await save(current, true), recovered: true };
       }
-      if (patch.channel && patch.enabled !== undefined) channels[patch.channel] = patch.enabled;
-      return putNotificationSubscriptionRule(
-        setting.ruleId ?? crypto.randomUUID(),
-        {
-          appKey: app.appKey,
-          typeKey: setting.typeKey,
-          mode: patch.mode ?? setting.mode.effectiveValue,
-          channels,
-          expectedVersion: setting.ruleVersion ?? undefined,
-        },
-        createNotificationIdempotencyKey('subscription-rule')
-      );
     },
     onMutate: () => setSaveState('saving'),
-    onSuccess: async () => {
-      setSaveState('saved');
+    onSuccess: async ({ recovered }) => {
+      setSaveState(recovered ? 'recovered' : 'saved');
       await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() });
+      if (recovered) toast.success(t('preferences.feedback.conflictRecovered'));
     },
     onError: () => {
       setSaveState('error');
@@ -537,14 +388,32 @@ export function NotificationPreferences() {
   });
 
   const resetMutation = useMutation({
-    mutationFn: (setting: NotificationTypeSetting) => {
+    mutationFn: async ({
+      appKey,
+      setting,
+    }: {
+      appKey: string;
+      setting: NotificationTypeSetting;
+    }) => {
       if (!setting.ruleId || setting.ruleVersion == null) return Promise.resolve();
       setBusyType(setting.typeKey);
-      return deleteNotificationSubscriptionRule(
-        setting.ruleId,
-        setting.ruleVersion,
-        createNotificationIdempotencyKey('subscription-rule-reset')
-      );
+      try {
+        await deleteNotificationSubscriptionRule(
+          setting.ruleId,
+          setting.ruleVersion,
+          createNotificationIdempotencyKey('subscription-rule-reset')
+        );
+      } catch (error) {
+        if (!isNotificationPreferenceConflict(error)) throw error;
+        const latest = await getNotificationEffectiveSettings();
+        const current = findNotificationTypeSetting(latest, appKey, setting.typeKey);
+        if (!current?.ruleId || current.ruleVersion == null) return;
+        await deleteNotificationSubscriptionRule(
+          current.ruleId,
+          current.ruleVersion,
+          createNotificationIdempotencyKey('subscription-rule-reset-retry')
+        );
+      }
     },
     onSuccess: async () => {
       setSaveState('saved');
@@ -985,7 +854,9 @@ export function NotificationPreferences() {
                     onUpdate={(setting, patch) =>
                       ruleMutation.mutate({ app: selectedApp, setting, patch })
                     }
-                    onReset={(setting) => resetMutation.mutate(setting)}
+                    onReset={(setting) =>
+                      resetMutation.mutate({ appKey: selectedApp.appKey, setting })
+                    }
                   />
                 )}
               </Box>

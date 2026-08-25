@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProductMark } from '@dwp-frontend/design-system/components/product-mark';
 import { resolveTenantLogoUrl } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
 
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import type { SxProps, Theme } from '@mui/material/styles';
@@ -30,7 +32,10 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
   });
   const branding = brandingQuery.data;
   const logoUrl = resolveTenantLogoUrl(branding);
-  const showTenantLogoSlot = tenantBranded && Boolean(logoUrl);
+  const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
+  const organizationName = branding?.organizationName?.trim() || null;
+  const showTenantLogo = Boolean(logoUrl) && logoUrl !== failedLogoUrl;
+  const showTenantBrandContext = tenantBranded && (showTenantLogo || Boolean(organizationName));
   const logoSlotWidth = variant === 'full' ? 80 : 64;
   const logoSlotHeight = variant === 'full' ? 40 : 32;
   const compact = variant === 'condensed' || variant === 'product-only';
@@ -38,7 +43,7 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
     tenantBranded && branding?.organizationName
       ? t('brand.tenantHomeLabel', { organization: branding.organizationName })
       : t('brand.homeLabel');
-  const tenantBrandContext = showTenantLogoSlot ? (
+  const tenantBrandContext = showTenantBrandContext ? (
     <Box
       data-testid="tenant-brand-context"
       sx={{
@@ -64,20 +69,34 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
           justifyContent: 'center',
         }}
       >
-        <Box
-          component="img"
-          data-testid="tenant-brand-logo"
-          src={logoUrl!}
-          alt=""
-          loading="eager"
-          fetchPriority="high"
-          sx={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-          }}
-        />
+        {showTenantLogo ? (
+          <Box
+            component="img"
+            data-testid="tenant-brand-logo"
+            src={logoUrl!}
+            alt=""
+            loading="eager"
+            fetchPriority="high"
+            onError={() => setFailedLogoUrl(logoUrl)}
+            sx={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+            }}
+          />
+        ) : (
+          <Typography
+            data-testid="tenant-brand-name-fallback"
+            component="span"
+            variant="subtitle2"
+            title={organizationName ?? undefined}
+            noWrap
+            sx={{ maxWidth: 1, fontWeight: 750 }}
+          >
+            {organizationName}
+          </Typography>
+        )}
       </Box>
     </Box>
   ) : undefined;

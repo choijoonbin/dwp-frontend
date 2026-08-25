@@ -1,5 +1,10 @@
 # R1 Personal Home Shell 및 Tenant Media Storage ADR
 
+> **부분 대체 안내 (2026-08-21):**
+> `R1 Flow Home 및 Bounded Personalization ADR.md`가 `workspace-home`에서 대형 Tenant 이미지
+> Hero와 Glass 중심 표현을 보조 Accent와 업무 의미 중심 표현으로 변경한다. Sidebar 없는
+> Shell, Tenant Media Storage, 보안·Revision·Rollback 계약은 그대로 유지한다.
+
 > 상태: Accepted
 >
 > 기준일: 2026-08-12

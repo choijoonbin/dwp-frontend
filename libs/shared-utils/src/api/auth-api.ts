@@ -45,8 +45,10 @@ export type MeResponse = {
   tenantCode: string;
   tenantName?: string | null;
   roles: string[];
+  legacyRoleFallbackAllowed?: boolean;
   groups?: Array<{
     groupRef: string;
+    groupKey?: string | null;
     displayName: string;
   }>;
   resourceRoles?: ResourceRoleDTO[];

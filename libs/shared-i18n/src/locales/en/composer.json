@@ -1,13 +1,20 @@
 {
   "toolbarLabel": "Home composition tools",
   "addWidget": "Add widget",
-  "presentationLabel": "Home presentation",
+  "presentationLabel": "Home layout",
   "presentations": {
     "balanced": "Balanced",
     "expressive": "Expressive",
+    "wide": "Wide",
     "focused": "Focused"
   },
   "reset": "Reset to default",
+  "undo": "Undo last change",
+  "redo": "Redo change",
+  "previewLabel": "Device preview",
+  "previewDesktop": "Desktop preview",
+  "previewMobile": "Mobile preview",
+  "changeCount": "{{count}} changes",
   "cancel": "Cancel changes",
   "done": "Save",
   "moveWidget": "Move {{widget}} widget",
@@ -20,7 +27,18 @@
   "widthLabel": "Width",
   "heightLabel": "Height",
   "removeWidget": "Hide {{widget}} widget",
-  "governed": "Widget locked by your organization",
+  "governed": "Fixed-position area",
+  "governedSystem": "System managed · fixed position",
+  "governedOrganization": "Organization managed · fixed position",
+  "drag": {
+    "instructions": "Press Space to pick up a widget, use the arrow keys to move it, then press Space again to drop it. Press Escape to cancel.",
+    "pickedUp": "Picked up the {{widget}} widget. There are {{count}} widgets.",
+    "over": "{{widget}} position, {{position}} of {{count}}.",
+    "notOver": "Outside an available widget position.",
+    "placed": "Placed the {{widget}} widget at position {{position}} of {{count}}.",
+    "returned": "Returned the {{widget}} widget to its original position.",
+    "cancelled": "Cancelled moving the {{widget}} widget."
+  },
   "sizes": {
     "fifth": "5 per row",
     "quarter": "4 per row",
@@ -42,6 +60,20 @@
     "standard": "Standard",
     "tall": "Tall",
     "expanded": "Expanded"
+  },
+  "heightShort": {
+    "short": "Short",
+    "standard": "Standard",
+    "tall": "Tall",
+    "expanded": "Expand"
+  },
+  "footprintShort": {
+    "fifth": "1/5",
+    "quarter": "1/4",
+    "compact": "1/3",
+    "medium": "1/2",
+    "large": "2/3",
+    "full": "Full"
   },
   "galleryTitle": "Add widgets",
   "galleryDescription": "Widgets available for your current role and permissions.",

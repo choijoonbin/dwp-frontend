@@ -13,6 +13,8 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
+export const HOME_OVERVIEW_FRESHNESS_SECONDS = 30;
+
 export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidgetKey>[] = [
   {
     key: 'command-rail',
@@ -28,7 +30,7 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
       schemaVersion: 1,
       owner: 'Digital Workplace Product',
       dataSource: 'DWP_HOME_OVERVIEW',
-      freshnessSeconds: 30,
+      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
       privacyClass: 'CONFIDENTIAL',
       retention: 'NONE',
       analyticsKey: 'home.command-rail',
@@ -39,7 +41,7 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
     icon: Sparkles,
     canHide: true,
     defaultSize: 'full',
-    allowedSizes: ['large', 'full'],
+    allowedSizes: ['compact', 'large', 'full'],
     defaultHeight: 'standard',
     allowedHeights: ['short', 'standard', 'tall'],
     audience: 'all',
@@ -47,7 +49,7 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
       schemaVersion: 1,
       owner: 'Digital Workplace Product',
       dataSource: 'DWP_HOME_OVERVIEW',
-      freshnessSeconds: 30,
+      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
       privacyClass: 'INTERNAL',
       retention: 'NONE',
       analyticsKey: 'home.workday-insights',
@@ -66,7 +68,7 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
       schemaVersion: 1,
       owner: 'Digital Workplace Product',
       dataSource: 'DWP_WORKSPACE',
-      freshnessSeconds: 30,
+      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
       privacyClass: 'CONFIDENTIAL',
       retention: 'NONE',
       analyticsKey: 'home.focus',
@@ -85,7 +87,7 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
       schemaVersion: 1,
       owner: 'Calendar Product',
       dataSource: 'DWP_CALENDAR',
-      freshnessSeconds: 30,
+      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
       privacyClass: 'CONFIDENTIAL',
       retention: 'NONE',
       analyticsKey: 'home.schedule',
@@ -104,7 +106,7 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
       schemaVersion: 1,
       owner: 'Digital Workplace Product',
       dataSource: 'DWP_ACTIVITY',
-      freshnessSeconds: 30,
+      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
       privacyClass: 'INTERNAL',
       retention: 'NONE',
       analyticsKey: 'home.activity',
@@ -117,9 +119,12 @@ export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.m
 );
 
 export const HOME_WIDGET_ROLE_ORDER: Record<HomeAudienceProfile, readonly HomeWidgetKey[]> = {
-  MEMBER: ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
-  MANAGER: ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
-  OPERATOR: ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
+  // command-rail is the governed Action Queue and is not a Flow personal key.
+  // Personal alias order: today, response-hub, request-tracker, role-pulse.
+  MEMBER: ['command-rail', 'schedule', 'daily-brief', 'focus', 'activity'],
+  MANAGER: ['command-rail', 'schedule', 'daily-brief', 'focus', 'activity'],
+  // Operators start with role-pulse before the shared personal sequence.
+  OPERATOR: ['command-rail', 'activity', 'schedule', 'daily-brief', 'focus'],
 };
 
 function orderedRegistry(

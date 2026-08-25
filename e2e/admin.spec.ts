@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 import { mockAuthenticatedRuntime } from './support/runtime-access';
-import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
+import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
 type Item = {
   code: string;
@@ -414,7 +414,7 @@ test('tenant administrators monitor API health and inspect a distributed trace',
 test('tenant administrators configure and reset the personal home presentation', async ({
   page,
 }) => {
-  await mockAdminSession(page);
+  await mockShellSession(page, ['ADMIN'], { permissions: DEFAULT_ADMIN_PERMISSIONS });
   let homeExperience = {
     headline: null as string | null,
     subheadline: null as string | null,
@@ -487,6 +487,9 @@ test('tenant administrators configure and reset the personal home presentation',
 
   await page.goto('/admin/experience/home-experience');
   await expect(page.getByRole('heading', { name: 'Home experience', level: 1 })).toBeVisible();
+  const workscapePreview = page.locator('[data-tenant-workscape-preview="desktop"]');
+  await expect(workscapePreview).toHaveAttribute('data-tenant-image-opacity', '1');
+  await expect(workscapePreview.getByText('My apps')).toBeVisible();
   await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
   await page.getByLabel('Headline').fill('One workspace, ready for action');
   await page

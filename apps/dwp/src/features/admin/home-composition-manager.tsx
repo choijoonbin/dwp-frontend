@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LayoutGrid, LockKeyhole, Save, ShieldCheck, UserRound } from 'lucide-react';
+import { LayoutGrid, LockKeyhole, Save, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system';
 import {
@@ -40,6 +40,7 @@ import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/aut
 import type {
   GovernedHomeZone,
   HomeCompositionPolicy,
+  HomeExperienceVariant,
   HomeGovernedZoneKey,
   HomeWidgetHeight,
   HomeWidgetSize,
@@ -170,6 +171,51 @@ export function HomeCompositionManager() {
 
       <Box sx={{ borderBlock: 1, borderColor: 'divider' }}>
         <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'stretch', md: 'center' }}
+          justifyContent="space-between"
+          gap={2}
+          sx={{ py: 2.5 }}
+        >
+          <Box>
+            <Typography variant="subtitle1">{t('homeComposition.variant.title')}</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              {t('homeComposition.variant.description')}
+            </Typography>
+          </Box>
+          <ToggleButtonGroup
+            exclusive
+            size="small"
+            value={draft.experienceVariant}
+            disabled={!canWrite}
+            aria-label={t('homeComposition.variant.title')}
+            onChange={(_, experienceVariant: HomeExperienceVariant | null) => {
+              if (experienceVariant) setDraft({ ...draft, experienceVariant });
+            }}
+          >
+            <ToggleButton value="CLASSIC" aria-label={t('homeComposition.variant.classic')}>
+              <LayoutGrid size={16} aria-hidden="true" />
+              <Box component="span" sx={{ ml: 0.75 }}>
+                {t('homeComposition.variant.classic')}
+              </Box>
+            </ToggleButton>
+            <ToggleButton value="FLOW_V1" aria-label={t('homeComposition.variant.flow')}>
+              <Sparkles size={16} aria-hidden="true" />
+              <Box component="span" sx={{ ml: 0.75 }}>
+                {t('homeComposition.variant.flow')}
+              </Box>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Stack>
+        {draft.experienceVariant === 'FLOW_V1' && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            {t('homeComposition.variant.flowNotice')}
+          </Alert>
+        )}
+      </Box>
+
+      <Box sx={{ borderBlock: 1, borderColor: 'divider' }}>
+        <Stack
           direction={{ xs: 'column', sm: 'row' }}
           alignItems={{ xs: 'stretch', sm: 'center' }}
           justifyContent="space-between"
@@ -211,24 +257,33 @@ export function HomeCompositionManager() {
             onVisibilityChange={(visible) => updateZone('announcements', { visible })}
             control={
               <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="flex-end">
-                <ToggleButtonGroup
-                  exclusive
-                  size="small"
-                  value={announcements.size}
-                  disabled={!canWrite || !announcements.visible}
-                  aria-label={t('homeComposition.zones.announcements.sizeLabel')}
-                  onChange={(_, size: HomeWidgetSize | null) =>
-                    size && updateZone('announcements', { size: size as GovernedHomeZone['size'] })
-                  }
-                >
-                  {announcementSizes.map((size) => (
-                    <Tooltip key={size} title={t(`homeComposition.sizes.${size}`)} arrow>
-                      <ToggleButton value={size} aria-label={t(`homeComposition.sizes.${size}`)}>
-                        <WorkspaceWidgetFootprintGlyph size={size} />
-                      </ToggleButton>
-                    </Tooltip>
-                  ))}
-                </ToggleButtonGroup>
+                {draft.experienceVariant === 'FLOW_V1' ? (
+                  <Chip
+                    variant="outlined"
+                    icon={<WorkspaceWidgetFootprintGlyph size="full" />}
+                    label={t('homeComposition.zones.announcements.flowFullWidth')}
+                  />
+                ) : (
+                  <ToggleButtonGroup
+                    exclusive
+                    size="small"
+                    value={announcements.size}
+                    disabled={!canWrite || !announcements.visible}
+                    aria-label={t('homeComposition.zones.announcements.sizeLabel')}
+                    onChange={(_, size: HomeWidgetSize | null) =>
+                      size &&
+                      updateZone('announcements', { size: size as GovernedHomeZone['size'] })
+                    }
+                  >
+                    {announcementSizes.map((size) => (
+                      <Tooltip key={size} title={t(`homeComposition.sizes.${size}`)} arrow>
+                        <ToggleButton value={size} aria-label={t(`homeComposition.sizes.${size}`)}>
+                          <WorkspaceWidgetFootprintGlyph size={size} />
+                        </ToggleButton>
+                      </Tooltip>
+                    ))}
+                  </ToggleButtonGroup>
+                )}
                 <ToggleButtonGroup
                   exclusive
                   size="small"
@@ -273,27 +328,53 @@ export function HomeCompositionManager() {
             bgcolor: 'background.default',
           }}
         >
-          <PreviewZone
-            columns={60}
-            label={t('homeComposition.zones.workspaceTools.title')}
-            policy="PERSONAL"
-            policyLabel={t('homeComposition.policyKinds.personal')}
-          />
-          {announcements.visible && (
-            <PreviewZone
-              columns={announcementSpan}
-              minHeight={Math.round(announcementHeight / 4)}
-              label={t('homeComposition.zones.announcements.title')}
-              policy="GOVERNED"
-              policyLabel={t('homeComposition.policyKinds.governed')}
-            />
+          {draft.experienceVariant === 'FLOW_V1' ? (
+            <>
+              {[
+                ['context', 'GOVERNED'],
+                ['dock', 'PERSONAL'],
+                ...(announcements.visible ? ([['announcements', 'GOVERNED']] as const) : []),
+                ['now', 'GOVERNED'],
+                ['flowline', 'PERSONAL'],
+                ['signals', 'PERSONAL'],
+                ['next', 'PERSONAL'],
+              ].map(([zone, policy]) => (
+                <PreviewZone
+                  key={zone}
+                  columns={60}
+                  label={t(`homeComposition.preview.flow.${zone}`)}
+                  policy={policy as 'GOVERNED' | 'PERSONAL'}
+                  policyLabel={t(
+                    `homeComposition.policyKinds.${policy === 'GOVERNED' ? 'governed' : 'personal'}`
+                  )}
+                />
+              ))}
+            </>
+          ) : (
+            <>
+              <PreviewZone
+                columns={60}
+                label={t('homeComposition.zones.workspaceTools.title')}
+                policy="PERSONAL"
+                policyLabel={t('homeComposition.policyKinds.personal')}
+              />
+              {announcements.visible && (
+                <PreviewZone
+                  columns={announcementSpan}
+                  minHeight={Math.round(announcementHeight / 4)}
+                  label={t('homeComposition.zones.announcements.title')}
+                  policy="GOVERNED"
+                  policyLabel={t('homeComposition.policyKinds.governed')}
+                />
+              )}
+              <PreviewZone
+                columns={40}
+                label={t('homeComposition.preview.commandRail')}
+                policy="PERSONAL"
+                policyLabel={t('homeComposition.policyKinds.personal')}
+              />
+            </>
           )}
-          <PreviewZone
-            columns={40}
-            label={t('homeComposition.preview.commandRail')}
-            policy="PERSONAL"
-            policyLabel={t('homeComposition.policyKinds.personal')}
-          />
         </Box>
       </Box>
     </Stack>

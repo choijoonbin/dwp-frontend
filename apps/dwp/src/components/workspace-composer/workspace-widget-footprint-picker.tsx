@@ -128,13 +128,14 @@ export function WorkspaceWidgetFootprintPicker({
         data-widget-height-trigger={height}
         onClick={(event) => setAnchor(event.currentTarget)}
         sx={{
-          width: 28,
-          height: 28,
-          bgcolor: 'grey.900',
-          color: 'common.white',
+          width: 44,
+          height: 44,
+          bgcolor: 'background.paper',
+          color: 'text.primary',
           border: 1,
-          borderColor: 'rgba(255,255,255,0.8)',
-          '&:hover': { bgcolor: 'grey.800' },
+          borderColor: 'divider',
+          boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+          '&:hover': { bgcolor: 'action.hover', borderColor: 'primary.main' },
         }}
       >
         <Scaling size={14} />
@@ -175,7 +176,12 @@ export function WorkspaceWidgetFootprintPicker({
                       aria-label={optionLabel}
                       data-widget-footprint-option={option}
                     >
-                      <WorkspaceWidgetFootprintGlyph size={option} />
+                      <Stack alignItems="center" gap={0.35}>
+                        <WorkspaceWidgetFootprintGlyph size={option} />
+                        <Typography variant="caption" fontWeight={700} lineHeight={1}>
+                          {t(`footprintShort.${option}`)}
+                        </Typography>
+                      </Stack>
                     </ToggleButton>
                   </Tooltip>
                 );
@@ -204,7 +210,12 @@ export function WorkspaceWidgetFootprintPicker({
                       aria-label={optionLabel}
                       data-widget-height-option={option}
                     >
-                      <WorkspaceWidgetHeightGlyph height={option} />
+                      <Stack alignItems="center" gap={0.35}>
+                        <WorkspaceWidgetHeightGlyph height={option} />
+                        <Typography variant="caption" fontWeight={700} lineHeight={1}>
+                          {t(`heightShort.${option}`)}
+                        </Typography>
+                      </Stack>
                     </ToggleButton>
                   </Tooltip>
                 );
@@ -219,12 +230,18 @@ export function WorkspaceWidgetFootprintPicker({
 
 const pickerGroupSx = {
   display: 'flex',
+  flexWrap: 'wrap',
+  maxWidth: 'min(300px, calc(100vw - 32px))',
   mt: 0.5,
   '& .MuiToggleButton-root': {
-    width: 48,
-    height: 40,
-    p: 0,
+    width: 'auto',
+    minWidth: 58,
+    minHeight: 60,
+    height: 'auto',
+    px: 1,
+    py: 0.5,
     color: 'text.secondary',
+    '& .MuiTypography-root': { whiteSpace: 'nowrap' },
     '&.Mui-selected': {
       color: 'primary.main',
       bgcolor: 'primary.50',

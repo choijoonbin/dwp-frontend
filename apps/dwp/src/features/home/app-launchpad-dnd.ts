@@ -16,6 +16,10 @@ export function targetItemId(droppableId: string): string | null {
     : null;
 }
 
+export function isLaunchpadOriginTarget(itemId: string, droppableId: string): boolean {
+  return droppableId === itemId || targetItemId(droppableId) === itemId;
+}
+
 export function groupTargetId(groupId: HomeAppGroupId): string {
   return `${GROUP_TARGET_PREFIX}${groupId}`;
 }

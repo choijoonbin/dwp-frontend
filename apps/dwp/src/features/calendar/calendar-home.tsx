@@ -17,6 +17,7 @@ import {
   cancelCalendarEvent,
   respondToCalendarEvent,
   useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -57,6 +58,7 @@ function minutesLabel(value: number, hour: string, minute: string) {
 export function CalendarHome() {
   const { t, i18n } = useTranslation('calendar');
   const auth = useAuth();
+  const { hasPermission } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
@@ -65,6 +67,9 @@ export function CalendarHome() {
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
+  const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
+  const canRespond = canUpdate;
   const query = useQuery({
     queryKey: ['calendar', 'home', timeZone],
     queryFn: () => getCalendarHome(timeZone),
@@ -127,7 +132,7 @@ export function CalendarHome() {
         eyebrow={data ? calendarDate(data.date, language) : t('home.today')}
         title={`${greeting}, ${auth.user?.displayName ?? t('home.member')}`}
         description={t('home.description')}
-        actions={
+        actions={canCreate ? (
           <ActionButton
             intent="primary"
             startIcon={<CalendarPlus size={18} />}
@@ -135,7 +140,7 @@ export function CalendarHome() {
           >
             {t('actions.newEvent')}
           </ActionButton>
-        }
+        ) : undefined}
       />
 
       {query.isError && (
@@ -364,7 +369,7 @@ export function CalendarHome() {
                     key={`${event.eventId}-${event.startsAt}`}
                     event={event}
                     onOpen={() => setSelected(event)}
-                    onRespond={(response) => respond(event, response)}
+                    onRespond={canRespond ? (response) => respond(event, response) : undefined}
                   />
                 ))
               ) : (
@@ -372,8 +377,8 @@ export function CalendarHome() {
                   kind="empty"
                   title={t('home.emptyToday')}
                   description={t('home.emptyTodayDescription')}
-                  actionLabel={t('actions.addFocus')}
-                  onAction={() => setCreateOpen(true)}
+                  actionLabel={canCreate ? t('actions.addFocus') : undefined}
+                  onAction={canCreate ? () => setCreateOpen(true) : undefined}
                 />
               )}
             </Box>
@@ -510,31 +515,36 @@ export function CalendarHome() {
         </Stack>
       ) : null}
 
-      <CalendarEventDialog open={createOpen} onClose={() => setCreateOpen(false)} />
-      <CalendarEventDialog
-        open={Boolean(editing)}
-        event={editing}
-        onClose={() => setEditing(null)}
-        onSaved={(event) => setSelected(event)}
-      />
+      {canCreate && (
+        <CalendarEventDialog open={createOpen} onClose={() => setCreateOpen(false)} />
+      )}
+      {canUpdate && (
+        <CalendarEventDialog
+          open={Boolean(editing)}
+          event={editing}
+          onClose={() => setEditing(null)}
+          onSaved={(event) => setSelected(event)}
+        />
+      )}
       <CalendarEventDrawer
         event={selected}
         open={Boolean(selected)}
-        canEdit={
-          selected?.organizerPersonPublicId
-            ? selected.organizerPersonPublicId === auth.user?.personPublicId
-            : selected?.organizerUserId === auth.user?.userId
-        }
+        canEdit={Boolean(
+          canUpdate &&
+            (selected?.organizerPersonPublicId
+              ? selected.organizerPersonPublicId === auth.user?.personPublicId
+              : selected?.organizerUserId === auth.user?.userId)
+        )}
         onClose={() => setSelected(null)}
-        onEdit={() => {
+        onEdit={canUpdate ? () => {
           setEditing(selected);
           setSelected(null);
-        }}
-        onCancel={() => selected && setCancelling(selected)}
-        onRespond={(response) => selected && respond(selected, response)}
+        } : undefined}
+        onCancel={canUpdate ? () => selected && setCancelling(selected) : undefined}
+        onRespond={canRespond ? (response) => selected && respond(selected, response) : undefined}
       />
       <ConfirmDialog
-        open={Boolean(cancelling)}
+        open={canUpdate && Boolean(cancelling)}
         title={t('event.cancelTitle')}
         description={t('event.cancelDescription', { title: cancelling?.title })}
         cancelLabel={t('actions.close')}
@@ -544,7 +554,7 @@ export function CalendarHome() {
         busy={cancelMutation.isPending}
         onClose={() => setCancelling(null)}
         onConfirm={() => {
-          if (cancelling) cancelMutation.mutate(cancelling);
+          if (canUpdate && cancelling) cancelMutation.mutate(cancelling);
         }}
       />
     </PageCanvas>

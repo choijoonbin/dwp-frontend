@@ -1,12 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
-import {
-  hasAnyRole,
-  hasProviderControlPlaneRole,
-  WORKFORCE_OPERATIONS_ROLES,
-} from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { isHcmReadEntitled } from '@dwp-frontend/shared-utils/auth/hcm-access';
+import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
@@ -26,11 +22,11 @@ function HcmRouteGuard({ children }: { children: React.ReactNode }) {
   const supportContext = useProviderSupportContext(providerRole);
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
   if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
-  const entitled =
-    isAppResourceEntitled('APP.HCM', permissions) ||
-    isAppResourceEntitled('APP.PEOPLE_DIRECTORY', permissions) ||
-    (isAppResourceEntitled('APP.WORKFORCE_MANAGEMENT', permissions) &&
-      hasAnyRole(auth.user?.roles ?? [], WORKFORCE_OPERATIONS_ROLES));
+  const entitled = isHcmReadEntitled(
+    permissions,
+    auth.user?.roles ?? [],
+    auth.user?.legacyRoleFallbackAllowed === true
+  );
   return entitled ? children : <Navigate to="/403" replace />;
 }
 

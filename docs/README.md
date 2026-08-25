@@ -47,6 +47,7 @@
 - `03-architecture/R1 DWP HCM Product Shell 및 Role-Aware Experience ADR.md`
 - `03-architecture/DWP HCM 용어 사전 및 호환 전환 규칙.md`
 - `03-architecture/R1 Multi-Surface Personal Home Composer ADR.md`
+- `03-architecture/R1 Flow Home 및 Bounded Personalization ADR.md`
 - `03-architecture/R1 Enterprise Communications and Newsroom ADR.md`
 - `03-architecture/R1 Employee Services and Service Request Orchestration ADR.md`
 - `03-architecture/R1 Enterprise Approval Decision Hub ADR.md`
@@ -68,6 +69,7 @@
 - `05-features/DWP-R1-CORE-001-reference-work-hub/`
 - `05-features/DWP-R1-AI-001-governed-ask-runtime/`
 - `05-features/DWP-R1-CORE-002-personal-home-experience/`
+- `05-features/DWP-R1-CORE-007-flow-home-personalization/`
 - `05-features/DWP-R1-ADM-006-governed-catalog/`
 - `05-features/DWP-R1-ADM-007-navigation-app-access-governance/`
 - `05-features/DWP-R1-ADM-008-localization-studio/`

@@ -17,6 +17,23 @@ export type PersonalHomeWidgetPreference<WidgetKey extends string = string> = {
 
 export type HomeWidgetPreference = PersonalHomeWidgetPreference<HomeWidgetKey>;
 
+export const WORKSPACE_HOME_WIDGET_SIZE_CONTRACT = {
+  'command-rail': ['large', 'full'],
+  activity: ['fifth', 'quarter', 'compact', 'medium'],
+  focus: ['quarter', 'compact', 'medium', 'large', 'full'],
+  schedule: ['fifth', 'quarter', 'compact', 'medium'],
+  'daily-brief': ['compact', 'large', 'full'],
+} as const satisfies Record<HomeWidgetKey, readonly HomeWidgetSize[]>;
+
+export function isWorkspaceHomeWidgetSizeAllowed(
+  widgetKey: HomeWidgetKey,
+  size: string | null | undefined
+): size is HomeWidgetSize {
+  return Boolean(
+    size && (WORKSPACE_HOME_WIDGET_SIZE_CONTRACT[widgetKey] as readonly string[]).includes(size)
+  );
+}
+
 export type HomePreferenceLayout<WidgetKey extends string = HomeWidgetKey> = {
   appLayout: unknown | null;
   presentation?: HomePresentation | null;

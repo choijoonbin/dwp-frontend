@@ -30,31 +30,31 @@ describe('home widget registry', () => {
     const source = reconcileHomeWidgets(null);
     const moved = reorderWorkspaceWidgets(source, 'activity', 'daily-brief');
 
-    expect(moved[4].widgetKey).toBe('activity');
+    expect(moved[2].widgetKey).toBe('activity');
     expect(source[0].widgetKey).toBe('command-rail');
   });
 
   it('provides distinct governed defaults for each work audience', () => {
     expect(defaultHomeWidgets(undefined, 'MEMBER').map((widget) => widget.widgetKey)).toEqual([
       'command-rail',
-      'activity',
-      'focus',
       'schedule',
       'daily-brief',
+      'focus',
+      'activity',
     ]);
     expect(defaultHomeWidgets(undefined, 'MANAGER').map((widget) => widget.widgetKey)).toEqual([
       'command-rail',
-      'activity',
-      'focus',
       'schedule',
       'daily-brief',
+      'focus',
+      'activity',
     ]);
     expect(defaultHomeWidgets(undefined, 'OPERATOR').map((widget) => widget.widgetKey)).toEqual([
       'command-rail',
       'activity',
-      'focus',
       'schedule',
       'daily-brief',
+      'focus',
     ]);
   });
 
@@ -80,7 +80,7 @@ describe('home widget registry', () => {
       {
         key: 'daily-brief',
         defaultSize: 'full',
-        allowedSizes: ['large', 'full'],
+        allowedSizes: ['compact', 'large', 'full'],
         defaultHeight: 'standard',
         allowedHeights: ['short', 'standard', 'tall'],
       },

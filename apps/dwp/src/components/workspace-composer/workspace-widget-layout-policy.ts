@@ -6,6 +6,7 @@ import type {
 
 // 60 is the smallest grid that represents 1/2, 1/3, 1/4, and 1/5 as whole units.
 export const WORKSPACE_WIDGET_GRID_COLUMNS = 60;
+export const WORKSPACE_WIDGET_EDITOR_CHROME_PX = 44;
 
 export type WorkspaceWidgetResponsiveColumns = Readonly<{
   xs: 60;
@@ -40,15 +41,17 @@ export const WORKSPACE_WIDGET_SIZE_POLICY: Readonly<
   full: { xs: 60, sm: 60, lg: 60 },
 };
 
-// Heights follow the 8px baseline grid. On phones the canvas releases the
-// fixed block size so every widget can reflow to its full content without clipping.
+// Heights are semantic edit-mode footprints, not read-mode minimums. The
+// document-scrolling Home releases these tokens after editing so 0/1-item
+// widgets collapse to their content instead of presenting an empty viewport.
+// Values follow the product Home content budgets and the 8px baseline grid.
 export const WORKSPACE_WIDGET_HEIGHT_POLICY: Readonly<
   Record<HomeWidgetHeight, WorkspaceWidgetHeightRule>
 > = {
-  short: { blockSize: 288, contentRows: 2 },
-  standard: { blockSize: 368, contentRows: 3 },
-  tall: { blockSize: 448, contentRows: 4 },
-  expanded: { blockSize: 560, contentRows: 6 },
+  short: { blockSize: 168, contentRows: 2 },
+  standard: { blockSize: 232, contentRows: 3 },
+  tall: { blockSize: 304, contentRows: 4 },
+  expanded: { blockSize: 384, contentRows: 6 },
 };
 
 const workspaceWidgetFootprints: Readonly<Record<HomeWidgetSize, WorkspaceWidgetFootprint>> = {

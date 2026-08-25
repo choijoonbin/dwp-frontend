@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isAppResourceEntitled } from './app-entitlements';
+import { isAppReadEntitled, isAppResourceEntitled } from './app-entitlements';
 
 const permission = (resourceKey: string, effect = 'ALLOW') => ({
   resourceType: 'APP',
@@ -22,5 +22,13 @@ describe('application entitlement aliases', () => {
     expect(
       isAppResourceEntitled('APP.HCM', [permission('APP.HCM'), permission('APP.HRIS', 'DENY')])
     ).toBe(false);
+  });
+
+  it('requires an explicit VIEW grant for API-backed app launch surfaces', () => {
+    expect(isAppReadEntitled('APP.WORK', [])).toBe(false);
+    expect(
+      isAppReadEntitled('APP.WORK', [{ ...permission('APP.WORK'), permissionCode: 'USE' }])
+    ).toBe(false);
+    expect(isAppReadEntitled('APP.WORK', [permission('APP.WORK')])).toBe(true);
   });
 });

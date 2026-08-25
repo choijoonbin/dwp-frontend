@@ -240,6 +240,12 @@ export function NotificationAdminOverviewPage({
   }
 
   const data = query.data;
+  const metricLabels: Record<string, string> = {
+    'active-contracts': t('admin.overview.metrics.activeContracts'),
+    'notifications-24h': t('admin.overview.metrics.notifications24Hours'),
+    'queued-deliveries': t('admin.overview.metrics.queuedDeliveries'),
+    'failed-deliveries': t('admin.overview.metrics.failedDeliveries'),
+  };
   return (
     <Stack gap={3}>
       {data.partial && (
@@ -251,8 +257,8 @@ export function NotificationAdminOverviewPage({
         ariaLabel={t('admin.overview.metricsLabel')}
         items={data.metrics.map((metric) => ({
           key: metric.key,
-          label: metric.label,
-          value: `${formatNumber(metric.value)}${metric.unit ?? ''}`,
+          label: metricLabels[metric.key] ?? metric.label,
+          value: formatNumber(metric.value),
           trend:
             metric.baseline == null
               ? undefined

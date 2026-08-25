@@ -67,6 +67,52 @@ describe('buildDwpTheme', () => {
     });
   });
 
+  it('chooses the highest-contrast action text for a mid-tone tenant accent', () => {
+    const theme = buildDwpTheme({ ...baseInput, accentColor: '#0070F8' });
+    const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as {
+      '&.MuiButton-containedPrimary'?: { color?: string; backgroundColor?: string };
+    };
+
+    expect(buttonRoot['&.MuiButton-containedPrimary']).toMatchObject({
+      color: '#000000',
+      backgroundColor: '#0070F8',
+    });
+  });
+
+  it('uses an opaque 3:1 focus ring when a tenant accent is too light for the canvas', () => {
+    const theme = buildDwpTheme({ ...baseInput, accentColor: '#FFFFFF' });
+    const baseline = theme.components?.MuiCssBaseline?.styleOverrides as {
+      ':focus-visible'?: { outline?: string };
+    };
+
+    expect(baseline[':focus-visible']?.outline).toBe('3px solid #0048B5');
+  });
+
+  it.each([
+    ['#000000', '#000000'],
+    ['#0070F8', '#0070F8'],
+    ['#FFFFFF', '#0048B5'],
+  ])('publishes a semantic focus-ring token for tenant accent %s', (accentColor, expected) => {
+    const theme = buildDwpTheme({ ...baseInput, accentColor });
+    const baseline = theme.components?.MuiCssBaseline?.styleOverrides as {
+      ':root'?: { '--dwp-focus-ring'?: string };
+    };
+
+    expect(baseline[':root']?.['--dwp-focus-ring']).toBe(expected);
+  });
+
+  it('overrides the ButtonBase focus reset with the semantic keyboard focus ring', () => {
+    const theme = buildDwpTheme(baseInput);
+    const buttonBaseRoot = theme.components?.MuiButtonBase?.styleOverrides?.root as {
+      '&.Mui-focusVisible, &:focus-visible'?: { outline?: string; outlineOffset?: number };
+    };
+
+    expect(buttonBaseRoot['&.Mui-focusVisible, &:focus-visible']).toEqual({
+      outline: `3px solid ${foundationTokens.color.product.primary}`,
+      outlineOffset: 2,
+    });
+  });
+
   it('resolves density metrics from the DTCG token adapter', () => {
     const theme = buildDwpTheme({ ...baseInput, density: 'compact' });
     const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as {

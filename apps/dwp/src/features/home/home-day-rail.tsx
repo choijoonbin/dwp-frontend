@@ -278,6 +278,7 @@ export function HomeDayRail({
               </ActionButton>
               {onStartEditing && (
                 <ActionButton
+                  data-home-edit-trigger
                   data-home-action-policy="PERSONAL"
                   intent="quiet"
                   startIcon={<Settings2 size={17} strokeWidth={1.8} aria-hidden="true" />}

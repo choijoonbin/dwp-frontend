@@ -1,5 +1,10 @@
 # DWP-R1-CORE-002 Personal Home Experience
 
+> **후속 기준:** `../DWP-R1-CORE-007-flow-home-personalization/README.md`가
+> `workspace-home`의 Flow Home 정보구조, 단일 문서 스크롤과 개인화 고도화를 정의한다.
+> 이 Package는 이미 구현된 이전 기준선과 증거로 보존하며, CORE-007의 미구현 항목을
+> 완료한 증거로 사용하지 않는다.
+
 > 상태: P0-P3 implemented, runtime-and-automated-verification-complete
 >
 > Release: R0.5 Reference, R1 Candidate

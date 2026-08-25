@@ -1,5 +1,5 @@
-import { API_URL } from '../env';
 import { axiosInstance } from '../axios-instance';
+import { resolveBrowserMediaUrl } from './browser-media-url';
 
 import type { ApiResponse } from '../types';
 import type { HomeWidgetHeight } from './home-preference-api';
@@ -34,6 +34,8 @@ export type HomeLaunchpadConfiguration = {
 export type HomePersonalZoneKey = 'workspace-tools';
 export type HomeGovernedZoneKey = 'announcements';
 export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
+export type HomeExperienceVariant = 'CLASSIC' | 'FLOW_V1';
+export type HomePreferenceStore = 'LEGACY' | 'VIEWS';
 
 export type GovernedHomeZone = {
   zoneKey: HomeGovernedZoneKey;
@@ -45,10 +47,19 @@ export type GovernedHomeZone = {
 };
 
 export type HomeCompositionPolicy = {
-  schemaVersion: 2;
+  schemaVersion: 3;
+  experienceVariant: HomeExperienceVariant;
   personalCustomizationEnabled: boolean;
   governedZones: GovernedHomeZone[];
 };
+
+export type LegacyHomeCompositionPolicy = {
+  schemaVersion: 1 | 2;
+  personalCustomizationEnabled?: boolean;
+  governedZones?: GovernedHomeZone[];
+};
+
+export type HomeCompositionPolicyPayload = HomeCompositionPolicy | LegacyHomeCompositionPolicy;
 
 export type HomeExperience = {
   headline?: string | null;
@@ -64,7 +75,13 @@ export type HomeExperience = {
   backgroundWidth?: number | null;
   backgroundHeight?: number | null;
   launchpadConfiguration: HomeLaunchpadConfiguration;
-  compositionPolicy: HomeCompositionPolicy;
+  compositionPolicy: HomeCompositionPolicyPayload;
+  /** Server-resolved variant after policy and runtime kill-switch evaluation. */
+  effectiveExperienceVariant?: HomeExperienceVariant;
+  /** Server capability flags are optional for backward-compatible, fail-closed clients. */
+  advancedPersonalizationEnabled?: boolean;
+  composerEnabled?: boolean;
+  homePreferenceStore?: HomePreferenceStore;
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
@@ -99,14 +116,15 @@ export const DEFAULT_HOME_BACKGROUND_URL = '/assets/home/default/agentic-workspa
 
 export function resolveHomeBackgroundUrl(experience?: HomeExperience | null): string {
   return experience?.backgroundUrl
-    ? API_URL + experience.backgroundUrl
+    ? resolveBrowserMediaUrl(experience.backgroundUrl)
     : DEFAULT_HOME_BACKGROUND_URL;
 }
 
 export function resolveAdminHomeBackgroundUrl(experience?: HomeExperience | null): string {
   return experience?.backgroundUrl
-    ? API_URL +
+    ? resolveBrowserMediaUrl(
         experience.backgroundUrl.replace('/v1/home-experience/', '/v1/admin/home-experience/')
+      )
     : DEFAULT_HOME_BACKGROUND_URL;
 }
 

@@ -2,6 +2,7 @@ import type {
   NotificationDeliveryProfile,
   NotificationEffectiveSettings,
   NotificationItem,
+  NotificationLiveSignal,
   NotificationQuietHours,
   NotificationTypeSetting,
 } from '@dwp-frontend/shared-utils/api/notification-api';
@@ -11,6 +12,33 @@ export type NotificationArrivalContent = {
   title: string;
   preview: string | null;
 };
+
+export type NotificationArrival = {
+  item: NotificationItem;
+  href: string | null;
+};
+
+export function upsertPersistentNotificationArrival(
+  current: NotificationArrival[],
+  arrival: NotificationArrival
+): NotificationArrival[] {
+  const existingIndex = current.findIndex(
+    ({ item }) => item.notificationId === arrival.item.notificationId
+  );
+  if (existingIndex < 0) return [...current, arrival];
+  return current.map((queued, index) => (index === existingIndex ? arrival : queued));
+}
+
+export function notificationArrivalSignalKey(
+  changeVersion: string,
+  notificationId: string
+): string {
+  return `${changeVersion}:${notificationId}`;
+}
+
+export function notificationArrivalCandidateIds(signal: NotificationLiveSignal): string[] {
+  return signal.arrivalIds;
+}
 
 function typeSetting(
   item: NotificationItem,

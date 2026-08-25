@@ -1,5 +1,11 @@
 # R1 Multi-Surface Personal Home Composer ADR
 
+> **부분 대체 안내 (2026-08-21):**
+> `R1 Flow Home 및 Bounded Personalization ADR.md`가 `workspace-home`에 한해 고정 높이와
+> 위젯 내부 세로 Scroll 조항을 단일 문서 Scroll, 요약 행 예산과 `전체 보기` 계약으로
+> 대체한다. Composer의 Registry, 제약 Grid, 저장·취소·초기화, Drag·Keyboard 이동과
+> Schema v5 계약은 유지한다.
+
 > 상태: Accepted and Implemented v2.0
 >
 > 기준일: 2026-08-18

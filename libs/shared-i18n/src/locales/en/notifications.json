@@ -235,7 +235,10 @@
   "bulk": {
     "toolbarLabel": "Selected notification actions",
     "selected": "{{count}} selected",
-    "selectItem": "Select {{title}}"
+    "selectItem": "Select {{title}}",
+    "undo": "Undo",
+    "undoing": "Restoring",
+    "undoAvailable": "The bulk change can be safely undone until {{time}}."
   },
   "detail": {
     "title": "Notification details",
@@ -251,6 +254,9 @@
       "EXPIRED": "The related work has expired.",
       "FORBIDDEN": "You no longer have access to this work.",
       "AVAILABLE": "The related work is available."
+    },
+    "targetReason": {
+      "SOURCE_DELETED": "The related work was deleted in its source application."
     }
   },
   "feedback": {
@@ -263,8 +269,13 @@
     "SNOOZE": "Moved to later until the selected time.",
     "triageError": "The notification could not be changed. Refresh its latest state and try again.",
     "bulkSuccess": "Updated {{count}} notifications.",
-    "bulkPartial": "{{count}} items conflicted with a newer state.",
-    "bulkError": "The selected notifications could not be changed."
+    "bulkPartial": "{{count}} items could not be updated and remain selected for retry.",
+    "bulkError": "The selected notifications could not be changed.",
+    "bulkUndoSuccess": "Restored {{count}} bulk changes to their previous state.",
+    "bulkUndoPartial": "{{count}} items were not restored because they changed afterward.",
+    "bulkUndoError": "The bulk change could not be undone. The undo window may have expired.",
+    "targetUnavailable": "The related work was deleted or is no longer accessible.",
+    "targetOpenError": "The related work could not be verified. Try again shortly."
   },
   "preferences": {
     "title": "Notification settings",
@@ -282,6 +293,7 @@
       "auto": "Changes save automatically",
       "saving": "Saving",
       "saved": "Saved at {{time}}",
+      "recovered": "Reapplied my change to the latest settings",
       "error": "Not saved",
       "now": "just now"
     },
@@ -292,6 +304,48 @@
       "SYSTEM_DEFAULT": "System default"
     },
     "mandatory": "Required",
+    "types": {
+      "APPROVAL_ACTION_REQUIRED": {
+        "label": "Approval action required",
+        "description": "Notifies you when an approval needs your review or decision."
+      },
+      "APPROVAL_REQUEST_APPROVED": {
+        "label": "Approval completed",
+        "description": "Notifies you when an approval request you submitted is approved."
+      },
+      "APPROVAL_REQUEST_REJECTED": {
+        "label": "Approval rejected",
+        "description": "Notifies you when an approval request you submitted is rejected."
+      },
+      "APPROVAL_REQUEST_SUBMITTED": {
+        "label": "Approval request submitted",
+        "description": "Notifies you when a related approval request is submitted."
+      },
+      "HCM_LEAVE_APPROVED": {
+        "label": "Leave approved",
+        "description": "Notifies you when your leave request is approved."
+      },
+      "MESSAGING_CHANNEL_MESSAGE": {
+        "label": "New channel message",
+        "description": "Notifies you when a new message is posted to a subscribed channel."
+      },
+      "MESSAGING_DIRECT_MESSAGE": {
+        "label": "New direct message",
+        "description": "Notifies you when a colleague sends you a direct message."
+      },
+      "MESSAGING_MENTION": {
+        "label": "Messenger mention",
+        "description": "Notifies you when someone mentions you in a conversation."
+      },
+      "MESSAGING_THREAD_REPLY": {
+        "label": "Conversation reply",
+        "description": "Notifies you when a new reply is added to a conversation you follow."
+      },
+      "SPACE_MENTION": {
+        "label": "Space mention",
+        "description": "Notifies you when someone mentions you in Space work."
+      }
+    },
     "presentation": {
       "title": "Arrival alerts and privacy",
       "description": "Control interruption and content exposure separately from durable notification-center storage.",
@@ -387,8 +441,9 @@
       "effectivePolicyUnavailable": "The current server does not expose effective policy composition. Only saved personal rules are shown; global settings still apply."
     },
     "feedback": {
-      "profileError": "Global notification settings could not be saved.",
-      "ruleError": "App notification settings could not be saved."
+      "conflictRecovered": "Your change was reapplied while preserving newer settings from another window.",
+      "profileError": "Notification settings could not be saved. The latest server settings were restored.",
+      "ruleError": "The notification type setting could not be saved. Review the latest state and try again."
     }
   },
   "admin": {
@@ -436,6 +491,12 @@
     },
     "overview": {
       "metricsLabel": "Notification operations key metrics",
+      "metrics": {
+        "activeContracts": "Active contracts",
+        "notifications24Hours": "Notifications in 24 hours",
+        "queuedDeliveries": "Queued deliveries",
+        "failedDeliveries": "Failed deliveries"
+      },
       "baseline": "Baseline {{value}}",
       "trendTitle": "Volume and user impact",
       "trendDescription": "Compare created, actionable, failed, and muted notifications.",
@@ -549,6 +610,17 @@
       "previewing": "Calculating impact",
       "previewTitle": "Policy change impact",
       "previewDescription": "Review affected notification types, recently observed users, and risk signals before creating a draft.",
+      "runtimePreviewTitle": "Runtime decision",
+      "runtimePreviewDescription": "The production evaluator calculated the default outcome with no user override.",
+      "runtimeChannel": "{{channel}} · {{outcome}} · {{mode}}",
+      "runtimeAdmitted": "Admitted",
+      "runtimeSuppressed": "Suppressed",
+      "runtimeMode": {
+        "IMMEDIATE": "Immediate",
+        "MUTED": "Muted",
+        "DAILY_DIGEST": "Daily digest",
+        "WEEKLY_DIGEST": "Weekly digest"
+      },
       "createDraft": "Create approval draft",
       "creatingDraft": "Creating draft",
       "makerCheckerPreview": "No live policy changes at this step. The draft becomes effective only after another approver publishes it.",

@@ -21,8 +21,12 @@ import { useNavigate } from 'react-router-dom';
 import {
   isAssertiveNotificationArrival,
   isPersistentNotificationArrival,
+  notificationArrivalCandidateIds,
   notificationArrivalContent,
+  notificationArrivalSignalKey,
   shouldSurfaceNotificationArrival,
+  type NotificationArrival,
+  upsertPersistentNotificationArrival,
 } from './notification-arrival-policy';
 import { isNotificationTargetActive } from './notification-active-context';
 import { notificationQueryKeys } from '../features/notifications/integration-contract';
@@ -42,11 +46,6 @@ const MAXIMUM_PENDING_IDS = 200;
 const MAXIMUM_RETRY_ATTEMPTS = 3;
 const ARRIVAL_DURATION_MS = 8_000;
 const ARRIVAL_RETRY_DELAY_MS = 1_500;
-
-type Arrival = {
-  item: NotificationItem;
-  href: string | null;
-};
 
 type ArrivalPolicyState = {
   ready: boolean;
@@ -71,12 +70,12 @@ export function NotificationArrivalHost() {
   const { isAuthenticated, user } = useAuth();
   const personalPreference = usePersonalPreference();
   const navigate = useNavigate();
-  const [urgentQueue, setUrgentQueue] = useState<Arrival[]>([]);
+  const [urgentQueue, setUrgentQueue] = useState<NotificationArrival[]>([]);
   const [ordinaryCount, setOrdinaryCount] = useState(0);
   const [arrivalRevision, setArrivalRevision] = useState(0);
-  const seenIds = useRef(new Set<string>());
-  const pendingIds = useRef(new Set<string>());
-  const inFlightIds = useRef(new Set<string>());
+  const seenSignals = useRef(new Set<string>());
+  const pendingSignals = useRef(new Map<string, string>());
+  const inFlightSignals = useRef(new Set<string>());
   const retryAttempts = useRef(new Map<string, number>());
   const identity = user ? `${user.tenantId}:${user.userId}` : null;
   const identityRef = useRef(identity);
@@ -129,25 +128,21 @@ export function NotificationArrivalHost() {
     };
   }, [arrivalPolicyReady, effectiveProfile, effectiveSettingsQuery.data, identity]);
 
-  const enqueue = useCallback((arrival: Arrival) => {
+  const enqueue = useCallback((arrival: NotificationArrival) => {
     if (!isPersistentNotificationArrival(arrival.item)) {
       setOrdinaryCount((current) => current + 1);
       return;
     }
-    setUrgentQueue((current) =>
-      current.some(({ item }) => item.notificationId === arrival.item.notificationId)
-        ? current
-        : [...current, arrival]
-    );
+    setUrgentQueue((current) => upsertPersistentNotificationArrival(current, arrival));
   }, []);
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
       setUrgentQueue([]);
       setOrdinaryCount(0);
-      seenIds.current.clear();
-      pendingIds.current.clear();
-      inFlightIds.current.clear();
+      seenSignals.current.clear();
+      pendingSignals.current.clear();
+      inFlightSignals.current.clear();
       retryAttempts.current.clear();
       return undefined;
     }
@@ -158,22 +153,23 @@ export function NotificationArrivalHost() {
       );
       if (!signal) return;
       let changed = false;
-      for (const notificationId of signal.changedIds) {
-        if (seenIds.current.has(notificationId)) continue;
-        if ((retryAttempts.current.get(notificationId) ?? 0) >= MAXIMUM_RETRY_ATTEMPTS) {
-          retryAttempts.current.delete(notificationId);
+      for (const notificationId of notificationArrivalCandidateIds(signal)) {
+        const signalKey = notificationArrivalSignalKey(signal.changeVersion, notificationId);
+        if (seenSignals.current.has(signalKey)) continue;
+        if ((retryAttempts.current.get(signalKey) ?? 0) >= MAXIMUM_RETRY_ATTEMPTS) {
+          retryAttempts.current.delete(signalKey);
         }
-        if (!pendingIds.current.has(notificationId)) {
-          pendingIds.current.add(notificationId);
+        if (!pendingSignals.current.has(signalKey)) {
+          pendingSignals.current.set(signalKey, notificationId);
           changed = true;
         } else {
           changed = true;
         }
       }
-      while (pendingIds.current.size > MAXIMUM_PENDING_IDS) {
-        const oldest = pendingIds.current.values().next().value;
+      while (pendingSignals.current.size > MAXIMUM_PENDING_IDS) {
+        const oldest = pendingSignals.current.keys().next().value;
         if (!oldest) break;
-        pendingIds.current.delete(oldest);
+        pendingSignals.current.delete(oldest);
         retryAttempts.current.delete(oldest);
       }
       if (changed) setArrivalRevision((current) => current + 1);
@@ -185,45 +181,46 @@ export function NotificationArrivalHost() {
 
   useEffect(() => {
     if (!isAuthenticated || !user || !arrivalPolicyReady) return undefined;
-    const candidateIds = [...pendingIds.current]
+    const candidates = [...pendingSignals.current.entries()]
       .filter(
-        (notificationId) =>
-          !seenIds.current.has(notificationId) &&
-          !inFlightIds.current.has(notificationId) &&
-          (retryAttempts.current.get(notificationId) ?? 0) < MAXIMUM_RETRY_ATTEMPTS
+        ([signalKey]) =>
+          !seenSignals.current.has(signalKey) &&
+          !inFlightSignals.current.has(signalKey) &&
+          (retryAttempts.current.get(signalKey) ?? 0) < MAXIMUM_RETRY_ATTEMPTS
       )
       .slice(0, MAXIMUM_FETCH_BATCH);
-    if (candidateIds.length === 0) return undefined;
+    if (candidates.length === 0) return undefined;
 
     const processingIdentity = identity;
-    const inFlight = inFlightIds.current;
-    candidateIds.forEach((notificationId) => inFlight.add(notificationId));
+    const inFlight = inFlightSignals.current;
+    candidates.forEach(([signalKey]) => inFlight.add(signalKey));
     void Promise.allSettled(
-      candidateIds.map((notificationId) => getNotificationDetail(notificationId))
+      candidates.map(([, notificationId]) => getNotificationDetail(notificationId))
     ).then((settled) => {
       let retryRequired = false;
       settled.forEach((result, index) => {
-        const notificationId = candidateIds[index];
-        if (!notificationId) return;
-        inFlight.delete(notificationId);
+        const candidate = candidates[index];
+        if (!candidate) return;
+        const [signalKey] = candidate;
+        inFlight.delete(signalKey);
         if (identityRef.current !== processingIdentity) return;
 
         if (result.status === 'rejected') {
-          const attempts = (retryAttempts.current.get(notificationId) ?? 0) + 1;
-          retryAttempts.current.set(notificationId, attempts);
+          const attempts = (retryAttempts.current.get(signalKey) ?? 0) + 1;
+          retryAttempts.current.set(signalKey, attempts);
           retryRequired ||= attempts < MAXIMUM_RETRY_ATTEMPTS;
           return;
         }
 
         const policyState = policyStateRef.current;
         if (!policyState.ready) return;
-        pendingIds.current.delete(notificationId);
-        retryAttempts.current.delete(notificationId);
-        seenIds.current.add(notificationId);
-        while (seenIds.current.size > 2_000) {
-          const oldest = seenIds.current.values().next().value;
+        pendingSignals.current.delete(signalKey);
+        retryAttempts.current.delete(signalKey);
+        seenSignals.current.add(signalKey);
+        while (seenSignals.current.size > 2_000) {
+          const oldest = seenSignals.current.values().next().value;
           if (!oldest) break;
-          seenIds.current.delete(oldest);
+          seenSignals.current.delete(oldest);
         }
 
         const item = result.value.item;
@@ -234,10 +231,10 @@ export function NotificationArrivalHost() {
         enqueue({ item, href: primaryHref(item) });
       });
 
-      const morePending = [...pendingIds.current].some(
-        (notificationId) =>
-          !inFlight.has(notificationId) &&
-          (retryAttempts.current.get(notificationId) ?? 0) < MAXIMUM_RETRY_ATTEMPTS
+      const morePending = [...pendingSignals.current.keys()].some(
+        (signalKey) =>
+          !inFlight.has(signalKey) &&
+          (retryAttempts.current.get(signalKey) ?? 0) < MAXIMUM_RETRY_ATTEMPTS
       );
       if ((retryRequired || morePending) && identityRef.current === processingIdentity) {
         window.setTimeout(

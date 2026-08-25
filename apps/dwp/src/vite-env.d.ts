@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_TENANT_ID?: string;
   readonly VITE_WORKSPACE_NAME?: string;
   readonly VITE_WEB_VITALS_ENDPOINT?: string;
+  readonly VITE_HOME_PERSONALIZATION_V2_ENABLED?: string;
 }
 
 interface ImportMeta {

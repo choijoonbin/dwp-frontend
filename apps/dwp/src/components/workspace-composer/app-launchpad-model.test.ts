@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  HOME_APP_GROUPS,
   HOME_APPS,
   addAppToLaunchpadFolder,
+  applyHomeAppNotificationBadges,
+  canonicalizePersistedLaunchpadLayout,
   createDefaultLaunchpadLayout,
   createLaunchpadFolder,
   hideLaunchpadApp,
   isAppEntitled,
+  moveLaunchpadItem,
   moveLaunchpadItemToGroup,
+  mergeEntitledLaunchpadProjection,
   reconcileLaunchpadLayout,
   removeAppFromLaunchpadFolder,
   renameLaunchpadFolder,
@@ -37,6 +42,13 @@ describe('personal home app entitlements', () => {
     const entitled = HOME_APPS.filter((app) => isAppEntitled(app, ['EMPLOYEE'], permissions));
 
     expect(entitled.map((app) => app.id)).toEqual(['dwp-work']);
+  });
+
+  it('requires the verified legacy-model signal before a role can expose HCM', () => {
+    const hcm = HOME_APPS.find((app) => app.resourceKey === 'APP.HCM')!;
+
+    expect(isAppEntitled(hcm, ['WORKSPACE_MEMBER'], [])).toBe(false);
+    expect(isAppEntitled(hcm, ['WORKSPACE_MEMBER'], [], true)).toBe(true);
   });
 
   it('gives an explicit deny precedence over an allow', () => {
@@ -69,8 +81,143 @@ describe('personal home app entitlements', () => {
   });
 });
 
+describe('home app notification badges', () => {
+  it('uses explicit owner keys, caps the label, and clears unsupported static values', () => {
+    const apps = HOME_APPS.map((app) => ({ ...app, badge: '9' }));
+    const badged = applyHomeAppNotificationBadges(
+      apps,
+      new Map([
+        ['approvals', 120],
+        ['messaging', 2],
+        ['communications', 4],
+      ])
+    );
+
+    expect(badged.find((app) => app.id === 'dwp-approvals')?.badge).toBe('99+');
+    expect(badged.find((app) => app.id === 'dwp-approvals')?.badgeMetadata).toEqual({
+      totalUnread: 120,
+      actionableUnread: 0,
+      urgentUnread: 0,
+      intent: 'unread',
+      accessibleLabel: '120 unread notifications',
+    });
+    expect(badged.find((app) => app.id === 'dwp-messaging')?.badge).toBe('2');
+    expect(badged.find((app) => app.id === 'dwp-communications')?.badge).toBe('4');
+    expect(badged.find((app) => app.id === 'dwp-work')?.badge).toBeUndefined();
+  });
+
+  it('retains urgent and actionable semantics from structured counters', () => {
+    const badged = applyHomeAppNotificationBadges(
+      HOME_APPS,
+      new Map([
+        ['approvals', { totalUnread: 120, actionableUnread: 7, urgentUnread: 2 }],
+        ['messaging', { totalUnread: 4, actionableUnread: 1, urgentUnread: 0 }],
+        ['communications', { totalUnread: 3, actionableUnread: 0, urgentUnread: 0 }],
+      ])
+    );
+
+    expect(badged.find((app) => app.id === 'dwp-approvals')).toMatchObject({
+      badge: '99+',
+      badgeMetadata: {
+        totalUnread: 120,
+        actionableUnread: 7,
+        urgentUnread: 2,
+        intent: 'urgent',
+        accessibleLabel: '120 unread notifications, 7 actionable, 2 urgent',
+      },
+    });
+    expect(badged.find((app) => app.id === 'dwp-messaging')?.badgeMetadata?.intent).toBe(
+      'actionable'
+    );
+    expect(badged.find((app) => app.id === 'dwp-communications')?.badgeMetadata?.intent).toBe(
+      'unread'
+    );
+  });
+
+  it('keeps verified app counters from a partial summary and clears only missing apps', () => {
+    const approval = HOME_APPS.find((app) => app.id === 'dwp-approvals')!;
+    const messaging = HOME_APPS.find((app) => app.id === 'dwp-messaging')!;
+    const badged = applyHomeAppNotificationBadges(
+      [
+        { ...approval, badge: '7' },
+        {
+          ...messaging,
+          badge: '9',
+          badgeMetadata: {
+            totalUnread: 9,
+            actionableUnread: 2,
+            urgentUnread: 1,
+            intent: 'urgent',
+            accessibleLabel: 'stale value',
+          },
+        },
+      ],
+      new Map([['approvals', { totalUnread: 5, actionableUnread: 3, urgentUnread: 1 }]])
+    );
+
+    expect(badged[0]).toMatchObject({
+      badge: '5',
+      badgeMetadata: {
+        totalUnread: 5,
+        actionableUnread: 3,
+        urgentUnread: 1,
+        intent: 'urgent',
+      },
+    });
+    expect(badged[1]?.badge).toBeUndefined();
+    expect(badged[1]?.badgeMetadata).toBeUndefined();
+  });
+
+  it('fails closed when notification values are unavailable', () => {
+    const approval = HOME_APPS.find((app) => app.id === 'dwp-approvals')!;
+    const result = applyHomeAppNotificationBadges(
+      [
+        {
+          ...approval,
+          badge: '7',
+          badgeMetadata: {
+            totalUnread: 7,
+            actionableUnread: 1,
+            urgentUnread: 0,
+            intent: 'actionable',
+            accessibleLabel: 'stale value',
+          },
+        },
+      ],
+      null
+    )[0];
+
+    expect(result?.badge).toBeUndefined();
+    expect(result?.badgeMetadata).toBeUndefined();
+  });
+});
+
 describe('personal home launchpad layout', () => {
   const workApps = HOME_APPS.filter((app) => app.groupId === 'work');
+  const mixedFolderApps = HOME_APPS.filter((app) =>
+    ['dwp-work', 'dwp-ask', 'dwp-activity', 'dwp-communications'].includes(app.id)
+  );
+  const mixedFolderCanonical = () =>
+    canonicalizePersistedLaunchpadLayout(
+      {
+        version: 1,
+        groups: {
+          work: ['future-before', 'folder-mixed', 'future-middle', 'dwp-activity', 'future-after'],
+          connect: ['dwp-communications'],
+        },
+        folders: {
+          'folder-mixed': {
+            id: 'folder-mixed',
+            name: 'Mixed tools',
+            groupId: 'work',
+            appIds: ['dwp-work', 'future-folder', 'dwp-ask'],
+          },
+        },
+        hiddenAppIds: [],
+      },
+      mixedFolderApps,
+      HOME_APP_GROUPS
+    );
 
   it('reconciles saved data against the current entitlement set', () => {
     const fullLayout = createDefaultLaunchpadLayout(workApps);
@@ -86,6 +233,292 @@ describe('personal home launchpad layout', () => {
     const workOnly = reconcileLaunchpadLayout(folderLayout, [workApps[0]!]);
     expect(workOnly.folders).toEqual({});
     expect(workOnly.groups.work).toEqual(['dwp-work']);
+  });
+
+  it('preserves revoked apps and mixed folders through unrelated saves', () => {
+    const apps = HOME_APPS.filter((app) => ['dwp-work', 'dwp-approvals'].includes(app.id));
+    const canonical = createLaunchpadFolder(
+      createDefaultLaunchpadLayout(apps),
+      'work',
+      'dwp-work',
+      'dwp-approvals',
+      'folder-critical',
+      'Critical work'
+    );
+    const entitled = apps.filter((app) => app.id === 'dwp-work');
+    const projection = reconcileLaunchpadLayout(canonical, entitled);
+
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, projection, entitled);
+
+    expect(saved).toEqual(canonical);
+    expect(reconcileLaunchpadLayout(saved, apps)).toEqual(canonical);
+  });
+
+  it('merges Dock edits while retaining unauthorized canonical placement', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-approvals', 'dwp-activity'].includes(app.id)
+    );
+    const canonical = createLaunchpadFolder(
+      createDefaultLaunchpadLayout(apps),
+      'work',
+      'dwp-work',
+      'dwp-approvals',
+      'folder-critical',
+      'Critical work'
+    );
+    const entitled = apps.filter((app) => app.id !== 'dwp-approvals');
+    const projection = reconcileLaunchpadLayout(canonical, entitled);
+    const edited = hideLaunchpadApp(projection, 'dwp-activity');
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, entitled);
+
+    expect(saved.folders['folder-critical']).toMatchObject({
+      name: 'Critical work',
+      appIds: ['dwp-work', 'dwp-approvals'],
+    });
+    expect(saved.hiddenAppIds).toContain('dwp-activity');
+    expect(reconcileLaunchpadLayout(saved, apps).folders['folder-critical']?.appIds).toEqual([
+      'dwp-work',
+      'dwp-approvals',
+    ]);
+  });
+
+  it('round-trips unknown apps, groups, folders, and hidden entries on unrelated saves', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-ask', 'dwp-activity', 'dwp-approvals'].includes(app.id)
+    );
+    const persisted = {
+      version: 1 as const,
+      groups: {
+        work: ['dwp-activity', 'future-top', 'mixed-bundle'],
+        future: ['future-standalone', 'future-bundle', 'dwp-approvals'],
+      },
+      folders: {
+        'mixed-bundle': {
+          id: 'mixed-bundle',
+          name: 'Mixed tools',
+          groupId: 'work',
+          appIds: ['dwp-work', 'future-mixed'],
+        },
+        'future-bundle': {
+          id: 'future-bundle',
+          name: 'Future tools',
+          groupId: 'future',
+          appIds: ['dwp-ask', 'future-folder-app'],
+        },
+      },
+      hiddenAppIds: ['future-hidden'],
+    };
+    const canonical = canonicalizePersistedLaunchpadLayout(persisted, apps, HOME_APP_GROUPS);
+    const projection = reconcileLaunchpadLayout(canonical, apps);
+
+    expect(canonical).toEqual(persisted);
+    expect(mergeEntitledLaunchpadProjection(canonical, projection, projection, apps)).toEqual(
+      persisted
+    );
+  });
+
+  it('preserves backend-valid identifiers that collide with object prototype names', () => {
+    const persisted = {
+      version: 1 as const,
+      groups: { future: ['__proto__'] },
+      folders: Object.fromEntries([
+        [
+          '__proto__',
+          {
+            id: '__proto__',
+            name: 'Future tools',
+            groupId: 'future',
+            appIds: ['future-a', 'future-b'],
+          },
+        ],
+      ]),
+      hiddenAppIds: ['constructor'],
+    };
+    const canonical = canonicalizePersistedLaunchpadLayout(persisted, [], HOME_APP_GROUPS);
+
+    expect(Object.hasOwn(canonical.folders, '__proto__')).toBe(true);
+    expect(canonical).toEqual(persisted);
+  });
+
+  it('keeps dormant future placements while applying a Dock edit elsewhere', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-ask', 'dwp-activity', 'dwp-approvals'].includes(app.id)
+    );
+    const canonical = canonicalizePersistedLaunchpadLayout(
+      {
+        version: 1,
+        groups: {
+          work: ['dwp-activity', 'future-top', 'mixed-bundle'],
+          future: ['future-standalone', 'future-bundle', 'dwp-approvals'],
+        },
+        folders: {
+          'mixed-bundle': {
+            id: 'mixed-bundle',
+            name: 'Mixed tools',
+            groupId: 'work',
+            appIds: ['dwp-work', 'future-mixed'],
+          },
+          'future-bundle': {
+            id: 'future-bundle',
+            name: 'Future tools',
+            groupId: 'future',
+            appIds: ['dwp-ask', 'future-folder-app'],
+          },
+        },
+        hiddenAppIds: ['future-hidden'],
+      },
+      apps,
+      HOME_APP_GROUPS
+    );
+    const projection = reconcileLaunchpadLayout(canonical, apps);
+    const edited = hideLaunchpadApp(projection, 'dwp-activity');
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, apps);
+
+    expect(saved.groups.work).toEqual(['future-top', 'mixed-bundle']);
+    expect(saved.groups.future).toEqual(['future-standalone', 'future-bundle', 'dwp-approvals']);
+    expect(saved.folders).toEqual(canonical.folders);
+    expect(saved.hiddenAppIds).toEqual(['future-hidden', 'dwp-activity']);
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('keeps interleaved future tokens anchored when another group changes', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-activity', 'dwp-communications'].includes(app.id)
+    );
+    const canonical = canonicalizePersistedLaunchpadLayout(
+      {
+        version: 1,
+        groups: {
+          work: ['future-a', 'dwp-work', 'future-b', 'dwp-activity'],
+          connect: ['dwp-communications'],
+        },
+        folders: {},
+        hiddenAppIds: [],
+      },
+      apps,
+      HOME_APP_GROUPS
+    );
+    const projection = reconcileLaunchpadLayout(canonical, apps);
+    const edited = hideLaunchpadApp(projection, 'dwp-communications');
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, apps);
+
+    expect(saved.groups.work).toEqual(['future-a', 'dwp-work', 'future-b', 'dwp-activity']);
+    expect(saved.hiddenAppIds).toEqual(['dwp-communications']);
+  });
+
+  it('persists a same-group reorder for an app projected from a future group', () => {
+    const apps = HOME_APPS.filter((app) => ['dwp-work', 'dwp-activity'].includes(app.id));
+    const canonical = canonicalizePersistedLaunchpadLayout(
+      {
+        version: 1,
+        groups: {
+          work: ['dwp-activity'],
+          future: ['future-a', 'dwp-work', 'future-b'],
+        },
+        folders: {},
+        hiddenAppIds: [],
+      },
+      apps,
+      HOME_APP_GROUPS
+    );
+    const projection = reconcileLaunchpadLayout(canonical, apps);
+    const edited = {
+      ...projection,
+      groups: { ...projection.groups, work: ['dwp-work', 'dwp-activity'] },
+    };
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, apps);
+
+    expect(saved.groups.future).toEqual(['future-a', 'future-b']);
+    expect(saved.groups.work).toEqual(['dwp-work', 'dwp-activity']);
+    expect(reconcileLaunchpadLayout(saved, apps).groups.work).toEqual(['dwp-work', 'dwp-activity']);
+  });
+
+  it('merges mixed-folder rename, member reorder, and add around dormant anchors', () => {
+    const canonical = mixedFolderCanonical();
+    const projection = reconcileLaunchpadLayout(canonical, mixedFolderApps);
+    const renamed = renameLaunchpadFolder(projection, 'folder-mixed', 'My daily tools');
+    const expanded = addAppToLaunchpadFolder(renamed, 'dwp-activity', 'folder-mixed');
+    const edited = {
+      ...expanded,
+      folders: {
+        ...expanded.folders,
+        'folder-mixed': {
+          ...expanded.folders['folder-mixed']!,
+          appIds: ['dwp-ask', 'dwp-work', 'dwp-activity'],
+        },
+      },
+    };
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, mixedFolderApps);
+
+    expect(saved.folders['folder-mixed']).toMatchObject({
+      name: 'My daily tools',
+      groupId: 'work',
+      appIds: ['dwp-ask', 'future-folder', 'dwp-work', 'dwp-activity'],
+    });
+    expect(saved.groups.work.filter((itemId) => itemId === 'folder-mixed')).toHaveLength(1);
+    expect(canonicalizePersistedLaunchpadLayout(saved, mixedFolderApps, HOME_APP_GROUPS)).toEqual(
+      saved
+    );
+  });
+
+  it('moves a visible mixed folder within its group without moving dormant anchors', () => {
+    const canonical = mixedFolderCanonical();
+    const projection = reconcileLaunchpadLayout(canonical, mixedFolderApps);
+    const edited = moveLaunchpadItem(projection, 'work', 'dwp-activity', 'folder-mixed');
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, mixedFolderApps);
+
+    expect(saved.groups.work).toEqual([
+      'future-before',
+      'dwp-activity',
+      'future-middle',
+      'folder-mixed',
+      'future-after',
+    ]);
+    expect(saved.folders['folder-mixed']?.appIds).toEqual(['dwp-work', 'future-folder', 'dwp-ask']);
+  });
+
+  it('moves a visible mixed folder across groups and keeps one valid placement', () => {
+    const canonical = mixedFolderCanonical();
+    const projection = reconcileLaunchpadLayout(canonical, mixedFolderApps);
+    const edited = moveLaunchpadItemToGroup(projection, 'work', 'connect', 'folder-mixed');
+    const saved = mergeEntitledLaunchpadProjection(canonical, projection, edited, mixedFolderApps);
+    const folderPlacements = Object.values(saved.groups)
+      .flat()
+      .filter((itemId) => itemId === 'folder-mixed');
+
+    expect(saved.folders['folder-mixed']?.groupId).toBe('connect');
+    expect(saved.groups.work).not.toContain('folder-mixed');
+    expect(saved.groups.connect).toContain('folder-mixed');
+    expect(folderPlacements).toHaveLength(1);
+    expect(canonicalizePersistedLaunchpadLayout(saved, mixedFolderApps, HOME_APP_GROUPS)).toEqual(
+      saved
+    );
+  });
+
+  it('dissolves a visible mixed folder without dropping its dormant member', () => {
+    const canonical = mixedFolderCanonical();
+    const projection = reconcileLaunchpadLayout(canonical, mixedFolderApps);
+    const edits = [
+      removeAppFromLaunchpadFolder(projection, 'folder-mixed', 'dwp-ask'),
+      ungroupLaunchpadFolder(projection, 'folder-mixed'),
+    ];
+
+    edits.forEach((edited) => {
+      const saved = mergeEntitledLaunchpadProjection(
+        canonical,
+        projection,
+        edited,
+        mixedFolderApps
+      );
+      expect(saved.folders['folder-mixed']).toBeUndefined();
+      expect(saved.groups.work).toEqual(
+        expect.arrayContaining(['future-folder', 'dwp-work', 'dwp-ask'])
+      );
+      expect(saved.groups.work.filter((itemId) => itemId === 'future-folder')).toHaveLength(1);
+      expect(canonicalizePersistedLaunchpadLayout(saved, mixedFolderApps, HOME_APP_GROUPS)).toEqual(
+        saved
+      );
+    });
   });
 
   it('supports folder creation, naming, adding, and safe dissolution', () => {

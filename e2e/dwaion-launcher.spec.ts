@@ -1,12 +1,22 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import type { Route } from '@playwright/test';
 
 import { ASK_RUNTIME_FIXTURE } from './support/runtime-access';
-import {
-  FULL_PRODUCT_PERMISSIONS,
-  fulfillSuccess,
-  mockShellSession,
-} from './support/shell-session';
+import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+
+function fulfillAskStream(route: Route, response: unknown) {
+  return route.fulfill({
+    status: 200,
+    contentType: 'text/event-stream',
+    body: [
+      'event: progress\ndata: {"stage":"AUTHORIZING"}',
+      'event: progress\ndata: {"stage":"RETRIEVING"}',
+      `event: result\ndata: ${JSON.stringify({ data: response })}`,
+      '',
+    ].join('\n\n'),
+  });
+}
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -15,9 +25,9 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
-  await page.route('**/api/agent/v1/ask', (route) => {
+  await page.route('**/api/agent/v1/ask/stream', (route) => {
     const request = route.request().postDataJSON() as { requestId: string };
-    return fulfillSuccess(route, { ...ASK_RUNTIME_FIXTURE, requestId: request.requestId });
+    return fulfillAskStream(route, { ...ASK_RUNTIME_FIXTURE, requestId: request.requestId });
   });
 });
 
@@ -77,13 +87,13 @@ test('DWAI·ON runs a governed question and carries it into the evidence workspa
   await page.goto('/');
   await page
     .getByTestId('dwaion-launcher')
-    .getByRole('button', { name: 'Open DWAI·ON', exact: true })
+    .getByRole('button', { name: /^Open DWAI·ON/ })
     .click();
 
   const panel = page.getByRole('dialog', { name: 'DWAI·ON conversation and support panel' });
   const question = 'Can I work remotely next Friday?';
   await panel.getByRole('textbox', { name: 'Ask DWAI·ON' }).fill(question);
-  const requestPromise = page.waitForRequest('**/api/agent/v1/ask');
+  const requestPromise = page.waitForRequest('**/api/agent/v1/ask/stream');
   await panel.getByRole('button', { name: 'Send question' }).click();
   const request = await requestPromise;
   expect(request.postDataJSON()).toMatchObject({
@@ -95,16 +105,16 @@ test('DWAI·ON runs a governed question and carries it into the evidence workspa
   await expect(panel.getByText('2 sources')).toBeVisible();
   await panel.getByRole('button', { name: 'Review evidence and sources' }).click();
   await expect(page).toHaveURL(
-    (url) => url.pathname === '/dwaion' && url.searchParams.get('q') === question
+    (url) => url.pathname === '/dwaion/new' && url.searchParams.get('q') === question
   );
 });
 
 test('DWAI·ON exposes configuration truthfully and links status to the app catalog', async ({
   page,
 }) => {
-  await page.route('**/api/agent/v1/ask', (route) => {
+  await page.route('**/api/agent/v1/ask/stream', (route) => {
     const request = route.request().postDataJSON() as { requestId: string };
-    return fulfillSuccess(route, {
+    return fulfillAskStream(route, {
       ...ASK_RUNTIME_FIXTURE,
       requestId: request.requestId,
       state: 'CONFIGURATION_REQUIRED',
@@ -128,7 +138,7 @@ test('DWAI·ON exposes configuration truthfully and links status to the app cata
   await page.goto('/');
   await page
     .getByTestId('dwaion-launcher')
-    .getByRole('button', { name: 'Open DWAI·ON', exact: true })
+    .getByRole('button', { name: /^Open DWAI·ON/ })
     .click();
   const panel = page.getByTestId('dwaion-panel');
   await panel.getByRole('button', { name: 'Where do I request software access?' }).click();
@@ -142,23 +152,47 @@ test('DWAI·ON exposes configuration truthfully and links status to the app cata
   await expect(page).toHaveURL(/\/apps$/);
 });
 
-test('DWAI·ON uses layered idle motion when motion is allowed', async ({ page }) => {
+test('DWAI·ON restores its original floating motion when motion is allowed', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
 
   const mascotMotion = page.getByTestId('dwaion-mascot-motion');
   const mascotGreeting = page.getByTestId('dwaion-mascot-greeting');
   await expect(mascotMotion).not.toHaveCSS('animation-name', 'none');
-  await expect(mascotMotion).toHaveCSS('animation-duration', '3.6s');
   await expect(mascotGreeting).not.toHaveCSS('animation-name', 'none');
-  await expect(mascotGreeting).toHaveCSS('animation-duration', '7.2s');
+  const motionAnimation = await mascotMotion.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    return {
+      currentTime: Number(animation?.currentTime ?? -1),
+      playState: animation?.playState,
+    };
+  });
+  const greetingAnimation = await mascotGreeting.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    return {
+      currentTime: Number(animation?.currentTime ?? -1),
+      playState: animation?.playState,
+    };
+  });
+  expect(motionAnimation.playState).toBe('running');
+  expect(greetingAnimation.playState).toBe('running');
+  await expect
+    .poll(async () =>
+      mascotMotion.evaluate((element) => Number(element.getAnimations()[0]?.currentTime ?? -1))
+    )
+    .toBeGreaterThan(motionAnimation.currentTime);
+  await expect
+    .poll(async () =>
+      mascotGreeting.evaluate((element) => Number(element.getAnimations()[0]?.currentTime ?? -1))
+    )
+    .toBeGreaterThan(greetingAnimation.currentTime);
 
   await page
     .getByTestId('dwaion-launcher')
-    .getByRole('button', { name: 'Open DWAI·ON', exact: true })
+    .getByRole('button', { name: /^Open DWAI·ON/ })
     .click();
   await expect(mascotGreeting).toHaveCSS('animation-name', 'none');
-  await expect(mascotMotion).toHaveCSS('animation-duration', '5s');
+  await expect(mascotMotion).not.toHaveCSS('animation-name', 'none');
 });
 
 test('DWAI·ON respects compact viewport and safe-area spacing', async ({ page }) => {

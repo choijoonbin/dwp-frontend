@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  applyNotificationBulkAction,
   applyNotificationTriage,
   createNotificationIdempotencyKey,
   getNotificationDetail,
@@ -59,6 +58,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationBulkUndoBanner } from './notification-bulk-undo-banner';
 import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import {
   defaultSnoozeTime,
@@ -79,6 +79,8 @@ import {
   useNotificationSyncResetSignal,
   useOnlineStatus,
 } from './use-notification-runtime';
+import { useNotificationBulkActions } from './use-notification-bulk-actions';
+import { useNotificationTargetNavigation } from './use-notification-target-navigation';
 
 import type { InfiniteData } from '@tanstack/react-query';
 import type { Theme } from '@mui/material/styles';
@@ -145,6 +147,10 @@ function NotificationDetailPane({
     staleTime: 30_000,
     retry: 1,
   });
+  const targetNavigation = useNotificationTargetNavigation(
+    onOpenTarget,
+    () => void detailQuery.refetch()
+  );
   const detail = detailQuery.data;
   const primary = (detail?.item ?? item).actions.find((action) => action.primary);
 
@@ -302,7 +308,11 @@ function NotificationDetailPane({
 
               {detail.targetState !== 'AVAILABLE' && (
                 <Alert severity="warning" sx={{ mt: 2 }}>
-                  {detail.targetStateReason ?? t(`detail.targetState.${detail.targetState}`)}
+                  {detail.targetStateReason
+                    ? t(`detail.targetReason.${detail.targetStateReason}`, {
+                        defaultValue: t(`detail.targetState.${detail.targetState}`),
+                      })
+                    : t(`detail.targetState.${detail.targetState}`)}
                 </Alert>
               )}
 
@@ -365,11 +375,8 @@ function NotificationDetailPane({
                 <ActionButton
                   intent="primary"
                   sx={{ mt: 3 }}
-                  onClick={() =>
-                    onOpenTarget
-                      ? onOpenTarget(primary.href as string)
-                      : window.location.assign(primary.href as string)
-                  }
+                  loading={targetNavigation.openingId === item.notificationId}
+                  onClick={() => void targetNavigation.openTarget(item.notificationId)}
                 >
                   {primary.label}
                 </ActionButton>
@@ -553,36 +560,10 @@ export function NotificationCenter({
     },
   });
 
-  const bulkMutation = useMutation({
-    mutationFn: async (
-      action: Extract<NotificationTriageAction, 'READ' | 'SAVE' | 'SNOOZE' | 'COMPLETE'>
-    ) => {
-      const result = await applyNotificationBulkAction({
-        notificationIds: [...selectedIds],
-        action,
-        snoozedUntil: action === 'SNOOZE' ? defaultSnoozeTime(4) : undefined,
-        idempotencyKey: createNotificationIdempotencyKey(
-          `center-selection-${action.toLowerCase()}`
-        ),
-      });
-      const failed = result.results.filter(
-        (item) => item.outcome !== 'APPLIED' && item.outcome !== 'ALREADY_APPLIED'
-      ).length;
-      return {
-        total: result.results.length,
-        failed,
-      };
-    },
-    onSuccess: async (result) => {
-      setSelectedIds(new Set());
-      await refreshNotificationData();
-      toast.success(
-        result.failed > 0
-          ? t('feedback.bulkPartial', { count: result.failed })
-          : t('feedback.bulkSuccess', { count: result.total })
-      );
-    },
-    onError: () => toast.error(t('feedback.bulkError')),
+  const { bulkMutation, undoMutation, undoReceipt, dismissUndo } = useNotificationBulkActions({
+    selectedIds,
+    setSelectedIds,
+    refresh: refreshNotificationData,
   });
 
   const cursorResetRequired =
@@ -630,8 +611,10 @@ export function NotificationCenter({
 
   const partial = inboxQuery.data?.pages.some((page) => page.partial) || summaryQuery.data?.partial;
   const unavailableSources = [
-    ...(summaryQuery.data?.unavailableSources ?? []),
-    ...(inboxQuery.data?.pages.flatMap((page) => page.unavailableSources) ?? []),
+    ...new Set([
+      ...(summaryQuery.data?.unavailableSources ?? []),
+      ...(inboxQuery.data?.pages.flatMap((page) => page.unavailableSources) ?? []),
+    ]),
   ];
   const showDetailOnly = mobile && selectedItem;
 
@@ -730,7 +713,7 @@ export function NotificationCenter({
                   value={view}
                   onChange={(event) => setView(event.target.value as NotificationView)}
                   size="small"
-                  aria-label={t('center.viewsLabel')}
+                  inputProps={{ 'aria-label': t('center.viewsLabel') }}
                   sx={{ display: { md: 'none' }, minWidth: 160 }}
                 >
                   {NOTIFICATION_VIEWS.map((candidate) => (
@@ -767,7 +750,7 @@ export function NotificationCenter({
                     }))
                   }
                   size="small"
-                  aria-label={t('filters.priority')}
+                  inputProps={{ 'aria-label': t('filters.priority') }}
                   IconComponent={ChevronDown}
                   startAdornment={<Filter size={16} />}
                   sx={{ minWidth: 132 }}
@@ -786,7 +769,7 @@ export function NotificationCenter({
                     setFilters((current) => ({ ...current, appKey: event.target.value }))
                   }
                   size="small"
-                  aria-label={t('filters.app')}
+                  inputProps={{ 'aria-label': t('filters.app') }}
                   displayEmpty
                   sx={{ minWidth: 140 }}
                 >
@@ -806,7 +789,7 @@ export function NotificationCenter({
                     }))
                   }
                   size="small"
-                  aria-label={t('filters.readState')}
+                  inputProps={{ 'aria-label': t('filters.readState') }}
                   sx={{ minWidth: 120 }}
                 >
                   {(['ALL', 'UNREAD', 'READ'] as const).map((state) => (
@@ -869,6 +852,14 @@ export function NotificationCenter({
                   <Check size={17} />
                 </ActionIconButton>
               </Stack>
+            )}
+            {undoReceipt && (
+              <NotificationBulkUndoBanner
+                expiresAt={undoReceipt.expiresAt}
+                busy={undoMutation.isPending}
+                onUndo={() => undoMutation.mutate(undoReceipt.token)}
+                onDismiss={dismissUndo}
+              />
             )}
 
             <Box sx={{ maxHeight: { md: 680 }, overflowY: 'auto' }}>

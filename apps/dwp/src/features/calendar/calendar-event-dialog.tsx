@@ -7,6 +7,7 @@ import {
   getCalendarResources,
   listPeople,
   updateCalendarEvent,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -127,6 +128,8 @@ export function CalendarEventDialog({
   onSaved,
 }: CalendarEventDialogProps) {
   const { t } = useTranslation('calendar');
+  const { hasPermission } = usePermissions();
+  const canMutate = hasPermission('APP.CALENDAR', event ? 'UPDATE' : 'CREATE');
   const toast = useToast();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>(() =>
@@ -134,6 +137,10 @@ export function CalendarEventDialog({
   );
   const [attendees, setAttendees] = useState<AttendeeOption[]>([]);
   const [validationVisible, setValidationVisible] = useState(false);
+
+  useEffect(() => {
+    if (open && !canMutate) onClose();
+  }, [canMutate, onClose, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -177,7 +184,7 @@ export function CalendarEventDialog({
   const peopleQuery = useQuery({
     queryKey: ['calendar', 'people-options'],
     queryFn: () => listPeople({ size: 100, surface: 'directory' }),
-    enabled: open,
+    enabled: open && canMutate,
     staleTime: 5 * 60_000,
     retry: 1,
   });
@@ -187,7 +194,7 @@ export function CalendarEventDialog({
   const resourcesQuery = useQuery({
     queryKey: ['calendar', 'resources', form.startsAt, form.endsAt],
     queryFn: () => getCalendarResources(form.startsAt, form.endsAt),
-    enabled: open && resourceRangeValid,
+    enabled: open && canMutate && resourceRangeValid,
     staleTime: 15_000,
     retry: 1,
   });
@@ -225,6 +232,7 @@ export function CalendarEventDialog({
 
   const mutation = useMutation({
     mutationFn: async () => {
+      if (!canMutate) throw new Error('Calendar mutation permission is required.');
       const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
       if (event) {
         return updateCalendarEvent(event.eventId, {
@@ -280,7 +288,7 @@ export function CalendarEventDialog({
   });
 
   const submit = () => {
-    if (!valid) {
+    if (!canMutate || !valid) {
       setValidationVisible(true);
       return;
     }
@@ -289,7 +297,7 @@ export function CalendarEventDialog({
 
   return (
     <FormDialog
-      open={open}
+      open={open && canMutate}
       title={t(event ? 'event.editTitle' : 'event.createTitle')}
       description={t(event ? 'event.editDescription' : 'event.createDescription')}
       cancelLabel={t('actions.cancel')}
@@ -298,7 +306,7 @@ export function CalendarEventDialog({
       onClose={onClose}
       onSubmit={submit}
       busy={mutation.isPending}
-      submitDisabled={!valid}
+      submitDisabled={!canMutate || !valid}
       maxWidth="md"
     >
       <Stack spacing={2.25}>

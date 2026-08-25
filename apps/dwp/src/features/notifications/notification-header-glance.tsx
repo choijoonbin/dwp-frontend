@@ -10,6 +10,7 @@ import {
   getNotificationSummary,
   isNotificationCursorResetError,
   type NotificationItem,
+  type NotificationLiveSignal,
   type NotificationView,
 } from '@dwp-frontend/shared-utils/api/notification-api';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
@@ -77,6 +78,7 @@ export function NotificationHeaderGlance({
   const [glance, setGlance] = useState<GlanceState>(EMPTY_GLANCE);
   const [resynchronizing, setResynchronizing] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const bufferedArrivalIdsRef = useRef(new Set<string>());
   const open = Boolean(anchor);
 
   const summaryQuery = useQuery({
@@ -101,24 +103,45 @@ export function NotificationHeaderGlance({
     retry: 1,
   });
 
-  const handleLiveSignal = useCallback(() => {
-    void Promise.all([
-      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.summary() }),
-      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.inboxRoot() }),
-    ]);
-  }, [queryClient]);
+  const handleLiveSignal = useCallback(
+    (signal: NotificationLiveSignal) => {
+      if (open && view === 'ALL') {
+        for (const notificationId of signal.arrivalIds) {
+          bufferedArrivalIdsRef.current.add(notificationId);
+        }
+      }
+      void Promise.all([
+        queryClient.invalidateQueries({ queryKey: notificationQueryKeys.summary() }),
+        queryClient.invalidateQueries({ queryKey: notificationQueryKeys.inboxRoot() }),
+      ]);
+    },
+    [open, queryClient, view]
+  );
   const connectionState = useNotificationLiveUpdates(handleLiveSignal);
   const { resetRequired, clearResetRequired } = useNotificationSyncResetSignal();
 
   useEffect(() => {
     if (!open) return;
-    setGlance((current) =>
-      reconcileGlanceItems(current.visible, inboxQuery.data?.items ?? [], true, GLANCE_LIMIT)
-    );
+    setGlance((current) => {
+      const reconciled = reconcileGlanceItems(
+        current.visible,
+        inboxQuery.data?.items ?? [],
+        true,
+        GLANCE_LIMIT
+      );
+      return {
+        ...reconciled,
+        bufferedCount: Math.max(
+          reconciled.bufferedCount,
+          reconciled.buffered.length > 0 ? bufferedArrivalIdsRef.current.size : 0
+        ),
+      };
+    });
   }, [inboxQuery.data?.items, open]);
 
   useEffect(() => {
     if (open) return;
+    bufferedArrivalIdsRef.current.clear();
     setGlance({
       visible: inboxQuery.data?.items.slice(0, GLANCE_LIMIT) ?? [],
       buffered: [],
@@ -127,6 +150,7 @@ export function NotificationHeaderGlance({
   }, [inboxQuery.data?.items, open]);
 
   useEffect(() => {
+    bufferedArrivalIdsRef.current.clear();
     setGlance(EMPTY_GLANCE);
   }, [view]);
 
@@ -185,6 +209,7 @@ export function NotificationHeaderGlance({
       document.activeElement instanceof HTMLElement
         ? document.activeElement.dataset.notificationFocusId
         : undefined;
+    bufferedArrivalIdsRef.current.clear();
     setGlance((current) => ({
       visible: current.buffered,
       buffered: [],
@@ -211,8 +236,10 @@ export function NotificationHeaderGlance({
   const partial = summaryQuery.data?.partial || inboxQuery.data?.partial;
   const unavailableSources = useMemo(
     () => [
-      ...(summaryQuery.data?.unavailableSources ?? []),
-      ...(inboxQuery.data?.unavailableSources ?? []),
+      ...new Set([
+        ...(summaryQuery.data?.unavailableSources ?? []),
+        ...(inboxQuery.data?.unavailableSources ?? []),
+      ]),
     ],
     [inboxQuery.data?.unavailableSources, summaryQuery.data?.unavailableSources]
   );
@@ -229,7 +256,7 @@ export function NotificationHeaderGlance({
       >
         <Badge
           color="error"
-          badgeContent={Math.min(actionableUnread, 99)}
+          badgeContent={actionableUnread}
           max={99}
           invisible={actionableUnread === 0}
         >
@@ -323,8 +350,13 @@ export function NotificationHeaderGlance({
             compact
           />
         )}
-        {glance.bufferedCount > 0 && (
-          <Box sx={{ px: 1.5, py: 1, borderBottom: 1, borderColor: 'divider' }}>
+        {glance.buffered.length > 0 && glance.bufferedCount > 0 && (
+          <Box
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            sx={{ px: 1.5, py: 1, borderBottom: 1, borderColor: 'divider' }}
+          >
             <ActionButton intent="secondary" size="small" fullWidth onClick={mergeBuffered}>
               {t('glance.newItems', { count: glance.bufferedCount })}
             </ActionButton>

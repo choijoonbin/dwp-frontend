@@ -7,6 +7,7 @@ import {
   HOME_PERSONAL_ZONE_KEYS,
   defaultHomeCompositionPolicy,
   governedHomeZone,
+  isFlowHomeVariant,
   reconcileHomeCompositionPolicy,
 } from './home-composition-policy';
 
@@ -48,11 +49,12 @@ describe('home composition policy', () => {
       ],
     });
 
-    expect(policy.schemaVersion).toBe(2);
+    expect(policy.schemaVersion).toBe(3);
+    expect(policy.experienceVariant).toBe('CLASSIC');
     expect(policy.personalCustomizationEnabled).toBe(false);
     expect(governedHomeZone(policy, 'announcements')).toMatchObject({
       placement: 'CANVAS',
-      visible: false,
+      visible: true,
       size: 'compact',
       height: 'short',
       sortOrder: 20,
@@ -66,5 +68,38 @@ describe('home composition policy', () => {
       reconcileHomeCompositionPolicy({ schemaVersion: 2, governedZones: [] })
         .personalCustomizationEnabled
     ).toBe(false);
+  });
+
+  it('only enables Flow Home for an explicit, valid v3 tenant variant', () => {
+    expect(
+      isFlowHomeVariant(
+        reconcileHomeCompositionPolicy({
+          schemaVersion: 3,
+          experienceVariant: 'FLOW_V1',
+          personalCustomizationEnabled: true,
+          governedZones: [],
+        })
+      )
+    ).toBe(true);
+    expect(
+      isFlowHomeVariant(
+        reconcileHomeCompositionPolicy({
+          schemaVersion: 2,
+          personalCustomizationEnabled: true,
+          governedZones: [],
+        })
+      )
+    ).toBe(false);
+    expect(
+      reconcileHomeCompositionPolicy({
+        schemaVersion: 3,
+        experienceVariant: 'UNKNOWN',
+        personalCustomizationEnabled: true,
+        governedZones: [],
+      })
+    ).toMatchObject({
+      experienceVariant: 'CLASSIC',
+      personalCustomizationEnabled: false,
+    });
   });
 });

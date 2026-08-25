@@ -518,8 +518,7 @@ export function ScheduleWidget({
                         textAlign: 'left',
                         '&:hover': { bgcolor: 'action.hover' },
                         '&:focus-visible': {
-                          outline: '2px solid',
-                          outlineColor: 'primary.main',
+                          outline: '2px solid var(--dwp-focus-ring, currentColor)',
                           outlineOffset: 2,
                         },
                       }}

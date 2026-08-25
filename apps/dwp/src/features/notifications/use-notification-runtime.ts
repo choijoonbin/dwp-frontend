@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
+  NOTIFICATION_CONNECTION_STATE_EVENT,
   NOTIFICATION_LIVE_EVENT,
   NOTIFICATION_SYNC_RESET_EVENT,
+  getNotificationConnectionState,
+  parseNotificationConnectionStateSignal,
   parseNotificationLiveSignal,
   parseNotificationSyncResetSignal,
   type NotificationLiveSignal,
@@ -50,21 +53,30 @@ export function useNotificationLiveUpdates(
   onSignal: (signal: NotificationLiveSignal) => void
 ): NotificationConnectionState {
   const online = useOnlineStatus();
-  const [seenLiveSignal, setSeenLiveSignal] = useState(false);
+  const [connectionState, setConnectionState] = useState(getNotificationConnectionState);
 
   useEffect(() => {
     const listener = (event: Event) => {
       const signal = parseNotificationLiveSignal((event as CustomEvent<unknown>).detail);
       if (!signal) return;
-      setSeenLiveSignal(true);
+      setConnectionState('live');
       onSignal(signal);
     };
     window.addEventListener(NOTIFICATION_LIVE_EVENT, listener);
     return () => window.removeEventListener(NOTIFICATION_LIVE_EVENT, listener);
   }, [onSignal]);
 
+  useEffect(() => {
+    const listener = (event: Event) => {
+      const signal = parseNotificationConnectionStateSignal((event as CustomEvent<unknown>).detail);
+      if (signal) setConnectionState(signal.state);
+    };
+    window.addEventListener(NOTIFICATION_CONNECTION_STATE_EVENT, listener);
+    return () => window.removeEventListener(NOTIFICATION_CONNECTION_STATE_EVENT, listener);
+  }, []);
+
   if (!online) return 'offline';
-  return seenLiveSignal ? 'live' : 'polling';
+  return connectionState;
 }
 
 export function useNotificationSyncResetSignal(): {

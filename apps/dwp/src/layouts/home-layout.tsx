@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 
 import { BrandLockup } from '../components/brand-lockup';
+import { HOME_LIGHT_CANVAS, HOME_LIGHT_SURFACE } from '../components/home-surface-tokens';
 import { ShellHeader } from '../components/shell-header';
 import { shellRegistry } from '../features/shell/shell-registry';
 
@@ -13,8 +14,19 @@ export function HomeLayout() {
     <Box
       data-testid="personal-home-shell"
       sx={{
+        '--home-canvas': (theme) =>
+          theme.palette.mode === 'dark' ? theme.palette.background.default : HOME_LIGHT_CANVAS,
+        '--home-surface': (theme) =>
+          theme.palette.mode === 'dark' ? theme.palette.background.paper : HOME_LIGHT_SURFACE,
+        '--home-surface-subtle': (theme) =>
+          theme.palette.mode === 'dark' ? theme.palette.background.default : '#FAFBFC',
+        '--home-radius-section': '16px',
+        '--home-radius-item': '12px',
         minHeight: '100dvh',
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.default' : '#FAF8FF'),
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: (theme) =>
+          theme.palette.mode === 'dark' ? 'background.default' : HOME_LIGHT_CANVAS,
         fontFamily: '"Hanken Grotesk", "Noto Sans KR", system-ui, sans-serif',
         '& .MuiTypography-root, & .MuiButtonBase-root, & .MuiChip-root': {
           fontFamily: 'inherit',
@@ -29,17 +41,18 @@ export function HomeLayout() {
         surface={shell.headerSurface}
         showWorkspace={shell.showWorkspace}
         compactSearch
-        maxContentWidth={2240}
+        maxContentWidth={2560}
         sx={{
-          bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.paper' : '#FAF8FF'),
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark' ? 'background.paper' : HOME_LIGHT_SURFACE,
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
-          '& .MuiToolbar-root': { minHeight: '63px !important', px: { xs: 2, md: '50px' } },
+          '& .MuiToolbar-root': { minHeight: '63px !important', px: { xs: 2, md: '24px' } },
         }}
         brand={
           <>
             <BrandLockup
-              variant="product-only"
+              variant="condensed"
               sx={{ display: { xs: 'inline-flex', md: 'none' }, flexShrink: 0 }}
             />
             <BrandLockup
@@ -55,7 +68,14 @@ export function HomeLayout() {
         id="dwp-main-content"
         tabIndex={-1}
         data-testid="personal-home-main"
-        sx={{ minWidth: 0, outline: 'none' }}
+        sx={{
+          minWidth: 0,
+          minHeight: 0,
+          flex: '1 1 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          outline: 'none',
+        }}
       >
         <Outlet />
       </Box>

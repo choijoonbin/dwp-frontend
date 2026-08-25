@@ -11,7 +11,7 @@
   "applications": [
     {
       "id": "workspace",
-      "features": ["home", "work-hub", "work", "activity"],
+      "features": ["home", "home-personalization", "work-hub", "work", "activity"],
       "routePrefixes": ["/", "/work", "/activity", "/apps"],
       "backendServices": ["platform"],
       "deployment": "independent"

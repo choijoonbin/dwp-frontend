@@ -3,6 +3,7 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 import type {
   NotificationChannel,
+  NotificationDeliveryMode,
   NotificationEntityVersion,
   NotificationPartialState,
   NotificationPriority,
@@ -119,6 +120,14 @@ export type TenantNotificationPolicyPreview = {
   proposedPolicy: TenantNotificationPolicy;
   affectedTypeCount: number;
   observedRecipients30Days: number;
+  runtimeChannels: Array<{
+    channel: NotificationChannel;
+    enabled: boolean;
+    effectiveMode: NotificationDeliveryMode | 'DAILY_DIGEST' | 'WEEKLY_DIGEST';
+    managed: boolean;
+    userOverridable: boolean;
+    defaultDeliveryAdmitted: boolean;
+  }>;
   riskFlags: string[];
 };
 

@@ -99,12 +99,12 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode: 'VIEW',
     effect: 'ALLOW' as const,
   },
-  {
+  ...['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
     resourceType: 'APP',
     resourceKey: 'APP.CALENDAR',
-    permissionCode: 'VIEW',
+    permissionCode,
     effect: 'ALLOW' as const,
-  },
+  })),
   ...['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
     resourceType: 'APP',
     resourceKey: 'APP.ROOMS',

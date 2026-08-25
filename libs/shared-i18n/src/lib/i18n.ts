@@ -15,6 +15,7 @@ export const PRODUCT_NAMESPACES = [
   'shell',
   'auth',
   'home',
+  'homeStudio',
   'communications',
   'calendar',
   'rooms',

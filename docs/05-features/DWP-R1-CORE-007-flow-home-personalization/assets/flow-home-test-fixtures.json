@@ -1,0 +1,59 @@
+{
+  "featureId": "DWP-R1-CORE-007",
+  "status": "design-test-data",
+  "fixtures": [
+    {
+      "key": "member-healthy-ko",
+      "locale": "ko",
+      "viewport": 1440,
+      "sectionStates": {
+        "app-dock": "healthy",
+        "announcements": "empty",
+        "now": "healthy",
+        "flowline": "healthy",
+        "signals": "healthy",
+        "next": "healthy"
+      }
+    },
+    {
+      "key": "member-partial-en",
+      "locale": "en",
+      "viewport": 1280,
+      "sectionStates": {
+        "app-dock": "healthy",
+        "announcements": "healthy",
+        "now": "healthy",
+        "flowline": "partial",
+        "signals": "stale",
+        "next": "error"
+      }
+    },
+    {
+      "key": "member-empty-mobile-ko",
+      "locale": "ko",
+      "viewport": 390,
+      "sectionStates": {
+        "app-dock": "healthy",
+        "announcements": "empty",
+        "now": "empty",
+        "flowline": "empty",
+        "signals": "empty",
+        "next": "empty"
+      }
+    },
+    {
+      "key": "member-offline-font-size-200",
+      "locale": "ko",
+      "viewport": 320,
+      "htmlFontSizePercent": 200,
+      "sectionStates": {
+        "app-dock": "stale",
+        "announcements": "stale",
+        "now": "offline",
+        "flowline": "offline",
+        "signals": "offline",
+        "next": "offline"
+      }
+    }
+  ]
+}

@@ -1,13 +1,20 @@
 {
   "toolbarLabel": "홈 구성 편집 도구",
   "addWidget": "위젯 추가",
-  "presentationLabel": "홈 표현 방식",
+  "presentationLabel": "홈 레이아웃",
   "presentations": {
     "balanced": "균형",
     "expressive": "생동감",
+    "wide": "와이드",
     "focused": "집중"
   },
   "reset": "기본 구성으로 되돌리기",
+  "undo": "마지막 변경 실행 취소",
+  "redo": "변경 다시 실행",
+  "previewLabel": "기기 미리보기",
+  "previewDesktop": "데스크톱 미리보기",
+  "previewMobile": "모바일 미리보기",
+  "changeCount": "변경 {{count}}건",
   "cancel": "변경 취소",
   "done": "저장",
   "moveWidget": "{{widget}} 위젯 이동",
@@ -15,7 +22,18 @@
   "moveWidgetLater": "{{widget}} 위젯을 뒤로 이동",
   "resizeWidget": "{{widget}} 위젯 크기 선택",
   "removeWidget": "{{widget}} 위젯 숨기기",
-  "governed": "조직에서 고정한 위젯",
+  "governed": "위치가 고정된 영역",
+  "governedSystem": "시스템 관리 · 위치 고정",
+  "governedOrganization": "조직 관리 · 위치 고정",
+  "drag": {
+    "instructions": "스페이스 키로 위젯을 집고 방향키로 이동한 뒤 다시 스페이스 키로 놓습니다. Escape 키로 취소합니다.",
+    "pickedUp": "{{widget}} 위젯을 집었습니다. 전체 {{count}}개입니다.",
+    "over": "{{widget}} 위치, {{count}}개 중 {{position}}번째입니다.",
+    "notOver": "놓을 수 있는 위젯 위치 밖입니다.",
+    "placed": "{{widget}} 위젯을 {{count}}개 중 {{position}}번째에 놓았습니다.",
+    "returned": "{{widget}} 위젯을 원래 위치로 되돌렸습니다.",
+    "cancelled": "{{widget}} 위젯 이동을 취소했습니다."
+  },
   "sizes": {
     "compact": "한 줄에 3개",
     "medium": "한 줄에 2개",
@@ -41,6 +59,20 @@
     "standard": "표준",
     "tall": "높게",
     "expanded": "확장"
+  },
+  "heightShort": {
+    "short": "낮게",
+    "standard": "표준",
+    "tall": "높게",
+    "expanded": "확장"
+  },
+  "footprintShort": {
+    "fifth": "1/5",
+    "quarter": "1/4",
+    "compact": "1/3",
+    "medium": "1/2",
+    "large": "2/3",
+    "full": "전체"
   },
   "footprints": {
     "fifth": "한 줄에 5개",

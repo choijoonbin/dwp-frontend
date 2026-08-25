@@ -2160,6 +2160,198 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/notifications/v1/admin/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_policies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/policies/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_createPolicyDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/policies/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_previewPolicy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/policies/{policyId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_publishPolicy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/suppressions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_list"];
+        put?: never;
+        post: operations["notification_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/suppressions/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_preview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/suppressions/{suppressionId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_revoke"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_templates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/templates/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_createTemplateDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/templates/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_previewTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/templates/{revisionId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_publishTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/templates/{revisionId}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_retireTemplateDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/notifications/v1/admin/types": {
         parameters: {
             query?: never;
@@ -2168,6 +2360,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["notification_types"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_capabilities"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2202,6 +2410,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["notification_bulkActions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/bulk-actions/{undoToken}/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_undoBulkAction"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2298,6 +2522,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["notification_snooze"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/target": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_target"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2424,6 +2664,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["notification_summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/summary/by-app": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_byApp"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3415,9 +3671,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_4"];
+        get: operations["platform_list_7"];
         put?: never;
-        post: operations["platform_create_8"];
+        post: operations["platform_create_12"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3432,7 +3688,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_7"];
+        put: operations["platform_update_9"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3465,7 +3721,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish_2"];
+        post: operations["platform_publish_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3495,7 +3751,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_5"];
+        get: operations["platform_detail_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3577,7 +3833,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_revoke"];
+        post: operations["platform_revoke_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3735,7 +3991,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_4"];
+        get: operations["platform_detail_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4039,7 +4295,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_8"];
+        get: operations["platform_list_11"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4272,6 +4528,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/dwaion/agents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_6"];
+        put?: never;
+        post: operations["platform_create_11"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_detail_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createRevision_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revision}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["platform_updateRevision_1"];
+        trace?: never;
+    };
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revision}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_activateRevision_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/dwaion/agents/{entryKey}/revisions/{revision}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_retireRevision_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/home-experience": {
         parameters: {
             query?: never;
@@ -4279,8 +4631,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_2"];
-        put: operations["platform_update_6"];
+        get: operations["platform_get_4"];
+        put: operations["platform_update_8"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4393,7 +4745,7 @@ export interface paths {
         };
         get: operations["platform_connectors"];
         put?: never;
-        post: operations["platform_create_7"];
+        post: operations["platform_create_10"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4408,7 +4760,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_5"];
+        put: operations["platform_update_7"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4425,7 +4777,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_activate_2"];
+        post: operations["platform_activate_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4567,7 +4919,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_revisions"];
+        get: operations["platform_revisions_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4649,7 +5001,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish_1"];
+        post: operations["platform_publish_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4665,7 +5017,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_restore_1"];
+        post: operations["platform_restore_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4759,9 +5111,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_3"];
+        get: operations["platform_list_5"];
         put?: never;
-        post: operations["platform_create_6"];
+        post: operations["platform_create_9"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4857,7 +5209,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_publish"];
+        post: operations["platform_publish_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4873,7 +5225,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_restore"];
+        post: operations["platform_restore_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4888,7 +5240,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_4"];
+        put: operations["platform_update_6"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4905,7 +5257,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_activate_1"];
+        post: operations["platform_activate_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4967,9 +5319,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_2"];
+        get: operations["platform_list_4"];
         put?: never;
-        post: operations["platform_create_5"];
+        post: operations["platform_create_8"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4989,7 +5341,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch: operations["platform_update_8"];
+        patch: operations["platform_update_10"];
         trace?: never;
     };
     "/api/platform/v1/admin/reference-sets/{setKey}/activate": {
@@ -5001,7 +5353,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_activate"];
+        post: operations["platform_activate_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5111,9 +5463,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_1"];
+        get: operations["platform_list_3"];
         put?: never;
-        post: operations["platform_create_4"];
+        post: operations["platform_create_7"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5431,8 +5783,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_1"];
-        put: operations["platform_update_3"];
+        get: operations["platform_get_3"];
+        put: operations["platform_update_5"];
         post?: never;
         delete?: never;
         options?: never;
@@ -5738,6 +6090,22 @@ export interface paths {
         get?: never;
         put: operations["platform_updateFloorPlanRevision"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/background": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_governedFloorPlanRevisionBackground"];
+        put?: never;
+        post: operations["platform_uploadGovernedFloorPlanRevisionBackground"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6119,7 +6487,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_7"];
+        get: operations["platform_list_10"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6201,7 +6569,7 @@ export interface paths {
         };
         get: operations["platform_events"];
         put?: never;
-        post: operations["platform_create_3"];
+        post: operations["platform_create_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6216,7 +6584,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_2"];
+        put: operations["platform_update_4"];
         post?: never;
         delete?: never;
         options?: never;
@@ -6295,7 +6663,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_7"];
+        get: operations["platform_get_10"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6311,7 +6679,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_6"];
+        get: operations["platform_list_9"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6432,6 +6800,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/home-composer/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_create_5"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-composer/proposals/{proposalId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-composer/proposals/{proposalId}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_apply_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-composer/proposals/{proposalId}/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_undo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/home-experience": {
         parameters: {
             query?: never;
@@ -6439,7 +6871,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_6"];
+        get: operations["platform_get_8"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6471,8 +6903,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get"];
-        put: operations["platform_update_1"];
+        get: operations["platform_get_2"];
+        put: operations["platform_update_3"];
         post?: never;
         delete?: never;
         options?: never;
@@ -6489,7 +6921,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_reset_1"];
+        post: operations["platform_reset_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6522,6 +6954,246 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_resetSurface"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_2"];
+        put?: never;
+        post: operations["platform_create_4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_1"];
+        put: operations["platform_update_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_apply"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_revisions_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-templates/{templateId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_revoke"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_1"];
+        put?: never;
+        post: operations["platform_create_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get"];
+        put: operations["platform_update_1"];
+        post?: never;
+        delete: operations["platform_delete_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/device-layouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_deviceLayouts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/device-layouts/{deviceClass}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_putDeviceLayout"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reset_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_revisions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/revisions/{revisionId}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/home-views/{viewId}/widgets/{widgetKey}/configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_configureWidget"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -6759,7 +7431,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_5"];
+        get: operations["platform_list_8"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6791,7 +7463,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_3"];
+        get: operations["platform_get_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6871,7 +7543,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_5"];
+        get: operations["platform_get_7"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7095,7 +7767,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_4"];
+        get: operations["platform_get_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -12457,9 +13129,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        notification_ApiResponseAppNotificationSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_AppNotificationSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         notification_ApiResponseBulkResult: {
             correlationId?: string;
             data?: components["schemas"]["notification_BulkResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseCapabilities: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_Capabilities"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -12527,16 +13219,6 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        notification_ApiResponseMaterializationResult: {
-            correlationId?: string;
-            data?: components["schemas"]["notification_MaterializationResult"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         notification_ApiResponseSubscriptionRule: {
             correlationId?: string;
             data?: components["schemas"]["notification_SubscriptionRule"];
@@ -12557,9 +13239,109 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        notification_ApiResponseSuppression: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_Suppression"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseSuppressionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_SuppressionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseSuppressionPreview: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_SuppressionPreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         notification_ApiResponseSyncResponse: {
             correlationId?: string;
             data?: components["schemas"]["notification_SyncResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTargetResolution: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TargetResolution"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTemplatePreview: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TemplatePreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTemplateRevision: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TemplateRevision"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTemplateWorkspace: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TemplateWorkspace"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTenantPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TenantPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTenantPolicyPage: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TenantPolicyPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTenantPolicyPreview: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TenantPolicyPreview"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -12587,6 +13369,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        notification_AppNotificationCounter: {
+            /** Format: int64 */
+            actionableUnread?: number;
+            appKey?: string;
+            /** Format: date-time */
+            lastActivityAt?: string;
+            /** Format: int64 */
+            totalUnread?: number;
+            /** Format: int64 */
+            urgentUnread?: number;
+        };
+        notification_AppNotificationSummary: {
+            apps?: components["schemas"]["notification_AppNotificationCounter"][];
+            changeVersion?: string;
+            counterVersion?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            partial?: boolean;
+            unavailableSources?: string[];
+        };
         notification_BulkActionRequest: {
             action: string;
             notificationIds: string[];
@@ -12604,6 +13406,19 @@ export interface components {
             changeVersion?: string;
             results?: components["schemas"]["notification_BulkItemResult"][];
             summary?: components["schemas"]["notification_Summary"];
+            /** Format: date-time */
+            undoExpiresAt?: string;
+            /** Format: uuid */
+            undoToken?: string;
+        };
+        notification_Capabilities: {
+            canonicalStore?: string;
+            enabledChannels?: string[];
+            externalDeliveryState?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            realtimeTransport?: string;
+            unavailableChannels?: string[];
         };
         notification_DeliveryLane: {
             /** Format: double */
@@ -12638,22 +13453,22 @@ export interface components {
                 [key: string]: boolean;
             };
             digest: components["schemas"]["notification_Digest"];
+            presentation: components["schemas"]["notification_Presentation"];
             quietHours: components["schemas"]["notification_QuietHours"];
             /** Format: date-time */
             updatedAt?: string;
-            /** Format: int64 */
-            version?: number;
+            version?: string;
         };
         notification_DeliveryProfileUpdate: {
             channels: {
                 [key: string]: boolean;
             };
             digest: components["schemas"]["notification_Digest"];
+            presentation: components["schemas"]["notification_Presentation"];
             quietHours: components["schemas"]["notification_QuietHours"];
             /** Format: date-time */
             updatedAt?: string;
-            /** Format: int64 */
-            version?: number;
+            version: string;
         };
         notification_Detail: {
             /** Format: date-time */
@@ -12669,29 +13484,6 @@ export interface components {
             dayOfWeek?: number;
             deliveryTime: string;
             mode: string;
-        };
-        notification_DirectMaterializationRequest: {
-            actionRequired?: boolean;
-            actorReference?: string;
-            /** Format: date-time */
-            dueAt?: string;
-            locale?: string;
-            /** Format: date-time */
-            occurredAt?: string;
-            reasonCode?: string;
-            recipientUserIds: number[];
-            /** Format: uuid */
-            sourceEventId: string;
-            sourceEventType: string;
-            /** Format: int32 */
-            sourceSchemaVersion?: number;
-            subjectReference?: string;
-            targetReference?: string;
-            threadKey?: string;
-            typeKey: string;
-            variables: {
-                [key: string]: unknown;
-            };
         };
         notification_EffectiveSettings: {
             apps?: components["schemas"]["notification_NotificationAppSetting"][];
@@ -12761,17 +13553,6 @@ export interface components {
             ownerLabel?: string;
             source?: string;
         };
-        notification_MaterializationResult: {
-            duplicate?: boolean;
-            /** Format: int64 */
-            highestChangeVersion?: number;
-            /** Format: uuid */
-            intentId?: string;
-            /** Format: uuid */
-            notificationId?: string;
-            /** Format: int32 */
-            recipientCount?: number;
-        };
         notification_NotificationAction: {
             actionKey?: string;
             disabledReason?: string;
@@ -12802,11 +13583,12 @@ export interface components {
                 [key: string]: components["schemas"]["notification_ManagedValueBoolean"];
             };
             description?: string;
+            mandatory?: boolean;
             mode?: components["schemas"]["notification_ManagedValueString"];
+            quietHoursBypass?: boolean;
             /** Format: uuid */
             ruleId?: string;
-            /** Format: int64 */
-            ruleVersion?: number;
+            ruleVersion?: string;
             typeKey?: string;
             typeName?: string;
         };
@@ -12822,6 +13604,30 @@ export interface components {
             ownerLabel?: string;
             severity?: string;
             title?: string;
+        };
+        notification_PolicyChannelRule: {
+            channel: string;
+            defaultMode: string;
+            enabled?: boolean;
+            /** Format: int32 */
+            maxPerWindow?: number;
+            userOverridable?: boolean;
+        };
+        notification_PolicyPublishRequest: {
+            approvalReason: string;
+            expectedVersion: string;
+        };
+        notification_PolicyRuntimeChannelPreview: {
+            channel?: string;
+            defaultDeliveryAdmitted?: boolean;
+            effectiveMode?: string;
+            enabled?: boolean;
+            managed?: boolean;
+            userOverridable?: boolean;
+        };
+        notification_Presentation: {
+            bannerMode: string;
+            previewMode: string;
         };
         notification_ProviderHealth: {
             channel?: string;
@@ -12845,8 +13651,7 @@ export interface components {
             timeZone: string;
         };
         notification_SnoozeRequest: {
-            /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: string;
             /** Format: date-time */
             snoozedUntil: string;
         };
@@ -12865,16 +13670,14 @@ export interface components {
             typeKey?: string;
             /** Format: date-time */
             updatedAt?: string;
-            /** Format: int64 */
-            version?: number;
+            version?: string;
         };
         notification_SubscriptionRuleUpdate: {
             appKey: string;
             channels: {
                 [key: string]: boolean;
             };
-            /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion?: string;
             mode: string;
             typeKey: string;
         };
@@ -12894,12 +13697,222 @@ export interface components {
                 [key: string]: number;
             };
         };
+        notification_Suppression: {
+            channel?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdBy?: number;
+            criticalBypass?: boolean;
+            /** Format: date-time */
+            expiresAt?: string;
+            reason?: string;
+            revokeReason?: string;
+            /** Format: date-time */
+            revokedAt?: string;
+            /** Format: int64 */
+            revokedBy?: number;
+            scopeKey?: string;
+            scopeType?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: uuid */
+            suppressionId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            version?: string;
+        };
+        notification_SuppressionCommand: {
+            channel: string;
+            criticalBypass?: boolean;
+            /** Format: date-time */
+            expiresAt: string;
+            reason: string;
+            scopeKey: string;
+            scopeType: string;
+            /** Format: date-time */
+            startsAt?: string;
+        };
+        notification_SuppressionPage: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["notification_Suppression"][];
+        };
+        notification_SuppressionPreview: {
+            /** Format: int64 */
+            affectedTypeCount?: number;
+            channel?: string;
+            criticalBypass?: boolean;
+            /** Format: int64 */
+            criticalBypassCandidates7Days?: number;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            matchedTypeKeys?: string[];
+            /** Format: int64 */
+            observedNotifications7Days?: number;
+            /** Format: int64 */
+            overlappingSuppressionCount?: number;
+            riskFlags?: string[];
+            scopeKey?: string;
+            scopeType?: string;
+            /** Format: date-time */
+            startsAt?: string;
+        };
+        notification_SuppressionRevokeCommand: {
+            expectedVersion: string;
+            reason: string;
+        };
         notification_SyncResponse: {
             changeVersion?: string;
             changedIds?: string[];
             counterVersion?: string;
             deletedIds?: string[];
+            hasMore?: boolean;
             summary?: components["schemas"]["notification_Summary"];
+        };
+        notification_TargetResolution: {
+            action?: components["schemas"]["notification_NotificationAction"];
+            /** Format: uuid */
+            notificationId?: string;
+            targetState?: string;
+        };
+        notification_TemplateContent: {
+            actionLabel?: string;
+            body?: string;
+            preview?: string;
+            title?: string;
+        };
+        notification_TemplateDecisionRequest: {
+            expectedVersion: string;
+            reason: string;
+        };
+        notification_TemplateDraftRequest: {
+            actionLabel?: string;
+            body: string;
+            changeReason: string;
+            channel: string;
+            expectedVersion: string;
+            locale: string;
+            preview?: string;
+            title: string;
+            /** Format: uuid */
+            typeVersionId: string;
+        };
+        notification_TemplatePreview: {
+            rendered?: components["schemas"]["notification_TemplateContent"];
+            variables?: string[];
+            warnings?: string[];
+        };
+        notification_TemplatePreviewRequest: {
+            actionLabel?: string;
+            body: string;
+            channel: string;
+            locale: string;
+            preview?: string;
+            sampleData: {
+                [key: string]: string;
+            };
+            title: string;
+            /** Format: uuid */
+            typeVersionId: string;
+        };
+        notification_TemplateRevision: {
+            appKey?: string;
+            approvalReason?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            changeReason?: string;
+            channel?: string;
+            checksum?: string;
+            content?: components["schemas"]["notification_TemplateContent"];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdBy?: number;
+            locale?: string;
+            /** Format: int32 */
+            revision?: number;
+            /** Format: uuid */
+            revisionId?: string;
+            state?: string;
+            typeKey?: string;
+            /** Format: uuid */
+            typeVersionId?: string;
+            version?: string;
+        };
+        notification_TemplateVariant: {
+            allowedVariables?: string[];
+            appKey?: string;
+            appName?: string;
+            channel?: string;
+            displayName?: string;
+            draft?: components["schemas"]["notification_TemplateRevision"];
+            history?: components["schemas"]["notification_TemplateRevision"][];
+            locale?: string;
+            providerDefault?: components["schemas"]["notification_TemplateContent"];
+            publishedOverride?: components["schemas"]["notification_TemplateRevision"];
+            typeKey?: string;
+            /** Format: uuid */
+            typeVersionId?: string;
+            version?: string;
+        };
+        notification_TemplateWorkspace: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["notification_TemplateVariant"][];
+        };
+        notification_TenantPolicy: {
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            changeReason?: string;
+            channels?: components["schemas"]["notification_PolicyChannelRule"][];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdBy?: number;
+            digestMode?: string;
+            mandatory?: boolean;
+            /** Format: uuid */
+            policyId?: string;
+            quietHoursBypass?: boolean;
+            scopeKey?: string;
+            scopeLabel?: string;
+            scopeType?: string;
+            source?: string;
+            state?: string;
+            version?: string;
+        };
+        notification_TenantPolicyChangeRequest: {
+            changeReason: string;
+            channels: components["schemas"]["notification_PolicyChannelRule"][];
+            digestMode: string;
+            expectedVersion: string;
+            mandatory?: boolean;
+            quietHoursBypass?: boolean;
+            scopeKey: string;
+            scopeType: string;
+        };
+        notification_TenantPolicyPage: {
+            drafts?: components["schemas"]["notification_TenantPolicy"][];
+            effectivePolicies?: components["schemas"]["notification_TenantPolicy"][];
+            /** Format: date-time */
+            generatedAt?: string;
+        };
+        notification_TenantPolicyPreview: {
+            /** Format: int64 */
+            affectedTypeCount?: number;
+            currentPolicy?: components["schemas"]["notification_TenantPolicy"];
+            /** Format: int64 */
+            observedRecipients30Days?: number;
+            proposedPolicy?: components["schemas"]["notification_TenantPolicy"];
+            riskFlags?: string[];
+            runtimeChannels?: components["schemas"]["notification_PolicyRuntimeChannelPreview"][];
         };
         notification_TimelineEntry: {
             actorLabel?: string;
@@ -12928,8 +13941,7 @@ export interface components {
             typeKey?: string;
             /** Format: date-time */
             updatedAt?: string;
-            /** Format: int64 */
-            version?: number;
+            version?: string;
             /** Format: int64 */
             volume24Hours?: number;
         };
@@ -12942,8 +13954,7 @@ export interface components {
             unavailableSources?: string[];
         };
         notification_VersionRequest: {
-            /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: string;
         };
         people_AbsenceWorkspace: {
             balances?: components["schemas"]["people_LeaveBalance"][];
@@ -15239,6 +16250,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseComposerProposalResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ComposerProposalResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseConfigurationCheck: {
             correlationId?: string;
             data?: components["schemas"]["platform_ConfigurationCheck"];
@@ -15292,6 +16313,26 @@ export interface components {
         platform_ApiResponseCorrelationPage: {
             correlationId?: string;
             data?: components["schemas"]["platform_CorrelationPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseDeleteHomeViewResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_DeleteHomeViewResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseDeviceLayoutResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_DeviceLayoutResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15459,6 +16500,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseHomeTemplateResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeTemplateResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseHomeViewResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeViewResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseImpactAnalysis: {
             correlationId?: string;
             data?: components["schemas"]["platform_ImpactAnalysis"];
@@ -15599,6 +16660,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseListDeviceLayoutResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_DeviceLayoutResponse"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseListEffectiveDelegatedScope: {
             correlationId?: string;
             data?: components["schemas"]["platform_EffectiveDelegatedScope"][];
@@ -15632,6 +16703,46 @@ export interface components {
         platform_ApiResponseListHomeExperienceRevisionResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_HomeExperienceRevisionResponse"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListHomeTemplateResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeTemplateResponse"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListHomeTemplateRevisionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeTemplateRevisionResponse"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListHomeViewResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeViewResponse"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListHomeViewRevisionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeViewRevisionResponse"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -16571,12 +17682,39 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_AppFolderV1: {
+            appIds: string[];
+            groupId: string;
+            id: string;
+            name: string;
+        };
         platform_AppLaunch: {
             appId?: string;
             launchMode?: string;
             launchTarget?: string;
             /** Format: date-time */
             launchedAt?: string;
+        };
+        platform_AppLayoutPayloadV1: {
+            folders: {
+                [key: string]: components["schemas"]["platform_AppFolderV1"];
+            };
+            groups: {
+                [key: string]: string[];
+            };
+            hiddenAppIds: string[];
+            /** Format: int32 */
+            version: number;
+        };
+        platform_ApplyComposerProposalRequest: {
+            /** Format: int64 */
+            viewVersion: number;
+        };
+        platform_ApplyHomeTemplateRequest: {
+            /** Format: uuid */
+            viewId: string;
+            /** Format: int64 */
+            viewVersion: number;
         };
         platform_AssignRequest: {
             assignedName: string;
@@ -17194,6 +18332,42 @@ export interface components {
             toEmail: string;
             toName?: string;
         };
+        platform_ComposerChange: {
+            /** Format: int32 */
+            afterIndex?: number;
+            appId?: string;
+            /** Format: int32 */
+            beforeIndex?: number;
+            /** @enum {string} */
+            operation: "MOVE_WIDGET" | "SHOW_WIDGET" | "HIDE_WIDGET" | "SET_WIDTH" | "SET_DENSITY" | "PIN_APP" | "UNPIN_APP";
+            value?: string;
+            widgetKey?: string;
+        };
+        platform_ComposerProposalResponse: {
+            /** Format: uuid */
+            appliedRevisionId?: string;
+            /** Format: int64 */
+            baseViewVersion: number;
+            beforeLayout: components["schemas"]["platform_HomeLayoutPayload"];
+            changes: components["schemas"]["platform_ComposerChange"][];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: uuid */
+            proposalId: string;
+            proposedLayout: components["schemas"]["platform_HomeLayoutPayload"];
+            reasonCodes: string[];
+            /** @enum {string} */
+            state: "PREVIEWED" | "CANCELLED" | "APPLIED" | "UNDONE" | "FAILED";
+            /** Format: uuid */
+            undoneRevisionId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: uuid */
+            viewId: string;
+            warnings: string[];
+        };
         platform_ConfigurationCheck: {
             blockingCodes?: string[];
             /** Format: date-time */
@@ -17343,8 +18517,25 @@ export interface components {
             sourceLocale: string;
             targetLocale: string;
         };
+        platform_CreateComposerProposalRequest: {
+            /** Format: int64 */
+            baseViewVersion: number;
+            changes: components["schemas"]["platform_ComposerChange"][];
+            reasonCodes: string[];
+            /** Format: uuid */
+            viewId: string;
+        };
         platform_CreateDraftRequest: {
             changeSummary?: string;
+        };
+        platform_CreateDwaionAgentRequest: {
+            artifactVersion: string;
+            description?: string;
+            entryKey: string;
+            name: string;
+            ownerRef: string;
+            /** @enum {string} */
+            riskTier: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
         };
         platform_CreateEventRequest: {
             allDay?: boolean;
@@ -17386,6 +18577,18 @@ export interface components {
             /** Format: uuid */
             basedOnRevisionId?: string;
             changeSummary: string;
+        };
+        platform_CreateHomeTemplateRequest: {
+            audience: components["schemas"]["platform_TemplateAudience"];
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            name: string;
+            templateKey: string;
+        };
+        platform_CreateHomeViewRequest: {
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            makeDefault?: boolean;
+            name: string;
+            viewKey: string;
         };
         platform_CreateItemRequest: {
             code: string;
@@ -17478,6 +18681,35 @@ export interface components {
             validUntil?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_DeleteHomeViewResponse: {
+            /** Format: uuid */
+            activeViewId?: string;
+            /** Format: uuid */
+            deletedViewId?: string;
+        };
+        platform_DeviceLayoutOverlay: {
+            /** @enum {string} */
+            density: "comfortable" | "compact";
+            widgetOrder: string[];
+            widgetSizes: {
+                [key: string]: "fifth" | "quarter" | "compact" | "medium" | "large" | "full";
+            };
+        };
+        platform_DeviceLayoutResponse: {
+            /** @enum {string} */
+            deviceClass: "DESKTOP" | "MOBILE";
+            /** Format: uuid */
+            deviceLayoutId: string;
+            overlay: components["schemas"]["platform_DeviceLayoutOverlay"];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version: number;
+            /** Format: uuid */
+            viewId: string;
+            /** Format: int64 */
+            viewVersion: number;
         };
         platform_Diff: {
             /** Format: int64 */
@@ -17786,6 +19018,8 @@ export interface components {
             window?: "H24" | "D7" | "D30" | "D90";
         };
         platform_FeedResponse: {
+            /** @description Reader-wide action-first detail slice; intentionally independent of scope and query filters. */
+            actionableItems?: components["schemas"]["platform_CommunicationItem"][];
             featured?: components["schemas"]["platform_CommunicationItem"];
             /** Format: date-time */
             generatedAt?: string;
@@ -17793,6 +19027,16 @@ export interface components {
             summary?: components["schemas"]["platform_FeedSummary"];
         };
         platform_FeedSummary: {
+            /**
+             * Format: int64
+             * @description Authoritative union count of unacknowledged required and unread CRITICAL items.
+             */
+            actionable?: number;
+            /**
+             * Format: int64
+             * @description Authoritative unread CRITICAL count across the reader's active feed.
+             */
+            criticalUnread?: number;
             /** Format: int64 */
             required?: number;
             /** Format: int64 */
@@ -17943,38 +19187,46 @@ export interface components {
             sortOrder?: number;
         };
         platform_HomeCompositionPolicy: {
-            governedZones?: components["schemas"]["platform_GovernedHomeZone"][];
-            personalCustomizationEnabled?: boolean;
+            /** @enum {string} */
+            experienceVariant: "CLASSIC" | "FLOW_V1";
+            governedZones: components["schemas"]["platform_GovernedHomeZone"][];
+            personalCustomizationEnabled: boolean;
             /** Format: int32 */
-            schemaVersion?: number;
+            schemaVersion: number;
         };
         platform_HomeExperienceResponse: {
+            advancedPersonalizationEnabled: boolean;
             backgroundContentType?: string;
             /** Format: int32 */
             backgroundHeight?: number;
             backgroundOriginalName?: string;
-            backgroundPosition?: string;
+            backgroundPosition: string;
             /** Format: int64 */
             backgroundSizeBytes?: number;
             backgroundUrl?: string;
             /** Format: int32 */
             backgroundWidth?: number;
-            compositionPolicy?: components["schemas"]["platform_HomeCompositionPolicy"];
+            composerEnabled: boolean;
+            compositionPolicy: components["schemas"]["platform_HomeCompositionPolicy"];
             defaultLocale?: string;
+            /** @enum {string} */
+            effectiveExperienceVariant: "CLASSIC" | "FLOW_V1";
             headline?: string;
-            launchpadConfiguration?: components["schemas"]["platform_HomeLaunchpadConfiguration"];
+            /** @enum {string} */
+            homePreferenceStore: "LEGACY" | "VIEWS";
+            launchpadConfiguration: components["schemas"]["platform_HomeLaunchpadConfiguration"];
             localizedContent?: {
                 [key: string]: components["schemas"]["platform_LocalizedCopy"];
             };
             /** Format: int32 */
-            overlayOpacity?: number;
+            overlayOpacity: number;
             subheadline?: string;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
             updatedBy?: number;
             /** Format: int64 */
-            version?: number;
+            version: number;
         };
         platform_HomeExperienceRevisionResponse: {
             /** Format: int32 */
@@ -18015,7 +19267,7 @@ export interface components {
             sortOrder?: number;
         };
         platform_HomeLayoutPayload: {
-            appLayout?: components["schemas"]["platform_JsonNode"];
+            appLayout?: components["schemas"]["platform_AppLayoutPayloadV1"];
             presentation?: string;
             widgets: components["schemas"]["platform_WidgetPreference"][];
         };
@@ -18049,15 +19301,18 @@ export interface components {
             work?: components["schemas"]["platform_SectionWorkQueue"];
         };
         platform_HomePreferenceResponse: {
-            customized?: boolean;
-            layout?: components["schemas"]["platform_HomeLayoutPayload"];
+            customized: boolean;
+            /** @enum {string} */
+            integrityStatus: "VALID" | "RECONCILED" | "RECOVERED";
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
             /** Format: int32 */
-            schemaVersion?: number;
-            surfaceKey?: string;
+            schemaVersion: number;
+            surfaceKey: string;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
-            version?: number;
+            version: number;
+            warnings: string[];
         };
         platform_HomeResponse: {
             accounts?: components["schemas"]["platform_AccountSummary"][];
@@ -18067,6 +19322,114 @@ export interface components {
             metrics?: components["schemas"]["platform_HomeMetrics"];
             proposals?: components["schemas"]["platform_ActionProposal"][];
             sharedInboxes?: components["schemas"]["platform_SharedInboxPulse"][];
+        };
+        platform_HomeTemplateResponse: {
+            audience: components["schemas"]["platform_TemplateAudience"];
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            /** @enum {string} */
+            lifecycle: "DRAFT" | "PUBLISHED" | "REVOKED";
+            name: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            /** Format: int32 */
+            schemaVersion: number;
+            /** Format: uuid */
+            templateId: string;
+            templateKey: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_HomeTemplateRevisionResponse: {
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: int64 */
+            createdBy: number;
+            /** Format: int64 */
+            revisionNumber: number;
+            snapshot: components["schemas"]["platform_HomeTemplateSnapshot"];
+            /** @enum {string} */
+            source: "CREATE" | "UPDATE" | "PUBLISH" | "REVOKE";
+            /** Format: uuid */
+            templateId: string;
+            /** Format: uuid */
+            templateRevisionId: string;
+        };
+        platform_HomeTemplateSnapshot: {
+            audience: components["schemas"]["platform_TemplateAudience"];
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            /** @enum {string} */
+            lifecycle: "DRAFT" | "PUBLISHED" | "REVOKED";
+            name: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            /** Format: int32 */
+            schemaVersion: number;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_HomeViewResponse: {
+            /** Format: date-time */
+            createdAt?: string;
+            customized: boolean;
+            isDefault: boolean;
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            name: string;
+            /** Format: int32 */
+            schemaVersion: number;
+            surfaceKey: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version: number;
+            /** Format: uuid */
+            viewId: string;
+            viewKey: string;
+            widgetConfigurations: {
+                [key: string]: components["schemas"]["platform_WidgetConfigurationPayload"];
+            };
+        };
+        platform_HomeViewRevisionResponse: {
+            changeSummary?: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: int64 */
+            createdBy?: number;
+            /** Format: uuid */
+            revisionId: string;
+            /** Format: int64 */
+            revisionNumber: number;
+            /** Format: int32 */
+            schemaVersion: number;
+            snapshot: components["schemas"]["platform_HomeViewSnapshot"];
+            /** @enum {string} */
+            source: "USER" | "TEMPLATE" | "AI" | "RESTORE" | "UNDO";
+            /** Format: uuid */
+            viewId: string;
+        };
+        platform_HomeViewSnapshot: {
+            deviceLayouts: {
+                [key: string]: components["schemas"]["platform_DeviceLayoutOverlay"];
+            };
+            legacyLayoutOnly: boolean;
+            /** Format: int32 */
+            snapshotVersion: number;
+            view: components["schemas"]["platform_HomeViewSnapshotView"];
+            widgetConfigurations: {
+                [key: string]: components["schemas"]["platform_WidgetConfigurationPayload"];
+            };
+        };
+        platform_HomeViewSnapshotView: {
+            customized?: boolean;
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            name?: string;
+            /** Format: int32 */
+            schemaVersion: number;
         };
         platform_ImpactAnalysis: {
             blocked?: boolean;
@@ -18866,6 +20229,8 @@ export interface components {
             assignedGroup?: string;
             assignedTo?: string;
             /** @enum {string} */
+            dataClassification?: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
+            /** @enum {string} */
             priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
             /** Format: uuid */
             requestId?: string;
@@ -19383,6 +20748,11 @@ export interface components {
             /** Format: int64 */
             userId?: number;
         };
+        platform_TemplateAudience: {
+            /** @enum {string} */
+            type: "ALL" | "ROLE";
+            values?: string[];
+        };
         platform_TenantBrandingResponse: {
             accentColor?: string;
             logoContentType?: string;
@@ -19518,6 +20888,13 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_UpdateDeviceLayoutRequest: {
+            overlay: components["schemas"]["platform_DeviceLayoutOverlay"];
+            /** Format: int64 */
+            version?: number;
+            /** Format: int64 */
+            viewVersion: number;
+        };
         platform_UpdateDraftRequest: {
             submit?: boolean;
             summary: string;
@@ -19578,6 +20955,19 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_UpdateHomeTemplateRequest: {
+            audience: components["schemas"]["platform_TemplateAudience"];
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            name: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_UpdateHomeViewRequest: {
+            layout: components["schemas"]["platform_HomeLayoutPayload"];
+            name: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_UpdateItemRequest: {
             labels: components["schemas"]["platform_LocalizedLabelRequest"][];
             parentCode?: string;
@@ -19631,6 +21021,11 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_UpdateWidgetConfigurationRequest: {
+            configuration: components["schemas"]["platform_WidgetConfigurationPayload"];
+            /** Format: int64 */
+            viewVersion: number;
+        };
         platform_UpdateWorkStatusRequest: {
             status: string;
             /** Format: int64 */
@@ -19671,6 +21066,13 @@ export interface components {
             /** Format: double */
             value: number;
         };
+        platform_WidgetConfigurationPayload: {
+            fieldKeys: string[];
+            filterPreset: string;
+            /** Format: int32 */
+            itemLimit?: number;
+            sourceKey: string;
+        };
         platform_WidgetPreference: {
             height?: string;
             size?: string;
@@ -19678,6 +21080,7 @@ export interface components {
             widgetKey: string;
         };
         platform_WorkItem: {
+            dataClassification?: string;
             /** Format: date-time */
             dueAt?: string;
             id?: string;
@@ -26586,6 +27989,328 @@ export interface operations {
             };
         };
     };
+    notification_policies: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTenantPolicyPage"];
+                };
+            };
+        };
+    };
+    notification_createPolicyDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_TenantPolicyChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTenantPolicy"];
+                };
+            };
+        };
+    };
+    notification_previewPolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_TenantPolicyChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTenantPolicyPreview"];
+                };
+            };
+        };
+    };
+    notification_publishPolicy: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_PolicyPublishRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTenantPolicy"];
+                };
+            };
+        };
+    };
+    notification_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSuppressionPage"];
+                };
+            };
+        };
+    };
+    notification_create: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_SuppressionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSuppression"];
+                };
+            };
+        };
+    };
+    notification_preview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_SuppressionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSuppressionPreview"];
+                };
+            };
+        };
+    };
+    notification_revoke: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                suppressionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_SuppressionRevokeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSuppression"];
+                };
+            };
+        };
+    };
+    notification_templates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplateWorkspace"];
+                };
+            };
+        };
+    };
+    notification_createTemplateDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_TemplateDraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplateRevision"];
+                };
+            };
+        };
+    };
+    notification_previewTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_TemplatePreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplatePreview"];
+                };
+            };
+        };
+    };
+    notification_publishTemplate: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_TemplateDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplateRevision"];
+                };
+            };
+        };
+    };
+    notification_retireTemplateDraft: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_TemplateDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTemplateRevision"];
+                };
+            };
+        };
+    };
     notification_types: {
         parameters: {
             query?: {
@@ -26608,6 +28333,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["notification_ApiResponseTypeContractPage"];
+                };
+            };
+        };
+    };
+    notification_capabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseCapabilities"];
                 };
             };
         };
@@ -26657,6 +28402,30 @@ export interface operations {
                 "application/json": components["schemas"]["notification_BulkActionRequest"];
             };
         };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseBulkResult"];
+                };
+            };
+        };
+    };
+    notification_undoBulkAction: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                undoToken: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
@@ -26827,6 +28596,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTargetResolution"];
                 };
             };
         };
@@ -27004,8 +28795,8 @@ export interface operations {
     notification_deleteSubscriptionRule: {
         parameters: {
             query?: {
-                expectedVersion?: number;
-                version?: number;
+                expectedVersion?: string;
+                version?: string;
             };
             header: {
                 "Idempotency-Key": string;
@@ -27068,6 +28859,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["notification_ApiResponseSummary"];
+                };
+            };
+        };
+    };
+    notification_byApp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseAppNotificationSummary"];
                 };
             };
         };
@@ -28698,7 +30509,7 @@ export interface operations {
             };
         };
     };
-    platform_list_4: {
+    platform_list_7: {
         parameters: {
             query?: never;
             header?: never;
@@ -28718,7 +30529,7 @@ export interface operations {
             };
         };
     };
-    platform_create_8: {
+    platform_create_12: {
         parameters: {
             query?: never;
             header?: {
@@ -28744,7 +30555,7 @@ export interface operations {
             };
         };
     };
-    platform_update_7: {
+    platform_update_9: {
         parameters: {
             query?: never;
             header?: {
@@ -28800,7 +30611,7 @@ export interface operations {
             };
         };
     };
-    platform_publish_2: {
+    platform_publish_3: {
         parameters: {
             query?: never;
             header?: {
@@ -28857,7 +30668,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_5: {
+    platform_detail_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -28912,8 +30723,6 @@ export interface operations {
                 state?: string;
             };
             header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -28936,7 +30745,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28966,7 +30774,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28992,11 +30799,10 @@ export interface operations {
             };
         };
     };
-    platform_revoke: {
+    platform_revoke_1: {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -29290,7 +31096,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_4: {
+    platform_detail_5: {
         parameters: {
             query: {
                 correlationId: string;
@@ -29800,7 +31606,7 @@ export interface operations {
             };
         };
     };
-    platform_list_8: {
+    platform_list_11: {
         parameters: {
             query?: {
                 page?: number;
@@ -30192,7 +31998,195 @@ export interface operations {
             };
         };
     };
-    platform_get_2: {
+    platform_list_6: {
+        parameters: {
+            query?: {
+                lifecycle?: "DRAFT" | "ACTIVE" | "RETIRED";
+                query?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePageResultRegistryEntryResponse"];
+                };
+            };
+        };
+    };
+    platform_create_11: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateDwaionAgentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEntryResponse"];
+                };
+            };
+        };
+    };
+    platform_detail_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEntryDetail"];
+                };
+            };
+        };
+    };
+    platform_createRevision_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                entryKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateRegistryRevisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEntryResponse"];
+                };
+            };
+        };
+    };
+    platform_updateRevision_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                entryKey: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateRegistryRevisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEntryResponse"];
+                };
+            };
+        };
+    };
+    platform_activateRevision_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                entryKey: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEntryResponse"];
+                };
+            };
+        };
+    };
+    platform_retireRevision_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                entryKey: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRegistryEntryResponse"];
+                };
+            };
+        };
+    };
+    platform_get_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -30212,7 +32206,7 @@ export interface operations {
             };
         };
     };
-    platform_update_6: {
+    platform_update_8: {
         parameters: {
             query?: never;
             header?: {
@@ -30437,7 +32431,7 @@ export interface operations {
             };
         };
     };
-    platform_create_7: {
+    platform_create_10: {
         parameters: {
             query?: never;
             header?: {
@@ -30463,7 +32457,7 @@ export interface operations {
             };
         };
     };
-    platform_update_5: {
+    platform_update_7: {
         parameters: {
             query?: never;
             header?: {
@@ -30491,7 +32485,7 @@ export interface operations {
             };
         };
     };
-    platform_activate_2: {
+    platform_activate_3: {
         parameters: {
             query?: never;
             header?: {
@@ -30707,7 +32701,7 @@ export interface operations {
             };
         };
     };
-    platform_revisions: {
+    platform_revisions_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -30851,7 +32845,7 @@ export interface operations {
             };
         };
     };
-    platform_publish_1: {
+    platform_publish_2: {
         parameters: {
             query?: never;
             header?: {
@@ -30879,7 +32873,7 @@ export interface operations {
             };
         };
     };
-    platform_restore_1: {
+    platform_restore_2: {
         parameters: {
             query?: never;
             header?: {
@@ -31037,7 +33031,7 @@ export interface operations {
             };
         };
     };
-    platform_list_3: {
+    platform_list_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -31057,7 +33051,7 @@ export interface operations {
             };
         };
     };
-    platform_create_6: {
+    platform_create_9: {
         parameters: {
             query?: never;
             header?: {
@@ -31211,7 +33205,7 @@ export interface operations {
             };
         };
     };
-    platform_publish: {
+    platform_publish_1: {
         parameters: {
             query?: never;
             header?: {
@@ -31239,7 +33233,7 @@ export interface operations {
             };
         };
     };
-    platform_restore: {
+    platform_restore_1: {
         parameters: {
             query?: never;
             header?: {
@@ -31267,7 +33261,7 @@ export interface operations {
             };
         };
     };
-    platform_update_4: {
+    platform_update_6: {
         parameters: {
             query?: never;
             header?: {
@@ -31295,7 +33289,7 @@ export interface operations {
             };
         };
     };
-    platform_activate_1: {
+    platform_activate_2: {
         parameters: {
             query?: never;
             header?: {
@@ -31401,7 +33395,7 @@ export interface operations {
             };
         };
     };
-    platform_list_2: {
+    platform_list_4: {
         parameters: {
             query?: {
                 query?: string;
@@ -31426,7 +33420,7 @@ export interface operations {
             };
         };
     };
-    platform_create_5: {
+    platform_create_8: {
         parameters: {
             query?: never;
             header?: {
@@ -31474,7 +33468,7 @@ export interface operations {
             };
         };
     };
-    platform_update_8: {
+    platform_update_10: {
         parameters: {
             query?: never;
             header?: {
@@ -31502,7 +33496,7 @@ export interface operations {
             };
         };
     };
-    platform_activate: {
+    platform_activate_1: {
         parameters: {
             query?: never;
             header?: {
@@ -31698,7 +33692,7 @@ export interface operations {
             };
         };
     };
-    platform_list_1: {
+    platform_list_3: {
         parameters: {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
@@ -31724,7 +33718,7 @@ export interface operations {
             };
         };
     };
-    platform_create_4: {
+    platform_create_7: {
         parameters: {
             query?: never;
             header?: {
@@ -32305,7 +34299,7 @@ export interface operations {
             };
         };
     };
-    platform_get_1: {
+    platform_get_3: {
         parameters: {
             query?: never;
             header?: never;
@@ -32325,7 +34319,7 @@ export interface operations {
             };
         };
     };
-    platform_update_3: {
+    platform_update_5: {
         parameters: {
             query?: never;
             header?: {
@@ -32888,9 +34882,7 @@ export interface operations {
     platform_effectiveDelegatedScopes: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -32949,6 +34941,62 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["platform_FloorPlanSnapshotRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_governedFloorPlanRevisionBackground: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    platform_uploadGovernedFloorPlanRevisionBackground: {
+        parameters: {
+            query: {
+                version: number;
+                changeSummary: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
             };
         };
         responses: {
@@ -33222,7 +35270,10 @@ export interface operations {
     };
     platform_policyOverrides: {
         parameters: {
-            query?: never;
+            query?: {
+                scopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -33242,7 +35293,10 @@ export interface operations {
     };
     platform_createPolicyOverride: {
         parameters: {
-            query?: never;
+            query?: {
+                scopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
             };
@@ -33268,7 +35322,10 @@ export interface operations {
     };
     platform_updatePolicyOverride: {
         parameters: {
-            query?: never;
+            query?: {
+                scopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
             };
@@ -33322,9 +35379,7 @@ export interface operations {
             query: {
                 permission: "VIEW" | "BOOK" | "MANAGE";
             };
-            header?: {
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path: {
                 siteId: string;
             };
@@ -33732,12 +35787,10 @@ export interface operations {
             };
         };
     };
-    platform_list_7: {
+    platform_list_10: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -33757,9 +35810,7 @@ export interface operations {
     platform_recordAction: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 announcementId: number;
             };
@@ -33781,9 +35832,7 @@ export interface operations {
     platform_recordView: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 announcementId: number;
             };
@@ -33877,7 +35926,7 @@ export interface operations {
             };
         };
     };
-    platform_create_3: {
+    platform_create_6: {
         parameters: {
             query?: never;
             header?: {
@@ -33904,7 +35953,7 @@ export interface operations {
             };
         };
     };
-    platform_update_2: {
+    platform_update_4: {
         parameters: {
             query?: never;
             header?: {
@@ -34040,7 +36089,7 @@ export interface operations {
             };
         };
     };
-    platform_get_7: {
+    platform_get_10: {
         parameters: {
             query?: {
                 locale?: string;
@@ -34064,7 +36113,7 @@ export interface operations {
             };
         };
     };
-    platform_list_6: {
+    platform_list_9: {
         parameters: {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
@@ -34118,7 +36167,6 @@ export interface operations {
                 size?: number;
             };
             header?: {
-                "X-DWP-Roles"?: string;
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -34141,7 +36189,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Roles"?: string;
                 "Accept-Language"?: string;
             };
             path: {
@@ -34165,9 +36212,7 @@ export interface operations {
     platform_acknowledge: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 communicationId: number;
             };
@@ -34189,9 +36234,7 @@ export interface operations {
     platform_recordInteraction: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 communicationId: number;
                 eventType: string;
@@ -34214,9 +36257,7 @@ export interface operations {
     platform_updateReaction: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 communicationId: number;
             };
@@ -34242,9 +36283,7 @@ export interface operations {
     platform_updatePreference: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 communicationId: number;
             };
@@ -34267,7 +36306,285 @@ export interface operations {
             };
         };
     };
-    platform_get_6: {
+    platform_create_5: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateComposerProposalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseComposerProposalResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_get_9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseComposerProposalResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_apply_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ApplyComposerProposalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseComposerProposalResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_undo: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ApplyComposerProposalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseComposerProposalResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_get_8: {
         parameters: {
             query?: never;
             header?: never;
@@ -34307,7 +36624,7 @@ export interface operations {
             };
         };
     };
-    platform_get: {
+    platform_get_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -34327,7 +36644,7 @@ export interface operations {
             };
         };
     };
-    platform_update_1: {
+    platform_update_3: {
         parameters: {
             query?: never;
             header?: {
@@ -34353,7 +36670,7 @@ export interface operations {
             };
         };
     };
-    platform_reset_1: {
+    platform_reset_2: {
         parameters: {
             query?: never;
             header?: {
@@ -34457,13 +36774,1366 @@ export interface operations {
             };
         };
     };
+    platform_list_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_create_4: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateHomeTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_get_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_update_2: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateHomeTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_apply: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ApplyHomeTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_publish: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_revisions_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListHomeTemplateRevisionResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_revoke: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_list_1: {
+        parameters: {
+            query?: {
+                surfaceKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_create_3: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateHomeViewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_update_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateHomeViewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_delete_1: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDeleteHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_activate: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_deviceLayouts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListDeviceLayoutResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_putDeviceLayout: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+                deviceClass: "DESKTOP" | "MOBILE";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateDeviceLayoutRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseDeviceLayoutResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_reset_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_revisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                viewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListHomeViewRevisionResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_restore: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_configureWidget: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                viewId: string;
+                widgetKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateWidgetConfigurationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Feature, tenant policy, or permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Owned resource or dependency not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description State, version, or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+            /** @description Request body exceeds the bounded limit */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
     platform_overview: {
         parameters: {
             query?: {
                 timeZone?: string;
             };
             header?: {
-                "X-DWP-Roles"?: string;
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -34827,7 +38497,7 @@ export interface operations {
             };
         };
     };
-    platform_list_5: {
+    platform_list_8: {
         parameters: {
             query?: {
                 locale?: string;
@@ -34878,7 +38548,7 @@ export interface operations {
             };
         };
     };
-    platform_get_3: {
+    platform_get_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -35044,7 +38714,7 @@ export interface operations {
             };
         };
     };
-    platform_get_5: {
+    platform_get_7: {
         parameters: {
             query?: {
                 locale?: string;
@@ -35256,7 +38926,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Roles"?: string;
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -35455,7 +39124,7 @@ export interface operations {
             };
         };
     };
-    platform_get_4: {
+    platform_get_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -35527,7 +39196,6 @@ export interface operations {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
                 "Idempotency-Key"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -35642,7 +39310,6 @@ export interface operations {
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path: {
                 bookingId: string;
@@ -35674,7 +39341,6 @@ export interface operations {
                 to: string;
             };
             header?: {
-                "X-DWP-Group-Refs"?: string;
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -35747,7 +39413,6 @@ export interface operations {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
                 "Idempotency-Key"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -35773,7 +39438,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Group-Refs"?: string;
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -36102,10 +39766,7 @@ export interface operations {
             query: {
                 surfaceKey: string;
             };
-            header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -36128,8 +39789,6 @@ export interface operations {
                 surfaceKey: string;
             };
             header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -36156,8 +39815,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -36186,8 +39843,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -36211,10 +39866,7 @@ export interface operations {
     platform_preference: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path: {
                 savedViewId: string;
             };
@@ -36240,9 +39892,7 @@ export interface operations {
     platform_markUsed: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path: {
                 savedViewId: string;
             };
@@ -38014,10 +41664,7 @@ export interface operations {
     provider_resolve: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Support-Validation-Token"?: string;
-                "X-DWP-Support-Resource-Method": string;
-                "X-DWP-Support-Resource-Path": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;

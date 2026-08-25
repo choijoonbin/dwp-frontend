@@ -18,6 +18,7 @@ import {
   login as loginApi,
   logout as logoutApi,
 } from '../api/auth-api';
+import { HttpError } from '../http-error';
 
 import type { MeResponse, LoginRequest } from '../api/auth-api';
 
@@ -40,71 +41,134 @@ type AuthProviderProps = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 const SESSION_ROTATION_INTERVAL_MS = 10 * 60 * 1000;
 
+function securityScopeFingerprint(user: MeResponse, permissions: readonly unknown[]): string {
+  const normalizedPermissions = permissions.map((permission) => JSON.stringify(permission)).sort();
+  const groups = (user.groups ?? [])
+    .map((group) => [group.groupRef.trim(), group.groupKey?.trim() ?? ''].join(':'))
+    .sort();
+  const resourceRoles = (user.resourceRoles ?? [])
+    .map((role) =>
+      [
+        role.responsibilityCode,
+        role.resourceType,
+        role.resourceKey,
+        role.resourceSetId,
+        role.resourceSetKey,
+        role.validTo ?? '',
+      ].join(':')
+    )
+    .sort();
+  return JSON.stringify({
+    identity: `${user.tenantId}:${user.userId}:${user.personPublicId ?? ''}`,
+    roles: [...user.roles].sort(),
+    groups,
+    resourceRoles,
+    legacyRoleFallbackAllowed: user.legacyRoleFallbackAllowed === true,
+    permissions: normalizedPermissions,
+  });
+}
+
 export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProviderProps) {
   const queryClient = useQueryClient();
   const [user, setUser] = useState<MeResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const authenticatedIdentity = useRef<string | null>(null);
+  const authenticatedScope = useRef<string | null>(null);
+  const verificationInFlight = useRef<Promise<boolean> | null>(null);
 
   const invalidateSession = useCallback(() => {
     queryClient.clear();
     authenticatedIdentity.current = null;
+    authenticatedScope.current = null;
     setUser(null);
     setIsLoading(false);
     usePermissionsStore.getState().clearPermissions();
   }, [queryClient]);
 
-  const refreshSession = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const meResponse = await getMe();
-      const nextIdentity = `${meResponse.data.tenantId}:${meResponse.data.userId}`;
-      if (authenticatedIdentity.current && authenticatedIdentity.current !== nextIdentity) {
-        queryClient.clear();
-      }
+  const verifySession = useCallback(
+    (showLoading: boolean) => {
+      if (verificationInFlight.current) return verificationInFlight.current;
+      if (showLoading) setIsLoading(true);
+      const verification = (async () => {
+        try {
+          const meResponse = await getMe();
+          const nextIdentity = `${meResponse.data.tenantId}:${meResponse.data.userId}`;
+          const sessionPreparation = prepareAuthenticatedSession
+            ? prepareAuthenticatedSession(meResponse.data)
+            : Promise.resolve();
+          const [permissionsResponse] = await Promise.all([getPermissions(), sessionPreparation]);
+          const nextPermissions = Array.isArray(permissionsResponse.data)
+            ? permissionsResponse.data
+            : [];
+          const nextScope = securityScopeFingerprint(meResponse.data, nextPermissions);
+          if (
+            (authenticatedIdentity.current && authenticatedIdentity.current !== nextIdentity) ||
+            (authenticatedScope.current && authenticatedScope.current !== nextScope)
+          ) {
+            queryClient.clear();
+          }
 
-      const sessionPreparation = prepareAuthenticatedSession
-        ? prepareAuthenticatedSession(meResponse.data)
-        : Promise.resolve();
-      const [permissionsResponse] = await Promise.all([getPermissions(), sessionPreparation]);
+          authenticatedIdentity.current = nextIdentity;
+          authenticatedScope.current = nextScope;
+          usePermissionsStore.getState().setPermissions(nextPermissions);
+          setUser(meResponse.data);
+          setIsLoading(false);
+          return true;
+        } catch (error) {
+          // A background verification is an authority freshness check, not a
+          // positive logout signal. Keep the last verified scope through a
+          // transient/network/5xx failure; only an authentication rejection
+          // may revoke it. Foreground verification remains fail-closed.
+          if (
+            showLoading ||
+            (error instanceof HttpError && (error.status === 401 || error.status === 403))
+          ) {
+            invalidateSession();
+          }
+          return false;
+        }
+      })();
+      verificationInFlight.current = verification;
+      void verification.finally(() => {
+        if (verificationInFlight.current === verification) verificationInFlight.current = null;
+      });
+      return verification;
+    },
+    [invalidateSession, prepareAuthenticatedSession, queryClient]
+  );
 
-      authenticatedIdentity.current = nextIdentity;
-      usePermissionsStore
-        .getState()
-        .setPermissions(Array.isArray(permissionsResponse.data) ? permissionsResponse.data : []);
-      setUser(meResponse.data);
-      setIsLoading(false);
-      return true;
-    } catch {
-      invalidateSession();
-      return false;
-    }
-  }, [invalidateSession, prepareAuthenticatedSession, queryClient]);
+  const refreshSession = useCallback(() => verifySession(true), [verifySession]);
 
   useEffect(() => {
     void refreshSession();
   }, [refreshSession]);
 
-  useEffect(() => {
-    if (!user) return undefined;
+  const isAuthenticated = Boolean(user);
 
-    const rotate = async () => {
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+
+    const rotateAndRefresh = async () => {
       try {
         await rotateBrowserSession();
+        await verifySession(false);
       } catch {
         // The global unauthorized handler owns redirects; transient failures retry next interval.
       }
     };
-    const interval = window.setInterval(() => void rotate(), SESSION_ROTATION_INTERVAL_MS);
+    const interval = window.setInterval(
+      () => void rotateAndRefresh(),
+      SESSION_ROTATION_INTERVAL_MS
+    );
     const handleVisibility = () => {
-      if (document.visibilityState === 'visible') void rotate();
+      if (document.visibilityState === 'visible') void rotateAndRefresh();
     };
     document.addEventListener('visibilitychange', handleVisibility);
     return () => {
       window.clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [user]);
+  }, [isAuthenticated, verifySession]);
 
   const login = useCallback(
     async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
@@ -132,14 +196,23 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
     () => ({
       user,
       isLoading,
-      isAuthenticated: Boolean(user),
+      isAuthenticated,
       login,
       logout,
       refreshSession,
       setPreferredLocale,
       invalidateSession,
     }),
-    [user, isLoading, login, logout, refreshSession, setPreferredLocale, invalidateSession]
+    [
+      user,
+      isLoading,
+      isAuthenticated,
+      login,
+      logout,
+      refreshSession,
+      setPreferredLocale,
+      invalidateSession,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1045,9 +1045,7 @@ test('home mounts its final logo-bearing header only after tenant branding resol
   expect((await tenantLogo.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(38);
 });
 
-test('home never exposes an optional-logo placeholder when tenant branding has no logo', async ({
-  page,
-}, testInfo) => {
+test('home falls back to the tenant name when branding has no logo', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'Desktop header hydration is verified here.');
   await page.setViewportSize({ width: 1920, height: 1080 });
 
@@ -1086,7 +1084,8 @@ test('home never exposes an optional-logo placeholder when tenant branding has n
   await expect(page.getByTestId('shell-boot-screen')).toHaveCount(0);
   await expect(brand).toBeVisible();
   await expect(brand.getByTestId('tenant-brand-logo')).toHaveCount(0);
-  await expect(header.getByText('Digital Workplace', { exact: true })).toBeVisible();
+  await expect(brand).toContainText('Digital Workplace');
+  await expect(brand.getByTestId('tenant-brand-name-fallback')).toHaveText('SK AX');
   await expect(header.getByRole('button', { name: 'Select workspace' })).toBeVisible();
 });
 

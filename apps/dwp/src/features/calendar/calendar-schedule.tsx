@@ -15,6 +15,7 @@ import {
   respondToCalendarEvent,
   updateCalendarEvent,
   useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { ActionButton, ConfirmDialog, PageCanvas } from '@dwp-frontend/design-system';
@@ -94,6 +95,7 @@ function updateInput(
 export function CalendarSchedule() {
   const { t, i18n } = useTranslation('calendar');
   const auth = useAuth();
+  const { hasPermission } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
   const compact = useMediaQuery('(max-width:899.95px)', { noSsr: true });
@@ -109,6 +111,9 @@ export function CalendarSchedule() {
   const [createState, setCreateState] = useState<CreateState | null>(null);
   const requestedEventId = searchParams.get('event');
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
+  const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
+  const canRespond = canUpdate;
   const dwaionHandoff = useMemo(
     () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
     [location.state]
@@ -136,14 +141,16 @@ export function CalendarSchedule() {
   useEffect(() => {
     const requestedType = searchParams.get('create');
     if (!requestedType && !dwaionHandoff) return;
-    setCreateState({
-      start: dwaionHandoffText(dwaionHandoff, 'startsAt') ?? new Date().toISOString(),
-      end: dwaionHandoffText(dwaionHandoff, 'endsAt') ?? undefined,
-      type: requestedType === 'focus' ? 'FOCUS' : 'MEETING',
-      title: dwaionHandoffText(dwaionHandoff, 'title') ?? undefined,
-      attendeeEmails: dwaionHandoffStrings(dwaionHandoff, 'attendees'),
-      fromDwaion: Boolean(dwaionHandoff),
-    });
+    if (canCreate) {
+      setCreateState({
+        start: dwaionHandoffText(dwaionHandoff, 'startsAt') ?? new Date().toISOString(),
+        end: dwaionHandoffText(dwaionHandoff, 'endsAt') ?? undefined,
+        type: requestedType === 'focus' ? 'FOCUS' : 'MEETING',
+        title: dwaionHandoffText(dwaionHandoff, 'title') ?? undefined,
+        attendeeEmails: dwaionHandoffStrings(dwaionHandoff, 'attendees'),
+        fromDwaion: Boolean(dwaionHandoff),
+      });
+    }
     const next = new URLSearchParams(searchParams);
     next.delete('create');
     const search = next.toString();
@@ -151,7 +158,7 @@ export function CalendarSchedule() {
       { pathname: location.pathname, search: search ? `?${search}` : '' },
       { replace: true, state: null }
     );
-  }, [dwaionHandoff, location.pathname, navigate, searchParams]);
+  }, [canCreate, dwaionHandoff, location.pathname, navigate, searchParams]);
 
   useEffect(() => {
     if (!requestedEventId || !eventsQuery.data) return;
@@ -217,9 +224,9 @@ export function CalendarSchedule() {
       const organizer = event.organizerPersonPublicId
         ? event.organizerPersonPublicId === auth.user?.personPublicId
         : event.organizerUserId === auth.user?.userId;
-      return organizer && event.status !== 'CANCELLED';
+      return canUpdate && organizer && event.status !== 'CANCELLED';
     },
-    [auth.user?.personPublicId, auth.user?.userId]
+    [auth.user?.personPublicId, auth.user?.userId, canUpdate]
   );
   const canMove = useCallback(
     (event: CalendarEvent) => canManage(event) && event.recurrence === 'NONE',
@@ -233,6 +240,7 @@ export function CalendarSchedule() {
     [eventsQuery.data, selectedCalendars]
   );
   const openNow = (type: CalendarEventType) => {
+    if (!canCreate) return;
     const start = new Date();
     start.setSeconds(0, 0);
     start.setMinutes(start.getMinutes() < 30 ? 30 : 60);
@@ -247,7 +255,7 @@ export function CalendarSchedule() {
         eyebrow={t('schedule.eyebrow')}
         title={t('schedule.title')}
         description={t('schedule.description')}
-        actions={
+        actions={canCreate ? (
           <>
             <ActionButton
               intent="secondary"
@@ -264,7 +272,7 @@ export function CalendarSchedule() {
               {t('actions.newEvent')}
             </ActionButton>
           </>
-        }
+        ) : undefined}
       />
 
       <Box
@@ -368,58 +376,65 @@ export function CalendarSchedule() {
               compact={compact}
               loading={eventsQuery.isLoading}
               navigateDate={navigateDate}
+              canCreate={canCreate}
               canMove={canMove}
               onRangeChange={(next) =>
                 setRange((current) =>
                   current.from === next.from && current.to === next.to ? current : next
                 )
               }
-              onCreateRange={(start, end, _allDay) =>
+              onCreateRange={(start, end, _allDay) => {
+                if (!canCreate) return;
                 setCreateState({
                   start: start.toISOString(),
                   end: end.toISOString(),
                   type: 'MEETING',
-                })
-              }
+                });
+              }}
               onOpenEvent={setSelected}
-              onMoveEvent={(event, change, revert) =>
-                moveMutation.mutate({ event, change, revert })
-              }
+              onMoveEvent={(event, change, revert) => {
+                if (!canMove(event)) return revert();
+                moveMutation.mutate({ event, change, revert });
+              }}
             />
           </Box>
         )}
       </Box>
 
-      <CalendarEventDialog
-        open={Boolean(createState)}
-        initialStart={createState?.start}
-        initialEnd={createState?.end}
-        initialType={createState?.type}
-        initialTitle={createState?.title}
-        initialAttendeeEmails={createState?.attendeeEmails}
-        fromDwaion={createState?.fromDwaion}
-        onClose={() => setCreateState(null)}
-      />
-      <CalendarEventDialog
-        open={Boolean(editing)}
-        event={editing}
-        onClose={() => setEditing(null)}
-        onSaved={setSelected}
-      />
+      {canCreate && (
+        <CalendarEventDialog
+          open={Boolean(createState)}
+          initialStart={createState?.start}
+          initialEnd={createState?.end}
+          initialType={createState?.type}
+          initialTitle={createState?.title}
+          initialAttendeeEmails={createState?.attendeeEmails}
+          fromDwaion={createState?.fromDwaion}
+          onClose={() => setCreateState(null)}
+        />
+      )}
+      {canUpdate && (
+        <CalendarEventDialog
+          open={Boolean(editing)}
+          event={editing}
+          onClose={() => setEditing(null)}
+          onSaved={setSelected}
+        />
+      )}
       <CalendarEventDrawer
         event={selected}
         open={Boolean(selected)}
         canEdit={Boolean(selected && canManage(selected))}
         onClose={clearEventSelection}
-        onEdit={() => {
+        onEdit={canUpdate ? () => {
           setEditing(selected);
           clearEventSelection();
-        }}
-        onCancel={() => selected && setCancelling(selected)}
-        onRespond={(response) => selected && respond(selected, response)}
+        } : undefined}
+        onCancel={canUpdate ? () => selected && setCancelling(selected) : undefined}
+        onRespond={canRespond ? (response) => selected && respond(selected, response) : undefined}
       />
       <ConfirmDialog
-        open={Boolean(cancelling)}
+        open={canUpdate && Boolean(cancelling)}
         title={t('event.cancelTitle')}
         description={t('event.cancelDescription', { title: cancelling?.title })}
         cancelLabel={t('actions.close')}
@@ -429,7 +444,7 @@ export function CalendarSchedule() {
         busy={cancelMutation.isPending}
         onClose={() => setCancelling(null)}
         onConfirm={() => {
-          if (cancelling) cancelMutation.mutate(cancelling);
+          if (canUpdate && cancelling) cancelMutation.mutate(cancelling);
         }}
       />
     </PageCanvas>

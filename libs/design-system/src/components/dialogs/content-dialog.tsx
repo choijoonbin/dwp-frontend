@@ -24,6 +24,7 @@ export type ContentDialogProps = {
   hideHeader?: boolean;
   maxWidth?: DialogProps['maxWidth'];
   titleStart?: React.ReactNode;
+  titleEnd?: React.ReactNode;
   headerContent?: React.ReactNode;
   contentDividers?: boolean;
   contentSx?: SxProps<Theme>;
@@ -42,6 +43,7 @@ export function ContentDialog({
   hideHeader = false,
   maxWidth = 'sm',
   titleStart,
+  titleEnd,
   headerContent,
   contentDividers = false,
   contentSx,
@@ -75,6 +77,7 @@ export function ContentDialog({
               </Typography>
             )}
           </Box>
+          {titleEnd}
           <ActionIconButton
             label={closeLabel}
             onClick={onClose}

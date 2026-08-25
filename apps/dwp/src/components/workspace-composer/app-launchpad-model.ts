@@ -4,6 +4,7 @@ import {
   isAppResourceEntitled as isSharedAppResourceEntitled,
   type AppEntitlementPermission,
 } from '@dwp-frontend/shared-utils/auth/app-entitlements';
+import { isHcmReadEntitled } from '@dwp-frontend/shared-utils/auth/hcm-access';
 
 export type HomeAppGroupId = string;
 
@@ -30,6 +31,29 @@ export type HomeAppIconKey =
   | 'workforce'
   | 'work';
 
+export type HomeAppBadgeIntent = 'unread' | 'actionable' | 'urgent';
+
+/**
+ * Notification semantics retained alongside the classic, display-only badge string.
+ * The exact total remains available to assistive UI even when the visual label is capped.
+ */
+export type HomeAppBadgeMetadata = Readonly<{
+  totalUnread: number;
+  actionableUnread: number;
+  urgentUnread: number;
+  intent: HomeAppBadgeIntent;
+  accessibleLabel: string;
+}>;
+
+/** Count-only projections and the notification service counter are both supported. */
+export type HomeAppNotificationBadgeValue =
+  | number
+  | Readonly<{
+      totalUnread: number;
+      actionableUnread: number;
+      urgentUnread: number;
+    }>;
+
 export type HomeAppDefinition = {
   id: string;
   name: string;
@@ -40,7 +64,12 @@ export type HomeAppDefinition = {
   iconKey: HomeAppIconKey;
   tone: string;
   resourceKey: string;
+  /** Backward-compatible visual label consumed by Classic and Flow launchers. */
   badge?: string;
+  /** Structured semantics for intent styling and an exact accessible announcement. */
+  badgeMetadata?: HomeAppBadgeMetadata;
+  /** Stable notification-platform owner key; never inferred from the app id. */
+  notificationSourceKey?: string;
   requiredRoles?: readonly string[];
 };
 
@@ -118,7 +147,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'work',
     tone: '#315FD5',
     resourceKey: 'APP.WORK',
-    badge: '4',
   },
   {
     id: 'dwp-ask',
@@ -141,7 +169,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'activity',
     tone: '#087E8B',
     resourceKey: 'APP.ACTIVITY',
-    badge: '2',
   },
   {
     id: 'dwp-notifications',
@@ -164,6 +191,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'approvals',
     tone: '#2856C7',
     resourceKey: 'APP.APPROVALS',
+    notificationSourceKey: 'approvals',
   },
   {
     id: 'dwp-communications',
@@ -175,6 +203,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'communications',
     tone: '#E14F5A',
     resourceKey: 'APP.COMMUNICATIONS',
+    notificationSourceKey: 'communications',
   },
   {
     id: 'dwp-calendar',
@@ -208,7 +237,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'mail',
     tone: '#176B63',
     resourceKey: 'APP.MAIL',
-    badge: '6',
   },
   {
     id: 'dwp-messaging',
@@ -220,7 +248,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'messaging',
     tone: '#2856C7',
     resourceKey: 'APP.MESSAGING',
-    badge: '3',
+    notificationSourceKey: 'messaging',
   },
   {
     id: 'dwp-spaces',
@@ -232,6 +260,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'spaces',
     tone: '#315B7A',
     resourceKey: 'APP.SPACES',
+    notificationSourceKey: 'space',
   },
   {
     id: 'ref-app-service',
@@ -243,7 +272,6 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'services',
     tone: '#15805A',
     resourceKey: 'APP.EMPLOYEE_SERVICES',
-    badge: '1',
   },
   {
     id: 'ref-app-people',
@@ -255,6 +283,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'hcm',
     tone: '#176B68',
     resourceKey: 'APP.HCM',
+    notificationSourceKey: 'hcm',
   },
   {
     id: 'ref-app-knowledge',
@@ -302,6 +331,71 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     requiredRoles: TENANT_CONTROL_PLANE_ROLES,
   },
 ];
+
+function isNotificationCount(value: unknown): value is number {
+  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
+}
+
+function notificationCounter(
+  value: HomeAppNotificationBadgeValue | undefined
+): Pick<HomeAppBadgeMetadata, 'totalUnread' | 'actionableUnread' | 'urgentUnread'> | undefined {
+  if (isNotificationCount(value)) {
+    return { totalUnread: value, actionableUnread: 0, urgentUnread: 0 };
+  }
+  if (
+    !value ||
+    !isNotificationCount(value.totalUnread) ||
+    !isNotificationCount(value.actionableUnread) ||
+    !isNotificationCount(value.urgentUnread) ||
+    value.actionableUnread > value.totalUnread ||
+    value.urgentUnread > value.totalUnread
+  ) {
+    return undefined;
+  }
+  return value;
+}
+
+function notificationIntent(
+  counter: Pick<HomeAppBadgeMetadata, 'totalUnread' | 'actionableUnread' | 'urgentUnread'>
+): HomeAppBadgeIntent {
+  if (counter.urgentUnread > 0) return 'urgent';
+  if (counter.actionableUnread > 0) return 'actionable';
+  return 'unread';
+}
+
+function notificationAccessibleLabel(
+  counter: Pick<HomeAppBadgeMetadata, 'totalUnread' | 'actionableUnread' | 'urgentUnread'>
+): string {
+  const parts = [
+    `${counter.totalUnread} unread notification${counter.totalUnread === 1 ? '' : 's'}`,
+  ];
+  if (counter.actionableUnread > 0) parts.push(`${counter.actionableUnread} actionable`);
+  if (counter.urgentUnread > 0) parts.push(`${counter.urgentUnread} urgent`);
+  return parts.join(', ');
+}
+
+export function applyHomeAppNotificationBadges(
+  apps: readonly HomeAppDefinition[],
+  notificationCounts: ReadonlyMap<string, HomeAppNotificationBadgeValue> | null
+): HomeAppDefinition[] {
+  return apps.map((app) => {
+    const counter = notificationCounter(
+      app.notificationSourceKey ? notificationCounts?.get(app.notificationSourceKey) : undefined
+    );
+    const next: HomeAppDefinition = { ...app };
+    delete next.badge;
+    delete next.badgeMetadata;
+    if (!counter || counter.totalUnread === 0) return next;
+
+    next.badge = counter.totalUnread > 99 ? '99+' : String(counter.totalUnread);
+    next.badgeMetadata = {
+      ...counter,
+      intent: notificationIntent(counter),
+      accessibleLabel: notificationAccessibleLabel(counter),
+    };
+    return next;
+  });
+}
 
 export function localizeHomeAppGroups(translate: HomeTranslate): HomeAppGroup[] {
   return HOME_APP_GROUPS.map((group) => ({
@@ -443,9 +537,14 @@ function copyLayout(layout: LaunchpadLayout): LaunchpadLayout {
 export function isAppEntitled(
   app: HomeAppDefinition,
   roles: readonly string[],
-  permissions: readonly AppEntitlementPermission[]
+  permissions: readonly AppEntitlementPermission[],
+  legacyRoleFallbackAllowed = false
 ): boolean {
   if (app.requiredRoles && !app.requiredRoles.some((role) => roles.includes(role))) return false;
+
+  if (appResourceAliasCandidates(app.resourceKey).includes('APP.HCM')) {
+    return isHcmReadEntitled(permissions, roles, legacyRoleFallbackAllowed);
+  }
 
   return isAppResourceEntitled(app.resourceKey, permissions);
 }
@@ -560,6 +659,11 @@ export function reconcileLaunchpadLayout(
 
   return { version: 1, groups, folders, hiddenAppIds };
 }
+
+export {
+  canonicalizePersistedLaunchpadLayout,
+  mergeEntitledLaunchpadProjection,
+} from './app-launchpad-persistence';
 
 export function moveLaunchpadItem(
   layout: LaunchpadLayout,

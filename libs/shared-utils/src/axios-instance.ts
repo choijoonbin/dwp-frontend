@@ -20,6 +20,7 @@ export type EventStreamMessage = {
 export type EventStreamConfig = {
   signal?: AbortSignal;
   timeoutMs?: number;
+  onOpen?: () => void;
   onMessage: (message: EventStreamMessage) => void;
 };
 
@@ -243,6 +244,7 @@ async function streamRequest<B>(
       );
     }
     if (!response.body) throw new HttpError('Event stream response body is missing.', 502);
+    config.onOpen?.();
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();

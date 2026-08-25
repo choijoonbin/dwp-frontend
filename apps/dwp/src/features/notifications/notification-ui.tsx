@@ -25,6 +25,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
+import { useNotificationTargetNavigation } from './use-notification-target-navigation';
+
 import type { NotificationConnectionState } from './use-notification-runtime';
 import type {
   NotificationItem,
@@ -319,14 +321,21 @@ export function NotificationItemRow({
   );
 }
 
-export function NotificationPrimaryAction({ item }: { item: NotificationItem }) {
+export function NotificationPrimaryAction({
+  item,
+  onOpenTarget,
+}: {
+  item: NotificationItem;
+  onOpenTarget?: (href: string) => void;
+}) {
   const primary = item.actions.find((action) => action.primary) ?? item.actions[0];
+  const targetNavigation = useNotificationTargetNavigation(onOpenTarget);
   if (!primary) return null;
   return (
     <ButtonBase
-      component={primary.href ? 'a' : 'button'}
-      href={primary.href ?? undefined}
-      disabled={!primary.enabled}
+      component="button"
+      onClick={() => void targetNavigation.openTarget(item.notificationId)}
+      disabled={!primary.enabled || targetNavigation.openingId === item.notificationId}
       sx={{
         minHeight: 36,
         px: 1.25,

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AuthProvider, useAuth } from './auth-provider';
 import { usePermissionsStore } from './permissions-store';
+import { HttpError } from '../http-error';
 
 import type { MeResponse } from '../api/auth-api';
 
@@ -152,5 +153,111 @@ describe('authenticated client lifecycle', () => {
 
     expect(queryClient.getQueryData(['workspace', 'activity'])).toBeUndefined();
     expect(currentAuth?.user?.userId).toBe(provider.userId);
+  });
+
+  it('clears user-scoped queries when the verified authority scope changes for the same user', async () => {
+    await mountAuthProvider();
+    queryClient.setQueryData(['home-contributions', 'private'], { value: 'cached' });
+    authApi.getPermissions.mockResolvedValueOnce({ data: [] });
+
+    await act(async () => {
+      await currentAuth?.refreshSession();
+    });
+
+    expect(queryClient.getQueryData(['home-contributions', 'private'])).toBeUndefined();
+    expect(usePermissionsStore.getState().permissions).toEqual([]);
+  });
+
+  it('clears cached scope when only a verified group key changes', async () => {
+    const initial = {
+      ...member,
+      groups: [{ groupRef: 'group-finance', groupKey: 'finance-v1', displayName: 'Finance' }],
+    };
+    authApi.getMe.mockResolvedValue({ data: initial });
+    await mountAuthProvider();
+    queryClient.setQueryData(['home-contributions', 'group-scoped'], { value: 'cached' });
+    authApi.getMe.mockResolvedValueOnce({
+      data: {
+        ...initial,
+        groups: [{ groupRef: 'group-finance', groupKey: 'finance-v2', displayName: 'Finance' }],
+      },
+    });
+
+    await act(async () => {
+      await currentAuth?.refreshSession();
+    });
+
+    expect(queryClient.getQueryData(['home-contributions', 'group-scoped'])).toBeUndefined();
+  });
+
+  it('refreshes verified identity and permissions after a visible session rotation', async () => {
+    await mountAuthProvider();
+    const initialMeCalls = authApi.getMe.mock.calls.length;
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      value: 'visible',
+    });
+
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await vi.waitFor(() => expect(authApi.rotateBrowserSession).toHaveBeenCalled());
+    await vi.waitFor(() => expect(authApi.getMe.mock.calls.length).toBeGreaterThan(initialMeCalls));
+  });
+
+  it('preserves the last verified session and cache on a transient background refresh failure', async () => {
+    await mountAuthProvider();
+    queryClient.setQueryData(['home-contributions', 'private'], { value: 'cached' });
+    authApi.getMe.mockRejectedValueOnce(new HttpError('Temporary upstream failure.', 503));
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      value: 'visible',
+    });
+
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await vi.waitFor(() => expect(authApi.getMe).toHaveBeenCalledTimes(2));
+
+    expect(currentAuth?.isAuthenticated).toBe(true);
+    expect(currentAuth?.user?.userId).toBe(member.userId);
+    expect(queryClient.getQueryData(['home-contributions', 'private'])).toEqual({ value: 'cached' });
+    expect(usePermissionsStore.getState().isLoaded).toBe(true);
+  });
+
+  it('invalidates the session and cache on a background 401 verification response', async () => {
+    await mountAuthProvider();
+    queryClient.setQueryData(['home-contributions', 'private'], { value: 'cached' });
+    authApi.getMe.mockRejectedValueOnce(new HttpError('Authentication required.', 401));
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      value: 'visible',
+    });
+
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(false));
+
+    expect(queryClient.getQueryData(['home-contributions', 'private'])).toBeUndefined();
+    expect(usePermissionsStore.getState().isLoaded).toBe(false);
+  });
+
+  it('invalidates the session and cache on a background 403 authority response', async () => {
+    await mountAuthProvider();
+    queryClient.setQueryData(['home-contributions', 'private'], { value: 'cached' });
+    authApi.getPermissions.mockRejectedValueOnce(new HttpError('Forbidden.', 403));
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      value: 'visible',
+    });
+
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(false));
+
+    expect(queryClient.getQueryData(['home-contributions', 'private'])).toBeUndefined();
+    expect(usePermissionsStore.getState().isLoaded).toBe(false);
   });
 });

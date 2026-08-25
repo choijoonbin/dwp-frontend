@@ -43,7 +43,7 @@ test('home co-branding keeps the product anchor stable and places the tenant con
   const bootBrand = bootHeader.locator('a[aria-label="Digital Workplace home"]:visible');
   const bootBrandBox = await bootBrand.boundingBox();
   await expect(page.getByTestId('home-loading-skeleton')).toBeVisible();
-  expect(bootBrandBox?.x).toBe(50);
+  expect(bootBrandBox?.x).toBe(24);
 
   releaseBranding();
 
@@ -71,7 +71,7 @@ test('home co-branding keeps the product anchor stable and places the tenant con
   expect(tenantLogoBox?.height).toBe(40);
 });
 
-test('mobile home keeps a compact stable product anchor without horizontal overflow', async ({
+test('mobile home keeps a compact tenant identifier without horizontal overflow', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'Mobile shell geometry is verified here.');
@@ -79,10 +79,12 @@ test('mobile home keeps a compact stable product anchor without horizontal overf
   await page.goto('/');
 
   const header = page.getByTestId('home-header');
-  const brand = header.getByRole('link', { name: 'Digital Workplace home' });
+  const brand = header.getByRole('link', { name: 'SKAX Digital Workplace home' });
 
   await expect(brand).toBeVisible();
-  await expect(brand).toHaveText('DWP');
+  await expect(brand).toContainText('DWP');
+  await expect(brand.getByTestId('tenant-brand-name-fallback')).toHaveText('SKAX');
+  await expect(brand.getByTestId('tenant-brand-divider')).toBeVisible();
   await expect(header.getByTestId('tenant-brand-logo')).toHaveCount(0);
 
   const geometry = await page.evaluate(() => ({

@@ -21,7 +21,16 @@ function safeColor(candidate: string): string {
 }
 
 function contrastText(background: string): string {
-  return getContrastRatio(background, '#FFFFFF') >= 4.5 ? '#FFFFFF' : '#0F151D';
+  if (getContrastRatio(background, '#FFFFFF') >= 4.5) return '#FFFFFF';
+  if (getContrastRatio(background, '#0F151D') >= 4.5) return '#0F151D';
+  return '#000000';
+}
+
+function focusRingColor(primary: string, surface: string, dark: boolean): string {
+  const candidates = [primary, dark ? '#B7CBFF' : '#0048B5', dark ? '#FFFFFF' : '#0F151D'];
+  return (
+    candidates.find((candidate) => getContrastRatio(candidate, surface) >= 3) ?? candidates[2]!
+  );
 }
 
 function densityMetrics(density: DensityPreference) {
@@ -53,6 +62,8 @@ export function buildDwpTheme({
     : dark
       ? tokens.color.neutral[500]
       : tokens.color.neutral[200];
+  const focusSurface = dark ? tokens.color.neutral[900] : tokens.color.neutral[0];
+  const focusRing = focusRingColor(primary, focusSurface, dark);
 
   return createTheme({
     cssVariables: { cssVarPrefix: 'dwp' },
@@ -125,12 +136,28 @@ export function buildDwpTheme({
       MuiCssBaseline: {
         styleOverrides: {
           '*': { boxSizing: 'border-box' },
+          ':root': { '--dwp-focus-ring': focusRing },
           '::selection': { backgroundColor: alpha(primary, 0.24) },
           ':focus-visible': {
-            outline: `3px solid ${alpha(primary, highContrast ? 1 : 0.55)}`,
+            outline: `3px solid ${highContrast ? primary : focusRing}`,
             outlineOffset: 2,
           },
           body: { margin: 0 },
+        },
+      },
+      MuiButtonBase: {
+        styleOverrides: {
+          root: {
+            '&.Mui-focusVisible, &:focus-visible': {
+              outline: `3px solid ${highContrast ? primary : focusRing}`,
+              outlineOffset: 2,
+            },
+            '@media (forced-colors: active)': {
+              '&.Mui-focusVisible, &:focus-visible': {
+                outlineColor: 'Highlight',
+              },
+            },
+          },
         },
       },
       MuiButton: {
@@ -144,6 +171,10 @@ export function buildDwpTheme({
               ? 'none'
               : `background-color ${tokens.duration.fast}ms ease-out, border-color ${tokens.duration.fast}ms ease-out, transform ${tokens.duration.fast}ms ease-out`,
             '&:not(.Mui-disabled):active': { transform: 'translateY(1px)' },
+            '&.Mui-focusVisible, &:focus-visible': {
+              outline: `3px solid ${highContrast ? primary : focusRing}`,
+              outlineOffset: 2,
+            },
             '&.MuiButton-containedPrimary': {
               color: contrastText(primary),
               backgroundColor: primary,
@@ -174,7 +205,14 @@ export function buildDwpTheme({
       },
       MuiIconButton: {
         styleOverrides: {
-          root: { width: metrics.controlHeight, height: metrics.controlHeight },
+          root: {
+            width: metrics.controlHeight,
+            height: metrics.controlHeight,
+            '&.Mui-focusVisible, &:focus-visible': {
+              outline: `3px solid ${highContrast ? primary : focusRing}`,
+              outlineOffset: 2,
+            },
+          },
         },
       },
       MuiPaper: {

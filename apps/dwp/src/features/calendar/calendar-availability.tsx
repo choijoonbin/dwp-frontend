@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getCalendarAvailability, listPeople } from '@dwp-frontend/shared-utils';
+import { getCalendarAvailability, listPeople, usePermissions } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   AutocompleteMultiField,
@@ -51,6 +51,8 @@ function isoRange(value: DateRangeValue) {
 
 export function CalendarAvailability() {
   const { t, i18n } = useTranslation('calendar');
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const [people, setPeople] = useState<PersonSummary[]>([]);
   const [duration, setDuration] = useState(30);
   const [range, setRange] = useState<DateRangeValue>(initialRange);
@@ -285,10 +287,10 @@ export function CalendarAvailability() {
               >
                 {availability.data.suggestions.map((slot) => (
                   <Box
-                    component="button"
-                    type="button"
+                    component={canCreate ? 'button' : 'div'}
+                    type={canCreate ? 'button' : undefined}
                     key={slot.startsAt}
-                    onClick={() => setSelectedSlot(slot)}
+                    onClick={canCreate ? () => setSelectedSlot(slot) : undefined}
                     sx={{
                       minHeight: 132,
                       p: 2,
@@ -299,8 +301,8 @@ export function CalendarAvailability() {
                       bgcolor: 'transparent',
                       color: 'text.primary',
                       textAlign: 'left',
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: 'action.hover' },
+                      cursor: canCreate ? 'pointer' : 'default',
+                      '&:hover': canCreate ? { bgcolor: 'action.hover' } : undefined,
                       '&:focus-visible': {
                         outline: '2px solid',
                         outlineColor: 'primary.main',
@@ -371,13 +373,15 @@ export function CalendarAvailability() {
         </Box>
       )}
 
-      <CalendarEventDialog
-        open={Boolean(selectedSlot)}
-        initialStart={selectedSlot?.startsAt}
-        initialEnd={selectedSlot?.endsAt}
-        initialAttendees={people}
-        onClose={() => setSelectedSlot(null)}
-      />
+      {canCreate && (
+        <CalendarEventDialog
+          open={Boolean(selectedSlot)}
+          initialStart={selectedSlot?.startsAt}
+          initialEnd={selectedSlot?.endsAt}
+          initialAttendees={people}
+          onClose={() => setSelectedSlot(null)}
+        />
+      )}
     </PageCanvas>
   );
 }

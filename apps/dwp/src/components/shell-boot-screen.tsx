@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { ProductMark } from '@dwp-frontend/design-system/components/product-mark';
 
 import Box from '@mui/material/Box';
+
+import { HOME_LIGHT_CANVAS, HOME_LIGHT_SURFACE } from './home-surface-tokens';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -41,7 +43,11 @@ export function ShellBootScreen({
       aria-live="polite"
       data-testid="shell-boot-screen"
       data-dwp-shell={shell.key}
-      sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}
+      sx={{
+        minHeight: '100dvh',
+        bgcolor: (theme) =>
+          homeShell && theme.palette.mode !== 'dark' ? HOME_LIGHT_CANVAS : 'background.default',
+      }}
     >
       {hasSidebar && (
         <Box
@@ -85,9 +91,9 @@ export function ShellBootScreen({
           display: 'flex',
           alignItems: 'center',
           gap: 1.25,
-          px: homeShell ? { xs: 2, md: '50px' } : { xs: 1.5, md: 2 },
+          px: homeShell ? { xs: 2, md: '24px' } : { xs: 1.5, md: 2 },
           bgcolor: (theme) =>
-            homeShell && theme.palette.mode !== 'dark' ? '#FAF8FF' : 'background.paper',
+            homeShell && theme.palette.mode !== 'dark' ? HOME_LIGHT_SURFACE : 'background.paper',
           borderBottom: 1,
           borderColor: 'divider',
           fontFamily: homeShell

@@ -12,7 +12,7 @@ import {
   Video,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getCalendarResources } from '@dwp-frontend/shared-utils';
+import { getCalendarResources, usePermissions } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   DateTimePickerField,
@@ -51,6 +51,8 @@ const FEATURE_ICONS = {
 
 export function CalendarResources() {
   const { t, i18n } = useTranslation('calendar');
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const [start, setStart] = useState(() => roundedStart().toISOString());
   const [end, setEnd] = useState(() =>
     new Date(roundedStart().getTime() + 60 * 60_000).toISOString()
@@ -327,15 +329,17 @@ export function CalendarResources() {
                       : 'resources.instantBooking'
                   )}
                 </Typography>
-                <ActionButton
-                  intent="secondary"
-                  size="small"
-                  startIcon={<CalendarPlus size={16} />}
-                  disabled={!resource.available || resource.state !== 'AVAILABLE'}
-                  onClick={() => setSelected(resource)}
-                >
-                  {t('resources.book')}
-                </ActionButton>
+                {canCreate && (
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    startIcon={<CalendarPlus size={16} />}
+                    disabled={!resource.available || resource.state !== 'AVAILABLE'}
+                    onClick={() => setSelected(resource)}
+                  >
+                    {t('resources.book')}
+                  </ActionButton>
+                )}
               </Stack>
             </Box>
           ))}
@@ -352,13 +356,15 @@ export function CalendarResources() {
         </Box>
       )}
 
-      <CalendarEventDialog
-        open={Boolean(selected)}
-        initialStart={queryRange.start}
-        initialEnd={queryRange.end}
-        initialResourceId={selected?.resourceId}
-        onClose={() => setSelected(null)}
-      />
+      {canCreate && (
+        <CalendarEventDialog
+          open={Boolean(selected)}
+          initialStart={queryRange.start}
+          initialEnd={queryRange.end}
+          initialResourceId={selected?.resourceId}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </PageCanvas>
   );
 }

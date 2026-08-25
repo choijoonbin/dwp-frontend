@@ -55,6 +55,11 @@ import type {
   CommunicationItem,
   CommunicationReaction,
 } from '@dwp-frontend/shared-utils';
+import { CommunicationActionRail } from '../features/communications/communication-action-rail';
+import {
+  buildCommunicationActionRailItems,
+  communicationActionIds,
+} from '../features/communications/communication-action-rail-model';
 
 const enter = keyframes`
   from { transform: translateY(10px); }
@@ -361,87 +366,6 @@ function StoryCard({
         <Box sx={{ mt: 'auto' }}>
           <StoryMeta item={item} />
         </Box>
-      </Stack>
-    </Box>
-  );
-}
-
-function RequiredRail({
-  items,
-  scope,
-}: {
-  items: CommunicationItem[];
-  scope: CommunicationFeedScope;
-}) {
-  const { t } = useTranslation('communications');
-  return (
-    <Box component="aside" aria-labelledby="required-news-title" sx={{ minWidth: 0 }}>
-      <Stack direction="row" alignItems="center" gap={1}>
-        <Box
-          sx={{
-            width: 34,
-            height: 34,
-            display: 'grid',
-            placeItems: 'center',
-            borderRadius: 1,
-            bgcolor: '#FFF0E2',
-            color: '#A94E00',
-          }}
-        >
-          <CircleAlert size={18} aria-hidden="true" />
-        </Box>
-        <Box>
-          <Typography id="required-news-title" component="h2" variant="subtitle1">
-            {t('page.requiredTitle')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('page.requiredDescription')}
-          </Typography>
-        </Box>
-      </Stack>
-      <Stack gap={1.25} sx={{ mt: 2 }}>
-        {items.length === 0 ? (
-          <Box sx={{ py: 4, px: 2, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-            <Check size={20} color="#18794E" aria-hidden="true" />
-            <Typography variant="body2" fontWeight={700} sx={{ mt: 1 }}>
-              {t('page.allCaughtUp')}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t('page.requiredEmpty')}
-            </Typography>
-          </Box>
-        ) : (
-          items.slice(0, 4).map((item) => (
-            <Box
-              key={item.communicationId}
-              component={Link}
-              to={`/communications/${scope}/${item.communicationId}`}
-              sx={{
-                p: 1.5,
-                border: 1,
-                borderColor: 'divider',
-                borderLeft: '4px solid #E89727',
-                borderRadius: 1,
-                bgcolor: 'background.paper',
-                color: 'text.primary',
-                textDecoration: 'none',
-                '&:hover': { borderColor: '#E89727', boxShadow: '0 10px 24px rgba(15,23,42,0.08)' },
-              }}
-            >
-              <Typography component="h3" variant="subtitle2">
-                {item.title}
-              </Typography>
-              <Stack direction="row" alignItems="center" gap={0.75} sx={{ mt: 1 }}>
-                <Clock3 size={13} color="#A94E00" aria-hidden="true" />
-                <Typography variant="caption" color="text.secondary">
-                  {item.acknowledgementDueAt
-                    ? t('story.acknowledgementDue', { date: storyDate(item.acknowledgementDueAt) })
-                    : t('page.required')}
-                </Typography>
-              </Stack>
-            </Box>
-          ))
-        )}
       </Stack>
     </Box>
   );
@@ -832,11 +756,13 @@ export default function CommunicationsPage() {
   if (storyId && detail.data) return <StoryDetail item={detail.data} scope={scope} />;
 
   const data: CommunicationFeed | undefined = feed.data;
-  const requiredItems = [requiredFeed.data?.featured, ...(requiredFeed.data?.items ?? [])].filter(
-    (item): item is CommunicationItem =>
-      Boolean(item?.acknowledgementRequired && !item.readerState.acknowledged)
-  );
-  const itemCount = (data?.items.length ?? 0) + (data?.featured ? 1 : 0);
+  const actionItems = buildCommunicationActionRailItems(data, requiredFeed.data);
+  const actionIds = communicationActionIds(actionItems);
+  const editorialFeatured =
+    data?.featured && !actionIds.has(data.featured.communicationId) ? data.featured : undefined;
+  const editorialItems = (data?.items ?? []).filter((item) => !actionIds.has(item.communicationId));
+  const editorialItemCount = editorialItems.length + (editorialFeatured ? 1 : 0);
+  const hasVisibleContent = editorialItemCount > 0 || actionItems.length > 0;
 
   return (
     <PageCanvas>
@@ -998,7 +924,7 @@ export default function CommunicationsPage() {
           </Alert>
         ) : feed.isLoading ? (
           <FeedLoading />
-        ) : itemCount === 0 ? (
+        ) : !hasVisibleContent ? (
           <Box
             sx={{
               minHeight: 360,
@@ -1022,7 +948,7 @@ export default function CommunicationsPage() {
           </Box>
         ) : (
           <>
-            {data?.featured && <FeaturedStory item={data.featured} scope={scope} />}
+            {editorialFeatured && <FeaturedStory item={editorialFeatured} scope={scope} />}
             <Box
               sx={{
                 mt: 3.5,
@@ -1047,17 +973,17 @@ export default function CommunicationsPage() {
                     {t('page.latest')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {t('page.latestCount', { count: data?.items.length ?? 0 })}
+                    {t('page.latestCount', { count: editorialItems.length })}
                   </Typography>
                 </Stack>
                 <Stack gap={1.5}>
-                  {(data?.items ?? []).map((item, index) => (
+                  {editorialItems.map((item, index) => (
                     <StoryCard key={item.communicationId} item={item} scope={scope} index={index} />
                   ))}
                 </Stack>
               </Box>
               <Box sx={{ position: { xl: 'sticky' }, top: { xl: 88 } }}>
-                <RequiredRail items={requiredItems} scope={scope} />
+                <CommunicationActionRail items={actionItems} scope={scope} />
               </Box>
             </Box>
           </>

@@ -1,6 +1,11 @@
 import { it, vi, expect, describe, afterEach } from 'vitest';
 
-import { axiosInstance, resetCsrfToken, setUnauthorizedHandler } from './axios-instance';
+import {
+  axiosInstance,
+  getEventStream,
+  resetCsrfToken,
+  setUnauthorizedHandler,
+} from './axios-instance';
 
 function jsonResponse(status: number, payload: unknown): Response {
   return {
@@ -245,5 +250,30 @@ describe('axiosInstance browser session contract', () => {
 
     await expect(request).resolves.toMatchObject({ name: 'AbortError' });
     expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+  });
+
+  it('reports an event stream as open after the response body is accepted', async () => {
+    const encoder = new TextEncoder();
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(
+          encoder.encode(
+            'event: notification.connected\ndata: {"changeVersion":"0","changedIds":[],"arrivalIds":[]}\n\n'
+          )
+        );
+        controller.close();
+      },
+    });
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, status: 200, body } as Response));
+    const onOpen = vi.fn();
+    const onMessage = vi.fn();
+
+    await getEventStream('/api/notifications/v1/stream', { onOpen, onMessage });
+
+    expect(onOpen).toHaveBeenCalledOnce();
+    expect(onMessage).toHaveBeenCalledWith({
+      event: 'notification.connected',
+      data: { changeVersion: '0', changedIds: [], arrivalIds: [] },
+    });
   });
 });

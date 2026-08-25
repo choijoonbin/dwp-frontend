@@ -3,6 +3,7 @@ import type {
   NotificationDeliveryProfile,
   NotificationEffectiveSettings,
   NotificationItem,
+  NotificationLiveSignal,
 } from '@dwp-frontend/shared-utils/api/notification-api';
 
 import {
@@ -13,8 +14,11 @@ import {
   isAssertiveNotificationArrival,
   isPersistentNotificationArrival,
   isQuietHoursActive,
+  notificationArrivalCandidateIds,
   notificationArrivalContent,
+  notificationArrivalSignalKey,
   shouldSurfaceNotificationArrival,
+  upsertPersistentNotificationArrival,
 } from './notification-arrival-policy';
 
 const messagingItem = {
@@ -116,6 +120,46 @@ describe('notification arrival target suppression', () => {
   });
 });
 
+describe('notification arrival signal identity', () => {
+  it('deduplicates a repeated stream hint without suppressing a later thread update', () => {
+    expect(notificationArrivalSignalKey('41', messagingItem.notificationId)).toBe(
+      notificationArrivalSignalKey('41', messagingItem.notificationId)
+    );
+    expect(notificationArrivalSignalKey('42', messagingItem.notificationId)).not.toBe(
+      notificationArrivalSignalKey('41', messagingItem.notificationId)
+    );
+  });
+
+  it('replaces a queued thread with its latest materialized version', () => {
+    const original = { item: messagingItem, href: '/messages/original' };
+    const updated = {
+      item: { ...messagingItem, preview: 'latest message' },
+      href: '/messages/latest',
+    };
+
+    expect(upsertPersistentNotificationArrival([original], updated)).toEqual([updated]);
+  });
+
+  it('never treats user triage refreshes as new arrivals', () => {
+    const triageSignal = {
+      changeVersion: '43',
+      counterVersion: '43',
+      changedIds: ['93af7315-2271-462e-a819-3d238a28830f'],
+      arrivalIds: [],
+    } satisfies NotificationLiveSignal;
+    const materializedSignal = {
+      ...triageSignal,
+      changeVersion: '44',
+      arrivalIds: triageSignal.changedIds,
+    } satisfies NotificationLiveSignal;
+
+    expect(notificationArrivalCandidateIds(triageSignal)).toEqual([]);
+    expect(notificationArrivalCandidateIds(materializedSignal)).toEqual(
+      materializedSignal.changedIds
+    );
+  });
+});
+
 describe('notification arrival policy', () => {
   it('fails closed until both personal and effective policy are authoritative', () => {
     expect(shouldSurfaceNotificationArrival(messagingItem, undefined, effectiveSettings)).toBe(
@@ -140,6 +184,24 @@ describe('notification arrival policy', () => {
     expect(isQuietHoursActive(quietHours, new Date('2026-08-19T14:30:00Z'))).toBe(true);
     expect(isQuietHoursActive(quietHours, new Date('2026-08-19T21:30:00Z'))).toBe(true);
     expect(isQuietHoursActive(quietHours, new Date('2026-08-20T08:00:00Z'))).toBe(false);
+  });
+
+  it('evaluates focus hours by local wall clock across daylight-saving transitions', () => {
+    const springForward = {
+      ...profile.quietHours,
+      enabled: true,
+      timeZone: 'America/New_York',
+      start: '01:30',
+      end: '03:30',
+      days: [7],
+    };
+    expect(isQuietHoursActive(springForward, new Date('2026-03-08T06:45:00Z'))).toBe(true);
+    expect(isQuietHoursActive(springForward, new Date('2026-03-08T07:15:00Z'))).toBe(true);
+    expect(isQuietHoursActive(springForward, new Date('2026-03-08T07:30:00Z'))).toBe(false);
+
+    const fallBack = { ...springForward, start: '00:30', end: '02:30' };
+    expect(isQuietHoursActive(fallBack, new Date('2026-11-01T05:30:00Z'))).toBe(true);
+    expect(isQuietHoursActive(fallBack, new Date('2026-11-01T06:30:00Z'))).toBe(true);
   });
 
   it('keeps the inbox item but suppresses live interruption during focus hours', () => {

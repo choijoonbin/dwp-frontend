@@ -1,8 +1,10 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 
 import {
-  WORKSPACE_APP_JIGGLE_DURATION_MS,
-  workspaceAppJiggle,
+  WORKSPACE_WIDGET_SETTLE_DURATION_MS,
+  WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING,
+  WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
+  workspaceWidgetSettle,
 } from '../../components/workspace-composer/workspace-edit-motion';
 
 export const LAUNCHPAD_TILE_WIDTH = 72;
@@ -82,10 +84,9 @@ export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProp
         theme.transitions.create('transform', { duration: theme.transitions.duration.shorter }),
       transformOrigin: 'center',
       animation: editing
-        ? `${workspaceAppJiggle} ${WORKSPACE_APP_JIGGLE_DURATION_MS}ms ease-in-out infinite`
+        ? `${workspaceWidgetSettle} ${WORKSPACE_WIDGET_SETTLE_DURATION_MS}ms ${WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING} ${Math.abs(motionDelayMs)}ms 1 backwards`
         : 'none',
-      animationDelay: editing ? `${motionDelayMs}ms` : '0ms',
-      willChange: editing ? 'transform' : 'auto',
+      willChange: editing ? 'transform, opacity' : 'auto',
     },
     '& [data-launchpad-edit-frame]': {
       transition: (theme) =>
@@ -138,6 +139,30 @@ export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProp
           bgcolor: 'rgba(255,255,255,0.12)',
           borderColor: '#FFFFFF',
         },
+    '@supports (animation-timing-function: linear(0, 1))': {
+      '& [data-launchpad-glyph]': {
+        animationTimingFunction: WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
+      },
+    },
+    '@media (prefers-reduced-transparency: reduce)': {
+      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+        bgcolor: editing ? 'background.paper' : 'transparent',
+        boxShadow: 'none',
+        backdropFilter: 'none',
+      },
+    },
+    '@media (forced-colors: active)': {
+      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+        bgcolor: editing ? 'Canvas' : 'transparent',
+        borderColor: editing ? 'CanvasText' : 'transparent',
+        boxShadow: 'none',
+      },
+      '&:focus-visible [data-launchpad-edit-frame], &:focus-visible [data-launchpad-edit-frame]::after':
+        {
+          outline: '2px solid Highlight',
+          outlineOffset: 2,
+        },
+    },
     'html[data-motion="reduced"] &': {
       transition: 'none',
       transform: 'none',

@@ -177,9 +177,9 @@ test('newsroom presents a responsive personalized editorial feed', async ({ page
 
   await expect(page.getByRole('heading', { name: 'Know what is moving today' })).toBeVisible();
   await expect(page.getByRole('heading', { name: featuredStory.title })).toBeVisible();
-  await expect(
-    page.getByLabel('Fresh stories').getByText(requiredStory.title, { exact: true })
-  ).toBeVisible();
+  const actionRail = page.getByTestId('communications-action-rail');
+  await expect(actionRail.getByText(requiredStory.title, { exact: true })).toBeVisible();
+  await expect(page.getByText(requiredStory.title, { exact: true })).toHaveCount(1);
   await expect(page.getByTestId('communications-header')).toHaveAttribute(
     'data-dwp-shell',
     'communications'
@@ -210,6 +210,59 @@ test('newsroom presents a responsive personalized editorial feed', async ({ page
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
   await expect.poll(() => events).toContain('impression');
+});
+
+test('action-first rail expands beyond four items without duplicate editorial links', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER']);
+  const criticalStories = Array.from({ length: 5 }, (_, index) => ({
+    ...featuredStory,
+    communicationId: 700 + index,
+    title: `Critical newsroom action ${index + 1}`,
+    severity: 'CRITICAL',
+    featured: false,
+    acknowledgementRequired: false,
+    readerState: { ...baseReaderState },
+  }));
+  const editorialFeature = {
+    ...featuredStory,
+    communicationId: 799,
+    readerState: { ...baseReaderState },
+  };
+
+  await page.route('**/api/platform/v1/communications**', (route) =>
+    fulfillSuccess(route, {
+      featured: editorialFeature,
+      items: criticalStories,
+      actionableItems: criticalStories,
+      summary: {
+        total: 6,
+        unread: 6,
+        required: 0,
+        saved: 0,
+        criticalUnread: 5,
+        actionable: 5,
+      },
+      generatedAt: '2026-08-24T09:10:00Z',
+    })
+  );
+
+  await page.goto('/communications/for-you');
+
+  const actionRail = page.getByTestId('communications-action-rail');
+  await expect(actionRail.getByText(criticalStories[0]!.title, { exact: true })).toBeVisible();
+  await expect(actionRail.getByText(criticalStories[3]!.title, { exact: true })).toBeVisible();
+  await expect(page.getByText(criticalStories[4]!.title, { exact: true })).toHaveCount(0);
+
+  const showMore = actionRail.getByRole('button', { name: 'Show 1 more priority updates' });
+  await expect(showMore).toHaveAttribute('aria-expanded', 'false');
+  await showMore.click();
+  await expect(actionRail.getByText(criticalStories[4]!.title, { exact: true })).toBeVisible();
+  await expect(page.getByText(criticalStories[4]!.title, { exact: true })).toHaveCount(1);
+  await expect(
+    actionRail.getByRole('button', { name: 'Show fewer priority updates' })
+  ).toHaveAttribute('aria-expanded', 'true');
 });
 
 test('required communication preserves acknowledgement evidence', async ({ page }) => {

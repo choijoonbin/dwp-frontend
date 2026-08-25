@@ -53,11 +53,17 @@ export type CommunicationFeedSummary = {
   unread: number;
   required: number;
   saved: number;
+  /** Additive server capability; omitted by pre-capability deployments. */
+  criticalUnread?: number;
+  /** Union of unacknowledged required and unread critical communications. */
+  actionable?: number;
 };
 
 export type CommunicationFeed = {
   featured?: CommunicationItem | null;
   items: CommunicationItem[];
+  /** Reader-wide action-first slice; intentionally independent of scope/query filters. */
+  actionableItems?: CommunicationItem[];
   summary: CommunicationFeedSummary;
   generatedAt: string;
 };

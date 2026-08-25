@@ -44,6 +44,7 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { TenantWorkscape } from '../../components/tenant-workscape';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import type {
@@ -532,31 +533,13 @@ export function HomeExperienceManager() {
           transition: 'background-color 160ms ease-out',
         }}
       >
-        <Box
-          aria-label={t('homeExperience.preview')}
-          sx={{
-            position: 'relative',
-            width: mobilePreview ? 320 : 'calc(100% - 32px)',
-            maxWidth: mobilePreview ? 320 : 1120,
-            aspectRatio: mobilePreview ? '9 / 16' : '16 / 6',
-            minHeight: mobilePreview ? 568 : 340,
-            overflow: 'hidden',
-            color: '#FFFFFF',
-            bgcolor: '#07163D',
-            backgroundImage: `url(${activeBackgroundUrl})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: `${form.backgroundPosition.toLowerCase()} center`,
-            backgroundSize: 'cover',
-            border: 1,
-            borderColor: darkPreview ? '#4B5663' : 'divider',
-            borderRadius: 1,
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              inset: 0,
-              bgcolor: `rgba(2, 10, 34, ${form.overlayOpacity / 100})`,
-            },
-          }}
+        <TenantWorkscape
+          ariaLabel={t('homeExperience.preview')}
+          backgroundUrl={activeBackgroundUrl}
+          backgroundPosition={form.backgroundPosition}
+          overlayOpacity={form.overlayOpacity}
+          previewViewport={mobilePreview ? 'mobile' : 'desktop'}
+          darkPreview={darkPreview}
         >
           <Box
             aria-hidden="true"
@@ -569,13 +552,13 @@ export function HomeExperienceManager() {
           <Box
             sx={{
               position: 'absolute',
-              inset: mobilePreview ? 'auto 16px 80px' : 'auto 7% 42px',
+              top: mobilePreview ? 64 : 36,
+              left: mobilePreview ? 16 : form.backgroundPosition === 'LEFT' ? 'auto' : '7%',
+              right: mobilePreview ? 16 : form.backgroundPosition === 'LEFT' ? '7%' : 'auto',
               maxWidth: mobilePreview ? 'none' : 560,
               p: mobilePreview ? 1.5 : 2,
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: 1,
-              bgcolor: 'rgba(5,17,47,0.68)',
-              backdropFilter: 'blur(14px)',
+              borderRadius: 2,
+              textShadow: '0 2px 10px rgba(0,0,0,0.42)',
             }}
           >
             <Typography component="p" variant={mobilePreview ? 'h6' : 'h5'} color="inherit">
@@ -585,7 +568,62 @@ export function HomeExperienceManager() {
               {previewCopy.subheadline?.trim() || t('homeExperience.previewMessage')}
             </Typography>
           </Box>
-        </Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: mobilePreview ? 'auto 12px 18px' : 'auto 3% 20px',
+              minHeight: mobilePreview ? 196 : 116,
+              px: mobilePreview ? 1.25 : 2,
+              py: 1.25,
+              color: darkPreview ? '#F8FAFC' : '#151B26',
+              bgcolor: darkPreview ? 'rgba(17,26,38,0.96)' : 'rgba(255,255,255,0.95)',
+              border: 1,
+              borderColor: darkPreview ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.74)',
+              borderRadius: 2,
+              boxShadow: '0 12px 28px rgba(3,12,28,0.2)',
+            }}
+          >
+            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+              <Typography component="p" variant="subtitle2" fontWeight={800}>
+                {t('homeExperience.previewDockTitle')}
+              </Typography>
+              <Typography variant="caption" color="inherit" sx={{ opacity: 0.66 }}>
+                {t('homeExperience.previewAllApps')}
+              </Typography>
+            </Stack>
+            <Box
+              aria-hidden="true"
+              sx={{
+                mt: 1,
+                display: 'grid',
+                gridTemplateColumns: mobilePreview ? 'repeat(4, 1fr)' : 'repeat(8, 1fr)',
+                gap: mobilePreview ? 0.75 : 1,
+              }}
+            >
+              {Array.from({ length: mobilePreview ? 8 : 8 }, (_, index) => (
+                <Stack key={index} alignItems="center" gap={0.5}>
+                  <Box
+                    sx={{
+                      width: mobilePreview ? 34 : 38,
+                      height: mobilePreview ? 34 : 38,
+                      borderRadius: 1.5,
+                      bgcolor: ['#EAF0FF', '#F1ECFF', '#E8F6F5', '#ECF2F8'][index % 4],
+                      border: '1px solid rgba(70,88,116,0.16)',
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      width: mobilePreview ? 32 : 38,
+                      height: 5,
+                      borderRadius: 99,
+                      bgcolor: darkPreview ? 'rgba(248,250,252,0.28)' : 'rgba(38,49,67,0.2)',
+                    }}
+                  />
+                </Stack>
+              ))}
+            </Box>
+          </Box>
+        </TenantWorkscape>
       </Box>
 
       <Box

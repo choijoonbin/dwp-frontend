@@ -11,6 +11,7 @@ export type WorkspaceWorkItem = {
   id: string;
   title: string;
   summary?: string | null;
+  dataClassification?: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED' | string | null;
   type: WorkspaceWorkType;
   priority: WorkspacePriority;
   status: WorkspaceWorkStatus;

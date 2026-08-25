@@ -767,6 +767,31 @@ export function NotificationPolicyStudio() {
                 </Stack>
               </Alert>
             )}
+            <Alert severity="info" icon={<ShieldCheck size={18} />}>
+              <Typography variant="subtitle2">{t('admin.policies.runtimePreviewTitle')}</Typography>
+              <Typography variant="body2" sx={{ mt: 0.35 }}>
+                {t('admin.policies.runtimePreviewDescription')}
+              </Typography>
+              <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.75 }}>
+                {preview.runtimeChannels.map((channel) => (
+                  <Chip
+                    key={channel.channel}
+                    size="small"
+                    variant="outlined"
+                    color={channel.defaultDeliveryAdmitted ? 'success' : 'default'}
+                    label={t('admin.policies.runtimeChannel', {
+                      channel: t(`channels.${channel.channel}`),
+                      outcome: t(
+                        `admin.policies.${
+                          channel.defaultDeliveryAdmitted ? 'runtimeAdmitted' : 'runtimeSuppressed'
+                        }`
+                      ),
+                      mode: t(`admin.policies.runtimeMode.${channel.effectiveMode}`),
+                    })}
+                  />
+                ))}
+              </Stack>
+            </Alert>
             <PolicyChannels channels={preview.proposedPolicy.channels} />
             <Alert severity="info">{t('admin.policies.makerCheckerPreview')}</Alert>
           </Stack>

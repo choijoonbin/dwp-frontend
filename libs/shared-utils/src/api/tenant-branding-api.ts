@@ -1,5 +1,5 @@
-import { API_URL } from '../env';
 import { axiosInstance } from '../axios-instance';
+import { resolveBrowserMediaUrl } from './browser-media-url';
 
 import type { ApiResponse } from '../types';
 
@@ -32,12 +32,14 @@ export type TenantBrandingRevision = {
 };
 
 export function resolveTenantLogoUrl(branding?: TenantBranding | null): string | null {
-  return branding?.logoUrl ? API_URL + branding.logoUrl : null;
+  return branding?.logoUrl ? resolveBrowserMediaUrl(branding.logoUrl) : null;
 }
 
 export function resolveAdminTenantLogoUrl(branding?: TenantBranding | null): string | null {
   return branding?.logoUrl
-    ? API_URL + branding.logoUrl.replace('/v1/tenant-branding/', '/v1/admin/tenant-branding/')
+    ? resolveBrowserMediaUrl(
+        branding.logoUrl.replace('/v1/tenant-branding/', '/v1/admin/tenant-branding/')
+      )
     : null;
 }
 

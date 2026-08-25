@@ -21,6 +21,24 @@ const backendSource = path.resolve(
   process.env.DWP_GATEWAY_OPENAPI ??
     path.join(root, '../dwp-backend/contracts/openapi/gateway-public.json')
 );
+const backendSourceIsExplicit = Boolean(process.env.DWP_GATEWAY_OPENAPI);
+
+const canonicalizeJson = (value) => {
+  if (Array.isArray(value)) {
+    return value.map(canonicalizeJson);
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, nestedValue]) => [key, canonicalizeJson(nestedValue)])
+    );
+  }
+  return value;
+};
+
+const readCanonicalJson = (file) =>
+  JSON.stringify(canonicalizeJson(JSON.parse(fs.readFileSync(file, 'utf8'))));
 
 if (mode === '--sync') {
   if (!fs.existsSync(backendSource)) {
@@ -33,6 +51,20 @@ if (mode === '--sync') {
 if (!fs.existsSync(snapshot)) {
   console.error(`Frontend Gateway contract snapshot is missing: ${snapshot}`);
   process.exit(1);
+}
+
+if (mode === '--check') {
+  if (fs.existsSync(backendSource)) {
+    if (readCanonicalJson(backendSource) !== readCanonicalJson(snapshot)) {
+      console.error(
+        'Frontend Gateway contract snapshot differs from the backend contract. Run corepack yarn openapi:sync.'
+      );
+      process.exit(1);
+    }
+  } else if (backendSourceIsExplicit) {
+    console.error(`Configured Backend Gateway contract is missing: ${backendSource}`);
+    process.exit(1);
+  }
 }
 
 const ast = await openapiTS(pathToFileURL(snapshot));

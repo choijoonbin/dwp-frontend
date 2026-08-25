@@ -106,8 +106,7 @@ function AnnouncementStory({
         transition: 'background-color 150ms ease',
         '&:hover': { bgcolor: 'action.hover' },
         '&:focus-visible': {
-          outline: '3px solid',
-          outlineColor: 'primary.main',
+          outline: '3px solid var(--dwp-focus-ring, currentColor)',
           outlineOffset: -3,
         },
         '@keyframes dwp-news-fade-in': {
@@ -217,7 +216,8 @@ export function AnnouncementsWidget({
   fetching,
   requestFailed,
   onRetry,
-}: HomeOverviewWidgetProps) {
+  autoRotate = true,
+}: HomeOverviewWidgetProps & { autoRotate?: boolean }) {
   const { t } = useTranslation('communications');
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [activeIndex, setActiveIndex] = useState(0);
@@ -296,12 +296,14 @@ export function AnnouncementsWidget({
   );
 
   useEffect(() => {
-    if (stories.length < 2 || reduceMotion || interactionPaused || autoPaused) return undefined;
+    if (!autoRotate || stories.length < 2 || reduceMotion || interactionPaused || autoPaused) {
+      return undefined;
+    }
     const timer = window.setInterval(() => {
       showStory(activeIndexRef.current + 1);
     }, NEWS_ROTATION_INTERVAL_MS);
     return () => window.clearInterval(timer);
-  }, [autoPaused, interactionPaused, reduceMotion, showStory, stories.length]);
+  }, [autoPaused, autoRotate, interactionPaused, reduceMotion, showStory, stories.length]);
 
   return (
     <Box
@@ -413,9 +415,16 @@ export function AnnouncementsWidget({
           alignItems="center"
           justifyContent="space-between"
           gap={1}
-          sx={{ minHeight: 48, px: 1.5, borderTop: 1, borderColor: 'divider' }}
+          sx={{
+            minHeight: 48,
+            px: 1.5,
+            py: 0.5,
+            flexWrap: 'wrap',
+            borderTop: 1,
+            borderColor: 'divider',
+          }}
         >
-          <Stack direction="row" alignItems="center" gap={0.25} minWidth={0}>
+          <Stack direction="row" alignItems="center" gap={0.25} minWidth={0} flexWrap="wrap">
             {stories.length > 1 && (
               <>
                 {stories.map((item, index) => (
@@ -427,8 +436,8 @@ export function AnnouncementsWidget({
                     aria-current={index === activeIndex ? 'true' : undefined}
                     onClick={() => showStory(index)}
                     sx={{
-                      width: 20,
-                      height: 28,
+                      width: 44,
+                      height: 44,
                       p: 0,
                       border: 0,
                       bgcolor: 'transparent',
@@ -443,15 +452,19 @@ export function AnnouncementsWidget({
                         bgcolor: index === activeIndex ? 'primary.main' : 'divider',
                         transition: reduceMotion ? 'none' : 'width 180ms ease',
                       },
+                      '&:focus-visible': {
+                        outline: '3px solid var(--dwp-focus-ring, currentColor)',
+                        outlineOffset: -3,
+                      },
                     }}
                   />
                 ))}
-                {!reduceMotion && (
+                {autoRotate && !reduceMotion && (
                   <ActionIconButton
                     size="small"
                     label={t(autoPaused ? 'home.resumeRotation' : 'home.pauseRotation')}
                     onClick={() => setAutoPaused((current) => !current)}
-                    sx={{ ml: 0.25 }}
+                    sx={{ ml: 0.25, width: 44, height: 44 }}
                   >
                     {autoPaused ? <Play size={15} /> : <Pause size={15} />}
                   </ActionIconButton>
@@ -469,8 +482,14 @@ export function AnnouncementsWidget({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 0.5,
+              minHeight: 44,
+              px: 0.5,
               textDecoration: 'none',
               whiteSpace: 'nowrap',
+              '&:focus-visible': {
+                outline: '3px solid var(--dwp-focus-ring, currentColor)',
+                outlineOffset: 2,
+              },
             }}
           >
             {t('home.viewAll')}

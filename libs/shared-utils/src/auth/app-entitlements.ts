@@ -37,3 +37,21 @@ export function isAppResourceEntitled(
     (permission) => permission.effect.trim().toUpperCase() === 'ALLOW'
   );
 }
+
+/** Exact read contract for surfaces that launch an API-backed app. */
+export function isAppReadEntitled(
+  resourceKey: string,
+  permissions: readonly AppEntitlementPermission[]
+): boolean {
+  const resourceKeys = new Set(appResourceAliasCandidates(resourceKey));
+  const matching = permissions.filter(
+    (permission) =>
+      permission.resourceType.trim().toUpperCase() === 'APP' &&
+      resourceKeys.has(permission.resourceKey.trim().toUpperCase()) &&
+      permission.permissionCode.trim().toUpperCase() === 'VIEW'
+  );
+  if (matching.some((permission) => permission.effect.trim().toUpperCase() === 'DENY')) {
+    return false;
+  }
+  return matching.some((permission) => permission.effect.trim().toUpperCase() === 'ALLOW');
+}

@@ -111,6 +111,7 @@ export const HR_SERVICE_REQUESTS_FIXTURE = [
     serviceNameKo: '복리후생 지원',
     serviceNameEn: 'Benefits support',
     summary: 'Confirm dependent enrollment evidence',
+    dataClassification: 'CONFIDENTIAL',
     status: 'AWAITING_REQUESTER',
     priority: 'NORMAL',
     assignedGroup: 'People Services',

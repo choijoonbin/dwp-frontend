@@ -235,7 +235,10 @@
   "bulk": {
     "toolbarLabel": "선택한 알림 작업",
     "selected": "{{count}}개 선택됨",
-    "selectItem": "{{title}} 선택"
+    "selectItem": "{{title}} 선택",
+    "undo": "실행 취소",
+    "undoing": "복원 중",
+    "undoAvailable": "방금 적용한 대량 변경은 {{time}}까지 안전하게 되돌릴 수 있습니다."
   },
   "detail": {
     "title": "알림 상세",
@@ -251,6 +254,9 @@
       "EXPIRED": "연결된 업무가 만료되었습니다.",
       "FORBIDDEN": "현재 이 업무를 열 권한이 없습니다.",
       "AVAILABLE": "연결된 업무를 열 수 있습니다."
+    },
+    "targetReason": {
+      "SOURCE_DELETED": "원본 앱에서 연결된 업무가 삭제되었습니다."
     }
   },
   "feedback": {
@@ -263,8 +269,13 @@
     "SNOOZE": "정한 시간까지 나중에 알림으로 이동했습니다.",
     "triageError": "알림 상태를 변경하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도해 주세요.",
     "bulkSuccess": "알림 {{count}}개의 상태를 변경했습니다.",
-    "bulkPartial": "일부 항목 {{count}}개가 최신 상태와 충돌했습니다.",
-    "bulkError": "선택한 알림의 상태를 변경하지 못했습니다."
+    "bulkPartial": "처리하지 못한 {{count}}개 항목을 다시 시도할 수 있도록 선택해 두었습니다.",
+    "bulkError": "선택한 알림의 상태를 변경하지 못했습니다.",
+    "bulkUndoSuccess": "대량 변경 {{count}}건을 원래 상태로 복원했습니다.",
+    "bulkUndoPartial": "{{count}}건은 이후 변경과 충돌해 복원하지 않았습니다.",
+    "bulkUndoError": "대량 변경을 되돌리지 못했습니다. 실행 가능 시간이 지났을 수 있습니다.",
+    "targetUnavailable": "연결된 업무가 삭제되었거나 더 이상 접근할 수 없습니다.",
+    "targetOpenError": "연결된 업무를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요."
   },
   "preferences": {
     "title": "알림 설정",
@@ -282,6 +293,7 @@
       "auto": "변경 사항 자동 저장",
       "saving": "저장 중",
       "saved": "{{time}} 저장됨",
+      "recovered": "최신 설정에 내 변경을 다시 적용함",
       "error": "저장하지 못함",
       "now": "방금"
     },
@@ -292,6 +304,48 @@
       "SYSTEM_DEFAULT": "시스템 기본값"
     },
     "mandatory": "필수 알림",
+    "types": {
+      "APPROVAL_ACTION_REQUIRED": {
+        "label": "결재 조치 필요",
+        "description": "내 검토나 승인이 필요한 결재가 배정되면 알립니다."
+      },
+      "APPROVAL_REQUEST_APPROVED": {
+        "label": "결재 승인 완료",
+        "description": "제출한 결재 요청이 승인되면 알립니다."
+      },
+      "APPROVAL_REQUEST_REJECTED": {
+        "label": "결재 반려",
+        "description": "제출한 결재 요청이 반려되면 알립니다."
+      },
+      "APPROVAL_REQUEST_SUBMITTED": {
+        "label": "결재 요청 제출",
+        "description": "관련 결재 요청이 제출되면 알립니다."
+      },
+      "HCM_LEAVE_APPROVED": {
+        "label": "휴가 승인",
+        "description": "내 휴가 신청이 승인되면 알립니다."
+      },
+      "MESSAGING_CHANNEL_MESSAGE": {
+        "label": "채널 새 메시지",
+        "description": "구독 중인 채널에 새 메시지가 등록되면 알립니다."
+      },
+      "MESSAGING_DIRECT_MESSAGE": {
+        "label": "새 다이렉트 메시지",
+        "description": "동료가 나에게 새 메시지를 보내면 알립니다."
+      },
+      "MESSAGING_MENTION": {
+        "label": "메신저 멘션",
+        "description": "대화에서 나를 직접 언급하면 알립니다."
+      },
+      "MESSAGING_THREAD_REPLY": {
+        "label": "대화 답글",
+        "description": "참여 중인 대화에 새 답글이 등록되면 알립니다."
+      },
+      "SPACE_MENTION": {
+        "label": "Space 멘션",
+        "description": "Space 업무에서 나를 직접 언급하면 알립니다."
+      }
+    },
     "presentation": {
       "title": "도착 알림 및 개인정보",
       "description": "알림 센터 보관과 별개로 화면에 표시되는 방해 수준과 내용 공개 범위를 정합니다.",
@@ -387,8 +441,9 @@
       "effectivePolicyUnavailable": "현재 서버는 유효 정책 합성 API를 제공하지 않아 저장된 개인 규칙만 표시합니다. 전역 설정은 계속 적용됩니다."
     },
     "feedback": {
-      "profileError": "전역 알림 설정을 저장하지 못했습니다.",
-      "ruleError": "앱별 알림 설정을 저장하지 못했습니다."
+      "conflictRecovered": "다른 창의 최신 설정을 유지하면서 내 변경을 다시 적용했습니다.",
+      "profileError": "알림 설정을 저장하지 못했습니다. 서버의 최신 설정으로 되돌렸습니다.",
+      "ruleError": "알림 유형 설정을 저장하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도해 주세요."
     }
   },
   "admin": {
@@ -436,6 +491,12 @@
     },
     "overview": {
       "metricsLabel": "알림 운영 핵심 지표",
+      "metrics": {
+        "activeContracts": "활성 계약",
+        "notifications24Hours": "최근 24시간 알림",
+        "queuedDeliveries": "전달 대기",
+        "failedDeliveries": "전달 실패"
+      },
       "baseline": "기준 {{value}}",
       "trendTitle": "발생과 사용자 영향",
       "trendDescription": "생성량과 함께 조치 필요, 실패, 음소거 추이를 비교합니다.",
@@ -549,6 +610,17 @@
       "previewing": "영향 계산 중",
       "previewTitle": "정책 변경 영향",
       "previewDescription": "초안을 만들기 전에 영향을 받는 알림 유형, 최근 사용자와 위험 신호를 확인합니다.",
+      "runtimePreviewTitle": "실제 런타임 판정",
+      "runtimePreviewDescription": "운영 적용과 같은 평가기로 사용자 재정의가 없는 기본 전달 결과를 계산했습니다.",
+      "runtimeChannel": "{{channel}} · {{outcome}} · {{mode}}",
+      "runtimeAdmitted": "전달",
+      "runtimeSuppressed": "억제",
+      "runtimeMode": {
+        "IMMEDIATE": "즉시",
+        "MUTED": "음소거",
+        "DAILY_DIGEST": "일간 요약",
+        "WEEKLY_DIGEST": "주간 요약"
+      },
       "createDraft": "승인 초안 만들기",
       "creatingDraft": "초안 생성 중",
       "makerCheckerPreview": "이 단계에서는 운영 정책이 바뀌지 않습니다. 초안 생성 후 다른 승인자가 게시해야 적용됩니다.",

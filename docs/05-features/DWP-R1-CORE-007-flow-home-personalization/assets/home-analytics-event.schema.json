@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/core-007/home-analytics-event.schema.json",
+  "title": "DWP Flow Home low-cardinality analytics event",
+  "description": "Design contract only. User content and identifiers are intentionally excluded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eventName", "surfaceKey", "occurredAt"],
+  "properties": {
+    "eventName": {
+      "type": "string",
+      "enum": [
+        "home.viewed",
+        "home.section_state",
+        "home.app_launched",
+        "home.action_opened",
+        "home.flowline_item_opened",
+        "home.signal_opened",
+        "home.edit_started",
+        "home.edit_changed",
+        "home.edit_undone",
+        "home.edit_redone",
+        "home.edit_saved",
+        "home.edit_cancelled",
+        "home.preference_conflict",
+        "home.recommendation_feedback"
+      ]
+    },
+    "surfaceKey": {
+      "type": "string",
+      "enum": ["workspace-home"]
+    },
+    "sectionKey": {
+      "type": "string",
+      "enum": ["app-dock", "announcements", "now", "flowline", "signals", "next"]
+    },
+    "entryMethod": {
+      "type": "string",
+      "enum": ["button", "long-press", "context-menu", "keyboard", "system"]
+    },
+    "actionType": {
+      "type": "string",
+      "enum": ["open", "move", "resize", "hide", "restore", "save", "cancel", "reset", "feedback"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["healthy", "empty", "loading", "partial", "stale", "offline", "forbidden", "error"]
+    },
+    "sourceType": {
+      "type": "string",
+      "enum": ["platform", "work", "calendar", "communications", "notification", "recommendation"]
+    },
+    "freshnessAgeBucket": {
+      "type": "string",
+      "enum": ["lt-1m", "1m-5m", "5m-30m", "30m-2h", "gte-2h", "unknown"]
+    },
+    "viewportBucket": {
+      "type": "string",
+      "enum": ["320", "390", "1280", "1440", "other"]
+    },
+    "durationBucket": {
+      "type": "string",
+      "enum": ["lt-1s", "1s-5s", "5s-30s", "30s-2m", "gte-2m"]
+    },
+    "changeCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

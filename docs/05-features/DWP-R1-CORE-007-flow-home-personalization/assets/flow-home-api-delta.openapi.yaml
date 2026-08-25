@@ -1,0 +1,203 @@
+openapi: 3.1.0
+info:
+  title: DWP Flow Home API Delta
+  version: 0.1.0-design
+  description: >-
+    CORE-007 구현 전에 Backend OpenAPI로 옮겨 승인할 증분 계약이다. 이 파일은 설계
+    초안이며 현재 Runtime API가 아니다. by-app Path와 재사용 Schema 후보를 함께 담은
+    비정규 Design Fragment이므로 Canonical OpenAPI에 병합되기 전에는 Codegen 입력으로
+    사용하지 않는다.
+x-dwp-feature-id: DWP-R1-CORE-007
+x-dwp-status: design-build-ready-candidate
+x-dwp-contract-kind: non-canonical-design-fragment
+x-dwp-codegen-ready: false
+paths:
+  /api/notifications/v1/summary/by-app:
+    get:
+      operationId: getNotificationSummaryByApp
+      summary: 현재 사용자의 권한 앱별 알림 집계
+      tags: [Flow Home]
+      responses:
+        '200':
+          description: 앱별 집계 또는 부분 실패 상태
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAppNotificationSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+components:
+  responses:
+    Unauthorized:
+      description: 인증 Session 없음 또는 만료
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: 현재 사용자 또는 Tenant 정책에서 허용되지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    ApiResponseAppNotificationSummary:
+      type: object
+      additionalProperties: false
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/AppNotificationSummary'
+    AppNotificationSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - partial
+        - unavailableSources
+        - apps
+        - changeVersion
+        - counterVersion
+        - generatedAt
+      properties:
+        partial:
+          type: boolean
+        unavailableSources:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            maxLength: 80
+        apps:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/AppNotificationCounter'
+        changeVersion:
+          type: string
+          maxLength: 80
+        counterVersion:
+          type: string
+          maxLength: 80
+        generatedAt:
+          type: string
+          format: date-time
+    AppNotificationCounter:
+      type: object
+      additionalProperties: false
+      required: [appKey, totalUnread, actionableUnread, urgentUnread]
+      properties:
+        appKey:
+          type: string
+          pattern: '^[a-z0-9][a-z0-9-]{0,63}$'
+        totalUnread:
+          type: integer
+          minimum: 0
+        actionableUnread:
+          type: integer
+          minimum: 0
+        urgentUnread:
+          type: integer
+          minimum: 0
+    HomeCompositionPolicyV3:
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - experienceVariant
+        - personalCustomizationEnabled
+        - governedZones
+      properties:
+        schemaVersion:
+          const: 3
+        experienceVariant:
+          type: string
+          enum: [CLASSIC, FLOW_V1]
+          default: CLASSIC
+        personalCustomizationEnabled:
+          type: boolean
+        governedZones:
+          type: array
+          items:
+            $ref: '#/components/schemas/HomeGovernedZoneV3'
+    HomeGovernedZoneV3:
+      type: object
+      additionalProperties: false
+      required: [zoneKey, placement, visible, size, height, sortOrder]
+      properties:
+        zoneKey:
+          type: string
+          minLength: 1
+          maxLength: 80
+        placement:
+          type: string
+          enum: [HERO, CANVAS]
+        visible:
+          type: boolean
+        size:
+          type: string
+          enum: [compact, medium, large, full]
+        height:
+          type: string
+          enum: [short, standard]
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 10000
+    AppLayoutPayloadV1:
+      type: object
+      additionalProperties: false
+      required: [version, groups, folders, hiddenAppIds]
+      properties:
+        version:
+          const: 1
+        groups:
+          type: object
+          additionalProperties:
+            type: array
+            uniqueItems: true
+            items:
+              type: string
+              maxLength: 100
+        folders:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AppFolderV1'
+        hiddenAppIds:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            maxLength: 100
+    AppFolderV1:
+      type: object
+      additionalProperties: false
+      required: [id, name, groupId, appIds]
+      properties:
+        id:
+          type: string
+          pattern: '^folder-[a-zA-Z0-9_-]+$'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 40
+        groupId:
+          type: string
+          maxLength: 80
+        appIds:
+          type: array
+          minItems: 2
+          uniqueItems: true
+          items:
+            type: string
+            maxLength: 100
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string

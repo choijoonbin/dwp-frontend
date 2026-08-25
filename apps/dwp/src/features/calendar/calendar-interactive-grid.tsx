@@ -37,6 +37,7 @@ type CalendarInteractiveGridProps = {
   compact: boolean;
   loading: boolean;
   navigateDate?: Date;
+  canCreate: boolean;
   canMove: (event: CalendarEvent) => boolean;
   onRangeChange: (range: CalendarRange) => void;
   onCreateRange: (start: Date, end: Date, allDay: boolean) => void;
@@ -93,6 +94,7 @@ export function CalendarInteractiveGrid({
   compact,
   loading,
   navigateDate,
+  canCreate,
   canMove,
   onRangeChange,
   onCreateRange,
@@ -181,8 +183,8 @@ export function CalendarInteractiveGrid({
         datesSet={(info: DatesSetInfo) =>
           onRangeChange({ from: info.start.toISOString(), to: info.end.toISOString() })
         }
-        selectable
-        selectMirror
+        selectable={canCreate}
+        selectMirror={canCreate}
         selectMinDistance={4}
         select={select}
         editable

@@ -48,6 +48,7 @@ type ShellHeaderProps = {
   primaryNavigation?: ReactNode;
   compactSearch?: boolean;
   maxContentWidth?: number;
+  trailing?: ReactNode;
   sx?: SxProps<Theme>;
 };
 
@@ -66,6 +67,7 @@ export function ShellHeader({
   primaryNavigation,
   compactSearch = false,
   maxContentWidth,
+  trailing,
   sx,
 }: ShellHeaderProps) {
   const glass = surface === 'glass';
@@ -241,6 +243,7 @@ export function ShellHeader({
           >
             <AccountMenu showIdentity />
           </Box>
+          {trailing}
         </Box>
       </Toolbar>
     </AppBar>

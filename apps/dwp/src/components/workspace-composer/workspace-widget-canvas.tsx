@@ -34,6 +34,7 @@ import {
   setWorkspaceWidgetVisibility,
 } from './workspace-composer-model';
 import {
+  WORKSPACE_WIDGET_EDITOR_CHROME_PX,
   WORKSPACE_WIDGET_GRID_COLUMNS,
   workspaceWidgetBlockSize,
   workspaceWidgetGridColumn,
@@ -41,13 +42,15 @@ import {
 } from './workspace-widget-layout-policy';
 import { WorkspaceWidgetFootprintPicker } from './workspace-widget-footprint-picker';
 import {
-  WORKSPACE_WIDGET_READY_PULSE_DURATION_MS,
-  WORKSPACE_WIDGET_JIGGLE_DURATION_MS,
+  GovernedWidget,
+  WorkspaceWidgetContent,
+  type GovernedWorkspaceWidget,
+} from './workspace-widget-frame';
+import {
   WORKSPACE_WIDGET_SETTLE_DURATION_MS,
   WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING,
   WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
-  workspaceWidgetJiggle,
-  workspaceWidgetReadyPulse,
+  useReadModeWidgetLongPress,
   workspaceWidgetSettle,
   workspaceWidgetSettleDelayMs,
 } from './workspace-edit-motion';
@@ -66,10 +69,13 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetDefinition } from './workspace-composer-model';
 
+export type { GovernedWorkspaceWidget } from './workspace-widget-frame';
+
 type WorkspaceWidgetCanvasProps<WidgetKey extends string> = {
   registry: readonly WorkspaceWidgetDefinition<WidgetKey>[];
   widgets: readonly PersonalHomeWidgetPreference<WidgetKey>[];
   governedWidgets?: readonly GovernedWorkspaceWidget[];
+  trailingGovernedWidgets?: readonly GovernedWorkspaceWidget[];
   editing: boolean;
   busy?: boolean;
   presentation?: HomePresentation;
@@ -80,15 +86,8 @@ type WorkspaceWidgetCanvasProps<WidgetKey extends string> = {
     size: HomeWidgetSize,
     height: HomeWidgetHeight
   ) => React.ReactNode;
-};
-
-export type GovernedWorkspaceWidget = {
-  widgetKey: string;
-  label: string;
-  size: HomeWidgetSize;
-  height: HomeWidgetHeight;
-  surface?: 'card' | 'plain';
-  content: React.ReactNode;
+  onStartEditing?: () => void;
+  scrollMode?: 'contained' | 'document';
 };
 
 type SortableWidgetProps<WidgetKey extends string> = {
@@ -103,8 +102,11 @@ type SortableWidgetProps<WidgetKey extends string> = {
   onMove: (direction: -1 | 1) => void;
   first: boolean;
   last: boolean;
+  keyboardDragging: boolean;
   motionDelayMs: number;
   inlineInset: Readonly<{ xs: number; sm: number; lg: number }>;
+  scrollMode: 'contained' | 'document';
+  onStartEditing?: () => void;
   children: React.ReactNode;
 };
 
@@ -128,27 +130,32 @@ function reorderWidgetKeys<WidgetKey extends string>(
   return next;
 }
 
-function WorkspaceWidgetContent({ children }: { children: React.ReactNode }) {
-  return (
-    <Box
-      data-workspace-widget-content
-      sx={{
-        flex: 1,
-        minHeight: 0,
-        overflowX: { xs: 'visible', sm: 'hidden' },
-        overflowY: { xs: 'visible', sm: 'auto' },
-        overscrollBehavior: 'contain',
-        scrollbarGutter: 'stable',
-        '& > section': {
-          height: 'auto !important',
-          minHeight: '100% !important',
-          overflow: 'visible !important',
-        },
-      }}
-    >
-      {children}
-    </Box>
-  );
+export type WorkspaceWidgetDropOutcome = Readonly<{
+  moved: boolean;
+  position: number;
+}>;
+
+export function resolveWorkspaceWidgetDropOutcome<WidgetKey extends string>(
+  keys: readonly WidgetKey[],
+  activeKey: WidgetKey,
+  finalOverKey: WidgetKey | null,
+  previewTargetKey: WidgetKey | null
+): WorkspaceWidgetDropOutcome {
+  const targetKey = resolveWorkspaceWidgetDropTarget(activeKey, finalOverKey, previewTargetKey);
+  const originalPosition = Math.max(0, keys.indexOf(activeKey)) + 1;
+  if (!targetKey) return { moved: false, position: originalPosition };
+  const next = reorderWidgetKeys(keys, activeKey, targetKey);
+  const nextPosition = Math.max(0, next.indexOf(activeKey)) + 1;
+  return { moved: nextPosition !== originalPosition, position: nextPosition };
+}
+
+export function resolveWorkspaceWidgetDropTarget<WidgetKey extends string>(
+  activeKey: WidgetKey,
+  finalOverKey: WidgetKey | null,
+  previewTargetKey: WidgetKey | null
+): WidgetKey | null {
+  if (!finalOverKey || finalOverKey === activeKey) return null;
+  return previewTargetKey ?? finalOverKey;
 }
 
 function SortableWidget<WidgetKey extends string>({
@@ -163,8 +170,11 @@ function SortableWidget<WidgetKey extends string>({
   onMove,
   first,
   last,
+  keyboardDragging,
   motionDelayMs,
   inlineInset,
+  scrollMode,
+  onStartEditing,
   children,
 }: SortableWidgetProps<WidgetKey>) {
   const { t } = useTranslation('composer');
@@ -175,17 +185,23 @@ function SortableWidget<WidgetKey extends string>({
   const size = widget.size ?? definition.defaultSize;
   const height = widget.height ?? definition.defaultHeight;
   const blockSize = workspaceWidgetBlockSize(height);
+  const documentScroll = scrollMode === 'document';
   const dropPreviewTransform = isDragging ? null : transform;
+  const readModeLongPress = useReadModeWidgetLongPress(
+    !editing && !busy ? onStartEditing : undefined
+  );
 
   return (
     <Box
+      {...readModeLongPress}
       ref={setNodeRef}
       data-workspace-widget={widget.widgetKey}
       data-workspace-widget-size={size}
       data-workspace-widget-height={height}
       data-workspace-widget-policy="PERSONAL"
       data-workspace-widget-surface={definition.surface ?? 'card'}
-      data-workspace-widget-motion={editing ? 'jiggle' : 'idle'}
+      data-workspace-widget-motion={editing ? 'settle' : 'idle'}
+      data-workspace-widget-long-press={!editing && onStartEditing ? 'enabled' : undefined}
       data-widget-drop-preview={isDragging ? 'true' : undefined}
       sx={(theme) => ({
         position: 'relative',
@@ -193,31 +209,40 @@ function SortableWidget<WidgetKey extends string>({
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
-        pt: editing ? 5 : 0,
+        pt: editing ? `${WORKSPACE_WIDGET_EDITOR_CHROME_PX}px` : 0,
         px: {
           xs: `${inlineInset.xs}px`,
           sm: `${inlineInset.sm}px`,
           lg: `${inlineInset.lg}px`,
         },
         gridColumn: workspaceWidgetGridColumn(size),
-        height: {
-          xs: 'auto',
-          sm: blockSize.sm + (editing ? 40 : 0),
-        },
+        // Document scrolling owns wheel input. Height tokens are an edit-mode
+        // footprint only; read mode is content-adaptive so sparse widgets do
+        // not turn the selected footprint into blank space. Contained canvases
+        // keep their fixed viewport.
+        height: documentScroll
+          ? editing
+            ? {
+                xs: 'auto',
+                sm: blockSize.sm + WORKSPACE_WIDGET_EDITOR_CHROME_PX,
+              }
+            : 'auto'
+          : {
+              xs: 'auto',
+              sm: blockSize.sm + (editing ? WORKSPACE_WIDGET_EDITOR_CHROME_PX : 0),
+            },
+        minHeight: 0,
+        alignSelf: documentScroll ? 'start' : 'stretch',
         opacity: 1,
         transform: CSS.Transform.toString(dropPreviewTransform),
         transformOrigin: 'center',
-        animation:
-          editing && !isDragging
-            ? `${workspaceWidgetJiggle} ${WORKSPACE_WIDGET_JIGGLE_DURATION_MS}ms ease-in-out ${-motionDelayMs}ms infinite`
-            : 'none',
+        animation: 'none',
         transition,
         zIndex: isDragging ? 4 : 1,
-        willChange:
-          editing && !isDragging ? 'translate, rotate' : isDragging ? 'transform' : 'auto',
+        willChange: isDragging ? 'transform' : 'auto',
         borderRadius: 1,
         '& > [data-workspace-widget-content]': {
-          opacity: isDragging ? 0 : 1,
+          opacity: isDragging ? 0 : editing ? 0.68 : 1,
           visibility: isDragging ? 'hidden' : 'visible',
           transition: 'opacity 120ms ease',
           transformOrigin: 'center',
@@ -259,7 +284,7 @@ function SortableWidget<WidgetKey extends string>({
                 : 'none',
               transformOrigin: 'center',
               animation: !isDragging
-                ? `${workspaceWidgetSettle} ${WORKSPACE_WIDGET_SETTLE_DURATION_MS}ms ${WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING} ${motionDelayMs}ms 1 backwards, ${workspaceWidgetReadyPulse} ${WORKSPACE_WIDGET_READY_PULSE_DURATION_MS}ms ease-in-out ${WORKSPACE_WIDGET_SETTLE_DURATION_MS + motionDelayMs}ms infinite`
+                ? `${workspaceWidgetSettle} ${WORKSPACE_WIDGET_SETTLE_DURATION_MS}ms ${WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING} ${motionDelayMs}ms 1 backwards`
                 : 'none',
               pointerEvents: 'none',
               zIndex: 5,
@@ -272,7 +297,20 @@ function SortableWidget<WidgetKey extends string>({
             animationTimingFunction: WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
           },
           '&::after': {
-            animationTimingFunction: `${WORKSPACE_WIDGET_SETTLE_SPRING_EASING}, ease-in-out`,
+            animationTimingFunction: WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
+          },
+        },
+        '@media (prefers-reduced-transparency: reduce)': {
+          '&::after': {
+            backgroundColor: isDragging ? theme.palette.background.paper : 'transparent',
+            boxShadow: 'none',
+          },
+        },
+        '@media (forced-colors: active)': {
+          '&::after': {
+            borderColor: 'CanvasText',
+            backgroundColor: isDragging ? 'Canvas' : 'transparent',
+            boxShadow: 'none',
           },
         },
         'html[data-motion="reduced"] &': {
@@ -301,7 +339,9 @@ function SortableWidget<WidgetKey extends string>({
         },
       })}
     >
-      <WorkspaceWidgetContent>{children}</WorkspaceWidgetContent>
+      <WorkspaceWidgetContent editing={editing} scrollMode={scrollMode}>
+        {children}
+      </WorkspaceWidgetContent>
       {isDragging && (
         <Box
           data-widget-drop-slot
@@ -338,6 +378,21 @@ function SortableWidget<WidgetKey extends string>({
               color: 'primary.main',
               boxShadow: `0 8px 22px ${alpha(theme.palette.common.black, 0.14)}`,
               backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              '@media (prefers-reduced-transparency: reduce)': {
+                bgcolor: 'background.paper',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              },
+              '@media (forced-colors: active)': {
+                bgcolor: 'Canvas',
+                color: 'CanvasText',
+                borderColor: 'CanvasText',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              },
             })}
           >
             <GripVertical size={20} />
@@ -348,7 +403,7 @@ function SortableWidget<WidgetKey extends string>({
         <Box
           sx={{
             position: 'absolute',
-            top: 6,
+            top: 0,
             left: {
               xs: inlineInset.xs + 8,
               sm: inlineInset.sm + 8,
@@ -365,8 +420,8 @@ function SortableWidget<WidgetKey extends string>({
             justifyContent: 'space-between',
             gap: 1,
             pointerEvents: 'none',
-            opacity: isDragging ? 0 : 1,
-            visibility: isDragging ? 'hidden' : 'visible',
+            opacity: isDragging && !keyboardDragging ? 0 : 1,
+            visibility: isDragging && !keyboardDragging ? 'hidden' : 'visible',
             transition: 'opacity 100ms ease',
           }}
         >
@@ -382,14 +437,29 @@ function SortableWidget<WidgetKey extends string>({
             aria-label={t('moveWidget', { widget: label })}
             sx={{
               pointerEvents: 'auto',
-              height: 30,
-              maxWidth: 'calc(100% - 142px)',
+              minHeight: 44,
+              maxWidth: 'calc(100% - 206px)',
               bgcolor: 'rgba(255,255,255,0.94)',
               color: 'text.primary',
               cursor: busy ? 'wait' : 'grab',
               boxShadow: '0 6px 18px rgba(15,23,42,0.16)',
               backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
               '&:active': { cursor: busy ? 'wait' : 'grabbing' },
+              '@media (prefers-reduced-transparency: reduce)': {
+                bgcolor: 'background.paper',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              },
+              '@media (forced-colors: active)': {
+                bgcolor: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid CanvasText',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              },
             }}
           />
           <Box sx={{ display: 'flex', gap: 0.5, pointerEvents: 'auto' }}>
@@ -399,13 +469,19 @@ function SortableWidget<WidgetKey extends string>({
               disabled={busy || first}
               onClick={() => onMove(-1)}
               sx={{
-                width: 28,
-                height: 28,
-                bgcolor: 'grey.900',
-                color: 'common.white',
+                width: 44,
+                height: 44,
+                bgcolor: 'background.paper',
+                color: 'text.primary',
                 border: 1,
-                borderColor: 'rgba(255,255,255,0.8)',
-                '&:hover': { bgcolor: 'grey.800' },
+                borderColor: 'divider',
+                boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+                '&:hover': { bgcolor: 'action.hover', borderColor: 'primary.main' },
+                '@media (forced-colors: active)': {
+                  bgcolor: 'ButtonFace',
+                  color: 'ButtonText',
+                  borderColor: 'ButtonText',
+                },
               }}
             >
               <ArrowUp size={14} />
@@ -416,13 +492,19 @@ function SortableWidget<WidgetKey extends string>({
               disabled={busy || last}
               onClick={() => onMove(1)}
               sx={{
-                width: 28,
-                height: 28,
-                bgcolor: 'grey.900',
-                color: 'common.white',
+                width: 44,
+                height: 44,
+                bgcolor: 'background.paper',
+                color: 'text.primary',
                 border: 1,
-                borderColor: 'rgba(255,255,255,0.8)',
-                '&:hover': { bgcolor: 'grey.800' },
+                borderColor: 'divider',
+                boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+                '&:hover': { bgcolor: 'action.hover', borderColor: 'primary.main' },
+                '@media (forced-colors: active)': {
+                  bgcolor: 'ButtonFace',
+                  color: 'ButtonText',
+                  borderColor: 'ButtonText',
+                },
               }}
             >
               <ArrowDown size={14} />
@@ -446,13 +528,23 @@ function SortableWidget<WidgetKey extends string>({
                 disabled={busy}
                 onClick={onRemove}
                 sx={{
-                  width: 28,
-                  height: 28,
-                  bgcolor: 'grey.900',
-                  color: 'common.white',
+                  width: 44,
+                  height: 44,
+                  bgcolor: 'background.paper',
+                  color: 'text.primary',
                   border: 1,
-                  borderColor: 'rgba(255,255,255,0.8)',
-                  '&:hover': { bgcolor: 'error.main' },
+                  borderColor: 'divider',
+                  boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+                  '&:hover': {
+                    bgcolor: 'action.hover',
+                    color: 'error.main',
+                    borderColor: 'error.main',
+                  },
+                  '@media (forced-colors: active)': {
+                    bgcolor: 'ButtonFace',
+                    color: 'ButtonText',
+                    borderColor: 'ButtonText',
+                  },
                 }}
               >
                 <X size={15} />
@@ -469,6 +561,16 @@ function SortableWidget<WidgetKey extends string>({
                     bgcolor: 'rgba(255,255,255,0.94)',
                     color: 'text.secondary',
                     boxShadow: '0 5px 14px rgba(15,23,42,0.14)',
+                    '@media (prefers-reduced-transparency: reduce)': {
+                      bgcolor: 'background.paper',
+                      boxShadow: 'none',
+                    },
+                    '@media (forced-colors: active)': {
+                      bgcolor: 'Canvas',
+                      color: 'CanvasText',
+                      border: '1px solid CanvasText',
+                      boxShadow: 'none',
+                    },
                   }}
                 >
                   <LockKeyhole size={14} aria-label={t('governed')} />
@@ -482,106 +584,28 @@ function SortableWidget<WidgetKey extends string>({
   );
 }
 
-function GovernedWidget({
-  widget,
-  editing,
-  inlineInset,
-}: {
-  widget: GovernedWorkspaceWidget;
-  editing: boolean;
-  inlineInset: Readonly<{ xs: number; sm: number; lg: number }>;
-}) {
-  const { t } = useTranslation('composer');
-  return (
-    <Box
-      data-workspace-widget={widget.widgetKey}
-      data-workspace-widget-size={widget.size}
-      data-workspace-widget-height={widget.height}
-      data-workspace-widget-policy="GOVERNED"
-      data-workspace-widget-surface={widget.surface ?? 'plain'}
-      sx={{
-        position: 'relative',
-        minWidth: 0,
-        boxSizing: 'border-box',
-        display: 'flex',
-        flexDirection: 'column',
-        pt: editing ? 5 : 0,
-        px: {
-          xs: `${inlineInset.xs}px`,
-          sm: `${inlineInset.sm}px`,
-          lg: `${inlineInset.lg}px`,
-        },
-        gridColumn: workspaceWidgetGridColumn(widget.size),
-        height: {
-          xs: 'auto',
-          sm: workspaceWidgetBlockSize(widget.height).sm + (editing ? 40 : 0),
-        },
-        '&::after': editing
-          ? {
-              content: '""',
-              position: 'absolute',
-              insetBlock: 0,
-              left: {
-                xs: `${inlineInset.xs}px`,
-                sm: `${inlineInset.sm}px`,
-                lg: `${inlineInset.lg}px`,
-              },
-              right: {
-                xs: `${inlineInset.xs}px`,
-                sm: `${inlineInset.sm}px`,
-                lg: `${inlineInset.lg}px`,
-              },
-              border: '1px dashed',
-              borderColor: 'text.disabled',
-              borderRadius: 1,
-              pointerEvents: 'none',
-              zIndex: 5,
-            }
-          : undefined,
-      }}
-    >
-      <WorkspaceWidgetContent>{widget.content}</WorkspaceWidgetContent>
-      {editing && (
-        <Chip
-          icon={<LockKeyhole size={14} aria-hidden="true" />}
-          label={`${widget.label} (${t('governed')})`}
-          size="small"
-          sx={{
-            position: 'absolute',
-            top: 6,
-            left: {
-              xs: inlineInset.xs + 8,
-              sm: inlineInset.sm + 8,
-              lg: inlineInset.lg + 8,
-            },
-            zIndex: 7,
-            maxWidth: 'calc(100% - 32px)',
-            bgcolor: 'rgba(255,255,255,0.94)',
-            color: 'text.secondary',
-            boxShadow: '0 6px 18px rgba(15,23,42,0.12)',
-            backdropFilter: 'blur(12px)',
-          }}
-        />
-      )}
-    </Box>
-  );
-}
-
 export function WorkspaceWidgetCanvas<WidgetKey extends string>({
   registry,
   widgets,
   governedWidgets = [],
+  trailingGovernedWidgets = [],
   editing,
   busy = false,
   presentation = 'balanced',
   getLabel,
   onChange,
   renderWidget,
+  onStartEditing,
+  scrollMode = 'contained',
 }: WorkspaceWidgetCanvasProps<WidgetKey>) {
   const { t } = useTranslation('composer');
   const [activeKey, setActiveKey] = useState<WidgetKey | null>(null);
+  const [activeInput, setActiveInput] = useState<'keyboard' | 'pointer' | null>(null);
   const [previewOrder, setPreviewOrder] = useState<WidgetKey[] | null>(null);
   const dropTargetKeyRef = useRef<WidgetKey | null>(null);
+  const dropOutcomeRef = useRef<
+    Readonly<{ activeKey: WidgetKey; outcome: WorkspaceWidgetDropOutcome }> | undefined
+  >(undefined);
   const definitionByKey = useMemo(
     () => new Map(registry.map((definition) => [definition.key, definition])),
     [registry]
@@ -605,13 +629,16 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
 
   const clearDragPreview = () => {
     setActiveKey(null);
+    setActiveInput(null);
     setPreviewOrder(null);
     dropTargetKeyRef.current = null;
   };
 
-  const handleDragStart = ({ active }: DragStartEvent) => {
+  const handleDragStart = ({ active, activatorEvent }: DragStartEvent) => {
     const nextActiveKey = String(active.id) as WidgetKey;
+    dropOutcomeRef.current = undefined;
     setActiveKey(nextActiveKey);
+    setActiveInput(activatorEvent.type === 'keydown' ? 'keyboard' : 'pointer');
     setPreviewOrder(visible.map((widget) => widget.widgetKey));
     dropTargetKeyRef.current = null;
   };
@@ -620,7 +647,11 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
     if (!over) return;
     const nextActiveKey = String(active.id) as WidgetKey;
     const nextOverKey = String(over.id) as WidgetKey;
-    if (nextOverKey === nextActiveKey) return;
+    if (nextOverKey === nextActiveKey) {
+      dropTargetKeyRef.current = null;
+      setPreviewOrder(visible.map((widget) => widget.widgetKey));
+      return;
+    }
     dropTargetKeyRef.current = nextOverKey;
     setPreviewOrder((current) =>
       reorderWidgetKeys(
@@ -633,9 +664,23 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     const nextActiveKey = String(active.id) as WidgetKey;
-    const nextOverKey = dropTargetKeyRef.current;
+    const finalOverKey = over ? (String(over.id) as WidgetKey) : null;
+    const nextOverKey = resolveWorkspaceWidgetDropTarget(
+      nextActiveKey,
+      finalOverKey,
+      dropTargetKeyRef.current
+    );
+    dropOutcomeRef.current = {
+      activeKey: nextActiveKey,
+      outcome: resolveWorkspaceWidgetDropOutcome(
+        visible.map((widget) => widget.widgetKey),
+        nextActiveKey,
+        finalOverKey,
+        dropTargetKeyRef.current
+      ),
+    };
     clearDragPreview();
-    if (!over || !nextOverKey) return;
+    if (!nextOverKey) return;
     onChange(reorderWorkspaceWidgets(widgets, nextActiveKey, nextOverKey));
   };
   const spacing = workspaceWidgetSpacing(presentation);
@@ -649,6 +694,49 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
       onDragOver={handleDragOver}
       onDragCancel={clearDragPreview}
       onDragEnd={handleDragEnd}
+      accessibility={{
+        screenReaderInstructions: {
+          draggable: t('drag.instructions'),
+        },
+        announcements: {
+          onDragStart: ({ active }) =>
+            t('drag.pickedUp', {
+              widget: getLabel(String(active.id) as WidgetKey),
+              count: previewVisible.length,
+            }),
+          onDragOver: ({ over }) =>
+            over
+              ? t('drag.over', {
+                  widget: getLabel(String(over.id) as WidgetKey),
+                  position:
+                    previewVisible.findIndex((widget) => widget.widgetKey === String(over.id)) + 1,
+                  count: previewVisible.length,
+                })
+              : t('drag.notOver'),
+          onDragEnd: ({ active, over }) => {
+            const activeKey = String(active.id) as WidgetKey;
+            const cached = dropOutcomeRef.current;
+            const outcome =
+              cached?.activeKey === activeKey
+                ? cached.outcome
+                : resolveWorkspaceWidgetDropOutcome(
+                    visible.map((widget) => widget.widgetKey),
+                    activeKey,
+                    over ? (String(over.id) as WidgetKey) : null,
+                    dropTargetKeyRef.current
+                  );
+            return outcome.moved
+              ? t('drag.placed', {
+                  widget: getLabel(activeKey),
+                  position: outcome.position,
+                  count: previewVisible.length,
+                })
+              : t('drag.returned', { widget: getLabel(activeKey) });
+          },
+          onDragCancel: ({ active }) =>
+            t('drag.cancelled', { widget: getLabel(String(active.id) as WidgetKey) }),
+        },
+      }}
     >
       <SortableContext
         items={previewVisible.map((widget) => widget.widgetKey)}
@@ -672,7 +760,7 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
               sm: `${spacing.virtualColumnGapPx.sm}px`,
             },
             rowGap: spacing.rowGap,
-            alignItems: 'start',
+            alignItems: scrollMode === 'document' ? 'start' : 'stretch',
           }}
         >
           {governedWidgets.map((widget) => (
@@ -681,6 +769,8 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
               widget={widget}
               editing={editing}
               inlineInset={inlineInset}
+              scrollMode={scrollMode}
+              onStartEditing={!editing && !busy ? onStartEditing : undefined}
             />
           ))}
           {previewVisible.map((widget, index) => {
@@ -712,13 +802,26 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
                 }
                 first={index === 0}
                 last={index === previewVisible.length - 1}
+                keyboardDragging={activeKey === widget.widgetKey && activeInput === 'keyboard'}
                 motionDelayMs={workspaceWidgetSettleDelayMs(index)}
                 inlineInset={inlineInset}
+                scrollMode={scrollMode}
+                onStartEditing={!editing && !busy ? onStartEditing : undefined}
               >
                 {renderWidget(widget.widgetKey, size, height)}
               </SortableWidget>
             );
           })}
+          {trailingGovernedWidgets.map((widget) => (
+            <GovernedWidget
+              key={widget.widgetKey}
+              widget={widget}
+              editing={editing}
+              inlineInset={inlineInset}
+              scrollMode={scrollMode}
+              onStartEditing={!editing && !busy ? onStartEditing : undefined}
+            />
+          ))}
         </Box>
       </SortableContext>
       <DragOverlay dropAnimation={null}>
@@ -744,7 +847,22 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
                 0.6
               )} inset`,
               backdropFilter: 'blur(18px)',
+              WebkitBackdropFilter: 'blur(18px)',
               cursor: 'grabbing',
+              '@media (prefers-reduced-transparency: reduce)': {
+                bgcolor: 'background.paper',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              },
+              '@media (forced-colors: active)': {
+                bgcolor: 'Canvas',
+                color: 'CanvasText',
+                borderColor: 'CanvasText',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              },
             })}
           >
             <Box
@@ -758,6 +876,11 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
                 borderRadius: 1,
                 bgcolor: alpha(theme.palette.primary.main, 0.12),
                 color: 'primary.main',
+                '@media (forced-colors: active)': {
+                  bgcolor: 'Canvas',
+                  color: 'CanvasText',
+                  border: '1px solid CanvasText',
+                },
               })}
             >
               <GripVertical size={19} />

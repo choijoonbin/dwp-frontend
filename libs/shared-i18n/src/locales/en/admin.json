@@ -857,6 +857,13 @@
       "governed": "Company managed",
       "personal": "Personal"
     },
+    "variant": {
+      "title": "Published home experience",
+      "description": "Choose the tenant-wide read path. Existing personal preferences remain intact when switching between experiences.",
+      "classic": "Classic Home",
+      "flow": "Flow Home",
+      "flowNotice": "Publish Flow Home only for an approved rollout cohort. The server kill switch can still return everyone to Classic Home without changing saved preferences."
+    },
     "personal": {
       "title": "Allow member home personalization",
       "description": "Members can arrange, group, or hide entitled workspace tools and change the visibility, order, and permitted footprint of personal widgets."
@@ -872,6 +879,7 @@
         "title": "Announcements",
         "description": "Shows the latest audience-targeted organization news in a governed banner.",
         "sizeLabel": "Announcements footprint",
+        "flowFullWidth": "Flow Home · Full width (no orphan gap)",
         "heightLabel": "Announcements height"
       }
     },
@@ -894,7 +902,16 @@
     "preview": {
       "title": "Composition preview",
       "description": "Desktop uses the 60-unit grid. Tablet and mobile promote every zone to full width.",
-      "commandRail": "Command rail"
+      "commandRail": "Command rail",
+      "flow": {
+        "context": "Compact context",
+        "dock": "My App Dock",
+        "announcements": "Announcements",
+        "now": "Now",
+        "flowline": "Today's Flowline",
+        "signals": "Work Signals",
+        "next": "Next"
+      }
     },
     "actions": {
       "revert": "Revert changes",
@@ -983,6 +1000,8 @@
     "preview": "Home hero preview",
     "previewHeadline": "Welcome back, Administrator",
     "previewMessage": "Your assigned apps and services, ready to launch.",
+    "previewDockTitle": "My apps",
+    "previewAllApps": "All apps",
     "builtInBackground": "Built-in DWP background",
     "fileRequirements": "PNG or JPEG / up to 10 MB",
     "locales": {

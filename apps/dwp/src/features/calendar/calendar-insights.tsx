@@ -11,7 +11,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getCalendarHome } from '@dwp-frontend/shared-utils';
+import { getCalendarHome, usePermissions } from '@dwp-frontend/shared-utils';
 import { ActionButton, ErrorState, PageCanvas, SignalMetric } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -30,6 +30,8 @@ function hours(value: number) {
 
 export function CalendarInsights() {
   const { t, i18n } = useTranslation('calendar');
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const [focusDialog, setFocusDialog] = useState(false);
   const language = i18n.resolvedLanguage ?? i18n.language;
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
@@ -64,7 +66,7 @@ export function CalendarInsights() {
         eyebrow={t('insights.eyebrow')}
         title={t('insights.title')}
         description={t('insights.description')}
-        actions={
+        actions={canCreate ? (
           <ActionButton
             intent="primary"
             startIcon={<CalendarPlus size={17} />}
@@ -72,7 +74,7 @@ export function CalendarInsights() {
           >
             {t('insights.protectFocus')}
           </ActionButton>
-        }
+        ) : undefined}
       />
 
       {query.isError ? (
@@ -300,11 +302,13 @@ export function CalendarInsights() {
         </Stack>
       )}
 
-      <CalendarEventDialog
-        open={focusDialog}
-        initialType="FOCUS"
-        onClose={() => setFocusDialog(false)}
-      />
+      {canCreate && (
+        <CalendarEventDialog
+          open={focusDialog}
+          initialType="FOCUS"
+          onClose={() => setFocusDialog(false)}
+        />
+      )}
     </PageCanvas>
   );
 }

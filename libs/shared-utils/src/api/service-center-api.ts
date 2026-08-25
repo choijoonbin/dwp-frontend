@@ -74,6 +74,7 @@ export type ServiceRequestSummary = {
   serviceNameKo: string;
   serviceNameEn: string;
   summary: string;
+  dataClassification?: ServiceDataClassification | null;
   status: ServiceRequestStatus;
   priority: ServiceRequestPriority;
   assignedGroup: string;

@@ -28,12 +28,12 @@ describe('workspace widget layout policy', () => {
 
   it('uses semantic height constraints on an 8px baseline and releases them on phones', () => {
     expect(WORKSPACE_WIDGET_HEIGHT_POLICY).toEqual({
-      short: { blockSize: 288, contentRows: 2 },
-      standard: { blockSize: 368, contentRows: 3 },
-      tall: { blockSize: 448, contentRows: 4 },
-      expanded: { blockSize: 560, contentRows: 6 },
+      short: { blockSize: 168, contentRows: 2 },
+      standard: { blockSize: 232, contentRows: 3 },
+      tall: { blockSize: 304, contentRows: 4 },
+      expanded: { blockSize: 384, contentRows: 6 },
     });
-    expect(workspaceWidgetBlockSize('tall')).toEqual({ xs: 'auto', sm: 448 });
+    expect(workspaceWidgetBlockSize('tall')).toEqual({ xs: 'auto', sm: 304 });
     expect(workspaceWidgetContentRows('expanded')).toBe(6);
     expect(
       Object.values(WORKSPACE_WIDGET_HEIGHT_POLICY).every(({ blockSize }) => blockSize % 8 === 0)

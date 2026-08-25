@@ -5,6 +5,7 @@ import type { ApiResponse } from '../types';
 
 export const NOTIFICATION_API_BASE = '/api/notifications/v1';
 export const NOTIFICATION_LIVE_EVENT = 'dwp:notification-changed';
+export const NOTIFICATION_CONNECTION_STATE_EVENT = 'dwp:notification-connection-state';
 export const NOTIFICATION_SYNC_RESET_EVENT = 'dwp:notification-sync-reset-required';
 
 export const NOTIFICATION_API_CAPABILITIES = {
@@ -102,6 +103,12 @@ export type NotificationDetail = {
   timeline: NotificationTimelineEntry[];
 };
 
+export type NotificationTargetResolution = {
+  notificationId: string;
+  targetState: 'AVAILABLE';
+  action: NotificationAction;
+};
+
 export type NotificationPartialState = {
   partial: boolean;
   unavailableSources: string[];
@@ -132,6 +139,7 @@ export type NotificationSyncResult = {
   counterVersion: NotificationCounterVersion;
   changedIds: string[];
   deletedIds: string[];
+  hasMore: boolean;
   summary: NotificationSummary;
 };
 
@@ -139,6 +147,11 @@ export type NotificationLiveSignal = {
   changeVersion: NotificationChangeVersion;
   counterVersion?: NotificationCounterVersion;
   changedIds: string[];
+  arrivalIds: string[];
+};
+
+export type NotificationConnectionStateSignal = {
+  state: 'live' | 'polling';
 };
 
 export type NotificationSyncResetSignal = {
@@ -184,6 +197,8 @@ export type NotificationBulkResult = {
   results: NotificationBulkItemResult[];
   changeVersion: NotificationChangeVersion;
   summary: NotificationSummary;
+  undoToken?: string | null;
+  undoExpiresAt?: string | null;
 };
 
 export type NotificationQuietHours = {
@@ -354,8 +369,10 @@ export function createNotificationIdempotencyKey(scope = 'notification'): string
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const DECIMAL_VERSION_PATTERN = /^(?:0|[1-9]\d*)$/u;
-const LIVE_SIGNAL_KEYS = new Set(['changeVersion', 'counterVersion', 'changedIds']);
+const LIVE_SIGNAL_KEYS = new Set(['changeVersion', 'counterVersion', 'changedIds', 'arrivalIds']);
 const SYNC_RESET_SIGNAL_KEYS = new Set(['errorCode']);
+const CONNECTION_STATE_SIGNAL_KEYS = new Set(['state']);
+let currentNotificationConnectionState: NotificationConnectionStateSignal['state'] = 'polling';
 
 export function normalizeNotificationDecimalVersion(
   value: unknown
@@ -385,9 +402,13 @@ export function parseNotificationLiveSignal(value: unknown): NotificationLiveSig
       : normalizeNotificationDecimalVersion(record.counterVersion);
   if (!changeVersion || (record.counterVersion !== undefined && !counterVersion)) return null;
   const changedIds = record.changedIds ?? [];
+  const arrivalIds = record.arrivalIds ?? [];
   if (
     !Array.isArray(changedIds) ||
-    changedIds.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id))
+    changedIds.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id)) ||
+    !Array.isArray(arrivalIds) ||
+    arrivalIds.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id)) ||
+    arrivalIds.some((id) => !changedIds.includes(id))
   ) {
     return null;
   }
@@ -395,11 +416,34 @@ export function parseNotificationLiveSignal(value: unknown): NotificationLiveSig
     changeVersion,
     ...(counterVersion ? { counterVersion } : {}),
     changedIds: changedIds as string[],
+    arrivalIds: arrivalIds as string[],
   };
 }
 
 export function createNotificationLiveEventDetail(value: unknown): NotificationLiveSignal | null {
   return parseNotificationLiveSignal(value);
+}
+
+export function parseNotificationConnectionStateSignal(
+  value: unknown
+): NotificationConnectionStateSignal | null {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  if (Object.keys(record).some((key) => !CONNECTION_STATE_SIGNAL_KEYS.has(key))) return null;
+  return record.state === 'live' || record.state === 'polling' ? { state: record.state } : null;
+}
+
+export function getNotificationConnectionState(): NotificationConnectionStateSignal['state'] {
+  return currentNotificationConnectionState;
+}
+
+export function publishNotificationConnectionState(value: unknown): void {
+  const signal = parseNotificationConnectionStateSignal(value);
+  if (!signal) return;
+  currentNotificationConnectionState = signal.state;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(NOTIFICATION_CONNECTION_STATE_EVENT, { detail: signal }));
+  }
 }
 
 export function parseNotificationSyncResetSignal(
@@ -490,6 +534,18 @@ export function getNotificationDetail(
     .then((response) => response.data.data);
 }
 
+export function resolveNotificationTarget(
+  notificationId: string,
+  signal?: AbortSignal
+): Promise<NotificationTargetResolution> {
+  return axiosInstance
+    .get<ApiResponse<NotificationTargetResolution>>(
+      `${NOTIFICATION_API_BASE}/inbox/${encodeURIComponent(notificationId)}/target`,
+      { signal }
+    )
+    .then((response) => response.data.data);
+}
+
 export const NOTIFICATION_SERVER_TRIAGE_ACTIONS = [
   'READ',
   'UNREAD',
@@ -574,6 +630,19 @@ export function applyNotificationBulkAction(input: {
       `${NOTIFICATION_API_BASE}/inbox/bulk-actions`,
       body,
       { headers: mutationHeaders(input.idempotencyKey) }
+    )
+    .then((response) => response.data.data);
+}
+
+export function undoNotificationBulkAction(
+  undoToken: string,
+  idempotencyKey: string
+): Promise<NotificationBulkResult> {
+  return axiosInstance
+    .post<ApiResponse<NotificationBulkResult>>(
+      `${NOTIFICATION_API_BASE}/inbox/bulk-actions/${encodeURIComponent(undoToken)}/undo`,
+      undefined,
+      { headers: mutationHeaders(idempotencyKey) }
     )
     .then((response) => response.data.data);
 }

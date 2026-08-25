@@ -104,9 +104,14 @@ export function SearchControl({ compact = false }: { compact?: boolean }) {
   const apps = useMemo(
     () =>
       localizeHomeApps(tHome).filter((app) =>
-        isAppEntitled(app, auth.user?.roles ?? [], permissions)
+        isAppEntitled(
+          app,
+          auth.user?.roles ?? [],
+          permissions,
+          auth.user?.legacyRoleFallbackAllowed === true
+        )
       ),
-    [auth.user?.roles, permissions, tHome]
+    [auth.user?.legacyRoleFallbackAllowed, auth.user?.roles, permissions, tHome]
   );
   const includeWork = apps.some((app) => app.id === 'dwp-work');
   const includeAsk = apps.some((app) => app.id === 'dwp-ask');

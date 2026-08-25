@@ -919,6 +919,8 @@
     "preview": "홈 히어로 미리보기",
     "previewHeadline": "Administrator님, 환영합니다",
     "previewMessage": "할당된 앱과 서비스를 바로 시작할 수 있습니다.",
+    "previewDockTitle": "내 앱",
+    "previewAllApps": "모든 앱",
     "builtInBackground": "DWP 기본 배경",
     "fileRequirements": "PNG 또는 JPEG / 최대 10 MB",
     "locales": {
@@ -3736,6 +3738,13 @@
       "governed": "회사 관리",
       "personal": "개인 설정"
     },
+    "variant": {
+      "title": "게시할 홈 경험",
+      "description": "테넌트 전체에 적용할 조회 경로를 선택합니다. 홈 경험을 전환해도 기존 개인 설정은 그대로 보존됩니다.",
+      "classic": "Classic Home",
+      "flow": "Flow Home",
+      "flowNotice": "승인된 배포 대상에만 Flow Home을 게시하세요. 서버 Kill Switch로 저장된 개인 설정을 바꾸지 않고 즉시 Classic Home으로 복귀할 수 있습니다."
+    },
     "personal": {
       "title": "구성원 홈 개인화 허용",
       "description": "구성원은 권한이 부여된 업무 도구를 배치·그룹화·숨김 처리하고 개인 위젯의 표시, 순서 및 허용된 폭과 높이를 변경할 수 있습니다."
@@ -3751,6 +3760,7 @@
         "title": "새로운 소식",
         "description": "대상 조건이 적용된 최신 조직 소식을 관리형 배너로 표시합니다.",
         "sizeLabel": "새로운 소식 영역 폭",
+        "flowFullWidth": "Flow Home · 전체 너비(빈 영역 방지)",
         "heightLabel": "새로운 소식 영역 높이"
       }
     },
@@ -3773,7 +3783,16 @@
     "preview": {
       "title": "구성 미리보기",
       "description": "데스크톱 60단 그리드 기준입니다. 태블릿과 모바일에서는 각 영역이 전체 너비로 전환됩니다.",
-      "commandRail": "업무 지휘"
+      "commandRail": "업무 지휘",
+      "flow": {
+        "context": "간결한 업무 맥락",
+        "dock": "내 앱 Dock",
+        "announcements": "새로운 소식",
+        "now": "지금",
+        "flowline": "오늘의 Flowline",
+        "signals": "업무 신호",
+        "next": "다음"
+      }
     },
     "actions": {
       "revert": "변경 취소",

@@ -71,11 +71,18 @@ export function DwaionLauncher({
       data-testid="dwaion-launcher"
       sx={{
         position: 'fixed',
-        right: { xs: 'max(14px, env(safe-area-inset-right))', sm: 24 },
-        bottom: { xs: 'max(14px, env(safe-area-inset-bottom))', sm: 24 },
-        zIndex: (theme) => theme.zIndex.snackbar - 1,
-        width: { xs: 64, sm: 74 },
-        height: { xs: 64, sm: 74 },
+        right: {
+          xs: 'calc(16px + env(safe-area-inset-right, 0px))',
+          sm: 'calc(24px + env(safe-area-inset-right, 0px))',
+        },
+        bottom: {
+          xs: 'calc(16px + env(safe-area-inset-bottom, 0px))',
+          sm: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+        },
+        // Dialogs and their backdrops must always own focus and pointer input.
+        zIndex: (theme) => theme.zIndex.modal - 1,
+        width: { xs: 48, sm: 56 },
+        height: { xs: 48, sm: 56 },
       }}
     >
       <ActionIconButton
@@ -87,18 +94,18 @@ export function DwaionLauncher({
         aria-haspopup="dialog"
         disableRipple
         onClick={(event) => setAnchorEl(open ? null : event.currentTarget)}
-        sx={{
-          width: { xs: 64, sm: 74 },
-          height: { xs: 64, sm: 74 },
+        sx={(theme) => ({
+          width: { xs: 48, sm: 56 },
+          height: { xs: 48, sm: 56 },
           p: 0,
           overflow: 'visible',
           bgcolor: 'rgba(5, 18, 42, 0.94)',
-          border: '1px solid rgba(178, 218, 255, 0.76)',
+          border: '1px solid',
+          borderColor: 'rgba(178, 218, 255, 0.76)',
           boxShadow: '0 12px 30px rgba(0, 13, 43, 0.26), inset 0 1px 0 rgba(255,255,255,0.18)',
-          transition: (theme) =>
-            theme.transitions.create(['background-color', 'border-color', 'box-shadow'], {
-              duration: theme.transitions.duration.shorter,
-            }),
+          transition: theme.transitions.create(['background-color', 'border-color', 'box-shadow'], {
+            duration: theme.transitions.duration.shorter,
+          }),
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -113,23 +120,27 @@ export function DwaionLauncher({
             borderColor: 'rgba(205, 235, 255, 0.96)',
             boxShadow: '0 16px 34px rgba(0, 13, 43, 0.32), 0 0 0 4px rgba(58, 179, 255, 0.12)',
           },
-          '&:focus-visible': { outline: '3px solid #8DB8FF', outlineOffset: 3 },
+          '&:focus-visible': {
+            outline: '3px solid var(--dwp-focus-ring, #8DB8FF)',
+            outlineOffset: 3,
+          },
           '@media (forced-colors: active)': {
             bgcolor: 'ButtonFace',
             borderColor: 'ButtonText',
+            boxShadow: 'none',
             '&::before': { display: 'none' },
           },
           '@media (prefers-reduced-motion: reduce)': {
             transition: 'none',
             '&::before': { animation: 'none' },
           },
-        }}
+        })}
       >
         <Box
           data-testid="dwaion-mascot-motion"
           sx={{
-            width: { xs: 68, sm: 80 },
-            height: { xs: 68, sm: 80 },
+            width: { xs: 48, sm: 56 },
+            height: { xs: 48, sm: 56 },
             animation: `${mascotFloat} ${open ? '5s' : '3.6s'} ease-in-out infinite`,
             '@media (prefers-reduced-motion: reduce)': { animation: 'none', transform: 'none' },
           }}
@@ -150,7 +161,7 @@ export function DwaionLauncher({
               src="/assets/assistants/dwaion-link-v1.png"
               alt=""
               draggable={false}
-              sx={{
+              sx={(theme) => ({
                 display: 'block',
                 width: 1,
                 height: 1,
@@ -158,16 +169,15 @@ export function DwaionLauncher({
                 objectFit: 'contain',
                 userSelect: 'none',
                 filter: 'drop-shadow(0 8px 10px rgba(0, 17, 55, 0.3))',
-                transition: (theme) =>
-                  theme.transitions.create('transform', {
-                    duration: theme.transitions.duration.shorter,
-                  }),
+                transition: theme.transitions.create('transform', {
+                  duration: theme.transitions.duration.shorter,
+                }),
                 '.MuiIconButton-root:hover &': { transform: 'translateY(-3px) scale(1.06)' },
                 '@media (prefers-reduced-motion: reduce)': {
                   transition: 'none',
                   transform: 'none',
                 },
-              }}
+              })}
             />
           </Box>
         </Box>

@@ -1,0 +1,207 @@
+{
+  "title": "My work home",
+  "description": "Keep your work context intact while tailoring the home composition to you.",
+  "close": "Close home studio",
+  "sections": {
+    "profiles": "My homes",
+    "appearance": "Layout style",
+    "content": "Content",
+    "device": "Device views",
+    "templates": "Templates",
+    "history": "Version history",
+    "ai": "AI proposal"
+  },
+  "common": {
+    "retry": "Try again",
+    "loading": "Loading personalization settings.",
+    "unavailable": "These settings are unavailable right now.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "apply": "Apply",
+    "active": "Active",
+    "updated": "Updated {{time}}",
+    "noSelection": "Choose a home first."
+  },
+  "profiles": {
+    "title": "Homes for each work mode",
+    "description": "Create up to ten homes and choose which one opens after sign-in.",
+    "newName": "New home name",
+    "create": "Create home",
+    "activate": "Use this home",
+    "edit": "Edit layout",
+    "activateBeforeEdit": "Use this home before editing its layout.",
+    "empty": "You have no personal homes yet. Save the current composition as your first home.",
+    "cannotDelete": "The active or last remaining home cannot be deleted."
+  },
+  "appearance": {
+    "title": "Home width and density",
+    "description": "Choose a content width and spacing pattern for your work style and screen.",
+    "selected": "Selected",
+    "saved": "Home appearance saved.",
+    "safety": "Layout style adjusts spacing and visible information for the available width. Permissions, work data, semantic order, and keyboard order stay the same.",
+    "options": {
+      "focused": {
+        "title": "Focused",
+        "description": "Narrows the canvas and uses compact spacing to keep attention on one task."
+      },
+      "balanced": {
+        "title": "Balanced",
+        "description": "Uses standard width and spacing to balance information and breathing room."
+      },
+      "expressive": {
+        "title": "Wide",
+        "description": "Minimizes side margins and uses large displays to show more information at once."
+      }
+    }
+  },
+  "content": {
+    "title": "Widget content scope",
+    "description": "Choose one to three summary rows for each purpose widget. Data access stays unchanged.",
+    "widget": "Widget",
+    "rowBudget": "Summary rows",
+    "fields": "Visible information",
+    "filterPreset": "Content focus",
+    "widgetLabels": {
+      "activity": "Work pulse",
+      "focus": "My requests",
+      "schedule": "Today",
+      "daily-brief": "Needs response"
+    },
+    "fieldLabels": {
+      "eventType": "Activity type",
+      "title": "Title",
+      "occurredAt": "Activity time",
+      "actor": "Person",
+      "status": "Status",
+      "priority": "Priority",
+      "dueAt": "Due date",
+      "startAt": "Start time",
+      "endAt": "End time",
+      "location": "Location",
+      "reason": "Reason",
+      "action": "Action"
+    },
+    "filterLabels": {
+      "RECENT": "Recent activity",
+      "MY_ACTIVITY": "My activity",
+      "ASSIGNED_TO_ME": "Assigned to me",
+      "DUE_SOON": "Due soon",
+      "HIGH_PRIORITY": "High priority",
+      "TODAY": "Today",
+      "NEXT_7_DAYS": "Next 7 days",
+      "RECOMMENDED": "Recommended",
+      "NEXT_ACTIONS": "Next actions"
+    },
+    "saved": "Content settings saved."
+  },
+  "device": {
+    "title": "Device layouts",
+    "description": "Tune density and widget sizes by device while preserving semantic order.",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "density": "Display density",
+    "comfortable": "Comfortable",
+    "compact": "Compact",
+    "widgetSizes": "Desktop section widths",
+    "workOverview": "Work overview",
+    "fifth": "One-fifth width",
+    "quarter": "Quarter width",
+    "compactWidth": "One-third width",
+    "medium": "Half width",
+    "large": "Wide",
+    "full": "Full width",
+    "saved": "{{device}} layout saved."
+  },
+  "templates": {
+    "title": "Governed work templates",
+    "description": "Published templates apply as a personal copy, separate from the source and later edits.",
+    "empty": "No templates are currently available.",
+    "apply": "Apply to my home",
+    "draftFromCurrent": "Draft from current home",
+    "publish": "Publish",
+    "revoke": "Revoke",
+    "audience": "Audience {{audience}}",
+    "applied": "Template applied as a new version.",
+    "confirm": {
+      "apply": {
+        "title": "Apply this template?",
+        "description": "{{name}} will replace this home's current layout as a new reversible version.",
+        "action": "Apply template"
+      },
+      "publish": {
+        "title": "Publish this template?",
+        "description": "{{name}} will become available to its configured audience.",
+        "action": "Publish template"
+      },
+      "revoke": {
+        "title": "Revoke this template?",
+        "description": "{{name}} will no longer be available for new applications. Existing personal copies remain unchanged.",
+        "action": "Revoke template"
+      }
+    }
+  },
+  "history": {
+    "title": "Version history",
+    "description": "Restoring creates a new version instead of overwriting history.",
+    "empty": "There is no saved version history yet.",
+    "revision": "Version {{number}}",
+    "restore": "Restore this version",
+    "restored": "The selected version was restored as a new version.",
+    "widgetFallback": "Widget",
+    "sources": {
+      "USER": "Direct change",
+      "TEMPLATE": "Template",
+      "AI": "AI proposal",
+      "RESTORE": "Version restore",
+      "UNDO": "Undo",
+      "UNKNOWN": "Home change"
+    },
+    "summaries": {
+      "created": "Home created.",
+      "updated": "Home composition updated.",
+      "reset": "Reset to organization defaults.",
+      "aiApplied": "AI proposal applied.",
+      "aiUndone": "AI proposal undone.",
+      "deviceUpdated": "{{device}} layout updated.",
+      "revisionRestored": "Version {{number}} restored.",
+      "templateApplied": "Template applied.",
+      "widgetUpdated": "{{widget}} content settings updated.",
+      "fallback": "Home composition updated."
+    }
+  },
+  "ai": {
+    "title": "AI Workstyle Composer",
+    "description": "Create a proposal from the current layout and permitted signals without sending work content.",
+    "focus": "Focus on deadlines",
+    "balance": "Balance today's flow",
+    "noise": "Reduce distractions",
+    "request": "Preview proposal",
+    "previewTitle": "Review before applying",
+    "reason": "Why this was suggested",
+    "changes": "{{count}} changes",
+    "noChanges": "Your current composition already fits this workstyle.",
+    "warning": "Managed App Dock, announcements, and Now regions will not change.",
+    "approve": "Approve and apply these changes",
+    "undo": "Undo AI changes",
+    "applied": "Only the approved changes were applied.",
+    "undone": "AI changes were restored to the previous version.",
+    "operations": {
+      "MOVE_WIDGET": "Move {{target}} widget",
+      "SHOW_WIDGET": "Show {{target}} widget",
+      "HIDE_WIDGET": "Hide {{target}} widget",
+      "SET_WIDTH": "Change {{target}} width",
+      "SET_DENSITY": "Change display density",
+      "PIN_APP": "Pin {{target}} app",
+      "UNPIN_APP": "Unpin {{target}} app"
+    }
+  },
+  "feedback": {
+    "created": "Home created.",
+    "activated": "Active home switched.",
+    "deleted": "Home deleted.",
+    "saved": "Changes saved.",
+    "failed": "The request could not be completed. Refresh the latest state and try again.",
+    "conflict": "This home changed elsewhere. The latest version has been loaded."
+  }
+}

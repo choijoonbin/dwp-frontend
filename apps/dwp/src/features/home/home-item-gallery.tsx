@@ -19,6 +19,7 @@ type HomeItemGalleryProps = {
   open: boolean;
   hiddenApps: readonly HomeAppDefinition[];
   hiddenWidgetKeys: readonly HomeWidgetKey[];
+  flow?: boolean;
   busy?: boolean;
   onClose: () => void;
   onAddApp: (app: HomeAppDefinition) => void;
@@ -29,6 +30,7 @@ export function HomeItemGallery({
   open,
   hiddenApps,
   hiddenWidgetKeys,
+  flow = false,
   busy = false,
   onClose,
   onAddApp,
@@ -36,9 +38,21 @@ export function HomeItemGallery({
 }: HomeItemGalleryProps) {
   const { t } = useTranslation('home');
   const [tab, setTab] = useState<'apps' | 'widgets'>('apps');
-  const hiddenWidgets = HOME_WIDGET_REGISTRY.filter((widget) =>
-    hiddenWidgetKeys.includes(widget.key)
+  const hiddenWidgets = HOME_WIDGET_REGISTRY.filter(
+    (widget) => hiddenWidgetKeys.includes(widget.key) && (!flow || widget.key !== 'command-rail')
   );
+  const flowCopy = {
+    schedule: {
+      label: 'flow.purpose.timeline.title',
+      description: 'flow.purpose.timeline.description',
+    },
+    'daily-brief': {
+      label: 'flow.purpose.response.title',
+      description: 'flow.purpose.response.description',
+    },
+    focus: { label: 'flow.purpose.request.title', description: 'flow.purpose.request.description' },
+    activity: { label: 'flow.purpose.pulse.title', description: 'flow.purpose.pulse.description' },
+  } as const;
   const empty = tab === 'apps' ? hiddenApps.length === 0 : hiddenWidgets.length === 0;
 
   return (
@@ -135,6 +149,9 @@ export function HomeItemGallery({
               ))
             : hiddenWidgets.map((widget) => {
                 const Icon = widget.icon;
+                const purposeCopy = flow
+                  ? flowCopy[widget.key as keyof typeof flowCopy]
+                  : undefined;
                 return (
                   <Box
                     component="li"
@@ -155,10 +172,12 @@ export function HomeItemGallery({
                     </Box>
                     <Box sx={{ minWidth: 0 }}>
                       <Typography variant="subtitle2">
-                        {t(`widgets.registry.${widget.key}.label`)}
+                        {t(purposeCopy?.label ?? `widgets.registry.${widget.key}.label`)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {t(`widgets.registry.${widget.key}.description`)}
+                        {t(
+                          purposeCopy?.description ?? `widgets.registry.${widget.key}.description`
+                        )}
                       </Typography>
                       {widget.manifest && (
                         <Typography variant="caption" color="text.secondary" display="block">
