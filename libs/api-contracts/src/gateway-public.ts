@@ -650,7 +650,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Completes the two-person, responsibility-only bootstrap with an exact-scope APP_ACCESS_APPROVER, except APP_OWNER which requires independent APP_CATALOG_ADMIN authority. Product specialist rows, capabilities, and duties cannot be decided here. */
+        /** @description Completes the two-person, responsibility-only bootstrap with an exact-scope APP_ACCESS_APPROVER. The one-time exception for a scope with an effective APP_OWNER and zero effective APP_ACCESS_APPROVER permits an independent APP_CATALOG_ADMIN to approve the first MANUAL user approver requested by that owner. Later approvers require an exact-scope approver. APP_OWNER requires independent APP_CATALOG_ADMIN authority. Product specialist rows, capabilities, and duties cannot be decided here. */
         post: operations["auth_decideAssignment"];
         delete?: never;
         options?: never;
@@ -12731,6 +12731,7 @@ export interface components {
             email?: string;
             groups?: components["schemas"]["auth_GroupMembershipDTO"][];
             jobTitle?: string;
+            legacyRoleFallbackAllowed?: boolean;
             permissions?: components["schemas"]["auth_PermissionDTO"][];
             /** Format: uuid */
             personPublicId?: string;
@@ -14229,6 +14230,7 @@ export interface components {
             body: string;
             /** Format: uuid */
             idempotencyKey: string;
+            mentionedUserIds?: number[];
             /** Format: uuid */
             replyToMessageId?: string;
         };
@@ -25090,430 +25092,6 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
-        approval_ApiResponseAdminPulse: {
-            correlationId?: string;
-            data?: components["schemas"]["approval_AdminPulse"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        approval_ApiResponseListPolicyVersionSummary: {
-            correlationId?: string;
-            data?: components["schemas"]["approval_PolicyVersionSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        approval_ApiResponseListSignatureProviderSummary: {
-            correlationId?: string;
-            data?: components["schemas"]["approval_SignatureProviderSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        approval_ApiResponseOperationsResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["approval_OperationsResponse"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        approval_SignatureProviderSummary: {
-            capabilities?: {
-                [key: string]: unknown;
-            };
-            credentialConfigured?: boolean;
-            displayName?: string;
-            /** Format: date-time */
-            lastHealthCheckedAt?: string;
-            lifecycleState?: string;
-            /** Format: uuid */
-            providerId?: string;
-            providerKey?: string;
-            providerType?: string;
-            /** Format: int64 */
-            version?: number;
-        };
-        auth_DirectorySubject: {
-            displayName?: string;
-            email?: string;
-            jobTitle?: string;
-            /** Format: uuid */
-            personPublicId?: string;
-            /** Format: uuid */
-            publicId?: string;
-            status?: string;
-            /** Format: int64 */
-            tenantId?: number;
-            /** Format: int64 */
-            userId?: number;
-        };
-        auth_InvitationResponse: {
-            activationToken?: string;
-            /** Format: int64 */
-            administratorUserId?: number;
-            email?: string;
-            /** Format: date-time */
-            expiresAt?: string;
-            /** Format: int64 */
-            tenantId?: number;
-        };
-        auth_IssueInvitationRequest: {
-            /** Format: int64 */
-            administratorUserId: number;
-            /** Format: int32 */
-            expiresInMinutes: number;
-        };
-        auth_PrincipalValidationRequest: {
-            /** Format: int64 */
-            actorId: number;
-            principalRef: string;
-            principalType: string;
-        };
-        auth_PrincipalValidationResult: {
-            active?: boolean;
-            canonicalRef?: string;
-            principalType?: string;
-            suppliedRef?: string;
-            /** Format: int64 */
-            tenantId?: number;
-        };
-        auth_ProvisionTenantRequest: {
-            administratorDisplayName: string;
-            /** Format: email */
-            administratorEmail: string;
-            dataRegion: string;
-            defaultLocale: string;
-            displayName: string;
-            entitlementKeys: string[];
-            isolationModel: string;
-            /** Format: uuid */
-            providerTenantId: string;
-            tenantKey: string;
-            timeZone: string;
-        };
-        auth_ProvisionTenantResponse: {
-            administratorEmail?: string;
-            /** Format: int64 */
-            administratorUserId?: number;
-            lifecycleState?: string;
-            /** Format: uuid */
-            providerTenantId?: string;
-            /** Format: int32 */
-            schemaVersion?: number;
-            /** Format: int64 */
-            tenantId?: number;
-        };
-        auth_ReplaceEntitlementsRequest: {
-            entitlementKeys: string[];
-        };
-        auth_Subject: {
-            displayName?: string;
-            email?: string;
-            jobTitle?: string;
-            /** Format: uuid */
-            personPublicId?: string;
-            /** Format: uuid */
-            publicId?: string;
-            roles?: string[];
-            status?: string;
-            /** Format: int64 */
-            tenantId?: number;
-            /** Format: int64 */
-            userId?: number;
-        };
-        auth_SyncRequest: {
-            action: string;
-            /** Format: int64 */
-            actorId: number;
-            justification: string;
-            permissionCode: string;
-            principalRef: string;
-            principalType: string;
-            resourceKey: string;
-            resourceName: string;
-            /** Format: date-time */
-            validTo?: string;
-        };
-        auth_SyncResult: {
-            changed?: boolean;
-            grantId?: string;
-            lifecycleState?: string;
-            permissionCode?: string;
-            principalRef?: string;
-            principalType?: string;
-            resourceKey?: string;
-            sourceRef?: string;
-            sourceType?: string;
-            /** Format: int64 */
-            tenantId?: number;
-            /** Format: date-time */
-            validFrom?: string;
-            /** Format: date-time */
-            validTo?: string;
-            /** Format: int64 */
-            version?: number;
-        };
-        auth_UpdateLifecycleRequest: {
-            lifecycleState: string;
-        };
-        auth_WorkforceIdentityEvent: {
-            displayName: string;
-            /** Format: uuid */
-            eventId: string;
-            externalId: string;
-            familyName?: string;
-            givenName?: string;
-            jobTitle?: string;
-            /** Format: uuid */
-            personPublicId: string;
-            preferredLocale?: string;
-            /** Format: uuid */
-            providerTenantId: string;
-            sourceVersion?: string;
-            /** Format: email */
-            workEmail?: string;
-            workerStatus: string;
-        };
-        people_ProvisionTenantRequest: {
-            dataRegion: string;
-            displayName: string;
-            isolationModel: string;
-            /** Format: uuid */
-            providerTenantId: string;
-            /** Format: int64 */
-            tenantId: number;
-            tenantKey: string;
-        };
-        people_ProvisionTenantResponse: {
-            externalReference?: string;
-            lifecycleState?: string;
-            /** Format: uuid */
-            providerTenantId?: string;
-            /** Format: int32 */
-            schemaVersion?: number;
-            /** Format: int64 */
-            tenantId?: number;
-        };
-        people_UpdateLifecycleRequest: {
-            lifecycleState: string;
-        };
-        platform_ApiHistoryEvent: {
-            actorId?: string;
-            actorType?: string;
-            authType?: string;
-            capturePolicyVersion?: string;
-            clientAddressHash?: string;
-            /** Format: date-time */
-            completedAt?: string;
-            correlationId?: string;
-            /** Format: int64 */
-            durationMs?: number;
-            environment?: string;
-            errorType?: string;
-            /** Format: uuid */
-            historyId?: string;
-            httpMethod?: string;
-            httpProtocol?: string;
-            httpScheme?: string;
-            observationPoint?: string;
-            /** Format: date-time */
-            occurredAt?: string;
-            outcome?: string;
-            parentSpanId?: string;
-            requestPath?: string;
-            /** Format: int64 */
-            requestSizeBytes?: number;
-            /** Format: int64 */
-            responseSizeBytes?: number;
-            routeId?: string;
-            routeTemplate?: string;
-            serviceInstance?: string;
-            serviceName?: string;
-            serviceVersion?: string;
-            spanId?: string;
-            /** Format: int32 */
-            statusCode?: number;
-            /** Format: int64 */
-            tenantId?: number;
-            traceId?: string;
-            userAgentFamily?: string;
-            userAgentHash?: string;
-        };
-        platform_ApiResponseCatalogSnapshot: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_CatalogSnapshot"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseCodeSet: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_CodeSet"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseIngestResult: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_IngestResult"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_AuditEvent: {
-            action?: string;
-            actorDisplayName?: string;
-            actorId?: string;
-            actorPrincipal?: string;
-            actorRoles?: string[];
-            actorType?: string;
-            afterState?: {
-                [key: string]: unknown;
-            };
-            approvalId?: string;
-            authenticationMethod?: string;
-            beforeState?: {
-                [key: string]: unknown;
-            };
-            category?: string;
-            clientAddressHash?: string;
-            correlationId?: string;
-            environment?: string;
-            /** Format: uuid */
-            eventId?: string;
-            eventVersion?: string;
-            metadata?: {
-                [key: string]: unknown;
-            };
-            /** Format: date-time */
-            occurredAt?: string;
-            outcome?: string;
-            policyDecision?: string;
-            policyId?: string;
-            reason?: string;
-            retentionClass?: string;
-            /** Format: int32 */
-            riskScore?: number;
-            sessionIdHash?: string;
-            severity?: string;
-            sourceInstance?: string;
-            sourceModule?: string;
-            sourceService?: string;
-            targetDisplayName?: string;
-            targetId?: string;
-            targetType?: string;
-            /** Format: int64 */
-            tenantId?: number;
-            traceId?: string;
-        };
-        platform_CatalogSnapshot: {
-            catalogScope?: string;
-            changePolicy?: string;
-            codeSets?: components["schemas"]["platform_CodeSetHealth"][];
-        };
-        platform_CodeBinding: {
-            consumerService?: string;
-            enforcementType?: string;
-            sourceReference?: string;
-            usageType?: string;
-        };
-        platform_CodeSet: {
-            bindings?: components["schemas"]["platform_CodeBinding"][];
-            codeSetKey?: string;
-            configurationLevel?: string;
-            contractKind?: string;
-            description?: string;
-            displayName?: string;
-            ownerService?: string;
-            runtimeVisibility?: string;
-            /** Format: int32 */
-            schemaVersion?: number;
-            sourceReference?: string;
-            validationSource?: string;
-            values?: components["schemas"]["platform_CodeValue"][];
-        };
-        platform_CodeSetHealth: {
-            /** Format: int64 */
-            bindingCount?: number;
-            codeSetKey?: string;
-            configurationLevel?: string;
-            contractKind?: string;
-            displayName?: string;
-            /** Format: int64 */
-            enforcedBindingCount?: number;
-            ownerService?: string;
-            registrationState?: string;
-            runtimeVisibility?: string;
-            /** Format: int32 */
-            schemaVersion?: number;
-            validationSource?: string;
-            /** Format: int64 */
-            valueCount?: number;
-        };
-        platform_CodeValue: {
-            behaviorMetadata?: components["schemas"]["platform_JsonNode"];
-            code?: string;
-            displayName?: string;
-            label?: string;
-            lifecycleState?: string;
-            predefined?: boolean;
-            /** Format: int32 */
-            sortOrder?: number;
-        };
-        platform_IngestResult: {
-            /** Format: int32 */
-            accepted?: number;
-        };
-        platform_ProvisionTenantRequest: {
-            dataRegion: string;
-            defaultLocale: string;
-            displayName: string;
-            entitlementKeys: string[];
-            isolationModel: string;
-            /** Format: uuid */
-            providerTenantId: string;
-            /** Format: int64 */
-            tenantId: number;
-            tenantKey: string;
-        };
-        platform_ProvisionTenantResponse: {
-            externalReference?: string;
-            lifecycleState?: string;
-            /** Format: uuid */
-            providerTenantId?: string;
-            /** Format: int32 */
-            schemaVersion?: number;
-            /** Format: int64 */
-            tenantId?: number;
-        };
-        platform_ReplaceEntitlementsRequest: {
-            entitlementKeys: string[];
-        };
-        platform_UpdateLifecycleRequest: {
-            lifecycleState: string;
-        };
     };
     responses: never;
     parameters: never;
@@ -33612,8 +33190,6 @@ export interface operations {
             };
             header?: {
                 "Accept-Language"?: string;
-                "X-DWP-Roles"?: string;
-                "X-DWP-Resource-Roles"?: string;
             };
             path?: never;
             cookie?: never;
@@ -33637,7 +33213,6 @@ export interface operations {
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Resource-Roles"?: string;
             };
             path: {
                 requestId: string;
@@ -33667,7 +33242,6 @@ export interface operations {
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Resource-Roles"?: string;
             };
             path: {
                 requestId: string;
@@ -33697,7 +33271,6 @@ export interface operations {
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Resource-Roles"?: string;
             };
             path: {
                 requestId: string;
@@ -37798,9 +37371,7 @@ export interface operations {
     platform_effectiveDelegatedScopes: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -38297,9 +37868,7 @@ export interface operations {
             query: {
                 permission: "VIEW" | "BOOK" | "MANAGE";
             };
-            header?: {
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path: {
                 siteId: string;
             };
@@ -38710,9 +38279,7 @@ export interface operations {
     platform_list_10: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -38732,9 +38299,7 @@ export interface operations {
     platform_recordAction: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 announcementId: number;
             };
@@ -38756,9 +38321,7 @@ export interface operations {
     platform_recordView: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-            };
+            header?: never;
             path: {
                 announcementId: number;
             };
@@ -39098,7 +38661,6 @@ export interface operations {
             };
             header?: {
                 "Accept-Language"?: string;
-                "X-DWP-Roles"?: string;
             };
             path?: never;
             cookie?: never;
@@ -39124,7 +38686,6 @@ export interface operations {
             };
             header?: {
                 "Accept-Language"?: string;
-                "X-DWP-Roles"?: string;
             };
             path: {
                 communicationId: number;
@@ -39153,7 +38714,6 @@ export interface operations {
             header?: {
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
-                "X-DWP-Roles"?: string;
             };
             path: {
                 communicationId: number;
@@ -39182,7 +38742,6 @@ export interface operations {
             header?: {
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
-                "X-DWP-Roles"?: string;
             };
             path: {
                 communicationId: number;
@@ -39212,7 +38771,6 @@ export interface operations {
             header?: {
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
-                "X-DWP-Roles"?: string;
             };
             path: {
                 communicationId: number;
@@ -39245,7 +38803,6 @@ export interface operations {
             header?: {
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
-                "X-DWP-Roles"?: string;
             };
             path: {
                 communicationId: number;
@@ -41106,7 +40663,6 @@ export interface operations {
             };
             header?: {
                 "Accept-Language"?: string;
-                "X-DWP-Roles"?: string;
             };
             path?: never;
             cookie?: never;
@@ -41928,7 +41484,6 @@ export interface operations {
             query?: never;
             header?: {
                 "X-Correlation-ID"?: string;
-                "X-DWP-Roles"?: string;
             };
             path?: never;
             cookie?: never;
@@ -42226,7 +41781,6 @@ export interface operations {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
                 "Idempotency-Key"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -42341,7 +41895,6 @@ export interface operations {
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path: {
                 bookingId: string;
@@ -42374,7 +41927,6 @@ export interface operations {
             };
             header?: {
                 "Accept-Language"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -42446,7 +41998,6 @@ export interface operations {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
                 "Idempotency-Key"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -42473,7 +42024,6 @@ export interface operations {
             query?: never;
             header?: {
                 "Accept-Language"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -42801,10 +42351,7 @@ export interface operations {
             query: {
                 surfaceKey: string;
             };
-            header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -42828,8 +42375,6 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -42856,8 +42401,6 @@ export interface operations {
             query?: never;
             header?: {
                 "X-Correlation-ID"?: string;
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path: {
                 savedViewId: string;
@@ -42886,8 +42429,6 @@ export interface operations {
             query?: never;
             header?: {
                 "X-Correlation-ID"?: string;
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
             };
             path: {
                 savedViewId: string;
@@ -42910,10 +42451,7 @@ export interface operations {
     platform_preference: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Roles"?: string;
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path: {
                 savedViewId: string;
             };
@@ -42939,9 +42477,7 @@ export interface operations {
     platform_markUsed: {
         parameters: {
             query?: never;
-            header?: {
-                "X-DWP-Group-Refs"?: string;
-            };
+            header?: never;
             path: {
                 savedViewId: string;
             };
@@ -44713,11 +44249,8 @@ export interface operations {
     provider_resolve: {
         parameters: {
             query?: never;
-            header: {
+            header?: {
                 "X-Correlation-ID"?: string;
-                "X-DWP-Support-Validation-Token"?: string;
-                "X-DWP-Support-Resource-Method": string;
-                "X-DWP-Support-Resource-Path": string;
             };
             path?: never;
             cookie: {
