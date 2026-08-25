@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { Outlet, type RouteObject } from 'react-router-dom';
 
+import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
 import { MessagingLayout } from '../layouts/messaging-layout';
 import {
   AppRouteGuard,
@@ -9,8 +10,21 @@ import {
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
+import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
 
 const MessagingPage = lazy(() => import('../pages/messaging'));
+
+const page = (
+  <Suspense fallback={routeFallback}>
+    <MessagingPage />
+  </Suspense>
+);
+
+const legacyShell = (
+  <AppRouteGuard resourceKey="APP.MESSAGING">
+    <MessagingLayout />
+  </AppRouteGuard>
+);
 
 export const messagingRoutes: RouteObject[] = [
   {
@@ -18,22 +32,21 @@ export const messagingRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.MESSAGING">
-            <MessagingLayout />
-          </AppRouteGuard>
+          <Outlet />
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
-    children: [
-      { index: true, element: <Navigate to="home" replace /> },
-      {
-        path: '*',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <MessagingPage />
-          </Suspense>
-        ),
-      },
-    ],
+    children: buildTwoSurfaceProductChildren({
+      manifest: MESSAGING_PRODUCT_MANIFEST,
+      workSurfaceId: 'messaging.work',
+      managementSurfaceId: 'messaging.management',
+      managementBasePath: '/messages/admin',
+      legacyPath: '/messages/home',
+      legacyShell,
+      areaKey: 'messaging',
+      translationNamespace: 'messaging',
+      renderPage: () => page,
+      legacyUnknown: page,
+    }),
   },
 ];

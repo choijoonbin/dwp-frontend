@@ -28,7 +28,17 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
-import { useApprovalExperience } from './use-approval-experience';
+import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
+import { approvalPolicyPublishCommand } from './approval-high-risk-command-model';
+import {
+  useApprovalExperience,
+  useApprovalManagementRequestScope,
+} from './use-approval-experience';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
+import { useApprovalHighRiskCommand } from './use-approval-high-risk-command';
 
 type RuleEntry = { key: string; value: string };
 
@@ -167,6 +177,7 @@ function PolicyChangeComparison({ policy }: { policy: ApprovalPolicy }) {
 export function ApprovalPolicyStudio() {
   const { t, i18n } = useTranslation('approvals');
   const experience = useApprovalExperience();
+  const requestScope = useApprovalManagementRequestScope();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -178,14 +189,16 @@ export function ApprovalPolicyStudio() {
   const [changeReason, setChangeReason] = useState('');
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewComment, setReviewComment] = useState('');
+  const policiesQueryKey = ['approvals', 'admin', 'policies', ...requestScope.cacheKey] as const;
   const policies = useQuery({
-    queryKey: ['approvals', 'admin', 'policies'],
-    queryFn: getApprovalPolicies,
+    queryKey: policiesQueryKey,
+    queryFn: ({ signal }) => getApprovalPolicies(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const versions = useQuery({
-    queryKey: ['approvals', 'admin', 'policies', selectedId, 'versions'],
-    queryFn: () => getApprovalPolicyVersions(selectedId!),
+    queryKey: ['approvals', 'admin', 'policies', selectedId, 'versions', ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      getApprovalPolicyVersions(selectedId!, requestScope.contextScopeKey, signal),
     enabled: Boolean(selectedId),
     staleTime: 30_000,
   });
@@ -209,40 +222,63 @@ export function ApprovalPolicyStudio() {
     if (!selectedId && policies.data?.length) setSelectedId(policies.data[0].policyId);
   }, [policies.data, selectedId]);
 
-  const save = useMutation({
-    mutationFn: () =>
-      updateApprovalPolicy(selected!.policyId, {
-        enforcementMode: mode,
-        severity,
-        lifecycleState: state,
-        rule: Object.fromEntries(rules.map((entry) => [entry.key, parseRuleValue(entry.value)])),
-        changeReason,
-        expectedVersion: selected!.version,
-      }),
+  const runUpdate = useApprovalGovernedMutation('route.approvals.admin.policy-update.action');
+  const highRiskPublish = useApprovalHighRiskCommand({
+    operation: 'POLICY_PUBLISH',
+    execute: (command, execution) =>
+      publishApprovalPolicy(
+        command.targetId,
+        {
+          expectedVersion: command.expectedObjectVersion,
+          reviewComment: String(command.payload.reviewComment ?? ''),
+        },
+        execution
+      ),
     onSuccess: (result) => {
-      queryClient.setQueryData(['approvals', 'admin', 'policies'], result);
-      setEditorOpen(false);
-      setChangeReason('');
-      toast.success(t('admin.studio.policySubmitted'));
-    },
-    onError: () => toast.error(t('admin.studio.saveConflict')),
-  });
-  const publish = useMutation({
-    mutationFn: () =>
-      publishApprovalPolicy(selected!.policyId, {
-        expectedVersion: selected!.version,
-        reviewComment,
-      }),
-    onSuccess: (result) => {
-      queryClient.setQueryData(['approvals', 'admin', 'policies'], result);
-      queryClient.invalidateQueries({
-        queryKey: ['approvals', 'admin', 'policies', selected!.policyId, 'versions'],
-      });
+      queryClient.setQueryData(policiesQueryKey, result);
+      if (selectedId) {
+        void queryClient.invalidateQueries({
+          queryKey: ['approvals', 'admin', 'policies', selectedId, 'versions'],
+        });
+      }
       setReviewOpen(false);
       setReviewComment('');
       toast.success(t('admin.studio.policyPublished'));
     },
-    onError: () => toast.error(t('admin.studio.saveConflict')),
+    onConflict: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['approvals', 'admin', 'policies'] });
+    },
+  });
+
+  const save = useMutation({
+    mutationFn: () =>
+      runUpdate((execution) =>
+        updateApprovalPolicy(
+          selected!.policyId,
+          {
+            enforcementMode: mode,
+            severity,
+            lifecycleState: state,
+            rule: Object.fromEntries(
+              rules.map((entry) => [entry.key, parseRuleValue(entry.value)])
+            ),
+            changeReason,
+            expectedVersion: selected!.version,
+          },
+          execution
+        )
+      ),
+    onSuccess: (result) => {
+      queryClient.setQueryData(policiesQueryKey, result);
+      setEditorOpen(false);
+      setChangeReason('');
+      toast.success(t('admin.studio.policySubmitted'));
+    },
+    onError: (error) => {
+      if (!isProductSurfaceOperationCancelledError(error)) {
+        toast.error(t('admin.studio.saveConflict'));
+      }
+    },
   });
   const openEditor = () => {
     if (!selected) return;
@@ -600,10 +636,16 @@ export function ApprovalPolicyStudio() {
         cancelLabel={t('actions.cancel')}
         submitLabel={t('admin.studio.publishPolicy')}
         submittingLabel={t('admin.studio.publishPolicy')}
-        busy={publish.isPending}
+        busy={highRiskPublish.controller.busy}
         submitDisabled={reviewComment.trim().length < 10}
         onClose={() => setReviewOpen(false)}
-        onSubmit={() => publish.mutate()}
+        onSubmit={() => {
+          if (!selected) return;
+          setReviewOpen(false);
+          void highRiskPublish.begin(
+            approvalPolicyPublishCommand(selected.policyId, selected.version, reviewComment)
+          );
+        }}
         maxWidth="md"
       >
         <Stack gap={2}>
@@ -621,6 +663,7 @@ export function ApprovalPolicyStudio() {
           />
         </Stack>
       </FormDialog>
+      <ApprovalHighRiskCommandDialog controller={highRiskPublish.controller} />
     </>
   );
 }

@@ -6,7 +6,7 @@ import {
   resolvePrimaryAuthorityRole,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
-import { canAccessAdminNavigationItem } from './admin-access-policy';
+import { canAccessAdminNavigationItem, canEnterCompanyAdministration } from './admin-access-policy';
 import type { AdminNavigationItem } from './admin-navigation';
 
 const item = (
@@ -23,6 +23,22 @@ const item = (
 });
 
 describe('control plane access policy', () => {
+  it('never opens company administration for an app configuration responsibility alone', () => {
+    expect(canEnterCompanyAdministration(['APP_CONFIG_ADMIN'], true)).toBe(false);
+    expect(
+      canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, false, [
+        {
+          responsibilityCode: 'APP_CONFIG_ADMIN',
+          resourceType: 'APP',
+          resourceKey: 'APP.APPROVALS',
+          resourceSetId: 'set-1',
+          resourceSetKey: 'APP_APPROVALS',
+        },
+      ])
+    ).toBe(false);
+    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false)).toBe(false);
+    expect(canEnterCompanyAdministration(['TENANT_ADMIN'], true)).toBe(true);
+  });
   it('recognizes every provider persona exposed by the provider router', () => {
     expect(hasProviderControlPlaneRole(['PROVIDER_OPERATOR'])).toBe(true);
     expect(hasProviderControlPlaneRole(['PROVIDER_SUPPORT'])).toBe(true);
@@ -44,6 +60,9 @@ describe('control plane access policy', () => {
       },
     ];
     expect(canEnterTenantControlPlane(['WORKSPACE_MEMBER'], false, false, resourceRoles)).toBe(
+      true
+    );
+    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, false, resourceRoles)).toBe(
       true
     );
     expect(
@@ -75,96 +94,35 @@ describe('control plane access policy', () => {
     expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, true)).toBe(true);
   });
 
-  it('limits delegated communications roles to the newsroom administration resource', () => {
-    const hasPermission = vi.fn(
-      (resource: string, permission = 'VIEW') =>
-        resource === 'ADMIN.COMMUNICATIONS' && ['VIEW', 'CREATE', 'UPDATE'].includes(permission)
-    );
-    expect(canEnterTenantControlPlane(['COMMUNICATIONS_EDITOR'], true)).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('branding', 'ADMIN.COMMUNICATIONS'), {
-        roles: ['COMMUNICATIONS_EDITOR'],
-        permissionsLoaded: true,
-        hasPermission,
-      })
-    ).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('branding'), {
-        roles: ['COMMUNICATIONS_EDITOR'],
-        permissionsLoaded: true,
-        hasPermission,
-      })
-    ).toBe(false);
+  it('keeps product specialists in product workbenches rather than company administration', () => {
+    const productRoles = [
+      'COMMUNICATIONS_EDITOR',
+      'COMMUNICATIONS_PUBLISHER',
+      'SERVICE_CATALOG_MANAGER',
+      'SERVICE_AGENT',
+      'HR_ADMIN',
+      'PEOPLE_ADMIN',
+      'SPACE_GOVERNANCE_ADMIN',
+      'SPACE_TEMPLATE_ADMIN',
+      'SPACE_COMPLIANCE_REVIEWER',
+      'SPACE_ACCESS_REVIEWER',
+    ];
+
+    for (const role of productRoles) {
+      expect(canEnterTenantControlPlane([role], true)).toBe(false);
+      expect(
+        canAccessAdminNavigationItem(item('branding', 'ADMIN.PRODUCT_SPECIALIST'), {
+          roles: [role],
+          permissionsLoaded: true,
+          hasPermission: vi.fn(() => true),
+        })
+      ).toBe(false);
+    }
+
     expect(resolvePrimaryAuthorityRole(['COMMUNICATIONS_PUBLISHER'])).toBe(
       'COMMUNICATIONS_PUBLISHER'
     );
-  });
-
-  it('separates service catalog design from request operations', () => {
-    const catalogPermission = vi.fn(
-      (resource: string, permission = 'VIEW') =>
-        resource === 'ADMIN.SERVICE_CATALOG' && ['VIEW', 'CREATE', 'UPDATE'].includes(permission)
-    );
-    expect(canEnterTenantControlPlane(['SERVICE_CATALOG_MANAGER'], true)).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('branding', 'ADMIN.SERVICE_CATALOG'), {
-        roles: ['SERVICE_CATALOG_MANAGER'],
-        permissionsLoaded: true,
-        hasPermission: catalogPermission,
-      })
-    ).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('home-apps', 'ADMIN.SERVICE_OPERATIONS'), {
-        roles: ['SERVICE_CATALOG_MANAGER'],
-        permissionsLoaded: true,
-        hasPermission: catalogPermission,
-      })
-    ).toBe(false);
     expect(resolvePrimaryAuthorityRole(['SERVICE_AGENT'])).toBe('SERVICE_AGENT');
-  });
-
-  it('admits Space operating personas while preserving resource-level isolation', () => {
-    const hasPermission = vi.fn(
-      (resource: string, permission = 'VIEW') =>
-        resource === 'ADMIN.SPACE_TEMPLATES' && permission === 'VIEW'
-    );
-    expect(canEnterTenantControlPlane(['SPACE_TEMPLATE_ADMIN'], true)).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('branding', 'ADMIN.SPACE_TEMPLATES'), {
-        roles: ['SPACE_TEMPLATE_ADMIN'],
-        permissionsLoaded: true,
-        hasPermission,
-      })
-    ).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('home-apps', 'ADMIN.SPACE_COMPLIANCE'), {
-        roles: ['SPACE_TEMPLATE_ADMIN'],
-        permissionsLoaded: true,
-        hasPermission,
-      })
-    ).toBe(false);
-  });
-
-  it('routes workforce governors only to explicitly granted people administration', () => {
-    const hasPermission = vi.fn(
-      (resource: string, permission = 'VIEW') =>
-        resource === 'ADMIN.WORKFORCE_ACCESS' && permission === 'MANAGE'
-    );
-    expect(canEnterTenantControlPlane(['HR_ADMIN'], true)).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('workforce-access', 'ADMIN.WORKFORCE_ACCESS', 'MANAGE'), {
-        roles: ['HR_ADMIN'],
-        permissionsLoaded: true,
-        hasPermission,
-      })
-    ).toBe(true);
-    expect(
-      canAccessAdminNavigationItem(item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS'), {
-        roles: ['HR_ADMIN'],
-        permissionsLoaded: true,
-        hasPermission,
-      })
-    ).toBe(false);
   });
 
   it('does not infer application approval responsibility from tenant administration', () => {
@@ -172,16 +130,33 @@ describe('control plane access policy', () => {
       canAccessAdminNavigationItem(
         {
           ...item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS'),
+          requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
           requiredResponsibilityCodes: ['APP_ACCESS_APPROVER', 'APP_ACCESS_MANAGER'],
         },
         {
           roles: ['TENANT_ADMIN'],
           permissionsLoaded: true,
-          hasPermission: vi.fn(() => false),
+          hasPermission: vi.fn(() => true),
           resourceRoles: [],
         }
       )
     ).toBe(false);
+
+    expect(
+      canAccessAdminNavigationItem(
+        {
+          ...item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS'),
+          requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
+          requiredResponsibilityCodes: ['APP_ACCESS_APPROVER', 'APP_ACCESS_MANAGER'],
+        },
+        {
+          roles: ['APP_CATALOG_ADMIN'],
+          permissionsLoaded: true,
+          hasPermission: vi.fn(() => true),
+          resourceRoles: [],
+        }
+      )
+    ).toBe(true);
   });
 
   it('keeps audit personas out of unscoped tenant administration pages', () => {
@@ -233,26 +208,22 @@ describe('control plane access policy', () => {
     ).toBe(false);
   });
 
-  it('exposes only the assigned-review surface to a workforce reviewer', () => {
+  it('keeps assigned reviewers out of the tenant administration shell', () => {
     const hasPermission = vi.fn(() => false);
-    const reviewItem = {
-      ...item('access-reviews'),
-      reviewerAccessible: true,
-    };
     expect(
-      canAccessAdminNavigationItem(reviewItem, {
+      canAccessAdminNavigationItem(item('access-reviews'), {
         roles: ['WORKSPACE_MEMBER'],
         permissionsLoaded: true,
         hasPermission,
       })
-    ).toBe(true);
+    ).toBe(false);
     expect(
-      canAccessAdminNavigationItem(reviewItem, {
-        roles: ['PROVIDER_SUPPORT'],
+      canAccessAdminNavigationItem(item('access-reviews'), {
+        roles: ['TENANT_ADMIN'],
         permissionsLoaded: true,
         hasPermission,
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('uses an explicit authority role instead of a mutable job title', () => {

@@ -20,7 +20,6 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import {
-  ApprovalQueue,
   DomainSection,
   ProgressSignal,
   QueryBoundary,
@@ -29,6 +28,7 @@ import {
 } from './hr-domain-components';
 
 import type { HrTimeEntry } from '@dwp-frontend/shared-utils';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
 
 function weekDates(start?: string): string[] {
   if (!start) return [];
@@ -46,7 +46,7 @@ function minutesLabel(minutes: number): string {
   return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
 }
 
-export function HrTimeWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }) {
+export function HrTimeWorkspace() {
   const { t } = useTranslation('hcm');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -59,6 +59,8 @@ export function HrTimeWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }) {
   const [minutes, setMinutes] = useState(480);
   const [workMode, setWorkMode] = useState('HYBRID');
   const [note, setNote] = useState('');
+  const updateEntry = useProductActionMutation('route.hcm.personal.time-entry-update.action');
+  const submitCard = useProductActionMutation('route.hcm.personal.time-submit.action');
   const card = query.data?.card;
   const entriesByDate = useMemo(
     () => new Map((query.data?.entries ?? []).map((entry) => [entry.workDate, entry])),
@@ -67,12 +69,19 @@ export function HrTimeWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }) {
   const dates = weekDates(card?.periodStart);
   const saveMutation = useMutation({
     mutationFn: () =>
-      saveHrTimeEntry(card!.timeCardId, editingDate!, {
-        minutes,
-        workMode,
-        note: note.trim() || undefined,
-        cardVersion: card!.version,
-      }),
+      updateEntry((authority) =>
+        saveHrTimeEntry(
+          card!.timeCardId,
+          editingDate!,
+          {
+            minutes,
+            workMode,
+            note: note.trim() || undefined,
+            cardVersion: card!.version,
+          },
+          authority
+        )
+      ),
     onSuccess: (data) => {
       queryClient.setQueryData(['hcm', 'time'], data);
       void queryClient.invalidateQueries({ queryKey: ['hcm', 'home-overview'] });
@@ -82,7 +91,8 @@ export function HrTimeWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }) {
     onError: () => toast.error(t('domains.time.saveError')),
   });
   const submitMutation = useMutation({
-    mutationFn: () => submitHrTimeCard(card!.timeCardId, card!.version),
+    mutationFn: () =>
+      submitCard((authority) => submitHrTimeCard(card!.timeCardId, card!.version, authority)),
     onSuccess: (data) => {
       queryClient.setQueryData(['hcm', 'time'], data);
       void queryClient.invalidateQueries({ queryKey: ['hcm', 'home-overview'] });
@@ -104,38 +114,7 @@ export function HrTimeWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }) {
       error={query.isError}
       onRetry={() => void query.refetch()}
     >
-      {mode === 'team' ? (
-        <Stack gap={2}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              gap: 1,
-            }}
-          >
-            <ProgressSignal
-              label={t('domains.time.teamPending')}
-              value={String(query.data?.teamQueue.length ?? 0)}
-              detail={t('domains.time.teamPendingDetail')}
-              progress={Math.min(100, (query.data?.teamQueue.length ?? 0) * 20)}
-              tone={query.data?.teamQueue.length ? 'warning' : 'success'}
-            />
-            <ProgressSignal
-              label={t('domains.time.teamCoverage')}
-              value={t('domains.time.currentWeek')}
-              detail={t('domains.time.teamCoverageDetail')}
-              progress={100}
-              tone="primary"
-            />
-          </Box>
-          <ApprovalQueue
-            domain="time"
-            items={query.data?.teamQueue ?? []}
-            title={t('domains.time.queueTitle')}
-            description={t('domains.time.queueDescription')}
-          />
-        </Stack>
-      ) : !card ? (
+      {!card ? (
         <EmptyState
           title={t('domains.time.noCardTitle')}
           description={t('domains.time.noCardDescription')}

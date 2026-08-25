@@ -9,6 +9,10 @@
     "openNavigation": "Open approval navigation",
     "backToHome": "Back to workspace"
   },
+  "surfaces": {
+    "work": "Approval work",
+    "management": "Approval management"
+  },
   "navigation": {
     "groups": {
       "approvals": {
@@ -208,6 +212,7 @@
     "CANCELLED": "Cancelled",
     "EXPIRED": "Expired",
     "PUBLISHED": "Published",
+    "PILOT": "Pilot",
     "REVOKED": "Revoked",
     "SKIPPED": "Skipped",
     "FAILED": "Failed",
@@ -232,6 +237,10 @@
   "insights": {
     "overdue": {
       "title": "Decisions have passed their due time",
+      "detail": "Review high-risk items first to reduce downstream delay."
+    },
+    "approval-sla-risk": {
+      "title": "Approvals are due today",
       "detail": "Review high-risk items first to reduce downstream delay."
     },
     "needs-info": {
@@ -472,6 +481,8 @@
     },
     "receivedFrom": "Received from user {{userId}}",
     "scopeWorkflow": "Process {{key}}",
+    "scopeWorkflowUnavailable": "Selected process",
+    "workflowIdentity": "Workflow ID {{id}}",
     "revoke": {
       "title": "Revoke this delegation?",
       "description": "{{name}} will immediately lose the delegated approval authority. Existing evidence remains available.",
@@ -736,6 +747,31 @@
       }
     },
     "policyRule": "Enforced rule",
+    "highRisk": {
+      "title": "Verify this high-risk action",
+      "description": "We will recheck the exact action and then ask your configured identity provider for fresh verification.",
+      "reconfirm": "Verification is complete. Review the latest object state, then explicitly confirm the action. It will not run automatically.",
+      "verify": "Verify identity",
+      "execute": "Confirm action",
+      "openIdentityProvider": "Continue in identity provider",
+      "providerSelection": "Choose an approved identity provider",
+      "popupWaiting": "Complete verification in the secure popup. This action remains paused until you return and confirm it.",
+      "errors": {
+        "authority-unavailable": "The action authority could not be verified. Refresh and try again.",
+        "pending-attempt": "Finish or dismiss the in-memory attempt before starting another action.",
+        "issuer-retry": "The verification challenge could not be issued. Retry with the same action attempt.",
+        "provider-unavailable": "No supported step-up identity provider is available.",
+        "revision-conflict": "The authority or object changed. Refresh, review, and confirm again.",
+        "popup-blocked": "The verification popup was blocked. Allow popups and try again.",
+        "popup-closed": "The verification popup was closed before completion. Start verification again.",
+        "popup-timeout": "The verification window expired. Start verification again.",
+        "challenge-expired": "The verification proof expired. Authority was checked again; request a new proof before confirming.",
+        "command-retry": "The network result is unknown. Retry once with the same protected attempt.",
+        "command-rejected": "The command was rejected and was not retried. Review the latest object state and input.",
+        "command-uncertain": "The command result is still unknown. Refresh the object before taking another action.",
+        "legacy-command-failed": "The action failed. Refresh and try again."
+      }
+    },
     "breached": {
       "title": "Overdue decisions",
       "meta": "Items requiring immediate operational action"

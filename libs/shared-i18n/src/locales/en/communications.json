@@ -9,6 +9,10 @@
       "navigationLabel": "Newsroom navigation"
     }
   },
+  "surfaces": {
+    "work": "Employee communications",
+    "management": "Communications management"
+  },
   "navigation": {
     "groups": {
       "communications": {

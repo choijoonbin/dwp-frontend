@@ -4,6 +4,7 @@
 - 기준일: 2026-08-21
 - 기준 Frontend Commit: `228bdf56a99e53fb0f2aa606b64acda3a82ca05a`
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
+- Ledger SHA-256: `e139d91c9bad813199475d8809fe74e2afe23106e4b464ca3a35cfec8546122f`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
@@ -286,32 +287,37 @@ Capability와 API Predicate를 추가한다.
 모든 행의 Plane은 `tenant-governance`, 목표 Shell은 `/admin`이다. 제품 운영 Route를 이 Hub로
 되돌리지 않는다. 24개 행의 `navigationContextId`는 모두 `tenant.admin`이다.
 
-| Menu ID                       | 현재 그룹 › 메뉴                   | Path                                      | Plane/Task | 현재 조건 요약                                 | 결정                                                           |
-| ----------------------------- | ---------------------------------- | ----------------------------------------- | ---------- | ---------------------------------------------- | -------------------------------------------------------------- |
-| `admin.branding`              | 사용자 경험 › 브랜딩               | `/admin/experience/branding`              | TG/A       | Full Tenant Admin; S config                    | Keep                                                           |
-| `admin.home-experience`       | 사용자 경험 › 홈 경험              | `/admin/experience/home-experience`       | TG/A       | Full Tenant Admin; S config                    | Keep                                                           |
-| `admin.home-composition`      | 사용자 경험 › 홈 구성 정책         | `/admin/experience/home-composition`      | TG/A       | Full Tenant Admin; S config                    | Keep                                                           |
-| `admin.home-apps`             | 사용자 경험 › 홈 앱 구성           | `/admin/experience/home-apps`             | TG/A       | Full Tenant Admin                              | Keep                                                           |
-| `admin.preference-exceptions` | 사용자 경험 › 설정 예외 검토       | `/admin/experience/preference-exceptions` | TG/O       | Full Tenant Admin                              | Keep                                                           |
-| `admin.localization`          | 사용자 경험 › 다국어 스튜디오      | `/admin/experience/localization`          | TG/A       | Full Tenant Admin                              | Keep                                                           |
-| `admin.access`                | ID 및 접근 권한 › 접근 제어        | `/admin/identity/access`                  | TG/A       | `ADMIN.IDENTITY_DIRECTORY:VIEW`                | Keep                                                           |
-| `admin.app-governance`        | ID 및 접근 권한 › 앱 책임 관리     | `/admin/identity/app-governance`          | TG/A       | Governance permission or scoped responsibility | Keep scoped Hub                                                |
-| `admin.app-access-requests`   | ID 및 접근 권한 › 앱 접근 요청     | `/admin/identity/app-access-requests`     | TG/O       | Access permission or scoped responsibility     | Keep scoped Hub                                                |
-| `admin.access-reviews`        | ID 및 접근 권한 › 접근 권한 검토   | `/admin/identity/access-reviews`          | TG/O       | 현재 모든 non-provider direct exception        | **분해:** 캠페인 운영만 Hub, Named Reviewer Task는 Work로 이동 |
-| `admin.roles`                 | ID 및 접근 권한 › 역할 및 권한     | `/admin/identity/roles`                   | TG/A       | Full Tenant Admin                              | Keep                                                           |
-| `admin.workforce-access`      | ID 및 접근 권한 › 인력 데이터 경계 | `/admin/identity/workforce-access`        | TG/A       | `ADMIN.WORKFORCE_ACCESS:MANAGE`                | Keep                                                           |
-| `admin.saved-view-custody`    | ID 및 접근 권한 › 저장 뷰 관리권   | `/admin/identity/saved-view-custody`      | TG/O       | `ADMIN.SAVED_VIEW_CUSTODY:VIEW`                | Keep                                                           |
-| `admin.provisioning`          | ID 및 접근 권한 › ID 프로비저닝    | `/admin/identity/provisioning`            | TG/A       | `ADMIN.IDENTITY_PROVISIONING:VIEW`             | Keep                                                           |
-| `admin.catalog`               | 플랫폼 설정 › 카탈로그 탐색        | `/admin/platform/catalog`                 | TG/A       | Full Tenant Admin                              | Keep                                                           |
-| `admin.reference-data`        | 플랫폼 설정 › 기준정보             | `/admin/platform/reference-data`          | TG/A       | Full Tenant Admin                              | Keep; HCM 기준정보와 Scope 구분                                |
-| `admin.registry`              | 플랫폼 설정 › 앱 레지스트리        | `/admin/platform/registry`                | TG/A       | Full Tenant Admin                              | Keep                                                           |
-| `admin.navigation`            | 플랫폼 설정 › 내비게이션           | `/admin/platform/navigation`              | TG/A       | Full Tenant Admin                              | Keep                                                           |
-| `admin.productivity`          | 연계 및 자동화 › 생산성 커넥터     | `/admin/integrations/productivity`        | TG/A       | `ADMIN.PRODUCTIVITY_CONNECTOR:MANAGE`          | Keep                                                           |
-| `admin.api-monitoring`        | 거버넌스 › API 모니터링            | `/admin/governance/api-monitoring`        | TG/O       | `ADMIN.API_MONITORING:VIEW`                    | Keep                                                           |
-| `admin.audit-overview`        | 거버넌스 › 감사 관제               | `/admin/governance/audit-overview`        | TG/O       | `ADMIN.AUDIT_VIEW:VIEW`                        | Keep                                                           |
-| `admin.audit-investigations`  | 거버넌스 › 조사 워크벤치           | `/admin/governance/audit-investigations`  | TG/O       | `ADMIN.AUDIT_INVESTIGATE:UPDATE`               | Keep                                                           |
-| `admin.audit-events`          | 거버넌스 › 증적 탐색기             | `/admin/governance/audit-events`          | TG/O       | `ADMIN.AUDIT_VIEW:VIEW`                        | Keep                                                           |
-| `admin.audit-governance`      | 거버넌스 › 증적 거버넌스           | `/admin/governance/audit-governance`      | TG/A       | `ADMIN.AUDIT_CONFIGURE:MANAGE`                 | Keep                                                           |
+| Menu ID                       | 현재 그룹 › 메뉴                   | Path                                      | Plane/Task | 현재 조건 요약                                                                  | 결정                                                           |
+| ----------------------------- | ---------------------------------- | ----------------------------------------- | ---------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `admin.branding`              | 사용자 경험 › 브랜딩               | `/admin/experience/branding`              | TG/A       | Full Tenant Admin; S config                                                     | Keep                                                           |
+| `admin.home-experience`       | 사용자 경험 › 홈 경험              | `/admin/experience/home-experience`       | TG/A       | Full Tenant Admin; S config                                                     | Keep                                                           |
+| `admin.home-composition`      | 사용자 경험 › 홈 구성 정책         | `/admin/experience/home-composition`      | TG/A       | Full Tenant Admin; S config                                                     | Keep                                                           |
+| `admin.home-apps`             | 사용자 경험 › 홈 앱 구성           | `/admin/experience/home-apps`             | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.preference-exceptions` | 사용자 경험 › 설정 예외 검토       | `/admin/experience/preference-exceptions` | TG/O       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.localization`          | 사용자 경험 › 다국어 스튜디오      | `/admin/experience/localization`          | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.access`                | ID 및 접근 권한 › 접근 제어        | `/admin/identity/access`                  | TG/A       | `ADMIN.IDENTITY_DIRECTORY:VIEW`                                                 | Keep                                                           |
+| `admin.app-governance`        | ID 및 접근 권한 › 앱 책임 관리     | `/admin/identity/app-governance`          | TG/A       | `APP_OWNER`, `APP_ACCESS_MANAGER`, `APP_ACCESS_APPROVER`, `APP_ACCESS_REVIEWER` | Keep scoped Hub; Preset 수명주기만 오케스트레이션              |
+| `admin.app-access-requests`   | ID 및 접근 권한 › 앱 접근 요청     | `/admin/identity/app-access-requests`     | TG/O       | Access permission or scoped responsibility                                      | Keep scoped Hub                                                |
+| `admin.access-reviews`        | ID 및 접근 권한 › 접근 권한 검토   | `/admin/identity/access-reviews`          | TG/O       | 현재 모든 non-provider direct exception                                         | **분해:** 캠페인 운영만 Hub, Named Reviewer Task는 Work로 이동 |
+| `admin.roles`                 | ID 및 접근 권한 › 역할 및 권한     | `/admin/identity/roles`                   | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.workforce-access`      | ID 및 접근 권한 › 인력 데이터 경계 | `/admin/identity/workforce-access`        | TG/A       | `ADMIN.WORKFORCE_ACCESS:MANAGE`                                                 | Keep                                                           |
+| `admin.saved-view-custody`    | ID 및 접근 권한 › 저장 뷰 관리권   | `/admin/identity/saved-view-custody`      | TG/O       | `ADMIN.SAVED_VIEW_CUSTODY:VIEW`                                                 | Keep                                                           |
+| `admin.provisioning`          | ID 및 접근 권한 › ID 프로비저닝    | `/admin/identity/provisioning`            | TG/A       | `ADMIN.IDENTITY_PROVISIONING:VIEW`                                              | Keep                                                           |
+| `admin.catalog`               | 플랫폼 설정 › 카탈로그 탐색        | `/admin/platform/catalog`                 | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.reference-data`        | 플랫폼 설정 › 기준정보             | `/admin/platform/reference-data`          | TG/A       | Full Tenant Admin                                                               | Keep; HCM 기준정보와 Scope 구분                                |
+| `admin.registry`              | 플랫폼 설정 › 앱 레지스트리        | `/admin/platform/registry`                | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.navigation`            | 플랫폼 설정 › 내비게이션           | `/admin/platform/navigation`              | TG/A       | Full Tenant Admin                                                               | Keep                                                           |
+| `admin.productivity`          | 연계 및 자동화 › 생산성 커넥터     | `/admin/integrations/productivity`        | TG/A       | `ADMIN.PRODUCTIVITY_CONNECTOR:MANAGE`                                           | Keep                                                           |
+| `admin.api-monitoring`        | 거버넌스 › API 모니터링            | `/admin/governance/api-monitoring`        | TG/O       | `ADMIN.API_MONITORING:VIEW`                                                     | Keep                                                           |
+| `admin.audit-overview`        | 거버넌스 › 감사 관제               | `/admin/governance/audit-overview`        | TG/O       | `ADMIN.AUDIT_VIEW:VIEW`                                                         | Keep                                                           |
+| `admin.audit-investigations`  | 거버넌스 › 조사 워크벤치           | `/admin/governance/audit-investigations`  | TG/O       | `ADMIN.AUDIT_INVESTIGATE:UPDATE`                                                | Keep                                                           |
+| `admin.audit-events`          | 거버넌스 › 증적 탐색기             | `/admin/governance/audit-events`          | TG/O       | `ADMIN.AUDIT_VIEW:VIEW`                                                         | Keep                                                           |
+| `admin.audit-governance`      | 거버넌스 › 증적 거버넌스           | `/admin/governance/audit-governance`      | TG/A       | `ADMIN.AUDIT_CONFIGURE:MANAGE`                                                  | Keep                                                           |
+
+회사 관리 센터의 `admin.app-governance`는 위 네 책임의 직접 할당과 제품 관리자 Preset의
+요청·승인·활성화·회수 수명주기를 오케스트레이션한다. `APP_CONFIG_ADMIN`과 제품 전문
+Role·Exact Capability의 실행 UI는 각 앱 Management Workbench에 귀속되며, 이 Hub의 Deep Link나
+Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Action을 만들지는 않는다.
 
 `admin.access-reviews`의 Backend 행 단위 Reviewer 제한은 유지한다. 분해 전까지 보안 우회는
 아니지만 일반 Reviewer가 Admin Shell에 들어가는 의미 오류로 기록한다.

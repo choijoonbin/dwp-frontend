@@ -23,7 +23,6 @@ import {
   createHrisConnector,
   createHrisMappingProfile,
   executeHrisConnector,
-  getSystemCodeSet,
   importSyntheticWorkdayFixture,
   listHrisConnectors,
   listHrisMappingProfiles,
@@ -42,11 +41,8 @@ import {
   ActionButton,
   ActionIconButton,
   EnterpriseDataGrid,
-  FormDialog,
-  FormField,
   GuidedEmptyState,
   OperationalKpiStrip,
-  SelectField,
 } from '@dwp-frontend/design-system';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
@@ -61,10 +57,19 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import {
+  ProductSurfaceHighRiskCommandDialog,
+  productSurfaceHighRiskCommand,
+  useProductSurfaceHighRiskCommand,
+} from '../../components/product-surface-high-risk-command';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useOptionalAllowedProductSurface } from '../../components/allowed-product-surface-context';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
+import { ConnectorDialog, IssueResolutionDialog, MappingDialog } from './hris-operations-dialogs';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
-  CreateHrisConnectorRequest,
   HrisConnector,
   HrisMappingProfile,
   HrisReconciliationIssue,
@@ -72,30 +77,6 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 type HrisView = 'connectors' | 'runs' | 'reconciliation' | 'mappings';
-
-const SOURCE_TYPES: CreateHrisConnectorRequest['sourceType'][] = [
-  'WORKDAY',
-  'ORACLE_HCM',
-  'SAP_HCM',
-  'SCIM',
-  'CUSTOM',
-];
-const CONNECTOR_TYPES: CreateHrisConnectorRequest['connectorType'][] = [
-  'WORKDAY_REST',
-  'WORKDAY_SOAP',
-  'ORACLE_HCM_REST',
-  'SAP_SUCCESSFACTORS',
-  'SCIM_BRIDGE',
-  'CUSTOM_REST',
-  'FILE_IMPORT',
-];
-const AUTH_MODES: CreateHrisConnectorRequest['authMode'][] = [
-  'NONE',
-  'BASIC',
-  'OAUTH2_CLIENT_CREDENTIALS',
-  'MTLS',
-  'SIGNED_REQUEST',
-];
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
@@ -128,32 +109,114 @@ export function HrisOperationsWorkbench() {
   const [createConnectorOpen, setCreateConnectorOpen] = useState(false);
   const [createMappingOpen, setCreateMappingOpen] = useState(false);
   const [issue, setIssue] = useState<HrisReconciliationIssue | null>(null);
-  const canManage = (auth.user?.roles ?? []).some((role) => ['ADMIN', 'HR_ADMIN'].includes(role));
-  const syntheticImportEnabled = import.meta.env.DEV;
+  const governedPage = useOptionalAllowedProductSurface();
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.management',
+  });
+  const legacyCanManage = (auth.user?.roles ?? []).some((role) =>
+    ['ADMIN', 'HR_ADMIN'].includes(role)
+  );
+  const canCreate = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('hcm.integration.create')
+    : legacyCanManage;
+  const canUpdate = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('hcm.integration.update')
+    : legacyCanManage;
+  const canExecute = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('hcm.integration.execute')
+    : legacyCanManage;
+  const canManage = canCreate || canUpdate || canExecute;
+  const syntheticImportEnabled = import.meta.env.DEV && !governedPage;
+  const refresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['workforce', 'hris'] });
+  };
+  const createIntegration = useProductActionMutation(
+    'route.hcm.management.integration-create.action'
+  );
+  const updateIntegration = useProductActionMutation(
+    'route.hcm.management.integration-update.action'
+  );
+  const configurationCheck = useProductSurfaceHighRiskCommand({
+    operation: 'HCM_INTEGRATION_CONFIGURATION_CHECK',
+    execute: async (command, authority) => {
+      const result = await checkHrisConnectorConfiguration(command.targetId, authority);
+      if (!result.valid) throw new Error(result.issues.join(' '));
+      return result;
+    },
+    onSuccess: async () => {
+      await refresh();
+      toast.success(t('provisioning.hris.toasts.checked'));
+    },
+  });
+  const connectorExecution = useProductSurfaceHighRiskCommand({
+    operation: 'HCM_INTEGRATION_EXECUTE',
+    execute: (command, authority) =>
+      executeHrisConnector(
+        command.targetId,
+        command.payload.syncMode === 'FULL' ? 'FULL' : 'DELTA',
+        authority
+      ),
+    onSuccess: async () => {
+      await refresh();
+      toast.success(t('provisioning.hris.toasts.syncStarted'));
+    },
+  });
+  const runRetry = useProductSurfaceHighRiskCommand({
+    operation: 'HCM_INTEGRATION_RETRY',
+    execute: (command, authority) => retryHrisSyncRun(command.targetId, authority),
+    onSuccess: async () => {
+      await refresh();
+      toast.success(t('provisioning.hris.toasts.syncStarted'));
+    },
+  });
+  const reconciliation = useProductSurfaceHighRiskCommand({
+    operation: 'HCM_INTEGRATION_RECONCILE',
+    execute: (command, authority) =>
+      reconcileHrisRun(command.targetId, String(command.payload.syncRunId ?? ''), authority),
+    onSuccess: async () => {
+      await refresh();
+      toast.success(t('provisioning.hris.toasts.reconciled'));
+    },
+  });
 
   const sources = useQuery({
-    queryKey: ['workforce', 'hris', 'sources'],
-    queryFn: listHrisSources,
+    queryKey: ['workforce', 'hris', 'sources', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listHrisSources(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const connectors = useQuery({
-    queryKey: ['workforce', 'hris', 'connectors'],
-    queryFn: listHrisConnectors,
+    queryKey: ['workforce', 'hris', 'connectors', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listHrisConnectors(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const mappings = useQuery({
-    queryKey: ['workforce', 'hris', 'mappings'],
-    queryFn: listHrisMappingProfiles,
+    queryKey: ['workforce', 'hris', 'mappings', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listHrisMappingProfiles(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const runs = useQuery({
-    queryKey: ['workforce', 'hris', 'runs'],
-    queryFn: () => listHrisSyncRuns(100),
+    queryKey: ['workforce', 'hris', 'runs', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listHrisSyncRuns(100, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const reconciliations = useQuery({
-    queryKey: ['workforce', 'hris', 'reconciliations'],
-    queryFn: () => listHrisReconciliations(50),
+    queryKey: ['workforce', 'hris', 'reconciliations', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listHrisReconciliations(50, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const issues = useQuery({
-    queryKey: ['workforce', 'hris', 'reconciliation-issues'],
-    queryFn: () => listHrisReconciliationIssues('OPEN', 100),
+    queryKey: ['workforce', 'hris', 'reconciliation-issues', ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      listHrisReconciliationIssues('OPEN', 100, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const queries = [sources, connectors, mappings, runs, reconciliations, issues];
   const pending = queries.some((query) => query.isLoading);
@@ -173,14 +236,12 @@ export function HrisOperationsWorkbench() {
     (connector) => connector.lifecycleState === 'ACTIVE' && connector.healthState === 'HEALTHY'
   );
 
-  const refresh = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['workforce', 'hris'] });
-  };
   const operate = async <T,>(
+    permitted: boolean,
     action: () => Promise<T>,
     success: string | ((result: T) => string)
   ) => {
-    if (!canManage) return;
+    if (!permitted) return;
     setBusy(true);
     try {
       const result = await action();
@@ -288,7 +349,7 @@ export function HrisOperationsWorkbench() {
           <ActionButton
             intent="secondary"
             startIcon={<Plus size={16} />}
-            disabled={!canManage}
+            disabled={!canCreate}
             onClick={() => setCreateConnectorOpen(true)}
           >
             {t('provisioning.hris.actions.newConnector')}
@@ -301,6 +362,7 @@ export function HrisOperationsWorkbench() {
               disabled={!canManage}
               onClick={() =>
                 void operate(
+                  legacyCanManage,
                   () => importSyntheticWorkdayFixture(),
                   (result) => t('provisioning.hris.toasts.imported', { count: result.readCount })
                 )
@@ -354,29 +416,104 @@ export function HrisOperationsWorkbench() {
         <ConnectorView
           connectors={connectors.data ?? []}
           mappings={activeMappings}
-          canManage={canManage}
+          canUpdate={canUpdate}
+          canExecute={canExecute}
           busy={busy}
-          onOperate={operate}
+          onCheck={(connector) =>
+            configurationCheck.begin(
+              productSurfaceHighRiskCommand({
+                operation: 'HCM_INTEGRATION_CONFIGURATION_CHECK',
+                commandMethod: 'POST',
+                commandPath: `/api/people/v1/workforce/data-operations/hris/connectors/${encodeURIComponent(connector.connectorInstanceId)}/configuration-check`,
+                targetType: 'HCM_CONNECTOR',
+                targetId: connector.connectorInstanceId,
+                expectedObjectVersion: connector.version,
+                payload: {},
+              })
+            )
+          }
+          onExecute={(connector, syncMode) =>
+            connectorExecution.begin(
+              productSurfaceHighRiskCommand({
+                operation: 'HCM_INTEGRATION_EXECUTE',
+                commandMethod: 'POST',
+                commandPath: `/api/people/v1/workforce/data-operations/hris/connectors/${encodeURIComponent(connector.connectorInstanceId)}/executions`,
+                targetType: 'HCM_CONNECTOR',
+                targetId: connector.connectorInstanceId,
+                expectedObjectVersion: connector.version,
+                payload: { syncMode },
+              })
+            )
+          }
+          onUpdate={(connector, request) =>
+            operate(
+              canUpdate,
+              () =>
+                updateIntegration((authority) =>
+                  updateHrisConnector(connector, request, authority)
+                ),
+              t('provisioning.hris.toasts.lifecycle')
+            )
+          }
         />
       )}
       {view === 'runs' && (
-        <RunView runs={runs.data ?? []} canManage={canManage} busy={busy} onOperate={operate} />
+        <RunView
+          runs={runs.data ?? []}
+          connectors={connectors.data ?? []}
+          canExecute={canExecute}
+          busy={busy}
+          onRetry={(run) =>
+            runRetry.begin(
+              productSurfaceHighRiskCommand({
+                operation: 'HCM_INTEGRATION_RETRY',
+                commandMethod: 'POST',
+                commandPath: `/api/people/v1/workforce/data-operations/hris/sync-runs/${encodeURIComponent(run.syncRunId)}/retry`,
+                targetType: 'HCM_SYNC_RUN',
+                targetId: run.syncRunId,
+                expectedObjectVersion: run.version,
+                payload: {},
+              })
+            )
+          }
+          onReconcile={(run, connector) =>
+            reconciliation.begin(
+              productSurfaceHighRiskCommand({
+                operation: 'HCM_INTEGRATION_RECONCILE',
+                commandMethod: 'POST',
+                commandPath: `/api/people/v1/workforce/data-operations/hris/connectors/${encodeURIComponent(connector.connectorInstanceId)}/reconciliations`,
+                targetType: 'HCM_CONNECTOR',
+                targetId: connector.connectorInstanceId,
+                expectedObjectVersion: connector.version,
+                payload: { syncRunId: run.syncRunId },
+              })
+            )
+          }
+        />
       )}
       {view === 'reconciliation' && (
         <ReconciliationView
           issues={issues.data ?? []}
           runs={reconciliations.data ?? []}
-          canManage={canManage}
+          canUpdate={canUpdate}
           onResolve={setIssue}
         />
       )}
       {view === 'mappings' && (
         <MappingView
           mappings={mappings.data ?? []}
-          canManage={canManage}
+          canCreate={canCreate}
+          canUpdate={canUpdate}
           busy={busy}
           onCreate={() => setCreateMappingOpen(true)}
-          onOperate={operate}
+          onActivate={(mapping) =>
+            operate(
+              canUpdate,
+              () =>
+                updateIntegration((authority) => activateHrisMappingProfile(mapping, authority)),
+              t('provisioning.hris.toasts.mappingActivated')
+            )
+          }
         />
       )}
 
@@ -386,7 +523,8 @@ export function HrisOperationsWorkbench() {
           onClose={() => setCreateConnectorOpen(false)}
           onSave={async (request) => {
             await operate(
-              () => createHrisConnector(request),
+              canCreate,
+              () => createIntegration((authority) => createHrisConnector(request, authority)),
               t('provisioning.hris.toasts.connectorCreated')
             );
             setCreateConnectorOpen(false);
@@ -400,7 +538,8 @@ export function HrisOperationsWorkbench() {
           onClose={() => setCreateMappingOpen(false)}
           onSave={async (request) => {
             await operate(
-              () => createHrisMappingProfile(request),
+              canCreate,
+              () => createIntegration((authority) => createHrisMappingProfile(request, authority)),
               t('provisioning.hris.toasts.mappingCreated')
             );
             setCreateMappingOpen(false);
@@ -414,13 +553,26 @@ export function HrisOperationsWorkbench() {
           onClose={() => setIssue(null)}
           onSave={async (state, note) => {
             await operate(
-              () => resolveHrisReconciliationIssue(issue.reconciliationIssueId, state, note),
+              canUpdate,
+              () =>
+                updateIntegration((authority) =>
+                  resolveHrisReconciliationIssue(
+                    issue.reconciliationIssueId,
+                    state,
+                    note,
+                    authority
+                  )
+                ),
               t('provisioning.hris.toasts.issueResolved')
             );
             setIssue(null);
           }}
         />
       )}
+      <ProductSurfaceHighRiskCommandDialog controller={configurationCheck.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={connectorExecution.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={runRetry.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={reconciliation.controller} />
     </Box>
   );
 }
@@ -428,27 +580,43 @@ export function HrisOperationsWorkbench() {
 function ConnectorView({
   connectors,
   mappings,
-  canManage,
+  canUpdate,
+  canExecute,
   busy,
-  onOperate,
+  onCheck,
+  onExecute,
+  onUpdate,
 }: {
   connectors: HrisConnector[];
   mappings: Map<number, HrisMappingProfile>;
-  canManage: boolean;
+  canUpdate: boolean;
+  canExecute: boolean;
   busy: boolean;
-  onOperate: (action: () => Promise<unknown>, success: string) => Promise<void>;
+  onCheck: (connector: HrisConnector) => Promise<void>;
+  onExecute: (connector: HrisConnector, syncMode: 'FULL' | 'DELTA') => Promise<void>;
+  onUpdate: (
+    connector: HrisConnector,
+    request: {
+      endpointUri?: string;
+      credentialReference?: string;
+      scheduleExpression?: string;
+      lifecycleState: string;
+    }
+  ) => Promise<void>;
 }) {
   const { t } = useTranslation('workforce');
   const display = useDisplayDictionary();
   if (!connectors.length) {
     return (
       <GuidedEmptyState
-        kind={canManage ? 'first-use' : 'permission'}
+        kind={canUpdate || canExecute ? 'first-use' : 'permission'}
         title={t(
-          canManage ? 'provisioning.hris.empty.title' : 'provisioning.hris.empty.permissionTitle'
+          canUpdate || canExecute
+            ? 'provisioning.hris.empty.title'
+            : 'provisioning.hris.empty.permissionTitle'
         )}
         description={t(
-          canManage
+          canUpdate || canExecute
             ? 'provisioning.hris.empty.description'
             : 'provisioning.hris.empty.permissionDescription'
         )}
@@ -578,15 +746,8 @@ function ConnectorView({
                 intent="quiet"
                 size="small"
                 startIcon={<ShieldCheck size={15} />}
-                disabled={!canManage || busy}
-                onClick={() =>
-                  void onOperate(async () => {
-                    const result = await checkHrisConnectorConfiguration(
-                      connector.connectorInstanceId
-                    );
-                    if (!result.valid) throw new Error(result.issues.join(' '));
-                  }, t('provisioning.hris.toasts.checked'))
-                }
+                disabled={!canExecute || busy}
+                onClick={() => void onCheck(connector)}
               >
                 {t('provisioning.hris.actions.check')}
               </ActionButton>
@@ -597,19 +758,14 @@ function ConnectorView({
                     ? 'provisioning.hris.actions.suspend'
                     : 'provisioning.hris.actions.activate'
                 )}
-                disabled={!canManage || busy || connector.lifecycleState === 'RETIRED'}
+                disabled={!canUpdate || busy || connector.lifecycleState === 'RETIRED'}
                 onClick={() =>
-                  void onOperate(
-                    () =>
-                      updateHrisConnector(connector, {
-                        endpointUri: connector.endpointUri ?? undefined,
-                        credentialReference: connector.credentialReference ?? undefined,
-                        scheduleExpression: connector.scheduleExpression ?? undefined,
-                        lifecycleState:
-                          connector.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE',
-                      }),
-                    t('provisioning.hris.toasts.lifecycle')
-                  )
+                  void onUpdate(connector, {
+                    endpointUri: connector.endpointUri ?? undefined,
+                    credentialReference: connector.credentialReference ?? undefined,
+                    scheduleExpression: connector.scheduleExpression ?? undefined,
+                    lifecycleState: connector.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE',
+                  })
                 }
               >
                 {connector.lifecycleState === 'ACTIVE' ? <Pause size={16} /> : <Play size={16} />}
@@ -617,26 +773,16 @@ function ConnectorView({
               <ActionButton
                 intent="secondary"
                 size="small"
-                disabled={!canManage || busy || !runnable}
-                onClick={() =>
-                  void onOperate(
-                    () => executeHrisConnector(connector.connectorInstanceId, 'DELTA'),
-                    t('provisioning.hris.toasts.syncStarted')
-                  )
-                }
+                disabled={!canExecute || busy || !runnable}
+                onClick={() => void onExecute(connector, 'DELTA')}
               >
                 {t('provisioning.hris.actions.deltaSync')}
               </ActionButton>
               <ActionButton
                 intent="secondary"
                 size="small"
-                disabled={!canManage || busy || !runnable}
-                onClick={() =>
-                  void onOperate(
-                    () => executeHrisConnector(connector.connectorInstanceId, 'FULL'),
-                    t('provisioning.hris.toasts.syncStarted')
-                  )
-                }
+                disabled={!canExecute || busy || !runnable}
+                onClick={() => void onExecute(connector, 'FULL')}
               >
                 {t('provisioning.hris.actions.fullSync')}
               </ActionButton>
@@ -650,14 +796,18 @@ function ConnectorView({
 
 function RunView({
   runs,
-  canManage,
+  connectors,
+  canExecute,
   busy,
-  onOperate,
+  onRetry,
+  onReconcile,
 }: {
   runs: HrisSyncRun[];
-  canManage: boolean;
+  connectors: HrisConnector[];
+  canExecute: boolean;
   busy: boolean;
-  onOperate: (action: () => Promise<unknown>, success: string) => Promise<void>;
+  onRetry: (run: HrisSyncRun) => Promise<void>;
+  onReconcile: (run: HrisSyncRun, connector: HrisConnector) => Promise<void>;
 }) {
   const { t } = useTranslation('workforce');
   const columns = useMemo<GridColDef<HrisSyncRun>[]>(
@@ -727,13 +877,8 @@ function RunView({
               <ActionIconButton
                 label={t('provisioning.hris.actions.retry')}
                 size="small"
-                disabled={!canManage || busy}
-                onClick={() =>
-                  void onOperate(
-                    () => retryHrisSyncRun(row.syncRunId),
-                    t('provisioning.hris.toasts.syncStarted')
-                  )
-                }
+                disabled={!canExecute || busy}
+                onClick={() => void onRetry(row)}
               >
                 <RotateCcw size={15} />
               </ActionIconButton>
@@ -742,13 +887,13 @@ function RunView({
               <ActionIconButton
                 label={t('provisioning.hris.actions.reconcile')}
                 size="small"
-                disabled={!canManage || busy}
-                onClick={() =>
-                  void onOperate(
-                    () => reconcileHrisRun(row.connectorInstanceId!, row.syncRunId),
-                    t('provisioning.hris.toasts.reconciled')
-                  )
-                }
+                disabled={!canExecute || busy}
+                onClick={() => {
+                  const connector = connectors.find(
+                    (candidate) => candidate.connectorInstanceId === row.connectorInstanceId
+                  );
+                  if (connector) void onReconcile(row, connector);
+                }}
               >
                 <GitCompareArrows size={15} />
               </ActionIconButton>
@@ -757,7 +902,7 @@ function RunView({
         ),
       },
     ],
-    [busy, canManage, onOperate, t]
+    [busy, canExecute, connectors, onReconcile, onRetry, t]
   );
   return (
     <EnterpriseDataGrid
@@ -776,12 +921,12 @@ function RunView({
 function ReconciliationView({
   issues,
   runs,
-  canManage,
+  canUpdate,
   onResolve,
 }: {
   issues: HrisReconciliationIssue[];
   runs: Awaited<ReturnType<typeof listHrisReconciliations>>;
-  canManage: boolean;
+  canUpdate: boolean;
   onResolve: (issue: HrisReconciliationIssue) => void;
 }) {
   const { t } = useTranslation('workforce');
@@ -821,7 +966,7 @@ function ReconciliationView({
           <ActionIconButton
             label={t('provisioning.hris.actions.resolve')}
             size="small"
-            disabled={!canManage}
+            disabled={!canUpdate}
             onClick={() => onResolve(row)}
           >
             <ArrowRight size={15} />
@@ -829,7 +974,7 @@ function ReconciliationView({
         ),
       },
     ],
-    [canManage, onResolve, t]
+    [canUpdate, onResolve, t]
   );
   return (
     <Box>
@@ -869,16 +1014,18 @@ function ReconciliationView({
 
 function MappingView({
   mappings,
-  canManage,
+  canCreate,
+  canUpdate,
   busy,
   onCreate,
-  onOperate,
+  onActivate,
 }: {
   mappings: HrisMappingProfile[];
-  canManage: boolean;
+  canCreate: boolean;
+  canUpdate: boolean;
   busy: boolean;
   onCreate: () => void;
-  onOperate: (action: () => Promise<unknown>, success: string) => Promise<void>;
+  onActivate: (mapping: HrisMappingProfile) => Promise<void>;
 }) {
   const { t } = useTranslation('workforce');
   return (
@@ -896,7 +1043,7 @@ function MappingView({
           intent="secondary"
           size="small"
           startIcon={<Plus size={15} />}
-          disabled={!canManage || busy}
+          disabled={!canCreate || busy}
           onClick={onCreate}
         >
           {t('provisioning.hris.actions.newMapping')}
@@ -925,13 +1072,8 @@ function MappingView({
             <ActionButton
               intent="secondary"
               size="small"
-              disabled={!canManage || busy}
-              onClick={() =>
-                void onOperate(
-                  () => activateHrisMappingProfile(mapping),
-                  t('provisioning.hris.toasts.mappingActivated')
-                )
-              }
+              disabled={!canUpdate || busy}
+              onClick={() => void onActivate(mapping)}
             >
               {t('provisioning.hris.actions.activate')}
             </ActionButton>
@@ -939,291 +1081,5 @@ function MappingView({
         </Stack>
       ))}
     </Box>
-  );
-}
-
-function ConnectorDialog({
-  busy,
-  onClose,
-  onSave,
-}: {
-  busy: boolean;
-  onClose: () => void;
-  onSave: (request: CreateHrisConnectorRequest) => Promise<void>;
-}) {
-  const { t, i18n } = useTranslation('workforce');
-  const locale = i18n.resolvedLanguage ?? i18n.language;
-  const sourceCatalog = useQuery({
-    queryKey: ['system-code-set', 'PEOPLE.HRIS_SOURCE_TYPE', locale],
-    queryFn: () => getSystemCodeSet('PEOPLE.HRIS_SOURCE_TYPE', locale),
-    staleTime: 300_000,
-  });
-  const connectorCatalog = useQuery({
-    queryKey: ['system-code-set', 'PEOPLE.HRIS_CONNECTOR_TYPE', locale],
-    queryFn: () => getSystemCodeSet('PEOPLE.HRIS_CONNECTOR_TYPE', locale),
-    staleTime: 300_000,
-  });
-  const authCatalog = useQuery({
-    queryKey: ['system-code-set', 'PEOPLE.HRIS_AUTH_MODE', locale],
-    queryFn: () => getSystemCodeSet('PEOPLE.HRIS_AUTH_MODE', locale),
-    staleTime: 300_000,
-  });
-  const [sourceKey, setSourceKey] = useState('');
-  const [sourceType, setSourceType] = useState<CreateHrisConnectorRequest['sourceType']>('WORKDAY');
-  const [sourceName, setSourceName] = useState('');
-  const [connectorKey, setConnectorKey] = useState('');
-  const [connectorType, setConnectorType] =
-    useState<CreateHrisConnectorRequest['connectorType']>('WORKDAY_REST');
-  const [endpointUri, setEndpointUri] = useState('');
-  const [authMode, setAuthMode] = useState<CreateHrisConnectorRequest['authMode']>(
-    'OAUTH2_CLIENT_CREDENTIALS'
-  );
-  const [credentialReference, setCredentialReference] = useState('');
-  const [scheduleExpression, setScheduleExpression] = useState('');
-  const options = <T extends string>(catalog: typeof sourceCatalog, fallback: T[]) =>
-    catalog.data?.values
-      .filter((value) => fallback.includes(value.code as T))
-      .map((value) => ({ value: value.code as T, label: value.label })) ??
-    fallback.map((value) => ({ value, label: value }));
-  const remote = connectorType !== 'FILE_IMPORT';
-  const valid =
-    sourceKey.trim() &&
-    sourceName.trim() &&
-    connectorKey.trim() &&
-    (!remote || endpointUri.startsWith('https://')) &&
-    (authMode === 'NONE' ||
-      /^(vault|secret|env|aws-secretsmanager):\/\//.test(credentialReference));
-  return (
-    <FormDialog
-      open
-      title={t('provisioning.hris.create.title')}
-      description={t('provisioning.hris.create.secretNotice')}
-      cancelLabel={t('common.actions.cancel')}
-      submitLabel={t('common.actions.create')}
-      busy={busy}
-      submitDisabled={!valid}
-      maxWidth="md"
-      onClose={onClose}
-      onSubmit={() =>
-        onSave({
-          sourceKey: sourceKey.trim(),
-          sourceType,
-          sourceName: sourceName.trim(),
-          connectorKey: connectorKey.trim(),
-          connectorType,
-          endpointUri: endpointUri.trim() || undefined,
-          authMode,
-          credentialReference: credentialReference.trim() || undefined,
-          scheduleExpression: scheduleExpression.trim() || undefined,
-        })
-      }
-    >
-      <Stack gap={2}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <FormField
-            required
-            label={t('provisioning.hris.create.sourceKey')}
-            value={sourceKey}
-            onChange={(event) => setSourceKey(event.target.value)}
-          />
-          <SelectField
-            label={t('provisioning.hris.create.sourceType')}
-            value={sourceType}
-            options={options(sourceCatalog, SOURCE_TYPES)}
-            onValueChange={(value) => value && setSourceType(value)}
-          />
-          <FormField
-            required
-            label={t('provisioning.hris.create.sourceName')}
-            value={sourceName}
-            onChange={(event) => setSourceName(event.target.value)}
-          />
-        </Stack>
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <FormField
-            required
-            label={t('provisioning.hris.create.connectorKey')}
-            value={connectorKey}
-            onChange={(event) => setConnectorKey(event.target.value)}
-          />
-          <SelectField
-            label={t('provisioning.hris.create.connectorType')}
-            value={connectorType}
-            options={options(connectorCatalog, CONNECTOR_TYPES)}
-            onValueChange={(value) => {
-              if (!value) return;
-              setConnectorType(value);
-              if (value === 'FILE_IMPORT') setAuthMode('NONE');
-            }}
-          />
-        </Stack>
-        <FormField
-          required={remote}
-          disabled={!remote}
-          label={t('provisioning.hris.create.endpoint')}
-          value={endpointUri}
-          onChange={(event) => setEndpointUri(event.target.value)}
-          supportingText={t(
-            remote ? 'provisioning.hris.create.httpsOnly' : 'provisioning.hris.create.fileManaged'
-          )}
-        />
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <SelectField
-            label={t('provisioning.hris.create.authMode')}
-            value={authMode}
-            options={options(authCatalog, AUTH_MODES)}
-            onValueChange={(value) => value && setAuthMode(value)}
-          />
-          <FormField
-            required={authMode !== 'NONE'}
-            disabled={authMode === 'NONE'}
-            label={t('provisioning.hris.create.credentialReference')}
-            value={credentialReference}
-            placeholder={t('provisioning.hris.create.credentialReferencePlaceholder')}
-            onChange={(event) => setCredentialReference(event.target.value)}
-          />
-          <FormField
-            label={t('provisioning.hris.create.schedule')}
-            value={scheduleExpression}
-            onChange={(event) => setScheduleExpression(event.target.value)}
-          />
-        </Stack>
-      </Stack>
-    </FormDialog>
-  );
-}
-
-function MappingDialog({
-  sources,
-  busy,
-  onClose,
-  onSave,
-}: {
-  sources: Awaited<ReturnType<typeof listHrisSources>>;
-  busy: boolean;
-  onClose: () => void;
-  onSave: (request: Parameters<typeof createHrisMappingProfile>[0]) => Promise<void>;
-}) {
-  const { t } = useTranslation('workforce');
-  const [sourceSystemId, setSourceSystemId] = useState<number | ''>(
-    sources[0]?.sourceSystemId ?? ''
-  );
-  const [profileKey, setProfileKey] = useState('');
-  const [sourceVersion, setSourceVersion] = useState('');
-  const [definition, setDefinition] = useState('{\n  "mappings": []\n}');
-  let parsed: Record<string, unknown> | null = null;
-  try {
-    parsed = JSON.parse(definition) as Record<string, unknown>;
-  } catch {
-    parsed = null;
-  }
-  const valid =
-    sourceSystemId !== '' &&
-    profileKey.trim() &&
-    sourceVersion.trim() &&
-    Array.isArray(parsed?.mappings) &&
-    parsed.mappings.length > 0;
-  return (
-    <FormDialog
-      open
-      title={t('provisioning.hris.mapping.createTitle')}
-      description={t('provisioning.hris.mapping.createDescription')}
-      cancelLabel={t('common.actions.cancel')}
-      submitLabel={t('common.actions.create')}
-      busy={busy}
-      submitDisabled={!valid}
-      maxWidth="md"
-      onClose={onClose}
-      onSubmit={() =>
-        parsed && sourceSystemId !== ''
-          ? onSave({
-              sourceSystemId,
-              profileKey: profileKey.trim(),
-              adapterType: 'WORKDAY_REST',
-              sourceSchemaVersion: sourceVersion.trim(),
-              targetSchemaVersion: 'dwp.workforce-projection.v1',
-              mappingDefinition: parsed,
-            })
-          : undefined
-      }
-    >
-      <Stack gap={2}>
-        <SelectField<number>
-          label={t('provisioning.hris.mapping.source')}
-          value={sourceSystemId}
-          options={sources.map((source) => ({ value: source.sourceSystemId, label: source.name }))}
-          onValueChange={setSourceSystemId}
-        />
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <FormField
-            label={t('provisioning.hris.mapping.key')}
-            value={profileKey}
-            onChange={(event) => setProfileKey(event.target.value)}
-          />
-          <FormField
-            label={t('provisioning.hris.mapping.sourceVersion')}
-            value={sourceVersion}
-            onChange={(event) => setSourceVersion(event.target.value)}
-          />
-        </Stack>
-        <FormField
-          multiline
-          minRows={10}
-          label={t('provisioning.hris.mapping.definition')}
-          value={definition}
-          errorMessage={!parsed ? t('provisioning.hris.mapping.invalidJson') : undefined}
-          onChange={(event) => setDefinition(event.target.value)}
-          inputProps={{ spellCheck: false }}
-        />
-      </Stack>
-    </FormDialog>
-  );
-}
-
-function IssueResolutionDialog({
-  issue,
-  busy,
-  onClose,
-  onSave,
-}: {
-  issue: HrisReconciliationIssue;
-  busy: boolean;
-  onClose: () => void;
-  onSave: (state: 'RESOLVED' | 'ACCEPTED', note: string) => Promise<void>;
-}) {
-  const { t } = useTranslation('workforce');
-  const [state, setState] = useState<'RESOLVED' | 'ACCEPTED'>('RESOLVED');
-  const [note, setNote] = useState('');
-  return (
-    <FormDialog
-      open
-      title={t('provisioning.hris.reconciliation.resolveTitle')}
-      description={`${issue.issueCode} · ${issue.redactedSummary}`}
-      cancelLabel={t('common.actions.cancel')}
-      submitLabel={t('common.actions.save')}
-      busy={busy}
-      submitDisabled={!note.trim()}
-      onClose={onClose}
-      onSubmit={() => onSave(state, note.trim())}
-    >
-      <Stack gap={2}>
-        <SelectField
-          label={t('provisioning.hris.reconciliation.disposition')}
-          value={state}
-          options={[
-            { value: 'RESOLVED', label: t('provisioning.hris.reconciliation.resolved') },
-            { value: 'ACCEPTED', label: t('provisioning.hris.reconciliation.accepted') },
-          ]}
-          onValueChange={(value) => value && setState(value)}
-        />
-        <FormField
-          multiline
-          minRows={4}
-          label={t('provisioning.hris.reconciliation.note')}
-          value={note}
-          onChange={(event) => setNote(event.target.value)}
-        />
-      </Stack>
-    </FormDialog>
   );
 }

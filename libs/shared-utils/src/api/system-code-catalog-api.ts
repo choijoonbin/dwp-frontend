@@ -1,4 +1,5 @@
 import { axiosInstance } from '../axios-instance';
+import { productSurfaceReadScopeConfig } from './product-surface-read-scope';
 
 import type { ApiResponse } from '../types';
 
@@ -6,7 +7,12 @@ export type SystemCodeConfigurationLevel = 'SYSTEM' | 'EXTENSIBLE' | 'USER';
 export type SystemCodeRuntimeVisibility = 'ADMIN_ONLY' | 'RUNTIME';
 
 export type SystemCodeContractKind =
-  'REFERENCE' | 'STATE_MACHINE' | 'SECURITY' | 'PROTOCOL' | 'OBSERVABILITY' | 'REGISTRY_META';
+  | 'REFERENCE'
+  | 'STATE_MACHINE'
+  | 'SECURITY'
+  | 'PROTOCOL'
+  | 'OBSERVABILITY'
+  | 'REGISTRY_META';
 
 export type SystemCodeValue = {
   code: string;
@@ -71,11 +77,14 @@ export type SystemCodeCatalogSnapshot = {
 
 export async function getSystemCodeSet(
   setKey: string,
-  locale: string
+  locale: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<RuntimeSystemCodeSet> {
   const search = new URLSearchParams({ locale });
   const response = await axiosInstance.get<ApiResponse<RuntimeSystemCodeSet>>(
-    `/api/platform/v1/catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`
+    `/api/platform/v1/catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }

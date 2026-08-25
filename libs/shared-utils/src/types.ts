@@ -6,4 +6,5 @@ export interface ApiResponse<T> {
   data: T;
   timestamp?: string;
   errorCode?: string;
+  correlationId?: string;
 }

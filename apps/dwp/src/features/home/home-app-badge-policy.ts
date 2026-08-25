@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { applyHomeAppNotificationBadges } from '../../components/workspace-composer/app-launchpad-model';
 import { isAppReadEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { isHcmReadEntitled } from '@dwp-frontend/shared-utils/auth/hcm-access';
@@ -9,7 +11,7 @@ import type {
   HomeAppNotificationBadgeValue,
 } from '../../components/workspace-composer/app-launchpad-model';
 
-type ResolveHomeAppsWithBadgesInput = {
+export type ResolveHomeAppsWithBadgesInput = {
   apps: readonly HomeAppDefinition[];
   roles: readonly string[];
   permissions: readonly AppEntitlementPermission[];
@@ -68,5 +70,40 @@ export function resolveHomeAppsWithBadges({
         : isAppReadEntitled(app.resourceKey, permissions);
     }),
     badgeCounts.size > 0 ? badgeCounts : null
+  );
+}
+
+export function useHomeAppsWithBadges({
+  apps,
+  roles,
+  permissions,
+  legacyRoleFallbackAllowed,
+  notificationSummary,
+  notificationSummaryAuthorized,
+  notificationSummaryHealthy,
+  notificationSummaryNow,
+}: ResolveHomeAppsWithBadgesInput): HomeAppDefinition[] {
+  return useMemo(
+    () =>
+      resolveHomeAppsWithBadges({
+        apps,
+        roles,
+        permissions,
+        legacyRoleFallbackAllowed,
+        notificationSummary,
+        notificationSummaryAuthorized,
+        notificationSummaryHealthy,
+        notificationSummaryNow,
+      }),
+    [
+      apps,
+      legacyRoleFallbackAllowed,
+      notificationSummary,
+      notificationSummaryAuthorized,
+      notificationSummaryHealthy,
+      notificationSummaryNow,
+      permissions,
+      roles,
+    ]
   );
 }

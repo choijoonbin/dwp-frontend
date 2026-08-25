@@ -5,6 +5,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { I18nProvider } from '@dwp-frontend/shared-i18n';
 import { AuthProvider, useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { ProductSurfaceAuthorityProvider } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 import { resolveTenantLogoUrl } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import { DwpDateTimeProvider } from '@dwp-frontend/design-system/enterprise/date-time/date-time-provider';
@@ -16,6 +17,10 @@ import App from './app';
 import { tenantBrandingQueryOptions } from './features/shell/tenant-branding-query';
 import { ErrorBoundary } from './routes/components/error-boundary';
 import { PersonalPreferenceProvider } from './providers/personal-preference-provider';
+import {
+  ProductSurfaceTelemetryProvider,
+  readProductSurfaceTelemetryConsent,
+} from './observability/product-surface-telemetry-context';
 
 const defaultTenantAppearance = {
   productName: 'Digital Workplace',
@@ -119,7 +124,30 @@ export function bootstrapApplication(routes: RouteObject[], applicationId = 'she
             <ProductThemeProvider>
               <ProductDateTimeProvider>
                 <PersonalPreferenceProvider>
-                  <RouterProvider router={router} />
+                  <ProductSurfaceAuthorityProvider
+                    legacySensitiveQueryPrefixes={[
+                      'approvals',
+                      'communications',
+                      'communication',
+                      'announcements',
+                      'services',
+                      'service-center',
+                      'service-catalog',
+                      'hcm',
+                      'hr',
+                    ]}
+                  >
+                    <ProductSurfaceTelemetryProvider
+                      productionCollectionEnabled={
+                        import.meta.env.VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION === 'true'
+                      }
+                      privacyConsentGranted={readProductSurfaceTelemetryConsent(
+                        window.localStorage
+                      )}
+                    >
+                      <RouterProvider router={router} />
+                    </ProductSurfaceTelemetryProvider>
+                  </ProductSurfaceAuthorityProvider>
                 </PersonalPreferenceProvider>
               </ProductDateTimeProvider>
             </ProductThemeProvider>

@@ -42,7 +42,7 @@ type Props = {
   view: OrganizationIntelligenceView;
   onViewChange: (view: OrganizationIntelligenceView) => void;
   onSelect: (selection: OrgChartSelection) => void;
-  onRequestExport: () => void;
+  onRequestExport?: () => void;
 };
 
 type MetricProps = {
@@ -227,14 +227,16 @@ export function OrganizationIntelligencePanel({
           <ToggleButton value="changes">{t('orgChart.intelligence.tabs.changes')}</ToggleButton>
           <ToggleButton value="quality">{t('orgChart.intelligence.tabs.quality')}</ToggleButton>
         </ToggleButtonGroup>
-        <ActionButton
-          size="small"
-          intent="secondary"
-          startIcon={<FileLock2 size={15} />}
-          onClick={onRequestExport}
-        >
-          {t('orgChart.intelligence.export')}
-        </ActionButton>
+        {onRequestExport && (
+          <ActionButton
+            size="small"
+            intent="secondary"
+            startIcon={<FileLock2 size={15} />}
+            onClick={onRequestExport}
+          >
+            {t('orgChart.intelligence.export')}
+          </ActionButton>
+        )}
       </Stack>
 
       {view === 'health' && (

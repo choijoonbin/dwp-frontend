@@ -33,6 +33,9 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import type { ServiceRequestStatus, ServiceRequestSummary } from '@dwp-frontend/shared-utils';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 const statuses: ServiceRequestStatus[] = [
   'SUBMITTED',
@@ -75,7 +78,17 @@ export function ServiceOperationsManager() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission } = usePermissions();
-  const canManage = hasPermission('ADMIN.SERVICE_OPERATIONS', 'MANAGE');
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'services',
+    surfaceKey: 'services.management',
+  });
+  const transitionRequest = useProductActionMutation(
+    'route.services.management.request-transition.action'
+  );
+  const canManage = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('services.operations.update')
+    : hasPermission('ADMIN.SERVICE_OPERATIONS', 'MANAGE');
   const [status, setStatus] = useState<'ALL' | ServiceRequestStatus>('ALL');
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -83,26 +96,41 @@ export function ServiceOperationsManager() {
   const [assignedTo, setAssignedTo] = useState('');
   const [note, setNote] = useState('');
   const queue = useQuery({
-    queryKey: ['admin', 'services', 'requests', status],
-    queryFn: () => getServiceOperationsQueue(status === 'ALL' ? undefined : status),
+    queryKey: ['admin', 'services', 'requests', status, ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      getServiceOperationsQueue(
+        status === 'ALL' ? undefined : status,
+        requestScope.contextScopeKey,
+        signal
+      ),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 20_000,
     retry: 1,
   });
   const detail = useQuery({
-    queryKey: ['admin', 'services', 'request', selectedId],
-    queryFn: () => getServiceOperationsRequest(selectedId as string),
-    enabled: Boolean(selectedId),
+    queryKey: ['admin', 'services', 'request', selectedId, ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      getServiceOperationsRequest(selectedId as string, requestScope.contextScopeKey, signal),
+    enabled: Boolean(selectedId) && requestScope.ready,
+    meta: requestScope.queryMeta,
     retry: 1,
   });
   const mutation = useMutation({
     mutationFn: () => {
       if (!detail.data || !targetStatus) throw new Error('Select a transition');
-      return transitionServiceRequest(detail.data.request.requestId, {
-        targetStatus,
-        assignedTo: assignedTo.trim() || null,
-        note: note.trim() || null,
-        version: detail.data.request.version,
-      });
+      return transitionRequest((authority) =>
+        transitionServiceRequest(
+          detail.data.request.requestId,
+          {
+            targetStatus,
+            assignedTo: assignedTo.trim() || null,
+            note: note.trim() || null,
+            version: detail.data.request.version,
+          },
+          authority
+        )
+      );
     },
     onSuccess: async (updated) => {
       await Promise.all([

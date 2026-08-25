@@ -19,9 +19,11 @@ import {
   cancelServiceRequest,
   createServiceRequest,
   dwaionHandoffText,
-  getMyServiceRequest,
-  getMyServiceRequests,
-  getServiceCatalog,
+  getServiceDiscoverCatalog,
+  getServiceDraftRequest,
+  getServiceDraftRequests,
+  getServiceMyRequest,
+  getServiceMyRequests,
   parseDwaionHandoff,
   submitServiceDraft,
   updateServiceDraft,
@@ -66,6 +68,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 import { ServiceCatalogCard } from '../features/services/service-catalog-card';
+import { useProductActionMutation } from '../components/use-product-action-mutation';
 
 const statusColors: Record<
   ServiceRequestStatus,
@@ -131,6 +134,8 @@ function RequestDialog({
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const createRequest = useProductActionMutation('route.services.work.request-create.action');
+  const updateDraft = useProductActionMutation('route.services.work.draft-update.action');
   const [summary, setSummary] = useState('');
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [validationVisible, setValidationVisible] = useState(false);
@@ -153,31 +158,42 @@ function RequestDialog({
   }, [draft, initialSummary, service]);
   const valid = Boolean(
     summary.trim() &&
-    fields.every((field) => {
-      if (!field.required) return true;
-      const value = values[field.key];
-      return value !== undefined && value !== null && value !== '' && value !== false;
-    })
+      fields.every((field) => {
+        if (!field.required) return true;
+        const value = values[field.key];
+        return value !== undefined && value !== null && value !== '' && value !== false;
+      })
   );
   const mutation = useMutation({
     mutationFn: async ({ submit }: { submit: boolean }) => {
       if (draft) {
-        const updated = await updateServiceDraft(draft.request.requestId, {
-          summary: summary.trim(),
-          values,
-          version: draft.request.version,
-          submit,
-        });
+        const updated = await updateDraft((authority) =>
+          updateServiceDraft(
+            draft.request.requestId,
+            {
+              summary: summary.trim(),
+              values,
+              version: draft.request.version,
+              submit,
+            },
+            authority
+          )
+        );
         return updated;
       }
       if (!service) throw new Error('Service unavailable');
-      return createServiceRequest({
-        serviceKey: service.serviceKey,
-        summary: summary.trim(),
-        values,
-        idempotencyKey: crypto.randomUUID(),
-        submit,
-      });
+      return createRequest((authority) =>
+        createServiceRequest(
+          {
+            serviceKey: service.serviceKey,
+            summary: summary.trim(),
+            values,
+            idempotencyKey: crypto.randomUUID(),
+            submit,
+          },
+          authority
+        )
+      );
     },
     onSuccess: async (detail, input) => {
       await Promise.all([
@@ -361,8 +377,8 @@ function DiscoverView() {
     [location.state]
   );
   const catalog = useQuery({
-    queryKey: ['services', 'catalog'],
-    queryFn: getServiceCatalog,
+    queryKey: ['services', 'catalog', 'view', 'discover'],
+    queryFn: ({ signal }) => getServiceDiscoverCatalog(signal),
     staleTime: 5 * 60_000,
     retry: 1,
   });
@@ -652,8 +668,9 @@ function RequestsView({ drafts }: { drafts: boolean }) {
   const { t, i18n } = useTranslation('services');
   const navigate = useNavigate();
   const requests = useQuery({
-    queryKey: ['services', 'requests'],
-    queryFn: () => getMyServiceRequests(),
+    queryKey: ['services', 'requests', 'view', drafts ? 'drafts' : 'my'],
+    queryFn: ({ signal }) =>
+      drafts ? getServiceDraftRequests(signal) : getServiceMyRequests(signal),
     staleTime: 30_000,
     retry: 1,
   });
@@ -757,17 +774,20 @@ function RequestsView({ drafts }: { drafts: boolean }) {
   );
 }
 
-function RequestDetailView({ requestId }: { requestId: string }) {
+function RequestDetailView({ requestId, draft }: { requestId: string; draft: boolean }) {
   const { t, i18n } = useTranslation('services');
   const display = useDisplayDictionary();
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const submitDraft = useProductActionMutation('route.services.work.draft-submit.action');
+  const cancelRequest = useProductActionMutation('route.services.work.request-cancel.action');
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [editing, setEditing] = useState(false);
   const detail = useQuery({
-    queryKey: ['services', 'request', requestId],
-    queryFn: () => getMyServiceRequest(requestId),
+    queryKey: ['services', 'request', requestId, 'view', draft ? 'draft' : 'absent'],
+    queryFn: ({ signal }) =>
+      draft ? getServiceDraftRequest(requestId, signal) : getServiceMyRequest(requestId, signal),
     retry: 1,
   });
   const mutation = useMutation({
@@ -779,8 +799,12 @@ function RequestDetailView({ requestId }: { requestId: string }) {
       data: ServiceRequestDetail;
     }) =>
       operation === 'submit'
-        ? submitServiceDraft(data.request.requestId, data.request.version)
-        : cancelServiceRequest(data.request.requestId, data.request.version),
+        ? submitDraft((authority) =>
+            submitServiceDraft(data.request.requestId, data.request.version, authority)
+          )
+        : cancelRequest((authority) =>
+            cancelServiceRequest(data.request.requestId, data.request.version, authority)
+          ),
     onSuccess: async (data, input) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['services', 'requests'] }),
@@ -1089,7 +1113,7 @@ function RequestDetailView({ requestId }: { requestId: string }) {
 
 export default function ServicesPage() {
   const { view = 'discover', requestId } = useParams();
-  if (requestId) return <RequestDetailView requestId={requestId} />;
+  if (requestId) return <RequestDetailView requestId={requestId} draft={view === 'drafts'} />;
   if (view === 'my') return <RequestsView drafts={false} />;
   if (view === 'drafts') return <RequestsView drafts />;
   return <DiscoverView />;

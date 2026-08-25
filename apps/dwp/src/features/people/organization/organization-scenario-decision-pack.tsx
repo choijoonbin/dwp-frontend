@@ -19,6 +19,7 @@ type Props = {
   history: OrganizationScenarioValidationRun[];
   loading: boolean;
   validating: boolean;
+  canValidate: boolean;
   onValidate: () => void;
 };
 
@@ -27,6 +28,7 @@ export function OrganizationScenarioDecisionPackView({
   history,
   loading,
   validating,
+  canValidate,
   onValidate,
 }: Props) {
   const { t } = useTranslation('workforce');
@@ -128,7 +130,7 @@ export function OrganizationScenarioDecisionPackView({
           size="small"
           variant="outlined"
           startIcon={validating ? <CircularProgress size={13} /> : <RefreshCw size={14} />}
-          disabled={validating}
+          disabled={!canValidate || validating}
           onClick={onValidate}
           sx={{ color: '#F8FAFC', borderColor: '#60758B', '&:hover': { borderColor: '#AFC1D4' } }}
         >

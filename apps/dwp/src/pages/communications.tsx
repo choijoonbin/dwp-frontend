@@ -42,11 +42,13 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import InputAdornment from '@mui/material/InputAdornment';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+
+import { useProductActionMutation } from '../components/use-product-action-mutation';
+import { FeedLoading, storyDate } from '../features/communications/communication-feed-support';
 
 import type {
   CommunicationContentType,
@@ -88,13 +90,10 @@ function toneFor(category: string) {
   return categoryTone[category] ?? categoryTone.COMPANY;
 }
 
-function storyDate(value?: string | null) {
-  return value ? formatDate(value, { dateStyle: 'medium' }) : '-';
-}
-
 function useCommunicationImpression(id: number) {
   const ref = useRef<HTMLDivElement>(null);
   const sent = useRef(false);
+  const recordEvent = useProductActionMutation('route.communications.work.event.action');
 
   useEffect(() => {
     const node = ref.current;
@@ -104,14 +103,14 @@ function useCommunicationImpression(id: number) {
         if (!entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.55))
           return;
         sent.current = true;
-        void recordCommunicationEvent(id, 'impression');
+        void recordEvent((authority) => recordCommunicationEvent(id, 'impression', authority));
         observer.disconnect();
       },
       { threshold: [0.55] }
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [id]);
+  }, [id, recordEvent]);
   return ref;
 }
 
@@ -144,9 +143,18 @@ function SaveButton({ item, compact = false }: { item: CommunicationItem; compac
   const { t } = useTranslation('communications');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const updateReaderState = useProductActionMutation(
+    'route.communications.work.reader-state.action'
+  );
   const mutation = useMutation({
     mutationFn: () =>
-      updateCommunicationReaderState(item.communicationId, { saved: !item.readerState.saved }),
+      updateReaderState((authority) =>
+        updateCommunicationReaderState(
+          item.communicationId,
+          { saved: !item.readerState.saved },
+          authority
+        )
+      ),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['communications'] }),
     onError: () => toast.error(t('story.saveError')),
   });
@@ -371,16 +379,6 @@ function StoryCard({
   );
 }
 
-function FeedLoading() {
-  return (
-    <Stack gap={2} aria-busy="true">
-      <Skeleton variant="rounded" height={460} />
-      <Skeleton variant="rounded" height={178} />
-      <Skeleton variant="rounded" height={178} />
-    </Stack>
-  );
-}
-
 const reactionOptions: readonly {
   key: CommunicationReaction;
   icon: typeof PartyPopper;
@@ -394,9 +392,12 @@ function ReactionBar({ item }: { item: CommunicationItem }) {
   const { t } = useTranslation('communications');
   const queryClient = useQueryClient();
   const toast = useToast();
+  const updateReaction = useProductActionMutation('route.communications.work.reaction.action');
   const reaction = useMutation({
     mutationFn: (next: CommunicationReaction | null) =>
-      updateCommunicationReaction(item.communicationId, next),
+      updateReaction((authority) =>
+        updateCommunicationReaction(item.communicationId, next, authority)
+      ),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['communications'] }),
     onError: () => toast.error(t('story.reactions.error')),
   });
@@ -442,15 +443,26 @@ function StoryDetail({ item, scope }: { item: CommunicationItem; scope: Communic
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const acknowledgeItem = useProductActionMutation(
+    'route.communications.work.acknowledgement.action'
+  );
+  const updateReaderState = useProductActionMutation(
+    'route.communications.work.reader-state.action'
+  );
+  const recordEvent = useProductActionMutation('route.communications.work.event.action');
   const opened = useRef<number | null>(null);
   const tone = toneFor(item.categoryKey);
   const acknowledge = useMutation({
-    mutationFn: () => acknowledgeCommunication(item.communicationId),
+    mutationFn: () =>
+      acknowledgeItem((authority) => acknowledgeCommunication(item.communicationId, authority)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['communications'] }),
     onError: () => toast.error(t('story.acknowledgeError')),
   });
   const dismiss = useMutation({
-    mutationFn: () => updateCommunicationReaderState(item.communicationId, { dismissed: true }),
+    mutationFn: () =>
+      updateReaderState((authority) =>
+        updateCommunicationReaderState(item.communicationId, { dismissed: true }, authority)
+      ),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['communications'] });
       toast.success(t('story.dismissed'));
@@ -462,14 +474,16 @@ function StoryDetail({ item, scope }: { item: CommunicationItem; scope: Communic
   useEffect(() => {
     if (opened.current === item.communicationId) return;
     opened.current = item.communicationId;
-    void recordCommunicationEvent(item.communicationId, 'open').then(() =>
-      queryClient.invalidateQueries({ queryKey: ['communications'] })
-    );
-  }, [item.communicationId, queryClient]);
+    void recordEvent((authority) =>
+      recordCommunicationEvent(item.communicationId, 'open', authority)
+    ).then(() => queryClient.invalidateQueries({ queryKey: ['communications'] }));
+  }, [item.communicationId, queryClient, recordEvent]);
 
   const openAction = () => {
     if (!item.actionUrl) return;
-    void recordCommunicationEvent(item.communicationId, 'action');
+    void recordEvent((authority) =>
+      recordCommunicationEvent(item.communicationId, 'action', authority)
+    );
     if (item.actionUrl.startsWith('https://'))
       window.open(item.actionUrl, '_blank', 'noopener,noreferrer');
     else navigate(item.actionUrl);

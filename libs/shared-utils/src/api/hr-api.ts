@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
+import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
+import { productSurfaceReadScopeConfig } from './product-surface-read-scope';
 
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type HrEmployeeContext = {
   personId: string;
@@ -110,6 +113,38 @@ export type HrAbsenceWorkspace = {
   teamCalendar: HrTeamAbsence[];
 };
 
+export type HrTeamMember = {
+  personId: string;
+  displayName: string;
+  businessTitle?: string | null;
+  organizationName?: string | null;
+  directReportCount: number;
+};
+
+export type HrTeamDataBoundary = 'TEAM' | 'ORGANIZATION_SET' | 'TEAM_AND_ORGANIZATION_SET';
+export type HrOperationsDataBoundary = 'TENANT' | 'ORGANIZATION_SET';
+
+export type HrTeamWorkspace = {
+  manager: HrEmployeeContext;
+  members: HrTeamMember[];
+  timePendingCount: number;
+  absencePendingCount: number;
+  dataBoundary: HrTeamDataBoundary;
+};
+
+export type HrTeamTimeWorkspace = {
+  manager: HrEmployeeContext;
+  teamQueue: HrApprovalItem[];
+  dataBoundary: HrTeamDataBoundary;
+};
+
+export type HrTeamAbsenceWorkspace = {
+  manager: HrEmployeeContext;
+  teamQueue: HrApprovalItem[];
+  teamCalendar: HrTeamAbsence[];
+  dataBoundary: HrTeamDataBoundary;
+};
+
 export type HrBenefitPlan = {
   planId: string;
   planType: string;
@@ -212,7 +247,20 @@ export type HrDomainOperations = {
   generatedAt: string;
   metrics: HrDomainMetric[];
   workQueue: HrApprovalItem[];
-  dataBoundary: string;
+  dataBoundary: HrOperationsDataBoundary;
+};
+
+export type HrDomainOperationsSummary = {
+  domain: HrDomainOperations['domain'];
+  metrics: HrDomainMetric[];
+  pendingCount: number;
+};
+
+export type HrWorkforceOperationsOverview = {
+  generatedAt: string;
+  dataBoundary: HrOperationsDataBoundary;
+  fieldGroups: string[];
+  domains: HrDomainOperationsSummary[];
 };
 
 export type HrHomeDomain = 'TIME' | 'ABSENCE' | 'BENEFITS' | 'PAY' | 'TALENT' | 'TEAM';
@@ -287,8 +335,11 @@ type HrHomeOverviewWire = Omit<
 
 const BASE = '/api/people/v1/hr';
 
-async function get<T>(path: string): Promise<T> {
-  const response = await axiosInstance.get<ApiResponse<T>>(`${BASE}${path}`);
+async function get<T>(path: string, contextScopeKey?: string, signal?: AbortSignal): Promise<T> {
+  const response = await axiosInstance.get<ApiResponse<T>>(
+    `${BASE}${path}`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
   return response.data.data;
 }
 
@@ -326,53 +377,143 @@ export const getHrHome = async (): Promise<HrHomeOverview> => {
 };
 export const getHrTime = () => get<HrTimeWorkspace>('/time');
 export const getHrAbsence = () => get<HrAbsenceWorkspace>('/absence');
+export const getHrTeam = (contextScopeKey?: string, signal?: AbortSignal) =>
+  get<HrTeamWorkspace>('/team', contextScopeKey, signal);
+export const getHrTeamTime = (contextScopeKey?: string, signal?: AbortSignal) =>
+  get<HrTeamTimeWorkspace>('/team/time', contextScopeKey, signal);
+export const getHrTeamAbsence = (contextScopeKey?: string, signal?: AbortSignal) =>
+  get<HrTeamAbsenceWorkspace>('/team/absence', contextScopeKey, signal);
 export const getHrBenefits = () => get<HrBenefitsWorkspace>('/benefits');
 export const getHrPay = () => get<HrPayWorkspace>('/pay');
 export const getHrTalent = () => get<HrTalentWorkspace>('/talent');
-export const getHrDomainOperations = (domain: string) =>
-  get<HrDomainOperations>(`/operations/${encodeURIComponent(domain)}`);
+export const getHrDomainOperations = (
+  domain: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+) => get<HrDomainOperations>(`/operations/${encodeURIComponent(domain)}`, contextScopeKey, signal);
+
+export async function getHrWorkforceOperationsOverview(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<HrWorkforceOperationsOverview> {
+  const response = await axiosInstance.get<ApiResponse<HrWorkforceOperationsOverview>>(
+    '/api/people/v1/workforce/operations/overview',
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
+  return response.data.data;
+}
+
+export const HCM_HR_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'saveHrTimeEntry',
+    routeContractKey: 'route.hcm.personal.time-entry-update.action',
+    method: 'PUT',
+    path: '/api/people/v1/hr/time/{cardId}/entries/{workDate}',
+  },
+  {
+    apiFunction: 'submitHrTimeCard',
+    routeContractKey: 'route.hcm.personal.time-submit.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/time/{cardId}/submit',
+  },
+  {
+    apiFunction: 'createHrLeaveRequest',
+    routeContractKey: 'route.hcm.personal.absence-create.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/absence/requests',
+  },
+  {
+    apiFunction: 'withdrawHrLeaveRequest',
+    routeContractKey: 'route.hcm.personal.absence-withdraw.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/absence/requests/{requestId}/withdraw',
+  },
+  {
+    apiFunction: 'decideHrRequest:time',
+    routeContractKey: 'route.hcm.operations.time-approve.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/time/{cardId}/decision',
+  },
+  {
+    apiFunction: 'decideHrRequest:absence',
+    routeContractKey: 'route.hcm.operations.absence-approve.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/absence/requests/{requestId}/decision',
+  },
+  {
+    apiFunction: 'decideHrTeamRequest:time',
+    routeContractKey: 'route.hcm.team.time-decision.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/team/time/{cardId}/decision',
+  },
+  {
+    apiFunction: 'decideHrTeamRequest:absence',
+    routeContractKey: 'route.hcm.team.absence-decision.action',
+    method: 'POST',
+    path: '/api/people/v1/hr/team/absence/{requestId}/decision',
+  },
+  {
+    apiFunction: 'updateHrGoal',
+    routeContractKey: 'route.hcm.personal.talent-goal-update.action',
+    method: 'PUT',
+    path: '/api/people/v1/hr/talent/goals/{goalId}',
+  },
+] as const;
 
 export async function saveHrTimeEntry(
   cardId: string,
   workDate: string,
-  request: { minutes: number; workMode: string; note?: string; cardVersion: number }
+  request: { minutes: number; workMode: string; note?: string; cardVersion: number },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<HrTimeWorkspace> {
   const response = await axiosInstance.put<ApiResponse<HrTimeWorkspace>, typeof request>(
     `${BASE}/time/${encodeURIComponent(cardId)}/entries/${encodeURIComponent(workDate)}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
-export async function submitHrTimeCard(cardId: string, version: number): Promise<HrTimeWorkspace> {
+export async function submitHrTimeCard(
+  cardId: string,
+  version: number,
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<HrTimeWorkspace> {
   const response = await axiosInstance.post<ApiResponse<HrTimeWorkspace>, undefined>(
     `${BASE}/time/${encodeURIComponent(cardId)}/submit?version=${version}`,
-    undefined
+    undefined,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
-export async function createHrLeaveRequest(request: {
-  planId: string;
-  startAt: string;
-  endAt: string;
-  requestedMinutes: number;
-  reason?: string;
-}): Promise<HrLeaveRequest> {
+export async function createHrLeaveRequest(
+  request: {
+    planId: string;
+    startAt: string;
+    endAt: string;
+    requestedMinutes: number;
+    reason?: string;
+  },
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<HrLeaveRequest> {
   const response = await axiosInstance.post<ApiResponse<HrLeaveRequest>, typeof request>(
     `${BASE}/absence/requests`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function withdrawHrLeaveRequest(
   requestId: string,
-  request: { note: string; version: number }
+  request: { note: string; version: number },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<HrAbsenceWorkspace> {
   const response = await axiosInstance.post<ApiResponse<HrAbsenceWorkspace>, typeof request>(
     `${BASE}/absence/requests/${encodeURIComponent(requestId)}/withdraw`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -380,7 +521,8 @@ export async function withdrawHrLeaveRequest(
 export async function decideHrRequest(
   domain: 'time' | 'absence',
   itemId: string,
-  request: { decision: 'APPROVE' | 'REJECT'; note: string; version: number }
+  request: { decision: 'APPROVE' | 'REJECT'; note: string; version: number },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<HrApprovalItem> {
   const path =
     domain === 'time'
@@ -388,18 +530,35 @@ export async function decideHrRequest(
       : `/absence/requests/${encodeURIComponent(itemId)}/decision`;
   const response = await axiosInstance.post<ApiResponse<HrApprovalItem>, typeof request>(
     `${BASE}${path}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
+export async function decideHrTeamRequest(
+  domain: 'time' | 'absence',
+  itemId: string,
+  request: { decision: 'APPROVE' | 'REJECT'; note: string; version: number },
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<HrApprovalItem> {
+  const response = await axiosInstance.post<ApiResponse<HrApprovalItem>, typeof request>(
+    `${BASE}/team/${domain}/${encodeURIComponent(itemId)}/decision`,
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function updateHrGoal(
   goalId: string,
-  request: { progressPercent: number; status: string; version: number }
+  request: { progressPercent: number; status: string; version: number },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<HrTalentWorkspace> {
   const response = await axiosInstance.put<ApiResponse<HrTalentWorkspace>, typeof request>(
     `${BASE}/talent/goals/${encodeURIComponent(goalId)}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }

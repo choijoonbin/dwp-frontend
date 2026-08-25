@@ -715,6 +715,45 @@ Management Scope에서 평가하며 `full-management`의 기본 Responsibility�
 
 Legacy Oversight Key는 아래 7.3 Allowlist에서만 정의하며 위 일반 Key와 재사용하지 않는다.
 
+#### 7.1.1 W1a Scoped Specialist Duty Authority
+
+W1a의 Approvals Management Exact Capability는 Global 전문 Role이 아니라 아래 Scoped Duty
+Assignment를 Authority Source로 사용한다. 이 표는 Canonical v2 Capability Descriptor의
+`contractKey → resolvedCapabilityCode`와 1:1로 검증하며 별도 Wildcard나 `MANAGE` Implication을
+허용하지 않는다.
+
+| Duty Code                     | Exact Capability Contract                       | 책임 규칙                              | 충돌 Duty                     |
+| ----------------------------- | ----------------------------------------------- | -------------------------------------- | ----------------------------- |
+| `APPROVAL_DESIGN_DRAFT`       | `design.read`, `design.create`, `design.update` | 같은 Set `APP_CONFIG_ADMIN` REQUIRED   | `APPROVAL_DESIGN_PUBLISH`     |
+| `APPROVAL_DESIGN_PUBLISH`     | `design.read`, `design.publish`                 | 같은 Set `APP_CONFIG_ADMIN` REQUIRED   | `APPROVAL_DESIGN_DRAFT`       |
+| `APPROVAL_POLICY_DRAFT`       | `policy.read`, `policy.update`                  | 같은 Set `APP_CONFIG_ADMIN` REQUIRED   | `APPROVAL_POLICY_PUBLISH`     |
+| `APPROVAL_POLICY_PUBLISH`     | `policy.read`, `policy.publish`                 | 같은 Set `APP_CONFIG_ADMIN` REQUIRED   | `APPROVAL_POLICY_DRAFT`       |
+| `APPROVAL_OPERATIONS_EXECUTE` | `operations.read`, `operations.execute`         | 같은 Set `APP_CONFIG_ADMIN` REQUIRED   | `APPROVAL_OPERATIONS_AUDIT`   |
+| `APPROVAL_OPERATIONS_AUDIT`   | `audit.operations.read`                         | `NOT_REQUIRED`, 명시적 Audit Exception | `APPROVAL_OPERATIONS_EXECUTE` |
+| `APPROVAL_SIGNATURE_READ`     | `signature.read`                                | 같은 Set `APP_CONFIG_ADMIN` REQUIRED   | 없음                          |
+
+표의 축약 Contract는 모두 `approvals.` Prefix를 가진다. Duty-Capability Mapping은 Permission
+Catalog FK와 `resourceKey:permissionCode` Generated Column으로 물리화하며 Canonical v2의 11개
+Approvals Management Contract, 13개 Duty-Contract Association과 Build에서 Exact Match해야 한다.
+
+Duty Assignment 계약은 다음과 같다.
+
+- Principal은 `USER | GROUP`, Source는 `MANUAL | GROUP | IAM | PROVISIONING | AGENT |
+MIGRATION`, Lifecycle은 `PENDING_APPROVAL | ACTIVE | DENIED | REVOKED | EXPIRED`다.
+- `resourceSetId`, 선택적 `responsibilityAssignmentId`, `validFrom/validTo`, `reviewDueAt`,
+  요청·승인·회수 Evidence, 사유와 Version을 저장한다. 요청자와 승인자는 달라야 하며 승인·회수는
+  Expected Version CAS를 사용한다.
+- Audit Exception 외 Duty는 `responsibilityAssignmentId`가 가리키는 활성
+  `APP_CONFIG_ADMIN`이 같은 Effective User와 같은 Resource Set에 결속되어야 한다. Duty와 책임이
+  각각 Direct/Group이어도 이 User+Set Intersection이 같으면 허용하고, Principal·Set을 교차 조합하지
+  않는다.
+- Effective Duty가 합성한 Exact Permission과 `SCOPED_*@<resourceSetKey>` Wire Token은 해당
+  Duty·Contract·Resolved Capability·Resource Set Hash에 결속한다. 명시적 Permission `DENY`가
+  합성 `ALLOW`보다 우선한다.
+- Canonical `RS_APPROVALS`는 Pilot Root-only Set을 허용한다. 동적 Set은
+  `APP.APPROVALS` Product Root와 하나 이상의 비-Product Child를 가져야 하며, Scope Key는 Duty의
+  실제 Set에서 생성한다.
+
 ### 7.2 Approvals Legacy Exact Action Migration
 
 기존 Effective Allow를 Role 이름으로 포괄 복제하지 않고 아래 입증된 Endpoint에만 같은
@@ -733,6 +772,14 @@ Scope·Validity로 Mapping한다. Shadow Delta와 Product·Security Owner 승인
 
 현재 Signature Admin API는 GET만 존재하므로 Pilot이 신규 Update·Secret Rotation을 추가하지
 않는다. 후속 Endpoint는 별도 기능 설계·Risk Policy·Exact Action 승인 후 추가한다.
+
+전환 중 Global 전문 Role Conflict Policy를 즉시 Retire하지 않는다. 000/100 Compatibility 경로는
+기존 Role/Permission Allow와 Exact Scoped Duty Token을 모두 인식하되 Scoped Token의 한 Contract를
+다른 Duty로 확대하지 않는다. 110/111 신규 PEP는 Scoped Duty와 Canonical Exact Mapping을
+필수로 하고 Global Role/Permission만 있는 사용자를 거부한다. Scoped Duty는 Global Role을 요구하지
+않으므로 서로 겹치지 않는 Designer/Publisher 또는 Operator/Auditor Set은 Global Conflict의
+False Deny 없이 공존할 수 있다. Legacy Fallback 제거와 110→000 Rollback Rehearsal이 끝난 별도
+Forward Migration에서만 Global Conflict Retirement를 검토한다.
 
 ### 7.3 Tenant Admin Legacy Oversight Allowlist
 
@@ -903,6 +950,15 @@ Challenge는 `auth_time` 또는 동등 Freshness Evidence를 평가하고 MFA `a
 Scope, Target Type·ID, Expected Object Version, Canonical Public Command Key·Method·Path,
 Idempotency Key, Canonicalized Payload Digest, Decision Revision, Issuer와 Audience를 서명한다.
 
+IdP `accepted AMR`는 exact lowercase closed mapping이다. Auth는 실제 AMR이 이 Allowlist의
+Subset이고 `pwd+otp`, `hwk`, `webauthn`, `fido`, `fido2` 또는 명시 `mfa` 중 하나를
+충족할 때만 원본 Token을 보존한 Canonical AMR에 `mfa`를 추가하고
+Session을 `OIDC_STEP_UP` Provenance로 표시한다. `pwd` Only·미지·대소문자 변형·중복은
+거부한다. 명시된 조합을 완성할 수 없는 Provider는 Production Readiness에서
+거부한다. 일반 Login이 저장한 원본 AMR은 literal `mfa`를 포함해도 Step-up으로
+승격하지 않고, `OIDC_STEP_UP` Provenance + Canonical `mfa`가 모두 있을 때만
+Challenge를 서명한다. 나머지는 재인증 Continuation을 요구한다.
+
 Approval과 People Service는 각자 `(challenge_id, nonce)` Unique Replay Ledger를 소유하고,
 검증된 Ledger Insert와 Domain Mutation을 같은 Local Transaction으로 Commit한다. Auth DB와
 Product DB의 분산 Transaction은 요구하지 않는다. Audience는 정확한 Product Service와
@@ -926,6 +982,29 @@ Static Assignment Predicate는 Event가 아닌 겹치는 Resource Set의 Respons
 같은 승인 Policy Version에서 판정한다. 각 Phase는 독립 Predicate Key와 Evidence Schema를
 가지고 Audit에 Policy ID·Phase·Version을 남긴다. Scope·Object가 겹치지 않으면 Tenant 전체
 Role 이름만으로 충돌을 만들지 않는다.
+
+Approvals Static Overlap은 다음 총함수로 고정한다.
+
+```text
+OVERLAP(left, right) =
+  left.resourceSetId == right.resourceSetId
+  OR EXISTS active shared non-product child(resourceType, resourceKey)
+```
+
+서로 다른 Set의 공통 `APP.APPROVALS` Product Root만으로는 Overlap이 아니다. 충돌 Duty의 유효
+시간창도 겹쳐야 하며 Direct Assignment, Group Assignment와 서로 다른 Group Membership을 동일
+Effective User 기준으로 펼친 뒤 판정한다. Assignment·Resource Set Member·Group Member·User/Group/
+Resource Set 상태·Conflict Policy의 INSERT/UPDATE/DELETE는 Tenant Advisory Lock과 Deferred DB
+Constraint 아래 재검사하고 새 충돌을 만드는 Transaction을 `SOD_CONFLICT`로 거부한다.
+
+Recovery Auditor Resolver는 Event `RS_APPROVALS`와 위 규칙으로 겹치는
+`APPROVAL_OPERATIONS_AUDIT`만 후보로 삼고 Originator와 해당 Audit Scope에 겹치는
+`APPROVAL_OPERATIONS_EXECUTE` 보유자를 제외한다. Audit과 Operator Evidence는 각각
+`approvals.audit.operations.read → ADMIN.APPROVAL_OPERATIONS:VIEW`,
+`approvals.operations.execute → ADMIN.APPROVAL_OPERATIONS:EXECUTE`와 Exact Match해야 한다.
+Audit Duty 자체가 Authority Source이므로 Global `AUDITOR` Role·Global `ALLOW`는 요구하지 않지만,
+동일 Resource Permission의 명시적 `DENY`, Evidence Revision Drift, 후보 부재는 503
+`AUTHORITY_RESOLUTION_UNAVAILABLE`로 Fail Closed한다.
 
 `SOD-HCM-REFERENCE-PUBLISH-V1`은 Reference Draft/Publish Lifecycle이 별도 기능 ADR로 승인될 때
 처음 제안하는 Post-Pilot 예약 Symbol이며 Pilot Registry Row·Grant·Fixture에는 존재하지 않는다.

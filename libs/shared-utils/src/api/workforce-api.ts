@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
+import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
+import { productSurfaceReadScopeConfig } from './product-surface-read-scope';
 
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type WorkforceReferenceOwnership = 'TENANT' | 'PRODUCT';
 
@@ -41,12 +44,22 @@ export type UpdateWorkforceReferenceValue = {
 
 const WORKFORCE_REFERENCE_BASE = '/api/people/v1/workforce/reference-data';
 
+export const HCM_WORKFORCE_REFERENCE_MUTATION_API_CONTRACT = {
+  apiFunction: 'updateWorkforceReferenceValue',
+  routeContractKey: 'route.hcm.management.reference-update.action',
+  method: 'PUT',
+  path: `${WORKFORCE_REFERENCE_BASE}/{catalogKey}/{code}`,
+} as const;
+
 export async function listWorkforceReferenceCatalogs(
-  locale: string
+  locale: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<WorkforceReferenceCatalog[]> {
   const search = new URLSearchParams({ locale });
   const response = await axiosInstance.get<ApiResponse<WorkforceReferenceCatalog[]>>(
-    `${WORKFORCE_REFERENCE_BASE}?${search.toString()}`
+    `${WORKFORCE_REFERENCE_BASE}?${search.toString()}`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }
@@ -55,7 +68,8 @@ export async function updateWorkforceReferenceValue(
   catalogKey: WorkforceReferenceCatalog['catalogKey'],
   code: string,
   locale: string,
-  request: UpdateWorkforceReferenceValue
+  request: UpdateWorkforceReferenceValue,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<WorkforceReferenceValue> {
   const search = new URLSearchParams({ locale });
   const response = await axiosInstance.put<
@@ -63,7 +77,8 @@ export async function updateWorkforceReferenceValue(
     UpdateWorkforceReferenceValue
   >(
     `${WORKFORCE_REFERENCE_BASE}/${encodeURIComponent(catalogKey)}/${encodeURIComponent(code)}?${search.toString()}`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }

@@ -7,6 +7,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
 import { AppGlyph } from '../app-glyph';
+import { AppManagementAction } from '../app-management-action';
 import { LAUNCHPAD_LONG_PRESS_DELAY_MS } from '../app-launchpad-long-press';
 
 import type {
@@ -21,6 +22,7 @@ type FlowAppDockListProps = {
   layout: LaunchpadLayout;
   itemLimit?: number;
   onLaunch: (app: HomeAppDefinition) => void;
+  onManage?: (app: HomeAppDefinition) => void;
   onOpenFolder: (folderId: string) => void;
   onStartEditing?: () => void;
   onOpenContextMenu?: (itemId: string, anchor: Readonly<{ top: number; left: number }>) => void;
@@ -39,6 +41,7 @@ export function FlowAppDockList({
   layout,
   itemLimit = 8,
   onLaunch,
+  onManage,
   onOpenFolder,
   onStartEditing,
   onOpenContextMenu,
@@ -271,9 +274,14 @@ export function FlowAppDockList({
                   component="li"
                   key={itemId}
                   data-flow-dock-item={itemId}
-                  sx={{ minWidth: 0, '@container flow-dock (min-width: 640px)': { width: 68 } }}
+                  sx={{
+                    position: 'relative',
+                    minWidth: 0,
+                    '@container flow-dock (min-width: 640px)': { width: 68 },
+                  }}
                 >
                   <ButtonBase
+                    data-flow-dock-launch
                     {...pointerHandlers}
                     onContextMenu={(event) => {
                       if (!onOpenContextMenu) return;
@@ -300,7 +308,9 @@ export function FlowAppDockList({
                         ? folderTotal > 0
                           ? badgeAriaLabel
                           : t('launchpad.openFolder', { folder: folder.name })
-                        : badgeAriaLabel
+                        : app?.managementOnly
+                          ? t('launchpad.manageApp', { app: app.name })
+                          : badgeAriaLabel
                     }
                     title={label}
                     onClick={() => {
@@ -410,6 +420,9 @@ export function FlowAppDockList({
                       {label}
                     </Typography>
                   </ButtonBase>
+                  {app?.managementRoute && onManage && (
+                    <AppManagementAction app={app} variant="overlay" onManage={onManage} />
+                  )}
                 </Box>
               );
             })}

@@ -1,7 +1,7 @@
 import type { ResourceRoleDTO } from '@dwp-frontend/shared-utils/api/auth-api';
 import {
+  canEnterTenantControlPlane,
   hasFullTenantAdminRole,
-  hasProviderControlPlaneRole,
   hasTenantControlPlaneRole,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
@@ -22,6 +22,20 @@ type AdminItemAccess = {
   supportScopes?: readonly string[];
   resourceRoles?: readonly ResourceRoleDTO[];
 };
+
+export function canEnterCompanyAdministration(
+  roles: readonly string[],
+  administrationAppEntitled: boolean,
+  hasActiveSupportSession = false,
+  resourceRoles: readonly ResourceRoleDTO[] = []
+): boolean {
+  return canEnterTenantControlPlane(
+    roles,
+    administrationAppEntitled,
+    hasActiveSupportSession,
+    resourceRoles
+  );
+}
 
 export function canAccessAdminNavigationItem(
   item: AdminNavigationItem,
@@ -47,8 +61,13 @@ export function canAccessAdminNavigationItem(
     return true;
   }
 
-  if (item.reviewerAccessible) return !hasProviderControlPlaneRole(access.roles);
   if (!hasTenantControlPlaneRole(access.roles)) return false;
+  if (
+    item.requiredAnyRoleCodes &&
+    !item.requiredAnyRoleCodes.some((role) => access.roles.includes(role))
+  ) {
+    return false;
+  }
   if (!item.requiredResourceKey) return hasFullTenantAdminRole(access.roles);
   return (
     access.permissionsLoaded &&

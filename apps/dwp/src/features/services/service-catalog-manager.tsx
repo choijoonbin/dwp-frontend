@@ -4,7 +4,7 @@ import { FilePlus2, PencilLine, Plus, Search, ShieldCheck, Trash2 } from 'lucide
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getAdminServiceCatalog,
-  getServiceCatalog,
+  getServiceManagementCatalog,
   saveAdminServiceCatalogItem,
   usePermissions,
   useToast,
@@ -42,6 +42,9 @@ import type {
   ServiceFieldType,
   ServiceRequestField,
 } from '@dwp-frontend/shared-utils';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 type CatalogForm = {
   serviceKey: string;
@@ -119,23 +122,23 @@ function formFrom(item: AdminServiceCatalogItem): CatalogForm {
 function validForm(form: CatalogForm) {
   return Boolean(
     /^[a-z][a-z0-9.-]{2,79}$/.test(form.serviceKey) &&
-    /^[A-Z][A-Z0-9_]{1,49}$/.test(form.categoryKey) &&
-    form.nameKo.trim() &&
-    form.nameEn.trim() &&
-    form.descriptionKo.trim() &&
-    form.descriptionEn.trim() &&
-    form.ownerGroup.trim() &&
-    form.slaHours > 0 &&
-    form.estimatedResolutionHours > 0 &&
-    form.fields.length > 0 &&
-    form.fields.every(
-      (field) =>
-        /^[a-z][A-Za-z0-9]{1,49}$/.test(field.key) &&
-        field.labelKo.trim() &&
-        field.labelEn.trim() &&
-        (field.type !== 'SELECT' || Boolean(field.options?.length))
-    ) &&
-    new Set(form.fields.map((field) => field.key)).size === form.fields.length
+      /^[A-Z][A-Z0-9_]{1,49}$/.test(form.categoryKey) &&
+      form.nameKo.trim() &&
+      form.nameEn.trim() &&
+      form.descriptionKo.trim() &&
+      form.descriptionEn.trim() &&
+      form.ownerGroup.trim() &&
+      form.slaHours > 0 &&
+      form.estimatedResolutionHours > 0 &&
+      form.fields.length > 0 &&
+      form.fields.every(
+        (field) =>
+          /^[a-z][A-Za-z0-9]{1,49}$/.test(field.key) &&
+          field.labelKo.trim() &&
+          field.labelEn.trim() &&
+          (field.type !== 'SELECT' || Boolean(field.options?.length))
+      ) &&
+      new Set(form.fields.map((field) => field.key)).size === form.fields.length
   );
 }
 
@@ -512,45 +515,71 @@ export function ServiceCatalogManager() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission } = usePermissions();
-  const canCreate = hasPermission('ADMIN.SERVICE_CATALOG', 'CREATE');
-  const canUpdate = hasPermission('ADMIN.SERVICE_CATALOG', 'UPDATE');
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'services',
+    surfaceKey: 'services.management',
+  });
+  const createCatalogItem = useProductActionMutation(
+    'route.services.management.catalog-create.action'
+  );
+  const updateCatalogItem = useProductActionMutation(
+    'route.services.management.catalog-update.action'
+  );
+  const canCreate = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('services.catalog.create')
+    : hasPermission('ADMIN.SERVICE_CATALOG', 'CREATE');
+  const canUpdate = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('services.catalog.update')
+    : hasPermission('ADMIN.SERVICE_CATALOG', 'UPDATE');
   const [search, setSearch] = useState('');
   const [lifecycle, setLifecycle] = useState<'ALL' | ServiceCatalogLifecycle>('ALL');
   const [selected, setSelected] = useState<AdminServiceCatalogItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const definitions = useQuery({
-    queryKey: ['admin', 'services', 'catalog'],
-    queryFn: getAdminServiceCatalog,
+    queryKey: ['admin', 'services', 'catalog', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getAdminServiceCatalog(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     retry: 1,
   });
   const publicCatalog = useQuery({
-    queryKey: ['services', 'catalog'],
-    queryFn: getServiceCatalog,
+    queryKey: ['services', 'catalog', 'view', 'management', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getServiceManagementCatalog(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 5 * 60_000,
     retry: 1,
   });
   const mutation = useMutation({
-    mutationFn: (form: CatalogForm) =>
-      saveAdminServiceCatalogItem({
-        serviceKey: form.serviceKey,
-        categoryKey: form.categoryKey,
-        nameKo: form.nameKo.trim(),
-        nameEn: form.nameEn.trim(),
-        descriptionKo: form.descriptionKo.trim(),
-        descriptionEn: form.descriptionEn.trim(),
-        ownerGroup: form.ownerGroup.trim(),
-        lifecycleState: form.lifecycleState,
-        requestSchema: { fields: form.fields },
-        slaHours: form.slaHours,
-        estimatedResolutionHours: form.estimatedResolutionHours,
-        dataClassification: form.dataClassification,
-        featured: form.featured,
-        tags: form.tags
-          .split(',')
-          .map((value) => value.trim())
-          .filter(Boolean),
-        version: form.version,
-      }),
+    mutationFn: (form: CatalogForm) => {
+      const persist = form.version == null ? createCatalogItem : updateCatalogItem;
+      return persist((authority) =>
+        saveAdminServiceCatalogItem(
+          {
+            serviceKey: form.serviceKey,
+            categoryKey: form.categoryKey,
+            nameKo: form.nameKo.trim(),
+            nameEn: form.nameEn.trim(),
+            descriptionKo: form.descriptionKo.trim(),
+            descriptionEn: form.descriptionEn.trim(),
+            ownerGroup: form.ownerGroup.trim(),
+            lifecycleState: form.lifecycleState,
+            requestSchema: { fields: form.fields },
+            slaHours: form.slaHours,
+            estimatedResolutionHours: form.estimatedResolutionHours,
+            dataClassification: form.dataClassification,
+            featured: form.featured,
+            tags: form.tags
+              .split(',')
+              .map((value) => value.trim())
+              .filter(Boolean),
+            version: form.version,
+          },
+          authority
+        )
+      );
+    },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['admin', 'services', 'catalog'] }),

@@ -62,7 +62,7 @@ export type AdminNavigationItem = {
   icon: LucideIcon;
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
-  reviewerAccessible?: boolean;
+  requiredAnyRoleCodes?: readonly string[];
   requiredResponsibilityCodes?: readonly string[];
 };
 
@@ -134,9 +134,9 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         icon: Boxes,
         requiredResourceKey: 'ADMIN.APP_GOVERNANCE',
         requiredPermissionCode: 'VIEW',
+        requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
         requiredResponsibilityCodes: [
           'APP_OWNER',
-          'APP_CONFIG_ADMIN',
           'APP_ACCESS_MANAGER',
           'APP_ACCESS_APPROVER',
           'APP_ACCESS_REVIEWER',
@@ -149,6 +149,7 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         icon: AppWindow,
         requiredResourceKey: 'ADMIN.APP_ACCESS_REQUESTS',
         requiredPermissionCode: 'VIEW',
+        requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
         requiredResponsibilityCodes: [
           'APP_OWNER',
           'APP_ACCESS_MANAGER',
@@ -161,7 +162,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'access-reviews',
         path: '/admin/identity/access-reviews',
         icon: ClipboardCheck,
-        reviewerAccessible: true,
       },
       {
         section: 'identity',

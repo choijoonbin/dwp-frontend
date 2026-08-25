@@ -11,19 +11,16 @@ import {
   ShieldCheck,
   XCircle,
 } from 'lucide-react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   cancelWorkforceExportRequest,
   createWorkforceExportRequest,
-  listWorkforceExportAttempts,
-  listWorkforceExportDatasets,
-  listWorkforceExportRequests,
-  previewWorkforceExport,
   retryWorkforceExportRequest,
   useAuth,
   usePermissions,
   useToast,
   type WorkforceExportAttempt,
+  type CreateWorkforceExportRequest,
   type WorkforceExportDataset,
   type WorkforceExportDatasetKey,
   type WorkforceExportRequest,
@@ -55,6 +52,16 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { useOptionalAllowedProductSurface } from '../../components/allowed-product-surface-context';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import {
+  ProductSurfaceHighRiskCommandDialog,
+  productSurfaceHighRiskCommand,
+  useProductSurfaceHighRiskCommand,
+} from '../../components/product-surface-high-risk-command';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { workforceExportActionAccess } from './workforce-export-action-access';
+import { useWorkforceExportReads } from './use-workforce-export-reads';
 
 import type { GridColDef } from '@mui/x-data-grid';
 
@@ -244,7 +251,7 @@ function EvidenceInspector({
   drawer: boolean;
   canRetry: boolean;
   onClose: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   onRetry: () => void;
 }) {
   const { t } = useTranslation('workforce');
@@ -400,7 +407,7 @@ function EvidenceInspector({
         gap={1}
         sx={{ mt: 2 }}
       >
-        {CANCELLABLE_STATES.includes(request.lifecycleState) && (
+        {onCancel && CANCELLABLE_STATES.includes(request.lifecycleState) && (
           <ActionButton intent="danger" startIcon={<XCircle size={16} />} onClick={onCancel}>
             {t('exports.actions.cancelRequest')}
           </ActionButton>
@@ -434,48 +441,35 @@ export function WorkforceExportCenter() {
   const [requestKey, setRequestKey] = useState(() => `workforce-export-${crypto.randomUUID()}`);
   const [decision, setDecision] = useState<Decision | null>(null);
   const [busy, setBusy] = useState(false);
+  const pageDecision = useOptionalAllowedProductSurface();
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const cancelExport = useProductActionMutation(
+    'route.hcm.management.controlled-export-cancel.action'
+  );
 
-  const datasetsQuery = useQuery({
-    queryKey: ['workforce', 'exports', 'datasets'],
-    queryFn: listWorkforceExportDatasets,
-  });
-  const datasets = datasetsQuery.data ?? [];
-  const selectedDataset =
-    datasets.find((dataset) => dataset.datasetKey === datasetKey) ?? datasets[0];
-  const effectiveDatasetKey = selectedDataset?.datasetKey ?? datasetKey;
-  const selection = useMemo(() => {
-    if (!selectedDataset) return {};
-    return Object.fromEntries(
-      selectedDataset.allowedSelectionKeys
-        .map((key) => [key, searchParams.get(key)?.trim()] as const)
-        .filter((entry): entry is readonly [string, string] => Boolean(entry[1]))
-    );
-  }, [searchParams, selectedDataset]);
-
-  const previewQuery = useQuery({
-    queryKey: ['workforce', 'exports', 'preview', effectiveDatasetKey, selection],
-    queryFn: () => previewWorkforceExport(effectiveDatasetKey, selection),
-    enabled: Boolean(selectedDataset),
-  });
-  const requestsQuery = useQuery({
-    queryKey: ['workforce', 'exports', 'requests'],
-    queryFn: listWorkforceExportRequests,
-  });
-  const requests = requestsQuery.data ?? [];
-  const selected = requests.find((request) => request.requestId === selectedId) ?? null;
-  const attemptsQuery = useQuery({
-    queryKey: ['workforce', 'exports', selectedId, 'attempts'],
-    queryFn: () => listWorkforceExportAttempts(selectedId!),
-    enabled: Boolean(selectedId),
-  });
-  const canGovern = hasPermission('ADMIN.WORKFORCE_ACCESS', 'MANAGE');
+  const {
+    attemptsQuery,
+    datasets,
+    datasetsQuery,
+    effectiveDatasetKey,
+    previewQuery,
+    requests,
+    requestsQuery,
+    selected,
+    selectedDataset,
+    selection,
+  } = useWorkforceExportReads({ datasetKey, searchParams, selectedId });
+  const actionAccess = workforceExportActionAccess(
+    capabilityAccess,
+    hasPermission('ADMIN.WORKFORCE_ACCESS', 'MANAGE')
+  );
   const canRetry = Boolean(
     selected &&
-    canGovern &&
-    selected.lifecycleState === 'FAILED' &&
-    selected.executionEnabled &&
-    !selected.blockers.length &&
-    selected.manualRetryCount < (previewQuery.data?.maximumManualRetries ?? 0)
+      actionAccess.retry &&
+      selected.lifecycleState === 'FAILED' &&
+      selected.executionEnabled &&
+      !selected.blockers.length &&
+      selected.manualRetryCount < (previewQuery.data?.maximumManualRetries ?? 0)
   );
 
   const refresh = async () => {
@@ -491,19 +485,16 @@ export function WorkforceExportCenter() {
     ]);
   };
 
-  const create = async (recipient: string, purpose: string, sourceReference: string) => {
-    if (!selectedDataset || !previewQuery.data) return;
-    setBusy(true);
-    try {
-      const created = await createWorkforceExportRequest({
-        idempotencyKey: requestKey,
-        datasetKey: selectedDataset.datasetKey,
-        selection,
-        exportFormat: 'CSV',
-        recipientReference: recipient,
-        purpose,
-        sourceReference,
-      });
+  const createExport = useProductSurfaceHighRiskCommand<WorkforceExportRequest>({
+    operation: 'HCM_EXPORT_CREATE',
+    execute: (command, authority) => {
+      const request = command.payload.command;
+      if (!request || typeof request !== 'object' || Array.isArray(request)) {
+        throw new Error('The governed export command is invalid.');
+      }
+      return createWorkforceExportRequest(request as CreateWorkforceExportRequest, authority);
+    },
+    onSuccess: async (created) => {
       await refresh();
       setRequestOpen(false);
       setSelectedId(created.requestId);
@@ -515,27 +506,78 @@ export function WorkforceExportCenter() {
             : 'exports.toasts.submitted'
         )
       );
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('common.operationError'));
-    } finally {
-      setBusy(false);
-    }
+    },
+  });
+  const retryExport = useProductSurfaceHighRiskCommand<WorkforceExportRequest>({
+    operation: 'HCM_EXPORT_RETRY',
+    execute: (command, authority) =>
+      retryWorkforceExportRequest(
+        command.targetId,
+        command.expectedObjectVersion,
+        String(command.payload.reason ?? ''),
+        authority
+      ),
+    onSuccess: async (updated) => {
+      await refresh();
+      setDecision(null);
+      setSelectedId(updated.requestId);
+      toast.success(t('exports.toasts.retried'));
+    },
+  });
+
+  const create = async (recipient: string, purpose: string, sourceReference: string) => {
+    if (!selectedDataset || !previewQuery.data) return;
+    const population = pageDecision?.scope.key ?? 'LEGACY_COMPATIBILITY';
+    const dataset = `${selectedDataset.datasetKey}@v${selectedDataset.version}`;
+    const command: CreateWorkforceExportRequest = {
+      idempotencyKey: requestKey,
+      datasetKey: selectedDataset.datasetKey,
+      selection,
+      exportFormat: 'CSV',
+      recipientReference: recipient,
+      purpose,
+      sourceReference,
+    };
+    await createExport.begin(
+      productSurfaceHighRiskCommand({
+        operation: 'HCM_EXPORT_CREATE',
+        commandMethod: 'POST',
+        commandPath: '/api/people/v1/workforce/exports',
+        targetType: 'EXPORT_DATASET',
+        targetId: `${dataset}:${population}`,
+        expectedObjectVersion: selectedDataset.version,
+        idempotencyKey: requestKey,
+        rotateIdempotencyInCommandPayload: true,
+        payload: { dataset, population, command },
+      })
+    );
   };
 
   const decide = async (reason: string) => {
     if (!selected || !decision) return;
+    if (decision === 'retry') {
+      await retryExport.begin(
+        productSurfaceHighRiskCommand({
+          operation: 'HCM_EXPORT_RETRY',
+          commandMethod: 'PATCH',
+          commandPath: `/api/people/v1/workforce/exports/${encodeURIComponent(selected.requestId)}/retry`,
+          targetType: 'EXPORT_REQUEST',
+          targetId: selected.requestId,
+          expectedObjectVersion: selected.version,
+          payload: { version: selected.version, reason },
+        })
+      );
+      return;
+    }
     setBusy(true);
     try {
-      const updated =
-        decision === 'retry'
-          ? await retryWorkforceExportRequest(selected, reason)
-          : await cancelWorkforceExportRequest(selected, reason);
+      const updated = await cancelExport((authority) =>
+        cancelWorkforceExportRequest(selected.requestId, selected.version, reason, authority)
+      );
       await refresh();
       setDecision(null);
       setSelectedId(updated.requestId);
-      toast.success(
-        t(decision === 'retry' ? 'exports.toasts.retried' : 'exports.toasts.cancelled')
-      );
+      toast.success(t('exports.toasts.cancelled'));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t('common.operationError'));
     } finally {
@@ -727,7 +769,7 @@ export function WorkforceExportCenter() {
               <ActionButton
                 intent="primary"
                 startIcon={<FileLock2 size={16} />}
-                disabled={!preview}
+                disabled={!preview || !actionAccess.create}
                 onClick={() => setRequestOpen(true)}
               >
                 {t('exports.actions.newRequest')}
@@ -888,7 +930,7 @@ export function WorkforceExportCenter() {
                     drawer={false}
                     canRetry={canRetry}
                     onClose={() => setSelectedId(null)}
-                    onCancel={() => setDecision('cancel')}
+                    onCancel={actionAccess.cancel ? () => setDecision('cancel') : undefined}
                     onRetry={() => setDecision('retry')}
                   />
                 </Box>
@@ -906,14 +948,14 @@ export function WorkforceExportCenter() {
           drawer
           canRetry={canRetry}
           onClose={() => setSelectedId(null)}
-          onCancel={() => setDecision('cancel')}
+          onCancel={actionAccess.cancel ? () => setDecision('cancel') : undefined}
           onRetry={() => setDecision('retry')}
         />
       )}
       <RequestDialog
         key={`${requestKey}-${requestOpen}`}
-        open={requestOpen}
-        busy={busy}
+        open={requestOpen && actionAccess.create}
+        busy={busy || createExport.controller.busy}
         executionEnabled={preview?.executionEnabled ?? false}
         defaultRecipient={auth.user?.email ?? ''}
         onClose={() => setRequestOpen(false)}
@@ -923,10 +965,12 @@ export function WorkforceExportCenter() {
         key={`${selected?.requestId ?? 'none'}-${decision ?? 'none'}`}
         request={selected}
         decision={decision}
-        busy={busy}
+        busy={busy || retryExport.controller.busy}
         onClose={() => setDecision(null)}
         onSubmit={decide}
       />
+      <ProductSurfaceHighRiskCommandDialog controller={createExport.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={retryExport.controller} />
     </>
   );
 }

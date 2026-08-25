@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 
+import { mockLegacyProductSurfaceAuthority } from './product-surface-authority';
+
 const DEFAULT_APP_RESOURCE_KEYS = [
   'APP.WORK',
   'APP.ASK',
@@ -376,7 +378,74 @@ export async function mockRuntimeCodeCatalog(page: Page): Promise<void> {
   });
 }
 
+export async function mockShellNotificationRuntime(page: Page): Promise<void> {
+  await page.route('**/api/notifications/v1/stream**', (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      body: ': connected\n\n',
+    })
+  );
+  await page.route('**/api/notifications/v1/summary**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success({
+        partial: false,
+        unavailableSources: [],
+        message: null,
+        actionableUnread: 0,
+        totalUnread: 0,
+        viewCounts: { PRIORITY: 0, ALL: 0, MENTIONS: 0, SAVED: 0, SNOOZED: 0, DONE: 0 },
+        changeVersion: '0',
+        counterVersion: '0',
+        generatedAt: '2026-08-24T00:00:00Z',
+      }),
+    })
+  );
+  await page.route('**/api/notifications/v1/me/delivery-profile', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success({
+        channels: {
+          IN_APP: true,
+          EMAIL: false,
+          WEB_PUSH: false,
+          MOBILE_PUSH: false,
+          TEAMS: false,
+          SLACK: false,
+        },
+        quietHours: {
+          enabled: false,
+          start: '22:00',
+          end: '07:00',
+          timeZone: 'Asia/Seoul',
+          days: [1, 2, 3, 4, 5, 6, 7],
+          allowUrgentBypass: true,
+        },
+        digest: { mode: 'OFF', deliveryTime: '09:00', dayOfWeek: null },
+        presentation: { bannerMode: 'SMART', previewMode: 'FULL' },
+        version: '0',
+        updatedAt: '2026-08-24T00:00:00Z',
+      }),
+    })
+  );
+  await page.route('**/api/notifications/v1/me/effective-settings', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success({
+        partial: false,
+        unavailableSources: [],
+        globalChannels: {},
+        apps: [],
+        generatedAt: '2026-08-24T00:00:00Z',
+      }),
+    })
+  );
+}
+
 export async function mockAuthenticatedRuntime(page: Page): Promise<void> {
+  await mockLegacyProductSurfaceAuthority(page);
+  await mockShellNotificationRuntime(page);
   await mockRuntimeCodeCatalog(page);
   await mockWorkspaceRuntime(page);
   await page.route(/\/api\/platform\/v1\/admin\/catalog(?:\?.*)?$/, (route) =>

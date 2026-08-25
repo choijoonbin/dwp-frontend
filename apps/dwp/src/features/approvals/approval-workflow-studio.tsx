@@ -21,8 +21,8 @@ import {
 } from '@dwp-frontend/design-system';
 import {
   createApprovalWorkflowDraft,
-  getApprovalWorkflow,
-  getApprovalWorkflows,
+  getApprovalStudioWorkflow,
+  getApprovalStudioWorkflows,
   publishApprovalWorkflow,
   updateApprovalWorkflowDraft,
   useToast,
@@ -38,7 +38,17 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
-import { useApprovalExperience } from './use-approval-experience';
+import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
+import { approvalWorkflowPublishCommand } from './approval-high-risk-command-model';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
+import { useApprovalHighRiskCommand } from './use-approval-high-risk-command';
+import {
+  useApprovalExperience,
+  useApprovalManagementRequestScope,
+} from './use-approval-experience';
 
 import type {
   ApprovalWorkflow,
@@ -85,6 +95,7 @@ const EMPTY_DRAFT: WorkflowDraft = {
 export function ApprovalWorkflowStudio() {
   const { t, i18n } = useTranslation('approvals');
   const experience = useApprovalExperience();
+  const requestScope = useApprovalManagementRequestScope();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -92,13 +103,22 @@ export function ApprovalWorkflowStudio() {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState<WorkflowDraft>(EMPTY_DRAFT);
   const workflows = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows'],
-    queryFn: getApprovalWorkflows,
+    queryKey: ['approvals', 'admin', 'workflows', 'view', 'absent', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalStudioWorkflows(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const detail = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows', selectedId],
-    queryFn: () => getApprovalWorkflow(selectedId!),
+    queryKey: [
+      'approvals',
+      'admin',
+      'workflows',
+      selectedId,
+      'view',
+      'absent',
+      ...requestScope.cacheKey,
+    ],
+    queryFn: ({ signal }) =>
+      getApprovalStudioWorkflow(selectedId!, requestScope.contextScopeKey, signal),
     enabled: Boolean(selectedId),
     staleTime: 30_000,
   });
@@ -111,14 +131,38 @@ export function ApprovalWorkflowStudio() {
     await queryClient.invalidateQueries({ queryKey: ['approvals', 'admin', 'workflows'] });
     if (workflowId) setSelectedId(workflowId);
   };
+  const runCreate = useApprovalGovernedMutation('route.approvals.admin.workflow-create.action');
+  const runUpdate = useApprovalGovernedMutation('route.approvals.admin.workflow-update.action');
+  const highRiskPublish = useApprovalHighRiskCommand({
+    operation: 'WORKFLOW_PUBLISH',
+    execute: (command, execution) =>
+      publishApprovalWorkflow(command.targetId, command.expectedObjectVersion, execution),
+    onSuccess: async () => {
+      await refresh(selectedId ?? undefined);
+      if (selectedId) {
+        await queryClient.invalidateQueries({
+          queryKey: ['approvals', 'admin', 'workflows', selectedId],
+        });
+      }
+      toast.success(t('admin.workflowPublished'));
+    },
+    onConflict: async () => {
+      await refresh(selectedId ?? undefined);
+    },
+  });
   const create = useMutation({
-    mutationFn: createApprovalWorkflowDraft,
+    mutationFn: (input: WorkflowDraft) =>
+      runCreate((execution) => createApprovalWorkflowDraft(input, execution)),
     onSuccess: async (result) => {
       await refresh(result.workflow.workflowId);
       setEditorOpen(false);
       toast.success(t('admin.studio.workflowCreated'));
     },
-    onError: () => toast.error(t('admin.studio.saveError')),
+    onError: (error) => {
+      if (!isProductSurfaceOperationCancelledError(error)) {
+        toast.error(t('admin.studio.saveError'));
+      }
+    },
   });
   const update = useMutation({
     mutationFn: ({
@@ -127,7 +171,7 @@ export function ApprovalWorkflowStudio() {
     }: {
       id: string;
       input: ApprovalWorkflowDraftInput & { expectedVersion: number };
-    }) => updateApprovalWorkflowDraft(id, input),
+    }) => runUpdate((execution) => updateApprovalWorkflowDraft(id, input, execution)),
     onSuccess: async (result) => {
       await refresh(result.workflow.workflowId);
       await queryClient.invalidateQueries({
@@ -136,22 +180,12 @@ export function ApprovalWorkflowStudio() {
       setEditorOpen(false);
       toast.success(t('admin.studio.workflowSaved'));
     },
-    onError: () => toast.error(t('admin.studio.saveConflict')),
-  });
-  const publish = useMutation({
-    mutationFn: ({ id, version }: { id: string; version: number }) =>
-      publishApprovalWorkflow(id, version),
-    onSuccess: async () => {
-      await refresh(selectedId ?? undefined);
-      if (selectedId)
-        await queryClient.invalidateQueries({
-          queryKey: ['approvals', 'admin', 'workflows', selectedId],
-        });
-      toast.success(t('admin.workflowPublished'));
+    onError: (error) => {
+      if (!isProductSurfaceOperationCancelledError(error)) {
+        toast.error(t('admin.studio.saveConflict'));
+      }
     },
-    onError: () => toast.error(t('admin.workflowPublishError')),
   });
-
   const openCreate = () => {
     setCreating(true);
     setDraft({ ...EMPTY_DRAFT, steps: EMPTY_DRAFT.steps.map((step) => ({ ...step })) });
@@ -254,13 +288,15 @@ export function ApprovalWorkflowStudio() {
             locale={i18n.resolvedLanguage}
             canEdit={experience.canEditDesign}
             canPublish={experience.canPublish}
-            publishing={publish.isPending}
+            publishing={highRiskPublish.controller.busy}
             onEdit={openEdit}
             onPublish={() =>
-              publish.mutate({
-                id: detail.data.workflow.workflowId,
-                version: detail.data.workflow.version,
-              })
+              void highRiskPublish.begin(
+                approvalWorkflowPublishCommand(
+                  detail.data.workflow.workflowId,
+                  detail.data.workflow.version
+                )
+              )
             }
           />
         ) : null}
@@ -276,6 +312,7 @@ export function ApprovalWorkflowStudio() {
         onClose={() => setEditorOpen(false)}
         onSave={save}
       />
+      <ApprovalHighRiskCommandDialog controller={highRiskPublish.controller} />
     </>
   );
 }
@@ -339,7 +376,7 @@ function WorkflowInspector({
   onEdit,
   onPublish,
 }: {
-  detail: Awaited<ReturnType<typeof getApprovalWorkflow>>;
+  detail: Awaited<ReturnType<typeof getApprovalStudioWorkflow>>;
   locale?: string;
   canEdit: boolean;
   canPublish: boolean;

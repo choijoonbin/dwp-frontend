@@ -78,6 +78,7 @@ type FlowHomeProps = {
   onAppLayoutChange: (layout: LaunchpadLayout) => void;
   onSectionsChange: (sections: FlowHomeSectionPreference[]) => void;
   onLaunchApp: (app: HomeAppDefinition) => void;
+  onManageApp?: (app: HomeAppDefinition) => void;
   onRetryOverview: () => void;
   onRetryContributions: () => void;
   onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
@@ -147,6 +148,7 @@ export function FlowHome({
   onAppLayoutChange,
   onSectionsChange,
   onLaunchApp,
+  onManageApp,
   onRetryOverview,
   onRetryContributions,
 }: FlowHomeProps) {
@@ -267,7 +269,7 @@ export function FlowHome({
           '--flow-shell-width': '2560px',
           px: compactPreview ? 2 : { xs: 2, sm: 3, lg: '20px' },
         },
-        '& [data-flow-app-dock-list] button': { minHeight: editing ? 72 : 62 },
+        '& [data-flow-dock-launch]': { minHeight: editing ? 72 : 62 },
         '&[data-preview-device="mobile"] [data-flow-app-dock-list]': {
           gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
         },
@@ -324,6 +326,7 @@ export function FlowHome({
           presentation={presentation}
           onBrowseAll={onBrowseAllApps}
           onLaunch={onLaunchApp}
+          onManage={onManageApp}
           onStartEditing={onStartEditing}
           onLayoutChange={onAppLayoutChange}
         />

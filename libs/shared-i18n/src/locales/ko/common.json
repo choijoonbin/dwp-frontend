@@ -70,6 +70,107 @@
     "loadFailed": "요청한 데이터를 불러오지 못했습니다.",
     "operationFailed": "작업을 완료하지 못했습니다."
   },
+  "productSurface": {
+    "scopeChooser": {
+      "title": "허용된 관리 범위 선택",
+      "description": "현재 제품 책임에 대해 서버가 반환한 범위 중 하나를 선택하세요. 선택 후에만 데이터를 불러옵니다."
+    },
+    "expiry": {
+      "warning": "5분 이내에 관리 권한을 다시 확인합니다",
+      "revalidating": "관리 권한을 다시 확인하는 중입니다"
+    },
+    "labels": {
+      "work": "업무",
+      "management": "제품 관리",
+      "appManagement": "앱 관리",
+      "returnToWork": "업무로 돌아가기",
+      "scope": "범위",
+      "readOnly": "읽기 전용",
+      "revalidateAt": "{{time}}에 접근 재확인",
+      "surfaceNavigation": "제품 업무 및 관리 영역",
+      "currentSurface": "현재 영역: {{surface}}",
+      "unknownSurface": "제품 영역",
+      "managementScope": "관리 범위",
+      "workScope": "업무 범위"
+    },
+    "actions": {
+      "retry": "다시 시도",
+      "return": "안전한 영역으로 돌아가기",
+      "selectScope": "관리 범위 선택",
+      "requestAccess": "접근 요청",
+      "requestResponsibility": "관리 책임 요청",
+      "activateAccess": "권한 활성화",
+      "closeNavigation": "제품 메뉴 닫기",
+      "closeSurfaceNavigation": "제품 영역 목록 닫기",
+      "returnToWork": "업무로 돌아가기",
+      "returnToCatalog": "앱 목록으로 돌아가기"
+    },
+    "feedback": {
+      "operationInProgress": "변경 작업을 전송하고 있습니다. 완료된 후 범위를 전환해 주세요.",
+      "preflightCancelled": "진행 중이던 권한 확인을 취소하고 범위를 전환합니다."
+    },
+    "access": {
+      "correlationId": "문의 ID: {{correlationId}}",
+      "appDenied": {
+        "title": "이 앱을 사용할 수 없습니다",
+        "description": "현재 계정에는 이 업무 영역에 필요한 앱 접근 권한이 없습니다."
+      },
+      "surfaceDenied": {
+        "title": "이 관리 영역이 할당되지 않았습니다",
+        "description": "제품 책임과 해당 관리 업무의 정확한 권한이 필요합니다."
+      },
+      "routeDenied": {
+        "title": "이 페이지는 현재 접근 범위 밖입니다",
+        "description": "현재 제품 책임에 포함된 다른 영역에서 업무를 계속할 수 있습니다."
+      },
+      "scopeSelectionRequired": {
+        "title": "관리할 범위를 선택해 주세요",
+        "description": "기본 범위가 지정되지 않았습니다. 허용 범위를 선택하기 전에는 제품 데이터를 조회하지 않습니다."
+      },
+      "scopeInvalid": {
+        "title": "이 범위를 더 이상 사용할 수 없습니다",
+        "description": "이전 범위가 회수·만료되었거나 현재 세션에 속하지 않습니다. 허용된 다른 범위를 선택해 주세요."
+      },
+      "expired": {
+        "title": "접근 권한이 만료되었습니다",
+        "description": "제품 데이터를 제거했습니다. 접근을 다시 요청하거나 아직 허용된 영역으로 돌아가 주세요."
+      },
+      "activationRequired": {
+        "title": "임시 권한 활성화가 필요합니다",
+        "description": "통제된 관리 영역에 진입하기 전에 대상 권한을 활성화해 주세요."
+      },
+      "stepUpRequired": {
+        "title": "추가 본인 확인이 필요합니다",
+        "description": "민감한 작업을 계속하려면 정책이 요구하는 최신 인증을 완료해 주세요."
+      },
+      "sodConflict": {
+        "title": "직무 분리 정책과 충돌합니다",
+        "description": "현재 할당 또는 이전 참여 이력으로 인해 같은 통제 범위에서 이 작업을 수행할 수 없습니다."
+      },
+      "supportScopeDenied": {
+        "title": "이 지원 세션에 포함되지 않은 영역입니다",
+        "description": "승인된 지원 범위로 돌아가 주세요. 일반 권한과 지원 권한은 합산하지 않습니다."
+      },
+      "authorityUnavailable": {
+        "title": "현재 접근 권한을 확인할 수 없습니다",
+        "description": "권한 서비스가 안전한 판정을 내리지 못했습니다. 이전에 저장된 허용 결과는 사용하지 않습니다."
+      }
+    },
+    "loading": {
+      "label": "제품 접근 권한과 메뉴를 확인하는 중"
+    },
+    "policyLock": {
+      "title": "회사 정책에서 관리합니다",
+      "description": "이 값은 상위 정책에 의해 잠겨 있습니다. 정책 근거를 확인하거나 필요한 경우 예외를 요청하세요.",
+      "policy": "정책",
+      "owner": "소유자",
+      "source": "상속 원천",
+      "scope": "적용 범위",
+      "effectiveAt": "발효일",
+      "viewPolicy": "정책 보기",
+      "requestException": "예외 요청"
+    }
+  },
   "savedViews": {
     "label": "저장된 뷰",
     "saveCurrent": "현재 조건 저장",

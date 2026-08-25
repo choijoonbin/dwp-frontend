@@ -608,6 +608,7 @@
   "domains": {
     "loading": "HR 정보를 불러오는 중",
     "loadError": "HR 업무 정보를 불러오지 못했습니다. 권한과 서비스 연결을 확인해 주세요.",
+    "teamBoundary": "현재 팀 데이터 경계({{boundary}}) 안의 구성원과 요청만 표시합니다.",
     "names": {
       "TIME": "근태",
       "ABSENCE": "휴가",
@@ -810,6 +811,11 @@
     "operations": {
       "boundaryTitle": "위임된 HR 업무 경계",
       "boundaryDescription": "{{domain}} 업무만 관리할 수 있으며 다른 민감 HR 영역은 포함되지 않습니다.",
+      "overviewBoundary": "서버가 판정한 인력 운영 데이터 경계({{boundary}}) 안의 집계만 표시합니다.",
+      "fieldGroups": "허용된 필드 그룹",
+      "generatedAt": "{{value}} 생성",
+      "overviewDomainTitle": "{{domain}} 운영 요약",
+      "overviewPending": "현재 경계의 처리 대기 {{count}}건",
       "tenantScope": "현재 회사 범위",
       "metrics": "업무 상태 지표",
       "queueTitle": "{{domain}} 처리 대기열",
@@ -894,7 +900,9 @@
       "peopleManagers": "하위 팀 관리자",
       "peopleManagersDetail": "직접 보고자 중 관리자",
       "locations": "근무 위치",
-      "locationsDetail": "팀이 근무하는 위치 수"
+      "locationsDetail": "팀이 근무하는 위치 수",
+      "pendingApprovals": "팀 승인 대기",
+      "pendingApprovalsDetail": "현재 팀 경계 안의 근태·휴가 승인 업무"
     },
     "roster": {
       "title": "팀 구성",

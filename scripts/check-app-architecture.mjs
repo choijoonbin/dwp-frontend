@@ -109,6 +109,73 @@ if (!shell || shell.id !== 'platform-shell' || shell.deployment !== 'independent
 }
 
 const platformFeatures = new Set(manifest.platformFeatures ?? []);
+const governedProducts = manifest.governedProductSurfaces ?? [];
+const governedProductIds = new Set();
+const governedSurfaceIds = new Set();
+const governedRoutePrefixes = new Set();
+const migrationWaves = new Set(['W0.5', 'W1a', 'W1b', 'W2', 'W3']);
+
+if (governedProducts.length !== 11) {
+  failures.push('Exactly 11 business products must declare governed Product Surfaces.');
+}
+for (const product of governedProducts) {
+  if (!/^[a-z][a-z0-9-]*$/.test(product.productId ?? '')) {
+    failures.push(`Invalid governed product id: ${product.productId}`);
+  }
+  if (governedProductIds.has(product.productId)) {
+    failures.push(`Duplicate governed product id: ${product.productId}`);
+  }
+  governedProductIds.add(product.productId);
+  if (!migrationWaves.has(product.migrationWave)) {
+    failures.push(`${product.productId} has an invalid migration wave: ${product.migrationWave}`);
+  }
+  if (product.rolloutDefault !== '000') {
+    failures.push(`${product.productId} must remain default-off at rollout state 000.`);
+  }
+  if (!product.routePrefix?.startsWith('/') || governedRoutePrefixes.has(product.routePrefix)) {
+    failures.push(`${product.productId} has an invalid or duplicate governed route prefix.`);
+  }
+  governedRoutePrefixes.add(product.routePrefix);
+
+  const ownsApplication = typeof product.applicationId === 'string';
+  const ownsPlatformFeature = typeof product.platformFeature === 'string';
+  if (ownsApplication === ownsPlatformFeature) {
+    failures.push(
+      `${product.productId} must declare exactly one applicationId or platformFeature owner.`
+    );
+  } else if (ownsApplication) {
+    if (!appIds.has(product.applicationId)) {
+      failures.push(
+        `${product.productId} references unknown application ${product.applicationId}.`
+      );
+    }
+    if (routePrefixes.get(product.routePrefix) !== product.applicationId) {
+      failures.push(`${product.productId} route prefix is not owned by ${product.applicationId}.`);
+    }
+  } else {
+    if (!platformFeatures.has(product.platformFeature)) {
+      failures.push(
+        `${product.productId} references unknown platform feature ${product.platformFeature}.`
+      );
+    }
+    const routeModule = path.join(root, 'apps/dwp/src/routes', product.routeModule ?? '');
+    if (!product.routeModule || !fs.existsSync(routeModule)) {
+      failures.push(`${product.productId} logical product route module is missing.`);
+    }
+  }
+
+  const workSurfaces = product.workSurfaceIds ?? [];
+  const managementSurfaces = product.managementSurfaceIds ?? [];
+  if (workSurfaces.length === 0 || managementSurfaces.length === 0) {
+    failures.push(`${product.productId} must declare both Work and Management Surfaces.`);
+  }
+  for (const surfaceId of [...workSurfaces, ...managementSurfaces]) {
+    if (!surfaceId.startsWith(`${product.productId}.`) || governedSurfaceIds.has(surfaceId)) {
+      failures.push(`${product.productId} has an invalid or duplicate Surface id: ${surfaceId}`);
+    }
+    governedSurfaceIds.add(surfaceId);
+  }
+}
 const diskFeatures = fs
   .readdirSync(featureRoot, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
@@ -144,5 +211,5 @@ if (failures.length > 0) {
 console.log(
   `PASS frontend application architecture: ${appIds.size} independent product applications, ` +
     `1 independent platform shell, ${platformFeatures.size} platform features, ` +
-    `Gateway ${manifest.gatewayPrefix}.`
+    `${governedProductIds.size} governed Product Surfaces, Gateway ${manifest.gatewayPrefix}.`
 );

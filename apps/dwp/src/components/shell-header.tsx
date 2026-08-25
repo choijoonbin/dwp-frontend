@@ -28,6 +28,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 export type ShellHeaderContext = {
   icon: LucideIcon;
   label: string;
+  detail?: string;
 };
 
 type ShellHeaderProps = {
@@ -42,10 +43,12 @@ type ShellHeaderProps = {
   leading?: ReactNode;
   navigation?: {
     label: string;
-    onOpen: () => void;
+    onOpen: (trigger: HTMLButtonElement) => void;
   };
   showWorkspace?: boolean;
   primaryNavigation?: ReactNode;
+  mobilePrimaryNavigation?: ReactNode;
+  contextControls?: ReactNode;
   compactSearch?: boolean;
   maxContentWidth?: number;
   trailing?: ReactNode;
@@ -65,6 +68,8 @@ export function ShellHeader({
   navigation,
   showWorkspace = false,
   primaryNavigation,
+  mobilePrimaryNavigation,
+  contextControls,
   compactSearch = false,
   maxContentWidth,
   trailing,
@@ -124,19 +129,12 @@ export function ShellHeader({
             sx={{
               display: { lg: 'none' },
               flex: '0 0 auto',
-              ...(primaryNavigation
-                ? {
-                    '@container dwp-shell-header (max-width: 1180px)': {
-                      display: 'block',
-                    },
-                  }
-                : undefined),
             }}
           >
             <ActionIconButton
               label={navigation.label}
               tooltipPlacement="bottom"
-              onClick={navigation.onOpen}
+              onClick={(event) => navigation.onOpen(event.currentTarget)}
               sx={{ width: 40, height: 40 }}
             >
               <Menu size={21} strokeWidth={1.8} aria-hidden="true" />
@@ -177,15 +175,29 @@ export function ShellHeader({
             >
               <ContextIcon size={18} strokeWidth={1.8} />
             </Box>
-            <Typography
-              component="span"
-              variant="subtitle2"
-              title={context.label}
-              noWrap
-              sx={{ minWidth: 0 }}
-            >
-              {context.label}
-            </Typography>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                component="span"
+                variant="subtitle2"
+                title={context.label}
+                noWrap
+                sx={{ display: 'block', minWidth: 0 }}
+              >
+                {context.label}
+              </Typography>
+              {context.detail && (
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  title={context.detail}
+                  noWrap
+                  sx={{ display: 'block', minWidth: 0, lineHeight: 1.15 }}
+                >
+                  {context.detail}
+                </Typography>
+              )}
+            </Box>
           </Box>
         )}
 
@@ -208,12 +220,19 @@ export function ShellHeader({
               ml: 1,
               minWidth: 0,
               display: { xs: 'none', lg: 'block' },
-              '@container dwp-shell-header (max-width: 1180px)': { display: 'none' },
             }}
           >
             {primaryNavigation}
           </Box>
         )}
+
+        {mobilePrimaryNavigation && (
+          <Box sx={{ ml: 0.5, minWidth: 0, display: { xs: 'block', lg: 'none' } }}>
+            {mobilePrimaryNavigation}
+          </Box>
+        )}
+
+        {contextControls}
 
         <Box sx={{ flexGrow: 1, minWidth: 4 }} />
 

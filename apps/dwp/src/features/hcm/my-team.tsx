@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, MapPin, Network, UsersRound } from 'lucide-react';
+import { Building2, ClipboardCheck, Network, UsersRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -11,7 +10,7 @@ import {
   SignalMetric,
 } from '@dwp-frontend/design-system';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
-import { getOrganizationChart } from '@dwp-frontend/shared-utils';
+import { getHrTeam } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -21,49 +20,38 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
-import { useHcmExperience } from './use-hcm-experience';
-
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 export function MyTeam() {
   const { t } = useTranslation('hcm');
   const navigate = useNavigate();
-  const experience = useHcmExperience();
-  const chart = useQuery({
-    queryKey: ['hcm', 'my-team', experience.currentPerson?.personId],
-    queryFn: () => getOrganizationChart({ depth: 12, surface: 'directory' }),
-    enabled: Boolean(experience.currentPerson),
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.team',
+  });
+  const team = useQuery({
+    queryKey: ['hcm', 'team', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getHrTeam(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 2 * 60 * 1000,
     retry: 1,
   });
-  const reports = useMemo(
-    () =>
-      (chart.data?.people ?? []).filter(
-        (person) => person.managerPersonId === experience.currentPerson?.personId
-      ),
-    [chart.data?.people, experience.currentPerson?.personId]
-  );
-  const organizationNameById = useMemo(
-    () =>
-      new Map((chart.data?.organizations ?? []).map((item) => [item.organizationId, item.name])),
-    [chart.data?.organizations]
-  );
-  const locationCount = new Set(reports.map((person) => person.locationName).filter(Boolean)).size;
+  const reports = team.data?.members ?? [];
   const managerCount = reports.filter((person) => person.directReportCount > 0).length;
+  const pendingCount = (team.data?.timePendingCount ?? 0) + (team.data?.absencePendingCount ?? 0);
 
-  if (experience.currentPersonQuery.isLoading || chart.isLoading) {
+  if (team.isLoading) {
     return <LoadingState size="standard" label={t('myTeam.loading')} />;
   }
-  if (experience.currentPersonQuery.isError || chart.isError) {
+  if (team.isError) {
     return (
       <ErrorState
         size="standard"
         title={t('common.loadError')}
         description={t('myTeam.loadError')}
         retryLabel={t('common.retry')}
-        onRetry={() => {
-          void experience.currentPersonQuery.refetch();
-          void chart.refetch();
-        }}
-        retrying={experience.currentPersonQuery.isFetching || chart.isFetching}
+        onRetry={() => void team.refetch()}
+        retrying={team.isFetching}
       />
     );
   }
@@ -93,11 +81,11 @@ export function MyTeam() {
           tone="info"
         />
         <SignalMetric
-          label={t('myTeam.signals.locations')}
-          value={formatNumber(locationCount)}
-          detail={t('myTeam.signals.locationsDetail')}
-          icon={<MapPin size={17} />}
-          tone="success"
+          label={t('myTeam.signals.pendingApprovals')}
+          value={formatNumber(pendingCount)}
+          detail={t('myTeam.signals.pendingApprovalsDetail')}
+          icon={<ClipboardCheck size={17} />}
+          tone={pendingCount ? 'warning' : 'success'}
         />
       </Box>
 
@@ -156,7 +144,7 @@ export function MyTeam() {
                       )}
                     </Stack>
                     <Typography variant="caption" color="text.secondary" noWrap display="block">
-                      {person.businessTitle || person.jobProfileName || '-'}
+                      {person.businessTitle || '-'}
                     </Typography>
                     <Stack
                       direction="row"
@@ -168,15 +156,7 @@ export function MyTeam() {
                       <Stack direction="row" alignItems="center" gap={0.5}>
                         <Building2 size={13} aria-hidden="true" />
                         <Typography variant="caption" color="text.secondary">
-                          {organizationNameById.get(person.organizationId) ||
-                            chart.data?.company.name ||
-                            '-'}
-                        </Typography>
-                      </Stack>
-                      <Stack direction="row" alignItems="center" gap={0.5}>
-                        <MapPin size={13} aria-hidden="true" />
-                        <Typography variant="caption" color="text.secondary">
-                          {person.locationName || '-'}
+                          {person.organizationName || '-'}
                         </Typography>
                       </Stack>
                     </Stack>

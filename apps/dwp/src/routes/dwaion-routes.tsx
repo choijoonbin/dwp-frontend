@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 
-import { DWAION_PRODUCT_MANIFEST } from '../features/dwaion/dwaion-navigation';
+import { DWAION_SURFACE_MANIFEST } from '../features/dwaion/dwaion-product-manifest';
 import { DwaionLayout } from '../layouts/dwaion-layout';
 import {
   AppRouteGuard,
@@ -12,6 +12,8 @@ import {
   authenticationFallback,
   routeFallback,
 } from './route-support';
+import { preserveProductRouteLocation } from './product-surface-canary-routes';
+import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
 
 const DwaionWorkspacePage = lazy(() => import('../pages/dwaion'));
 const DwaionHome = lazy(() =>
@@ -76,159 +78,37 @@ const ACTION_AUTHORITIES = [
   { resourceKey: 'ACTION.APPROVAL_REQUEST', permissionCode: 'CREATE' },
 ] as const;
 
-const authenticatedProduct = (
-  <AuthGuard fallback={authenticationFallback}>
-    <WorkspaceRouteGuard>
-      <AppRouteGuard resourceKey={DWAION_PRODUCT_MANIFEST.appKey}>
-        <DwaionLayout />
-      </AppRouteGuard>
-    </WorkspaceRouteGuard>
-  </AuthGuard>
+const legacyShell = (
+  <AppRouteGuard resourceKey={DWAION_SURFACE_MANIFEST.appKey}>
+    <DwaionLayout />
+  </AppRouteGuard>
 );
 
 export const dwaionRoutes: RouteObject[] = [
   {
     path: 'dwaion',
-    element: authenticatedProduct,
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <WorkspaceRouteGuard>
+          <Outlet />
+        </WorkspaceRouteGuard>
+      </AuthGuard>
+    ),
     children: [
-      { index: true, element: <LegacyDwaionEntry /> },
-      {
-        path: 'home',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <DwaionHome />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'new',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <DwaionWorkspacePage />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'conversations',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <DwaionConversations />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'conversations/:conversationId',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <DwaionWorkspacePage />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'agents',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <DwaionAgents />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'actions',
-        element: (
-          <ProductAnyRouteGuard authorities={ACTION_AUTHORITIES}>
-            <Suspense fallback={routeFallback}>
-              <DwaionActions />
-            </Suspense>
-          </ProductAnyRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/overview',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_OPERATIONS">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminOverview />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/agents',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_AGENTS">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminAgents />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/sources',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_SOURCES">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminSources />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/actions',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_ACTIONS">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminActions />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/safety',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_SAFETY">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminSafety />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/evaluation',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_EVALUATION">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminEvaluation />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/gates',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.DWAION_GATES">
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminGates />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/audit',
-        element: (
-          <ProductAnyRouteGuard
-            authorities={[
-              { resourceKey: 'ADMIN.DWAION_RETENTION', permissionCode: 'VIEW' },
-              { resourceKey: 'ADMIN.DWAION_AUDIT', permissionCode: 'VIEW' },
-            ]}
-          >
-            <Suspense fallback={routeFallback}>
-              <DwaionAdminAudit />
-            </Suspense>
-          </ProductAnyRouteGuard>
-        ),
-      },
-      { path: 'admin/retention', element: <Navigate to="/dwaion/admin/audit" replace /> },
-      { path: '*', element: <Navigate to="/dwaion/home" replace /> },
+      ...buildTwoSurfaceProductChildren({
+        manifest: DWAION_SURFACE_MANIFEST,
+        workSurfaceId: 'dwaion.work',
+        managementSurfaceId: 'dwaion.management',
+        managementBasePath: '/dwaion/admin',
+        legacyPath: '/dwaion/home',
+        legacyShell,
+        areaKey: 'dwaion',
+        translationNamespace: 'work',
+        renderPage: (route) => dwaionRoutePage(route.pattern),
+        renderLegacyPage: (route) => dwaionLegacyRoutePage(route.pattern),
+        legacyUnknown: <Navigate to="/dwaion/home" replace />,
+      }),
+      { path: 'admin/retention', element: <LegacyDwaionRetentionRedirect /> },
     ],
   },
   {
@@ -236,7 +116,7 @@ export const dwaionRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey={DWAION_PRODUCT_MANIFEST.appKey}>
+          <AppRouteGuard resourceKey={DWAION_SURFACE_MANIFEST.appKey}>
             <LegacyDwaionEntry />
           </AppRouteGuard>
         </WorkspaceRouteGuard>
@@ -246,7 +126,7 @@ export const dwaionRoutes: RouteObject[] = [
 ];
 
 function LegacyDwaionEntry() {
-  const { search } = useLocation();
+  const { search, hash } = useLocation();
   const params = new URLSearchParams(search);
   const conversationId = params.get('conversation')?.trim();
   const hasNewConversationContext = Boolean(params.get('q')?.trim() || params.get('agent')?.trim());
@@ -258,6 +138,7 @@ function LegacyDwaionEntry() {
         to={{
           pathname: `/dwaion/conversations/${encodeURIComponent(conversationId)}`,
           search: params.toString() ? `?${params.toString()}` : '',
+          hash,
         }}
         replace
       />
@@ -265,8 +146,87 @@ function LegacyDwaionEntry() {
   }
   return (
     <Navigate
-      to={{ pathname: hasNewConversationContext ? '/dwaion/new' : '/dwaion/home', search }}
+      to={{ pathname: hasNewConversationContext ? '/dwaion/new' : '/dwaion/home', search, hash }}
       replace
     />
   );
+}
+
+function LegacyDwaionRetentionRedirect() {
+  const location = useLocation();
+  return <Navigate to={preserveProductRouteLocation('/dwaion/admin/audit', location)} replace />;
+}
+
+function page(children: React.ReactNode) {
+  return <Suspense fallback={routeFallback}>{children}</Suspense>;
+}
+
+function dwaionRoutePage(pattern: string) {
+  const component =
+    pattern === '/dwaion/home' ? (
+      <DwaionHome />
+    ) : pattern === '/dwaion/conversations' ? (
+      <DwaionConversations />
+    ) : pattern === '/dwaion/agents' ? (
+      <DwaionAgents />
+    ) : pattern === '/dwaion/actions' ? (
+      <DwaionActions />
+    ) : pattern === '/dwaion/admin/overview' ? (
+      <DwaionAdminOverview />
+    ) : pattern === '/dwaion/admin/agents' ? (
+      <DwaionAdminAgents />
+    ) : pattern === '/dwaion/admin/sources' ? (
+      <DwaionAdminSources />
+    ) : pattern === '/dwaion/admin/actions' ? (
+      <DwaionAdminActions />
+    ) : pattern === '/dwaion/admin/safety' ? (
+      <DwaionAdminSafety />
+    ) : pattern === '/dwaion/admin/evaluation' ? (
+      <DwaionAdminEvaluation />
+    ) : pattern === '/dwaion/admin/gates' ? (
+      <DwaionAdminGates />
+    ) : pattern === '/dwaion/admin/audit' ? (
+      <DwaionAdminAudit />
+    ) : (
+      <DwaionWorkspacePage />
+    );
+  return page(component);
+}
+
+function dwaionLegacyRoutePage(pattern: string) {
+  const current = dwaionRoutePage(pattern);
+  if (pattern === '/dwaion/actions') {
+    return <ProductAnyRouteGuard authorities={ACTION_AUTHORITIES}>{current}</ProductAnyRouteGuard>;
+  }
+  const resourceKey =
+    pattern === '/dwaion/admin/overview'
+      ? 'ADMIN.DWAION_OPERATIONS'
+      : pattern === '/dwaion/admin/agents'
+        ? 'ADMIN.DWAION_AGENTS'
+        : pattern === '/dwaion/admin/sources'
+          ? 'ADMIN.DWAION_SOURCES'
+          : pattern === '/dwaion/admin/actions'
+            ? 'ADMIN.DWAION_ACTIONS'
+            : pattern === '/dwaion/admin/safety'
+              ? 'ADMIN.DWAION_SAFETY'
+              : pattern === '/dwaion/admin/evaluation'
+                ? 'ADMIN.DWAION_EVALUATION'
+                : pattern === '/dwaion/admin/gates'
+                  ? 'ADMIN.DWAION_GATES'
+                  : undefined;
+  if (resourceKey)
+    return <ProductRouteGuard resourceKey={resourceKey}>{current}</ProductRouteGuard>;
+  if (pattern === '/dwaion/admin/audit') {
+    return (
+      <ProductAnyRouteGuard
+        authorities={[
+          { resourceKey: 'ADMIN.DWAION_RETENTION', permissionCode: 'VIEW' },
+          { resourceKey: 'ADMIN.DWAION_AUDIT', permissionCode: 'VIEW' },
+        ]}
+      >
+        {current}
+      </ProductAnyRouteGuard>
+    );
+  }
+  return current;
 }

@@ -7,7 +7,13 @@ import { defineConfig, loadEnv } from 'vite';
 
 const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.join(workspaceRoot, 'apps/dwp');
-const developmentPort = 4200;
+const configuredDevelopmentPort = Number(process.env.DWP_FRONTEND_DEV_PORT ?? 4200);
+const developmentPort =
+  Number.isSafeInteger(configuredDevelopmentPort) &&
+  configuredDevelopmentPort >= 1024 &&
+  configuredDevelopmentPort <= 65_535
+    ? configuredDevelopmentPort
+    : 4200;
 const trustedHttpOrigin = (value: string) => {
   try {
     const url = new URL(value);
@@ -138,7 +144,10 @@ export default defineConfig(({ command, mode }) => {
                   moduleId.includes('dynamic-import-helper'),
                 tags: ['$initial'],
                 includeDependenciesRecursively: false,
-                maxSize: 430 * 1024,
+                // Keep the eagerly matched route table in one application chunk. The governed
+                // 169-route ledger stays below the bundle byte budget; splitting it only adds a
+                // blocking request without creating a lazy execution boundary.
+                maxSize: 576 * 1024,
                 priority: 10,
               },
             ],

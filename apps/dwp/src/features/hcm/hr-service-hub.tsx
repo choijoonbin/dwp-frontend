@@ -4,7 +4,7 @@ import { ArrowRight, Clock3, FileText, Inbox, LifeBuoy, ShieldCheck } from 'luci
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ActionButton, EmptyState } from '@dwp-frontend/design-system';
-import { getMyServiceRequests, getServiceCatalog } from '@dwp-frontend/shared-utils';
+import { getHcmServiceCatalog, getHcmServiceRequests } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -29,14 +29,14 @@ export function HrServiceHub() {
   const { t } = useTranslation('hcm');
   const navigate = useNavigate();
   const catalog = useQuery({
-    queryKey: ['services', 'catalog'],
-    queryFn: getServiceCatalog,
+    queryKey: ['services', 'catalog', 'surface:hcm'],
+    queryFn: ({ signal }) => getHcmServiceCatalog(signal),
     staleTime: 5 * 60_000,
     retry: 1,
   });
   const requests = useQuery({
-    queryKey: ['services', 'requests'],
-    queryFn: () => getMyServiceRequests(),
+    queryKey: ['services', 'requests', 'surface:hcm'],
+    queryFn: ({ signal }) => getHcmServiceRequests(signal),
     staleTime: 30_000,
     retry: 1,
   });

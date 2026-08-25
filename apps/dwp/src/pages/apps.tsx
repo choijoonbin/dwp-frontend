@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -26,6 +26,7 @@ import {
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   ActionIconButton,
+  ActionButton,
   EmptyState,
   FilterBar,
   FormDialog,
@@ -52,10 +53,20 @@ import { SectionHeading } from '../components/workspace-ui';
 import { HOME_APPS } from '../components/workspace-composer/app-launchpad-model';
 import { AppGlyph } from '../features/home/app-glyph';
 import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
+import {
+  findGovernedProductEntry,
+  useGovernedProductEntryCatalog,
+} from '../features/shell/product-entry-point-registry';
 
 import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 
 type AppFilter = 'all' | 'available' | 'requestable' | 'pending' | 'pinned' | 'connected';
+
+const AppManagementRequestDialog = lazy(() =>
+  import('../components/app-management-request-dialog').then((module) => ({
+    default: module.AppManagementRequestDialog,
+  }))
+);
 
 const homeAppById = new Map(HOME_APPS.map((app) => [app.id, app]));
 const fallbackAppVisual = { iconKey: 'legacy', tone: '#4B5663' } as const;
@@ -170,6 +181,8 @@ export default function AppsPage() {
   const filter: AppFilter = isAppFilter(filterParam) ? filterParam : 'all';
   const query = searchParams.get('q') ?? '';
   const selectedAppId = searchParams.get('app');
+  const requestedManagementResource = searchParams.get('requestManagement');
+  const requestedManagementSurface = searchParams.get('requestSurface');
   const [requestingApp, setRequestingApp] = useState<WorkspaceApp | null>(null);
   const appsQuery = useQuery({
     queryKey: ['workspace', 'apps'],
@@ -178,7 +191,24 @@ export default function AppsPage() {
     retry: 1,
   });
   const apps = appsQuery.data ?? emptyApps;
+  const governedEntries = useGovernedProductEntryCatalog();
+  const managementOnlyEntries = governedEntries.filter(
+    (entry) => entry.management && !apps.some((app) => app.resourceKey === entry.appResourceKey)
+  );
   const pinnedApps = apps.filter((app) => app.pinned && app.accessState === 'AVAILABLE');
+
+  useEffect(() => {
+    const requestedResource = searchParams.get('requestResource');
+    if (!requestedResource || appsQuery.isPending) return;
+    const requestedApp = apps.find(
+      (app) => app.resourceKey === requestedResource && app.accessState === 'REQUESTABLE'
+    );
+    if (!requestedApp) return;
+    setRequestingApp(requestedApp);
+    const next = new URLSearchParams(searchParams);
+    next.delete('requestResource');
+    setSearchParams(next, { replace: true });
+  }, [apps, appsQuery.isPending, searchParams, setSearchParams]);
 
   const visibleApps = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -325,7 +355,7 @@ export default function AppsPage() {
       </PageCanvas>
     );
   }
-  if (apps.length === 0) {
+  if (apps.length === 0 && managementOnlyEntries.length === 0) {
     return (
       <PageCanvas>
         {header}
@@ -341,6 +371,65 @@ export default function AppsPage() {
   return (
     <PageCanvas>
       {header}
+
+      {managementOnlyEntries.length > 0 && (
+        <Box component="section" aria-labelledby="manageable-apps-heading" sx={{ mt: 4 }}>
+          <SectionHeading
+            id="manageable-apps-heading"
+            icon={ShieldCheck}
+            title={t('appsPage.manageable.title')}
+            meta={
+              <Typography variant="body2" color="text.secondary">
+                {t('appsPage.manageable.count', { count: managementOnlyEntries.length })}
+              </Typography>
+            }
+          />
+          <Box
+            component="ul"
+            sx={{
+              p: 0,
+              mt: 1.5,
+              mb: 0,
+              listStyle: 'none',
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+              gap: 1,
+            }}
+          >
+            {managementOnlyEntries.map((entry) => {
+              const definition = HOME_APPS.find(
+                (candidate) => candidate.resourceKey === entry.appResourceKey
+              );
+              return (
+                <Box
+                  component="li"
+                  key={entry.productId}
+                  sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}
+                >
+                  <Stack direction="row" alignItems="center" gap={1.5}>
+                    {definition && <AppGlyph app={definition} size={42} />}
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography component="h3" variant="subtitle2">
+                        {definition?.name ?? entry.productId}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {t('appsPage.manageable.managementOnly')}
+                      </Typography>
+                    </Box>
+                    <ActionButton
+                      intent="secondary"
+                      startIcon={<ShieldCheck size={16} aria-hidden="true" />}
+                      onClick={() => navigate(entry.management!.path)}
+                    >
+                      {t('appsPage.manage')}
+                    </ActionButton>
+                  </Stack>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+      )}
 
       <Box component="section" aria-labelledby="launchpad-heading" sx={{ mt: 4 }}>
         <SectionHeading
@@ -552,6 +641,7 @@ export default function AppsPage() {
         >
           {visibleApps.map((app) => {
             const selected = selectedAppId === app.id;
+            const governedEntry = findGovernedProductEntry(governedEntries, app.resourceKey);
             const healthColor =
               app.health === 'healthy'
                 ? 'success.main'
@@ -655,6 +745,18 @@ export default function AppsPage() {
                     <Send size={17} strokeWidth={1.8} aria-hidden="true" />
                   )}
                 </ButtonBase>
+                {governedEntry?.management && (
+                  <Box sx={{ px: 2, py: 1, pr: 6, borderTop: 1, borderColor: 'divider' }}>
+                    <ActionButton
+                      intent="quiet"
+                      size="small"
+                      startIcon={<ShieldCheck size={15} aria-hidden="true" />}
+                      onClick={() => navigate(governedEntry.management!.path)}
+                    >
+                      {t('appsPage.manage')}
+                    </ActionButton>
+                  </Box>
+                )}
                 {app.accessState === 'AVAILABLE' ? (
                   <ActionIconButton
                     label={
@@ -714,6 +816,24 @@ export default function AppsPage() {
           });
         }}
       />
+      {requestedManagementResource && (
+        <Suspense
+          fallback={
+            <LoadingState label={t('appsPage.managementRequest.loading')} size="standard" />
+          }
+        >
+          <AppManagementRequestDialog
+            appResourceKey={requestedManagementResource}
+            requestedSurfaceId={requestedManagementSurface}
+            onClose={() => {
+              const next = new URLSearchParams(searchParams);
+              next.delete('requestManagement');
+              next.delete('requestSurface');
+              setSearchParams(next, { replace: true });
+            }}
+          />
+        </Suspense>
+      )}
     </PageCanvas>
   );
 }

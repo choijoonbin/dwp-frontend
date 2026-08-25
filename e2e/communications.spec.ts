@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { fulfillSuccess, mockShellSession } from './support/shell-session';
+import { mockLegacyProductSurfaceAuthority } from './support/product-surface-authority';
 
 type ReaderState = {
   unread: boolean;
@@ -171,6 +172,7 @@ test('newsroom presents a responsive personalized editorial feed', async ({ page
     displayName: 'Mina Kim',
     jobTitle: 'Network operations lead',
   });
+  await mockLegacyProductSurfaceAuthority(page);
   const events = await mockCommunications(page);
 
   await page.goto('/communications/for-you');
@@ -267,6 +269,7 @@ test('action-first rail expands beyond four items without duplicate editorial li
 
 test('required communication preserves acknowledgement evidence', async ({ page }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER']);
+  await mockLegacyProductSurfaceAuthority(page);
   const events = await mockCommunications(page);
 
   await page.goto(`/communications/required/${requiredStory.communicationId}`);

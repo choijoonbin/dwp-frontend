@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { fulfillSuccess, mockShellSession } from './support/shell-session';
+import { mockLegacyProductSurfaceAuthority } from './support/product-surface-authority';
 
 const service = {
   serviceKey: 'EMPLOYMENT_CERTIFICATE',
@@ -163,6 +164,7 @@ test('service hub presents a responsive and accessible cross-domain catalog', as
     displayName: 'Mina Kim',
     jobTitle: 'Network operations lead',
   });
+  await mockLegacyProductSurfaceAuthority(page);
   await mockServices(page);
 
   await page.goto('/services/discover');
@@ -184,6 +186,7 @@ test('service hub presents a responsive and accessible cross-domain catalog', as
 
 test('editing and submitting a draft is one atomic request', async ({ page }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER']);
+  await mockLegacyProductSurfaceAuthority(page);
   const state = await mockServices(page);
 
   await page.goto('/services/discover');

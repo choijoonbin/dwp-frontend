@@ -9,19 +9,16 @@ export const TENANT_CONTROL_PLANE_ROLES = [
   ...TENANT_AUDIT_ROLES,
   'IDENTITY_ADMIN',
   'APP_CATALOG_ADMIN',
-  'COMMUNICATIONS_EDITOR',
-  'COMMUNICATIONS_PUBLISHER',
-  'SERVICE_CATALOG_MANAGER',
-  'SERVICE_AGENT',
-  'HR_ADMIN',
-  'PEOPLE_ADMIN',
-  'SPACE_GOVERNANCE_ADMIN',
-  'SPACE_TEMPLATE_ADMIN',
-  'SPACE_COMPLIANCE_REVIEWER',
-  'SPACE_ACCESS_REVIEWER',
 ] as const;
 
 export const WORKFORCE_OPERATIONS_ROLES = ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN'] as const;
+
+export const COMPANY_APP_GOVERNANCE_RESPONSIBILITIES = [
+  'APP_OWNER',
+  'APP_ACCESS_MANAGER',
+  'APP_ACCESS_APPROVER',
+  'APP_ACCESS_REVIEWER',
+] as const;
 
 export const PROVIDER_CONTROL_PLANE_ROLES = [
   'PROVIDER_ADMIN',
@@ -59,7 +56,12 @@ export function canEnterTenantControlPlane(
 ): boolean {
   if (hasActiveSupportSession && hasProviderControlPlaneRole(roles)) return true;
   return (
-    (hasTenantControlPlaneRole(roles) && administrationAppEntitled) || resourceRoles.length > 0
+    (hasTenantControlPlaneRole(roles) && administrationAppEntitled) ||
+    resourceRoles.some((role) =>
+      COMPANY_APP_GOVERNANCE_RESPONSIBILITIES.includes(
+        role.responsibilityCode as (typeof COMPANY_APP_GOVERNANCE_RESPONSIBILITIES)[number]
+      )
+    )
   );
 }
 

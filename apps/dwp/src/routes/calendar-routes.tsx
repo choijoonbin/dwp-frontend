@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { Outlet, type RouteObject } from 'react-router-dom';
 
+import { CALENDAR_PRODUCT_MANIFEST } from '../features/calendar/calendar-product-manifest';
 import { CalendarLayout } from '../layouts/calendar-layout';
 import {
   AppRouteGuard,
@@ -9,8 +10,21 @@ import {
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
+import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
 
 const CalendarPage = lazy(() => import('../pages/calendar'));
+
+const page = (
+  <Suspense fallback={routeFallback}>
+    <CalendarPage />
+  </Suspense>
+);
+
+const legacyShell = (
+  <AppRouteGuard resourceKey="APP.CALENDAR">
+    <CalendarLayout />
+  </AppRouteGuard>
+);
 
 export const calendarRoutes: RouteObject[] = [
   {
@@ -18,22 +32,21 @@ export const calendarRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.CALENDAR">
-            <CalendarLayout />
-          </AppRouteGuard>
+          <Outlet />
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
-    children: [
-      { index: true, element: <Navigate to="home" replace /> },
-      {
-        path: '*',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <CalendarPage />
-          </Suspense>
-        ),
-      },
-    ],
+    children: buildTwoSurfaceProductChildren({
+      manifest: CALENDAR_PRODUCT_MANIFEST,
+      workSurfaceId: 'calendar.work',
+      managementSurfaceId: 'calendar.management',
+      managementBasePath: '/calendar/admin',
+      legacyPath: '/calendar/home',
+      legacyShell,
+      areaKey: 'calendar',
+      translationNamespace: 'calendar',
+      renderPage: () => page,
+      legacyUnknown: page,
+    }),
   },
 ];

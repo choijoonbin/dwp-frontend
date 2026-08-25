@@ -71,6 +71,9 @@ export type HomeAppDefinition = {
   /** Stable notification-platform owner key; never inferred from the app id. */
   notificationSourceKey?: string;
   requiredRoles?: readonly string[];
+  /** Server-derived Pilot entry. Never populate from a raw MANAGE permission fallback. */
+  managementRoute?: string;
+  managementOnly?: boolean;
 };
 
 export type HomeAppGroup = {

@@ -40,8 +40,8 @@ import {
   addOrganizationScenarioMove,
   getOrganizationChart,
   getOrganizationIntelligence,
-  listIdentityUsers,
   listOrganizationScenarios,
+  listWorkforceOrganizationCandidates,
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -73,6 +73,14 @@ import {
   ManagementPanelLoading,
 } from '../../../components/management-panel-state';
 import {
+  appendProductPageShortcutScope,
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../../components/product-page-shortcut-access';
+import { useProductActionMutation } from '../../../components/use-product-action-mutation';
+import { useProductSurfaceCapabilityAccess } from '../../../components/product-surface-capability-access';
+import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
+import {
   OrganizationNode,
   PersonNode,
   PositionNode,
@@ -93,6 +101,16 @@ import {
 } from './organization-intelligence-panel';
 import { OrganizationDesignOverview } from './organization-design-overview';
 import { OrganizationScenarioDrawer } from './organization-scenario-drawer';
+import {
+  ORGANIZATION_LENSES,
+  matchesOrganization,
+  matchesPerson,
+  matchesPosition,
+  organizationLensLabel,
+  organizationVisual,
+  toggleSetValue,
+  type OrganizationLens,
+} from './organization-chart-visuals';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import {
   isIsoDate,
@@ -115,22 +133,7 @@ import type {
   ReactFlowInstance,
 } from '@xyflow/react';
 import type { LucideIcon } from 'lucide-react';
-import type { TFunction } from 'i18next';
-import type {
-  OrganizationChartOrganization,
-  OrganizationDesignPolicy,
-  OrganizationScenario,
-} from '@dwp-frontend/shared-utils';
-
-type OrganizationLens = 'structure' | 'health' | 'headcount' | 'span' | 'vacancy' | 'changes';
-const ORGANIZATION_LENSES: readonly OrganizationLens[] = [
-  'structure',
-  'health',
-  'headcount',
-  'span',
-  'vacancy',
-  'changes',
-];
+import type { OrganizationScenario } from '@dwp-frontend/shared-utils';
 
 const nodeTypes = {
   organization: OrganizationNode,
@@ -202,8 +205,17 @@ export function OrganizationExplorer({
   const { t } = useTranslation('workforce');
   const display = useDisplayDictionary();
   const auth = useAuth();
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const controlledExportShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmControlledExport
+  );
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.management',
+  });
   const supportContext = useCurrentProviderSupportContext();
   const workforceView = experience === 'workforce';
+  const updateScenario = useProductActionMutation('route.hcm.management.org-update.action');
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const defaultMode: ChartMode = workforceView ? 'organizations' : 'people';
@@ -249,10 +261,27 @@ export function OrganizationExplorer({
     },
     [setSearchParams]
   );
-  const canManageWorkforce = (auth.user?.roles ?? []).some((role) =>
+  const legacyCanManage = (auth.user?.roles ?? []).some((role) =>
     ['ADMIN', 'HR_ADMIN'].includes(role)
   );
-  const workforceReadOnly = !workforceView || Boolean(supportContext.data) || !canManageWorkforce;
+  const scenarioCapabilities = {
+    create: capabilityAccess.governed
+      ? capabilityAccess.hasWritableCapability('hcm.org-design.create')
+      : legacyCanManage,
+    update: capabilityAccess.governed
+      ? capabilityAccess.hasWritableCapability('hcm.org-design.update')
+      : legacyCanManage,
+    approve: capabilityAccess.governed
+      ? capabilityAccess.hasWritableCapability('hcm.org-design.approve')
+      : legacyCanManage,
+    publish: capabilityAccess.governed
+      ? capabilityAccess.hasWritableCapability('hcm.org-design.publish')
+      : legacyCanManage,
+  };
+  const canOpenScenarios =
+    workforceView && !supportContext.data && Object.values(scenarioCapabilities).some(Boolean);
+  const workforceReadOnly =
+    !workforceView || Boolean(supportContext.data) || !scenarioCapabilities.update;
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -274,26 +303,42 @@ export function OrganizationExplorer({
   const directionWasCustomized = useRef(searchParams.has('direction'));
 
   const chartQuery = useQuery({
-    queryKey: [experience, 'organization-chart', asOf, rootOrganizationId, scenarioId],
-    queryFn: () =>
+    queryKey: [
+      experience,
+      'organization-chart',
+      asOf,
+      rootOrganizationId,
+      scenarioId,
+      workforceView ? 'design' : '',
+      ...(workforceView ? requestScope.cacheKey : []),
+    ],
+    queryFn: ({ signal }) =>
       getOrganizationChart({
         asOf,
         rootOrganizationId,
         scenarioId: workforceView && scenarioId ? scenarioId : undefined,
         depth: 10,
         surface: experience,
+        view: workforceView ? 'design' : undefined,
+        contextScopeKey: workforceView ? requestScope.contextScopeKey : undefined,
+        signal,
       }),
+    enabled: !workforceView || requestScope.ready,
+    meta: workforceView ? requestScope.queryMeta : undefined,
   });
   const scenariosQuery = useQuery({
-    queryKey: ['workforce', 'organization-scenarios'],
-    queryFn: listOrganizationScenarios,
-    enabled: workforceView,
+    queryKey: ['workforce', 'organization-scenarios', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listOrganizationScenarios(requestScope.contextScopeKey, signal),
+    enabled: workforceView && requestScope.ready,
+    meta: requestScope.queryMeta,
   });
-  const identitiesQuery = useQuery({
-    queryKey: ['workforce', 'organization-chart', 'identity-roles'],
-    queryFn: () => listIdentityUsers(),
-    enabled: workforceView && !workforceReadOnly,
+  const candidatesQuery = useQuery({
+    queryKey: ['workforce', 'organization-chart', 'candidates', ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      listWorkforceOrganizationCandidates(requestScope.contextScopeKey, signal),
+    enabled: workforceView && !workforceReadOnly && requestScope.ready,
     retry: false,
+    meta: requestScope.queryMeta,
   });
   const intelligenceQuery = useQuery({
     queryKey: [
@@ -304,28 +349,31 @@ export function OrganizationExplorer({
       compareTo,
       rootOrganizationId,
       scenarioId,
+      ...requestScope.cacheKey,
     ],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       getOrganizationIntelligence({
         asOf,
         compareTo,
         rootOrganizationId,
         scenarioId: scenarioId || undefined,
         depth: 10,
+        contextScopeKey: requestScope.contextScopeKey,
+        signal,
       }),
-    enabled: workforceView && mode === 'insights',
+    enabled: workforceView && mode === 'insights' && requestScope.ready,
+    meta: requestScope.queryMeta,
   });
 
   const chart = chartQuery.data;
   const scenarios = scenariosQuery.data ?? [];
   const selectedScenario = scenarios.find((scenario) => scenario.scenarioId === scenarioId);
-  const rolesByEmail = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const identity of identitiesQuery.data?.content ?? []) {
-      if (identity.email) map.set(identity.email.toLowerCase(), identity.roles);
-    }
+  const candidatesByPersonId = useMemo(() => {
+    const map = new Map(
+      (candidatesQuery.data ?? []).map((candidate) => [candidate.publicId, candidate] as const)
+    );
     return map;
-  }, [identitiesQuery.data]);
+  }, [candidatesQuery.data]);
 
   const toggleOrganization = useCallback((organizationId: string) => {
     setCollapsedOrganizations((current) => toggleSetValue(current, organizationId));
@@ -826,18 +874,24 @@ export function OrganizationExplorer({
     try {
       const next =
         pendingMove.kind === 'organization'
-          ? await addOrganizationScenarioMove(
-              selectedScenario,
-              pendingMove.targetId,
-              pendingMove.newParentId
+          ? await updateScenario((authority) =>
+              addOrganizationScenarioMove(
+                selectedScenario,
+                pendingMove.targetId,
+                pendingMove.newParentId,
+                authority
+              )
             )
-          : await addOrganizationScenarioPositionMove(
-              selectedScenario,
-              pendingMove.targetId,
-              pendingMove.newParentId
+          : await updateScenario((authority) =>
+              addOrganizationScenarioPositionMove(
+                selectedScenario,
+                pendingMove.targetId,
+                pendingMove.newParentId,
+                authority
+              )
             );
       queryClient.setQueryData<OrganizationScenario[]>(
-        ['workforce', 'organization-scenarios'],
+        ['workforce', 'organization-scenarios', ...requestScope.cacheKey],
         (current = []) => current.map((item) => (item.scenarioId === next.scenarioId ? next : item))
       );
       await queryClient.invalidateQueries({ queryKey: ['workforce', 'organization-chart'] });
@@ -861,7 +915,7 @@ export function OrganizationExplorer({
     <OrgChartInspector
       chart={chart}
       selection={selection}
-      rolesByEmail={rolesByEmail}
+      candidatesByPersonId={candidatesByPersonId}
       onClose={() => updateNavigationState(organizationSelectionSearchParams(undefined))}
       onSelect={(nextSelection) =>
         updateNavigationState(organizationSelectionSearchParams(nextSelection))
@@ -1263,7 +1317,7 @@ export function OrganizationExplorer({
                 size="small"
                 variant="outlined"
                 startIcon={<GitPullRequest size={15} />}
-                disabled={workforceReadOnly}
+                disabled={!canOpenScenarios}
                 onClick={() => setScenarioOpen(true)}
               >
                 {t('orgChart.actions.scenarios')}
@@ -1327,17 +1381,27 @@ export function OrganizationExplorer({
                     ...organizationSelectionSearchParams(nextSelection),
                   });
                 }}
-                onRequestExport={() => {
-                  const params = new URLSearchParams({
-                    dataset: 'ORGANIZATION_INTELLIGENCE',
-                    view: insightView,
-                    asOf: intelligenceQuery.data?.asOf ?? asOf,
-                    compareTo,
-                  });
-                  if (scenarioId) params.set('scenarioId', scenarioId);
-                  if (rootOrganizationId) params.set('rootOrganizationId', rootOrganizationId);
-                  navigate(`/hr/data/exports?${params.toString()}`);
-                }}
+                onRequestExport={
+                  controlledExportShortcut.disclosed
+                    ? () => {
+                        const params = new URLSearchParams({
+                          dataset: 'ORGANIZATION_INTELLIGENCE',
+                          view: insightView,
+                          asOf: intelligenceQuery.data?.asOf ?? asOf,
+                          compareTo,
+                        });
+                        if (scenarioId) params.set('scenarioId', scenarioId);
+                        if (rootOrganizationId)
+                          params.set('rootOrganizationId', rootOrganizationId);
+                        navigate(
+                          appendProductPageShortcutScope(
+                            `/hr/data/exports?${params.toString()}`,
+                            controlledExportShortcut
+                          )
+                        );
+                      }
+                    : undefined
+                }
               />
             ) : (
               <>
@@ -1463,8 +1527,9 @@ export function OrganizationExplorer({
         </Drawer>
         {workforceView && (
           <OrganizationScenarioDrawer
-            open={scenarioOpen && !workforceReadOnly}
+            open={scenarioOpen && canOpenScenarios}
             chart={chart}
+            capabilities={scenarioCapabilities}
             currentUserId={auth.user?.userId}
             previewScenarioId={scenarioId}
             onPreviewScenario={(nextScenarioId) => {
@@ -1545,137 +1610,4 @@ export function OrganizationExplorer({
       </Box>
     </Stack>
   );
-}
-
-function toggleSetValue(current: ReadonlySet<string>, value: string): Set<string> {
-  const next = new Set(current);
-  if (next.has(value)) next.delete(value);
-  else next.add(value);
-  return next;
-}
-
-function matchesOrganization(
-  organization: {
-    name: string;
-    shortName?: string | null;
-    organizationKey: string;
-    costCenterKey?: string | null;
-  },
-  search: string
-): boolean {
-  if (!search) return false;
-  return [
-    organization.name,
-    organization.shortName,
-    organization.organizationKey,
-    organization.costCenterKey,
-  ].some((value) => value?.toLocaleLowerCase().includes(search));
-}
-
-function matchesPerson(
-  person: {
-    displayName: string;
-    workEmail?: string | null;
-    businessTitle?: string | null;
-    jobProfileName?: string | null;
-  },
-  search: string
-): boolean {
-  if (!search) return false;
-  return [person.displayName, person.workEmail, person.businessTitle, person.jobProfileName].some(
-    (value) => value?.toLocaleLowerCase().includes(search)
-  );
-}
-
-function matchesPosition(
-  position: {
-    positionKey: string;
-    title: string;
-    jobProfileName?: string | null;
-    locationName?: string | null;
-  },
-  search: string
-): boolean {
-  if (!search) return false;
-  return [
-    position.positionKey,
-    position.title,
-    position.jobProfileName,
-    position.locationName,
-  ].some((value) => value?.toLocaleLowerCase().includes(search));
-}
-
-function organizationVisual(
-  organization: OrganizationChartOrganization,
-  lens: OrganizationLens,
-  changed: boolean,
-  policy: OrganizationDesignPolicy
-): { accentColor: string; surfaceColor: string; changed: boolean } {
-  if (lens === 'health') {
-    if (organization.healthStatus === 'CRITICAL') {
-      return { accentColor: '#C2412D', surfaceColor: '#FFF7F5', changed };
-    }
-    if (organization.healthStatus === 'ATTENTION') {
-      return { accentColor: '#A16207', surfaceColor: '#FFFBEB', changed };
-    }
-    return { accentColor: '#16815F', surfaceColor: '#F4FBF8', changed };
-  }
-  if (lens === 'headcount') {
-    if (organization.totalHeadcount >= 20) {
-      return { accentColor: '#1D4ED8', surfaceColor: '#EFF6FF', changed };
-    }
-    if (organization.totalHeadcount >= 10) {
-      return { accentColor: '#0F766E', surfaceColor: '#F0FDFA', changed };
-    }
-    return { accentColor: '#64748B', surfaceColor: '#F8FAFC', changed };
-  }
-  if (lens === 'span') {
-    if (organization.averageManagerSpan > policy.maximumManagerSpan) {
-      return { accentColor: '#C2412D', surfaceColor: '#FFF7F5', changed };
-    }
-    if (
-      organization.managerCount > 0 &&
-      organization.averageManagerSpan < policy.minimumManagerSpan
-    ) {
-      return { accentColor: '#A16207', surfaceColor: '#FFFBEB', changed };
-    }
-    return { accentColor: '#16815F', surfaceColor: '#F4FBF8', changed };
-  }
-  if (lens === 'vacancy') {
-    return organization.openPositionCount > 0
-      ? { accentColor: '#A16207', surfaceColor: '#FFFBEB', changed }
-      : { accentColor: '#16815F', surfaceColor: '#F4FBF8', changed };
-  }
-  if (lens === 'changes') {
-    return changed
-      ? { accentColor: '#7C3AED', surfaceColor: '#F5F3FF', changed }
-      : { accentColor: '#64748B', surfaceColor: '#F8FAFC', changed };
-  }
-  return { accentColor: '', surfaceColor: '', changed };
-}
-
-function organizationLensLabel(
-  organization: OrganizationChartOrganization,
-  lens: OrganizationLens,
-  changed: boolean,
-  t: TFunction<'admin'>
-): string | undefined {
-  if (lens === 'health') {
-    return t(`orgChart.health.${organization.healthStatus}`, {
-      defaultValue: organization.healthStatus,
-    });
-  }
-  if (lens === 'headcount') {
-    return t('orgChart.lensValues.headcount', { count: organization.totalHeadcount });
-  }
-  if (lens === 'span') {
-    return t('orgChart.lensValues.span', { value: organization.averageManagerSpan.toFixed(1) });
-  }
-  if (lens === 'vacancy') {
-    return t('orgChart.lensValues.vacancy', { count: organization.openPositionCount });
-  }
-  if (lens === 'changes') {
-    return t(changed ? 'orgChart.lensValues.changed' : 'orgChart.lensValues.unchanged');
-  }
-  return undefined;
 }

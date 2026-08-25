@@ -929,6 +929,7 @@ export const APPROVAL_OPERATIONS_FIXTURE = {
       lastError: 'Downstream endpoint returned 503',
       createdAt: '2026-08-11T00:10:00Z',
       lastRetriedAt: null,
+      version: 7,
     },
   ],
 } satisfies ApprovalOperations;
@@ -953,6 +954,7 @@ export const APPROVAL_DELEGATIONS_FIXTURE = [
     delegatorUserId: 1,
     delegateUserId: 2,
     scopeType: 'WORKFLOW',
+    workflowId: APPROVAL_WORKFLOW_FIXTURE.workflowId,
     workflowKey: APPROVAL_WORKFLOW_FIXTURE.workflowKey,
     startsAt: '2026-08-17T00:00:00Z',
     endsAt: '2026-08-21T09:00:00Z',

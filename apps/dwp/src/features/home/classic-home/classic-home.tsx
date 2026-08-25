@@ -52,6 +52,7 @@ type ClassicHomeProps = {
   onAppLayoutChange: (layout: LaunchpadLayout) => void;
   onWidgetsChange: (widgets: HomeWidgetPreference[]) => void;
   onLaunchApp: (app: HomeAppDefinition) => void;
+  onManageApp?: (app: HomeAppDefinition) => void;
   onRetryOverview: () => void;
   onRecommendationFeedback: (recommendation: HomeRecommendation) => void;
 };
@@ -86,6 +87,7 @@ export function ClassicHome({
   onAppLayoutChange,
   onWidgetsChange,
   onLaunchApp,
+  onManageApp,
   onRetryOverview,
   onRecommendationFeedback,
 }: ClassicHomeProps) {
@@ -116,6 +118,7 @@ export function ClassicHome({
             onImageBackground
             onLayoutChange={onAppLayoutChange}
             onLaunch={onLaunchApp}
+            onManage={onManageApp}
             onStartEditing={onStartEditing}
           />
         }

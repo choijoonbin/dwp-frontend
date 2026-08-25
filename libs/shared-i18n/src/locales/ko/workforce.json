@@ -633,6 +633,12 @@
       "status": "재직 상태",
       "accessRoles": "시스템 권한",
       "noAccessRole": "할당된 시스템 권한 없음",
+      "managementEligibility": "관리 업무 후보 적격성",
+      "noManagementEligibility": "관리 업무 후보 정보 없음",
+      "eligibility": {
+        "ELIGIBLE": "적격",
+        "INELIGIBLE": "부적격"
+      },
       "manager": "보고 대상",
       "directReports": "직속 보고자 {{count}}명",
       "layerAndSpan": "계층 및 관리 범위",

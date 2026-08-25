@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Database, X } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -10,7 +10,7 @@ import {
   FormField,
   LoadingState,
 } from '@dwp-frontend/design-system';
-import { decideHrRequest, useToast } from '@dwp-frontend/shared-utils';
+import { decideHrRequest, decideHrTeamRequest, useToast } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -21,6 +21,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import { canDiscloseHcmApprovalAction } from './hcm-approval-action-access';
 
 import type { HrApprovalItem } from '@dwp-frontend/shared-utils';
 
@@ -147,27 +150,61 @@ export function ApprovalQueue({
   items,
   title,
   description,
+  decisionScope = 'operations',
 }: {
   domain: 'time' | 'absence';
   items: HrApprovalItem[];
   title: string;
   description: string;
+  decisionScope?: 'operations' | 'team';
 }) {
   const { t } = useTranslation('hcm');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const canDecide = canDiscloseHcmApprovalAction(capabilityAccess, decisionScope, domain);
   const [decision, setDecision] = useState<{
     item: HrApprovalItem;
     action: 'APPROVE' | 'REJECT';
   } | null>(null);
   const [note, setNote] = useState('');
+  const operationsTimeDecision = useProductActionMutation(
+    'route.hcm.operations.time-approve.action'
+  );
+  const operationsAbsenceDecision = useProductActionMutation(
+    'route.hcm.operations.absence-approve.action'
+  );
+  const teamTimeDecision = useProductActionMutation('route.hcm.team.time-decision.action');
+  const teamAbsenceDecision = useProductActionMutation('route.hcm.team.absence-decision.action');
+  useEffect(() => {
+    setDecision(null);
+    setNote('');
+  }, [capabilityAccess.contextScopeKey]);
   const mutation = useMutation({
-    mutationFn: () =>
-      decideHrRequest(domain, decision!.item.itemId, {
-        decision: decision!.action,
-        note: note.trim(),
-        version: decision!.item.version,
-      }),
+    mutationFn: () => {
+      if (!canDecide) throw new Error('The approval action is not authorized.');
+      const decide = decisionScope === 'team' ? decideHrTeamRequest : decideHrRequest;
+      const govern =
+        decisionScope === 'team'
+          ? domain === 'time'
+            ? teamTimeDecision
+            : teamAbsenceDecision
+          : domain === 'time'
+            ? operationsTimeDecision
+            : operationsAbsenceDecision;
+      return govern((authority) =>
+        decide(
+          domain,
+          decision!.item.itemId,
+          {
+            decision: decision!.action,
+            note: note.trim(),
+            version: decision!.item.version,
+          },
+          authority
+        )
+      );
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['hcm'] });
       toast.success(t('domains.approvals.saved'));
@@ -204,22 +241,26 @@ export function ApprovalQueue({
                   </Stack>
                   <Stack direction="row" alignItems="center" gap={0.75}>
                     <StatusChip status={item.status} />
-                    <ActionButton
-                      intent="secondary"
-                      size="small"
-                      startIcon={<X size={15} />}
-                      onClick={() => setDecision({ item, action: 'REJECT' })}
-                    >
-                      {t('domains.approvals.reject')}
-                    </ActionButton>
-                    <ActionButton
-                      intent="primary"
-                      size="small"
-                      startIcon={<Check size={15} />}
-                      onClick={() => setDecision({ item, action: 'APPROVE' })}
-                    >
-                      {t('domains.approvals.approve')}
-                    </ActionButton>
+                    {canDecide && (
+                      <>
+                        <ActionButton
+                          intent="secondary"
+                          size="small"
+                          startIcon={<X size={15} />}
+                          onClick={() => setDecision({ item, action: 'REJECT' })}
+                        >
+                          {t('domains.approvals.reject')}
+                        </ActionButton>
+                        <ActionButton
+                          intent="primary"
+                          size="small"
+                          startIcon={<Check size={15} />}
+                          onClick={() => setDecision({ item, action: 'APPROVE' })}
+                        >
+                          {t('domains.approvals.approve')}
+                        </ActionButton>
+                      </>
+                    )}
                   </Stack>
                 </Stack>
               </Box>
@@ -235,7 +276,7 @@ export function ApprovalQueue({
       </DomainSection>
 
       <FormDialog
-        open={Boolean(decision)}
+        open={Boolean(decision) && canDecide}
         title={t(
           `domains.approvals.${decision?.action === 'APPROVE' ? 'approveTitle' : 'rejectTitle'}`
         )}

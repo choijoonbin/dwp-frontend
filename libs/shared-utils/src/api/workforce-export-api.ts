@@ -1,9 +1,17 @@
 import { axiosInstance } from '../axios-instance';
+import {
+  productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
+} from './product-surface-governed-mutation';
+import { productSurfaceReadScopeConfig } from './product-surface-read-scope';
 
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type WorkforceExportDatasetKey =
-  'ORGANIZATION_INTELLIGENCE' | 'WORKFORCE_DIRECTORY' | 'ASSIGNMENT_REGISTER';
+  | 'ORGANIZATION_INTELLIGENCE'
+  | 'WORKFORCE_DIRECTORY'
+  | 'ASSIGNMENT_REGISTER';
 
 export type WorkforceExportState =
   | 'BLOCKED_PENDING_APPROVAL'
@@ -89,7 +97,13 @@ export type WorkforceExportAttempt = {
   attemptEventId: string;
   attemptNumber: number;
   eventType:
-    'BLOCKED' | 'CLAIMED' | 'RETRY_SCHEDULED' | 'FAILED' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+    | 'BLOCKED'
+    | 'CLAIMED'
+    | 'RETRY_SCHEDULED'
+    | 'FAILED'
+    | 'COMPLETED'
+    | 'CANCELLED'
+    | 'EXPIRED';
   workerReference?: string | null;
   failureCode?: string | null;
   redactedFailureMessage?: string | null;
@@ -100,66 +114,119 @@ export type WorkforceExportAttempt = {
 
 const BASE = '/api/people/v1/workforce/exports';
 
-export async function listWorkforceExportDatasets(): Promise<WorkforceExportDataset[]> {
+export const HCM_WORKFORCE_EXPORT_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createWorkforceExportRequest',
+    routeContractKey: 'route.hcm.management.controlled-export-create.action',
+    method: 'POST',
+    path: BASE,
+  },
+  {
+    apiFunction: 'cancelWorkforceExportRequest',
+    routeContractKey: 'route.hcm.management.controlled-export-cancel.action',
+    method: 'PATCH',
+    path: `${BASE}/{requestId}/cancel`,
+  },
+  {
+    apiFunction: 'retryWorkforceExportRequest',
+    routeContractKey: 'route.hcm.management.controlled-export-retry.action',
+    method: 'PATCH',
+    path: `${BASE}/{requestId}/retry`,
+  },
+] as const;
+
+export async function listWorkforceExportDatasets(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<WorkforceExportDataset[]> {
   const response = await axiosInstance.get<ApiResponse<WorkforceExportDataset[]>>(
-    `${BASE}/datasets`
+    `${BASE}/datasets`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }
 
 export async function previewWorkforceExport(
   datasetKey: WorkforceExportDatasetKey,
-  selection: Record<string, string>
+  selection: Record<string, string>,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<WorkforceExportPreview> {
   const response = await axiosInstance.post<
     ApiResponse<WorkforceExportPreview>,
     { datasetKey: WorkforceExportDatasetKey; selection: Record<string, string> }
-  >(`${BASE}/preview`, { datasetKey, selection });
+  >(
+    `${BASE}/preview`,
+    { datasetKey, selection },
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
   return response.data.data;
 }
 
-export async function listWorkforceExportRequests(): Promise<WorkforceExportRequest[]> {
-  const response = await axiosInstance.get<ApiResponse<WorkforceExportRequest[]>>(BASE);
+export async function listWorkforceExportRequests(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<WorkforceExportRequest[]> {
+  const response = await axiosInstance.get<ApiResponse<WorkforceExportRequest[]>>(
+    BASE,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
   return response.data.data;
 }
 
 export async function createWorkforceExportRequest(
-  request: CreateWorkforceExportRequest
+  request: CreateWorkforceExportRequest,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<WorkforceExportRequest> {
   const response = await axiosInstance.post<
     ApiResponse<WorkforceExportRequest>,
     CreateWorkforceExportRequest
-  >(BASE, request);
+  >(BASE, request, productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true }));
   return response.data.data;
 }
 
 export async function cancelWorkforceExportRequest(
-  request: WorkforceExportRequest,
-  reason: string
+  requestId: string,
+  version: number,
+  reason: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<WorkforceExportRequest> {
   const response = await axiosInstance.patch<
     ApiResponse<WorkforceExportRequest>,
     { version: number; reason: string }
-  >(`${BASE}/${request.requestId}/cancel`, { version: request.version, reason });
+  >(
+    `${BASE}/${requestId}/cancel`,
+    { version, reason },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
 export async function retryWorkforceExportRequest(
-  request: WorkforceExportRequest,
-  reason: string
+  requestId: string,
+  version: number,
+  reason: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<WorkforceExportRequest> {
   const response = await axiosInstance.patch<
     ApiResponse<WorkforceExportRequest>,
     { version: number; reason: string }
-  >(`${BASE}/${request.requestId}/retry`, { version: request.version, reason });
+  >(
+    `${BASE}/${requestId}/retry`,
+    { version, reason },
+    productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
+  );
   return response.data.data;
 }
 
 export async function listWorkforceExportAttempts(
-  requestId: string
+  requestId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<WorkforceExportAttempt[]> {
   const response = await axiosInstance.get<ApiResponse<WorkforceExportAttempt[]>>(
-    `${BASE}/${requestId}/attempts`
+    `${BASE}/${requestId}/attempts`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }

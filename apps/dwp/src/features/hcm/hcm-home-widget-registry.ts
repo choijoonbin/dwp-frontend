@@ -1,9 +1,8 @@
-import { Activity, ContactRound, LayoutGrid, UserRoundCheck, UsersRound } from 'lucide-react';
+import { Activity, ContactRound, LayoutGrid, UsersRound } from 'lucide-react';
 
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
-export type HcmHomeWidgetKey =
-  'quick-actions' | 'people-signals' | 'profile' | 'team' | 'operations';
+export type HcmHomeWidgetKey = 'quick-actions' | 'people-signals' | 'profile' | 'team';
 
 export const HCM_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HcmHomeWidgetKey>[] = [
   {
@@ -42,15 +41,5 @@ export const HCM_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HcmHom
     defaultHeight: 'tall',
     allowedHeights: ['standard', 'tall', 'expanded'],
     audience: 'manager',
-  },
-  {
-    key: 'operations',
-    icon: UserRoundCheck,
-    canHide: true,
-    defaultSize: 'full',
-    allowedSizes: ['large', 'full'],
-    defaultHeight: 'tall',
-    allowedHeights: ['standard', 'tall', 'expanded'],
-    audience: 'operator',
   },
 ];

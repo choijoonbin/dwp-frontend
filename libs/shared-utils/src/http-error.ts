@@ -8,3 +8,13 @@ export class HttpError extends Error {
     this.name = 'HttpError';
   }
 }
+
+export class HttpTransportError extends Error {
+  constructor(
+    public readonly reason: 'NETWORK' | 'TIMEOUT' | 'ABORT',
+    cause?: unknown
+  ) {
+    super(`HTTP transport failed: ${reason.toLowerCase()}`, { cause });
+    this.name = 'HttpTransportError';
+  }
+}

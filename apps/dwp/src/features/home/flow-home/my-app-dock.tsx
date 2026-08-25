@@ -29,6 +29,7 @@ type MyAppDockProps = {
   presentation: HomePresentation;
   onBrowseAll: () => void;
   onLaunch: (app: HomeAppDefinition) => void;
+  onManage?: (app: HomeAppDefinition) => void;
   onStartEditing?: () => void;
   onLayoutChange: (layout: LaunchpadLayout) => void;
 };
@@ -45,6 +46,7 @@ export function MyAppDock({
   presentation,
   onBrowseAll,
   onLaunch,
+  onManage,
   onStartEditing,
   onLayoutChange,
 }: MyAppDockProps) {
@@ -131,7 +133,7 @@ export function MyAppDock({
         ...(priorityCompact
           ? {
               py: 1,
-              '& [data-flow-app-dock-list] button': {
+              '& [data-flow-dock-launch]': {
                 minHeight: '72px !important',
                 py: '0 !important',
                 gap: '2px !important',
@@ -231,6 +233,7 @@ export function MyAppDock({
               flowItemLimit={itemLimit}
               onLayoutChange={onLayoutChange}
               onLaunch={onLaunch}
+              onManage={onManage}
               onStartEditing={onStartEditing}
             />
           ) : (

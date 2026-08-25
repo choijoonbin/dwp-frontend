@@ -30,7 +30,7 @@ import Typography from '@mui/material/Typography';
 import { PersonAvatar } from '../directory/person-avatar';
 
 import type { LucideIcon } from 'lucide-react';
-import type { OrganizationChart } from '@dwp-frontend/shared-utils';
+import type { OrganizationChart, WorkforceOrganizationCandidate } from '@dwp-frontend/shared-utils';
 
 export type OrgChartSelection =
   | { kind: 'organization'; id: string }
@@ -114,14 +114,14 @@ function PersonLink({
 export function OrgChartInspector({
   chart,
   selection,
-  rolesByEmail,
+  candidatesByPersonId,
   onClose,
   onSelect,
   onFocusOrganization,
 }: {
   chart: OrganizationChart;
   selection: OrgChartSelection;
-  rolesByEmail: ReadonlyMap<string, string[]>;
+  candidatesByPersonId: ReadonlyMap<string, WorkforceOrganizationCandidate>;
   onClose: () => void;
   onSelect: (selection: OrgChartSelection) => void;
   onFocusOrganization: (organizationId: string) => void;
@@ -208,7 +208,7 @@ export function OrgChartInspector({
           <PersonDetails
             chart={chart}
             personId={person.personId}
-            rolesByEmail={rolesByEmail}
+            candidatesByPersonId={candidatesByPersonId}
             onSelect={onSelect}
           />
         )}
@@ -358,12 +358,12 @@ function OrganizationDetails({
 function PersonDetails({
   chart,
   personId,
-  rolesByEmail,
+  candidatesByPersonId,
   onSelect,
 }: {
   chart: OrganizationChart;
   personId: string;
-  rolesByEmail: ReadonlyMap<string, string[]>;
+  candidatesByPersonId: ReadonlyMap<string, WorkforceOrganizationCandidate>;
   onSelect: (selection: OrgChartSelection) => void;
 }) {
   const { t } = useTranslation('workforce');
@@ -376,7 +376,7 @@ function PersonDetails({
     ? chart.people.find((candidate) => candidate.personId === person.managerPersonId)
     : undefined;
   const reports = chart.people.filter((candidate) => candidate.managerPersonId === person.personId);
-  const roles = person.workEmail ? (rolesByEmail.get(person.workEmail.toLowerCase()) ?? []) : [];
+  const candidate = candidatesByPersonId.get(person.personId);
 
   return (
     <Stack gap={2}>
@@ -423,16 +423,20 @@ function PersonDetails({
 
       <Box>
         <Typography variant="overline" color="text.secondary">
-          {t('orgChart.details.accessRoles')}
+          {t('orgChart.details.managementEligibility')}
         </Typography>
         <Stack direction="row" gap={0.6} flexWrap="wrap" useFlexGap sx={{ mt: 0.5 }}>
-          {roles.length ? (
-            roles.map((role) => (
-              <Chip key={role} icon={<ShieldCheck size={14} />} label={role} size="small" />
-            ))
+          {candidate ? (
+            <Chip
+              icon={<ShieldCheck size={14} />}
+              label={t(`orgChart.details.eligibility.${candidate.eligibility}`)}
+              color={candidate.eligibility === 'ELIGIBLE' ? 'success' : 'default'}
+              size="small"
+              variant="outlined"
+            />
           ) : (
             <Typography variant="body2" color="text.secondary">
-              {t('orgChart.details.noAccessRole')}
+              {t('orgChart.details.noManagementEligibility')}
             </Typography>
           )}
         </Stack>

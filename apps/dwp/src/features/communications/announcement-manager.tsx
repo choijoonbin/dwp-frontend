@@ -37,6 +37,9 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import { AnnouncementDialog, definitionFrom, formFrom } from './announcement-dialog';
@@ -306,20 +309,49 @@ export function AnnouncementManager() {
   const queryClient = useQueryClient();
   const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
   const supportContext = useCurrentProviderSupportContext();
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'communications',
+    surfaceKey: 'communications.management',
+  });
+  const createContent = useProductActionMutation(
+    'route.communications.management.content-create.action'
+  );
+  const updateContent = useProductActionMutation(
+    'route.communications.management.content-update.action'
+  );
+  const publishContent = useProductActionMutation(
+    'route.communications.management.content-publish.action'
+  );
+  const archiveContent = useProductActionMutation(
+    'route.communications.management.content-archive.action'
+  );
   const supportWrite = supportContext.data?.scopes.includes('TENANT_CONFIGURATION_WRITE') ?? false;
   const useSupportPermissions = Boolean(supportContext.data);
-  const canCreate = useSupportPermissions
+  const legacyCanCreate = useSupportPermissions
     ? supportWrite
     : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'CREATE');
-  const canUpdate = useSupportPermissions
+  const legacyCanUpdate = useSupportPermissions
     ? supportWrite
     : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'UPDATE');
-  const canPublish = useSupportPermissions
+  const legacyCanPublish = useSupportPermissions
     ? supportWrite
     : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'APPROVE');
-  const canArchive = useSupportPermissions
+  const legacyCanArchive = useSupportPermissions
     ? supportWrite
     : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'MANAGE');
+  const canCreate = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('communications.content.create')
+    : legacyCanCreate;
+  const canUpdate = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('communications.content.update')
+    : legacyCanUpdate;
+  const canPublish = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('communications.content.publish')
+    : legacyCanPublish;
+  const canArchive = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('communications.content.archive')
+    : legacyCanArchive;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selected, setSelected] = useState<Announcement | null>(null);
   const [previewed, setPreviewed] = useState<Announcement | null>(null);
@@ -327,8 +359,10 @@ export function AnnouncementManager() {
   const [busy, setBusy] = useState(false);
   const [operationError, setOperationError] = useState<string | null>(null);
   const announcementsQuery = useQuery({
-    queryKey: ['admin', 'announcements'],
-    queryFn: listAdminAnnouncements,
+    queryKey: ['admin', 'announcements', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => listAdminAnnouncements(requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
 
   const refresh = async () => {
@@ -593,12 +627,17 @@ export function AnnouncementManager() {
                     onClick={() =>
                       void run(
                         () =>
-                          createAnnouncement({
-                            ...definitionFrom(formFrom(announcement)),
-                            title: t('announcements.copyTitle', {
-                              title: announcement.title,
-                            }).slice(0, 160),
-                          }),
+                          createContent((authority) =>
+                            createAnnouncement(
+                              {
+                                ...definitionFrom(formFrom(announcement)),
+                                title: t('announcements.copyTitle', {
+                                  title: announcement.title,
+                                }).slice(0, 160),
+                              },
+                              authority
+                            )
+                          ),
                         t('announcements.toasts.duplicated')
                       )
                     }
@@ -631,7 +670,13 @@ export function AnnouncementManager() {
                       onClick={() =>
                         void run(
                           () =>
-                            publishAnnouncement(announcement.announcementId, announcement.version),
+                            publishContent((authority) =>
+                              publishAnnouncement(
+                                announcement.announcementId,
+                                announcement.version,
+                                authority
+                              )
+                            ),
                           t('announcements.toasts.published')
                         )
                       }
@@ -650,7 +695,13 @@ export function AnnouncementManager() {
                       onClick={() =>
                         void run(
                           () =>
-                            archiveAnnouncement(announcement.announcementId, announcement.version),
+                            archiveContent((authority) =>
+                              archiveAnnouncement(
+                                announcement.announcementId,
+                                announcement.version,
+                                authority
+                              )
+                            ),
                           t('announcements.toasts.archived')
                         )
                       }
@@ -712,12 +763,15 @@ export function AnnouncementManager() {
           void run(
             () =>
               selected
-                ? updateAnnouncement(
-                    selected.announcementId,
-                    definitionFrom(form),
-                    selected.version
+                ? updateContent((authority) =>
+                    updateAnnouncement(
+                      selected.announcementId,
+                      definitionFrom(form),
+                      selected.version,
+                      authority
+                    )
                   )
-                : createAnnouncement(definitionFrom(form)),
+                : createContent((authority) => createAnnouncement(definitionFrom(form), authority)),
             selected ? t('announcements.toasts.updated') : t('announcements.toasts.created')
           )
         }

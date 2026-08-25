@@ -7,6 +7,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
 import { AppGlyph } from './app-glyph';
+import { AppManagementAction } from './app-management-action';
 
 import type {
   HomeAppDefinition,
@@ -20,6 +21,7 @@ type AppLaunchpadFolderDialogProps = {
   onClose: () => void;
   onRename: (folder: LaunchpadFolder) => void;
   onLaunch: (app: HomeAppDefinition) => void;
+  onManage?: (app: HomeAppDefinition) => void;
   onRemoveApp: (app: HomeAppDefinition) => void;
 };
 
@@ -50,6 +52,7 @@ export function AppLaunchpadFolderDialog({
   onClose,
   onRename,
   onLaunch,
+  onManage,
   onRemoveApp,
 }: AppLaunchpadFolderDialogProps) {
   const { t } = useTranslation('home');
@@ -98,7 +101,11 @@ export function AppLaunchpadFolderDialog({
                 }}
               >
                 <ButtonBase
-                  aria-label={openAppLabel(app, t)}
+                  aria-label={
+                    app.managementOnly
+                      ? t('launchpad.manageApp', { app: app.name })
+                      : openAppLabel(app, t)
+                  }
                   onClick={() => {
                     if (!editing) onLaunch(app);
                   }}
@@ -167,6 +174,9 @@ export function AppLaunchpadFolderDialog({
                     </Typography>
                   </Box>
                 </ButtonBase>
+                {!editing && app.managementRoute && onManage && (
+                  <AppManagementAction app={app} variant="inline" onManage={onManage} />
+                )}
                 {editing && (
                   <ActionIconButton
                     label={t('launchpad.removeAppLabel', { app: app.name })}

@@ -608,6 +608,7 @@
   "domains": {
     "loading": "Loading HR information",
     "loadError": "HR work information could not be loaded. Check your permission and service connection.",
+    "teamBoundary": "Only people and requests inside the current team data boundary ({{boundary}}) are shown.",
     "names": {
       "TIME": "Time",
       "ABSENCE": "Absence",
@@ -810,6 +811,11 @@
     "operations": {
       "boundaryTitle": "Delegated HR work boundary",
       "boundaryDescription": "You can manage only {{domain}} work; other sensitive HR domains are excluded.",
+      "overviewBoundary": "Only aggregates inside the workforce operations boundary evaluated by the server ({{boundary}}) are shown.",
+      "fieldGroups": "Allowed field groups",
+      "generatedAt": "Generated {{value}}",
+      "overviewDomainTitle": "{{domain}} operations summary",
+      "overviewPending": "{{count}} items pending in the current boundary",
       "tenantScope": "Current company scope",
       "metrics": "Operational metrics",
       "queueTitle": "{{domain}} work queue",
@@ -894,7 +900,9 @@
       "peopleManagers": "People managers",
       "peopleManagersDetail": "Managers among direct reports",
       "locations": "Work locations",
-      "locationsDetail": "Distinct locations across the team"
+      "locationsDetail": "Distinct locations across the team",
+      "pendingApprovals": "Pending team approvals",
+      "pendingApprovalsDetail": "Time and absence items inside the current team boundary"
     },
     "roster": {
       "title": "Team roster",

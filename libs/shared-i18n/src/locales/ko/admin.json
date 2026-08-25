@@ -3045,7 +3045,12 @@
     "loading": "앱 책임 체계를 불러오는 중",
     "attention": "승인 대기 {{pending}}건 · 소유자 없는 앱 범위 {{ownerless}}건을 확인하세요.",
     "viewLabel": "앱 책임 관리 보기",
-    "views": { "assignments": "책임 할당", "boundaries": "앱 리소스 범위" },
+    "controlResponsibilitiesNotice": "이 보기는 앱 소유자와 접근 승인·이행·검토 책임만 관리합니다. 앱 설정 관리자와 제품 전문 직무는 앱 관리자 Preset에서 함께 요청·승인·활성화해야 합니다.",
+    "views": {
+      "assignments": "책임 할당",
+      "presets": "앱 관리자 Preset",
+      "boundaries": "앱 리소스 범위"
+    },
     "metrics": {
       "activeAssignments": "활성 책임",
       "pendingApprovals": "승인 대기",
@@ -3066,16 +3071,24 @@
       "submitForApproval": "승인 요청",
       "approve": "승인",
       "approved": "승인",
+      "activate": "활성화",
       "deny": "반려",
       "denied": "반려",
       "revoke": "회수",
-      "revoked": "회수"
+      "revoked": "회수",
+      "openWorkbench": "{{app}} 관리 워크벤치 열기",
+      "requestPreset": "앱 관리자 Preset 요청",
+      "resolveReview": "검토 완료",
+      "dismissReview": "검토 제외"
     },
     "fields": {
       "principal": "사용자 또는 그룹",
       "responsibility": "관리 책임",
       "scope": "앱 리소스 범위",
+      "preset": "앱별 관리 직무 Preset",
       "validTo": "만료 시각(선택)",
+      "validToRequired": "관리 권한 만료 시각",
+      "reviewDueAt": "재검토 기한",
       "justification": "업무 근거",
       "justificationHelp": "10자 이상의 구체적 근거가 감사 증거로 보존됩니다.",
       "boundaryKey": "범위 키",
@@ -3089,7 +3102,14 @@
       "boundaryTitle": "앱 리소스 범위 생성",
       "approvedTitle": "이 책임 할당을 승인할까요?",
       "deniedTitle": "이 책임 할당을 반려할까요?",
-      "revokedTitle": "이 활성 책임을 회수할까요?"
+      "revokedTitle": "이 활성 책임을 회수할까요?",
+      "presetRequestTitle": "앱 관리자 Preset 승인 요청",
+      "presetAPPROVEDTitle": "이 앱 관리자 Preset을 승인할까요?",
+      "presetACTIVATEDTitle": "승인된 앱 관리자 Preset을 독립 활성화할까요?",
+      "presetDENIEDTitle": "이 앱 관리자 Preset을 반려할까요?",
+      "presetREVOKEDTitle": "이 앱 관리자 Preset을 회수할까요?",
+      "reviewRESOLVEDTitle": "이 기존 권한 검토를 완료할까요?",
+      "reviewDISMISSEDTitle": "이 기존 권한 검토를 제외할까요?"
     },
     "responsibilities": {
       "APP_OWNER": "앱 소유자",
@@ -3100,6 +3120,7 @@
     },
     "states": {
       "PENDING_APPROVAL": "승인 대기",
+      "APPROVED": "승인됨 · 독립 활성화 대기",
       "ACTIVE": "활성",
       "DENIED": "반려",
       "REVOKED": "회수",
@@ -3109,6 +3130,35 @@
     "noExpiry": "만료 없음",
     "reviewDue": "재검토 {{value}}",
     "assignmentCount": "활성 {{count}}",
+    "presets": {
+      "principalMetadata": "{{type}} · {{ref}}",
+      "presetMetadata": "{{code}} · v{{version}}",
+      "title": "앱별 관리자 직무",
+      "description": "관리 책임과 최소 전문 직무를 하나의 감사 가능한 승인 흐름으로 지정합니다.",
+      "atomicNotice": "책임, 앱 범위, 전문 직무는 함께 승인·활성화·회수됩니다. 일부 직무만 적용되는 부분 성공은 허용하지 않습니다.",
+      "requestDescription": "대상 사용자, 앱 범위, 최소 전문 직무, 만료와 재검토 기한을 확인한 뒤 독립 승인을 요청합니다.",
+      "responsibilityPreview": "함께 부여되는 책임: {{responsibility}}",
+      "unavailable": "이 Preset은 현재 요청할 수 없습니다. 사유: {{reason}}",
+      "validityFutureError": "만료 시각은 현재보다 이후여야 합니다.",
+      "reviewWindowError": "재검토 기한은 현재보다 이후이며 만료 시각을 넘을 수 없습니다.",
+      "assignmentTable": "앱 관리자 Preset 할당",
+      "reviewTitle": "기존 관리자 권한 검토",
+      "reviewTable": "기존 Permission-only 관리자 검토 목록",
+      "emptyTitle": "지정된 앱 관리자 Preset이 없습니다",
+      "emptyDescription": "광범위한 관리자 역할 대신 앱별 최소 직무와 명시적인 종료 시각을 지정하세요.",
+      "columns": {
+        "preset": "관리 직무",
+        "duties": "전문 Duty",
+        "sourceRole": "기존 역할",
+        "reason": "검토 사유",
+        "evidence": "검토 증거"
+      },
+      "reviewStates": {
+        "OPEN": "검토 대기",
+        "RESOLVED": "검토 완료",
+        "DISMISSED": "검토 제외"
+      }
+    },
     "empty": {
       "assignmentsTitle": "앱 책임 할당이 없습니다",
       "assignmentsDescription": "책임과 범위, 유효 기간을 지정해 승인 가능한 할당을 요청하세요."
@@ -3118,7 +3168,14 @@
       "boundaryCreated": "앱 리소스 범위를 생성했습니다.",
       "approved": "책임 할당을 승인했습니다.",
       "denied": "책임 할당을 반려했습니다.",
-      "revoked": "활성 책임을 회수했습니다."
+      "revoked": "활성 책임을 회수했습니다.",
+      "presetRequested": "앱 관리자 Preset을 승인 요청했습니다.",
+      "presetAPPROVED": "앱 관리자 Preset을 승인했습니다.",
+      "presetACTIVATED": "앱 관리자 Preset을 활성화했습니다.",
+      "presetDENIED": "앱 관리자 Preset을 반려했습니다.",
+      "presetREVOKED": "앱 관리자 Preset을 회수했습니다.",
+      "reviewRESOLVED": "기존 관리자 권한 검토를 완료했습니다.",
+      "reviewDISMISSED": "기존 관리자 권한을 검토 대상에서 제외했습니다."
     }
   },
   "appAccess": {

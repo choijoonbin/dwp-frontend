@@ -22,6 +22,7 @@
     "DEGRADED": "성능 저하",
     "DEPRECATED": "사용 중단 예정",
     "DENIED": "거부됨",
+    "DISMISSED": "검토 제외됨",
     "DRAFT": "초안",
     "ENDED": "종료됨",
     "ERROR": "오류",

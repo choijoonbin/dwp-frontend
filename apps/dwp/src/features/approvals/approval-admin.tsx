@@ -11,7 +11,7 @@ import {
   TimerReset,
   TriangleAlert,
 } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionIconButton, SignalMetric } from '@dwp-frontend/design-system';
 import {
   formatDate as formatLocalizedDate,
@@ -36,11 +36,22 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import {
+  appendProductPageShortcutScope,
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../components/product-page-shortcut-access';
 import { ApprovalFormStudio } from './approval-form-studio';
+import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
+import { approvalDeliveryRetryCommand } from './approval-high-risk-command-model';
 import { ApprovalPolicyStudio } from './approval-policy-studio';
 import { ApprovalWorkflowStudio } from './approval-workflow-studio';
 import { ApprovalLinkRow, ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
-import { useApprovalExperience } from './use-approval-experience';
+import {
+  useApprovalExperience,
+  useApprovalManagementRequestScope,
+} from './use-approval-experience';
+import { useApprovalHighRiskCommand } from './use-approval-high-risk-command';
 
 import type { ApprovalView } from './approval-navigation';
 
@@ -62,9 +73,16 @@ export function ApprovalAdmin({
 
 function ApprovalAdminOverview() {
   const { t } = useTranslation('approvals');
+  const requestScope = useApprovalManagementRequestScope();
+  const workflowShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows
+  );
+  const operationsShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.approvalOperations
+  );
   const overview = useQuery({
-    queryKey: ['approvals', 'admin', 'overview'],
-    queryFn: getApprovalAdminOverview,
+    queryKey: ['approvals', 'admin', 'overview', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalAdminOverview(requestScope.contextScopeKey, signal),
     staleTime: 20_000,
   });
   if (overview.isError) return <ErrorPanel />;
@@ -125,16 +143,23 @@ function ApprovalAdminOverview() {
         sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, 1fr)' }, gap: 2 }}
       >
         <ApprovalSurface title={t('admin.controlModel.title')} meta={t('admin.controlModel.meta')}>
-          {['designer', 'publisher', 'operator', 'auditor'].map((role, index) => (
-            <ApprovalLinkRow
-              key={role}
-              title={t(`admin.controlModel.${role}.title`)}
-              detail={t(`admin.controlModel.${role}.detail`)}
-              route={index < 2 ? '/approvals/admin/workflows' : '/approvals/admin/operations'}
-              icon={index < 2 ? GitBranch : ShieldCheck}
-              tone={index === 1 ? approvalTone.amber : approvalTone.primary}
-            />
-          ))}
+          {['designer', 'publisher', 'operator', 'auditor'].map((role, index) => {
+            const shortcut = index < 2 ? workflowShortcut : operationsShortcut;
+            if (!shortcut.disclosed) return null;
+            return (
+              <ApprovalLinkRow
+                key={role}
+                title={t(`admin.controlModel.${role}.title`)}
+                detail={t(`admin.controlModel.${role}.detail`)}
+                route={appendProductPageShortcutScope(
+                  index < 2 ? '/approvals/admin/workflows' : '/approvals/admin/operations',
+                  shortcut
+                )}
+                icon={index < 2 ? GitBranch : ShieldCheck}
+                tone={index === 1 ? approvalTone.amber : approvalTone.primary}
+              />
+            );
+          })}
         </ApprovalSurface>
         <ApprovalSurface title={t('admin.assurance.title')} meta={t('admin.assurance.meta')}>
           {(data?.assurance ?? []).map((signal) => {
@@ -180,15 +205,27 @@ function ApprovalOperationsAdmin() {
   const { t, i18n } = useTranslation('approvals');
   const queryClient = useQueryClient();
   const { canOperate } = useApprovalExperience();
+  const requestScope = useApprovalManagementRequestScope();
+  const operationsQueryKey = [
+    'approvals',
+    'admin',
+    'operations',
+    ...requestScope.cacheKey,
+  ] as const;
   const operations = useQuery({
-    queryKey: ['approvals', 'admin', 'operations'],
-    queryFn: getApprovalOperations,
+    queryKey: operationsQueryKey,
+    queryFn: ({ signal }) => getApprovalOperations(requestScope.contextScopeKey, signal),
     refetchInterval: 30_000,
   });
-  const retryDelivery = useMutation({
-    mutationFn: retryApprovalIntegrationDelivery,
+  const highRiskRetry = useApprovalHighRiskCommand({
+    operation: 'DELIVERY_RETRY',
+    execute: (command, execution) =>
+      retryApprovalIntegrationDelivery(command.targetId, command.expectedObjectVersion, execution),
     onSuccess: (data) => {
-      queryClient.setQueryData(['approvals', 'admin', 'operations'], data);
+      queryClient.setQueryData(operationsQueryKey, data);
+    },
+    onConflict: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['approvals', 'admin', 'operations'] });
     },
   });
   const formatDate = (value?: string | null) =>
@@ -273,7 +310,9 @@ function ApprovalOperationsAdmin() {
               </TableHead>
               <TableBody>
                 {(operations.data?.integrationDeliveries ?? []).map((delivery) => {
-                  const retryable = delivery.status === 'FAILED' || delivery.status === 'DEAD';
+                  const retryable =
+                    (delivery.status === 'FAILED' || delivery.status === 'DEAD') &&
+                    Number.isSafeInteger(delivery.version);
                   return (
                     <TableRow key={delivery.outboxId} hover>
                       <TableCell sx={{ minWidth: 220 }}>
@@ -305,7 +344,7 @@ function ApprovalOperationsAdmin() {
                           </Typography>
                         </Tooltip>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell align="right" sx={{ pr: { xs: 12, sm: 2 } }}>
                         <ActionIconButton
                           label={t('admin.integrations.retry')}
                           tooltip={
@@ -315,8 +354,12 @@ function ApprovalOperationsAdmin() {
                           }
                           size="small"
                           disabled={!canOperate || !retryable}
-                          loading={retryDelivery.isPending}
-                          onClick={() => retryDelivery.mutate(delivery.outboxId)}
+                          loading={highRiskRetry.controller.busy}
+                          onClick={() =>
+                            void highRiskRetry.begin(
+                              approvalDeliveryRetryCommand(delivery.outboxId, delivery.version)
+                            )
+                          }
                         >
                           <RefreshCcw size={16} />
                         </ActionIconButton>
@@ -329,18 +372,17 @@ function ApprovalOperationsAdmin() {
           </Box>
         )}
       </ApprovalSurface>
-      {retryDelivery.isError ? (
-        <Alert severity="error">{t('admin.integrations.retryError')}</Alert>
-      ) : null}
+      <ApprovalHighRiskCommandDialog controller={highRiskRetry.controller} />
     </Stack>
   );
 }
 
 function ApprovalSignatureAdmin() {
   const { t } = useTranslation('approvals');
+  const requestScope = useApprovalManagementRequestScope();
   const providers = useQuery({
-    queryKey: ['approvals', 'admin', 'signatures'],
-    queryFn: getApprovalSignatureProviders,
+    queryKey: ['approvals', 'admin', 'signatures', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalSignatureProviders(requestScope.contextScopeKey, signal),
     staleTime: 60_000,
   });
   if (providers.isError) return <ErrorPanel />;

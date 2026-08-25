@@ -477,6 +477,7 @@
     "groupFolder": "{{group}} 폴더",
     "groupApps": "{{group}} 앱",
     "openApp": "{{app}} 열기",
+    "manageApp": "{{app}} 관리",
     "dragApp": "{{app}} 이동",
     "removeApp": "홈에서 제거",
     "removeAppLabel": "{{app}} 앱을 홈에서 제거",

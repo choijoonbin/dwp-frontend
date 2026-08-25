@@ -17,7 +17,10 @@ import {
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
-import type { ProductAreaNavigationGroup } from '../../layouts/product-area-layout';
+import type {
+  ProductNavigationGroup,
+  ProductSurfaceNavigationGroup,
+} from '../../components/product-manifest';
 
 export type ApprovalView =
   | 'home'
@@ -46,10 +49,18 @@ export type ApprovalNavigationItem = {
   requiredAllPermissionCodes?: readonly string[];
 };
 
-export const APPROVAL_NAVIGATION = [
+export const APPROVAL_WORK_NAVIGATION = [
   {
     id: 'overview',
-    items: [{ view: 'home', path: '/approvals/home', icon: House }],
+    items: [
+      {
+        view: 'home',
+        path: '/approvals/home',
+        icon: House,
+        taskKind: 'work',
+        access: { type: 'policy', accessPolicyKey: 'approvals.work-access.v1' },
+      },
+    ],
   },
   {
     id: 'decisions',
@@ -58,60 +69,95 @@ export const APPROVAL_NAVIGATION = [
         view: 'inbox',
         path: '/approvals/inbox',
         icon: ClipboardCheck,
-        requiredResourceKey: 'ACTION.APPROVAL_TASK',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'work',
+        access: {
+          type: 'capability',
+          capabilityContractKey: 'approvals.work.task.read',
+        },
       },
       {
         view: 'completed',
         path: '/approvals/completed',
         icon: CheckCircle2,
-        requiredResourceKey: 'ACTION.APPROVAL_TASK',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'work',
+        access: {
+          type: 'capability',
+          capabilityContractKey: 'approvals.work.task.read',
+        },
       },
       {
         view: 'new',
         path: '/approvals/requests/new',
         icon: FileInput,
-        requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
-        requiredAllPermissionCodes: ['CREATE', 'UPDATE'],
+        taskKind: 'work',
+        access: {
+          type: 'capability-expression',
+          mode: 'ALL',
+          capabilityContractKeys: [
+            'approvals.work.request.create',
+            'approvals.work.request.update',
+          ],
+        },
       },
       {
         view: 'drafts',
         path: '/approvals/requests/drafts',
         icon: FilePenLine,
-        requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'work',
+        access: {
+          type: 'capability',
+          capabilityContractKey: 'approvals.work.request.read',
+        },
       },
       {
         view: 'submitted',
         path: '/approvals/requests/submitted',
         icon: Send,
-        requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'work',
+        access: {
+          type: 'capability',
+          capabilityContractKey: 'approvals.work.request.read',
+        },
       },
       {
         view: 'needs-info',
         path: '/approvals/requests/needs-info',
         icon: MessagesSquare,
-        requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'work',
+        access: {
+          type: 'capability',
+          capabilityContractKey: 'approvals.work.request.read',
+        },
       },
       {
         view: 'archive',
         path: '/approvals/requests/archive',
         icon: Archive,
-        requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'work',
+        access: {
+          type: 'capability',
+          capabilityContractKey: 'approvals.work.request.read',
+        },
       },
       {
         view: 'delegations',
         path: '/approvals/delegations',
         icon: BadgeCheck,
-        requiredResourceKey: 'ACTION.APPROVAL_DELEGATION',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        taskKind: 'work',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.work.delegation.read',
+            'approvals.work.delegation.manage',
+          ],
+        },
       },
     ],
   },
+] as const satisfies readonly ProductSurfaceNavigationGroup[];
+
+export const APPROVAL_MANAGEMENT_NAVIGATION = [
   {
     id: 'administration',
     items: [
@@ -119,53 +165,138 @@ export const APPROVAL_NAVIGATION = [
         view: 'admin-overview',
         path: '/approvals/admin/overview',
         icon: Gauge,
-        requiredResourceKey: 'ADMIN.APPROVAL_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'operations',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.operations.read',
+            'approvals.oversight.overview.read',
+          ],
+        },
       },
       {
         view: 'workflows',
         path: '/approvals/admin/workflows',
         icon: GitBranch,
-        requiredResourceKey: 'ADMIN.APPROVAL_DESIGN',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: ['approvals.design.read', 'approvals.oversight.design.read'],
+        },
       },
       {
         view: 'forms',
         path: '/approvals/admin/forms',
         icon: FileStack,
-        requiredResourceKey: 'ADMIN.APPROVAL_DESIGN',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: ['approvals.design.read', 'approvals.oversight.design.read'],
+        },
       },
       {
         view: 'policies',
         path: '/approvals/admin/policies',
         icon: ShieldCheck,
-        requiredResourceKey: 'ADMIN.APPROVAL_POLICY',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: ['approvals.policy.read', 'approvals.oversight.policy.read'],
+        },
       },
       {
         view: 'operations',
         path: '/approvals/admin/operations',
         icon: ListChecks,
-        requiredResourceKey: 'ADMIN.APPROVAL_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'operations',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.operations.read',
+            'approvals.audit.operations.read',
+            'approvals.oversight.operations.read',
+          ],
+        },
       },
       {
         view: 'signatures',
         path: '/approvals/admin/signatures',
         icon: KeyRound,
-        requiredResourceKey: 'ADMIN.APPROVAL_SIGNATURE',
-        requiredPermissionCode: 'VIEW',
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.signature.read',
+            'approvals.oversight.signature.read',
+          ],
+        },
       },
     ],
   },
-] as const satisfies readonly ProductAreaNavigationGroup[];
+] as const satisfies readonly ProductSurfaceNavigationGroup[];
+
+/** Flag-off compatibility projection. New surface routes never authorize from these fields. */
+export const APPROVAL_NAVIGATION = [
+  ...APPROVAL_WORK_NAVIGATION.map((group) => ({
+    ...group,
+    items: group.items.map((item) => {
+      if (item.view === 'home') return item;
+      if (item.view === 'inbox' || item.view === 'completed') {
+        return {
+          ...item,
+          requiredResourceKey: 'ACTION.APPROVAL_TASK',
+          requiredPermissionCode: 'VIEW',
+        };
+      }
+      if (item.view === 'new') {
+        return {
+          ...item,
+          requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
+          requiredAllPermissionCodes: ['CREATE', 'UPDATE'],
+        };
+      }
+      if (item.view === 'delegations') {
+        return {
+          ...item,
+          requiredResourceKey: 'ACTION.APPROVAL_DELEGATION',
+          requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        };
+      }
+      return {
+        ...item,
+        requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
+        requiredPermissionCode: 'VIEW',
+      };
+    }),
+  })),
+  ...APPROVAL_MANAGEMENT_NAVIGATION.map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      ...item,
+      requiredResourceKey:
+        item.view === 'workflows' || item.view === 'forms'
+          ? 'ADMIN.APPROVAL_DESIGN'
+          : item.view === 'policies'
+            ? 'ADMIN.APPROVAL_POLICY'
+            : item.view === 'signatures'
+              ? 'ADMIN.APPROVAL_SIGNATURE'
+              : 'ADMIN.APPROVAL_OPERATIONS',
+      requiredPermissionCode: 'VIEW',
+    })),
+  })),
+] as const satisfies readonly ProductNavigationGroup[];
 
 export const APPROVAL_DEFAULT_PATH = '/approvals/home';
 
 export function findApprovalNavigationItem(pathname: string): ApprovalNavigationItem | undefined {
   for (const group of APPROVAL_NAVIGATION) {
-    const items: readonly ApprovalNavigationItem[] = group.items;
+    const items = group.items as readonly ApprovalNavigationItem[];
     const item = items.find((candidate) => candidate.path === pathname);
     if (item) return item;
   }

@@ -1,10 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import {
-  canEnterTenantControlPlane,
-  hasProviderControlPlaneRole,
-} from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
@@ -16,9 +13,21 @@ import {
   type RouteObject,
 } from 'react-router-dom';
 
-import { canAccessAdminNavigationItem } from '../features/admin/admin-access-policy';
+import {
+  canAccessAdminNavigationItem,
+  canEnterCompanyAdministration,
+} from '../features/admin/admin-access-policy';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { AdminLayout } from '../layouts/admin-layout';
+import {
+  PRODUCT_LEGACY_ROUTE_SOURCE,
+  PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+} from './product-page-route-contracts';
+import { resolveProductLegacyRoute } from './product-route-contract-source';
+import {
+  ProductCanaryRouteBoundary,
+  ProductCanarySurfaceBoundary,
+} from './product-surface-canary-routes';
 import {
   authenticationFallback,
   ProductRouteGuard,
@@ -31,27 +40,20 @@ const AdminPage = lazy(() => import('../pages/admin'));
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  const { pathname } = useLocation();
   const { permissions } = usePermissions();
   const roles = auth.user?.roles ?? [];
   const providerRole = hasProviderControlPlaneRole(roles);
   const supportContext = useProviderSupportContext(providerRole);
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
-  const regularAccess = canEnterTenantControlPlane(
+  const resourceRoles = auth.user?.resourceRoles ?? [];
+  const regularAccess = canEnterCompanyAdministration(roles, appPermitted, false, resourceRoles);
+  if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
+  return canEnterCompanyAdministration(
     roles,
     appPermitted,
-    false,
-    auth.user?.resourceRoles
-  );
-  const assignedReviewerAccess = !providerRole && pathname === '/admin/identity/access-reviews';
-  if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
-  return assignedReviewerAccess ||
-    canEnterTenantControlPlane(
-      roles,
-      appPermitted,
-      Boolean(supportContext.data),
-      auth.user?.resourceRoles
-    ) ? (
+    Boolean(supportContext.data),
+    resourceRoles
+  ) ? (
     children
   ) : (
     <Navigate to="/403" replace />
@@ -114,23 +116,71 @@ function productAdminLegacyRedirect(
   path: string,
   destination: string,
   resourceKey: string,
-  requiredAnySupportScopes: readonly string[] = []
+  requiredAnySupportScopes: readonly string[] = [],
+  canary?: {
+    redirectId: string;
+    productId: string;
+    surfaceId: string;
+    routeContractKey: string;
+  }
 ): RouteObject {
+  const redirect = <ProductAdminLegacyDestination destination={destination} canary={canary} />;
+  const legacy = (
+    <ProductRouteGuard
+      resourceKey={resourceKey}
+      requiredAnySupportScopes={requiredAnySupportScopes}
+    >
+      {redirect}
+    </ProductRouteGuard>
+  );
   return {
     path,
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <ProductRouteGuard
-            resourceKey={resourceKey}
-            requiredAnySupportScopes={requiredAnySupportScopes}
-          >
-            <Navigate to={destination} replace />
-          </ProductRouteGuard>
+          {canary ? (
+            <ProductCanarySurfaceBoundary
+              productId={canary.productId}
+              surfaceId={canary.surfaceId}
+              legacy={legacy}
+            >
+              <ProductCanaryRouteBoundary
+                productId={canary.productId}
+                surfaceId={canary.surfaceId}
+                routeContractKey={canary.routeContractKey}
+              >
+                {redirect}
+              </ProductCanaryRouteBoundary>
+            </ProductCanarySurfaceBoundary>
+          ) : (
+            legacy
+          )}
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
   };
+}
+
+function ProductAdminLegacyDestination({
+  destination,
+  canary,
+}: {
+  destination: string;
+  canary?: { redirectId: string };
+}) {
+  const location = useLocation();
+  const resolved = canary
+    ? resolveProductLegacyRoute(
+        location.pathname,
+        location.search,
+        location.hash,
+        PRODUCT_LEGACY_ROUTE_SOURCE.filter((redirect) => redirect.redirectId === canary.redirectId),
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+      )
+    : undefined;
+  if (canary && !resolved) return <Navigate to="/404" replace />;
+  const target = resolved?.target ?? `${destination}${location.search}${location.hash}`;
+  return <Navigate to={target} replace />;
 }
 
 const productAdminLegacyRoutes: RouteObject[] = [
@@ -138,17 +188,37 @@ const productAdminLegacyRoutes: RouteObject[] = [
     'admin/experience/announcements',
     '/communications/admin/content',
     'ADMIN.COMMUNICATIONS',
-    ['TENANT_CONFIGURATION_READ', 'TENANT_CONFIGURATION_WRITE']
+    ['TENANT_CONFIGURATION_READ', 'TENANT_CONFIGURATION_WRITE'],
+    {
+      redirectId: 'communications-management-announcements-v1',
+      productId: 'communications',
+      surfaceId: 'communications.management',
+      routeContractKey: 'route.communications.management.content.page',
+    }
   ),
   productAdminLegacyRedirect(
     'admin/services/service-catalog',
     '/services/admin/catalog',
-    'ADMIN.SERVICE_CATALOG'
+    'ADMIN.SERVICE_CATALOG',
+    [],
+    {
+      redirectId: 'services-management-catalog-v1',
+      productId: 'services',
+      surfaceId: 'services.management',
+      routeContractKey: 'route.services.management.catalog.page',
+    }
   ),
   productAdminLegacyRedirect(
     'admin/services/service-operations',
     '/services/admin/operations',
-    'ADMIN.SERVICE_OPERATIONS'
+    'ADMIN.SERVICE_OPERATIONS',
+    [],
+    {
+      redirectId: 'services-management-operations-v1',
+      productId: 'services',
+      surfaceId: 'services.management',
+      routeContractKey: 'route.services.management.operations.page',
+    }
   ),
   productAdminLegacyRedirect(
     'admin/notifications/overview',

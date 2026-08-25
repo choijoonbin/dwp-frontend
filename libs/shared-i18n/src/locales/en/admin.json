@@ -3126,7 +3126,12 @@
     "loading": "Loading application responsibility governance",
     "attention": "Review {{pending}} pending approvals and {{ownerless}} app scopes without an owner.",
     "viewLabel": "Application governance view",
-    "views": { "assignments": "Responsibility assignments", "boundaries": "App resource sets" },
+    "controlResponsibilitiesNotice": "This view manages only app ownership and access approval, fulfillment, and review responsibilities. App configuration administrators and product specialist duties must be requested, approved, and activated together through an app admin preset.",
+    "views": {
+      "assignments": "Responsibility assignments",
+      "presets": "App admin presets",
+      "boundaries": "App resource sets"
+    },
     "metrics": {
       "activeAssignments": "Active responsibilities",
       "pendingApprovals": "Pending approval",
@@ -3147,16 +3152,24 @@
       "submitForApproval": "Submit for approval",
       "approve": "Approve",
       "approved": "Approve",
+      "activate": "Activate",
       "deny": "Deny",
       "denied": "Deny",
       "revoke": "Revoke",
-      "revoked": "Revoke"
+      "revoked": "Revoke",
+      "openWorkbench": "Open {{app}} management workbench",
+      "requestPreset": "Request app admin preset",
+      "resolveReview": "Resolve review",
+      "dismissReview": "Dismiss review"
     },
     "fields": {
       "principal": "User or group",
       "responsibility": "Administrative responsibility",
       "scope": "App resource set",
+      "preset": "Product administration duty preset",
       "validTo": "Expiration time (optional)",
+      "validToRequired": "Administration expiration time",
+      "reviewDueAt": "Review due time",
       "justification": "Business justification",
       "justificationHelp": "A specific reason of at least 10 characters is retained as audit evidence.",
       "boundaryKey": "Scope key",
@@ -3170,7 +3183,14 @@
       "boundaryTitle": "Create app resource set",
       "approvedTitle": "Approve this responsibility assignment?",
       "deniedTitle": "Deny this responsibility assignment?",
-      "revokedTitle": "Revoke this active responsibility?"
+      "revokedTitle": "Revoke this active responsibility?",
+      "presetRequestTitle": "Request app administrator preset",
+      "presetAPPROVEDTitle": "Approve this app administrator preset?",
+      "presetACTIVATEDTitle": "Activate this approved app administrator preset?",
+      "presetDENIEDTitle": "Deny this app administrator preset?",
+      "presetREVOKEDTitle": "Revoke this app administrator preset?",
+      "reviewRESOLVEDTitle": "Resolve this legacy access review?",
+      "reviewDISMISSEDTitle": "Dismiss this legacy access review?"
     },
     "responsibilities": {
       "APP_OWNER": "App owner",
@@ -3181,6 +3201,7 @@
     },
     "states": {
       "PENDING_APPROVAL": "Pending approval",
+      "APPROVED": "Approved, awaiting independent activation",
       "ACTIVE": "Active",
       "DENIED": "Denied",
       "REVOKED": "Revoked",
@@ -3190,6 +3211,35 @@
     "noExpiry": "No expiration",
     "reviewDue": "Review due {{value}}",
     "assignmentCount": "{{count}} active",
+    "presets": {
+      "principalMetadata": "{{type}} · {{ref}}",
+      "presetMetadata": "{{code}} · v{{version}}",
+      "title": "Product-specific administrator duties",
+      "description": "Assign responsibility and the minimum specialist duties through one auditable approval flow.",
+      "atomicNotice": "Responsibility, app scope, and specialist duties are approved, activated, and revoked together. Partial fulfillment is not allowed.",
+      "requestDescription": "Confirm the principal, app boundary, least-privilege duties, expiration, and review date before requesting independent approval.",
+      "responsibilityPreview": "Responsibility assigned with this preset: {{responsibility}}",
+      "unavailable": "This preset cannot currently be requested. Reason: {{reason}}",
+      "validityFutureError": "The expiration time must be in the future.",
+      "reviewWindowError": "The review time must be in the future and cannot exceed expiration.",
+      "assignmentTable": "Application administrator preset assignments",
+      "reviewTitle": "Legacy administrator access review",
+      "reviewTable": "Permission-only administrator review queue",
+      "emptyTitle": "No app administrator presets assigned",
+      "emptyDescription": "Choose a product-specific least-privilege duty and an explicit end time instead of a broad administrator role.",
+      "columns": {
+        "preset": "Administration duty",
+        "duties": "Specialist duties",
+        "sourceRole": "Legacy role",
+        "reason": "Review reason",
+        "evidence": "Review evidence"
+      },
+      "reviewStates": {
+        "OPEN": "Pending review",
+        "RESOLVED": "Resolved",
+        "DISMISSED": "Dismissed"
+      }
+    },
     "empty": {
       "assignmentsTitle": "No application responsibilities assigned",
       "assignmentsDescription": "Request an assignment with an explicit responsibility, resource scope, and validity."
@@ -3199,7 +3249,14 @@
       "boundaryCreated": "Application resource set created.",
       "approved": "Responsibility assignment approved.",
       "denied": "Responsibility assignment denied.",
-      "revoked": "Active responsibility revoked."
+      "revoked": "Active responsibility revoked.",
+      "presetRequested": "App administrator preset submitted for approval.",
+      "presetAPPROVED": "App administrator preset approved.",
+      "presetACTIVATED": "App administrator preset activated.",
+      "presetDENIED": "App administrator preset denied.",
+      "presetREVOKED": "App administrator preset revoked.",
+      "reviewRESOLVED": "Legacy administrator review resolved.",
+      "reviewDISMISSED": "Legacy administrator access dismissed from the review queue."
     }
   },
   "appAccess": {

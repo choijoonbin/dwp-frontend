@@ -48,7 +48,7 @@ import {
 import { HomeFooter } from '../features/home/home-footer';
 import {
   HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
-  resolveHomeAppsWithBadges,
+  useHomeAppsWithBadges,
 } from '../features/home/home-app-badge-policy';
 import { RecommendationUndoSnackbar } from '../features/home/recommendation-undo-snackbar';
 import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
@@ -100,6 +100,8 @@ import {
   restoreLaunchpadApp,
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
+import { useGovernedHomeAppCatalog } from '../features/shell/use-governed-home-app-catalog';
+
 import type { HomePresentation, HomeWidgetPreference } from '@dwp-frontend/shared-utils';
 import type { LaunchpadLayout } from '../components/workspace-composer/app-launchpad-model';
 import type { FlowHomeSectionPreference } from '../features/home/flow-home/flow-home-preference';
@@ -223,34 +225,22 @@ export default function HomePage() {
       ),
     [homeExperienceQuery.data?.launchpadConfiguration, i18n.language, i18n.resolvedLanguage, t]
   );
-  const entitledApps = useMemo(() => {
-    const notificationBadgesAvailable =
-      hasPermission('APP.NOTIFICATIONS', 'VIEW') &&
+  const notificationSummaryAuthorized = hasPermission('APP.NOTIFICATIONS', 'VIEW');
+  const entitledAppsWithBadges = useHomeAppsWithBadges({
+    apps: launchpadCatalog.apps,
+    roles: auth.user?.roles ?? [],
+    permissions,
+    legacyRoleFallbackAllowed: auth.user?.legacyRoleFallbackAllowed === true,
+    notificationSummary,
+    notificationSummaryAuthorized,
+    notificationSummaryHealthy:
+      notificationSummaryAuthorized &&
       notificationSummaryQuery.isSuccess &&
       !notificationSummaryQuery.isError &&
-      !notificationSummaryQuery.isRefetchError;
-    return resolveHomeAppsWithBadges({
-      apps: launchpadCatalog.apps,
-      roles: auth.user?.roles ?? [],
-      permissions,
-      legacyRoleFallbackAllowed: auth.user?.legacyRoleFallbackAllowed === true,
-      notificationSummary,
-      notificationSummaryAuthorized: hasPermission('APP.NOTIFICATIONS', 'VIEW'),
-      notificationSummaryHealthy: notificationBadgesAvailable,
-      notificationSummaryNow: currentInstant,
-    });
-  }, [
-    auth.user?.legacyRoleFallbackAllowed,
-    auth.user?.roles,
-    currentInstant,
-    hasPermission,
-    launchpadCatalog.apps,
-    notificationSummary,
-    notificationSummaryQuery.isError,
-    notificationSummaryQuery.isRefetchError,
-    notificationSummaryQuery.isSuccess,
-    permissions,
-  ]);
+      !notificationSummaryQuery.isRefetchError,
+    notificationSummaryNow: currentInstant,
+  });
+  const entitledApps = useGovernedHomeAppCatalog(entitledAppsWithBadges);
   const [draftHistory, setDraftHistory] = useState(() =>
     createHomeDraftHistory({
       widgets: defaultHomeWidgets(registeredWidgetKeys),
@@ -302,8 +292,8 @@ export default function HomePage() {
   const flowHomeEnabled = homeExperience?.effectiveExperienceVariant === 'FLOW_V1';
   const advancedPersonalizationEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED &&
-    flowHomeEnabled &&
-    homeExperience?.advancedPersonalizationEnabled
+      flowHomeEnabled &&
+      homeExperience?.advancedPersonalizationEnabled
   );
   const composerEnabled = Boolean(
     advancedPersonalizationEnabled && homeExperience?.composerEnabled
@@ -471,7 +461,7 @@ export default function HomePage() {
     editorActive && editSession ? editSession.resetAvailable : durableResetAvailable;
   const editorSourceFailed = Boolean(
     homeExperienceQuery.isError ||
-    (activeStoreUsesViews ? homeViewsQuery.isError : homePreferenceQuery.isError)
+      (activeStoreUsesViews ? homeViewsQuery.isError : homePreferenceQuery.isError)
   );
   const persistedDraft = useMemo<HomeDraft>(
     () => ({
@@ -790,6 +780,10 @@ export default function HomePage() {
       : '-';
   const runtimeAppById = new Map((workspaceAppsQuery.data ?? []).map((app) => [app.id, app]));
   const launchApp = (app: (typeof entitledApps)[number]) => {
+    if (app.managementOnly && app.managementRoute) {
+      navigate(app.managementRoute);
+      return;
+    }
     const runtimeApp = runtimeAppById.get(app.id);
     if (!runtimeApp) {
       navigate(app.route);
@@ -878,6 +872,9 @@ export default function HomePage() {
           onAppLayoutChange={setDraftAppLayout}
           onSectionsChange={updateFlowSections}
           onLaunchApp={launchApp}
+          onManageApp={(app) => {
+            if (app.managementRoute) navigate(app.managementRoute);
+          }}
           onRetryOverview={retryHomeData}
           onRetryContributions={retryHomeData}
           onRecommendationFeedback={recommendationFeedback.dismiss}
@@ -912,6 +909,9 @@ export default function HomePage() {
           onAppLayoutChange={setDraftAppLayout}
           onWidgetsChange={setDraftWidgets}
           onLaunchApp={launchApp}
+          onManageApp={(app) => {
+            if (app.managementRoute) navigate(app.managementRoute);
+          }}
           onRetryOverview={() => void homeOverviewQuery.refetch()}
           onRecommendationFeedback={recommendationFeedback.dismiss}
         />
