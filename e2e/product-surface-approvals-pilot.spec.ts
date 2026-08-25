@@ -270,6 +270,15 @@ test('업무 Surface와 관리 Surface는 같은 사용자에게도 각자의 �
     name: '앱 관리',
     exact: true,
   });
+  await expect(
+    page.getByTestId('approvals-header').getByRole('link', { name: '앱 관리', exact: true })
+  ).toHaveCount(1);
+  await page.getByRole('button', { name: /^계정:/u }).click();
+  const accountDialog = page.getByRole('dialog', { name: '계정 및 세션' });
+  await expect(accountDialog.getByRole('menuitem', { name: '앱 관리', exact: true })).toHaveCount(
+    0
+  );
+  await page.keyboard.press('Escape');
   expect(await managementSurfaceLink.evaluate((element) => element.tagName)).toBe('A');
   await expect(
     surfaceNavigation.getByRole('link', { name: '결재 업무', exact: true })

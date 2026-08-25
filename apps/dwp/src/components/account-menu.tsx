@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Building2,
-  Boxes,
   BriefcaseBusiness,
   ChevronDown,
   ChevronRight,
@@ -35,7 +34,6 @@ import { alpha } from '@mui/material/styles';
 import { isAppResourceEntitled } from '../components/workspace-composer/app-launchpad-model';
 import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
-import { useGovernedProductEntryCatalog } from '../features/shell/product-entry-point-registry';
 import { canEnterCompanyAdministration } from '../features/admin/admin-access-policy';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
@@ -82,7 +80,6 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const panelId = useId();
   const settingsDescriptionId = useId();
   const administrationDescriptionId = useId();
-  const appManagementDescriptionId = useId();
   const providerDescriptionId = useId();
   const displayName = auth.user?.displayName || t('account.fallbackName');
   const roles = auth.user?.roles ?? [];
@@ -97,8 +94,6 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
     Boolean(supportContext.data),
     auth.user?.resourceRoles
   );
-  const governedEntries = useGovernedProductEntryCatalog();
-  const hasProductManagement = governedEntries.some((entry) => entry.management);
   const isProviderAdmin = providerRole;
   const workspaceName =
     supportContext.data?.tenantName || auth.user?.tenantName || auth.user?.tenantCode;
@@ -411,44 +406,6 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                       : 'account.menu.administrationDescription',
                     { tenant: supportContext.data?.tenantName }
                   )}
-                </Typography>
-              </Box>
-              <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
-            </MenuItem>
-          )}
-          {!supportContext.data && hasProductManagement && (
-            <MenuItem
-              aria-label={t('account.menu.appManagement')}
-              aria-describedby={appManagementDescriptionId}
-              onClick={() => goTo('/apps')}
-              sx={{ mx: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
-            >
-              <Box
-                sx={{
-                  width: 36,
-                  height: 36,
-                  flex: '0 0 auto',
-                  display: 'grid',
-                  placeItems: 'center',
-                  borderRadius: 1,
-                  color: 'primary.main',
-                  bgcolor: 'action.selected',
-                }}
-              >
-                <Boxes {...menuIconProps} />
-              </Box>
-              <Box sx={{ minWidth: 0, flex: 1 }}>
-                <Typography variant="body2" fontWeight={600} noWrap>
-                  {t('account.menu.appManagement')}
-                </Typography>
-                <Typography
-                  id={appManagementDescriptionId}
-                  variant="caption"
-                  color="text.secondary"
-                  noWrap
-                  sx={{ display: 'block' }}
-                >
-                  {t('account.menu.appManagementDescription')}
                 </Typography>
               </Box>
               <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
