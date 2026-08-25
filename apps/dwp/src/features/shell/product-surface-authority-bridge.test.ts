@@ -4,12 +4,16 @@ import {
   GOVERNED_SURFACE_PAGE_ROUTES,
   GOVERNED_SURFACE_PRODUCT_IDS,
   observeProductSurfaceLocationChange,
+  resolveActiveGovernedProductId,
   resolveActiveGovernedPageRoute,
   resolveActiveGovernedSurfaceId,
+  resolveGovernedPageEvaluationRoutes,
   resolveGovernedSurfaceOperationTarget,
+  resolveProductSurfaceEvaluationScopeKey,
 } from './product-surface-authority-bridge';
 import { governedProductManifest } from '../../components/product-manifest-registry';
 import { PRODUCT_MENU_ROUTES } from '../../routes/product-menu-manifest';
+import { PRODUCT_LEGACY_ROUTE_SOURCE } from '../../routes/product-page-route-contracts';
 import {
   ProductSurfaceOperationCancelledError,
   productSurfaceOperationCoordinator,
@@ -22,13 +26,110 @@ const routes = [
 ] as const;
 
 describe('product surface authority bridge routing', () => {
-  it('evaluates all 11 governed products against the complete official plus DRAFT PAGE source', () => {
+  it('registers all 11 governed products against the complete official plus DRAFT PAGE source', () => {
     expect(GOVERNED_SURFACE_PRODUCT_IDS).toHaveLength(11);
     expect(new Set(GOVERNED_SURFACE_PRODUCT_IDS).size).toBe(11);
     expect(GOVERNED_SURFACE_PAGE_ROUTES).toHaveLength(131);
     expect(new Set(GOVERNED_SURFACE_PAGE_ROUTES.map((route) => route.routeContractKey)).size).toBe(
       131
     );
+    expect(
+      Math.max(
+        ...GOVERNED_SURFACE_PRODUCT_IDS.map(
+          (productId) =>
+            GOVERNED_SURFACE_PAGE_ROUTES.filter((route) => route.productId === productId).length
+        )
+      )
+    ).toBe(25);
+  });
+
+  it('evaluates PAGE authority only for the product that owns the current location', () => {
+    const approvals = resolveGovernedPageEvaluationRoutes(
+      '/approvals/home',
+      GOVERNED_SURFACE_PAGE_ROUTES
+    );
+    expect(approvals).not.toHaveLength(0);
+    expect(new Set(approvals.map((route) => route.productId))).toEqual(new Set(['approvals']));
+    expect(approvals.length).toBeLessThan(GOVERNED_SURFACE_PAGE_ROUTES.length);
+    expect(resolveActiveGovernedProductId('/approvals/%68ome')).toBe('approvals');
+  });
+
+  it('uses a product base index for bounded evaluation but sends no PAGE requests from global pages', () => {
+    const spaces = governedProductManifest('spaces');
+    expect(spaces).toBeDefined();
+    if (!spaces) throw new Error('Spaces manifest is required by this routing contract.');
+
+    const atProductRoot = resolveGovernedPageEvaluationRoutes(
+      '/spaces',
+      GOVERNED_SURFACE_PAGE_ROUTES,
+      [spaces]
+    );
+    expect(atProductRoot.length).toBeGreaterThan(0);
+    expect(atProductRoot.every((route) => route.productId === 'spaces')).toBe(true);
+    expect(resolveGovernedPageEvaluationRoutes('/apps', GOVERNED_SURFACE_PAGE_ROUTES)).toEqual([]);
+    expect(resolveGovernedPageEvaluationRoutes('/', GOVERNED_SURFACE_PAGE_ROUTES)).toEqual([]);
+  });
+
+  it('plans mixed-case product roots and Surface indexes with Router-equivalent ownership', () => {
+    const approvals = governedProductManifest('approvals');
+    const spaces = governedProductManifest('spaces');
+    expect(approvals).toBeDefined();
+    expect(spaces).toBeDefined();
+    if (!approvals || !spaces) {
+      throw new Error('Approvals and Spaces manifests are required by this routing contract.');
+    }
+
+    const mixedCaseRoot = resolveGovernedPageEvaluationRoutes(
+      '/APPROVALS',
+      GOVERNED_SURFACE_PAGE_ROUTES,
+      [approvals]
+    );
+    expect(mixedCaseRoot.length).toBeGreaterThan(0);
+    expect(mixedCaseRoot.every((route) => route.productId === 'approvals')).toBe(true);
+    expect(
+      resolveActiveGovernedSurfaceId('/APPROVALS/ADMIN', GOVERNED_SURFACE_PAGE_ROUTES, [approvals])
+    ).toBe('approvals.admin');
+    expect(
+      resolveActiveGovernedSurfaceId('/SPACES/ADMIN', GOVERNED_SURFACE_PAGE_ROUTES, [spaces])
+    ).toBe('spaces.management');
+  });
+
+  it('keeps every registered legacy Deep Link inside its target product authority plan', () => {
+    expect(PRODUCT_LEGACY_ROUTE_SOURCE).toHaveLength(3);
+    for (const redirect of PRODUCT_LEGACY_ROUTE_SOURCE) {
+      const target = GOVERNED_SURFACE_PAGE_ROUTES.find(
+        (route) => route.routeContractKey === redirect.targetRouteContractKey
+      );
+      expect(target, redirect.redirectId).toBeDefined();
+      const activeSurfaceId = resolveActiveGovernedSurfaceId(
+        `${redirect.sourcePath.toUpperCase()}?scope=opaque-scope`,
+        GOVERNED_SURFACE_PAGE_ROUTES
+      );
+      expect(activeSurfaceId, redirect.redirectId).toBe(target!.surfaceId);
+      const planned = resolveGovernedPageEvaluationRoutes(
+        redirect.sourcePath.toUpperCase(),
+        GOVERNED_SURFACE_PAGE_ROUTES
+      );
+      expect(planned.length, redirect.redirectId).toBeGreaterThan(0);
+      expect(new Set(planned.map((route) => route.productId)), redirect.redirectId).toEqual(
+        new Set([target!.productId])
+      );
+      expect(
+        resolveProductSurfaceEvaluationScopeKey(target!.surfaceId, activeSurfaceId, 'opaque-scope'),
+        redirect.redirectId
+      ).toBe('opaque-scope');
+      const siblingSurface = planned.find((route) => route.surfaceId !== activeSurfaceId);
+      if (siblingSurface) {
+        expect(
+          resolveProductSurfaceEvaluationScopeKey(
+            siblingSurface.surfaceId,
+            activeSurfaceId,
+            'opaque-scope'
+          ),
+          redirect.redirectId
+        ).toBeUndefined();
+      }
+    }
   });
 
   it('resolves every static Work menu through the same PAGE source used by last-route storage', () => {

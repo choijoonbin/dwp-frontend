@@ -8,10 +8,12 @@ import {
   useProductSurfaceAuthority,
 } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
-import { ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
+import {
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+  PRODUCT_LEGACY_ROUTE_SOURCE,
+} from '../../routes/product-page-route-contracts';
 import {
   isSegmentOwnedPath,
-  matchesProductRoute,
   normalizeProductPath,
   type ProductSurfaceManifest,
 } from '../../components/product-manifest';
@@ -103,8 +105,13 @@ export function observeProductSurfaceLocationChange(
 
 export function resolveActiveGovernedSurfaceId(
   pathname: string,
-  routes: readonly Pick<(typeof GOVERNED_SURFACE_PAGE_ROUTES)[number], 'pattern' | 'surfaceId'>[],
-  manifests: readonly ProductSurfaceManifest[] = []
+  routes: readonly (Pick<(typeof GOVERNED_SURFACE_PAGE_ROUTES)[number], 'pattern' | 'surfaceId'> &
+    Partial<Pick<(typeof GOVERNED_SURFACE_PAGE_ROUTES)[number], 'routeContractKey'>>)[],
+  manifests: readonly ProductSurfaceManifest[] = [],
+  legacyRedirects: readonly {
+    sourcePath: `/${string}`;
+    targetRouteContractKey: string;
+  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
 ): string | undefined {
   const canonicalPathname = decodeGovernedPathname(pathname);
   const matches = matchingGovernedPageRoutes(canonicalPathname, routes);
@@ -113,16 +120,31 @@ export function resolveActiveGovernedSurfaceId(
   if (matches.length > 0) return undefined;
 
   const normalizedPath = normalizeProductPath(canonicalPathname);
+  const legacyRedirect = legacyRedirects.find(
+    (candidate) =>
+      governedPathOwnershipKey(candidate.sourcePath) === governedPathOwnershipKey(normalizedPath)
+  );
+  if (legacyRedirect) {
+    const targetSurfaceIds = [
+      ...new Set(
+        routes
+          .filter((route) => route.routeContractKey === legacyRedirect.targetRouteContractKey)
+          .map((route) => route.surfaceId)
+      ),
+    ];
+    return targetSurfaceIds.length === 1 ? targetSurfaceIds[0] : undefined;
+  }
+
   const candidates = manifests.flatMap((manifest) => {
     if (
-      normalizedPath === manifest.basePath ||
-      !isSegmentOwnedPath(normalizedPath, manifest.basePath)
+      governedPathOwnershipKey(normalizedPath) === governedPathOwnershipKey(manifest.basePath) ||
+      !isGovernedSegmentOwnedPath(normalizedPath, manifest.basePath)
     ) {
       return [];
     }
     return manifest.surfaces.flatMap((surface) =>
       surface.routeMatchers
-        .filter((matcher) => matchesProductRoute(normalizedPath, matcher))
+        .filter((matcher) => matchesGovernedProductRoute(normalizedPath, matcher))
         .map((matcher) => ({ surfaceId: surface.id, specificity: matcher.path.length }))
     );
   });
@@ -153,6 +175,73 @@ export function resolveActiveGovernedPageRoute(
   );
 }
 
+export function resolveActiveGovernedProductId(
+  pathname: string,
+  routes: readonly Pick<
+    (typeof GOVERNED_SURFACE_PAGE_ROUTES)[number],
+    'pattern' | 'productId' | 'routeContractKey'
+  >[] = GOVERNED_SURFACE_PAGE_ROUTES,
+  manifests: readonly Pick<ProductSurfaceManifest, 'id' | 'basePath'>[] = CANARY_MANIFESTS,
+  legacyRedirects: readonly {
+    sourcePath: `/${string}`;
+    targetRouteContractKey: string;
+  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+): string | undefined {
+  const canonicalPathname = decodeGovernedPathname(pathname);
+  const pageRoute = resolveActiveGovernedPageRoute(canonicalPathname, routes);
+  if (pageRoute) return pageRoute.productId;
+
+  const normalizedPath = normalizeProductPath(canonicalPathname);
+  const legacyRedirect = legacyRedirects.find(
+    (candidate) =>
+      governedPathOwnershipKey(candidate.sourcePath) === governedPathOwnershipKey(normalizedPath)
+  );
+  if (legacyRedirect) {
+    const owners = [
+      ...new Set(
+        routes
+          .filter((route) => route.routeContractKey === legacyRedirect.targetRouteContractKey)
+          .map((route) => route.productId)
+      ),
+    ];
+    return owners.length === 1 ? owners[0] : undefined;
+  }
+
+  const candidates = manifests
+    .filter((manifest) => isGovernedSegmentOwnedPath(normalizedPath, manifest.basePath))
+    .sort((left, right) => right.basePath.length - left.basePath.length);
+  const best = candidates[0];
+  if (!best) return undefined;
+  return candidates.some(
+    (candidate) => candidate.basePath.length === best.basePath.length && candidate.id !== best.id
+  )
+    ? undefined
+    : best.id;
+}
+
+export function resolveGovernedPageEvaluationRoutes<
+  T extends { pattern: `/${string}`; productId: string; routeContractKey: string },
+>(
+  pathname: string,
+  routes: readonly T[],
+  manifests: readonly Pick<ProductSurfaceManifest, 'id' | 'basePath'>[] = CANARY_MANIFESTS,
+  legacyRedirects: readonly {
+    sourcePath: `/${string}`;
+    targetRouteContractKey: string;
+  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+): readonly T[] {
+  const productId = resolveActiveGovernedProductId(pathname, routes, manifests, legacyRedirects);
+  return productId ? routes.filter((route) => route.productId === productId) : [];
+}
+
+export function resolveProductSurfaceEvaluationScopeKey(
+  routeSurfaceId: string,
+  activeSurfaceId: string | undefined,
+  requestedScope: string | undefined
+): string | undefined {
+  return routeSurfaceId === activeSurfaceId ? requestedScope : undefined;
+}
+
 function routeSegments(path: string): string[] {
   return normalizeProductPath(path).split('/').filter(Boolean);
 }
@@ -163,6 +252,25 @@ function decodeGovernedPathname(pathname: string): string {
   } catch {
     return pathname;
   }
+}
+
+function governedPathOwnershipKey(pathname: string): `/${string}` {
+  return normalizeProductPath(pathname).toLowerCase() as `/${string}`;
+}
+
+function isGovernedSegmentOwnedPath(pathname: string, prefix: string): boolean {
+  return isSegmentOwnedPath(governedPathOwnershipKey(pathname), governedPathOwnershipKey(prefix));
+}
+
+function matchesGovernedProductRoute(
+  pathname: string,
+  matcher: ProductSurfaceManifest['surfaces'][number]['routeMatchers'][number]
+): boolean {
+  const pathKey = governedPathOwnershipKey(pathname);
+  const matcherKey = governedPathOwnershipKey(matcher.path);
+  return matcher.kind === 'exact'
+    ? pathKey === matcherKey
+    : isSegmentOwnedPath(pathKey, matcherKey);
 }
 
 function isDynamicSegment(segment: string): boolean {
@@ -359,6 +467,15 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
     () => resolveActiveGovernedPageRoute(location.pathname),
     [location.pathname]
   );
+  const evaluationRoutes = useMemo(
+    () =>
+      resolveGovernedPageEvaluationRoutes(
+        location.pathname,
+        GOVERNED_SURFACE_PAGE_ROUTES,
+        CANARY_MANIFESTS
+      ),
+    [location.pathname]
+  );
   const activeOperationTarget = useMemo(
     () => resolveGovernedSurfaceOperationTarget(activeSurfaceId),
     [activeSurfaceId]
@@ -382,7 +499,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
   }, [activeOperationTarget, location.key, requestedScope]);
   const requests = useMemo(() => {
     if (!snapshot || !envelope) return [];
-    return GOVERNED_SURFACE_PAGE_ROUTES.flatMap((route) => {
+    return evaluationRoutes.flatMap((route) => {
       if (!productFlags[route.productId]?.capabilityEnforcement) return [];
       const context = envelope.contexts.find(
         (candidate) =>
@@ -396,11 +513,15 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
         },
         routeContractKey: route.routeContractKey,
         contextKey: context?.contextKey,
-        contextScopeKey: route.surfaceId === activeSurfaceId ? requestedScope : undefined,
+        contextScopeKey: resolveProductSurfaceEvaluationScopeKey(
+          route.surfaceId,
+          activeSurfaceId,
+          requestedScope
+        ),
       };
       return [{ route, request }];
     });
-  }, [activeSurfaceId, envelope, productFlags, requestedScope, snapshot]);
+  }, [activeSurfaceId, envelope, evaluationRoutes, productFlags, requestedScope, snapshot]);
   const evaluations = useQueries({
     queries: requests.map(({ route, request }) => ({
       queryKey: productSurfaceEvaluationQueryKey(snapshot!, request, {
