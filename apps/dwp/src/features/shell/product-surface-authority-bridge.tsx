@@ -19,7 +19,11 @@ import {
 } from '../../components/product-manifest';
 import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
 import { productSurfaceOperationCoordinator } from '../../components/product-surface-operation-coordinator';
-import { ProductSurfaceCanaryProvider } from './product-surface-canary-runtime';
+import {
+  isProductSurfaceEnforced,
+  ProductSurfaceCanaryProvider,
+  resolveProductSurfaceRolloutMode,
+} from './product-surface-canary-runtime';
 import {
   purgeForeignProductSurfaceLastRoutes,
   purgeProductSurfaceLastRoutes,
@@ -418,8 +422,20 @@ function decisionFromError(error: unknown): SurfaceDecision {
   });
 }
 
-function surfaceDecision(decisions: readonly SurfaceDecision[]): SurfaceDecision {
+function pageEvaluationEnabled(flags: ProductSurfaceRolloutFlags | undefined): boolean {
+  return Boolean(
+    flags &&
+    flags.surfaceUiEvaluation === 'resolved' &&
+    isProductSurfaceEnforced(resolveProductSurfaceRolloutMode(flags))
+  );
+}
+
+function surfaceDecision(
+  decisions: readonly SurfaceDecision[],
+  activePageDecision?: SurfaceDecision
+): SurfaceDecision {
   return (
+    (activePageDecision?.state === 'allowed' ? activePageDecision : undefined) ??
     decisions.find((decision) => decision.state === 'allowed') ??
     decisions.find((decision) => decision.state === 'authority-unavailable') ??
     decisions[0] ?? { state: 'authority-unavailable' }
@@ -500,7 +516,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
   const requests = useMemo(() => {
     if (!snapshot || !envelope) return [];
     return evaluationRoutes.flatMap((route) => {
-      if (!productFlags[route.productId]?.capabilityEnforcement) return [];
+      if (!pageEvaluationEnabled(productFlags[route.productId])) return [];
       const context = envelope.contexts.find(
         (candidate) =>
           candidate.productKey === route.productId && candidate.surfaceKey === route.surfaceId
@@ -528,7 +544,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
         tenantId: String(auth.user?.tenantId ?? ''),
         actorId: String(auth.user?.userId ?? ''),
       }),
-      queryFn: () => authority.evaluateProduct(request),
+      queryFn: ({ signal }) => authority.evaluateProduct(request, { signal }),
       retry: false,
       staleTime: Number.POSITIVE_INFINITY,
       meta: {
@@ -589,11 +605,14 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
           surfaceDecision(
             requests
               .filter(({ route }) => route.surfaceId === surfaceId)
-              .map(({ route }) => routeDecisions[route.routeContractKey]!)
+              .map(({ route }) => routeDecisions[route.routeContractKey]!),
+            activePageRoute?.surfaceId === surfaceId
+              ? routeDecisions[activePageRoute.routeContractKey]
+              : undefined
           ),
         ])
       ),
-    [requests, routeDecisions]
+    [activePageRoute, requests, routeDecisions]
   );
   const previousStorageRevision = useRef<string | undefined>(undefined);
   useEffect(() => {
