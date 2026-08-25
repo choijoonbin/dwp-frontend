@@ -15,6 +15,7 @@ import {
   evaluateProductSurfaceAccess,
   getProductSurfaceContexts,
 } from '../api/auth-api';
+import { setAuthorizationAccessFailureHandler } from '../axios-instance';
 import { useAuth } from './auth-provider';
 import {
   parseProductSurfaceAuthoritySnapshot,
@@ -121,6 +122,7 @@ export function ProductSurfaceAuthorityProvider({
   const actorId = String(auth.user?.userId ?? '');
   const senderId = useRef(crypto.randomUUID());
   const previousRevision = useRef<string | null>(null);
+  const revalidationInFlight = useRef<Promise<boolean> | null>(null);
   const [authorityBlocked, setAuthorityBlocked] = useState(false);
   const query = useQuery({
     queryKey: [...productSurfaceAuthorityQueryPrefix, tenantId, actorId],
@@ -134,6 +136,8 @@ export function ProductSurfaceAuthorityProvider({
     gcTime: 0,
   });
   const snapshot = !query.isError && !authorityBlocked ? query.data : undefined;
+  const authoritySnapshot = query.data;
+  const refetchAuthority = query.refetch;
 
   const purgeAccessSensitiveQueries = useCallback(
     async (accessMode?: string) => {
@@ -146,30 +150,59 @@ export function ProductSurfaceAuthorityProvider({
           { tenantId, actorId, accessMode },
           legacySensitiveQueryPrefixes
         );
-      await queryClient.cancelQueries({ predicate: matches });
+      let cancellation: Promise<void>;
+      try {
+        cancellation = queryClient.cancelQueries({ predicate: matches });
+      } catch {
+        cancellation = Promise.resolve();
+      }
+      // removeQueries notifies active observers synchronously, so a component cannot keep
+      // rendering a revoked response while cancellation settles.
       queryClient.removeQueries({ predicate: matches });
       window.dispatchEvent(new Event('dwp:product-surface-authority-invalidated'));
+      await cancellation.catch(() => undefined);
     },
     [actorId, legacySensitiveQueryPrefixes, queryClient, tenantId]
   );
 
-  const revalidate = useCallback(async () => {
-    if (!auth.isAuthenticated) return false;
-    const previous = query.data;
-    setAuthorityBlocked(true);
-    await purgeAccessSensitiveQueries(previous?.envelope.activeAccessMode);
-    const result = await query.refetch();
-    if (!result.data || result.isError) return false;
-    const delay = productSurfaceRefreshDelay(result.data, Date.now(), MAX_REFRESH_DELAY_MS);
-    const advancedAfterExpiry =
-      !previous ||
-      delay > 0 ||
-      result.data.envelope.decisionRevision !== previous.envelope.decisionRevision ||
-      Date.parse(result.data.envelope.generatedAt) > Date.parse(previous.envelope.generatedAt);
-    if (!advancedAfterExpiry) return false;
-    setAuthorityBlocked(false);
-    return true;
-  }, [auth.isAuthenticated, purgeAccessSensitiveQueries, query]);
+  const revalidate = useCallback(() => {
+    if (!auth.isAuthenticated) return Promise.resolve(false);
+    if (revalidationInFlight.current) return revalidationInFlight.current;
+    const refresh = (async () => {
+      const previous = authoritySnapshot;
+      // This state change removes every governed route from its trusted runtime before cache
+      // cancellation or the authority round-trip can yield back to React.
+      setAuthorityBlocked(true);
+      try {
+        await purgeAccessSensitiveQueries(previous?.envelope.activeAccessMode);
+        const result = await refetchAuthority();
+        if (!result.data || result.isError) return false;
+        const delay = productSurfaceRefreshDelay(result.data, Date.now(), MAX_REFRESH_DELAY_MS);
+        const advancedAfterExpiry =
+          !previous ||
+          delay > 0 ||
+          result.data.envelope.decisionRevision !== previous.envelope.decisionRevision ||
+          Date.parse(result.data.envelope.generatedAt) > Date.parse(previous.envelope.generatedAt);
+        if (!advancedAfterExpiry) return false;
+        setAuthorityBlocked(false);
+        return true;
+      } catch {
+        return false;
+      }
+    })();
+    revalidationInFlight.current = refresh;
+    void refresh.finally(() => {
+      if (revalidationInFlight.current === refresh) revalidationInFlight.current = null;
+    });
+    return refresh;
+  }, [auth.isAuthenticated, authoritySnapshot, purgeAccessSensitiveQueries, refetchAuthority]);
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) return undefined;
+    return setAuthorizationAccessFailureHandler(async () => {
+      await revalidate();
+    });
+  }, [auth.isAuthenticated, revalidate]);
 
   useEffect(() => {
     if (!snapshot) return undefined;

@@ -303,7 +303,6 @@ export function buildApprovalStepUpIssuerRequest(
       expectedObjectVersion: attempt.descriptor.expectedObjectVersion,
       idempotencyKey: attempt.idempotencyKey,
       payload: attempt.descriptor.payload,
-      contextKey: attempt.authority.contextKey,
       contextScopeKey: attempt.authority.contextScopeKey,
       ...(attempt.providerKey ? { providerKey: attempt.providerKey } : {}),
       ...(returnTo ? { returnTo } : {}),

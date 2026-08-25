@@ -1,6 +1,7 @@
 import type { Page, Route } from '@playwright/test';
 
 type SurfaceId = 'approvals.work' | 'approvals.admin';
+type HcmSurfaceId = 'hcm.personal' | 'hcm.team' | 'hcm.operations' | 'hcm.management';
 
 export type ApprovalAuthorityOptions = {
   work?: boolean;
@@ -15,8 +16,25 @@ export type ApprovalAuthorityOptions = {
   revalidateAt?: string;
 };
 
+export type HcmAuthorityOptions = {
+  deniedRouteKeys?: readonly string[];
+};
+
 const GENERATED_AT = '2026-08-24T00:00:00Z';
 const REVALIDATE_AT = '2026-08-25T00:00:00Z';
+const GOVERNED_PRODUCT_KEYS = [
+  'approvals',
+  'calendar',
+  'communications',
+  'dwaion',
+  'hcm',
+  'mail',
+  'messaging',
+  'notifications',
+  'services',
+  'spaces',
+  'workplace',
+] as const;
 const WORK_SCOPE = {
   key: 'scope:approvals:self',
   kind: 'SELF',
@@ -257,8 +275,8 @@ function success(route: Route, data: unknown) {
   });
 }
 
-export async function mockLegacyProductSurfaceAuthority(page: Page) {
-  const rollouts = ['approvals', 'communications', 'services'].map((productKey) => ({
+function baselineRollout(productKey: (typeof GOVERNED_PRODUCT_KEYS)[number]) {
+  return {
     productKey,
     state: '000',
     flags: {
@@ -269,11 +287,15 @@ export async function mockLegacyProductSurfaceAuthority(page: Page) {
     cohort: 'baseline',
     opaqueRevision: `rollout-${productKey}-baseline`,
     authorityStatus: 'NOT_EVALUATED',
-  }));
+  } as const;
+}
+
+export async function mockLegacyProductSurfaceAuthority(page: Page) {
+  const rollouts = GOVERNED_PRODUCT_KEYS.map(baselineRollout);
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
-      contractVersion: 'product-surfaces/v2',
+      contractVersion: 'product-surfaces/v3',
       decisionRevision: 'e2e-product-authority-baseline',
       sourceRevisions: {
         auth: 'auth-baseline',
@@ -293,6 +315,192 @@ export async function mockLegacyProductSurfaceAuthority(page: Page) {
       decisionRevision: 'e2e-product-authority-baseline',
     })
   );
+}
+
+function hcmPolicyGrant(accessPolicyKey: string, scopeKey: string) {
+  return {
+    grantKind: 'POLICY',
+    accessPolicyKey,
+    authorityMode: 'ENTITLEMENT',
+    policyDecisionRef: `policy:${accessPolicyKey}`,
+    scopeKeys: [scopeKey],
+    requiresProductEntitlement: false,
+    readOnly: false,
+    validUntil: null,
+  } as const;
+}
+
+function hcmCapabilityGrant(capabilityContractKey: string, scopeKey: string) {
+  return {
+    grantKind: 'CAPABILITY',
+    capabilityContractKey,
+    resolvedCapabilityCode: capabilityContractKey,
+    authorityMode: 'PERMISSION',
+    predicatePolicyKeys: [],
+    responsibilityRequirement: 'NOT_REQUIRED',
+    scopeKeys: [scopeKey],
+    requiresProductEntitlement: false,
+    readOnly: false,
+    activationState: 'ACTIVE',
+    validUntil: null,
+  } as const;
+}
+
+function hcmContext(
+  surfaceKey: HcmSurfaceId,
+  plane: 'work' | 'management',
+  scope: { key: string; kind: 'SELF' | 'TEAM' | 'TARGET_POPULATION' | 'RESOURCE_SET' },
+  policies: readonly string[],
+  capabilities: readonly string[]
+) {
+  return {
+    contextKey: `ctx:${surfaceKey}`,
+    productKey: 'hcm',
+    surfaceKey,
+    plane,
+    accessMode: 'NORMAL',
+    accessSource: plane === 'management' ? 'MANAGEMENT' : 'ENTITLEMENT',
+    appResourceKey: 'APP.HCM',
+    effectiveGrants: [
+      ...policies.map((key) => hcmPolicyGrant(key, scope.key)),
+      ...capabilities.map((key) => hcmCapabilityGrant(key, scope.key)),
+    ],
+    scopes: [
+      {
+        ...scope,
+        displayName: surfaceKey,
+        isDefault: true,
+        readOnly: false,
+        validUntil: null,
+      },
+    ],
+    revalidateAt: REVALIDATE_AT,
+  } as const;
+}
+
+/** Server-authoritative HCM fixture used by the four-surface browser acceptance suite. */
+export async function mockHcmProductSurfaceAuthority(
+  page: Page,
+  options: HcmAuthorityOptions = {}
+) {
+  const deniedRouteKeys = new Set(options.deniedRouteKeys ?? []);
+  const contexts = [
+    hcmContext(
+      'hcm.personal',
+      'work',
+      { key: 'scope:hcm:self', kind: 'SELF' },
+      [
+        'hcm.personal-access.v1',
+        'hcm.personal-core-access.v1',
+        'hcm.personal-services-access.v1',
+        'hcm.directory-access.v1',
+      ],
+      []
+    ),
+    hcmContext(
+      'hcm.team',
+      'work',
+      { key: 'scope:hcm:team', kind: 'TEAM' },
+      ['hcm.team-access.v1'],
+      ['hcm.team.time.read', 'hcm.team.absence.read']
+    ),
+    hcmContext(
+      'hcm.operations',
+      'management',
+      { key: 'scope:hcm:operations', kind: 'TARGET_POPULATION' },
+      ['hcm.operations-access.v1'],
+      [
+        'hcm.operations.workforce.read',
+        'hcm.operations.time.read',
+        'hcm.operations.absence.read',
+        'hcm.operations.benefits.read',
+        'hcm.operations.pay.read',
+        'hcm.operations.talent.read',
+      ]
+    ),
+    hcmContext(
+      'hcm.management',
+      'management',
+      { key: 'scope:hcm:management', kind: 'RESOURCE_SET' },
+      [],
+      [
+        'hcm.org-design.read',
+        'hcm.reference.read',
+        'hcm.integration.read',
+        'hcm.controlled-export.read',
+      ]
+    ),
+  ] as const;
+  const contextBySurface = new Map(contexts.map((context) => [context.surfaceKey, context]));
+
+  await page.route('**/api/auth/product-surface-contexts', (route) =>
+    success(route, {
+      contractVersion: 'product-surfaces/v3',
+      decisionRevision: 'e2e-hcm-authority-1',
+      sourceRevisions: {
+        auth: 'auth-hcm-1',
+        policy: 'policy-hcm-1',
+        productRelationship: 'relationship-hcm-1',
+      },
+      activeAccessMode: 'NORMAL',
+      generatedAt: GENERATED_AT,
+      contexts,
+      rollouts: GOVERNED_PRODUCT_KEYS.map((productKey) =>
+        productKey === 'hcm'
+          ? {
+              productKey,
+              state: '111',
+              flags: {
+                contextShadow: true,
+                capabilityEnforcement: true,
+                surfaceUi: true,
+              },
+              cohort: 'e2e-hcm-pilot',
+              opaqueRevision: 'rollout-hcm-e2e-1',
+              authorityStatus: 'AVAILABLE',
+            }
+          : baselineRollout(productKey)
+      ),
+    })
+  );
+  await page.route('**/api/auth/product-surface-access/evaluate', (route) => {
+    const body = route.request().postDataJSON() as {
+      subject?: { surfaceKey?: HcmSurfaceId };
+      routeContractKey?: string;
+      contextScopeKey?: string;
+    };
+    const surfaceKey = body.subject?.surfaceKey;
+    const routeContractKey = body.routeContractKey ?? '';
+    const context = surfaceKey ? contextBySurface.get(surfaceKey) : undefined;
+    if (!context) {
+      return success(route, {
+        decision: 'SURFACE_DENIED',
+        reasonCode: 'SURFACE_CAPABILITY_REQUIRED',
+        decisionRevision: 'e2e-hcm-authority-1',
+      });
+    }
+    if (deniedRouteKeys.has(routeContractKey)) {
+      return success(route, {
+        decision: 'ROUTE_DENIED',
+        reasonCode: 'ROUTE_CAPABILITY_REQUIRED',
+        decisionRevision: 'e2e-hcm-authority-1',
+      });
+    }
+    const scope =
+      context.scopes.find((candidate) => candidate.key === body.contextScopeKey) ??
+      context.scopes[0];
+    return success(route, {
+      decision: 'ALLOWED',
+      reasonCode: null,
+      decisionRevision: 'e2e-hcm-authority-1',
+      context,
+      routeGrantRef: `grant:${routeContractKey}`,
+      scope,
+      effectiveReadOnly: false,
+      validUntil: null,
+      revalidateAt: REVALIDATE_AT,
+    });
+  });
 }
 
 export async function mockApprovalProductSurfaceAuthority(
@@ -317,7 +525,7 @@ export async function mockApprovalProductSurfaceAuthority(
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
-      contractVersion: 'product-surfaces/v2',
+      contractVersion: 'product-surfaces/v3',
       decisionRevision: decisionRevision(),
       sourceRevisions: {
         auth: `auth-${revision}`,
@@ -340,18 +548,9 @@ export async function mockApprovalProductSurfaceAuthority(
           opaqueRevision: `rollout-approvals-${revision}`,
           authorityStatus: options.surfaceUi === false ? 'NOT_EVALUATED' : 'AVAILABLE',
         },
-        ...['communications', 'services'].map((productKey) => ({
-          productKey,
-          state: '000',
-          flags: {
-            contextShadow: false,
-            capabilityEnforcement: false,
-            surfaceUi: false,
-          },
-          cohort: 'baseline',
-          opaqueRevision: `rollout-${productKey}-baseline`,
-          authorityStatus: 'NOT_EVALUATED',
-        })),
+        ...GOVERNED_PRODUCT_KEYS.filter((productKey) => productKey !== 'approvals').map(
+          baselineRollout
+        ),
       ],
     })
   );
@@ -418,7 +617,7 @@ export async function mockApprovalProductSurfaceAuthority(
       context,
       routeGrantRef: `grant:${routeContractKey}`,
       scope,
-      effectiveReadOnly: false,
+      effectiveReadOnly: scope.readOnly,
       validUntil: null,
       revalidateAt: options.revalidateAt ?? REVALIDATE_AT,
     });

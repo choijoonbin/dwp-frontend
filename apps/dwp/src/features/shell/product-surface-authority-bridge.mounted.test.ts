@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -12,6 +12,8 @@ import {
   resolveGovernedPageEvaluationRoutes,
 } from './product-surface-authority-bridge';
 import { useProductSurfaceCanaryAuthority } from './product-surface-canary-runtime';
+import { readProductSurfaceLastRoute } from './product-surface-last-route';
+import { PRODUCT_LEGACY_ROUTE_SOURCE } from '../../routes/product-page-route-contracts';
 
 import type {
   ProductSurfaceEffectiveContext,
@@ -110,7 +112,8 @@ function rollout(
       flags,
       cohort: 'mounted-test',
       opaqueRevision: 'rollout-mounted-1',
-      authorityStatus: state === '111' ? ('AVAILABLE' as const) : ('NOT_EVALUATED' as const),
+      authorityStatus:
+        state === '110' || state === '111' ? ('AVAILABLE' as const) : ('NOT_EVALUATED' as const),
     },
     surfaceUiEvaluation,
   };
@@ -135,14 +138,20 @@ function allowedEvaluation(
 
 function authority(
   evaluation: ProductSurfaceAuthorityContextValue['evaluateProduct'],
-  resolution: ReturnType<typeof rollout> | { state: 'authority-unavailable' }
+  resolution: ReturnType<typeof rollout> | { state: 'authority-unavailable' },
+  options: {
+    productKey?: string;
+    snapshot?: ProductSurfaceAuthoritySnapshot;
+  } = {}
 ): ProductSurfaceAuthorityContextValue {
+  const productKey = options.productKey ?? 'approvals';
+  const authoritySnapshot = options.snapshot ?? snapshot;
   return {
     status: 'ready',
-    snapshot,
+    snapshot: authoritySnapshot,
     serverNowMs: Date.parse(GENERATED_AT),
-    rolloutForProduct: (productKey) =>
-      productKey === 'approvals' ? resolution : { state: 'authority-unavailable' },
+    rolloutForProduct: (candidateProductKey) =>
+      candidateProductKey === productKey ? resolution : { state: 'authority-unavailable' },
     evaluateProduct: evaluation,
     evaluateGoverned: vi.fn(),
     revalidate: vi.fn().mockResolvedValue(true),
@@ -153,8 +162,10 @@ let root: Root | null;
 let container: HTMLDivElement | null;
 let queryClient: QueryClient;
 let observedAuthority: ProductSurfaceCanaryAuthority | undefined;
+let navigateBridge: ReturnType<typeof useNavigate> | undefined;
 
 function AuthorityProbe() {
+  navigateBridge = useNavigate();
   observedAuthority = useProductSurfaceCanaryAuthority();
   return null;
 }
@@ -194,6 +205,8 @@ describe('mounted product surface authority bridge', () => {
     root = null;
     container = null;
     observedAuthority = undefined;
+    navigateBridge = undefined;
+    window.sessionStorage.clear();
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     bridgeMocks.useAuth.mockReturnValue({
       isLoading: false,
@@ -240,11 +253,51 @@ describe('mounted product surface authority bridge', () => {
     }
   );
 
+  it('passes a legacy Deep Link scope only to its exact registered PAGE target', async () => {
+    const redirect = PRODUCT_LEGACY_ROUTE_SOURCE[0]!;
+    const target = GOVERNED_SURFACE_PAGE_ROUTES.find(
+      (route) => route.routeContractKey === redirect.targetRouteContractKey
+    )!;
+    const aliasSnapshot: ProductSurfaceAuthoritySnapshot = {
+      ...snapshot,
+      envelope: {
+        ...snapshot.envelope,
+        contexts: [],
+      },
+    };
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => ({
+      decision: 'ROUTE_DENIED' as const,
+      decisionRevision: REVISION,
+      correlationId: request.routeContractKey,
+    }));
+    const selectedScope = 'opaque-legacy-selected-scope';
+
+    await mountBridge(
+      `${redirect.sourcePath}?scope=${selectedScope}`,
+      authority(evaluateProduct, rollout('111'), {
+        productKey: target.productId,
+        snapshot: aliasSnapshot,
+      })
+    );
+    const planned = resolveGovernedPageEvaluationRoutes(
+      redirect.sourcePath,
+      GOVERNED_SURFACE_PAGE_ROUTES
+    );
+    await vi.waitFor(() => expect(evaluateProduct).toHaveBeenCalledTimes(planned.length));
+
+    for (const [request] of evaluateProduct.mock.calls) {
+      expect(request.contextKey).toBeUndefined();
+      expect(request.contextScopeKey).toBe(
+        request.routeContractKey === target.routeContractKey ? selectedScope : undefined
+      );
+    }
+  });
+
   it.each([
     ['110 enforced compatibility', rollout('110')],
     ['111 separated Surface UI', rollout('111')],
   ])(
-    'bounds %s PAGE requests to the active product and exact active Surface scope',
+    'bounds %s PAGE requests to the active product and exact active PAGE scope',
     async (_name, mode) => {
       const evaluateProduct = vi.fn(
         async (
@@ -271,8 +324,9 @@ describe('mounted product surface authority bridge', () => {
       expect(calls.length).toBeLessThan(GOVERNED_SURFACE_PAGE_ROUTES.length);
       for (const [request, options] of calls) {
         expect(request.subject.productKey).toBe('approvals');
+        expect(request.contextKey).toBeUndefined();
         expect(request.contextScopeKey).toBe(
-          request.subject.surfaceKey === ACTIVE_ROUTE.surfaceId ? selectedScope : undefined
+          request.routeContractKey === ACTIVE_ROUTE.routeContractKey ? selectedScope : undefined
         );
         expect(options?.signal).toBeInstanceOf(AbortSignal);
       }
@@ -295,6 +349,53 @@ describe('mounted product surface authority bridge', () => {
     await unmountBridge();
 
     expect(signals.every((signal) => signal.aborted)).toBe(true);
+  });
+
+  it('settles every Work PAGE after an in-flight management-to-work scope transition', async () => {
+    const workRoutes = APPROVALS_ROUTES.filter((route) => route.surfaceId === 'approvals.work');
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      const delayMs =
+        request.routeContractKey
+          .split('')
+          .reduce((total, character) => total + character.charCodeAt(0), 0) % 40;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      return allowedEvaluation(request);
+    });
+
+    await mountBridge(
+      '/approvals/admin/workflows?scope=management-scope',
+      authority(evaluateProduct, rollout('111'))
+    );
+    await act(async () => {
+      navigateBridge?.(`${APPROVALS_PATH}?scope=work-scope`);
+    });
+    await act(async () => {
+      await vi.waitFor(
+        () =>
+          expect(
+            workRoutes.filter(
+              (route) =>
+                observedAuthority?.routeDecisions?.[route.routeContractKey]?.state === 'allowed'
+            )
+          ).toHaveLength(workRoutes.length),
+        { timeout: 2_000 }
+      );
+    });
+
+    expect(workRoutes).toHaveLength(9);
+    const latestRequestByRoute = new Map(
+      evaluateProduct.mock.calls.map(([request]) => [request.routeContractKey, request])
+    );
+    expect(latestRequestByRoute.get(ACTIVE_ROUTE.routeContractKey)?.contextScopeKey).toBe(
+      'work-scope'
+    );
+    expect(
+      workRoutes
+        .filter((route) => route.routeContractKey !== ACTIVE_ROUTE.routeContractKey)
+        .every(
+          (route) => latestRequestByRoute.get(route.routeContractKey)?.contextScopeKey === undefined
+        )
+    ).toBe(true);
   });
 
   it('uses the active PAGE allow for Surface presentation instead of a read-only sibling', async () => {
@@ -322,5 +423,33 @@ describe('mounted product surface authority bridge', () => {
       effectiveReadOnly: false,
       routeGrantRef: ACTIVE_ROUTE.routeContractKey,
     });
+  });
+
+  it('stores last Work route convenience state under the list revision, not the direct revision', async () => {
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => ({
+      ...allowedEvaluation(request),
+      decisionRevision: 'revision-direct-page',
+    }));
+
+    await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+        'allowed'
+      )
+    );
+
+    expect(
+      readProductSurfaceLastRoute(
+        {
+          tenantId: '1',
+          actorId: '42',
+          productId: 'approvals',
+          surfaceId: ACTIVE_ROUTE.surfaceId,
+        },
+        REVISION,
+        window.sessionStorage,
+        Date.parse(GENERATED_AT)
+      )
+    ).toBe(ACTIVE_ROUTE.routeId);
   });
 });

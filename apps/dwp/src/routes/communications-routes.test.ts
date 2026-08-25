@@ -9,6 +9,7 @@ import {
 } from '../features/communications/communications-navigation';
 import { resolveProductRoot } from '../features/shell/product-root-resolver';
 import { resolveCanaryRouteDecision } from '../features/shell/product-surface-canary-runtime';
+import { canContextAccessNavigation } from '../features/shell/product-surface-context';
 import { resolveProductSurface } from '../features/shell/product-surface-resolver';
 import {
   PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
@@ -37,11 +38,29 @@ function context(
     accessSource:
       accessMode === 'PROVIDER_SUPPORT' ? 'SUPPORT' : management ? 'MANAGEMENT' : 'ENTITLEMENT',
     appResourceKey: 'APP.COMMUNICATIONS',
-    effectiveGrants: [],
+    effectiveGrants:
+      accessMode === 'PROVIDER_SUPPORT'
+        ? [
+            {
+              grantKind: 'POLICY',
+              accessPolicyKey: 'communications.management-entry.v1',
+              policyDecisionRef: 'support-decision-communications-1',
+              authorityMode: 'SUPPORT_SESSION',
+              scopeKeys: [management ? 'scope-communications' : 'scope-self'],
+              requiresProductEntitlement: false,
+              readOnly: true,
+            },
+          ]
+        : [],
     scopes: [
       {
         key: management ? 'scope-communications' : 'scope-self',
-        kind: management ? 'RESOURCE_SET' : 'SELF',
+        kind:
+          accessMode === 'PROVIDER_SUPPORT'
+            ? 'SUPPORT_SESSION'
+            : management
+              ? 'RESOURCE_SET'
+              : 'SELF',
         displayName: management ? 'Communications' : 'Self',
         isDefault: true,
         readOnly: accessMode === 'PROVIDER_SUPPORT',
@@ -92,6 +111,11 @@ describe('Communications product surface Canary routes', () => {
       'communications.management',
     ]);
     expect(
+      COMMUNICATIONS_PRODUCT_MANIFEST.surfaces.find(
+        (surface) => surface.id === 'communications.management'
+      )?.supportedScopeKinds
+    ).toEqual(['RESOURCE_SET', 'SUPPORT_SESSION']);
+    expect(
       communicationsRoutes[0]?.children?.find((route) => route.path === 'admin')
     ).toBeDefined();
     const routerKeys = communicationsRoutes
@@ -105,6 +129,37 @@ describe('Communications product surface Canary routes', () => {
         .map((route) => route.routeContractKey)
         .sort()
     );
+  });
+
+  it('projects the management item from the exact server capability grant', () => {
+    const management = context('communications.management');
+    management.effectiveGrants = [
+      {
+        grantKind: 'CAPABILITY',
+        capabilityContractKey: 'communications.content.read',
+        resolvedCapabilityCode: 'ADMIN.COMMUNICATIONS:VIEW',
+        authorityMode: 'PERMISSION',
+        predicatePolicyKeys: [],
+        responsibilityRequirement: 'REQUIRED',
+        responsibility: {
+          code: 'APP_CONFIG_ADMIN',
+          resourceSetKey: 'RS_COMMUNICATIONS',
+        },
+        scopeKeys: ['scope-communications'],
+        requiresProductEntitlement: false,
+        readOnly: false,
+        activationState: 'ACTIVE',
+      },
+    ];
+    const item = COMMUNICATIONS_MANAGEMENT_NAVIGATION[0].items[0];
+
+    expect(item.access).toEqual({
+      type: 'capability',
+      capabilityContractKey: 'communications.content.read',
+    });
+    expect(
+      canContextAccessNavigation(item.access, management, 'scope-communications', fixedClock)
+    ).toBe(true);
   });
 
   it('registers the exact dynamic PAGE 4 allowlist and keeps controls in their local 404 surface', () => {

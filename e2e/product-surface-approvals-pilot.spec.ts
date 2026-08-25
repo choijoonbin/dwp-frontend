@@ -148,6 +148,16 @@ async function approvalNavigation(page: Page): Promise<Locator> {
   return mobile;
 }
 
+async function responsiveControlKind(
+  desktop: Locator,
+  mobile: Locator
+): Promise<'desktop' | 'mobile'> {
+  await expect
+    .poll(async () => (await desktop.isVisible()) || (await mobile.isVisible()))
+    .toBe(true);
+  return (await desktop.isVisible()) ? 'desktop' : 'mobile';
+}
+
 for (const scenario of APPROVAL_FIXTURE_MATRIX) {
   test(`${scenario.testId} canonical fixture가 root·menu·direct-route 결정을 구동한다`, async ({
     page,
@@ -262,23 +272,32 @@ test('업무 Surface와 관리 Surface는 같은 사용자에게도 각자의 �
     workNavigation.getByRole('link', { name: '프로세스 설계', exact: true })
   ).toHaveCount(0);
   await expect(workNavigation.getByRole('link', { name: '앱 관리', exact: true })).toHaveCount(0);
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (mobile) await page.keyboard.press('Escape');
 
-  const surfaceNavigation = page
-    .getByTestId('approvals-header')
-    .getByRole('navigation', { name: '제품 업무 및 관리 영역' });
-  const managementSurfaceLink = surfaceNavigation.getByRole('link', {
-    name: '앱 관리',
-    exact: true,
-  });
   await expect(
     page.getByTestId('approvals-header').getByRole('link', { name: '앱 관리', exact: true })
-  ).toHaveCount(1);
+  ).toHaveCount(mobile ? 0 : 1);
   await page.getByRole('button', { name: /^계정:/u }).click();
   const accountDialog = page.getByRole('dialog', { name: '계정 및 세션' });
   await expect(accountDialog.getByRole('menuitem', { name: '앱 관리', exact: true })).toHaveCount(
     0
   );
   await page.keyboard.press('Escape');
+
+  if (mobile) {
+    await page.getByTestId('approvals-mobile-surface-switcher').getByRole('button').click();
+  }
+  const surfaceNavigation = (
+    mobile
+      ? page.getByTestId('product-surface-mobile-disclosure')
+      : page.getByTestId('approvals-header')
+  ).getByRole('navigation', { name: '제품 업무 및 관리 영역' });
+  const managementSurfaceLink = surfaceNavigation.getByRole('link', {
+    name: '앱 관리',
+    exact: true,
+  });
+  await expect(managementSurfaceLink).toHaveCount(1);
   expect(await managementSurfaceLink.evaluate((element) => element.tagName)).toBe('A');
   await expect(
     surfaceNavigation.getByRole('link', { name: '결재 업무', exact: true })
@@ -374,12 +393,18 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
   await page.goto('/approvals/home');
   await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
   await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).toBeVisible();
-  await page.getByRole('button', { name: '현재 영역: 결재 업무' }).click();
+  const textZoomDisclosureTrigger = page.getByRole('button', {
+    name: '현재 영역: 결재 업무',
+  });
+  await textZoomDisclosureTrigger.click();
   await expect(
     page
       .getByTestId('product-surface-mobile-disclosure')
       .getByRole('link', { name: '앱 관리', exact: true })
   ).toBeVisible();
+  await page.getByRole('button', { name: '제품 영역 목록 닫기' }).click();
+  await expect(textZoomDisclosureTrigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(textZoomDisclosureTrigger).toBeFocused();
   const textZoomOverflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
@@ -437,14 +462,19 @@ test('관리 딥링크의 query/hash와 back/forward 및 새 탭 URL을 보존�
   await mockApprovalProductSurfaceAuthority(page, { work: false, management: true });
 
   await page.goto('/approvals/admin/forms?view=published#catalog');
-  await expect(page).toHaveURL(/\/approvals\/admin\/forms\?view=published#catalog$/u);
+  const canonicalManagementUrl = (url: URL, pathname: string) =>
+    url.pathname === pathname &&
+    url.searchParams.get('scope') === 'scope:approvals:tenant' &&
+    url.searchParams.get('view') === 'published' &&
+    url.hash === '#catalog';
+  await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/forms'));
   const navigation = await approvalNavigation(page);
   await navigation.getByRole('link', { name: '결재 정책', exact: true }).click();
-  await expect(page).toHaveURL(/\/approvals\/admin\/policies\?view=published#catalog$/u);
+  await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/policies'));
   await page.goBack();
-  await expect(page).toHaveURL(/\/approvals\/admin\/forms\?view=published#catalog$/u);
+  await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/forms'));
   await page.goForward();
-  await expect(page).toHaveURL(/\/approvals\/admin\/policies\?view=published#catalog$/u);
+  await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/policies'));
 
   const second = await context.newPage();
   await mockShellSession(second, ['APPROVAL_DESIGNER'], {
@@ -453,7 +483,35 @@ test('관리 딥링크의 query/hash와 back/forward 및 새 탭 URL을 보존�
   });
   await mockApprovalProductSurfaceAuthority(second, { work: false, management: true });
   await second.goto('/approvals/admin/forms?view=published#catalog');
-  await expect(second).toHaveURL(/\/approvals\/admin\/forms\?view=published#catalog$/u);
+  await expect(second).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/forms'));
+});
+
+test('제품 root는 명시한 non-default Scope와 query/hash를 canonical 관리 PAGE까지 보존한다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APPROVAL_OPERATOR'], {
+    locale: 'ko',
+    permissions: APPROVAL_ADMIN_PERMISSIONS,
+  });
+  await mockApprovalProductSurfaceAuthority(page, {
+    work: false,
+    management: true,
+    managementScopes: 'two-no-default',
+  });
+
+  await page.goto('/approvals?scope=S2&view=exceptions#queue');
+
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/approvals/admin/overview' &&
+      url.searchParams.get('scope') === 'S2' &&
+      url.searchParams.get('view') === 'exceptions' &&
+      url.hash === '#queue'
+  );
+  await expect(page.getByTestId('approvals-shell')).toHaveAttribute(
+    'data-product-surface',
+    'approvals.admin'
+  );
 });
 
 test('기본값 없는 복수 Scope의 관리 index와 sidebar는 선택 Scope·query·hash를 보존한다', async ({
@@ -499,6 +557,74 @@ test('기본값 없는 복수 Scope의 관리 index와 sidebar는 선택 Scope·
   });
 });
 
+test('기본 Scope가 없어도 앱 관리 진입점을 유지하고 exact 선택 후 query·hash를 보존한다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_OPERATOR'], {
+    locale: 'ko',
+    permissions: APPROVAL_ADMIN_PERMISSIONS,
+  });
+  await mockApprovalProductSurfaceAuthority(page, {
+    managementScopes: 'two-no-default',
+  });
+
+  await page.goto('/approvals/home');
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (mobile) {
+    await page.getByTestId('approvals-mobile-surface-switcher').getByRole('button').click();
+  }
+  const surfaceNavigation = mobile
+    ? page.getByTestId('product-surface-mobile-disclosure')
+    : page.getByTestId('approvals-header');
+  const managementEntry = surfaceNavigation.getByRole('link', { name: '앱 관리', exact: true });
+  await expect(managementEntry).toHaveCount(1);
+  await expect(managementEntry).not.toHaveAttribute('href', /[?&]scope=/u);
+  await managementEntry.click();
+  await expect(page.getByTestId('product-surface-access-state')).toHaveAttribute(
+    'data-product-access-state',
+    'scope-selection-required'
+  );
+
+  await page.goto('/approvals/admin/overview?view=exceptions#queue');
+  await page.getByRole('button', { name: '관리 범위 선택' }).click();
+  const dialog = page.getByRole('dialog', { name: '허용된 관리 범위 선택' });
+  await dialog.getByRole('combobox', { name: '범위' }).click();
+  await page.getByRole('option', { name: '전자결재 운영 B' }).click();
+  await dialog.getByRole('button', { name: '관리 범위 선택' }).click();
+
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/approvals/admin/overview' &&
+      url.searchParams.get('scope') === 'S2' &&
+      url.searchParams.get('view') === 'exceptions' &&
+      url.hash === '#queue'
+  );
+  await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/approvals/admin/overview' &&
+      url.searchParams.get('scope') === null &&
+      url.searchParams.get('view') === 'exceptions' &&
+      url.hash === '#queue'
+  );
+  await expect(page.getByTestId('product-surface-access-state')).toHaveAttribute(
+    'data-product-access-state',
+    'scope-selection-required'
+  );
+
+  await page.goForward();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/approvals/admin/overview' &&
+      url.searchParams.get('scope') === 'S2' &&
+      url.searchParams.get('view') === 'exceptions' &&
+      url.hash === '#queue'
+  );
+  await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
+});
+
 test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispatch하지 않는다', async ({
   page,
 }) => {
@@ -530,10 +656,28 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
   await page.goto('/approvals/admin/workflows?scope=S2');
   await expect(page.getByRole('heading', { name: '프로세스 설계', level: 1 })).toBeVisible();
   const scopeSelector = page.getByRole('combobox', { name: '범위' });
-  await scopeSelector.click();
-  await page.getByRole('option', { name: '전자결재 운영 A' }).click();
+  const mobileScopeTrigger = page.getByRole('button', {
+    name: '관리 범위: 전자결재 운영 B',
+  });
+  if ((await responsiveControlKind(scopeSelector, mobileScopeTrigger)) === 'desktop') {
+    await scopeSelector.click();
+    await page.getByRole('option', { name: '전자결재 운영 A' }).click();
+  } else {
+    await mobileScopeTrigger.click();
+    const dialog = page.getByRole('dialog', { name: '허용된 관리 범위 선택' });
+    await dialog.getByRole('combobox', { name: '관리 범위' }).click();
+    await page.getByRole('option', { name: '전자결재 운영 A' }).click();
+    await dialog.getByRole('button', { name: '관리 범위 선택' }).click();
+  }
   await expect(page).toHaveURL((url) => url.searchParams.get('scope') === 'S1');
-  await expect(scopeSelector).toContainText('전자결재 운영 A');
+  const selectedMobileScopeTrigger = page.getByRole('button', {
+    name: '관리 범위: 전자결재 운영 A',
+  });
+  const selectedScopeControl =
+    (await responsiveControlKind(scopeSelector, selectedMobileScopeTrigger)) === 'desktop'
+      ? scopeSelector
+      : selectedMobileScopeTrigger;
+  await expect(selectedScopeControl).toBeVisible();
 
   const actionGate = deferred();
   const actionStarted = deferred();
@@ -606,7 +750,15 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
 
     scopeBPageGate.resolve();
     await expect(page.getByRole('heading', { name: '프로세스 설계', level: 1 })).toBeVisible();
-    await expect(page.getByRole('combobox', { name: '범위' })).toContainText('전자결재 운영 B');
+    const restoredDesktopScope = page.getByRole('combobox', { name: '범위' });
+    const restoredMobileScope = page.getByRole('button', {
+      name: '관리 범위: 전자결재 운영 B',
+    });
+    if ((await responsiveControlKind(restoredDesktopScope, restoredMobileScope)) === 'desktop') {
+      await expect(restoredDesktopScope).toContainText('전자결재 운영 B');
+    } else {
+      await expect(restoredMobileScope).toBeVisible();
+    }
     expect(createDispatchCount).toBe(0);
   } finally {
     actionGate.resolve();

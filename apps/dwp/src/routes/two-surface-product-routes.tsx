@@ -1,22 +1,16 @@
-import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
+import type { RouteObject } from 'react-router-dom';
 
 import type { ProductSurfaceManifest } from '../components/product-manifest';
 import type { ProductAreaLayoutProps } from '../layouts/product-area-layout';
-import {
-  isProductSurfaceEnforced,
-  resolveCanaryProductFlags,
-  resolveProductSurfaceRolloutMode,
-  useProductSurfaceCanaryAuthority,
-} from '../features/shell/product-surface-canary-runtime';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
 import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
 import {
   ProductCanaryRoot,
+  ProductCanaryFirstAllowedIndex,
+  ProductCanaryIndexedSurfaceBoundary,
   ProductCanaryRouteBoundary,
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
-  preserveProductRouteLocation,
-  resolveFirstAllowedCanaryRoute,
 } from './product-surface-canary-routes';
 
 import type { ReactNode } from 'react';
@@ -43,36 +37,6 @@ function relativePattern(pattern: string, parentPath: string): string {
     throw new Error(`Product DRAFT route is outside Router parent ${parentPath}: ${pattern}`);
   }
   return pattern.slice(prefix.length);
-}
-
-export function ProductCanaryFirstAllowedIndex({
-  productId,
-  surfaceId,
-  candidates,
-  legacy,
-}: {
-  productId: string;
-  surfaceId: string;
-  candidates: readonly ProductPageRouteContractSource[];
-  legacy: ReactNode;
-}) {
-  const authority = useProductSurfaceCanaryAuthority();
-  const location = useLocation();
-  const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, productId));
-  if (!isProductSurfaceEnforced(mode)) return legacy;
-  const destination = resolveFirstAllowedCanaryRoute(authority, {
-    productId,
-    surfaceId,
-    candidates: candidates.map((route) => ({
-      routeContractKey: route.routeContractKey,
-      path: route.pattern,
-    })),
-  });
-  return destination ? (
-    <Navigate to={preserveProductRouteLocation(destination, location)} replace />
-  ) : (
-    <Navigate to="/403" replace />
-  );
 }
 
 export function buildTwoSurfaceProductChildren({
@@ -131,13 +95,14 @@ export function buildTwoSurfaceProductChildren({
     {
       path: relativePattern(managementBasePath, manifest.basePath),
       element: (
-        <ProductCanarySurfaceBoundary
+        <ProductCanaryIndexedSurfaceBoundary
           productId={manifest.id}
           surfaceId={managementSurfaceId}
+          indexPath={managementBasePath}
           legacy={legacyShell}
         >
           {surfaceShell(managementSurfaceId)}
-        </ProductCanarySurfaceBoundary>
+        </ProductCanaryIndexedSurfaceBoundary>
       ),
       children: [
         {
@@ -146,7 +111,10 @@ export function buildTwoSurfaceProductChildren({
             <ProductCanaryFirstAllowedIndex
               productId={manifest.id}
               surfaceId={managementSurfaceId}
-              candidates={managementRoutes}
+              candidates={managementRoutes.map((route) => ({
+                routeContractKey: route.routeContractKey,
+                path: route.pattern,
+              }))}
               legacy={legacyUnknown}
             />
           ),

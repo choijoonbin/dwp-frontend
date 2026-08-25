@@ -141,6 +141,23 @@ describe('resolveProductSurfaceRequestScope', () => {
     expect(resolved.cacheKey.at(-1)).toBe(REVISION);
   });
 
+  it('binds a direct PAGE scope to a unique entry context with a different opaque key', () => {
+    const listSnapshot = snapshot();
+    listSnapshot.envelope.contexts[0]!.contextKey = 'communications-management-entry';
+
+    const resolved = resolveProductSurfaceRequestScope({
+      ...identity,
+      decision: decision(),
+      snapshot: listSnapshot,
+    });
+
+    expect(resolved).toMatchObject({
+      governed: true,
+      ready: true,
+      contextScopeKey: 'scope:non-default',
+    });
+  });
+
   it('preserves the legacy fallback contract without a governed PAGE decision', () => {
     expect(
       resolveProductSurfaceRequestScope({ ...identity, decision: null, snapshot: undefined })

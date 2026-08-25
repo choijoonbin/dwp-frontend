@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { PageCanvas } from '@dwp-frontend/design-system';
-import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 
@@ -9,7 +8,10 @@ import { ProductAreaPageHeader } from '../components/product-area-page-header';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
 import { findHcmNavigationItem, HCM_DEFAULT_PATH } from '../features/hcm/hcm-navigation';
 import { useHcmExperience } from '../features/hcm/use-hcm-experience';
+import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { RouteFallback } from '../routes/route-support';
+
+import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
 
 const HcmHome = lazy(() =>
   import('../features/hcm/hcm-home').then((module) => ({
@@ -107,13 +109,14 @@ const WorkforceReferenceData = lazy(() =>
   }))
 );
 
-export default function HcmPage() {
-  const { pathname } = useLocation();
-  const { hasPermission } = usePermissions();
+function HcmPageContent({
+  page,
+  governedPage,
+}: {
+  page: HcmNavigationItem;
+  governedPage: boolean;
+}) {
   const experience = useHcmExperience();
-  const governedPage = useOptionalAllowedProductSurface();
-  const page = findHcmNavigationItem(pathname);
-  if (!page) return <Navigate to={HCM_DEFAULT_PATH} replace />;
   if (!governedPage && page.audience === 'manager' && !experience.isManager) {
     return <Navigate to={HCM_DEFAULT_PATH} replace />;
   }
@@ -130,17 +133,6 @@ export default function HcmPage() {
     !governedPage &&
     !['all', 'manager', 'operator'].includes(page.audience) &&
     !domainAudienceAllowed
-  ) {
-    return <Navigate to={HCM_DEFAULT_PATH} replace />;
-  }
-  if (
-    !governedPage &&
-    page.requiredResourceKey &&
-    !(
-      page.requiredAnyPermissionCodes?.some((code) =>
-        hasPermission(page.requiredResourceKey!, code)
-      ) ?? hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
-    )
   ) {
     return <Navigate to={HCM_DEFAULT_PATH} replace />;
   }
@@ -187,5 +179,20 @@ export default function HcmPage() {
         <Suspense fallback={<RouteFallback />}>{content}</Suspense>
       </Box>
     </PageCanvas>
+  );
+}
+
+export default function HcmPage() {
+  const { pathname } = useLocation();
+  const governedPage = useOptionalAllowedProductSurface();
+  const page = findHcmNavigationItem(pathname);
+  if (!page) return <Navigate to={HCM_DEFAULT_PATH} replace />;
+
+  const content = <HcmPageContent page={page} governedPage={Boolean(governedPage)} />;
+  if (governedPage) return content;
+  return (
+    <ProductAreaNavigationItemAccessGuard item={page}>
+      {content}
+    </ProductAreaNavigationItemAccessGuard>
   );
 }

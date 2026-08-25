@@ -71,6 +71,7 @@ export * from './auth/control-plane-access';
 export * from './auth/app-entitlements';
 export * from './auth/hcm-access';
 export * from './auth/provider-support-context';
+export * from './auth/product-surface-scope-kind';
 export * from './auth/product-surface-authority-model';
 export * from './auth/product-surface-context-provider';
 export * from './api/auth-policy-api';

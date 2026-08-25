@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Home, LifeBuoy, ShieldCheck, X } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -21,7 +21,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { BrandLockup } from '../components/brand-lockup';
-import { ProviderSupportBanner } from '../components/provider-support-banner';
+import { governedProductManifest } from '../components/product-manifest-registry';
 import { ShellHeader } from '../components/shell-header';
 import {
   productSurfaceContentInstanceKey,
@@ -31,13 +31,17 @@ import {
 } from '../components/product-surface-controls';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
+import { buildLegacyProductSurfacePresentation } from '../features/shell/legacy-product-surface-presentation';
 import { canContextAccessNavigation } from '../features/shell/product-surface-context';
 import { resolveProductCompatibilityNavigationLocation } from '../features/shell/product-surface-compatibility-navigation';
 import {
   DesktopNavigationToggle,
   useDesktopNavigation,
 } from '../features/shell/desktop-navigation';
-import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
+import {
+  ProductSurfaceTelemetryExposure,
+  useProductSurfaceTelemetry,
+} from '../observability/product-surface-telemetry-context';
 import type {
   ProductNavigationGroup as ProductAreaNavigationGroup,
   ProductNavigationItem as ProductAreaNavigationItem,
@@ -45,6 +49,8 @@ import type {
 } from '../components/product-manifest';
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import { canAccessProductAreaNavigationItem } from './product-area-permissions';
+
+const ProviderSupportBanner = lazy(() => import('../components/provider-support-banner'));
 
 export type { ProductAreaNavigationGroup, ProductAreaNavigationItem };
 
@@ -101,7 +107,16 @@ export function ProductAreaLayout({
   const auth = useAuth();
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
   const supportContext = useProviderSupportContext(providerRole);
-  const { hasPermission } = usePermissions();
+  const supportSession = providerRole ? (supportContext.data ?? undefined) : undefined;
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canAccessLegacyItem = (item: ProductAreaNavigationItem) =>
+    permissionsLoaded &&
+    (!providerRole || (!supportContext.isLoading && supportSession !== undefined)) &&
+    canAccessProductAreaNavigationItem(
+      item,
+      hasPermission,
+      providerRole ? supportSession?.scopes : undefined
+    );
   const location = useLocation();
   const { pathname } = location;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -116,19 +131,28 @@ export function ProductAreaLayout({
     toggle: toggleDesktopNavigation,
   } = useDesktopNavigation(shell);
   const tenantName =
-    supportContext.data?.tenantName ||
+    supportSession?.tenantName ||
     auth.user?.tenantName ||
     auth.user?.tenantCode ||
     t('shell.tenantFallback');
-  const visibleNavigation = navigation
+  const legacyManifest = surface
+    ? undefined
+    : governedProductManifest(areaKey === 'rooms' ? 'workplace' : areaKey);
+  const legacyPresentation = legacyManifest
+    ? buildLegacyProductSurfacePresentation({
+        manifest: legacyManifest,
+        pathname,
+        navigation,
+        canAccessItem: canAccessLegacyItem,
+      })
+    : undefined;
+  const navigationSource = legacyManifest ? (legacyPresentation?.navigation ?? []) : navigation;
+  const visibleNavigation = navigationSource
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
-        if (surface?.compatibilityNavigation) {
-          return (
-            isSurfaceNavigationItem(item) &&
-            surface.compatibilityNavigationTargets?.has(item.path) === true
-          );
+        if (surface?.compatibilityNavigationTargets && isSurfaceNavigationItem(item)) {
+          return surface.compatibilityNavigationTargets?.has(item.path) === true;
         }
         if (surface && isSurfaceNavigationItem(item)) {
           return canContextAccessNavigation(
@@ -139,14 +163,33 @@ export function ProductAreaLayout({
           );
         }
         if (surface) return false;
-        return canAccessProductAreaNavigationItem(item, hasPermission, supportContext.data?.scopes);
+        return canAccessLegacyItem(item);
       }),
     }))
     .filter((group) => group.items.length > 0);
-  const returnTarget = supportContext.data
+  const returnTarget = supportSession
     ? { path: '/provider/support', label: tAdmin('supportMode.backToProvider') }
-    : (surface?.returnTarget ?? { path: '/', label: t('shell.backToHome') });
-  const SurfaceIcon = surface?.decision.context.plane === 'management' ? ShieldCheck : AreaIcon;
+    : surface?.returnTarget
+      ? surface.returnTarget
+      : legacyPresentation
+        ? {
+            path: legacyPresentation.returnTarget.path,
+            label: tCommon(
+              legacyPresentation.returnTarget.kind === 'work'
+                ? 'productSurface.actions.returnToWork'
+                : 'productSurface.actions.returnToCatalog'
+            ),
+          }
+        : { path: '/', label: t('shell.backToHome') };
+  const presentationPlane =
+    surface?.decision.context.plane ?? legacyPresentation?.currentSurface.plane;
+  const presentationLabel =
+    surface?.label ??
+    (legacyPresentation ? t(legacyPresentation.currentSurface.labelKey) : undefined);
+  const presentationEntries = surface?.entryPoints ?? legacyPresentation?.headerEntryPoints;
+  const currentSurfaceId =
+    surface?.decision.context.surfaceKey ?? legacyPresentation?.currentSurface.id;
+  const SurfaceIcon = presentationPlane === 'management' ? ShieldCheck : AreaIcon;
   const contentInstanceKey = surface
     ? productSurfaceContentInstanceKey({
         contextKey: surface.decision.context.contextKey,
@@ -154,8 +197,13 @@ export function ProductAreaLayout({
         contextScopeKey: surface.decision.scope.key,
         decisionRevision: surface.decision.decisionRevision,
       })
-    : 'legacy';
-  const returnSurface = surface?.entryPoints?.find((entry) => entry.path === returnTarget.path);
+    : legacyPresentation
+      ? `legacy:${legacyPresentation.currentSurface.id}`
+      : 'legacy';
+  const returnSurface = surface?.entryPoints?.find((entry) => entry.entryKind === 'work-return');
+  const legacyReturnSurface = legacyPresentation?.headerEntryPoints.find(
+    (entry) => entry.entryKind === 'work-return'
+  );
 
   const closeMobileNavigation = (restoreFocus: boolean) => {
     restoreMobileNavigationFocusRef.current = restoreFocus;
@@ -210,7 +258,7 @@ export function ProductAreaLayout({
       <Divider />
       <Box sx={{ px: 2.5, pt: 2.25, pb: 1, display: compactNavigation ? 'none' : 'block' }}>
         <Typography component="p" variant="overline" sx={{ color: 'var(--dwp-product-accent)' }}>
-          {surface?.label ?? t(`shell.${areaKey}.context`)}
+          {presentationLabel ?? t(`shell.${areaKey}.context`)}
         </Typography>
         <Typography variant="body2" fontWeight={750} noWrap>
           {tenantName}
@@ -243,16 +291,20 @@ export function ProductAreaLayout({
                   pathname === item.path ||
                   (item.path !== '/' && pathname.startsWith(`${item.path}/`));
                 const label = t(`navigation.items.${areaKey}.${item.view}.label`);
+                const exactNavigationTarget = surface?.compatibilityNavigationTargets?.get(
+                  item.path
+                );
                 return (
                   <Box component="li" key={item.path} sx={{ display: 'block' }}>
                     <Tooltip title={compactNavigation ? label : ''} placement="right">
                       <ListItemButton
+                        data-testid={`${areaKey}-navigation-item-${item.view}`}
                         component={NavLink}
                         to={
-                          surface?.compatibilityNavigation
+                          exactNavigationTarget
                             ? resolveProductCompatibilityNavigationLocation(
                                 item.path,
-                                surface.compatibilityNavigationTargets!.get(item.path)!,
+                                exactNavigationTarget,
                                 location
                               )
                             : {
@@ -314,15 +366,16 @@ export function ProductAreaLayout({
       <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
         <Tooltip title={compactNavigation ? returnTarget.label : ''} placement="right">
           <ActionButton
+            data-testid={`${areaKey}-surface-return`}
             component={NavLink}
             to={returnTarget.path}
             fullWidth
             intent="quiet"
             aria-label={compactNavigation ? returnTarget.label : undefined}
             startIcon={
-              supportContext.data ? (
+              supportSession ? (
                 <LifeBuoy size={17} strokeWidth={1.8} />
-              ) : surface ? (
+              ) : surface || legacyPresentation ? (
                 <ArrowLeft size={17} strokeWidth={1.8} />
               ) : (
                 <Home size={17} strokeWidth={1.8} />
@@ -334,6 +387,12 @@ export function ProductAreaLayout({
                   surface.decision.context.productKey,
                   surface.decision.context.surfaceKey,
                   returnSurface.surfaceId
+                );
+              } else if (legacyPresentation && legacyReturnSurface) {
+                telemetry.captureReturn(
+                  legacyManifest!.id,
+                  legacyPresentation.currentSurface.id,
+                  legacyReturnSurface.surfaceId
                 );
               }
               onNavigate?.();
@@ -357,7 +416,16 @@ export function ProductAreaLayout({
       data-testid={`${areaKey}-shell`}
       data-product-surface={surface?.decision.context.surfaceKey}
       data-product-surface-label={surface?.label}
-      data-product-plane={surface?.decision.context.plane}
+      data-product-plane={presentationPlane}
+      data-product-presentation={
+        surface
+          ? surface.compatibilityNavigation
+            ? 'compatibility-separated'
+            : 'native-surface'
+          : legacyPresentation
+            ? 'compatibility-separated'
+            : undefined
+      }
       data-dwp-navigation-state={compact ? 'compact' : 'expanded'}
       data-product-concept={productExperience.concept}
       data-product-density={productExperience.density}
@@ -433,17 +501,18 @@ export function ProductAreaLayout({
       <ShellHeader
         testId={`${areaKey}-header`}
         shellKey={shell.key}
-        scope={supportContext.data ? 'support' : shell.scope}
+        scope={supportSession ? 'support' : shell.scope}
         desktopOffset={desktopOffset}
         context={{
           icon: SurfaceIcon,
-          label: surface
-            ? `${t(`shell.${areaKey}.name`)} · ${surface.label}`
+          label: presentationLabel
+            ? `${t(`shell.${areaKey}.name`)} · ${presentationLabel}`
             : t(`shell.${areaKey}.name`),
           detail: surface ? `${tenantName} · ${surface.decision.scope.displayName}` : undefined,
         }}
         navigation={{
           label: t('shell.openNavigation'),
+          testId: `${areaKey}-mobile-navigation-trigger`,
           onOpen: (trigger) => {
             mobileNavigationTriggerRef.current = trigger;
             setMobileOpen(true);
@@ -458,25 +527,29 @@ export function ProductAreaLayout({
             />
           ) : undefined
         }
-        showWorkspace={shell.showWorkspace && !supportContext.data}
+        showWorkspace={shell.showWorkspace && !supportSession}
         primaryNavigation={
-          surface?.entryPoints ? (
-            <ProductSurfaceSwitcher
-              currentSurfaceId={surface.decision.context.surfaceKey}
-              entries={surface.entryPoints}
-              label={tCommon('productSurface.labels.surfaceNavigation')}
-              resolveLabel={(labelKey) => t(labelKey)}
-            />
+          presentationEntries && currentSurfaceId ? (
+            <Box data-testid={`${areaKey}-desktop-surface-switcher`}>
+              <ProductSurfaceSwitcher
+                currentSurfaceId={currentSurfaceId}
+                entries={presentationEntries}
+                label={tCommon('productSurface.labels.surfaceNavigation')}
+                resolveLabel={(labelKey) => t(labelKey)}
+              />
+            </Box>
           ) : undefined
         }
         mobilePrimaryNavigation={
-          surface?.entryPoints ? (
-            <ProductSurfaceDisclosure
-              currentSurfaceId={surface.decision.context.surfaceKey}
-              entries={surface.entryPoints}
-              label={tCommon('productSurface.labels.surfaceNavigation')}
-              resolveLabel={(labelKey) => t(labelKey)}
-            />
+          presentationEntries && currentSurfaceId ? (
+            <Box data-testid={`${areaKey}-mobile-surface-switcher`}>
+              <ProductSurfaceDisclosure
+                currentSurfaceId={currentSurfaceId}
+                entries={presentationEntries}
+                label={tCommon('productSurface.labels.surfaceNavigation')}
+                resolveLabel={(labelKey) => t(labelKey)}
+              />
+            </Box>
           ) : undefined
         }
         contextControls={surface ? <ProductSurfaceContextBar runtime={surface} /> : undefined}
@@ -497,8 +570,21 @@ export function ProductAreaLayout({
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
-        {supportContext.data && <ProviderSupportBanner context={supportContext.data} />}
-        <Outlet key={contentInstanceKey} />
+        {supportSession && (
+          <Suspense fallback={null}>
+            <ProviderSupportBanner context={supportSession} />
+          </Suspense>
+        )}
+        {legacyPresentation && legacyManifest ? (
+          <ProductSurfaceTelemetryExposure
+            productKey={legacyManifest.id}
+            surfaceKey={legacyPresentation.currentSurface.id as `${string}.${string}`}
+          >
+            <Outlet key={contentInstanceKey} />
+          </ProductSurfaceTelemetryExposure>
+        ) : (
+          <Outlet key={contentInstanceKey} />
+        )}
       </Box>
     </Box>
   );

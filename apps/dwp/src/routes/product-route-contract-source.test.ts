@@ -171,6 +171,13 @@ describe('product route contract source', () => {
       target: '/example/work?scope=alpha#item',
       maxHops: 1,
     });
+    expect(
+      resolveProductLegacyRoute('/OLD-EXAMPLE', '?scope=alpha', '#item', [valid], source)
+    ).toEqual({
+      redirectId: 'legacy-example-v1',
+      target: '/example/work?scope=alpha#item',
+      maxHops: 1,
+    });
     expect(() =>
       defineProductLegacyRouteSource(
         [{ ...valid, targetRouteContractKey: 'route.example.work.stale.page' }],
@@ -183,5 +190,11 @@ describe('product route contract source', () => {
     expect(() =>
       defineProductLegacyRouteSource([{ ...valid, maxHops: 2 as never }], source)
     ).toThrow(/one hop/u);
+    expect(() =>
+      defineProductLegacyRouteSource(
+        [valid, { ...valid, redirectId: 'legacy-case-duplicate', sourcePath: '/OLD-EXAMPLE' }],
+        source
+      )
+    ).toThrow(/duplicated/u);
   });
 });

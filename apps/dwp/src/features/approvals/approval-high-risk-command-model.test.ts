@@ -118,10 +118,8 @@ describe('approval HIGH command model', () => {
     expect(issuerRequest.request).not.toHaveProperty('routeContractKey');
     expect(issuerRequest.request).not.toHaveProperty('capabilityContractKey');
     expect(issuerRequest.request).not.toHaveProperty('expectedDecisionRevision');
-    expect(issuerRequest.request).toMatchObject({
-      contextKey: 'approval-management',
-      contextScopeKey: 'scope-1',
-    });
+    expect(issuerRequest.request).not.toHaveProperty('contextKey');
+    expect(issuerRequest.request).toMatchObject({ contextScopeKey: 'scope-1' });
     expect(issuerRequest.expectedDecisionRevision).toBe('user-visible-revision');
     const resumed = transitionApprovalHighRiskAttempt(
       applyApprovalStepUpContinuation(initial, {
@@ -290,9 +288,9 @@ describe('approval HIGH command model', () => {
       expectedObjectVersion: 2,
       idempotencyKey: 'retry-attempt-1',
       payload: {},
-      contextKey: 'approvals-management',
       contextScopeKey: 'scope-1',
     });
+    expect(issuer.request).not.toHaveProperty('contextKey');
     expect(issuer.request.payload).not.toHaveProperty('expectedVersion');
     expect(issuer.expectedDecisionRevision).toBe('retry-revision');
   });

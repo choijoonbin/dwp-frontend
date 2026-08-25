@@ -2,8 +2,10 @@ import { it, vi, expect, describe, afterEach } from 'vitest';
 
 import {
   axiosInstance,
+  classifyAuthorizationAccessFailure,
   getEventStream,
   resetCsrfToken,
+  setAuthorizationAccessFailureHandler,
   setUnauthorizedHandler,
 } from './axios-instance';
 import { HttpTransportError } from './http-error';
@@ -20,6 +22,7 @@ describe('axiosInstance browser session contract', () => {
   afterEach(() => {
     vi.useRealTimers();
     resetCsrfToken();
+    setAuthorizationAccessFailureHandler(null);
     setUnauthorizedHandler(null);
     vi.unstubAllGlobals();
   });
@@ -32,6 +35,73 @@ describe('axiosInstance browser session contract', () => {
     await expect(axiosInstance.get('/api/restricted')).rejects.toMatchObject({ status: 403 });
 
     expect(unauthorized).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [403, { errorCode: 'ROUTE_CAPABILITY_REQUIRED' }, true],
+    [403, { code: 'E2001' }, true],
+    [403, { message: 'Forbidden' }, true],
+    [403, { errorCode: 'STEP_UP_REQUIRED' }, false],
+    [403, { errorCode: 'STEP_UP_CHALLENGE_EXPIRED' }, false],
+    [403, { errorCode: 'SOD_CONFLICT' }, false],
+    [409, { errorCode: 'DECISION_REVISION_CONFLICT' }, true],
+    [409, { errorCode: 'SCOPE_CONTEXT_EXPIRED' }, true],
+    [409, { errorCode: 'OBJECT_VERSION_CONFLICT' }, false],
+    [409, { errorCode: 'STEP_UP_CHALLENGE_REPLAY' }, false],
+    [409, { code: 'E1009' }, false],
+    [503, { errorCode: 'AUTHORITY_RESOLUTION_UNAVAILABLE' }, true],
+    [503, { errorCode: 'UPSTREAM_UNAVAILABLE' }, false],
+    [401, { errorCode: 'AUTHENTICATION_REQUIRED' }, false],
+  ])('classifies only an authorization freshness failure (%s, %o)', (status, payload, expected) => {
+    expect(Boolean(classifyAuthorizationAccessFailure(status, payload))).toBe(expected);
+  });
+
+  it('notifies the authority boundary without replacing the original access error', async () => {
+    const accessFailure = vi.fn();
+    setAuthorizationAccessFailureHandler(accessFailure);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse(409, {
+          errorCode: 'DECISION_REVISION_CONFLICT',
+          message: 'Authority revision changed.',
+        })
+      )
+    );
+
+    await expect(axiosInstance.get('/api/governed-resource')).rejects.toMatchObject({
+      status: 409,
+      message: 'Authority revision changed.',
+    });
+
+    expect(accessFailure).toHaveBeenCalledWith({
+      status: 409,
+      reasonCode: 'DECISION_REVISION_CONFLICT',
+    });
+  });
+
+  it('does not notify the authority boundary for expected workflow denials or a 401 session', async () => {
+    const accessFailure = vi.fn();
+    const unauthorized = vi.fn();
+    setAuthorizationAccessFailureHandler(accessFailure);
+    setUnauthorizedHandler(unauthorized);
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'STEP_UP_REQUIRED' }))
+        .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'SOD_CONFLICT' }))
+        .mockResolvedValueOnce(jsonResponse(409, { errorCode: 'OBJECT_VERSION_CONFLICT' }))
+        .mockResolvedValueOnce(jsonResponse(401, { errorCode: 'AUTHENTICATION_REQUIRED' }))
+    );
+
+    await expect(axiosInstance.get('/api/step-up')).rejects.toMatchObject({ status: 403 });
+    await expect(axiosInstance.get('/api/sod')).rejects.toMatchObject({ status: 403 });
+    await expect(axiosInstance.get('/api/version')).rejects.toMatchObject({ status: 409 });
+    await expect(axiosInstance.get('/api/session')).rejects.toMatchObject({ status: 401 });
+
+    expect(accessFailure).not.toHaveBeenCalled();
+    expect(unauthorized).toHaveBeenCalledOnce();
   });
 
   it('sends an opaque scope only as the standard query parameter', async () => {
@@ -142,6 +212,8 @@ describe('axiosInstance browser session contract', () => {
   });
 
   it('refreshes a stale CSRF token once when the gateway rejects a mutation', async () => {
+    const accessFailure = vi.fn();
+    setAuthorizationAccessFailureHandler(accessFailure);
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(
@@ -169,6 +241,7 @@ describe('axiosInstance browser session contract', () => {
     expect(retriedMutation.headers).toEqual(
       expect.objectContaining({ 'X-XSRF-TOKEN': 'fresh-token' })
     );
+    expect(accessFailure).not.toHaveBeenCalled();
   });
 
   it('lets the browser set the multipart boundary for FormData mutations', async () => {

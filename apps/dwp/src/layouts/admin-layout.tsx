@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Home, LifeBuoy } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -19,7 +19,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
 
 import { BrandLockup } from '../components/brand-lockup';
-import { ProviderSupportBanner } from '../components/provider-support-banner';
 import { ShellHeader } from '../components/shell-header';
 import {
   ADMIN_NAVIGATION,
@@ -33,6 +32,8 @@ import {
   DesktopNavigationToggle,
   useDesktopNavigation,
 } from '../features/shell/desktop-navigation';
+
+const ProviderSupportBanner = lazy(() => import('../components/provider-support-banner'));
 
 type AdminNavigationProps = {
   compact?: boolean;
@@ -399,7 +400,11 @@ export function AdminLayout() {
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
-        {supportContext.data && <ProviderSupportBanner context={supportContext.data} />}
+        {supportContext.data && (
+          <Suspense fallback={null}>
+            <ProviderSupportBanner context={supportContext.data} />
+          </Suspense>
+        )}
         <Outlet />
       </Box>
     </Box>

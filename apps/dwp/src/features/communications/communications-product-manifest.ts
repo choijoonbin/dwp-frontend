@@ -39,7 +39,7 @@ export const COMMUNICATIONS_PRODUCT_MANIFEST = defineProductManifest({
         accessPolicyKey: 'communications.management-entry.v1',
         requiresProductEntitlement: false,
       },
-      supportedScopeKinds: ['RESOURCE_SET'],
+      supportedScopeKinds: ['RESOURCE_SET', 'SUPPORT_SESSION'],
       shellProfile: 'product-management',
       returnSurfaceId: 'communications.work',
     },

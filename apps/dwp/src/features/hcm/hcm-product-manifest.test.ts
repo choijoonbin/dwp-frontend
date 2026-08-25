@@ -79,8 +79,8 @@ describe('HCM W1b product manifest', () => {
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
       ['SELF'],
-      ['TEAM', 'ORG_UNIT'],
-      ['ORG_UNIT', 'LEGAL_ENTITY'],
+      ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
+      ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
       ['RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
     ]);
   });

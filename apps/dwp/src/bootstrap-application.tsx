@@ -1,6 +1,6 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
-import { StrictMode, useMemo, type PropsWithChildren } from 'react';
+import { lazy, StrictMode, Suspense, useMemo, type PropsWithChildren } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { I18nProvider } from '@dwp-frontend/shared-i18n';
@@ -14,13 +14,16 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { Outlet, RouterProvider, createBrowserRouter, type RouteObject } from 'react-router-dom';
 
 import App from './app';
+import { GOVERNED_PRODUCT_LEGACY_SENSITIVE_QUERY_PREFIXES } from './features/shell/product-sensitive-query-prefixes';
 import { tenantBrandingQueryOptions } from './features/shell/tenant-branding-query';
 import { ErrorBoundary } from './routes/components/error-boundary';
 import { PersonalPreferenceProvider } from './providers/personal-preference-provider';
-import {
-  ProductSurfaceTelemetryProvider,
-  readProductSurfaceTelemetryConsent,
-} from './observability/product-surface-telemetry-context';
+import { ShellBootScreen } from './components/shell-boot-screen';
+import { readProductSurfaceTelemetryConsent } from './observability/product-surface-telemetry-context';
+
+const ProductSurfaceTelemetryProvider = lazy(
+  () => import('./observability/product-surface-telemetry-provider')
+);
 
 const defaultTenantAppearance = {
   productName: 'Digital Workplace',
@@ -115,6 +118,20 @@ export function bootstrapApplication(routes: RouteObject[], applicationId = 'she
   const hotData = import.meta.hot?.data as { reactRoot?: Root } | undefined;
   const reactRoot = hotData?.reactRoot ?? createRoot(rootElement);
   if (hotData) hotData.reactRoot = reactRoot;
+  const productionTelemetryEnabled =
+    import.meta.env.VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION === 'true';
+  const telemetryConsentGranted = readProductSurfaceTelemetryConsent(window.localStorage);
+  const routedApplication = <RouterProvider router={router} />;
+  const telemetryApplication =
+    productionTelemetryEnabled && telemetryConsentGranted ? (
+      <Suspense fallback={<ShellBootScreen />}>
+        <ProductSurfaceTelemetryProvider productionCollectionEnabled privacyConsentGranted>
+          {routedApplication}
+        </ProductSurfaceTelemetryProvider>
+      </Suspense>
+    ) : (
+      routedApplication
+    );
 
   reactRoot.render(
     <StrictMode>
@@ -125,28 +142,9 @@ export function bootstrapApplication(routes: RouteObject[], applicationId = 'she
               <ProductDateTimeProvider>
                 <PersonalPreferenceProvider>
                   <ProductSurfaceAuthorityProvider
-                    legacySensitiveQueryPrefixes={[
-                      'approvals',
-                      'communications',
-                      'communication',
-                      'announcements',
-                      'services',
-                      'service-center',
-                      'service-catalog',
-                      'hcm',
-                      'hr',
-                    ]}
+                    legacySensitiveQueryPrefixes={GOVERNED_PRODUCT_LEGACY_SENSITIVE_QUERY_PREFIXES}
                   >
-                    <ProductSurfaceTelemetryProvider
-                      productionCollectionEnabled={
-                        import.meta.env.VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION === 'true'
-                      }
-                      privacyConsentGranted={readProductSurfaceTelemetryConsent(
-                        window.localStorage
-                      )}
-                    >
-                      <RouterProvider router={router} />
-                    </ProductSurfaceTelemetryProvider>
+                    {telemetryApplication}
                   </ProductSurfaceAuthorityProvider>
                 </PersonalPreferenceProvider>
               </ProductDateTimeProvider>

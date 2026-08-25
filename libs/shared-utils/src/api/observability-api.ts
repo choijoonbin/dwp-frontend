@@ -1,5 +1,6 @@
 import { axiosInstance } from '../axios-instance';
 import type { components } from '@dwp-frontend/api-contracts';
+import type { ProductScopeKind } from '../auth/product-surface-scope-kind';
 
 export type WebVitalMetric = components['schemas']['platform_WebVitalRequest'];
 
@@ -7,24 +8,10 @@ export const PRODUCT_SURFACE_EVENT_ENDPOINT =
   '/api/platform/v1/observability/product-surface-events' as const;
 
 export type ProductSurfaceKey = `${string}.${string}`;
-export type ProductSurfaceScopeKind =
-  | 'SELF'
-  | 'ORG_UNIT'
-  | 'LEGAL_ENTITY'
-  | 'DOMAIN'
-  | 'RESOURCE'
-  | 'RESOURCE_SET'
-  | 'TARGET_POPULATION'
-  | 'SUPPORT_SESSION';
+export type ProductSurfaceScopeKind = ProductScopeKind;
 export type ProductSurfaceDeviceClass = 'DESKTOP' | 'TABLET' | 'MOBILE';
 export type ProductSurfaceElapsedBucket =
-  | 'LT_1S'
-  | 'S1_TO_5'
-  | 'S5_TO_15'
-  | 'S15_TO_30'
-  | 'S30_TO_60'
-  | 'M1_TO_5'
-  | 'GTE_5M';
+  'LT_1S' | 'S1_TO_5' | 'S5_TO_15' | 'S15_TO_30' | 'S30_TO_60' | 'M1_TO_5' | 'GTE_5M';
 export type ProductSurfaceReasonCode =
   | 'APP_DENIED'
   | 'SURFACE_DENIED'
@@ -51,12 +38,7 @@ export type ProductSurfaceTaskKind =
   | 'REPORTING'
   | 'REVIEW';
 export type ProductSurfacePolicyKind =
-  | 'READ_ONLY'
-  | 'UPSTREAM_LOCK'
-  | 'SEGREGATION_OF_DUTIES'
-  | 'STEP_UP'
-  | 'SUPPORT'
-  | 'EXPIRY';
+  'READ_ONLY' | 'UPSTREAM_LOCK' | 'SEGREGATION_OF_DUTIES' | 'STEP_UP' | 'SUPPORT' | 'EXPIRY';
 
 type ProductSurfaceEventBase<EventName extends string> = {
   schemaVersion: 1;

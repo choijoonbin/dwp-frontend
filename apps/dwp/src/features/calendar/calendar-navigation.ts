@@ -1,18 +1,14 @@
 import { BarChart3, CalendarDays, Gauge, House, Settings2, UsersRound } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
+import type { ProductNavigationItem } from '../../components/product-manifest';
 
 export type CalendarSection = 'start' | 'plan' | 'insights' | 'admin';
 export type CalendarView =
   'home' | 'schedule' | 'availability' | 'insights' | 'admin-overview' | 'admin-policies';
 
-export type CalendarNavigationItem = {
+export type CalendarNavigationItem = ProductNavigationItem & {
   section: CalendarSection;
   view: CalendarView;
-  path: string;
-  icon: LucideIcon;
-  requiredResourceKey?: string;
-  requiredPermissionCode?: string;
 };
 
 export type CalendarNavigationGroup = {

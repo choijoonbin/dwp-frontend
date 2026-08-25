@@ -1,8 +1,8 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import { ProductAdminSurface } from '../components/product-admin-surface';
+import { ProductSurfaceLocalNotFound } from '../components/product-surface-local-not-found';
 import {
   SpaceAdminContentReviews,
   SpaceAdminDirectory,
@@ -16,11 +16,8 @@ import { SpaceDetailPage } from '../features/spaces/space-detail-page';
 import { SpaceDirectoryPage } from '../features/spaces/space-directory-page';
 import { SpaceHomePage } from '../features/spaces/space-home-page';
 import { SpaceRequestsPage } from '../features/spaces/space-requests-page';
-import {
-  SPACE_DEFAULT_PATH,
-  findSpaceNavigationItem,
-  findSpaceView,
-} from '../features/spaces/space-navigation';
+import { findSpaceNavigationItem, findSpaceView } from '../features/spaces/space-navigation';
+import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 
 import type { ReactNode } from 'react';
 
@@ -39,67 +36,69 @@ function SpaceAdministration({ view, children }: { view: string; children: React
 
 export default function SpacesPage() {
   const { pathname } = useLocation();
-  const { hasPermission, isLoaded } = usePermissions();
   const view = findSpaceView(pathname);
   const navigationItem = findSpaceNavigationItem(pathname);
 
-  if (!isLoaded) return null;
-  if (
-    navigationItem?.requiredResourceKey &&
-    !hasPermission(navigationItem.requiredResourceKey, navigationItem.requiredPermissionCode)
-  ) {
-    return <Navigate to="/403" replace />;
-  }
-  if (view === 'home') return <SpaceHomePage />;
-  if (view === 'my-spaces') return <SpaceDirectoryPage scope="MY" />;
-  if (view === 'discover') return <SpaceDirectoryPage scope="DISCOVER" />;
-  if (view === 'requests') return <SpaceRequestsPage />;
-  if (view === 'admin-overview')
-    return (
+  let content: ReactNode;
+  if (view === 'home') content = <SpaceHomePage />;
+  else if (view === 'my-spaces') content = <SpaceDirectoryPage scope="MY" />;
+  else if (view === 'discover') content = <SpaceDirectoryPage scope="DISCOVER" />;
+  else if (view === 'requests') content = <SpaceRequestsPage />;
+  else if (view === 'admin-overview')
+    content = (
       <SpaceAdministration view="overview">
         <SpaceAdminOverview />
       </SpaceAdministration>
     );
-  if (view === 'admin-directory')
-    return (
+  else if (view === 'admin-directory')
+    content = (
       <SpaceAdministration view="directory">
         <SpaceAdminDirectory />
       </SpaceAdministration>
     );
-  if (view === 'admin-requests')
-    return (
+  else if (view === 'admin-requests')
+    content = (
       <SpaceAdministration view="requests">
         <SpaceAdminRequests />
       </SpaceAdministration>
     );
-  if (view === 'admin-templates')
-    return (
+  else if (view === 'admin-templates')
+    content = (
       <SpaceAdministration view="templates">
         <SpaceAdminTemplates />
       </SpaceAdministration>
     );
-  if (view === 'admin-content-reviews')
-    return (
+  else if (view === 'admin-content-reviews')
+    content = (
       <SpaceAdministration view="contentReviews">
         <SpaceAdminContentReviews />
       </SpaceAdministration>
     );
-  if (view === 'admin-lifecycle')
-    return (
+  else if (view === 'admin-lifecycle')
+    content = (
       <SpaceAdministration view="lifecycle">
         <SpaceAdminLifecycle />
       </SpaceAdministration>
     );
-  if (view === 'admin-operations')
-    return (
+  else if (view === 'admin-operations')
+    content = (
       <SpaceAdministration view="operations">
         <SpaceAdminOperations />
       </SpaceAdministration>
     );
-
-  const match = pathname.match(/^\/spaces\/([^/]+)(?:\/(.*))?$/);
-  if (match && !['home', 'my', 'discover', 'requests', 'admin'].includes(match[1])) {
-    return <SpaceDetailPage spaceKey={decodeURIComponent(match[1])} tab={match[2] || 'overview'} />;
+  else {
+    const match = pathname.match(/^\/spaces\/([^/]+)(?:\/(.*))?$/);
+    if (!match || ['home', 'my', 'discover', 'requests', 'admin'].includes(match[1])) {
+      return <ProductSurfaceLocalNotFound />;
+    }
+    content = (
+      <SpaceDetailPage spaceKey={decodeURIComponent(match[1])} tab={match[2] || 'overview'} />
+    );
   }
-  return <Navigate to={SPACE_DEFAULT_PATH} replace />;
+
+  return (
+    <ProductAreaNavigationItemAccessGuard item={navigationItem ?? {}}>
+      {content}
+    </ProductAreaNavigationItemAccessGuard>
+  );
 }

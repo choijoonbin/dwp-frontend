@@ -10,6 +10,7 @@ import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions'
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import { ShellBootScreen } from '../components/shell-boot-screen';
+import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 
 export function RouteFallback() {
   const { t } = useTranslation('common');
@@ -66,11 +67,13 @@ export function ProductRouteGuard({
   resourceKey,
   permissionCode = 'VIEW',
   requiredAnySupportScopes = [],
+  localDeny = false,
   children,
 }: {
   resourceKey: string;
   permissionCode?: string;
   requiredAnySupportScopes?: readonly string[];
+  localDeny?: boolean;
   children: React.ReactNode;
 }) {
   const auth = useAuth();
@@ -81,14 +84,20 @@ export function ProductRouteGuard({
   if (providerRole) {
     const supportSession = supportContext.data;
     if (!supportSession) return <Navigate to="/provider" replace />;
-    return requiredAnySupportScopes.some((scope) => supportSession.scopes.includes(scope)) ? (
-      children
+    if (requiredAnySupportScopes.some((scope) => supportSession.scopes.includes(scope))) {
+      return children;
+    }
+    return localDeny ? (
+      <ProductSurfaceAccessState decision={{ state: 'support-scope-denied' }} />
     ) : (
       <Navigate to="/403" replace />
     );
   }
-  return hasPermission(resourceKey, permissionCode) || hasPermission(resourceKey, 'MANAGE') ? (
-    children
+  if (hasPermission(resourceKey, permissionCode) || hasPermission(resourceKey, 'MANAGE')) {
+    return children;
+  }
+  return localDeny ? (
+    <ProductSurfaceAccessState decision={{ state: 'route-denied' }} />
   ) : (
     <Navigate to="/403" replace />
   );
@@ -96,18 +105,22 @@ export function ProductRouteGuard({
 
 export function ProductAnyRouteGuard({
   authorities,
+  localDeny = false,
   children,
 }: {
   authorities: readonly { resourceKey: string; permissionCode: string }[];
+  localDeny?: boolean;
   children: React.ReactNode;
 }) {
   const { hasPermission, isLoaded } = usePermissions();
   if (!isLoaded) return <RouteFallback />;
-  return authorities.some(
+  const allowed = authorities.some(
     ({ resourceKey, permissionCode }) =>
       hasPermission(resourceKey, permissionCode) || hasPermission(resourceKey, 'MANAGE')
-  ) ? (
-    children
+  );
+  if (allowed) return children;
+  return localDeny ? (
+    <ProductSurfaceAccessState decision={{ state: 'route-denied' }} />
   ) : (
     <Navigate to="/403" replace />
   );

@@ -411,8 +411,29 @@ function validateRouterSource(value, latestBundle) {
     ) {
       fail(`legacy redirect ${redirect.redirectId} must preserve URL state and stop after one hop`);
     }
-    const target = routeByKey.get(redirect.targetRouteContractKey);
+    const registeredTarget = routeByKey.get(redirect.targetRouteContractKey);
+    const draftTarget =
+      !registeredTarget &&
+      redirect.targetLifecycle === 'DRAFT' &&
+      typeof redirect.targetPath === 'string' &&
+      redirect.targetPath.startsWith('/') &&
+      !redirect.targetPath.includes('?') &&
+      !redirect.targetPath.includes('#') &&
+      !redirect.targetPath.includes(':') &&
+      !redirect.targetPath.includes('*')
+        ? { pattern: redirect.targetPath }
+        : undefined;
+    const target = registeredTarget ?? draftTarget;
     if (!target) fail(`legacy redirect ${redirect.redirectId} has unknown target`);
+    if (registeredTarget && ('targetLifecycle' in redirect || 'targetPath' in redirect)) {
+      fail(`registered legacy redirect ${redirect.redirectId} must not claim DRAFT metadata`);
+    }
+    if (
+      draftTarget &&
+      !/^route\.[a-z0-9]+(?:[.-][a-z0-9]+)*\.page$/u.test(redirect.targetRouteContractKey)
+    ) {
+      fail(`DRAFT legacy redirect ${redirect.redirectId} has an invalid target contract`);
+    }
     if (redirectBySource.has(target.pattern)) {
       fail(`legacy redirect ${redirect.redirectId} forms a redirect cycle`);
     }

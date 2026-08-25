@@ -28,20 +28,29 @@ export function routeDocumentTitle(heading: string, surface?: string): string {
   return [heading.trim(), surface?.trim(), 'DWP'].filter(Boolean).join(' · ');
 }
 
-function commitRouteAccessibility(focusHeading: boolean): boolean {
+function commitRouteAccessibility(
+  focusHeading: boolean,
+  previousHeading?: HTMLHeadingElement
+): HTMLHeadingElement | undefined {
   const main = document.getElementById('dwp-main-content');
   const heading = main?.querySelector<HTMLHeadingElement>('h1');
-  if (!heading?.textContent?.trim()) return false;
+  if (!heading?.textContent?.trim()) return undefined;
   const surface = document
     .querySelector<HTMLElement>('[data-product-surface-label]')
     ?.dataset.productSurfaceLabel?.trim();
   document.title = routeDocumentTitle(heading.textContent, surface);
-  if (focusHeading) {
+  const headingChanged = previousHeading !== heading;
+  const focusMayFollowRouteReplacement =
+    previousHeading === undefined ||
+    document.activeElement === previousHeading ||
+    document.activeElement === document.body ||
+    document.activeElement === main;
+  if (focusHeading && headingChanged && focusMayFollowRouteReplacement) {
     heading.tabIndex = -1;
     heading.dataset.routeFocusTarget = 'true';
     heading.focus({ preventScroll: true });
   }
-  return true;
+  return heading;
 }
 
 export default function App({ children }: AppProps) {
@@ -60,21 +69,20 @@ export default function App({ children }: AppProps) {
     const focusHeading = !first && pathChanged && navigationType !== 'POP';
     if (!first && navigationType !== 'POP') window.scrollTo(0, 0);
     const cancelPerformanceReport = first ? () => undefined : reportRouteCommit(pathname);
-    let observer: MutationObserver | undefined;
+    let committedHeading: HTMLHeadingElement | undefined;
+    const commit = () => {
+      committedHeading =
+        commitRouteAccessibility(focusHeading, committedHeading) ?? committedHeading;
+    };
+    const observer = new MutationObserver(commit);
     const focusFrame = window.requestAnimationFrame(() => {
-      if (commitRouteAccessibility(focusHeading)) return;
-      const main = document.getElementById('dwp-main-content');
-      if (!main) return;
-      observer = new MutationObserver(() => {
-        if (!commitRouteAccessibility(focusHeading)) return;
-        observer?.disconnect();
-        observer = undefined;
-      });
-      observer.observe(main, { childList: true, subtree: true });
+      const stableRoot = document.getElementById('root') ?? document.body;
+      observer.observe(stableRoot, { childList: true, subtree: true });
+      commit();
     });
     return () => {
       window.cancelAnimationFrame(focusFrame);
-      observer?.disconnect();
+      observer.disconnect();
       cancelPerformanceReport();
     };
   }, [navigationType, pathname]);

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { COMMUNICATIONS_PRODUCT_MANIFEST } from '../features/communications/communications-product-manifest';
+import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
   resolveCanaryProductFlags,
   resolveProductSurfaceRolloutMode,
@@ -13,7 +14,6 @@ import {
 } from '../layouts/communications-surface-layouts';
 import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
-import { useAllowedProductSurface } from './product-surface-guard';
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 
 export function CommunicationsCanarySurfaceShell({

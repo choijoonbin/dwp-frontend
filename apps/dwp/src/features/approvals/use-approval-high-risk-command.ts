@@ -2,7 +2,6 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import {
   getProductSurfaceStepUpContinuation,
   HttpError,
-  HttpTransportError,
   isTrustedProductSurfaceStepUpWindowCompletion,
   issueProductSurfaceStepUpChallenge,
   matchesProductSurfaceStepUpCompletion,
@@ -13,12 +12,23 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import { useOptionalAllowedProductSurface } from '../../components/allowed-product-surface-context';
+import { productScopeIdentitiesAreKnownAndUnique } from '../../components/product-manifest';
 import {
   ProductSurfaceOperationCancelledError,
   isProductSurfaceOperationCancelledError,
   productSurfaceOperationCoordinator,
   sameProductSurfaceOperationIdentity,
 } from '../../components/product-surface-operation-coordinator';
+import { useSingleProductSurfaceTaskTelemetry } from '../../components/use-single-product-surface-task-telemetry';
+import { resolveProductSurfaceTaskKind } from '../../observability/product-surface-task-kind';
+import {
+  ApprovalHighRiskDispatchContextChangedError,
+  assertApprovalHighRiskAttemptBinding,
+  assertApprovalHighRiskOperationBindingCurrent,
+  classifyApprovalHighRiskCommandFailure,
+  runApprovalHighRiskBoundDispatch,
+  runApprovalHighRiskResumeSingleFlight,
+} from './approval-high-risk-command-runtime';
 import {
   APPROVAL_HIGH_RISK_ROUTE_CONTRACT_KEY_BY_OPERATION,
   HIGH_RISK_PRODUCT_SURFACE_BY_OPERATION,
@@ -45,10 +55,21 @@ import type {
   ApprovalHighRiskCommandDescriptor,
   ApprovalHighRiskOperation,
 } from './approval-high-risk-command-model';
-import type {
-  ProductSurfaceOperationIdentity,
-  ProductSurfaceOperationTicket,
-} from '../../components/product-surface-operation-coordinator';
+import type { ApprovalHighRiskOperationBinding } from './approval-high-risk-command-runtime';
+import type { ProductSurfaceOperationIdentity } from '../../components/product-surface-operation-coordinator';
+
+export {
+  ApprovalHighRiskDispatchContextChangedError,
+  assertApprovalHighRiskAttemptBinding,
+  assertApprovalHighRiskOperationBindingCurrent,
+  classifyApprovalHighRiskCommandFailure,
+  runApprovalHighRiskBoundDispatch,
+  runApprovalHighRiskResumeSingleFlight,
+};
+export type {
+  ApprovalHighRiskCommandFailureDisposition,
+  ApprovalHighRiskOperationBinding,
+} from './approval-high-risk-command-runtime';
 
 export type ApprovalHighRiskCommandError =
   | 'authority-unavailable'
@@ -88,136 +109,6 @@ const DEFAULT_APPROVAL_HIGH_RISK_OPERATION_TARGET = {
   surfaceKey: 'approvals.admin',
 } as const;
 
-export type ApprovalHighRiskOperationBinding = Readonly<{
-  identity: ProductSurfaceOperationIdentity;
-  ticket: ProductSurfaceOperationTicket;
-  actionDecisionRevision: { current: string | null };
-}>;
-
-export type ApprovalHighRiskCommandFailureDisposition =
-  | 'AMBIGUOUS_RETRY'
-  | 'REISSUE_PROOF'
-  | 'REPLAY_SUCCESS'
-  | 'REPLAY_UNCERTAIN'
-  | 'AUTHORITY_CONFLICT'
-  | 'DETERMINISTIC_REJECT';
-
-function errorCode(error: HttpError): string | null {
-  if (!error.details || typeof error.details !== 'object' || Array.isArray(error.details)) {
-    return null;
-  }
-  const value = (error.details as Record<string, unknown>).errorCode;
-  return typeof value === 'string' && value.trim() ? value.trim().toUpperCase() : null;
-}
-
-export function classifyApprovalHighRiskCommandFailure(
-  error: unknown
-): ApprovalHighRiskCommandFailureDisposition {
-  if (error instanceof HttpTransportError) return 'AMBIGUOUS_RETRY';
-  if (!(error instanceof HttpError)) return 'DETERMINISTIC_REJECT';
-  const code = errorCode(error);
-  if (
-    error.status === 403 &&
-    (code === 'STEP_UP_REQUIRED' ||
-      code === 'STEP_UP_CHALLENGE_EXPIRED' ||
-      code === 'STEP_UP_CHALLENGE_INVALID')
-  ) {
-    return 'REISSUE_PROOF';
-  }
-  if (
-    error.status === 409 &&
-    (code === 'IDEMPOTENCY_REPLAY_SUCCESS' || code === 'IDEMPOTENT_REPLAY_SUCCESS')
-  ) {
-    return 'REPLAY_SUCCESS';
-  }
-  // People consumes a step-up challenge in the same transaction as the command. After an
-  // ambiguous first response, a second dispatch can therefore mean either "the first command
-  // committed" or "the challenge was consumed without an observable command result". Never
-  // describe that state as a deterministic rejection and never offer another retry.
-  if (error.status === 409 && code === 'STEP_UP_CHALLENGE_REPLAY') {
-    return 'REPLAY_UNCERTAIN';
-  }
-  if (
-    error.status === 409 &&
-    (code === 'DECISION_REVISION_CONFLICT' ||
-      code === 'SCOPE_CONTEXT_EXPIRED' ||
-      code === 'OBJECT_VERSION_CONFLICT')
-  ) {
-    return 'AUTHORITY_CONFLICT';
-  }
-  if (error.status === 408 || error.status >= 500) return 'AMBIGUOUS_RETRY';
-  return 'DETERMINISTIC_REJECT';
-}
-
-export async function runApprovalHighRiskResumeSingleFlight(
-  flag: { current: boolean },
-  task: () => Promise<void>
-): Promise<boolean> {
-  if (flag.current) return false;
-  flag.current = true;
-  try {
-    await task();
-    return true;
-  } finally {
-    flag.current = false;
-  }
-}
-
-export function assertApprovalHighRiskOperationBindingCurrent(
-  binding: ApprovalHighRiskOperationBinding,
-  currentIdentity: ProductSurfaceOperationIdentity | null
-): void {
-  binding.ticket.assertCurrent();
-  if (!sameProductSurfaceOperationIdentity(currentIdentity, binding.identity)) {
-    throw new ProductSurfaceOperationCancelledError();
-  }
-}
-
-export function assertApprovalHighRiskAttemptBinding(
-  attempt: ApprovalHighRiskAttempt,
-  binding: ApprovalHighRiskOperationBinding
-): void {
-  if (
-    attempt.authority.contextKey !== binding.identity.contextKey ||
-    attempt.authority.contextScopeKey !== binding.identity.contextScopeKey ||
-    attempt.authority.expectedDecisionRevision !== binding.actionDecisionRevision.current
-  ) {
-    throw new ProductSurfaceOperationCancelledError();
-  }
-}
-
-export class ApprovalHighRiskDispatchContextChangedError extends Error {
-  readonly dispatchError: unknown;
-
-  constructor(dispatchError: unknown) {
-    super('The HIGH command result is uncertain after its authority context changed.');
-    this.name = 'ApprovalHighRiskDispatchContextChangedError';
-    this.dispatchError = dispatchError;
-  }
-}
-
-export async function runApprovalHighRiskBoundDispatch<TResult>(
-  binding: ApprovalHighRiskOperationBinding,
-  dispatch: () => Promise<TResult>
-): Promise<TResult> {
-  binding.ticket.markDispatched();
-  try {
-    const result = await dispatch();
-    binding.ticket.finish();
-    return result;
-  } catch (caught) {
-    try {
-      binding.ticket.markPreflight();
-    } catch (bindingError) {
-      if (isProductSurfaceOperationCancelledError(bindingError)) {
-        throw new ApprovalHighRiskDispatchContextChangedError(caught);
-      }
-      throw bindingError;
-    }
-    throw caught;
-  }
-}
-
 function nonBlank(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -242,6 +133,10 @@ export function resolveApprovalHighRiskEntryBinding(
   const contextExpiry = Date.parse(context.revalidateAt);
   if (
     !nonBlank(context.contextKey) ||
+    !nonBlank(context.appResourceKey) ||
+    !nonBlank(context.plane) ||
+    context.accessMode !== snapshot.envelope.activeAccessMode ||
+    !productScopeIdentitiesAreKnownAndUnique(context.scopes) ||
     !Number.isFinite(contextExpiry) ||
     contextExpiry <= serverNowMs
   ) {
@@ -276,7 +171,6 @@ export function buildApprovalHighRiskActionEvaluationRequest(
       surfaceKey: target.surfaceKey,
     },
     routeContractKey: APPROVAL_HIGH_RISK_ROUTE_CONTRACT_KEY_BY_OPERATION[operation],
-    contextKey: binding.contextKey,
     contextScopeKey: binding.contextScopeKey,
   };
 }
@@ -328,6 +222,22 @@ export function useApprovalHighRiskCommand<TResult>({
   const resumeInFlightRef = useRef(false);
   const operationBindingRef = useRef<ApprovalHighRiskOperationBinding | null>(null);
   const operationTarget = HIGH_RISK_PRODUCT_SURFACE_BY_OPERATION[operation];
+  const taskKind = resolveProductSurfaceTaskKind({
+    productKey: operationTarget.productKey,
+    surfaceKey: operationTarget.surfaceKey,
+    routeContractKey: APPROVAL_HIGH_RISK_ROUTE_CONTRACT_KEY_BY_OPERATION[operation],
+  });
+  const {
+    begin: beginTelemetryTask,
+    complete: completeTelemetryTask,
+    fail: failTelemetryTask,
+    failAuthority: failAuthorityTelemetryTask,
+    abandon: abandonTelemetryTask,
+  } = useSingleProductSurfaceTaskTelemetry({
+    productKey: operationTarget.productKey,
+    surfaceKey: operationTarget.surfaceKey,
+    taskKind,
+  });
   const rollout = productAuthority.rolloutForProduct(operationTarget.productKey);
   const rolloutState = rollout.state === 'ready' ? rollout.rollout.state : undefined;
   const selectedScopeKey =
@@ -438,8 +348,9 @@ export function useApprovalHighRiskCommand<TResult>({
       updateAttempt(null);
       setError(null);
       setOpen(false);
+      abandonTelemetryTask();
     },
-    [clearPopup, finishOperationBinding, updateAttempt]
+    [abandonTelemetryTask, clearPopup, finishOperationBinding, updateAttempt]
   );
 
   const conflict = useCallback(async () => {
@@ -448,9 +359,17 @@ export function useApprovalHighRiskCommand<TResult>({
     updateAttempt(null);
     setError('revision-conflict');
     setOpen(true);
+    failAuthorityTelemetryTask();
     await productAuthority.revalidate();
     await onConflict?.();
-  }, [clearPopup, finishOperationBinding, onConflict, productAuthority, updateAttempt]);
+  }, [
+    clearPopup,
+    failAuthorityTelemetryTask,
+    finishOperationBinding,
+    onConflict,
+    productAuthority,
+    updateAttempt,
+  ]);
 
   const restartProof = useCallback(
     async (candidate: ApprovalHighRiskAttempt) => {
@@ -464,6 +383,7 @@ export function useApprovalHighRiskCommand<TResult>({
       try {
         if (!entryBinding || !operationIdentity) {
           setError('authority-unavailable');
+          failAuthorityTelemetryTask();
           return;
         }
         binding = startOperationBinding(operationIdentity);
@@ -481,6 +401,7 @@ export function useApprovalHighRiskCommand<TResult>({
         if (resolution.mode !== 'secure') {
           finishOperationBinding(binding);
           setError('authority-unavailable');
+          failAuthorityTelemetryTask();
           return;
         }
         binding.actionDecisionRevision.current = resolution.authority.expectedDecisionRevision;
@@ -495,6 +416,7 @@ export function useApprovalHighRiskCommand<TResult>({
         }
         finishOperationBinding(binding);
         setError('authority-unavailable');
+        failTelemetryTask(caught);
       } finally {
         setBusy(false);
       }
@@ -503,6 +425,8 @@ export function useApprovalHighRiskCommand<TResult>({
       clearPopup,
       dismissCancelledOperation,
       entryBinding,
+      failAuthorityTelemetryTask,
+      failTelemetryTask,
       finishOperationBinding,
       operation,
       operationIdentity,
@@ -533,6 +457,7 @@ export function useApprovalHighRiskCommand<TResult>({
           finishOperationBinding(binding);
           updateAttempt(null);
           setError('authority-unavailable');
+          failAuthorityTelemetryTask();
           return;
         }
         const next = applyApprovalStepUpChallenge(
@@ -580,6 +505,7 @@ export function useApprovalHighRiskCommand<TResult>({
       currentOperationBinding,
       dismissCancelledOperation,
       finishOperationBinding,
+      failAuthorityTelemetryTask,
       productAuthority.snapshot,
       updateAttempt,
     ]
@@ -684,8 +610,9 @@ export function useApprovalHighRiskCommand<TResult>({
     () => () => {
       clearPopup();
       cancelOperationBinding();
+      abandonTelemetryTask();
     },
-    [cancelOperationBinding, clearPopup]
+    [abandonTelemetryTask, cancelOperationBinding, clearPopup]
   );
 
   const runCommand = useCallback(
@@ -705,6 +632,7 @@ export function useApprovalHighRiskCommand<TResult>({
         finishOperationBinding(binding);
         updateAttempt(null);
         setError('authority-unavailable');
+        failAuthorityTelemetryTask();
         return;
       }
       let executing: ApprovalHighRiskAttempt;
@@ -736,6 +664,7 @@ export function useApprovalHighRiskCommand<TResult>({
         finishOperationBinding(binding);
         updateAttempt(null);
         setOpen(false);
+        completeTelemetryTask();
         completedResult = result;
         completed = true;
       } catch (caught) {
@@ -747,6 +676,7 @@ export function useApprovalHighRiskCommand<TResult>({
           finishOperationBinding(binding);
           updateAttempt({ ...executing, phase: 'COMMAND_UNCERTAIN' });
           setError('command-uncertain');
+          failAuthorityTelemetryTask();
           return;
         }
         const disposition = classifyApprovalHighRiskCommandFailure(caught);
@@ -759,6 +689,7 @@ export function useApprovalHighRiskCommand<TResult>({
           finishOperationBinding(binding);
           updateAttempt(null);
           setOpen(false);
+          completeTelemetryTask();
           await productAuthority.revalidate();
           await onConflict?.();
           return;
@@ -767,6 +698,7 @@ export function useApprovalHighRiskCommand<TResult>({
           finishOperationBinding(binding);
           updateAttempt({ ...executing, phase: 'COMMAND_UNCERTAIN' });
           setError('command-uncertain');
+          failTelemetryTask(caught);
           return;
         }
         if (disposition === 'AUTHORITY_CONFLICT') {
@@ -780,6 +712,7 @@ export function useApprovalHighRiskCommand<TResult>({
         }
         updateAttempt({ ...executing, phase: 'COMMAND_UNCERTAIN' });
         setError(disposition === 'DETERMINISTIC_REJECT' ? 'command-rejected' : 'command-uncertain');
+        failTelemetryTask(caught);
       } finally {
         setBusy(false);
       }
@@ -790,10 +723,13 @@ export function useApprovalHighRiskCommand<TResult>({
     },
     [
       clearPopup,
+      completeTelemetryTask,
       conflict,
       currentOperationBinding,
       dismissCancelledOperation,
       execute,
+      failAuthorityTelemetryTask,
+      failTelemetryTask,
       finishOperationBinding,
       onConflict,
       onSuccess,
@@ -815,6 +751,7 @@ export function useApprovalHighRiskCommand<TResult>({
         setError('pending-attempt');
         return;
       }
+      beginTelemetryTask();
       if (rolloutState === '000' || rolloutState === '100') {
         setBusy(true);
         try {
@@ -822,10 +759,12 @@ export function useApprovalHighRiskCommand<TResult>({
             mode: 'LEGACY_COMPATIBILITY',
             rolloutState,
           });
+          completeTelemetryTask();
           await onSuccess?.(result);
-        } catch {
+        } catch (caught) {
           setError('legacy-command-failed');
           setOpen(true);
+          failTelemetryTask(caught);
         } finally {
           setBusy(false);
         }
@@ -839,6 +778,7 @@ export function useApprovalHighRiskCommand<TResult>({
       ) {
         setError('authority-unavailable');
         setOpen(true);
+        failAuthorityTelemetryTask();
         return;
       }
       setBusy(true);
@@ -860,6 +800,7 @@ export function useApprovalHighRiskCommand<TResult>({
           finishOperationBinding(binding);
           setError('authority-unavailable');
           setOpen(true);
+          failAuthorityTelemetryTask();
           return;
         }
         binding.actionDecisionRevision.current = resolution.authority.expectedDecisionRevision;
@@ -877,15 +818,20 @@ export function useApprovalHighRiskCommand<TResult>({
         finishOperationBinding(binding);
         setError('authority-unavailable');
         setOpen(true);
+        failTelemetryTask(caught);
       } finally {
         setBusy(false);
       }
     },
     [
+      beginTelemetryTask,
+      completeTelemetryTask,
       dismissCancelledOperation,
       entryBinding,
       execute,
       finishOperationBinding,
+      failAuthorityTelemetryTask,
+      failTelemetryTask,
       onSuccess,
       operation,
       operationIdentity,
@@ -980,7 +926,8 @@ export function useApprovalHighRiskCommand<TResult>({
     updateAttempt(null);
     setError(null);
     setOpen(false);
-  }, [cancelOperationBinding, clearPopup, updateAttempt]);
+    abandonTelemetryTask();
+  }, [abandonTelemetryTask, cancelOperationBinding, clearPopup, updateAttempt]);
 
   return {
     begin,

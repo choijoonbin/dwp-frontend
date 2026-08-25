@@ -180,6 +180,45 @@ describe('resolveProductRoot', () => {
     });
   });
 
+  it('preserves an explicit non-default scope instead of silently selecting the default', () => {
+    const work = context('example.work', 'work', 'SELF', [
+      {
+        key: 'scope-default',
+        kind: 'SELF',
+        displayName: 'Default',
+        isDefault: true,
+        readOnly: false,
+      },
+      {
+        key: 'scope-explicit',
+        kind: 'SELF',
+        displayName: 'Explicit',
+        isDefault: false,
+        readOnly: false,
+      },
+    ]);
+
+    expect(
+      resolveProductRoot(manifest, envelope([work]), {
+        nowMs: Date.parse('2029-01-01'),
+        requestedScopeKey: 'scope-explicit',
+      })
+    ).toMatchObject({
+      type: 'redirect',
+      contextScopeKey: 'scope-explicit',
+      to: '/example/work?scope=scope-explicit',
+    });
+  });
+
+  it('fails locally instead of replacing an invalid explicit scope with a default', () => {
+    expect(
+      resolveProductRoot(manifest, envelope([context('example.work', 'work', 'SELF')]), {
+        nowMs: Date.parse('2029-01-01'),
+        requestedScopeKey: 'scope-unknown',
+      })
+    ).toEqual({ type: 'access-state', state: 'scope-invalid' });
+  });
+
   it('fails closed for duplicate contexts, mixed modes, and an empty revision', () => {
     const work = context('example.work', 'work', 'SELF');
     expect(resolveProductRoot(manifest, envelope([work, work]))).toEqual({

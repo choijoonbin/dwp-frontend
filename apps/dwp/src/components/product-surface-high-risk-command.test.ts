@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  buildApprovalStepUpIssuerRequest,
   createApprovalHighRiskAttempt,
   productSurfaceHighRiskCommand,
   restartApprovalHighRiskAttempt,
@@ -15,7 +16,7 @@ const authority = {
 } as const;
 
 describe('Shared product-surface HIGH command contract', () => {
-  it('evaluates HCM commands against the exact management route and selected scope', () => {
+  it('recalculates HCM exact ACTION context from the selected scope instead of the aggregate key', () => {
     expect(
       buildApprovalHighRiskActionEvaluationRequest('HCM_ORG_PUBLISH', {
         contextKey: authority.contextKey,
@@ -24,9 +25,26 @@ describe('Shared product-surface HIGH command contract', () => {
     ).toEqual({
       subject: { type: 'PRODUCT', productKey: 'hcm', surfaceKey: 'hcm.management' },
       routeContractKey: 'route.hcm.management.org-publish.action',
-      contextKey: 'hcm-management',
       contextScopeKey: 'population-team-a',
     });
+
+    const attempt = createApprovalHighRiskAttempt(
+      productSurfaceHighRiskCommand({
+        operation: 'HCM_ORG_PUBLISH',
+        commandMethod: 'POST',
+        commandPath: '/api/people/v1/workforce/organization/scenarios/scenario-1/publish',
+        targetType: 'ORG_SCENARIO',
+        targetId: 'scenario-1',
+        expectedObjectVersion: 3,
+        payload: { expectedVersion: 3 },
+      }),
+      { ...authority, contextKey: 'hcm-aggregate-multi-scope-context' },
+      'hcm-org-publish-attempt'
+    );
+    const issuer = buildApprovalStepUpIssuerRequest(attempt);
+    expect(issuer.request).not.toHaveProperty('contextKey');
+    expect(issuer.request.contextScopeKey).toBe('population-team-a');
+    expect(issuer.expectedDecisionRevision).toBe('revision-1');
   });
 
   it('rotates the export replay key in both proof material and the actual create command', () => {

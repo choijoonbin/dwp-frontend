@@ -21,7 +21,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
+import type { ProductNavigationItem } from '../../components/product-manifest';
 import { projectProductSurfaceNavigation } from '../../components/product-surface-navigation-projection';
 
 export type HcmAudience =
@@ -34,13 +34,7 @@ export type HcmAudience =
   | 'pay-admin'
   | 'talent-admin';
 export type HcmSection =
-  | 'start'
-  | 'personal'
-  | 'organization'
-  | 'team'
-  | 'operate'
-  | 'design'
-  | 'foundation';
+  'start' | 'personal' | 'organization' | 'team' | 'operate' | 'design' | 'foundation';
 export type HcmView =
   | 'home'
   | 'me'
@@ -68,16 +62,10 @@ export type HcmView =
   | 'data-operations'
   | 'exports';
 
-export type HcmNavigationItem = {
+export type HcmNavigationItem = ProductNavigationItem & {
   section: HcmSection;
   view: HcmView;
-  path: string;
-  icon: LucideIcon;
   audience: HcmAudience;
-  requiredResourceKey?: string;
-  requiredPermissionCode?: string;
-  requiredAnyPermissionCodes?: readonly string[];
-  requiredAnySupportScopes?: readonly string[];
 };
 
 export type HcmNavigationGroup = {

@@ -1,7 +1,7 @@
 export const HCM_DEFAULT_PATH = '/hr/home';
 
-export function mapLegacyHrPath(pathname: string): string {
-  const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
+export function mapLegacyHrPath(pathname: string): string | undefined {
+  const normalized = (pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname).toLowerCase();
   const explicitRoutes: Record<string, string> = {
     '/people': HCM_DEFAULT_PATH,
     '/people/directory': '/hr/directory',
@@ -15,5 +15,5 @@ export function mapLegacyHrPath(pathname: string): string {
     '/workforce/data-operations': '/hr/data/integrations',
     '/workforce/exports': '/hr/data/exports',
   };
-  return explicitRoutes[normalized] ?? normalized;
+  return explicitRoutes[normalized];
 }

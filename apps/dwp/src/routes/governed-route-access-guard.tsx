@@ -17,11 +17,7 @@ export type GovernedRouteAccessDecision =
   | { state: 'allowed'; decisionRevision: string; effectiveReadOnly: boolean }
   | {
       state:
-        | 'route-denied'
-        | 'expired'
-        | 'step-up-required'
-        | 'sod-conflict'
-        | 'authority-unavailable';
+        'route-denied' | 'expired' | 'step-up-required' | 'sod-conflict' | 'authority-unavailable';
     };
 
 const DENIED_STATES = {
@@ -32,26 +28,45 @@ const DENIED_STATES = {
   AUTHORITY_UNAVAILABLE: 'authority-unavailable',
 } as const;
 
+function nonBlank(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
 export function mapGovernedRouteEvaluation(
   data: GovernedRouteEvaluationData,
   request: GovernedRouteEvaluationRequest,
   expectedAccessMode: string | undefined,
   serverNowMs?: number
 ): GovernedRouteAccessDecision {
-  if (data.decision !== 'ALLOWED') {
-    return { state: DENIED_STATES[data.decision] ?? 'authority-unavailable' };
+  if (!data || typeof data !== 'object') return { state: 'authority-unavailable' };
+  const evaluation = data as unknown as Record<string, unknown>;
+  if (evaluation.decision !== 'ALLOWED') {
+    const state =
+      typeof evaluation.decision === 'string'
+        ? DENIED_STATES[evaluation.decision as keyof typeof DENIED_STATES]
+        : undefined;
+    return { state: state ?? 'authority-unavailable' };
   }
-  const context = data.context;
+  const context =
+    evaluation.context &&
+    typeof evaluation.context === 'object' &&
+    !Array.isArray(evaluation.context)
+      ? (evaluation.context as Record<string, unknown>)
+      : undefined;
   if (
     !context ||
-    !data.decisionRevision?.trim() ||
-    data.decisionRevision !== context.decisionRevision ||
+    !nonBlank(evaluation.decisionRevision) ||
+    !nonBlank(context.decisionRevision) ||
+    evaluation.decisionRevision !== context.decisionRevision ||
+    !nonBlank(context.contextKey) ||
     context.navigationContextId !== request.navigationContextId ||
     context.accessSource !== 'RELATIONSHIP' ||
     (expectedAccessMode && context.accessMode !== expectedAccessMode) ||
-    !context.routeGrantRef.trim() ||
+    !nonBlank(context.routeGrantRef) ||
+    typeof context.effectiveReadOnly !== 'boolean' ||
     typeof serverNowMs !== 'number' ||
     !Number.isFinite(serverNowMs) ||
+    !nonBlank(context.revalidateAt) ||
     !Number.isFinite(Date.parse(context.revalidateAt)) ||
     Date.parse(context.revalidateAt) <= serverNowMs
   ) {

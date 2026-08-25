@@ -3,6 +3,7 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
 
 import { WORKPLACE_PRODUCT_MANIFEST } from '../features/rooms/workplace-product-manifest';
+import { normalizeProductPath } from '../components/product-manifest';
 import { RoomsLayout } from '../layouts/rooms-layout';
 import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
 import {
@@ -28,17 +29,25 @@ const legacyShell = (
   </AppRouteGuard>
 );
 
-const workplaceCanonicalPaths = new Set(
+const workplaceCanonicalPaths = new Map(
   DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
     (route) => route.productId === 'workplace' && !route.pattern.includes(':')
-  ).map((route) => route.pattern)
+  ).map((route) => [route.pattern.toLowerCase(), route.pattern] as const)
 );
+
+export function resolveLegacyRoomsPath(pathname: string): `/${string}` | undefined {
+  const normalizedPath = normalizeProductPath(pathname);
+  const lowerPath = normalizedPath.toLowerCase();
+  if (lowerPath !== '/rooms' && !lowerPath.startsWith('/rooms/')) return undefined;
+  const suffix = normalizedPath.slice('/rooms'.length).replace(/^\/+|\/+$/gu, '');
+  const requestedTarget = suffix ? `/workplace/${suffix}` : '/workplace/home';
+  return workplaceCanonicalPaths.get(requestedTarget.toLowerCase());
+}
 
 function LegacyRoomsRedirect() {
   const location = useLocation();
-  const suffix = location.pathname.replace(/^\/rooms\/?/u, '');
-  const target = (suffix ? `/workplace/${suffix}` : '/workplace/home') as `/${string}`;
-  return workplaceCanonicalPaths.has(target) ? (
+  const target = resolveLegacyRoomsPath(location.pathname);
+  return target ? (
     <Navigate to={preserveProductRouteLocation(target, location)} replace />
   ) : (
     <Navigate to="/404" replace />

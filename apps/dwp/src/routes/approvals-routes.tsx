@@ -1,14 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
-import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
+import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
-import {
-  isProductSurfaceEnforced,
-  resolveCanaryProductFlags,
-  resolveProductSurfaceRolloutMode,
-  useProductSurfaceCanaryAuthority,
-} from '../features/shell/product-surface-canary-runtime';
 import { ApprovalLayout } from '../layouts/approval-layout';
 import { productPageRelativePattern } from './product-page-route-contracts';
 import {
@@ -19,11 +13,11 @@ import {
 } from './route-support';
 import {
   ProductCanaryRoot,
+  ProductCanaryFirstAllowedIndex,
+  ProductCanaryIndexedSurfaceBoundary,
   ProductCanaryRouteBoundary,
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
-  preserveProductRouteLocation,
-  resolveFirstAllowedCanaryRoute,
 } from './product-surface-canary-routes';
 
 const ApprovalsPage = lazy(() => import('../pages/approvals'));
@@ -43,47 +37,32 @@ const legacyShell = (
   </AppRouteGuard>
 );
 
-function ApprovalManagementIndex() {
-  const authority = useProductSurfaceCanaryAuthority();
-  const location = useLocation();
-  const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, 'approvals'));
-  if (!isProductSurfaceEnforced(mode)) return page(<ApprovalsPage />);
-  const destination = resolveFirstAllowedCanaryRoute(authority, {
-    productId: 'approvals',
-    surfaceId: 'approvals.admin',
-    candidates: [
-      {
-        routeContractKey: 'route.approvals.admin.overview.page',
-        path: '/approvals/admin/overview',
-      },
-      {
-        routeContractKey: 'route.approvals.admin.workflows.page',
-        path: '/approvals/admin/workflows',
-      },
-      {
-        routeContractKey: 'route.approvals.admin.forms.page',
-        path: '/approvals/admin/forms',
-      },
-      {
-        routeContractKey: 'route.approvals.admin.policies.page',
-        path: '/approvals/admin/policies',
-      },
-      {
-        routeContractKey: 'route.approvals.admin.operations.page',
-        path: '/approvals/admin/operations',
-      },
-      {
-        routeContractKey: 'route.approvals.admin.signatures.page',
-        path: '/approvals/admin/signatures',
-      },
-    ],
-  });
-  return destination ? (
-    <Navigate to={preserveProductRouteLocation(destination, location)} replace />
-  ) : (
-    <Navigate to="/403" replace />
-  );
-}
+const approvalManagementIndexCandidates = [
+  {
+    routeContractKey: 'route.approvals.admin.overview.page',
+    path: '/approvals/admin/overview',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.workflows.page',
+    path: '/approvals/admin/workflows',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.forms.page',
+    path: '/approvals/admin/forms',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.policies.page',
+    path: '/approvals/admin/policies',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.operations.page',
+    path: '/approvals/admin/operations',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.signatures.page',
+    path: '/approvals/admin/signatures',
+  },
+] as const;
 
 function approvalPageRoute(
   surfaceId: 'approvals.work' | 'approvals.admin',
@@ -147,16 +126,27 @@ export const approvalsRoutes: RouteObject[] = [
       {
         path: 'admin',
         element: (
-          <ProductCanarySurfaceBoundary
+          <ProductCanaryIndexedSurfaceBoundary
             productId="approvals"
             surfaceId="approvals.admin"
+            indexPath="/approvals/admin"
             legacy={legacyShell}
           >
             {page(<ApprovalSurfaceShell surfaceId="approvals.admin" />)}
-          </ProductCanarySurfaceBoundary>
+          </ProductCanaryIndexedSurfaceBoundary>
         ),
         children: [
-          { index: true, element: <ApprovalManagementIndex /> },
+          {
+            index: true,
+            element: (
+              <ProductCanaryFirstAllowedIndex
+                productId="approvals"
+                surfaceId="approvals.admin"
+                candidates={approvalManagementIndexCandidates}
+                legacy={page(<ApprovalsPage />)}
+              />
+            ),
+          },
           ...approvalManagementRoutes.map((view) =>
             approvalPageRoute(
               'approvals.admin',

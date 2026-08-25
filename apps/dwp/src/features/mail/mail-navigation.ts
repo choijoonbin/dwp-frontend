@@ -11,7 +11,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
+import type { ProductNavigationItem } from '../../components/product-manifest';
 
 export type MailSection = 'start' | 'mailbox' | 'collaboration' | 'settings' | 'admin';
 export type MailView =
@@ -26,13 +26,9 @@ export type MailView =
   | 'admin-shared-inboxes'
   | 'admin-policies';
 
-export type MailNavigationItem = {
+export type MailNavigationItem = ProductNavigationItem & {
   section: MailSection;
   view: MailView;
-  path: string;
-  icon: LucideIcon;
-  requiredResourceKey?: string;
-  requiredPermissionCode?: string;
 };
 
 export type MailNavigationGroup = {

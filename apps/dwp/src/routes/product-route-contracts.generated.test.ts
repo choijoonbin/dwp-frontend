@@ -90,39 +90,39 @@ describe('generated product route authorization contracts', () => {
     ]);
   });
 
-  it('keeps the three central aliases URL-preserving and one-hop only', () => {
-    expect(PRODUCT_LEGACY_ROUTE_SOURCE).toHaveLength(3);
+  it('keeps all 14 central aliases registry-owned, URL-preserving, and one-hop only', () => {
+    expect(PRODUCT_LEGACY_ROUTE_SOURCE).toHaveLength(14);
     expect(
       PRODUCT_LEGACY_ROUTE_SOURCE.every(
         (redirect) => redirect.maxHops === 1 && redirect.preserveQuery && redirect.preserveHash
       )
     ).toBe(true);
-    expect(
-      PRODUCT_LEGACY_ROUTE_SOURCE.map((redirect) =>
+    for (const redirect of PRODUCT_LEGACY_ROUTE_SOURCE) {
+      const target = ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.find(
+        (route) => route.routeContractKey === redirect.targetRouteContractKey
+      );
+      expect(target, redirect.redirectId).toBeDefined();
+      const draftTarget = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+        (route) => route.routeContractKey === redirect.targetRouteContractKey
+      );
+      expect(redirect.targetLifecycle === 'DRAFT', redirect.redirectId).toBe(draftTarget);
+      expect(redirect.targetPath, redirect.redirectId).toBe(
+        draftTarget ? target!.pattern : undefined
+      );
+      expect(
         resolveProductLegacyRoute(
           redirect.sourcePath,
           '?scope=scope-1',
           '#history',
           PRODUCT_LEGACY_ROUTE_SOURCE,
-          PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
-        )
-      )
-    ).toEqual([
-      {
-        redirectId: 'communications-management-announcements-v1',
-        target: '/communications/admin/content?scope=scope-1#history',
+          ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+        ),
+        redirect.redirectId
+      ).toEqual({
+        redirectId: redirect.redirectId,
+        target: `${target!.pattern}?scope=scope-1#history`,
         maxHops: 1,
-      },
-      {
-        redirectId: 'services-management-catalog-v1',
-        target: '/services/admin/catalog?scope=scope-1#history',
-        maxHops: 1,
-      },
-      {
-        redirectId: 'services-management-operations-v1',
-        target: '/services/admin/operations?scope=scope-1#history',
-        maxHops: 1,
-      },
-    ]);
+      });
+    }
   });
 });

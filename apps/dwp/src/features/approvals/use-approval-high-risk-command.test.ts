@@ -220,6 +220,15 @@ describe('approval HIGH command controller invariants', () => {
     ).toEqual({ contextKey: 'approvals-management', contextScopeKey: 'scope-2' });
   });
 
+  it('fails closed for an unknown HIGH-risk entry scope kind', () => {
+    const authority = snapshot();
+    authority.envelope.contexts[0]!.scopes[0]!.kind = 'UNKNOWN_SCOPE';
+
+    expect(
+      resolveApprovalHighRiskEntryBinding(authority, 'scope-1', Date.parse('2026-08-24T00:59:50Z'))
+    ).toBeNull();
+  });
+
   it('retries only ambiguous network outcomes and separates typed server failures', () => {
     expect(classifyApprovalHighRiskCommandFailure(new HttpTransportError('NETWORK'))).toBe(
       'AMBIGUOUS_RETRY'

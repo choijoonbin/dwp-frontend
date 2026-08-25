@@ -14,17 +14,36 @@ import { ConfiguredProductSurfaceShell } from './configured-product-surface-shel
 import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './product-page-route-contracts';
 import {
   ProductCanaryRoot,
+  ProductCanaryFirstAllowedIndex,
+  ProductCanaryIndexedSurfaceBoundary,
   ProductCanaryRouteBoundary,
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
 } from './product-surface-canary-routes';
-import { ProductCanaryFirstAllowedIndex } from './two-surface-product-routes';
 import { authenticationFallback, RouteFallback, routeFallback } from './route-support';
 
 const HcmPage = lazy(() => import('../pages/hcm'));
 const HcmLayout = lazy(() =>
   import('../layouts/hcm-layout').then((module) => ({ default: module.HcmLayout }))
 );
+
+export function resolveLegacyHcmShellAccess({
+  providerRole,
+  supportContextLoading,
+  supportScopes,
+  entitled,
+}: {
+  providerRole: boolean;
+  supportContextLoading: boolean;
+  supportScopes?: readonly string[];
+  entitled: boolean;
+}): 'loading' | 'allowed' | 'denied' {
+  if (providerRole) {
+    if (supportContextLoading) return 'loading';
+    return supportScopes?.includes('WORKFORCE_READ') ? 'allowed' : 'denied';
+  }
+  return entitled ? 'allowed' : 'denied';
+}
 
 function HcmRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
@@ -33,20 +52,34 @@ function HcmRouteGuard({ children }: { children: React.ReactNode }) {
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
   const supportContext = useProviderSupportContext(providerRole);
   if (governedSurface) return children;
-  if (providerRole && supportContext.isLoading) return <RouteFallback />;
-  if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
   const entitled = isHcmReadEntitled(
     permissions,
     auth.user?.roles ?? [],
     auth.user?.legacyRoleFallbackAllowed === true
   );
-  return entitled ? children : <Navigate to="/403" replace />;
+  const access = resolveLegacyHcmShellAccess({
+    providerRole,
+    supportContextLoading: supportContext.isLoading,
+    supportScopes: providerRole ? supportContext.data?.scopes : undefined,
+    entitled,
+  });
+  if (access === 'loading') return <RouteFallback />;
+  return access === 'allowed' ? children : <Navigate to="/403" replace />;
 }
 
 function LegacyPeopleRedirect() {
   const location = useLocation();
   const pathname = mapLegacyHrPath(location.pathname);
-  return <Navigate to={`${pathname}${location.search}${location.hash}`} replace />;
+  return (
+    <Navigate
+      to={{
+        pathname: pathname ?? '/hr/legacy-not-found',
+        search: location.search,
+        hash: location.hash,
+      }}
+      replace
+    />
+  );
 }
 
 const hcmPage = (
@@ -84,6 +117,19 @@ function hcmSurfaceBoundary(surfaceId: string) {
     <ProductCanarySurfaceBoundary productId="hcm" surfaceId={surfaceId} legacy={legacyHcmShell}>
       {hcmSurfaceShell(surfaceId)}
     </ProductCanarySurfaceBoundary>
+  );
+}
+
+function hcmIndexedSurfaceBoundary(surfaceId: string, indexPath: `/${string}`) {
+  return (
+    <ProductCanaryIndexedSurfaceBoundary
+      productId="hcm"
+      surfaceId={surfaceId}
+      indexPath={indexPath}
+      legacy={legacyHcmShell}
+    >
+      {hcmSurfaceShell(surfaceId)}
+    </ProductCanaryIndexedSurfaceBoundary>
   );
 }
 
@@ -153,7 +199,7 @@ function hcmSurfaceRoutes(): RouteObject[] {
     },
     {
       path: 'manage',
-      element: hcmSurfaceBoundary('hcm.management'),
+      element: hcmIndexedSurfaceBoundary('hcm.management', '/hr/manage'),
       children: [
         {
           index: true,
@@ -161,7 +207,10 @@ function hcmSurfaceRoutes(): RouteObject[] {
             <ProductCanaryFirstAllowedIndex
               productId="hcm"
               surfaceId="hcm.management"
-              candidates={managementCandidates}
+              candidates={managementCandidates.map((route) => ({
+                routeContractKey: route.routeContractKey,
+                path: route.pattern,
+              }))}
               legacy={hcmPage}
             />
           ),

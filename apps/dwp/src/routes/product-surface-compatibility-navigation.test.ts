@@ -12,13 +12,14 @@ import { WORKPLACE_PRODUCT_MANIFEST } from '../features/rooms/workplace-product-
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
 import { SPACE_PRODUCT_MANIFEST } from '../features/spaces/space-product-manifest';
 import {
-  buildProductCompatibilityNavigation,
   buildProductCompatibilityNavigationTargets,
   resolveProductCompatibilityNavigationLocation,
 } from '../features/shell/product-surface-compatibility-navigation';
 import type { ProductCompatibilityNavigationTarget } from '../features/shell/product-surface-compatibility-navigation';
 import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { resolveConfiguredProductSurfacePresentation } from './configured-product-surface-shell';
+import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
+import { resolveProductRoot } from '../features/shell/product-root-resolver';
 
 import type {
   ProductNavigationAccess,
@@ -214,16 +215,193 @@ function mutateSurfaceContext(
   };
 }
 
-describe('rollout 110 exact combined navigation', () => {
-  it.each(PRODUCTS)('$product combines every manifest-owned Surface menu', ({ manifest }) => {
-    const combined = buildProductCompatibilityNavigation(manifest);
-    const combinedPaths = combined.flatMap((group) => group.items.map((item) => item.path));
-    const manifestPaths = manifest.surfaces.flatMap((surface) =>
-      surface.navigation.flatMap((group) => group.items.map((item) => item.path))
-    );
+describe('rollout 110/111 exact navigation targets', () => {
+  it('projects all six Approvals management items from their exact PAGE decisions in 111', () => {
+    const managementPaths = APPROVAL_PRODUCT_MANIFEST.surfaces
+      .find((surface) => surface.id === 'approvals.admin')!
+      .navigation.flatMap((group) => group.items.map((item) => item.path));
+    const targets = buildProductCompatibilityNavigationTargets({
+      authority: authorityFor(APPROVAL_PRODUCT_MANIFEST),
+      manifest: APPROVAL_PRODUCT_MANIFEST,
+      registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+      rolloutMode: 'surface-ui',
+    });
 
-    expect(combinedPaths).toEqual(manifestPaths);
-    expect(new Set(combinedPaths).size).toBe(manifestPaths.length);
+    expect(managementPaths).toHaveLength(6);
+    expect(managementPaths.filter((path) => targets?.has(path))).toEqual(managementPaths);
+  });
+
+  it('projects all nine Work and six Management Approvals PAGEs from exact 111 decisions', () => {
+    const authority = authorityFor(APPROVAL_PRODUCT_MANIFEST);
+    const routeDecisions = { ...authority.routeDecisions };
+    authority.routeDecisions = routeDecisions;
+    const workSurface = APPROVAL_PRODUCT_MANIFEST.surfaces.find(
+      (surface) => surface.id === 'approvals.work'
+    )!;
+    authority.envelope = {
+      ...authority.envelope!,
+      contexts: authority.envelope!.contexts.map((context) =>
+        context.surfaceKey === workSurface.id
+          ? {
+              ...context,
+              scopes: context.scopes.map((scope) => ({ ...scope, readOnly: true })),
+            }
+          : context
+      ),
+    };
+    for (const item of workSurface.navigation.flatMap((group) => group.items)) {
+      const route = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.find(
+        (candidate) =>
+          candidate.routeKind === 'PAGE' &&
+          candidate.productId === 'approvals' &&
+          candidate.surfaceId === workSurface.id &&
+          candidate.pattern === item.path
+      )!;
+      const existing = authority.routeDecisions?.[route.routeContractKey];
+      expect(existing?.state).toBe('allowed');
+      if (!existing || existing.state !== 'allowed') continue;
+      const context: EffectiveProductSurfaceContext = {
+        ...existing.context,
+        contextKey: `ctx-direct-${route.routeId}`,
+        appResourceKey:
+          item.path === '/approvals/home'
+            ? 'APP.APPROVALS'
+            : item.path === '/approvals/inbox' || item.path === '/approvals/completed'
+              ? 'ACTION.APPROVAL_TASK'
+              : 'ACTION.APPROVAL_REQUEST',
+      };
+      routeDecisions[route.routeContractKey] = {
+        ...existing,
+        context,
+      };
+    }
+
+    const targets = buildProductCompatibilityNavigationTargets({
+      authority,
+      manifest: APPROVAL_PRODUCT_MANIFEST,
+      registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+      rolloutMode: 'surface-ui',
+    });
+
+    const workPaths = workSurface.navigation.flatMap((group) =>
+      group.items.map((item) => item.path)
+    );
+    const managementPaths = APPROVAL_PRODUCT_MANIFEST.surfaces
+      .find((surface) => surface.id === 'approvals.admin')!
+      .navigation.flatMap((group) => group.items.map((item) => item.path));
+    expect(workPaths).toHaveLength(9);
+    expect(managementPaths).toHaveLength(6);
+    expect(workPaths.filter((path) => targets?.has(path))).toEqual(workPaths);
+    expect(managementPaths.filter((path) => targets?.has(path))).toEqual(managementPaths);
+  });
+
+  it('accepts HCM aggregate mixed scopes across root, header, and exact PAGE navigation', () => {
+    const authority = authorityFor(HCM_PRODUCT_MANIFEST);
+    const routeDecisions = { ...authority.routeDecisions };
+    const mixedSurfaceIds = new Set(['hcm.team', 'hcm.operations']);
+    const canonicalContexts = authority.envelope!.contexts.map((context) => {
+      if (!mixedSurfaceIds.has(context.surfaceKey)) return context;
+      return {
+        ...context,
+        scopes: [
+          context.scopes[0]!,
+          {
+            key: `${context.surfaceKey}-target-population`,
+            kind: 'TARGET_POPULATION' as const,
+            displayName: `${context.surfaceKey} target population`,
+            isDefault: false,
+            readOnly: false,
+          },
+        ],
+      };
+    });
+    authority.envelope = { ...authority.envelope!, contexts: canonicalContexts };
+
+    for (const surfaceId of mixedSurfaceIds) {
+      const canonical = canonicalContexts.find((context) => context.surfaceKey === surfaceId)!;
+      const targetScope = canonical.scopes.find((scope) => scope.kind === 'TARGET_POPULATION')!;
+      for (const route of REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter(
+        (candidate) =>
+          candidate.routeKind === 'PAGE' &&
+          candidate.productId === 'hcm' &&
+          candidate.surfaceId === surfaceId
+      )) {
+        const existing = routeDecisions[route.routeContractKey];
+        expect(existing?.state, route.routeContractKey).toBe('allowed');
+        if (!existing || existing.state !== 'allowed') continue;
+        routeDecisions[route.routeContractKey] = {
+          ...existing,
+          context: {
+            ...existing.context,
+            contextKey: `direct-${route.routeId}`,
+            appResourceKey: `PAGE.${route.routeId}`,
+            scopes: [targetScope],
+            effectiveGrants: existing.context.effectiveGrants.map((grant) => ({
+              ...grant,
+              scopeKeys: [targetScope.key],
+            })),
+          },
+          scope: targetScope,
+        };
+      }
+    }
+    authority.routeDecisions = routeDecisions;
+
+    expect(
+      resolveProductRoot(HCM_PRODUCT_MANIFEST, authority.envelope!, { nowMs: SERVER_NOW_MS })
+    ).toMatchObject({ type: 'redirect', surfaceId: 'hcm.personal' });
+
+    const targetPaths = HCM_PRODUCT_MANIFEST.surfaces
+      .filter((surface) => mixedSurfaceIds.has(surface.id))
+      .flatMap((surface) =>
+        surface.navigation.flatMap((group) => group.items.map((item) => item.path))
+      );
+    const targets = buildProductCompatibilityNavigationTargets({
+      authority,
+      manifest: HCM_PRODUCT_MANIFEST,
+      registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+      rolloutMode: 'surface-ui',
+    });
+    expect(targetPaths).toHaveLength(11);
+    expect(targetPaths.filter((path) => targets?.has(path))).toEqual(targetPaths);
+
+    const personalRoute = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.find(
+      (route) => route.routeKind === 'PAGE' && route.pattern === '/hr/home'
+    )!;
+    const personalDecision = routeDecisions[personalRoute.routeContractKey];
+    expect(personalDecision?.state).toBe('allowed');
+    if (!personalDecision || personalDecision.state !== 'allowed') return;
+    const runtime = buildProductCanaryLayoutRuntime({
+      authority,
+      manifest: HCM_PRODUCT_MANIFEST,
+      decision: personalDecision,
+      label: 'HCM',
+      returnLabels: { work: 'Back to work', catalog: 'Back to apps' },
+      registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+      rolloutMode: 'surface-ui',
+    });
+    expect(
+      runtime.entryPoints?.filter((entry) => entry.entryKind === 'management-entry')
+    ).toHaveLength(1);
+  });
+
+  it('keeps denied and unregistered 111 PAGE items undisclosed', () => {
+    const managementPaths = APPROVAL_PRODUCT_MANIFEST.surfaces
+      .find((surface) => surface.id === 'approvals.admin')!
+      .navigation.flatMap((group) => group.items.map((item) => item.path));
+    const [deniedPath, unregisteredPath] = managementPaths;
+    const targets = buildProductCompatibilityNavigationTargets({
+      authority: authorityFor(APPROVAL_PRODUCT_MANIFEST, { deniedPaths: [deniedPath!] }),
+      manifest: APPROVAL_PRODUCT_MANIFEST,
+      registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter(
+        (route) => route.routeKind !== 'PAGE' || route.pattern !== unregisteredPath
+      ),
+      rolloutMode: 'surface-ui',
+    });
+
+    expect(targets).toBeDefined();
+    expect(targets?.has(deniedPath!)).toBe(false);
+    expect(targets?.has(unregisteredPath!)).toBe(false);
   });
 
   it.each(PRODUCTS)('$product shows authorized Work and Management items', ({ manifest }) => {
@@ -302,31 +480,32 @@ describe('rollout 110 exact combined navigation', () => {
     }
   );
 
-  it.each(PRODUCTS)('$product limits the compatibility projection to state 110', ({ manifest }) => {
-    const authority = authorityFor(manifest);
-    for (const [state, rolloutMode] of [
-      ['000', 'baseline'],
-      ['100', 'shadow'],
-      ['111', 'surface-ui'],
-    ] as const) {
-      expect(
-        buildProductCompatibilityNavigationTargets({
-          authority,
-          manifest,
-          registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
-          rolloutMode,
-        }),
-        state
-      ).toBeUndefined();
+  it.each(PRODUCTS)(
+    '$product disables exact navigation targets before enforcement',
+    ({ manifest }) => {
+      const authority = authorityFor(manifest);
+      for (const [state, rolloutMode] of [
+        ['000', 'baseline'],
+        ['100', 'shadow'],
+      ] as const) {
+        expect(
+          buildProductCompatibilityNavigationTargets({
+            authority,
+            manifest,
+            registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+            rolloutMode,
+          }),
+          state
+        ).toBeUndefined();
+      }
     }
-  });
+  );
 
   it.each(PRODUCTS)(
     '$product exposes a trusted no-default multi-scope target and removes the source scope',
     ({ manifest }) => {
-      const targetPath = manifest.surfaces
-        .find((surface) => surface.plane === 'management')!
-        .navigation.flatMap((group) => group.items)[0]!.path;
+      const targetSurface = manifest.surfaces.find((surface) => surface.plane === 'management')!;
+      const targetPath = targetSurface.navigation.flatMap((group) => group.items)[0]!.path;
       const targets = buildProductCompatibilityNavigationTargets({
         authority: authorityFor(manifest, { scopeSelectionPaths: [targetPath] }),
         manifest,
@@ -334,7 +513,10 @@ describe('rollout 110 exact combined navigation', () => {
         rolloutMode: 'enforced-compatibility',
       })!;
 
-      expect(targets.get(targetPath)).toEqual({ state: 'scope-selection-required' });
+      expect(targets.get(targetPath)).toEqual({
+        state: 'scope-selection-required',
+        targetScopeKeys: [`${targetSurface.id}-scope-a`, `${targetSurface.id}-scope-b`],
+      });
       const destination = resolveProductCompatibilityNavigationLocation(
         targetPath,
         targets.get(targetPath)!,
@@ -344,6 +526,19 @@ describe('rollout 110 exact combined navigation', () => {
       expect(search.has('scope')).toBe(false);
       expect(search.get('view')).toBe('exceptions');
       expect(destination.hash).toBe('#queue');
+
+      const sameSurfaceDestination = resolveProductCompatibilityNavigationLocation(
+        targetPath,
+        targets.get(targetPath)!,
+        {
+          search: `?scope=${targetSurface.id}-scope-b&view=exceptions`,
+          hash: '#queue',
+        }
+      );
+      const sameSurfaceSearch = new URLSearchParams(sameSurfaceDestination.search);
+      expect(sameSurfaceSearch.get('scope')).toBe(`${targetSurface.id}-scope-b`);
+      expect(sameSurfaceSearch.get('view')).toBe('exceptions');
+      expect(sameSurfaceDestination.hash).toBe('#queue');
     }
   );
 
@@ -379,6 +574,19 @@ describe('rollout 110 exact combined navigation', () => {
           routeDecisions: {
             ...base.routeDecisions,
             [targetRoute.routeContractKey]: { state: 'scope-selection-required' },
+          },
+        },
+      },
+      {
+        name: 'non-string direct decision revision',
+        authority: {
+          ...base,
+          routeDecisions: {
+            ...base.routeDecisions,
+            [targetRoute.routeContractKey]: {
+              state: 'scope-selection-required',
+              detail: { decisionRevision: 42 as unknown as string },
+            },
           },
         },
       },
@@ -543,7 +751,7 @@ describe('rollout 110 exact combined navigation', () => {
 
 describe('configured product shell rollout presentation', () => {
   it.each(PRODUCTS)(
-    '$product preserves 000/100 legacy, 110 compatibility, and 111 plane separation',
+    '$product preserves legacy authorization at 000/100 and separates every enforced shell',
     ({ manifest }) => {
       for (const surface of manifest.surfaces) {
         expect(resolveConfiguredProductSurfacePresentation('baseline', surface.plane)).toBe(
@@ -552,7 +760,7 @@ describe('configured product shell rollout presentation', () => {
         expect(resolveConfiguredProductSurfacePresentation('shadow', surface.plane)).toBe('legacy');
         expect(
           resolveConfiguredProductSurfacePresentation('enforced-compatibility', surface.plane)
-        ).toBe('compatibility');
+        ).toBe(surface.plane === 'management' ? 'compatibility-management' : 'compatibility-work');
         expect(resolveConfiguredProductSurfacePresentation('surface-ui', surface.plane)).toBe(
           surface.plane === 'management' ? 'separated-management' : 'separated-work'
         );

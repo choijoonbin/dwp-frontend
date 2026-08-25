@@ -5,26 +5,29 @@ import {
   isAuthorizedScopeTransitionResponse,
   isProductAccessSensitiveQuery,
 } from './use-product-surface-scope-transition';
+import { GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES } from './product-sensitive-query-prefixes';
 
 describe('governed product sensitive-query adapter', () => {
   it('covers migrated product query prefixes until every feature owns exact meta', () => {
     const queryClient = new QueryClient();
-    queryClient.setQueryData(['approvals', 'inbox'], [{ private: true }]);
-    queryClient.setQueryData(['communications', 'feed'], [{ private: true }]);
-    queryClient.setQueryData(['services', 'requests'], [{ private: true }]);
-    queryClient.setQueryData(['hcm', 'employee'], [{ private: true }]);
+    for (const [productId, prefixes] of Object.entries(GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES)) {
+      for (const prefix of prefixes) {
+        queryClient.setQueryData([prefix, productId, 'private'], [{ private: true }]);
+      }
+    }
     queryClient.setQueryData(['unrelated', 'public'], [{ public: true }]);
 
-    for (const productId of ['approvals', 'communications', 'services', 'hcm']) {
+    for (const productId of Object.keys(GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES)) {
       queryClient.removeQueries({
         predicate: (query) => isProductAccessSensitiveQuery(query, productId),
       });
     }
 
-    expect(queryClient.getQueryData(['approvals', 'inbox'])).toBeUndefined();
-    expect(queryClient.getQueryData(['communications', 'feed'])).toBeUndefined();
-    expect(queryClient.getQueryData(['services', 'requests'])).toBeUndefined();
-    expect(queryClient.getQueryData(['hcm', 'employee'])).toBeUndefined();
+    for (const [productId, prefixes] of Object.entries(GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES)) {
+      for (const prefix of prefixes) {
+        expect(queryClient.getQueryData([prefix, productId, 'private'])).toBeUndefined();
+      }
+    }
     expect(queryClient.getQueryData(['unrelated', 'public'])).toEqual([{ public: true }]);
   });
 

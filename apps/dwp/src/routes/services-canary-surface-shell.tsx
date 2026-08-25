@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
+import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
   resolveCanaryProductFlags,
   resolveProductSurfaceRolloutMode,
@@ -10,7 +11,6 @@ import { ServicesLayout } from '../layouts/services-layout';
 import { ServicesManagementLayout, ServicesWorkLayout } from '../layouts/services-surface-layouts';
 import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
-import { useAllowedProductSurface } from './product-surface-guard';
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 
 export function ServicesCanarySurfaceShell({

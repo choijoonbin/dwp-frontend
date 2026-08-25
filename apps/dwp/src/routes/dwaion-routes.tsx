@@ -196,7 +196,11 @@ function dwaionRoutePage(pattern: string) {
 function dwaionLegacyRoutePage(pattern: string) {
   const current = dwaionRoutePage(pattern);
   if (pattern === '/dwaion/actions') {
-    return <ProductAnyRouteGuard authorities={ACTION_AUTHORITIES}>{current}</ProductAnyRouteGuard>;
+    return (
+      <ProductAnyRouteGuard authorities={ACTION_AUTHORITIES} localDeny>
+        {current}
+      </ProductAnyRouteGuard>
+    );
   }
   const resourceKey =
     pattern === '/dwaion/admin/overview'
@@ -215,10 +219,15 @@ function dwaionLegacyRoutePage(pattern: string) {
                   ? 'ADMIN.DWAION_GATES'
                   : undefined;
   if (resourceKey)
-    return <ProductRouteGuard resourceKey={resourceKey}>{current}</ProductRouteGuard>;
+    return (
+      <ProductRouteGuard resourceKey={resourceKey} localDeny>
+        {current}
+      </ProductRouteGuard>
+    );
   if (pattern === '/dwaion/admin/audit') {
     return (
       <ProductAnyRouteGuard
+        localDeny
         authorities={[
           { resourceKey: 'ADMIN.DWAION_RETENTION', permissionCode: 'VIEW' },
           { resourceKey: 'ADMIN.DWAION_AUDIT', permissionCode: 'VIEW' },

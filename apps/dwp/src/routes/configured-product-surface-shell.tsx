@@ -2,26 +2,26 @@ import { useTranslation } from 'react-i18next';
 
 import type { ProductPlane, ProductSurfaceManifest } from '../components/product-manifest';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
   resolveCanaryProductFlags,
   resolveProductSurfaceRolloutMode,
   useProductSurfaceCanaryAuthority,
 } from '../features/shell/product-surface-canary-runtime';
-import { buildProductCompatibilityNavigation } from '../features/shell/product-surface-compatibility-navigation';
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 import { ProductManagementLayout } from '../layouts/product-management-layout';
 import { ProductWorkLayout } from '../layouts/product-work-layout';
 import { ProductAreaLayout, type ProductAreaLayoutProps } from '../layouts/product-area-layout';
 import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
-import { useAllowedProductSurface } from './product-surface-guard';
 
 import type { ReactNode } from 'react';
 import type { ProductSurfaceRolloutMode } from '../features/shell/product-surface-canary-runtime';
 
 export type ConfiguredProductSurfacePresentation =
   | 'legacy'
-  | 'compatibility'
+  | 'compatibility-work'
+  | 'compatibility-management'
   | 'separated-work'
   | 'separated-management'
   | 'unavailable';
@@ -31,7 +31,9 @@ export function resolveConfiguredProductSurfacePresentation(
   plane: ProductPlane
 ): ConfiguredProductSurfacePresentation {
   if (mode === 'baseline' || mode === 'shadow') return 'legacy';
-  if (mode === 'enforced-compatibility') return 'compatibility';
+  if (mode === 'enforced-compatibility') {
+    return plane === 'management' ? 'compatibility-management' : 'compatibility-work';
+  }
   if (mode === 'surface-ui') {
     return plane === 'management' ? 'separated-management' : 'separated-work';
   }
@@ -81,14 +83,13 @@ export function ConfiguredProductSurfaceShell({
   }
   const layoutProps = {
     areaKey,
-    navigation:
-      presentation === 'compatibility'
-        ? buildProductCompatibilityNavigation(manifest)
-        : surface.navigation,
+    navigation: surface.navigation,
     translationNamespace,
     surface: runtime,
   };
-  if (presentation === 'compatibility') return <ProductAreaLayout {...layoutProps} />;
+  if (presentation === 'compatibility-management' || presentation === 'compatibility-work') {
+    return <ProductAreaLayout {...layoutProps} />;
+  }
   return presentation === 'separated-management' ? (
     <ProductManagementLayout {...layoutProps} />
   ) : (

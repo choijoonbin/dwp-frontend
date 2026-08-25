@@ -13,9 +13,9 @@ export type GovernedProductAreaNavigationItem = {
 export function canAccessProductAreaNavigationItem(
   item: GovernedProductAreaNavigationItem,
   hasPermission: (resourceKey: string, permissionCode?: string) => boolean,
-  supportScopes: readonly string[] = []
+  supportScopes?: readonly string[]
 ) {
-  if (supportScopes.length > 0) {
+  if (supportScopes !== undefined) {
     return Boolean(item.requiredAnySupportScopes?.some((scope) => supportScopes.includes(scope)));
   }
   if (item.requiredAnyAuthorities?.length) {

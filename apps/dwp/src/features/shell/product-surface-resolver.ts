@@ -131,8 +131,14 @@ export function resolveLegacyProductRedirect(
   registeredProductRouteCatalog: readonly RegisteredProductRoute[]
 ): LegacyProductRedirectResolution {
   const pathname = normalizeProductPath(location.pathname);
+  const pathnameIdentity = pathname.toLowerCase();
   const definition = [...definitions]
-    .filter((candidate) => matchesProductRoute(pathname, candidate.sourceMatcher))
+    .filter((candidate) =>
+      matchesProductRoute(pathnameIdentity, {
+        ...candidate.sourceMatcher,
+        path: normalizeProductPath(candidate.sourceMatcher.path).toLowerCase() as `/${string}`,
+      })
+    )
     .sort((left, right) => right.sourceMatcher.path.length - left.sourceMatcher.path.length)[0];
   if (!definition) return { type: 'no-redirect' };
 
@@ -140,11 +146,11 @@ export function resolveLegacyProductRedirect(
   if (definition.target.kind === 'static') targetPath = definition.target.path;
   if (definition.target.kind === 'path-map') {
     targetPath = definition.target.entries.find(
-      (entry) => normalizeProductPath(entry.sourcePath) === pathname
+      (entry) => normalizeProductPath(entry.sourcePath).toLowerCase() === pathnameIdentity
     )?.targetPath;
   }
   if (definition.target.kind === 'registered-suffix') {
-    if (isSegmentOwnedPath(pathname, definition.target.sourceBase)) {
+    if (isSegmentOwnedPath(pathnameIdentity, definition.target.sourceBase.toLowerCase())) {
       const suffix = pathname.slice(normalizeProductPath(definition.target.sourceBase).length);
       targetPath = normalizeProductPath(`${definition.target.targetBase}${suffix}`);
     }
@@ -157,7 +163,14 @@ export function resolveLegacyProductRedirect(
   });
   if (!targetPath || !targetIsRegistered(targetPath, registeredProductRouteCatalog))
     return unknown();
-  if (definitions.some((candidate) => matchesProductRoute(targetPath!, candidate.sourceMatcher))) {
+  if (
+    definitions.some((candidate) =>
+      matchesProductRoute(targetPath!.toLowerCase(), {
+        ...candidate.sourceMatcher,
+        path: normalizeProductPath(candidate.sourceMatcher.path).toLowerCase() as `/${string}`,
+      })
+    )
+  ) {
     return unknown();
   }
   return {

@@ -35,10 +35,10 @@ function contextIsStructurallyValid(
   const surface = manifest.surfaces.find((candidate) => candidate.id === context.surfaceKey);
   return Boolean(
     surface &&
-      context.productKey === manifest.id &&
-      context.plane === surface.plane &&
-      context.accessMode === activeAccessMode &&
-      context.scopes.every((scope) => surface.supportedScopeKinds.includes(scope.kind))
+    context.productKey === manifest.id &&
+    context.plane === surface.plane &&
+    context.accessMode === activeAccessMode &&
+    context.scopes.every((scope) => surface.supportedScopeKinds.includes(scope.kind))
   );
 }
 
@@ -51,6 +51,7 @@ export function resolveProductRoot(
   options: {
     deniedState?: Extract<SurfaceDeniedState, 'app-denied' | 'authority-unavailable'>;
     nowMs?: number;
+    requestedScopeKey?: string;
   } = {}
 ): ProductRootResolution {
   if (!envelope.decisionRevision.trim())
@@ -81,7 +82,11 @@ export function resolveProductRoot(
       if (revalidateAt <= (options.nowMs ?? Date.now())) {
         return { type: 'access-state', state: 'expired' };
       }
-      const scopeResolution = resolveEffectiveScope(context.scopes, undefined, options.nowMs);
+      const scopeResolution = resolveEffectiveScope(
+        context.scopes,
+        options.requestedScopeKey,
+        options.nowMs
+      );
       if (scopeResolution.state === 'authority-unavailable') {
         return { type: 'access-state', state: 'authority-unavailable' };
       }

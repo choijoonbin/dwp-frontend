@@ -6,12 +6,7 @@ import type {
 } from '../../components/product-manifest';
 
 export type CommunicationsView =
-  | 'home'
-  | 'for-you'
-  | 'all'
-  | 'required'
-  | 'saved'
-  | 'admin-content';
+  'home' | 'for-you' | 'all' | 'required' | 'saved' | 'admin-content';
 
 export const COMMUNICATIONS_WORK_NAVIGATION = [
   {
@@ -76,8 +71,8 @@ export const COMMUNICATIONS_MANAGEMENT_NAVIGATION = [
         icon: Megaphone,
         taskKind: 'operations',
         access: {
-          type: 'policy',
-          accessPolicyKey: 'communications.content-route-access.v1',
+          type: 'capability',
+          capabilityContractKey: 'communications.content.read',
         },
       },
     ],

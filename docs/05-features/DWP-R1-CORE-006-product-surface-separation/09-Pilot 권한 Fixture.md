@@ -642,9 +642,21 @@ Connector·Nonce 재사용을 허용하지 않는다.
 | `FX-N-WORKFORCE-TARGET-OUTSIDE`         | Legal A Workforce Grant로 `P_B201`/`ASSIGNMENT_B_1` 요청                                                    | 404 `RESOURCE_NOT_AVAILABLE`; Query·Mutation 0                               |
 | `FX-N-EXPORT-TARGET-OUTSIDE`            | Legal A Export Grant로 `DS_HCM_PAY`/`LEGAL_B_ACTIVE` 요청                                                   | 404 `RESOURCE_NOT_AVAILABLE`; Export·Nonce 소비 0                            |
 | `FX-N-EXPORT-STEPUP-CROSS-ACTION`       | Create Challenge를 `route.hcm.management.controlled-export-retry.action`에, Retry Challenge를 Create에 제출 | 409 `STEP_UP_CHALLENGE_MISMATCH`; Mutation·Nonce 소비 0                      |
-| `FX-N-FLAG-INVALID`                     | Flag `000`, `100`, `110`, `111` 이외 조합                                                                   | Configuration Reject, 인가 Legacy Fallback 없음                              |
+| `FX-N-FLAG-INVALID`                     | 제품 `(S,E_p,U_p)`가 `000`, `100`, `110`, `111` 이외 조합                                                   | Configuration Reject, 인가 Legacy Fallback 없음                              |
+| `FX-N-FLAG-CROSS-PRODUCT`               | Approvals `E_p` Decision을 HCM 상태 합성에 주입                                                             | Exact Flag Key Reject, HCM Authority 평가 0                                  |
+| `FX-N-FLAG-LEGACY-GLOBAL`               | Legacy 전역 E만 true이고 제품 `E_p=false`                                                                   | 제품 상태는 `100`; Exact Authority 평가 0                                    |
+| `FX-N-LATCH-MIGRATION`                  | v2 첫 조회 MISSING + Legacy v1 존재; probe 중 v2 생성/미생성 두 경우                                        | 재조회 v2 우선, 두 번 MISSING일 때만 `MIGRATION_REQUIRED`; Cross-slot 0      |
+| `FX-N-LATCH-CORRUPT`                    | v2 Hash의 Schema·Product·bit·Revision·Field 수·TTL 중 하나가 계약 위반                                      | `CORRUPT`, Cached Allow·Legacy Fallback 0, Context Envelope 503              |
 
 ## 8. Context 조합 Fixture
+
+### `FX-C-ROLLOUT-MIXED`
+
+Local Tenant의 `S=1`을 11개 제품이 공유한다. Approvals·Communications·HCM·Services는 각
+`E_p=1,U_p=1`로 `111`, Calendar·DWAI·ON·Mail·Messaging·Notifications·Spaces·Workplace는 각
+`E_p=0,U_p=0`으로 `100`이다. 한 Context Envelope에서 11개 Product가 정확히 한 번씩 반환되고
+전자의 불변 v3 PAGE 58개만 Exact Authority를 평가한다. 제품별 `E_p/U_p`가 다르다는 이유로 Envelope
+전체를 거부하거나, Legacy 전역 E로 후자의 상태를 `110/111`로 올리면 실패다.
 
 ### `FX-C-MULTI-WINDOW`
 

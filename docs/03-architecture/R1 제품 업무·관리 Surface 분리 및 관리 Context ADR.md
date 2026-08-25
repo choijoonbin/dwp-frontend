@@ -146,9 +146,12 @@ type ProductScopeKind =
   | 'TEAM'
   | 'ORG_UNIT'
   | 'LEGAL_ENTITY'
+  | 'DOMAIN'
   | 'RESOURCE_SET'
   | 'RESOURCE'
-  | 'POLICY_NODE';
+  | 'POLICY_NODE'
+  | 'TARGET_POPULATION'
+  | 'SUPPORT_SESSION';
 
 type ProductRouteMatcher = {
   kind: 'exact' | 'prefix';
@@ -376,8 +379,7 @@ type GovernedRouteAuthorizationContract = {
   routeContractKey: string;
   navigationContextId: string;
   subject:
-    | { type: 'PRODUCT'; productKey: string; surfaceKey: string }
-    | { type: 'GOVERNED_CONTEXT' };
+    { type: 'PRODUCT'; productKey: string; surfaceKey: string } | { type: 'GOVERNED_CONTEXT' };
   routeKind: 'PAGE' | 'DATA' | 'ACTION';
   sideEffectFree?: boolean;
   uiRouteId?: string;
@@ -462,6 +464,9 @@ Pathless 또는 명시적 Child Route로 분리하고 각각 독립 Guard를 적
   구조를 노출하지 않는 Product-local 404를 표시한다.
 - `replace`는 Index Canonicalization과 Legacy Redirect에만 사용한다. 사용자가 Surface 또는
   Scope를 선택한 이동은 History에 남긴다.
+- Surface Index는 PAGE 권한 대상으로 가장하지 않는다. Index Shell Guard보다 먼저, Scope 없는
+  Sibling PAGE 판정에서 확인된 첫 허용 Child로 Query·Hash·명시 Scope를 보존해 `replace`하고,
+  이동이 끝난 Exact PAGE 한 건에만 URL Scope를 결속한다.
 - Direct URL, 새로고침, Browser Back/Forward와 새 Tab이 같은 Surface·Scope를 복원한다.
 
 관리 권한만 있고 Work Entitlement가 없는 사용자의 Management Deep Link는 허용할 수 있다.
@@ -681,6 +686,19 @@ Gateway가 표시용 결과를 합성해도 각 Service의 최종 인가 권위�
   Surface만 Projection하며 Role 문자열이나 Responsibility만으로 Surface를 추론하지 않는다.
 - Navigation Context Endpoint는 현재 `ALLOWED`인 Context만 반환한다. 명시적 `DENY`, 비활성,
   만료·회수와 Scope Conflict는 제거하되 Direct Route 상태 판정은 별도 서버 평가로 제공한다.
+- Navigation 목록과 PAGE·DATA·ACTION Direct 판정은 각각 재계산되므로 `contextKey`와
+  `decisionRevision`이 서로 다른 Opaque 값일 수 있다. Client는 문자열 동일성을 요구하지 않고
+  Tenant·Actor·Product·Surface·Plane·Access Mode, 유효시간과 Direct 선택 Scope가 목록 Context의
+  유일한 동일 Key·Kind Scope인지 검증한다. Client는 ACTION 평가·실행에 목록 `contextKey`를
+  전송하지 않는다. 선택 Scope와 Direct Revision을 보내면 Gateway가 Exact ACTION Context를 다시
+  계산한다. `STEP_UP_REQUIRED`가 Context를 비공개로 반환하는 HIGH Action도 Issuer에 목록
+  `contextKey`를 보내지 않으며, Issuer가 동일 Scope·Revision으로 재평가해 얻은 Exact Context를
+  Command-bound Challenge에 서명한다.
+- Surface Entry가 허용 Scope를 정확히 하나의 `SELF`로 결정하고 Child Capability의
+  Responsibility가 `NOT_REQUIRED`이면 Direct Route도 그 `SELF` Surface Scope를 유지한다.
+  Assigned/Candidate/Object/Relationship 같은 Child Target Resolver는 선택 가능한 새 Surface
+  Scope가 아니라 Product Service PEP의 대상 검증 경계이며, Gateway와 소유 서비스가 요청마다
+  다시 검사한다. 다중 Scope 또는 Responsibility가 필요한 Surface에는 이 상속을 적용하지 않는다.
 - Tenant ID는 Client Scope 값으로 선택하지 않고 신뢰 가능한 Gateway Context에서 받는다.
 - URL `scope`와 Product API의 `contextScopeKey`는 서버가 발급한 Opaque Key만 사용하며 Gateway가
   Actor·Product·Surface와 대조해 Trusted Context로 변환한다.
@@ -766,7 +784,9 @@ Union으로 매핑하고 알 수 없는 값은 `AUTHORITY_UNAVAILABLE`로 Fail C
 - Permission Payload가 비거나 Registry에서 Product Contract를 찾지 못하면 신규 Product
   Management는 Fail Closed한다. 기존 App Entitlement의 Legacy Fail-open 동작을 신규 Surface
   계약으로 복제하지 않는다.
-- Feature Flag는 Layout·Navigation Projection만 바꾸며 인가 우회 수단이 아니다.
+- `U_p`만 Layout·Navigation Projection을 바꾼다. `S`는 차이를 관찰하고 `E_p`는 기존/Exact
+  Authority 경계를 선택하지만, 어떤 Flag도 그 자체로 Permission·Scope를 부여하거나 인가 우회
+  수단이 되지 않는다.
 
 ## 10. Scope와 정책 상속
 
@@ -784,6 +804,9 @@ Surface Switcher는 `어떤 일을 하는가`, Scope Switcher는 `어느 대상�
 허용 Scope가 하나면 이를 Canonical URL로 `replace`한다. 둘 이상이면 서버가 정확히 하나를
 `isDefault=true`로 지정한 경우에만 자동 선택한다. 기본값이 없거나 둘 이상이면
 `scope-selection-required` 상태에서 Product Data Query와 Mutation을 시작하지 않는다.
+같은 Surface의 다른 PAGE로 이동할 때 현재 Opaque Scope가 그 PAGE의 신뢰 가능한 허용 Scope
+집합에 있으면 Query·Hash와 함께 유지한다. 다른 Surface에서 온 Scope, 알 수 없거나 만료된 Scope는
+전파하지 않으며 유효한 다른 Scope로 조용히 확대하지 않는다.
 
 선택한 Opaque Key는 OpenAPI의 표준 `contextScopeKey` Request Parameter로 전달하며 Client가
 `X-DWP-*` Header를 만들지 않는다. Gateway는 Actor·Product·Surface와 다시 대조해 Trusted
@@ -861,23 +884,69 @@ Legacy `/rooms`는 `/workplace/home`으로 이동한다. `/rooms/<suffix>`는 �
 Registry에 명시된 11개 `/people/**`, `/workforce/**` Source만 한 번 Redirect하고, 미등록
 Subpath는 자기 자신으로 Redirect하지 않으며 HCM Surface 안 404로 끝낸다.
 
-Rollout Control은 `context.shadow`, `capability.enforcement`, `surface.ui` 세 단계로 분리한다.
-Tenant 단위 UI Flag는 `ux.product-surfaces.approvals.v1`,
-`ux.product-surfaces.hcm.v1`을 사용한다. `surface.ui=off`인 Compatibility Shell도 Sibling
-Guard, 신규 Effective Context와 서버 PEP를 그대로 사용해 Management-only 접근을 보존한다.
-기존 APP Parent Guard나 전역 `MANAGE` Fallback으로 돌아가지 않는다.
+Rollout Control은 Shadow `S`, 제품별 Capability Enforcement `E_p`, 제품별 Native UI `U_p`의
+세 축으로 분리한다. Flag와 합성 범위는 다음으로 고정한다.
 
-| Shadow | Enforcement |  UI | 허용 상태                       |
-| -----: | ----------: | --: | ------------------------------- |
-|      0 |           0 |   0 | Baseline                        |
-|      1 |           0 |   0 | Shadow                          |
-|      1 |           1 |   0 | 신규 인가 + Compatibility Shell |
-|      1 |           1 |   1 | 신규 인가 + 분리 UI             |
+| 축    | Canonical Flag                                                | 범위             | 신규 상태 합성                         |
+| ----- | ------------------------------------------------------------- | ---------------- | -------------------------------------- |
+| `S`   | `access.product-surfaces.context-shadow.v1`                   | Tenant-global    | 모든 제품이 같은 bit·revision을 사용   |
+| `E_p` | `access.product-surfaces.capability-enforcement.<product>.v1` | Tenant + Product | 해당 제품의 Exact 인가 전환에만 사용   |
+| `U_p` | `ux.product-surfaces.<product>.v1`                            | Tenant + Product | 해당 제품의 Native Surface UI에만 사용 |
 
-나머지 Flag 조합은 Invalid로 거부한다. UI Flag 장애는 Compatibility Shell로 돌아갈 수
-있지만 이미 켜진 Enforcement를 끄지 않는다. Enforcement 설정·Registry 평가 장애 시
-서명된 마지막 승인 Policy Version을 유지하거나 Product Management를 Fail Closed하고,
-Legacy Policy로 자동 복귀하지 않는다.
+`<product>`는 Checksummed Rollout Inventory의
+`approvals`, `calendar`, `communications`, `dwaion`, `hcm`, `mail`, `messaging`,
+`notifications`, `services`, `spaces`, `workplace` 중 하나다. 기존 전역
+`access.product-surfaces.capability-enforcement.v1`은 전환 이력·호환 증거용 Legacy Flag로
+등록 상태를 유지하지만, 신규 상태·Context Envelope·인가 결정을 합성하는 `E_p`로 사용하지 않는다.
+Legacy 전역 E가 true여도 어느 제품의 `E_p`를 충족하거나 승격시키지 못한다. Context Envelope가
+제품 간 동등성을 요구하는 축은 `S`뿐이며 `E_p`와 `U_p`는 제품마다 달라도 정상이다.
+
+업무·관리 메뉴의 시각적 분리와 Work Header의 단일 `앱 관리` 진입점은 Flag와 무관한 공통 Shell
+불변식이다. `U_p=0`인 Compatibility-separated Shell은 이 정보 구조를 유지하면서 `E_p=0`이면
+기존 권한 가드를, `E_p=1`이면 Sibling Guard, 신규 Effective Context와 서버 PEP를 사용한다. 어떤
+Rollback도 혼합 Sidebar, 기존 APP Parent Guard 또는 전역 `MANAGE` Fallback으로 돌아가지 않는다.
+
+각 제품 `p`의 상태는 `(S,E_p,U_p)`로 독립 계산한다.
+
+|  상태 | `S` | `E_p` | `U_p` | 허용 상태                                 |
+| ----: | --: | ----: | ----: | ----------------------------------------- |
+| `000` |   0 |     0 |     0 | 기존 인가 + Compatibility-separated Shell |
+| `100` |   1 |     0 |     0 | Shadow + Compatibility-separated Shell    |
+| `110` |   1 |     1 |     0 | 신규 인가 + Compatibility-separated Shell |
+| `111` |   1 |     1 |     1 | 신규 인가 + Native Surface UI             |
+
+`E_p ⇒ S`, `U_p ⇒ E_p`를 위반하는 조합은 Invalid로 거부한다. Local 전용 검증 Seed는 `S=1`로
+고정하고 v3에 Exact PAGE 계약이 있는 `approvals`, `communications`, `hcm`, `services`만
+`E_p=1,U_p=1`, 즉 `111`로 만든다. 나머지 W2/W3 DRAFT 7개 제품은 `E_p=0,U_p=0`, 즉
+`100`으로 유지한다. 불변 `product-surfaces` v3를 변경해 이 7개 제품을 억지로 포함하지 않는다.
+승인 Bundle에 없는 제품이 `110` 또는 `111`로 평가되면 Gateway는 503
+`AUTHORITY_RESOLUTION_UNAVAILABLE`로 Fail Closed한다.
+
+Gateway는 짧은 Evaluation Cache와 별개인 Durable Safety Latch v2를
+`tenant + product`로 유지한다. 논리 Key는
+`dwp:gateway:product-surface:se-latch:v2:<tenant>:<product>`이며 `schema=2`, `productKey`,
+마지막 승인 `S/E_p` bit와 각 Opaque Revision을 TTL 없이 저장한다. Provider가 두 축을 모두
+권위 있게 반환할 때만 원자 승인하고, 낮은 Revision은 저장된 Snapshot을 유지하며 같은 Revision의
+다른 bit는 Conflict로 Fail Closed한다.
+
+- Provider 장애에서 v2 Snapshot이 있으면 마지막 승인 `S/E_p`를 복원하고 `U_p=0`으로 계산한다.
+  따라서 `111→110`은 허용하지만 `110→100/000` 자동 강등은 금지한다.
+- 새 Tenant·Product에 v2와 Legacy v1 Latch가 모두 없으면 안전한 초기 상태 `000`으로 계산한다.
+- v2가 없는데 Tenant 전역 Legacy v1 Latch가 있으면 제품 귀속을 추정하지 않고
+  `MIGRATION_REQUIRED`로 503 처리한다.
+- Redis Cluster Cross-slot을 피하기 위해 v2 Product Key와 Legacy Tenant Key를 하나의 다중-key
+  Lua로 읽지 않는다. `v2 LOAD → MISSING이면 Legacy 단일-key probe → v2 재조회` 순서로 Migration
+  Race를 닫는다. 두 번째 v2의 `FOUND/CORRUPT/UNAVAILABLE`가 Legacy 결과보다 우선하고, v2가 두 번
+  모두 `MISSING`일 때만 Legacy의 `MISSING/MIGRATION_REQUIRED`를 채택한다.
+- v2 Corrupt·Unavailable, Invalid 조합 또는 Revision Conflict는 Cached Allow나 Legacy Policy로
+  우회하지 않고 503으로 Fail Closed한다.
+
+운영자가 인가 회귀를 승인해 `E_p=false`인 더 높은 Revision을 발행하는 것은 장애 Fallback과
+구분되는 명시적 제품별 Rollback이다. `S=1`이면 상태는 `110→100`이고, Assignment·Audit와 불변
+Authorization Bundle은 삭제하지 않는다. `S` 자체를 끄는 Tenant-wide 변경은 별도 승인된 더 높은
+Revision이어야 한다. Production Migration의 1+11+11 Flag 기본값은 모두 Off이며, 앞의 Local Seed는
+Production 활성화 증거가 아니다. 실제 Production Flag, Active Pointer와 운영 Assignment는 외부
+Product·Security·Privacy 승인 전 변경하지 않는다.
 
 ### 12.1 Authorization Migration 불변식
 
@@ -890,7 +959,7 @@ Legacy Policy로 자동 복귀하지 않는다.
 - Shadow Evaluation으로 기존과 신규 Route·API 결정을 비교한 뒤 Canary에서 Enforcement한다.
 - UI Rollback은 Navigation·Layout Projection만 되돌린다. 인가 회귀는 Assignment와 Audit를
   삭제하지 않고 직전 승인된 Versioned Capability Policy로 원자적으로 되돌린다.
-- `context.shadow × capability.enforcement × surface.ui`의 지원 Flag 조합별 Route·API Truth
+- 제품별 `S × E_p × U_p`의 지원 Flag 조합별 Route·API Truth
   Table과 Rollback Rehearsal을 Canary Gate에서 통과한다.
 
 ## 13. 기각한 대안

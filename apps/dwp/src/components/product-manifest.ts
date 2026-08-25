@@ -1,19 +1,28 @@
 import type { LucideIcon } from 'lucide-react';
+import {
+  PRODUCT_SCOPE_KINDS,
+  isProductScopeKind,
+  type ProductScopeKind,
+} from '@dwp-frontend/shared-utils/auth/product-surface-scope-kind';
+
+export { PRODUCT_SCOPE_KINDS, isProductScopeKind };
+export type { ProductScopeKind };
 
 export type NonEmptyReadonlyArray<Value> = readonly [Value, ...Value[]];
 
 export type ProductTaskKind = 'work' | 'team' | 'operations' | 'administration';
 export type ProductPlane = 'work' | 'management';
 export type GovernedMenuPlane = ProductPlane | 'tenant-governance' | 'provider-control' | 'account';
-export type ProductScopeKind =
-  | 'TENANT'
-  | 'SELF'
-  | 'TEAM'
-  | 'ORG_UNIT'
-  | 'LEGAL_ENTITY'
-  | 'RESOURCE_SET'
-  | 'RESOURCE'
-  | 'POLICY_NODE';
+
+export function productScopeIdentitiesAreKnownAndUnique(
+  scopes: readonly Readonly<{ key: string; kind: string }>[]
+): boolean {
+  return (
+    scopes.length > 0 &&
+    new Set(scopes.map((scope) => scope.key)).size === scopes.length &&
+    scopes.every((scope) => scope.key.trim().length > 0 && isProductScopeKind(scope.kind))
+  );
+}
 
 export type ProductRouteMatcher = {
   kind: 'exact' | 'prefix';
@@ -146,20 +155,9 @@ export type LegacyProductManifest<AreaKey extends string = string> = {
 };
 
 export type ProductManifest<AreaKey extends string = string> =
-  | ProductSurfaceManifest
-  | LegacyProductManifest<AreaKey>;
+  ProductSurfaceManifest | LegacyProductManifest<AreaKey>;
 
 const TASK_KINDS = new Set<ProductTaskKind>(['work', 'team', 'operations', 'administration']);
-const SCOPE_KINDS = new Set<ProductScopeKind>([
-  'TENANT',
-  'SELF',
-  'TEAM',
-  'ORG_UNIT',
-  'LEGAL_ENTITY',
-  'RESOURCE_SET',
-  'RESOURCE',
-  'POLICY_NODE',
-]);
 const CONTRACT_KEY_PATTERN = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/u;
 const SURFACE_ID_PATTERN = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/u;
 
@@ -454,7 +452,7 @@ function validateSurfaceProductManifest(manifest: ProductSurfaceManifest): void 
       surface.supportedScopeKinds,
       `${manifest.id} surface scope kinds are empty: ${surface.id}`
     );
-    if (surface.supportedScopeKinds.some((kind) => !SCOPE_KINDS.has(kind))) {
+    if (surface.supportedScopeKinds.some((kind) => !isProductScopeKind(kind))) {
       throw new Error(`${manifest.id} surface has an unsupported scope kind: ${surface.id}`);
     }
     const matcherKeys = new Set<string>();

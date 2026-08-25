@@ -21135,7 +21135,7 @@ export interface components {
             /** Format: int32 */
             schemaVersion: number;
             /** @enum {string} */
-            scopeKind?: "SELF" | "ORG_UNIT" | "LEGAL_ENTITY" | "DOMAIN" | "RESOURCE" | "RESOURCE_SET" | "TARGET_POPULATION" | "SUPPORT_SESSION";
+            scopeKind?: "TENANT" | "SELF" | "TEAM" | "ORG_UNIT" | "LEGAL_ENTITY" | "DOMAIN" | "RESOURCE_SET" | "RESOURCE" | "POLICY_NODE" | "TARGET_POPULATION" | "SUPPORT_SESSION";
             surfaceKey?: string;
             targetSurfaceKey?: string;
             /** @enum {string} */

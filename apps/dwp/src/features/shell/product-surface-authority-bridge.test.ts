@@ -4,6 +4,7 @@ import {
   GOVERNED_SURFACE_PAGE_ROUTES,
   GOVERNED_SURFACE_PRODUCT_IDS,
   observeProductSurfaceLocationChange,
+  resolveActiveGovernedEvaluationRouteContractKey,
   resolveActiveGovernedProductId,
   resolveActiveGovernedPageRoute,
   resolveActiveGovernedSurfaceId,
@@ -95,7 +96,7 @@ describe('product surface authority bridge routing', () => {
   });
 
   it('keeps every registered legacy Deep Link inside its target product authority plan', () => {
-    expect(PRODUCT_LEGACY_ROUTE_SOURCE).toHaveLength(3);
+    expect(PRODUCT_LEGACY_ROUTE_SOURCE).toHaveLength(14);
     for (const redirect of PRODUCT_LEGACY_ROUTE_SOURCE) {
       const target = GOVERNED_SURFACE_PAGE_ROUTES.find(
         (route) => route.routeContractKey === redirect.targetRouteContractKey
@@ -115,15 +116,29 @@ describe('product surface authority bridge routing', () => {
         new Set([target!.productId])
       );
       expect(
-        resolveProductSurfaceEvaluationScopeKey(target!.surfaceId, activeSurfaceId, 'opaque-scope'),
+        resolveActiveGovernedEvaluationRouteContractKey(
+          redirect.sourcePath.toUpperCase(),
+          GOVERNED_SURFACE_PAGE_ROUTES,
+          PRODUCT_LEGACY_ROUTE_SOURCE
+        ),
+        redirect.redirectId
+      ).toBe(target!.routeContractKey);
+      expect(
+        resolveProductSurfaceEvaluationScopeKey(
+          target!.routeContractKey,
+          target!.routeContractKey,
+          'opaque-scope'
+        ),
         redirect.redirectId
       ).toBe('opaque-scope');
-      const siblingSurface = planned.find((route) => route.surfaceId !== activeSurfaceId);
-      if (siblingSurface) {
+      const siblingRoute = planned.find(
+        (route) => route.routeContractKey !== target!.routeContractKey
+      );
+      if (siblingRoute) {
         expect(
           resolveProductSurfaceEvaluationScopeKey(
-            siblingSurface.surfaceId,
-            activeSurfaceId,
+            siblingRoute.routeContractKey,
+            target!.routeContractKey,
             'opaque-scope'
           ),
           redirect.redirectId
@@ -145,13 +160,20 @@ describe('product surface authority bridge routing', () => {
     }
   });
 
-  it('resolves one exact active surface so its sibling PAGE evaluations share the selected scope', () => {
-    const active = resolveActiveGovernedSurfaceId('/sample/work/item-7', routes);
+  it('binds a URL scope only to the exact active PAGE and never to sibling evaluations', () => {
+    const active = resolveActiveGovernedPageRoute('/sample/work/item-7', routes);
     const requestedScope = 'opaque-scope';
-    expect(active).toBe('sample.work');
+    expect(active?.pattern).toBe('/sample/work/:itemId');
     expect(
-      routes.map((route) => (route.surfaceId === active ? requestedScope : undefined))
-    ).toEqual(['opaque-scope', 'opaque-scope', undefined]);
+      routes.map((route) =>
+        resolveProductSurfaceEvaluationScopeKey(route.pattern, active?.pattern, requestedScope)
+      )
+    ).toEqual([undefined, 'opaque-scope', undefined]);
+  });
+
+  it('does not bind a scope to an unresolved Surface or product index', () => {
+    expect(resolveActiveGovernedEvaluationRouteContractKey('/approvals/admin')).toBeUndefined();
+    expect(resolveActiveGovernedEvaluationRouteContractKey('/approvals')).toBeUndefined();
   });
 
   it('does not guess an active surface for an unknown path', () => {

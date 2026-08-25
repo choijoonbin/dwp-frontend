@@ -16,6 +16,57 @@ describe('product area navigation access', () => {
     ).toBe(true);
   });
 
+  it('applies MANAGE override and any/all authority expressions consistently', () => {
+    const hasManage = vi.fn(
+      (resource: string, permission?: string) =>
+        resource === 'ADMIN.EXAMPLE' && permission === 'MANAGE'
+    );
+
+    expect(
+      canAccessProductAreaNavigationItem(
+        {
+          requiredResourceKey: 'ADMIN.EXAMPLE',
+          requiredAllPermissionCodes: ['VIEW', 'UPDATE'],
+        },
+        hasManage
+      )
+    ).toBe(true);
+    expect(
+      canAccessProductAreaNavigationItem(
+        {
+          requiredAnyAuthorities: [
+            { resourceKey: 'ADMIN.OTHER', permissionCode: 'VIEW' },
+            { resourceKey: 'ADMIN.EXAMPLE', permissionCode: 'APPROVE' },
+          ],
+        },
+        hasManage
+      )
+    ).toBe(true);
+
+    const hasAll = vi.fn(
+      (resource: string, permission?: string) =>
+        resource === 'ADMIN.EXAMPLE' && ['VIEW', 'UPDATE'].includes(permission ?? '')
+    );
+    expect(
+      canAccessProductAreaNavigationItem(
+        {
+          requiredResourceKey: 'ADMIN.EXAMPLE',
+          requiredAllPermissionCodes: ['VIEW', 'UPDATE'],
+        },
+        hasAll
+      )
+    ).toBe(true);
+    expect(
+      canAccessProductAreaNavigationItem(
+        {
+          requiredResourceKey: 'ADMIN.EXAMPLE',
+          requiredAnyPermissionCodes: ['APPROVE', 'UPDATE'],
+        },
+        hasAll
+      )
+    ).toBe(true);
+  });
+
   it('exposes only explicitly scoped product operations during provider support', () => {
     const hasPermission = vi.fn(() => true);
     const scopes = ['TENANT_CONFIGURATION_READ'];
@@ -39,5 +90,7 @@ describe('product area navigation access', () => {
         scopes
       )
     ).toBe(true);
+
+    expect(canAccessProductAreaNavigationItem({}, hasPermission, [])).toBe(false);
   });
 });

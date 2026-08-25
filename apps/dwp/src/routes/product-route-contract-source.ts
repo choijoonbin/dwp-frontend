@@ -45,6 +45,8 @@ export type ProductLegacyRouteSource = {
   redirectId: string;
   sourcePath: `/${string}`;
   targetRouteContractKey: string;
+  targetLifecycle?: 'DRAFT';
+  targetPath?: `/${string}`;
   preserveQuery: true;
   preserveHash: true;
   maxHops: 1;
@@ -151,7 +153,7 @@ export function defineProductLegacyRouteSource(
   const sourcePaths = new Set<string>();
   const routesByKey = new Map(pageRoutes.map((route) => [route.routeContractKey, route]));
   const redirectSources = new Set(
-    redirects.map((redirect) => normalizeProductPath(redirect.sourcePath))
+    redirects.map((redirect) => normalizeProductPath(redirect.sourcePath).toLowerCase())
   );
   for (const redirect of redirects) {
     if (!redirect.redirectId.trim() || redirectIds.has(redirect.redirectId)) {
@@ -161,12 +163,13 @@ export function defineProductLegacyRouteSource(
     }
     redirectIds.add(redirect.redirectId);
     const sourcePath = normalizeProductPath(redirect.sourcePath);
-    if (sourcePath !== redirect.sourcePath || sourcePaths.has(sourcePath)) {
+    const sourceIdentity = sourcePath.toLowerCase();
+    if (sourcePath !== redirect.sourcePath || sourcePaths.has(sourceIdentity)) {
       throw new Error(
         `Product legacy redirect source is invalid or duplicated: ${redirect.sourcePath}`
       );
     }
-    sourcePaths.add(sourcePath);
+    sourcePaths.add(sourceIdentity);
     if (!redirect.preserveQuery || !redirect.preserveHash || redirect.maxHops !== 1) {
       throw new Error(
         `Product legacy redirect must preserve URL state for one hop: ${redirect.redirectId}`
@@ -178,12 +181,22 @@ export function defineProductLegacyRouteSource(
         `Product legacy redirect references an unknown target: ${redirect.redirectId}`
       );
     }
+    if (redirect.targetLifecycle === 'DRAFT' && redirect.targetPath !== target.pattern) {
+      throw new Error(
+        `Product DRAFT legacy redirect target metadata differs from its route: ${redirect.redirectId}`
+      );
+    }
+    if ((redirect.targetLifecycle === 'DRAFT') !== (typeof redirect.targetPath === 'string')) {
+      throw new Error(
+        `Product legacy redirect DRAFT metadata is incomplete: ${redirect.redirectId}`
+      );
+    }
     if (target.pattern.includes(':') || target.pattern.includes('*')) {
       throw new Error(`Product legacy redirect target must be static: ${redirect.redirectId}`);
     }
     if (
-      sourcePath === target.pattern ||
-      redirectSources.has(normalizeProductPath(target.pattern))
+      sourceIdentity === normalizeProductPath(target.pattern).toLowerCase() ||
+      redirectSources.has(normalizeProductPath(target.pattern).toLowerCase())
     ) {
       throw new Error(`Product legacy redirect forms a cycle: ${redirect.redirectId}`);
     }
@@ -198,9 +211,9 @@ export function resolveProductLegacyRoute(
   redirects: readonly ProductLegacyRouteSource[],
   pageRoutes: readonly ProductPageRouteContractSource[]
 ): ResolvedProductLegacyRoute | undefined {
-  const normalizedPath = normalizeProductPath(pathname);
+  const normalizedPath = normalizeProductPath(pathname).toLowerCase();
   const redirect = redirects.find(
-    (candidate) => normalizeProductPath(candidate.sourcePath) === normalizedPath
+    (candidate) => normalizeProductPath(candidate.sourcePath).toLowerCase() === normalizedPath
   );
   if (!redirect) return undefined;
   const route = pageRoutes.find(

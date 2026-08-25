@@ -143,10 +143,7 @@ export type ProductSurfacePolicyGrant = {
   accessPolicyKey: string;
   policyDecisionRef: string;
   authorityMode:
-    | 'ENTITLEMENT'
-    | 'RELATIONSHIP'
-    | 'ENTITLEMENT_AND_RELATIONSHIP'
-    | 'SUPPORT_SESSION';
+    'ENTITLEMENT' | 'RELATIONSHIP' | 'ENTITLEMENT_AND_RELATIONSHIP' | 'SUPPORT_SESSION';
   scopeKeys: string[];
   requiresProductEntitlement: boolean;
   readOnly: boolean;
@@ -256,7 +253,7 @@ export type ProductSurfaceStepUpChallengeRequest = {
   expectedObjectVersion: number;
   idempotencyKey: string;
   payload: Readonly<Record<string, unknown>>;
-  contextKey: string;
+  contextKey?: string;
   contextScopeKey: string;
   providerKey?: string;
   returnTo?: string;
@@ -373,7 +370,7 @@ function validatedStepUpRequest(
     !nonBlank(value.idempotencyKey) ||
     !payload ||
     !jsonValue(payload) ||
-    !nonBlank(value.contextKey) ||
+    (value.contextKey !== undefined && !nonBlank(value.contextKey)) ||
     !nonBlank(value.contextScopeKey) ||
     (value.providerKey !== undefined && !nonBlank(value.providerKey)) ||
     (value.returnTo !== undefined &&
@@ -392,8 +389,8 @@ function validatedStepUpRequest(
     expectedObjectVersion: value.expectedObjectVersion as number,
     idempotencyKey: value.idempotencyKey,
     payload,
-    contextKey: value.contextKey,
     contextScopeKey: value.contextScopeKey,
+    ...(value.contextKey === undefined ? {} : { contextKey: value.contextKey as string }),
     ...(value.providerKey === undefined ? {} : { providerKey: value.providerKey as string }),
     ...(value.returnTo === undefined ? {} : { returnTo: value.returnTo as string }),
   };

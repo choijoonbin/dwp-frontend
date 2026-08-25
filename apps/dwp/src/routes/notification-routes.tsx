@@ -191,7 +191,9 @@ function notificationLegacyRoutePage(pattern: string) {
           ? 'ADMIN.NOTIFICATION_OPERATIONS'
           : undefined;
   return resourceKey ? (
-    <ProductRouteGuard resourceKey={resourceKey}>{current}</ProductRouteGuard>
+    <ProductRouteGuard resourceKey={resourceKey} localDeny>
+      {current}
+    </ProductRouteGuard>
   ) : (
     current
   );

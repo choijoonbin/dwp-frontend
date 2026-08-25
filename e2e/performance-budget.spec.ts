@@ -33,7 +33,7 @@ test('authenticated shell and SPA transitions stay within the runtime budget', a
   });
 
   await page.goto('/work');
-  await expect(page.getByTestId('app-header')).toBeVisible();
+  await expect(page.getByTestId('work-header')).toBeVisible();
   const shellReady = await page.evaluate(() => performance.now());
   expect(shellReady).toBeLessThanOrEqual(budgets.shellReadyMs);
 
@@ -46,8 +46,8 @@ test('authenticated shell and SPA transitions stay within the runtime budget', a
   );
   expect(initialCls).toBeLessThanOrEqual(budgets.cumulativeLayoutShift);
 
-  await page.getByRole('link', { name: 'DWAI·ON', exact: true }).first().click();
-  await expect(page).toHaveURL(/\/dwaion$/);
+  await page.getByRole('link', { name: 'Unified work queue', exact: true }).click();
+  await expect(page).toHaveURL(/\/work\/queue$/);
   await expect
     .poll(() =>
       page.evaluate(
@@ -65,7 +65,7 @@ test('authenticated shell and SPA transitions stay within the runtime budget', a
   );
   expect(routeMetric).toMatchObject({
     name: 'route-transition',
-    routeGroup: 'workspace',
+    routeGroup: 'work',
     navigationType: 'link',
   });
   expect(routeMetric).not.toHaveProperty('pathname');

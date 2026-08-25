@@ -5,6 +5,9 @@ import {
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../../routes/product-surface-authorization.generated';
 import { useProductSurfaceGovernedMutation } from '../../components/use-product-surface-governed-mutation';
+import { resolveProductSurfaceTaskKind } from '../../observability/product-surface-task-kind';
+
+import type { ProductSurfaceMutationBinding } from '../../components/use-product-surface-governed-mutation';
 
 export { isProductSurfaceOperationCancelledError } from '../../components/use-product-surface-governed-mutation';
 
@@ -37,12 +40,17 @@ const bindings = Object.fromEntries(
         productKey: 'approvals',
         surfaceKey: route.surfaceId!,
         routeContractKey: contract.routeContractKey,
+        taskKind: resolveProductSurfaceTaskKind({
+          productKey: 'approvals',
+          surfaceKey: route.surfaceId!,
+          routeContractKey: contract.routeContractKey,
+        }),
       },
     ];
   })
 ) as Record<
   ApprovalGovernedMutationRouteContractKey,
-  { productKey: 'approvals'; surfaceKey: string; routeContractKey: string }
+  ProductSurfaceMutationBinding & { productKey: 'approvals' }
 >;
 
 export function useApprovalGovernedMutation(

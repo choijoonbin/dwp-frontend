@@ -160,7 +160,6 @@ describe('auth login API', () => {
           expectedObjectVersion: 7,
           idempotencyKey: 'attempt-1',
           payload: { expectedVersion: 7 },
-          contextKey: 'approvals-management',
           contextScopeKey: 'scope-1',
           returnTo: '/approvals/admin/workflows?scope=scope-1',
         },
@@ -179,10 +178,10 @@ describe('auth login API', () => {
       expectedObjectVersion: 7,
       idempotencyKey: 'attempt-1',
       payload: { expectedVersion: 7 },
-      contextKey: 'approvals-management',
       contextScopeKey: 'scope-1',
       returnTo: '/approvals/admin/workflows?scope=scope-1',
     });
+    expect(body).not.toHaveProperty('contextKey');
     expect((fetchMock.mock.calls[1]?.[1] as RequestInit).headers).toMatchObject({
       'X-DWP-Expected-Decision-Revision': 'user-visible-revision',
     });

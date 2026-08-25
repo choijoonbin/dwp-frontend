@@ -71,6 +71,7 @@ function decision(
 function entryContext(
   capabilityContractKey: string,
   overrides: Partial<{
+    contextKey: string;
     activationState: string;
     grantReadOnly: boolean;
     scopeReadOnly: boolean;
@@ -79,7 +80,7 @@ function entryContext(
   }> = {}
 ): CanonicalProductSurfaceContext {
   return {
-    contextKey: 'context:hcm-management',
+    contextKey: overrides.contextKey ?? 'context:hcm-management',
     productKey: 'hcm',
     surfaceKey: 'hcm.management',
     plane: 'management',
@@ -146,7 +147,11 @@ describe('hasWritableProductSurfaceCapability', () => {
     const pageDecision = decision();
     const canonical = resolveCanonicalProductSurfaceContext(
       pageDecision,
-      snapshot(entryContext('hcm.integration.update'))
+      snapshot(
+        entryContext('hcm.integration.update', {
+          contextKey: 'context:hcm-management-entry',
+        })
+      )
     );
 
     expect(pageDecision.context.effectiveGrants).not.toContainEqual(
@@ -177,7 +182,7 @@ describe('hasWritableProductSurfaceCapability', () => {
     ).toBe(false);
   });
 
-  it('requires an exact context, surface, and selected-scope identity', () => {
+  it('requires exact surface, mode, plane, and selected-scope identity without opaque key equality', () => {
     const pageDecision = decision();
     const wrongSurface = entryContext('hcm.integration.update');
     wrongSurface.surfaceKey = 'hcm.work';
@@ -186,6 +191,48 @@ describe('hasWritableProductSurfaceCapability', () => {
     const wrongScope = entryContext('hcm.integration.update');
     wrongScope.scopes = wrongScope.scopes.filter((scope) => scope.key !== 'scope:selected');
     expect(resolveCanonicalProductSurfaceContext(pageDecision, snapshot(wrongScope))).toBeNull();
+
+    const wrongMode = entryContext('hcm.integration.update');
+    wrongMode.accessMode = 'ELEVATED';
+    expect(resolveCanonicalProductSurfaceContext(pageDecision, snapshot(wrongMode))).toBeNull();
+
+    const wrongPlane = entryContext('hcm.integration.update');
+    wrongPlane.plane = 'work';
+    expect(resolveCanonicalProductSurfaceContext(pageDecision, snapshot(wrongPlane))).toBeNull();
+
+    const wrongKind = entryContext('hcm.integration.update');
+    wrongKind.scopes = wrongKind.scopes.map((scope) =>
+      scope.key === 'scope:selected' ? { ...scope, kind: 'SELF' } : scope
+    );
+    expect(resolveCanonicalProductSurfaceContext(pageDecision, snapshot(wrongKind))).toBeNull();
+
+    const duplicateDirectScope = decision();
+    duplicateDirectScope.context.scopes = [
+      ...duplicateDirectScope.context.scopes,
+      { ...duplicateDirectScope.context.scopes[0]! },
+    ];
+    expect(
+      resolveCanonicalProductSurfaceContext(
+        duplicateDirectScope,
+        snapshot(entryContext('hcm.integration.update'))
+      )
+    ).toBeNull();
+
+    const foreignDirectScope = decision();
+    foreignDirectScope.context.scopes = [
+      ...foreignDirectScope.context.scopes,
+      {
+        ...foreignDirectScope.context.scopes[0]!,
+        key: 'scope:foreign',
+        displayName: 'Foreign',
+      },
+    ];
+    expect(
+      resolveCanonicalProductSurfaceContext(
+        foreignDirectScope,
+        snapshot(entryContext('hcm.integration.update'))
+      )
+    ).toBeNull();
   });
 
   it('admits exact canonical grants when list and direct decision revisions differ', () => {

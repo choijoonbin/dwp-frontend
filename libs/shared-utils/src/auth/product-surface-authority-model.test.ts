@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  isExclusiveProviderSupportContext,
   parseProductSurfaceAuthoritySnapshot,
   productSurfaceRefreshDelay,
   productSurfaceServerNow,
   resolveProductRollout,
 } from './product-surface-authority-model';
+import { PRODUCT_SCOPE_KINDS } from './product-surface-scope-kind';
 
 const RECEIVED_AT = Date.parse('2026-08-24T01:00:10Z');
 
@@ -65,6 +67,39 @@ function envelope() {
   };
 }
 
+function providerSupportEnvelope() {
+  const candidate = structuredClone(envelope());
+  candidate.activeAccessMode = 'PROVIDER_SUPPORT';
+  const context = candidate.contexts[0]!;
+  context.contextKey = 'ctx-communications-support';
+  context.surfaceKey = 'communications.management';
+  context.plane = 'management';
+  context.accessMode = 'PROVIDER_SUPPORT';
+  context.accessSource = 'SUPPORT';
+  context.appResourceKey = 'ADMIN.COMMUNICATIONS';
+  context.effectiveGrants = [
+    {
+      grantKind: 'POLICY',
+      accessPolicyKey: 'communications.management-entry.v1',
+      policyDecisionRef: 'support-decision-1',
+      authorityMode: 'SUPPORT_SESSION',
+      scopeKeys: ['support-session-1'],
+      requiresProductEntitlement: false,
+      readOnly: true,
+    },
+  ];
+  context.scopes = [
+    {
+      key: 'support-session-1',
+      kind: 'SUPPORT_SESSION',
+      displayName: 'Approved support session',
+      isDefault: true,
+      readOnly: true,
+    },
+  ];
+  return candidate;
+}
+
 describe('product surface authority model', () => {
   it('uses the server clock offset when scheduling the earliest revalidation', () => {
     const snapshot = parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT);
@@ -106,32 +141,7 @@ describe('product surface authority model', () => {
     );
   });
 
-  it('accepts explicit 110 AVAILABLE and NOT_EVALUATED compatibility meanings', () => {
-    const snapshot = parseProductSurfaceAuthoritySnapshot(
-      {
-        ...envelope(),
-        rollouts: [
-          {
-            ...envelope().rollouts[0],
-            state: '110',
-            flags: {
-              contextShadow: true,
-              capabilityEnforcement: true,
-              surfaceUi: false,
-            },
-            authorityStatus: 'NOT_EVALUATED',
-          },
-        ],
-      },
-      RECEIVED_AT
-    );
-
-    expect(resolveProductRollout(snapshot, 'communications')).toMatchObject({
-      state: 'ready',
-      surfaceUiEvaluation: 'resolved',
-      rollout: { state: '110' },
-    });
-
+  it('requires context-backed AVAILABLE authority before enabling 110 canary enforcement', () => {
     const availableEnvelope = envelope();
     availableEnvelope.rollouts[0]!.state = '110';
     availableEnvelope.rollouts[0]!.flags.surfaceUi = false;
@@ -141,6 +151,17 @@ describe('product surface authority model', () => {
       surfaceUiEvaluation: 'resolved',
       rollout: { state: '110', authorityStatus: 'AVAILABLE' },
     });
+
+    const notEvaluatedEnvelope = envelope();
+    notEvaluatedEnvelope.rollouts[0]!.state = '110';
+    notEvaluatedEnvelope.rollouts[0]!.flags.surfaceUi = false;
+    notEvaluatedEnvelope.rollouts[0]!.authorityStatus = 'NOT_EVALUATED';
+    expect(
+      resolveProductRollout(
+        parseProductSurfaceAuthoritySnapshot(notEvaluatedEnvelope, RECEIVED_AT),
+        'communications'
+      )
+    ).toEqual({ state: 'authority-unavailable' });
   });
 
   it('requires AVAILABLE authority for 111 and fails unavailable 110 closed', () => {
@@ -186,6 +207,17 @@ describe('product surface authority model', () => {
     );
   });
 
+  it.each(['TENANT', 'TEAM', 'POLICY_NODE'] as const)(
+    'accepts the canonical %s scope kind from the authority wire',
+    (kind) => {
+      const candidate = envelope();
+      candidate.contexts[0]!.scopes[0]!.kind = kind;
+
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).not.toThrow();
+      expect(PRODUCT_SCOPE_KINDS).toContain(kind);
+    }
+  );
+
   it('rejects unknown or production-unsupported activation states and foreign scopes', () => {
     const unknownActivation = envelope();
     (unknownActivation.contexts[0]!.effectiveGrants as unknown[]).splice(0, 1, {
@@ -225,6 +257,92 @@ describe('product surface authority model', () => {
     const foreignScope = envelope();
     foreignScope.contexts[0]!.effectiveGrants[0]!.scopeKeys = ['foreign-scope'];
     expect(() => parseProductSurfaceAuthoritySnapshot(foreignScope, RECEIVED_AT)).toThrow(
+      /context is invalid/
+    );
+  });
+
+  it.each(['110', '111'] as const)(
+    'accepts the %s server support DTO only as an exclusive read-only support-session union',
+    (state) => {
+      const candidate = providerSupportEnvelope();
+      candidate.rollouts[0]!.state = state;
+      candidate.rollouts[0]!.flags.surfaceUi = state === '111';
+
+      expect(isExclusiveProviderSupportContext(candidate.contexts[0])).toBe(true);
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).not.toThrow();
+    }
+  );
+
+  it('rejects malformed, mixed, or writable provider support contexts at the wire boundary', () => {
+    type SupportEnvelope = ReturnType<typeof providerSupportEnvelope>;
+    const mutations: readonly ((candidate: SupportEnvelope) => void)[] = [
+      (candidate) => {
+        candidate.contexts[0]!.accessSource = 'MANAGEMENT';
+      },
+      (candidate) => {
+        candidate.contexts[0]!.effectiveGrants[0]!.grantKind = 'CAPABILITY';
+      },
+      (candidate) => {
+        candidate.contexts[0]!.effectiveGrants[0]!.authorityMode = 'ENTITLEMENT';
+      },
+      (candidate) => {
+        candidate.contexts[0]!.effectiveGrants[0]!.readOnly = false;
+      },
+      (candidate) => {
+        candidate.contexts[0]!.effectiveGrants[0]!.requiresProductEntitlement = true;
+      },
+      (candidate) => {
+        candidate.contexts[0]!.effectiveGrants[0]!.scopeKeys = [];
+      },
+      (candidate) => {
+        candidate.contexts[0]!.effectiveGrants = [];
+      },
+      (candidate) => {
+        candidate.contexts[0]!.scopes[0]!.readOnly = false;
+      },
+      (candidate) => {
+        candidate.contexts[0]!.scopes[0]!.kind = 'RESOURCE_SET';
+      },
+      (candidate) => {
+        candidate.contexts[0]!.scopes.push({
+          ...candidate.contexts[0]!.scopes[0]!,
+          displayName: 'Duplicate support scope',
+        });
+      },
+      (candidate) => {
+        candidate.contexts[0]!.scopes.push({
+          ...candidate.contexts[0]!.scopes[0]!,
+          key: 'support-session-2',
+          displayName: 'Second default support scope',
+        });
+        candidate.contexts[0]!.effectiveGrants[0]!.scopeKeys.push('support-session-2');
+      },
+      (candidate) => {
+        candidate.contexts.push({
+          ...structuredClone(candidate.contexts[0]!),
+          contextKey: 'ctx-mixed-normal',
+          surfaceKey: 'communications.work',
+          plane: 'work',
+          accessMode: 'NORMAL',
+        });
+      },
+    ];
+
+    for (const mutate of mutations) {
+      const candidate = providerSupportEnvelope();
+      mutate(candidate);
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
+        /context is invalid/
+      );
+    }
+  });
+
+  it('rejects support-session authority mixed into a normal access-mode context', () => {
+    const candidate = providerSupportEnvelope();
+    candidate.activeAccessMode = 'NORMAL';
+    candidate.contexts[0]!.accessMode = 'NORMAL';
+
+    expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
       /context is invalid/
     );
   });

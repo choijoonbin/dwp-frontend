@@ -179,6 +179,30 @@ export function resolveActiveGovernedPageRoute(
   );
 }
 
+export function resolveActiveGovernedEvaluationRouteContractKey(
+  pathname: string,
+  routes: readonly { pattern: string; routeContractKey: string }[] = GOVERNED_SURFACE_PAGE_ROUTES,
+  legacyRedirects: readonly {
+    sourcePath: `/${string}`;
+    targetRouteContractKey: string;
+  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+): string | undefined {
+  const canonicalPathname = decodeGovernedPathname(pathname);
+  const activePage = resolveActiveGovernedPageRoute(canonicalPathname, routes);
+  if (activePage) return activePage.routeContractKey;
+
+  const normalizedPath = normalizeProductPath(canonicalPathname);
+  const redirectTargets = legacyRedirects
+    .filter(
+      (redirect) =>
+        governedPathOwnershipKey(redirect.sourcePath) === governedPathOwnershipKey(normalizedPath)
+    )
+    .map((redirect) => redirect.targetRouteContractKey);
+  if (redirectTargets.length !== 1) return undefined;
+  const matchingTargets = routes.filter((route) => route.routeContractKey === redirectTargets[0]);
+  return matchingTargets.length === 1 ? matchingTargets[0]!.routeContractKey : undefined;
+}
+
 export function resolveActiveGovernedProductId(
   pathname: string,
   routes: readonly Pick<
@@ -239,11 +263,11 @@ export function resolveGovernedPageEvaluationRoutes<
 }
 
 export function resolveProductSurfaceEvaluationScopeKey(
-  routeSurfaceId: string,
-  activeSurfaceId: string | undefined,
+  routeContractKey: string,
+  activeRouteContractKey: string | undefined,
   requestedScope: string | undefined
 ): string | undefined {
-  return routeSurfaceId === activeSurfaceId ? requestedScope : undefined;
+  return routeContractKey === activeRouteContractKey ? requestedScope : undefined;
 }
 
 function routeSegments(path: string): string[] {
@@ -403,6 +427,18 @@ function directEvaluation(data: ProductSurfaceEvaluationData): ProductSurfaceDir
   };
 }
 
+function safeDirectDecision(
+  data: ProductSurfaceEvaluationData,
+  expected: { productKey: string; surfaceKey: string },
+  nowMs: number | undefined
+): SurfaceDecision {
+  try {
+    return mapProductSurfaceDirectEvaluation(directEvaluation(data), expected, nowMs);
+  } catch {
+    return { state: 'authority-unavailable' };
+  }
+}
+
 function decisionFromError(error: unknown): SurfaceDecision {
   if (!(error instanceof HttpError)) return { state: 'authority-unavailable' };
   const details =
@@ -483,6 +519,10 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
     () => resolveActiveGovernedPageRoute(location.pathname),
     [location.pathname]
   );
+  const activeEvaluationRouteContractKey = useMemo(
+    () => resolveActiveGovernedEvaluationRouteContractKey(location.pathname),
+    [location.pathname]
+  );
   const evaluationRoutes = useMemo(
     () =>
       resolveGovernedPageEvaluationRoutes(
@@ -517,10 +557,6 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
     if (!snapshot || !envelope) return [];
     return evaluationRoutes.flatMap((route) => {
       if (!pageEvaluationEnabled(productFlags[route.productId])) return [];
-      const context = envelope.contexts.find(
-        (candidate) =>
-          candidate.productKey === route.productId && candidate.surfaceKey === route.surfaceId
-      );
       const request: ProductSurfaceEvaluationRequest = {
         subject: {
           type: 'PRODUCT',
@@ -528,16 +564,22 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
           surfaceKey: route.surfaceId,
         },
         routeContractKey: route.routeContractKey,
-        contextKey: context?.contextKey,
         contextScopeKey: resolveProductSurfaceEvaluationScopeKey(
-          route.surfaceId,
-          activeSurfaceId,
+          route.routeContractKey,
+          activeEvaluationRouteContractKey,
           requestedScope
         ),
       };
       return [{ route, request }];
     });
-  }, [activeSurfaceId, envelope, evaluationRoutes, productFlags, requestedScope, snapshot]);
+  }, [
+    activeEvaluationRouteContractKey,
+    envelope,
+    evaluationRoutes,
+    productFlags,
+    requestedScope,
+    snapshot,
+  ]);
   const evaluations = useQueries({
     queries: requests.map(({ route, request }) => ({
       queryKey: productSurfaceEvaluationQueryKey(snapshot!, request, {
@@ -563,8 +605,8 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
     const entries = requests.map(({ route }, index) => {
       const result = evaluations[index];
       const decision = result?.data
-        ? mapProductSurfaceDirectEvaluation(
-            directEvaluation(result.data),
+        ? safeDirectDecision(
+            result.data,
             { productKey: route.productId, surfaceKey: route.surfaceId },
             authority.serverNowMs
           )
@@ -636,6 +678,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
   useEffect(() => {
     if (
       !auth.user ||
+      !envelope ||
       !activePageRoute ||
       activePageRoute.pattern.includes(':') ||
       activePageRoute.pattern.includes('*')
@@ -653,13 +696,13 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
       },
       {
         routeId: activePageRoute.routeId,
-        decisionRevision: decision.decisionRevision,
+        decisionRevision: envelope.decisionRevision,
         expiresAt: decision.revalidateAt,
       },
       undefined,
       authority.serverNowMs
     );
-  }, [activePageRoute, auth.user, authority.serverNowMs, routeDecisions]);
+  }, [activePageRoute, auth.user, authority.serverNowMs, envelope, routeDecisions]);
   const lastAllowedWorkRouteIds = useMemo(() => {
     const navigationStorageReadKey = location.key;
     if (!navigationStorageReadKey || !auth.user || !envelope) return {};

@@ -433,6 +433,116 @@
       "preserveQuery": true,
       "preserveHash": true,
       "maxHops": 1
+    },
+    {
+      "redirectId": "notifications-management-overview-v1",
+      "sourcePath": "/admin/notifications/overview",
+      "targetRouteContractKey": "route.notifications.management.overview.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/notifications/admin/overview",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "notifications-management-contracts-v1",
+      "sourcePath": "/admin/notifications/contracts",
+      "targetRouteContractKey": "route.notifications.management.contracts.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/notifications/admin/contracts",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "notifications-management-policies-v1",
+      "sourcePath": "/admin/notifications/policies",
+      "targetRouteContractKey": "route.notifications.management.policies.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/notifications/admin/policies",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "notifications-management-operations-v1",
+      "sourcePath": "/admin/notifications/operations",
+      "targetRouteContractKey": "route.notifications.management.operations.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/notifications/admin/operations",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-overview-v1",
+      "sourcePath": "/admin/spaces/overview",
+      "targetRouteContractKey": "route.spaces.management.overview.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/overview",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-directory-v1",
+      "sourcePath": "/admin/spaces/directory",
+      "targetRouteContractKey": "route.spaces.management.directory.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/directory",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-requests-v1",
+      "sourcePath": "/admin/spaces/requests",
+      "targetRouteContractKey": "route.spaces.management.requests.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/requests",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-templates-v1",
+      "sourcePath": "/admin/spaces/templates",
+      "targetRouteContractKey": "route.spaces.management.templates.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/templates",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-content-reviews-v1",
+      "sourcePath": "/admin/spaces/content-reviews",
+      "targetRouteContractKey": "route.spaces.management.content-reviews.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/content-reviews",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-lifecycle-v1",
+      "sourcePath": "/admin/spaces/lifecycle",
+      "targetRouteContractKey": "route.spaces.management.lifecycle.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/lifecycle",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "spaces-management-operations-v1",
+      "sourcePath": "/admin/spaces/operations",
+      "targetRouteContractKey": "route.spaces.management.operations.page",
+      "targetLifecycle": "DRAFT",
+      "targetPath": "/spaces/admin/operations",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
     }
   ]
 }

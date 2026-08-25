@@ -1,7 +1,6 @@
 import {
   normalizeProductPath,
   type ProductSurfaceDefinition,
-  type ProductSurfaceNavigationGroup,
   type ProductSurfaceNavigationItem,
   type ProductSurfaceManifest,
 } from '../../components/product-manifest';
@@ -16,7 +15,7 @@ import type { RegisteredProductRoute } from '../../routes/product-route-contract
 
 export type ProductCompatibilityNavigationTarget =
   | { state: 'allowed'; targetScopeKey: string }
-  | { state: 'scope-selection-required' };
+  | { state: 'scope-selection-required'; targetScopeKeys: readonly string[] };
 
 function isRequiredFutureInstant(value: string | undefined, serverNowMs: number): boolean {
   if (!value) return false;
@@ -28,18 +27,22 @@ function isOptionalFutureInstant(value: string | undefined, serverNowMs: number)
   return value === undefined || isRequiredFutureInstant(value, serverNowMs);
 }
 
-function hasTrustedScopeSelectionContext(
+function nonBlank(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function trustedScopeSelectionKeys(
   authority: ProductSurfaceCanaryAuthority,
   manifest: ProductSurfaceManifest,
   surface: ProductSurfaceDefinition,
   item: ProductSurfaceNavigationItem,
-  directDecisionRevision: string | undefined,
+  directDecisionRevision: unknown,
   serverNowMs: number
-): boolean {
+): readonly string[] | undefined {
   const envelope = authority.envelope;
-  if (!envelope?.decisionRevision.trim() || !directDecisionRevision?.trim()) return false;
+  if (!nonBlank(envelope?.decisionRevision) || !nonBlank(directDecisionRevision)) return undefined;
   const candidates = envelope.contexts.filter((context) => context.surfaceKey === surface.id);
-  if (candidates.length !== 1) return false;
+  if (candidates.length !== 1) return undefined;
   const context = candidates[0]!;
   const scopeKeys = context.scopes.map((scope) => scope.key);
   if (
@@ -48,7 +51,7 @@ function hasTrustedScopeSelectionContext(
     context.surfaceKey !== surface.id ||
     context.plane !== surface.plane ||
     context.accessMode !== envelope.activeAccessMode ||
-    context.appResourceKey !== manifest.appKey ||
+    !context.appResourceKey.trim() ||
     envelope.contexts.some(
       (candidate) =>
         candidate.productKey === manifest.id && candidate.accessMode !== envelope.activeAccessMode
@@ -64,34 +67,18 @@ function hasTrustedScopeSelectionContext(
     ) ||
     new Set(scopeKeys).size !== scopeKeys.length
   ) {
-    return false;
+    return undefined;
   }
-  return context.scopes.some((scope) =>
-    canContextAccessNavigation(item.access, context, scope.key, serverNowMs)
+  const eligibleScopeKeys = context.scopes.flatMap((scope) =>
+    canContextAccessNavigation(item.access, context, scope.key, serverNowMs) ? [scope.key] : []
   );
-}
-
-/** Preserves the legacy group order while combining every manifest-owned Surface menu. */
-export function buildProductCompatibilityNavigation(
-  manifest: ProductSurfaceManifest
-): readonly ProductSurfaceNavigationGroup[] {
-  const groups = new Map<string, { id: string; items: ProductSurfaceNavigationItem[] }>();
-  for (const surface of manifest.surfaces) {
-    for (const group of surface.navigation) {
-      const existing = groups.get(group.id);
-      if (existing) {
-        existing.items.push(...group.items);
-      } else {
-        groups.set(group.id, { id: group.id, items: [...group.items] });
-      }
-    }
-  }
-  return [...groups.values()];
+  return eligibleScopeKeys.length > 0 ? eligibleScopeKeys : undefined;
 }
 
 /**
- * Rollout 110 keeps the legacy combined menu, but every item is still projected from its own
- * exact PAGE decision. A Work decision can never authorize a Management item (or vice versa).
+ * Enforced navigation is always projected from each item's exact PAGE decision. Both rollout 110
+ * and 111 render only the current plane; the complete target map also supplies trusted cross-plane
+ * entry points without ever combining Work and Management sidebar items.
  */
 export function buildProductCompatibilityNavigationTargets({
   authority,
@@ -104,7 +91,7 @@ export function buildProductCompatibilityNavigationTargets({
   registeredRoutes: readonly RegisteredProductRoute[];
   rolloutMode: ProductSurfaceRolloutMode;
 }): ReadonlyMap<string, ProductCompatibilityNavigationTarget> | undefined {
-  if (rolloutMode !== 'enforced-compatibility') {
+  if (rolloutMode !== 'enforced-compatibility' && rolloutMode !== 'surface-ui') {
     return undefined;
   }
 
@@ -142,18 +129,18 @@ export function buildProductCompatibilityNavigationTargets({
           state: 'allowed',
           targetScopeKey: decision.scope.key,
         });
-      } else if (
-        decision.state === 'scope-selection-required' &&
-        hasTrustedScopeSelectionContext(
+      } else if (decision.state === 'scope-selection-required') {
+        const targetScopeKeys = trustedScopeSelectionKeys(
           authority,
           manifest,
           surface,
           item,
           decision.detail?.decisionRevision,
           serverNowMs
-        )
-      ) {
-        targets.set(normalizedPath, { state: 'scope-selection-required' });
+        );
+        if (targetScopeKeys) {
+          targets.set(normalizedPath, { state: 'scope-selection-required', targetScopeKeys });
+        }
       }
     }
   }
@@ -169,7 +156,7 @@ export function resolveProductCompatibilityNavigationLocation(
   const search = new URLSearchParams(current.search ?? '');
   if (target.state === 'allowed') {
     search.set('scope', target.targetScopeKey);
-  } else {
+  } else if (!target.targetScopeKeys.includes(search.get('scope') ?? '')) {
     search.delete('scope');
   }
   const serializedSearch = search.toString();

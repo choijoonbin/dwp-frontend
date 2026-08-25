@@ -1,4 +1,5 @@
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../routes/product-surface-authorization.generated';
+import { resolveProductSurfaceTaskKind } from '../observability/product-surface-task-kind';
 import { useProductSurfaceGovernedMutation } from './use-product-surface-governed-mutation';
 
 import type { ProductSurfaceMutationBinding } from './use-product-surface-governed-mutation';
@@ -26,6 +27,11 @@ const PRODUCT_ACTION_BINDINGS = new Map<
           productKey: route.productId,
           surfaceKey: route.surfaceId,
           routeContractKey: route.routeContractKey,
+          taskKind: resolveProductSurfaceTaskKind({
+            productKey: route.productId,
+            surfaceKey: route.surfaceId,
+            routeContractKey: route.routeContractKey,
+          }),
         },
       ] as const,
     ];

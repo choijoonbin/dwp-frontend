@@ -238,7 +238,13 @@ Method Mismatch를 CI·Direct Evaluation에서 거부한다.
 PAGE Catalog, Product Manifest의 Base/Surface Index, 공식 Legacy Redirect Registry 순서로 해석해
 소유 제품 하나의 PAGE만 Direct Evaluation Plan에 넣는다. Router와 동일하게 소유권 비교는
 대소문자를 구분하지 않지만 원 URL·Query·Hash는 보존한다. Legacy Alias는 Target Product뿐 아니라
-Target Surface도 해석해 명시 `scope`를 그 Surface의 모든 PAGE 평가에 전달한다. 따라서 전역 화면과
+정확한 Target PAGE Contract도 해석한다. 명시 `scope`는 현재 Exact PAGE 또는 공식 Legacy Alias의
+Target PAGE 한 건에만 전달하며 같은 Surface의 Sibling PAGE에는 전파하지 않는다. Base/Surface
+Index는 Shell Guard 전에 Scope 없는 Sibling 판정으로 첫 허용 Child를 선택하고 Query·Hash·Scope를
+보존해 Redirect한 뒤 Exact PAGE에서 평가한다. 요청 Scope가 있으면 그 Scope와 일치하는 ALLOWED
+Child 또는 해당 Scope Grant가 있는 `scope-selection-required` Child만 선택한다. 같은 Surface의
+Sidebar 이동은 Target의 신뢰 가능한 Scope Key 집합에 현재 Scope가 포함될 때만 이를 유지한다.
+따라서 전역 화면과
 `000/100`은 0건, `110/111`은 현재 계약 기준 제품별 6~25건이며 다른 제품 Decision은 Location 변경
 전까지 요청하지 않는다. React Query Key는 Tenant·Actor·Access Mode·Decision Revision·Scope를
 계속 결속하고, 새 제품으로 이동하면 해당 제품 Plan으로 교체해 기존 Fail-closed 의미를 유지한다.
@@ -573,20 +579,38 @@ Rollout은 기존 Provider Feature Rollout 원장을 재사용하되 Tenant 앱�
 - 신규 `dwp-backend/dwp-provider-server/src/main/java/com/dwp/services/provider/rollout/FeatureRolloutDecisionOutboxRepository.java`
 - 신규 `dwp-backend/dwp-provider-server/src/main/java/com/dwp/services/provider/rollout/FeatureRolloutOutboxRelay.java`
 - 신규 `dwp-backend/dwp-provider-server/src/main/resources/db/migration/V35__seed_product_surface_rollout_flags_and_outbox.sql`
+- 신규 `dwp-backend/dwp-provider-server/src/main/resources/db/migration/V37__seed_product_surface_capability_enforcement_flags.sql`
+- 신규 `dwp-backend/dwp-provider-server/src/main/resources/db/local-seed/R__activate_core006_local_pilot_rollouts.sql`
 - 신규 `dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/FeatureRolloutEvaluationClient.java`
 - 신규 `dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/FeatureRolloutDecisionCache.java`
 - 신규 `dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/FeatureRolloutInvalidationConsumer.java`
+- 신규 `dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceRolloutSafetyLatch.java`
+- 신규 `dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/RedisProductSurfaceRolloutSafetyLatch.java`
 - 신규 `dwp-backend/dwp-provider-server/src/test/java/com/dwp/services/provider/rollout/FeatureRolloutInternalEvaluationControllerTest.java`
 - 신규 `dwp-backend/dwp-provider-server/src/test/java/com/dwp/services/provider/rollout/FeatureRolloutOutboxRelayTest.java`
 - 신규 `dwp-backend/dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceFeatureRolloutContractTest.java`
+- 신규 `dwp-backend/dwp-gateway/src/test/java/com/dwp/gateway/productsurface/RedisProductSurfaceRolloutSafetyLatchTest.java`
+- 신규 `dwp-backend/dwp-provider-server/src/test/java/com/dwp/services/provider/rollout/Core006LocalPilotRolloutSeedPostgresTest.java`
 - `dwp-backend/contracts/openapi/provider.json`,
   `dwp-backend/contracts/openapi/gateway-public.json`과 Route Precedence Contract 갱신
 
 Internal Evaluator는 `tenantId + flagKey`만 받고 Operator `FEATURE_ROLLOUT_READ` 권한을 요구하지
 않는 대신 mTLS Service Identity를 강제한다. Gateway가 Context 응답에 평가 결과와 Opaque Rollout
 Revision을 합성한다. Cache Key는 Tenant+Flag+Revision, TTL 최대 60초이고 Pause/Rollback Event로
-즉시 무효화한다. Provider 장애 시 새 Tenant·새 Revision은 Off로 Fail Closed하며 Mutation 인가는
-Flag와 무관하게 신규 PEP를 유지한다.
+즉시 무효화한다. Gateway는 `S`를 Tenant-global로 한 번 평가하고 각 제품의 `E_p/U_p`를 별도로
+평가한다. Context Envelope는 `S` bit·revision만 제품 간 같아야 하며 `E_p/U_p` 동등성을 요구하지
+않는다. Mutation 인가는 Flag와 무관하게 신규 PEP를 유지한다.
+
+짧은 Cache와 별도로 Redis Durable Safety Latch v2를 `tenant+product`별로 둔다. Provider가
+`S/E_p`를 모두 권위 있게 반환했을 때만 `schema=2`, Product Key, 두 bit와 두 Opaque Revision을
+TTL 없이 원자 저장한다. 낮은 Revision은 저장 Snapshot을 반환하고 같은 Revision의 다른 bit는
+Conflict다. Provider 장애에서 Snapshot `FOUND`면 마지막 `S/E_p`를 복원하고 `U_p=0`으로 계산해
+`111→110`만 허용한다. v2와 Legacy v1이 모두 없는 신규 Tenant·Product의 `MISSING`만 `000`이다.
+v2가 없고 Legacy v1이 있으면 `MIGRATION_REQUIRED`, Corrupt·Unavailable·Revision Conflict는
+503이며 `110→100/000` 자동 강등이나 Legacy 인가 Fallback은 없다.
+Redis Cluster Cross-slot을 피하기 위해 v2와 Legacy Key를 같은 Lua에 넣지 않는다. `v2 LOAD →
+MISSING이면 Legacy 단일-key probe → v2 재조회`로 Race를 닫고, 두 번째 v2의
+`FOUND/CORRUPT/UNAVAILABLE`를 우선한다. v2가 두 번 모두 `MISSING`일 때만 Legacy 결과를 사용한다.
 
 Provider는 Admin 변경과 같은 Transaction에서 `feature-rollout.decision.changed` Outbox Event를
 기록하고 Relay가 Tenant·Flag·Opaque Revision·State만 발행한다. Gateway Consumer는 일치 Cache를
@@ -598,10 +622,13 @@ Tenant, Flag Key, Opaque Revision, State, created/published time, attempt와 nex
 `FeatureRolloutDecisionOutboxRepository`가 Admin 변경 Transaction에 Insert하고 Relay가
 At-least-once 전송한다. UX Event나 보안 Audit Payload를 이 운영 Invalidation Stream에 넣지 않는다.
 
-Flag는 `context.shadow`, `capability.enforcement`, `surface.ui` 세 축이며 허용 조합은
-`000`, `100`, `110`, `111`뿐이다. Product UI Key는
-`ux.product-surfaces.<product>.v1`이고 Baseline, Cohort, Health Gate, Pause·Rollback Dashboard와
-각 조합의 Rehearsal Test를 제공한다.
+Flag는 Tenant-global `S=access.product-surfaces.context-shadow.v1`, 제품별
+`E_p=access.product-surfaces.capability-enforcement.<product>.v1`, 제품별
+`U_p=ux.product-surfaces.<product>.v1` 세 축이며 각 제품의 허용 조합은 `000`, `100`, `110`,
+`111`뿐이다. `E_p⇒S`, `U_p⇒E_p`를 강제한다. 기존 전역
+`access.product-surfaces.capability-enforcement.v1`은 전환 증거용으로 등록 상태만 보존하고 신규
+합성에는 사용하지 않는다. Baseline, Cohort, Health Gate, Pause·명시적 Rollback Dashboard와 각
+조합·Latch 장애의 Rehearsal Test를 제공한다.
 
 ### `PS-W0-09` Assigned Review Surface 보정
 
@@ -705,7 +732,7 @@ Admin Campaign Route 403/404를 Auth Controller/Service, Gateway, Frontend Contr
 - Product Management가 Work App Entitlement Parent에서 독립
 - 중앙 Legacy Redirect가 같은 Management Surface로 이동
 - Support Context가 일반 Permission과 합산되지 않음
-- Feature Flag Off Rollback
+- `U_p` Off Compatibility Rollback과 더 높은 승인 `E_p=false` 운영 Rollback의 분리
 
 Canary에서 제품 페이지 기능은 바꾸지 않는다. 공통 Shell 문제만 검증한다.
 
@@ -823,8 +850,7 @@ Surface의 404여야 한다. DATA/ACTION Pattern은 Browser `known-route`를 만
 단일 Source로 사용해 Exact Contract, Scope, Mode와 Validity를 생성한다. Canary Gate는 메뉴 수,
 Sibling Guard, Management-only Root, Dynamic PAGE 4+2 Allowlist와 위 6개 404 Control, Direct Route
 Deny, Assigned Request·Version Predicate, Legacy 한 Hop, Refresh·Back·새 Tab, Support Exclusive
-Mode, 네 Flag 상태와 Rollback
-Rehearsal을 모두 통과해야 한다.
+Mode, 제품별 `(S,E_p,U_p)` 네 상태와 Latch v2·명시적 Rollback Rehearsal을 모두 통과해야 한다.
 
 ## 5. W1a Approvals Pilot
 
@@ -1030,13 +1056,15 @@ Grant와 Explicit DENY·Evidence Revision을 Fail Closed로 확인한다.
 | ------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `000`   | 기존 Role/Permission Compatibility 또는 Exact Scoped Duty(+ non-audit same-set Config); Cross-grant 금지 | 유지                                                               |
 | `100`   | 실제 결정은 000과 동일, v2 Shadow Delta 기록; Scoped Authority의 Exact Action 유지                       | 유지                                                               |
-| `110`   | v2 Context/PEP가 Scoped Duty + Canonical Exact Mapping 필수, UI는 Compatibility Shell                    | 유지하되 Scoped Duty가 Global Role을 요구하지 않아 False Deny 없음 |
-| `111`   | 110 인가 + 분리 Surface UI                                                                               | 동일                                                               |
+| `110`   | v2 Context/PEP가 Scoped Duty + Canonical Exact Mapping 필수, UI는 분리 Compatibility Shell               | 유지하되 Scoped Duty가 Global Role을 요구하지 않아 False Deny 없음 |
+| `111`   | 110 인가 + Native Surface UI                                                                             | 동일                                                               |
 
-Global Role Conflict는 Legacy Fallback 제거와 110→000 Rehearsal 완료 전 Retire하지 않는다. Rollback은
-Scoped Assignment/Audit를 삭제하지 않고 000 Compatibility로 되돌린다. Approval Delivery Retry의
-Governed Overload는 Expected Version CAS를 유지하며, Legacy Overload는 Tenant+Outbox+FAILED/DEAD
-상태의 단일 Atomic Update로 version을 증가시켜 Governed→Legacy Rollback 뒤에도 재시도가 막히지 않는다.
+Global Role Conflict는 Legacy Fallback 제거와 더 높은 승인 `E_p=false` Revision을 사용하는
+제품별 `110→100` 운영 Rollback Rehearsal 완료 전 Retire하지 않는다. 이 명시적 Rollback은 Scoped
+Assignment/Audit를 삭제하지 않고 `S=1` Compatibility 인가로 되돌린다. Provider·Latch 장애는
+`110→100/000`을 자동 수행하지 않는다. Approval Delivery Retry의 Governed Overload는 Expected
+Version CAS를 유지하며, Legacy Overload는 Tenant+Outbox+FAILED/DEAD 상태의 단일 Atomic Update로
+version을 증가시켜 명시적 Governed→Legacy 운영 Rollback 뒤에도 재시도가 막히지 않는다.
 
 #### Approval Non-root DB Compatibility Fence
 
@@ -1102,13 +1130,13 @@ Mapping은 Fail Closed한다. Production Readiness는 모든 활성 Step-up Prov
 - Management-only 사용자
 - Query Deep Link, Back/Forward, 새 Tab
 - 권한 회수 중 Draft·Mutation
-- Feature Flag Off 시 기존 Canonical URL 유지
+- `U_p` Off 시 기존 Canonical URL·분리 Shell 유지, `E_p`는 장애로 자동 Off 금지
 - Scoped Duty same/disjoint/partial-overlap, Direct↔Group 책임 교차 Source, Membership Mutation
   DB Reject, Concurrent Activation one-wins, Expiry/Revoke와 Legacy Review Queue
 - V91의 11개 Canonical Approvals Management Contract/13개 Duty Association이 Generated v2
   `resolvedCapabilityCode`와 Exact Match하고 Drift 시 Build 실패
-- 000/100 Scoped-only Exact Action, 110/111 Global Role-only Deny, 110→000 Rollback과 연속
-  Delivery Failure/Legacy Retry의 version 증가
+- 000/100 Scoped-only Exact Action, 110/111 Global Role-only Deny, 더 높은 승인 `E_p=false`의
+  110→100 운영 Rollback, Provider 장애 시 111→110과 연속 Delivery Failure/Legacy Retry의 version 증가
 - Recovery Auditor가 겹치는 Scoped Audit Duty만 사용하고 Originator·겹치는 Operator·Explicit
   DENY·비정규 Audit/Operator Mapping·Evidence Drift를 Fail Closed하는지 검사
 - OIDC LOGIN `pwd+otp`·literal `mfa`→Continuation, STEP_UP `pwd+otp`·`hwk`→Canonical
@@ -1165,7 +1193,7 @@ const HCM_SURFACES = [
       accessPolicyKey: 'hcm.team-access.v1',
       requiresProductEntitlement: false,
     },
-    supportedScopeKinds: ['TEAM', 'ORG_UNIT'],
+    supportedScopeKinds: ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
     shellProfile: 'product-work',
   },
   {
@@ -1181,7 +1209,7 @@ const HCM_SURFACES = [
       accessPolicyKey: 'hcm.operations-access.v1',
       requiresProductEntitlement: false,
     },
-    supportedScopeKinds: ['ORG_UNIT', 'LEGAL_ENTITY'],
+    supportedScopeKinds: ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
     shellProfile: 'product-management',
   },
   {
@@ -1433,45 +1461,73 @@ Export Create Request는 `datasetKey`, `datasetContractVersion`, Target Populati
 2. 기존 Route/Menu/API 허용과 신규 결정을 비식별 Difference로 집계한다.
 3. 더 넓어진 Allow는 모두 Blocker다.
 4. 의도적 Deny는 영향 사용자·Role·Route와 Product Owner 승인을 연결한다.
-5. Canary Tenant에서 `capability.enforcement`를 켜되 Compatibility Shell로 Route/API 정합성을
-   먼저 확인한다.
-6. `surface.ui`를 켜고 IA·사용성 지표를 확인한다.
-7. UI Rollback은 Compatibility Shell로, 인가 Rollback은 직전 승인 Capability Policy Version으로
+5. Canary Tenant에서 승인된 제품의 `E_p`만 켜되 분리 Compatibility Shell로 Route/API 정합성을
+   먼저 확인한다. 다른 제품의 `E_p`는 Off를 유지한다.
+6. 같은 제품의 `U_p`를 켜고 IA·사용성 지표를 확인한다.
+7. UI Rollback은 분리 Compatibility Shell로, 인가 Rollback은 직전 승인 Capability Policy Version으로
    수행한다.
 
 ## 8. Feature Flag
 
-| Control/Flag                                        | Owner             | Default | Scope                   |
-| --------------------------------------------------- | ----------------- | ------- | ----------------------- |
-| `access.product-surfaces.context-shadow.v1`         | Identity/Platform | off     | Tenant                  |
-| `access.product-surfaces.capability-enforcement.v1` | Security/Platform | off     | Tenant + Policy Version |
-| `ux.product-surfaces.communications.v1`             | Shared Experience | off     | Tenant                  |
-| `ux.product-surfaces.services.v1`                   | Shared Experience | off     | Tenant                  |
-| `ux.product-surfaces.approvals.v1`                  | Approvals         | off     | Tenant                  |
-| `ux.product-surfaces.hcm.v1`                        | HCM               | off     | Tenant                  |
-| `ux.product-surfaces.dwaion.v1`                     | DWAI·ON           | off     | Tenant                  |
-| `ux.product-surfaces.notifications.v1`              | Notifications     | off     | Tenant                  |
-| `ux.product-surfaces.spaces.v1`                     | Spaces            | off     | Tenant                  |
-| `ux.product-surfaces.calendar.v1`                   | Calendar          | off     | Tenant                  |
-| `ux.product-surfaces.workplace.v1`                  | Workplace         | off     | Tenant                  |
-| `ux.product-surfaces.mail.v1`                       | Mail              | off     | Tenant                  |
-| `ux.product-surfaces.messaging.v1`                  | Messaging         | off     | Tenant                  |
+| Control/Flag                                                       | Owner             | Default | Scope          | 합성 역할                                    |
+| ------------------------------------------------------------------ | ----------------- | ------- | -------------- | -------------------------------------------- |
+| `access.product-surfaces.context-shadow.v1`                        | Identity/Platform | off     | Tenant-global  | `S`; 11개 Product가 같은 bit·revision 사용   |
+| `access.product-surfaces.capability-enforcement.v1`                | Security/Platform | off     | Legacy Tenant  | 전환 증거·구버전 호환만; 신규 합성 참조 금지 |
+| `access.product-surfaces.capability-enforcement.approvals.v1`      | Approvals         | off     | Tenant+Product | Approvals `E_p`                              |
+| `access.product-surfaces.capability-enforcement.calendar.v1`       | Calendar          | off     | Tenant+Product | Calendar `E_p`                               |
+| `access.product-surfaces.capability-enforcement.communications.v1` | Shared Experience | off     | Tenant+Product | Communications `E_p`                         |
+| `access.product-surfaces.capability-enforcement.dwaion.v1`         | DWAI·ON           | off     | Tenant+Product | DWAI·ON `E_p`                                |
+| `access.product-surfaces.capability-enforcement.hcm.v1`            | HCM               | off     | Tenant+Product | HCM `E_p`                                    |
+| `access.product-surfaces.capability-enforcement.mail.v1`           | Mail              | off     | Tenant+Product | Mail `E_p`                                   |
+| `access.product-surfaces.capability-enforcement.messaging.v1`      | Messaging         | off     | Tenant+Product | Messaging `E_p`                              |
+| `access.product-surfaces.capability-enforcement.notifications.v1`  | Notifications     | off     | Tenant+Product | Notifications `E_p`                          |
+| `access.product-surfaces.capability-enforcement.services.v1`       | Shared Experience | off     | Tenant+Product | Services `E_p`                               |
+| `access.product-surfaces.capability-enforcement.spaces.v1`         | Spaces            | off     | Tenant+Product | Spaces `E_p`                                 |
+| `access.product-surfaces.capability-enforcement.workplace.v1`      | Workplace         | off     | Tenant+Product | Workplace `E_p`                              |
+| `ux.product-surfaces.approvals.v1`                                 | Approvals         | off     | Tenant+Product | Approvals `U_p`                              |
+| `ux.product-surfaces.calendar.v1`                                  | Calendar          | off     | Tenant+Product | Calendar `U_p`                               |
+| `ux.product-surfaces.communications.v1`                            | Shared Experience | off     | Tenant+Product | Communications `U_p`                         |
+| `ux.product-surfaces.dwaion.v1`                                    | DWAI·ON           | off     | Tenant+Product | DWAI·ON `U_p`                                |
+| `ux.product-surfaces.hcm.v1`                                       | HCM               | off     | Tenant+Product | HCM `U_p`                                    |
+| `ux.product-surfaces.mail.v1`                                      | Mail              | off     | Tenant+Product | Mail `U_p`                                   |
+| `ux.product-surfaces.messaging.v1`                                 | Messaging         | off     | Tenant+Product | Messaging `U_p`                              |
+| `ux.product-surfaces.notifications.v1`                             | Notifications     | off     | Tenant+Product | Notifications `U_p`                          |
+| `ux.product-surfaces.services.v1`                                  | Shared Experience | off     | Tenant+Product | Services `U_p`                               |
+| `ux.product-surfaces.spaces.v1`                                    | Spaces            | off     | Tenant+Product | Spaces `U_p`                                 |
+| `ux.product-surfaces.workplace.v1`                                 | Workplace         | off     | Tenant+Product | Workplace `U_p`                              |
 
-지원하는 상태는 다음 네 개로 고정한다. `U`는 해당 Product의 `ux.product-surfaces.*`다.
+각 Product `p`가 지원하는 상태는 `(S,E_p,U_p)`의 다음 네 개로 고정한다. 제품 간 동등성을
+요구하는 축은 `S`뿐이다.
 
-| 상태  | S Context Shadow | E Capability Enforcement | U Surface UI | UI와 인가                                         | 신규 `앱 관리` CTA | W2/W3 DRAFT Route |
-| ----- | ---------------: | -----------------------: | -----------: | ------------------------------------------------- | ------------------ | ----------------- |
-| `000` |                0 |                        0 |            0 | 전환 전 기존 UI + 기존 인가                       | 숨김               | 미등록            |
-| `100` |                1 |                        0 |            0 | Shadow Difference + Compatibility UI              | 숨김               | 미등록            |
-| `110` |                1 |                        1 |            0 | Exact 인가 + 기존 업무·관리 합산 Compatibility UI | 숨김               | Fail Closed       |
-| `111` |                1 |                        1 |            1 | Exact 인가 + Work/Management 분리 UI              | 권한자에게만 표시  | Fail Closed       |
+| 상태  | `S` Context Shadow | `E_p` Capability Enforcement | `U_p` Native UI | UI와 인가                                       | `앱 관리` CTA    | W2/W3 DRAFT Route          |
+| ----- | -----------------: | ---------------------------: | --------------: | ----------------------------------------------- | ---------------- | -------------------------- |
+| `000` |                  0 |                            0 |               0 | 분리 Compatibility Shell + 기존 인가            | 기존 관리 권한자 | 인가 미등록, Legacy만 사용 |
+| `100` |                  1 |                            0 |               0 | 같은 분리 Shell + Shadow Difference + 기존 인가 | 기존 관리 권한자 | 인가 미등록, Legacy만 사용 |
+| `110` |                  1 |                            1 |               0 | 분리 Compatibility Shell + Exact 인가           | 서버 판정 권한자 | Fail Closed                |
+| `111` |                  1 |                            1 |               1 | Native Surface UI + Exact 인가                  | 서버 판정 권한자 | Fail Closed                |
 
-나머지 조합은 설정 검증에서 거부한다. UI Flag 평가 실패는 `U=0` Compatibility
-Shell로 돌아갈 수 있지만 `E=1`은 유지한다. 이미 Enforcement된 Tenant에서 Enforcement
-설정·Registry 평가가 실패하면 서명된 마지막 승인 Policy Version을 유지하거나 Product
-Management를 Fail Closed하며 Legacy `MANAGE`로 자동 복귀하지 않는다. Compatibility Shell도
-신규 Sibling Guard·Effective Context·PEP를 사용한다. 네 조합의 Route·API Truth Table과
-실제 Rollback Rehearsal을 Canary에서 통과한다.
+`E_p⇒S`, `U_p⇒E_p`를 위반하는 조합은 설정 검증에서 거부한다. 업무·관리 Sidebar 분리와 단일
+진입점은 Flag가 아니라 공통 Shell 불변식이다. `U_p` 평가 실패는 분리 Compatibility Shell로
+돌아갈 수 있지만 혼합 Sidebar로 회귀하지 않으며 Latch v2의 마지막 승인 `E_p=1`을 끄지 않는다.
+Provider 장애에서 Snapshot이 있으면 `S/E_p`를 복원하고 `U_p=0`으로 계산해 `111→110`만 허용한다.
+`110→100/000` 자동 강등, Legacy 전역 E 또는 `MANAGE`로 복귀는 금지한다. `E_p=false`인 더 높은
+승인 Revision을 발행하는 명시적 제품 Rollback은 `S=1`에서 `110→100`이며 장애 Fallback과
+분리한다. Compatibility Shell도 신규 Sibling Guard·Effective Context·PEP를 사용한다.
+
+Local 전용 Seed의 정확한 제품 Truth Table은 다음과 같다.
+
+| Local 제품군                                                   | `S` | `E_p` | `U_p` |  상태 | Authorization Bundle                |
+| -------------------------------------------------------------- | --: | ----: | ----: | ----: | ----------------------------------- |
+| Approvals·Communications·HCM·Services                          |   1 |     1 |     1 | `111` | 불변 v3에 Exact PAGE 58개 포함      |
+| Calendar·DWAI·ON·Mail·Messaging·Notifications·Spaces·Workplace |   1 |     0 |     0 | `100` | W2/W3 DRAFT; Exact Authority 미평가 |
+
+불변 v3에 없는 W2/W3 제품을 `110/111`로 만들면 Gateway는 503 Fail Closed한다. Local Seed는
+Production Rollout이 아니며 신규 상태 합성에 참여하는 Production의 `S/E_p/U_p` 23개 Flag는 모두
+default-off다. Local Auth v3 Active Pointer도 고정 Local Tenant의 검증용일 뿐 Production 승인
+Evidence로 재사용하지 않는다. 외부
+Product·Security·Privacy 승인 전 Production Flag, Active Pointer와 운영 Assignment를 변경하지
+않는다. 제품별 네 조합의 Route·API Truth Table, Latch v2 Migration/Corruption/Outage와 명시적
+Rollback Rehearsal을 Canary에서 통과한다.
 
 ## 9. Issue 분해와 의존성
 
@@ -1530,7 +1586,8 @@ Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bu
 - [ ] Telemetry Privacy·Retention·수집 Pipeline과 사전 등록 KPI·표본 Gate 승인
 - [ ] Exact Fixture를 재사용하는 Canary·Pilot Unit·Contract·E2E Issue 연결
 - [ ] Figma 또는 Storybook 핵심 Frame 승인
-- [ ] 3단계 Feature Flag Truth Table·Rollback Rehearsal, Observation·Rollback Owner 지정
+- [ ] Tenant-global `S` + 제품별 `E_p/U_p` Truth Table, Latch v2 장애·명시적 Rollback
+      Rehearsal, Observation·Rollback Owner 지정
 
 기술 구현은 검증 가능한 DRAFT Migration과 default-off Runtime으로 완료했다. 불변 v1~v3
 Bundle의 바이트·Checksum은 보존하고, 11개 제품 Rollout 참여 목록은 별도 Checksummed Inventory로

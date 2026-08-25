@@ -1,8 +1,8 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { DwpDatePickerProvider } from '@dwp-frontend/design-system/enterprise/date-time/date-picker-provider';
-import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import { RoomBookings } from '../features/rooms/room-bookings';
+import { ProductSurfaceLocalNotFound } from '../components/product-surface-local-not-found';
 import { RoomsAdminOperations } from '../features/rooms/rooms-admin-operations';
 import { RoomsAdminPolicies } from '../features/rooms/rooms-admin-policies';
 import { RoomsFind } from '../features/rooms/rooms-find';
@@ -14,25 +14,14 @@ import { WorkplaceAdminPolicy } from '../features/rooms/workplace-admin-policy';
 import { WorkplaceBookings } from '../features/rooms/workplace-bookings';
 import { WorkplaceExplore } from '../features/rooms/workplace-explore';
 import { WorkplaceHome } from '../features/rooms/workplace-home';
-import {
-  findFirstAccessibleRoomsPath,
-  findRoomsNavigationItem,
-} from '../features/rooms/rooms-navigation';
+import { findRoomsNavigationItem } from '../features/rooms/rooms-navigation';
+import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 
 export default function RoomsPage() {
   const { pathname } = useLocation();
-  const { hasPermission, isLoaded } = usePermissions();
   const page = findRoomsNavigationItem(pathname);
-  const accessiblePath = findFirstAccessibleRoomsPath(hasPermission);
 
-  if (!isLoaded) return null;
-  if (!page) return <Navigate to={accessiblePath} replace />;
-  if (
-    page.requiredResourceKey &&
-    !hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
-  ) {
-    return <Navigate to={accessiblePath} replace />;
-  }
+  if (!page) return <ProductSurfaceLocalNotFound />;
 
   const content = {
     home: <WorkplaceHome />,
@@ -49,5 +38,9 @@ export default function RoomsPage() {
     'admin-room-policy': <RoomsAdminPolicies />,
   }[page.view];
 
-  return <DwpDatePickerProvider>{content}</DwpDatePickerProvider>;
+  return (
+    <ProductAreaNavigationItemAccessGuard item={page}>
+      <DwpDatePickerProvider>{content}</DwpDatePickerProvider>
+    </ProductAreaNavigationItemAccessGuard>
+  );
 }

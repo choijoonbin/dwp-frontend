@@ -67,4 +67,28 @@ describe('governed route access guard', () => {
       state: 'authority-unavailable',
     });
   });
+
+  it('fails closed without throwing for malformed allowed revision, grant, and read-only fields', () => {
+    const malformed = [
+      { ...allowed(), decisionRevision: null },
+      { ...allowed(), decisionRevision: 42 },
+      { ...allowed(), context: { ...allowed().context, decisionRevision: undefined } },
+      { ...allowed(), context: { ...allowed().context, decisionRevision: 42 } },
+      { ...allowed(), context: { ...allowed().context, routeGrantRef: null } },
+      { ...allowed(), context: { ...allowed().context, routeGrantRef: 42 } },
+      { ...allowed(), context: { ...allowed().context, effectiveReadOnly: null } },
+      { ...allowed(), context: { ...allowed().context, effectiveReadOnly: 'false' } },
+    ];
+
+    for (const candidate of malformed) {
+      expect(
+        mapGovernedRouteEvaluation(
+          candidate as unknown as Parameters<typeof mapGovernedRouteEvaluation>[0],
+          request,
+          'NORMAL',
+          Date.parse('2029-01-01T00:00:00Z')
+        )
+      ).toEqual({ state: 'authority-unavailable' });
+    }
+  });
 });

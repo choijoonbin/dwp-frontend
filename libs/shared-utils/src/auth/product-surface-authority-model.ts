@@ -3,20 +3,11 @@ import type {
   ProductSurfaceEffectiveContext,
   ProductSurfaceRollout,
 } from '../api/auth-api';
+import { isProductScopeKind } from './product-surface-scope-kind';
 
 const ACCESS_MODES = new Set(['NORMAL', 'ELEVATED', 'PROVIDER_SUPPORT']);
 const ACCESS_SOURCES = new Set(['ENTITLEMENT', 'RELATIONSHIP', 'MANAGEMENT', 'SUPPORT']);
 const PLANES = new Set(['work', 'management']);
-const SCOPE_KINDS = new Set([
-  'SELF',
-  'ORG_UNIT',
-  'LEGAL_ENTITY',
-  'DOMAIN',
-  'RESOURCE',
-  'RESOURCE_SET',
-  'TARGET_POPULATION',
-  'SUPPORT_SESSION',
-]);
 const ROLLOUT_STATES = new Set(['000', '100', '110', '111']);
 const AUTHORITY_STATUSES = new Set(['NOT_EVALUATED', 'AVAILABLE', 'UNAVAILABLE']);
 const CAPABILITY_AUTHORITY_MODES = new Set([
@@ -74,13 +65,13 @@ function validScope(value: unknown): boolean {
   const scope = record(value);
   return Boolean(
     scope &&
-      nonBlank(scope.key) &&
-      nonBlank(scope.kind) &&
-      SCOPE_KINDS.has(scope.kind) &&
-      nonBlank(scope.displayName) &&
-      typeof scope.isDefault === 'boolean' &&
-      typeof scope.readOnly === 'boolean' &&
-      nullableInstant(scope.validUntil)
+    nonBlank(scope.key) &&
+    nonBlank(scope.kind) &&
+    isProductScopeKind(scope.kind) &&
+    nonBlank(scope.displayName) &&
+    typeof scope.isDefault === 'boolean' &&
+    typeof scope.readOnly === 'boolean' &&
+    nullableInstant(scope.validUntil)
   );
 }
 
@@ -106,23 +97,93 @@ function validGrant(value: unknown): boolean {
   if (grant.grantKind === 'CAPABILITY') {
     return Boolean(
       nonBlank(grant.capabilityContractKey) &&
-        nonBlank(grant.resolvedCapabilityCode) &&
-        nonBlank(grant.authorityMode) &&
-        CAPABILITY_AUTHORITY_MODES.has(grant.authorityMode) &&
-        stringArray(grant.predicatePolicyKeys) &&
-        nonBlank(grant.responsibilityRequirement) &&
-        RESPONSIBILITY_REQUIREMENTS.has(grant.responsibilityRequirement) &&
-        validResponsibility(grant.responsibility) &&
-        nonBlank(grant.activationState) &&
-        ACTIVATION_STATES.has(grant.activationState)
+      nonBlank(grant.resolvedCapabilityCode) &&
+      nonBlank(grant.authorityMode) &&
+      CAPABILITY_AUTHORITY_MODES.has(grant.authorityMode) &&
+      stringArray(grant.predicatePolicyKeys) &&
+      nonBlank(grant.responsibilityRequirement) &&
+      RESPONSIBILITY_REQUIREMENTS.has(grant.responsibilityRequirement) &&
+      validResponsibility(grant.responsibility) &&
+      nonBlank(grant.activationState) &&
+      ACTIVATION_STATES.has(grant.activationState)
     );
   }
   return Boolean(
     grant.grantKind === 'POLICY' &&
-      nonBlank(grant.accessPolicyKey) &&
-      nonBlank(grant.policyDecisionRef) &&
-      nonBlank(grant.authorityMode) &&
-      POLICY_AUTHORITY_MODES.has(grant.authorityMode)
+    nonBlank(grant.accessPolicyKey) &&
+    nonBlank(grant.policyDecisionRef) &&
+    nonBlank(grant.authorityMode) &&
+    POLICY_AUTHORITY_MODES.has(grant.authorityMode)
+  );
+}
+
+/**
+ * Provider support is a separate, session-bound read-only authority union. It must never carry
+ * normal entitlement/capability authority or a writable scope across the wire boundary.
+ */
+export function isExclusiveProviderSupportContext(value: unknown): boolean {
+  const context = record(value);
+  const grants = context?.effectiveGrants;
+  const scopes = context?.scopes;
+  if (
+    !context ||
+    context.accessMode !== 'PROVIDER_SUPPORT' ||
+    context.accessSource !== 'SUPPORT' ||
+    !Array.isArray(grants) ||
+    grants.length === 0 ||
+    !Array.isArray(scopes) ||
+    scopes.length === 0 ||
+    !scopes.every((scope) => {
+      const candidate = record(scope);
+      return (
+        validScope(scope) && candidate?.kind === 'SUPPORT_SESSION' && candidate.readOnly === true
+      );
+    })
+  ) {
+    return false;
+  }
+
+  const scopeKeys = new Set(
+    scopes.flatMap((scope) => {
+      const key = record(scope)?.key;
+      return nonBlank(key) ? [key] : [];
+    })
+  );
+  const defaultScopeCount = scopes.filter((scope) => record(scope)?.isDefault === true).length;
+  if (scopeKeys.size !== scopes.length || defaultScopeCount > 1) return false;
+  const referencedScopeKeys = new Set<string>();
+  const grantsAreExclusive = grants.every((grant) => {
+    const candidate = record(grant);
+    if (
+      !candidate ||
+      !validGrant(grant) ||
+      candidate.grantKind !== 'POLICY' ||
+      candidate.authorityMode !== 'SUPPORT_SESSION' ||
+      candidate.requiresProductEntitlement !== false ||
+      candidate.readOnly !== true ||
+      !Array.isArray(candidate.scopeKeys) ||
+      candidate.scopeKeys.length === 0
+    ) {
+      return false;
+    }
+    for (const scopeKey of candidate.scopeKeys) {
+      if (!nonBlank(scopeKey) || !scopeKeys.has(scopeKey)) return false;
+      referencedScopeKeys.add(scopeKey);
+    }
+    return true;
+  });
+  return grantsAreExclusive && referencedScopeKeys.size === scopeKeys.size;
+}
+
+function containsProviderSupportAuthority(value: unknown): boolean {
+  const context = record(value);
+  const grants = context?.effectiveGrants;
+  const scopes = context?.scopes;
+  return Boolean(
+    context?.accessSource === 'SUPPORT' ||
+    (Array.isArray(grants) &&
+      grants.some((grant) => record(grant)?.authorityMode === 'SUPPORT_SESSION')) ||
+    (Array.isArray(scopes) && scopes.some((scope) => record(scope)?.kind === 'SUPPORT_SESSION'))
   );
 }
 
@@ -154,6 +215,9 @@ function validContext(value: unknown, activeAccessMode: string, generatedAtMs: n
   const defaults = context.scopes.filter((scope) => record(scope)?.isDefault === true);
   const scopeKeySet = new Set(scopeKeys);
   return (
+    (activeAccessMode === 'PROVIDER_SUPPORT'
+      ? isExclusiveProviderSupportContext(context)
+      : !containsProviderSupportAuthority(context)) &&
     scopeKeySet.size === scopeKeys.length &&
     defaults.length <= 1 &&
     context.effectiveGrants.every((grant) =>
@@ -166,9 +230,9 @@ function validSourceRevisions(value: unknown): boolean {
   const revisions = record(value);
   return Boolean(
     revisions &&
-      Object.values(revisions).every(
-        (revision) => revision === undefined || revision === null || nonBlank(revision)
-      )
+    Object.values(revisions).every(
+      (revision) => revision === undefined || revision === null || nonBlank(revision)
+    )
   );
 }
 
@@ -242,8 +306,7 @@ export function resolveProductRollout(
   const statusMatchesState =
     (rollout.state === '000' && authorityStatus === 'NOT_EVALUATED') ||
     (rollout.state === '100' && AUTHORITY_STATUSES.has(authorityStatus)) ||
-    (rollout.state === '110' &&
-      (authorityStatus === 'AVAILABLE' || authorityStatus === 'NOT_EVALUATED')) ||
+    (rollout.state === '110' && authorityStatus === 'AVAILABLE') ||
     (rollout.state === '111' && authorityStatus === 'AVAILABLE');
   if (
     !ROLLOUT_STATES.has(rollout.state) ||

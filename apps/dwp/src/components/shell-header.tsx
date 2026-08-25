@@ -43,6 +43,7 @@ type ShellHeaderProps = {
   leading?: ReactNode;
   navigation?: {
     label: string;
+    testId?: string;
     onOpen: (trigger: HTMLButtonElement) => void;
   };
   showWorkspace?: boolean;
@@ -132,6 +133,7 @@ export function ShellHeader({
             }}
           >
             <ActionIconButton
+              data-testid={navigation.testId}
               label={navigation.label}
               tooltipPlacement="bottom"
               onClick={(event) => navigation.onOpen(event.currentTarget)}

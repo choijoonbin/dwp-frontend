@@ -918,7 +918,6 @@ export async function mockShellSession(
   roles: string[],
   options: ShellSessionOptions = {}
 ) {
-  await mockLegacyProductSurfaceAuthority(page);
   await mockShellNotificationRuntime(page);
   const provider = roles.some((role) => role.startsWith('PROVIDER_'));
   const locale = options.locale ?? 'en';
@@ -3787,4 +3786,6 @@ export async function mockShellSession(
       body: JSON.stringify({ status: 'ERROR', message: 'Not required by shell contract test' }),
     });
   });
+  // Register this last so the broad shell API fallback cannot shadow the authority fixture.
+  await mockLegacyProductSurfaceAuthority(page);
 }

@@ -31,12 +31,75 @@ type CsrfTokenData = {
 };
 
 type UnauthorizedHandler = (status: number) => void;
+export type AuthorizationAccessFailure = Readonly<{
+  status: 403 | 409 | 503;
+  reasonCode?: string;
+}>;
+type AuthorizationAccessFailureHandler = (
+  failure: AuthorizationAccessFailure
+) => void | Promise<void>;
 let unauthorizedHandler: UnauthorizedHandler | null = null;
+let authorizationAccessFailureHandler: AuthorizationAccessFailureHandler | null = null;
 let csrfToken: CsrfTokenData | null = null;
 let csrfTokenPromise: Promise<CsrfTokenData> | null = null;
 
 export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
   unauthorizedHandler = handler;
+}
+
+export function setAuthorizationAccessFailureHandler(
+  handler: AuthorizationAccessFailureHandler | null
+): () => void {
+  authorizationAccessFailureHandler = handler;
+  return () => {
+    if (authorizationAccessFailureHandler === handler) authorizationAccessFailureHandler = null;
+  };
+}
+
+const EXPECTED_FORBIDDEN_WORKFLOW_REASONS = new Set([
+  'STEP_UP_REQUIRED',
+  'STEP_UP_CHALLENGE_EXPIRED',
+  'STEP_UP_CHALLENGE_INVALID',
+  'SOD_CONFLICT',
+]);
+const AUTHORIZATION_CONFLICT_REASONS = new Set([
+  'DECISION_REVISION_CONFLICT',
+  'SCOPE_CONTEXT_EXPIRED',
+]);
+
+function responseReasonCode(payload: unknown): string | undefined {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return undefined;
+  const record = payload as Record<string, unknown>;
+  const value = record.errorCode ?? record.reasonCode ?? record.code;
+  return typeof value === 'string' && value.trim() ? value.trim().toUpperCase() : undefined;
+}
+
+export function classifyAuthorizationAccessFailure(
+  status: number,
+  payload: unknown
+): AuthorizationAccessFailure | null {
+  const reasonCode = responseReasonCode(payload);
+  if (status === 403) {
+    if (reasonCode && EXPECTED_FORBIDDEN_WORKFLOW_REASONS.has(reasonCode)) return null;
+    return { status, ...(reasonCode ? { reasonCode } : {}) };
+  }
+  if (status === 409 && reasonCode && AUTHORIZATION_CONFLICT_REASONS.has(reasonCode)) {
+    return { status, reasonCode };
+  }
+  if (status === 503 && reasonCode === 'AUTHORITY_RESOLUTION_UNAVAILABLE') {
+    return { status, reasonCode };
+  }
+  return null;
+}
+
+function notifyAuthorizationAccessFailure(status: number, payload: unknown): void {
+  const failure = classifyAuthorizationAccessFailure(status, payload);
+  if (!failure || !authorizationAccessFailureHandler) return;
+  try {
+    void Promise.resolve(authorizationAccessFailureHandler(failure)).catch(() => undefined);
+  } catch {
+    // Observing an access failure must never replace the original HTTP failure.
+  }
 }
 
 export function resetCsrfToken(): void {
@@ -203,6 +266,7 @@ async function request<T>(
     if (response.status === 401) {
       unauthorizedHandler?.(response.status);
     }
+    if (!csrfRejected) notifyAuthorizationAccessFailure(response.status, payload);
     const record =
       typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : null;
     const message =
@@ -273,6 +337,9 @@ async function streamRequest<B>(
         return streamRequest(method, url, body, config, false);
       }
       if (response.status === 401) unauthorizedHandler?.(response.status);
+      if (!(response.status === 403 && payload === undefined && isMutation(method))) {
+        notifyAuthorizationAccessFailure(response.status, payload);
+      }
       throw new HttpError(
         `Event stream request failed: ${response.status}`,
         response.status,

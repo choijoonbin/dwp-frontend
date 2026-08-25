@@ -1,9 +1,11 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { axiosInstance, resetCsrfToken } from '../axios-instance';
+import { PRODUCT_SCOPE_KINDS, type ProductScopeKind } from '../auth/product-surface-scope-kind';
 import {
   PRODUCT_SURFACE_EVENT_ENDPOINT,
   reportProductSurfaceEvent,
+  type ProductSurfaceScopeKind,
   type ProductSurfaceTelemetryEvent,
 } from './observability-api';
 
@@ -12,6 +14,25 @@ describe('product surface observability API', () => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     resetCsrfToken();
+  });
+
+  it('reuses the canonical Product Surface authorization scope taxonomy', () => {
+    const telemetryKinds: readonly ProductSurfaceScopeKind[] = PRODUCT_SCOPE_KINDS;
+
+    expectTypeOf<ProductSurfaceScopeKind>().toEqualTypeOf<ProductScopeKind>();
+    expect(telemetryKinds).toEqual([
+      'TENANT',
+      'SELF',
+      'TEAM',
+      'ORG_UNIT',
+      'LEGAL_ENTITY',
+      'DOMAIN',
+      'RESOURCE_SET',
+      'RESOURCE',
+      'POLICY_NODE',
+      'TARGET_POPULATION',
+      'SUPPORT_SESSION',
+    ]);
   });
 
   it('posts only the typed client event to the dedicated endpoint', async () => {

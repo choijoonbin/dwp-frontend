@@ -1,9 +1,40 @@
 import { QueryClient } from '@tanstack/react-query';
 import { describe, expect, it } from 'vitest';
 
-import { isProductAuthoritySensitiveQuery } from './product-surface-context-provider';
+import {
+  isProductAuthoritySensitiveQuery,
+  productSurfaceEvaluationQueryKey,
+} from './product-surface-context-provider';
+
+import type { ProductSurfaceAuthoritySnapshot } from './product-surface-authority-model';
 
 describe('product surface authority cache invalidation', () => {
+  it('does not reuse a direct ALLOWED result across list-envelope revisions', () => {
+    const snapshot = (decisionRevision: string) =>
+      ({
+        envelope: { activeAccessMode: 'NORMAL', decisionRevision },
+      }) as ProductSurfaceAuthoritySnapshot;
+    const request = {
+      subject: {
+        type: 'PRODUCT' as const,
+        productKey: 'approvals',
+        surfaceKey: 'approvals.admin',
+      },
+      routeContractKey: 'route.approvals.admin.policies.page',
+    };
+    const identity = { tenantId: '1', actorId: '900018' };
+    const before = productSurfaceEvaluationQueryKey(snapshot('list-revision-1'), request, identity);
+    const after = productSurfaceEvaluationQueryKey(snapshot('list-revision-2'), request, identity);
+    const queryClient = new QueryClient();
+    queryClient.setQueryData(before, {
+      decision: 'ALLOWED',
+      decisionRevision: 'independent-direct-revision',
+    });
+
+    expect(after).not.toEqual(before);
+    expect(queryClient.getQueryData(after)).toBeUndefined();
+  });
+
   it('purges exact sensitive meta and migrated product prefixes after a revision change', () => {
     const identity = { tenantId: 'tenant-1', actorId: 'actor-1', accessMode: 'NORMAL' };
     expect(

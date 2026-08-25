@@ -71,6 +71,10 @@
     "operationFailed": "작업을 완료하지 못했습니다."
   },
   "productSurface": {
+    "notFound": {
+      "title": "이 제품 페이지를 찾을 수 없습니다",
+      "description": "주소가 올바른지 확인하거나 현재 제품 메뉴에서 다른 업무를 선택해 주세요."
+    },
     "scopeChooser": {
       "title": "허용된 관리 범위 선택",
       "description": "현재 제품 책임에 대해 서버가 반환한 범위 중 하나를 선택하세요. 선택 후에만 데이터를 불러옵니다."

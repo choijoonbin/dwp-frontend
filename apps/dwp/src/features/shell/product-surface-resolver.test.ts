@@ -184,6 +184,18 @@ describe('resolveLegacyProductRedirect', () => {
       to: '/example/requests/request-42?mode=compact#history',
       replace: true,
     });
+    expect(
+      resolveLegacyProductRedirect(
+        { pathname: '/OLD-EXAMPLE/REQUEST-42', search: '?mode=compact', hash: '#history' },
+        manifest.legacyRedirects ?? [],
+        catalog
+      )
+    ).toEqual({
+      type: 'redirect',
+      redirectId: 'old-example',
+      to: '/example/requests/REQUEST-42?mode=compact#history',
+      replace: true,
+    });
   });
 
   it('ends at the declared local not-found state when the target is not registered', () => {

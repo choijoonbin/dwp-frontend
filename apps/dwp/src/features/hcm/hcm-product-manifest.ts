@@ -51,7 +51,7 @@ export const HCM_PRODUCT_MANIFEST = defineProductManifest({
         accessPolicyKey: 'hcm.team-access.v1',
         requiresProductEntitlement: false,
       },
-      supportedScopeKinds: ['TEAM', 'ORG_UNIT'],
+      supportedScopeKinds: ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
       shellProfile: 'product-work',
     },
     {
@@ -67,7 +67,7 @@ export const HCM_PRODUCT_MANIFEST = defineProductManifest({
         accessPolicyKey: 'hcm.operations-access.v1',
         requiresProductEntitlement: false,
       },
-      supportedScopeKinds: ['ORG_UNIT', 'LEGAL_ENTITY'],
+      supportedScopeKinds: ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
       shellProfile: 'product-management',
       returnSurfaceId: 'hcm.personal',
     },

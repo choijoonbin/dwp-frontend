@@ -16,7 +16,11 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
-export function ProviderSupportBanner({ context }: { context: ProviderSupportSessionContext }) {
+export default function ProviderSupportBanner({
+  context,
+}: {
+  context: ProviderSupportSessionContext;
+}) {
   const { t } = useTranslation('admin');
   const queryClient = useQueryClient();
   const navigate = useNavigate();

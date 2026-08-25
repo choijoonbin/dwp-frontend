@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { House, ShieldCheck } from 'lucide-react';
+import { PRODUCT_SCOPE_KINDS as AUTHORITY_WIRE_SCOPE_KINDS } from '@dwp-frontend/shared-utils/auth/product-surface-scope-kind';
 
-import { defineProductManifest } from './product-manifest';
+import {
+  PRODUCT_SCOPE_KINDS,
+  defineProductManifest,
+  isProductScopeKind,
+  productScopeIdentitiesAreKnownAndUnique,
+} from './product-manifest';
 
 const validManifest = () => ({
   id: 'example',
@@ -103,6 +109,42 @@ const validSurfaceManifest = () => ({
 });
 
 describe('defineProductManifest', () => {
+  it('shares every declared and server-issued Product scope kind from one runtime guard', () => {
+    expect(PRODUCT_SCOPE_KINDS).toBe(AUTHORITY_WIRE_SCOPE_KINDS);
+    expect(PRODUCT_SCOPE_KINDS).toEqual([
+      'TENANT',
+      'SELF',
+      'TEAM',
+      'ORG_UNIT',
+      'LEGAL_ENTITY',
+      'DOMAIN',
+      'RESOURCE_SET',
+      'RESOURCE',
+      'POLICY_NODE',
+      'TARGET_POPULATION',
+      'SUPPORT_SESSION',
+    ]);
+    expect(['TENANT', 'TEAM', 'POLICY_NODE', 'TARGET_POPULATION'].every(isProductScopeKind)).toBe(
+      true
+    );
+    expect(isProductScopeKind('UNKNOWN_SCOPE')).toBe(false);
+    expect(
+      productScopeIdentitiesAreKnownAndUnique([
+        { key: 'scope-team', kind: 'TEAM' },
+        { key: 'scope-policy', kind: 'POLICY_NODE' },
+      ])
+    ).toBe(true);
+    expect(
+      productScopeIdentitiesAreKnownAndUnique([
+        { key: 'scope-team', kind: 'TEAM' },
+        { key: 'scope-team', kind: 'TARGET_POPULATION' },
+      ])
+    ).toBe(false);
+    expect(
+      productScopeIdentitiesAreKnownAndUnique([{ key: 'scope-unknown', kind: 'UNKNOWN_SCOPE' }])
+    ).toBe(false);
+  });
+
   it('accepts a product whose home and navigation are owned by its route boundary', () => {
     expect(defineProductManifest(validManifest())).toEqual(validManifest());
   });

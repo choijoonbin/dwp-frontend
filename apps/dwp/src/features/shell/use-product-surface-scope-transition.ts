@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useProductSurfaceAuthority, useToast } from '@dwp-frontend/shared-utils';
 
 import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
+import { GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES } from './product-sensitive-query-prefixes';
 import { transitionProductSurfaceScope } from './product-surface-cache';
 import { useProductSurfaceTelemetry } from '../../observability/product-surface-telemetry-context';
 import { productSurfaceOperationCoordinator } from '../../components/product-surface-operation-coordinator';
@@ -12,13 +13,6 @@ import { productSurfaceOperationCoordinator } from '../../components/product-sur
 import type { AllowedSurfaceDecision } from './product-surface-context';
 import type { ProductSurfaceEvaluationData } from '@dwp-frontend/shared-utils/api/auth-api';
 import type { ProductSurfaceScopeKind } from '@dwp-frontend/shared-utils/api/observability-api';
-
-const PRODUCT_QUERY_PREFIXES: Readonly<Record<string, readonly string[]>> = {
-  approvals: ['approvals'],
-  communications: ['communications', 'communication', 'announcements'],
-  services: ['services', 'service-center', 'service-catalog'],
-  hcm: ['hcm', 'hr'],
-};
 
 export function isProductAccessSensitiveQuery(
   query: { queryKey: readonly unknown[]; meta?: Readonly<Record<string, unknown>> },
@@ -35,9 +29,11 @@ export function isProductAccessSensitiveQuery(
   const prefix = query.queryKey[0];
   return (
     typeof prefix === 'string' &&
-    (PRODUCT_QUERY_PREFIXES[productId] ?? []).some(
-      (candidate) => prefix === candidate || prefix.startsWith(`${candidate}-`)
-    )
+    (
+      GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES[
+        productId as keyof typeof GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES
+      ] ?? []
+    ).some((candidate) => prefix === candidate || prefix.startsWith(`${candidate}-`))
   );
 }
 
@@ -207,13 +203,22 @@ export function useProductSurfaceScopeTransition(decision: AllowedSurfaceDecisio
         );
         return true;
       } catch {
+        const failureReason = transition.isCurrent() ? 'SCOPE_INVALID' : 'CANCELLED';
         telemetry.failScopeSwitch(
           decision.context.productKey,
           decision.context.surfaceKey,
           scopeKind,
           attempt.attemptId,
-          transition.isCurrent() ? 'SCOPE_INVALID' : 'CANCELLED'
+          failureReason
         );
+        if (failureReason === 'SCOPE_INVALID') {
+          telemetry.captureScopeInvalid(
+            decision.context.productKey,
+            decision.context.surfaceKey,
+            scopeKind,
+            failureReason
+          );
+        }
         return false;
       } finally {
         transition.finish(completed);

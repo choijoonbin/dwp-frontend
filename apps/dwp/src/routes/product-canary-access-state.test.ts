@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   resolveCanaryAccessActionKinds,
   resolveCanarySafeReturnPath,
+  resolveCanarySelectableScopes,
 } from './product-canary-access-state';
 
 import type { ProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
@@ -109,5 +110,117 @@ describe('Canary access-state safe return', () => {
       )
     ).toBe('/apps');
     expect(resolveCanarySafeReturnPath(authority, 'unknown', 'unknown.admin')).toBe('/apps');
+  });
+});
+
+describe('Canary access-state scope chooser', () => {
+  const serverNowMs = Date.parse('2029-01-01T00:00:00Z');
+  const scopes = [
+    {
+      key: 'scope:approvals:eligible',
+      kind: 'RESOURCE_SET' as const,
+      displayName: 'Eligible',
+      isDefault: false,
+      readOnly: false,
+    },
+    {
+      key: 'scope:approvals:unrelated',
+      kind: 'RESOURCE_SET' as const,
+      displayName: 'Unrelated',
+      isDefault: false,
+      readOnly: false,
+    },
+  ];
+  const context = {
+    contextKey: 'approvals-admin-context',
+    productKey: 'approvals',
+    surfaceKey: 'approvals.admin',
+    plane: 'management' as const,
+    accessMode: 'NORMAL' as const,
+    accessSource: 'MANAGEMENT' as const,
+    appResourceKey: 'ADMIN.APPROVALS',
+    effectiveGrants: [
+      {
+        grantKind: 'CAPABILITY' as const,
+        capabilityContractKey: 'approvals.design.read',
+        resolvedCapabilityCode: 'APPROVAL_DESIGN:READ',
+        authorityMode: 'PERMISSION' as const,
+        responsibilityRequirement: 'NOT_REQUIRED' as const,
+        scopeKeys: ['scope:approvals:eligible'],
+        requiresProductEntitlement: false,
+        readOnly: false,
+        activationState: 'ACTIVE',
+      },
+    ],
+    scopes,
+    revalidateAt: '2030-01-01T00:00:00Z',
+  };
+  const authority = {
+    flags: {
+      contextShadow: true,
+      capabilityEnforcement: true,
+      surfaceUi: true,
+      surfaceUiEvaluation: 'resolved',
+    },
+    serverNowMs,
+    envelope: {
+      contractVersion: '1',
+      decisionRevision: 'revision-envelope',
+      sourceRevisions: {},
+      activeAccessMode: 'NORMAL',
+      generatedAt: '2029-01-01T00:00:00Z',
+      contexts: [context],
+    },
+  } satisfies ProductSurfaceCanaryAuthority;
+  const decision = {
+    state: 'scope-selection-required' as const,
+    detail: { decisionRevision: 'revision-route' },
+  };
+
+  it('offers only scopes eligible for the exact management entry route', () => {
+    expect(
+      resolveCanarySelectableScopes(
+        authority,
+        decision,
+        'approvals',
+        'approvals.admin',
+        'route.approvals.admin.forms.page'
+      ).map((scope) => scope.key)
+    ).toEqual(['scope:approvals:eligible']);
+  });
+
+  it('offers only scopes that can reach at least one registered index destination', () => {
+    expect(
+      resolveCanarySelectableScopes(authority, decision, 'approvals', 'approvals.admin').map(
+        (scope) => scope.key
+      )
+    ).toEqual(['scope:approvals:eligible']);
+  });
+
+  it('fails closed for missing direct decision provenance or duplicate canonical contexts', () => {
+    expect(
+      resolveCanarySelectableScopes(
+        authority,
+        { state: 'scope-selection-required' },
+        'approvals',
+        'approvals.admin',
+        'route.approvals.admin.forms.page'
+      )
+    ).toEqual([]);
+    expect(
+      resolveCanarySelectableScopes(
+        {
+          ...authority,
+          envelope: {
+            ...authority.envelope,
+            contexts: [context, { ...context, contextKey: 'duplicate-context' }],
+          },
+        },
+        decision,
+        'approvals',
+        'approvals.admin',
+        'route.approvals.admin.forms.page'
+      )
+    ).toEqual([]);
   });
 });

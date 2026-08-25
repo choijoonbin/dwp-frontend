@@ -46,25 +46,31 @@ export function ProductSurfaceAccessState({
 
   if (presentation.tone === 'error') {
     return (
-      <LocalErrorState
-        title={t(presentation.titleKey)}
-        description={t(presentation.descriptionKey)}
-        retryLabel={
-          primaryAction && primaryHandler ? t(ACTION_LABEL_KEYS[primaryAction]) : undefined
-        }
-        onRetry={primaryHandler}
-        requestIdLabel={correlationLabel}
-        supportLabel={
-          secondaryAction && secondaryHandler ? t(ACTION_LABEL_KEYS[secondaryAction]) : undefined
-        }
-        onSupport={secondaryHandler}
-        size="page"
-      />
+      <Stack data-testid="product-surface-access-state" data-product-access-state={decision.state}>
+        <LocalErrorState
+          title={t(presentation.titleKey)}
+          description={t(presentation.descriptionKey)}
+          retryLabel={
+            primaryAction && primaryHandler ? t(ACTION_LABEL_KEYS[primaryAction]) : undefined
+          }
+          onRetry={primaryHandler}
+          requestIdLabel={correlationLabel}
+          supportLabel={
+            secondaryAction && secondaryHandler ? t(ACTION_LABEL_KEYS[secondaryAction]) : undefined
+          }
+          onSupport={secondaryHandler}
+          size="page"
+        />
+      </Stack>
     );
   }
 
   return (
-    <Stack alignItems="center">
+    <Stack
+      data-testid="product-surface-access-state"
+      data-product-access-state={decision.state}
+      alignItems="center"
+    >
       <GuidedEmptyState
         kind={presentation.tone === 'permission' ? 'permission' : 'empty'}
         title={t(presentation.titleKey)}

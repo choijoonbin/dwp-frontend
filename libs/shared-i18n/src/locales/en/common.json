@@ -71,6 +71,10 @@
     "operationFailed": "The operation could not be completed."
   },
   "productSurface": {
+    "notFound": {
+      "title": "This product page could not be found",
+      "description": "Check the address or choose another task from the current product menu."
+    },
     "scopeChooser": {
       "title": "Select an allowed scope",
       "description": "Choose one of the scopes returned for your current product responsibility. Data is loaded only after selection."

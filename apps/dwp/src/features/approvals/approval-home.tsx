@@ -538,6 +538,7 @@ export function ApprovalHome() {
           editing={editing}
           busy={mutation.isPending}
           presentation={activePresentation}
+          scrollMode="document"
           getLabel={(key) => t(`home.widgets.${key}.label`)}
           onChange={setDraftWidgets}
           renderWidget={renderWidget}

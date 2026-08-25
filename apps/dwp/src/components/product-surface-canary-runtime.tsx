@@ -1,5 +1,8 @@
 // Neutral runtime authority shared by the application shell and lazy product features.
 import { createContext, useContext, type ReactNode } from 'react';
+import { isExclusiveProviderSupportContext } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
+
+import { isProductScopeKind } from './product-manifest';
 
 import type {
   EffectiveProductSurfaceContextEnvelope,
@@ -14,11 +17,7 @@ export type ProductSurfaceRolloutFlags = {
 };
 
 export type ProductSurfaceRolloutMode =
-  | 'baseline'
-  | 'shadow'
-  | 'enforced-compatibility'
-  | 'surface-ui'
-  | 'invalid';
+  'baseline' | 'shadow' | 'enforced-compatibility' | 'surface-ui' | 'invalid';
 
 export type ProductSurfaceCanaryAuthority = {
   flags: ProductSurfaceRolloutFlags;
@@ -82,8 +81,9 @@ export function isProductSurfaceEnforced(mode: ProductSurfaceRolloutMode): boole
 }
 
 /**
- * Only rollout 111 may replace legacy discovery or disclose cross-plane Surface entry points.
- * Rollout 110 enforces server authorization while retaining the existing combined experience.
+ * Rollout 110 keeps product pages on the compatibility shell while projecting the exact current
+ * plane and its single server-authorized management transition. Rollout 111 additionally enables
+ * the native Surface shell and server-authorized app-catalog discovery.
  */
 export function isProductSurfaceUiSeparated(mode: ProductSurfaceRolloutMode): mode is 'surface-ui' {
   return mode === 'surface-ui';
@@ -104,17 +104,117 @@ function allowedDecisionIsTrusted(
 ): boolean {
   const envelope = authority.envelope;
   const serverNowMs = authority.serverNowMs ?? Date.now();
-  const remainsValid = (value: string | undefined) => {
-    if (value === undefined) return false;
+  const nonBlank = (value: unknown): value is string =>
+    typeof value === 'string' && value.trim().length > 0;
+  const record = (value: unknown): Record<string, unknown> | undefined =>
+    value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : undefined;
+  const remainsValid = (value: unknown) => {
+    if (!nonBlank(value)) return false;
     const expiryMs = Date.parse(value);
     return Number.isFinite(expiryMs) && expiryMs > serverNowMs;
   };
-  const optionalExpiryRemainsValid = (value: string | undefined) =>
-    value === undefined || remainsValid(value);
+  const optionalExpiryRemainsValid = (value: unknown) => value === undefined || remainsValid(value);
+  const optionalInstantIsWellFormed = (value: unknown) =>
+    value === undefined || (nonBlank(value) && Number.isFinite(Date.parse(value)));
+  const stringArray = (value: unknown): value is string[] =>
+    Array.isArray(value) && value.every(nonBlank);
+  const accessSourceIsKnown = (value: unknown) =>
+    value === 'ENTITLEMENT' ||
+    value === 'RELATIONSHIP' ||
+    value === 'MANAGEMENT' ||
+    value === 'SUPPORT';
+  const scopesAreWellFormed = (scopes: unknown): scopes is typeof decision.context.scopes => {
+    if (!Array.isArray(scopes) || scopes.length === 0) return false;
+    const keys = new Set<string>();
+    return scopes.every((scope) => {
+      if (typeof scope !== 'object' || scope === null) return false;
+      const candidate = scope as Record<string, unknown>;
+      if (
+        !nonBlank(candidate.key) ||
+        keys.has(candidate.key) ||
+        !nonBlank(candidate.kind) ||
+        !isProductScopeKind(candidate.kind) ||
+        !nonBlank(candidate.displayName) ||
+        typeof candidate.isDefault !== 'boolean' ||
+        typeof candidate.readOnly !== 'boolean' ||
+        !optionalExpiryRemainsValid(candidate.validUntil)
+      ) {
+        return false;
+      }
+      keys.add(candidate.key);
+      return true;
+    });
+  };
+  const responsibilityIsWellFormed = (value: unknown) => {
+    if (value === undefined) return true;
+    const responsibility = record(value);
+    return Boolean(
+      responsibility && nonBlank(responsibility.code) && nonBlank(responsibility.resourceSetKey)
+    );
+  };
+  const effectiveGrantsAreWellFormed = (grants: unknown, scopes: unknown): boolean => {
+    if (!Array.isArray(grants) || !Array.isArray(scopes)) return false;
+    const contextScopeKeys = new Set(
+      scopes.flatMap((scope) => {
+        const key = record(scope)?.key;
+        return nonBlank(key) ? [key] : [];
+      })
+    );
+    return grants.every((value) => {
+      const grant = record(value);
+      if (
+        !grant ||
+        !stringArray(grant.scopeKeys) ||
+        !grant.scopeKeys.every((scopeKey) => contextScopeKeys.has(scopeKey)) ||
+        typeof grant.requiresProductEntitlement !== 'boolean' ||
+        typeof grant.readOnly !== 'boolean' ||
+        !optionalInstantIsWellFormed(grant.validUntil)
+      ) {
+        return false;
+      }
+      if (grant.grantKind === 'CAPABILITY') {
+        return Boolean(
+          nonBlank(grant.capabilityContractKey) &&
+          nonBlank(grant.resolvedCapabilityCode) &&
+          (grant.authorityMode === 'PERMISSION' ||
+            grant.authorityMode === 'PERMISSION_AND_RELATIONSHIP' ||
+            grant.authorityMode === 'PERMISSION_OR_RELATIONSHIP') &&
+          (grant.predicatePolicyKeys === undefined || stringArray(grant.predicatePolicyKeys)) &&
+          (grant.responsibilityRequirement === 'REQUIRED' ||
+            grant.responsibilityRequirement === 'NOT_REQUIRED' ||
+            grant.responsibilityRequirement === 'LEGACY_OVERSIGHT') &&
+          responsibilityIsWellFormed(grant.responsibility) &&
+          nonBlank(grant.activationState)
+        );
+      }
+      return Boolean(
+        grant.grantKind === 'POLICY' &&
+        nonBlank(grant.accessPolicyKey) &&
+        nonBlank(grant.policyDecisionRef) &&
+        (grant.authorityMode === 'ENTITLEMENT' ||
+          grant.authorityMode === 'RELATIONSHIP' ||
+          grant.authorityMode === 'ENTITLEMENT_AND_RELATIONSHIP' ||
+          grant.authorityMode === 'SUPPORT_SESSION')
+      );
+    });
+  };
   if (
     !envelope ||
-    !envelope.decisionRevision.trim() ||
-    !decision.decisionRevision.trim() ||
+    typeof decision !== 'object' ||
+    decision === null ||
+    typeof decision.context !== 'object' ||
+    decision.context === null ||
+    typeof decision.scope !== 'object' ||
+    decision.scope === null ||
+    !nonBlank(envelope.decisionRevision) ||
+    !nonBlank(decision.decisionRevision) ||
+    !nonBlank(decision.context.contextKey) ||
+    !nonBlank(decision.routeGrantRef) ||
+    !nonBlank(decision.scope.key) ||
+    !nonBlank(decision.scope.kind) ||
+    typeof decision.effectiveReadOnly !== 'boolean' ||
     decision.context.productKey !== expected.productId ||
     decision.context.surfaceKey !== expected.surfaceId ||
     decision.context.accessMode !== envelope.activeAccessMode ||
@@ -131,23 +231,75 @@ function allowedDecisionIsTrusted(
   }
   const canonicalContext = envelope.contexts.filter(
     (context) =>
-      context.contextKey === decision.context.contextKey &&
       context.productKey === expected.productId &&
       context.surfaceKey === expected.surfaceId &&
       context.accessMode === envelope.activeAccessMode
   );
-  if (canonicalContext.length !== 1 || !remainsValid(canonicalContext[0]?.revalidateAt)) {
+  const canonical = canonicalContext.length === 1 ? canonicalContext[0] : undefined;
+  if (
+    !canonical ||
+    !nonBlank(canonical.contextKey) ||
+    !nonBlank(canonical.appResourceKey) ||
+    !remainsValid(canonical.revalidateAt) ||
+    decision.context.plane !== canonical.plane ||
+    !accessSourceIsKnown(canonical.accessSource) ||
+    !accessSourceIsKnown(decision.context.accessSource) ||
+    !nonBlank(decision.context.appResourceKey)
+  ) {
     return false;
   }
-  const canonicalScopes = canonicalContext[0]!.scopes.filter(
+  if (!scopesAreWellFormed(canonical.scopes) || !scopesAreWellFormed(decision.context.scopes)) {
+    return false;
+  }
+  if (
+    !scopesAreWellFormed([decision.scope]) ||
+    !effectiveGrantsAreWellFormed(canonical.effectiveGrants, canonical.scopes) ||
+    !effectiveGrantsAreWellFormed(decision.context.effectiveGrants, decision.context.scopes)
+  ) {
+    return false;
+  }
+  const providerSupportAuthorityIsExclusive =
+    envelope.activeAccessMode === 'PROVIDER_SUPPORT'
+      ? isExclusiveProviderSupportContext(canonical) &&
+        isExclusiveProviderSupportContext(decision.context) &&
+        decision.scope.readOnly === true &&
+        decision.effectiveReadOnly === true
+      : canonical.accessSource !== 'SUPPORT' &&
+        decision.context.accessSource !== 'SUPPORT' &&
+        canonical.effectiveGrants.every(
+          (grant) => grant.grantKind !== 'POLICY' || grant.authorityMode !== 'SUPPORT_SESSION'
+        ) &&
+        decision.context.effectiveGrants.every(
+          (grant) => grant.grantKind !== 'POLICY' || grant.authorityMode !== 'SUPPORT_SESSION'
+        );
+  if (!providerSupportAuthorityIsExclusive) return false;
+  if (
+    decision.context.scopes.some(
+      (directScope) =>
+        !canonical.scopes.some(
+          (canonicalScope) =>
+            canonicalScope.key === directScope.key && canonicalScope.kind === directScope.kind
+        )
+    )
+  ) {
+    return false;
+  }
+  // Source, app resource, default and read-only are exact-route projections. The surface entry
+  // may conservatively aggregate alternatives, while the direct decision remains authoritative.
+  // Direct scope sets may be a route-local subset; identity is anchored by key/kind while
+  // default, read-only and per-grant validity are validated as independent projections.
+  const selectedDirectScopes = decision.context.scopes.filter(
     (scope) => scope.key === decision.scope.key
   );
-  const canonicalScope = canonicalScopes.length === 1 ? canonicalScopes[0] : undefined;
+  const selectedDirectScope =
+    selectedDirectScopes.length === 1 ? selectedDirectScopes[0] : undefined;
   return Boolean(
-    canonicalScope &&
-      canonicalScope.kind === decision.scope.kind &&
-      canonicalScope.readOnly === decision.scope.readOnly &&
-      optionalExpiryRemainsValid(canonicalScope.validUntil)
+    selectedDirectScope &&
+    selectedDirectScope.kind === decision.scope.kind &&
+    selectedDirectScope.readOnly === decision.scope.readOnly &&
+    selectedDirectScope.isDefault === decision.scope.isDefault &&
+    selectedDirectScope.validUntil === decision.scope.validUntil &&
+    (!decision.scope.readOnly || decision.effectiveReadOnly)
   );
 }
 

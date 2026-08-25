@@ -23,6 +23,24 @@ async function openMobileHcmNavigation(page: Page) {
   await openButton.click();
 }
 
+async function hcmNavigation(page: Page) {
+  await openMobileHcmNavigation(page);
+  const navigation = page.getByTestId(
+    (page.viewportSize()?.width ?? 1280) < 900 ? 'hcm-mobile-sidebar' : 'hcm-sidebar'
+  );
+  await expect(navigation).toBeVisible();
+  return navigation;
+}
+
+async function followHcmSurfaceEntry(page: Page, path: string) {
+  if ((page.viewportSize()?.width ?? 1280) >= 1200) {
+    await page.getByTestId('hcm-desktop-surface-switcher').locator(`a[href="${path}"]`).click();
+    return;
+  }
+  await page.getByTestId('hcm-mobile-surface-switcher').getByRole('button').click();
+  await page.getByTestId('product-surface-mobile-disclosure').locator(`a[href="${path}"]`).click();
+}
+
 test('employees enter one HR home without manager or operator navigation', async ({ page }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     displayName: 'Mina Kim',
@@ -78,10 +96,16 @@ test('people managers receive team navigation from the reporting relationship', 
   await expect(page.locator('[data-workspace-widget="profile"]')).toHaveCount(0);
   await expect(page.locator('[data-workspace-widget="operations"]')).toHaveCount(0);
 
-  await openMobileHcmNavigation(page);
-  await expect(page.getByRole('link', { name: 'My team' })).toBeVisible();
-  await page.getByRole('link', { name: 'My team' }).click();
+  const personalNavigation = await hcmNavigation(page);
+  await expect(personalNavigation.getByRole('link', { name: 'My team' })).toHaveCount(0);
+  if ((page.viewportSize()?.width ?? 1280) < 900) await page.keyboard.press('Escape');
+
+  await followHcmSurfaceEntry(page, '/hr/team');
   await expect(page).toHaveURL(/\/hr\/team$/u);
+  const teamNavigation = await hcmNavigation(page);
+  await expect(teamNavigation.getByRole('link', { name: 'My team' })).toBeVisible();
+  await expect(teamNavigation.getByRole('link', { name: 'My HR profile' })).toHaveCount(0);
+  if ((page.viewportSize()?.width ?? 1280) < 900) await page.keyboard.press('Escape');
   await expect(page.getByRole('heading', { name: 'My team', exact: true })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
@@ -152,30 +176,42 @@ test('HR operators receive governed workforce and data navigation', async ({ pag
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
 
-  await page.goto('/hr/home');
+  await page.goto('/hr/operations');
 
-  await page.getByRole('button', { name: 'HR operations', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Workforce operations flow' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'HR operations pulse' })).toBeVisible();
-  await expect(
-    page.getByRole('main').getByText('HR operations', { exact: true }).first()
-  ).toBeVisible();
-  await expect(page.locator('[data-workspace-widget="operations"]')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Workforce operations', level: 1 })).toBeVisible();
   await expect(page.locator('[data-workspace-widget="profile"]')).toHaveCount(0);
   await expect(page.locator('[data-workspace-widget="team"]')).toHaveCount(0);
-  await openMobileHcmNavigation(page);
-  await expect(page.getByRole('link', { name: 'Operations overview' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Workforce people' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Assignments' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Organization design' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Workforce reference data' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Integrations & reconciliation' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Governed exports' })).toBeVisible();
-  await page.keyboard.press('Escape');
+  const operationsNavigation = await hcmNavigation(page);
+  await expect(
+    operationsNavigation.getByRole('link', { name: 'Operations overview' })
+  ).toBeVisible();
+  await expect(operationsNavigation.getByRole('link', { name: 'Workforce people' })).toBeVisible();
+  await expect(operationsNavigation.getByRole('link', { name: 'Assignments' })).toBeVisible();
+  await expect(operationsNavigation.getByRole('link', { name: 'Organization design' })).toHaveCount(
+    0
+  );
+  await expect(operationsNavigation.getByRole('link', { name: 'My HR profile' })).toHaveCount(0);
+  if ((page.viewportSize()?.width ?? 1280) < 900) await page.keyboard.press('Escape');
+
+  await page.goto('/hr/design/organization');
+  const managementNavigation = await hcmNavigation(page);
+  await expect(
+    managementNavigation.getByRole('link', { name: 'Organization design' })
+  ).toBeVisible();
+  await expect(
+    managementNavigation.getByRole('link', { name: 'Workforce reference data' })
+  ).toBeVisible();
+  await expect(
+    managementNavigation.getByRole('link', { name: 'Integrations & reconciliation' })
+  ).toBeVisible();
+  await expect(managementNavigation.getByRole('link', { name: 'Governed exports' })).toBeVisible();
+  await expect(managementNavigation.getByRole('link', { name: 'Operations overview' })).toHaveCount(
+    0
+  );
   await expectNoHorizontalOverflow(page);
 });
 
-test('HR operators without a linked worker enter operations without personal data leakage', async ({
+test('HR operators without a linked worker use the operations Surface without personal data leakage', async ({
   page,
 }) => {
   await mockShellSession(page, ['HR_ADMIN'], {
@@ -185,12 +221,12 @@ test('HR operators without a linked worker enter operations without personal dat
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
 
-  await page.goto('/hr/home');
+  await page.goto('/hr/operations');
 
-  await expect(page.getByRole('heading', { name: 'Workforce operations flow' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Workforce operations', level: 1 })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Me', exact: true })).toHaveCount(0);
   await expect(page.locator('[data-workspace-widget="profile"]')).toHaveCount(0);
-  await expect(page.locator('[data-workspace-widget="operations"]')).toBeVisible();
+  await expect(page.getByTestId('hcm-shell')).toHaveAttribute('data-product-plane', 'management');
   await expectNoHorizontalOverflow(page);
 });
 

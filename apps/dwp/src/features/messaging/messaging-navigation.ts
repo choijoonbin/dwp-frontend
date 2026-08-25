@@ -9,19 +9,15 @@ import {
   UserRoundSearch,
 } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
+import type { ProductNavigationItem } from '../../components/product-manifest';
 
 export type MessagingSection = 'start' | 'conversations' | 'work' | 'admin';
 export type MessagingView =
   'home' | 'inbox' | 'spaces' | 'direct' | 'people' | 'later' | 'admin-overview' | 'admin-policy';
 
-export type MessagingNavigationItem = {
+export type MessagingNavigationItem = ProductNavigationItem & {
   section: MessagingSection;
   view: MessagingView;
-  path: string;
-  icon: LucideIcon;
-  requiredResourceKey?: string;
-  requiredPermissionCode?: string;
 };
 
 export type MessagingNavigationGroup = {

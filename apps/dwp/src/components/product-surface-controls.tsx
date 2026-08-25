@@ -44,6 +44,12 @@ export type ProductSurfaceLayoutRuntime = {
   compatibilityNavigationTargets?: ReadonlyMap<string, ProductCompatibilityNavigationTarget>;
 };
 
+/** Navigation needs no authority evidence; server and compatibility entries share this view. */
+export type ProductSurfaceNavigationEntry = Pick<
+  ProductSurfaceEntryPoint,
+  'productId' | 'surfaceId' | 'plane' | 'labelKey' | 'path' | 'entryKind'
+>;
+
 export function productSurfaceContentInstanceKey(identity: {
   contextKey: string;
   surfaceKey: string;
@@ -143,7 +149,7 @@ export function ProductSurfaceSwitcher({
   onNavigate,
 }: {
   currentSurfaceId: string;
-  entries: readonly ProductSurfaceEntryPoint[];
+  entries: readonly ProductSurfaceNavigationEntry[];
   label: string;
   resolveLabel?: (labelKey: string) => string;
   onNavigate?: () => void;
@@ -173,7 +179,11 @@ export function ProductSurfaceSwitcher({
             aria-current={selected ? 'page' : undefined}
             onClick={() => {
               if (!selected) {
-                telemetry.beginSurfaceSwitch(entry.productId, currentSurfaceId, entry.surfaceId);
+                if (entry.entryKind === 'work-return') {
+                  telemetry.captureReturn(entry.productId, currentSurfaceId, entry.surfaceId);
+                } else {
+                  telemetry.beginSurfaceSwitch(entry.productId, currentSurfaceId, entry.surfaceId);
+                }
               }
               onNavigate?.();
             }}
@@ -193,7 +203,7 @@ export function ProductSurfaceDisclosure({
   resolveLabel,
 }: {
   currentSurfaceId: string;
-  entries: readonly ProductSurfaceEntryPoint[];
+  entries: readonly ProductSurfaceNavigationEntry[];
   label: string;
   resolveLabel?: (labelKey: string) => string;
 }) {
@@ -317,11 +327,19 @@ export function ProductSurfaceDisclosure({
                       aria-current={selected ? 'page' : undefined}
                       onClick={() => {
                         if (!selected) {
-                          telemetry.beginSurfaceSwitch(
-                            entry.productId,
-                            currentSurfaceId,
-                            entry.surfaceId
-                          );
+                          if (entry.entryKind === 'work-return') {
+                            telemetry.captureReturn(
+                              entry.productId,
+                              currentSurfaceId,
+                              entry.surfaceId
+                            );
+                          } else {
+                            telemetry.beginSurfaceSwitch(
+                              entry.productId,
+                              currentSurfaceId,
+                              entry.surfaceId
+                            );
+                          }
                         }
                         close(selected);
                       }}
@@ -342,9 +360,11 @@ export function ProductSurfaceDisclosure({
 
 export function ProductSurfaceContextBar({ runtime }: { runtime: ProductSurfaceLayoutRuntime }) {
   const { t } = useTranslation('common');
+  const telemetry = useProductSurfaceTelemetry();
   const { decision } = runtime;
   const scopes = runtime.availableScopes ?? decision.context.scopes;
   const scopeTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const policyLockCapturedRef = useRef<string | null>(null);
   const [scopeOpen, setScopeOpen] = useState(false);
   const [selectedScope, setSelectedScope] = useState(decision.scope.key);
   const expiresAt = Date.parse(decision.revalidateAt);
@@ -357,6 +377,26 @@ export function ProductSurfaceContextBar({ runtime }: { runtime: ProductSurfaceL
       : t('productSurface.labels.workScope');
 
   useEffect(() => setSelectedScope(decision.scope.key), [decision.scope.key]);
+
+  useEffect(() => {
+    if (!decision.effectiveReadOnly) return;
+    if (!/^[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*$/u.test(decision.context.surfaceKey)) return;
+    const identity = `${decision.context.surfaceKey}:${decision.decisionRevision}`;
+    if (policyLockCapturedRef.current === identity) return;
+    policyLockCapturedRef.current = identity;
+    telemetry.capturePolicyLockViewed(
+      decision.context.productKey,
+      decision.context.surfaceKey,
+      decision.context.accessMode === 'PROVIDER_SUPPORT' ? 'SUPPORT' : 'READ_ONLY'
+    );
+  }, [
+    decision.context.accessMode,
+    decision.context.productKey,
+    decision.context.surfaceKey,
+    decision.decisionRevision,
+    decision.effectiveReadOnly,
+    telemetry,
+  ]);
 
   const closeScope = () => {
     setScopeOpen(false);

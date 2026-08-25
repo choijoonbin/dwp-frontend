@@ -46,6 +46,32 @@ Grant, Work Entitlement와 Product Service의 Relationship Eligibility를 Gatewa
       "targetPopulation": "POP-R12",
       "support": "SUPPORT-R3"
     },
+    "rollouts": [
+      {
+        "productKey": "approvals",
+        "state": "111",
+        "flags": {
+          "contextShadow": true,
+          "capabilityEnforcement": true,
+          "surfaceUi": true
+        },
+        "authorityStatus": "AVAILABLE",
+        "cohort": "full",
+        "opaqueRevision": "opaque-product-rollout-revision"
+      },
+      {
+        "productKey": "calendar",
+        "state": "100",
+        "flags": {
+          "contextShadow": true,
+          "capabilityEnforcement": false,
+          "surfaceUi": false
+        },
+        "authorityStatus": "NOT_EVALUATED",
+        "cohort": "baseline",
+        "opaqueRevision": "opaque-product-rollout-revision"
+      }
+    ],
     "activeAccessMode": "NORMAL",
     "generatedAt": "2026-08-21T09:00:00Z",
     "contexts": [
@@ -111,6 +137,32 @@ Grant, Work Entitlement와 Product Service의 Relationship Eligibility를 Gatewa
 - Opaque Context·Scope Key가 있어도 Gateway와 서비스는 Actor·Tenant·Product·Surface·Target을
   다시 계산한다.
 
+### Rollout Envelope 불변식
+
+- `rollouts[]`는 Checksummed Inventory의 11개 Product를 정확히 한 번씩 포함한다. 예시는 Local
+  Truth Table 중 두 행만 축약해 표시했다.
+- 각 `state`는 해당 Product `p`의 `(S,E_p,U_p)`를 `000|100|110|111`로 직렬화한다.
+  `S=access.product-surfaces.context-shadow.v1`,
+  `E_p=access.product-surfaces.capability-enforcement.<product>.v1`,
+  `U_p=ux.product-surfaces.<product>.v1`이다.
+- 모든 Product의 `flags.contextShadow`와 그 Opaque Revision만 Envelope-global로 같아야 한다.
+  `capabilityEnforcement`는 전역 값이 아니라 해당 Product의 `E_p`이므로 제품 간 값·Revision
+  동등성을 요구하지 않는다. `surfaceUi`도 제품별이다.
+- 기존 `access.product-surfaces.capability-enforcement.v1`은 전환 증거용 Legacy Flag이며 응답의
+  `capabilityEnforcement`, 상태 합성 또는 Authority 선택에 사용하지 않는다.
+- `E_p ⇒ S`, `U_p ⇒ E_p` 위반은 503 `AUTHORITY_RESOLUTION_UNAVAILABLE`다. `000/100`은 Exact PAGE
+  Authority를 평가하지 않고 `authorityStatus=NOT_EVALUATED`, `110/111`은 승인 Bundle의 모든
+  현재 PAGE 계약을 평가한다. 미계약 PAGE·Registry·Owner Authority 공백은 503 Fail Closed다.
+- Durable Latch v2는 `tenant+product`별 마지막 승인 `S/E_p`와 두 Revision만 복원한다. Provider
+  장애에서 `FOUND`면 `U_p=0`이므로 `111→110`, v2와 Legacy v1이 모두 없는 신규 Product
+  `MISSING`만 `000`이다. Legacy v1 발견(`MIGRATION_REQUIRED`), Corrupt, Unavailable 또는 Revision
+  Conflict는 503이며 `110→100/000` 자동 강등을 하지 않는다.
+- Latch Migration 판정은 Redis Cluster Cross-slot을 만들지 않는 `v2 LOAD → Legacy 단일-key
+probe → v2 재조회`다. 두 번째 v2의 `FOUND/CORRUPT/UNAVAILABLE`가 우선하며 v2가 두 번 모두
+  `MISSING`일 때만 Legacy `MISSING/MIGRATION_REQUIRED`를 응답 의미에 반영한다.
+- 승인된 운영 Rollback은 `E_p=false`인 더 높은 Revision을 발행하는 명시적 변경이다. `S=1`이면
+  `110→100`이며 Provider 장애 Fallback과 동일하게 취급하지 않는다.
+
 ### `POST /api/auth/product-surface-access/evaluate`
 
 Direct URL, 새 Tab과 비허용 상태를 결정한다.
@@ -143,6 +195,18 @@ Product·Surface·Route ID/Pattern·Method와 대조하고, 해당
 Child Route의 Exact Capability 또는 Policy를 Surface Entry와 함께 평가한다. Client는 Raw
 Capability Code를 선택해 보내지 않는다. `contextKey`가 없는 새 Tab은 서버가 Active
 Access Mode와 Context를 재계산하고, 있으면 현 Actor·Session·Revision에 속하는지 재검증한다.
+
+목록 Envelope와 PAGE·DATA·ACTION Direct 응답의 `contextKey`·`decisionRevision`은 독립적으로
+재계산한 Opaque 값이므로 같음을 계약으로 삼지 않는다. Client는 Product·Surface·Plane·Access
+Mode, 만료와 선택 Scope의 Key·Kind 유일 포함 관계를 검증한다. ACTION 평가와 실행에는 목록
+`contextKey`를 보내지 않고 선택 Scope와 Direct Revision을 전달하며 Gateway가 Exact ACTION
+Context를 재계산한다. HIGH Action의 `STEP_UP_REQUIRED` 응답은 Context를 계속 비공개로 유지한다.
+Step-up Issuer 요청도 목록 `contextKey`를 생략하고 선택 Scope와 Direct Revision만 전달하며,
+Issuer가 Exact ACTION을 재평가해 얻은 Context를 Challenge Claim·Command Digest에 결속한다.
+`approvals.work`처럼 Surface Entry가 정확히 하나의 `SELF` Scope를 반환하고 Child Capability가
+`responsibilityRequirement=NOT_REQUIRED`인 경우 PAGE·DATA·ACTION Direct 응답도 그 Surface
+`SELF`를 유지한다. Assigned Task·Own Request·Published Form 등 `scopeResolver`와
+`targetBindingKinds`는 별도 선택 Scope가 아니라 Approval Service PEP가 재검사할 대상 경계다.
 
 `ALLOWED`는 정확히 한 Effective Context, Route Grant Reference, 선택 Scope,
 `effectiveReadOnly`와 `revalidateAt`을 포함한다. 다른 Decision은 공개 가능한 `validUntil`,
@@ -778,8 +842,9 @@ Scope·Validity로 Mapping한다. Shadow Delta와 Product·Security Owner 승인
 다른 Duty로 확대하지 않는다. 110/111 신규 PEP는 Scoped Duty와 Canonical Exact Mapping을
 필수로 하고 Global Role/Permission만 있는 사용자를 거부한다. Scoped Duty는 Global Role을 요구하지
 않으므로 서로 겹치지 않는 Designer/Publisher 또는 Operator/Auditor Set은 Global Conflict의
-False Deny 없이 공존할 수 있다. Legacy Fallback 제거와 110→000 Rollback Rehearsal이 끝난 별도
-Forward Migration에서만 Global Conflict Retirement를 검토한다.
+False Deny 없이 공존할 수 있다. Legacy Fallback 제거와 더 높은 승인 `E_p=false` Revision을
+사용하는 제품별 `110→100` 운영 Rollback Rehearsal이 끝난 별도 Forward Migration에서만 Global
+Conflict Retirement를 검토한다. Provider·Latch 장애로 `110→100/000`을 자동 강등하는 경로는 없다.
 
 ### 7.3 Tenant Admin Legacy Oversight Allowlist
 
@@ -1046,7 +1111,9 @@ Audit Duty 자체가 Authority Source이므로 Global `AUDITOR` Role·Global `AL
 - Product별 Work Entitlement AND 여부가 Manifest와 Backend Policy에서 동일하다.
 - Permission Payload가 비어 있으면 신규 Product는 Fail Closed한다.
 - Responsibility A + Capability B + Scope C의 교차 조합이 거부된다.
-- Flag On/Off가 같은 Effective Context·Guard·PEP Authorization Decision을 낸다.
+- 같은 `S/E_p`에서 `U_p` On/Off가 같은 Effective Context·Guard·PEP Authorization Decision을 낸다.
+- 11개 제품의 `E_p`가 Exact Flag Key로 평가되고 Legacy 전역 E는 상태 합성에 사용되지 않는다.
+- 한 Context Envelope에서 `S`만 모든 제품에 동일하고 `E_p/U_p` 혼합 상태가 허용된다.
 - Support와 NORMAL 권한을 동시에 가진 Fixture에서도 Support Context가 NORMAL Write를 합치지 않는다.
 - Named Reviewer Relationship만으로 `/admin/**` 어느 Route도 열리지 않는다.
 - 미지원 Scoped JIT 거부 후 Request·Grant Row는 0이고 Denied Audit만 1건이다.

@@ -30,7 +30,7 @@ export const ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE = defineProductRouteContract
 
 export const PRODUCT_LEGACY_ROUTE_SOURCE = defineProductLegacyRouteSource(
   PRODUCT_PAGE_ROUTER_SOURCE.legacyRedirects,
-  PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
 );
 
 export const REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG = generateRegisteredProductRouteCatalog(

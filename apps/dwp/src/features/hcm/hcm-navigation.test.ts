@@ -44,6 +44,10 @@ describe('HR product navigation', () => {
   it('keeps legacy bookmarks while resolving every destination to the HR shell', () => {
     expect(mapLegacyHrPath('/people/directory')).toBe('/hr/directory');
     expect(mapLegacyHrPath('/workforce/data-operations')).toBe('/hr/data/integrations');
+    expect(mapLegacyHrPath('/WORKFORCE/DATA-OPERATIONS/?scope=S#tab')).toBeUndefined();
+    expect(mapLegacyHrPath('/WORKFORCE/DATA-OPERATIONS/')).toBe('/hr/data/integrations');
+    expect(mapLegacyHrPath('/people/unknown')).toBeUndefined();
+    expect(mapLegacyHrPath('/workforce/unknown')).toBeUndefined();
     expect(findHcmNavigationItem('/hr/design/organization')?.view).toBe('organization-design');
   });
 });

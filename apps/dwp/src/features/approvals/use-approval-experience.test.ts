@@ -178,6 +178,7 @@ describe('approval experience authority source', () => {
     const pageDecision = decision([grant('approvals.design.read')]);
     const entry = {
       ...pageDecision.context,
+      contextKey: 'approval-management-entry',
       effectiveGrants: [
         grant('approvals.design.read'),
         grant('approvals.design.publish', { activationState: 'ELIGIBLE' }),
@@ -197,6 +198,19 @@ describe('approval experience authority source', () => {
         decision: pageDecision,
         entryContext: null,
         hasPermission: (_resource, action) => action === 'MANAGE',
+        nowMs: NOW,
+      }).canPublish
+    ).toBe(false);
+
+    expect(
+      resolveApprovalExperience({
+        decision: pageDecision,
+        entryContext: {
+          ...entry,
+          contextKey: pageDecision.context.contextKey,
+          accessMode: 'ELEVATED',
+        },
+        hasPermission: () => false,
         nowMs: NOW,
       }).canPublish
     ).toBe(false);

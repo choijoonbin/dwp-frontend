@@ -6,6 +6,7 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import { useOptionalAllowedProductSurface } from '../../components/allowed-product-surface-context';
+import { resolveCanonicalProductSurfaceContext } from '../../components/product-surface-capability-access';
 
 import type { AllowedSurfaceDecision } from '../../components/product-surface-context';
 
@@ -14,6 +15,8 @@ type ApprovalEntryContext = Readonly<{
   contextKey: string;
   productKey: string;
   surfaceKey: string;
+  plane: string;
+  accessMode: string;
   effectiveGrants: readonly Readonly<{
     grantKind: string;
     capabilityContractKey?: string;
@@ -22,7 +25,7 @@ type ApprovalEntryContext = Readonly<{
     validUntil?: string | null;
     readOnly: boolean;
   }>[];
-  scopes: readonly Readonly<{ key: string }>[];
+  scopes: readonly Readonly<{ key: string; kind: string; validUntil?: string | null }>[];
   revalidateAt: string;
 }>;
 
@@ -88,6 +91,7 @@ function governedCapabilityChecker(
   const decisionReadOnly = decision.effectiveReadOnly || decision.scope.readOnly;
   const decisionExpiry = Math.min(
     Date.parse(decision.revalidateAt),
+    Date.parse(decision.context.revalidateAt),
     Date.parse(entryContext.revalidateAt)
   );
   return (contractKey, mutation = false, includeEligible = false) => {
@@ -163,11 +167,25 @@ export function resolveApprovalExperience({
     };
   }
 
+  const selectedEntryScopes =
+    entryContext?.scopes.filter(
+      (scope) => scope.key === decision.scope.key && scope.kind === decision.scope.kind
+    ) ?? [];
+  const selectedEntryScope = selectedEntryScopes.length === 1 ? selectedEntryScopes[0] : undefined;
+  const scopeRemainsValid = (value: string | null | undefined) => {
+    if (value == null) return true;
+    const instant = Date.parse(value);
+    return Number.isFinite(instant) && instant > nowMs;
+  };
   const governedEntry =
-    entryContext?.contextKey === decision.context.contextKey &&
+    entryContext &&
     entryContext.productKey === decision.context.productKey &&
     entryContext.surfaceKey === decision.context.surfaceKey &&
-    entryContext.scopes.some((scope) => scope.key === decision.scope.key)
+    entryContext.accessMode === decision.context.accessMode &&
+    entryContext.plane === decision.context.plane &&
+    selectedEntryScope &&
+    scopeRemainsValid(selectedEntryScope.validUntil) &&
+    scopeRemainsValid(decision.scope.validUntil)
       ? entryContext
       : null;
   const can = governedEntry
@@ -210,16 +228,7 @@ export function useApprovalExperience(): ApprovalExperience {
   const { hasPermission } = usePermissions();
   const decision = useOptionalAllowedProductSurface();
   const authority = useProductSurfaceAuthority();
-  const entryContexts =
-    decision && authority.snapshot
-      ? authority.snapshot.envelope.contexts.filter(
-          (context) =>
-            context.contextKey === decision.context.contextKey &&
-            context.productKey === decision.context.productKey &&
-            context.surfaceKey === decision.context.surfaceKey
-        )
-      : [];
-  const entryContext = entryContexts.length === 1 ? entryContexts[0] : null;
+  const entryContext = resolveCanonicalProductSurfaceContext(decision, authority.snapshot);
   const nowMs = authority.snapshot ? productSurfaceServerNow(authority.snapshot) : Date.now();
   return resolveApprovalExperience({ decision, entryContext, hasPermission, nowMs });
 }

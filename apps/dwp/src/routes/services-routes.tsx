@@ -1,14 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
-import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
+import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
-import {
-  isProductSurfaceEnforced,
-  resolveCanaryProductFlags,
-  resolveProductSurfaceRolloutMode,
-  useProductSurfaceCanaryAuthority,
-} from '../features/shell/product-surface-canary-runtime';
 import { ServicesLayout } from '../layouts/services-layout';
 import { productPageRelativePattern } from './product-page-route-contracts';
 import {
@@ -20,11 +14,11 @@ import {
 } from './route-support';
 import {
   ProductCanaryRoot,
+  ProductCanaryFirstAllowedIndex,
+  ProductCanaryIndexedSurfaceBoundary,
   ProductCanaryRouteBoundary,
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
-  preserveProductRouteLocation,
-  resolveFirstAllowedCanaryRoute,
 } from './product-surface-canary-routes';
 
 const ServicesPage = lazy(() => import('../pages/services'));
@@ -65,31 +59,16 @@ const legacyManagementShell = (
   </AppRouteGuard>
 );
 
-function ServicesManagementIndex() {
-  const authority = useProductSurfaceCanaryAuthority();
-  const location = useLocation();
-  const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, 'services'));
-  if (!isProductSurfaceEnforced(mode)) return page(<ServicesPage />);
-  const destination = resolveFirstAllowedCanaryRoute(authority, {
-    productId: 'services',
-    surfaceId: 'services.management',
-    candidates: [
-      {
-        routeContractKey: 'route.services.management.catalog.page',
-        path: '/services/admin/catalog',
-      },
-      {
-        routeContractKey: 'route.services.management.operations.page',
-        path: '/services/admin/operations',
-      },
-    ],
-  });
-  return destination ? (
-    <Navigate to={preserveProductRouteLocation(destination, location)} replace />
-  ) : (
-    <Navigate to="/403" replace />
-  );
-}
+const servicesManagementIndexCandidates = [
+  {
+    routeContractKey: 'route.services.management.catalog.page',
+    path: '/services/admin/catalog',
+  },
+  {
+    routeContractKey: 'route.services.management.operations.page',
+    path: '/services/admin/operations',
+  },
+] as const;
 
 function servicesWorkRoute(routeContractKey: string, element: React.ReactNode): RouteObject {
   return {
@@ -120,7 +99,11 @@ function servicesManagementRoute(
         productId="services"
         surfaceId="services.management"
         routeContractKey={routeContractKey}
-        legacy={<ProductRouteGuard resourceKey={resourceKey}>{element}</ProductRouteGuard>}
+        legacy={
+          <ProductRouteGuard resourceKey={resourceKey} localDeny>
+            {element}
+          </ProductRouteGuard>
+        }
       >
         {element}
       </ProductCanaryRouteBoundary>
@@ -148,16 +131,27 @@ export const servicesRoutes: RouteObject[] = [
       {
         path: 'admin',
         element: (
-          <ProductCanarySurfaceBoundary
+          <ProductCanaryIndexedSurfaceBoundary
             productId="services"
             surfaceId="services.management"
+            indexPath="/services/admin"
             legacy={legacyManagementShell}
           >
             {page(<ServicesSurfaceShell surfaceId="services.management" />)}
-          </ProductCanarySurfaceBoundary>
+          </ProductCanaryIndexedSurfaceBoundary>
         ),
         children: [
-          { index: true, element: <ServicesManagementIndex /> },
+          {
+            index: true,
+            element: (
+              <ProductCanaryFirstAllowedIndex
+                productId="services"
+                surfaceId="services.management"
+                candidates={servicesManagementIndexCandidates}
+                legacy={page(<ServicesPage />)}
+              />
+            ),
+          },
           servicesManagementRoute(
             'route.services.management.catalog.page',
             'ADMIN.SERVICE_CATALOG',

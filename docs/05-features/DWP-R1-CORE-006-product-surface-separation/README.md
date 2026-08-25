@@ -7,7 +7,7 @@
 - Roadmap: R1 Common Experience Foundation
 - Pilot: Approvals `W1a`, HCM `W1b`
 - Technical Canary: Communications·Services `W0.5`
-- 기준일: 2026-08-25
+- 기준일: 2026-08-26
 
 ## 산출물
 
@@ -36,23 +36,35 @@ Tenant Governance, 정확한 앱 접근 책임과 Preset 수명주기 오케스�
 Capability의 실제 기능 실행은 각 앱 Workbench에 남기며 회사 센터가 제품 Action을 대신 실행하지
 않는다.
 
-Rollout 상태별 사용자 경험과 인가 경계는 다음과 같이 고정한다.
+Rollout은 Tenant-global Shadow `S=access.product-surfaces.context-shadow.v1`, 제품별 Enforcement
+`E_p=access.product-surfaces.capability-enforcement.<product>.v1`, 제품별 Native UI
+`U_p=ux.product-surfaces.<product>.v1`로 합성한다. 기존 전역
+`access.product-surfaces.capability-enforcement.v1`은 전환 이력·호환 증거용으로만 유지하고 신규
+상태 합성에는 사용하지 않는다. Context Envelope에서 제품 간 동등성을 요구하는 축은 `S`뿐이다.
+Rollout 상태별 사용자 경험과 인가 경계는 제품별 `(S,E_p,U_p)`로 다음과 같이 고정한다.
 
-| 상태  | Shell과 내비게이션                                            | 인가                         | 신규 `앱 관리` CTA | W2/W3 DRAFT Route |
-| ----- | ------------------------------------------------------------- | ---------------------------- | ------------------ | ----------------- |
-| `000` | 전환 전 기존 UI                                               | 기존 정책                    | 숨김               | 미등록            |
-| `100` | Shadow 평가 + 기존 Compatibility UI                           | 기존 정책, 차이만 관찰       | 숨김               | 미등록            |
-| `110` | 기존 업무·관리 합산 Compatibility UI                          | Exact Capability Enforcement | 숨김               | Fail Closed       |
-| `111` | Work/Management 분리 UI + Work Header의 단일 `앱 관리` 진입점 | Exact Capability Enforcement | 권한자에게만 표시  | Fail Closed       |
+| 상태  | `S,E_p,U_p` | Shell과 내비게이션                                      | 인가                         | `앱 관리` CTA      | W2/W3 DRAFT Route          |
+| ----- | ----------- | ------------------------------------------------------- | ---------------------------- | ------------------ | -------------------------- |
+| `000` | `0,0,0`     | Work/Management가 분리된 Compatibility Shell            | 기존 정책                    | 기존 관리 권한자만 | 인가 미등록, Legacy만 사용 |
+| `100` | `1,0,0`     | 같은 분리 Shell + Shadow 평가                           | 기존 정책, 차이만 관찰       | 기존 관리 권한자만 | 인가 미등록, Legacy만 사용 |
+| `110` | `1,1,0`     | 같은 분리 Shell + Exact Context 전환                    | Exact Capability Enforcement | 서버 판정 권한자만 | Fail Closed                |
+| `111` | `1,1,1`     | Native Surface UI + Work Header의 단일 `앱 관리` 진입점 | Exact Capability Enforcement | 서버 판정 권한자만 | Fail Closed                |
 
-따라서 default-off Tenant 또는 `110`에서는 기존 합산 UI가 계속 보일 수 있으며 이는 분리 UI 누락이
-아니다. `110`의 합산 메뉴도 각 PAGE의 직접 결정과 대상 Scope로 투영하며, 대상에 기본값 없는 복수
+업무·관리 Sidebar 분리, Work Header의 단일 `앱 관리`, Management Header/Footer의
+`업무로 돌아가기`는 네 상태 모두에서 유지되는 공통 IA 불변식이다. `000/100`은 기존 권한 가드를
+그 표현에 투영하고 `110/111`은 각 PAGE의 직접 결정과 대상 Scope를 투영한다. 대상에 기본값 없는 복수
 Scope만 있으면 출발 화면의 Scope를 제거한 뒤 대상 Scope 선택 화면으로 이동한다. 거부·만료·불완전
 Authority 항목은 노출하지 않는다. W2/W3의 Frontend DRAFT Route는 `110`과 `111` 모두에서 다음
 승인 Backend Bundle에 같은 Route·Capability 계약이 들어오기 전까지 사용할 수 없다.
 
-권한 Bundle v1~v3은 기존 바이트와 Checksum을 보존한 채 모두 `DRAFT`이고 Active Pointer는 없다.
-11개 Rollout 제품 목록은 별도 Checksummed Inventory로 분리했으며 모든 Feature Flag는 기본 Off다.
+Canonical/Production Migration 기준 권한 Bundle v1~v3은 기존 바이트와 Checksum을 보존한 채 모두
+`DRAFT`이고 Active Pointer는 없다. Local verification bootstrap만 고정 Local Tenant에서 v3를
+검증용으로 승인·활성화할 수 있으며, 이 Pointer와 Evidence는 Production 승인으로 재사용하지 않는다.
+11개 Rollout 제품 목록은 별도 Checksummed Inventory로 분리했다. Production Migration의 `S` 1개,
+`E_p` 11개, `U_p` 11개는 모두 기본 Off이고, Legacy 전역 E도 신규 합성에는 영향을 주지 않는다.
+Local 검증 Seed만 `S=1`, Approvals·Communications·HCM·Services의 `E_p/U_p=1`로 네 제품을
+`111`에 두며, Calendar·DWAI·ON·Mail·Messaging·Notifications·Spaces·Workplace는 `100`에 둔다.
+이는 Production 활성화나 승인 증거가 아니다.
 HCM은 owner-service PEP, Target Population, 실 Team·Operations API, SoD와 1회용 Step-up까지 v3
 계약에 결속했다. 제품 관리자 Preset은 통제면 책임의 제한적 2인 Bootstrap과 제품 전문 권한의
 3단계 `요청 → 승인 → 활성화`를 분리한다. 본 문서와 Surface ADR은 실제
@@ -89,3 +101,12 @@ Approvals에서 공통 Shell·Guard·Deep Link·Telemetry를 먼저 검증하고
 Target Population, 다중 Scope와 Support Read-only를 통과한 뒤 제품별 DRAFT Route를 다음 승인
 Bundle로 승격한다. 승인 Bundle에 없는 제품은 Enforcement가 켜지는 `110` 또는 `111`에서
 Gateway가 503으로 Fail Closed하며 UI Flag만으로 우회할 수 없다.
+
+Gateway의 Durable Safety Latch v2는 `tenant+product`별 마지막 승인 `S/E_p`와 각 Revision을
+TTL 없이 보존한다. Provider 장애 시 Snapshot이 있으면 `S/E_p`를 유지하고 `U_p=0`으로 내려
+`111→110`만 허용한다. `110→100/000` 자동 강등은 금지한다. v2가 없는 신규 Tenant·Product는
+Legacy v1 Latch도 없을 때만 `000`이고, Legacy v1 발견은 `MIGRATION_REQUIRED`, Corrupt·Unavailable과
+Revision Conflict는 모두 503이다. `E_p=false`인 더 높은 승인 Revision을 발행하는 명시적 운영
+Rollback(`S=1`이면 `110→100`)은 장애 Fallback과 별개의 절차다.
+Redis Cluster에서는 두 Key를 한 Lua로 읽지 않는다. `v2 MISSING → Legacy 단일-key probe → v2
+재조회` 후 최종 v2 결과를 우선해 Migration 동시 생성 Race와 Cross-slot을 함께 차단한다.
