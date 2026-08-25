@@ -234,6 +234,15 @@ Method Mismatch를 CI·Direct Evaluation에서 거부한다.
 - Auth 장애 시 Cached Allow로 Mutation하지 않음
 - Responsibility와 `ADMIN.*`를 Frontend에서 합성하지 않음
 
+`ProductSurfaceAuthorityBridge`는 로그인 시 전체 11개 제품 PAGE를 선평가하지 않는다. 현재 URL을
+PAGE Catalog, Product Manifest의 Base/Surface Index, 공식 Legacy Redirect Registry 순서로 해석해
+소유 제품 하나의 PAGE만 Direct Evaluation Plan에 넣는다. Router와 동일하게 소유권 비교는
+대소문자를 구분하지 않지만 원 URL·Query·Hash는 보존한다. Legacy Alias는 Target Product뿐 아니라
+Target Surface도 해석해 명시 `scope`를 그 Surface의 모든 PAGE 평가에 전달한다. 따라서 전역 화면과
+`000/100`은 0건, `110/111`은 현재 계약 기준 제품별 6~25건이며 다른 제품 Decision은 Location 변경
+전까지 요청하지 않는다. React Query Key는 Tenant·Actor·Access Mode·Decision Revision·Scope를
+계속 결속하고, 새 제품으로 이동하면 해당 제품 Plan으로 교체해 기존 Fail-closed 의미를 유지한다.
+
 Public Path가 `/api/auth/**`여도 합성 Owner는 Gateway다. Auth Service는 Role·Entitlement·
 Responsibility·Capability·JIT Source Decision을, People/HCM 등 Product Service는 Relationship·
 Target Population Revision을, Provider는 Support Decision을 Internal Contract로 제공한다. Gateway는
@@ -928,7 +937,7 @@ approvals (Auth + Workspace/Support context)
 현재 UI 호출을 닫기 위해 다음 Cross-service DATA/ACTION도 Version 2 Bundle과 같은 변경에 포함한다.
 
 | Route Contract                                        | Public ↔ Service                                                                                                                                                  | Access/Profile                                                                                                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `route.approvals.work.home-preference.data`           | `GET /api/platform/v1/home-preferences/surfaces/{surfaceKey}` ↔ `GET /v1/home-preferences/surfaces/{surfaceKey}`, fixed `surfaceKey=approval-home`                | `full-work`: `approvals.work-access.v1`, `SELF`, Approvals+Platform 공동 Owner                                                   |
 | `route.approvals.work.home-preference-update.action`  | `PUT /api/platform/v1/home-preferences/surfaces/{surfaceKey}` ↔ `PUT /v1/home-preferences/surfaces/{surfaceKey}`, fixed `surfaceKey=approval-home`                | `full-work`: `approvals.work-access.v1`, `SELF`, Expected Version                                                                |
 | `route.approvals.admin.forms-workflow-reference.data` | `GET /api/approvals/v1/admin/workflows`, `GET /api/approvals/v1/admin/workflows/{workflowId}` ↔ `GET /v1/admin/workflows`, `GET /v1/admin/workflows/{workflowId}` | `full-management`: `approvals.design.read`; `legacy-oversight`: `approvals.oversight.design.read` + Workflow Metadata Projection |
@@ -1280,7 +1289,7 @@ hr (Auth + neutral HCM context)
 두 신규 Read Contract의 호출 Owner를 다음처럼 고정한다.
 
 | Consumer / Contract                                                                                                                     | Exact Public ↔ Service Binding                                                                       | Access·Projection                                                                                                    |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `apps/dwp/src/features/workforce/workforce-overview.tsx` / `route.hcm.operations.overview.page`                                         | `GET /api/people/v1/workforce/operations/overview` ↔ `GET /v1/workforce/operations/overview`         | NORMAL은 허용 Operations Read의 ANY + Target Population; SUPPORT는 `hcm.operations-overview-read.v1`, Read-only Mask |
 | `apps/dwp/src/features/people/organization/organization-chart-manager.tsx` / `route.hcm.management.org-design.page`의 Candidate Binding | `GET /api/people/v1/workforce/organization/candidates` ↔ `GET /v1/workforce/organization/candidates` | `hcm.org-design.read` + Config Scope; Candidate 최소 Projection                                                      |
 
