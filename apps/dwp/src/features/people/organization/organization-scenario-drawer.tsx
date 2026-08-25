@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
-  BriefcaseBusiness,
   CalendarClock,
   Check,
   CircleMinus,
@@ -16,7 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   addOrganizationScenarioMove,
   cancelOrganizationScenario,
@@ -61,10 +60,25 @@ import type {
 import { OrganizationScenarioComparison } from './organization-scenario-comparison';
 import { OrganizationScenarioDecisionPackView } from './organization-scenario-decision-pack';
 import { OrganizationScenarioPositionEditor } from './organization-scenario-position-editor';
+import { organizationScenarioQueryKeys } from './organization-scenario-query-keys';
+import { ChangeTypeIcon, WorkflowAction, signed } from './organization-scenario-support';
+import {
+  ProductSurfaceHighRiskCommandDialog,
+  productSurfaceHighRiskCommand,
+  useProductSurfaceHighRiskCommand,
+} from '../../../components/product-surface-high-risk-command';
+import { useProductActionMutation } from '../../../components/use-product-action-mutation';
+import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
 
 type Props = {
   open: boolean;
   chart: OrganizationChart;
+  capabilities: Readonly<{
+    create: boolean;
+    update: boolean;
+    approve: boolean;
+    publish: boolean;
+  }>;
   currentUserId?: number;
   previewScenarioId?: string;
   onPreviewScenario: (scenarioId: string) => void;
@@ -106,6 +120,7 @@ function changeSnapshot(change: OrganizationScenarioChange): Record<string, unkn
 export function OrganizationScenarioDrawer({
   open,
   chart,
+  capabilities,
   currentUserId,
   previewScenarioId,
   onPreviewScenario,
@@ -130,36 +145,58 @@ export function OrganizationScenarioDrawer({
   const [newParentId, setNewParentId] = useState('');
   const [moveKind, setMoveKind] = useState<'organization' | 'position'>('organization');
   const [reason, setReason] = useState('');
-
+  const createScenario = useProductActionMutation('route.hcm.management.org-create.action');
+  const cloneScenario = useProductActionMutation('route.hcm.management.org-clone.action');
+  const updateScenario = useProductActionMutation('route.hcm.management.org-update.action');
+  const approveScenario = useProductActionMutation('route.hcm.management.org-approval.action');
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.management',
+  });
+  const keys = organizationScenarioQueryKeys(requestScope.cacheKey);
   const scenariosQuery = useQuery({
-    queryKey: ['workforce', 'organization-scenarios'],
-    queryFn: listOrganizationScenarios,
-    enabled: open,
+    queryKey: keys.listKey,
+    queryFn: ({ signal }) => listOrganizationScenarios(requestScope.contextScopeKey, signal),
+    enabled: open && requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const scenarios = useMemo(() => scenariosQuery.data ?? [], [scenariosQuery.data]);
   const selected = scenarios.find((scenario) => scenario.scenarioId === selectedId) ?? scenarios[0];
   const decisionQuery = useQuery({
-    queryKey: ['workforce', 'organization-scenarios', selected?.scenarioId, 'decision-pack'],
-    queryFn: () => getOrganizationScenarioDecisionPack(selected?.scenarioId as string),
-    enabled: open && Boolean(selected?.scenarioId),
+    queryKey: keys.detailKey(selected?.scenarioId, 'decision-pack'),
+    queryFn: ({ signal }) =>
+      getOrganizationScenarioDecisionPack(
+        selected?.scenarioId as string,
+        requestScope.contextScopeKey,
+        signal
+      ),
+    enabled: open && requestScope.ready && Boolean(selected?.scenarioId),
+    meta: requestScope.queryMeta,
   });
   const decisionHistoryQuery = useQuery({
-    queryKey: ['workforce', 'organization-scenarios', selected?.scenarioId, 'decision-history'],
-    queryFn: () => getOrganizationScenarioDecisionHistory(selected?.scenarioId as string),
-    enabled: open && Boolean(selected?.scenarioId),
+    queryKey: keys.detailKey(selected?.scenarioId, 'decision-history'),
+    queryFn: ({ signal }) =>
+      getOrganizationScenarioDecisionHistory(
+        selected?.scenarioId as string,
+        requestScope.contextScopeKey,
+        signal
+      ),
+    enabled: open && requestScope.ready && Boolean(selected?.scenarioId),
+    meta: requestScope.queryMeta,
   });
   const comparisonScenario = scenarios.find(
     (scenario) => scenario.scenarioId === comparisonScenarioId
   );
   const comparisonDecisionQuery = useQuery({
-    queryKey: [
-      'workforce',
-      'organization-scenarios',
-      comparisonScenario?.scenarioId,
-      'decision-pack',
-    ],
-    queryFn: () => getOrganizationScenarioDecisionPack(comparisonScenario?.scenarioId as string),
-    enabled: open && Boolean(comparisonScenario?.scenarioId),
+    queryKey: keys.detailKey(comparisonScenario?.scenarioId, 'decision-pack'),
+    queryFn: ({ signal }) =>
+      getOrganizationScenarioDecisionPack(
+        comparisonScenario?.scenarioId as string,
+        requestScope.contextScopeKey,
+        signal
+      ),
+    enabled: open && requestScope.ready && Boolean(comparisonScenario?.scenarioId),
+    meta: requestScope.queryMeta,
   });
   const organizationsById = useMemo(
     () =>
@@ -195,15 +232,12 @@ export function OrganizationScenarioDrawer({
   }, [comparisonScenarioId, scenarios, selected?.scenarioId]);
 
   const replaceScenario = (next: OrganizationScenario) => {
-    queryClient.setQueryData<OrganizationScenario[]>(
-      ['workforce', 'organization-scenarios'],
-      (current = []) => {
-        const found = current.some((item) => item.scenarioId === next.scenarioId);
-        return found
-          ? current.map((item) => (item.scenarioId === next.scenarioId ? next : item))
-          : [next, ...current];
-      }
-    );
+    queryClient.setQueryData<OrganizationScenario[]>(keys.listKey, (current = []) => {
+      const found = current.some((item) => item.scenarioId === next.scenarioId);
+      return found
+        ? current.map((item) => (item.scenarioId === next.scenarioId ? next : item))
+        : [next, ...current];
+    });
     setSelectedId(next.scenarioId);
   };
 
@@ -234,9 +268,25 @@ export function OrganizationScenarioDrawer({
       setBusy(false);
     }
   };
+  const publishScenario = useProductSurfaceHighRiskCommand({
+    operation: 'HCM_ORG_PUBLISH',
+    execute: (command, authority) =>
+      publishOrganizationScenario(command.targetId, command.expectedObjectVersion, authority),
+    onSuccess: async (next) => {
+      replaceScenario(next);
+      onScenarioChanged();
+      await queryClient.invalidateQueries({
+        queryKey: ['workforce', 'organization-scenarios', next.scenarioId, 'decision-pack'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['workforce', 'organization-scenarios', next.scenarioId, 'decision-history'],
+      });
+      toast.success(t('orgChart.scenarios.messages.published'));
+    },
+  });
 
   const handleCreate = async () => {
-    if (!name.trim()) return;
+    if (!capabilities.create || !name.trim()) return;
     const next = await execute(
       () => {
         const common = {
@@ -246,8 +296,12 @@ export function OrganizationScenarioDrawer({
           effectiveDate,
         };
         return cloneSourceId
-          ? cloneOrganizationScenario(cloneSourceId, common)
-          : createOrganizationScenario({ ...common, baselineDate });
+          ? cloneScenario((authority) =>
+              cloneOrganizationScenario(cloneSourceId, common, authority)
+            )
+          : createScenario((authority) =>
+              createOrganizationScenario({ ...common, baselineDate }, authority)
+            );
       },
       t(
         cloneSourceId ? 'orgChart.scenarios.messages.cloned' : 'orgChart.scenarios.messages.created'
@@ -261,9 +315,12 @@ export function OrganizationScenarioDrawer({
   };
 
   const handleMove = async () => {
-    if (!selected || !organizationId || !newParentId) return;
+    if (!capabilities.update || !selected || !organizationId || !newParentId) return;
     const next = await execute(
-      () => addOrganizationScenarioMove(selected, organizationId, newParentId),
+      () =>
+        updateScenario((authority) =>
+          addOrganizationScenarioMove(selected, organizationId, newParentId, authority)
+        ),
       t('orgChart.scenarios.messages.moveAdded')
     );
     if (!next) return;
@@ -296,15 +353,14 @@ export function OrganizationScenarioDrawer({
     (organization) => !disallowedParentIds.has(organization.organizationId)
   );
   const handleValidate = async () => {
-    if (!selected) return;
+    if (!capabilities.update || !selected) return;
     setBusy(true);
     setError(undefined);
     try {
-      const decision = await validateOrganizationScenarioDecisionPack(selected);
-      queryClient.setQueryData(
-        ['workforce', 'organization-scenarios', selected.scenarioId, 'decision-pack'],
-        decision
+      const decision = await updateScenario((authority) =>
+        validateOrganizationScenarioDecisionPack(selected, authority)
       );
+      queryClient.setQueryData(keys.detailKey(selected.scenarioId, 'decision-pack'), decision);
       await queryClient.invalidateQueries({
         queryKey: ['workforce', 'organization-scenarios', selected.scenarioId, 'decision-history'],
       });
@@ -369,6 +425,7 @@ export function OrganizationScenarioDrawer({
             <Tooltip title={t('orgChart.scenarios.create')}>
               <IconButton
                 size="small"
+                disabled={!capabilities.create}
                 onClick={() => {
                   setCloneSourceId(undefined);
                   setName('');
@@ -505,7 +562,7 @@ export function OrganizationScenarioDrawer({
                   startIcon={
                     busy ? <CircularProgress size={14} color="inherit" /> : <Plus size={15} />
                   }
-                  disabled={busy || !name.trim()}
+                  disabled={!capabilities.create || busy || !name.trim()}
                   onClick={() => void handleCreate()}
                 >
                   {t(
@@ -582,6 +639,7 @@ export function OrganizationScenarioDrawer({
                 history={decisionHistoryQuery.data ?? []}
                 loading={decisionQuery.isLoading}
                 validating={busy}
+                canValidate={capabilities.update}
                 onValidate={() => void handleValidate()}
               />
 
@@ -607,6 +665,7 @@ export function OrganizationScenarioDrawer({
                       size="small"
                       aria-label={t('orgChart.scenarios.clone.action')}
                       disabled={
+                        !capabilities.create ||
                         !['DRAFT', 'IN_REVIEW', 'APPROVED', 'REJECTED'].includes(
                           selected.lifecycleState
                         )
@@ -639,7 +698,7 @@ export function OrganizationScenarioDrawer({
                 </Button>
               </Stack>
 
-              {selected.lifecycleState === 'DRAFT' && (
+              {selected.lifecycleState === 'DRAFT' && capabilities.update && (
                 <Stack gap={1.25}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
                     <Typography variant="subtitle2">
@@ -789,7 +848,7 @@ export function OrganizationScenarioDrawer({
                               defaultValue: change.validationState,
                             })}
                           />
-                          {selected.lifecycleState === 'DRAFT' && (
+                          {selected.lifecycleState === 'DRAFT' && capabilities.update && (
                             <Tooltip title={t('orgChart.scenarios.removeChange')}>
                               <IconButton
                                 size="small"
@@ -798,7 +857,13 @@ export function OrganizationScenarioDrawer({
                                 onClick={() =>
                                   void execute(
                                     () =>
-                                      removeOrganizationScenarioChange(selected, change.changeId),
+                                      updateScenario((authority) =>
+                                        removeOrganizationScenarioChange(
+                                          selected,
+                                          change.changeId,
+                                          authority
+                                        )
+                                      ),
                                     t('orgChart.scenarios.messages.changeRemoved')
                                   )
                                 }
@@ -819,7 +884,7 @@ export function OrganizationScenarioDrawer({
                 </Box>
               </Box>
 
-              {selected.lifecycleState === 'DRAFT' && (
+              {selected.lifecycleState === 'DRAFT' && capabilities.update && (
                 <WorkflowAction
                   title={t('orgChart.scenarios.submit.title')}
                   help={t('orgChart.scenarios.submit.help')}
@@ -832,14 +897,20 @@ export function OrganizationScenarioDrawer({
                   secondaryLabel={t('orgChart.scenarios.cancel.action')}
                   onAction={async () => {
                     const next = await execute(
-                      () => submitOrganizationScenario(selected, reason.trim()),
+                      () =>
+                        updateScenario((authority) =>
+                          submitOrganizationScenario(selected, reason.trim(), authority)
+                        ),
                       t('orgChart.scenarios.messages.submitted')
                     );
                     if (next) setReason('');
                   }}
                   onSecondary={async () => {
                     const next = await execute(
-                      () => cancelOrganizationScenario(selected, reason.trim()),
+                      () =>
+                        updateScenario((authority) =>
+                          cancelOrganizationScenario(selected, reason.trim(), authority)
+                        ),
                       t('orgChart.scenarios.messages.cancelled')
                     );
                     if (next) setReason('');
@@ -849,27 +920,34 @@ export function OrganizationScenarioDrawer({
 
               {selected.lifecycleState === 'IN_REVIEW' &&
                 (currentUserId === selected.ownerUserId ? (
-                  <Stack gap={1}>
-                    <Alert severity="warning">{t('orgChart.scenarios.approval.separation')}</Alert>
-                    <WorkflowAction
-                      title={t('orgChart.scenarios.cancel.title')}
-                      help={t('orgChart.scenarios.cancel.help')}
-                      reason={reason}
-                      setReason={setReason}
-                      busy={busy}
-                      icon={<CircleMinus size={15} />}
-                      actionLabel={t('orgChart.scenarios.cancel.action')}
-                      actionColor="error"
-                      onAction={async () => {
-                        const next = await execute(
-                          () => cancelOrganizationScenario(selected, reason.trim()),
-                          t('orgChart.scenarios.messages.cancelled')
-                        );
-                        if (next) setReason('');
-                      }}
-                    />
-                  </Stack>
-                ) : (
+                  capabilities.update ? (
+                    <Stack gap={1}>
+                      <Alert severity="warning">
+                        {t('orgChart.scenarios.approval.separation')}
+                      </Alert>
+                      <WorkflowAction
+                        title={t('orgChart.scenarios.cancel.title')}
+                        help={t('orgChart.scenarios.cancel.help')}
+                        reason={reason}
+                        setReason={setReason}
+                        busy={busy}
+                        icon={<CircleMinus size={15} />}
+                        actionLabel={t('orgChart.scenarios.cancel.action')}
+                        actionColor="error"
+                        onAction={async () => {
+                          const next = await execute(
+                            () =>
+                              updateScenario((authority) =>
+                                cancelOrganizationScenario(selected, reason.trim(), authority)
+                              ),
+                            t('orgChart.scenarios.messages.cancelled')
+                          );
+                          if (next) setReason('');
+                        }}
+                      />
+                    </Stack>
+                  ) : null
+                ) : capabilities.approve ? (
                   <WorkflowAction
                     title={t('orgChart.scenarios.approval.title')}
                     help={t('orgChart.scenarios.approval.help')}
@@ -881,22 +959,38 @@ export function OrganizationScenarioDrawer({
                     secondaryLabel={t('orgChart.scenarios.approval.reject')}
                     onAction={async () => {
                       const next = await execute(
-                        () => decideOrganizationScenario(selected, 'APPROVED', reason.trim()),
+                        () =>
+                          approveScenario((authority) =>
+                            decideOrganizationScenario(
+                              selected,
+                              'APPROVED',
+                              reason.trim(),
+                              authority
+                            )
+                          ),
                         t('orgChart.scenarios.messages.approved')
                       );
                       if (next) setReason('');
                     }}
                     onSecondary={async () => {
                       const next = await execute(
-                        () => decideOrganizationScenario(selected, 'REJECTED', reason.trim()),
+                        () =>
+                          approveScenario((authority) =>
+                            decideOrganizationScenario(
+                              selected,
+                              'REJECTED',
+                              reason.trim(),
+                              authority
+                            )
+                          ),
                         t('orgChart.scenarios.messages.rejected')
                       );
                       if (next) setReason('');
                     }}
                   />
-                ))}
+                ) : null)}
 
-              {selected.lifecycleState === 'APPROVED' && (
+              {selected.lifecycleState === 'APPROVED' && capabilities.publish && (
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
                   alignItems={{ sm: 'center' }}
@@ -917,11 +1011,18 @@ export function OrganizationScenarioDrawer({
                     startIcon={
                       busy ? <CircularProgress size={14} color="inherit" /> : <Check size={15} />
                     }
-                    disabled={busy}
+                    disabled={!capabilities.publish || busy}
                     onClick={() =>
-                      void execute(
-                        () => publishOrganizationScenario(selected),
-                        t('orgChart.scenarios.messages.published')
+                      void publishScenario.begin(
+                        productSurfaceHighRiskCommand({
+                          operation: 'HCM_ORG_PUBLISH',
+                          commandMethod: 'POST',
+                          commandPath: `/api/people/v1/workforce/organization/scenarios/${encodeURIComponent(selected.scenarioId)}/publish`,
+                          targetType: 'ORG_SCENARIO',
+                          targetId: selected.scenarioId,
+                          expectedObjectVersion: selected.version,
+                          payload: { version: selected.version },
+                        })
                       )
                     }
                   >
@@ -952,108 +1053,7 @@ export function OrganizationScenarioDrawer({
           )}
         </Box>
       </Box>
+      <ProductSurfaceHighRiskCommandDialog controller={publishScenario.controller} />
     </Drawer>
-  );
-}
-
-function signed(value: number, fractionDigits = 0): string {
-  return formatNumber(value, {
-    signDisplay: 'always',
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-  });
-}
-
-function ChangeTypeIcon({ targetKind, changeType }: { targetKind: string; changeType: string }) {
-  return (
-    <Box
-      sx={{
-        width: 30,
-        height: 30,
-        display: 'grid',
-        placeItems: 'center',
-        bgcolor: 'action.hover',
-        borderRadius: 1,
-      }}
-    >
-      {changeType === 'CREATE_POSITION' ? (
-        <Plus size={16} />
-      ) : changeType === 'CLOSE_POSITION' ? (
-        <CircleMinus size={16} />
-      ) : targetKind === 'POSITION' ? (
-        <BriefcaseBusiness size={16} />
-      ) : (
-        <GitPullRequest size={16} />
-      )}
-    </Box>
-  );
-}
-
-function WorkflowAction({
-  title,
-  help,
-  reason,
-  setReason,
-  busy,
-  disabled,
-  icon,
-  actionLabel,
-  secondaryLabel,
-  actionColor = 'primary',
-  onAction,
-  onSecondary,
-}: {
-  title: string;
-  help: string;
-  reason: string;
-  setReason: (value: string) => void;
-  busy: boolean;
-  disabled?: boolean;
-  icon: ReactNode;
-  actionLabel: string;
-  secondaryLabel?: string;
-  actionColor?: 'primary' | 'error';
-  onAction: () => Promise<void>;
-  onSecondary?: () => Promise<void>;
-}) {
-  const { t } = useTranslation('workforce');
-  return (
-    <Stack gap={1} sx={{ pt: 1 }}>
-      <Box>
-        <Typography variant="subtitle2">{title}</Typography>
-        <Typography variant="body2" color="text.secondary">
-          {help}
-        </Typography>
-      </Box>
-      <TextField
-        multiline
-        minRows={2}
-        size="small"
-        label={t('orgChart.scenarios.fields.reason')}
-        value={reason}
-        onChange={(event) => setReason(event.target.value)}
-      />
-      <Stack direction="row" justifyContent="flex-end" gap={1}>
-        {secondaryLabel && onSecondary && (
-          <Button
-            color="error"
-            variant="outlined"
-            disabled={busy || !reason.trim()}
-            onClick={() => void onSecondary()}
-          >
-            {secondaryLabel}
-          </Button>
-        )}
-        <Button
-          color={actionColor}
-          variant={actionColor === 'error' ? 'outlined' : 'contained'}
-          startIcon={busy ? <CircularProgress size={14} color="inherit" /> : icon}
-          disabled={busy || disabled || !reason.trim()}
-          onClick={() => void onAction()}
-        >
-          {actionLabel}
-        </Button>
-      </Stack>
-    </Stack>
   );
 }

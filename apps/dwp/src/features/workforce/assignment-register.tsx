@@ -20,6 +20,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { PersonSummary } from '@dwp-frontend/shared-utils';
@@ -33,9 +34,23 @@ export function AssignmentRegister() {
   const [asOf, setAsOf] = useState(today);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('ALL');
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.operations',
+  });
   const people = useQuery({
-    queryKey: ['workforce', 'assignments', asOf],
-    queryFn: () => listPeople({ asOf, size: 100, surface: 'workforce' }),
+    queryKey: ['workforce', 'assignments', asOf, ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      listPeople({
+        asOf,
+        size: 100,
+        surface: 'workforce',
+        view: 'assignments',
+        contextScopeKey: requestScope.contextScopeKey,
+        signal,
+      }),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const rows = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase();

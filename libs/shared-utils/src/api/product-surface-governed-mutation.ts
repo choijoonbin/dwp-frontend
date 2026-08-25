@@ -88,3 +88,22 @@ export function productSurfaceGovernedMutationConfig(
     ...(authority.mode === 'SECURE' ? { contextScopeKey: authority.contextScopeKey } : {}),
   };
 }
+
+/**
+ * HIGH-risk commands may never fall through the secure rollout without a challenge, replay key,
+ * and optimistic-lock precondition. Legacy 000/100 traffic remains compatible during rollout.
+ */
+export function productSurfaceHighRiskMutationConfig(
+  authority: ProductSurfaceGovernedMutationAuthority,
+  options: { objectVersionHeader: boolean }
+): { headers: Record<string, string>; contextScopeKey?: string } {
+  if (
+    authority.mode === 'SECURE' &&
+    (!authority.stepUp ||
+      !nonBlank(authority.idempotencyKey) ||
+      authority.objectVersion === undefined)
+  ) {
+    throw new Error('Product surface governed HIGH-risk mutation authority is incomplete.');
+  }
+  return productSurfaceGovernedMutationConfig(authority, options);
+}

@@ -633,6 +633,12 @@
       "status": "Worker status",
       "accessRoles": "System roles",
       "noAccessRole": "No system role assigned",
+      "managementEligibility": "Management candidate eligibility",
+      "noManagementEligibility": "No management candidate record",
+      "eligibility": {
+        "ELIGIBLE": "Eligible",
+        "INELIGIBLE": "Ineligible"
+      },
       "manager": "Reports to",
       "directReports": "{{count}} direct reports",
       "layerAndSpan": "Layer and manager span",

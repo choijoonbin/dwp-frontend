@@ -28,6 +28,55 @@ describe('governed product sensitive-query adapter', () => {
     expect(queryClient.getQueryData(['unrelated', 'public'])).toEqual([{ public: true }]);
   });
 
+  it.each([
+    ['communications', 'communications.management', ['admin', 'announcements']],
+    ['services', 'services.management', ['admin', 'services', 'catalog']],
+  ] as const)(
+    'aborts and removes %s non-default-scope queries by exact surface meta',
+    async (productId, surfaceId, prefix) => {
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+      const queryKey = [...prefix, 'scope:non-default', 'revision-direct'];
+      let markStarted: (() => void) | undefined;
+      const started = new Promise<void>((resolve) => {
+        markStarted = resolve;
+      });
+      let aborted = false;
+      const inFlight = queryClient
+        .fetchQuery({
+          queryKey,
+          meta: { accessSensitive: true, productId, surfaceId },
+          queryFn: ({ signal }) => {
+            markStarted?.();
+            return new Promise<never>((_resolve, reject) => {
+              signal.addEventListener(
+                'abort',
+                () => {
+                  aborted = true;
+                  reject(new DOMException('Scope changed', 'AbortError'));
+                },
+                { once: true }
+              );
+            });
+          },
+        })
+        .catch(() => undefined);
+
+      await started;
+      const matches = (query: {
+        queryKey: readonly unknown[];
+        meta?: Readonly<Record<string, unknown>>;
+      }) => isProductAccessSensitiveQuery(query, productId, surfaceId);
+      await queryClient.cancelQueries({ predicate: matches });
+      queryClient.removeQueries({ predicate: matches });
+      await inFlight;
+
+      expect(aborted).toBe(true);
+      expect(queryClient.getQueryCache().find({ queryKey })).toBeUndefined();
+    }
+  );
+
   it('accepts only a fresh direct response for the exact new scope and revision', () => {
     const evaluated = {
       decision: 'ALLOWED' as const,

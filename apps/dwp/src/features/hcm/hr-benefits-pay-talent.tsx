@@ -43,6 +43,7 @@ import {
 } from './hr-domain-components';
 
 import type { HrGoal } from '@dwp-frontend/shared-utils';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
 
 export function HrBenefitsWorkspace() {
   const { t } = useTranslation('hcm');
@@ -331,6 +332,7 @@ export function HrTalentWorkspace() {
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const updateGoal = useProductActionMutation('route.hcm.personal.talent-goal-update.action');
   const query = useQuery({
     queryKey: ['hcm', 'talent'],
     queryFn: getHrTalent,
@@ -340,11 +342,17 @@ export function HrTalentWorkspace() {
   const [progress, setProgress] = useState(0);
   const mutation = useMutation({
     mutationFn: () =>
-      updateHrGoal(goal!.goalId, {
-        progressPercent: progress,
-        status: progress === 100 ? 'COMPLETED' : goal!.status,
-        version: goal!.version,
-      }),
+      updateGoal((authority) =>
+        updateHrGoal(
+          goal!.goalId,
+          {
+            progressPercent: progress,
+            status: progress === 100 ? 'COMPLETED' : goal!.status,
+            version: goal!.version,
+          },
+          authority
+        )
+      ),
     onSuccess: (data) => {
       queryClient.setQueryData(['hcm', 'talent'], data);
       void queryClient.invalidateQueries({ queryKey: ['hcm', 'home-overview'] });

@@ -59,7 +59,7 @@ function envelope() {
         },
         cohort: 'eligible-10',
         opaqueRevision: 'rollout-communications-7',
-        surfaceUiEvaluation: 'RESOLVED',
+        authorityStatus: 'AVAILABLE',
       },
     ],
   };
@@ -106,7 +106,7 @@ describe('product surface authority model', () => {
     );
   });
 
-  it('allows only the server-declared 110 UI-evaluation outage without a legacy downgrade', () => {
+  it('accepts explicit 110 AVAILABLE and NOT_EVALUATED compatibility meanings', () => {
     const snapshot = parseProductSurfaceAuthoritySnapshot(
       {
         ...envelope(),
@@ -119,7 +119,7 @@ describe('product surface authority model', () => {
               capabilityEnforcement: true,
               surfaceUi: false,
             },
-            surfaceUiEvaluation: 'UNAVAILABLE',
+            authorityStatus: 'NOT_EVALUATED',
           },
         ],
       },
@@ -128,9 +128,54 @@ describe('product surface authority model', () => {
 
     expect(resolveProductRollout(snapshot, 'communications')).toMatchObject({
       state: 'ready',
-      surfaceUiEvaluation: 'unavailable',
+      surfaceUiEvaluation: 'resolved',
       rollout: { state: '110' },
     });
+
+    const availableEnvelope = envelope();
+    availableEnvelope.rollouts[0]!.state = '110';
+    availableEnvelope.rollouts[0]!.flags.surfaceUi = false;
+    const available = parseProductSurfaceAuthoritySnapshot(availableEnvelope, RECEIVED_AT);
+    expect(resolveProductRollout(available, 'communications')).toMatchObject({
+      state: 'ready',
+      surfaceUiEvaluation: 'resolved',
+      rollout: { state: '110', authorityStatus: 'AVAILABLE' },
+    });
+  });
+
+  it('requires AVAILABLE authority for 111 and fails unavailable 110 closed', () => {
+    const uiEnabled = envelope();
+    uiEnabled.rollouts[0]!.state = '111';
+    uiEnabled.rollouts[0]!.flags.surfaceUi = true;
+    expect(
+      resolveProductRollout(parseProductSurfaceAuthoritySnapshot(uiEnabled), 'communications')
+    ).toMatchObject({ state: 'ready', rollout: { authorityStatus: 'AVAILABLE' } });
+
+    for (const [state, authorityStatus] of [
+      ['111', 'UNAVAILABLE'],
+      ['111', 'NOT_EVALUATED'],
+      ['110', 'UNAVAILABLE'],
+    ] as const) {
+      const invalid = envelope();
+      invalid.rollouts[0]!.state = state;
+      invalid.rollouts[0]!.flags.surfaceUi = state === '111';
+      invalid.rollouts[0]!.authorityStatus = authorityStatus;
+      expect(
+        resolveProductRollout(parseProductSurfaceAuthoritySnapshot(invalid), 'communications')
+      ).toEqual({ state: 'authority-unavailable' });
+    }
+  });
+
+  it('rejects missing or unknown rollout authority status at the wire parser', () => {
+    for (const authorityStatus of [undefined, 'FUTURE_STATUS']) {
+      const invalid = envelope() as unknown as {
+        rollouts: Array<Record<string, unknown>>;
+      };
+      invalid.rollouts[0]!.authorityStatus = authorityStatus;
+      expect(() => parseProductSurfaceAuthoritySnapshot(invalid, RECEIVED_AT)).toThrow(
+        /duplicate or invalid identities/
+      );
+    }
   });
 
   it('rejects invalid timestamps instead of relying on the local clock alone', () => {
@@ -141,7 +186,7 @@ describe('product surface authority model', () => {
     );
   });
 
-  it('rejects unknown activation states and grants bound to a foreign scope', () => {
+  it('rejects unknown or production-unsupported activation states and foreign scopes', () => {
     const unknownActivation = envelope();
     (unknownActivation.contexts[0]!.effectiveGrants as unknown[]).splice(0, 1, {
       grantKind: 'CAPABILITY',
@@ -156,6 +201,24 @@ describe('product surface authority model', () => {
       activationState: 'FUTURE_STATE',
     });
     expect(() => parseProductSurfaceAuthoritySnapshot(unknownActivation, RECEIVED_AT)).toThrow(
+      /context is invalid/
+    );
+
+    const unsupportedRequired = envelope();
+    (unsupportedRequired.contexts[0]!.effectiveGrants as unknown[]).splice(0, 1, {
+      grantKind: 'CAPABILITY',
+      capabilityContractKey: 'communications.content.publish',
+      resolvedCapabilityCode: 'COMMUNICATION_PUBLISH',
+      authorityMode: 'PERMISSION',
+      predicatePolicyKeys: [],
+      responsibilityRequirement: 'REQUIRED',
+      responsibility: { code: 'APP_CONFIG_ADMIN', resourceSetKey: 'RS_COMMUNICATIONS' },
+      scopeKeys: ['self'],
+      requiresProductEntitlement: false,
+      readOnly: false,
+      activationState: 'REQUIRED',
+    });
+    expect(() => parseProductSurfaceAuthoritySnapshot(unsupportedRequired, RECEIVED_AT)).toThrow(
       /context is invalid/
     );
 

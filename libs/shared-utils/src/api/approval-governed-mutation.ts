@@ -1,4 +1,7 @@
-import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
+import {
+  productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
+} from './product-surface-governed-mutation';
 
 import type {
   ProductSurfaceGovernedMutationAuthority,
@@ -18,4 +21,11 @@ export function approvalMutationExecutionConfig(
   options?: { objectVersionHeader?: boolean }
 ): { headers: Record<string, string>; contextScopeKey?: string } {
   return productSurfaceGovernedMutationConfig(execution, options);
+}
+
+export function approvalHighRiskMutationExecutionConfig(
+  execution: ApprovalMutationExecution,
+  options: { objectVersionHeader: boolean }
+): { headers: Record<string, string>; contextScopeKey?: string } {
+  return productSurfaceHighRiskMutationConfig(execution, options);
 }

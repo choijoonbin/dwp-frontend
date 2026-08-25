@@ -2,12 +2,16 @@ import { House, ShieldCheck } from 'lucide-react';
 import { describe, expect, it } from 'vitest';
 
 import { defineProductManifest } from '../../components/product-manifest';
+import type { ProductSurfaceDefinition } from '../../components/product-manifest';
 
 import {
   buildManageableProductList,
   buildProductAppCardEntryPoints,
+  buildProductHeaderEntryPoints,
   buildProductSurfaceEntryPoints,
 } from './product-entry-point-model';
+
+import type { ProductSurfaceEntryPoint } from './product-entry-point-model';
 
 import type { EffectiveProductSurfaceContext } from './product-surface-context';
 
@@ -144,4 +148,91 @@ describe('product entry points', () => {
       )
     ).toEqual([]);
   });
+
+  it('exposes exactly one app-management transition from a multi-surface work header', () => {
+    const hcmLikeManifest = defineProductManifest({
+      id: 'hcm',
+      appKey: 'APP.HCM',
+      basePath: '/hr',
+      surfaces: [
+        surfaceDefinition('hcm.personal', 'work', '/hr/home', ['work']),
+        surfaceDefinition('hcm.team', 'work', '/hr/team', ['team']),
+        surfaceDefinition('hcm.operations', 'management', '/hr/operations', ['operations']),
+        surfaceDefinition('hcm.management', 'management', '/hr/manage', [
+          'operations',
+          'administration',
+        ]),
+      ],
+    });
+    const entries: ProductSurfaceEntryPoint[] = [
+      entry('hcm.personal', 'work', '/hr/home'),
+      entry('hcm.team', 'work', '/hr/team'),
+      entry('hcm.operations', 'management', '/hr/operations'),
+      entry('hcm.management', 'management', '/hr/manage'),
+    ];
+
+    expect(buildProductHeaderEntryPoints(hcmLikeManifest, 'hcm.personal', entries)).toEqual([
+      entries[0],
+      entries[1],
+      { ...entries[3], entryKind: 'management-entry' },
+    ]);
+    expect(buildProductHeaderEntryPoints(hcmLikeManifest, 'hcm.operations', entries)).toEqual([
+      { ...entries[0], entryKind: 'work-return' },
+      entries[2],
+      entries[3],
+    ]);
+  });
 });
+
+function surfaceDefinition(
+  id: string,
+  plane: 'work' | 'management',
+  indexPath: `/${string}`,
+  taskKinds: [
+    'work' | 'team' | 'operations' | 'administration',
+    ...Array<'work' | 'team' | 'operations' | 'administration'>,
+  ]
+): ProductSurfaceDefinition {
+  return {
+    id,
+    plane,
+    labelKey: id,
+    taskKinds,
+    routeMatchers: [{ kind: 'prefix' as const, path: indexPath }],
+    indexPath,
+    navigation: [],
+    entryAccess:
+      plane === 'work'
+        ? {
+            type: 'policy' as const,
+            accessPolicyKey: `${id}.v1`,
+            requiresProductEntitlement: false,
+          }
+        : {
+            type: 'capability' as const,
+            entryCapabilityMode: 'ANY' as const,
+            requiredCapabilityContractKeys: [`${id}.read`],
+            requiresProductEntitlement: false,
+          },
+    supportedScopeKinds: plane === 'work' ? (['SELF'] as const) : (['RESOURCE_SET'] as const),
+    shellProfile: plane === 'work' ? ('product-work' as const) : ('product-management' as const),
+    returnSurfaceId: plane === 'management' ? 'hcm.personal' : undefined,
+  };
+}
+
+function entry(
+  surfaceId: string,
+  plane: 'work' | 'management',
+  path: string
+): ProductSurfaceEntryPoint {
+  return {
+    productId: 'hcm',
+    surfaceId,
+    plane,
+    labelKey: surfaceId,
+    path,
+    contextKey: `${surfaceId}-context`,
+    requiresScopeSelection: false,
+    readOnly: false,
+  };
+}

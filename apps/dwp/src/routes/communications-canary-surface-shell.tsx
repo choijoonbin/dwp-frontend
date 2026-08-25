@@ -37,13 +37,12 @@ export function CommunicationsCanarySurfaceShell({
     manifest: COMMUNICATIONS_PRODUCT_MANIFEST,
     decision,
     label: t(surface.labelKey),
-    returnLabel: tCommon(
-      decision.context.plane === 'management'
-        ? 'productSurface.actions.returnToWork'
-        : 'productSurface.actions.returnToCatalog'
-    ),
+    returnLabels: {
+      work: tCommon('productSurface.actions.returnToWork'),
+      catalog: tCommon('productSurface.actions.returnToCatalog'),
+    },
     registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
-    compatibilityNavigation: mode === 'enforced-compatibility',
+    rolloutMode: mode,
     onScopeChange: (scopeKey) => void transitionScope(scopeKey),
   });
   if (mode === 'surface-ui') {

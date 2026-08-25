@@ -1,9 +1,9 @@
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import { ProductSurfaceLoadingShell } from '../components/product-surface-loading-shell';
 import {
   AllowedProductSurfaceProvider,
   useAllowedProductSurface,
 } from '../features/shell/allowed-product-surface-context';
-import { RouteFallback } from './route-support';
 
 import type { ReactNode } from 'react';
 import type { ProductSurfaceAccessStateActions } from '../components/product-surface-access-state';
@@ -25,7 +25,7 @@ export function ProductSurfaceGuard({
   actions?: ProductSurfaceAccessStateActions;
   children: ReactNode | ((allowed: AllowedSurfaceDecision) => ReactNode);
 }) {
-  if (pending) return <RouteFallback />;
+  if (pending) return <ProductSurfaceLoadingShell />;
   const effectiveDecision = decision ?? ({ state: 'authority-unavailable' } as const);
   if (effectiveDecision.state !== 'allowed') {
     return <ProductSurfaceAccessState decision={effectiveDecision} actions={actions} />;

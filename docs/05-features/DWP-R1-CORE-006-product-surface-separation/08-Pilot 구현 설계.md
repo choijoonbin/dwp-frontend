@@ -3,8 +3,10 @@
 ## 1. 목적
 
 이 문서는 Common Contract, Technical Canary, Approvals와 HCM을 순서대로 구현·승격하도록 변경
-단위와 검증 증거를 고정하는 living blueprint다. W0·W0.5·W1a 기술 구현은 DRAFT/default-off로
-완료했으며 실제 Owner 승인 전에는 활성 Bundle Pointer나 Production Flag를 변경하지 않는다.
+단위와 검증 증거를 고정하는 living blueprint다. 2026-08-25 승인된 기술 작업 범위에 따라
+W0~W3 소스·계약·Fail-closed Rollout 준비를 DRAFT/default-off로 구현했다. 이 기술 작업 승인은
+Product·Security·Privacy Owner의 운영 활성화 승인을 대신하지 않으며, 그 전에는 활성 Bundle
+Pointer나 Production Flag를 변경하지 않는다.
 
 ```mermaid
 flowchart LR
@@ -14,9 +16,10 @@ flowchart LR
     D --> E["W2/W3 전체 제품"]
 ```
 
-Approvals와 HCM은 공식 대표 Pilot이지만 병렬 구현하지 않는다. HCM은 공통 Shell 문제 외에
-Reporting Relation, HR Field Mask, Support Scope와 Granular Capability 문제를 포함하므로
-Approvals Gate를 먼저 통과해야 한다.
+Approvals와 HCM은 공식 대표 Pilot이며 운영 승격과 관찰은 반드시 Approvals → HCM 순서를
+지킨다. HCM은 공통 Shell 문제 외에 Reporting Relation, HR Field Mask, Support Scope와
+Granular Capability 문제를 포함한다. 기술 코드는 검증을 위해 준비되어도 두 Pilot을 동시에
+Production 활성화하지 않는다.
 
 ## 2. Target Runtime
 
@@ -1324,8 +1327,10 @@ Backend 변경 후보:
 - `dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportDtos.java`
 - `dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java`
 - `dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportRepository.java`
-- W1b 승인 후 당시 다음 가용 People Migration으로 Step-up Replay Ledger 추가
-- W1b 승인 후 당시 다음 가용 Auth Migration으로 HCM Product Management Capability Seed 추가
+- People `V44__bind_hcm_step_up_replay_and_sync_versions.sql`에 Step-up Replay Ledger와 대상
+  Version 결속을 DRAFT/default-off Runtime으로 추가
+- HCM Product Management Capability는 불변 `product-surfaces` v3 DRAFT에 유지하고 Active
+  Pointer를 만들지 않음
 - `dwp-backend/contracts/openapi/people.json`,
   `dwp-backend/contracts/openapi/gateway-public.json`,
   `dwp-backend/scripts/export-openapi-contracts.py`
@@ -1435,15 +1440,22 @@ Export Create Request는 `datasetKey`, `datasetContractVersion`, Target Populati
 | `ux.product-surfaces.services.v1`                   | Shared Experience | off     | Tenant                  |
 | `ux.product-surfaces.approvals.v1`                  | Approvals         | off     | Tenant                  |
 | `ux.product-surfaces.hcm.v1`                        | HCM               | off     | Tenant                  |
+| `ux.product-surfaces.dwaion.v1`                     | DWAI·ON           | off     | Tenant                  |
+| `ux.product-surfaces.notifications.v1`              | Notifications     | off     | Tenant                  |
+| `ux.product-surfaces.spaces.v1`                     | Spaces            | off     | Tenant                  |
+| `ux.product-surfaces.calendar.v1`                   | Calendar          | off     | Tenant                  |
+| `ux.product-surfaces.workplace.v1`                  | Workplace         | off     | Tenant                  |
+| `ux.product-surfaces.mail.v1`                       | Mail              | off     | Tenant                  |
+| `ux.product-surfaces.messaging.v1`                  | Messaging         | off     | Tenant                  |
 
 지원하는 상태는 다음 네 개로 고정한다. `U`는 해당 Product의 `ux.product-surfaces.*`다.
 
-| S Context Shadow | E Capability Enforcement | U Surface UI | 의미                            |
-| ---------------: | -----------------------: | -----------: | ------------------------------- |
-|                0 |                        0 |            0 | 전환 전 Baseline                |
-|                1 |                        0 |            0 | Shadow Difference 계산만        |
-|                1 |                        1 |            0 | 신규 인가 + Compatibility Shell |
-|                1 |                        1 |            1 | 신규 인가 + 분리 Surface UI     |
+| 상태  | S Context Shadow | E Capability Enforcement | U Surface UI | UI와 인가                                         | 신규 `앱 관리` CTA | W2/W3 DRAFT Route |
+| ----- | ---------------: | -----------------------: | -----------: | ------------------------------------------------- | ------------------ | ----------------- |
+| `000` |                0 |                        0 |            0 | 전환 전 기존 UI + 기존 인가                       | 숨김               | 미등록            |
+| `100` |                1 |                        0 |            0 | Shadow Difference + Compatibility UI              | 숨김               | 미등록            |
+| `110` |                1 |                        1 |            0 | Exact 인가 + 기존 업무·관리 합산 Compatibility UI | 숨김               | Fail Closed       |
+| `111` |                1 |                        1 |            1 | Exact 인가 + Work/Management 분리 UI              | 권한자에게만 표시  | Fail Closed       |
 
 나머지 조합은 설정 검증에서 거부한다. UI Flag 평가 실패는 `U=0` Compatibility
 Shell로 돌아갈 수 있지만 `E=1`은 유지한다. 이미 Enforcement된 Tenant에서 Enforcement
@@ -1486,8 +1498,8 @@ Management를 Fail Closed하며 Legacy `MANAGE`로 자동 복귀하지 않는다
 
 ## 11. 운영 활성화 판정
 
-다음은 기술 구현 완료와 별개인 외부 승인 Gate다. 모두 체크되기 전에는 W1a를 Production에서
-활성화하거나 W1b 구현을 시작하지 않는다.
+다음은 기술 구현 완료와 별개인 외부 승인 Gate다. 모두 체크되기 전에는 W1a 또는 W1b를
+Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bundle로 승격하지 않는다.
 
 - [ ] 사용자·Product·Security Owner가 ADR, 169개 분류표와 `PS-01`~`PS-11` 승인
 - [ ] Bound Context·Direct Evaluation·Reason Code OpenAPI와 Support/NORMAL Exclusive Mode 승인
@@ -1511,6 +1523,9 @@ Management를 Fail Closed하며 Legacy `MANAGE`로 자동 복귀하지 않는다
 - [ ] Figma 또는 Storybook 핵심 Frame 승인
 - [ ] 3단계 Feature Flag Truth Table·Rollback Rehearsal, Observation·Rollback Owner 지정
 
-기술 구현은 검증 가능한 DRAFT Migration과 default-off Runtime으로 완료했다. 위 승인 이후에는
-정보 구조를 다시 논의하지 않고 W1a Bundle/Flag 승격 절차만 수행한다. 승인 전에는 운영 Role
-Assignment, Active Pointer와 Production Flag를 변경하지 않는다.
+기술 구현은 검증 가능한 DRAFT Migration과 default-off Runtime으로 완료했다. 불변 v1~v3
+Bundle의 바이트·Checksum은 보존하고, 11개 제품 Rollout 참여 목록은 별도 Checksummed Inventory로
+관리한다. W2/W3의 73개 Page 계약은 제품별 권한 Owner 검토 전 Frontend DRAFT로 유지하며 다음
+승인 Bundle에 포함되기 전에는 `110`과 `111` 모두에서 Gateway가 Fail Closed한다. `110`의
+Compatibility UI는 기존 Route를 유지하기 위한 것이며 DRAFT Route를 활성화하는 우회 수단이
+아니다. 승인 전에는 운영 Role Assignment, Active Pointer와 Production Flag를 변경하지 않는다.

@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
   PRODUCT_LEGACY_ROUTE_SOURCE,
   PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
   REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
 } from './product-page-route-contracts';
+import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
 import {
   PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS,
   PRODUCT_AUTHORIZATION_REGISTRY_REVISION,
   PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+  PRODUCT_SURFACE_ROLLOUT_PRODUCTS,
 } from './product-surface-authorization.generated';
 import { resolveProductLegacyRoute } from './product-route-contract-source';
 
@@ -31,6 +34,19 @@ describe('generated product route authorization contracts', () => {
         checksum: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
       })
     );
+    expect(PRODUCT_SURFACE_ROLLOUT_PRODUCTS).toEqual([
+      'approvals',
+      'calendar',
+      'communications',
+      'dwaion',
+      'hcm',
+      'mail',
+      'messaging',
+      'notifications',
+      'services',
+      'spaces',
+      'workplace',
+    ]);
     expect(router).toHaveLength(58);
     expect(registry).toEqual(router);
   });
@@ -39,10 +55,18 @@ describe('generated product route authorization contracts', () => {
     const nonPages = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
       (route) => route.routeKind !== 'PAGE'
     );
+    const countByKind = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.reduce<Record<string, number>>(
+      (counts, route) => ({ ...counts, [route.routeKind]: (counts[route.routeKind] ?? 0) + 1 }),
+      {}
+    );
 
+    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(129);
+    expect(countByKind).toEqual({ ACTION: 59, DATA: 12, PAGE: 58 });
     expect(nonPages).toHaveLength(71);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(58);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(73);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(131);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(131);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

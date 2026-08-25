@@ -1,9 +1,9 @@
 # R1 제품 업무·관리 Surface 분리 및 관리 Context ADR
 
 - 상태: Proposed for approval (`review-ready`)
-- 기준일: 2026-08-21
-- 기준 Frontend Commit: `228bdf56a99e53fb0f2aa606b64acda3a82ca05a`
-- 기준 Backend Commit: `7a79e809a5626fb82c2d32afd39040beb9fc9b4c`
+- 최종 기술 검증일: 2026-08-25
+- 구현 Frontend Branch: `codex/core006-frontend`
+- 구현 Backend Branch: `codex/core006-backend`
 - 적용 범위: DWP Global Shell, 모든 Business App, Tenant Control Center, Provider Support,
   Auth, Gateway와 제품별 관리 API
 - 결정 Owner: Shared Experience Platform, Identity & Access, 각 Product Owner
@@ -38,11 +38,11 @@ Provider 역할만으로 제품 데이터·제품 설정을 자동 상속하지 
 ## 2. 배경과 확인된 문제
 
 Backend는 이미 Provider Control Plane, Tenant Governance, Resource Responsibility와 Workforce
-Access를 독립 권한면으로 유지한다. 반면 Frontend `ProductAreaLayout`은 권한 필터를 통과한 모든
+Access를 독립 권한면으로 유지했다. 변경 전 Frontend `ProductAreaLayout`은 권한 필터를 통과한 모든
 Navigation Group을 하나의 배열과 Sidebar에 합쳐 표시한다. 제품 관리 Route도 다수 제품에서
 구성원 `AppRouteGuard` 아래에 중첩되어 있다.
 
-2026-08-21 기준 정적 메뉴 169개를 전수 확인한 결과는 다음과 같다.
+2026-08-21 변경 전 기준 정적 메뉴 169개를 전수 확인한 결과는 다음과 같다.
 
 | 구분                               | 수량 | 현재 문제                                                     |
 | ---------------------------------- | ---: | ------------------------------------------------------------- |
@@ -508,8 +508,8 @@ Navigation, Route, Gateway와 Service PEP가 같은 Implication Policy를 사용
 
 - Sidebar에는 현재 Work 또는 Team Surface의 메뉴만 표시한다.
 - 관리 메뉴 Tree, 관리 KPI와 관리용 위험 신호를 포함하지 않는다.
-- 관리 가능한 사용자는 Product Header의 이름 있는 Link Navigation에서만 `앱 관리` 또는
-  제품별 Surface를 전환한다.
+- 관리 가능한 사용자는 Product Header의 이름 있는 단일 `앱 관리` Link로만 Management Plane에
+  진입한다. Work Header에 세부 운영·설정 Surface를 나열하지 않는다.
 - 관리 권한이 없는 사용자는 비활성 관리 Control을 보지 않는다.
 
 ### 7.2 Product Management Shell
@@ -535,8 +535,9 @@ Name·Role·Value, Keyboard, Focus, 320 CSS px Reflow와 Status Message 의미�
    이유만으로 관리 Landing을 기본으로 만들지 않는다. Work Identity가 없는 Management-only
    사용자는 Product별 Root Resolver가 첫 허용 Management Route 또는 명시적 Access State를
    선택한다.
-2. Work Header는 접근 가능한 Surface가 둘 이상일 때만 Surface Switcher를 Interactive하게
-   표시한다.
+2. Work Header는 허용된 Work Surface와 최대 한 개의 `앱 관리` Link만 투영한다. 여러
+   Management Surface가 있어도 Work Header에는 대표 관리 진입점 하나만 표시하고, 세부 전환은
+   Management Context 안에서만 제공한다.
 3. 앱 카탈로그 Card는 관리 가능한 앱에 보조 `관리` Action을 제공할 수 있다. 이 Action도
    서버 Context를 재검사한다.
 4. Tenant Admin Hub의 앱 Card는 해당 앱 Management Route로 Deep Link할 수 있지만 제품
@@ -562,6 +563,13 @@ Name·Role·Value, Keyboard, Focus, 320 CSS px Reflow와 Status Message 의미�
 2. 제품별 최소 권한 Package 또는 전문 역할 Assignment
 3. SoD와 자기 승인·자기 이행 Conflict 검사
 4. 승인·활성화·만료·회수와 Session/Decision Revision 갱신
+
+회사 관리 센터는 이 Preset 수명주기를 오케스트레이션하지만 제품 기능을 실행하는 장소가 아니다.
+중앙에서 직접 할당할 수 있는 책임은 `APP_OWNER`, `APP_ACCESS_MANAGER`,
+`APP_ACCESS_APPROVER`, `APP_ACCESS_REVIEWER` 네 개로 제한한다. `APP_CONFIG_ADMIN`, 제품 전문
+Role과 그로부터 계산되는 Exact Capability는 제품별 범위에 결속하고, 실제 생성·수정·게시·운영
+Action은 해당 앱 Management Workbench에서만 수행한다. Tenant Admin Hub의 Deep Link와 Preset
+승인은 이 제품 권한을 암묵적으로 추가하거나 회사 센터에 제품 Action 권한을 만들지 않는다.
 
 Approvals처럼 Designer, Publisher, Operator가 분리된 제품은 하나의 광범위한 App Admin
 Preset으로 합치지 않는다. 책임은 Scope를 제한하고 제품 전문 역할은 행위를 제한한다.

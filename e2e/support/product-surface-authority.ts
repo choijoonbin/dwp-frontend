@@ -268,7 +268,7 @@ export async function mockLegacyProductSurfaceAuthority(page: Page) {
     },
     cohort: 'baseline',
     opaqueRevision: `rollout-${productKey}-baseline`,
-    surfaceUiEvaluation: 'RESOLVED',
+    authorityStatus: 'NOT_EVALUATED',
   }));
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
@@ -338,7 +338,7 @@ export async function mockApprovalProductSurfaceAuthority(
           },
           cohort: 'e2e-pilot',
           opaqueRevision: `rollout-approvals-${revision}`,
-          surfaceUiEvaluation: 'RESOLVED',
+          authorityStatus: options.surfaceUi === false ? 'NOT_EVALUATED' : 'AVAILABLE',
         },
         ...['communications', 'services'].map((productKey) => ({
           productKey,
@@ -350,7 +350,7 @@ export async function mockApprovalProductSurfaceAuthority(
           },
           cohort: 'baseline',
           opaqueRevision: `rollout-${productKey}-baseline`,
-          surfaceUiEvaluation: 'RESOLVED',
+          authorityStatus: 'NOT_EVALUATED',
         })),
       ],
     })

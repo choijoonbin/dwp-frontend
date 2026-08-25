@@ -39,15 +39,15 @@ DWP의 권한은 `프로바이더 > 회사 관리자 > 앱 관리자 > 구성원
 
 ### 2.1 구성원과 테넌트 역할
 
-| 역할                       | 허용 책임                                               | 명시적 금지                                                    |
-| -------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
-| `WORKSPACE_MEMBER`         | 개인 홈, 할당 앱, 본인 요청·취소                        | 관리 센터, 프로바이더 영역                                     |
-| `TENANT_ADMIN`             | 회사 설정, 허용된 테넌트 역할 위임, 앱·ID 거버넌스 총괄 | 프로바이더 영역, HR 원천 데이터 자동 접근, 자기 승인·자기 이행 |
-| `IDENTITY_ADMIN`           | 사용자·그룹·SCIM/HRIS ID 프로비저닝                     | 고권한 역할 부여, 앱 접근 결정·이행, 감사 설정                 |
-| `APP_CATALOG_ADMIN`        | 앱 소유권과 앱 범위 책임자 구성, 요청 큐 전체 조회      | 앱 요청 승인·이행·회수, 앱 업무 데이터                         |
-| `HR_ADMIN`, `PEOPLE_ADMIN` | HRIS 운영 기능                                          | 테넌트·앱·감사 관리 자동 접근                                  |
-| `AUDITOR`                  | 감사 조회와 조사                                        | 운영 데이터 변경, ID·앱 관리자 겸직                            |
-| `AUDIT_ADMIN`              | 감사 정책과 증적 거버넌스                               | 일반 운영 역할과 무제한 결합                                   |
+| 역할                       | 허용 책임                                                 | 명시적 금지                                                    |
+| -------------------------- | --------------------------------------------------------- | -------------------------------------------------------------- |
+| `WORKSPACE_MEMBER`         | 개인 홈, 할당 앱, 본인 요청·취소                          | 관리 센터, 프로바이더 영역                                     |
+| `TENANT_ADMIN`             | 회사 설정, 허용된 테넌트 역할 위임, 앱·ID 거버넌스 총괄   | 프로바이더 영역, HR 원천 데이터 자동 접근, 자기 승인·자기 이행 |
+| `IDENTITY_ADMIN`           | 사용자·그룹·SCIM/HRIS ID 프로비저닝                       | 고권한 역할 부여, 앱 접근 결정·이행, 감사 설정                 |
+| `APP_CATALOG_ADMIN`        | 앱 소유권 지정·회수, 앱 범위 구성, 접근 요청 큐 전체 조회 | 앱 접근 요청 승인·이행·회수, 앱 업무 데이터                    |
+| `HR_ADMIN`, `PEOPLE_ADMIN` | HRIS 운영 기능                                            | 테넌트·앱·감사 관리 자동 접근                                  |
+| `AUDITOR`                  | 감사 조회와 조사                                          | 운영 데이터 변경, ID·앱 관리자 겸직                            |
+| `AUDIT_ADMIN`              | 감사 정책과 증적 거버넌스                                 | 일반 운영 역할과 무제한 결합                                   |
 
 테넌트 관리자가 직접 위임할 수 있는 역할은 활성 정책
 `sys_role_assignment_policies`에 등록된 항목으로 제한한다. 자기 자신, 동급 이상,
@@ -67,12 +67,55 @@ DWP의 권한은 `프로바이더 > 회사 관리자 > 앱 관리자 > 구성원
 | `APP_ACCESS_MANAGER`  | 승인된 요청의 권한 적용·재시도·회수        | 요청자 및 동일 요청 승인자의 이행 금지      |
 | `APP_ACCESS_REVIEWER` | 해당 앱 접근 현황·정기 검토                | 이행 담당자와 겸직 금지                     |
 
-`APP_CATALOG_ADMIN`은 요청 큐를 읽을 수 있지만 승인·이행 버튼은 사용할 수 없다.
+`APP_CATALOG_ADMIN`은 **앱 접근 요청 큐**를 읽을 수 있지만 접근 승인·이행 버튼은 사용할 수
+없다. 이 Read-only 제한은 별도 앱 소유권 Workflow의 `APP_OWNER` 지정·회수 권한까지 막는다는
+뜻이 아니다.
 `APP_ACCESS_APPROVER`와 `APP_ACCESS_MANAGER`는 서로의 API를 호출할 수 없다. 광범위한
 테넌트 관리자도 앱 요청 큐를 자동으로 열거나 승인자와 이행자를 겸할 수 없다. 요청
 조회·결정·이행·회수는 앱 범위 책임 또는 `APP_CATALOG_ADMIN`의 읽기 책임으로만 연다.
 
-### 2.3 프로바이더 역할
+### 2.3 회사 관리 센터와 앱 관리 워크벤치 투영
+
+권한면을 UI에 다음과 같이 투영한다. 회사 관리 센터(`/admin`)는 Tenant Governance와 앱 접근
+거버넌스만 소유하고, 제품별 설정·운영 기능은 각 앱의 Product Management Workbench가
+소유한다.
+
+| 진입 권위                                                                       | 회사 관리 센터 투영                            | 제품 관리 Workbench 투영                                  |
+| ------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------- |
+| `TENANT_ADMIN`, `IDENTITY_ADMIN`, `APP_CATALOG_ADMIN`, `AUDIT_*`                | 보유 Role·Permission에 해당하는 회사 관리 메뉴 | 별도 Product Capability가 있을 때만 Deep Link 이후 허용   |
+| `APP_OWNER`, `APP_ACCESS_APPROVER`, `APP_ACCESS_MANAGER`, `APP_ACCESS_REVIEWER` | 정확한 Resource Set의 앱 거버넌스 메뉴만       | 별도 Product Capability가 있을 때만 허용                  |
+| `APP_CONFIG_ADMIN`과 제품 전문 Role·Duty                                        | 진입 권위로 사용하지 않음                      | 정확한 앱 Scope와 Capability가 결속된 관리 Surface만 허용 |
+| `WORKSPACE_MEMBER`                                                              | 진입 불가                                      | Entitlement·관계에 해당하는 Work Surface                  |
+
+`APP_CONFIG_ADMIN`, `HR_ADMIN`, `PEOPLE_ADMIN`, Communications·Services·Spaces 등 제품 전문
+Role이나 제품 Permission만으로 `/admin`을 열지 않는다. 회사 관리 센터의 앱 Card가 제품
+Workbench로 연결되더라도 권한을 부여하거나 회사 관리자 Role을 제품 Capability로 변환하지
+않는다. Gateway와 제품 Service PEP가 Deep Link의 권한과 Scope를 다시 판정한다.
+
+구성원 겸 앱 관리자는 앱 Root에서 항상 Work Surface를 먼저 본다. Work Sidebar에는 현재
+Work·Team Surface 메뉴만 표시하고, 권한자에게만 Header의 단일 `앱 관리` 진입점을 제공한다.
+진입 후에는 Shell·Sidebar·Scope 표시를 Product Management Context로 전체 전환하며, 이때만
+같은 앱의 세부 운영·설정 Surface 사이를 이동할 수 있다. Management Sidebar에는 Work 메뉴를
+섞지 않고 `업무로 돌아가기`를 제공한다. Work Identity가 없는 관리 전용 사용자는 첫 허용 관리
+Route 또는 명시적인 권한 상태로 이동한다.
+
+앱 관리 위임 Workflow는 두 종류를 구분한다.
+
+1. `APP_OWNER`, `APP_ACCESS_APPROVER`, `APP_ACCESS_MANAGER`, `APP_ACCESS_REVIEWER` 같은 통제면
+   책임은 요청자와 결정자를 분리하는 2인 Bootstrap Workflow를 사용할 수 있다. 이 예외는 제품
+   Capability·Scoped Duty·`APP_CONFIG_ADMIN`을 생성하지 않는다. `APP_OWNER`의 지정·회수는
+   `APP_CATALOG_ADMIN`만, 나머지 책임의 승인·회수는 같은 Resource Set의 정확한
+   `APP_ACCESS_APPROVER`·`APP_ACCESS_MANAGER`만 수행한다.
+2. 제품 전문 관리자 Preset은 책임 Assignment와 최소 Scoped Duty 묶음을 하나의 Aggregate로
+   준비하고 `요청 → 승인 → 활성화`의 3단계를 거친다. 요청자·승인자·활성자·대상 사용자는
+   서로 독립이어야 하며, 어느 구성요소도 부분 활성화하지 않는다. 회수·만료는 전체 Aggregate를
+   비활성화하고 대상 Principal의 Access Revision을 갱신한다.
+
+두 Workflow 모두 Tenant·Resource Set·유효기간·Object Version·SoD를 서버에서 잠금 후 다시
+검사한다. 성공뿐 아니라 권한 부족, 자기 승인·자기 활성화, 잘못된 상태·버전·기간·범위 거부도
+Correlation ID와 구체 Reason Code를 독립 감사 Transaction에 남긴다.
+
+### 2.4 프로바이더 역할
 
 | 역할                          | 일상 책임                            |
 | ----------------------------- | ------------------------------------ |
@@ -172,9 +215,14 @@ DWP 내부 권한을 가짜 성공으로 표시하지 않으며, 외부 시스�
   각자의 권한과 일치한다.
 - 직접 URL과 API 호출도 동일한 허용·거부 결과를 낸다.
 - App Catalog Admin은 요청 큐 읽기만 가능하다.
+- App Catalog Admin은 별도 Ownership Workflow에서만 `APP_OWNER`를 지정·회수할 수 있다.
 - Tenant Admin은 앱 요청 큐와 승인·이행·회수 API에 403이어야 한다.
 - Approver는 결정만, Access Manager는 이행·재시도·회수만 가능하다.
 - 승인자와 동일한 사용자는 같은 요청을 이행할 수 없다.
+- `APP_CONFIG_ADMIN`과 제품 전문 Role·Permission만으로 회사 관리 센터에 진입할 수 없다.
+- 구성원 겸 관리자의 Work Sidebar에는 관리 메뉴가 없고 단일 `앱 관리` Link만 표시되며,
+  Product Management Sidebar에는 Work 메뉴가 없다.
+- 제품 관리자 Preset은 요청·승인·활성화가 분리되고 부분 활성화가 불가능하다.
 - 권한 적용·회수 후 `/api/auth/me`와 다음 API 요청의 Effective Permission이 재로그인
   없이 바뀐다.
 - 모든 성공·실패·거부가 감사 이벤트와 Correlation ID로 추적된다.

@@ -52,6 +52,104 @@ export type AppAdminAssignment = {
   updatedAt: string;
 };
 
+export type AppAdminPresetDuty = {
+  dutyCode: string;
+  legacyRoleCode?: string | null;
+  resourceKey: string;
+  riskTier: 'LOW' | 'MEDIUM' | 'HIGH';
+  auditPolicyException: boolean;
+  capabilityContractKeys: string[];
+};
+
+export type AppAdminPresetCatalogItem = {
+  presetCode: string;
+  productKey: string;
+  appResourceKey: string;
+  displayName: string;
+  description: string;
+  responsibilityCode: string;
+  riskTier: 'LOW' | 'MEDIUM' | 'HIGH';
+  catalogVersion: number;
+  duties: AppAdminPresetDuty[];
+  requestable?: boolean;
+  unavailableReason?: string | null;
+};
+
+export type AppAdminPresetDutyAssignment = {
+  assignmentId: string;
+  dutyCode: string;
+  lifecycleState: string;
+  version: number;
+};
+
+export type AppAdminPresetAssignment = {
+  presetAssignmentId: string;
+  presetCode: string;
+  productKey: string;
+  presetName: string;
+  principalType: 'USER' | 'GROUP';
+  principalRef: string;
+  principalName: string;
+  resourceSetId: string;
+  resourceSetKey: string;
+  resourceSetName: string;
+  responsibilityAssignmentId: string;
+  assignmentSource: string;
+  requestChannel: 'SELF_SERVICE' | 'GOVERNANCE';
+  lifecycleState: 'PENDING_APPROVAL' | 'APPROVED' | 'ACTIVE' | 'DENIED' | 'REVOKED' | 'EXPIRED';
+  validFrom?: string | null;
+  validTo: string;
+  reviewDueAt: string;
+  justification: string;
+  requestedBy?: number | null;
+  requestedByName?: string | null;
+  approvedBy?: number | null;
+  approvedByName?: string | null;
+  approvedAt?: string | null;
+  decisionReason?: string | null;
+  activatedBy?: number | null;
+  activatedByName?: string | null;
+  activatedAt?: string | null;
+  activationReason?: string | null;
+  revokedBy?: number | null;
+  revokedByName?: string | null;
+  revokedAt?: string | null;
+  revocationReason?: string | null;
+  version: number;
+  catalogVersion: number;
+  createdAt: string;
+  updatedAt: string;
+  duties: AppAdminPresetDutyAssignment[];
+};
+
+export type AppAdminPresetSelfServiceOption = {
+  preset: AppAdminPresetCatalogItem;
+  resourceSets: Array<{
+    resourceSetId: string;
+    resourceSetKey: string;
+    resourceSetName: string;
+  }>;
+};
+
+export type AppAdminPresetReview = {
+  reviewId: string;
+  userId: number;
+  userName: string;
+  resourceSetId: string;
+  resourceSetName?: string | null;
+  sourceRoleCode: string;
+  dutyCode: string;
+  reasonCode: string;
+  evidence: unknown;
+  lifecycleState: 'OPEN' | 'RESOLVED' | 'DISMISSED';
+  resolvedBy?: number | null;
+  resolvedAt?: string | null;
+  resolutionReason?: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AppGovernanceDashboard = {
   metrics: {
     activeAssignments: number;
@@ -68,6 +166,9 @@ export type AppGovernanceDashboard = {
   }>;
   resourceSets: AppResourceSet[];
   assignments: AppAdminAssignment[];
+  presetCatalog?: AppAdminPresetCatalogItem[];
+  presetAssignments?: AppAdminPresetAssignment[];
+  presetReviews?: AppAdminPresetReview[];
 };
 
 const BASE = '/api/auth/admin/access/app-governance';
@@ -145,6 +246,146 @@ export async function revokeAppAdminAssignment(
   >(`${BASE}/assignments/${assignment.assignmentId}/revoke`, {
     reason,
     version: assignment.version,
+  });
+  return response.data.data;
+}
+
+export async function getAppAdminPresetCatalog(): Promise<AppAdminPresetCatalogItem[]> {
+  const response = await axiosInstance.get<ApiResponse<AppAdminPresetCatalogItem[]>>(
+    `${BASE}/presets/catalog`
+  );
+  return response.data.data;
+}
+
+export async function getAppAdminPresetAssignments(): Promise<AppAdminPresetAssignment[]> {
+  const response = await axiosInstance.get<ApiResponse<AppAdminPresetAssignment[]>>(
+    `${BASE}/presets/assignments`
+  );
+  return response.data.data;
+}
+
+export async function getAppAdminPresetAssignment(
+  presetAssignmentId: string
+): Promise<AppAdminPresetAssignment> {
+  const response = await axiosInstance.get<ApiResponse<AppAdminPresetAssignment>>(
+    `${BASE}/presets/assignments/${presetAssignmentId}`
+  );
+  return response.data.data;
+}
+
+export async function createAppAdminPresetAssignment(payload: {
+  principalType: 'USER' | 'GROUP';
+  principalRef: string;
+  presetCode: string;
+  resourceSetId: string;
+  validTo: string;
+  reviewDueAt: string;
+  justification: string;
+}): Promise<AppAdminPresetAssignment> {
+  const response = await axiosInstance.post<ApiResponse<AppAdminPresetAssignment>, typeof payload>(
+    `${BASE}/presets/assignments`,
+    payload
+  );
+  return response.data.data;
+}
+
+export async function getAppAdminPresetSelfServiceOptions(
+  appResourceKey: string
+): Promise<AppAdminPresetSelfServiceOption[]> {
+  const response = await axiosInstance.get<ApiResponse<AppAdminPresetSelfServiceOption[]>>(
+    `${BASE}/presets/self-service-options?appResourceKey=${encodeURIComponent(appResourceKey)}`
+  );
+  return response.data.data;
+}
+
+export async function createAppAdminPresetSelfServiceRequest(
+  payload: {
+    presetCode: string;
+    resourceSetId: string;
+    validTo: string;
+    reviewDueAt: string;
+    justification: string;
+  },
+  idempotencyKey: string,
+  correlationId?: string
+): Promise<AppAdminPresetAssignment> {
+  const normalizedKey = idempotencyKey.trim();
+  if (
+    normalizedKey.length < 8 ||
+    normalizedKey.length > 160 ||
+    !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/u.test(normalizedKey)
+  ) {
+    throw new Error('App administrator self-service request requires a valid idempotency key.');
+  }
+  const response = await axiosInstance.post<ApiResponse<AppAdminPresetAssignment>, typeof payload>(
+    `${BASE}/presets/self-service-requests`,
+    payload,
+    {
+      headers: {
+        'Idempotency-Key': normalizedKey,
+        ...(correlationId ? { 'X-Correlation-ID': correlationId } : {}),
+      },
+    }
+  );
+  return response.data.data;
+}
+
+export async function decideAppAdminPresetAssignment(
+  assignment: AppAdminPresetAssignment,
+  decision: 'APPROVED' | 'DENIED',
+  reason: string
+): Promise<AppAdminPresetAssignment> {
+  const response = await axiosInstance.post<
+    ApiResponse<AppAdminPresetAssignment>,
+    { decision: string; reason: string; version: number }
+  >(`${BASE}/presets/assignments/${assignment.presetAssignmentId}/decision`, {
+    decision,
+    reason,
+    version: assignment.version,
+  });
+  return response.data.data;
+}
+
+export async function activateAppAdminPresetAssignment(
+  assignment: AppAdminPresetAssignment,
+  reason: string
+): Promise<AppAdminPresetAssignment> {
+  const response = await axiosInstance.post<
+    ApiResponse<AppAdminPresetAssignment>,
+    { reason: string; version: number }
+  >(`${BASE}/presets/assignments/${assignment.presetAssignmentId}/activate`, {
+    reason,
+    version: assignment.version,
+  });
+  return response.data.data;
+}
+
+export async function revokeAppAdminPresetAssignment(
+  assignment: AppAdminPresetAssignment,
+  reason: string
+): Promise<AppAdminPresetAssignment> {
+  const response = await axiosInstance.patch<
+    ApiResponse<AppAdminPresetAssignment>,
+    { reason: string; version: number }
+  >(`${BASE}/presets/assignments/${assignment.presetAssignmentId}/revoke`, {
+    reason,
+    version: assignment.version,
+  });
+  return response.data.data;
+}
+
+export async function decideAppAdminPresetReview(
+  review: AppAdminPresetReview,
+  decision: 'RESOLVED' | 'DISMISSED',
+  reason: string
+): Promise<AppAdminPresetReview> {
+  const response = await axiosInstance.post<
+    ApiResponse<AppAdminPresetReview>,
+    { decision: string; reason: string; version: number }
+  >(`${BASE}/presets/reviews/${review.reviewId}/decision`, {
+    decision,
+    reason,
+    version: review.version,
   });
   return response.data.data;
 }

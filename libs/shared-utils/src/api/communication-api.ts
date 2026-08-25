@@ -1,6 +1,8 @@
 import { axiosInstance } from '../axios-instance';
+import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
 
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type CommunicationSeverity = 'INFO' | 'SUCCESS' | 'WARNING' | 'CRITICAL';
 export type CommunicationContentType = 'ANNOUNCEMENT' | 'NEWS' | 'EVENT' | 'POLICY_UPDATE';
@@ -69,6 +71,33 @@ export type CommunicationFeedQuery = {
   size?: number;
 };
 
+export const COMMUNICATIONS_WORK_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'recordCommunicationEvent',
+    routeContractKey: 'route.communications.work.event.action',
+    method: 'POST',
+    path: '/api/platform/v1/communications/{communicationId}/events/{eventType}',
+  },
+  {
+    apiFunction: 'updateCommunicationReaderState',
+    routeContractKey: 'route.communications.work.reader-state.action',
+    method: 'PUT',
+    path: '/api/platform/v1/communications/{communicationId}/reader-state',
+  },
+  {
+    apiFunction: 'acknowledgeCommunication',
+    routeContractKey: 'route.communications.work.acknowledgement.action',
+    method: 'POST',
+    path: '/api/platform/v1/communications/{communicationId}/acknowledgement',
+  },
+  {
+    apiFunction: 'updateCommunicationReaction',
+    routeContractKey: 'route.communications.work.reaction.action',
+    method: 'PUT',
+    path: '/api/platform/v1/communications/{communicationId}/reaction',
+  },
+] as const;
+
 export async function getCommunicationFeed(
   query: CommunicationFeedQuery = {}
 ): Promise<CommunicationFeed> {
@@ -93,42 +122,59 @@ export async function getCommunication(communicationId: number): Promise<Communi
 
 export async function recordCommunicationEvent(
   communicationId: number,
-  event: 'impression' | 'open' | 'action'
+  event: 'impression' | 'open' | 'action',
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<void> {
   await axiosInstance.post<ApiResponse<void>, undefined>(
     `/api/platform/v1/communications/${communicationId}/events/${event}`,
-    undefined
+    undefined,
+    productSurfaceGovernedMutationConfig(authority)
   );
 }
 
 export async function updateCommunicationReaderState(
   communicationId: number,
-  state: { saved?: boolean; dismissed?: boolean }
+  state: { saved?: boolean; dismissed?: boolean },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CommunicationReaderState> {
   const response = await axiosInstance.put<
     ApiResponse<{ communicationId: number; readerState: CommunicationReaderState }>,
     { saved?: boolean; dismissed?: boolean }
-  >(`/api/platform/v1/communications/${communicationId}/reader-state`, state);
+  >(
+    `/api/platform/v1/communications/${communicationId}/reader-state`,
+    state,
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data.readerState;
 }
 
 export async function acknowledgeCommunication(
-  communicationId: number
+  communicationId: number,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CommunicationReaderState> {
   const response = await axiosInstance.post<
     ApiResponse<{ communicationId: number; readerState: CommunicationReaderState }>,
     undefined
-  >(`/api/platform/v1/communications/${communicationId}/acknowledgement`, undefined);
+  >(
+    `/api/platform/v1/communications/${communicationId}/acknowledgement`,
+    undefined,
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data.readerState;
 }
 
 export async function updateCommunicationReaction(
   communicationId: number,
-  reaction: CommunicationReaction | null
+  reaction: CommunicationReaction | null,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CommunicationReactionSummary> {
   const response = await axiosInstance.put<
     ApiResponse<CommunicationReactionSummary>,
     { reaction: CommunicationReaction | null }
-  >(`/api/platform/v1/communications/${communicationId}/reaction`, { reaction });
+  >(
+    `/api/platform/v1/communications/${communicationId}/reaction`,
+    { reaction },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }

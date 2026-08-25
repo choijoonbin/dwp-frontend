@@ -224,6 +224,9 @@ test('management-only 사용자는 제품 루트에서 첫 관리 페이지로 �
   await expect(navigation.getByRole('link', { name: '프로세스 설계', exact: true })).toBeVisible();
   await expect(navigation.getByRole('link', { name: '결재함', exact: true })).toHaveCount(0);
   await expect(navigation.getByRole('link', { name: '새 결재 작성', exact: true })).toHaveCount(0);
+  await expect(
+    navigation.getByRole('link', { name: '앱 목록으로 돌아가기', exact: true })
+  ).toHaveAttribute('href', '/apps');
   if (await page.getByTestId('approvals-mobile-sidebar').isVisible()) {
     await page.keyboard.press('Escape');
   }
@@ -258,8 +261,20 @@ test('업무 Surface와 관리 Surface는 같은 사용자에게도 각자의 �
   await expect(
     workNavigation.getByRole('link', { name: '프로세스 설계', exact: true })
   ).toHaveCount(0);
+  await expect(workNavigation.getByRole('link', { name: '앱 관리', exact: true })).toHaveCount(0);
 
-  await workNavigation.getByRole('link', { name: '결재 관리', exact: true }).click();
+  const surfaceNavigation = page
+    .getByTestId('approvals-header')
+    .getByRole('navigation', { name: '제품 업무 및 관리 영역' });
+  const managementSurfaceLink = surfaceNavigation.getByRole('link', {
+    name: '앱 관리',
+    exact: true,
+  });
+  expect(await managementSurfaceLink.evaluate((element) => element.tagName)).toBe('A');
+  await expect(
+    surfaceNavigation.getByRole('link', { name: '결재 업무', exact: true })
+  ).toHaveAttribute('aria-current', 'page');
+  await managementSurfaceLink.click();
   await expect(page).toHaveURL(/\/approvals\/admin\/overview(?:\?.*)?$/u);
   await expect(page.getByTestId('approvals-shell')).toHaveAttribute(
     'data-product-surface',
@@ -272,6 +287,9 @@ test('업무 Surface와 관리 Surface는 같은 사용자에게도 각자의 �
   await expect(managementNavigation.getByRole('link', { name: '결재함', exact: true })).toHaveCount(
     0
   );
+  await expect(
+    managementNavigation.getByRole('link', { name: '업무로 돌아가기', exact: true })
+  ).toHaveAttribute('href', /\/approvals\/home/u);
 });
 
 test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항상 발견 가능하다', async ({
@@ -287,8 +305,14 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/approvals/home');
     await expect(
-      page.getByTestId('approvals-sidebar').getByRole('link', { name: '결재 관리', exact: true })
+      page
+        .getByTestId('approvals-header')
+        .getByRole('navigation', { name: '제품 업무 및 관리 영역' })
+        .getByRole('link', { name: '앱 관리', exact: true })
     ).toBeVisible();
+    await expect(
+      page.getByTestId('approvals-sidebar').getByRole('link', { name: '앱 관리', exact: true })
+    ).toHaveCount(0);
     await page.screenshot({
       path: testInfo.outputPath(`approvals-surface-switch-${width}.png`),
       fullPage: true,
@@ -301,17 +325,31 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
   ]) {
     await page.setViewportSize(viewport);
     await page.goto('/approvals/home');
-    await page.getByRole('button', { name: '전자결재 메뉴 열기' }).click();
+    const disclosureTrigger = page.getByRole('button', { name: '현재 영역: 결재 업무' });
+    await disclosureTrigger.click();
+    await expect(disclosureTrigger).toHaveAttribute('aria-expanded', 'true');
     await expect(
       page
-        .getByTestId('approvals-mobile-sidebar')
-        .getByRole('link', { name: '결재 관리', exact: true })
+        .getByTestId('product-surface-mobile-disclosure')
+        .getByRole('link', { name: '앱 관리', exact: true })
     ).toBeVisible();
-    await expect(
-      page
-        .getByTestId('approvals-mobile-sidebar')
-        .locator('xpath=ancestor::*[contains(@class,"MuiDrawer-paper")][1]')
-    ).toHaveCSS('transform', 'none');
+    await page.getByRole('button', { name: '제품 영역 목록 닫기' }).click();
+    await expect(disclosureTrigger).toBeFocused();
+    await disclosureTrigger.click();
+    await page.keyboard.press('Escape');
+    await expect(disclosureTrigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(disclosureTrigger).toBeFocused();
+
+    const drawerTrigger = page.getByRole('button', { name: '전자결재 메뉴 열기' });
+    await drawerTrigger.click();
+    const mobileSidebar = page.getByTestId('approvals-mobile-sidebar');
+    await expect(mobileSidebar.getByRole('link', { name: '결재함', exact: true })).toBeVisible();
+    await expect(mobileSidebar.getByRole('link', { name: '앱 관리', exact: true })).toHaveCount(0);
+    await expect(page.locator('#dwp-main-content')).toHaveAttribute('inert', '');
+    await expect(page.getByTestId('approvals-header')).toHaveAttribute('inert', '');
+    await mobileSidebar.getByRole('button', { name: '제품 메뉴 닫기' }).click();
+    await expect(drawerTrigger).toBeFocused();
+    await expect(page.locator('#dwp-main-content')).not.toHaveAttribute('inert', '');
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     );
@@ -327,11 +365,11 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
   await page.goto('/approvals/home');
   await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
   await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).toBeVisible();
-  await page.getByRole('button', { name: '전자결재 메뉴 열기' }).click();
+  await page.getByRole('button', { name: '현재 영역: 결재 업무' }).click();
   await expect(
     page
-      .getByTestId('approvals-mobile-sidebar')
-      .getByRole('link', { name: '결재 관리', exact: true })
+      .getByTestId('product-surface-mobile-disclosure')
+      .getByRole('link', { name: '앱 관리', exact: true })
   ).toBeVisible();
   const textZoomOverflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -347,6 +385,36 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
     path: testInfo.outputPath('approvals-surface-switch-text-200.png'),
     fullPage: true,
   });
+});
+
+test('mobile Surface Link는 route 전환 후 Document Title·H1 focus를 갱신하고 browser back focus를 덮어쓰지 않는다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_OPERATOR'], {
+    locale: 'ko',
+    permissions: APPROVAL_ADMIN_PERMISSIONS,
+  });
+  await mockApprovalProductSurfaceAuthority(page);
+
+  await page.goto('/approvals/home');
+  await page.getByRole('button', { name: '현재 영역: 결재 업무' }).click();
+  await page
+    .getByTestId('product-surface-mobile-disclosure')
+    .getByRole('link', { name: '앱 관리', exact: true })
+    .click();
+  const managementHeading = page.getByRole('heading', { name: '결재 운영 개요', level: 1 });
+  await expect(managementHeading).toBeFocused();
+  await expect(page).toHaveTitle('결재 운영 개요 · 결재 관리 · DWP');
+
+  await page.getByRole('button', { name: '전자결재 메뉴 열기' }).click();
+  const persistentLink = page
+    .getByTestId('approvals-mobile-sidebar')
+    .getByRole('link', { name: '프로세스 설계', exact: true });
+  await persistentLink.focus();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/approvals\/home(?:\?.*)?$/u);
+  await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).not.toBeFocused();
 });
 
 test('관리 딥링크의 query/hash와 back/forward 및 새 탭 URL을 보존한다', async ({
@@ -393,6 +461,12 @@ test('기본값 없는 복수 Scope의 관리 index와 sidebar는 선택 Scope·
   });
 
   await page.goto('/approvals/admin?scope=S2&view=exceptions#queue');
+  await expect(
+    page.getByTestId('approvals-header').getByTestId('product-surface-context-bar')
+  ).toHaveAttribute('data-placement', 'header');
+  await expect(
+    page.getByTestId('approvals-sidebar').getByTestId('product-surface-context-bar')
+  ).toHaveCount(0);
   await expect(page).toHaveURL(
     (url) =>
       url.pathname === '/approvals/admin/overview' &&
@@ -510,7 +584,11 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
     await page.goBack();
     await expect(page).toHaveURL((url) => url.searchParams.get('scope') === 'S2');
     await scopeBPageStarted.promise;
-    await expect(page.getByLabel('페이지 불러오는 중')).toBeVisible();
+    await expect(page.getByTestId('product-surface-loading-shell')).toBeVisible();
+    await expect(page.getByTestId('product-surface-loading-shell')).toHaveAttribute(
+      'aria-busy',
+      'true'
+    );
     await expect(page.getByRole('heading', { name: '프로세스 설계', level: 1 })).toHaveCount(0);
 
     actionGate.resolve();

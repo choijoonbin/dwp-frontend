@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { PageCanvas } from '@dwp-frontend/design-system/components/page-canvas/page-canvas';
 import { ErrorState } from '@dwp-frontend/design-system/components/states/state-panels';
-import { Navigate, useParams, useRouteError } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useParams, useRouteError } from 'react-router-dom';
 
+import { NOTIFICATION_PRODUCT_MANIFEST } from '../features/notifications/notification-product-manifest';
 import { NotificationLayout } from '../layouts/notification-layout';
 import {
   AppRouteGuard,
@@ -13,6 +14,8 @@ import {
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
+import { preserveProductRouteLocation } from './product-surface-canary-routes';
+import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -68,8 +71,15 @@ function NotificationPageRoute() {
 
 function LegacyNotificationDetailRedirect() {
   const { notificationId } = useParams();
+  const location = useLocation();
   return (
-    <Navigate to={`/notifications/center/${encodeURIComponent(notificationId ?? '')}`} replace />
+    <Navigate
+      to={preserveProductRouteLocation(
+        `/notifications/center/${encodeURIComponent(notificationId ?? '')}`,
+        location
+      )}
+      replace
+    />
   );
 }
 
@@ -104,103 +114,89 @@ export const notificationRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.NOTIFICATIONS">
-            <NotificationLayout />
-          </AppRouteGuard>
+          <Outlet />
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="home" replace /> },
-      {
-        path: 'home',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <NotificationHome />
-          </Suspense>
+      ...buildTwoSurfaceProductChildren({
+        manifest: NOTIFICATION_PRODUCT_MANIFEST,
+        workSurfaceId: 'notifications.work',
+        managementSurfaceId: 'notifications.management',
+        managementBasePath: '/notifications/admin',
+        legacyPath: '/notifications/home',
+        legacyShell: (
+          <AppRouteGuard resourceKey="APP.NOTIFICATIONS">
+            <NotificationLayout />
+          </AppRouteGuard>
         ),
-        errorElement: <NotificationRouteError />,
-      },
-      {
-        path: 'center',
-        element: <NotificationPageRoute />,
-        errorElement: <NotificationRouteError />,
-      },
-      {
-        path: 'center/:notificationId',
-        element: <NotificationPageRoute />,
-        errorElement: <NotificationRouteError />,
-      },
-      {
-        path: 'settings',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <NotificationSettingsPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'admin/overview',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
-            <Suspense fallback={routeFallback}>
-              <NotificationAdminOverview />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/contracts',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_CONTRACT">
-            <Suspense fallback={routeFallback}>
-              <NotificationAdminContracts />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/policies',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_POLICY">
-            <Suspense fallback={routeFallback}>
-              <NotificationAdminPolicies />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/operations',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
-            <Suspense fallback={routeFallback}>
-              <NotificationAdminOperations />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/templates',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_TEMPLATE">
-            <Suspense fallback={routeFallback}>
-              <NotificationAdminTemplates />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
-      {
-        path: 'admin/suppressions',
-        element: (
-          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
-            <Suspense fallback={routeFallback}>
-              <NotificationAdminSuppressions />
-            </Suspense>
-          </ProductRouteGuard>
-        ),
-      },
+        areaKey: 'notifications',
+        translationNamespace: 'notifications',
+        renderPage: (route) => notificationRoutePage(route.pattern),
+        renderLegacyPage: (route) => notificationLegacyRoutePage(route.pattern),
+        renderErrorElement: (route) =>
+          route.surfaceId === 'notifications.work' ? <NotificationRouteError /> : undefined,
+        legacyUnknown: <Navigate to="/notifications/home" replace />,
+      }),
       { path: ':notificationId', element: <LegacyNotificationDetailRedirect /> },
-      { path: '*', element: <Navigate to="/notifications/home" replace /> },
     ],
   },
 ];
+
+function notificationRoutePage(pattern: string) {
+  if (pattern === '/notifications/home') {
+    return (
+      <Suspense fallback={routeFallback}>
+        <NotificationHome />
+      </Suspense>
+    );
+  }
+  if (pattern === '/notifications/settings') {
+    return (
+      <Suspense fallback={routeFallback}>
+        <NotificationSettingsPage />
+      </Suspense>
+    );
+  }
+  if (pattern === '/notifications/admin/overview') {
+    return page(<NotificationAdminOverview />);
+  }
+  if (pattern === '/notifications/admin/contracts') {
+    return page(<NotificationAdminContracts />);
+  }
+  if (pattern === '/notifications/admin/policies') {
+    return page(<NotificationAdminPolicies />);
+  }
+  if (pattern === '/notifications/admin/templates') {
+    return page(<NotificationAdminTemplates />);
+  }
+  if (pattern === '/notifications/admin/operations') {
+    return page(<NotificationAdminOperations />);
+  }
+  if (pattern === '/notifications/admin/suppressions') {
+    return page(<NotificationAdminSuppressions />);
+  }
+  return <NotificationPageRoute />;
+}
+
+function notificationLegacyRoutePage(pattern: string) {
+  const current = notificationRoutePage(pattern);
+  const resourceKey = pattern.includes('/admin/contracts')
+    ? 'ADMIN.NOTIFICATION_CONTRACT'
+    : pattern.includes('/admin/policies')
+      ? 'ADMIN.NOTIFICATION_POLICY'
+      : pattern.includes('/admin/templates')
+        ? 'ADMIN.NOTIFICATION_TEMPLATE'
+        : pattern.includes('/admin/')
+          ? 'ADMIN.NOTIFICATION_OPERATIONS'
+          : undefined;
+  return resourceKey ? (
+    <ProductRouteGuard resourceKey={resourceKey}>{current}</ProductRouteGuard>
+  ) : (
+    current
+  );
+}
+
+function page(children: React.ReactNode) {
+  return <Suspense fallback={routeFallback}>{children}</Suspense>;
+}

@@ -1,6 +1,12 @@
 import type { SurfaceDeniedState } from '../features/shell/product-surface-context';
 
-export type ProductSurfaceAccessAction = 'retry' | 'return' | 'select-scope' | 'request-access';
+export type ProductSurfaceAccessAction =
+  | 'retry'
+  | 'return'
+  | 'select-scope'
+  | 'request-access'
+  | 'request-responsibility'
+  | 'activate-access';
 
 export type ProductSurfaceAccessPresentation = {
   titleKey: string;
@@ -21,14 +27,15 @@ const ACCESS_PRESENTATIONS = {
   'surface-denied': {
     titleKey: 'productSurface.access.surfaceDenied.title',
     descriptionKey: 'productSurface.access.surfaceDenied.description',
-    primaryAction: 'request-access',
+    primaryAction: 'request-responsibility',
     secondaryAction: 'return',
     tone: 'permission',
   },
   'route-denied': {
     titleKey: 'productSurface.access.routeDenied.title',
     descriptionKey: 'productSurface.access.routeDenied.description',
-    primaryAction: 'return',
+    primaryAction: 'request-responsibility',
+    secondaryAction: 'return',
     tone: 'permission',
   },
   'scope-selection-required': {
@@ -48,14 +55,14 @@ const ACCESS_PRESENTATIONS = {
   expired: {
     titleKey: 'productSurface.access.expired.title',
     descriptionKey: 'productSurface.access.expired.description',
-    primaryAction: 'request-access',
+    primaryAction: 'request-responsibility',
     secondaryAction: 'return',
     tone: 'attention',
   },
   'activation-required': {
     titleKey: 'productSurface.access.activationRequired.title',
     descriptionKey: 'productSurface.access.activationRequired.description',
-    primaryAction: 'request-access',
+    primaryAction: 'activate-access',
     secondaryAction: 'return',
     tone: 'attention',
   },

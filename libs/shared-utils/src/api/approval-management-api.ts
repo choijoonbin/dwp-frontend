@@ -39,6 +39,14 @@ export async function getApprovalWorkflows(
   contextScopeKey?: string,
   signal?: AbortSignal
 ): Promise<ApprovalWorkflow[]> {
+  return getApprovalStudioWorkflows(contextScopeKey, signal);
+}
+
+/** Workflow Studio reads must keep the `view` discriminator absent. */
+export async function getApprovalStudioWorkflows(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalWorkflow[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalWorkflow[]>>(
     `${base}/workflows`,
     selectedScope(contextScopeKey, signal)
@@ -51,8 +59,42 @@ export async function getApprovalWorkflow(
   contextScopeKey?: string,
   signal?: AbortSignal
 ): Promise<ApprovalWorkflowDetail> {
+  return getApprovalStudioWorkflow(workflowId, contextScopeKey, signal);
+}
+
+/** Workflow Studio detail reads must keep the `view` discriminator absent. */
+export async function getApprovalStudioWorkflow(
+  workflowId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalWorkflowDetail> {
   const response = await axiosInstance.get<ApiResponse<ApprovalWorkflowDetail>>(
     `${base}/workflows/${workflowId}`,
+    selectedScope(contextScopeKey, signal)
+  );
+  return response.data.data;
+}
+
+/** Form Studio may only consume the registry's workflow-reference projection. */
+export async function getApprovalFormReferenceWorkflows(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalWorkflow[]> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalWorkflow[]>>(
+    `${base}/workflows?view=reference`,
+    selectedScope(contextScopeKey, signal)
+  );
+  return response.data.data;
+}
+
+/** Form Studio may only consume the registry's workflow-reference projection. */
+export async function getApprovalFormReferenceWorkflow(
+  workflowId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalWorkflowDetail> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalWorkflowDetail>>(
+    `${base}/workflows/${workflowId}?view=reference`,
     selectedScope(contextScopeKey, signal)
   );
   return response.data.data;

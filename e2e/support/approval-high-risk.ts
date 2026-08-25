@@ -217,7 +217,7 @@ export async function mockApprovalHighRiskNetwork(
         flags: { contextShadow: false, capabilityEnforcement: false, surfaceUi: false },
         cohort: 'popup-callback',
         opaqueRevision: `popup-${productKey}`,
-        surfaceUiEvaluation: 'RESOLVED',
+        authorityStatus: 'NOT_EVALUATED',
       })),
     })
   );

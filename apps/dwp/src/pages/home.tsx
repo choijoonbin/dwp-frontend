@@ -58,10 +58,10 @@ import { useSystemCodeOptions } from '../components/use-system-code-options';
 import {
   findGovernedProductEntry,
   GOVERNED_ENTRY_MANIFESTS,
+  usesLegacyProductLaunchDiscovery,
   useGovernedProductEntryCatalog,
 } from '../features/shell/product-entry-point-registry';
 import {
-  isProductSurfaceEnforced,
   resolveCanaryProductFlags,
   resolveProductSurfaceRolloutMode,
   useProductSurfaceCanaryAuthority,
@@ -187,7 +187,7 @@ export default function HomePage() {
           const mode = resolveProductSurfaceRolloutMode(
             resolveCanaryProductFlags(surfaceAuthority, manifest.id)
           );
-          if (!isProductSurfaceEnforced(mode) && mode !== 'invalid') {
+          if (usesLegacyProductLaunchDiscovery(mode)) {
             return isAppEntitled(app, auth.user?.roles ?? [], permissions) ? [app] : [];
           }
           const entry = findGovernedProductEntry(governedEntries, app.resourceKey);

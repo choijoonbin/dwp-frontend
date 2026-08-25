@@ -33,6 +33,11 @@ describe('product surface access presentation', () => {
       'retry'
     );
     expect(getProductSurfaceAccessPresentation('step-up-required').primaryAction).toBe('retry');
-    expect(getProductSurfaceAccessPresentation('route-denied').primaryAction).toBe('return');
+    expect(getProductSurfaceAccessPresentation('route-denied').primaryAction).toBe(
+      'request-responsibility'
+    );
+    expect(getProductSurfaceAccessPresentation('activation-required').primaryAction).toBe(
+      'activate-access'
+    );
   });
 });

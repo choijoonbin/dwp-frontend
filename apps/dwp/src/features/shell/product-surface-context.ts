@@ -76,6 +76,7 @@ export type SurfaceDecisionDetail = {
   expiredAt?: string;
   requiredAssurance?: string;
   requestPolicyRef?: string;
+  correlationId?: string;
 };
 
 export type SurfaceDeniedState =
@@ -117,6 +118,7 @@ export type ProductSurfaceDirectEvaluation = {
   expiredAt?: string;
   requiredAssurance?: string;
   requestPolicyRef?: string;
+  correlationId?: string;
 };
 
 export type EffectiveScopeResolution =
@@ -191,6 +193,7 @@ function deniedDetail(evaluation: ProductSurfaceDirectEvaluation): SurfaceDecisi
     expiredAt: evaluation.expiredAt,
     requiredAssurance: evaluation.requiredAssurance,
     requestPolicyRef: evaluation.requestPolicyRef,
+    correlationId: evaluation.correlationId,
   };
 }
 
@@ -244,14 +247,26 @@ export function mapProductSurfaceAccessError(error: {
   status?: number;
   reasonCode?: string;
   decisionRevision?: string;
+  correlationId?: string;
 }): SurfaceDecision {
   const mapped = error.reasonCode ? REASON_CODE_STATES[error.reasonCode] : undefined;
-  if (mapped) return { state: mapped, detail: { decisionRevision: error.decisionRevision } };
-  if (error.status === 503) return { state: 'authority-unavailable' };
-  if (error.status === 401) return { state: 'authority-unavailable' };
-  if (error.status === 403) return { state: 'route-denied' };
-  if (error.status === 404) return { state: 'route-denied' };
-  return { state: 'authority-unavailable' };
+  const detail =
+    error.decisionRevision || error.correlationId
+      ? {
+          decisionRevision: error.decisionRevision,
+          correlationId: error.correlationId,
+        }
+      : undefined;
+  if (mapped) return { state: mapped, ...(detail ? { detail } : {}) };
+  if (error.status === 503) {
+    return { state: 'authority-unavailable', ...(detail ? { detail } : {}) };
+  }
+  if (error.status === 401) {
+    return { state: 'authority-unavailable', ...(detail ? { detail } : {}) };
+  }
+  if (error.status === 403) return { state: 'route-denied', ...(detail ? { detail } : {}) };
+  if (error.status === 404) return { state: 'route-denied', ...(detail ? { detail } : {}) };
+  return { state: 'authority-unavailable', ...(detail ? { detail } : {}) };
 }
 
 function grantIsEffectiveForScope(

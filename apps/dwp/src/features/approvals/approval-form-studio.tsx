@@ -20,9 +20,9 @@ import {
   createApprovalFormDraft,
   getApprovalForm,
   getApprovalFormCategories,
+  getApprovalFormReferenceWorkflow,
+  getApprovalFormReferenceWorkflows,
   getApprovalForms,
-  getApprovalWorkflow,
-  getApprovalWorkflows,
   publishApprovalForm,
   updateApprovalFormCategory,
   updateApprovalFormDraft,
@@ -42,6 +42,7 @@ import { ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
 import { approvalFormPublishCommand } from './approval-high-risk-command-model';
 import { CategoryEditorDialog, FormEditorDialog } from './approval-form-catalog-dialogs';
+import { emptyCategoryDraft, emptyFormDraft } from './approval-form-catalog-drafts';
 import {
   buildApprovalFormCategoryTree,
   descendantCategoryIds,
@@ -58,42 +59,7 @@ import {
 import { useApprovalHighRiskCommand } from './use-approval-high-risk-command';
 
 import type { ApprovalForm, ApprovalFormCategory } from '@dwp-frontend/shared-utils';
-import type { CategoryDraft, FormDraft } from './approval-form-catalog-dialogs';
-
-const emptyFormDraft = (): FormDraft => ({
-  formKey: '',
-  categoryId: '',
-  nameKo: '',
-  nameEn: '',
-  descriptionKo: '',
-  descriptionEn: '',
-  ownerGroupRef: 'APPROVAL_OPERATOR',
-  defaultWorkflowId: '',
-  fields: [
-    {
-      key: 'summary',
-      labelKo: '요청 내용',
-      labelEn: 'Request summary',
-      helpKo: '결재자가 판단할 핵심 배경과 요청 내용을 입력합니다.',
-      helpEn: 'Provide the context and request the approver needs to decide.',
-      type: 'TEXTAREA',
-      required: true,
-      options: [],
-    },
-  ],
-});
-
-const emptyCategoryDraft = (): CategoryDraft => ({
-  categoryKey: '',
-  parentCategoryId: '',
-  nameKo: '',
-  nameEn: '',
-  descriptionKo: '',
-  descriptionEn: '',
-  iconKey: 'files',
-  sortOrder: 100,
-  lifecycleState: 'ACTIVE',
-});
+import type { CategoryDraft, FormDraft } from './approval-form-catalog-drafts';
 
 export function ApprovalFormStudio() {
   const { t, i18n } = useTranslation('approvals');
@@ -123,8 +89,9 @@ export function ApprovalFormStudio() {
     staleTime: 30_000,
   });
   const workflows = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows', ...requestScope.cacheKey],
-    queryFn: ({ signal }) => getApprovalWorkflows(requestScope.contextScopeKey, signal),
+    queryKey: ['approvals', 'admin', 'workflows', 'view', 'reference', ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      getApprovalFormReferenceWorkflows(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const detail = useQuery({
@@ -709,11 +676,12 @@ function FormInspector({
       'admin',
       'workflows',
       route?.workflowId,
-      'route-preview',
+      'view',
+      'reference',
       ...requestScope.cacheKey,
     ],
     queryFn: ({ signal }) =>
-      getApprovalWorkflow(route!.workflowId, requestScope.contextScopeKey, signal),
+      getApprovalFormReferenceWorkflow(route!.workflowId, requestScope.contextScopeKey, signal),
     enabled: Boolean(route?.workflowId),
     staleTime: 30_000,
   });

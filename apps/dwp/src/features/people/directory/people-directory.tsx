@@ -1,14 +1,9 @@
 import { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CalendarDays, Mail, Network, ShieldCheck, UserRound, UsersRound, X } from 'lucide-react';
+import { CalendarDays, Mail, Network, UserRound, UsersRound, X } from 'lucide-react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import {
-  getOrganizationChart,
-  getPerson,
-  listIdentityUsers,
-  listPeople,
-} from '@dwp-frontend/shared-utils';
+import { getOrganizationChart, getPerson, listPeople } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   EnterpriseDataGrid,
@@ -35,14 +30,21 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../../components/management-panel-state';
+import {
+  appendProductPageShortcutScope,
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../../components/product-page-shortcut-access';
 import { isIsoDate } from '../organization/organization-navigation';
 import { PersonAvatar } from './person-avatar';
 import { GovernedSavedViewControl } from '../../../components/governed-saved-view-control';
+import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OrganizationChart, PersonDetail, PersonSummary } from '@dwp-frontend/shared-utils';
+import type { ProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
 
-type PeopleDirectoryRow = PersonSummary & { roles: string[] };
+type PeopleDirectoryRow = PersonSummary;
 export type PeopleDirectoryExperience = 'directory' | 'workforce';
 
 function today(): string {
@@ -72,23 +74,43 @@ function PersonDetailDialog({
   person,
   asOf,
   chart,
-  roles,
   experience,
+  requestScope,
   onClose,
 }: {
   person: PeopleDirectoryRow | null;
   asOf: string;
   chart?: OrganizationChart;
-  roles: string[];
   experience: PeopleDirectoryExperience;
+  requestScope: ProductSurfaceRequestScope;
   onClose: () => void;
 }) {
   const { t } = useTranslation('workforce');
   const navigate = useNavigate();
+  const organizationDesignShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmOrganizationDesign
+  );
   const detailQuery = useQuery({
-    queryKey: [experience, 'people', 'detail', person?.personId, asOf],
-    queryFn: () => getPerson(person?.personId ?? '', asOf, experience),
-    enabled: Boolean(person),
+    queryKey: [
+      experience,
+      'people',
+      'detail',
+      person?.personId,
+      asOf,
+      experience === 'directory' ? 'directory' : '',
+      ...(experience === 'workforce' ? requestScope.cacheKey : []),
+    ],
+    queryFn: ({ signal }) =>
+      getPerson(
+        person?.personId ?? '',
+        asOf,
+        experience,
+        experience === 'workforce' ? requestScope.contextScopeKey : undefined,
+        signal,
+        experience === 'directory' ? 'directory' : undefined
+      ),
+    enabled: Boolean(person) && (experience !== 'workforce' || requestScope.ready),
+    meta: experience === 'workforce' ? requestScope.queryMeta : undefined,
   });
   const chartPerson = chart?.people.find((candidate) => candidate.personId === person?.personId);
   const directReports = chart?.people.filter(
@@ -123,23 +145,29 @@ function PersonDetailDialog({
           <PersonProfile
             detail={detailQuery.data}
             person={person}
-            roles={roles}
             experience={experience}
             managerName={
               chart?.people.find((candidate) => candidate.personId === chartPerson?.managerPersonId)
                 ?.displayName
             }
             directReports={directReports ?? []}
-            onViewInOrganization={() => {
-              const params = new URLSearchParams({
-                asOf,
-                mode: 'people',
-                person: person.personId,
-              });
-              navigate(
-                `${experience === 'workforce' ? '/hr/design' : '/hr'}/organization?${params}`
-              );
-            }}
+            onViewInOrganization={
+              experience !== 'workforce' || organizationDesignShortcut.disclosed
+                ? () => {
+                    const params = new URLSearchParams({
+                      asOf,
+                      mode: 'people',
+                      person: person.personId,
+                    });
+                    const href = `${experience === 'workforce' ? '/hr/design' : '/hr'}/organization?${params}`;
+                    navigate(
+                      experience === 'workforce'
+                        ? appendProductPageShortcutScope(href, organizationDesignShortcut)
+                        : href
+                    );
+                  }
+                : undefined
+            }
           />
         )}
       </DialogContent>
@@ -150,7 +178,6 @@ function PersonDetailDialog({
 function PersonProfile({
   detail,
   person,
-  roles,
   experience,
   managerName,
   directReports,
@@ -158,11 +185,10 @@ function PersonProfile({
 }: {
   detail: PersonDetail;
   person: PeopleDirectoryRow;
-  roles: string[];
   experience: PeopleDirectoryExperience;
   managerName?: string;
   directReports: OrganizationChart['people'];
-  onViewInOrganization: () => void;
+  onViewInOrganization?: () => void;
 }) {
   const { t } = useTranslation('workforce');
   const workforceView = experience === 'workforce';
@@ -199,15 +225,17 @@ function PersonProfile({
             </Stack>
           )}
         </Box>
-        <ActionButton
-          intent="secondary"
-          size="small"
-          startIcon={<Network size={16} aria-hidden="true" />}
-          onClick={onViewInOrganization}
-          sx={{ flexShrink: 0 }}
-        >
-          {t('people.detail.viewInOrganization')}
-        </ActionButton>
+        {onViewInOrganization && (
+          <ActionButton
+            intent="secondary"
+            size="small"
+            startIcon={<Network size={16} aria-hidden="true" />}
+            onClick={onViewInOrganization}
+            sx={{ flexShrink: 0 }}
+          >
+            {t('people.detail.viewInOrganization')}
+          </ActionButton>
+        )}
       </Stack>
 
       <Box
@@ -244,25 +272,6 @@ function PersonProfile({
         direction={{ xs: 'column', md: 'row' }}
         divider={<Divider flexItem orientation="vertical" />}
       >
-        {workforceView && (
-          <Box sx={{ px: 3, py: 2.5, flex: 1, minWidth: 0 }}>
-            <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
-              <ShieldCheck size={16} />
-              <Typography component="h3" variant="subtitle2">
-                {t('people.detail.roles')}
-              </Typography>
-            </Stack>
-            <Stack direction="row" flexWrap="wrap" gap={0.6} useFlexGap>
-              {roles.length ? (
-                roles.map((role) => <Chip key={role} label={role} size="small" />)
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  {t('people.detail.noRoles')}
-                </Typography>
-              )}
-            </Stack>
-          </Box>
-        )}
         <Box sx={{ px: 3, py: 2.5, flex: 1, minWidth: 0 }}>
           <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
             <UsersRound size={16} />
@@ -373,6 +382,10 @@ export function PeopleDirectory({
 }) {
   const { t } = useTranslation('workforce');
   const workforceView = experience === 'workforce';
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.operations',
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const currentDate = today();
   const asOfParam = searchParams.get('asOf');
@@ -383,7 +396,6 @@ export function PeopleDirectory({
   const organization = searchParams.get('org') || 'ALL';
   const grade = workforceView ? searchParams.get('grade') || 'ALL' : 'ALL';
   const location = searchParams.get('location') || 'ALL';
-  const role = workforceView ? searchParams.get('role') || 'ALL' : 'ALL';
   const columnPreset = searchParams.get('columns') === 'compact' ? 'compact' : 'operational';
 
   const updateSearchParams = (values: Record<string, string | null | undefined>) => {
@@ -392,8 +404,16 @@ export function PeopleDirectory({
 
   const serverStatus = workforceView ? (status === 'ALL' ? undefined : status) : 'ACTIVE';
   const peopleQuery = useInfiniteQuery({
-    queryKey: [experience, 'people', 'directory', asOf, deferredQuery, serverStatus],
-    queryFn: ({ pageParam }) =>
+    queryKey: [
+      experience,
+      'people',
+      'directory',
+      asOf,
+      deferredQuery,
+      serverStatus,
+      ...(workforceView ? requestScope.cacheKey : []),
+    ],
+    queryFn: ({ pageParam, signal }) =>
       listPeople({
         query: deferredQuery,
         asOf,
@@ -401,38 +421,38 @@ export function PeopleDirectory({
         cursor: pageParam ?? undefined,
         size: 100,
         surface: experience,
+        contextScopeKey: workforceView ? requestScope.contextScopeKey : undefined,
+        signal,
       }),
+    enabled: !workforceView || requestScope.ready,
+    meta: workforceView ? requestScope.queryMeta : undefined,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextCursor : null),
   });
   const chartQuery = useQuery({
-    queryKey: [experience, 'people', 'org-context', asOf],
-    queryFn: () => getOrganizationChart({ asOf, depth: 10, surface: experience }),
+    queryKey: [
+      experience,
+      'people',
+      'org-context',
+      asOf,
+      experience === 'directory' ? 'directory' : '',
+      ...(workforceView ? requestScope.cacheKey : []),
+    ],
+    queryFn: ({ signal }) =>
+      getOrganizationChart({
+        asOf,
+        depth: 10,
+        surface: experience,
+        view: experience === 'directory' ? 'directory' : undefined,
+        contextScopeKey: workforceView ? requestScope.contextScopeKey : undefined,
+        signal,
+      }),
+    enabled: !workforceView || requestScope.ready,
+    meta: workforceView ? requestScope.queryMeta : undefined,
   });
-  const identitiesQuery = useQuery({
-    queryKey: ['workforce', 'people', 'identity-roles'],
-    queryFn: () => listIdentityUsers(),
-    enabled: workforceView,
-    retry: false,
-  });
-
-  const rolesByEmail = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const identity of identitiesQuery.data?.content ?? []) {
-      if (identity.email) map.set(identity.email.toLowerCase(), identity.roles);
-    }
-    return map;
-  }, [identitiesQuery.data]);
-
   const rows = useMemo<PeopleDirectoryRow[]>(
-    () =>
-      (peopleQuery.data?.pages ?? []).flatMap((page) =>
-        page.items.map((person) => ({
-          ...person,
-          roles: person.workEmail ? (rolesByEmail.get(person.workEmail.toLowerCase()) ?? []) : [],
-        }))
-      ),
-    [peopleQuery.data, rolesByEmail]
+    () => (peopleQuery.data?.pages ?? []).flatMap((page) => page.items),
+    [peopleQuery.data]
   );
   const selected = rows.find((row) => row.personId === searchParams.get('person')) ?? null;
 
@@ -441,7 +461,6 @@ export function PeopleDirectory({
       organizations: unique(rows.map((row) => row.organizationName)),
       grades: unique(rows.map((row) => row.jobGradeName)),
       locations: unique(rows.map((row) => row.locationName)),
-      roles: unique(rows.flatMap((row) => row.roles)),
     }),
     [rows]
   );
@@ -453,7 +472,6 @@ export function PeopleDirectory({
       if (organization !== 'ALL' && row.organizationName !== organization) return false;
       if (grade !== 'ALL' && row.jobGradeName !== grade) return false;
       if (location !== 'ALL' && row.locationName !== location) return false;
-      if (workforceView && role !== 'ALL' && !row.roles.includes(role)) return false;
       if (!needle) return true;
       return [
         row.displayName,
@@ -464,7 +482,7 @@ export function PeopleDirectory({
         row.managerDisplayName,
       ].some((value) => value?.toLocaleLowerCase().includes(needle));
     });
-  }, [grade, location, organization, query, role, rows, status, workforceView]);
+  }, [grade, location, organization, query, rows, status]);
 
   const columns = useMemo<GridColDef<PeopleDirectoryRow>[]>(() => {
     const values: GridColDef<PeopleDirectoryRow>[] = [
@@ -525,24 +543,6 @@ export function PeopleDirectory({
         flex: 0.65,
         valueGetter: (_value, row) => row.locationName || t('people.notAvailable'),
       },
-      ...(workforceView
-        ? [
-            {
-              field: 'roles',
-              headerName: t('people.columns.roles'),
-              minWidth: 190,
-              flex: 0.75,
-              renderCell: ({ row }) => (
-                <Stack direction="row" gap={0.4} sx={{ minWidth: 0, overflow: 'hidden' }}>
-                  {row.roles.slice(0, 2).map((assignedRole) => (
-                    <Chip key={assignedRole} label={assignedRole} size="small" variant="outlined" />
-                  ))}
-                  {row.roles.length > 2 && <Chip label={`+${row.roles.length - 2}`} size="small" />}
-                </Stack>
-              ),
-            } satisfies GridColDef<PeopleDirectoryRow>,
-          ]
-        : []),
       {
         field: 'workerStatus',
         headerName: t('people.columns.status'),
@@ -586,7 +586,6 @@ export function PeopleDirectory({
       org: null,
       person: null,
       q: null,
-      role: null,
       status: null,
     });
   };
@@ -629,15 +628,6 @@ export function PeopleDirectory({
           },
         ]
       : []),
-    ...(workforceView && role !== 'ALL'
-      ? [
-          {
-            key: 'role',
-            label: `${t('people.filters.role')}: ${role}`,
-            onRemove: () => updateSearchParams({ role: null, person: null }),
-          },
-        ]
-      : []),
     ...(asOf !== currentDate
       ? [
           {
@@ -662,18 +652,6 @@ export function PeopleDirectory({
             retryLabel={t('common.actions.retry')}
             retrying={chartQuery.isFetching}
             onRetry={() => void chartQuery.refetch()}
-          />
-        </Box>
-      )}
-      {workforceView && identitiesQuery.isError && (
-        <Box sx={{ mb: 1.5 }}>
-          <LocalErrorState
-            size="compact"
-            title={t('people.partial.rolesTitle')}
-            description={t('people.partial.rolesDescription')}
-            retryLabel={t('common.actions.retry')}
-            retrying={identitiesQuery.isFetching}
-            onRetry={() => void identitiesQuery.refetch()}
           />
         </Box>
       )}
@@ -744,14 +722,6 @@ export function PeopleDirectory({
                   onChange={(value) => updateSearchParams({ location: value, person: null })}
                   options={options.locations}
                 />
-                {workforceView && (
-                  <FilterSelect
-                    label={t('people.filters.role')}
-                    value={role}
-                    onChange={(value) => updateSearchParams({ role: value, person: null })}
-                    options={options.roles}
-                  />
-                )}
                 <TextField
                   size="small"
                   type="date"
@@ -784,7 +754,6 @@ export function PeopleDirectory({
                     organization,
                     grade,
                     location,
-                    role,
                     asOf,
                     columns: columnPreset,
                   }}
@@ -793,7 +762,6 @@ export function PeopleDirectory({
                     organization === 'ALL' &&
                     grade === 'ALL' &&
                     location === 'ALL' &&
-                    role === 'ALL' &&
                     asOf === currentDate &&
                     columnPreset === 'operational'
                       ? `builtin-${status}`
@@ -809,7 +777,6 @@ export function PeopleDirectory({
                         organization: 'ALL',
                         grade: 'ALL',
                         location: 'ALL',
-                        role: 'ALL',
                         asOf: currentDate,
                         columns: 'operational',
                       },
@@ -824,7 +791,6 @@ export function PeopleDirectory({
                         organization: 'ALL',
                         grade: 'ALL',
                         location: 'ALL',
-                        role: 'ALL',
                         asOf: currentDate,
                         columns: 'operational',
                       },
@@ -839,7 +805,6 @@ export function PeopleDirectory({
                         organization: 'ALL',
                         grade: 'ALL',
                         location: 'ALL',
-                        role: 'ALL',
                         asOf: currentDate,
                         columns: 'operational',
                       },
@@ -865,10 +830,6 @@ export function PeopleDirectory({
                         typeof configuration.location === 'string' &&
                         configuration.location !== 'ALL'
                           ? configuration.location
-                          : null,
-                      role:
-                        typeof configuration.role === 'string' && configuration.role !== 'ALL'
-                          ? configuration.role
                           : null,
                       asOf:
                         typeof configuration.asOf === 'string' &&
@@ -923,7 +884,6 @@ export function PeopleDirectory({
                   ? {
                       locationName: false,
                       managerDisplayName: false,
-                      roles: false,
                     }
                   : undefined
               }
@@ -934,12 +894,10 @@ export function PeopleDirectory({
                 showFilters: false,
                 showQuickFilter: false,
                 refreshLabel: t('common.actions.refresh'),
-                refreshing:
-                  peopleQuery.isFetching || chartQuery.isFetching || identitiesQuery.isFetching,
+                refreshing: peopleQuery.isFetching || chartQuery.isFetching,
                 onRefresh: () => {
                   void peopleQuery.refetch();
                   void chartQuery.refetch();
-                  void identitiesQuery.refetch();
                 },
                 columnPresetsLabel: t('people.grid.columnPresets.label'),
                 selectedColumnPresetId: columnPreset,
@@ -970,8 +928,8 @@ export function PeopleDirectory({
         person={selected}
         asOf={asOf}
         chart={chartQuery.data}
-        roles={selected?.roles ?? []}
         experience={experience}
+        requestScope={requestScope}
         onClose={() => updateSearchParams({ person: null })}
       />
     </>

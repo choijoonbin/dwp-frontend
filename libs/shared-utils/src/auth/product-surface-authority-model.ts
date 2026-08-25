@@ -18,6 +18,7 @@ const SCOPE_KINDS = new Set([
   'SUPPORT_SESSION',
 ]);
 const ROLLOUT_STATES = new Set(['000', '100', '110', '111']);
+const AUTHORITY_STATUSES = new Set(['NOT_EVALUATED', 'AVAILABLE', 'UNAVAILABLE']);
 const CAPABILITY_AUTHORITY_MODES = new Set([
   'PERMISSION',
   'PERMISSION_AND_RELATIONSHIP',
@@ -30,7 +31,7 @@ const POLICY_AUTHORITY_MODES = new Set([
   'SUPPORT_SESSION',
 ]);
 const RESPONSIBILITY_REQUIREMENTS = new Set(['REQUIRED', 'NOT_REQUIRED', 'LEGACY_OVERSIGHT']);
-const ACTIVATION_STATES = new Set(['ACTIVE', 'ELIGIBLE', 'REQUIRED']);
+const ACTIVATION_STATES = new Set(['ACTIVE', 'ELIGIBLE']);
 
 export type ProductSurfaceAuthoritySnapshot = {
   envelope: ProductSurfaceContextListData;
@@ -205,7 +206,14 @@ export function parseProductSurfaceAuthoritySnapshot(
   if (
     new Set(contextKeys).size !== contextKeys.length ||
     new Set(surfaceKeys).size !== surfaceKeys.length ||
-    envelope.rollouts.some((rollout) => !nonBlank(record(rollout)?.productKey))
+    envelope.rollouts.some((rollout) => {
+      const value = record(rollout);
+      return (
+        !nonBlank(value?.productKey) ||
+        !nonBlank(value?.authorityStatus) ||
+        !AUTHORITY_STATUSES.has(value.authorityStatus)
+      );
+    })
   ) {
     throw new Error('Product surface authority contains duplicate or invalid identities.');
   }
@@ -230,7 +238,13 @@ export function resolveProductRollout(
   if (matches.length !== 1) return { state: 'authority-unavailable' };
   const rollout = matches[0]!;
   const flags = record(rollout.flags);
-  const evaluation = rollout.surfaceUiEvaluation;
+  const authorityStatus = rollout.authorityStatus;
+  const statusMatchesState =
+    (rollout.state === '000' && authorityStatus === 'NOT_EVALUATED') ||
+    (rollout.state === '100' && AUTHORITY_STATUSES.has(authorityStatus)) ||
+    (rollout.state === '110' &&
+      (authorityStatus === 'AVAILABLE' || authorityStatus === 'NOT_EVALUATED')) ||
+    (rollout.state === '111' && authorityStatus === 'AVAILABLE');
   if (
     !ROLLOUT_STATES.has(rollout.state) ||
     !flags ||
@@ -240,15 +254,14 @@ export function resolveProductRollout(
     rolloutBits(rollout) !== rollout.state ||
     !nonBlank(rollout.cohort) ||
     !nonBlank(rollout.opaqueRevision) ||
-    (evaluation !== undefined && evaluation !== 'RESOLVED' && evaluation !== 'UNAVAILABLE') ||
-    (evaluation === 'UNAVAILABLE' && rollout.state !== '110')
+    !statusMatchesState
   ) {
     return { state: 'authority-unavailable' };
   }
   return {
     state: 'ready',
     rollout,
-    surfaceUiEvaluation: evaluation === 'UNAVAILABLE' ? 'unavailable' : 'resolved',
+    surfaceUiEvaluation: 'resolved',
   };
 }
 

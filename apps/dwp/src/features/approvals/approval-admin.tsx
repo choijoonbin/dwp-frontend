@@ -36,6 +36,11 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import {
+  appendProductPageShortcutScope,
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../components/product-page-shortcut-access';
 import { ApprovalFormStudio } from './approval-form-studio';
 import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
 import { approvalDeliveryRetryCommand } from './approval-high-risk-command-model';
@@ -69,6 +74,12 @@ export function ApprovalAdmin({
 function ApprovalAdminOverview() {
   const { t } = useTranslation('approvals');
   const requestScope = useApprovalManagementRequestScope();
+  const workflowShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows
+  );
+  const operationsShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.approvalOperations
+  );
   const overview = useQuery({
     queryKey: ['approvals', 'admin', 'overview', ...requestScope.cacheKey],
     queryFn: ({ signal }) => getApprovalAdminOverview(requestScope.contextScopeKey, signal),
@@ -132,16 +143,23 @@ function ApprovalAdminOverview() {
         sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, 1fr)' }, gap: 2 }}
       >
         <ApprovalSurface title={t('admin.controlModel.title')} meta={t('admin.controlModel.meta')}>
-          {['designer', 'publisher', 'operator', 'auditor'].map((role, index) => (
-            <ApprovalLinkRow
-              key={role}
-              title={t(`admin.controlModel.${role}.title`)}
-              detail={t(`admin.controlModel.${role}.detail`)}
-              route={index < 2 ? '/approvals/admin/workflows' : '/approvals/admin/operations'}
-              icon={index < 2 ? GitBranch : ShieldCheck}
-              tone={index === 1 ? approvalTone.amber : approvalTone.primary}
-            />
-          ))}
+          {['designer', 'publisher', 'operator', 'auditor'].map((role, index) => {
+            const shortcut = index < 2 ? workflowShortcut : operationsShortcut;
+            if (!shortcut.disclosed) return null;
+            return (
+              <ApprovalLinkRow
+                key={role}
+                title={t(`admin.controlModel.${role}.title`)}
+                detail={t(`admin.controlModel.${role}.detail`)}
+                route={appendProductPageShortcutScope(
+                  index < 2 ? '/approvals/admin/workflows' : '/approvals/admin/operations',
+                  shortcut
+                )}
+                icon={index < 2 ? GitBranch : ShieldCheck}
+                tone={index === 1 ? approvalTone.amber : approvalTone.primary}
+              />
+            );
+          })}
         </ApprovalSurface>
         <ApprovalSurface title={t('admin.assurance.title')} meta={t('admin.assurance.meta')}>
           {(data?.assurance ?? []).map((signal) => {

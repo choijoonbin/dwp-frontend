@@ -1,6 +1,12 @@
 import { axiosInstance } from '../axios-instance';
+import {
+  productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
+} from './product-surface-governed-mutation';
+import { productSurfaceReadScopeConfig } from './product-surface-read-scope';
 
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type PeopleDataAccess = {
   classification: string;
@@ -110,6 +116,14 @@ export type PeopleCursorPage = {
   size: number;
   hasMore: boolean;
   asOf: string;
+};
+
+export type WorkforceOrganizationCandidate = {
+  publicId: string;
+  displayName: string;
+  organization: string;
+  position?: string | null;
+  eligibility: 'ELIGIBLE' | 'INELIGIBLE';
 };
 
 export type OrganizationChartMetrics = {
@@ -555,6 +569,7 @@ export type HrisSyncRun = {
   unchangedCount: number;
   failureCode?: string | null;
   redactedFailureMessage?: string | null;
+  version: number;
   startedAt: string;
   completedAt?: string | null;
 };
@@ -607,6 +622,9 @@ export async function listPeople(
     size?: number;
     asOf?: string;
     surface?: 'directory' | 'workforce';
+    view?: 'assignments';
+    contextScopeKey?: string;
+    signal?: AbortSignal;
   } = {}
 ): Promise<PeopleCursorPage> {
   const search = new URLSearchParams({ size: String(params.size ?? 50) });
@@ -614,20 +632,28 @@ export async function listPeople(
   if (params.status) search.set('status', params.status);
   if (params.cursor) search.set('cursor', params.cursor);
   if (params.asOf) search.set('asOf', params.asOf);
+  if (params.view) search.set('view', params.view);
   const response = await axiosInstance.get<ApiResponse<PeopleCursorPage>>(
-    `/api/people/v1/${params.surface === 'workforce' ? 'workforce/people' : 'people'}?${search.toString()}`
+    `/api/people/v1/${params.surface === 'workforce' ? 'workforce/people' : 'people'}?${search.toString()}`,
+    productSurfaceReadScopeConfig(params.contextScopeKey, params.signal)
   );
   return response.data.data;
 }
-
 export async function getPerson(
   personId: string,
   asOf?: string,
-  surface: 'directory' | 'workforce' = 'directory'
+  surface: 'directory' | 'workforce' = 'directory',
+  contextScopeKey?: string,
+  signal?: AbortSignal,
+  view?: 'directory'
 ): Promise<PersonDetail> {
-  const search = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
+  const params = new URLSearchParams();
+  if (asOf) params.set('asOf', asOf);
+  if (view) params.set('view', view);
+  const search = params.size ? `?${params.toString()}` : '';
   const response = await axiosInstance.get<ApiResponse<PersonDetail>>(
-    `/api/people/v1/${surface === 'workforce' ? 'workforce/people' : 'people'}/${encodeURIComponent(personId)}${search}`
+    `/api/people/v1/${surface === 'workforce' ? 'workforce/people' : 'people'}/${encodeURIComponent(personId)}${search}`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }
@@ -639,6 +665,9 @@ export async function getOrganizationChart(
     scenarioId?: string;
     depth?: number;
     surface?: 'directory' | 'workforce';
+    view?: 'design' | 'directory';
+    contextScopeKey?: string;
+    signal?: AbortSignal;
   } = {}
 ): Promise<OrganizationChart> {
   const search = new URLSearchParams({ depth: String(params.depth ?? 10) });
@@ -647,8 +676,10 @@ export async function getOrganizationChart(
     search.set('rootOrganizationId', params.rootOrganizationId);
   }
   if (params.scenarioId) search.set('scenarioId', params.scenarioId);
+  if (params.view) search.set('view', params.view);
   const response = await axiosInstance.get<ApiResponse<OrganizationChart>>(
-    `/api/people/v1/${params.surface === 'workforce' ? 'workforce/organization/chart' : 'org-chart'}?${search.toString()}`
+    `/api/people/v1/${params.surface === 'workforce' ? 'workforce/organization/chart' : 'org-chart'}?${search.toString()}`,
+    productSurfaceReadScopeConfig(params.contextScopeKey, params.signal)
   );
   return response.data.data;
 }
@@ -660,6 +691,8 @@ export async function getOrganizationIntelligence(
     rootOrganizationId?: string;
     scenarioId?: string;
     depth?: number;
+    contextScopeKey?: string;
+    signal?: AbortSignal;
   } = {}
 ): Promise<OrganizationIntelligence> {
   const search = new URLSearchParams({ depth: String(params.depth ?? 10) });
@@ -668,28 +701,125 @@ export async function getOrganizationIntelligence(
   if (params.rootOrganizationId) search.set('rootOrganizationId', params.rootOrganizationId);
   if (params.scenarioId) search.set('scenarioId', params.scenarioId);
   const response = await axiosInstance.get<ApiResponse<OrganizationIntelligence>>(
-    `/api/people/v1/workforce/organization/intelligence?${search.toString()}`
+    `/api/people/v1/workforce/organization/intelligence?${search.toString()}`,
+    productSurfaceReadScopeConfig(params.contextScopeKey, params.signal)
   );
   return response.data.data;
 }
 
 const ORG_SCENARIO_BASE = '/api/people/v1/workforce/organization/scenarios';
 
-export async function listOrganizationScenarios(): Promise<OrganizationScenario[]> {
-  const response = await axiosInstance.get<ApiResponse<OrganizationScenario[]>>(ORG_SCENARIO_BASE);
+export const HCM_ORGANIZATION_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createOrganizationScenario',
+    routeContractKey: 'route.hcm.management.org-create.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}`,
+  },
+  {
+    apiFunction: 'cloneOrganizationScenario',
+    routeContractKey: 'route.hcm.management.org-clone.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/clone`,
+  },
+  {
+    apiFunction: 'addOrganizationScenarioMove',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/moves`,
+  },
+  {
+    apiFunction: 'addOrganizationScenarioPositionMove',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/position-moves`,
+  },
+  {
+    apiFunction: 'createOrganizationScenarioPosition',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/positions`,
+  },
+  {
+    apiFunction: 'closeOrganizationScenarioPosition',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/positions/{positionId}/close`,
+  },
+  {
+    apiFunction: 'validateOrganizationScenarioDecisionPack',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/decision-pack/validate`,
+  },
+  {
+    apiFunction: 'removeOrganizationScenarioChange',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'DELETE',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/changes/{changeId}`,
+  },
+  {
+    apiFunction: 'submitOrganizationScenario',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/submit`,
+  },
+  {
+    apiFunction: 'cancelOrganizationScenario',
+    routeContractKey: 'route.hcm.management.org-update.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/cancel`,
+  },
+  {
+    apiFunction: 'decideOrganizationScenario',
+    routeContractKey: 'route.hcm.management.org-approval.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/approval`,
+  },
+  {
+    apiFunction: 'publishOrganizationScenario',
+    routeContractKey: 'route.hcm.management.org-publish.action',
+    method: 'POST',
+    path: `${ORG_SCENARIO_BASE}/{scenarioId}/publish`,
+  },
+] as const;
+
+export async function listOrganizationScenarios(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<OrganizationScenario[]> {
+  const response = await axiosInstance.get<ApiResponse<OrganizationScenario[]>>(
+    ORG_SCENARIO_BASE,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
   return response.data.data;
 }
 
-export async function createOrganizationScenario(request: {
-  scenarioKey: string;
-  name: string;
-  description?: string;
-  baselineDate: string;
-  effectiveDate: string;
-}): Promise<OrganizationScenario> {
+export async function listWorkforceOrganizationCandidates(
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<WorkforceOrganizationCandidate[]> {
+  const response = await axiosInstance.get<ApiResponse<WorkforceOrganizationCandidate[]>>(
+    '/api/people/v1/workforce/organization/candidates',
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
+  return response.data.data;
+}
+
+export async function createOrganizationScenario(
+  request: {
+    scenarioKey: string;
+    name: string;
+    description?: string;
+    baselineDate: string;
+    effectiveDate: string;
+  },
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, typeof request>(
     ORG_SCENARIO_BASE,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -701,11 +831,13 @@ export async function cloneOrganizationScenario(
     name: string;
     description?: string;
     effectiveDate: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, typeof request>(
     `${ORG_SCENARIO_BASE}/${sourceScenarioId}/clone`,
-    request
+    request,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
@@ -713,32 +845,34 @@ export async function cloneOrganizationScenario(
 export async function addOrganizationScenarioMove(
   scenario: OrganizationScenario,
   organizationId: string,
-  newParentOrganizationId: string
+  newParentOrganizationId: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<
     ApiResponse<OrganizationScenario>,
     { organizationId: string; newParentOrganizationId: string; version: number }
-  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/moves`, {
-    organizationId,
-    newParentOrganizationId,
-    version: scenario.version,
-  });
+  >(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/moves`,
+    { organizationId, newParentOrganizationId, version: scenario.version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
 export async function addOrganizationScenarioPositionMove(
   scenario: OrganizationScenario,
   positionId: string,
-  newParentPositionId: string
+  newParentPositionId: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<
     ApiResponse<OrganizationScenario>,
     { positionId: string; newParentPositionId: string; version: number }
-  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/position-moves`, {
-    positionId,
-    newParentPositionId,
-    version: scenario.version,
-  });
+  >(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/position-moves`,
+    { positionId, newParentPositionId, version: scenario.version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
@@ -755,278 +889,144 @@ export async function createOrganizationScenarioPosition(
     annualCostAmount?: number;
     costCurrency?: string;
     availabilityDate: string;
-  }
+  },
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const payload = { ...request, version: scenario.version };
   const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, typeof payload>(
     `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/positions`,
-    payload
+    payload,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function closeOrganizationScenarioPosition(
   scenario: OrganizationScenario,
-  positionId: string
+  positionId: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, { version: number }>(
     `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/positions/${positionId}/close`,
-    { version: scenario.version }
+    { version: scenario.version },
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function getOrganizationScenarioDecisionPack(
-  scenarioId: string
+  scenarioId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<OrganizationScenarioDecisionPack> {
   const response = await axiosInstance.get<ApiResponse<OrganizationScenarioDecisionPack>>(
-    `${ORG_SCENARIO_BASE}/${scenarioId}/decision-pack`
+    `${ORG_SCENARIO_BASE}/${scenarioId}/decision-pack`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }
 
 export async function getOrganizationScenarioDecisionHistory(
-  scenarioId: string
+  scenarioId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
 ): Promise<OrganizationScenarioValidationRun[]> {
   const response = await axiosInstance.get<ApiResponse<OrganizationScenarioValidationRun[]>>(
-    `${ORG_SCENARIO_BASE}/${scenarioId}/decision-pack/history`
+    `${ORG_SCENARIO_BASE}/${scenarioId}/decision-pack/history`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return response.data.data;
 }
 
 export async function validateOrganizationScenarioDecisionPack(
-  scenario: OrganizationScenario
+  scenario: OrganizationScenario,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenarioDecisionPack> {
   const response = await axiosInstance.post<
     ApiResponse<OrganizationScenarioDecisionPack>,
     { version: number }
-  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/decision-pack/validate`, {
-    version: scenario.version,
-  });
+  >(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/decision-pack/validate`,
+    { version: scenario.version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
 export async function removeOrganizationScenarioChange(
   scenario: OrganizationScenario,
-  changeId: string
+  changeId: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const search = new URLSearchParams({ version: String(scenario.version) });
   const response = await axiosInstance.delete<ApiResponse<OrganizationScenario>>(
-    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/changes/${changeId}?${search.toString()}`
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/changes/${changeId}?${search.toString()}`,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function submitOrganizationScenario(
   scenario: OrganizationScenario,
-  reason: string
+  reason: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<
     ApiResponse<OrganizationScenario>,
     { reason: string; version: number }
-  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/submit`, {
-    reason,
-    version: scenario.version,
-  });
+  >(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/submit`,
+    { reason, version: scenario.version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
 export async function decideOrganizationScenario(
   scenario: OrganizationScenario,
   decision: 'APPROVED' | 'REJECTED',
-  reason: string
+  reason: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   if (!scenario.approval) throw new Error('The scenario has no approval gate.');
   const response = await axiosInstance.post<
     ApiResponse<OrganizationScenario>,
     { decision: string; reason: string; version: number }
-  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/approval`, {
-    decision,
-    reason,
-    version: scenario.approval.version,
-  });
+  >(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/approval`,
+    { decision, reason, version: scenario.approval.version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
 export async function cancelOrganizationScenario(
   scenario: OrganizationScenario,
-  reason: string
+  reason: string,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<
     ApiResponse<OrganizationScenario>,
     { reason: string; version: number }
-  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/cancel`, {
-    reason,
-    version: scenario.version,
-  });
+  >(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/cancel`,
+    { reason, version: scenario.version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
 export async function publishOrganizationScenario(
-  scenario: OrganizationScenario
+  scenarioId: string,
+  version: number,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<OrganizationScenario> {
   const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, { version: number }>(
-    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/publish`,
-    { version: scenario.version }
+    `${ORG_SCENARIO_BASE}/${scenarioId}/publish`,
+    { version },
+    productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
   );
   return response.data.data;
 }
 
-const HRIS_BASE = '/api/people/v1/workforce/data-operations/hris';
-
-export async function listHrisSources(): Promise<HrisSourceSystem[]> {
-  const response = await axiosInstance.get<ApiResponse<HrisSourceSystem[]>>(`${HRIS_BASE}/sources`);
-  return response.data.data;
-}
-
-export async function listHrisConnectors(): Promise<HrisConnector[]> {
-  const response = await axiosInstance.get<ApiResponse<HrisConnector[]>>(`${HRIS_BASE}/connectors`);
-  return response.data.data;
-}
-
-export async function createHrisConnector(
-  request: CreateHrisConnectorRequest
-): Promise<HrisConnector> {
-  const response = await axiosInstance.post<ApiResponse<HrisConnector>, CreateHrisConnectorRequest>(
-    `${HRIS_BASE}/connectors`,
-    request
-  );
-  return response.data.data;
-}
-
-export async function updateHrisConnector(
-  connector: HrisConnector,
-  request: {
-    endpointUri?: string;
-    credentialReference?: string;
-    scheduleExpression?: string;
-    lifecycleState: string;
-  }
-): Promise<HrisConnector> {
-  const response = await axiosInstance.put<
-    ApiResponse<HrisConnector>,
-    typeof request & { version: number }
-  >(`${HRIS_BASE}/connectors/${connector.connectorInstanceId}`, {
-    ...request,
-    version: connector.version,
-  });
-  return response.data.data;
-}
-
-export async function checkHrisConnectorConfiguration(
-  connectorId: string
-): Promise<HrisConfigurationCheck> {
-  const response = await axiosInstance.post<ApiResponse<HrisConfigurationCheck>, undefined>(
-    `${HRIS_BASE}/connectors/${connectorId}/configuration-check`,
-    undefined
-  );
-  return response.data.data;
-}
-
-export async function listHrisMappingProfiles(): Promise<HrisMappingProfile[]> {
-  const response = await axiosInstance.get<ApiResponse<HrisMappingProfile[]>>(
-    `${HRIS_BASE}/mapping-profiles`
-  );
-  return response.data.data;
-}
-
-export async function listHrisSyncRuns(size = 50): Promise<HrisSyncRun[]> {
-  const response = await axiosInstance.get<ApiResponse<HrisSyncRun[]>>(
-    `${HRIS_BASE}/sync-runs?size=${size}`
-  );
-  return response.data.data;
-}
-
-export async function executeHrisConnector(
-  connectorId: string,
-  syncMode: 'FULL' | 'DELTA'
-): Promise<HrisImportResult> {
-  const response = await axiosInstance.post<ApiResponse<HrisImportResult>, { syncMode: string }>(
-    `${HRIS_BASE}/connectors/${connectorId}/executions`,
-    { syncMode }
-  );
-  return response.data.data;
-}
-
-export async function retryHrisSyncRun(syncRunId: string): Promise<HrisImportResult> {
-  const response = await axiosInstance.post<ApiResponse<HrisImportResult>, undefined>(
-    `${HRIS_BASE}/sync-runs/${syncRunId}/retry`,
-    undefined
-  );
-  return response.data.data;
-}
-
-export async function createHrisMappingProfile(request: {
-  sourceSystemId: number;
-  profileKey: string;
-  adapterType: string;
-  sourceSchemaVersion: string;
-  targetSchemaVersion: string;
-  mappingDefinition: Record<string, unknown>;
-}): Promise<HrisMappingProfile> {
-  const response = await axiosInstance.post<ApiResponse<HrisMappingProfile>, typeof request>(
-    `${HRIS_BASE}/mapping-profiles`,
-    request
-  );
-  return response.data.data;
-}
-
-export async function activateHrisMappingProfile(
-  mapping: HrisMappingProfile
-): Promise<HrisMappingProfile> {
-  const response = await axiosInstance.post<ApiResponse<HrisMappingProfile>, { version: number }>(
-    `${HRIS_BASE}/mapping-profiles/${mapping.mappingProfileId}/activate`,
-    { version: mapping.version }
-  );
-  return response.data.data;
-}
-
-export async function listHrisReconciliations(size = 50): Promise<HrisReconciliationRun[]> {
-  const response = await axiosInstance.get<ApiResponse<HrisReconciliationRun[]>>(
-    `${HRIS_BASE}/reconciliations?size=${size}`
-  );
-  return response.data.data;
-}
-
-export async function reconcileHrisRun(
-  connectorId: string,
-  syncRunId: string
-): Promise<HrisReconciliationRun> {
-  const response = await axiosInstance.post<ApiResponse<HrisReconciliationRun>, undefined>(
-    `${HRIS_BASE}/connectors/${connectorId}/reconciliations?syncRunId=${encodeURIComponent(syncRunId)}`,
-    undefined
-  );
-  return response.data.data;
-}
-
-export async function listHrisReconciliationIssues(
-  state: 'OPEN' | 'RESOLVED' | 'ACCEPTED' | '' = 'OPEN',
-  size = 100
-): Promise<HrisReconciliationIssue[]> {
-  const query = new URLSearchParams({ size: String(size) });
-  if (state) query.set('state', state);
-  const response = await axiosInstance.get<ApiResponse<HrisReconciliationIssue[]>>(
-    `${HRIS_BASE}/reconciliation-issues?${query.toString()}`
-  );
-  return response.data.data;
-}
-
-export async function resolveHrisReconciliationIssue(
-  issueId: string,
-  lifecycleState: 'RESOLVED' | 'ACCEPTED',
-  resolutionNote: string
-): Promise<void> {
-  await axiosInstance.put<ApiResponse<void>, { lifecycleState: string; resolutionNote: string }>(
-    `${HRIS_BASE}/reconciliation-issues/${issueId}`,
-    { lifecycleState, resolutionNote }
-  );
-}
-
-export async function importSyntheticWorkdayFixture(): Promise<HrisImportResult> {
-  const response = await axiosInstance.post<ApiResponse<HrisImportResult>, undefined>(
-    `${HRIS_BASE}/sample-import`,
-    undefined,
-    { headers: { 'Idempotency-Key': crypto.randomUUID() } }
-  );
-  return response.data.data;
-}
+export * from './hris-admin-api';

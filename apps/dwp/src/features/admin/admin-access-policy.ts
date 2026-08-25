@@ -26,9 +26,15 @@ type AdminItemAccess = {
 export function canEnterCompanyAdministration(
   roles: readonly string[],
   administrationAppEntitled: boolean,
-  hasActiveSupportSession = false
+  hasActiveSupportSession = false,
+  resourceRoles: readonly ResourceRoleDTO[] = []
 ): boolean {
-  return canEnterTenantControlPlane(roles, administrationAppEntitled, hasActiveSupportSession, []);
+  return canEnterTenantControlPlane(
+    roles,
+    administrationAppEntitled,
+    hasActiveSupportSession,
+    resourceRoles
+  );
 }
 
 export function canAccessAdminNavigationItem(
@@ -56,6 +62,12 @@ export function canAccessAdminNavigationItem(
   }
 
   if (!hasTenantControlPlaneRole(access.roles)) return false;
+  if (
+    item.requiredAnyRoleCodes &&
+    !item.requiredAnyRoleCodes.some((role) => access.roles.includes(role))
+  ) {
+    return false;
+  }
   if (!item.requiredResourceKey) return hasFullTenantAdminRole(access.roles);
   return (
     access.permissionsLoaded &&

@@ -1,5 +1,8 @@
 import { axiosInstance } from '../axios-instance';
-import { approvalMutationExecutionConfig } from './approval-governed-mutation';
+import {
+  approvalHighRiskMutationExecutionConfig,
+  approvalMutationExecutionConfig,
+} from './approval-governed-mutation';
 
 import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApprovalMutationExecution } from './approval-governed-mutation';
@@ -766,7 +769,7 @@ export async function publishApprovalWorkflow(
   >(
     `${base}/admin/workflows/${workflowId}/publish`,
     { expectedVersion },
-    approvalMutationExecutionConfig(execution)
+    approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: false })
   );
   return response.data.data;
 }
@@ -872,7 +875,7 @@ export async function publishApprovalForm(
   >(
     `${base}/admin/forms/${formId}/publish`,
     { expectedVersion },
-    approvalMutationExecutionConfig(execution)
+    approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: false })
   );
   return response.data.data;
 }
@@ -912,7 +915,7 @@ export async function publishApprovalPolicy(
   >(
     `${base}/admin/policies/${policyId}/publish`,
     input,
-    approvalMutationExecutionConfig(execution)
+    approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: false })
   );
   return response.data.data;
 }
@@ -930,7 +933,7 @@ export async function retryApprovalIntegrationDelivery(
   const response = await axiosInstance.post<ApiResponse<ApprovalOperations>, undefined>(
     `${base}/admin/operations/events/${outboxId}/retry`,
     undefined,
-    approvalMutationExecutionConfig(execution, { objectVersionHeader: true })
+    approvalHighRiskMutationExecutionConfig(execution, { objectVersionHeader: true })
   );
   return response.data.data;
 }

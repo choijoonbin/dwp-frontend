@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Home, LifeBuoy, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Home, LifeBuoy, ShieldCheck, X } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
@@ -25,11 +26,13 @@ import { ShellHeader } from '../components/shell-header';
 import {
   productSurfaceContentInstanceKey,
   ProductSurfaceContextBar,
+  ProductSurfaceDisclosure,
   ProductSurfaceSwitcher,
 } from '../components/product-surface-controls';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
 import { canContextAccessNavigation } from '../features/shell/product-surface-context';
+import { resolveProductCompatibilityNavigationLocation } from '../features/shell/product-surface-compatibility-navigation';
 import {
   DesktopNavigationToggle,
   useDesktopNavigation,
@@ -102,6 +105,8 @@ export function ProductAreaLayout({
   const location = useLocation();
   const { pathname } = location;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileNavigationTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const restoreMobileNavigationFocusRef = useRef(false);
   const telemetry = useProductSurfaceTelemetry();
   const {
     compact,
@@ -119,6 +124,12 @@ export function ProductAreaLayout({
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
+        if (surface?.compatibilityNavigation) {
+          return (
+            isSurfaceNavigationItem(item) &&
+            surface.compatibilityNavigationTargets?.has(item.path) === true
+          );
+        }
         if (surface && isSurfaceNavigationItem(item)) {
           return canContextAccessNavigation(
             item.access,
@@ -127,7 +138,7 @@ export function ProductAreaLayout({
             surface.serverNowMs
           );
         }
-        if (surface && !surface.compatibilityNavigation) return false;
+        if (surface) return false;
         return canAccessProductAreaNavigationItem(item, hasPermission, supportContext.data?.scopes);
       }),
     }))
@@ -146,10 +157,34 @@ export function ProductAreaLayout({
     : 'legacy';
   const returnSurface = surface?.entryPoints?.find((entry) => entry.path === returnTarget.path);
 
+  const closeMobileNavigation = (restoreFocus: boolean) => {
+    restoreMobileNavigationFocusRef.current = restoreFocus;
+    setMobileOpen(false);
+  };
+
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const background = [
+      document.querySelector<HTMLElement>(`[data-testid="${areaKey}-header"]`),
+      document.getElementById('dwp-main-content'),
+    ].filter((element): element is HTMLElement => Boolean(element));
+    for (const element of background) element.setAttribute('inert', '');
+    return () => {
+      for (const element of background) element.removeAttribute('inert');
+    };
+  }, [areaKey, mobileOpen]);
+
+  useEffect(() => {
+    if (mobileOpen || !restoreMobileNavigationFocusRef.current) return undefined;
+    restoreMobileNavigationFocusRef.current = false;
+    const frame = window.requestAnimationFrame(() => mobileNavigationTriggerRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [mobileOpen]);
+
   const navigationContent = (
     compactNavigation: boolean,
     onNavigate?: () => void,
-    showSurfaceSwitcher = false
+    showClose = false
   ) => (
     <Box sx={{ height: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       <Box
@@ -158,22 +193,20 @@ export function ProductAreaLayout({
           px: compactNavigation ? 0 : 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: compactNavigation ? 'center' : 'flex-start',
+          justifyContent: compactNavigation ? 'center' : 'space-between',
         }}
       >
         <BrandLockup variant={compactNavigation ? 'product-only' : 'product-full'} />
+        {showClose && !compactNavigation && (
+          <ActionIconButton
+            label={tCommon('productSurface.actions.closeNavigation')}
+            onClick={() => closeMobileNavigation(true)}
+            sx={{ width: 40, height: 40 }}
+          >
+            <X size={19} strokeWidth={1.8} aria-hidden="true" />
+          </ActionIconButton>
+        )}
       </Box>
-      {showSurfaceSwitcher && surface?.entryPoints && surface.entryPoints.length > 1 && (
-        <Box sx={{ px: 1.5, py: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <ProductSurfaceSwitcher
-            currentSurfaceId={surface.decision.context.surfaceKey}
-            entries={surface.entryPoints}
-            label={tCommon('productSurface.labels.surfaceNavigation')}
-            resolveLabel={(labelKey) => t(labelKey)}
-            onNavigate={onNavigate}
-          />
-        </Box>
-      )}
       <Divider />
       <Box sx={{ px: 2.5, pt: 2.25, pb: 1, display: compactNavigation ? 'none' : 'block' }}>
         <Typography component="p" variant="overline" sx={{ color: 'var(--dwp-product-accent)' }}>
@@ -182,14 +215,6 @@ export function ProductAreaLayout({
         <Typography variant="body2" fontWeight={750} noWrap>
           {tenantName}
         </Typography>
-        {surface && (
-          <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
-            {surface.decision.scope.displayName}
-            {surface.decision.effectiveReadOnly
-              ? ` · ${tCommon('productSurface.labels.readOnly')}`
-              : ''}
-          </Typography>
-        )}
       </Box>
       <Box
         component="nav"
@@ -223,11 +248,19 @@ export function ProductAreaLayout({
                     <Tooltip title={compactNavigation ? label : ''} placement="right">
                       <ListItemButton
                         component={NavLink}
-                        to={{
-                          pathname: item.path,
-                          search: surface ? location.search : '',
-                          hash: surface ? location.hash : '',
-                        }}
+                        to={
+                          surface?.compatibilityNavigation
+                            ? resolveProductCompatibilityNavigationLocation(
+                                item.path,
+                                surface.compatibilityNavigationTargets!.get(item.path)!,
+                                location
+                              )
+                            : {
+                                pathname: item.path,
+                                search: surface ? location.search : '',
+                                hash: surface ? location.hash : '',
+                              }
+                        }
                         selected={selected}
                         aria-label={compactNavigation ? label : undefined}
                         aria-current={selected ? 'page' : undefined}
@@ -323,6 +356,7 @@ export function ProductAreaLayout({
     <Box
       data-testid={`${areaKey}-shell`}
       data-product-surface={surface?.decision.context.surfaceKey}
+      data-product-surface-label={surface?.label}
       data-product-plane={surface?.decision.context.plane}
       data-dwp-navigation-state={compact ? 'compact' : 'expanded'}
       data-product-concept={productExperience.concept}
@@ -366,11 +400,12 @@ export function ProductAreaLayout({
           transition: (theme) => theme.transitions.create('width'),
         }}
       >
-        {navigationContent(compact, undefined, !compact)}
+        {navigationContent(compact)}
       </Box>
       <Drawer
         open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
+        onClose={() => closeMobileNavigation(true)}
+        ModalProps={{ disableRestoreFocus: true }}
         slotProps={{
           paper: {
             'aria-label': t(`shell.${areaKey}.navigationLabel`),
@@ -392,7 +427,7 @@ export function ProductAreaLayout({
         }}
       >
         <Box data-testid={`${areaKey}-mobile-sidebar`} sx={{ height: 1, minHeight: 0 }}>
-          {navigationContent(false, () => setMobileOpen(false), true)}
+          {navigationContent(false, () => closeMobileNavigation(false), true)}
         </Box>
       </Drawer>
       <ShellHeader
@@ -409,7 +444,10 @@ export function ProductAreaLayout({
         }}
         navigation={{
           label: t('shell.openNavigation'),
-          onOpen: () => setMobileOpen(true),
+          onOpen: (trigger) => {
+            mobileNavigationTriggerRef.current = trigger;
+            setMobileOpen(true);
+          },
         }}
         leading={
           collapsible ? (
@@ -422,7 +460,7 @@ export function ProductAreaLayout({
         }
         showWorkspace={shell.showWorkspace && !supportContext.data}
         primaryNavigation={
-          surface?.entryPoints && compact ? (
+          surface?.entryPoints ? (
             <ProductSurfaceSwitcher
               currentSurfaceId={surface.decision.context.surfaceKey}
               entries={surface.entryPoints}
@@ -431,6 +469,17 @@ export function ProductAreaLayout({
             />
           ) : undefined
         }
+        mobilePrimaryNavigation={
+          surface?.entryPoints ? (
+            <ProductSurfaceDisclosure
+              currentSurfaceId={surface.decision.context.surfaceKey}
+              entries={surface.entryPoints}
+              label={tCommon('productSurface.labels.surfaceNavigation')}
+              resolveLabel={(labelKey) => t(labelKey)}
+            />
+          ) : undefined
+        }
+        contextControls={surface ? <ProductSurfaceContextBar runtime={surface} /> : undefined}
       />
       <Box
         component="main"
@@ -449,7 +498,6 @@ export function ProductAreaLayout({
         }}
       >
         {supportContext.data && <ProviderSupportBanner context={supportContext.data} />}
-        {surface && <ProductSurfaceContextBar runtime={surface} />}
         <Outlet key={contentInstanceKey} />
       </Box>
     </Box>

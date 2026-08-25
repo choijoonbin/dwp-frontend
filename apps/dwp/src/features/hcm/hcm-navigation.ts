@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
+import { projectProductSurfaceNavigation } from '../../components/product-surface-navigation-projection';
 
 export type HcmAudience =
   | 'all'
@@ -33,7 +34,13 @@ export type HcmAudience =
   | 'pay-admin'
   | 'talent-admin';
 export type HcmSection =
-  'start' | 'personal' | 'organization' | 'team' | 'operate' | 'design' | 'foundation';
+  | 'start'
+  | 'personal'
+  | 'organization'
+  | 'team'
+  | 'operate'
+  | 'design'
+  | 'foundation';
 export type HcmView =
   | 'home'
   | 'me'
@@ -297,6 +304,75 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
     ],
   },
 ];
+
+const policy = (accessPolicyKey: string) => ({ type: 'policy' as const, accessPolicyKey });
+const capability = (capabilityContractKey: string) => ({
+  type: 'capability' as const,
+  capabilityContractKey,
+});
+
+export const HCM_PERSONAL_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+  home: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  me: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  time: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  absence: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  benefits: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  pay: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  talent: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
+  services: { taskKind: 'work', access: policy('hcm.personal-services-access.v1') },
+  directory: { taskKind: 'work', access: policy('hcm.directory-access.v1') },
+  organization: { taskKind: 'work', access: policy('hcm.directory-access.v1') },
+});
+
+export const HCM_TEAM_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+  team: { taskKind: 'team', access: policy('hcm.team-access.v1') },
+  'team-time': { taskKind: 'team', access: capability('hcm.team.time.read') },
+  'team-absence': { taskKind: 'team', access: capability('hcm.team.absence.read') },
+});
+
+export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+  operations: {
+    taskKind: 'operations',
+    access: {
+      type: 'capability-expression',
+      mode: 'ANY',
+      capabilityContractKeys: [
+        'hcm.operations.workforce.read',
+        'hcm.operations.time.read',
+        'hcm.operations.absence.read',
+        'hcm.operations.benefits.read',
+        'hcm.operations.pay.read',
+        'hcm.operations.talent.read',
+      ],
+    },
+  },
+  'time-operations': { taskKind: 'operations', access: capability('hcm.operations.time.read') },
+  'absence-operations': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.absence.read'),
+  },
+  'benefits-operations': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.benefits.read'),
+  },
+  'pay-operations': { taskKind: 'operations', access: capability('hcm.operations.pay.read') },
+  'talent-operations': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.talent.read'),
+  },
+  people: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
+  assignments: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
+});
+
+export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+  'organization-design': {
+    taskKind: 'administration',
+    access: capability('hcm.org-design.read'),
+  },
+  'reference-data': { taskKind: 'administration', access: capability('hcm.reference.read') },
+  'data-operations': { taskKind: 'operations', access: capability('hcm.integration.read') },
+  exports: { taskKind: 'operations', access: capability('hcm.controlled-export.read') },
+});
 
 export { HCM_DEFAULT_PATH, mapLegacyHrPath } from './hcm-legacy-paths';
 

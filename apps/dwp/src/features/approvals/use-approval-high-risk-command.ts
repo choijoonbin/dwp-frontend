@@ -21,6 +21,7 @@ import {
 } from '../../components/product-surface-operation-coordinator';
 import {
   APPROVAL_HIGH_RISK_ROUTE_CONTRACT_KEY_BY_OPERATION,
+  HIGH_RISK_PRODUCT_SURFACE_BY_OPERATION,
   applyApprovalStepUpChallenge,
   applyApprovalStepUpContinuation,
   beginApprovalHighRiskCommandExecution,
@@ -82,7 +83,7 @@ export type ApprovalHighRiskEntryBinding = Readonly<{
 }>;
 
 const POPUP_POLL_MS = 500;
-const APPROVAL_HIGH_RISK_OPERATION_TARGET = {
+const DEFAULT_APPROVAL_HIGH_RISK_OPERATION_TARGET = {
   productKey: 'approvals',
   surfaceKey: 'approvals.admin',
 } as const;
@@ -97,6 +98,7 @@ export type ApprovalHighRiskCommandFailureDisposition =
   | 'AMBIGUOUS_RETRY'
   | 'REISSUE_PROOF'
   | 'REPLAY_SUCCESS'
+  | 'REPLAY_UNCERTAIN'
   | 'AUTHORITY_CONFLICT'
   | 'DETERMINISTIC_REJECT';
 
@@ -127,6 +129,13 @@ export function classifyApprovalHighRiskCommandFailure(
     (code === 'IDEMPOTENCY_REPLAY_SUCCESS' || code === 'IDEMPOTENT_REPLAY_SUCCESS')
   ) {
     return 'REPLAY_SUCCESS';
+  }
+  // People consumes a step-up challenge in the same transaction as the command. After an
+  // ambiguous first response, a second dispatch can therefore mean either "the first command
+  // committed" or "the challenge was consumed without an observable command result". Never
+  // describe that state as a deterministic rejection and never offer another retry.
+  if (error.status === 409 && code === 'STEP_UP_CHALLENGE_REPLAY') {
+    return 'REPLAY_UNCERTAIN';
   }
   if (
     error.status === 409 &&
@@ -216,12 +225,17 @@ function nonBlank(value: unknown): value is string {
 export function resolveApprovalHighRiskEntryBinding(
   snapshot: ProductSurfaceAuthoritySnapshot | undefined,
   requestedScopeKey: string | undefined,
-  clientNowMs = Date.now()
+  clientNowMs = Date.now(),
+  target: Readonly<{
+    productKey: string;
+    surfaceKey: string;
+  }> = DEFAULT_APPROVAL_HIGH_RISK_OPERATION_TARGET
 ): ApprovalHighRiskEntryBinding | null {
   if (!snapshot) return null;
   const serverNowMs = productSurfaceServerNow(snapshot, clientNowMs);
   const contexts = snapshot.envelope.contexts.filter(
-    (context) => context.productKey === 'approvals' && context.surfaceKey === 'approvals.admin'
+    (context) =>
+      context.productKey === target.productKey && context.surfaceKey === target.surfaceKey
   );
   if (contexts.length !== 1) return null;
   const context = contexts[0]!;
@@ -252,13 +266,14 @@ export function resolveApprovalHighRiskEntryBinding(
 
 export function buildApprovalHighRiskActionEvaluationRequest(
   operation: ApprovalHighRiskOperation,
-  binding: ApprovalHighRiskEntryBinding
+  binding: ApprovalHighRiskEntryBinding,
+  target = HIGH_RISK_PRODUCT_SURFACE_BY_OPERATION[operation]
 ): ProductSurfaceEvaluationRequest {
   return {
     subject: {
       type: 'PRODUCT',
-      productKey: 'approvals',
-      surfaceKey: 'approvals.admin',
+      productKey: target.productKey,
+      surfaceKey: target.surfaceKey,
     },
     routeContractKey: APPROVAL_HIGH_RISK_ROUTE_CONTRACT_KEY_BY_OPERATION[operation],
     contextKey: binding.contextKey,
@@ -312,25 +327,32 @@ export function useApprovalHighRiskCommand<TResult>({
   const popupDeadlineRef = useRef<number | null>(null);
   const resumeInFlightRef = useRef(false);
   const operationBindingRef = useRef<ApprovalHighRiskOperationBinding | null>(null);
-  const rollout = productAuthority.rolloutForProduct('approvals');
+  const operationTarget = HIGH_RISK_PRODUCT_SURFACE_BY_OPERATION[operation];
+  const rollout = productAuthority.rolloutForProduct(operationTarget.productKey);
   const rolloutState = rollout.state === 'ready' ? rollout.rollout.state : undefined;
   const selectedScopeKey =
-    pageDecision?.context.productKey === 'approvals' &&
-    pageDecision.context.surfaceKey === 'approvals.admin'
+    pageDecision?.context.productKey === operationTarget.productKey &&
+    pageDecision.context.surfaceKey === operationTarget.surfaceKey
       ? pageDecision.scope.key
       : undefined;
   const entryBinding = useMemo(
-    () => resolveApprovalHighRiskEntryBinding(productAuthority.snapshot, selectedScopeKey),
-    [productAuthority.snapshot, selectedScopeKey]
+    () =>
+      resolveApprovalHighRiskEntryBinding(
+        productAuthority.snapshot,
+        selectedScopeKey,
+        Date.now(),
+        operationTarget
+      ),
+    [operationTarget, productAuthority.snapshot, selectedScopeKey]
   );
   const operationIdentity = useMemo<ProductSurfaceOperationIdentity | null>(
     () =>
       entryBinding &&
       productAuthority.snapshot &&
-      pageDecision?.context.productKey === APPROVAL_HIGH_RISK_OPERATION_TARGET.productKey &&
-      pageDecision.context.surfaceKey === APPROVAL_HIGH_RISK_OPERATION_TARGET.surfaceKey
+      pageDecision?.context.productKey === operationTarget.productKey &&
+      pageDecision.context.surfaceKey === operationTarget.surfaceKey
         ? {
-            ...APPROVAL_HIGH_RISK_OPERATION_TARGET,
+            ...operationTarget,
             tenantId: String(auth.user?.tenantId ?? ''),
             actorId: String(auth.user?.userId ?? ''),
             accessMode: productAuthority.snapshot.envelope.activeAccessMode,
@@ -339,7 +361,14 @@ export function useApprovalHighRiskCommand<TResult>({
             decisionRevision: pageDecision.decisionRevision,
           }
         : null,
-    [auth.user?.tenantId, auth.user?.userId, entryBinding, pageDecision, productAuthority.snapshot]
+    [
+      auth.user?.tenantId,
+      auth.user?.userId,
+      entryBinding,
+      operationTarget,
+      pageDecision,
+      productAuthority.snapshot,
+    ]
   );
   const operationIdentityRef = useRef(operationIdentity);
   operationIdentityRef.current = operationIdentity;
@@ -348,11 +377,9 @@ export function useApprovalHighRiskCommand<TResult>({
     if (operationIdentity) {
       productSurfaceOperationCoordinator.observeIdentity(operationIdentity);
     } else {
-      productSurfaceOperationCoordinator.observeAuthorityUnavailable(
-        APPROVAL_HIGH_RISK_OPERATION_TARGET
-      );
+      productSurfaceOperationCoordinator.observeAuthorityUnavailable(operationTarget);
     }
-  }, [operationIdentity]);
+  }, [operationIdentity, operationTarget]);
 
   const updateAttempt = useCallback((next: ApprovalHighRiskAttempt | null) => {
     attemptRef.current = next;
@@ -389,14 +416,12 @@ export function useApprovalHighRiskCommand<TResult>({
       const binding = {
         identity,
         actionDecisionRevision: { current: null },
-        ticket: productSurfaceOperationCoordinator.beginOperation(
-          APPROVAL_HIGH_RISK_OPERATION_TARGET
-        ),
+        ticket: productSurfaceOperationCoordinator.beginOperation(operationTarget),
       };
       operationBindingRef.current = binding;
       return binding;
     },
-    []
+    [operationTarget]
   );
 
   const currentOperationBinding = useCallback((): ApprovalHighRiskOperationBinding => {
@@ -736,6 +761,12 @@ export function useApprovalHighRiskCommand<TResult>({
           setOpen(false);
           await productAuthority.revalidate();
           await onConflict?.();
+          return;
+        }
+        if (disposition === 'REPLAY_UNCERTAIN') {
+          finishOperationBinding(binding);
+          updateAttempt({ ...executing, phase: 'COMMAND_UNCERTAIN' });
+          setError('command-uncertain');
           return;
         }
         if (disposition === 'AUTHORITY_CONFLICT') {

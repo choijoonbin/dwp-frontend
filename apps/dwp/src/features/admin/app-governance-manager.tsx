@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ArrowUpRight,
   Check,
   Clock3,
   Layers3,
@@ -11,6 +12,7 @@ import {
   UserRoundCog,
   X,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createAppAdminAssignment,
@@ -22,6 +24,7 @@ import {
   useToast,
   type AppAdminAssignment,
   type AppGovernanceDashboard,
+  type AppResourceMember,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
@@ -55,12 +58,27 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
-import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
+import { AppAdminPresetManager } from './app-admin-preset-manager';
+import {
+  canRequestGovernedAssignment,
+  governedRequestScopes,
+  resolveAssignmentActions,
+  type AppGovernanceActor,
+} from './app-governance-authority';
 
-type View = 'assignments' | 'boundaries';
+export { resolveAssignmentActions } from './app-governance-authority';
+
+type View = 'assignments' | 'presets' | 'boundaries';
 type Decision = 'APPROVED' | 'DENIED' | 'REVOKED';
 
 const queryKey = ['admin', 'app-governance'] as const;
+const CONTROL_PLANE_RESPONSIBILITIES = new Set([
+  'APP_OWNER',
+  'APP_ACCESS_APPROVER',
+  'APP_ACCESS_MANAGER',
+  'APP_ACCESS_REVIEWER',
+]);
 
 function statusColor(state: AppAdminAssignment['lifecycleState']) {
   if (state === 'ACTIVE') return 'success' as const;
@@ -69,12 +87,28 @@ function statusColor(state: AppAdminAssignment['lifecycleState']) {
   return 'info' as const;
 }
 
+export function resolveManagementWorkbenchEntries(resources: readonly AppResourceMember[]) {
+  return resources.flatMap((resource) => {
+    const manifest = GOVERNED_PRODUCT_MANIFESTS.find(
+      (candidate) => candidate.appKey === resource.resourceKey
+    );
+    const managementSurface =
+      manifest?.surfaces.find(
+        (surface) => surface.plane === 'management' && surface.taskKinds.includes('administration')
+      ) ?? manifest?.surfaces.find((surface) => surface.plane === 'management');
+    return manifest && managementSurface
+      ? [{ productId: manifest.id, path: managementSurface.indexPath, resource }]
+      : [];
+  });
+}
+
 export function AppGovernanceManager() {
   const { t } = useTranslation('admin');
   const auth = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [view, setView] = useState<View>('assignments');
+  const [view, setView] = useState<View>('presets');
   const [assignmentOpen, setAssignmentOpen] = useState(false);
   const [boundaryOpen, setBoundaryOpen] = useState(false);
   const [action, setAction] = useState<{
@@ -84,16 +118,15 @@ export function AppGovernanceManager() {
   const [busy, setBusy] = useState(false);
   const dashboard = useQuery({ queryKey, queryFn: getAppGovernanceDashboard });
   const data = dashboard.data;
-  const roles = auth.user?.roles ?? [];
-  const tenantGovernor = hasFullTenantAdminRole(roles);
-  const catalogAdmin = roles.includes('APP_CATALOG_ADMIN');
-  const ownerScopes = new Set(
-    (auth.user?.resourceRoles ?? [])
-      .filter((role) => role.responsibilityCode === 'APP_OWNER')
-      .map((role) => role.resourceSetId)
-  );
-  const canRequest = tenantGovernor || catalogAdmin || ownerScopes.size > 0;
-  const canCreateBoundary = tenantGovernor || catalogAdmin;
+  const actor: AppGovernanceActor = {
+    userId: auth.user?.userId,
+    roles: auth.user?.roles ?? [],
+    resourceRoles: auth.user?.resourceRoles ?? [],
+    groupRefs: auth.user?.groups?.map((group) => group.groupRef) ?? [],
+  };
+  const requestScopes = governedRequestScopes(actor);
+  const canRequest = canRequestGovernedAssignment(actor);
+  const canCreateBoundary = actor.roles.includes('APP_CATALOG_ADMIN');
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey });
@@ -175,6 +208,9 @@ export function AppGovernanceManager() {
           <ToggleButton value="assignments">
             {t('appGovernance.views.assignments')} ({data.assignments.length})
           </ToggleButton>
+          <ToggleButton value="presets">
+            {t('appGovernance.views.presets')} ({data.presetAssignments?.length ?? 0})
+          </ToggleButton>
           <ToggleButton value="boundaries">
             {t('appGovernance.views.boundaries')} ({data.resourceSets.length})
           </ToggleButton>
@@ -200,116 +236,115 @@ export function AppGovernanceManager() {
         </Stack>
       </Stack>
 
-      {view === 'assignments' ? (
-        data.assignments.length ? (
-          <TableContainer
-            sx={{ border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }}
-          >
-            <Table size="small" aria-label={t('appGovernance.assignmentTable')}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('appGovernance.columns.principal')}</TableCell>
-                  <TableCell>{t('appGovernance.columns.responsibility')}</TableCell>
-                  <TableCell>{t('appGovernance.columns.scope')}</TableCell>
-                  <TableCell>{t('appGovernance.columns.validity')}</TableCell>
-                  <TableCell>{t('appGovernance.columns.state')}</TableCell>
-                  <TableCell align="right">{t('appGovernance.columns.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.assignments.map((assignment) => {
-                  const mayApprove =
-                    assignment.lifecycleState === 'PENDING_APPROVAL' &&
-                    assignment.requestedBy !== auth.user?.userId &&
-                    assignment.principalRef !== String(auth.user?.userId) &&
-                    (tenantGovernor ||
-                      (catalogAdmin && assignment.responsibilityCode !== 'APP_OWNER'));
-                  const mayRevoke =
-                    assignment.lifecycleState === 'ACTIVE' &&
-                    (tenantGovernor ||
-                      catalogAdmin ||
-                      (ownerScopes.has(assignment.resourceSetId) &&
-                        assignment.responsibilityCode !== 'APP_OWNER'));
-                  return (
-                    <TableRow key={assignment.assignmentId} hover sx={{ height: 58 }}>
-                      <TableCell>
-                        <Typography variant="subtitle2">{assignment.principalName}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {assignment.principalType} · {assignment.principalRef}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {t(`appGovernance.responsibilities.${assignment.responsibilityCode}`)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">{assignment.resourceSetName}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {assignment.resourceSetKey}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {assignment.validTo
-                            ? formatDate(assignment.validTo, { dateStyle: 'medium' })
-                            : t('appGovernance.noExpiry')}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {t('appGovernance.reviewDue', {
-                            value: formatDate(assignment.reviewDueAt, { dateStyle: 'medium' }),
-                          })}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          variant="outlined"
-                          color={statusColor(assignment.lifecycleState)}
-                          label={t(`appGovernance.states.${assignment.lifecycleState}`)}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Stack direction="row" justifyContent="flex-end" gap={0.5}>
-                          {mayApprove && (
-                            <>
+      {view === 'presets' ? (
+        <AppAdminPresetManager data={data} />
+      ) : view === 'assignments' ? (
+        <Stack gap={1.5}>
+          <Alert severity="info">{t('appGovernance.controlResponsibilitiesNotice')}</Alert>
+          {data.assignments.length ? (
+            <TableContainer
+              sx={{
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 1,
+                bgcolor: 'background.paper',
+              }}
+            >
+              <Table size="small" aria-label={t('appGovernance.assignmentTable')}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t('appGovernance.columns.principal')}</TableCell>
+                    <TableCell>{t('appGovernance.columns.responsibility')}</TableCell>
+                    <TableCell>{t('appGovernance.columns.scope')}</TableCell>
+                    <TableCell>{t('appGovernance.columns.validity')}</TableCell>
+                    <TableCell>{t('appGovernance.columns.state')}</TableCell>
+                    <TableCell align="right">{t('appGovernance.columns.actions')}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.assignments.map((assignment) => {
+                    const { mayApprove, mayRevoke } = resolveAssignmentActions(assignment, actor);
+                    return (
+                      <TableRow key={assignment.assignmentId} hover sx={{ height: 58 }}>
+                        <TableCell>
+                          <Typography variant="subtitle2">{assignment.principalName}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {assignment.principalType} · {assignment.principalRef}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {t(`appGovernance.responsibilities.${assignment.responsibilityCode}`)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">{assignment.resourceSetName}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {assignment.resourceSetKey}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {assignment.validTo
+                              ? formatDate(assignment.validTo, { dateStyle: 'medium' })
+                              : t('appGovernance.noExpiry')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {t('appGovernance.reviewDue', {
+                              value: formatDate(assignment.reviewDueAt, { dateStyle: 'medium' }),
+                            })}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            color={statusColor(assignment.lifecycleState)}
+                            label={t(`appGovernance.states.${assignment.lifecycleState}`)}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <Stack direction="row" justifyContent="flex-end" gap={0.5}>
+                            {mayApprove && (
+                              <>
+                                <ActionIconButton
+                                  label={t('appGovernance.actions.approve')}
+                                  onClick={() => setAction({ assignment, decision: 'APPROVED' })}
+                                >
+                                  <Check size={17} />
+                                </ActionIconButton>
+                                <ActionIconButton
+                                  label={t('appGovernance.actions.deny')}
+                                  onClick={() => setAction({ assignment, decision: 'DENIED' })}
+                                >
+                                  <X size={17} />
+                                </ActionIconButton>
+                              </>
+                            )}
+                            {mayRevoke && (
                               <ActionIconButton
-                                label={t('appGovernance.actions.approve')}
-                                onClick={() => setAction({ assignment, decision: 'APPROVED' })}
+                                label={t('appGovernance.actions.revoke')}
+                                onClick={() => setAction({ assignment, decision: 'REVOKED' })}
                               >
-                                <Check size={17} />
+                                <ShieldX size={17} />
                               </ActionIconButton>
-                              <ActionIconButton
-                                label={t('appGovernance.actions.deny')}
-                                onClick={() => setAction({ assignment, decision: 'DENIED' })}
-                              >
-                                <X size={17} />
-                              </ActionIconButton>
-                            </>
-                          )}
-                          {mayRevoke && (
-                            <ActionIconButton
-                              label={t('appGovernance.actions.revoke')}
-                              onClick={() => setAction({ assignment, decision: 'REVOKED' })}
-                            >
-                              <ShieldX size={17} />
-                            </ActionIconButton>
-                          )}
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <GuidedEmptyState
-            kind="first-use"
-            title={t('appGovernance.empty.assignmentsTitle')}
-            description={t('appGovernance.empty.assignmentsDescription')}
-          />
-        )
+                            )}
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <GuidedEmptyState
+              kind="first-use"
+              title={t('appGovernance.empty.assignmentsTitle')}
+              description={t('appGovernance.empty.assignmentsDescription')}
+            />
+          )}
+        </Stack>
       ) : (
         <Box
           sx={{
@@ -328,6 +363,7 @@ export function AppGovernanceManager() {
                 assignment.resourceSetId === resourceSet.resourceSetId &&
                 assignment.lifecycleState === 'ACTIVE'
             );
+            const managementEntries = resolveManagementWorkbenchEntries(resourceSet.resources);
             return (
               <Box
                 key={resourceSet.resourceSetId}
@@ -365,6 +401,21 @@ export function AppGovernanceManager() {
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
                   {resourceSet.description}
                 </Typography>
+                {managementEntries.length > 0 && (
+                  <Stack gap={0.75} sx={{ mt: 2 }} alignItems="flex-start">
+                    {managementEntries.map(({ productId, path, resource }) => (
+                      <ActionButton
+                        key={`${productId}:${resource.resourceKey}`}
+                        intent="quiet"
+                        size="small"
+                        endIcon={<ArrowUpRight size={15} aria-hidden="true" />}
+                        onClick={() => navigate(path)}
+                      >
+                        {t('appGovernance.actions.openWorkbench', { app: resource.resourceName })}
+                      </ActionButton>
+                    ))}
+                  </Stack>
+                )}
               </Box>
             );
           })}
@@ -374,7 +425,7 @@ export function AppGovernanceManager() {
       <AssignmentDialog
         open={assignmentOpen}
         data={data}
-        allowedResourceSetIds={tenantGovernor || catalogAdmin ? null : ownerScopes}
+        allowedResourceSetIds={requestScopes}
         busy={busy}
         onClose={() => setAssignmentOpen(false)}
         onSubmit={async (payload) => {
@@ -469,7 +520,9 @@ function AssignmentDialog({
     (item) => !allowedResourceSetIds || allowedResourceSetIds.has(item.resourceSetId)
   );
   const responsibilities = data.responsibilities.filter(
-    (item) => allowedResourceSetIds === null || item.code !== 'APP_OWNER'
+    (item) =>
+      CONTROL_PLANE_RESPONSIBILITIES.has(item.code) &&
+      (allowedResourceSetIds === null || item.code !== 'APP_OWNER')
   );
   const selectedPrincipal = data.principals.find(
     (item) => `${item.type}:${item.ref}` === principal

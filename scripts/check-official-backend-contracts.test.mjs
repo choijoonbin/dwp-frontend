@@ -80,6 +80,10 @@ function createOfficialContracts() {
       `${JSON.stringify(bundle, null, 2)}\n`
     );
   });
+  fs.writeFileSync(
+    path.join(authorizationDirectory, 'product-surface-rollout-inventory.v1.generated.json'),
+    `${JSON.stringify(snapshot.rolloutInventory, null, 2)}\n`
+  );
   fs.copyFileSync(
     path.join(authorizationDirectory, 'product-surfaces-v1.bundle-v3.json'),
     path.join(authorizationDirectory, 'product-surfaces-v1.json')
@@ -202,6 +206,20 @@ test('rejects authorization content with a stale canonical checksum', () => {
   const result = run(['--backend-contracts', contracts]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /checksum does not match canonical content/);
+});
+
+test('rejects a rollout inventory whose checksum is no longer bound to its product set', () => {
+  const contracts = createOfficialContracts();
+  const inventoryPath = path.join(
+    contracts,
+    'product-authorization/product-surface-rollout-inventory.v1.generated.json'
+  );
+  const inventory = JSON.parse(fs.readFileSync(inventoryPath, 'utf8'));
+  inventory.checksum = 'a'.repeat(64);
+  fs.writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, 2)}\n`);
+  const result = run(['--backend-contracts', contracts]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /rollout inventory checksum is invalid/);
 });
 
 test('rejects a non-DRAFT bundle before external activation approval', () => {

@@ -14,6 +14,7 @@ export type ProductSurfaceEntryPoint = {
   contextScopeKey?: string;
   requiresScopeSelection: boolean;
   readOnly: boolean;
+  entryKind?: 'surface' | 'management-entry' | 'work-return';
 };
 
 export type ProductAppCardEntryPoints = {
@@ -82,6 +83,54 @@ export function buildProductSurfaceEntryPoints(
   });
 }
 
+function preferredManagementEntry(
+  manifest: ProductSurfaceManifest,
+  entries: readonly ProductSurfaceEntryPoint[]
+): ProductSurfaceEntryPoint | undefined {
+  const managementEntries = entries.filter((entry) => entry.plane === 'management');
+  const administrationSurfaceIds = new Set(
+    manifest.surfaces
+      .filter(
+        (surface) => surface.plane === 'management' && surface.taskKinds.includes('administration')
+      )
+      .map((surface) => surface.id)
+  );
+  return (
+    managementEntries.find((entry) => administrationSurfaceIds.has(entry.surfaceId)) ??
+    managementEntries[0]
+  );
+}
+
+/**
+ * Work presents one explicit App Management transition. Once inside the management plane,
+ * its product-owned sub-surfaces may be selected without leaking them into the work header.
+ */
+export function buildProductHeaderEntryPoints(
+  manifest: ProductSurfaceManifest,
+  currentSurfaceId: string,
+  entries: readonly ProductSurfaceEntryPoint[]
+): readonly ProductSurfaceEntryPoint[] {
+  const currentSurface = manifest.surfaces.find((surface) => surface.id === currentSurfaceId);
+  if (!currentSurface) return [];
+  const workEntries = entries.filter((entry) => entry.plane === 'work');
+  const managementEntries = entries.filter((entry) => entry.plane === 'management');
+
+  if (currentSurface.plane === 'work') {
+    const managementEntry = preferredManagementEntry(manifest, entries);
+    return managementEntry
+      ? [...workEntries, { ...managementEntry, entryKind: 'management-entry' }]
+      : workEntries;
+  }
+
+  const returnSurfaceId = currentSurface.returnSurfaceId;
+  const workReturn =
+    workEntries.find((entry) => entry.surfaceId === returnSurfaceId) ?? workEntries[0];
+  return [
+    ...(workReturn ? [{ ...workReturn, entryKind: 'work-return' as const }] : []),
+    ...managementEntries,
+  ];
+}
+
 export function buildProductAppCardEntryPoints(
   manifest: ProductSurfaceManifest,
   contexts: readonly EffectiveProductSurfaceContext[],
@@ -89,10 +138,10 @@ export function buildProductAppCardEntryPoints(
 ): ProductAppCardEntryPoints {
   const entries = buildProductSurfaceEntryPoints(manifest, contexts, nowMs);
   const workEntry = entries.find((entry) => entry.plane === 'work');
-  const managementEntries = entries.filter((entry) => entry.plane === 'management');
+  const managementEntry = preferredManagementEntry(manifest, entries);
   return {
-    primary: workEntry ?? managementEntries[0],
-    managementActions: workEntry ? managementEntries : managementEntries.slice(1),
+    primary: workEntry ?? managementEntry,
+    managementActions: workEntry && managementEntry ? [managementEntry] : [],
   };
 }
 
@@ -102,9 +151,10 @@ export function buildManageableProductList(
   nowMs = Date.now()
 ): readonly { productId: string; entries: readonly ProductSurfaceEntryPoint[] }[] {
   return manifests.flatMap((manifest) => {
-    const entries = buildProductSurfaceEntryPoints(manifest, contexts, nowMs).filter(
-      (entry) => entry.plane === 'management'
+    const entry = preferredManagementEntry(
+      manifest,
+      buildProductSurfaceEntryPoints(manifest, contexts, nowMs)
     );
-    return entries.length > 0 ? [{ productId: manifest.id, entries }] : [];
+    return entry ? [{ productId: manifest.id, entries: [entry] }] : [];
   });
 }

@@ -144,7 +144,10 @@ export default defineConfig(({ command, mode }) => {
                   moduleId.includes('dynamic-import-helper'),
                 tags: ['$initial'],
                 includeDependenciesRecursively: false,
-                maxSize: 430 * 1024,
+                // Keep the eagerly matched route table in one application chunk. The governed
+                // 169-route ledger stays below the bundle byte budget; splitting it only adds a
+                // blocking request without creating a lazy execution boundary.
+                maxSize: 576 * 1024,
                 priority: 10,
               },
             ],

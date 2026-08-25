@@ -3,19 +3,26 @@ import { Navigate } from 'react-router-dom';
 
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import type { ProductSurfaceManifest } from '../components/product-manifest';
-import { buildProductSurfaceEntryPoints } from '../features/shell/product-entry-point-model';
+import {
+  buildProductHeaderEntryPoints,
+  buildProductSurfaceEntryPoints,
+} from '../features/shell/product-entry-point-model';
 import { resolveProductRoot } from '../features/shell/product-root-resolver';
 import {
   isProductSurfaceEnforced,
+  isProductSurfaceUiSeparated,
   resolveCanaryProductFlags,
   resolveCanaryRouteDecision,
   resolveCanarySurfaceDecision,
   resolveProductSurfaceRolloutMode,
   useProductSurfaceCanaryAuthority,
   type ProductSurfaceCanaryAuthority,
+  type ProductSurfaceRolloutMode,
 } from '../features/shell/product-surface-canary-runtime';
 import { resolveProductSurfaceReturnTarget } from '../features/shell/product-surface-layout-model';
+import { buildProductCompatibilityNavigationTargets } from '../features/shell/product-surface-compatibility-navigation';
 import { ProductSurfaceTelemetryExposure } from '../observability/product-surface-telemetry-context';
+import { ProductSurfaceLoadingShell } from '../components/product-surface-loading-shell';
 
 import type { ReactNode } from 'react';
 import type {
@@ -82,12 +89,8 @@ export function isProductCanaryBoundaryPending(
   );
 }
 
-function pendingState() {
-  return (
-    <Suspense fallback={null}>
-      <ProductSurfaceGuard pending>{null}</ProductSurfaceGuard>
-    </Suspense>
-  );
+function pendingState(productId?: string, surfaceId?: string) {
+  return <ProductSurfaceLoadingShell productId={productId} surfaceId={surfaceId} />;
 }
 
 export function resolveProductCanaryBoundaryStrategy(
@@ -113,7 +116,9 @@ export function ProductCanarySurfaceBoundary({
   children: ReactNode;
 }) {
   const authority = useProductSurfaceCanaryAuthority();
-  if (isProductCanaryBoundaryPending(authority, { surfaceId })) return pendingState();
+  if (isProductCanaryBoundaryPending(authority, { surfaceId })) {
+    return pendingState(productId, surfaceId);
+  }
   const strategy = resolveProductCanaryBoundaryStrategy(authority, productId);
   if (strategy === 'fail-closed') {
     return accessState({ state: 'authority-unavailable' }, productId, surfaceId);
@@ -148,7 +153,7 @@ export function ProductCanaryRouteBoundary({
 }) {
   const authority = useProductSurfaceCanaryAuthority();
   if (isProductCanaryBoundaryPending(authority, { surfaceId, routeContractKey })) {
-    return pendingState();
+    return pendingState(productId, surfaceId);
   }
   const strategy = resolveProductCanaryBoundaryStrategy(authority, productId);
   if (strategy === 'fail-closed') {
@@ -178,7 +183,7 @@ export function ProductCanaryRoot({
   legacyPath: string;
 }) {
   const authority = useProductSurfaceCanaryAuthority();
-  if (authority.authorityPending) return pendingState();
+  if (authority.authorityPending) return pendingState(manifest.id);
   const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, manifest.id));
   if (mode === 'baseline' || mode === 'shadow') {
     return <Navigate to={legacyPath} replace />;
@@ -201,7 +206,7 @@ export function ProductCanaryUnknownRoute({
   legacy: ReactNode;
 }) {
   const authority = useProductSurfaceCanaryAuthority();
-  if (authority.authorityPending) return pendingState();
+  if (authority.authorityPending) return pendingState(productId);
   const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, productId));
   if (mode === 'baseline' || mode === 'shadow') return legacy;
   if (mode === 'invalid') {
@@ -233,22 +238,30 @@ export function buildProductCanaryLayoutRuntime({
   manifest,
   decision,
   label,
-  returnLabel,
+  returnLabels,
   registeredRoutes,
   onScopeChange,
-  compatibilityNavigation = false,
+  rolloutMode,
 }: {
   authority: ProductSurfaceCanaryAuthority;
   manifest: ProductSurfaceManifest;
   decision: AllowedSurfaceDecision;
   label: string;
-  returnLabel: string;
+  returnLabels: Readonly<Record<'work' | 'catalog', string>>;
   registeredRoutes: readonly RegisteredProductRoute[];
   onScopeChange?: (scopeKey: string) => void;
-  compatibilityNavigation?: boolean;
+  rolloutMode: ProductSurfaceRolloutMode;
 }): ProductSurfaceLayoutRuntime {
   const serverNowMs = authority.serverNowMs ?? Date.now();
   const contexts = authority.envelope?.contexts ?? [];
+  const allowedRouteIds = new Set(
+    registeredRoutes.flatMap((route) =>
+      route.routeKind === 'PAGE' &&
+      authority.routeDecisions?.[route.routeContractKey]?.state === 'allowed'
+        ? [route.routeId]
+        : []
+    )
+  );
   const returnTarget =
     decision.context.plane === 'management'
       ? resolveProductSurfaceReturnTarget(
@@ -256,18 +269,32 @@ export function buildProductCanaryLayoutRuntime({
           decision.context.surfaceKey,
           contexts,
           registeredRoutes,
-          authority.lastAllowedWorkRoutes,
+          authority.lastAllowedWorkRouteIds,
+          allowedRouteIds,
           serverNowMs
         )
       : { path: '/apps', kind: 'catalog' as const };
+  const entryPoints = isProductSurfaceUiSeparated(rolloutMode)
+    ? buildProductHeaderEntryPoints(
+        manifest,
+        decision.context.surfaceKey,
+        buildProductSurfaceEntryPoints(manifest, contexts, serverNowMs)
+      )
+    : undefined;
   return {
     decision,
     label,
     serverNowMs,
-    entryPoints: buildProductSurfaceEntryPoints(manifest, contexts, serverNowMs),
+    entryPoints,
     availableScopes: decision.context.scopes,
     onScopeChange,
-    returnTarget: { path: returnTarget.path, label: returnLabel },
-    compatibilityNavigation,
+    returnTarget: { path: returnTarget.path, label: returnLabels[returnTarget.kind] },
+    compatibilityNavigation: rolloutMode === 'enforced-compatibility',
+    compatibilityNavigationTargets: buildProductCompatibilityNavigationTargets({
+      authority,
+      manifest,
+      registeredRoutes,
+      rolloutMode,
+    }),
   };
 }

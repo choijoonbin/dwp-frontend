@@ -174,7 +174,7 @@ export type ProductSurfaceRollout = {
   };
   cohort: string;
   opaqueRevision: string;
-  surfaceUiEvaluation?: 'RESOLVED' | 'UNAVAILABLE';
+  authorityStatus: 'NOT_EVALUATED' | 'AVAILABLE' | 'UNAVAILABLE';
 };
 
 export type ProductSurfaceContextListData = {
@@ -213,6 +213,7 @@ export type ProductSurfaceEvaluationData = {
   requiredAssurance?: string | null;
   requestPolicyRef?: string | null;
   revalidateAt?: string | null;
+  correlationId?: string | null;
 };
 
 export type GovernedRouteEvaluationRequest = {
@@ -492,7 +493,10 @@ export async function evaluateProductSurfaceAccess(
     timeoutMs: 8_000,
     ...(options.signal ? { signal: options.signal } : {}),
   });
-  return response.data.data;
+  return {
+    ...response.data.data,
+    correlationId: response.data.data.correlationId ?? response.data.correlationId ?? undefined,
+  };
 }
 
 export async function evaluateGovernedRouteAccess(

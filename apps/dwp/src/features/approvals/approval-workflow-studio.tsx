@@ -21,8 +21,8 @@ import {
 } from '@dwp-frontend/design-system';
 import {
   createApprovalWorkflowDraft,
-  getApprovalWorkflow,
-  getApprovalWorkflows,
+  getApprovalStudioWorkflow,
+  getApprovalStudioWorkflows,
   publishApprovalWorkflow,
   updateApprovalWorkflowDraft,
   useToast,
@@ -103,13 +103,22 @@ export function ApprovalWorkflowStudio() {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState<WorkflowDraft>(EMPTY_DRAFT);
   const workflows = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows', ...requestScope.cacheKey],
-    queryFn: ({ signal }) => getApprovalWorkflows(requestScope.contextScopeKey, signal),
+    queryKey: ['approvals', 'admin', 'workflows', 'view', 'absent', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalStudioWorkflows(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const detail = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows', selectedId, ...requestScope.cacheKey],
-    queryFn: ({ signal }) => getApprovalWorkflow(selectedId!, requestScope.contextScopeKey, signal),
+    queryKey: [
+      'approvals',
+      'admin',
+      'workflows',
+      selectedId,
+      'view',
+      'absent',
+      ...requestScope.cacheKey,
+    ],
+    queryFn: ({ signal }) =>
+      getApprovalStudioWorkflow(selectedId!, requestScope.contextScopeKey, signal),
     enabled: Boolean(selectedId),
     staleTime: 30_000,
   });
@@ -367,7 +376,7 @@ function WorkflowInspector({
   onEdit,
   onPublish,
 }: {
-  detail: Awaited<ReturnType<typeof getApprovalWorkflow>>;
+  detail: Awaited<ReturnType<typeof getApprovalStudioWorkflow>>;
   locale?: string;
   canEdit: boolean;
   canPublish: boolean;

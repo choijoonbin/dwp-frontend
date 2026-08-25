@@ -10,16 +10,34 @@ export type ApprovalHighRiskOperation =
   | 'WORKFLOW_PUBLISH'
   | 'FORM_PUBLISH'
   | 'POLICY_PUBLISH'
-  | 'DELIVERY_RETRY';
+  | 'DELIVERY_RETRY'
+  | 'HCM_ORG_PUBLISH'
+  | 'HCM_EXPORT_CREATE'
+  | 'HCM_EXPORT_RETRY'
+  | 'HCM_INTEGRATION_CONFIGURATION_CHECK'
+  | 'HCM_INTEGRATION_EXECUTE'
+  | 'HCM_INTEGRATION_RETRY'
+  | 'HCM_INTEGRATION_RECONCILE';
 
 export type ApprovalHighRiskCommandDescriptor = Readonly<{
   operation: ApprovalHighRiskOperation;
-  commandMethod: 'POST';
+  commandMethod: 'POST' | 'PATCH';
   commandPath: string;
-  targetType: 'WORKFLOW' | 'FORM' | 'POLICY' | 'OUTBOX_EVENT';
+  targetType:
+    | 'WORKFLOW'
+    | 'FORM'
+    | 'POLICY'
+    | 'OUTBOX_EVENT'
+    | 'ORG_SCENARIO'
+    | 'EXPORT_DATASET'
+    | 'EXPORT_REQUEST'
+    | 'HCM_CONNECTOR'
+    | 'HCM_SYNC_RUN';
   targetId: string;
   expectedObjectVersion: number;
   payload: Readonly<Record<string, unknown>>;
+  idempotencyKey?: string;
+  rotateIdempotencyInCommandPayload?: boolean;
 }>;
 
 export type ApprovalHighRiskAuthority = Readonly<{
@@ -64,7 +82,30 @@ export const APPROVAL_HIGH_RISK_ROUTE_CONTRACT_KEY_BY_OPERATION = {
   FORM_PUBLISH: 'route.approvals.admin.form-publish.action',
   POLICY_PUBLISH: 'route.approvals.admin.policy-publish.action',
   DELIVERY_RETRY: 'route.approvals.admin.operations.retry.action',
+  HCM_ORG_PUBLISH: 'route.hcm.management.org-publish.action',
+  HCM_EXPORT_CREATE: 'route.hcm.management.controlled-export-create.action',
+  HCM_EXPORT_RETRY: 'route.hcm.management.controlled-export-retry.action',
+  HCM_INTEGRATION_CONFIGURATION_CHECK: 'route.hcm.management.integration-execute.action',
+  HCM_INTEGRATION_EXECUTE: 'route.hcm.management.integration-execute.action',
+  HCM_INTEGRATION_RETRY: 'route.hcm.management.integration-execute.action',
+  HCM_INTEGRATION_RECONCILE: 'route.hcm.management.integration-execute.action',
 } as const satisfies Readonly<Record<ApprovalHighRiskOperation, string>>;
+
+export const HIGH_RISK_PRODUCT_SURFACE_BY_OPERATION = {
+  WORKFLOW_PUBLISH: { productKey: 'approvals', surfaceKey: 'approvals.admin' },
+  FORM_PUBLISH: { productKey: 'approvals', surfaceKey: 'approvals.admin' },
+  POLICY_PUBLISH: { productKey: 'approvals', surfaceKey: 'approvals.admin' },
+  DELIVERY_RETRY: { productKey: 'approvals', surfaceKey: 'approvals.admin' },
+  HCM_ORG_PUBLISH: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+  HCM_EXPORT_CREATE: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+  HCM_EXPORT_RETRY: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+  HCM_INTEGRATION_CONFIGURATION_CHECK: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+  HCM_INTEGRATION_EXECUTE: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+  HCM_INTEGRATION_RETRY: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+  HCM_INTEGRATION_RECONCILE: { productKey: 'hcm', surfaceKey: 'hcm.management' },
+} as const satisfies Readonly<
+  Record<ApprovalHighRiskOperation, { productKey: string; surfaceKey: string }>
+>;
 
 function nonBlank(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
@@ -97,6 +138,21 @@ function descriptor(
     expectedObjectVersion,
     payload,
   };
+}
+
+export function productSurfaceHighRiskCommand(input: ApprovalHighRiskCommandDescriptor) {
+  if (!nonBlank(input.operation) || !nonBlank(input.targetType) || !nonBlank(input.targetId)) {
+    throw new Error('HIGH command target is required.');
+  }
+  if (
+    !safeVersion(input.expectedObjectVersion) ||
+    !input.commandPath.startsWith('/api/') ||
+    input.commandPath.includes('?') ||
+    input.commandPath.includes('#')
+  ) {
+    throw new Error('HIGH command binding is invalid.');
+  }
+  return Object.freeze({ ...input, payload: Object.freeze({ ...input.payload }) });
 }
 
 export function approvalWorkflowPublishCommand(
@@ -193,7 +249,7 @@ export function resolveApprovalHighRiskActionAuthority({
 export function createApprovalHighRiskAttempt(
   command: ApprovalHighRiskCommandDescriptor,
   authority: ApprovalHighRiskAuthority,
-  idempotencyKey: string = globalThis.crypto.randomUUID()
+  idempotencyKey: string = command.idempotencyKey ?? globalThis.crypto.randomUUID()
 ): ApprovalHighRiskAttempt {
   if (!nonBlank(idempotencyKey)) throw new Error('HIGH command idempotency key is required.');
   return {
@@ -214,7 +270,20 @@ export function restartApprovalHighRiskAttempt(
   if (idempotencyKey === attempt.idempotencyKey) {
     throw new Error('A restarted HIGH command must rotate its idempotency key.');
   }
-  return createApprovalHighRiskAttempt(attempt.descriptor, authority, idempotencyKey);
+  const command = attempt.descriptor.rotateIdempotencyInCommandPayload
+    ? {
+        ...attempt.descriptor,
+        idempotencyKey,
+        payload: {
+          ...attempt.descriptor.payload,
+          command: {
+            ...((attempt.descriptor.payload.command as Readonly<Record<string, unknown>>) ?? {}),
+            idempotencyKey,
+          },
+        },
+      }
+    : attempt.descriptor;
+  return createApprovalHighRiskAttempt(command, authority, idempotencyKey);
 }
 
 export function buildApprovalStepUpIssuerRequest(

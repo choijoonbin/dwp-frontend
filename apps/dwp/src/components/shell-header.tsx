@@ -43,10 +43,12 @@ type ShellHeaderProps = {
   leading?: ReactNode;
   navigation?: {
     label: string;
-    onOpen: () => void;
+    onOpen: (trigger: HTMLButtonElement) => void;
   };
   showWorkspace?: boolean;
   primaryNavigation?: ReactNode;
+  mobilePrimaryNavigation?: ReactNode;
+  contextControls?: ReactNode;
   compactSearch?: boolean;
   maxContentWidth?: number;
   sx?: SxProps<Theme>;
@@ -65,6 +67,8 @@ export function ShellHeader({
   navigation,
   showWorkspace = false,
   primaryNavigation,
+  mobilePrimaryNavigation,
+  contextControls,
   compactSearch = false,
   maxContentWidth,
   sx,
@@ -123,19 +127,12 @@ export function ShellHeader({
             sx={{
               display: { lg: 'none' },
               flex: '0 0 auto',
-              ...(primaryNavigation
-                ? {
-                    '@container dwp-shell-header (max-width: 1180px)': {
-                      display: 'block',
-                    },
-                  }
-                : undefined),
             }}
           >
             <ActionIconButton
               label={navigation.label}
               tooltipPlacement="bottom"
-              onClick={navigation.onOpen}
+              onClick={(event) => navigation.onOpen(event.currentTarget)}
               sx={{ width: 40, height: 40 }}
             >
               <Menu size={21} strokeWidth={1.8} aria-hidden="true" />
@@ -221,12 +218,19 @@ export function ShellHeader({
               ml: 1,
               minWidth: 0,
               display: { xs: 'none', lg: 'block' },
-              '@container dwp-shell-header (max-width: 1180px)': { display: 'none' },
             }}
           >
             {primaryNavigation}
           </Box>
         )}
+
+        {mobilePrimaryNavigation && (
+          <Box sx={{ ml: 0.5, minWidth: 0, display: { xs: 'block', lg: 'none' } }}>
+            {mobilePrimaryNavigation}
+          </Box>
+        )}
+
+        {contextControls}
 
         <Box sx={{ flexGrow: 1, minWidth: 4 }} />
 

@@ -1,28 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FormDialog, FormField } from '@dwp-frontend/design-system';
+import { FormDialog } from '@dwp-frontend/design-system/components/dialogs/form-dialog';
+import { FormField } from '@dwp-frontend/design-system/components/forms/form-field';
 
 import MenuItem from '@mui/material/MenuItem';
 
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import { GOVERNED_PRODUCT_MANIFESTS } from '../components/product-manifest-registry';
 import { useProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
+import { resolveProductSurfaceReturnTarget } from '../features/shell/product-surface-layout-model';
 import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
 import { productSurfaceTelemetryEvent } from '../observability/product-surface-telemetry';
+import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 
 import type { ProductSurfaceAccessStateActions } from '../components/product-surface-access-state';
 import type { SurfaceDecision } from '../features/shell/product-surface-context';
 
-const PRODUCT_APP_RESOURCE: Readonly<Record<string, string>> = {
-  approvals: 'APP.APPROVALS',
-  communications: 'APP.COMMUNICATIONS',
-  services: 'APP.EMPLOYEE_SERVICES',
-};
-
 export function resolveCanaryAccessActionKinds(
   decision: Exclude<SurfaceDecision, { state: 'allowed' }>,
   hasScopes: boolean,
-  hasRequestableApp: boolean
+  hasRequestableApp: boolean,
+  managementSurface = false
 ): ReadonlySet<keyof ProductSurfaceAccessStateActions> {
   const actions = new Set<keyof ProductSurfaceAccessStateActions>(['return']);
   if (decision.state === 'authority-unavailable' || decision.state === 'step-up-required') {
@@ -35,7 +34,52 @@ export function resolveCanaryAccessActionKinds(
     actions.add('select-scope');
   }
   if (hasRequestableApp && decision.state === 'app-denied') actions.add('request-access');
+  if (
+    hasRequestableApp &&
+    managementSurface &&
+    ['surface-denied', 'route-denied', 'expired'].includes(decision.state)
+  ) {
+    actions.add('request-responsibility');
+  }
+  if (decision.state === 'activation-required') actions.add('activate-access');
   return actions;
+}
+
+export function resolveCanarySafeReturnPath(
+  authority: ReturnType<typeof useProductSurfaceCanaryAuthority>,
+  productId: string,
+  surfaceId?: string
+): string {
+  const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
+  const surface = manifest?.surfaces.find((candidate) => candidate.id === surfaceId);
+  if (!manifest || surface?.plane !== 'management') return '/apps';
+  const allowedRouteIds = new Set(
+    REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.flatMap((route) =>
+      authority.routeDecisions?.[route.routeContractKey]?.state === 'allowed' &&
+      typeof route.routeId === 'string'
+        ? [route.routeId]
+        : []
+    )
+  );
+  const returnSurfaceId =
+    surface.returnSurfaceId ??
+    manifest.surfaces.find((candidate) => candidate.plane === 'work')?.id;
+  const hasAllowedWorkRoute = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.some(
+    (route) =>
+      route.surfaceId === returnSurfaceId &&
+      typeof route.routeId === 'string' &&
+      allowedRouteIds.has(route.routeId)
+  );
+  if (!hasAllowedWorkRoute) return '/apps';
+  return resolveProductSurfaceReturnTarget(
+    manifest,
+    surface.id,
+    authority.envelope?.contexts ?? [],
+    REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+    authority.lastAllowedWorkRouteIds,
+    allowedRouteIds,
+    authority.serverNowMs
+  ).path;
 }
 
 export function ProductCanaryAccessState({
@@ -64,7 +108,11 @@ export function ProductCanaryAccessState({
       ) ?? [];
     return matching.length === 1 ? matching[0]!.scopes : [];
   }, [authority.envelope?.contexts, productId, surfaceId]);
-  const appResourceKey = PRODUCT_APP_RESOURCE[productId];
+  const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
+  const appResourceKey = manifest?.appKey;
+  const managementSurface = manifest?.surfaces.some(
+    (surface) => surface.id === surfaceId && surface.plane === 'management'
+  );
   useEffect(() => {
     if (!surfaceId || !/^[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*$/u.test(surfaceId)) return;
     const canonicalSurfaceId = surfaceId as `${string}.${string}`;
@@ -85,11 +133,13 @@ export function ProductCanaryAccessState({
   const actionKinds = resolveCanaryAccessActionKinds(
     decision,
     scopes.length > 0,
-    Boolean(appResourceKey)
+    Boolean(appResourceKey),
+    managementSurface
   );
+  const safeReturnPath = resolveCanarySafeReturnPath(authority, productId, surfaceId);
   const actions: ProductSurfaceAccessStateActions = {
     ...(actionKinds.has('retry') ? { retry: () => void authority.revalidate?.() } : {}),
-    ...(actionKinds.has('return') ? { return: () => navigate('/apps') } : {}),
+    ...(actionKinds.has('return') ? { return: () => navigate(safeReturnPath) } : {}),
     ...(actionKinds.has('select-scope')
       ? {
           'select-scope': () => {
@@ -103,6 +153,20 @@ export function ProductCanaryAccessState({
           'request-access': () =>
             navigate(`/apps?${new URLSearchParams({ requestResource: appResourceKey! })}`),
         }
+      : {}),
+    ...(actionKinds.has('request-responsibility')
+      ? {
+          'request-responsibility': () =>
+            navigate(
+              `/apps?${new URLSearchParams({
+                requestManagement: appResourceKey!,
+                ...(surfaceId ? { requestSurface: surfaceId } : {}),
+              })}`
+            ),
+        }
+      : {}),
+    ...(actionKinds.has('activate-access')
+      ? { 'activate-access': () => navigate('/account/security#privileged-access') }
       : {}),
   };
 

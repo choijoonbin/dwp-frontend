@@ -95,6 +95,70 @@ const catalog: readonly RegisteredProductRoute[] = [
   },
 ];
 
+const approvalManifest = defineProductManifest({
+  id: 'approvals',
+  appKey: 'APP.APPROVALS',
+  basePath: '/approvals',
+  surfaces: [
+    {
+      id: 'approvals.work',
+      plane: 'work',
+      labelKey: 'approvals.work',
+      taskKinds: ['work'],
+      routeMatchers: [
+        { kind: 'exact', path: '/approvals/home' },
+        { kind: 'exact', path: '/approvals/inbox' },
+      ],
+      indexPath: '/approvals/home',
+      navigation: [],
+      entryAccess: {
+        type: 'policy',
+        accessPolicyKey: 'approvals.work.v1',
+        requiresProductEntitlement: true,
+      },
+      supportedScopeKinds: ['SELF'],
+      shellProfile: 'product-work',
+    },
+    {
+      id: 'approvals.admin',
+      plane: 'management',
+      labelKey: 'approvals.admin',
+      taskKinds: ['administration'],
+      routeMatchers: [{ kind: 'prefix', path: '/approvals/admin' }],
+      indexPath: '/approvals/admin',
+      navigation: [],
+      entryAccess: {
+        type: 'capability',
+        entryCapabilityMode: 'ANY',
+        requiredCapabilityContractKeys: ['approvals.admin.read'],
+        requiresProductEntitlement: false,
+      },
+      supportedScopeKinds: ['RESOURCE_SET'],
+      shellProfile: 'product-management',
+      returnSurfaceId: 'approvals.work',
+    },
+  ],
+});
+
+const approvalCatalog: readonly RegisteredProductRoute[] = [
+  {
+    routeKind: 'PAGE',
+    routeId: 'approvals.work.home',
+    pattern: '/approvals/home',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeContractKey: 'route.approvals.work.home.page',
+  },
+  {
+    routeKind: 'PAGE',
+    routeId: 'approvals.work.inbox',
+    pattern: '/approvals/inbox',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeContractKey: 'route.approvals.work.inbox.page',
+  },
+];
+
 const workContext: EffectiveProductSurfaceContext = {
   contextKey: 'work-context',
   productKey: 'example',
@@ -124,29 +188,77 @@ describe('product surface return target', () => {
         'example.admin',
         [workContext],
         catalog,
-        { 'example.work': '/example/work/item-42?tab=history#evidence' },
+        { 'example.work': 'example.work.home' },
+        new Set(['example.work.home']),
         Date.parse('2029-01-01')
       )
     ).toEqual({
-      path: '/example/work/item-42?tab=history&scope=self-scope#evidence',
+      path: '/example/work?scope=self-scope',
       kind: 'work',
     });
   });
 
-  it('uses the work index for an unknown last route and catalog for management-only users', () => {
+  it('rejects dynamic or unknown route ids and uses the work index', () => {
     expect(
       resolveProductSurfaceReturnTarget(
         manifest,
         'example.admin',
         [workContext],
         catalog,
-        { 'example.work': '/example/work/missing/nested' },
+        { 'example.work': 'example.work.detail' },
+        new Set(['example.work.detail']),
         Date.parse('2029-01-01')
       )
     ).toEqual({ path: '/example/work?scope=self-scope', kind: 'work' });
+    expect(
+      resolveProductSurfaceReturnTarget(
+        manifest,
+        'example.admin',
+        [workContext],
+        catalog,
+        { 'example.work': 'example.work.unknown' },
+        new Set(['example.work.unknown']),
+        Date.parse('2029-01-01')
+      )
+    ).toEqual({ path: '/example/work?scope=self-scope', kind: 'work' });
+  });
+
+  it('returns to the catalog for management-only users', () => {
     expect(resolveProductSurfaceReturnTarget(manifest, 'example.admin', [], catalog)).toEqual({
       path: '/apps',
       kind: 'catalog',
     });
+  });
+
+  it('uses the Approvals inbox then home fallback according to exact route allowance', () => {
+    const approvalsWorkContext: EffectiveProductSurfaceContext = {
+      ...workContext,
+      contextKey: 'approvals-work-context',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.work',
+      appResourceKey: 'APP.APPROVALS',
+    };
+    expect(
+      resolveProductSurfaceReturnTarget(
+        approvalManifest,
+        'approvals.admin',
+        [approvalsWorkContext],
+        approvalCatalog,
+        {},
+        new Set(['approvals.work.inbox', 'approvals.work.home']),
+        Date.parse('2029-01-01')
+      )
+    ).toEqual({ path: '/approvals/inbox?scope=self-scope', kind: 'work' });
+    expect(
+      resolveProductSurfaceReturnTarget(
+        approvalManifest,
+        'approvals.admin',
+        [approvalsWorkContext],
+        approvalCatalog,
+        {},
+        new Set(['approvals.work.home']),
+        Date.parse('2029-01-01')
+      )
+    ).toEqual({ path: '/approvals/home?scope=self-scope', kind: 'work' });
   });
 });

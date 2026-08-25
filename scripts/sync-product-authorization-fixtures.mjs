@@ -95,6 +95,7 @@ const AUTHORIZATION_SNAPSHOT_FIELDS = [
   'bundles',
   'index',
   'latestAlias',
+  'rolloutInventory',
   'schemaVersion',
   'snapshotKey',
 ];
@@ -120,6 +121,19 @@ const AUTHORIZATION_INDEX_VERSION_FIELDS = [
   'checksum',
   'counts',
   'version',
+];
+const EXPECTED_ROLLOUT_PRODUCTS = [
+  'approvals',
+  'calendar',
+  'communications',
+  'dwaion',
+  'hcm',
+  'mail',
+  'messaging',
+  'notifications',
+  'services',
+  'spaces',
+  'workplace',
 ];
 const FIXTURE_BUNDLE_FIELDS = [
   'catalogs',
@@ -305,6 +319,10 @@ function readAuthorizationRegistry(sourcePath) {
             )
           ),
           latestAlias: readJson(aliasPath, 'authorization registry latest alias'),
+          rolloutInventory: readJson(
+            path.join(sourcePath, 'product-surface-rollout-inventory.v1.generated.json'),
+            'product surface rollout inventory'
+          ),
         };
       })()
     : readJson(sourcePath, 'authorization snapshot');
@@ -382,6 +400,31 @@ function readAuthorizationRegistry(sourcePath) {
   }
   if (index.latestChecksum !== bundlesByVersion.get(index.latestVersion)?.checksum) {
     fail('authorization registry latest checksum differs from bundle v3');
+  }
+  const rolloutInventory = requireRecord(
+    source.rolloutInventory,
+    'product surface rollout inventory'
+  );
+  const expectedRolloutFields = [
+    'checksum',
+    'checksumAlgorithm',
+    'inventoryKey',
+    'products',
+    'schemaVersion',
+  ];
+  const rolloutPayload = structuredClone(rolloutInventory);
+  delete rolloutPayload.checksum;
+  if (
+    JSON.stringify(Object.keys(rolloutInventory).sort()) !==
+      JSON.stringify(expectedRolloutFields) ||
+    rolloutInventory.schemaVersion !== 1 ||
+    rolloutInventory.inventoryKey !== 'product-surface-rollout-products.v1' ||
+    rolloutInventory.checksumAlgorithm !== 'SHA-256' ||
+    !SHA_256.test(rolloutInventory.checksum) ||
+    JSON.stringify(rolloutInventory.products) !== JSON.stringify(EXPECTED_ROLLOUT_PRODUCTS) ||
+    sha256(rolloutPayload) !== rolloutInventory.checksum
+  ) {
+    fail('product surface rollout inventory is invalid');
   }
   if (
     JSON.stringify(canonicalize(source.latestAlias)) !==

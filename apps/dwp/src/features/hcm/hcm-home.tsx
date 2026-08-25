@@ -7,8 +7,6 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
-  ContactRound,
-  DatabaseZap,
   GraduationCap,
   HeartPulse,
   LayoutDashboard,
@@ -16,7 +14,6 @@ import {
   ReceiptText,
   RefreshCw,
   ShieldAlert,
-  ShieldCheck,
   UsersRound,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -27,14 +24,13 @@ import {
   EmptyState,
   PageCanvas,
 } from '@dwp-frontend/design-system';
-import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
   getHomeSurfacePreference,
   getHrHome,
   getOrganizationChart,
-  listHrisSyncRuns,
-  updateHomeSurfacePreference,
+  updateHcmHomePreference,
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -68,6 +64,7 @@ import {
 import { HcmRhythmMetric } from './hcm-rhythm-metric';
 import { HCM_HOME_WIDGET_REGISTRY } from './hcm-home-widget-registry';
 import { useHcmExperience } from './use-hcm-experience';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
 
 import type { LucideIcon } from 'lucide-react';
 import type {
@@ -79,7 +76,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { HcmHomeWidgetKey } from './hcm-home-widget-registry';
 
-type HomeMode = 'personal' | 'team' | 'operations';
+type HomeMode = 'personal' | 'team';
 type AttentionPriority = 'critical' | 'attention' | 'routine';
 
 type AttentionSignal = {
@@ -128,10 +125,7 @@ export function HcmHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const experience = useHcmExperience();
-  const hasPersonalIdentity = Boolean(auth.user?.personPublicId);
-  const [homeMode, setHomeMode] = useState<HomeMode>(() =>
-    experience.canOperate && !hasPersonalIdentity ? 'operations' : 'personal'
-  );
+  const [homeMode, setHomeMode] = useState<HomeMode>('personal');
   const [editorOpen, setEditorOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [editBaseVersion, setEditBaseVersion] = useState<number | null>(null);
@@ -142,7 +136,6 @@ export function HcmHome() {
   const hrOverview = useQuery({
     queryKey: ['hcm', 'home-overview', auth.user?.tenantId, auth.user?.userId],
     queryFn: getHrHome,
-    enabled: hasPersonalIdentity || !experience.canOperate,
     staleTime: 30_000,
     retry: 1,
   });
@@ -151,33 +144,21 @@ export function HcmHome() {
 
   useEffect(() => {
     if (homeMode === 'team' && !resolvedIsManager) setHomeMode('personal');
-    if (homeMode === 'operations' && !experience.canOperate) setHomeMode('personal');
-  }, [experience.canOperate, homeMode, resolvedIsManager]);
-
-  useEffect(() => {
-    if (
-      experience.canOperate &&
-      !hrOverview.isLoading &&
-      (hrOverview.isError || !hrOverview.data)
-    ) {
-      setHomeMode('operations');
-    }
-  }, [experience.canOperate, hrOverview.data, hrOverview.isError, hrOverview.isLoading]);
+  }, [homeMode, resolvedIsManager]);
 
   const roleRegistry = useMemo(
     () =>
       visibleWorkspaceRegistry(HCM_HOME_WIDGET_REGISTRY, {
         isManager: resolvedIsManager,
-        canOperate: experience.canOperate,
+        canOperate: false,
       }),
-    [experience.canOperate, resolvedIsManager]
+    [resolvedIsManager]
   );
   const eligibleRegistry = useMemo(
     () =>
       roleRegistry.filter((definition) => {
-        if (homeMode === 'personal') return !['team', 'operations'].includes(definition.key);
-        if (homeMode === 'team') return !['profile', 'operations'].includes(definition.key);
-        return !['profile', 'team'].includes(definition.key);
+        if (homeMode === 'personal') return definition.key !== 'team';
+        return definition.key !== 'profile';
       }),
     [homeMode, roleRegistry]
   );
@@ -195,21 +176,6 @@ export function HcmHome() {
     staleTime: 2 * 60 * 1000,
     retry: 1,
   });
-  const workforceChart = useQuery({
-    queryKey: ['hcm', 'operations-pulse'],
-    queryFn: () => getOrganizationChart({ depth: 12, surface: 'workforce' }),
-    enabled: homeMode === 'operations' && experience.canOperate,
-    staleTime: 60_000,
-    retry: 1,
-  });
-  const syncRuns = useQuery({
-    queryKey: ['hcm', 'operations-sync-runs'],
-    queryFn: () => listHrisSyncRuns(10),
-    enabled: homeMode === 'operations' && experience.canOperate,
-    staleTime: 60_000,
-    retry: false,
-  });
-
   const persistedWidgets = useMemo(() => {
     const reconciled = reconcileWorkspaceWidgets(
       homePreference.data?.layout.widgets,
@@ -259,12 +225,17 @@ export function HcmHome() {
     setDraftPresentation(persistedPresentation);
     closeEditor();
   };
+  const updatePreference = useProductActionMutation(
+    'route.hcm.personal.home-preference-update.action'
+  );
   const preferenceMutation = useMutation({
     mutationFn: (layout: HomePreferenceLayout<HcmHomeWidgetKey>) =>
-      updateHomeSurfacePreference(
-        'hcm-home',
-        layout,
-        editBaseVersion ?? homePreference.data?.version ?? 0
+      updatePreference((authority) =>
+        updateHcmHomePreference(
+          layout,
+          editBaseVersion ?? homePreference.data?.version ?? 0,
+          authority
+        )
       ),
     onSuccess: async (next) => {
       queryClient.setQueryData(
@@ -299,15 +270,7 @@ export function HcmHome() {
     hrOverview.data?.employee.personId,
     teamChart.data?.people,
   ]);
-  const latestRun = useMemo(
-    () =>
-      [...(syncRuns.data ?? [])].sort(
-        (left, right) => new Date(right.startedAt).getTime() - new Date(left.startedAt).getTime()
-      )[0],
-    [syncRuns.data]
-  );
-
-  if (homeMode !== 'operations' && !experience.canOperate && hrOverview.isLoading) {
+  if (hrOverview.isLoading) {
     return (
       <PageCanvas>
         <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
@@ -329,11 +292,7 @@ export function HcmHome() {
     );
   }
 
-  if (
-    homeMode !== 'operations' &&
-    !experience.canOperate &&
-    (hrOverview.isError || !hrOverview.data)
-  ) {
+  if (hrOverview.isError || !hrOverview.data) {
     return (
       <PageCanvas>
         <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
@@ -557,55 +516,11 @@ export function HcmHome() {
         ]
       : []),
   ];
-  const operationsAttention: AttentionSignal[] = [
-    ...(latestRun && !['COMPLETED', 'SUCCEEDED'].includes(latestRun.lifecycleState)
-      ? [
-          {
-            id: 'sync-state',
-            icon: DatabaseZap,
-            title: t('home.needsAttention.syncFailure.title'),
-            description: t('home.needsAttention.syncFailure.description', {
-              source: latestRun.sourceKey,
-            }),
-            value: latestRun.lifecycleState,
-            actionLabel: t('home.needsAttention.inspectSync'),
-            route: '/hr/data/integrations',
-            priority: 'critical' as const,
-          },
-        ]
-      : []),
-    ...(latestRun?.rejectedCount
-      ? [
-          {
-            id: 'sync-rejected',
-            icon: ShieldAlert,
-            title: t('home.needsAttention.rejectedRecords.title'),
-            description: t('home.needsAttention.rejectedRecords.description'),
-            value: t('home.needsAttention.rejectedRecords.value', {
-              count: latestRun.rejectedCount,
-            }),
-            actionLabel: t('home.needsAttention.inspectData'),
-            route: '/hr/data/integrations',
-            priority: 'attention' as const,
-          },
-        ]
-      : []),
-  ];
-  const attentionSignals =
-    homeMode === 'team'
-      ? teamAttention
-      : homeMode === 'operations'
-        ? operationsAttention
-        : personalAttention;
+  const attentionSignals = homeMode === 'team' ? teamAttention : personalAttention;
   const attentionUnavailable =
     homeMode === 'team'
       ? !domainAvailable('TEAM')
-      : homeMode === 'operations'
-        ? workforceChart.isLoading ||
-          syncRuns.isLoading ||
-          workforceChart.isError ||
-          syncRuns.isError
-        : !domainAvailable('TIME') || !domainAvailable('BENEFITS') || !domainAvailable('TALENT');
+      : !domainAvailable('TIME') || !domainAvailable('BENEFITS') || !domainAvailable('TALENT');
   const personalTools: ToolLink[] = [
     {
       id: 'time',
@@ -669,38 +584,7 @@ export function HcmHome() {
     },
     personalTools[4],
   ];
-  const operationsTools: ToolLink[] = [
-    {
-      id: 'operations',
-      icon: DatabaseZap,
-      label: t('home.tools.operations'),
-      description: t('home.tools.descriptions.operations'),
-      route: '/hr/operations',
-    },
-    {
-      id: 'workforce',
-      icon: UsersRound,
-      label: t('home.tools.workforce'),
-      description: t('home.tools.descriptions.workforce'),
-      route: '/hr/operations/people',
-    },
-    {
-      id: 'assignments',
-      icon: ContactRound,
-      label: t('home.tools.assignments'),
-      description: t('home.tools.descriptions.assignments'),
-      route: '/hr/operations/assignments',
-    },
-    {
-      id: 'integrations',
-      icon: DatabaseZap,
-      label: t('home.tools.integrations'),
-      description: t('home.tools.descriptions.integrations'),
-      route: '/hr/data/integrations',
-    },
-  ];
-  const tools =
-    homeMode === 'team' ? teamTools : homeMode === 'operations' ? operationsTools : personalTools;
+  const tools = homeMode === 'team' ? teamTools : personalTools;
 
   const timeStatus = currentTime?.status ?? 'UNAVAILABLE';
   const timeStages: Array<{
@@ -748,13 +632,9 @@ export function HcmHome() {
       ? domainAvailable('TEAM')
         ? t('home.header.teamSummary', { count: overview.teamPendingCount })
         : t('home.header.teamUnavailableSummary')
-      : homeMode === 'operations'
-        ? t('home.header.operationsSummary', {
-            quality: workforceChart.data?.analysis.dataQualityScore ?? t('home.states.unavailable'),
-          })
-        : currentTime?.exceptionCount
-          ? t('home.header.personalExceptionSummary', { count: currentTime.exceptionCount })
-          : t('home.header.personalSummary');
+      : currentTime?.exceptionCount
+        ? t('home.header.personalExceptionSummary', { count: currentTime.exceptionCount })
+        : t('home.header.personalSummary');
 
   const openRhythm = () => {
     const target = document.getElementById('hcm-rhythm');
@@ -1037,63 +917,6 @@ export function HcmHome() {
                     />
                   </Box>
                 )}
-                {homeMode === 'operations' && (
-                  <Box
-                    sx={{
-                      display: 'grid',
-                      gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-                      gap: 0.8,
-                    }}
-                  >
-                    <HcmRhythmMetric
-                      icon={UsersRound}
-                      label={t('home.rhythm.operations.workforce')}
-                      value={
-                        workforceChart.data
-                          ? formatNumber(workforceChart.data.metrics.activeHeadcount)
-                          : t('home.states.unavailable')
-                      }
-                      detail={t('home.rhythm.operations.workforceDetail')}
-                      onClick={() => navigate('/hr/operations/people')}
-                    />
-                    <HcmRhythmMetric
-                      icon={ShieldCheck}
-                      label={t('home.rhythm.operations.quality')}
-                      value={
-                        workforceChart.data
-                          ? `${workforceChart.data.analysis.dataQualityScore}%`
-                          : t('home.states.unavailable')
-                      }
-                      detail={t('home.rhythm.operations.qualityDetail')}
-                      onClick={() => navigate('/hr/operations')}
-                    />
-                    <HcmRhythmMetric
-                      icon={DatabaseZap}
-                      label={t('home.rhythm.operations.sync')}
-                      value={latestRun?.lifecycleState ?? t('home.states.unavailable')}
-                      detail={
-                        latestRun?.completedAt
-                          ? formatDate(latestRun.completedAt, {
-                              dateStyle: 'medium',
-                              timeStyle: 'short',
-                            })
-                          : t('home.rhythm.operations.noSync')
-                      }
-                      onClick={() => navigate('/hr/data/integrations')}
-                    />
-                    <HcmRhythmMetric
-                      icon={ContactRound}
-                      label={t('home.rhythm.operations.positions')}
-                      value={
-                        workforceChart.data
-                          ? formatNumber(workforceChart.data.metrics.openPositionCount)
-                          : t('home.states.unavailable')
-                      }
-                      detail={t('home.rhythm.operations.positionsDetail')}
-                      onClick={() => navigate('/hr/operations/assignments')}
-                    />
-                  </Box>
-                )}
               </Box>
             </HcmSectionSurface>
           </Box>
@@ -1246,60 +1069,6 @@ export function HcmHome() {
             )}
           </HcmSectionSurface>
         );
-      case 'operations':
-        return (
-          <HcmSectionSurface
-            eyebrow={t('home.operations.eyebrow')}
-            title={t('home.operations.title')}
-            meta={t('home.operations.meta')}
-            action={
-              <ActionButton intent="quiet" size="small" onClick={() => navigate('/hr/operations')}>
-                {t('home.operations.open')}
-              </ActionButton>
-            }
-          >
-            <Stack gap={0} sx={{ px: { xs: 1.5, md: 2 }, pb: 2 }}>
-              {[
-                [
-                  t('home.operations.activeWorkforce'),
-                  workforceChart.data
-                    ? formatNumber(workforceChart.data.metrics.activeHeadcount)
-                    : t('home.states.unavailable'),
-                ],
-                [
-                  t('home.operations.dataQuality'),
-                  workforceChart.data
-                    ? `${workforceChart.data.analysis.dataQualityScore}%`
-                    : t('home.states.unavailable'),
-                ],
-                [
-                  t('home.operations.latestSync'),
-                  latestRun?.completedAt
-                    ? formatDate(latestRun.completedAt, {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })
-                    : t('home.operations.noSync'),
-                ],
-              ].map(([label, value]) => (
-                <Stack
-                  key={label}
-                  direction="row"
-                  justifyContent="space-between"
-                  gap={2}
-                  sx={{ py: 1.1, borderBottom: 1, borderColor: 'divider' }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    {label}
-                  </Typography>
-                  <Typography variant="body2" fontWeight={780} textAlign="right">
-                    {value}
-                  </Typography>
-                </Stack>
-              ))}
-            </Stack>
-          </HcmSectionSurface>
-        );
     }
   };
 
@@ -1386,7 +1155,7 @@ export function HcmHome() {
           </Typography>
         </Box>
         <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.8}>
-          {((hrOverview.data && resolvedIsManager) || experience.canOperate) && (
+          {hrOverview.data && resolvedIsManager && (
             <ToggleButtonGroup
               exclusive
               size="small"
@@ -1400,9 +1169,6 @@ export function HcmHome() {
               )}
               {hrOverview.data && resolvedIsManager && (
                 <ToggleButton value="team">{t('home.mode.team')}</ToggleButton>
-              )}
-              {experience.canOperate && (
-                <ToggleButton value="operations">{t('home.mode.operations')}</ToggleButton>
               )}
             </ToggleButtonGroup>
           )}

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { useQueries } from '@tanstack/react-query';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
@@ -8,7 +8,7 @@ import {
   useProductSurfaceAuthority,
 } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
-import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
+import { ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
 import {
   isSegmentOwnedPath,
   matchesProductRoute,
@@ -18,6 +18,12 @@ import {
 import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
 import { productSurfaceOperationCoordinator } from '../../components/product-surface-operation-coordinator';
 import { ProductSurfaceCanaryProvider } from './product-surface-canary-runtime';
+import {
+  purgeForeignProductSurfaceLastRoutes,
+  purgeProductSurfaceLastRoutes,
+  readProductSurfaceLastRoute,
+  storeProductSurfaceLastRoute,
+} from './product-surface-last-route';
 import {
   mapProductSurfaceAccessError,
   mapProductSurfaceDirectEvaluation,
@@ -41,16 +47,16 @@ import type {
 } from './product-surface-context';
 import type { ProductSurfaceOperationTarget } from '../../components/product-surface-operation-coordinator';
 
-const CANARY_PRODUCTS = ['approvals', 'communications', 'services'] as const;
+export const GOVERNED_SURFACE_PRODUCT_IDS = GOVERNED_PRODUCT_MANIFESTS.map(
+  (manifest) => manifest.id
+);
 const INVALID_FLAGS: ProductSurfaceRolloutFlags = {
   contextShadow: false,
   capabilityEnforcement: true,
   surfaceUi: false,
   surfaceUiEvaluation: 'unavailable',
 };
-const CANARY_ROUTES = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) =>
-  (CANARY_PRODUCTS as readonly string[]).includes(route.productId)
-);
+export const GOVERNED_SURFACE_PAGE_ROUTES = ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE;
 const CANARY_MANIFESTS = GOVERNED_PRODUCT_MANIFESTS;
 
 type ProductSurfaceNavigationObservation = Readonly<{
@@ -69,7 +75,10 @@ function sameOperationTarget(
 
 export function resolveGovernedSurfaceOperationTarget(
   surfaceId: string | undefined,
-  routes: readonly Pick<(typeof CANARY_ROUTES)[number], 'productId' | 'surfaceId'>[] = CANARY_ROUTES
+  routes: readonly Pick<
+    (typeof GOVERNED_SURFACE_PAGE_ROUTES)[number],
+    'productId' | 'surfaceId'
+  >[] = GOVERNED_SURFACE_PAGE_ROUTES
 ): ProductSurfaceOperationTarget | undefined {
   if (!surfaceId) return undefined;
   const owners = [
@@ -94,16 +103,16 @@ export function observeProductSurfaceLocationChange(
 
 export function resolveActiveGovernedSurfaceId(
   pathname: string,
-  routes: readonly Pick<(typeof CANARY_ROUTES)[number], 'pattern' | 'surfaceId'>[],
+  routes: readonly Pick<(typeof GOVERNED_SURFACE_PAGE_ROUTES)[number], 'pattern' | 'surfaceId'>[],
   manifests: readonly ProductSurfaceManifest[] = []
 ): string | undefined {
-  const matches = routes.filter((route) =>
-    matchPath({ path: route.pattern, end: true, caseSensitive: false }, pathname)
-  );
-  if (matches.length === 1) return matches[0]!.surfaceId;
-  if (matches.length > 1) return undefined;
+  const canonicalPathname = decodeGovernedPathname(pathname);
+  const matches = matchingGovernedPageRoutes(canonicalPathname, routes);
+  const pageRoute = highestSpecificityPageRoute(matches);
+  if (pageRoute) return pageRoute.surfaceId;
+  if (matches.length > 0) return undefined;
 
-  const normalizedPath = normalizeProductPath(pathname);
+  const normalizedPath = normalizeProductPath(canonicalPathname);
   const candidates = manifests.flatMap((manifest) => {
     if (
       normalizedPath === manifest.basePath ||
@@ -126,6 +135,101 @@ export function resolveActiveGovernedSurfaceId(
   )
     ? undefined
     : best.surfaceId;
+}
+
+export function resolveActiveGovernedPageRoute(
+  pathname: string
+): (typeof GOVERNED_SURFACE_PAGE_ROUTES)[number] | undefined;
+export function resolveActiveGovernedPageRoute<T extends { pattern: string }>(
+  pathname: string,
+  routes: readonly T[]
+): T | undefined;
+export function resolveActiveGovernedPageRoute(
+  pathname: string,
+  routes: readonly { pattern: string }[] = GOVERNED_SURFACE_PAGE_ROUTES
+) {
+  return highestSpecificityPageRoute(
+    matchingGovernedPageRoutes(decodeGovernedPathname(pathname), routes)
+  );
+}
+
+function routeSegments(path: string): string[] {
+  return normalizeProductPath(path).split('/').filter(Boolean);
+}
+
+function decodeGovernedPathname(pathname: string): string {
+  try {
+    return decodeURI(pathname);
+  } catch {
+    return pathname;
+  }
+}
+
+function isDynamicSegment(segment: string): boolean {
+  return segment === '*' || segment.startsWith(':');
+}
+
+/**
+ * A dynamic product detail route must never claim a segment reserved by a static sibling.
+ * For example, `/spaces/:spaceKey` cannot own `/spaces/admin`, even when the management
+ * surface index has not redirected to its first PAGE yet.
+ */
+function isShadowedDynamicMatch<T extends { pattern: string }>(
+  route: T,
+  pathname: string,
+  routes: readonly T[]
+): boolean {
+  const patternSegments = routeSegments(route.pattern);
+  if (!patternSegments.some(isDynamicSegment)) return false;
+  const pathnameSegments = routeSegments(pathname);
+  return patternSegments.some(
+    (segment, index) =>
+      isDynamicSegment(segment) &&
+      routes.some((candidate) => {
+        if (candidate === route) return false;
+        const candidateSegments = routeSegments(candidate.pattern);
+        const reservedSegment = candidateSegments[index];
+        if (!reservedSegment || isDynamicSegment(reservedSegment)) return false;
+        if (reservedSegment.toLowerCase() !== pathnameSegments[index]?.toLowerCase()) return false;
+        return candidateSegments.slice(0, index).every((candidateSegment, prefixIndex) => {
+          const actualSegment = pathnameSegments[prefixIndex];
+          return (
+            Boolean(actualSegment) &&
+            (isDynamicSegment(candidateSegment) ||
+              candidateSegment.toLowerCase() === actualSegment!.toLowerCase())
+          );
+        });
+      })
+  );
+}
+
+function matchingGovernedPageRoutes<T extends { pattern: string }>(
+  pathname: string,
+  routes: readonly T[]
+): T[] {
+  return routes.filter(
+    (route) =>
+      matchPath({ path: route.pattern, end: true, caseSensitive: false }, pathname) &&
+      !isShadowedDynamicMatch(route, pathname, routes)
+  );
+}
+
+function pageRouteSpecificity(pattern: string): number {
+  return routeSegments(pattern).reduce(
+    (score, segment) => score + (segment === '*' ? 1 : segment.startsWith(':') ? 3 : 10),
+    0
+  );
+}
+
+function highestSpecificityPageRoute<T extends { pattern: string }>(routes: readonly T[]) {
+  if (routes.length === 0) return undefined;
+  const ranked = [...routes].sort(
+    (left, right) => pageRouteSpecificity(right.pattern) - pageRouteSpecificity(left.pattern)
+  );
+  const best = ranked[0]!;
+  return ranked[1] && pageRouteSpecificity(ranked[1].pattern) === pageRouteSpecificity(best.pattern)
+    ? undefined
+    : best;
 }
 
 function effectiveContext(context: ProductSurfaceEffectiveContext): EffectiveProductSurfaceContext {
@@ -183,6 +287,7 @@ function directEvaluation(data: ProductSurfaceEvaluationData): ProductSurfaceDir
     expiredAt: data.expiredAt ?? undefined,
     requiredAssurance: data.requiredAssurance ?? undefined,
     requestPolicyRef: data.requestPolicyRef ?? undefined,
+    correlationId: data.correlationId ?? undefined,
   };
 }
 
@@ -190,13 +295,18 @@ function decisionFromError(error: unknown): SurfaceDecision {
   if (!(error instanceof HttpError)) return { state: 'authority-unavailable' };
   const details =
     error.details && typeof error.details === 'object'
-      ? (error.details as { errorCode?: unknown; decisionRevision?: unknown })
+      ? (error.details as {
+          errorCode?: unknown;
+          decisionRevision?: unknown;
+          correlationId?: unknown;
+        })
       : undefined;
   return mapProductSurfaceAccessError({
     status: error.status,
     reasonCode: typeof details?.errorCode === 'string' ? details.errorCode : undefined,
     decisionRevision:
       typeof details?.decisionRevision === 'string' ? details.decisionRevision : undefined,
+    correlationId: typeof details?.correlationId === 'string' ? details.correlationId : undefined,
   });
 }
 
@@ -217,7 +327,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
   const productFlags = useMemo(
     () =>
       Object.fromEntries(
-        CANARY_PRODUCTS.map((productKey) => {
+        GOVERNED_SURFACE_PRODUCT_IDS.map((productKey) => {
           const resolution = authority.rolloutForProduct(productKey);
           return [
             productKey,
@@ -237,7 +347,16 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
     [location.search]
   );
   const activeSurfaceId = useMemo(
-    () => resolveActiveGovernedSurfaceId(location.pathname, CANARY_ROUTES, CANARY_MANIFESTS),
+    () =>
+      resolveActiveGovernedSurfaceId(
+        location.pathname,
+        GOVERNED_SURFACE_PAGE_ROUTES,
+        CANARY_MANIFESTS
+      ),
+    [location.pathname]
+  );
+  const activePageRoute = useMemo(
+    () => resolveActiveGovernedPageRoute(location.pathname),
     [location.pathname]
   );
   const activeOperationTarget = useMemo(
@@ -263,7 +382,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
   }, [activeOperationTarget, location.key, requestedScope]);
   const requests = useMemo(() => {
     if (!snapshot || !envelope) return [];
-    return CANARY_ROUTES.flatMap((route) => {
+    return GOVERNED_SURFACE_PAGE_ROUTES.flatMap((route) => {
       if (!productFlags[route.productId]?.capabilityEnforcement) return [];
       const context = envelope.contexts.find(
         (candidate) =>
@@ -355,6 +474,74 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
       ),
     [requests, routeDecisions]
   );
+  const previousStorageRevision = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (auth.isLoading) return;
+    if (!auth.user) {
+      purgeProductSurfaceLastRoutes();
+      previousStorageRevision.current = undefined;
+      return;
+    }
+    purgeForeignProductSurfaceLastRoutes({
+      tenantId: String(auth.user.tenantId),
+      actorId: String(auth.user.userId),
+    });
+  }, [auth.isLoading, auth.user]);
+  useEffect(() => {
+    const revision = envelope?.decisionRevision;
+    const previous = previousStorageRevision.current;
+    if (previous && revision && previous !== revision) purgeProductSurfaceLastRoutes();
+    if (revision) previousStorageRevision.current = revision;
+  }, [envelope?.decisionRevision]);
+  useEffect(() => {
+    if (
+      !auth.user ||
+      !activePageRoute ||
+      activePageRoute.pattern.includes(':') ||
+      activePageRoute.pattern.includes('*')
+    ) {
+      return;
+    }
+    const decision = routeDecisions[activePageRoute.routeContractKey];
+    if (decision?.state !== 'allowed' || decision.context.plane !== 'work') return;
+    storeProductSurfaceLastRoute(
+      {
+        tenantId: String(auth.user.tenantId),
+        actorId: String(auth.user.userId),
+        productId: activePageRoute.productId,
+        surfaceId: activePageRoute.surfaceId,
+      },
+      {
+        routeId: activePageRoute.routeId,
+        decisionRevision: decision.decisionRevision,
+        expiresAt: decision.revalidateAt,
+      },
+      undefined,
+      authority.serverNowMs
+    );
+  }, [activePageRoute, auth.user, authority.serverNowMs, routeDecisions]);
+  const lastAllowedWorkRouteIds = useMemo(() => {
+    const navigationStorageReadKey = location.key;
+    if (!navigationStorageReadKey || !auth.user || !envelope) return {};
+    return Object.fromEntries(
+      envelope.contexts
+        .filter((context) => context.plane === 'work')
+        .flatMap((context) => {
+          const routeId = readProductSurfaceLastRoute(
+            {
+              tenantId: String(auth.user!.tenantId),
+              actorId: String(auth.user!.userId),
+              productId: context.productKey,
+              surfaceId: context.surfaceKey,
+            },
+            envelope.decisionRevision,
+            undefined,
+            authority.serverNowMs
+          );
+          return routeId ? [[context.surfaceKey, routeId] as const] : [];
+        })
+    );
+  }, [auth.user, authority.serverNowMs, envelope, location.key]);
   const canaryAuthority = useMemo<ProductSurfaceCanaryAuthority>(
     () => ({
       flags: INVALID_FLAGS,
@@ -366,6 +553,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
       pendingRoutes,
       pendingSurfaces,
       serverNowMs: authority.serverNowMs,
+      lastAllowedWorkRouteIds,
       revalidate: authority.revalidate,
     }),
     [
@@ -373,6 +561,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
       authority.serverNowMs,
       authority.status,
       envelope,
+      lastAllowedWorkRouteIds,
       productFlags,
       pendingRoutes,
       pendingSurfaces,

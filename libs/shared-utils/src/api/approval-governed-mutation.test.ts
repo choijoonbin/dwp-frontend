@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildProductSurfaceGovernedMutationHeaders,
   productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
   PRODUCT_SURFACE_EXPECTED_DECISION_REVISION_HEADER,
   PRODUCT_SURFACE_EXPECTED_OBJECT_VERSION_HEADER,
   PRODUCT_SURFACE_IDEMPOTENCY_KEY_HEADER,
@@ -71,5 +72,43 @@ describe('Product surface governed mutation headers', () => {
         stepUp: { ...authority.stepUp, decisionRevision: 'issuer-other-revision' },
       })
     ).toThrowError('Product surface governed step-up proof is invalid.');
+  });
+
+  it('fails closed when a secure HIGH command omits or tampers with its challenge', () => {
+    expect(() =>
+      productSurfaceHighRiskMutationConfig(
+        {
+          mode: 'SECURE',
+          rolloutState: '110',
+          expectedDecisionRevision: 'revision-1',
+          contextKey: 'context-1',
+          contextScopeKey: 'scope-1',
+          objectVersion: 3,
+          idempotencyKey: 'attempt-1',
+        },
+        { objectVersionHeader: true }
+      )
+    ).toThrowError('Product surface governed HIGH-risk mutation authority is incomplete.');
+    expect(() =>
+      productSurfaceHighRiskMutationConfig(
+        { ...authority, stepUp: { ...authority.stepUp, challenge: ' ' } },
+        { objectVersionHeader: true }
+      )
+    ).toThrowError('Product surface governed step-up proof is invalid.');
+    expect(() =>
+      productSurfaceHighRiskMutationConfig(
+        { ...authority, objectVersion: undefined },
+        { objectVersionHeader: true }
+      )
+    ).toThrowError('Product surface governed HIGH-risk mutation authority is incomplete.');
+  });
+
+  it('requires HIGH proof while honoring body-bound versus header-bound object versions', () => {
+    expect(
+      productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: false }).headers
+    ).not.toHaveProperty(PRODUCT_SURFACE_EXPECTED_OBJECT_VERSION_HEADER);
+    expect(
+      productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true }).headers
+    ).toHaveProperty(PRODUCT_SURFACE_EXPECTED_OBJECT_VERSION_HEADER, '7');
   });
 });

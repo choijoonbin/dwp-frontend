@@ -134,6 +134,21 @@ describe('effective product surface context', () => {
     expect(mapProductSurfaceAccessError({ status: 503 })).toEqual({
       state: 'authority-unavailable',
     });
+    expect(
+      mapProductSurfaceDirectEvaluation(
+        { decision: 'ROUTE_DENIED', correlationId: 'correlation-direct-1' },
+        { productKey: 'example', surfaceKey: 'example.admin' }
+      )
+    ).toMatchObject({
+      state: 'route-denied',
+      detail: { correlationId: 'correlation-direct-1' },
+    });
+    expect(
+      mapProductSurfaceAccessError({ status: 503, correlationId: 'correlation-error-1' })
+    ).toMatchObject({
+      state: 'authority-unavailable',
+      detail: { correlationId: 'correlation-error-1' },
+    });
   });
 
   it('projects navigation from exact grants without MANAGE or cross-scope fallback', () => {

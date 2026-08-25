@@ -255,7 +255,12 @@ export function MyPrivilegedAccess() {
   };
 
   return (
-    <Box component="section" sx={{ mt: 5 }}>
+    <Box
+      component="section"
+      id="privileged-access"
+      tabIndex={-1}
+      sx={{ mt: 5, scrollMarginTop: 80 }}
+    >
       <Stack direction="row" alignItems="center" gap={1}>
         <KeyRound size={20} strokeWidth={1.8} aria-hidden="true" />
         <Typography component="h2" variant="h6">

@@ -19,6 +19,25 @@ export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   indexChecksum: 'dbe810156eabb2e81d21a70d1d1746f2566a8ef2ed6b9331ce334a25d2f2617f',
 } as const;
 
+export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
+  inventoryKey: 'product-surface-rollout-products.v1',
+  checksum: '841e2cd03d6eac70f0787160d77532d56c309af4c63214c2dc50e2101e303aa2',
+} as const;
+
+export const PRODUCT_SURFACE_ROLLOUT_PRODUCTS = [
+  'approvals',
+  'calendar',
+  'communications',
+  'dwaion',
+  'hcm',
+  'mail',
+  'messaging',
+  'notifications',
+  'services',
+  'spaces',
+  'workplace',
+] as const;
+
 export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
   {
     routeContractKey: 'route.approvals.admin.form-category-create.action',

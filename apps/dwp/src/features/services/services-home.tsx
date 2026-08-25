@@ -14,7 +14,7 @@ import {
   ResourcePageHeader,
 } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { getMyServiceRequests, getServiceCatalog } from '@dwp-frontend/shared-utils';
+import { getServiceHomeCatalog, getServiceHomeRequests } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -27,9 +27,12 @@ const completedStates = new Set(['RESOLVED', 'CLOSED', 'CANCELLED']);
 export function ServicesHome() {
   const { t, i18n } = useTranslation('services');
   const query = useQuery({
-    queryKey: ['services', 'home'],
-    queryFn: async () => {
-      const [catalog, requests] = await Promise.all([getServiceCatalog(), getMyServiceRequests()]);
+    queryKey: ['services', 'home', 'view', 'absent'],
+    queryFn: async ({ signal }) => {
+      const [catalog, requests] = await Promise.all([
+        getServiceHomeCatalog(signal),
+        getServiceHomeRequests(signal),
+      ]);
       return { catalog, requests };
     },
     staleTime: 30_000,

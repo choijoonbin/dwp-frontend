@@ -94,7 +94,8 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const isAdmin = canEnterCompanyAdministration(
     roles,
     isAppResourceEntitled('APP.ADMINISTRATION', permissions),
-    Boolean(supportContext.data)
+    Boolean(supportContext.data),
+    auth.user?.resourceRoles
   );
   const governedEntries = useGovernedProductEntryCatalog();
   const hasProductManagement = governedEntries.some((entry) => entry.management);

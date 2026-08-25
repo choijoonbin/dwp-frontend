@@ -32,6 +32,9 @@ import type {
   WorkforceReferenceCatalog,
   WorkforceReferenceValue,
 } from '@dwp-frontend/shared-utils';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 function ReferenceEditDialog({
   catalog,
@@ -139,20 +142,31 @@ function ReferenceEditDialog({
 export function WorkforceReferenceData() {
   const { t, i18n } = useTranslation('workforce');
   const display = useDisplayDictionary();
-  const locale = i18n.resolvedLanguage ?? i18n.language ?? 'en';
   const auth = useAuth();
+  const locale = i18n.resolvedLanguage ?? i18n.language ?? 'en';
   const toast = useToast();
   const queryClient = useQueryClient();
   const [catalogKey, setCatalogKey] = useState<string>();
   const [editing, setEditing] = useState<WorkforceReferenceValue | null>(null);
   const [busy, setBusy] = useState(false);
+  const updateReference = useProductActionMutation('route.hcm.management.reference-update.action');
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.management',
+  });
   const query = useQuery({
-    queryKey: ['workforce', 'reference-data', locale],
-    queryFn: () => listWorkforceReferenceCatalogs(locale),
+    queryKey: ['workforce', 'reference-data', locale, ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      listWorkforceReferenceCatalogs(locale, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
   });
   const catalogs = query.data ?? [];
   const selected = catalogs.find((catalog) => catalog.catalogKey === catalogKey) ?? catalogs[0];
-  const canEdit = (auth.user?.roles ?? []).some((role) => ['ADMIN', 'HR_ADMIN'].includes(role));
+  const capabilityAccess = useProductSurfaceCapabilityAccess();
+  const canEdit = capabilityAccess.governed
+    ? capabilityAccess.hasWritableCapability('hcm.reference.update')
+    : (auth.user?.roles ?? []).some((role) => ['ADMIN', 'HR_ADMIN'].includes(role));
 
   const columns = useMemo<GridColDef<WorkforceReferenceValue>[]>(
     () => [
@@ -340,10 +354,15 @@ export function WorkforceReferenceData() {
           if (!editing) return;
           setBusy(true);
           try {
-            await updateWorkforceReferenceValue(selected.catalogKey, editing.code, locale, {
-              ...request,
-              version: editing.version,
-            });
+            await updateReference((authority) =>
+              updateWorkforceReferenceValue(
+                selected.catalogKey,
+                editing.code,
+                locale,
+                { ...request, version: editing.version },
+                authority
+              )
+            );
             await queryClient.invalidateQueries({ queryKey: ['workforce', 'reference-data'] });
             toast.success(t('reference.saved'));
             setEditing(null);

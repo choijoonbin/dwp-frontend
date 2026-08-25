@@ -633,6 +633,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** @description Two-person, responsibility-only control-plane bootstrap exception. Only APP_OWNER, APP_ACCESS_APPROVER, APP_ACCESS_MANAGER, and APP_ACCESS_REVIEWER are accepted; APP_OWNER is Catalog-authority-only and this path cannot issue product capabilities, duties, or APP_CONFIG_ADMIN. All product specialist access must use the three-stage preset workflow. */
         post: operations["auth_requestAssignment"];
         delete?: never;
         options?: never;
@@ -649,6 +650,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** @description Completes the two-person, responsibility-only bootstrap with an exact-scope APP_ACCESS_APPROVER, except APP_OWNER which requires independent APP_CATALOG_ADMIN authority. Product specialist rows, capabilities, and duties cannot be decided here. */
         post: operations["auth_decideAssignment"];
         delete?: never;
         options?: never;
@@ -669,7 +671,153 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        /** @description Revokes a legacy control-plane responsibility with an exact-scope APP_ACCESS_MANAGER, except APP_OWNER which only APP_CATALOG_ADMIN can revoke. Broad tenant roles alone are forbidden. */
         patch: operations["auth_revokeAssignment"];
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_presetAssignments"];
+        put?: never;
+        post: operations["auth_requestPresetAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/assignments/{assignmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_presetAssignment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/assignments/{assignmentId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Activates an independently approved preset with an exact-scope APP_ACCESS_MANAGER. The requester, approver, activator, and target remain separated. */
+        post: operations["auth_activatePresetAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/assignments/{assignmentId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decidePresetAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/assignments/{assignmentId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["auth_revokePresetAssignment"];
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_presetCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/reviews/{reviewId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decidePresetReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/self-service-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_selfServiceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/app-governance/presets/self-service-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_selfServiceRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/auth/admin/access/app-governance/resource-sets": {
@@ -2753,6 +2901,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/people/v1/hr/team": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_team"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hr/team/absence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_teamAbsence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hr/team/absence/{requestId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_decideTeamLeaveRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hr/team/time": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_teamTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hr/team/time/{cardId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_decideTeamTimeCard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/people/v1/hr/time": {
         parameters: {
             query?: never;
@@ -3183,6 +3411,38 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["people_retry_1"];
+        trace?: never;
+    };
+    "/api/people/v1/workforce/operations/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/organization/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_listOrganizationCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/people/v1/workforce/organization/chart": {
@@ -10469,6 +10729,11 @@ export interface components {
             tenantId?: number;
             tenantKey?: string;
         };
+        auth_ActivateAppAdminPresetRequest: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
         auth_ActivationRequest: {
             /** Format: int32 */
             durationMinutes: number;
@@ -10505,6 +10770,26 @@ export interface components {
         auth_ApiResponseActivationSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_ActivationSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseAppAdminPresetAssignment: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AppAdminPresetAssignment"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseAppAdminPresetReview: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AppAdminPresetReview"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -10665,6 +10950,36 @@ export interface components {
         auth_ApiResponseItemSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_ItemSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseListAppAdminPreset: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AppAdminPreset"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseListAppAdminPresetAssignment: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AppAdminPresetAssignment"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseListAppAdminPresetSelfServiceOption: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AppAdminPresetSelfServiceOption"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -10992,6 +11307,142 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_AppAdminPreset: {
+            appResourceKey?: string;
+            /** Format: int64 */
+            catalogVersion?: number;
+            description?: string;
+            displayName?: string;
+            duties?: components["schemas"]["auth_AppAdminPresetDuty"][];
+            presetCode?: string;
+            productKey?: string;
+            requestable?: boolean;
+            responsibilityCode?: string;
+            riskTier?: string;
+            unavailableReason?: string;
+        };
+        auth_AppAdminPresetAssignment: {
+            /** Format: date-time */
+            activatedAt?: string;
+            /** Format: int64 */
+            activatedBy?: number;
+            activatedByName?: string;
+            activationReason?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            approvedByName?: string;
+            assignmentSource?: string;
+            /** Format: int64 */
+            catalogVersion?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            duties?: components["schemas"]["auth_AppAdminPresetDutyAssignment"][];
+            justification?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            presetAssignmentId?: string;
+            presetCode?: string;
+            presetName?: string;
+            principalName?: string;
+            principalRef?: string;
+            principalType?: string;
+            productKey?: string;
+            requestChannel?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            requestedByName?: string;
+            /** Format: uuid */
+            resourceSetId?: string;
+            resourceSetKey?: string;
+            resourceSetName?: string;
+            /** Format: uuid */
+            responsibilityAssignmentId?: string;
+            /** Format: date-time */
+            reviewDueAt?: string;
+            revocationReason?: string;
+            /** Format: date-time */
+            revokedAt?: string;
+            /** Format: int64 */
+            revokedBy?: number;
+            revokedByName?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validTo?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        auth_AppAdminPresetDecisionRequest: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        auth_AppAdminPresetDuty: {
+            auditPolicyException?: boolean;
+            capabilityContractKeys?: string[];
+            dutyCode?: string;
+            legacyRoleCode?: string;
+            resourceKey?: string;
+            riskTier?: string;
+        };
+        auth_AppAdminPresetDutyAssignment: {
+            /** Format: uuid */
+            assignmentId?: string;
+            dutyCode?: string;
+            lifecycleState?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        auth_AppAdminPresetResourceSetOption: {
+            /** Format: uuid */
+            resourceSetId?: string;
+            resourceSetKey?: string;
+            resourceSetName?: string;
+        };
+        auth_AppAdminPresetReview: {
+            /** Format: date-time */
+            createdAt?: string;
+            dutyCode?: string;
+            evidence?: {
+                [key: string]: unknown;
+            };
+            lifecycleState?: string;
+            reasonCode?: string;
+            resolutionReason?: string;
+            /** Format: date-time */
+            resolvedAt?: string;
+            /** Format: int64 */
+            resolvedBy?: number;
+            /** Format: uuid */
+            resourceSetId?: string;
+            resourceSetName?: string;
+            /** Format: uuid */
+            reviewId?: string;
+            sourceRoleCode?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            userId?: number;
+            userName?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        auth_AppAdminPresetReviewDecisionRequest: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        auth_AppAdminPresetSelfServiceOption: {
+            preset?: components["schemas"]["auth_AppAdminPreset"];
+            resourceSets?: components["schemas"]["auth_AppAdminPresetResourceSetOption"][];
+        };
         auth_ApplicationContext: null;
         auth_ApprovalDecisionRequest: {
             decision: string;
@@ -11134,6 +11585,18 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        auth_CreateAppAdminPresetAssignmentRequest: {
+            justification: string;
+            presetCode: string;
+            principalRef: string;
+            principalType: string;
+            /** Format: uuid */
+            resourceSetId: string;
+            /** Format: date-time */
+            reviewDueAt: string;
+            /** Format: date-time */
+            validTo: string;
+        };
         auth_CreateAssignmentRequest: {
             justification: string;
             principalRef: string;
@@ -11230,6 +11693,16 @@ export interface components {
             name: string;
             privileged?: boolean;
         };
+        auth_CreateSelfServicePresetRequest: {
+            justification: string;
+            presetCode: string;
+            /** Format: uuid */
+            resourceSetId: string;
+            /** Format: date-time */
+            reviewDueAt: string;
+            /** Format: date-time */
+            validTo: string;
+        };
         auth_CredentialIssued: {
             bearerToken?: string;
             connector?: components["schemas"]["auth_ConnectorSummary"];
@@ -11246,6 +11719,9 @@ export interface components {
         auth_Dashboard: {
             assignments?: components["schemas"]["auth_Assignment"][];
             metrics?: components["schemas"]["auth_Metrics"];
+            presetAssignments?: components["schemas"]["auth_AppAdminPresetAssignment"][];
+            presetCatalog?: components["schemas"]["auth_AppAdminPreset"][];
+            presetReviews?: components["schemas"]["auth_AppAdminPresetReview"][];
             principals?: components["schemas"]["auth_Principal"][];
             resourceSets?: components["schemas"]["auth_ResourceSet"][];
             responsibilities?: components["schemas"]["auth_Responsibility"][];
@@ -12016,6 +12492,11 @@ export interface components {
             riskTier?: string;
             /** Format: int32 */
             sortOrder?: number;
+        };
+        auth_RevokeAppAdminPresetRequest: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
         };
         auth_RevokeAssignmentRequest: {
             reason: string;
@@ -13887,6 +14368,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        people_ApiResponseListOrganizationCandidate: {
+            correlationId?: string;
+            data?: components["schemas"]["people_OrganizationCandidate"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         people_ApiResponseListOrganizationOption: {
             correlationId?: string;
             data?: components["schemas"]["people_OrganizationOption"][];
@@ -14097,6 +14588,36 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        people_ApiResponseTeamAbsenceWorkspace: {
+            correlationId?: string;
+            data?: components["schemas"]["people_TeamAbsenceWorkspace"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseTeamTimeWorkspace: {
+            correlationId?: string;
+            data?: components["schemas"]["people_TeamTimeWorkspace"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseTeamWorkspace: {
+            correlationId?: string;
+            data?: components["schemas"]["people_TeamWorkspace"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         people_ApiResponseTimeWorkspace: {
             correlationId?: string;
             data?: components["schemas"]["people_TimeWorkspace"];
@@ -14110,6 +14631,16 @@ export interface components {
         people_ApiResponseVoid: {
             correlationId?: string;
             data?: unknown;
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseWorkforceOperationsOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["people_WorkforceOperationsOverview"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14527,12 +15058,19 @@ export interface components {
             value?: number;
         };
         people_DomainOperations: {
-            dataBoundary?: string;
+            /** @enum {string} */
+            dataBoundary?: "TEAM" | "ORGANIZATION_SET" | "TEAM_AND_ORGANIZATION_SET" | "TENANT";
             domain?: string;
             /** Format: date-time */
             generatedAt?: string;
             metrics?: components["schemas"]["people_DomainMetric"][];
             workQueue?: components["schemas"]["people_ApprovalItem"][];
+        };
+        people_DomainOperationsSummary: {
+            domain?: string;
+            metrics?: components["schemas"]["people_DomainMetric"][];
+            /** Format: int32 */
+            pendingCount?: number;
         };
         people_EmployeeContext: {
             businessTitle?: string;
@@ -14820,6 +15358,15 @@ export interface components {
             shortName?: string;
             /** Format: int32 */
             totalHeadcount?: number;
+        };
+        people_OrganizationCandidate: {
+            displayName: string;
+            /** @enum {string} */
+            eligibility: "ELIGIBLE" | "INELIGIBLE";
+            organization: string;
+            position?: string | null;
+            /** Format: uuid */
+            publicId: string;
         };
         people_OrganizationChart: {
             analysis?: components["schemas"]["people_Analysis"];
@@ -15255,6 +15802,8 @@ export interface components {
             unchangedCount?: number;
             /** Format: int64 */
             updatedCount?: number;
+            /** Format: int64 */
+            version?: number;
         };
         people_TalentWorkspace: {
             employee?: components["schemas"]["people_EmployeeContext"];
@@ -15275,6 +15824,38 @@ export interface components {
             /** Format: date-time */
             startAt?: string;
             status?: string;
+        };
+        people_TeamAbsenceWorkspace: {
+            /** @enum {string} */
+            dataBoundary?: "TEAM" | "ORGANIZATION_SET" | "TEAM_AND_ORGANIZATION_SET" | "TENANT";
+            manager?: components["schemas"]["people_EmployeeContext"];
+            teamCalendar?: components["schemas"]["people_TeamAbsence"][];
+            teamQueue?: components["schemas"]["people_ApprovalItem"][];
+        };
+        people_TeamMember: {
+            businessTitle?: string;
+            /** Format: int32 */
+            directReportCount?: number;
+            displayName?: string;
+            organizationName?: string;
+            /** Format: uuid */
+            personId?: string;
+        };
+        people_TeamTimeWorkspace: {
+            /** @enum {string} */
+            dataBoundary?: "TEAM" | "ORGANIZATION_SET" | "TEAM_AND_ORGANIZATION_SET" | "TENANT";
+            manager?: components["schemas"]["people_EmployeeContext"];
+            teamQueue?: components["schemas"]["people_ApprovalItem"][];
+        };
+        people_TeamWorkspace: {
+            /** Format: int32 */
+            absencePendingCount?: number;
+            /** @enum {string} */
+            dataBoundary?: "TEAM" | "ORGANIZATION_SET" | "TEAM_AND_ORGANIZATION_SET" | "TENANT";
+            manager?: components["schemas"]["people_EmployeeContext"];
+            members?: components["schemas"]["people_TeamMember"][];
+            /** Format: int32 */
+            timePendingCount?: number;
         };
         people_TimeCard: {
             dataOrigin?: string;
@@ -15437,6 +16018,14 @@ export interface components {
             workerNumber?: string;
             workerStatus?: string;
             workerType?: string;
+        };
+        people_WorkforceOperationsOverview: {
+            /** @enum {string} */
+            dataBoundary?: "TEAM" | "ORGANIZATION_SET" | "TEAM_AND_ORGANIZATION_SET" | "TENANT";
+            domains?: components["schemas"]["people_DomainOperationsSummary"][];
+            fieldGroups?: string[];
+            /** Format: date-time */
+            generatedAt?: string;
         };
         platform_AccountSummary: {
             /** Format: uuid */
@@ -23094,6 +23683,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -23123,6 +23714,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 categoryId: string;
@@ -23177,6 +23770,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -23231,6 +23826,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 formId: string;
@@ -23475,6 +24072,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 policyId: string;
@@ -23650,6 +24249,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -23704,6 +24305,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 workflowId: string;
@@ -23879,6 +24482,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -23933,6 +24538,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 delegationId: string;
@@ -24012,6 +24619,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -24091,6 +24700,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -24122,6 +24733,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -24153,6 +24766,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -24184,6 +24799,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -24265,6 +24882,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 taskId: string;
@@ -24296,6 +24915,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 taskId: string;
@@ -24515,6 +25136,269 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                };
+            };
+        };
+    };
+    auth_presetAssignments: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListAppAdminPresetAssignment"];
+                };
+            };
+        };
+    };
+    auth_requestPresetAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateAppAdminPresetAssignmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetAssignment"];
+                };
+            };
+        };
+    };
+    auth_presetAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetAssignment"];
+                };
+            };
+        };
+    };
+    auth_activatePresetAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_ActivateAppAdminPresetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetAssignment"];
+                };
+            };
+        };
+    };
+    auth_decidePresetAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_AppAdminPresetDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetAssignment"];
+                };
+            };
+        };
+    };
+    auth_revokePresetAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_RevokeAppAdminPresetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetAssignment"];
+                };
+            };
+        };
+    };
+    auth_presetCatalog: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListAppAdminPreset"];
+                };
+            };
+        };
+    };
+    auth_decidePresetReview: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                reviewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_AppAdminPresetReviewDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetReview"];
+                };
+            };
+        };
+    };
+    auth_selfServiceOptions: {
+        parameters: {
+            query: {
+                appResourceKey: string;
+            };
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListAppAdminPresetSelfServiceOption"];
+                };
+            };
+        };
+    };
+    auth_selfServiceRequest: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateSelfServicePresetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAppAdminPresetAssignment"];
                 };
             };
         };
@@ -28298,6 +29182,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -28327,6 +29213,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -28358,6 +29246,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -28506,6 +29396,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 goalId: string;
@@ -28525,6 +29417,141 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["people_ApiResponseTalentWorkspace"];
+                };
+            };
+        };
+    };
+    people_team: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseTeamWorkspace"];
+                };
+            };
+        };
+    };
+    people_teamAbsence: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseTeamAbsenceWorkspace"];
+                };
+            };
+        };
+    };
+    people_decideTeamLeaveRequest: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_DecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseApprovalItem"];
+                };
+            };
+        };
+    };
+    people_teamTime: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseTeamTimeWorkspace"];
+                };
+            };
+        };
+    };
+    people_decideTeamTimeCard: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_DecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseApprovalItem"];
                 };
             };
         };
@@ -28560,6 +29587,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 cardId: string;
@@ -28591,6 +29620,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 cardId: string;
@@ -28624,6 +29655,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 cardId: string;
@@ -28754,6 +29787,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -28783,6 +29818,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 connectorId: string;
@@ -28814,6 +29851,11 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
             };
             path: {
                 connectorId: string;
@@ -28841,6 +29883,11 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
             };
             path: {
                 connectorId: string;
@@ -28871,7 +29918,13 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: never;
+            header?: {
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
+            };
             path: {
                 connectorId: string;
             };
@@ -28919,7 +29972,10 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: never;
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -28946,7 +30002,10 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: never;
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 mappingId: string;
             };
@@ -29000,7 +30059,10 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: never;
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
             path: {
                 issueId: string;
             };
@@ -29125,6 +30187,11 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
             };
             path: {
                 syncRunId: string;
@@ -29175,6 +30242,11 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
             };
             path?: never;
             cookie?: never;
@@ -29279,6 +30351,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -29310,6 +30384,11 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
             };
             path: {
                 requestId: string;
@@ -29329,6 +30408,52 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["people_ApiResponseRequestSummary"];
+                };
+            };
+        };
+    };
+    people_overview: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseWorkforceOperationsOverview"];
+                };
+            };
+        };
+    };
+    people_listOrganizationCandidates: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseListOrganizationCandidate"];
                 };
             };
         };
@@ -29419,6 +30544,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -29448,6 +30575,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29479,6 +30608,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29511,6 +30642,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29539,6 +30672,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29620,6 +30755,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29651,6 +30788,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29682,6 +30821,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29713,6 +30854,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29744,6 +30887,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29776,6 +30921,11 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge"?: string;
+                "Idempotency-Key"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version"?: number;
             };
             path: {
                 scenarioId: string;
@@ -29807,6 +30957,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 scenarioId: string;
@@ -29917,6 +31069,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 catalogKey: string;
@@ -29972,6 +31126,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -30001,6 +31157,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 announcementId: number;
@@ -30032,6 +31190,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 announcementId: number;
@@ -30063,6 +31223,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 announcementId: number;
@@ -33448,6 +34610,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -33477,6 +34641,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 serviceKey: string;
@@ -33557,6 +34723,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -35452,6 +36620,8 @@ export interface operations {
             };
             header?: {
                 "X-DWP-Roles"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 communicationId: number;
@@ -35479,6 +36649,8 @@ export interface operations {
             };
             header?: {
                 "X-DWP-Roles"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 communicationId: number;
@@ -35507,6 +36679,8 @@ export interface operations {
             };
             header?: {
                 "X-DWP-Roles"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 communicationId: number;
@@ -35538,6 +36712,8 @@ export interface operations {
             };
             header?: {
                 "X-DWP-Roles"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 communicationId: number;
@@ -35706,6 +36882,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 surfaceKey: string;
@@ -36665,6 +37843,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path?: never;
             cookie?: never;
@@ -36719,6 +37899,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -36750,6 +37932,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;
@@ -36781,6 +37965,8 @@ export interface operations {
             };
             header?: {
                 "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 requestId: string;

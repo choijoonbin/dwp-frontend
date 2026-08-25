@@ -22,6 +22,7 @@
     "DEGRADED": "Degraded",
     "DEPRECATED": "Deprecated",
     "DENIED": "Denied",
+    "DISMISSED": "Dismissed",
     "DRAFT": "Draft",
     "ENDED": "Ended",
     "ERROR": "Error",

@@ -279,7 +279,7 @@ export function WorkforceOverview() {
   });
   const scenarios = useQuery({
     queryKey: ['workforce', 'overview', 'scenarios'],
-    queryFn: listOrganizationScenarios,
+    queryFn: () => listOrganizationScenarios(),
     retry: false,
   });
   const runs = useQuery({

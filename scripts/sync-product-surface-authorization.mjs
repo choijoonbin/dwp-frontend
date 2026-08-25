@@ -18,7 +18,14 @@ const INDEX_FILE = 'product-surfaces-v1.index.json';
 const LATEST_ALIAS_FILE = 'product-surfaces-v1.json';
 const VERSIONS = [1, 2, 3];
 const LATEST_VERSION = VERSIONS.at(-1);
-const SNAPSHOT_FIELDS = ['bundles', 'index', 'latestAlias', 'schemaVersion', 'snapshotKey'];
+const SNAPSHOT_FIELDS = [
+  'bundles',
+  'index',
+  'latestAlias',
+  'rolloutInventory',
+  'schemaVersion',
+  'snapshotKey',
+];
 const BUNDLE_FIELDS = new Set([
   'accessPolicies',
   'authorityEndpoints',
@@ -72,6 +79,19 @@ const EXPECTED_COUNTS = {
     routes: 129,
   },
 };
+const EXPECTED_ROLLOUT_PRODUCTS = [
+  'approvals',
+  'calendar',
+  'communications',
+  'dwaion',
+  'hcm',
+  'mail',
+  'messaging',
+  'notifications',
+  'services',
+  'spaces',
+  'workplace',
+];
 const PRESERVED_V1_CHECKSUM = 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67';
 const SHA_256 = /^[a-f0-9]{64}$/u;
 
@@ -189,6 +209,33 @@ function validateBundle(value, expectedVersion) {
   return bundle;
 }
 
+function validateRolloutInventory(value) {
+  const inventory = requireRecord(value, 'rollout inventory');
+  const expectedFields = [
+    'checksum',
+    'checksumAlgorithm',
+    'inventoryKey',
+    'products',
+    'schemaVersion',
+  ];
+  if (canonicalJson(Object.keys(inventory).sort()) !== canonicalJson(expectedFields)) {
+    fail('rollout inventory field set is not exact');
+  }
+  if (
+    inventory.schemaVersion !== 1 ||
+    inventory.inventoryKey !== 'product-surface-rollout-products.v1' ||
+    inventory.checksumAlgorithm !== 'SHA-256' ||
+    !SHA_256.test(inventory.checksum) ||
+    canonicalJson(inventory.products) !== canonicalJson(EXPECTED_ROLLOUT_PRODUCTS)
+  ) {
+    fail('rollout inventory identity or product set is invalid');
+  }
+  const payload = structuredClone(inventory);
+  delete payload.checksum;
+  if (sha256(payload) !== inventory.checksum) fail('rollout inventory checksum is invalid');
+  return inventory;
+}
+
 function isAppendOnlySuperset(previous, next) {
   if (Array.isArray(previous)) {
     return (
@@ -301,11 +348,12 @@ function validateSnapshot(value) {
     validateNoDroppedContracts(bundles[index - 1], bundles[index]);
   }
   const index = validateIndex(snapshot.index, bundles);
+  const rolloutInventory = validateRolloutInventory(snapshot.rolloutInventory);
   const latestAlias = validateBundle(snapshot.latestAlias, index.latestVersion);
   if (canonicalJson(latestAlias) !== canonicalJson(bundles.at(-1))) {
     fail('latest alias does not match the latest immutable bundle');
   }
-  return { snapshot, index, bundles, latestAlias };
+  return { snapshot, index, bundles, latestAlias, rolloutInventory };
 }
 
 function validateRouterSource(value, latestBundle) {
@@ -406,7 +454,7 @@ function routeProjection(route) {
   };
 }
 
-async function generatedTypescript(index, latestBundle) {
+async function generatedTypescript(index, latestBundle, rolloutInventory) {
   const projections = latestBundle.routes.map(routeProjection);
   const literal = JSON.stringify(projections, null, 2);
   const source = `/** @generated from architecture/product-surface-authorization.v1.json. Do not edit manually. */
@@ -429,6 +477,15 @@ export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = ${JSON.stringify({
     checksum: index.latestChecksum,
     indexChecksum: index.indexChecksum,
   })} as const;
+
+export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = ${JSON.stringify({
+    inventoryKey: rolloutInventory.inventoryKey,
+    checksum: rolloutInventory.checksum,
+  })} as const;
+
+export const PRODUCT_SURFACE_ROLLOUT_PRODUCTS = ${JSON.stringify(
+    rolloutInventory.products
+  )} as const;
 
 export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = ${literal} as const satisfies readonly ProductAuthorizationRouteProjection[];
 
@@ -514,6 +571,10 @@ function readOfficialSnapshot(artifactDirectory) {
     index,
     bundles,
     latestAlias: readOfficialJson(LATEST_ALIAS_FILE, 'latest alias'),
+    rolloutInventory: readOfficialJson(
+      'product-surface-rollout-inventory.v1.generated.json',
+      'rollout inventory'
+    ),
   };
 }
 
@@ -557,7 +618,11 @@ async function main() {
   const validated = validateSnapshot(snapshot);
   const routerSource = readJson(routerSourcePath, 'router source');
   validateRouterSource(routerSource, validated.latestAlias);
-  const generated = await generatedTypescript(validated.index, validated.latestAlias);
+  const generated = await generatedTypescript(
+    validated.index,
+    validated.latestAlias,
+    validated.rolloutInventory
+  );
   await writeOrCheck(validated.snapshot, generated, args.mode);
   console.log(
     `PASS product surface authorization v1-v${validated.index.latestVersion} ` +

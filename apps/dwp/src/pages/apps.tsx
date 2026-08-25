@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -61,6 +61,12 @@ import {
 import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 
 type AppFilter = 'all' | 'available' | 'requestable' | 'pending' | 'pinned' | 'connected';
+
+const AppManagementRequestDialog = lazy(() =>
+  import('../components/app-management-request-dialog').then((module) => ({
+    default: module.AppManagementRequestDialog,
+  }))
+);
 
 const homeAppById = new Map(HOME_APPS.map((app) => [app.id, app]));
 const fallbackAppVisual = { iconKey: 'legacy', tone: '#4B5663' } as const;
@@ -175,6 +181,8 @@ export default function AppsPage() {
   const filter: AppFilter = isAppFilter(filterParam) ? filterParam : 'all';
   const query = searchParams.get('q') ?? '';
   const selectedAppId = searchParams.get('app');
+  const requestedManagementResource = searchParams.get('requestManagement');
+  const requestedManagementSurface = searchParams.get('requestSurface');
   const [requestingApp, setRequestingApp] = useState<WorkspaceApp | null>(null);
   const appsQuery = useQuery({
     queryKey: ['workspace', 'apps'],
@@ -808,6 +816,24 @@ export default function AppsPage() {
           });
         }}
       />
+      {requestedManagementResource && (
+        <Suspense
+          fallback={
+            <LoadingState label={t('appsPage.managementRequest.loading')} size="standard" />
+          }
+        >
+          <AppManagementRequestDialog
+            appResourceKey={requestedManagementResource}
+            requestedSurfaceId={requestedManagementSurface}
+            onClose={() => {
+              const next = new URLSearchParams(searchParams);
+              next.delete('requestManagement');
+              next.delete('requestSurface');
+              setSearchParams(next, { replace: true });
+            }}
+          />
+        </Suspense>
+      )}
     </PageCanvas>
   );
 }

@@ -82,16 +82,26 @@
     "labels": {
       "work": "Work",
       "management": "Product management",
+      "appManagement": "App management",
+      "returnToWork": "Return to work",
       "scope": "Scope",
       "readOnly": "Read only",
       "revalidateAt": "Access revalidates {{time}}",
-      "surfaceNavigation": "Product work and management areas"
+      "surfaceNavigation": "Product work and management areas",
+      "currentSurface": "Current area: {{surface}}",
+      "unknownSurface": "Product area",
+      "managementScope": "Management scope",
+      "workScope": "Work scope"
     },
     "actions": {
       "retry": "Try again",
       "return": "Return to a safe area",
       "selectScope": "Select a scope",
       "requestAccess": "Request access",
+      "requestResponsibility": "Request management responsibility",
+      "activateAccess": "Activate access",
+      "closeNavigation": "Close product navigation",
+      "closeSurfaceNavigation": "Close product area list",
       "returnToWork": "Return to work",
       "returnToCatalog": "Return to apps"
     },
@@ -100,6 +110,7 @@
       "preflightCancelled": "The pending authority check was cancelled before switching scope."
     },
     "access": {
+      "correlationId": "Support ID: {{correlationId}}",
       "appDenied": {
         "title": "This application is not available",
         "description": "Your current account does not have the application access required for this work area."
@@ -144,6 +155,20 @@
         "title": "Access cannot be verified right now",
         "description": "The authority service could not make a safe decision. No cached permission will be used."
       }
+    },
+    "loading": {
+      "label": "Verifying product access and navigation"
+    },
+    "policyLock": {
+      "title": "Managed by company policy",
+      "description": "A higher-level policy locks this value. Review the policy evidence or request an exception when appropriate.",
+      "policy": "Policy",
+      "owner": "Owner",
+      "source": "Inherited from",
+      "scope": "Applied scope",
+      "effectiveAt": "Effective date",
+      "viewPolicy": "View policy",
+      "requestException": "Request exception"
     }
   },
   "savedViews": {

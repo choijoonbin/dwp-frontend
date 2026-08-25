@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarPlus, CalendarRange, Clock, RotateCcw } from 'lucide-react';
+import { CalendarPlus, Clock, RotateCcw } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -25,23 +25,21 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import {
-  ApprovalQueue,
   DomainSection,
   ProgressSignal,
   QueryBoundary,
   ReferenceNotice,
   StatusChip,
 } from './hr-domain-components';
-import { PersonAvatar } from '../../components/person-avatar';
-
 import type { HrLeaveRequest } from '@dwp-frontend/shared-utils';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
 
 function minutesToDays(minutes: number): string {
   const days = minutes / 480;
   return Number.isInteger(days) ? String(days) : days.toFixed(1);
 }
 
-export function HrAbsenceWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }) {
+export function HrAbsenceWorkspace() {
   const { t } = useTranslation('hcm');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -59,6 +57,8 @@ export function HrAbsenceWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }
   const [reason, setReason] = useState('');
   const [withdrawing, setWithdrawing] = useState<HrLeaveRequest | null>(null);
   const [withdrawalNote, setWithdrawalNote] = useState('');
+  const createLeave = useProductActionMutation('route.hcm.personal.absence-create.action');
+  const withdrawLeave = useProductActionMutation('route.hcm.personal.absence-withdraw.action');
 
   useEffect(() => {
     if (searchParams.get('request') !== 'open') return;
@@ -72,13 +72,18 @@ export function HrAbsenceWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }
 
   const createMutation = useMutation({
     mutationFn: () =>
-      createHrLeaveRequest({
-        planId,
-        startAt: new Date(`${startDate}T09:00:00`).toISOString(),
-        endAt: new Date(`${endDate}T18:00:00`).toISOString(),
-        requestedMinutes: hours * 60,
-        reason: reason.trim() || undefined,
-      }),
+      createLeave((authority) =>
+        createHrLeaveRequest(
+          {
+            planId,
+            startAt: new Date(`${startDate}T09:00:00`).toISOString(),
+            endAt: new Date(`${endDate}T18:00:00`).toISOString(),
+            requestedMinutes: hours * 60,
+            reason: reason.trim() || undefined,
+          },
+          authority
+        )
+      ),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['hcm'] });
       setRequestOpen(false);
@@ -89,10 +94,13 @@ export function HrAbsenceWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }
   });
   const withdrawMutation = useMutation({
     mutationFn: () =>
-      withdrawHrLeaveRequest(withdrawing!.requestId, {
-        note: withdrawalNote.trim(),
-        version: withdrawing!.version,
-      }),
+      withdrawLeave((authority) =>
+        withdrawHrLeaveRequest(
+          withdrawing!.requestId,
+          { note: withdrawalNote.trim(), version: withdrawing!.version },
+          authority
+        )
+      ),
     onSuccess: (data) => {
       queryClient.setQueryData(['hcm', 'absence'], data);
       void queryClient.invalidateQueries({ queryKey: ['hcm', 'home-overview'] });
@@ -107,209 +115,120 @@ export function HrAbsenceWorkspace({ mode = 'self' }: { mode?: 'self' | 'team' }
     new Date(endDate).getTime() >= new Date(startDate).getTime() &&
     hours > 0 &&
     hours <= 240;
-  const teamCalendar = query.data?.teamCalendar ?? [];
-  const teamMembersAway = new Set(teamCalendar.map((absence) => absence.personId)).size;
-
   return (
     <QueryBoundary
       loading={query.isLoading}
       error={query.isError}
       onRetry={() => void query.refetch()}
     >
-      {mode === 'team' ? (
-        <Stack gap={2}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              gap: 1,
-            }}
-          >
+      <Stack gap={2}>
+        {query.data?.balances.some((balance) => balance.dataOrigin === 'REFERENCE') && (
+          <ReferenceNotice />
+        )}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+            gap: 1,
+          }}
+        >
+          {(query.data?.balances ?? []).slice(0, 3).map((balance) => (
             <ProgressSignal
-              label={t('domains.absence.teamPending')}
-              value={String(query.data?.teamQueue.length ?? 0)}
-              detail={t('domains.absence.teamPendingDetail')}
-              progress={Math.min(100, (query.data?.teamQueue.length ?? 0) * 20)}
-              tone={query.data?.teamQueue.length ? 'warning' : 'success'}
-            />
-            <ProgressSignal
-              label={t('domains.absence.upcomingCoverage')}
-              value={String(teamMembersAway)}
-              detail={t('domains.absence.upcomingCoverageDetail', {
-                count: teamCalendar.length,
+              key={balance.planId}
+              label={balance.planName}
+              value={t('domains.absence.daysAvailable', {
+                value: minutesToDays(balance.availableMinutes),
               })}
-              progress={Math.min(100, teamMembersAway * 20)}
-              tone={teamMembersAway ? 'primary' : 'success'}
+              detail={t('domains.absence.balanceDetail', {
+                used: minutesToDays(balance.usedMinutes),
+                pending: minutesToDays(balance.pendingMinutes),
+              })}
+              progress={
+                balance.grantedMinutes ? (balance.usedMinutes / balance.grantedMinutes) * 100 : 0
+              }
+              tone={balance.availableMinutes > 0 ? 'success' : 'warning'}
             />
-          </Box>
-          <ApprovalQueue
-            domain="absence"
-            items={query.data?.teamQueue ?? []}
-            title={t('domains.absence.queueTitle')}
-            description={t('domains.absence.queueDescription')}
-          />
-          <DomainSection
-            title={t('domains.absence.teamCalendarTitle')}
-            description={t('domains.absence.teamCalendarDescription')}
-          >
-            {teamCalendar.length ? (
-              <Box>
-                {teamCalendar.map((absence, index) => (
-                  <Box key={absence.requestId}>
-                    {index > 0 && <Divider />}
-                    <Stack
-                      direction={{ xs: 'column', sm: 'row' }}
-                      alignItems={{ xs: 'stretch', sm: 'center' }}
-                      gap={1.25}
-                      sx={{ px: 2, py: 1.5 }}
-                    >
-                      <Stack direction="row" alignItems="center" gap={1.25} minWidth={0} flex={1}>
-                        <PersonAvatar name={absence.employeeName} size={38} />
-                        <Box minWidth={0}>
-                          <Typography variant="body2" fontWeight={750} noWrap>
-                            {absence.employeeName}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            noWrap
-                            display="block"
-                          >
-                            {[absence.employeeTitle, absence.planName].filter(Boolean).join(' · ')}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                      <Stack direction="row" alignItems="center" gap={1}>
-                        <CalendarRange size={16} aria-hidden="true" />
-                        <Typography variant="caption" fontWeight={700}>
-                          {formatDate(absence.startAt, { dateStyle: 'medium' })} -{' '}
-                          {formatDate(absence.endAt, { dateStyle: 'medium' })}
-                        </Typography>
-                        <StatusChip status={absence.status} />
-                      </Stack>
-                    </Stack>
-                  </Box>
-                ))}
-              </Box>
-            ) : (
-              <EmptyState
-                size="compact"
-                title={t('domains.absence.noTeamAbsenceTitle')}
-                description={t('domains.absence.noTeamAbsenceDescription')}
-              />
-            )}
-          </DomainSection>
-        </Stack>
-      ) : (
-        <Stack gap={2}>
-          {query.data?.balances.some((balance) => balance.dataOrigin === 'REFERENCE') && (
-            <ReferenceNotice />
+          ))}
+          {!query.data?.balances.length && (
+            <EmptyState
+              title={t('domains.absence.noBalanceTitle')}
+              description={t('domains.absence.noBalanceDescription')}
+            />
           )}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-              gap: 1,
-            }}
-          >
-            {(query.data?.balances ?? []).slice(0, 3).map((balance) => (
-              <ProgressSignal
-                key={balance.planId}
-                label={balance.planName}
-                value={t('domains.absence.daysAvailable', {
-                  value: minutesToDays(balance.availableMinutes),
-                })}
-                detail={t('domains.absence.balanceDetail', {
-                  used: minutesToDays(balance.usedMinutes),
-                  pending: minutesToDays(balance.pendingMinutes),
-                })}
-                progress={
-                  balance.grantedMinutes ? (balance.usedMinutes / balance.grantedMinutes) * 100 : 0
-                }
-                tone={balance.availableMinutes > 0 ? 'success' : 'warning'}
-              />
-            ))}
-            {!query.data?.balances.length && (
-              <EmptyState
-                title={t('domains.absence.noBalanceTitle')}
-                description={t('domains.absence.noBalanceDescription')}
-              />
-            )}
-          </Box>
+        </Box>
 
-          <DomainSection
-            title={t('domains.absence.historyTitle')}
-            description={t('domains.absence.historyDescription')}
-            action={
-              <ActionButton
-                intent="primary"
-                size="small"
-                startIcon={<CalendarPlus size={16} />}
-                disabled={!query.data?.balances.length}
-                onClick={() => setRequestOpen(true)}
-              >
-                {t('domains.absence.request')}
-              </ActionButton>
-            }
-          >
-            {query.data?.requests.length ? (
-              <Box>
-                {query.data.requests.map((request, index) => (
-                  <Box key={request.requestId}>
-                    {index > 0 && <Divider />}
-                    <Stack
-                      direction={{ xs: 'column', md: 'row' }}
-                      alignItems={{ xs: 'stretch', md: 'center' }}
-                      gap={1.5}
-                      sx={{ px: 2, py: 1.5 }}
-                    >
-                      <Box minWidth={0} flex={1}>
-                        <Typography variant="body2" fontWeight={750}>
-                          {request.planName}
+        <DomainSection
+          title={t('domains.absence.historyTitle')}
+          description={t('domains.absence.historyDescription')}
+          action={
+            <ActionButton
+              intent="primary"
+              size="small"
+              startIcon={<CalendarPlus size={16} />}
+              disabled={!query.data?.balances.length}
+              onClick={() => setRequestOpen(true)}
+            >
+              {t('domains.absence.request')}
+            </ActionButton>
+          }
+        >
+          {query.data?.requests.length ? (
+            <Box>
+              {query.data.requests.map((request, index) => (
+                <Box key={request.requestId}>
+                  {index > 0 && <Divider />}
+                  <Stack
+                    direction={{ xs: 'column', md: 'row' }}
+                    alignItems={{ xs: 'stretch', md: 'center' }}
+                    gap={1.5}
+                    sx={{ px: 2, py: 1.5 }}
+                  >
+                    <Box minWidth={0} flex={1}>
+                      <Typography variant="body2" fontWeight={750}>
+                        {request.planName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {formatDate(request.startAt, { dateStyle: 'medium' })} -{' '}
+                        {formatDate(request.endAt, { dateStyle: 'medium' })}
+                      </Typography>
+                    </Box>
+                    <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
+                      <Stack direction="row" alignItems="center" gap={0.5}>
+                        <Clock size={14} aria-hidden="true" />
+                        <Typography variant="caption" fontWeight={700}>
+                          {t('domains.absence.hours', {
+                            value: request.requestedMinutes / 60,
+                          })}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDate(request.startAt, { dateStyle: 'medium' })} -{' '}
-                          {formatDate(request.endAt, { dateStyle: 'medium' })}
-                        </Typography>
-                      </Box>
-                      <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
-                        <Stack direction="row" alignItems="center" gap={0.5}>
-                          <Clock size={14} aria-hidden="true" />
-                          <Typography variant="caption" fontWeight={700}>
-                            {t('domains.absence.hours', {
-                              value: request.requestedMinutes / 60,
-                            })}
-                          </Typography>
-                        </Stack>
-                        <StatusChip status={request.status} />
-                        {request.status === 'SUBMITTED' && (
-                          <ActionButton
-                            intent="quiet"
-                            size="small"
-                            startIcon={<RotateCcw size={14} />}
-                            onClick={() => {
-                              setWithdrawing(request);
-                              setWithdrawalNote('');
-                            }}
-                          >
-                            {t('domains.actions.withdraw')}
-                          </ActionButton>
-                        )}
                       </Stack>
+                      <StatusChip status={request.status} />
+                      {request.status === 'SUBMITTED' && (
+                        <ActionButton
+                          intent="quiet"
+                          size="small"
+                          startIcon={<RotateCcw size={14} />}
+                          onClick={() => {
+                            setWithdrawing(request);
+                            setWithdrawalNote('');
+                          }}
+                        >
+                          {t('domains.actions.withdraw')}
+                        </ActionButton>
+                      )}
                     </Stack>
-                  </Box>
-                ))}
-              </Box>
-            ) : (
-              <EmptyState
-                size="compact"
-                title={t('domains.absence.noRequestsTitle')}
-                description={t('domains.absence.noRequestsDescription')}
-              />
-            )}
-          </DomainSection>
-        </Stack>
-      )}
+                  </Stack>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <EmptyState
+              size="compact"
+              title={t('domains.absence.noRequestsTitle')}
+              description={t('domains.absence.noRequestsDescription')}
+            />
+          )}
+        </DomainSection>
+      </Stack>
 
       <FormDialog
         open={requestOpen}

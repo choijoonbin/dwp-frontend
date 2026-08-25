@@ -108,5 +108,107 @@
       "deployment": "independent"
     }
   ],
-  "platformFeatures": ["auth", "notifications", "saved-views", "search", "shell"]
+  "platformFeatures": ["auth", "notifications", "saved-views", "search", "shell"],
+  "governedProductSurfaces": [
+    {
+      "productId": "approvals",
+      "applicationId": "approvals",
+      "routePrefix": "/approvals",
+      "workSurfaceIds": ["approvals.work"],
+      "managementSurfaceIds": ["approvals.admin"],
+      "migrationWave": "W1a",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "communications",
+      "applicationId": "communications",
+      "routePrefix": "/communications",
+      "workSurfaceIds": ["communications.work"],
+      "managementSurfaceIds": ["communications.management"],
+      "migrationWave": "W0.5",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "services",
+      "applicationId": "services",
+      "routePrefix": "/services",
+      "workSurfaceIds": ["services.work"],
+      "managementSurfaceIds": ["services.management"],
+      "migrationWave": "W0.5",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "hcm",
+      "applicationId": "hcm",
+      "routePrefix": "/hr",
+      "workSurfaceIds": ["hcm.personal", "hcm.team"],
+      "managementSurfaceIds": ["hcm.operations", "hcm.management"],
+      "migrationWave": "W1b",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "dwaion",
+      "applicationId": "dwaion",
+      "routePrefix": "/dwaion",
+      "workSurfaceIds": ["dwaion.work"],
+      "managementSurfaceIds": ["dwaion.management"],
+      "migrationWave": "W2",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "notifications",
+      "platformFeature": "notifications",
+      "routeModule": "notification-routes.tsx",
+      "routePrefix": "/notifications",
+      "workSurfaceIds": ["notifications.work"],
+      "managementSurfaceIds": ["notifications.management"],
+      "migrationWave": "W2",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "spaces",
+      "applicationId": "spaces",
+      "routePrefix": "/spaces",
+      "workSurfaceIds": ["spaces.work"],
+      "managementSurfaceIds": ["spaces.management"],
+      "migrationWave": "W2",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "calendar",
+      "applicationId": "calendar",
+      "routePrefix": "/calendar",
+      "workSurfaceIds": ["calendar.work"],
+      "managementSurfaceIds": ["calendar.management"],
+      "migrationWave": "W3",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "workplace",
+      "applicationId": "rooms",
+      "routePrefix": "/workplace",
+      "workSurfaceIds": ["workplace.work"],
+      "managementSurfaceIds": ["workplace.management"],
+      "migrationWave": "W3",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "mail",
+      "applicationId": "mail",
+      "routePrefix": "/mail",
+      "workSurfaceIds": ["mail.work"],
+      "managementSurfaceIds": ["mail.management"],
+      "migrationWave": "W3",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "messaging",
+      "applicationId": "messaging",
+      "routePrefix": "/messages",
+      "workSurfaceIds": ["messaging.work"],
+      "managementSurfaceIds": ["messaging.management"],
+      "migrationWave": "W3",
+      "rolloutDefault": "000"
+    }
+  ]
 }

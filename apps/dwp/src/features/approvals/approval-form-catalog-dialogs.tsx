@@ -13,24 +13,8 @@ import Typography from '@mui/material/Typography';
 import { ApprovalFormFieldEditor } from './approval-form-field-editor';
 import { StatusChip } from './approval-ui';
 
-import type {
-  ApprovalFormCategory,
-  ApprovalFormDraftInput,
-  ApprovalWorkflow,
-} from '@dwp-frontend/shared-utils';
-
-export type FormDraft = ApprovalFormDraftInput & { formKey: string };
-export type CategoryDraft = {
-  categoryKey: string;
-  parentCategoryId: string;
-  nameKo: string;
-  nameEn: string;
-  descriptionKo: string;
-  descriptionEn: string;
-  iconKey: string;
-  sortOrder: number;
-  lifecycleState: 'ACTIVE' | 'INACTIVE';
-};
+import type { ApprovalFormCategory, ApprovalWorkflow } from '@dwp-frontend/shared-utils';
+import type { CategoryDraft, FormDraft } from './approval-form-catalog-drafts';
 
 export function FormEditorDialog({
   open,

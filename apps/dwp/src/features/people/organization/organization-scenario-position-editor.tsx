@@ -19,6 +19,8 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
 import type { OrganizationChart, OrganizationScenario } from '@dwp-frontend/shared-utils';
+import { useProductActionMutation } from '../../../components/use-product-action-mutation';
+import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
 
 type PositionAction = 'move' | 'create' | 'close';
 type PositionType = 'REGULAR' | 'SHARED' | 'ASSISTANT' | 'TEMPORARY';
@@ -54,14 +56,25 @@ function plannedPositionKey(): string {
 export function OrganizationScenarioPositionEditor({ chart, scenario, busy, execute }: Props) {
   const { t, i18n } = useTranslation('workforce');
   const locale = i18n.resolvedLanguage ?? i18n.language;
+  const updateScenario = useProductActionMutation('route.hcm.management.org-update.action');
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.management',
+  });
   const positionTypeCatalog = useQuery({
-    queryKey: ['system-code-set', 'PEOPLE.POSITION_TYPE', locale],
-    queryFn: () => getSystemCodeSet('PEOPLE.POSITION_TYPE', locale),
+    queryKey: ['system-code-set', 'PEOPLE.POSITION_TYPE', locale, ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      getSystemCodeSet('PEOPLE.POSITION_TYPE', locale, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 5 * 60 * 1000,
   });
   const criticalityCatalog = useQuery({
-    queryKey: ['system-code-set', 'PEOPLE.POSITION_CRITICALITY', locale],
-    queryFn: () => getSystemCodeSet('PEOPLE.POSITION_CRITICALITY', locale),
+    queryKey: ['system-code-set', 'PEOPLE.POSITION_CRITICALITY', locale, ...requestScope.cacheKey],
+    queryFn: ({ signal }) =>
+      getSystemCodeSet('PEOPLE.POSITION_CRITICALITY', locale, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 5 * 60 * 1000,
   });
   const positionTypeOptions = useMemo(
@@ -127,7 +140,10 @@ export function OrganizationScenarioPositionEditor({ chart, scenario, busy, exec
   const handleMove = async () => {
     if (!positionId || !parentPositionId) return;
     const next = await execute(
-      () => addOrganizationScenarioPositionMove(scenario, positionId, parentPositionId),
+      () =>
+        updateScenario((authority) =>
+          addOrganizationScenarioPositionMove(scenario, positionId, parentPositionId, authority)
+        ),
       t('orgChart.scenarios.messages.positionMoveAdded')
     );
     if (!next) return;
@@ -141,18 +157,24 @@ export function OrganizationScenarioPositionEditor({ chart, scenario, busy, exec
     if (!title.trim() || !positionKey.trim() || !organizationId || !parentPositionId) return;
     const next = await execute(
       () =>
-        createOrganizationScenarioPosition(scenario, {
-          positionKey: positionKey.trim().toUpperCase(),
-          title: title.trim(),
-          organizationId,
-          reportsToPositionId: parentPositionId,
-          positionType,
-          criticality,
-          budgetedFte: fte,
-          annualCostAmount: cost,
-          costCurrency: cost === undefined ? undefined : costCurrency,
-          availabilityDate,
-        }),
+        updateScenario((authority) =>
+          createOrganizationScenarioPosition(
+            scenario,
+            {
+              positionKey: positionKey.trim().toUpperCase(),
+              title: title.trim(),
+              organizationId,
+              reportsToPositionId: parentPositionId,
+              positionType,
+              criticality,
+              budgetedFte: fte,
+              annualCostAmount: cost,
+              costCurrency: cost === undefined ? undefined : costCurrency,
+              availabilityDate,
+            },
+            authority
+          )
+        ),
       t('orgChart.scenarios.messages.positionCreated')
     );
     if (!next) return;
@@ -165,7 +187,10 @@ export function OrganizationScenarioPositionEditor({ chart, scenario, busy, exec
   const handleClose = async () => {
     if (!positionId) return;
     const next = await execute(
-      () => closeOrganizationScenarioPosition(scenario, positionId),
+      () =>
+        updateScenario((authority) =>
+          closeOrganizationScenarioPosition(scenario, positionId, authority)
+        ),
       t('orgChart.scenarios.messages.positionClosed')
     );
     if (next) setPositionId('');

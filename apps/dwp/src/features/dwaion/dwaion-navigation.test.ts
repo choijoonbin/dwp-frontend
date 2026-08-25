@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { dwaionRoutes } from '../../routes/dwaion-routes';
+import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/draft-product-page-route-contracts';
 import { DWAION_PRODUCT_MANIFEST } from './dwaion-navigation';
 
 describe('DWAI-ON product manifest', () => {
@@ -46,14 +46,10 @@ describe('DWAI-ON product manifest', () => {
   });
 
   it('keeps every manifest navigation target backed by a static product route', () => {
-    const productRoute = dwaionRoutes.find((route) => route.path === 'dwaion');
-    const staticPaths = new Set(
-      productRoute?.children
-        ?.map((route) => route.path)
-        .filter(
-          (path): path is string => typeof path === 'string' && !path.includes(':') && path !== '*'
-        )
-        .map((path) => `/dwaion/${path}`)
+    const staticPaths = new Set<string>(
+      DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+        (route) => route.productId === 'dwaion' && !route.pattern.includes(':')
+      ).map((route) => route.pattern)
     );
     const navigationPaths = DWAION_PRODUCT_MANIFEST.navigation.flatMap((group) =>
       group.items.map((item) => item.path)

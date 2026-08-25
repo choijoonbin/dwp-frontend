@@ -42,11 +42,11 @@ Seed를 만들거나 제2의 수기 Registry를 두지 않는다. Generator Diff
 - Row의 `mappingVersion=1`, `policyVersion=1`, `lifecycleState=ACTIVE`다. Bundle은 다음 불변
   Promotion Chain으로 나누며 아직 구현·검증되지 않은 Row는 다음 Bundle에도 넣지 않는다.
 
-| Bundle Key / Version   | 활성 Row 집합                                          | Release Gate                        |
-| ---------------------- | ------------------------------------------------------ | ----------------------------------- |
-| `product-surfaces / 1` | W0 Registry + Named Review + Communications + Services | V87·V88, Canary OpenAPI/PEP         |
-| `product-surfaces / 2` | Version 1 Snapshot + Approvals                         | V89·V90·V91, Approvals Contract/E2E |
-| `product-surfaces / 3` | Version 2 Snapshot + HCM 계약                          | DRAFT only, HCM Runtime/활성화 없음 |
+| Bundle Key / Version   | 활성 Row 집합                                          | Release Gate                                      |
+| ---------------------- | ------------------------------------------------------ | ------------------------------------------------- |
+| `product-surfaces / 1` | W0 Registry + Named Review + Communications + Services | V87·V88, Canary OpenAPI/PEP                       |
+| `product-surfaces / 2` | Version 1 Snapshot + Approvals                         | V89·V90·V91, Approvals Contract/E2E               |
+| `product-surfaces / 3` | Version 2 Snapshot + HCM 계약                          | DRAFT, HCM Runtime default-off, 활성 Pointer 없음 |
 
 세 Bundle은 같은 `bundleKey=product-surfaces`와 서로 다른 Version·SHA-256를 가진 Immutable
 Snapshot이다. 다음 Wave는 직전 승인 Snapshot을 입력으로 새 Version을 생성하고 하나뿐인 Active

@@ -4,6 +4,7 @@ import {
   isProductSurfaceEnforced,
   resolveCanaryProductFlags,
   resolveCanaryRouteDecision,
+  resolveCanarySurfaceDecision,
   resolveProductSurfaceRolloutMode,
   type ProductSurfaceCanaryAuthority,
   type ProductSurfaceRolloutFlags,
@@ -111,7 +112,7 @@ describe('product surface Canary rollout runtime', () => {
     ).toBe('enforced-compatibility');
   });
 
-  it('accepts only server decisions closed over revision, scope, product, surface, and access mode', () => {
+  it('accepts route and surface decisions across list/direct revisions with exact identity', () => {
     const expected = {
       productId: 'communications',
       surfaceId: 'communications.management',
@@ -119,6 +120,32 @@ describe('product surface Canary rollout runtime', () => {
     };
 
     expect(resolveCanaryRouteDecision(authority(), expected)).toEqual(allowed);
+    const splitRevision = authority({
+      envelope: {
+        ...authority().envelope!,
+        decisionRevision: 'psr-list-with-rollout-digest',
+      },
+      routeDecisions: {
+        [expected.routeContractKey]: {
+          ...allowed,
+          decisionRevision: 'psr-direct-route-evaluation',
+        },
+      },
+      surfaceDecisions: {
+        [expected.surfaceId]: {
+          ...allowed,
+          decisionRevision: 'psr-direct-surface-evaluation',
+        },
+      },
+    });
+    expect(resolveCanaryRouteDecision(splitRevision, expected)).toMatchObject({
+      state: 'allowed',
+      decisionRevision: 'psr-direct-route-evaluation',
+    });
+    expect(resolveCanarySurfaceDecision(splitRevision, expected)).toMatchObject({
+      state: 'allowed',
+      decisionRevision: 'psr-direct-surface-evaluation',
+    });
     expect(
       resolveCanaryRouteDecision(
         authority({
@@ -127,11 +154,33 @@ describe('product surface Canary rollout runtime', () => {
         expected
       )
     ).toEqual({ state: 'authority-unavailable' });
+  });
+
+  it('fails closed for expired direct or canonical authority evidence', () => {
+    const expected = {
+      productId: 'communications',
+      surfaceId: 'communications.management',
+      routeContractKey: 'route.communications.management.content.page',
+    };
     expect(
       resolveCanaryRouteDecision(
         authority({
           routeDecisions: {
-            [expected.routeContractKey]: { ...allowed, decisionRevision: 'stale-revision' },
+            [expected.routeContractKey]: {
+              ...allowed,
+              revalidateAt: '2028-01-01T00:00:00Z',
+            },
+          },
+        }),
+        expected
+      )
+    ).toEqual({ state: 'authority-unavailable' });
+    expect(
+      resolveCanaryRouteDecision(
+        authority({
+          envelope: {
+            ...authority().envelope!,
+            contexts: [{ ...context, revalidateAt: '2028-01-01T00:00:00Z' }],
           },
         }),
         expected

@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ApprovalQueue, DomainSection, QueryBoundary } from './hr-domain-components';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 export function HrDomainOperations({
   domain,
@@ -19,9 +20,15 @@ export function HrDomainOperations({
   domain: 'TIME' | 'ABSENCE' | 'BENEFITS' | 'PAY' | 'TALENT';
 }) {
   const { t } = useTranslation('hcm');
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.operations',
+  });
   const query = useQuery({
-    queryKey: ['hcm', 'operations', domain],
-    queryFn: () => getHrDomainOperations(domain),
+    queryKey: ['hcm', 'operations', domain, ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getHrDomainOperations(domain, requestScope.contextScopeKey, signal),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     staleTime: 20_000,
   });
   const actionableDomain = domain === 'TIME' || domain === 'ABSENCE';

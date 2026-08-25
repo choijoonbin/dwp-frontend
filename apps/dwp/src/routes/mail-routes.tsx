@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { Outlet, type RouteObject } from 'react-router-dom';
 
+import { MAIL_PRODUCT_MANIFEST } from '../features/mail/mail-product-manifest';
 import { MailLayout } from '../layouts/mail-layout';
 import {
   AppRouteGuard,
@@ -9,8 +10,21 @@ import {
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
+import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
 
 const MailPage = lazy(() => import('../pages/mail'));
+
+const page = (
+  <Suspense fallback={routeFallback}>
+    <MailPage />
+  </Suspense>
+);
+
+const legacyShell = (
+  <AppRouteGuard resourceKey="APP.MAIL">
+    <MailLayout />
+  </AppRouteGuard>
+);
 
 export const mailRoutes: RouteObject[] = [
   {
@@ -18,22 +32,21 @@ export const mailRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.MAIL">
-            <MailLayout />
-          </AppRouteGuard>
+          <Outlet />
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
-    children: [
-      { index: true, element: <Navigate to="home" replace /> },
-      {
-        path: '*',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <MailPage />
-          </Suspense>
-        ),
-      },
-    ],
+    children: buildTwoSurfaceProductChildren({
+      manifest: MAIL_PRODUCT_MANIFEST,
+      workSurfaceId: 'mail.work',
+      managementSurfaceId: 'mail.management',
+      managementBasePath: '/mail/admin',
+      legacyPath: '/mail/home',
+      legacyShell,
+      areaKey: 'mail',
+      translationNamespace: 'mail',
+      renderPage: () => page,
+      legacyUnknown: page,
+    }),
   },
 ];

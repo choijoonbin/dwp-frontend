@@ -45,9 +45,15 @@ function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const providerRole = hasProviderControlPlaneRole(roles);
   const supportContext = useProviderSupportContext(providerRole);
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
-  const regularAccess = canEnterCompanyAdministration(roles, appPermitted, false);
+  const resourceRoles = auth.user?.resourceRoles ?? [];
+  const regularAccess = canEnterCompanyAdministration(roles, appPermitted, false, resourceRoles);
   if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
-  return canEnterCompanyAdministration(roles, appPermitted, Boolean(supportContext.data)) ? (
+  return canEnterCompanyAdministration(
+    roles,
+    appPermitted,
+    Boolean(supportContext.data),
+    resourceRoles
+  ) ? (
     children
   ) : (
     <Navigate to="/403" replace />

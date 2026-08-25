@@ -1356,6 +1356,32 @@
         "CONFIGURATION_REQUIRED": "Admin setup required"
       }
     },
+    "managementRequest": {
+      "title": "Request app management responsibility",
+      "description": "Choose the app administration duty and scope you need, then submit it for independent approval. Submitting does not grant management access.",
+      "loading": "Checking the app administration duties you can request",
+      "loadErrorTitle": "App management request information could not be loaded",
+      "loadErrorDescription": "Refresh your authorization state and try again.",
+      "retry": "Try again",
+      "emptyTitle": "No management duty can be requested",
+      "emptyDescription": "There is no active self-service preset for this app and scope. Contact the app owner or tenant administrator.",
+      "pendingNotice": "The request is created only in pending approval. The requester and subject cannot approve their own request.",
+      "requestContext": "Requested app",
+      "requestedSurface": "Management surface where the request started: {{surface}}",
+      "preset": "App administration duty",
+      "scope": "Management scope",
+      "validTo": "Requested expiration",
+      "reviewDueAt": "Periodic review due",
+      "validityFutureError": "The expiration must be in the future.",
+      "reviewWindowError": "The review must be in the future and no later than the requested expiration.",
+      "justification": "Business justification",
+      "justificationHelp": "Provide at least 10 characters. The reason is retained as approval and audit evidence.",
+      "submit": "Submit for approval",
+      "submitting": "Submitting",
+      "cancel": "Cancel",
+      "requested": "Your app management responsibility request was submitted for approval.",
+      "requestError": "The app management responsibility request could not be submitted."
+    },
     "noMatches": "No matching apps",
     "noMatchesDescription": "Clear the search or app type to see all available apps.",
     "resetFilters": "Reset filters"
