@@ -513,7 +513,7 @@ export function FlowUpdates({
           sx={{
             mt: compact ? 2 : 1.25,
             minHeight: compact ? 0 : bodyHeight,
-            height: compact ? 'auto' : bodyHeight,
+            height: 'auto',
             flex: '0 0 auto',
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 1fr)',
@@ -538,8 +538,8 @@ export function FlowUpdates({
             data-news-featured
             sx={{
               minWidth: 0,
-              minHeight: compact ? 200 : 0,
-              height: compact ? 'auto' : 1,
+              minHeight: compact ? 200 : bodyHeight,
+              height: '100%',
               display: 'grid',
               gridTemplateColumns: 'minmax(0, 1fr)',
               alignItems: 'stretch',

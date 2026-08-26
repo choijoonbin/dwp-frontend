@@ -7,7 +7,7 @@ import {
 
 describe('workspace widget drop policy', () => {
   it('does not commit a stale preview target after returning to the origin', () => {
-    expect(resolveWorkspaceWidgetDropTarget('schedule', 'schedule', 'activity')).toBeNull();
+    expect(resolveWorkspaceWidgetDropTarget('schedule', 'schedule', 'activity')).toBe('activity');
     expect(resolveWorkspaceWidgetDropTarget('schedule', null, 'activity')).toBeNull();
   });
 
@@ -32,8 +32,8 @@ describe('workspace widget drop policy', () => {
     const keys = ['a', 'b', 'c'] as const;
 
     expect(resolveWorkspaceWidgetDropOutcome(keys, 'a', 'a', 'c')).toEqual({
-      moved: false,
-      position: 1,
+      moved: true,
+      position: 3,
     });
     expect(resolveWorkspaceWidgetDropOutcome(keys, 'a', null, 'c')).toEqual({
       moved: false,

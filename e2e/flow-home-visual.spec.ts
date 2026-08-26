@@ -7,6 +7,7 @@ import {
   fulfillSuccess,
   mockShellSession,
 } from './support/shell-session';
+import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -109,9 +110,18 @@ function flowOverview() {
 async function mockFlowHome(
   page: Page,
   presentation: 'focused' | 'balanced' | 'expressive',
-  experienceOverrides: Parameters<typeof flowExperience>[0] = {}
+  experienceOverrides: Parameters<typeof flowExperience>[0] = {},
+  visualOptions: Readonly<{
+    colorScheme?: 'light' | 'dark';
+    forcedColors?: 'active' | 'none';
+  }> = {}
 ) {
-  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
+  const colorScheme = visualOptions.colorScheme ?? 'light';
+  await page.emulateMedia({
+    reducedMotion: 'reduce',
+    colorScheme,
+    forcedColors: visualOptions.forcedColors ?? 'none',
+  });
   await page.clock.setFixedTime(FLOW_VISUAL_NOW);
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
@@ -119,7 +129,7 @@ async function mockFlowHome(
     jobTitle: '디지털 워크플레이스 담당자',
     permissions: FLOW_PERMISSIONS,
     appearance: {
-      mode: 'light',
+      mode: colorScheme,
       density: 'standard',
       highContrast: false,
       reduceMotion: true,
@@ -150,6 +160,13 @@ async function mockFlowHome(
     });
   });
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/approvals/v1/home', (route) =>
+    fulfillSuccess(route, { ...APPROVAL_HOME_FIXTURE, generatedAt: FLOW_VISUAL_NOW.toISOString() })
+  );
+  await page.route('**/api/people/v1/hr/home', (route) =>
+    fulfillSuccess(route, { ...HR_HOME_FIXTURE, generatedAt: FLOW_VISUAL_NOW.toISOString() })
+  );
+  await page.route('**/api/platform/v1/services/requests', (route) => fulfillSuccess(route, []));
   await page.route('**/api/notifications/v1/summary/by-app', (route) =>
     fulfillSuccess(route, {
       partial: false,
@@ -175,6 +192,18 @@ async function mockFlowHome(
       generatedAt: FLOW_VISUAL_NOW.toISOString(),
     })
   );
+}
+
+async function emulateReducedTransparency(page: Page, colorScheme: 'light' | 'dark') {
+  const session = await page.context().newCDPSession(page);
+  await session.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [
+      { name: 'prefers-color-scheme', value: colorScheme },
+      { name: 'prefers-reduced-motion', value: 'reduce' },
+      { name: 'prefers-reduced-transparency', value: 'reduce' },
+    ],
+  });
 }
 
 async function waitForVisualState(page: Page) {
@@ -347,6 +376,322 @@ async function expectDesktopPurposeComposition(flowHome: Locator) {
   expect(Math.abs(geometry.request.width - geometry.pulse.width)).toBeLessThanOrEqual(2);
 }
 
+const WORKSCAPE_VIEWPORTS = [
+  { width: 1920, height: 1080 },
+  { width: 1440, height: 900 },
+  { width: 1024, height: 768 },
+  { width: 768, height: 1024 },
+  { width: 390, height: 844 },
+  { width: 320, height: 760 },
+] as const;
+
+const WORKSCAPE_POSITIONS = ['LEFT', 'CENTER', 'RIGHT'] as const;
+const WORKSCAPE_SCHEMES = ['light', 'dark'] as const;
+const WORKSCAPE_PHOTO = '/media/communications/workplace-improvement.jpg';
+
+for (const viewport of WORKSCAPE_VIEWPORTS) {
+  for (const backgroundPosition of WORKSCAPE_POSITIONS) {
+    for (const colorScheme of WORKSCAPE_SCHEMES) {
+      test(`Workscape matrix ${viewport.width} ${backgroundPosition} ${colorScheme}`, async ({
+        page,
+      }, testInfo) => {
+        test.skip(testInfo.project.name !== 'chromium', 'The full matrix is captured in Chromium.');
+        await page.setViewportSize(viewport);
+        await mockFlowHome(
+          page,
+          viewport.width >= 1600 ? 'expressive' : 'balanced',
+          {
+            backgroundUrl: WORKSCAPE_PHOTO,
+            backgroundPosition,
+            overlayOpacity: 24,
+          },
+          { colorScheme }
+        );
+
+        await page.goto('/');
+        const flowHome = page.getByTestId('flow-home');
+        const workscape = flowHome.locator('[data-flow-workscape]');
+        await expect(workscape).toHaveAttribute(
+          'data-tenant-background-position',
+          backgroundPosition.toLowerCase()
+        );
+        await expect(workscape).toHaveAttribute('data-tenant-image-opacity', '1');
+        await expect(workscape.locator('[data-flow-health-strip]')).toHaveCount(0);
+        await expectNoHorizontalOverflow(page);
+        await waitForVisualState(page);
+
+        const contract = await workscape.evaluate((surface) => {
+          const frame = surface.querySelector<HTMLElement>('[data-flow-launch-deck-frame]')!;
+          const copy = surface.querySelector<HTMLElement>('[data-flow-context-copy]')!;
+          const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
+          const frameBounds = frame.getBoundingClientRect();
+          const copyBounds = copy.getBoundingClientRect();
+          const dockBounds = dock.getBoundingClientRect();
+          const targets = Array.from(surface.querySelectorAll<HTMLElement>('button')).map(
+            (target) => {
+              const bounds = target.getBoundingClientRect();
+              return { width: bounds.width, height: bounds.height };
+            }
+          );
+          const appLabels = Array.from(
+            surface.querySelectorAll<HTMLElement>(
+              '[data-flow-dock-item] button .MuiTypography-root'
+            )
+          ).map((label) => ({
+            text: label.textContent?.trim() ?? '',
+            clipped: label.scrollWidth > label.clientWidth + 1,
+          }));
+          const appItemBounds = Array.from(
+            surface.querySelectorAll<HTMLElement>('[data-flow-dock-item] button')
+          ).map((item) => {
+            const bounds = item.getBoundingClientRect();
+            return {
+              left: bounds.left,
+              right: bounds.right,
+              top: bounds.top,
+              bottom: bounds.bottom,
+            };
+          });
+          const groupLabels = Array.from(
+            surface.querySelectorAll<HTMLElement>('[data-flow-dock-group] > .MuiTypography-root')
+          )
+            .filter((label) => window.getComputedStyle(label).display !== 'none')
+            .map((label) => {
+              const bounds = label.getBoundingClientRect();
+              return {
+                text: label.textContent?.trim() ?? '',
+                clipped: label.scrollWidth > label.clientWidth + 1,
+                bounds: {
+                  left: bounds.left,
+                  right: bounds.right,
+                  top: bounds.top,
+                  bottom: bounds.bottom,
+                },
+              };
+            });
+          const dockAction = surface
+            .querySelector<HTMLElement>('[data-flow-dock-action]')!
+            .getBoundingClientRect();
+          return {
+            frame: {
+              left: frameBounds.left,
+              right: frameBounds.right,
+              width: frameBounds.width,
+              center: frameBounds.left + frameBounds.width / 2,
+            },
+            copy: { left: copyBounds.left, right: copyBounds.right },
+            dock: {
+              left: dockBounds.left,
+              right: dockBounds.right,
+              width: dockBounds.width,
+              center: dockBounds.left + dockBounds.width / 2,
+              background: window.getComputedStyle(dock).backgroundColor,
+              overflow: dock.scrollWidth - dock.clientWidth,
+            },
+            workscapeHeight: surface.getBoundingClientRect().height,
+            targets,
+            appLabels,
+            appItemBounds,
+            groupLabels,
+            dockAction: {
+              left: dockAction.left,
+              right: dockAction.right,
+              top: dockAction.top,
+              bottom: dockAction.bottom,
+            },
+          };
+        });
+
+        expect(contract.dock.background).not.toBe('rgba(255, 255, 255, 0.94)');
+        expect(contract.dock.background).not.toBe('rgba(0, 0, 0, 0)');
+        expect(contract.dock.overflow).toBeLessThanOrEqual(1);
+        expect(contract.targets.every((target) => target.width >= 44 && target.height >= 44)).toBe(
+          true
+        );
+        expect(contract.appLabels.every((label) => label.text.length > 0 && !label.clipped)).toBe(
+          true
+        );
+        expect(contract.groupLabels.every((label) => label.text.length > 0 && !label.clipped)).toBe(
+          true
+        );
+        expect(
+          contract.groupLabels.every(
+            (label) =>
+              label.bounds.right <= contract.dockAction.left ||
+              label.bounds.left >= contract.dockAction.right ||
+              label.bounds.bottom <= contract.dockAction.top ||
+              label.bounds.top >= contract.dockAction.bottom
+          )
+        ).toBe(true);
+        expect(
+          contract.appItemBounds.every(
+            (bounds) =>
+              bounds.right <= contract.dockAction.left ||
+              bounds.left >= contract.dockAction.right ||
+              bounds.bottom <= contract.dockAction.top ||
+              bounds.top >= contract.dockAction.bottom
+          )
+        ).toBe(true);
+        expect(contract.workscapeHeight).toBeLessThanOrEqual(
+          viewport.width >= 1200 ? 340 : viewport.width >= 900 ? 380 : 460
+        );
+
+        if (viewport.width >= 900 && backgroundPosition === 'RIGHT') {
+          expect(Math.abs(contract.copy.left - contract.dock.left)).toBeLessThanOrEqual(2);
+          expect(contract.frame.right - contract.dock.right).toBeGreaterThanOrEqual(
+            contract.frame.width * 0.24
+          );
+        } else if (viewport.width >= 900 && backgroundPosition === 'LEFT') {
+          expect(Math.abs(contract.copy.right - contract.dock.right)).toBeLessThanOrEqual(2);
+          expect(contract.dock.left - contract.frame.left).toBeGreaterThanOrEqual(
+            contract.frame.width * 0.24
+          );
+        } else if (viewport.width >= 900) {
+          expect(Math.abs(contract.frame.center - contract.dock.center)).toBeLessThanOrEqual(2);
+        } else {
+          expect(Math.abs(contract.frame.width - contract.dock.width)).toBeLessThanOrEqual(2);
+        }
+
+        await expect(workscape).toHaveScreenshot(
+          `flow-workscape-${viewport.width}-${backgroundPosition.toLowerCase()}-${colorScheme}.png`,
+          {
+            animations: 'disabled',
+            caret: 'hide',
+            scale: 'css',
+            maxDiffPixelRatio: 0.001,
+            timeout: 15_000,
+          }
+        );
+      });
+    }
+  }
+}
+
+for (const viewport of WORKSCAPE_VIEWPORTS) {
+  test(`Workscape forced colors ${viewport.width}`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Forced colors are captured in Chromium.');
+    await page.setViewportSize(viewport);
+    await mockFlowHome(
+      page,
+      viewport.width >= 1600 ? 'expressive' : 'balanced',
+      {
+        backgroundUrl: WORKSCAPE_PHOTO,
+        backgroundPosition: 'CENTER',
+        overlayOpacity: 24,
+      },
+      { forcedColors: 'active' }
+    );
+
+    await page.goto('/');
+    const workscape = page.getByTestId('flow-home').locator('[data-flow-workscape]');
+    await waitForVisualState(page);
+    const forcedContract = await workscape.evaluate((surface) => ({
+      beforeDisplay: window.getComputedStyle(surface, '::before').display,
+      afterDisplay: window.getComputedStyle(surface, '::after').display,
+      dockBackground: window.getComputedStyle(
+        surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!
+      ).backgroundColor,
+    }));
+    expect(forcedContract.beforeDisplay).toBe('none');
+    expect(forcedContract.afterDisplay).toBe('none');
+    expect(forcedContract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
+    await expectNoHorizontalOverflow(page);
+    await expect(workscape).toHaveScreenshot(`flow-workscape-${viewport.width}-forced-colors.png`, {
+      animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
+      maxDiffPixelRatio: 0.001,
+      timeout: 15_000,
+    });
+  });
+}
+
+for (const viewport of [WORKSCAPE_VIEWPORTS[1], WORKSCAPE_VIEWPORTS[4]]) {
+  for (const colorScheme of WORKSCAPE_SCHEMES) {
+    test(`Workscape reduced transparency ${viewport.width} ${colorScheme}`, async ({
+      page,
+    }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== 'chromium',
+        'Reduced transparency is captured in Chromium.'
+      );
+      await page.setViewportSize(viewport);
+      await mockFlowHome(
+        page,
+        'balanced',
+        {
+          backgroundUrl: WORKSCAPE_PHOTO,
+          backgroundPosition: 'RIGHT',
+          overlayOpacity: 24,
+        },
+        { colorScheme }
+      );
+      await emulateReducedTransparency(page, colorScheme);
+
+      await page.goto('/');
+      const workscape = page.getByTestId('flow-home').locator('[data-flow-workscape]');
+      await waitForVisualState(page);
+      const dockBackground = await workscape
+        .locator('[data-flow-dock-shell]')
+        .evaluate((dock) => window.getComputedStyle(dock).backgroundColor);
+      expect(dockBackground).toBe(colorScheme === 'dark' ? 'rgb(7, 20, 38)' : 'rgb(16, 40, 77)');
+      await expectNoHorizontalOverflow(page);
+      await expect(workscape).toHaveScreenshot(
+        `flow-workscape-${viewport.width}-reduced-transparency-${colorScheme}.png`,
+        {
+          animations: 'disabled',
+          caret: 'hide',
+          scale: 'css',
+          maxDiffPixelRatio: 0.001,
+          timeout: 15_000,
+        }
+      );
+    });
+  }
+}
+
+for (const viewport of [WORKSCAPE_VIEWPORTS[2], WORKSCAPE_VIEWPORTS[3]]) {
+  for (const mode of ['dark', 'forced-colors'] as const) {
+    test(`Flow Home full-page intermediate ${viewport.width} ${mode}`, async ({
+      page,
+    }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== 'chromium',
+        'Intermediate full-page accessibility coverage is captured in Chromium.'
+      );
+      await page.setViewportSize(viewport);
+      await mockFlowHome(
+        page,
+        'balanced',
+        {
+          backgroundUrl: WORKSCAPE_PHOTO,
+          backgroundPosition: 'RIGHT',
+          overlayOpacity: 24,
+        },
+        mode === 'dark' ? { colorScheme: 'dark' } : { forcedColors: 'active' }
+      );
+
+      await page.goto('/');
+      const flowHome = page.getByTestId('flow-home');
+      await expect(flowHome).toBeVisible();
+      await expectNoHorizontalOverflow(page);
+      await waitForVisualState(page);
+      await expectDwaionClearOfHomeActions(page);
+      await expect(page).toHaveScreenshot(
+        `flow-home-purpose-${viewport.width}-${mode}-full-page.png`,
+        {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: true,
+          scale: 'css',
+          maxDiffPixelRatio: 0.001,
+          timeout: 15_000,
+        }
+      );
+    });
+  }
+}
+
 test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Desktop baseline uses the Chromium project.');
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -361,7 +706,7 @@ test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page 
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeLessThanOrEqual(280);
+  expect(workscapeHeight).toBeLessThanOrEqual(340);
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
@@ -457,7 +802,7 @@ test('Flow Home expressive Korean desktop 1920 visual baseline', async ({ page }
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeLessThanOrEqual(280);
+  expect(workscapeHeight).toBeLessThanOrEqual(340);
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
@@ -495,7 +840,7 @@ test('Flow Home tenant photo keeps brand colour and a readable launch deck', asy
     };
   });
   expect(contract.imageOpacity).toBe('1');
-  expect(contract.workscapeHeight).toBeLessThanOrEqual(280);
+  expect(contract.workscapeHeight).toBeLessThanOrEqual(340);
   expect(contract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);

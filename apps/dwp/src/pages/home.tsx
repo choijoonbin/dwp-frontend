@@ -85,6 +85,7 @@ import { useHomeEditorSafety } from '../features/home/runtime/use-home-editor-sa
 import { useHomeEditorEntryFocus } from '../features/home/runtime/use-home-editor-entry-focus';
 import { useHomeCurrentInstant } from '../features/home/runtime/use-home-current-instant';
 import { useHomeRecommendationFeedback } from '../features/home/runtime/use-home-recommendation-feedback';
+import { activeHomeStoreUsesViews } from '../features/home/runtime/home-store-capabilities';
 import { HomeEditorGuards } from '../features/home/runtime/home-editor-guards';
 import {
   resolveHomeViewCustomized,
@@ -301,7 +302,7 @@ export default function HomePage() {
   const viewStoreEnabled = Boolean(
     advancedPersonalizationEnabled && homeExperience?.homePreferenceStore === 'VIEWS'
   );
-  const activeStoreUsesViews = editSession ? editSession.store === 'VIEWS' : viewStoreEnabled;
+  const activeStoreUsesViews = activeHomeStoreUsesViews(viewStoreEnabled, editSession?.store);
   const homeStudioEnabled = advancedPersonalizationEnabled && activeStoreUsesViews;
   const homePreferenceQuery = useQuery({
     queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
@@ -851,9 +852,8 @@ export default function HomePage() {
           overviewLoading={homeOverviewQuery.isLoading}
           overviewFetching={homeOverviewQuery.isFetching}
           overviewFailed={homeOverviewHardFailed}
-          supplementalPartial={
-            launcherSummaryPartial || homeOverviewRefreshPartial || homeContributionRuntime.partial
-          }
+          supplementalPartial={homeOverviewRefreshPartial || homeContributionRuntime.partial}
+          notificationPartial={launcherSummaryPartial}
           contributionModel={homeContributionRuntime.model}
           contributionLoading={homeContributionRuntime.loading}
           contributionFetching={homeContributionRuntime.fetching}

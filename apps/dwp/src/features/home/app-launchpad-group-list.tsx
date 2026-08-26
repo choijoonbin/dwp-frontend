@@ -25,6 +25,7 @@ type AppLaunchpadGroupListProps = {
   groupId: HomeAppGroupId;
   groupName: string;
   itemIds: string[];
+  sortableItemIds?: string[];
   immersive: boolean;
   dragDisabled: boolean;
   previewActive: boolean;
@@ -36,6 +37,7 @@ export function AppLaunchpadGroupList({
   groupId,
   groupName,
   itemIds,
+  sortableItemIds = itemIds,
   immersive,
   dragDisabled,
   previewActive,
@@ -49,7 +51,7 @@ export function AppLaunchpadGroupList({
   });
 
   return (
-    <SortableContext items={itemIds} strategy={rectSortingStrategy}>
+    <SortableContext items={sortableItemIds} strategy={rectSortingStrategy}>
       <Box
         component="ul"
         ref={dropTarget.setNodeRef}

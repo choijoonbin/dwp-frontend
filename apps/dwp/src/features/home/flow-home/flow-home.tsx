@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, CalendarRange, Inbox, ListTodo, Zap } from 'lucide-react';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -10,6 +11,7 @@ import { TenantWorkscape } from '../../../components/tenant-workscape';
 import { FlowHomeContext } from './flow-home-context';
 import { HomePurposeWidget } from './home-purpose-widget';
 import { MyAppDock } from './my-app-dock';
+import { resolveFlowHomeHealth } from './flow-home-health';
 import { FLOW_HOME_SECTION_REGISTRY } from './flow-home-preference';
 import {
   FlowRequiredNotice,
@@ -17,10 +19,8 @@ import {
   hasFlowGeneralUpdates,
   hasFlowRequiredNotice,
 } from './flow-updates';
-import { flowSourceLabel } from './flow-source-label';
 import { resolveFlowTrailingGovernedPlacement } from './flow-governed-placement';
 import { homePurposeAllRoute } from './home-purpose-route-policy';
-import { HOME_OVERVIEW_FRESHNESS_SECONDS } from '../home-widget-registry';
 
 import type {
   HomeAudienceProfile,
@@ -60,6 +60,7 @@ type FlowHomeProps = {
   overviewFetching: boolean;
   overviewFailed: boolean;
   supplementalPartial?: boolean;
+  notificationPartial?: boolean;
   contributionModel: HomeContributionModel;
   contributionLoading: boolean;
   contributionFetching: boolean;
@@ -111,6 +112,13 @@ function useLargeTextReflow(): boolean {
   return largeText;
 }
 
+function contributionCount(items: HomeContributionModel['buckets']['action']): number {
+  return Math.min(
+    999,
+    items.reduce((total, item) => total + Math.max(1, item.count), 0)
+  );
+}
+
 export function FlowHome({
   audience,
   now,
@@ -118,6 +126,7 @@ export function FlowHome({
   headline,
   subheadline,
   updatedAt,
+  timeZone,
   backgroundUrl,
   backgroundPosition = 'RIGHT',
   overlayOpacity = 18,
@@ -131,6 +140,7 @@ export function FlowHome({
   overviewFetching,
   overviewFailed,
   supplementalPartial = false,
+  notificationPartial = false,
   contributionModel,
   contributionLoading,
   contributionFetching,
@@ -173,38 +183,28 @@ export function FlowHome({
       overviewFailed ||
       overview?.communications.status === 'UNAVAILABLE' ||
       hasFlowGeneralUpdates(overview));
-  const sourceSections = [
-    overview?.work,
-    overview?.calendar,
-    overview?.activity,
-    overview?.communications,
-  ];
-  const partial =
-    overviewFailed ||
-    supplementalPartial ||
-    contributionPartial ||
-    sourceSections.some((section) => section?.status === 'UNAVAILABLE');
-  const generatedAt = overview?.generatedAt ? Date.parse(overview.generatedAt) : Number.NaN;
-  const staleThresholdMs = HOME_OVERVIEW_FRESHNESS_SECONDS * 1000;
-  const delayedSource = sourceSections.reduce<
-    Readonly<{ source: string; lagMs: number }> | undefined
-  >((oldest, section) => {
-    if (!section || section.status !== 'AVAILABLE') return oldest;
-    const sectionGeneratedAt = Date.parse(section.generatedAt);
-    if (!Number.isFinite(sectionGeneratedAt)) return oldest;
-    const lagMs = now.getTime() - sectionGeneratedAt;
-    if (lagMs <= staleThresholdMs || (oldest && oldest.lagMs >= lagMs)) return oldest;
-    return { source: section.source, lagMs };
-  }, undefined);
-  const stale =
-    (Number.isFinite(generatedAt) && now.getTime() - generatedAt > staleThresholdMs) ||
-    Boolean(delayedSource);
-  const staleDetail = delayedSource
-    ? t(partial ? 'flow.context.partialAndSourceStale' : 'flow.context.sourceStale', {
-        source: flowSourceLabel(delayedSource.source, t),
-        count: Math.max(1, Math.ceil(delayedSource.lagMs / 60_000)),
+  const health = resolveFlowHomeHealth({
+    now,
+    overview,
+    overviewFailed,
+    overviewFetching,
+    supplementalPartial: supplementalPartial || contributionPartial,
+    notificationPartial,
+    contributionFetching,
+    providers: contributionModel.providers,
+  });
+  const healthUpdatedAt = health.lastUpdatedAt
+    ? formatDate(new Date(health.lastUpdatedAt), {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone,
       })
-    : undefined;
+    : updatedAt;
+  const contextMetrics = {
+    action: contributionCount(contributionModel.buckets.action),
+    timeline: contributionCount(contributionModel.buckets.timeline),
+    response: contributionCount(contributionModel.buckets.response),
+  };
   const configuredLimit = (storageKey: string, fallback = 3) => {
     const value = widgetConfigurations[storageKey]?.itemLimit;
     return Math.min(3, Math.max(1, typeof value === 'number' ? value : fallback));
@@ -295,41 +295,61 @@ export function FlowHome({
         compact={compactPreview}
         ariaLabel={t('flow.workscape.label')}
       >
-        <FlowHomeContext
-          audience={audience}
-          currentDate={currentDate}
-          headline={headline}
-          subheadline={subheadline}
-          updatedAt={updatedAt}
-          backgroundPosition={backgroundPosition}
-          partial={partial}
-          stale={stale}
-          staleDetail={staleDetail}
-          editing={editing}
-          customizationEnabled={customizationEnabled}
-          customizationBusy={customizationBusy}
-          compact={compactPreview}
-          priorityCompact={narrowViewport || compactPreview}
-          onEdit={onStartEditing}
-          onOpenStudio={onOpenStudio}
-          onRetry={onRetryOverview}
-        />
-        <MyAppDock
-          apps={apps}
-          groups={appGroups}
-          layout={appLayout}
-          editing={editing}
-          customizationEnabled={customizationEnabled}
-          busy={customizationBusy}
-          compact={compactPreview}
-          priorityCompact={narrowViewport || compactPreview}
-          presentation={presentation}
-          onBrowseAll={onBrowseAllApps}
-          onLaunch={onLaunchApp}
-          onManage={onManageApp}
-          onStartEditing={onStartEditing}
-          onLayoutChange={onAppLayoutChange}
-        />
+        <Box
+          data-flow-launch-deck-frame
+          sx={{
+            width: 1,
+            maxWidth: { md: 1280, xl: 1520 },
+            mx: 'auto',
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            alignItems: editing
+              ? 'stretch'
+              : backgroundPosition === 'LEFT'
+                ? { xs: 'stretch', md: 'flex-end' }
+                : backgroundPosition === 'CENTER'
+                  ? { xs: 'stretch', md: 'center' }
+                  : { xs: 'stretch', md: 'flex-start' },
+          }}
+        >
+          <FlowHomeContext
+            audience={audience}
+            currentDate={currentDate}
+            headline={headline}
+            subheadline={subheadline}
+            updatedAt={healthUpdatedAt}
+            backgroundPosition={backgroundPosition}
+            health={health}
+            metrics={contextMetrics}
+            editing={editing}
+            customizationEnabled={customizationEnabled}
+            customizationBusy={customizationBusy}
+            compact={compactPreview}
+            priorityCompact={narrowViewport || compactPreview}
+            onEdit={onStartEditing}
+            onOpenStudio={onOpenStudio}
+            onRetry={onRetryOverview}
+          />
+          <MyAppDock
+            apps={apps}
+            groups={appGroups}
+            layout={appLayout}
+            editing={editing}
+            customizationEnabled={customizationEnabled}
+            busy={customizationBusy}
+            compact={compactPreview}
+            priorityCompact={narrowViewport || compactPreview}
+            presentation={presentation}
+            backgroundPosition={backgroundPosition}
+            onBrowseAll={onBrowseAllApps}
+            onLaunch={onLaunchApp}
+            onManage={onManageApp}
+            onStartEditing={onStartEditing}
+            onLayoutChange={onAppLayoutChange}
+          />
+        </Box>
       </TenantWorkscape>
 
       {requiredNoticeVisible && (

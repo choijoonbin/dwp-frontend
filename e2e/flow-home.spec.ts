@@ -125,15 +125,29 @@ function overviewWithCommunications(
   communications: Record<string, unknown> = HOME_COMMUNICATIONS_FIXTURE
 ) {
   const overview = createHomeOverviewFixture(['WORKSPACE_MEMBER']);
+  const generatedAt = FLOW_FIXTURE_NOW.toISOString();
   return {
     ...overview,
+    work: { ...overview.work, generatedAt, data: { ...overview.work.data, generatedAt } },
+    calendar: {
+      ...overview.calendar,
+      generatedAt,
+      data: { ...overview.calendar.data, generatedAt },
+    },
+    activity: {
+      ...overview.activity,
+      generatedAt,
+      data: { ...overview.activity.data, generatedAt },
+    },
     communications: {
       status: 'AVAILABLE' as const,
       source: 'DWP_COMMUNICATIONS',
-      generatedAt: FLOW_FIXTURE_NOW.toISOString(),
-      data: communications,
+      generatedAt,
+      data: { ...communications, generatedAt },
       reason: null,
     },
+    recommendationSection: { ...overview.recommendationSection, generatedAt },
+    generatedAt,
   };
 }
 
@@ -585,6 +599,7 @@ test.beforeEach(async ({ page }) => {
   });
   await routeFlowExperience(page);
   await routeDefaultPreference(page);
+  await routeEmptyExternalContributions(page);
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
   await page.route('**/api/notifications/v1/summary/by-app', (route) =>
     fulfillSuccess(route, {
@@ -639,8 +654,25 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
     '8'
   );
   const workscapeHeight = (await workscape.boundingBox())?.height ?? Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeGreaterThanOrEqual(160);
-  expect(workscapeHeight).toBeLessThanOrEqual(280);
+  expect(workscapeHeight).toBeGreaterThanOrEqual(240);
+  expect(workscapeHeight).toBeLessThanOrEqual(340);
+  const launchDeckContract = await workscape.evaluate((surface) => {
+    const copy = surface.querySelector<HTMLElement>('[data-flow-context-copy]')!;
+    const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
+    const copyBounds = copy.getBoundingClientRect();
+    const dockBounds = dock.getBoundingClientRect();
+    return {
+      inlineStartDelta: Math.abs(copyBounds.left - dockBounds.left),
+      dockBackground: window.getComputedStyle(dock).backgroundColor,
+      horizontalOverflow: dock.scrollWidth - dock.clientWidth,
+    };
+  });
+  expect(launchDeckContract.inlineStartDelta).toBeLessThanOrEqual(2);
+  expect(launchDeckContract.dockBackground).not.toBe('rgba(255, 255, 255, 0.94)');
+  expect(launchDeckContract.horizontalOverflow).toBeLessThanOrEqual(1);
+  await expect(workscape.getByText(/8 more$/)).toBeVisible();
+  await expect(workscape.getByText(/^\+8$/)).toHaveCount(0);
+  await expect(workscape.getByText(/Some sources are unavailable/i)).toHaveCount(0);
 
   const order = await flowHome
     .locator('[data-flow-section]')
@@ -844,7 +876,41 @@ test('one failed app provider keeps valid work visible and discloses the partial
   await expect(response).toContainText('Some data is delayed');
   await expect(response.getByRole('button', { name: 'Try again' })).toBeVisible();
   await expect(response).not.toContainText('No responses are waiting');
+  const healthStrip = flowHome.locator('[data-flow-health-strip]');
+  await expect(healthStrip).toHaveAttribute('data-flow-health-state', 'partial');
+  await expect(healthStrip).toHaveAttribute('data-flow-health-domains', 'approvals');
+  await expect(healthStrip).toContainText(
+    'Approvals could not be loaded. Other work information and apps remain available.'
+  );
+  await expect(healthStrip.getByRole('button', { name: 'Reload work data' })).toBeVisible();
   await expectSeriousAxeViolationsToBeEmpty(page, '[data-testid="flow-home"]');
+});
+
+test('health details use the freshest successful provider time when the overview is unavailable', async ({
+  page,
+}) => {
+  await page.route('**/api/platform/v1/home/overview**', (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Overview temporarily unavailable' }),
+    })
+  );
+  await page.goto('/');
+
+  const healthStrip = page.getByTestId('flow-home').locator('[data-flow-health-strip]');
+  await expect(healthStrip).toHaveAttribute('data-flow-health-state', 'unavailable');
+  const detailsTrigger = healthStrip.getByRole('button', {
+    name: 'View work information status',
+  });
+  await detailsTrigger.click();
+  const details = page.getByRole('region', { name: 'Work information status' });
+  await expect(details).toBeVisible();
+  await expect(details).not.toContainText('As of -');
+  await expect(details).toContainText(/As of .*\d/);
+  await page.keyboard.press('Escape');
+  await expect(details).toHaveCount(0);
+  await expect(detailsTrigger).toBeFocused();
 });
 
 test('a successful partial notification summary never masquerades as an empty response queue', async ({
@@ -870,6 +936,12 @@ test('a successful partial notification summary never masquerades as an empty re
   await expect(response).toHaveAttribute('data-home-content-state', 'partial');
   await expect(response).toContainText('Some data is delayed');
   await expect(response).not.toContainText('No responses are waiting');
+  const healthStrip = page.getByTestId('flow-home').locator('[data-flow-health-strip]');
+  await expect(healthStrip).toHaveAttribute('data-flow-health-state', 'partial');
+  await expect(healthStrip).toHaveAttribute('data-flow-health-domains', 'notifications');
+  await expect(healthStrip).toContainText(
+    'Notifications could not be loaded. Other work information and apps remain available.'
+  );
 });
 
 test('HCM domain fallback zeroes remain partial rather than confirmed pulse data', async ({
@@ -976,6 +1048,9 @@ test('tenant imagery remains colourful behind a bounded, readable app Dock', asy
     backgroundPosition: 'RIGHT',
     overlayOpacity: 24,
   });
+  await page.route('**/api/platform/v1/home/overview**', (route) =>
+    fulfillSuccess(route, overviewWithCommunications())
+  );
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
@@ -996,7 +1071,7 @@ test('tenant imagery remains colourful behind a bounded, readable app Dock', asy
     };
   });
   expect(visualContract.imageOpacity).toBe('1');
-  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(280);
+  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(340);
   expect(visualContract.dockWidth / visualContract.workscapeWidth).toBeLessThanOrEqual(0.82);
   expect(visualContract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
   await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(8);
@@ -1165,13 +1240,17 @@ test('keyboard move controls reorder only personal purpose widgets and cancel re
 
   await moveEarlier.focus();
   await moveEarlier.press('Enter');
-  await expect.poll(order).toEqual(['today', 'request-tracker', 'response-hub', 'role-pulse']);
+  const movedOrder = ['today', 'request-tracker', 'response-hub', 'role-pulse'];
+  await expect.poll(order).toEqual(movedOrder);
   await expect.poll(governedOrder).toEqual(originalGoverned);
 
-  await page
-    .locator('[data-workspace-composer-placement="floating"]')
-    .getByRole('button', { name: 'Cancel changes' })
-    .click();
+  const toolbar = page.locator('[data-workspace-composer-placement="floating"]');
+  await toolbar.getByRole('button', { name: 'Undo last change' }).click();
+  await expect.poll(order).toEqual(original);
+  await toolbar.getByRole('button', { name: 'Redo change' }).click();
+  await expect.poll(order).toEqual(movedOrder);
+
+  await toolbar.getByRole('button', { name: 'Cancel changes' }).click();
   await page.getByRole('alertdialog').getByRole('button', { name: 'Discard changes' }).click();
   await expect.poll(order).toEqual(original);
   await expect(editTrigger).toBeFocused();
@@ -1440,6 +1519,12 @@ test('VIEWS editing and save stay available when the inactive legacy store fails
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Edit home' })).toHaveCount(1);
+  await page.getByRole('button', { name: 'Home edit options' }).click();
+  await expect(page.getByRole('menuitem', { name: /Arrange screen/ })).toBeVisible();
+  await page.getByRole('menuitem', { name: /Home settings/ }).click();
+  await expect(page.getByRole('dialog', { name: 'My work home' })).toBeVisible();
+  await page.getByRole('button', { name: 'Close home studio' }).click();
   await page.getByRole('button', { name: 'Edit home' }).click();
   const widget = page.locator('[data-workspace-widget="request-tracker"]');
   await widget.locator('[data-widget-footprint-trigger]').click();
@@ -1505,6 +1590,85 @@ test('LEGACY editing and save stay available when the inactive VIEWS store fails
 
   await expect.poll(() => saved).toBe(true);
   expect(viewsRequests).toBe(0);
+});
+
+test('an unrelated LEGACY home edit preserves opaque app layout placements', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Opaque persistence is covered once on desktop.');
+  const opaqueAppLayout = {
+    version: 1 as const,
+    groups: {
+      work: ['future-top-level', 'folder-mixed', 'dwp-activity'],
+      future_group: ['future-group-app', 'folder-future'],
+    },
+    folders: {
+      'folder-mixed': {
+        id: 'folder-mixed',
+        name: 'Mixed tools',
+        groupId: 'work',
+        appIds: ['dwp-work', 'future-folder-app'],
+      },
+      'folder-future': {
+        id: 'folder-future',
+        name: 'Future tools',
+        groupId: 'future_group',
+        appIds: ['future-folder-a', 'future-folder-b'],
+      },
+    },
+    hiddenAppIds: ['future-hidden-app'],
+  };
+  let savedAppLayout: unknown = null;
+  let preference = {
+    ...DEFAULT_HOME_PREFERENCE,
+    customized: true,
+    version: 4,
+    layout: { ...DEFAULT_HOME_PREFERENCE.layout, appLayout: opaqueAppLayout },
+  };
+  await routeFlowExperience(page, {
+    advancedPersonalizationEnabled: true,
+    composerEnabled: true,
+    homePreferenceStore: 'LEGACY',
+  });
+  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
+      return fulfillSuccess(route, preference);
+    }
+    if (request.method() === 'PUT' && path.endsWith('/home-preferences')) {
+      const payload = request.postDataJSON() as {
+        layout: typeof preference.layout;
+        version: number;
+      };
+      savedAppLayout = payload.layout.appLayout;
+      preference = {
+        ...preference,
+        layout: payload.layout,
+        version: preference.version + 1,
+      };
+      return fulfillSuccess(route, preference);
+    }
+    return route.fallback();
+  });
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home' }).click();
+  const widget = page.locator('[data-workspace-widget="request-tracker"]');
+  await widget.locator('[data-widget-footprint-trigger]').click();
+  await page
+    .getByRole('dialog', { name: 'My requests widget size' })
+    .locator('[data-widget-height-option="tall"]')
+    .click();
+  await page.keyboard.press('Escape');
+  await page
+    .locator('[data-workspace-composer-placement="floating"]')
+    .getByRole('button', { name: 'Save' })
+    .click();
+
+  await expect.poll(() => savedAppLayout).not.toBeNull();
+  expect(savedAppLayout).toEqual(opaqueAppLayout);
 });
 
 test('an entitlement granted during editing cannot delete its canonical app placement', async ({

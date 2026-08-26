@@ -130,6 +130,17 @@ function reorderWidgetKeys<WidgetKey extends string>(
   return next;
 }
 
+function widgetKeyOrdersMatch<WidgetKey extends string>(
+  left: readonly WidgetKey[] | null,
+  right: readonly WidgetKey[]
+): boolean {
+  return (
+    left !== null &&
+    left.length === right.length &&
+    left.every((key, index) => key === right[index])
+  );
+}
+
 export type WorkspaceWidgetDropOutcome = Readonly<{
   moved: boolean;
   position: number;
@@ -154,7 +165,12 @@ export function resolveWorkspaceWidgetDropTarget<WidgetKey extends string>(
   finalOverKey: WidgetKey | null,
   previewTargetKey: WidgetKey | null
 ): WidgetKey | null {
-  if (!finalOverKey || finalOverKey === activeKey) return null;
+  if (!finalOverKey) return null;
+  // Once the destination footprint moves under the pointer, collision
+  // detection naturally reports the active widget itself. Preserve the last
+  // meaningful destination instead of treating that stable preview as a
+  // cancelled drop.
+  if (finalOverKey === activeKey) return previewTargetKey;
   return previewTargetKey ?? finalOverKey;
 }
 
@@ -647,19 +663,23 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
     if (!over) return;
     const nextActiveKey = String(active.id) as WidgetKey;
     const nextOverKey = String(over.id) as WidgetKey;
+    const baseOrder = visible.map((widget) => widget.widgetKey);
     if (nextOverKey === nextActiveKey) {
-      dropTargetKeyRef.current = null;
-      setPreviewOrder(visible.map((widget) => widget.widgetKey));
+      // The active footprint moves into the destination slot. Its own
+      // collision must not clear the target and move the DOM back, otherwise
+      // pointer collisions oscillate indefinitely between both orders.
       return;
     }
+
+    // Drag-over can fire repeatedly for the same collision target while the
+    // preview itself is moving. Reordering the current preview toggles the
+    // dragged item back and forth and can create a React update loop. Always
+    // derive the preview from the stable committed order and ignore duplicate
+    // target events.
+    if (dropTargetKeyRef.current === nextOverKey) return;
     dropTargetKeyRef.current = nextOverKey;
-    setPreviewOrder((current) =>
-      reorderWidgetKeys(
-        current ?? visible.map((widget) => widget.widgetKey),
-        nextActiveKey,
-        nextOverKey
-      )
-    );
+    const nextOrder = reorderWidgetKeys(baseOrder, nextActiveKey, nextOverKey);
+    setPreviewOrder((current) => (widgetKeyOrdersMatch(current, nextOrder) ? current : nextOrder));
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {

@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { ActionIconButton } from '@dwp-frontend/design-system';
 
@@ -21,34 +20,6 @@ type DwaionLauncherProps = {
   onOpenContacts?: () => void;
   onOpenStatus: () => void;
 };
-
-const mascotFloat = keyframes`
-  0%, 100% { transform: translate3d(0, 1px, 0) rotate(-1deg); }
-  30% { transform: translate3d(0, -7px, 0) rotate(1.2deg); }
-  55% { transform: translate3d(0, -4px, 0) rotate(-0.5deg); }
-  78% { transform: translate3d(0, -9px, 0) rotate(1.4deg); }
-`;
-
-const mascotGreeting = keyframes`
-  0%, 58%, 80%, 100% { transform: rotate(0deg) scale(1); }
-  62% { transform: rotate(-7deg) scale(1.045); }
-  66% { transform: rotate(6deg) scale(1.035); }
-  70% { transform: rotate(-4deg) scale(1.045); }
-  74% { transform: rotate(3deg) scale(1.025); }
-`;
-
-const auraPulse = keyframes`
-  0%, 100% {
-    opacity: 0.42;
-    transform: scale(0.86);
-    box-shadow: 0 0 0 0 rgba(80, 224, 255, 0);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
-    box-shadow: 0 0 18px 2px rgba(80, 224, 255, 0.24);
-  }
-`;
 
 export function DwaionLauncher({
   firstName,
@@ -112,7 +83,6 @@ export function DwaionLauncher({
             inset: 4,
             borderRadius: '50%',
             border: '1px solid rgba(80, 224, 255, 0.48)',
-            animation: `${auraPulse} 2.8s ease-in-out infinite`,
             pointerEvents: 'none',
           },
           '&:hover': {
@@ -141,8 +111,6 @@ export function DwaionLauncher({
           sx={{
             width: { xs: 48, sm: 56 },
             height: { xs: 48, sm: 56 },
-            animation: `${mascotFloat} ${open ? '5s' : '3.6s'} ease-in-out infinite`,
-            '@media (prefers-reduced-motion: reduce)': { animation: 'none', transform: 'none' },
           }}
         >
           <Box
@@ -151,8 +119,6 @@ export function DwaionLauncher({
               width: 1,
               height: 1,
               transformOrigin: '50% 72%',
-              animation: open ? 'none' : `${mascotGreeting} 7.2s ease-in-out infinite`,
-              '@media (prefers-reduced-motion: reduce)': { animation: 'none', transform: 'none' },
             }}
           >
             <Box

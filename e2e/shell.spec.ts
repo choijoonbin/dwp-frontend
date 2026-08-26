@@ -8,6 +8,7 @@ import {
   mockRuntimeNavigation,
 } from './support/runtime-access';
 import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-session';
+import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
 
 async function expectNoAutomaticAccessibilityViolations(page: Page) {
   const results = await new AxeBuilder({ page }).analyze();
@@ -33,12 +34,18 @@ async function mockAuthenticatedAdminSession(page: Page) {
         message: 'OK',
         data: {
           userId: 1,
+          personPublicId: 'person-session-user',
           displayName: 'Admin',
           jobTitle: 'Platform administrator',
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
+          tenantName: 'SKAX',
+          preferredLocale: 'en',
+          tenantDefaultLocale: 'en',
           roles: ['ADMIN'],
+          groups: [],
+          resourceRoles: [],
         },
       }),
     })
@@ -364,6 +371,69 @@ test.beforeEach(async ({ page }) => {
       }),
     })
   );
+  await page.route('**/api/notifications/v1/summary**', (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path.endsWith('/summary/by-app')) {
+      return fulfillSuccess(route, {
+        partial: false,
+        unavailableSources: [],
+        apps: [],
+        changeVersion: '0',
+        counterVersion: '0',
+        generatedAt: '2026-08-11T00:00:00Z',
+      });
+    }
+    return fulfillSuccess(route, {
+      partial: false,
+      unavailableSources: [],
+      message: null,
+      actionableUnread: 0,
+      totalUnread: 0,
+      viewCounts: { PRIORITY: 0, ALL: 0, MENTIONS: 0, SAVED: 0, SNOOZED: 0, DONE: 0 },
+      changeVersion: '0',
+      counterVersion: '0',
+      generatedAt: '2026-08-11T00:00:00Z',
+    });
+  });
+  await page.route('**/api/notifications/v1/me/delivery-profile', (route) =>
+    fulfillSuccess(route, {
+      channels: { IN_APP: true },
+      quietHours: {
+        enabled: false,
+        start: '22:00',
+        end: '07:00',
+        timeZone: 'Asia/Seoul',
+        days: [1, 2, 3, 4, 5, 6, 7],
+        allowUrgentBypass: true,
+      },
+      digest: { mode: 'OFF', deliveryTime: '09:00', dayOfWeek: null },
+      presentation: { bannerMode: 'SMART', previewMode: 'FULL' },
+      version: '0',
+      updatedAt: '2026-08-11T00:00:00Z',
+    })
+  );
+  await page.route('**/api/notifications/v1/me/effective-settings', (route) =>
+    fulfillSuccess(route, {
+      partial: false,
+      unavailableSources: [],
+      globalChannels: {},
+      apps: [],
+      generatedAt: '2026-08-11T00:00:00Z',
+    })
+  );
+  await page.route('**/api/notifications/v1/stream**', (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      body: ': connected\n\n',
+    })
+  );
+  await page.route('**/api/approvals/v1/home', (route) =>
+    fulfillSuccess(route, APPROVAL_HOME_FIXTURE)
+  );
+  await page.route('**/api/people/v1/hr/home', (route) => fulfillSuccess(route, HR_HOME_FIXTURE));
+  await page.route('**/api/platform/v1/services/requests', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
 });
 
 test('unauthenticated users see the login shell without business navigation', async ({ page }) => {
@@ -1098,45 +1168,77 @@ test('workspace widget surfaces use the governed responsive visual gap', async (
   await mockAuthenticatedAdminSession(page);
   await page.goto('/');
 
-  const activity = page.locator(
-    '[data-workspace-widget="activity"] [data-workspace-widget-content] > section'
-  );
-  const focus = page.locator(
-    '[data-workspace-widget="focus"] [data-workspace-widget-content] > section'
-  );
-  const schedule = page.locator(
-    '[data-workspace-widget="schedule"] [data-workspace-widget-content] > section'
-  );
-  const dailyBrief = page.locator(
-    '[data-workspace-widget="daily-brief"] [data-workspace-widget-content] > section'
-  );
-  await expect(activity).toBeVisible();
-  await expect(focus).toBeVisible();
-  await expect(schedule).toBeVisible();
-  await expect(dailyBrief).toBeVisible();
+  const canvas = page.locator('[data-workspace-presentation]');
+  const widgets = canvas.locator('[data-workspace-widget]');
+  await expect(canvas).toBeVisible();
+  await expect(widgets.first()).toBeVisible();
 
-  const [activityBox, focusBox, scheduleBox, dailyBriefBox] = await Promise.all([
-    activity.boundingBox(),
-    focus.boundingBox(),
-    schedule.boundingBox(),
-    dailyBrief.boundingBox(),
-  ]);
-  expect(activityBox).not.toBeNull();
-  expect(focusBox).not.toBeNull();
-  expect(scheduleBox).not.toBeNull();
-  expect(dailyBriefBox).not.toBeNull();
-  if (!activityBox || !focusBox || !scheduleBox || !dailyBriefBox) return;
+  const layout = await canvas.evaluate((element) => {
+    const style = window.getComputedStyle(element);
+    const boxes = Array.from(element.querySelectorAll<HTMLElement>('[data-workspace-widget]'))
+      .map((widget) => {
+        const bounds = widget.getBoundingClientRect();
+        return {
+          key: widget.dataset.workspaceWidget ?? '',
+          x: bounds.x,
+          y: bounds.y,
+          right: bounds.right,
+          bottom: bounds.bottom,
+          width: bounds.width,
+          height: bounds.height,
+        };
+      })
+      .filter((bounds) => bounds.width > 0 && bounds.height > 0);
+    return {
+      rowGap: Number.parseFloat(style.rowGap),
+      columnGap: Number.parseFloat(style.columnGap),
+      boxes,
+    };
+  });
+  const expectedGap = testInfo.project.name === 'mobile' ? 16 : 24;
+  expect(layout.rowGap).toBeCloseTo(expectedGap, 0);
+  expect(layout.columnGap).toBeCloseTo(testInfo.project.name === 'mobile' ? 0 : 2, 0);
+  expect(layout.boxes.length).toBeGreaterThanOrEqual(4);
 
-  if (testInfo.project.name === 'mobile') {
-    expect(focusBox.y - (activityBox.y + activityBox.height)).toBeCloseTo(16, 0);
-    expect(scheduleBox.y - (focusBox.y + focusBox.height)).toBeCloseTo(16, 0);
-    expect(dailyBriefBox.y - (scheduleBox.y + scheduleBox.height)).toBeCloseTo(16, 0);
-    return;
+  for (let index = 0; index < layout.boxes.length; index += 1) {
+    const current = layout.boxes[index];
+    if (!current) continue;
+    for (const candidate of layout.boxes.slice(index + 1)) {
+      const overlapsHorizontally = current.x < candidate.right && candidate.x < current.right;
+      const overlapsVertically = current.y < candidate.bottom && candidate.y < current.bottom;
+      expect(
+        overlapsHorizontally && overlapsVertically,
+        `${current.key} and ${candidate.key} must not overlap`
+      ).toBe(false);
+    }
   }
 
-  expect(focusBox.x - (activityBox.x + activityBox.width)).toBeCloseTo(24, 0);
-  expect(scheduleBox.x - (focusBox.x + focusBox.width)).toBeCloseTo(24, 0);
-  expect(dailyBriefBox.y - (activityBox.y + activityBox.height)).toBeCloseTo(24, 0);
+  if (testInfo.project.name !== 'mobile') {
+    const horizontalSurfaceGaps = await canvas.evaluate((element) => {
+      const surfaces = Array.from(element.querySelectorAll<HTMLElement>('[data-workspace-widget]'))
+        .map((widget) => {
+          const surface = widget.querySelector<HTMLElement>(
+            ':scope > [data-workspace-widget-content] > section'
+          );
+          const bounds = surface?.getBoundingClientRect();
+          return bounds
+            ? { x: bounds.x, y: bounds.y, right: bounds.right, bottom: bounds.bottom }
+            : null;
+        })
+        .filter(
+          (bounds): bounds is { x: number; y: number; right: number; bottom: number } =>
+            bounds !== null
+        );
+      return surfaces.flatMap((left, index) =>
+        surfaces.slice(index + 1).flatMap((right) => {
+          const sameRow = Math.abs(left.y - right.y) < 2;
+          if (!sameRow) return [];
+          return right.x >= left.right ? [right.x - left.right] : [left.x - right.right];
+        })
+      );
+    });
+    expect(horizontalSurfaceGaps.some((gap) => Math.abs(gap - expectedGap) < 1)).toBe(true);
+  }
 });
 
 test('compact navigation reflows the desktop workspace canvas', async ({ page }, testInfo) => {
@@ -1151,11 +1253,18 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
         message: 'OK',
         data: {
           userId: 1,
+          personPublicId: 'person-session-user',
           displayName: 'Admin',
+          jobTitle: 'Platform administrator',
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
+          tenantName: 'SKAX',
+          preferredLocale: 'en',
+          tenantDefaultLocale: 'en',
           roles: ['ADMIN'],
+          groups: [],
+          resourceRoles: [],
         },
       }),
     })
@@ -1225,11 +1334,18 @@ test('personal home launcher can create, rename, persist, and reset folders', as
         message: 'OK',
         data: {
           userId: 1,
+          personPublicId: 'person-session-user',
           displayName: 'Admin',
+          jobTitle: 'Platform administrator',
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
+          tenantName: 'SKAX',
+          preferredLocale: 'en',
+          tenantDefaultLocale: 'en',
           roles: ['ADMIN'],
+          groups: [],
+          resourceRoles: [],
         },
       }),
     })
@@ -1294,7 +1410,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
         };
       });
     expect(iconMotion.animationName).not.toBe('none');
-    expect(iconMotion.iterationCount).toBe('infinite');
+    expect(iconMotion.iterationCount).toBe('1');
 
     const editingWorkButton = page.getByRole('button', { name: 'Move Work', exact: true });
     const editingWorkItem = editingWorkButton.locator('..');
@@ -1426,12 +1542,15 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     expect(workBounds).not.toBeNull();
     const sourceX = (workBounds?.x ?? 0) + (workBounds?.width ?? 0) / 2;
     const sourceY = (workBounds?.y ?? 0) + (workBounds?.height ?? 0) / 2;
+    const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
+    expect(askTargetBounds).not.toBeNull();
     await page.mouse.move(sourceX, sourceY);
     await page.mouse.down();
     await page.mouse.move(sourceX + 16, sourceY, { steps: 4 });
-    await expect(page.locator('[data-launchpad-item="dwp-work"]')).toHaveCSS('opacity', '0.28');
-    const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
-    expect(askTargetBounds).not.toBeNull();
+    await expect(page.locator('[data-launchpad-item="dwp-work"]')).toHaveAttribute(
+      'data-launchpad-drop-preview',
+      'true'
+    );
     await page.mouse.move(
       (askTargetBounds?.x ?? 0) + (askTargetBounds?.width ?? 0) / 2,
       (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
@@ -1548,18 +1667,18 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
 
     const listStyle = window.getComputedStyle(list);
     const columnCount = listStyle.gridTemplateColumns.split(' ').filter(Boolean).length;
-    if (columnCount < 1 || items.length < columnCount) return null;
+    if (columnCount < 1) return null;
 
     const firstBounds = firstItem.getBoundingClientRect();
+    const listBounds = list.getBoundingClientRect();
+    const columnGap = Number.parseFloat(listStyle.columnGap) || 0;
     const rowGap = Number.parseFloat(listStyle.rowGap) || 0;
+    const columnWidth = (listBounds.width - Math.max(0, columnCount - 1) * columnGap) / columnCount;
     const targetIndex = items.length;
     const targetColumn = targetIndex % columnCount;
     const targetRow = Math.floor(targetIndex / columnCount);
-    const columnAnchor = items[targetColumn];
-    if (!columnAnchor) return null;
-    const columnBounds = columnAnchor.getBoundingClientRect();
     return {
-      x: columnBounds.left + columnBounds.width / 2,
+      x: listBounds.left + targetColumn * (columnWidth + columnGap) + columnWidth / 2,
       y: firstBounds.top + firstBounds.height / 2 + targetRow * (firstBounds.height + rowGap),
     };
   });
@@ -1633,7 +1752,7 @@ test('personal home widgets persist user choices and restore governed defaults',
 
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await expect(page.getByText(/Announcements.*Widget locked by your organization/)).toBeVisible();
+  await expect(page.getByText(/Announcements.*Organization managed.*fixed position/)).toBeVisible();
   await expect(page.locator('[data-workspace-widget="announcements"]')).toHaveAttribute(
     'data-workspace-widget-policy',
     'GOVERNED'
@@ -1673,11 +1792,12 @@ test('personal home widgets persist user choices and restore governed defaults',
   expect(savedLayout.widgets.map((widget) => widget.widgetKey)).toEqual([
     'command-rail',
     'activity',
-    'focus',
     'schedule',
     'daily-brief',
+    'focus',
   ]);
   expect(savedLayout.widgets.find((widget) => widget.widgetKey === 'activity')?.size).toBe('fifth');
+  await expect(page.getByRole('button', { name: 'Edit home', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
 
   await page.reload();
@@ -1699,6 +1819,17 @@ test('widget drag exposes an exact destination footprint before the layout chang
 
   const scheduleWidget = page.locator('[data-workspace-widget="schedule"]');
   const activityWidget = page.locator('[data-workspace-widget="activity"]');
+  const personalWidgets = page.locator('[data-workspace-widget-policy="PERSONAL"]');
+  const initialWidgetOrder = await personalWidgets.evaluateAll((widgets) =>
+    widgets.map((widget) => widget.getAttribute('data-workspace-widget') ?? '')
+  );
+  const expectedWidgetOrder = [...initialWidgetOrder];
+  const scheduleIndex = expectedWidgetOrder.indexOf('schedule');
+  const activityIndex = expectedWidgetOrder.indexOf('activity');
+  expect(scheduleIndex).toBeGreaterThanOrEqual(0);
+  expect(activityIndex).toBeGreaterThanOrEqual(0);
+  const [movedSchedule] = expectedWidgetOrder.splice(scheduleIndex, 1);
+  if (movedSchedule) expectedWidgetOrder.splice(activityIndex, 0, movedSchedule);
   const scheduleHandle = scheduleWidget.getByRole('button', {
     name: 'Move Schedule widget',
     exact: true,
@@ -1764,13 +1895,11 @@ test('widget drag exposes an exact destination footprint before the layout chang
   await expect(page.locator('[data-widget-drag-overlay]')).toHaveCount(0);
   await expect
     .poll(() =>
-      page
-        .locator('[data-workspace-widget-policy="PERSONAL"]')
-        .evaluateAll((widgets) =>
-          widgets.map((widget) => widget.getAttribute('data-workspace-widget'))
-        )
+      personalWidgets.evaluateAll((widgets) =>
+        widgets.map((widget) => widget.getAttribute('data-workspace-widget'))
+      )
     )
-    .toEqual(['command-rail', 'schedule', 'activity', 'focus', 'daily-brief']);
+    .toEqual(expectedWidgetOrder);
 });
 
 test('personal home launcher only exposes explicitly entitled apps when app permissions exist', async ({

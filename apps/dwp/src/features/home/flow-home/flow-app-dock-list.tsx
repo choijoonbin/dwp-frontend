@@ -126,15 +126,15 @@ export function FlowAppDockList({
         p: 0,
         m: 0,
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, minmax(54px, 64px))',
-        justifyContent: 'start',
-        columnGap: 'clamp(4px, 2vw, 10px)',
+        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+        justifyContent: 'stretch',
+        columnGap: 0.75,
         rowGap: 0.5,
         overflow: 'visible',
         '@container flow-dock (min-width: 640px)': {
           display: 'flex',
           alignItems: 'stretch',
-          gap: 1.25,
+          gap: 2,
         },
       }}
     >
@@ -149,23 +149,27 @@ export function FlowAppDockList({
             '@container flow-dock (min-width: 640px)': {
               display: 'flex',
               flexDirection: 'column',
-              minWidth: 0,
-              pl: groupIndex === 0 ? 0 : 1.25,
+              minWidth: 104,
+              pl: groupIndex === 0 ? 0 : 2,
               borderInlineStart: groupIndex === 0 ? 0 : 1,
-              borderColor: 'divider',
+              borderColor: 'rgba(255,255,255,0.14)',
             },
           }}
         >
           <Typography
             id={`flow-dock-group-${group.id}`}
+            title={group.name}
             variant="caption"
             fontWeight={750}
-            color="text.secondary"
             sx={{
               display: 'none',
               minHeight: 18,
               px: 0.5,
               letterSpacing: '0.01em',
+              color: 'rgba(248,250,252,0.72)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
               '@container flow-dock (min-width: 640px)': { display: 'block' },
             }}
           >
@@ -181,7 +185,7 @@ export function FlowAppDockList({
               '@container flow-dock (min-width: 640px)': {
                 display: 'flex',
                 alignItems: 'start',
-                gap: 0.5,
+                gap: 0.75,
               },
             }}
           >
@@ -277,7 +281,7 @@ export function FlowAppDockList({
                   sx={{
                     position: 'relative',
                     minWidth: 0,
-                    '@container flow-dock (min-width: 640px)': { width: 68 },
+                    '@container flow-dock (min-width: 640px)': { width: 76 },
                   }}
                 >
                   <ButtonBase
@@ -329,15 +333,20 @@ export function FlowAppDockList({
                       justifyContent: 'center',
                       gap: 0.5,
                       borderRadius: 2,
-                      color: 'text.primary',
+                      color: '#F8FAFC',
                       '@container flow-dock (min-width: 640px)': {
                         minHeight: 72,
                         py: 0.25,
                       },
-                      '&:hover': { bgcolor: 'action.hover' },
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
+                      '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
                       '&:focus-visible': {
-                        outline: '3px solid var(--dwp-focus-ring, currentColor)',
+                        outline: '2px solid #93C5FD',
                         outlineOffset: 2,
+                      },
+                      '@media (forced-colors: active)': {
+                        color: 'CanvasText',
+                        '&:focus-visible': { outlineColor: 'Highlight' },
                       },
                     }}
                   >
@@ -350,8 +359,9 @@ export function FlowAppDockList({
                             display: 'grid',
                             placeItems: 'center',
                             borderRadius: 2,
-                            bgcolor: 'action.selected',
-                            color: 'primary.main',
+                            bgcolor: 'rgba(255,255,255,0.10)',
+                            color: '#BFDBFE',
+                            border: '1px solid rgba(255,255,255,0.16)',
                           }}
                         >
                           <Folder size={23} strokeWidth={1.8} aria-hidden="true" />
@@ -387,7 +397,7 @@ export function FlowAppDockList({
                                   ? 'warning.contrastText'
                                   : 'primary.contrastText',
                             border: 2,
-                            borderColor: 'background.paper',
+                            borderColor: '#10284D',
                             fontSize: 10,
                             fontWeight: 800,
                             fontVariantNumeric: 'tabular-nums',
@@ -411,6 +421,7 @@ export function FlowAppDockList({
                         lineHeight: 1.3,
                         wordBreak: 'keep-all',
                         overflowWrap: 'break-word',
+                        fontSize: 11.5,
                         '@container flow-dock (min-width: 640px)': {
                           minHeight: 17,
                           WebkitLineClamp: 1,

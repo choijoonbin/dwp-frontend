@@ -19,7 +19,7 @@ type TenantWorkscapeProps = {
 };
 
 function clampOverlay(value: number): number {
-  return Math.min(0.72, Math.max(0, value / 100));
+  return Math.min(0.78, Math.max(0, value / 100));
 }
 
 /**
@@ -46,15 +46,8 @@ export function TenantWorkscape({
         ? 'center'
         : 'right center';
   const configuredOverlay = clampOverlay(overlayOpacity);
-  const safeEdgeOpacity = Math.max(HOME_WORKSCAPE_TOKENS.scrim.safe, configuredOverlay);
-  const middleOpacity = Math.max(HOME_WORKSCAPE_TOKENS.scrim.middle, configuredOverlay);
-  const farEdgeOpacity = Math.max(HOME_WORKSCAPE_TOKENS.scrim.far, configuredOverlay);
-  const scrimDirection = backgroundPosition === 'LEFT' ? '270deg' : '90deg';
   const preview = Boolean(previewViewport);
   const mobilePreview = previewViewport === 'mobile';
-  // The brand scene is a launch context, not a second dashboard viewport.
-  // Together with the one-row Dock this targets a 208–224px desktop Workscape.
-  const contextHeight = presentation === 'focused' ? 78 : 84;
 
   return (
     <Box
@@ -62,13 +55,32 @@ export function TenantWorkscape({
       aria-label={ariaLabel}
       data-flow-workscape={preview ? undefined : 'true'}
       data-tenant-workscape-preview={preview ? previewViewport : undefined}
+      data-tenant-workscape-presentation={presentation}
       data-tenant-background-position={backgroundPosition.toLowerCase()}
       data-tenant-image-opacity={sceneUrl ? '1' : '0'}
       sx={(theme) => {
-        const workscape =
-          HOME_WORKSCAPE_TOKENS[darkPreview || theme.palette.mode === 'dark' ? 'dark' : 'light'];
+        const dark = darkPreview || theme.palette.mode === 'dark';
+        const workscape = HOME_WORKSCAPE_TOKENS[dark ? 'dark' : 'light'];
+        const opacity = (minimum: number) => Math.min(0.78, Math.max(minimum, configuredOverlay));
+        const scrim =
+          backgroundPosition === 'CENTER'
+            ? `linear-gradient(180deg, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.64 : 0.58
+              )}) 0%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.32 : 0.26
+              )}) 48%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.5 : 0.44
+              )}) 100%)`
+            : `linear-gradient(${backgroundPosition === 'LEFT' ? '270deg' : '90deg'}, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.78 : 0.78
+              )}) 0%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.6 : 0.54
+              )}) 42%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.24 : 0.2
+              )}) 72%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
+                dark ? 0.16 : 0.1
+              )}) 100%)`;
         return {
-          '--flow-workscape-context-min-height': `${contextHeight}px`,
           position: 'relative',
           isolation: 'isolate',
           minWidth: 0,
@@ -88,12 +100,12 @@ export function TenantWorkscape({
               }
             : {
                 width: 1,
-                px: compact ? 0.75 : { xs: 0.75, sm: 1, md: 1 },
-                pt: compact ? 0.75 : { xs: 0.75, sm: 1, md: 1 },
-                pb: compact ? 0.75 : { xs: 0.75, sm: 1, md: 1 },
+                px: compact ? 0.75 : { xs: 0.75, sm: 2, md: 2.5, lg: 3, xl: 3.5 },
+                pt: compact ? 0.75 : { xs: 1, md: 1.75 },
+                pb: compact ? 0.75 : { xs: 1, md: 1.75 },
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 0.75,
+                gap: 1,
                 borderRadius: compact ? 3.5 : 'calc(var(--flow-surface-radius) + 4px)',
               }),
           '&::before': sceneUrl
@@ -115,14 +127,16 @@ export function TenantWorkscape({
             position: 'absolute',
             zIndex: -1,
             inset: 0,
-            background: `linear-gradient(${scrimDirection}, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${safeEdgeOpacity}) 0%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${middleOpacity}) 48%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${farEdgeOpacity}) 100%)`,
+            background: scrim,
             pointerEvents: 'none',
           },
           '& > *': { position: 'relative', zIndex: 1 },
           '@media (max-width: 599.95px)': {
-            '--flow-workscape-context-min-height': '88px',
             '&::after': {
-              background: `rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${Math.max(HOME_WORKSCAPE_TOKENS.scrim.mobile, configuredOverlay)})`,
+              background: `rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${Math.min(
+                0.78,
+                Math.max(0.62, configuredOverlay)
+              )})`,
             },
           },
           '@media (forced-colors: active)': {
@@ -137,7 +151,7 @@ export function TenantWorkscape({
           },
           '@media (prefers-reduced-transparency: reduce)': {
             '& [data-flow-dock-shell]': {
-              bgcolor: theme.palette.background.paper,
+              bgcolor: dark ? '#071426' : '#10284D',
               backdropFilter: HOME_FORCED_COLOR_TOKENS.backdropFilter,
               WebkitBackdropFilter: HOME_FORCED_COLOR_TOKENS.backdropFilter,
             },

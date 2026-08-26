@@ -15,7 +15,7 @@ import type {
   HomeAppGroup,
   LaunchpadLayout,
 } from '../../../components/workspace-composer/app-launchpad-model';
-import type { HomePresentation } from '@dwp-frontend/shared-utils';
+import type { HomeBackgroundPosition, HomePresentation } from '@dwp-frontend/shared-utils';
 
 type MyAppDockProps = {
   apps: readonly HomeAppDefinition[];
@@ -27,6 +27,7 @@ type MyAppDockProps = {
   compact?: boolean;
   priorityCompact?: boolean;
   presentation: HomePresentation;
+  backgroundPosition: HomeBackgroundPosition;
   onBrowseAll: () => void;
   onLaunch: (app: HomeAppDefinition) => void;
   onManage?: (app: HomeAppDefinition) => void;
@@ -44,6 +45,7 @@ export function MyAppDock({
   compact = false,
   priorityCompact = false,
   presentation,
+  backgroundPosition,
   onBrowseAll,
   onLaunch,
   onManage,
@@ -52,18 +54,23 @@ export function MyAppDock({
 }: MyAppDockProps) {
   const { t } = useTranslation('home');
   const narrowViewport = useMediaQuery('(max-width:599.95px)', { noSsr: true });
+  const tabletViewport = useMediaQuery('(min-width:900px) and (max-width:1199.95px)', {
+    noSsr: true,
+  });
   const expressiveViewport = useMediaQuery('(min-width:1200px)', { noSsr: true });
   const wideViewport = useMediaQuery('(min-width:1600px)', { noSsr: true });
   const itemLimit =
     compact || narrowViewport
       ? 4
-      : presentation === 'expressive'
-        ? wideViewport
-          ? 12
-          : expressiveViewport
-            ? 10
-            : 8
-        : 8;
+      : tabletViewport
+        ? 6
+        : presentation === 'expressive'
+          ? wideViewport
+            ? 12
+            : expressiveViewport
+              ? 10
+              : 8
+          : 8;
   const availableItemIds = new Set([...apps.map((app) => app.id), ...Object.keys(layout.folders)]);
   const orderedItemIds = groups
     .flatMap((group) => layout.groups[group.id] ?? [])
@@ -71,7 +78,7 @@ export function MyAppDock({
   const visibleItemIds = orderedItemIds.slice(0, itemLimit);
   const visibleItemCount = visibleItemIds.length;
   const hiddenItemCount = Math.max(0, orderedItemIds.length - visibleItemCount);
-  const preferredDockWidth = Math.min(1120, Math.max(400, 156 + visibleItemCount * 72));
+  const preferredDockWidth = Math.min(1120, Math.max(540, 240 + visibleItemCount * 78));
   const visibleAppIds = new Set(
     visibleItemIds.flatMap((itemId) => layout.folders[itemId]?.appIds ?? [itemId])
   );
@@ -109,27 +116,32 @@ export function MyAppDock({
       sx={(theme) => ({
         minWidth: 0,
         width: editing ? 1 : { xs: 1, md: `min(100%, ${preferredDockWidth}px)` },
-        alignSelf: 'center',
-        minHeight: 0,
-        color: 'text.primary',
-        px: compact ? 1 : { xs: 1, sm: 1.25, md: 1.5 },
-        py: compact ? 0.75 : { xs: 0.75, md: 0.75 },
+        alignSelf: editing
+          ? 'stretch'
+          : backgroundPosition === 'LEFT'
+            ? { xs: 'stretch', md: 'flex-end' }
+            : backgroundPosition === 'CENTER'
+              ? { xs: 'stretch', md: 'center' }
+              : { xs: 'stretch', md: 'flex-start' },
+        minHeight: editing ? 0 : { xs: 136, sm: 132 },
+        color: '#F8FAFC',
+        px: compact ? 1 : { xs: 1.25, sm: 1.5, md: 1.75 },
+        pt: compact ? 0.75 : { xs: 1, md: 1.5 },
+        pb: compact ? 0.75 : { xs: 1, md: 1.25 },
         containerName: 'flow-dock',
         containerType: 'inline-size',
-        borderRadius: compact ? 3 : 'calc(var(--flow-surface-radius) - 2px)',
-        bgcolor: theme.palette.mode === 'dark' ? 'rgba(17,26,38,0.94)' : 'rgba(255,255,255,0.94)',
+        borderRadius: compact ? '14px' : '16px',
+        bgcolor: theme.palette.mode === 'dark' ? 'rgba(5,16,35,0.86)' : 'rgba(8,24,52,0.78)',
         border: 1,
-        borderColor: editing
-          ? 'primary.main'
-          : theme.palette.mode === 'dark'
-            ? 'rgba(255,255,255,0.2)'
-            : 'rgba(255,255,255,0.72)',
-        backdropFilter: 'blur(18px) saturate(115%)',
-        WebkitBackdropFilter: 'blur(18px) saturate(115%)',
+        borderColor: editing ? '#93C5FD' : 'rgba(255,255,255,0.22)',
+        backdropFilter: 'blur(24px) saturate(130%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(130%)',
         boxShadow:
           theme.palette.mode === 'dark'
-            ? '0 14px 32px rgba(0,0,0,0.28)'
-            : '0 14px 32px rgba(10,30,58,0.16)',
+            ? 'inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 30px rgba(0,0,0,0.42)'
+            : 'inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 30px rgba(1,10,28,0.30)',
+        '& [data-flow-dock-meta] .MuiTypography-root': { color: '#F8FAFC' },
+        '& [data-flow-app-dock-list]': { color: '#F8FAFC' },
         ...(priorityCompact
           ? {
               py: 1,
@@ -148,8 +160,8 @@ export function MyAppDock({
           WebkitBackdropFilter: 'none',
         },
         '@media (prefers-reduced-transparency: reduce)': {
-          bgcolor: 'background.paper',
-          boxShadow: 'none',
+          bgcolor: theme.palette.mode === 'dark' ? '#071426' : '#10284D',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.24)',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
         },
@@ -166,7 +178,17 @@ export function MyAppDock({
           gridTemplateColumns: 'minmax(0, 1fr) auto',
           alignItems: 'center',
           columnGap: 1,
-          rowGap: 0.25,
+          rowGap: 0.5,
+          ...(!editing && itemLimit <= 10
+            ? {
+                '@container flow-dock (min-width: 800px)': {
+                  gridTemplateAreas: '"meta apps action"',
+                  gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+                  columnGap: 2,
+                  rowGap: 0,
+                },
+              }
+            : {}),
         }}
       >
         <Box data-flow-dock-meta sx={{ gridArea: 'meta', minWidth: 0 }}>
@@ -203,10 +225,10 @@ export function MyAppDock({
           <Typography
             data-flow-dock-description
             variant="body2"
-            color="text.secondary"
             sx={{
               mt: 0.25,
               maxWidth: 720,
+              color: 'rgba(248,250,252,0.72)',
               lineHeight: 1.35,
               wordBreak: 'keep-all',
               overflowWrap: 'break-word',
@@ -219,7 +241,20 @@ export function MyAppDock({
             {t('flow.dock.description')}
           </Typography>
         </Box>
-        <Box sx={{ gridArea: 'apps', minWidth: 0 }}>
+        <Box
+          sx={{
+            gridArea: 'apps',
+            minWidth: 0,
+            ...(!editing && itemLimit <= 10
+              ? {
+                  '@container flow-dock (min-width: 800px)': {
+                    display: 'flex',
+                    alignItems: 'center',
+                  },
+                }
+              : {}),
+          }}
+        >
           {visibleItemCount > 0 || editing ? (
             <AppLaunchpad
               apps={apps}
@@ -237,12 +272,16 @@ export function MyAppDock({
               onStartEditing={onStartEditing}
             />
           ) : (
-            <Typography variant="body2" color="text.secondary" sx={{ minHeight: 44, py: 1.25 }}>
+            <Typography
+              variant="body2"
+              sx={{ minHeight: 44, py: 1.25, color: 'rgba(248,250,252,0.72)' }}
+            >
               {t('flow.dock.empty')}
             </Typography>
           )}
         </Box>
         <ActionButton
+          data-flow-dock-action
           intent="quiet"
           size="small"
           startIcon={<LayoutGrid size={16} aria-hidden="true" />}
@@ -262,6 +301,10 @@ export function MyAppDock({
             minHeight: 44,
             justifySelf: 'end',
             whiteSpace: 'nowrap',
+            color: '#F8FAFC',
+            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
+            '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
+            '&:focus-visible': { outline: '2px solid #93C5FD', outlineOffset: 2 },
           }}
         >
           {visibleItemCount === 0 ? t('flow.dock.emptyAction') : t('launchpad.allApps')}
@@ -276,10 +319,11 @@ export function MyAppDock({
                 display: 'inline-grid',
                 placeItems: 'center',
                 borderRadius: 999,
-                color: 'text.secondary',
-                bgcolor: 'action.selected',
+                color: '#E2E8F0',
+                bgcolor: 'rgba(255,255,255,0.12)',
                 fontWeight: 750,
                 fontVariantNumeric: 'tabular-nums',
+                fontSize: 10.5,
               }}
             >
               {t('flow.dock.moreApps', { count: hiddenItemCount })}
