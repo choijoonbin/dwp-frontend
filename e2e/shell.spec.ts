@@ -864,13 +864,13 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page).toHaveURL(/\/work/);
   const businessSidebar =
     testInfo.project.name === 'mobile'
-      ? page.getByTestId('mobile-sidebar')
-      : page.getByTestId('desktop-sidebar');
+      ? page.getByTestId('work-mobile-sidebar')
+      : page.getByTestId('work-sidebar');
   if (testInfo.project.name === 'mobile') {
     await page.getByRole('button', { name: 'Open navigation' }).click();
   }
-  await expect(businessSidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-  await expect(businessSidebar.getByText('Digital Workplace', { exact: true })).toBeVisible();
+  await expect(businessSidebar.getByRole('link', { name: 'Back to personal home' })).toBeVisible();
+  await expect(businessSidebar.getByRole('link', { name: 'DWAI·ON', exact: true })).toHaveCount(0);
   await expect(businessSidebar.locator('img')).toHaveCount(0);
   if (testInfo.project.name === 'mobile') {
     await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
@@ -881,7 +881,7 @@ test('authenticated users enter a personal home before the business shell', asyn
     (window as typeof window & { __dwpSpaNavigationMarker?: string }).__dwpSpaNavigationMarker =
       'preserved';
   });
-  await businessSidebar.getByRole('link', { name: 'Digital Workplace home' }).click();
+  await businessSidebar.getByRole('link', { name: 'Back to personal home' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect
     .poll(() =>
@@ -1002,7 +1002,7 @@ test('authenticated users enter a personal home before the business shell', asyn
     ).toBeVisible();
     await expect(settingsNavigation.getByRole('link', { name: 'Home workspace' })).toBeVisible();
     await expect(settingsNavigation.getByRole('link', { name: 'Back to workspace' })).toBeVisible();
-    await expect(settingsNavigation.getByRole('link')).toHaveCount(9);
+    await expect(settingsNavigation.getByRole('link')).toHaveCount(10);
   }
 
   await settingsNavigation.getByRole('link', { name: 'Language & region' }).click();
@@ -1285,8 +1285,9 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
 
   const readGeometry = () =>
     page.evaluate(() => {
-      const header = document.querySelector('[data-testid="app-header"]');
-      const main = document.querySelector('[data-testid="app-main"]');
+      const shell = document.querySelector('[data-testid="work-shell"]');
+      const header = document.querySelector('[data-testid="work-header"]');
+      const main = shell?.querySelector('main') ?? null;
       const canvas = document.querySelector('[data-dwp-page-canvas="workspace"]');
       const rectangle = (element: Element | null) => {
         const rect = element?.getBoundingClientRect();
@@ -1307,7 +1308,7 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
   expect(expanded.canvas).toEqual({ left: 248, right: 1920, width: 1672 });
 
   await page.getByRole('button', { name: 'Collapse navigation' }).click();
-  await expect(page.getByTestId('desktop-sidebar')).toHaveCSS('width', '72px');
+  await expect(page.getByTestId('work-sidebar')).toHaveCSS('width', '72px');
   await expect(page.locator('[data-dwp-navigation-state="compact"]')).toBeVisible();
   await expect.poll(async () => (await readGeometry()).canvas?.width).toBe(1848);
 
@@ -2004,45 +2005,49 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   );
   await mockAskRuntime(page);
 
-  const navigateTo = async (label: 'Work' | 'DWAI·ON' | 'Activity' | 'Apps') => {
-    if (testInfo.project.name === 'mobile') {
-      await page.getByRole('button', { name: 'Open navigation' }).click();
-      await page
-        .getByTestId('mobile-sidebar')
-        .getByRole('link', { name: label, exact: true })
-        .click();
-      return;
+  const navigateTo = async (label: 'Work' | 'Activity' | 'Apps') => {
+    if (new URL(page.url()).pathname !== '/') {
+      if (testInfo.project.name === 'mobile') {
+        await page.getByRole('button', { name: 'Open navigation' }).click();
+      }
+      await page.getByRole('link', { name: 'Back to personal home' }).click();
+      await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
     }
     await page
-      .getByTestId('desktop-sidebar')
-      .getByRole('link', { name: label, exact: true })
+      .getByRole('button', { name: label === 'Apps' ? 'All apps' : `Open ${label}` })
       .click();
   };
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await page.getByRole('button', { name: 'Open priority in Work' }).click();
-  await expect(page).toHaveURL(/\/work\?item=WK-1042/);
+  await expect(page).toHaveURL(/\/work\/queue\?item=WK-1042/);
   await expect(page.getByRole('heading', { name: 'Work', exact: true })).toBeVisible();
   await expect(page.getByRole('grid', { name: 'Work queue' })).toBeVisible();
   await expect(page.getByText('WK-1042 / Approval / Owner: You')).toBeVisible();
 
-  await navigateTo('DWAI·ON');
-  await expect(page.getByRole('heading', { name: 'DWAI·ON', exact: true })).toBeVisible();
-  await page
-    .getByRole('textbox', { name: 'Ask a work question' })
-    .fill('Can I work remotely next Friday?');
-  await page.getByRole('button', { name: 'Send question' }).click();
-  await expect(page.getByRole('heading', { name: 'DWAI·ON response' })).toBeVisible();
+  const workSidebar =
+    testInfo.project.name === 'mobile'
+      ? page.getByTestId('work-mobile-sidebar')
+      : page.getByTestId('work-sidebar');
+  await expect(workSidebar.getByRole('link', { name: 'DWAI·ON', exact: true })).toHaveCount(0);
+  await expect(workSidebar.getByRole('link', { name: 'Back to personal home' })).toBeVisible();
+  await page.getByRole('button', { name: 'Open DWAI·ON' }).click();
   await expect(
-    page.getByTestId('dwaion-workspace-result').getByText('Verified answer', { exact: true })
+    page.getByRole('dialog', { name: 'DWAI·ON conversation and support panel' })
   ).toBeVisible();
+  await page.getByRole('textbox', { name: 'Ask DWAI·ON' }).fill('Can I work remotely next Friday?');
+  await page.getByRole('button', { name: 'Send question' }).click();
+  await expect(page.getByTestId('dwaion-answer')).toBeVisible();
   await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
-  await expect(page.getByText('Verified sources (2)', { exact: true })).toBeVisible();
-  await expect(page.getByText('AUD-REF-1042')).toBeVisible();
+  await expect(page.getByText('2 sources reviewed', { exact: true })).toBeVisible();
+  await expect(page.getByText('Policy allowed', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Close DWAI·ON' }).click();
 
   await navigateTo('Activity');
-  await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Activity home', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Open full timeline' }).click();
+  await expect(page).toHaveURL(/\/activity\/timeline/);
   await page.getByRole('button', { name: 'Agents' }).click();
   await expect(
     page.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')

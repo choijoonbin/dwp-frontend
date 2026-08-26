@@ -354,6 +354,12 @@ export async function mockWorkspaceRuntime(page: Page): Promise<void> {
 }
 
 export async function mockAskRuntime(page: Page): Promise<void> {
+  await page.route('**/api/agent/v1/ask/stream', (route) =>
+    route.fulfill({
+      contentType: 'text/event-stream',
+      body: `event: result\ndata: ${JSON.stringify({ data: ASK_RUNTIME_FIXTURE })}\n\n`,
+    })
+  );
   await page.route('**/api/agent/v1/ask', (route) =>
     route.fulfill({
       contentType: 'application/json',

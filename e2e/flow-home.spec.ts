@@ -1518,8 +1518,18 @@ test('VIEWS editing and save stay available when the inactive legacy store fails
     return route.fallback();
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
+  const experienceReady = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/platform/v1/home-experience') && response.status() === 200
+  );
+  const viewsReady = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/platform/v1/home-views') && response.status() === 200
+  );
   await page.goto('/');
+  await Promise.all([experienceReady, viewsReady]);
   await expect(page.getByRole('button', { name: 'Edit home' })).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Home edit options' })).toBeVisible();
   await page.getByRole('button', { name: 'Home edit options' }).click();
   await expect(page.getByRole('menuitem', { name: /Arrange screen/ })).toBeVisible();
   await page.getByRole('menuitem', { name: /Home settings/ }).click();
