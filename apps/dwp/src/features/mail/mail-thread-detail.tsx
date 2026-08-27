@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Archive,
   ArrowLeft,
   Clock3,
   MailOpen,
@@ -47,6 +46,7 @@ import Typography from '@mui/material/Typography';
 
 import { mailRelativeTime, MailProposalCard } from './mail-components';
 import { MailDraftEditor } from './mail-draft-editor';
+import { MailThreadLifecycleActions } from './mail-thread-lifecycle-actions';
 
 import type { MailActionProposal, MailThread, MailThreadAction } from '@dwp-frontend/shared-utils';
 
@@ -54,10 +54,12 @@ export function MailThreadDetailPane({
   threadId,
   onBack,
   onUpdated,
+  onDeleted,
 }: {
   threadId?: string | null;
   onBack?: () => void;
   onUpdated?: (thread: MailThread) => void;
+  onDeleted?: () => void;
 }) {
   const { t, i18n } = useTranslation('mail');
   const auth = useAuth();
@@ -270,13 +272,14 @@ export function MailThreadDetailPane({
             >
               <Clock3 size={18} />
             </ActionIconButton>
-            <ActionIconButton
-              label={t('thread.archive')}
-              loading={actionMutation.isPending}
-              onClick={() => actionMutation.mutate('ARCHIVE')}
-            >
-              <Archive size={18} />
-            </ActionIconButton>
+            <MailThreadLifecycleActions
+              thread={thread}
+              onUpdated={(updated) => {
+                queryClient.invalidateQueries({ queryKey: ['mail', 'thread', threadId] });
+                onUpdated?.(updated);
+              }}
+              onDeleted={() => onDeleted?.()}
+            />
           </Stack>
           <Chip
             size="small"

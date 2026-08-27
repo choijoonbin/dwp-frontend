@@ -28,6 +28,7 @@ import type { AskDwpResponse, AskProgressStage } from '@dwp-frontend/shared-util
 import type { DwaionWorkspaceState } from './dwaion-workspace-model';
 
 import { responseTone } from './dwaion-workspace-model';
+import { DwaionSpeechButton } from '../../components/dwaion-assistant/dwaion-voice-controls';
 
 type DwaionWorkspaceAnswerProps = {
   question: string;
@@ -58,7 +59,7 @@ export function DwaionWorkspaceAnswer({
   onRetry,
   onReset,
 }: DwaionWorkspaceAnswerProps) {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
   const toast = useToast();
   const [feedback, setFeedback] = useState<'UP' | 'DOWN' | null>(null);
 
@@ -183,6 +184,13 @@ export function DwaionWorkspaceAnswer({
                 variant="outlined"
                 label={t(`askPage.states.${response.state}`)}
               />
+              {response.answer && (
+                <DwaionSpeechButton
+                  text={response.answer}
+                  locale={i18n.resolvedLanguage || i18n.language || 'en'}
+                  namespace="work"
+                />
+              )}
               {response.answer && (
                 <ActionIconButton
                   label={t('askPage.actions.copy')}

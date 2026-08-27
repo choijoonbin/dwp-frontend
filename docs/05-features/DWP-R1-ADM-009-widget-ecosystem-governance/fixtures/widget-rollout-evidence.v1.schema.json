@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-rollout-evidence.v1.schema.json",
+  "title": "DWP Widget Rollout Evidence V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "evidenceId",
+    "environment",
+    "window",
+    "source",
+    "revisions",
+    "samples",
+    "diffCounts",
+    "unsafeAllowCount",
+    "queue",
+    "outbox",
+    "drill"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "evidenceId": { "$ref": "#/$defs/uuid" },
+    "environment": { "const": "STAGING" },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["startAt", "endAt", "durationSeconds", "missingSampleBuckets"],
+      "properties": {
+        "startAt": { "$ref": "#/$defs/timestamp" },
+        "endAt": { "$ref": "#/$defs/timestamp" },
+        "durationSeconds": { "const": 86400 },
+        "missingSampleBuckets": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "querySetRevision",
+        "immutableSnapshotRefHash",
+        "collectorBuildDigest",
+        "collectedAt"
+      ],
+      "properties": {
+        "provider": { "const": "PROMETHEUS" },
+        "querySetRevision": { "$ref": "#/$defs/sha256" },
+        "immutableSnapshotRefHash": { "$ref": "#/$defs/sha256" },
+        "collectorBuildDigest": { "$ref": "#/$defs/sha256" },
+        "collectedAt": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "revisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deploymentBuildDigest",
+        "catalogRevision",
+        "bindingCatalogRevision",
+        "policyRevision",
+        "safetyRevision",
+        "rolloutRevision",
+        "selectorKeyId",
+        "ring",
+        "ringBps"
+      ],
+      "properties": {
+        "deploymentBuildDigest": { "$ref": "#/$defs/sha256" },
+        "catalogRevision": { "$ref": "#/$defs/revision" },
+        "bindingCatalogRevision": { "$ref": "#/$defs/sha256" },
+        "policyRevision": { "$ref": "#/$defs/revision" },
+        "safetyRevision": { "$ref": "#/$defs/revision" },
+        "rolloutRevision": { "$ref": "#/$defs/nonNegativeInteger" },
+        "selectorKeyId": { "$ref": "#/$defs/revision" },
+        "ring": { "enum": ["staging-bootstrap", "staging-shadow"] },
+        "ringBps": { "type": "integer", "minimum": 1, "maximum": 10000 }
+      }
+    },
+    "samples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "placementContexts"],
+      "properties": {
+        "total": { "$ref": "#/$defs/nonNegativeInteger" },
+        "placementContexts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["CLASSIC_PERSONAL", "FLOW_PERSONAL", "FLOW_GOVERNED"],
+          "properties": {
+            "CLASSIC_PERSONAL": { "$ref": "#/$defs/nonNegativeInteger" },
+            "FLOW_PERSONAL": { "$ref": "#/$defs/nonNegativeInteger" },
+            "FLOW_GOVERNED": { "$ref": "#/$defs/nonNegativeInteger" }
+          }
+        }
+      }
+    },
+    "diffCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "STATIC_ONLY",
+        "SHADOW_ONLY",
+        "STATE_MISMATCH",
+        "ADDABILITY_MISMATCH",
+        "VERSION_UNRESOLVED",
+        "BINDING_MISMATCH",
+        "SAFETY_MISMATCH"
+      ],
+      "properties": {
+        "STATIC_ONLY": { "$ref": "#/$defs/nonNegativeInteger" },
+        "SHADOW_ONLY": { "$ref": "#/$defs/nonNegativeInteger" },
+        "STATE_MISMATCH": { "$ref": "#/$defs/nonNegativeInteger" },
+        "ADDABILITY_MISMATCH": { "$ref": "#/$defs/nonNegativeInteger" },
+        "VERSION_UNRESOLVED": { "$ref": "#/$defs/nonNegativeInteger" },
+        "BINDING_MISMATCH": { "$ref": "#/$defs/nonNegativeInteger" },
+        "SAFETY_MISMATCH": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "unsafeAllowCount": { "$ref": "#/$defs/nonNegativeInteger" },
+    "queue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rejectionCount",
+        "enqueueAttemptCount",
+        "rejectionRateBps",
+        "maxRolling15MinuteRejectionRateBps",
+        "maxOneMinuteRejectionRateBps",
+        "evaluationErrorCount",
+        "evaluationCount",
+        "evaluationErrorRateBps",
+        "maxRolling15MinuteEvaluationErrorRateBps",
+        "maxOneMinuteEvaluationErrorRateBps",
+        "durationP99Milliseconds",
+        "maxRolling15MinuteDurationP99Milliseconds",
+        "maxOneMinuteDurationP99Milliseconds",
+        "maxDepth",
+        "maximumConsecutiveSecondsAboveDepth230"
+      ],
+      "properties": {
+        "rejectionCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "enqueueAttemptCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "rejectionRateBps": { "$ref": "#/$defs/basisPoints" },
+        "maxRolling15MinuteRejectionRateBps": { "$ref": "#/$defs/basisPoints" },
+        "maxOneMinuteRejectionRateBps": { "$ref": "#/$defs/basisPoints" },
+        "evaluationErrorCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "evaluationCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "evaluationErrorRateBps": { "$ref": "#/$defs/basisPoints" },
+        "maxRolling15MinuteEvaluationErrorRateBps": { "$ref": "#/$defs/basisPoints" },
+        "maxOneMinuteEvaluationErrorRateBps": { "$ref": "#/$defs/basisPoints" },
+        "durationP99Milliseconds": { "$ref": "#/$defs/nonNegativeInteger" },
+        "maxRolling15MinuteDurationP99Milliseconds": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "maxOneMinuteDurationP99Milliseconds": { "$ref": "#/$defs/nonNegativeInteger" },
+        "maxDepth": { "$ref": "#/$defs/nonNegativeInteger" },
+        "maximumConsecutiveSecondsAboveDepth230": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "outbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "oldestUnpublishedAgeMillisecondsMax",
+        "deliveryErrorCount",
+        "deliveryAttemptCount",
+        "maxFiveMinuteDeliveryErrorRateBps",
+        "deadLetterIncrease"
+      ],
+      "properties": {
+        "oldestUnpublishedAgeMillisecondsMax": { "$ref": "#/$defs/nonNegativeInteger" },
+        "deliveryErrorCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "deliveryAttemptCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "maxFiveMinuteDeliveryErrorRateBps": { "$ref": "#/$defs/basisPoints" },
+        "deadLetterIncrease": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "drill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "killDecisionP99Milliseconds",
+        "quarantineDecisionP99Milliseconds",
+        "wouldDenyMaximumMilliseconds",
+        "wouldStopDataMaximumMilliseconds",
+        "legacyPayloadMismatchCount",
+        "legacyDataMismatchCount"
+      ],
+      "properties": {
+        "killDecisionP99Milliseconds": { "$ref": "#/$defs/nonNegativeInteger" },
+        "quarantineDecisionP99Milliseconds": { "$ref": "#/$defs/nonNegativeInteger" },
+        "wouldDenyMaximumMilliseconds": { "$ref": "#/$defs/nonNegativeInteger" },
+        "wouldStopDataMaximumMilliseconds": { "$ref": "#/$defs/nonNegativeInteger" },
+        "legacyPayloadMismatchCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "legacyDataMismatchCount": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "nonNegativeInteger": { "type": "integer", "minimum": 0 },
+    "basisPoints": { "type": "integer", "minimum": 0, "maximum": 10000 }
+  }
+}

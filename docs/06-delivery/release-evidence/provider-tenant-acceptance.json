@@ -1,0 +1,855 @@
+{
+  "schemaVersion": 1,
+  "manifestId": "provider-tenant-acceptance.v1",
+  "release": "R1-pilot",
+  "asOf": "2026-08-27",
+  "status": "BLOCKED",
+  "items": [
+    {
+      "id": "PT-A01",
+      "owner": "Identity and Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Provider identities cannot receive Tenant roles",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.security.ProviderTenantRoleBoundaryPostgresIntegrationTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/ProviderTenantRoleBoundaryPostgresIntegrationTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A02",
+      "owner": "Identity and Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Tenant identities cannot receive Provider roles",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.security.ProviderTenantRoleBoundaryPostgresIntegrationTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/ProviderTenantRoleBoundaryPostgresIntegrationTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A03",
+      "owner": "Identity and Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Mixed-plane JWTs and migrated legacy sessions are rejected or revoked",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.security.AuthSessionJwtValidatorTest --tests com.dwp.services.auth.security.ProviderTenantRoleBoundaryPostgresIntegrationTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/AuthSessionJwtValidatorTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/ProviderTenantRoleBoundaryPostgresIntegrationTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A04",
+      "owner": "Gateway and Frontend Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Provider access to Tenant admin, home, product routes and APIs remains denied",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn test:e2e:provider",
+          "artifact": "provider-e2e-report"
+        },
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-gateway:test --tests com.dwp.gateway.ProviderDataPlaneBoundaryFilterTest"
+        }
+      ],
+      "evidence": [
+        "e2e/provider-access-boundary.spec.ts",
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProviderDataPlaneBoundaryFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A05",
+      "owner": "Gateway Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Tenant identities cannot enter Provider estate APIs or routes",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.security.ProviderSecurityFilterTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/security/ProviderSecurityFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A06",
+      "owner": "Gateway Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Browser-supplied Tenant, identity and support headers are stripped",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-gateway:test --tests com.dwp.gateway.VerifiedIdentityFilterTest --tests com.dwp.gateway.ProviderDataPlaneBoundaryFilterTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProviderDataPlaneBoundaryFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A07",
+      "owner": "Provider Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "STANDARD support requests require customer approval evidence",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderControlPlaneServiceTest.standardSupportRequiresACustomerApprovalReference"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderControlPlaneServiceTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A08",
+      "owner": "Provider Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Support request idempotency rejects key reuse with a different payload",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportLifecycleAcceptancePostgresTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportLifecycleAcceptancePostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A09",
+      "owner": "Provider Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "A support requester cannot approve their own request",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportLifecycleAcceptancePostgresTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportLifecycleAcceptancePostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A10",
+      "owner": "Provider Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Only the approved requesting operator and login session can activate support",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderControlPlaneServiceTest --tests com.dwp.services.provider.support.ProviderSupportAccessServiceTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/support/ProviderSupportAccessServiceTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderControlPlaneServiceTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A11",
+      "owner": "Provider Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Approved requester activation creates exactly one bounded support session",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportLifecycleAcceptancePostgresTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportLifecycleAcceptancePostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A12",
+      "owner": "Gateway and Provider Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Only the exact preview GET is allowed; retired scopes and unknown routes remain denied",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-gateway:test --tests com.dwp.gateway.ProviderDataPlaneBoundaryFilterTest --tests com.dwp.gateway.SupportSessionContextFilterTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProviderDataPlaneBoundaryFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/support/ProviderSupportAccessPolicyTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A13",
+      "owner": "Gateway Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "A Tenant A support session cannot read Tenant B data",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportLifecycleAcceptancePostgresTest :dwp-gateway:test --tests com.dwp.gateway.ProviderDataPlaneBoundaryFilterTest --max-workers=1 --no-daemon"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportLifecycleAcceptancePostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProviderDataPlaneBoundaryFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A14",
+      "owner": "Provider Platform and Frontend Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Expiry, revocation and effective-authority loss contain open grants, deny the next request and purge caches",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run libs/shared-utils/src/auth/provider-support-context.test.ts apps/dwp/src/components/query-cache-plane-boundary.test.ts apps/dwp/src/features/provider/provider-support-cache.test.ts"
+        },
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportSessionInvariantPostgresTest --tests com.dwp.services.provider.ProviderSupportAutomaticContainmentMigrationPostgresTest --tests com.dwp.services.provider.ProviderSupportAuthorityContainmentMigrationPostgresTest --tests com.dwp.services.provider.ProviderSupportAuthorityContainmentInvariantPostgresTest --tests com.dwp.services.provider.ProviderSupportAuthorityContainmentConcurrencyPostgresTest --tests com.dwp.services.provider.support.ProviderSupportAccessServiceTest --tests com.dwp.services.provider.support.ProviderSupportAuthorityReconciliationPostgresTest --tests com.dwp.services.provider.support.ProviderSupportAuthorityReconciliationWorkerTest --tests com.dwp.services.provider.support.ProviderSupportAuthorityReconciliationServiceTest --no-daemon --max-workers=1"
+        },
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.codecatalog.SupportContainmentAndMailCheckContractRegistryPostgresIntegrationTest --tests com.dwp.services.platform.codecatalog.AuthorityContainmentOriginRegistryPostgresIntegrationTest --rerun-tasks --no-daemon --max-workers=1"
+        }
+      ],
+      "evidence": [
+        "libs/shared-utils/src/auth/provider-support-context.test.ts",
+        "apps/dwp/src/components/query-cache-plane-boundary.test.ts",
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportSessionInvariantPostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportAutomaticContainmentMigrationPostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportAuthorityContainmentMigrationPostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportAuthorityContainmentInvariantPostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportAuthorityContainmentConcurrencyPostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/support/ProviderSupportAuthorityReconciliationPostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/support/ProviderSupportAuthorityReconciliationWorkerTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/support/ProviderSupportAuthorityReconciliationServiceTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/codecatalog/SupportContainmentAndMailCheckContractRegistryPostgresIntegrationTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/codecatalog/AuthorityContainmentOriginRegistryPostgresIntegrationTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/main/resources/db/migration/V52__harden_applied_support_containment_principal.sql",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/main/resources/db/migration/V53__contain_support_grants_after_authority_loss.sql",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-platform-server/src/main/resources/db/migration/V202__reconcile_support_containment_and_mail_check_contracts.sql",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-platform-server/src/main/resources/db/migration/V204__align_authority_containment_origin_check_contracts.sql",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A15",
+      "owner": "Site Reliability Engineering",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Verification and audit-outbox failures fail closed under fault injection",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportLifecycleAcceptancePostgresTest :dwp-gateway:test --tests com.dwp.gateway.SupportSessionContextFilterTest --max-workers=1 --no-daemon"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportLifecycleAcceptancePostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/SupportSessionContextFilterTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A16",
+      "owner": "Frontend Platform and Provider Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "A-to-B-to-A transitions across tabs and browsers leave no stale cache or stream",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --project=mobile --workers=1",
+          "artifact": "provider-e2e-report"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run libs/shared-utils/src/auth/cross-tab-revision.test.ts apps/dwp/src/components/query-cache-plane-boundary.test.ts"
+        }
+      ],
+      "evidence": [
+        "e2e/provider-acceptance-evidence.spec.ts",
+        "libs/shared-utils/src/auth/cross-tab-revision.test.ts",
+        "apps/dwp/src/components/query-cache-plane-boundary.test.ts"
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A17",
+      "owner": "Security Engineering",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Break-glass support remains unavailable until external controls are approved",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderControlPlaneServiceTest.breakGlassRemainsDisabledUntilExternalControlsAreBound"
+        }
+      ],
+      "evidence": [],
+      "blockers": ["EXTERNAL_BREAK_GLASS_POLICY_AND_OPERATIONS_APPROVAL"],
+      "failClosedEvidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderControlPlaneServiceTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ]
+    },
+    {
+      "id": "PT-A18",
+      "owner": "Provider Audit",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Independent auditors complete post-access review linked to the support timeline",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-provider-server:test --tests com.dwp.services.provider.ProviderSupportPostReviewEvidencePostgresTest --tests com.dwp.services.provider.support.ProviderSupportPostReviewEvidenceServiceTest --max-workers=1 --no-daemon"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run apps/dwp/src/features/provider/provider-support-post-review-evidence-model.test.ts"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn playwright test e2e/provider-critical-operations.spec.ts --project=chromium --workers=1 --grep 'privileged support separates|post-access review'",
+          "artifact": "provider-e2e-report"
+        }
+      ],
+      "evidence": [
+        "e2e/provider-critical-operations.spec.ts",
+        "apps/dwp/src/features/provider/provider-support-post-review-evidence-model.test.ts",
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/ProviderSupportPostReviewEvidencePostgresTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/test/java/com/dwp/services/provider/support/ProviderSupportPostReviewEvidenceServiceTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A19",
+      "owner": "Platform and Frontend Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Preview rejects invalid scope, method, identity inputs and closed-contract fields",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run libs/shared-utils/src/api/tenant-experience-preview-api.test.ts"
+        },
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.experiencepreview.TenantExperiencePreviewControllerTest --tests com.dwp.services.platform.experiencepreview.TenantExperiencePreviewServiceTest"
+        }
+      ],
+      "evidence": [
+        "libs/shared-utils/src/api/tenant-experience-preview-api.test.ts",
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/experiencepreview/TenantExperiencePreviewControllerTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A20",
+      "owner": "Frontend Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Preview network trace contains only the dedicated configuration GET",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn test:e2e:provider",
+          "artifact": "provider-e2e-report"
+        }
+      ],
+      "evidence": ["e2e/provider-access-boundary.spec.ts"],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A21",
+      "owner": "Security and Privacy",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "PII canaries are absent from preview DOM, screenshots, logs and traces",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --project=mobile --workers=1",
+          "artifact": "provider-e2e-report"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn provider:artifacts:scan playwright-report-provider test-results/provider",
+          "artifact": "provider-e2e-report"
+        }
+      ],
+      "evidence": [
+        "e2e/provider-acceptance-evidence.spec.ts",
+        "scripts/scan-provider-artifacts.mjs",
+        ".github/workflows/frontend-quality.yml"
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A22",
+      "owner": "Frontend Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Identical preview versions render deterministically within the stale-time budget",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --project=mobile --workers=1",
+          "artifact": "provider-e2e-report"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run libs/shared-utils/src/api/tenant-experience-preview-api.test.ts"
+        }
+      ],
+      "evidence": [
+        "e2e/provider-acceptance-evidence.spec.ts",
+        "apps/dwp/src/features/provider/provider-tenant-experience-preview.tsx",
+        "libs/shared-utils/src/api/tenant-experience-preview-api.test.ts"
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A23",
+      "owner": "Frontend Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Provider account preferences stay local to the immutable Provider realm",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run apps/dwp/src/providers/personal-preference-provider.test.ts"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn test:e2e:provider",
+          "artifact": "provider-e2e-report"
+        }
+      ],
+      "evidence": [
+        "apps/dwp/src/providers/personal-preference-provider.test.ts",
+        "e2e/provider-access-boundary.spec.ts"
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A24",
+      "owner": "Gateway and Auth Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Identity plane is explicit and missing, unknown or mixed-plane identities fail closed",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-gateway:test --tests com.dwp.gateway.AuthSessionVerifierTest --tests com.dwp.gateway.ProviderDataPlaneBoundaryFilterTest"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn vitest run libs/shared-utils/src/auth/auth-provider.test.tsx libs/shared-utils/src/auth/control-plane-access.test.ts"
+        }
+      ],
+      "evidence": [
+        "libs/shared-utils/src/auth/auth-provider.test.tsx",
+        "libs/shared-utils/src/auth/control-plane-access.test.ts",
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A25",
+      "owner": "Gateway and Auth Security",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Internal handlers require service identity and remain unavailable to browser JWTs",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-gateway:test --tests com.dwp.gateway.ServiceIdentityFilterChainTest --tests com.dwp.gateway.productsurface.ProductSurfaceServiceIdentityClientTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/ServiceIdentityFilterChainTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/ProductSurfaceServiceIdentityClientTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A26",
+      "owner": "Frontend Platform",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Active support redirects account routes, blocks admin and preserves revocation controls",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn test:e2e:provider",
+          "artifact": "provider-e2e-report"
+        }
+      ],
+      "evidence": ["e2e/provider-access-boundary.spec.ts"],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A27",
+      "owner": "Security Engineering",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "CI scans Provider artifacts for tokens, cookies and PII",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn provider:artifacts:scan:test"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn provider:artifacts:scan playwright-report-provider test-results/provider",
+          "artifact": "provider-e2e-report"
+        }
+      ],
+      "evidence": [
+        "scripts/scan-provider-artifacts.mjs",
+        "scripts/scan-provider-artifacts.test.mjs",
+        ".github/workflows/frontend-quality.yml"
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A28",
+      "owner": "Compliance and Audit Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Retention expiry and legal hold are verified against WORM and SIEM infrastructure",
+      "automatedChecks": [],
+      "evidence": [],
+      "blockers": [
+        "EXTERNAL_WORM_RETENTION_STORE",
+        "EXTERNAL_SIEM_DELIVERY_EVIDENCE",
+        "EXTERNAL_LEGAL_HOLD_POLICY_APPROVAL"
+      ],
+      "failClosedEvidence": ["docs/06-delivery/R2 R3 출시 증거 실행 가이드.md"]
+    },
+    {
+      "id": "PT-A29",
+      "owner": "Identity and Database Engineering",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Mixed-principal migration reruns without duplicates and preserves audit history",
+      "automatedChecks": [
+        {
+          "repository": "dwp-backend",
+          "command": "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.security.ProviderTenantRoleBoundaryPostgresIntegrationTest"
+        }
+      ],
+      "evidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/ProviderTenantRoleBoundaryPostgresIntegrationTest.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    },
+    {
+      "id": "PT-A30",
+      "owner": "Frontend Accessibility",
+      "state": "COMPLETE",
+      "releaseRequired": true,
+      "summary": "Support scope, Tenant, expiry and revocation remain usable on mobile, keyboard and 200 percent zoom",
+      "automatedChecks": [
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn test:e2e:provider",
+          "artifact": "provider-e2e-report"
+        },
+        {
+          "repository": "dwp-frontend",
+          "command": "corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1"
+        }
+      ],
+      "evidence": [
+        "e2e/provider-acceptance-evidence.spec.ts",
+        "e2e/provider-access-boundary.spec.ts",
+        "e2e/responsive-accessibility.spec.ts"
+      ],
+      "blockers": [],
+      "failClosedEvidence": []
+    }
+  ]
+}

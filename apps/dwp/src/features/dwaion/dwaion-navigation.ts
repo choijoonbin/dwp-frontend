@@ -1,10 +1,12 @@
 import {
+  Activity,
   Bot,
   ChartNoAxesCombined,
   DatabaseZap,
   FlaskConical,
   History,
   House,
+  Inbox,
   ListChecks,
   MessageSquarePlus,
   ScrollText,
@@ -25,6 +27,14 @@ export const DWAION_NAVIGATION = [
       { path: '/dwaion/new', view: 'new', icon: MessageSquarePlus },
       { path: '/dwaion/conversations', view: 'conversations', icon: History },
     ],
+  },
+  {
+    id: 'activity',
+    items: [{ path: '/dwaion/activity', view: 'activity', icon: Activity }],
+  },
+  {
+    id: 'proactive',
+    items: [{ path: '/dwaion/proposals', view: 'proposals', icon: Inbox }],
   },
   {
     id: 'discover',

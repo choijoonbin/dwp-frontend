@@ -18,15 +18,24 @@ export type NotificationArrival = {
   href: string | null;
 };
 
+export const MAXIMUM_PERSISTENT_NOTIFICATION_ARRIVALS = 3;
+
 export function upsertPersistentNotificationArrival(
   current: NotificationArrival[],
-  arrival: NotificationArrival
+  arrival: NotificationArrival,
+  maximumSize = MAXIMUM_PERSISTENT_NOTIFICATION_ARRIVALS
 ): NotificationArrival[] {
+  const boundedSize = Math.max(1, maximumSize);
   const existingIndex = current.findIndex(
     ({ item }) => item.notificationId === arrival.item.notificationId
   );
-  if (existingIndex < 0) return [...current, arrival];
-  return current.map((queued, index) => (index === existingIndex ? arrival : queued));
+  if (existingIndex >= 0) {
+    return current.map((queued, index) => (index === existingIndex ? arrival : queued));
+  }
+  const queued = [...current, arrival];
+  if (queued.length <= boundedSize) return queued;
+  if (boundedSize === 1) return [queued[0]!];
+  return [queued[0]!, ...queued.slice(-(boundedSize - 1))];
 }
 
 export function notificationArrivalSignalKey(
@@ -135,9 +144,5 @@ export function isPersistentNotificationArrival(item: NotificationItem): boolean
 }
 
 export function isAssertiveNotificationArrival(item: NotificationItem): boolean {
-  if (item.priority !== 'URGENT') return false;
-  const classification = `${item.source.appKey}.${item.typeKey}`.toLowerCase();
-  return ['security', 'emergency', 'incident', 'account-compromise'].some((marker) =>
-    classification.includes(marker)
-  );
+  return item.priority === 'URGENT' && item.interruptionLevel === 'CRITICAL';
 }

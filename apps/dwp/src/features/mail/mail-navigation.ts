@@ -1,13 +1,18 @@
 import {
+  Archive,
   Cable,
   CircleGauge,
   FilePenLine,
+  FolderTree,
   House,
   Inbox,
+  ListFilter,
   MailCheck,
   Send,
   Settings2,
+  ShieldAlert,
   ShieldCheck,
+  Trash2,
   UsersRound,
 } from 'lucide-react';
 
@@ -19,8 +24,13 @@ export type MailView =
   | 'inbox'
   | 'sent'
   | 'drafts'
+  | 'archive'
+  | 'spam'
+  | 'trash'
+  | 'folders'
   | 'shared'
   | 'accounts'
+  | 'organization'
   | 'admin-overview'
   | 'admin-connections'
   | 'admin-shared-inboxes'
@@ -47,6 +57,10 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
       { section: 'mailbox', view: 'inbox', path: '/mail/inbox', icon: Inbox },
       { section: 'mailbox', view: 'sent', path: '/mail/sent', icon: Send },
       { section: 'mailbox', view: 'drafts', path: '/mail/drafts', icon: FilePenLine },
+      { section: 'mailbox', view: 'archive', path: '/mail/archive', icon: Archive },
+      { section: 'mailbox', view: 'spam', path: '/mail/spam', icon: ShieldAlert },
+      { section: 'mailbox', view: 'trash', path: '/mail/trash', icon: Trash2 },
+      { section: 'mailbox', view: 'folders', path: '/mail/folders', icon: FolderTree },
     ],
   },
   {
@@ -55,7 +69,15 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
   },
   {
     id: 'settings',
-    items: [{ section: 'settings', view: 'accounts', path: '/mail/accounts', icon: MailCheck }],
+    items: [
+      {
+        section: 'settings',
+        view: 'organization',
+        path: '/mail/organization',
+        icon: ListFilter,
+      },
+      { section: 'settings', view: 'accounts', path: '/mail/accounts', icon: MailCheck },
+    ],
   },
   {
     id: 'admin',

@@ -86,6 +86,7 @@ const EXPECTED_ROLLOUT_PRODUCTS = [
   'dwaion',
   'hcm',
   'mail',
+  'meetings',
   'messaging',
   'notifications',
   'services',

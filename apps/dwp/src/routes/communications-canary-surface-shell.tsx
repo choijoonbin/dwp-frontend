@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { COMMUNICATIONS_PRODUCT_MANIFEST } from '../features/communications/communications-product-manifest';
+import { useProductApplicationRuntime } from '../components/product-application-runtime';
 import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
   resolveCanaryProductFlags,
@@ -12,7 +13,6 @@ import {
   CommunicationsManagementLayout,
   CommunicationsWorkLayout,
 } from '../layouts/communications-surface-layouts';
-import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 
@@ -22,6 +22,7 @@ export function CommunicationsCanarySurfaceShell({
   surfaceId: 'communications.work' | 'communications.management';
 }) {
   const decision = useAllowedProductSurface();
+  const applicationRuntime = useProductApplicationRuntime();
   const authority = useProductSurfaceCanaryAuthority();
   const mode = resolveProductSurfaceRolloutMode(
     resolveCanaryProductFlags(authority, 'communications')
@@ -41,15 +42,18 @@ export function CommunicationsCanarySurfaceShell({
       work: tCommon('productSurface.actions.returnToWork'),
       catalog: tCommon('productSurface.actions.returnToCatalog'),
     },
-    registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+    registeredRoutes: applicationRuntime.registeredRoutes,
     rolloutMode: mode,
     onScopeChange: (scopeKey) => void transitionScope(scopeKey),
   });
   if (mode === 'surface-ui') {
     return surface.plane === 'management' ? (
-      <CommunicationsManagementLayout surface={runtime} />
+      <CommunicationsManagementLayout
+        manifest={COMMUNICATIONS_PRODUCT_MANIFEST}
+        surface={runtime}
+      />
     ) : (
-      <CommunicationsWorkLayout surface={runtime} />
+      <CommunicationsWorkLayout manifest={COMMUNICATIONS_PRODUCT_MANIFEST} surface={runtime} />
     );
   }
   return <CommunicationsLayout surface={runtime} />;

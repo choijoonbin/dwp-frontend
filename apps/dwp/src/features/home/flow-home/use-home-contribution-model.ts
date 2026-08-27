@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
 import {
   getApprovalHome,
@@ -118,6 +119,7 @@ export function useHomeContributionModel({
   overviewRefreshFailed = false,
   notification,
 }: UseHomeContributionModelInput): HomeContributionRuntime {
+  const { t } = useTranslation('home');
   const identityReady = Boolean(tenantId && userId);
   const contributionPermissions = useMemo(
     () => resolveHomeContributionPermissions(permissions, roles, legacyRoleFallbackAllowed),
@@ -149,7 +151,9 @@ export function useHomeContributionModel({
 
   const approvals = useQuery({
     queryKey: ['home-contributions', 'approvals', tenantId, userId, accessFingerprint],
-    queryFn: getApprovalHome,
+    // TanStack Query passes a QueryFunctionContext argument. Do not forward it
+    // as the optional governed scope key expected by getApprovalHome().
+    queryFn: () => getApprovalHome(),
     enabled: approvalsEnabled,
     staleTime: HOME_APP_INSIGHT_STALE_MS,
     refetchInterval: HOME_APP_INSIGHT_STALE_MS,
@@ -406,12 +410,10 @@ export function useHomeContributionModel({
         now,
         permissions: contributionPermissions,
         redactionPolicy: {
-          fallbackTitle: locale.toLocaleLowerCase().startsWith('ko')
-            ? '보호된 항목'
-            : 'Protected item',
+          fallbackTitle: t('flow.purpose.protectedItem'),
         },
       }),
-    [contributionPermissions, locale, now, queryResults]
+    [contributionPermissions, now, queryResults, t]
   );
 
   const enabledQueries = [

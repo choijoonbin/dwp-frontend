@@ -80,7 +80,7 @@ describe('governed product entry registry', () => {
           sample: {
             contextShadow: true,
             capabilityEnforcement: true,
-            surfaceUi: true,
+            surfaceUi: false,
             surfaceUiEvaluation: 'resolved',
           },
         },
@@ -114,33 +114,33 @@ describe('governed product entry registry', () => {
       state: '000',
       mode: 'baseline',
       flags: [false, false, false],
-      separated: false,
+      governedDiscovery: false,
       legacyDiscovery: true,
     },
     {
       state: '100',
       mode: 'shadow',
       flags: [true, false, false],
-      separated: false,
+      governedDiscovery: false,
       legacyDiscovery: true,
     },
     {
       state: '110',
       mode: 'enforced-compatibility',
       flags: [true, true, false],
-      separated: false,
+      governedDiscovery: true,
       legacyDiscovery: true,
     },
     {
       state: '111',
       mode: 'surface-ui',
       flags: [true, true, true],
-      separated: true,
+      governedDiscovery: true,
       legacyDiscovery: false,
     },
   ] as const)(
-    'uses legacy launch/discovery without the new management CTA in rollout $state',
-    ({ mode, flags, separated, legacyDiscovery }) => {
+    'uses the correct governed and legacy discovery sources in rollout $state',
+    ({ mode, flags, governedDiscovery, legacyDiscovery }) => {
       const contexts = [
         {
           contextKey: 'sample-management',
@@ -186,8 +186,35 @@ describe('governed product entry registry', () => {
         Date.parse('2029-01-01T00:00:00Z')
       );
 
-      expect(catalog).toHaveLength(separated ? 1 : 0);
+      expect(catalog).toHaveLength(governedDiscovery ? 1 : 0);
       expect(usesLegacyProductLaunchDiscovery(mode)).toBe(legacyDiscovery);
     }
   );
+
+  it('does not infer a 110 catalog entry from a tenant-admin role without product duty context', () => {
+    const result = buildGovernedProductEntryCatalog(
+      {
+        productFlags: {
+          sample: {
+            contextShadow: true,
+            capabilityEnforcement: true,
+            surfaceUi: false,
+            surfaceUiEvaluation: 'resolved',
+          },
+        },
+      },
+      {
+        contractVersion: '1',
+        decisionRevision: 'tenant-admin-revision',
+        sourceRevisions: {},
+        activeAccessMode: 'NORMAL',
+        generatedAt: '2029-01-01T00:00:00Z',
+        contexts: [],
+      },
+      [manifest],
+      Date.parse('2029-01-01T00:00:00Z')
+    );
+
+    expect(result).toEqual([]);
+  });
 });

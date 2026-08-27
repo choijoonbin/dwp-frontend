@@ -42,43 +42,115 @@
     "cancel": "취소",
     "close": "닫기"
   },
+  "expressions": {
+    "open": "이모티콘 열기",
+    "search": "이모티콘 또는 업무 표현 검색",
+    "empty": "일치하는 표현이 없습니다.",
+    "recentEmpty": "사용한 이모티콘이 여기에 표시됩니다.",
+    "categories": {
+      "label": "이모티콘 분류",
+      "recent": "최근",
+      "people": "감정",
+      "work": "업무",
+      "objects": "도구",
+      "symbols": "기호",
+      "stamps": "빠른 표현"
+    }
+  },
+  "mentions": {
+    "open": "구성원 멘션",
+    "suggestionsLabel": "멘션 추천",
+    "everyone": "모든 구성원",
+    "empty": "일치하는 대화 구성원이 없습니다.",
+    "participantCount": "대화 구성원 {{count}}명에게 알림"
+  },
   "home": {
     "eyebrow": "DWP 메시징",
     "greetingMorning": "좋은 아침입니다",
     "greetingAfternoon": "안녕하세요",
     "greetingEvening": "좋은 저녁입니다",
     "member": "구성원",
-    "title": "{{name}}님, 오늘 중요한 대화를 먼저 정리했습니다",
-    "description": "Space, DM, 운영 공지와 후속 조치를 하나의 업무 신호로 모아 보여줍니다.",
-    "signalSummary": "읽지 않은 대화 {{unread}}개, 멘션 {{mentions}}개, 긴급 대화 {{urgent}}개",
+    "title": "{{greeting}}, {{name}}님",
+    "description": "놓치면 안 될 대화와 이어서 처리할 업무를 한눈에 정리했습니다.",
+    "signalSummary": "읽지 않은 대화 {{unread}}개, 멘션 {{mentions}}개, 저장한 항목 {{saved}}개",
     "loadError": "메신저 홈 정보를 불러오지 못했습니다.",
-    "metrics": {
-      "unread": "읽지 않음",
-      "unreadDetail": "업무 흐름에서 확인해야 할 대화",
-      "mentions": "멘션",
-      "mentionsDetail": "나에게 직접 요청된 메시지",
-      "spaces": "Space 대화",
-      "spacesDetail": "내가 속한 Space와 연결됨",
-      "direct": "DM",
-      "directDetail": "직접 대화와 소규모 그룹",
-      "saved": "저장한 항목",
-      "savedDetail": "개인적으로 다시 확인할 메시지"
+    "sync": {
+      "current": "최신 상태",
+      "refreshing": "업데이트 중",
+      "updated": "{{time}} 조회"
     },
-    "priority": {
-      "title": "우선 확인 대화",
-      "description": "멘션, 긴급도, 최근 활동을 기준으로 정렬됩니다.",
+    "attention": {
+      "eyebrow": "오늘의 집중",
+      "openInbox": "받은 대화 열기",
+      "states": {
+        "mentions": {
+          "title": "나를 기다리는 멘션이 {{count}}개 있습니다",
+          "description": "멘션을 먼저 확인한 뒤 읽지 않은 대화 {{unread}}개와 저장한 항목 {{saved}}개를 이어서 처리하세요."
+        },
+        "unread": {
+          "title": "읽지 않은 대화 {{count}}개부터 확인하세요",
+          "description": "DM을 우선으로, Space와 채널의 읽지 않은 흐름을 정리했습니다."
+        },
+        "saved": {
+          "title": "저장한 항목 {{count}}개를 이어서 처리하세요",
+          "description": "새 요청은 모두 확인했습니다. 직접 저장한 메시지에서 업무를 이어갈 수 있습니다."
+        },
+        "clear": {
+          "title": "중요한 대화를 모두 확인했습니다",
+          "description": "새 요청이 도착하면 이곳에 먼저 표시됩니다."
+        }
+      }
+    },
+    "signals": {
+      "mentions": {
+        "label": "나에게 온 멘션",
+        "action": "받은 대화에서 멘션 {{count}}개 확인하기"
+      },
+      "unread": {
+        "label": "읽지 않은 대화",
+        "action": "읽지 않은 대화 {{count}}개 열기"
+      },
+      "saved": {
+        "label": "저장한 항목",
+        "action": "저장한 항목 {{count}}개 열기"
+      }
+    },
+    "focus": {
+      "title": "지금 처리할 대화",
+      "description": "읽지 않은 DM, Space, 그 밖의 대화 순으로 최대 6개를 보여줍니다.",
       "open": "전체 보기",
-      "emptyTitle": "지금 확인할 대화가 없습니다",
-      "emptyDescription": "새 메시지가 오면 여기에 먼저 표시됩니다."
+      "loading": "처리할 대화를 불러오는 중",
+      "partial": "전체 대화 목록을 갱신하지 못해 최근 홈 스냅샷을 표시합니다.",
+      "emptyTitle": "지금 처리할 새 대화가 없습니다",
+      "emptyDescription": "읽지 않은 대화가 생기면 이곳에 먼저 표시됩니다.",
+      "noPreview": "아직 표시할 메시지가 없습니다.",
+      "protectedPreview": "보호된 대화의 내용은 홈에서 미리 볼 수 없습니다.",
+      "reasons": {
+        "unread": "읽지 않음 {{count}}",
+        "pinned": "고정",
+        "favorite": "즐겨찾기",
+        "recent": "최근 활동"
+      }
     },
     "spaces": {
-      "title": "활성 Space",
-      "description": "내가 참여 중인 Space의 대화 상태입니다."
+      "title": "내 Space 흐름",
+      "description": "내 멤버십으로 접근할 수 있는 Space 대화입니다.",
+      "open": "모든 Space 대화 열기",
+      "spaceLinked": "Space 연결 대화",
+      "spaceCount": "Space {{count}}개",
+      "directCount": "DM {{count}}개",
+      "emptyTitle": "연결된 Space 대화가 없습니다",
+      "emptyDescription": "Space 멤버십이 동기화되면 여기에 표시됩니다."
     },
-    "people": {
-      "title": "오늘 연결할 구성원",
-      "description": "조직도와 Space 참여 정보를 기반으로 추천합니다.",
-      "open": "대화 열기"
+    "continue": {
+      "title": "이어서 처리하기",
+      "description": "내가 직접 저장한 메시지에서 업무 맥락을 이어갑니다.",
+      "open": "저장한 항목 모두 열기",
+      "loading": "저장한 항목을 불러오는 중",
+      "loadError": "저장한 항목을 불러오지 못했습니다.",
+      "emptyTitle": "저장한 메시지가 없습니다",
+      "emptyDescription": "다시 확인할 메시지를 저장하면 이곳에서 이어볼 수 있습니다.",
+      "startDirect": "구성원을 찾아 새 DM 시작"
     }
   },
   "type": {
@@ -98,6 +170,8 @@
     "selectDescription": "왼쪽 목록에서 대화를 선택하면 메시지, 구성원, 정책 맥락을 확인할 수 있습니다.",
     "loadError": "대화 내용을 불러오지 못했습니다.",
     "timeline": "메시지",
+    "unread": "여기부터 읽지 않음",
+    "newMessages": "새 메시지 {{count}}개",
     "history": {
       "loadOlder": "이전 메시지 불러오기",
       "loading": "이전 메시지 불러오는 중",
@@ -147,6 +221,11 @@
       "saved": "대화 설정을 저장했습니다.",
       "saveError": "대화 설정을 저장하지 못했습니다. 최신 값을 확인한 뒤 다시 시도해 주세요.",
       "loadError": "대화 설정을 불러오지 못했습니다.",
+      "sectionsLabel": "대화 설정 영역",
+      "sections": {
+        "general": "일반",
+        "display": "화면"
+      },
       "favorite": "즐겨찾기",
       "favoriteDescription": "즐겨찾기 대화 목록에 표시합니다.",
       "pinned": "상단 고정",
@@ -160,7 +239,43 @@
         "MUTE": "알림 끄기"
       }
     },
+    "display": {
+      "saved": "메신저 화면 설정을 저장했습니다.",
+      "saveError": "화면 설정을 저장하지 못했습니다. 다른 세션의 변경을 확인한 뒤 다시 시도해 주세요.",
+      "loadError": "화면 설정을 불러오지 못했습니다.",
+      "scopeLabel": "화면 설정 적용 범위",
+      "scopeConversation": "이 대화",
+      "scopeGlobal": "모든 대화",
+      "layout": "메시지 표현",
+      "layoutDescription": "대화 유형에 맞춰 자동 선택하거나 말풍선·협업 스트림을 직접 선택합니다.",
+      "density": "정보 밀도",
+      "densityDescription": "장시간 업무에 맞는 여백과 한 화면에 표시할 메시지 수를 정합니다.",
+      "theme": "대화 배경",
+      "themeDescription": "테넌트가 승인한 저채도 프리셋만 내 화면에 적용됩니다.",
+      "showAvatars": "발신자 아바타 표시",
+      "alwaysTimestamps": "모든 메시지의 시각 표시",
+      "messagePreview": "대화 목록에 메시지 미리보기",
+      "reset": "이 대화 설정을 기본값으로 되돌리기",
+      "resetSuccess": "이 대화가 메신저 기본 화면 설정을 따릅니다.",
+      "values": {
+        "INHERIT": "기본값",
+        "AUTO": "자동",
+        "CONVERSATIONAL": "대화형",
+        "COLLABORATIVE": "협업형",
+        "COMFORTABLE": "편안하게",
+        "COMPACT": "간결하게",
+        "DEFAULT": "기본",
+        "MIST": "미스트",
+        "SAGE": "세이지",
+        "ROSE": "로즈"
+      },
+      "policy": {
+        "RESTRICTED_CONVERSATION": "제한 대화는 보안 표식과 대비를 보호하기 위해 승인된 기본 표면을 사용합니다.",
+        "STRUCTURED_CONVERSATION": "공지·인시던트·회의 대화는 업무 의미를 유지하기 위해 협업형 구조를 사용합니다. 밀도와 승인 테마는 개인화할 수 있습니다."
+      }
+    },
     "meetingAction": "회의",
+    "composerMeetingAction": "화상 회의 시작 또는 참여",
     "meetingDialog": {
       "title": "대화 회의",
       "description": "카메라와 마이크를 미리 확인한 뒤 대화 구성원과 바로 연결합니다.",
@@ -182,7 +297,14 @@
       "permissionError": "카메라 또는 마이크 권한을 확인해 주세요.",
       "disconnected": "회의에서 나갔습니다.",
       "endForEveryone": "모두에게 회의 종료",
-      "ending": "회의 종료 중"
+      "ending": "회의 종료 중",
+      "history": {
+        "title": "최근 회의",
+        "description": "이 대화에서 진행한 회의의 운영 이력입니다.",
+        "empty": "아직 종료된 회의가 없습니다.",
+        "endedBy": "{{name}} 종료",
+        "minutes": "약 {{count}}분"
+      }
     },
     "me": "나",
     "deleted": "삭제된 메시지입니다"

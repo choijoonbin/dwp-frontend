@@ -1,0 +1,174 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "name": "stale-catalog-head",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "catalogRevision",
+        "value": 43
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "stale-binding-catalog-head",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "bindingCatalogRevision",
+        "value": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "stale-policy-head",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "policyCatalogRevision",
+        "value": 18
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "stale-safety-head",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "safetyRevision",
+        "value": 10
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "stale-authority-head",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "authorityRevision",
+        "value": 32
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "impact-count-changed",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "existingInstanceBlockedCount",
+        "value": 3
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "draft-version-changed",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "draftVersion",
+        "value": 8
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "cross-tenant-binding",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "internalTenantBinding",
+        "value": "tib_other8f4c2d1e9a77"
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "authority-snapshot-expired",
+      "mutation": {
+        "target": "CURRENT_PREIMAGE",
+        "operation": "SET",
+        "path": "validUntil",
+        "value": "2026-08-27T05:05:00Z"
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 409,
+      "expectedCode": "IMPACT_REVISION_CONFLICT",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    },
+    {
+      "name": "missing-expected-impact-revision",
+      "mutation": {
+        "target": "REQUEST",
+        "operation": "DELETE",
+        "path": "expectedImpactRevision"
+      },
+      "authenticatedTenantBinding": "tib_acme8f4c2d1e9a77",
+      "dbNow": "2026-08-27T05:05:00Z",
+      "expectedHttpStatus": 400,
+      "expectedCode": "INVALID_INPUT_VALUE",
+      "expectedStateMutationCount": 0,
+      "expectedEventCount": 0,
+      "expectedOutboxCount": 0,
+      "expectedAuditCount": 0
+    }
+  ]
+}

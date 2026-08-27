@@ -4,6 +4,7 @@ import { resetCsrfToken } from '../axios-instance';
 import {
   endMessagingMeeting,
   getCurrentMessagingMeeting,
+  getMessagingMeetingHistory,
   isTrustedMeetingServerUrl,
   issueMessagingMeetingToken,
   startMessagingMeeting,
@@ -32,6 +33,19 @@ describe('messaging meeting API boundary', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/messaging/v1/conversations/conversation%2Fa/meetings/current',
+      expect.objectContaining({ method: 'GET', credentials: 'include' })
+    );
+  });
+
+  it('loads bounded meeting history through the conversation scope', async () => {
+    const items = [{ sessionId: 'session-1', lifecycleState: 'ENDED', durationSeconds: 600 }];
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getMessagingMeetingHistory('conversation/a', 3)).resolves.toEqual(items);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/messaging/v1/conversations/conversation%2Fa/meetings/history?limit=3',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
     );
   });

@@ -34,12 +34,18 @@ type UnauthorizedHandler = (status: number) => void;
 export type AuthorizationAccessFailure = Readonly<{
   status: 403 | 409 | 503;
   reasonCode?: string;
+  contextScopeKey?: string;
+  rejectedDecisionRevision?: string;
+  serverDecisionRevision?: string;
 }>;
 type AuthorizationAccessFailureHandler = (
   failure: AuthorizationAccessFailure
 ) => void | Promise<void>;
+type AuthorizationAccessFailureRegistration = Readonly<{
+  handler: AuthorizationAccessFailureHandler;
+}>;
 let unauthorizedHandler: UnauthorizedHandler | null = null;
-let authorizationAccessFailureHandler: AuthorizationAccessFailureHandler | null = null;
+let authorizationAccessFailureRegistration: AuthorizationAccessFailureRegistration | null = null;
 let csrfToken: CsrfTokenData | null = null;
 let csrfTokenPromise: Promise<CsrfTokenData> | null = null;
 
@@ -50,18 +56,15 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): voi
 export function setAuthorizationAccessFailureHandler(
   handler: AuthorizationAccessFailureHandler | null
 ): () => void {
-  authorizationAccessFailureHandler = handler;
+  const registration = handler ? { handler } : null;
+  authorizationAccessFailureRegistration = registration;
   return () => {
-    if (authorizationAccessFailureHandler === handler) authorizationAccessFailureHandler = null;
+    if (authorizationAccessFailureRegistration === registration) {
+      authorizationAccessFailureRegistration = null;
+    }
   };
 }
 
-const EXPECTED_FORBIDDEN_WORKFLOW_REASONS = new Set([
-  'STEP_UP_REQUIRED',
-  'STEP_UP_CHALLENGE_EXPIRED',
-  'STEP_UP_CHALLENGE_INVALID',
-  'SOD_CONFLICT',
-]);
 const AUTHORIZATION_CONFLICT_REASONS = new Set([
   'DECISION_REVISION_CONFLICT',
   'SCOPE_CONTEXT_EXPIRED',
@@ -79,9 +82,11 @@ export function classifyAuthorizationAccessFailure(
   payload: unknown
 ): AuthorizationAccessFailure | null {
   const reasonCode = responseReasonCode(payload);
+  // Most 403 responses are authoritative, route-local denials. Scope expiry is the one
+  // contractual exception: the server has rejected the issued scope itself, so retaining
+  // scope-bound queries would keep revoked data alive past the authority boundary.
   if (status === 403) {
-    if (reasonCode && EXPECTED_FORBIDDEN_WORKFLOW_REASONS.has(reasonCode)) return null;
-    return { status, ...(reasonCode ? { reasonCode } : {}) };
+    return reasonCode === 'SCOPE_CONTEXT_EXPIRED' ? { status, reasonCode } : null;
   }
   if (status === 409 && reasonCode && AUTHORIZATION_CONFLICT_REASONS.has(reasonCode)) {
     return { status, reasonCode };
@@ -92,11 +97,51 @@ export function classifyAuthorizationAccessFailure(
   return null;
 }
 
-function notifyAuthorizationAccessFailure(status: number, payload: unknown): void {
+function requestContextScopeKey(body: unknown, configuredScopeKey?: string): string | undefined {
+  if (configuredScopeKey) return configuredScopeKey;
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return undefined;
+  const value = (body as Record<string, unknown>).contextScopeKey;
+  return typeof value === 'string' && value.trim() ? value : undefined;
+}
+
+const EXPECTED_DECISION_REVISION_HEADER = 'x-dwp-expected-decision-revision';
+const RESPONSE_DECISION_REVISION_HEADER = 'X-DWP-Decision-Revision';
+
+function requestDecisionRevision(headers?: Record<string, string>): string | undefined {
+  if (!headers) return undefined;
+  const entry = Object.entries(headers).find(
+    ([name]) => name.toLowerCase() === EXPECTED_DECISION_REVISION_HEADER
+  );
+  const value = entry?.[1];
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function notifyAuthorizationAccessFailure(
+  status: number,
+  payload: unknown,
+  context?: Readonly<{
+    contextScopeKey?: string;
+    rejectedDecisionRevision?: string;
+    serverDecisionRevision?: string;
+  }>,
+  registration: AuthorizationAccessFailureRegistration | null = authorizationAccessFailureRegistration
+): void {
   const failure = classifyAuthorizationAccessFailure(status, payload);
-  if (!failure || !authorizationAccessFailureHandler) return;
+  if (!failure || !registration || authorizationAccessFailureRegistration !== registration) {
+    return;
+  }
+  const contextualFailure = {
+    ...failure,
+    ...(context?.contextScopeKey ? { contextScopeKey: context.contextScopeKey } : {}),
+    ...(context?.rejectedDecisionRevision
+      ? { rejectedDecisionRevision: context.rejectedDecisionRevision }
+      : {}),
+    ...(context?.serverDecisionRevision
+      ? { serverDecisionRevision: context.serverDecisionRevision }
+      : {}),
+  };
   try {
-    void Promise.resolve(authorizationAccessFailureHandler(failure)).catch(() => undefined);
+    void Promise.resolve(registration.handler(contextualFailure)).catch(() => undefined);
   } catch {
     // Observing an access failure must never replace the original HTTP failure.
   }
@@ -208,7 +253,8 @@ async function request<T>(
   url: string,
   body?: unknown,
   config: RequestConfig = {},
-  allowCsrfRetry = true
+  allowCsrfRetry = true,
+  accessFailureRegistration = authorizationAccessFailureRegistration
 ): Promise<AxiosLikeResponse<T>> {
   const headers = buildHeaders(body, config.headers);
   const scopedUrl = withContextScope(url, config.contextScopeKey);
@@ -261,12 +307,26 @@ async function request<T>(
     const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;
     if (csrfRejected) {
       resetCsrfToken();
-      if (allowCsrfRetry) return request<T>(method, url, body, config, false);
+      if (allowCsrfRetry) {
+        return request<T>(method, url, body, config, false, accessFailureRegistration);
+      }
     }
     if (response.status === 401) {
       unauthorizedHandler?.(response.status);
     }
-    if (!csrfRejected) notifyAuthorizationAccessFailure(response.status, payload);
+    if (!csrfRejected) {
+      notifyAuthorizationAccessFailure(
+        response.status,
+        payload,
+        {
+          contextScopeKey: requestContextScopeKey(body, config.contextScopeKey),
+          rejectedDecisionRevision: requestDecisionRevision(config.headers),
+          serverDecisionRevision:
+            response.headers?.get(RESPONSE_DECISION_REVISION_HEADER)?.trim() || undefined,
+        },
+        accessFailureRegistration
+      );
+    }
     const record =
       typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : null;
     const message =
@@ -307,7 +367,8 @@ async function streamRequest<B>(
   url: string,
   body: B | undefined,
   config: EventStreamConfig,
-  allowCsrfRetry: boolean
+  allowCsrfRetry: boolean,
+  accessFailureRegistration = authorizationAccessFailureRegistration
 ): Promise<void> {
   const headers = buildHeaders(body, { Accept: 'text/event-stream' });
   if (isMutation(method)) {
@@ -334,11 +395,18 @@ async function streamRequest<B>(
       const payload = await parseBody(response);
       if (response.status === 403 && payload === undefined && allowCsrfRetry) {
         resetCsrfToken();
-        return streamRequest(method, url, body, config, false);
+        return streamRequest(method, url, body, config, false, accessFailureRegistration);
       }
       if (response.status === 401) unauthorizedHandler?.(response.status);
       if (!(response.status === 403 && payload === undefined && isMutation(method))) {
-        notifyAuthorizationAccessFailure(response.status, payload);
+        notifyAuthorizationAccessFailure(
+          response.status,
+          payload,
+          {
+            contextScopeKey: requestContextScopeKey(body),
+          },
+          accessFailureRegistration
+        );
       }
       throw new HttpError(
         `Event stream request failed: ${response.status}`,

@@ -1,0 +1,746 @@
+{
+  "$schema": "../../../architecture/product-surface-production-readiness.schema.json",
+  "schemaVersion": 1,
+  "manifestId": "product-surface-production-readiness.v1",
+  "release": "R1-product-surfaces",
+  "asOf": "2026-08-27",
+  "status": "BLOCKED",
+  "adrReference": "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md",
+  "navigationConveniencePolicy": {
+    "policyId": "product-surface-navigation-convenience.v1",
+    "workReturnLastRoute": "ALLOWED",
+    "managementAutomaticRestore": "FORBIDDEN",
+    "managementResume": "EXPLICIT_USER_ACTION_AND_REAUTHORIZE_ONLY",
+    "acceptanceCriteria": [
+      {
+        "id": "NC-01",
+        "requirement": "업무로 돌아가기는 동일 권한 Revision에서 허용된 마지막 Work routeId만 사용한다.",
+        "testReference": "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts"
+      },
+      {
+        "id": "NC-02",
+        "requirement": "앱 관리는 항상 권한 확인된 대표 Management Landing으로 이동한다.",
+        "testReference": "apps/dwp/src/features/shell/product-entry-point-model.test.ts"
+      },
+      {
+        "id": "NC-03",
+        "requirement": "Management PAGE 방문은 마지막 route 편의 저장소에 기록되지 않고 자동 복원되지 않는다.",
+        "testReference": "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts"
+      },
+      {
+        "id": "NC-04",
+        "requirement": "Management direct link, bookmark와 browser history는 URL 및 최신 서버 권한으로만 복원한다.",
+        "testReference": "e2e/product-surface-approvals-pilot.spec.ts"
+      },
+      {
+        "id": "NC-05",
+        "requirement": "별도 관리 이어하기 도입 시 명시적 Action과 Exact PAGE, Revision, Expiry 재검증 없이는 이동하지 않는다.",
+        "testReference": "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts"
+      }
+    ]
+  },
+  "scopedJitReleasePolicy": {
+    "policyId": "scoped-jit-release-disablement.v1",
+    "activation": "DISABLED",
+    "environmentOverride": "FORBIDDEN",
+    "allowedScopes": [],
+    "controlIds": [
+      "AUTH_SERVICE_ROLLOUT_GATE",
+      "DB_POLICY_MODE_TRIGGER",
+      "DB_REQUEST_STATE_TRIGGER",
+      "DB_ACTIVE_GRANT_TRIGGER"
+    ],
+    "reenablementRequirements": [
+      "EXACT_SCOPE_PEP",
+      "EXPIRY_REVALIDATION",
+      "AUTHORITY_REVISION_BINDING",
+      "CROSS_SCOPE_NEGATIVE_MATRIX",
+      "IDENTITY_SECURITY_OWNER_APPROVAL"
+    ]
+  },
+  "productionGates": [
+    {
+      "id": "G-02",
+      "owner": "Identity and Access + Gateway Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Effective Context, Direct Evaluation OpenAPI, reason code and invalidation contract approval",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "OPENAPI",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_OPENAPI_AND_INVALIDATION_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "G-03",
+      "owner": "Shared Experience Platform + Product Owners",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Manifest, menu ownership, registered route and legacy redirect registry approval",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM", "AUTOMATED_TEST_RUN"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_REGISTRY_OWNER_APPROVAL"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "G-04",
+      "owner": "Identity and Access + Product Security",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Application entitlement and Management guard independent truth table approval",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM", "AUTOMATED_TEST_RUN"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_ENTITLEMENT_MANAGEMENT_TRUTH_TABLE_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "G-05",
+      "owner": "HCM Product + Security",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Granular HCM management capabilities and target population approval",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM", "AUTOMATED_TEST_RUN"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_HCM_CAPABILITY_TARGET_POPULATION_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "G-06",
+      "owner": "Identity and Access + Security",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Scoped JIT end-to-end fail-closed verification or explicit release disablement",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "AUTOMATED_TEST_RUN",
+        "FEATURE_DISABLED_AT_RELEASE"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_IDENTITY_SECURITY_APPROVAL_AND_DISABLEMENT_ATTESTATION"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "G-07",
+      "owner": "Privacy + Data Platform + Product Analytics",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "UX telemetry separation, consent, retention and privacy approval",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PRIVACY_APPROVAL",
+        "TELEMETRY_RETENTION",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_TELEMETRY_PRIVACY_RETENTION_APPROVAL"],
+      "failClosedEvidence": ["apps/dwp/src/observability/product-surface-telemetry-context.tsx"]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "PS-01",
+      "owner": "Security + Product",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Tenant Admin receives only explicitly seeded product read-only oversight",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_01_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "PS-02",
+      "owner": "Identity and Access",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Pilot JIT permits tenant scope only and fails closed for other activation scopes",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_02_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "PS-03",
+      "owner": "HCM + Security",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Organization design and controlled export use dedicated exact capabilities",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_03_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "PS-04",
+      "owner": "Identity + Work",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Campaign administration and named reviewer decisions remain separate task planes",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_04_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "PS-05",
+      "owner": "Privacy + Data + Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "UX analytics and security audit use separate store, schema, retention and access",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_05_OWNER_APPROVAL"],
+      "failClosedEvidence": ["apps/dwp/src/observability/product-surface-telemetry-context.tsx"]
+    },
+    {
+      "id": "PS-06",
+      "owner": "Security + Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Surface, grant and scope DTO binding with exclusive NORMAL or SUPPORT mode",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_06_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "PS-07",
+      "owner": "Identity + Product",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Delegated management requires responsibility and capability with proven scopes",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_07_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "PS-08",
+      "owner": "Product + UX",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Product root resolves Work first and Management-only second",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_08_OWNER_APPROVAL"],
+      "failClosedEvidence": ["apps/dwp/src/features/shell/product-entry-point-model.ts"]
+    },
+    {
+      "id": "PS-09",
+      "owner": "Security + Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Composite revision, trusted context and multi-tab invalidation contract",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_09_OWNER_APPROVAL"],
+      "failClosedEvidence": ["libs/shared-utils/src/auth/product-surface-context-provider.tsx"]
+    },
+    {
+      "id": "PS-10",
+      "owner": "Security + Product Owners",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Exact actions and legacy MANAGE compatibility delta",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_10_OWNER_APPROVAL"],
+      "failClosedEvidence": ["apps/dwp/src/routes/route-support.tsx"]
+    },
+    {
+      "id": "PS-11",
+      "owner": "Security + Risk Owner",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Scope-bound separation of duties and step-up freshness policy",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "CONTRACT_CHECKSUM"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_PS_11_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "P-APPROVALS",
+      "productId": "approvals",
+      "owner": "Approvals + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Approvals exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_COMPLETE_PRODUCTION_CLOSURE_ATTESTATION"],
+      "failClosedEvidence": ["architecture/product-surface-authorization.v1.json"]
+    },
+    {
+      "id": "P-COMMUNICATIONS",
+      "productId": "communications",
+      "owner": "Communications + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Communications exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_COMPLETE_PRODUCTION_CLOSURE_ATTESTATION"],
+      "failClosedEvidence": ["architecture/product-surface-authorization.v1.json"]
+    },
+    {
+      "id": "P-SERVICES",
+      "productId": "services",
+      "owner": "Services + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Services exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_COMPLETE_PRODUCTION_CLOSURE_ATTESTATION"],
+      "failClosedEvidence": ["architecture/product-surface-authorization.v1.json"]
+    },
+    {
+      "id": "P-HCM",
+      "productId": "hcm",
+      "owner": "HCM + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "HCM exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_COMPLETE_PRODUCTION_CLOSURE_ATTESTATION"],
+      "failClosedEvidence": ["architecture/product-surface-authorization.v1.json"]
+    },
+    {
+      "id": "P-DWAION",
+      "productId": "dwaion",
+      "owner": "DWAI-ON + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "DWAI-ON exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-NOTIFICATIONS",
+      "productId": "notifications",
+      "owner": "Notifications + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Notifications exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-SPACES",
+      "productId": "spaces",
+      "owner": "Spaces + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Spaces exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-CALENDAR",
+      "productId": "calendar",
+      "owner": "Calendar + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Calendar exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-WORKPLACE",
+      "productId": "workplace",
+      "owner": "Workplace + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Workplace exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-MAIL",
+      "productId": "mail",
+      "owner": "Mail + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Mail exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-MESSAGING",
+      "productId": "messaging",
+      "owner": "Messaging + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Messaging exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "P-MEETINGS",
+      "productId": "meetings",
+      "owner": "Meetings + Security",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Meetings exact PAGE, DATA and ACTION production closure",
+      "routeKinds": ["PAGE", "DATA", "ACTION"],
+      "rolloutDefault": "000",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_EXACT_PAGE_DATA_ACTION_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    }
+  ],
+  "exitCriteria": [
+    {
+      "id": "X-01",
+      "owner": "Security + Product Owners",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "All 12 products have immutable exact PAGE, DATA and ACTION contracts with Gateway and service PEP closure",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PAGE_CONTRACT",
+        "DATA_CONTRACT",
+        "ACTION_CONTRACT",
+        "GATEWAY_PEP_TEST",
+        "SERVICE_PEP_TEST",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "CONTRACT_CHECKSUM",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_TWELVE_PRODUCT_EXACT_CLOSURE"],
+      "failClosedEvidence": ["architecture/frontend-apps.json"]
+    },
+    {
+      "id": "X-02",
+      "owner": "Platform Security + SRE",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Production deployment proves Gateway-only trusted context issuance and direct-service denial",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "DEPLOYMENT_TRUST_ATTESTATION",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_DEPLOYMENT_TRUST_ATTESTATION"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    },
+    {
+      "id": "X-03",
+      "owner": "Security + Quality Engineering",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Cross-tenant, scope escape, stale revision, NORMAL versus SUPPORT confused-deputy and internal-header-spoof matrix passes",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "CROSS_TENANT_NEGATIVE_TEST",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_47_PRODUCT_VECTOR_SERVICE_PEP_CELLS"],
+      "failClosedEvidence": [
+        "docs/06-delivery/release-evidence/X-03-authorization-negative-matrix.md",
+        "e2e/product-surface-approvals-pilot.spec.ts"
+      ]
+    },
+    {
+      "id": "X-04",
+      "owner": "Identity Platform + Frontend Platform",
+      "state": "PENDING_INTERNAL",
+      "releaseRequired": true,
+      "summary": "Revocation and multi-tab invalidation meet the approved latency SLO in all browser capability modes",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "REVOCATION_SLO", "AUTOMATED_TEST_RUN"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["INTERNAL_REVOCATION_MULTI_TAB_SLO_EVIDENCE"],
+      "failClosedEvidence": ["libs/shared-utils/src/auth/product-surface-context-provider.tsx"]
+    },
+    {
+      "id": "X-05",
+      "owner": "Frontend Platform + SRE",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Every application, route prefix and alias passes the real Nginx artifact routing matrix",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "ARTIFACT_ROUTING_MATRIX", "AUTOMATED_TEST_RUN"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_STAGING_NGINX_ROUTING_ATTESTATION_AND_OWNER_APPROVAL"],
+      "failClosedEvidence": [
+        "architecture/frontend-apps.json",
+        "deploy/nginx/dwp-product-routes.conf",
+        "scripts/serve-product-artifacts.mjs",
+        "e2e/product-artifact-runtime.spec.ts"
+      ]
+    },
+    {
+      "id": "X-06",
+      "owner": "Privacy + Data Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Telemetry consent, revocation, retention and separation from security audit are approved",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "PRIVACY_APPROVAL",
+        "TELEMETRY_RETENTION",
+        "AUTOMATED_TEST_RUN"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_TELEMETRY_PRIVACY_APPROVAL"],
+      "failClosedEvidence": ["apps/dwp/src/bootstrap-application.tsx"]
+    },
+    {
+      "id": "X-07",
+      "owner": "Accessibility + UX Research + Product",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Approved browser, OS and assistive technology matrix plus quantitative usability study pass",
+      "requiredEvidenceTypes": ["OWNER_APPROVAL", "ACCESSIBILITY_MANUAL_AT", "USABILITY_STUDY"],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_MANUAL_AT_AND_USABILITY_SIGN_OFF"],
+      "failClosedEvidence": ["e2e/product-surface-approvals-pilot.spec.ts"]
+    },
+    {
+      "id": "X-08",
+      "owner": "Security + SRE + Risk Owner",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Fail-closed chaos, rollback rehearsal and independent penetration testing pass with zero Critical or High findings",
+      "requiredEvidenceTypes": [
+        "OWNER_APPROVAL",
+        "CHAOS_TEST",
+        "ROLLBACK_REHEARSAL",
+        "PENETRATION_TEST"
+      ],
+      "approval": { "approvedBy": [], "approvedAt": null },
+      "evidence": [],
+      "blockers": ["EXTERNAL_CHAOS_ROLLBACK_AND_PENETRATION_EVIDENCE"],
+      "failClosedEvidence": [
+        "docs/03-architecture/R1 제품 업무·관리 Surface 분리 및 관리 Context ADR.md"
+      ]
+    }
+  ]
+}

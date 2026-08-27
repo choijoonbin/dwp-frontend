@@ -12,6 +12,7 @@ export type ApprovalAuthorityOptions = {
   managementCapabilityKeys?: readonly string[];
   managementReadOnly?: boolean;
   managementScopes?: 'default' | 'two-no-default';
+  managementScopeDisplayName?: string;
   generatedAt?: string;
   revalidateAt?: string;
 };
@@ -29,6 +30,7 @@ const GOVERNED_PRODUCT_KEYS = [
   'dwaion',
   'hcm',
   'mail',
+  'meetings',
   'messaging',
   'notifications',
   'services',
@@ -180,7 +182,13 @@ function managementContext(options: ApprovalAuthorityOptions) {
   const scopes =
     options.managementScopes === 'two-no-default'
       ? MANAGEMENT_SCOPES_WITHOUT_DEFAULT.map((scope) => ({ ...scope, readOnly }))
-      : [{ ...MANAGEMENT_SCOPE, readOnly }];
+      : [
+          {
+            ...MANAGEMENT_SCOPE,
+            displayName: options.managementScopeDisplayName ?? MANAGEMENT_SCOPE.displayName,
+            readOnly,
+          },
+        ];
   return {
     contextKey: 'ctx:approvals:admin',
     productKey: 'approvals',

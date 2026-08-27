@@ -5,6 +5,7 @@ import {
   HOME_LIGHT_CANVAS,
   HOME_LIGHT_SURFACE,
   HOME_LIGHT_SURFACE_SUBTLE,
+  HOME_MOTION_TOKENS,
   HOME_STATUS_TOKENS,
   HOME_SURFACE_TOKENS,
   HOME_WORKSCAPE_TOKENS,
@@ -78,6 +79,15 @@ describe('Home semantic color contracts', () => {
       image: 'none',
       shadow: 'none',
       backdropFilter: 'none',
+    });
+  });
+
+  it('limits Home motion to short, action-linked feedback', () => {
+    expect(HOME_MOTION_TOKENS).toEqual({
+      quick: '140ms',
+      standard: '200ms',
+      easing: 'cubic-bezier(0.2, 0, 0, 1)',
+      lift: 'translateY(-2px)',
     });
   });
 

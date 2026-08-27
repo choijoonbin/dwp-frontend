@@ -1,0 +1,579 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "caseId": "unknown-command-type",
+      "baseCaseId": "create-definition",
+      "mutations": [{ "op": "replace", "path": "/request/commandType", "value": "DELETE_ALL" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "operation-command-swap",
+      "baseCaseId": "validate-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/operationId",
+          "value": "submitWidgetDefinitionVersion"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "target-extra-field",
+      "baseCaseId": "validate-version",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/request/target/definitionId",
+          "value": "11111111-1111-4111-8111-111111111111"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "payload-extra-field",
+      "baseCaseId": "submit-version",
+      "mutations": [{ "op": "add", "path": "/request/payload/targetState", "value": "PUBLISHED" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "payload-required-field-removed",
+      "baseCaseId": "validate-version",
+      "mutations": [{ "op": "remove", "path": "/request/payload/manifestHash" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "nested-manifest-open-field",
+      "baseCaseId": "update-version",
+      "mutations": [{ "op": "add", "path": "/request/payload/manifest/unknown", "value": true }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "uppercase-idempotency-key",
+      "baseCaseId": "create-definition",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/publicIdempotencyKey",
+          "value": "20000000-0000-4000-8000-00000000000A"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "expected-version-envelope-mismatch",
+      "baseCaseId": "submit-version",
+      "mutations": [{ "op": "replace", "path": "/request/expectedVersion", "value": 5 }],
+      "expectedError": "EXPECTED_VERSION_BINDING"
+    },
+    {
+      "caseId": "definition-target-hash-tampered",
+      "baseCaseId": "create-definition",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/targetId",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "create-version-target-hash-tampered",
+      "baseCaseId": "create-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/targetId",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "version-target-id-mismatch",
+      "baseCaseId": "validate-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/versionId",
+          "value": "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "evidence-target-id-mismatch",
+      "baseCaseId": "waive-evidence",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/evidenceId",
+          "value": "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "channel-target-hash-tampered",
+      "baseCaseId": "promote-channel",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/targetId",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "runtime-global-id-not-null",
+      "baseCaseId": "disable-runtime-control",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/runtimeTargetId",
+          "value": "11111111-1111-4111-8111-111111111111"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "runtime-target-payload-mismatch",
+      "baseCaseId": "disable-runtime-control",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/controlScope",
+          "value": "RUNTIME_ACTION"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "runtime-control-id-mismatch",
+      "baseCaseId": "enable-runtime-control",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/target/controlId",
+          "value": "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+        }
+      ],
+      "expectedError": "TARGET_BINDING"
+    },
+    {
+      "caseId": "public-fingerprint-tampered",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/publicRequestFingerprint",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "PUBLIC_REQUEST_FINGERPRINT"
+    },
+    {
+      "caseId": "signed-public-fingerprint-tampered",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedPublicRequestFingerprint",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "PUBLIC_REQUEST_FINGERPRINT"
+    },
+    {
+      "caseId": "permission-set-hash-tampered",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/permissionSetHash",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "PERMISSION_SET_HASH"
+    },
+    {
+      "caseId": "required-permission-missing",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedPermissionCodes",
+          "value": ["WIDGET_CATALOG_READ"]
+        }
+      ],
+      "expectedError": "REQUIRED_PERMISSION"
+    },
+    {
+      "caseId": "service-scope-mismatch",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/serviceScope",
+          "value": "widget-registry.write"
+        }
+      ],
+      "expectedError": "SERVICE_SCOPE"
+    },
+    {
+      "caseId": "signed-operator-mismatch",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedActorRef",
+          "value": "actor_ref_another_reviewer"
+        }
+      ],
+      "expectedError": "ACTOR_BINDING"
+    },
+    {
+      "caseId": "signed-session-mismatch",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedSessionRef",
+          "value": "session_ref_another_session"
+        }
+      ],
+      "expectedError": "ACTOR_BINDING"
+    },
+    {
+      "caseId": "signed-sod-mismatch",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedSodArtifactIds",
+          "value": ["sod_approval_0001"]
+        }
+      ],
+      "expectedError": "SOD_BINDING"
+    },
+    {
+      "caseId": "envelope-sod-unsorted",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/sodArtifactIds",
+          "value": ["sod_case_0001", "sod_approval_0001"]
+        }
+      ],
+      "expectedError": "SORT_UNIQUE"
+    },
+    {
+      "caseId": "signed-sod-duplicated",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedSodArtifactIds",
+          "value": ["sod_approval_0001", "sod_approval_0001"]
+        }
+      ],
+      "expectedError": "SORT_UNIQUE"
+    },
+    {
+      "caseId": "signed-permissions-unsorted",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedPermissionCodes",
+          "value": ["WIDGET_DEFINITION_RELEASE", "WIDGET_CATALOG_READ"]
+        }
+      ],
+      "expectedError": "SORT_UNIQUE"
+    },
+    {
+      "caseId": "signed-owner-products-duplicated",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedOwnerProductKeys",
+          "value": ["core.workspace", "core.workspace"]
+        }
+      ],
+      "expectedError": "SORT_UNIQUE"
+    },
+    {
+      "caseId": "provider-authority-stale",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentProviderAuthorityRevision",
+          "value": "provider_authority_revision_0043"
+        }
+      ],
+      "expectedError": "AUTHORITY_STALE"
+    },
+    {
+      "caseId": "signed-command-id-mismatch",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedCommandId",
+          "value": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+        }
+      ],
+      "expectedError": "ASSERTION_BINDING"
+    },
+    {
+      "caseId": "signed-operation-mismatch",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedOperationId",
+          "value": "deprecateWidgetDefinitionVersion"
+        }
+      ],
+      "expectedError": "ASSERTION_BINDING"
+    },
+    {
+      "caseId": "signed-target-mismatch",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedTarget/versionId",
+          "value": "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+        }
+      ],
+      "expectedError": "ASSERTION_BINDING"
+    },
+    {
+      "caseId": "signed-idempotency-key-mismatch",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedPublicIdempotencyKey",
+          "value": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+        }
+      ],
+      "expectedError": "ASSERTION_BINDING"
+    },
+    {
+      "caseId": "signed-payload-hash-tampered",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedPayloadHash",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "PAYLOAD_HASH"
+    },
+    {
+      "caseId": "signed-reason-digest-tampered",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedReasonDigest",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "REASON_DIGEST"
+    },
+    {
+      "caseId": "idempotency-key-reused-with-different-fingerprint",
+      "baseCaseId": "create-definition",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/payload/reasonText",
+          "value": "A different body attempts to reuse the completed public receipt."
+        }
+      ],
+      "recomputeDerived": [
+        "publicRequestFingerprint",
+        "signedPublicRequestFingerprint",
+        "signedPayloadHash",
+        "signedReasonDigest"
+      ],
+      "checkAgainstGolden": true,
+      "expectedError": "IDEMPOTENCY_KEY_REUSED"
+    },
+    {
+      "caseId": "same-receipt-new-command-id",
+      "baseCaseId": "create-definition",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/commandId",
+          "value": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedCommandId",
+          "value": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+        }
+      ],
+      "checkAgainstGolden": true,
+      "expectedError": "COMMAND_BINDING_MISMATCH"
+    },
+    {
+      "caseId": "decision-empty-sod-artifacts",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        { "op": "replace", "path": "/request/sodArtifactIds", "value": [] },
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedSodArtifactIds",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/artifactIds",
+          "value": []
+        }
+      ],
+      "expectedError": "SOD_ARTIFACT_REQUIRED"
+    },
+    {
+      "caseId": "publish-fabricated-sod-artifact",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/sodArtifactIds",
+          "value": ["sod_fabricated_9999"]
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/signedSodArtifactIds",
+          "value": ["sod_fabricated_9999"]
+        }
+      ],
+      "expectedError": "SOD_ARTIFACT_BINDING"
+    },
+    {
+      "caseId": "clearance-stale-sod-authority",
+      "baseCaseId": "clear-quarantine",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/currentAuthorityRevision",
+          "value": "sod_authority_revision_0043"
+        }
+      ],
+      "expectedError": "SOD_AUTHORITY_STALE"
+    },
+    {
+      "caseId": "enable-expired-sod-snapshot",
+      "baseCaseId": "enable-runtime-control",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/validUntil",
+          "value": "2026-08-27T10:00:00Z"
+        }
+      ],
+      "expectedError": "SOD_AUTHORITY_STALE"
+    },
+    {
+      "caseId": "publish-cross-owner-scope",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/trustedCurrentTarget/ownerProductKey",
+          "value": "core.finance"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/targetOwnerProductKey",
+          "value": "core.finance"
+        }
+      ],
+      "expectedError": "OWNER_SCOPE"
+    },
+    {
+      "caseId": "decision-author-actor-collision",
+      "baseCaseId": "decide-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/trustedCurrentTarget/actorHistory/AUTHOR",
+          "value": "actor_ref_widget_admin"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/separationActors/0/actorRef",
+          "value": "actor_ref_widget_admin"
+        }
+      ],
+      "expectedError": "SOD_ACTOR_CONFLICT"
+    },
+    {
+      "caseId": "publish-missing-approver-fact",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/separationActors",
+          "value": []
+        }
+      ],
+      "expectedError": "SOD_ARTIFACT_REQUIRED"
+    },
+    {
+      "caseId": "clearance-cross-target-sod-facts",
+      "baseCaseId": "clear-quarantine",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/targetId",
+          "value": "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+        }
+      ],
+      "expectedError": "TARGET_AUTHORITY_BINDING"
+    },
+    {
+      "caseId": "clearance-reject-has-no-terminal-ledger-model",
+      "baseCaseId": "approve-quarantine-clearance",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/payload/reviewDecision",
+          "value": "REJECT"
+        }
+      ],
+      "recomputeDerived": [
+        "publicRequestFingerprint",
+        "signedPublicRequestFingerprint",
+        "signedPayloadHash",
+        "signedReasonDigest"
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "publish-future-fractional-sod-verification",
+      "baseCaseId": "publish-version",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/resolvedSodFacts/verifiedAt",
+          "value": "2026-08-27T10:00:30.1Z"
+        }
+      ],
+      "expectedError": "SOD_AUTHORITY_STALE"
+    }
+  ]
+}

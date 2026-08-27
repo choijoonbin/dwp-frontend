@@ -1,14 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, FilterX, Search, UsersRound, Video } from 'lucide-react';
+import { CalendarClock, Video } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ActionButton,
   DatePickerField,
   EmptyState,
-  FormField,
+  FilterBar,
   PageCanvas,
   SelectField,
+  mergeFilterSearchParams,
 } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import { getRoomAvailability, getRoomsPolicy } from '@dwp-frontend/shared-utils';
@@ -16,12 +18,9 @@ import { getRoomAvailability, getRoomsPolicy } from '@dwp-frontend/shared-utils'
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
@@ -56,6 +55,8 @@ function RoomTimeline({
   policy,
   occupancy,
   canBook,
+  bookingBlockedReason,
+  serverNow,
   onSelect,
 }: {
   room: CalendarResource;
@@ -64,10 +65,25 @@ function RoomTimeline({
   policy: CalendarPolicy;
   occupancy: readonly RoomOccupancy[];
   canBook: boolean;
+  bookingBlockedReason?: string;
+  serverNow: string;
   onSelect: (selection: BookingSelection) => void;
 }) {
   const { t, i18n } = useTranslation('rooms');
   const slots = roomPolicySlots(date, room.timeZone, durationMinutes, policy, SLOT_MINUTES);
+  const [activeSlotIndex, setActiveSlotIndex] = useState(0);
+  const slotRefs = useRef(new Map<number, HTMLButtonElement>());
+
+  useEffect(() => {
+    if (activeSlotIndex >= slots.length) setActiveSlotIndex(0);
+  }, [activeSlotIndex, slots.length]);
+
+  const moveFocus = (index: number) => {
+    if (!slots.length) return;
+    const nextIndex = (index + slots.length) % slots.length;
+    setActiveSlotIndex(nextIndex);
+    slotRefs.current.get(nextIndex)?.focus();
+  };
   return (
     <Box sx={{ minWidth: Math.max(520, slots.length * 30) }}>
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
@@ -89,7 +105,8 @@ function RoomTimeline({
         ))}
       </Box>
       <Box
-        role="group"
+        role="toolbar"
+        aria-orientation="horizontal"
         aria-label={t('find.timelineLabel', { room: room.name })}
         sx={{
           display: 'grid',
@@ -108,67 +125,92 @@ function RoomTimeline({
             new Date(start.getTime() + SLOT_MINUTES * 60_000),
             occupancy
           );
+          const past = start.getTime() < Date.parse(serverNow);
           const selectable =
             canBook &&
+            !past &&
             roomSlotAvailable({
               start,
               end,
               occupancy,
               active: room.state === 'AVAILABLE',
+              bufferMinutes: policy.defaultBufferMinutes,
             });
           const label = formatDate(
             start,
             { hour: '2-digit', minute: '2-digit', timeZone: room.timeZone },
             resolveSupportedLocale(i18n.resolvedLanguage)
           );
-          return (
-            <Tooltip
-              key={slot.startsAt}
-              title={t(
-                !canBook
-                  ? 'permissions.roomBookingReadOnly'
+          const tooltip =
+            bookingBlockedReason ??
+            t(
+              !canBook
+                ? 'permissions.roomBookingReadOnly'
+                : past
+                  ? 'find.slotPast'
                   : occupied
                     ? 'find.slotOccupied'
                     : selectable
                       ? 'find.slotAvailable'
                       : 'find.slotUnavailable',
-                {
+              { time: label }
+            );
+          return (
+            <Tooltip key={slot.startsAt} title={tooltip}>
+              <Box
+                component="button"
+                type="button"
+                tabIndex={index === activeSlotIndex ? 0 : -1}
+                aria-disabled={!selectable}
+                aria-label={t(selectable ? 'find.bookSlot' : 'find.unavailableSlot', {
+                  room: room.name,
                   time: label,
-                }
-              )}
-            >
-              <Box component="span" sx={{ display: 'block', minWidth: 0 }}>
-                <Box
-                  component="button"
-                  type="button"
-                  disabled={!selectable}
-                  aria-label={t(selectable ? 'find.bookSlot' : 'find.unavailableSlot', {
-                    room: room.name,
-                    time: label,
-                  })}
-                  onClick={() => onSelect({ room, startsAt: slot.startsAt, endsAt: slot.endsAt })}
-                  sx={{
-                    display: 'block',
-                    width: '100%',
-                    height: 44,
-                    minWidth: 0,
-                    p: 0,
-                    border: 0,
-                    borderRight: index === slots.length - 1 ? 0 : 1,
-                    borderColor: 'divider',
-                    bgcolor: occupied ? 'warning.light' : 'background.paper',
-                    opacity: occupied ? 0.7 : selectable ? 1 : 0.45,
-                    cursor: selectable ? 'pointer' : 'not-allowed',
-                    '&:hover': selectable ? { bgcolor: 'var(--dwp-product-soft)' } : undefined,
-                    '&:focus-visible': {
-                      position: 'relative',
-                      zIndex: 1,
-                      outline: '2px solid var(--dwp-product-accent)',
-                      outlineOffset: -2,
-                    },
-                  }}
-                />
-              </Box>
+                })}
+                ref={(node: HTMLButtonElement | null) => {
+                  if (node) slotRefs.current.set(index, node);
+                  else slotRefs.current.delete(index);
+                }}
+                onFocus={() => setActiveSlotIndex(index)}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    moveFocus(index + 1);
+                  }
+                  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    moveFocus(index - 1);
+                  }
+                  if (event.key === 'Home' || event.key === 'End') {
+                    event.preventDefault();
+                    moveFocus(event.key === 'Home' ? 0 : slots.length - 1);
+                  }
+                }}
+                onClick={() => {
+                  if (selectable) {
+                    onSelect({ room, startsAt: slot.startsAt, endsAt: slot.endsAt });
+                  }
+                }}
+                sx={{
+                  display: 'block',
+                  width: '100%',
+                  height: 44,
+                  minWidth: 0,
+                  p: 0,
+                  border: 0,
+                  borderRight: index === slots.length - 1 ? 0 : 1,
+                  borderColor: 'divider',
+                  bgcolor: occupied ? 'warning.light' : 'background.paper',
+                  opacity: occupied ? 0.7 : selectable ? 1 : 0.45,
+                  cursor: selectable ? 'pointer' : 'not-allowed',
+                  '&:hover': selectable ? { bgcolor: 'var(--dwp-product-soft)' } : undefined,
+                  '&:focus-visible': {
+                    position: 'relative',
+                    zIndex: 1,
+                    outline: '2px solid var(--dwp-product-accent)',
+                    outlineOffset: -2,
+                  },
+                }}
+              />
             </Tooltip>
           );
         })}
@@ -180,12 +222,13 @@ function RoomTimeline({
 export function RoomsFind() {
   const { t } = useTranslation('rooms');
   const capabilities = useRoomsCapabilities();
-  const [date, setDate] = useState(() => roomLocalDate('UTC'));
-  const [search, setSearch] = useState('');
-  const [site, setSite] = useState('ALL');
-  const [capacity, setCapacity] = useState('0');
-  const [duration, setDuration] = useState(DEFAULT_ROOM_POLICY.defaultEventMinutes);
-  const [feature, setFeature] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const date = searchParams.get('date') ?? roomLocalDate('UTC');
+  const search = searchParams.get('q') ?? '';
+  const site = searchParams.get('site') ?? 'ALL';
+  const capacity = searchParams.get('capacity') ?? '0';
+  const duration = Number(searchParams.get('duration')) || DEFAULT_ROOM_POLICY.defaultEventMinutes;
+  const feature = searchParams.get('feature');
   const [selection, setSelection] = useState<BookingSelection | null>(null);
   const defaultedTimeZoneRef = useRef(false);
   const range = useMemo(() => roomAvailabilityRange(date), [date]);
@@ -204,6 +247,7 @@ export function RoomsFind() {
     retry: 1,
   });
   const policy = policyQuery.data ?? DEFAULT_ROOM_POLICY;
+  const policyAvailable = Boolean(policyQuery.data);
   const rooms = useMemo(() => availabilityQuery.data?.rooms ?? [], [availabilityQuery.data?.rooms]);
   const sites = [...new Set(rooms.map((room) => room.site))].sort();
   const features = [...new Set(rooms.flatMap((room) => room.features))].sort();
@@ -212,17 +256,29 @@ export function RoomsFind() {
     rooms[0]?.timeZone ??
     'UTC';
   const durationOptions = useMemo(() => roomDurationOptions(policy), [policy]);
-  const dateBounds = roomDateBounds(activeTimeZone, policy.maximumAdvanceDays);
+  const dateBounds = roomDateBounds(
+    activeTimeZone,
+    policy.maximumAdvanceDays,
+    availabilityQuery.data?.generatedAt
+  );
+  const updateParams = useCallback(
+    (values: Record<string, string | number | null | undefined>) => {
+      setSearchParams((current) => mergeFilterSearchParams(current, values), { replace: true });
+    },
+    [setSearchParams]
+  );
   useEffect(() => {
     if (defaultedTimeZoneRef.current || !rooms[0]) return;
     defaultedTimeZoneRef.current = true;
-    setDate(roomLocalDate(rooms[0].timeZone, availabilityQuery.data?.generatedAt));
-  }, [availabilityQuery.data?.generatedAt, rooms]);
+    if (!searchParams.has('date')) {
+      updateParams({ date: roomLocalDate(rooms[0].timeZone, availabilityQuery.data?.generatedAt) });
+    }
+  }, [availabilityQuery.data?.generatedAt, rooms, searchParams, updateParams]);
   useEffect(() => {
     if (!durationOptions.includes(duration)) {
-      setDuration(durationOptions[0] ?? policy.defaultEventMinutes);
+      updateParams({ duration: durationOptions[0] ?? policy.defaultEventMinutes });
     }
-  }, [duration, durationOptions, policy.defaultEventMinutes]);
+  }, [duration, durationOptions, policy.defaultEventMinutes, updateParams]);
   const filtered = rooms.filter((room) => {
     const query = search.trim().toLocaleLowerCase();
     return (
@@ -245,10 +301,14 @@ export function RoomsFind() {
     return result;
   }, [availabilityQuery.data?.occupancy]);
   const resetFilters = () => {
-    setSearch('');
-    setSite('ALL');
-    setCapacity('0');
-    setFeature(null);
+    updateParams({
+      q: null,
+      date: roomLocalDate(activeTimeZone, availabilityQuery.data?.generatedAt),
+      site: null,
+      capacity: null,
+      duration: policy.defaultEventMinutes,
+      feature: null,
+    });
   };
 
   return (
@@ -257,94 +317,104 @@ export function RoomsFind() {
         eyebrow={t('find.eyebrow')}
         title={t('find.title')}
         description={t('find.description')}
-        actions={
-          <ActionButton intent="secondary" startIcon={<FilterX size={17} />} onClick={resetFilters}>
-            {t('actions.resetFilters')}
-          </ActionButton>
-        }
       />
 
       {capabilities.isLoaded && !capabilities.canCreateRoomBooking && (
         <RoomsPermissionNotice>{t('permissions.roomBookingReadOnly')}</RoomsPermissionNotice>
       )}
+      {policyQuery.isError && (
+        <Alert
+          severity={policyAvailable ? 'warning' : 'error'}
+          action={
+            <ActionButton intent="quiet" onClick={() => policyQuery.refetch()}>
+              {t('actions.retry')}
+            </ActionButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {t(policyAvailable ? 'find.policyStale' : 'find.policyUnavailable')}
+        </Alert>
+      )}
 
       <Box
-        sx={{
-          bgcolor: 'background.paper',
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          p: { xs: 1.5, md: 2 },
-          mb: 2,
-        }}
+        sx={{ bgcolor: 'background.paper', borderInline: 1, borderColor: 'divider', px: 2, mb: 2 }}
       >
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: '1fr 1fr',
-              xl: 'minmax(260px, 1.4fr) 220px 180px auto',
-            },
-            gap: 1.5,
-            alignItems: 'center',
-          }}
-        >
-          <FormField
-            size="small"
-            label={t('find.searchLabel')}
-            value={search}
-            onChange={(change) => setSearch(change.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search size={17} />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <DatePickerField
-            size="small"
-            label={t('find.dateLabel')}
-            value={date}
-            minDate={dateBounds.minDate}
-            maxDate={dateBounds.maxDate}
-            onValueChange={(value) => value && setDate(value)}
-          />
-          <SelectField
-            size="small"
-            label={t('find.siteLabel')}
-            value={site}
-            options={[
-              { value: 'ALL', label: t('find.allSites') },
-              ...sites.map((value) => ({ value, label: value })),
-            ]}
-            onValueChange={(value) => setSite(String(value))}
-          />
-          <Stack direction="row" gap={1} alignItems="center">
-            <UsersRound size={17} />
-            <ToggleButtonGroup
-              exclusive
-              size="small"
-              value={capacity}
-              onChange={(_, value: string | null) => value && setCapacity(value)}
-              aria-label={t('find.capacityLabel')}
-            >
-              {['0', '4', '8', '12'].map((value) => (
-                <ToggleButton
-                  key={value}
-                  value={value}
-                  aria-label={t('find.capacityOption', { count: value })}
-                >
-                  {value === '0' ? t('find.any') : `${value}+`}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Stack>
-        </Box>
-        <Stack direction={{ xs: 'column', md: 'row' }} gap={1.5} sx={{ mt: 1.5 }}>
-          <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap" sx={{ flex: 1 }}>
-            <Video size={16} />
+        <FilterBar
+          ariaLabel={t('find.filterLabel')}
+          searchLabel={t('find.searchLabel')}
+          searchValue={search}
+          onSearchChange={(value) => updateParams({ q: value })}
+          resultLabel={t('find.resultCount', { count: filtered.length })}
+          activeFilters={
+            feature
+              ? [
+                  {
+                    key: 'feature',
+                    label: t(`features.${feature}`, { defaultValue: feature }),
+                    onRemove: () => updateParams({ feature: null }),
+                  },
+                ]
+              : []
+          }
+          resetLabel={t('actions.resetFilters')}
+          onReset={resetFilters}
+          filters={
+            <>
+              <DatePickerField
+                size="small"
+                label={t('find.dateLabel')}
+                value={date}
+                minDate={dateBounds.minDate}
+                maxDate={dateBounds.maxDate}
+                onValueChange={(value) => value && updateParams({ date: value })}
+                sx={{ minWidth: 156 }}
+              />
+              <SelectField
+                size="small"
+                label={t('find.siteLabel')}
+                value={site}
+                options={[
+                  { value: 'ALL', label: t('find.allSites') },
+                  ...sites.map((value) => ({ value, label: value })),
+                ]}
+                onValueChange={(value) => updateParams({ site: String(value) })}
+                sx={{ minWidth: 170 }}
+              />
+              <SelectField
+                size="small"
+                label={t('find.capacityLabel')}
+                value={capacity}
+                options={['0', '4', '8', '12'].map((value) => ({
+                  value,
+                  label: value === '0' ? t('find.any') : t('find.capacityOption', { count: value }),
+                }))}
+                onValueChange={(value) => updateParams({ capacity: String(value) })}
+                sx={{ minWidth: 150 }}
+              />
+              <SelectField
+                size="small"
+                label={t('find.durationLabel')}
+                value={String(duration)}
+                options={durationOptions.map((value) => ({
+                  value: String(value),
+                  label: t('find.minutes', { count: value }),
+                }))}
+                onValueChange={(value) => updateParams({ duration: String(value) })}
+                sx={{ minWidth: 140 }}
+              />
+            </>
+          }
+        />
+        {features.length > 0 && (
+          <Stack
+            direction="row"
+            gap={0.75}
+            alignItems="center"
+            useFlexGap
+            flexWrap="wrap"
+            sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
+          >
+            <Video size={16} aria-hidden="true" />
             {features.map((value) => (
               <Chip
                 key={value}
@@ -353,24 +423,11 @@ export function RoomsFind() {
                 color={feature === value ? 'primary' : 'default'}
                 variant={feature === value ? 'filled' : 'outlined'}
                 label={t(`features.${value}`, { defaultValue: value })}
-                onClick={() => setFeature((current) => (current === value ? null : value))}
+                onClick={() => updateParams({ feature: feature === value ? null : value })}
               />
             ))}
           </Stack>
-          <ToggleButtonGroup
-            exclusive
-            size="small"
-            value={duration}
-            onChange={(_, value: number | null) => value && setDuration(value)}
-            aria-label={t('find.durationLabel')}
-          >
-            {durationOptions.map((value) => (
-              <ToggleButton key={value} value={value}>
-                {t('find.minutes', { count: value })}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Stack>
+        )}
       </Box>
 
       <Box
@@ -396,13 +453,25 @@ export function RoomsFind() {
             {t('find.resultCount', { count: filtered.length })}
           </Typography>
         </Stack>
+        {availabilityQuery.isError && availabilityQuery.data && (
+          <Alert
+            severity="warning"
+            action={
+              <ActionButton intent="quiet" onClick={() => availabilityQuery.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
+            {t('workplace.staleWarning')}
+          </Alert>
+        )}
         {availabilityQuery.isLoading ? (
           <Stack spacing={1} p={2}>
             {Array.from({ length: 4 }, (_, index) => (
               <Skeleton key={index} variant="rounded" height={112} />
             ))}
           </Stack>
-        ) : availabilityQuery.isError ? (
+        ) : availabilityQuery.isError && !availabilityQuery.data ? (
           <Alert
             severity="error"
             action={
@@ -457,7 +526,19 @@ export function RoomsFind() {
                   durationMinutes={duration}
                   policy={policy}
                   occupancy={occupancyByRoom.get(room.resourceId) ?? []}
-                  canBook={capabilities.canCreateRoomBooking}
+                  canBook={
+                    capabilities.canCreateRoomBooking &&
+                    policyAvailable &&
+                    !availabilityQuery.isError
+                  }
+                  bookingBlockedReason={
+                    !policyAvailable
+                      ? t('find.policyUnavailable')
+                      : availabilityQuery.isError
+                        ? t('find.availabilityStale')
+                        : undefined
+                  }
+                  serverNow={availabilityQuery.data?.generatedAt ?? new Date().toISOString()}
                   onSelect={setSelection}
                 />
               </Box>
@@ -471,7 +552,7 @@ export function RoomsFind() {
         room={selection?.room ?? null}
         initialStart={selection?.startsAt}
         initialEnd={selection?.endsAt}
-        policy={policy}
+        policy={policyQuery.data ?? null}
         onClose={() => setSelection(null)}
       />
     </PageCanvas>

@@ -19,6 +19,12 @@ Profile과 Login Policy는 Auth `me`·policy API를 읽고 Security 화면은 �
 Time Zone과 Home Widget ID를 검증하며 Version 충돌은 `409`로 구분한다. 자동 저장은 실패를
 성공으로 표시하지 않는다.
 
+위 Platform Personal Preference·Managed Policy API는 Tenant Principal 전용이다. Provider
+Frontend는 호출 자체를 만들지 않고 Provider가 직접 호출하면 `403` 또는 정책상 `404`로
+거부한다. Provider 언어 변경은 Auth `preferredLocale` 계약만 사용하고 Appearance·Accessibility·
+Regional 표시는 격리된 Browser-local Key를 사용한다. Provider Server Sync API는 후속 Backend Gate 전에는
+존재하거나 성공하는 것처럼 표현하지 않는다.
+
 사용자 API는 Session User만 사용하고 다른 사용자의 요청 ID는 찾을 수 없게 처리한다. 관리자
 API는 Admin Route Guard와 서버 Tenant Context를 모두 통과해야 하며 교차 Tenant 요청을
 허용하지 않는다. 결정에는 현재 Version, 10자 이상의 근거와 선택적 증적 참조가 필요하다.

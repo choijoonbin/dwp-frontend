@@ -14,8 +14,11 @@ coverage/
 .nx/
 storybook-static/
 playwright-report/
+playwright-report-*/
 test-results/
+test-results-*/
 blob-report/
+artifacts/
 *.tsbuildinfo
 
 # Local environment

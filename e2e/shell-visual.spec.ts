@@ -26,7 +26,7 @@ test('workspace member shell reflows at the intermediate desktop boundary', asyn
   });
 
   await page.goto('/work');
-  await expect(page.getByTestId('app-header')).toBeVisible();
+  await expect(page.getByTestId('work-header')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Work', level: 1 })).toBeVisible();
   await expect(page).toHaveScreenshot('shell-workspace-member-en-1024.png', {
     animations: 'disabled',

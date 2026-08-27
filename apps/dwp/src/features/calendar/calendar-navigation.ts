@@ -1,10 +1,29 @@
-import { BarChart3, CalendarDays, Gauge, House, Settings2, UsersRound } from 'lucide-react';
+import {
+  BarChart3,
+  CalendarDays,
+  Focus,
+  Gauge,
+  House,
+  Inbox,
+  Settings2,
+  Trash2,
+  UsersRound,
+} from 'lucide-react';
 
 import type { ProductNavigationItem } from '../../components/product-manifest';
 
-export type CalendarSection = 'start' | 'plan' | 'insights' | 'admin';
+export type CalendarSection = 'start' | 'plan' | 'coordinate' | 'insights' | 'utility' | 'admin';
 export type CalendarView =
-  'home' | 'schedule' | 'availability' | 'insights' | 'admin-overview' | 'admin-policies';
+  | 'home'
+  | 'schedule'
+  | 'focus'
+  | 'invitations'
+  | 'trash'
+  | 'availability'
+  | 'insights'
+  | 'admin-overview'
+  | 'admin-company-calendars'
+  | 'admin-policies';
 
 export type CalendarNavigationItem = ProductNavigationItem & {
   section: CalendarSection;
@@ -32,6 +51,23 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
       },
       {
         section: 'plan',
+        view: 'focus',
+        path: '/calendar/focus',
+        icon: Focus,
+      },
+    ],
+  },
+  {
+    id: 'coordinate',
+    items: [
+      {
+        section: 'coordinate',
+        view: 'invitations',
+        path: '/calendar/invitations',
+        icon: Inbox,
+      },
+      {
+        section: 'coordinate',
         view: 'availability',
         path: '/calendar/availability',
         icon: UsersRound,
@@ -50,6 +86,17 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
     ],
   },
   {
+    id: 'utility',
+    items: [
+      {
+        section: 'utility',
+        view: 'trash',
+        path: '/calendar/trash',
+        icon: Trash2,
+      },
+    ],
+  },
+  {
     id: 'admin',
     items: [
       {
@@ -57,6 +104,14 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
         view: 'admin-overview',
         path: '/calendar/admin/overview',
         icon: Gauge,
+        requiredResourceKey: 'ADMIN.CALENDAR',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'admin',
+        view: 'admin-company-calendars',
+        path: '/calendar/admin/company-calendars',
+        icon: CalendarDays,
         requiredResourceKey: 'ADMIN.CALENDAR',
         requiredPermissionCode: 'VIEW',
       },

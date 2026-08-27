@@ -6,6 +6,8 @@ import type {
   MessagingConversation,
   MessagingConversationDetail,
   MessagingAttachment,
+  MessagingConversationDisplayPreference,
+  MessagingDisplayPreference,
   MessagingMember,
   MessagingMemberRole,
   MessagingMessage,
@@ -54,6 +56,7 @@ type SendRequest = {
   replyToMessageId?: string | null;
   idempotencyKey: string;
   attachmentIds: string[];
+  mentionedUserIds: number[];
 };
 
 type CreateRequest = {
@@ -78,6 +81,8 @@ type MessagingFixtureState = {
   managedMemberRole: MessagingMemberRole;
   attachments: Map<string, MessagingAttachment>;
   uploadedAttachmentIds: string[];
+  displayPreference: MessagingDisplayPreference;
+  conversationDisplayPreferences: Map<string, MessagingConversationDisplayPreference>;
   nextMessage: number;
   nextAttachment: number;
   nextConversation: number;
@@ -172,6 +177,22 @@ function createFixtureState(): MessagingFixtureState {
     managedMemberRole: 'MEMBER',
     attachments: new Map(),
     uploadedAttachmentIds: [],
+    displayPreference: {
+      layoutMode: 'AUTO',
+      density: 'COMFORTABLE',
+      theme: 'DEFAULT',
+      showAvatars: true,
+      timestampMode: 'SMART',
+      messagePreview: true,
+      version: 1,
+      policy: {
+        allowedThemes: ['DEFAULT', 'MIST', 'SAGE', 'ROSE'],
+        allowPersonalBackgrounds: false,
+        allowThemeSharing: false,
+        version: 1,
+      },
+    },
+    conversationDisplayPreferences: new Map(),
     nextMessage: 10,
     nextAttachment: 1,
     nextConversation: 2,
@@ -452,6 +473,52 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
       });
     }
 
+    if (path === '/api/messaging/v1/display-preferences' && method === 'GET') {
+      return fulfill(route, state.displayPreference);
+    }
+    if (path === '/api/messaging/v1/display-preferences' && method === 'PUT') {
+      const payload = request.postDataJSON() as Omit<MessagingDisplayPreference, 'policy'>;
+      state.displayPreference = {
+        ...state.displayPreference,
+        ...payload,
+        version: payload.version + 1,
+      };
+      return fulfill(route, state.displayPreference);
+    }
+
+    const displayPreference = path.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/display-preference$/u
+    );
+    if (displayPreference && method === 'GET') {
+      const conversationId = decodeURIComponent(displayPreference[1]!);
+      return fulfill(route, conversationDisplayPreference(state, conversationId));
+    }
+    if (displayPreference && method === 'PUT') {
+      const conversationId = decodeURIComponent(displayPreference[1]!);
+      const current = conversationDisplayPreference(state, conversationId);
+      const payload = request.postDataJSON() as Pick<
+        MessagingConversationDisplayPreference,
+        'layoutMode' | 'density' | 'theme' | 'version'
+      >;
+      const saved: MessagingConversationDisplayPreference = {
+        ...current,
+        ...payload,
+        effectiveLayoutMode:
+          payload.layoutMode === 'CONVERSATIONAL' ? 'CONVERSATIONAL' : 'COLLABORATIVE',
+        effectiveDensity:
+          payload.density === 'COMPACT' ? 'COMPACT' : state.displayPreference.density,
+        effectiveTheme: payload.theme === 'INHERIT' ? state.displayPreference.theme : payload.theme,
+        version: payload.version + 1,
+      };
+      state.conversationDisplayPreferences.set(conversationId, saved);
+      return fulfill(route, saved);
+    }
+    if (displayPreference && method === 'DELETE') {
+      const conversationId = decodeURIComponent(displayPreference[1]!);
+      state.conversationDisplayPreferences.delete(conversationId);
+      return fulfill(route, conversationDisplayPreference(state, conversationId));
+    }
+
     const settings = path.match(/^\/api\/messaging\/v1\/conversations\/([^/]+)\/settings$/u);
     if (settings && method === 'GET') {
       return fulfill(route, {
@@ -497,6 +564,28 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
     );
     if (currentMeeting && method === 'GET') {
       return fulfill(route, { session: null });
+    }
+
+    const meetingHistory = path.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/meetings\/history$/u
+    );
+    if (meetingHistory && method === 'GET') {
+      return fulfill(route, {
+        items: [
+          {
+            sessionId: '74000000-0000-0000-0000-000000000001',
+            conversationId: decodeURIComponent(meetingHistory[1]!),
+            provider: 'LIVEKIT',
+            startedByUserId: COLLEAGUE.userId,
+            startedByName: COLLEAGUE.displayName,
+            startedAt: '2026-08-19T07:00:00Z',
+            endedByUserId: CURRENT_MEMBER.userId,
+            endedByName: CURRENT_MEMBER.displayName,
+            endedAt: '2026-08-19T07:24:00Z',
+            durationSeconds: 1440,
+          },
+        ],
+      });
     }
 
     const createAttachment = path.match(
@@ -719,6 +808,29 @@ async function openConversation(page: Page) {
   await expect(page.getByRole('textbox', { name: 'Compose message' })).toBeVisible();
 }
 
+function conversationDisplayPreference(
+  state: MessagingFixtureState,
+  conversationId: string
+): MessagingConversationDisplayPreference {
+  return (
+    state.conversationDisplayPreferences.get(conversationId) ?? {
+      conversationId,
+      layoutMode: 'INHERIT',
+      density: 'INHERIT',
+      theme: 'INHERIT',
+      effectiveLayoutMode: 'COLLABORATIVE',
+      effectiveDensity: state.displayPreference.density,
+      effectiveTheme: state.displayPreference.theme,
+      showAvatars: state.displayPreference.showAvatars,
+      timestampMode: state.displayPreference.timestampMode,
+      messagePreview: state.displayPreference.messagePreview,
+      policyLocked: false,
+      policyReason: null,
+      version: 0,
+    }
+  );
+}
+
 function messageRow(page: Page, body: string): Locator {
   return page
     .getByText(body, { exact: true })
@@ -769,7 +881,40 @@ test('composer sends with Enter, preserves Shift+Enter, and ignores Enter during
   await expect.poll(() => state.sentRequests.at(-1)?.body).toBe('Korean composition complete');
 });
 
-test('security-scanned attachments are delivered with the message and downloaded through a grant', async ({
+test('composer offers searchable expressions, structured mentions, and conversation meeting history', async ({
+  page,
+}) => {
+  const state = await mockMessaging(page);
+  await openConversation(page);
+  const composer = page.getByRole('textbox', { name: 'Compose message' });
+
+  await page.getByRole('button', { name: 'Open emoji' }).click();
+  const expressionSearch = page.getByRole('textbox', {
+    name: 'Search emoji or work expression',
+  });
+  await expect(expressionSearch).toBeVisible();
+  await expressionSearch.fill('review');
+  await page.getByRole('button', { name: 'Reviewing', exact: true }).click();
+  await expect(composer).toHaveValue('👀');
+
+  await composer.fill('@');
+  const mentionSuggestions = page.getByRole('listbox', { name: 'Mention suggestions' });
+  await expect(mentionSuggestions).toBeVisible();
+  await expect(mentionSuggestions.getByText(COLLEAGUE.jobTitle!, { exact: false })).toBeVisible();
+  await mentionSuggestions.getByText(COLLEAGUE.displayName, { exact: true }).click();
+  await expect(composer).toHaveValue(`@${COLLEAGUE.displayName} `);
+  await composer.type('please review this.');
+  await composer.press('Enter');
+  await expect.poll(() => state.sentRequests.at(-1)?.mentionedUserIds).toEqual([COLLEAGUE.userId]);
+
+  await page.getByRole('button', { name: 'Start or join a meeting', exact: true }).click();
+  const meetingDialog = page.getByRole('dialog', { name: /Conversation meeting/ });
+  await expect(meetingDialog.getByText('Recent meetings', { exact: true })).toBeVisible();
+  await expect(meetingDialog.getByText(COLLEAGUE.displayName, { exact: true })).toBeVisible();
+  await expect(meetingDialog.getByText('24 min', { exact: false })).toBeVisible();
+});
+
+test('security-scanned attachment-only messages are delivered and downloaded through a grant', async ({
   page,
 }) => {
   const state = await mockMessaging(page);
@@ -788,13 +933,12 @@ test('security-scanned attachments are delivered with the message and downloaded
   await expect(page.getByText(/Ready to attach$/u)).toBeVisible();
   await expect.poll(() => state.uploadedAttachmentIds).toHaveLength(1);
 
-  const composer = page.getByRole('textbox', { name: 'Compose message' });
-  await composer.fill('Please review the attached launch notes.');
-  await composer.press('Enter');
+  await page.getByRole('textbox', { name: 'Compose message' }).press('Enter');
 
   await expect
     .poll(() => state.sentRequests.at(-1)?.attachmentIds)
     .toEqual([state.uploadedAttachmentIds[0]]);
+  expect(state.sentRequests.at(-1)?.body).toBe('');
   const downloadButton = page.getByRole('button', { name: 'Download launch-notes.txt' });
   await expect(downloadButton).toBeVisible();
   const downloadPromise = page.waitForEvent('download');
@@ -812,12 +956,17 @@ test('message actions expose labelled reactions, thread replies, save, edit, del
   let ownerRow = messageRow(page, 'Confirm the launch checklist before noon.');
   await ownerRow.hover();
   await ownerRow.getByRole('button', { name: 'Add reaction' }).click();
-  const reactionMenu = page.getByRole('menu');
-  await expect(reactionMenu.getByRole('menuitem', { name: /Like/ })).toBeVisible();
-  await expect(reactionMenu.getByRole('menuitem', { name: /Done/ })).toBeVisible();
-  await expect(reactionMenu.getByRole('menuitem', { name: /Looking/ })).toBeVisible();
-  await expect(reactionMenu.getByRole('menuitem', { name: /Thanks/ })).toBeVisible();
-  await reactionMenu.getByRole('menuitem', { name: /Like/ }).click();
+  await expect(
+    page.getByRole('textbox', { name: 'Search emoji or work expression' })
+  ).toBeVisible();
+  await page.getByRole('tab', { name: 'People' }).click();
+  await expect(page.getByRole('button', { name: 'Like', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Thanks', exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'Work' }).click();
+  await expect(page.getByRole('button', { name: 'Done', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Reviewing', exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'People' }).click();
+  await page.getByRole('button', { name: 'Like', exact: true }).click();
   await expect
     .poll(() => state.reactionRequests.at(-1))
     .toEqual({
@@ -864,7 +1013,7 @@ test('message actions expose labelled reactions, thread replies, save, edit, del
   await expect.poll(() => state.deletedMessageIds).toContain(OWNER_MESSAGE_ID);
   await expect(page.getByText('This message was deleted', { exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Meeting', exact: true }).click();
+  await page.getByRole('button', { name: 'Start or join a meeting', exact: true }).click();
   const meetingDialog = page.getByRole('dialog', { name: /Conversation meeting/ });
   await expect(meetingDialog).toBeVisible();
   await expect(meetingDialog.getByText('Ready to start a meeting')).toBeVisible();
@@ -934,6 +1083,33 @@ test('conversation owners can govern member roles from the conversation context'
   await expect(dialog.getByRole('button', { name: 'Remove Alex Park' })).toBeVisible();
 });
 
+test('personal display settings persist per conversation and globally without affecting peers', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Desktop display preference contract');
+  const state = await mockMessaging(page);
+  await openConversation(page);
+
+  await page.getByRole('button', { name: 'Conversation settings' }).click();
+  await page.getByRole('tab', { name: 'Display' }).click();
+  await expect(
+    page.getByText('Only tenant-approved, low-saturation presets are applied to your view.')
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Mist' }).click();
+  await expect
+    .poll(() => state.conversationDisplayPreferences.get(CONVERSATION_ID)?.theme)
+    .toBe('MIST');
+
+  await page.getByRole('button', { name: 'All conversations' }).click();
+  await page.getByRole('button', { name: 'Compact' }).click();
+  await expect.poll(() => state.displayPreference.density).toBe('COMPACT');
+  await page.screenshot({
+    path: testInfo.outputPath('messaging-display-preferences.png'),
+    fullPage: true,
+  });
+});
+
 test('long conversations load earlier history without replacing the current timeline', async ({
   page,
 }) => {
@@ -951,7 +1127,7 @@ test('long conversations load earlier history without replacing the current time
   );
 
   await openConversation(page);
-  const timeline = page.getByRole('log', { name: 'Messages' });
+  const timeline = page.getByRole('feed', { name: 'Messages' });
   await expect(page.getByText('History 105', { exact: true })).toBeAttached();
   await expect(page.getByText('History 006', { exact: true })).toHaveCount(0);
   await timeline.evaluate((element) => {

@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProductMark } from '@dwp-frontend/design-system/components/product-mark';
 import { resolveTenantLogoUrl } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -25,7 +27,9 @@ type BrandLockupProps = {
 export function BrandLockup({ variant = 'full', label, description, sx }: BrandLockupProps) {
   const { t } = useTranslation('shell');
   const navigate = useNavigate();
-  const tenantBranded = variant === 'full' || variant === 'condensed';
+  const auth = useAuth();
+  const providerAccount = isProviderIdentity(auth.user);
+  const tenantBranded = !providerAccount && (variant === 'full' || variant === 'condensed');
   const brandingQuery = useQuery({
     ...tenantBrandingQueryOptions,
     enabled: tenantBranded,

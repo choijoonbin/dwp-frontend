@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   getPerson,
   hasAnyRole,
-  hasProviderControlPlaneRole,
+  isProviderIdentity,
   isAppResourceEntitled,
   listPeople,
   useAuth,
@@ -18,7 +18,7 @@ export function useHcmExperience() {
   const auth = useAuth();
   const { permissions, hasPermission } = usePermissions();
   const roles = auth.user?.roles ?? [];
-  const providerRole = hasProviderControlPlaneRole(roles);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
   const identityQueries = [auth.user?.email]
     .map((value) => value?.trim())

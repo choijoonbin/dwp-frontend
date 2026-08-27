@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "files": {
+    "apps/dwp/src/components/spaces/space-ui.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/approvals/approval-admin.tsx": {
+      "localeStartsWithKo": 2
+    },
+    "apps/dwp/src/features/approvals/approval-delegation-model.ts": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/approvals/approval-form-catalog-dialogs.tsx": {
+      "localeStartsWithKo": 2
+    },
+    "apps/dwp/src/features/approvals/approval-form-studio.tsx": {
+      "localeStartsWithKo": 4
+    },
+    "apps/dwp/src/features/approvals/approval-inbox.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/approvals/approval-insight-copy.ts": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/approvals/approval-payload-data.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/approvals/approval-policy-studio.tsx": {
+      "localeStartsWithKo": 2
+    },
+    "apps/dwp/src/features/approvals/approval-request-detail-drawer.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/approvals/approval-requests.tsx": {
+      "localeStartsWithKo": 8
+    },
+    "apps/dwp/src/features/approvals/approval-workflow-studio.tsx": {
+      "localeStartsWithKo": 3
+    },
+    "apps/dwp/src/features/calendar/calendar-interactive-grid.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/dwaion/dwaion-agents.tsx": {
+      "koreanTranslationDefaultValue": 7
+    },
+    "apps/dwp/src/features/dwaion/dwaion-conversations.tsx": {
+      "koreanTranslationDefaultValue": 14
+    },
+    "apps/dwp/src/features/messaging/messaging-composer.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/features/messaging/messaging-expression-catalog.ts": {
+      "localeStartsWithKo": 2
+    },
+    "apps/dwp/src/features/spaces/space-admin-page.tsx": {
+      "localeStartsWithKo": 3
+    },
+    "apps/dwp/src/features/spaces/space-detail-page.tsx": {
+      "localeStartsWithKo": 2
+    },
+    "apps/dwp/src/features/spaces/space-home-page.tsx": {
+      "localeStartsWithKo": 5
+    },
+    "apps/dwp/src/features/spaces/space-requests-page.tsx": {
+      "localeStartsWithKo": 1
+    },
+    "apps/dwp/src/pages/account/settings-components.tsx": {
+      "localeStartsWithKo": 1
+    }
+  }
+}

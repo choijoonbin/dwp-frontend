@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { BriefcaseBusiness, Building2, Database, Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { getMe } from '@dwp-frontend/shared-utils';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -91,6 +92,7 @@ export default function ProfilePage() {
   });
 
   const profile = meQuery.data;
+  const providerAccount = isProviderIdentity(profile);
 
   return (
     <PageCanvas mode="focus">
@@ -106,7 +108,7 @@ export default function ProfilePage() {
             {t('profile.title')}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-            {t('profile.description')}
+            {t(providerAccount ? 'profile.provider.description' : 'profile.description')}
           </Typography>
         </Box>
       </Box>
@@ -133,7 +135,11 @@ export default function ProfilePage() {
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-          {t('profile.identity.description')}
+          {t(
+            providerAccount
+              ? 'profile.provider.identityDescription'
+              : 'profile.identity.description'
+          )}
         </Typography>
 
         {meQuery.isLoading ? (
@@ -155,13 +161,17 @@ export default function ProfilePage() {
               icon={UserRound}
               label={t('profile.fields.name')}
               value={profile.displayName}
-              source={t('profile.sources.workforce')}
+              source={t(
+                providerAccount ? 'profile.sources.authIdentity' : 'profile.sources.workforce'
+              )}
             />
             <ProfileField
               icon={BriefcaseBusiness}
               label={t('profile.fields.jobTitle')}
               value={profile.jobTitle}
-              source={t('profile.sources.workforce')}
+              source={t(
+                providerAccount ? 'profile.sources.authIdentity' : 'profile.sources.workforce'
+              )}
             />
             <ProfileField
               icon={Mail}
@@ -169,12 +179,21 @@ export default function ProfilePage() {
               value={profile.email}
               source={t('profile.sources.identity')}
             />
-            <ProfileField
-              icon={Building2}
-              label={t('profile.fields.tenant')}
-              value={profile.tenantName || profile.tenantCode}
-              source={t('profile.sources.tenant')}
-            />
+            {providerAccount ? (
+              <ProfileField
+                icon={Building2}
+                label={t('profile.fields.identityRealm')}
+                value={t('profile.provider.identityRealm')}
+                source={t('profile.sources.providerIdentity')}
+              />
+            ) : (
+              <ProfileField
+                icon={Building2}
+                label={t('profile.fields.tenant')}
+                value={profile.tenantName || profile.tenantCode}
+                source={t('profile.sources.tenant')}
+              />
+            )}
             <ProfileField
               icon={ShieldCheck}
               label={t('profile.fields.roles')}
@@ -193,10 +212,14 @@ export default function ProfilePage() {
 
       <Alert severity="info" icon={<Database size={20} />} sx={{ mt: 3 }}>
         <Typography component="p" variant="subtitle2">
-          {t('profile.governance.title')}
+          {t(providerAccount ? 'profile.provider.governanceTitle' : 'profile.governance.title')}
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.25 }}>
-          {t('profile.governance.description')}
+          {t(
+            providerAccount
+              ? 'profile.provider.governanceDescription'
+              : 'profile.governance.description'
+          )}
         </Typography>
       </Alert>
     </PageCanvas>

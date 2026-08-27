@@ -5,12 +5,15 @@ import { Navigate } from 'react-router-dom';
 
 import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
-import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import { ShellBootScreen } from '../components/shell-boot-screen';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import {
+  exactProductRouteAllowsLegacyAdminGuard,
+  useOptionalAllowedExactProductRoute,
+} from '../features/shell/allowed-product-surface-context';
 
 export function RouteFallback() {
   const { t } = useTranslation('common');
@@ -26,16 +29,12 @@ export const authenticationFallback = <ShellBootScreen />;
 
 export function WorkspaceRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
-  const supportContext = useProviderSupportContext(providerRole);
-  if (providerRole && supportContext.isLoading) return <RouteFallback />;
-  if (!providerRole) return children;
-  return supportContext.data ? children : <Navigate to="/provider" replace />;
+  const providerRole = isProviderIdentity(auth.user);
+  return providerRole ? <Navigate to="/provider" replace /> : children;
 }
 
 export function AppRouteGuard({
   resourceKey,
-  requiredAnySupportScopes = [],
   children,
 }: {
   resourceKey: string;
@@ -44,18 +43,9 @@ export function AppRouteGuard({
 }) {
   const auth = useAuth();
   const { permissions, isLoaded } = usePermissions();
-  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
-  const supportContext = useProviderSupportContext(providerRole);
-  if (!isLoaded || (providerRole && supportContext.isLoading)) return <RouteFallback />;
-  if (providerRole) {
-    const supportSession = supportContext.data;
-    if (!supportSession) return <Navigate to="/provider" replace />;
-    return requiredAnySupportScopes.some((scope) => supportSession.scopes.includes(scope)) ? (
-      children
-    ) : (
-      <Navigate to="/403" replace />
-    );
-  }
+  const providerRole = isProviderIdentity(auth.user);
+  if (!isLoaded) return <RouteFallback />;
+  if (providerRole) return <Navigate to="/provider" replace />;
   return isAppResourceEntitled(resourceKey, permissions) ? (
     children
   ) : (
@@ -66,7 +56,6 @@ export function AppRouteGuard({
 export function ProductRouteGuard({
   resourceKey,
   permissionCode = 'VIEW',
-  requiredAnySupportScopes = [],
   localDeny = false,
   children,
 }: {
@@ -78,21 +67,19 @@ export function ProductRouteGuard({
 }) {
   const auth = useAuth();
   const { hasPermission, isLoaded } = usePermissions();
-  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
-  const supportContext = useProviderSupportContext(providerRole);
-  if (!isLoaded || (providerRole && supportContext.isLoading)) return <RouteFallback />;
+  const providerRole = isProviderIdentity(auth.user);
+  const exactRouteDecision = useOptionalAllowedExactProductRoute();
   if (providerRole) {
-    const supportSession = supportContext.data;
-    if (!supportSession) return <Navigate to="/provider" replace />;
-    if (requiredAnySupportScopes.some((scope) => supportSession.scopes.includes(scope))) {
-      return children;
-    }
     return localDeny ? (
       <ProductSurfaceAccessState decision={{ state: 'support-scope-denied' }} />
     ) : (
-      <Navigate to="/403" replace />
+      <Navigate to="/provider" replace />
     );
   }
+  if (exactProductRouteAllowsLegacyAdminGuard(exactRouteDecision, [resourceKey])) {
+    return children;
+  }
+  if (!isLoaded) return <RouteFallback />;
   if (hasPermission(resourceKey, permissionCode) || hasPermission(resourceKey, 'MANAGE')) {
     return children;
   }
@@ -112,7 +99,25 @@ export function ProductAnyRouteGuard({
   localDeny?: boolean;
   children: React.ReactNode;
 }) {
+  const auth = useAuth();
   const { hasPermission, isLoaded } = usePermissions();
+  const providerRole = isProviderIdentity(auth.user);
+  const exactRouteDecision = useOptionalAllowedExactProductRoute();
+  if (providerRole) {
+    return localDeny ? (
+      <ProductSurfaceAccessState decision={{ state: 'support-scope-denied' }} />
+    ) : (
+      <Navigate to="/provider" replace />
+    );
+  }
+  if (
+    exactProductRouteAllowsLegacyAdminGuard(
+      exactRouteDecision,
+      authorities.map(({ resourceKey }) => resourceKey)
+    )
+  ) {
+    return children;
+  }
   if (!isLoaded) return <RouteFallback />;
   const allowed = authorities.some(
     ({ resourceKey, permissionCode }) =>

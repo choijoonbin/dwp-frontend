@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { normalizeProductPath } from '../components/product-manifest';
-import { GOVERNED_PRODUCT_MANIFESTS } from '../components/product-manifest-registry';
+import { useRuntimeProductManifest } from '../components/product-application-runtime';
 import { ProductSurfaceLoadingShell } from '../components/product-surface-loading-shell';
 import {
   useProductSurfaceCanaryAuthority,
@@ -47,6 +47,7 @@ export default function ProductCanaryFirstAllowedIndexRuntime({
   candidates: readonly { routeContractKey: string; path: string }[];
 }) {
   const authority = useProductSurfaceCanaryAuthority();
+  const manifest = useRuntimeProductManifest(productId);
   const location = useLocation();
   if (candidates.some((candidate) => authority.pendingRoutes?.[candidate.routeContractKey])) {
     return <ProductSurfaceLoadingShell productId={productId} surfaceId={surfaceId} />;
@@ -81,7 +82,6 @@ export default function ProductCanaryFirstAllowedIndexRuntime({
 
   const decision = resolveIndexDecision(authority, candidates);
   if (canonicalScopeValid && decision.state !== 'authority-unavailable') {
-    const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
     const surface = manifest?.surfaces.find((candidate) => candidate.id === surfaceId);
     const canonicalContext = canonicalContexts[0];
     const scopedDestination = candidates.find((candidate) => {

@@ -4,10 +4,9 @@ import { ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useAuth,
-  useIdpQuery,
   safeReturnUrl,
   buildOidcLoginUrl,
-  useAuthPolicyQuery,
+  useLoginOptionsQuery,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -75,14 +74,7 @@ export default function SignInPage() {
   const auth = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const policyQuery = useAuthPolicyQuery();
-  const ssoConfigured = Boolean(
-    policyQuery.data?.ssoLoginEnabled && policyQuery.data.allowedLoginTypes.includes('SSO')
-  );
-  const idpQuery = useIdpQuery({
-    enabled: ssoConfigured,
-    providerKey: policyQuery.data?.ssoProviderKey,
-  });
+  const loginOptionsQuery = useLoginOptionsQuery();
   const [email, setEmail] = useState(searchParams.get('email') ?? '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -90,16 +82,12 @@ export default function SignInPage() {
   const [errorKey, setErrorKey] = useState<'loginFailed' | null>(null);
 
   const allowLocal = useMemo(
-    () =>
-      Boolean(
-        policyQuery.data?.localLoginEnabled && policyQuery.data.allowedLoginTypes.includes('LOCAL')
-      ),
-    [policyQuery.data]
+    () => Boolean(loginOptionsQuery.data?.localLoginAvailable),
+    [loginOptionsQuery.data]
   );
-  const ssoProviderKey = idpQuery.data?.providerKey || null;
-  const allowSso = Boolean(ssoConfigured && ssoProviderKey);
+  const allowSso = Boolean(loginOptionsQuery.data?.ssoLoginAvailable);
   const preferSso = Boolean(
-    allowSso && (!allowLocal || policyQuery.data?.defaultLoginType === 'SSO')
+    allowSso && (!allowLocal || loginOptionsQuery.data?.preferredLoginType === 'SSO')
   );
 
   const submit = async (event: React.FormEvent) => {
@@ -116,7 +104,7 @@ export default function SignInPage() {
     }
   };
 
-  if (policyQuery.isLoading || (ssoConfigured && idpQuery.isLoading)) {
+  if (loginOptionsQuery.isLoading) {
     return (
       <Box
         role="status"
@@ -128,7 +116,7 @@ export default function SignInPage() {
     );
   }
 
-  if (policyQuery.error || !policyQuery.data) {
+  if (loginOptionsQuery.error || !loginOptionsQuery.data) {
     return <Alert severity="error">{t('errors.policyLoadFailed')}</Alert>;
   }
 
@@ -219,19 +207,18 @@ export default function SignInPage() {
     </Box>
   ) : null;
 
-  const ssoButton =
-    allowSso && ssoProviderKey ? (
-      <Button
-        fullWidth
-        size="large"
-        variant={preferSso ? 'contained' : 'outlined'}
-        startIcon={<ShieldCheck size={18} />}
-        onClick={() => window.location.assign(buildOidcLoginUrl(ssoProviderKey))}
-        sx={{ minHeight: 50 }}
-      >
-        {t('signIn.sso')}
-      </Button>
-    ) : null;
+  const ssoButton = allowSso ? (
+    <Button
+      fullWidth
+      size="large"
+      variant={preferSso ? 'contained' : 'outlined'}
+      startIcon={<ShieldCheck size={18} />}
+      onClick={() => window.location.assign(buildOidcLoginUrl())}
+      sx={{ minHeight: 50 }}
+    >
+      {t('signIn.sso')}
+    </Button>
+  ) : null;
 
   return (
     <Box>

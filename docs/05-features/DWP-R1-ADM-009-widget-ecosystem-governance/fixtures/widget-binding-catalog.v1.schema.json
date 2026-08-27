@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-binding-catalog.v1.schema.json",
+  "title": "DWP Widget Binding Catalog V1 Golden Fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixtureVersion", "canonicalization", "expected", "catalog"],
+  "properties": {
+    "fixtureVersion": { "const": 1 },
+    "canonicalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "encoding", "hash", "hashScope", "componentHashScope"],
+      "properties": {
+        "algorithm": { "const": "RFC8785-JCS" },
+        "encoding": { "const": "UTF-8" },
+        "hash": { "const": "SHA-256" },
+        "hashScope": { "const": "catalog" },
+        "componentHashScope": { "const": "component-array" }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalogRevisionId",
+        "productAppRevision",
+        "rendererRevision",
+        "capabilityRevision"
+      ],
+      "properties": {
+        "catalogRevisionId": { "$ref": "#/$defs/sha256" },
+        "productAppRevision": { "$ref": "#/$defs/sha256" },
+        "rendererRevision": { "$ref": "#/$defs/sha256" },
+        "capabilityRevision": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "productApps", "renderers", "capabilities"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "productApps": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productApp" }
+        },
+        "renderers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/renderer" }
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/capability" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "productKey": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "appResourceKey": {
+      "type": "string",
+      "pattern": "^APP\\.[A-Z][A-Z0-9_]*(?:\\.[A-Z0-9_]+)*$"
+    },
+    "authority": {
+      "type": "string",
+      "pattern": "^APP\\.[A-Z][A-Z0-9_.]*:[A-Z][A-Z0-9_]*$"
+    },
+    "productApp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productKey", "sourceAppResourceKey", "state", "authorities"],
+      "properties": {
+        "productKey": { "$ref": "#/$defs/productKey" },
+        "sourceAppResourceKey": { "$ref": "#/$defs/appResourceKey" },
+        "state": { "const": "ACTIVE" },
+        "authorities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/authority" }
+        }
+      }
+    },
+    "renderer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rendererKey",
+        "kind",
+        "ownerProductKey",
+        "sourceAppResourceKey",
+        "minimumHostApiVersion",
+        "maximumHostApiVersion",
+        "state"
+      ],
+      "properties": {
+        "rendererKey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+        },
+        "kind": { "const": "NATIVE" },
+        "ownerProductKey": { "$ref": "#/$defs/productKey" },
+        "sourceAppResourceKey": { "$ref": "#/$defs/appResourceKey" },
+        "minimumHostApiVersion": { "const": 1 },
+        "maximumHostApiVersion": { "const": 1 },
+        "state": { "const": "ACTIVE" }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productKey", "sourceAppResourceKey", "capabilityType", "capabilityKey"],
+      "properties": {
+        "productKey": { "$ref": "#/$defs/productKey" },
+        "sourceAppResourceKey": { "$ref": "#/$defs/appResourceKey" },
+        "capabilityType": { "enum": ["SOURCE", "DATA", "ACTION"] },
+        "capabilityKey": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*(?:\\.[A-Z0-9_]+)*$"
+        }
+      }
+    }
+  }
+}

@@ -9,6 +9,7 @@ import {
   PRODUCT_DEFAULT_LOCALE,
   type SupportedLocale,
 } from './locales';
+import { loadLocaleResource } from './locale-resource-loader';
 
 export const PRODUCT_NAMESPACES = [
   'common',
@@ -20,6 +21,7 @@ export const PRODUCT_NAMESPACES = [
   'calendar',
   'rooms',
   'mail',
+  'meetings',
   'messaging',
   'notifications',
   'services',
@@ -40,15 +42,18 @@ function getInitialLanguage(): SupportedLocale {
   return resolveSupportedLocale(readLocalePreference(), ...(navigator.languages ?? []));
 }
 
-export function initI18n() {
+let initializationStarted = false;
+
+export function initI18n(namespaces: readonly string[] = PRODUCT_NAMESPACES) {
   if (i18n.isInitialized) return i18n;
+  if (initializationStarted) return i18n;
+  initializationStarted = true;
 
   i18n
     .use(
       resourcesToBackend(async (lang: string, ns: string) => {
         try {
-          const m = await import(`../locales/${lang}/${ns}.json`);
-          return m.default;
+          return await loadLocaleResource(lang, ns);
         } catch (err) {
           if (import.meta.env.DEV) {
             console.warn(`[i18n] Failed to load ns=${ns} lang=${lang}`, err);
@@ -66,7 +71,7 @@ export function initI18n() {
       load: 'all',
       defaultNS: 'common',
       fallbackNS: 'common',
-      ns: [...PRODUCT_NAMESPACES],
+      ns: [...namespaces],
       returnNull: false,
       interpolation: {
         escapeValue: false,

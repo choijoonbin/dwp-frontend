@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
+import { useProductApplicationRuntime } from '../components/product-application-runtime';
 import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
   resolveCanaryProductFlags,
@@ -9,7 +10,6 @@ import {
 } from '../features/shell/product-surface-canary-runtime';
 import { ServicesLayout } from '../layouts/services-layout';
 import { ServicesManagementLayout, ServicesWorkLayout } from '../layouts/services-surface-layouts';
-import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 
@@ -19,6 +19,7 @@ export function ServicesCanarySurfaceShell({
   surfaceId: 'services.work' | 'services.management';
 }) {
   const decision = useAllowedProductSurface();
+  const applicationRuntime = useProductApplicationRuntime();
   const authority = useProductSurfaceCanaryAuthority();
   const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, 'services'));
   const { t } = useTranslation('services');
@@ -36,15 +37,15 @@ export function ServicesCanarySurfaceShell({
       work: tCommon('productSurface.actions.returnToWork'),
       catalog: tCommon('productSurface.actions.returnToCatalog'),
     },
-    registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+    registeredRoutes: applicationRuntime.registeredRoutes,
     rolloutMode: mode,
     onScopeChange: (scopeKey) => void transitionScope(scopeKey),
   });
   if (mode === 'surface-ui') {
     return surface.plane === 'management' ? (
-      <ServicesManagementLayout surface={runtime} />
+      <ServicesManagementLayout manifest={SERVICES_PRODUCT_MANIFEST} surface={runtime} />
     ) : (
-      <ServicesWorkLayout surface={runtime} />
+      <ServicesWorkLayout manifest={SERVICES_PRODUCT_MANIFEST} surface={runtime} />
     );
   }
   return <ServicesLayout surface={runtime} />;

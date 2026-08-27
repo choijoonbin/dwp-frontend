@@ -44,17 +44,29 @@ test('customer estate connects global posture, placement, and tenant 360', async
   ).toBeVisible();
   await expect(page.getByRole('region', { name: 'Tenant readiness signals' })).toContainText('1/1');
 
+  await page.getByRole('tab', { name: 'Domains and administrators' }).click();
+  await expect(
+    page.getByText(
+      'Administrator activation is unavailable until a customer-owned out-of-band delivery channel is connected. Provider operators cannot issue or view activation links.'
+    )
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Issue activation link' })).toHaveCount(0);
+  await expect(page.getByText('Configured administrators').locator('../..')).toContainText('1');
+  await expect(page.getByText('Active administrators').locator('../..')).toContainText('1');
+  await expect(page.getByText('Park Hyunwoo')).toHaveCount(0);
+  await expect(page.getByText('hyunwoo.park@sk.com')).toHaveCount(0);
+
   await page.getByRole('tab', { name: 'Product access' }).click();
   await expect(page).toHaveURL(/tab=entitlements/);
   await expect(page.getByText('Product access for SKAX Production')).toBeVisible();
 });
 
-test('customer estate preserves governed filters and compares selected tenant environments', async ({
+test('customer estate preserves URL-governed filters without crossing into tenant saved views', async ({
   page,
 }) => {
   await page.goto('/provider/tenants');
 
-  await expect(page.getByRole('button', { name: 'Saved views' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Saved views' })).toHaveCount(0);
   await page.getByRole('combobox', { name: /Data region/ }).click();
   await page.getByRole('option', { name: 'Seoul' }).click();
   await expect(page).toHaveURL(/region=ap-northeast-2/);
@@ -74,6 +86,14 @@ test('customer estate preserves governed filters and compares selected tenant en
   );
 });
 
+test('customer estate reaches tenant 101 through server pagination', async ({ page }) => {
+  await page.goto('/provider/tenants?page=5');
+
+  await expect(page.getByRole('row', { name: /Tenant 101 Production/ })).toBeVisible();
+  await expect(page).toHaveURL(/page=5/);
+  await expect(page.getByText('25 shown / 150 total')).toBeVisible();
+});
+
 test('onboarding review exposes the complete immutable plan before preview', async ({ page }) => {
   await page.goto('/provider/tenants');
   await page.getByRole('button', { name: 'Onboard company' }).click();
@@ -89,11 +109,14 @@ test('onboarding review exposes the complete immutable plan before preview', asy
 
   await dialog.getByLabel('Administrator name').fill('Casey Admin');
   await dialog.getByLabel('Administrator work email').fill('casey@acme.example');
+  await expect(dialog.getByText('Administrator identity will remain staged')).toBeVisible();
+  await expect(dialog.getByText(/without a browser activation token or link/)).toBeVisible();
   await dialog.getByRole('button', { name: 'Next' }).click();
 
   await expect(dialog.getByText('Onboarding plan summary')).toBeVisible();
   await expect(dialog.getByText('Acme Production')).toBeVisible();
   await expect(dialog.getByText('casey@acme.example')).toBeVisible();
+  await expect(dialog.getByText('Administrator identity will remain staged')).toBeVisible();
   await dialog.getByLabel('Workforce management').check();
   await dialog.getByLabel('Business justification').fill('New contracted production tenant.');
   await expect(dialog.getByRole('button', { name: 'Preview' })).toBeEnabled();

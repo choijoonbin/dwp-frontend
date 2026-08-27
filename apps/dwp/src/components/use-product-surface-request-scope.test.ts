@@ -110,6 +110,8 @@ describe('resolveProductSurfaceRequestScope', () => {
         accessMode: 'NORMAL',
         productId: 'communications',
         surfaceId: 'communications.management',
+        contextScopeKey: 'scope:non-default',
+        decisionRevision: REVISION,
       },
     });
   });
@@ -172,6 +174,7 @@ describe('resolveProductSurfaceRequestScope', () => {
         accessMode: 'LEGACY',
         productId: 'communications',
         surfaceId: 'communications.management',
+        decisionRevision: '',
       },
     });
   });

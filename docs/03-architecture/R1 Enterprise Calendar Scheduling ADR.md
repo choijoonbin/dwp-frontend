@@ -1,6 +1,6 @@
 # ADR: R1 Enterprise Calendar Scheduling
 
-- 상태: Accepted and implemented
+- 상태: Accepted and implemented · v1.2 scheduling evaluation amendment
 - 기준일: 2026-08-14
 - 기능 ID: `DWP-R1-CAL-001`
 
@@ -23,6 +23,10 @@ DWP는 네이티브 메일 도메인 `APP.MAIL`과 일정 도메인 `APP.CALENDA
 | Gateway                      | 세션 검증, Tenant 경계, 최소 Permission Prefix 전달                |
 | People                       | 구성원 검색과 영속 `person_public_id` 소유                         |
 | External adapter             | Google/Microsoft 동기화, 회의 링크, Webhook 재처리                 |
+
+v1.2부터 기존 `CalendarService`는 public API 호환 facade로 유지하고 free/busy와 Room의 결합
+평가는 `CalendarSchedulingEvaluator`가 담당한다. Booking/Poll 착수 전 Command, Query,
+Recurrence, Room booking, Policy, Privacy/Audit 협력 서비스로 추가 분리한다.
 
 R1의 추천과 충돌 계산은 결정론적 규칙이다. 일정 변경을 수행하는 AI Agent를 추가하지
 않는다. 향후 Agent는 변경안 Preview를 만들 수 있지만 사람의 명시적 적용 확인과 같은
@@ -84,6 +88,8 @@ SKAX 개발 Seed는 `SKAX_CALENDAR_ADMINS` 그룹에 이서연을 넣고 역할�
 - 생성에는 클라이언트 멱등 키를 사용해 재전송 중복을 차단한다.
 - 예약의 원본 기간은 PostgreSQL GiST exclusion constraint로 차단한다. 반복 예약의 미래
   occurrence는 자원별 transaction advisory lock을 획득한 뒤 서비스 검증으로 차단한다.
+- Scheduling evaluation은 person ID를 POST body로 받고, Tenant identity bridge에서 확인되지
+  않는 ID를 free로 간주하지 않는다. 응답은 기준 해시와 만료 시각을 포함한다.
 
 ## 7. API 경계
 
@@ -97,6 +103,10 @@ SKAX 개발 Seed는 `SKAX_CALENDAR_ADMINS` 그룹에 이서연을 넣고 역할�
 - `POST /v1/calendar/events/{id}/cancel`
 - `GET /v1/calendar/availability`
 - `GET /v1/calendar/resources`
+- `POST /v1/calendar/scheduling/evaluations`
+
+`GET /availability`는 기존 public API 호환 경계로만 유지한다. DWP UI와 신규 소비자는 사람
+식별자를 URL에 남기지 않는 결합 POST API를 사용한다.
 
 ### 관리자
 
@@ -121,11 +131,17 @@ SKAX 개발 Seed는 `SKAX_CALENDAR_ADMINS` 그룹에 이서연을 넣고 역할�
 동시 생성 요청은 `tenant + resource` advisory lock으로 직렬화한다. 잠금 이후 요청·기존 반복
 occurrence를 모두 검사하고, 마지막 방어선으로 원본 예약 기간 exclusion constraint를 적용한다.
 
+Scheduling evaluation은 read-only transaction에서 People free/busy와 ABAC 필터를 통과한
+Room 후보를 같은 `generatedAt`으로 묶는다. 이 snapshot은 soft recommendation이며 일정 생성과
+수정의 Room 충돌 검사를 대체하지 않는다. `completeness`, source 상태, `validUntil`, 현재 입력의
+criteria hash가 모두 유효할 때만 클라이언트가 적용한다.
+
 ## 9. 외부 연동 포트
 
-외부 공급사는 `source_type/source_ref`와 별도 연결 Credential을 사용한다. 동기화는
+외부 공급사는 `source_type/source_ref`와 별도 `dwp-calendar-adapter-server` Credential을 사용한다. 동기화는
 외부 ID + 변경 버전으로 멱등 처리하고, Webhook 수신·증분 Pull·재조정 Job을 함께 둔다.
 회의 링크 발급 실패가 일정 전체 생성 실패로 이어지지 않도록 후속 상태와 재시도를 분리한다.
+Calendar transaction 안에서 공급사 API를 호출하지 않고 Outbox/Inbox 이후 비동기로 처리한다.
 
 ## 10. 결과
 

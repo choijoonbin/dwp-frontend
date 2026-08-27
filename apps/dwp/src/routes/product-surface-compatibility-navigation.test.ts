@@ -6,6 +6,7 @@ import { COMMUNICATIONS_PRODUCT_MANIFEST } from '../features/communications/comm
 import { DWAION_SURFACE_MANIFEST } from '../features/dwaion/dwaion-product-manifest';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { MAIL_PRODUCT_MANIFEST } from '../features/mail/mail-product-manifest';
+import { MEETINGS_PRODUCT_MANIFEST } from '../features/meetings/meetings-product-manifest';
 import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
 import { NOTIFICATION_PRODUCT_MANIFEST } from '../features/notifications/notification-product-manifest';
 import { WORKPLACE_PRODUCT_MANIFEST } from '../features/rooms/workplace-product-manifest';
@@ -45,6 +46,7 @@ const PRODUCTS = [
   { product: 'Dwaion', manifest: DWAION_SURFACE_MANIFEST },
   { product: 'Calendar', manifest: CALENDAR_PRODUCT_MANIFEST },
   { product: 'Mail', manifest: MAIL_PRODUCT_MANIFEST },
+  { product: 'Meetings', manifest: MEETINGS_PRODUCT_MANIFEST },
   { product: 'Messaging', manifest: MESSAGING_PRODUCT_MANIFEST },
   { product: 'Notifications', manifest: NOTIFICATION_PRODUCT_MANIFEST },
   { product: 'Workplace', manifest: WORKPLACE_PRODUCT_MANIFEST },

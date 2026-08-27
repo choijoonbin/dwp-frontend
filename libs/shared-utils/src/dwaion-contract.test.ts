@@ -2,11 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DWAION_APPROVAL_EXPERT_AGENT_KEY,
+  createDwaionQuestionLaunchState,
   createDwaionHandoff,
   dwaionWorkspaceRoute,
+  hasDwaionQuestionLaunchState,
+  parseDwaionQuestionLaunchState,
   parseDwaionHandoff,
   resolveDwaionAgentKey,
 } from './dwaion-contract';
+import type { AgentActionHandoffOrigin } from './api/agent-plan-api';
 
 describe('dwaion contract', () => {
   it('opens an existing conversation without resubmitting its latest question', () => {
@@ -15,8 +19,24 @@ describe('dwaion contract', () => {
     );
   });
 
-  it('preserves a new question when no conversation exists', () => {
-    expect(dwaionWorkspaceRoute('today priorities')).toBe('/dwaion/new?q=today+priorities');
+  it('never serializes a work question into the workspace URL', () => {
+    expect(dwaionWorkspaceRoute('today priorities')).toBe('/dwaion/new');
+  });
+
+  it('carries only an opaque server ticket across independently deployed products', () => {
+    const launchId = '00000000-0000-4000-8000-000000000016';
+    const state = createDwaionQuestionLaunchState(launchId);
+
+    expect(state).toEqual({ dwaionQuestionLaunch: { version: 2, launchId } });
+    expect(JSON.stringify(state)).not.toContain('today priorities');
+    expect(parseDwaionQuestionLaunchState(state)).toBe(launchId);
+    expect(hasDwaionQuestionLaunchState(state)).toBe(true);
+    expect(createDwaionQuestionLaunchState('invalid')).toBeNull();
+    expect(
+      parseDwaionQuestionLaunchState({
+        dwaionQuestionLaunch: { version: 1, handoffId: launchId },
+      })
+    ).toBeNull();
   });
 
   it('adds the specialist agent only when explicitly selected', () => {
@@ -38,6 +58,7 @@ describe('dwaion contract', () => {
           endsAt: '2026-08-20T01:30:00Z',
         },
         sourceReferences: ['src-01'],
+        origin: origin(),
       },
       now
     );
@@ -55,6 +76,7 @@ describe('dwaion contract', () => {
         planHash: 'b'.repeat(64),
         reviewedInputs: { subject: 'Review' },
         sourceReferences: [],
+        origin: origin(),
       },
       createdAt
     );
@@ -74,3 +96,15 @@ describe('dwaion contract', () => {
     ).toBeNull();
   });
 });
+
+function origin(): AgentActionHandoffOrigin {
+  return {
+    appKey: 'APP.ASK',
+    route: '/dwaion/conversations/00000000-0000-4000-8000-000000000001',
+    surface: 'action-shelf',
+    sourceRunId: '00000000-0000-4000-8000-000000000002',
+    sourceRequestId: 'request-source-1',
+    sourceCorrelationId: 'correlation-source-1',
+    conversationId: '00000000-0000-4000-8000-000000000001',
+  };
+}

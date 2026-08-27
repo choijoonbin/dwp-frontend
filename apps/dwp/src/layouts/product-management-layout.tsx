@@ -4,7 +4,8 @@ import { ProductAreaLayout } from './product-area-layout';
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import type { ProductAreaLayoutProps } from './product-area-layout';
 
-export type ProductManagementLayoutProps = Omit<ProductAreaLayoutProps, 'surface'> & {
+export type ProductManagementLayoutProps = Omit<ProductAreaLayoutProps, 'manifest' | 'surface'> & {
+  manifest: NonNullable<ProductAreaLayoutProps['manifest']>;
   surface: ProductSurfaceLayoutRuntime;
 };
 

@@ -7,7 +7,8 @@ export type MailProviderType =
 export type MailConnectionState =
   'ACTIVE' | 'CONFIGURATION_REQUIRED' | 'SYNCING' | 'DEGRADED' | 'SUSPENDED';
 export type MailTriageLane = 'PRIORITY' | 'NEEDS_REPLY' | 'ASSIGNED' | 'UPDATES' | 'NEWSLETTERS';
-export type MailWorkflowState = 'OPEN' | 'DONE' | 'SNOOZED' | 'ARCHIVED' | 'DRAFT';
+export type MailWorkflowState =
+  'OPEN' | 'DONE' | 'SNOOZED' | 'ARCHIVED' | 'DRAFT' | 'TRASHED' | 'SPAM';
 export type MailImportance = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
 export type MailClassification = 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
 export type MailThreadAction =
@@ -220,6 +221,97 @@ export type MailAdminOverview = {
   generatedAt: string;
 };
 
+export type MailFolderColor = 'NEUTRAL' | 'BLUE' | 'TEAL' | 'GREEN' | 'AMBER' | 'CORAL' | 'VIOLET';
+export type MailProviderSyncState = 'LOCAL_ONLY' | 'PENDING' | 'SYNCED' | 'ERROR';
+export type MailRuleMatchMode = 'ALL' | 'ANY';
+export type MailRuleField =
+  'SENDER' | 'RECIPIENT' | 'SUBJECT' | 'BODY' | 'HAS_ATTACHMENT' | 'IMPORTANCE';
+export type MailRuleOperator = 'CONTAINS' | 'EQUALS' | 'STARTS_WITH' | 'ENDS_WITH' | 'IS';
+export type MailRuleActionType = 'MOVE_TO_FOLDER' | 'MARK_READ' | 'STAR' | 'SET_IMPORTANCE';
+export type MailLifecycleAction =
+  'MOVE' | 'ARCHIVE' | 'TRASH' | 'SPAM' | 'RESTORE' | 'DELETE_FOREVER';
+
+export type MailFolder = {
+  folderId: string;
+  accountId: string;
+  parentFolderId?: string | null;
+  folderKey: string;
+  displayName: string;
+  folderType: MailThread['folderType'];
+  color: MailFolderColor;
+  synchronizationState: MailProviderSyncState;
+  sortOrder: number;
+  totalCount: number;
+  unreadCount: number;
+  version: number;
+};
+
+export type MailRuleCondition = {
+  field: MailRuleField;
+  operator: MailRuleOperator;
+  value: string;
+};
+
+export type MailRuleAction = {
+  type: MailRuleActionType;
+  folderId?: string | null;
+  importance?: MailImportance | null;
+};
+
+export type MailRule = {
+  ruleId: string;
+  accountId: string;
+  displayName: string;
+  priority: number;
+  matchMode: MailRuleMatchMode;
+  conditions: MailRuleCondition[];
+  actions: MailRuleAction[];
+  stopProcessing: boolean;
+  enabled: boolean;
+  synchronizationState: MailProviderSyncState;
+  lastRunAt?: string | null;
+  lastMatchCount: number;
+  version: number;
+};
+
+export type MailRuleRun = {
+  runId: string;
+  ruleId: string;
+  triggerKind: 'MANUAL' | 'INCOMING' | 'BACKFILL';
+  status: 'RUNNING' | 'SUCCEEDED' | 'FAILED';
+  scannedCount: number;
+  matchedCount: number;
+  changedCount: number;
+  startedAt: string;
+  completedAt?: string | null;
+};
+
+export type MailOrganization = {
+  accounts: MailAccount[];
+  folders: MailFolder[];
+  rules: MailRule[];
+  recentRuns: MailRuleRun[];
+  generatedAt: string;
+};
+
+export type MailFolderInput = {
+  accountId: string;
+  parentFolderId?: string | null;
+  displayName: string;
+  color: MailFolderColor;
+};
+
+export type MailRuleInput = {
+  accountId: string;
+  displayName: string;
+  priority: number;
+  matchMode: MailRuleMatchMode;
+  conditions: MailRuleCondition[];
+  actions: MailRuleAction[];
+  stopProcessing: boolean;
+  enabled: boolean;
+};
+
 export async function getMailHome(): Promise<MailHome> {
   const response = await axiosInstance.get<ApiResponse<MailHome>>('/api/platform/v1/mail/home');
   return response.data.data;
@@ -229,6 +321,7 @@ export async function getMailThreads(input: {
   lane?: MailTriageLane;
   state?: MailWorkflowState;
   folder?: MailThread['folderType'];
+  folderId?: string;
   sharedOnly?: boolean;
   query?: string;
   page?: number;
@@ -238,6 +331,7 @@ export async function getMailThreads(input: {
   if (input.lane) search.set('lane', input.lane);
   if (input.state) search.set('state', input.state);
   if (input.folder) search.set('folder', input.folder);
+  if (input.folderId) search.set('folderId', input.folderId);
   if (input.sharedOnly) search.set('sharedOnly', 'true');
   if (input.query) search.set('query', input.query);
   search.set('page', String(input.page ?? 0));
@@ -440,5 +534,89 @@ export async function updateMailSharedInbox(
     `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}`,
     input
   );
+  return response.data.data;
+}
+
+export async function getMailOrganization(): Promise<MailOrganization> {
+  const response = await axiosInstance.get<ApiResponse<MailOrganization>>(
+    '/api/platform/v1/mail/organization'
+  );
+  return response.data.data;
+}
+
+export async function createMailFolder(input: MailFolderInput): Promise<MailFolder> {
+  const response = await axiosInstance.post<ApiResponse<MailFolder>, MailFolderInput>(
+    '/api/platform/v1/mail/organization/folders',
+    input
+  );
+  return response.data.data;
+}
+
+export async function updateMailFolder(
+  folderId: string,
+  input: Omit<MailFolderInput, 'accountId'> & { version: number }
+): Promise<MailFolder> {
+  const response = await axiosInstance.put<ApiResponse<MailFolder>, typeof input>(
+    `/api/platform/v1/mail/organization/folders/${encodeURIComponent(folderId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function archiveMailFolder(folderId: string, version: number): Promise<void> {
+  await axiosInstance.post<ApiResponse<null>, { version: number }>(
+    `/api/platform/v1/mail/organization/folders/${encodeURIComponent(folderId)}/archive`,
+    { version }
+  );
+}
+
+export async function createMailRule(input: MailRuleInput): Promise<MailRule> {
+  const response = await axiosInstance.post<ApiResponse<MailRule>, MailRuleInput>(
+    '/api/platform/v1/mail/organization/rules',
+    input
+  );
+  return response.data.data;
+}
+
+export async function updateMailRule(
+  ruleId: string,
+  input: Omit<MailRuleInput, 'accountId'> & { version: number }
+): Promise<MailRule> {
+  const response = await axiosInstance.put<ApiResponse<MailRule>, typeof input>(
+    `/api/platform/v1/mail/organization/rules/${encodeURIComponent(ruleId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function archiveMailRule(ruleId: string, version: number): Promise<void> {
+  await axiosInstance.post<ApiResponse<null>, { version: number }>(
+    `/api/platform/v1/mail/organization/rules/${encodeURIComponent(ruleId)}/archive`,
+    { version }
+  );
+}
+
+export async function runMailRule(ruleId: string): Promise<MailRuleRun> {
+  const response = await axiosInstance.post<ApiResponse<MailRuleRun>>(
+    `/api/platform/v1/mail/organization/rules/${encodeURIComponent(ruleId)}/run`,
+    {}
+  );
+  return response.data.data;
+}
+
+export async function applyMailLifecycle(
+  threadId: string,
+  action: MailLifecycleAction,
+  version: number,
+  targetFolderId?: string | null
+): Promise<{ thread?: MailThread | null; deleted: boolean }> {
+  const response = await axiosInstance.post<
+    ApiResponse<{ thread?: MailThread | null; deleted: boolean }>,
+    { action: MailLifecycleAction; version: number; targetFolderId?: string | null }
+  >(`/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/lifecycle`, {
+    action,
+    version,
+    targetFolderId,
+  });
   return response.data.data;
 }

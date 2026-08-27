@@ -161,6 +161,7 @@ export async function mockApprovalHighRiskNetwork(
       tenantId: 1,
       tenantCode: 'default',
       tenantName: 'SKAX',
+      identityPlane: 'TENANT',
       preferredLocale: 'ko',
       tenantDefaultLocale: 'ko',
       roles: ['WORKSPACE_MEMBER'],

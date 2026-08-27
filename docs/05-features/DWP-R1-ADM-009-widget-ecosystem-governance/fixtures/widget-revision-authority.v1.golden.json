@@ -1,0 +1,230 @@
+{
+  "fixtureVersion": 1,
+  "heads": [
+    {
+      "authority": "REGISTRY",
+      "table": "plt_widget_registry_revision_head",
+      "keyColumns": ["environment"],
+      "revisionType": "SIGNED_BIGINT",
+      "maxRevision": "9223372036854775807"
+    },
+    {
+      "authority": "TENANT_POLICY",
+      "table": "adm_tenant_widget_policy_catalog_head",
+      "keyColumns": ["tenant_id"],
+      "revisionType": "SIGNED_BIGINT",
+      "maxRevision": "9223372036854775807"
+    },
+    {
+      "authority": "SAFETY",
+      "table": "plt_widget_safety_revision_head",
+      "keyColumns": ["environment"],
+      "revisionType": "SIGNED_BIGINT",
+      "maxRevision": "9223372036854775807"
+    }
+  ],
+  "mutationCases": [
+    {
+      "name": "registry-state-change",
+      "outcome": "STATE_CHANGED",
+      "authority": "REGISTRY",
+      "currentRevision": "41",
+      "nextRevision": "42",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "STATE_EVENT_OUTBOX_SAME_TRANSACTION",
+      "stateMutationCount": 1,
+      "eventCount": 1,
+      "outboxCount": 1
+    },
+    {
+      "name": "tenant-policy-publish",
+      "outcome": "STATE_CHANGED",
+      "authority": "TENANT_POLICY",
+      "currentRevision": "16",
+      "nextRevision": "17",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "STATE_EVENT_OUTBOX_SAME_TRANSACTION",
+      "stateMutationCount": 1,
+      "eventCount": 1,
+      "outboxCount": 1
+    },
+    {
+      "name": "safety-disable",
+      "outcome": "STATE_CHANGED",
+      "authority": "SAFETY",
+      "currentRevision": "8",
+      "nextRevision": "9",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "STATE_EVENT_OUTBOX_SAME_TRANSACTION",
+      "stateMutationCount": 1,
+      "eventCount": 1,
+      "outboxCount": 1
+    },
+    {
+      "name": "idempotent-replay",
+      "outcome": "REPLAY",
+      "authority": "REGISTRY",
+      "currentRevision": "42",
+      "nextRevision": "42",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "NO_STATE_EVENT_OUTBOX",
+      "stateMutationCount": 0,
+      "eventCount": 0,
+      "outboxCount": 0
+    },
+    {
+      "name": "semantic-no-op",
+      "outcome": "NO_OP",
+      "authority": "TENANT_POLICY",
+      "currentRevision": "17",
+      "nextRevision": "17",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "NO_STATE_EVENT_OUTBOX",
+      "stateMutationCount": 0,
+      "eventCount": 0,
+      "outboxCount": 0
+    },
+    {
+      "name": "validation-failure",
+      "outcome": "FAILURE",
+      "authority": "SAFETY",
+      "currentRevision": "9",
+      "nextRevision": "9",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "NO_STATE_EVENT_OUTBOX",
+      "stateMutationCount": 0,
+      "eventCount": 0,
+      "outboxCount": 0
+    },
+    {
+      "name": "tenant-policy-rollback-as-new-revision",
+      "outcome": "ROLLBACK_STATE_CHANGED",
+      "authority": "TENANT_POLICY",
+      "currentRevision": "17",
+      "nextRevision": "18",
+      "rollbackSourceRevision": "11",
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "STATE_EVENT_OUTBOX_SAME_TRANSACTION",
+      "stateMutationCount": 1,
+      "eventCount": 1,
+      "outboxCount": 1
+    },
+    {
+      "name": "bigint-head-exhausted",
+      "outcome": "OVERFLOW",
+      "authority": "REGISTRY",
+      "currentRevision": "9223372036854775807",
+      "nextRevision": null,
+      "lock": "SELECT_FOR_UPDATE",
+      "commitBoundary": "NO_STATE_EVENT_OUTBOX",
+      "readinessStatus": "FAILED",
+      "errorCode": "REVISION_HEAD_EXHAUSTED",
+      "stateMutationCount": 0,
+      "eventCount": 0,
+      "outboxCount": 0
+    }
+  ],
+  "pagination": {
+    "revisionPreimage": {
+      "catalog": "TENANT_WIDGET_CATALOG",
+      "headRevision": "17",
+      "queryHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "tenantBinding": "tib_acme8f4c2d1e9a77"
+    },
+    "firstPage": {
+      "transaction": "READ_ONLY_REPEATABLE_READ",
+      "capturedHeadRevision": "17",
+      "readRevision": "4e6b459a86d55d96246b11efe02ac311e682ed009c93814d2aa5660986d26ba8",
+      "httpStatus": 200
+    },
+    "nextPageSameHead": {
+      "suppliedReadRevision": "4e6b459a86d55d96246b11efe02ac311e682ed009c93814d2aa5660986d26ba8",
+      "currentHeadRevision": "17",
+      "httpStatus": 200
+    },
+    "nextPageStaleHead": {
+      "suppliedReadRevision": "4e6b459a86d55d96246b11efe02ac311e682ed009c93814d2aa5660986d26ba8",
+      "currentHeadRevision": "18",
+      "httpStatus": 409,
+      "errorCode": "READ_REVISION_CONFLICT"
+    }
+  },
+  "effectiveRead": {
+    "maxAttempts": 2,
+    "algorithm": ["READ_THREE_HEADS", "EVALUATE", "RECHECK_THREE_HEADS"],
+    "positiveCacheLookupOrder": [
+      "READ_REGISTRY_HEAD",
+      "READ_TENANT_POLICY_HEAD",
+      "READ_SAFETY_HEAD",
+      "BUILD_CACHE_KEY_WITH_SAFETY",
+      "POSITIVE_CACHE_LOOKUP"
+    ],
+    "stable": {
+      "firstHeads": {
+        "registryRevision": "42",
+        "tenantPolicyRevision": "17",
+        "safetyRevision": "9"
+      },
+      "recheckedHeads": {
+        "registryRevision": "42",
+        "tenantPolicyRevision": "17",
+        "safetyRevision": "9"
+      },
+      "attempts": 1,
+      "httpStatus": 200
+    },
+    "drift": {
+      "attempts": [
+        {
+          "firstHeads": {
+            "registryRevision": "42",
+            "tenantPolicyRevision": "17",
+            "safetyRevision": "9"
+          },
+          "recheckedHeads": {
+            "registryRevision": "43",
+            "tenantPolicyRevision": "17",
+            "safetyRevision": "9"
+          }
+        },
+        {
+          "firstHeads": {
+            "registryRevision": "43",
+            "tenantPolicyRevision": "17",
+            "safetyRevision": "9"
+          },
+          "recheckedHeads": {
+            "registryRevision": "43",
+            "tenantPolicyRevision": "18",
+            "safetyRevision": "9"
+          }
+        }
+      ],
+      "httpStatus": 503,
+      "errorCode": "REVISION_STABILITY_UNAVAILABLE"
+    }
+  },
+  "rolloutSnapshot": {
+    "environment": "STAGING",
+    "predecessorRolloutRevision": 7,
+    "headTuple": {
+      "registryRevision": "42",
+      "tenantPolicyRevision": "17",
+      "safetyRevision": "9"
+    },
+    "evidenceWindow": {
+      "startedAt": "2026-08-27T04:00:00Z",
+      "endedAt": "2026-08-27T05:00:00Z"
+    },
+    "predecessorActivationAt": "2026-08-27T03:55:00Z",
+    "authoritativeTransitions": [
+      {
+        "environment": "STAGING",
+        "commitState": "COMMITTED",
+        "type": "ACTIVATE",
+        "rolloutRevision": 7,
+        "occurredAt": "2026-08-27T03:55:00Z"
+      }
+    ]
+  }
+}

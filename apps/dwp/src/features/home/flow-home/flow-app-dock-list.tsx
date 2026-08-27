@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import { AppGlyph } from '../app-glyph';
 import { AppManagementAction } from '../app-management-action';
 import { LAUNCHPAD_LONG_PRESS_DELAY_MS } from '../app-launchpad-long-press';
+import { resolveFlowAppDockModel } from './flow-app-dock-model';
 
 import type {
   HomeAppDefinition,
@@ -50,18 +51,10 @@ export function FlowAppDockList({
   const appById = useMemo(() => new Map(apps.map((app) => [app.id, app])), [apps]);
   const press = useRef<PressState | null>(null);
   const suppressClickUntil = useRef(0);
-  const itemGroups = useMemo(() => {
-    let remaining = itemLimit;
-    return groups
-      .map((group) => {
-        const itemIds = (layout.groups[group.id] ?? [])
-          .filter((itemId) => Boolean(layout.folders[itemId] || appById.has(itemId)))
-          .slice(0, remaining);
-        remaining = Math.max(0, remaining - itemIds.length);
-        return { ...group, itemIds };
-      })
-      .filter((group) => group.itemIds.length > 0);
-  }, [appById, groups, itemLimit, layout.folders, layout.groups]);
+  const itemGroups = useMemo(
+    () => resolveFlowAppDockModel({ apps, groups, layout, itemLimit }).groups,
+    [apps, groups, itemLimit, layout]
+  );
 
   const cancelLongPress = () => {
     if (!press.current) return;
@@ -149,6 +142,7 @@ export function FlowAppDockList({
             '@container flow-dock (min-width: 640px)': {
               display: 'flex',
               flexDirection: 'column',
+              gap: 1.25,
               minWidth: 104,
               pl: groupIndex === 0 ? 0 : 2,
               borderInlineStart: groupIndex === 0 ? 0 : 1,

@@ -1,0 +1,104 @@
+import type { HomePresentation } from '@dwp-frontend/shared-utils';
+
+export type HomePresentationHint = HomePresentation;
+
+export type HomeLoadingReadTemplate = 'single-column' | 'standard' | 'adaptive-wide';
+
+export type HomePresentationHintStorage = Readonly<{
+  getItem: (key: string) => string | null;
+  setItem: (key: string, value: string) => void;
+}>;
+
+export type HomeLoadingLayout = Readonly<{
+  presentation: HomePresentationHint;
+  template: HomeLoadingReadTemplate;
+  dockItemCount: number;
+  dockPreferredWidth: number;
+  dockStacked: boolean;
+}>;
+
+export const HOME_PRESENTATION_HINT_STORAGE_KEY = 'dwp.home.presentation-hint.v1';
+export const HOME_LOADING_LARGE_TEXT_ROOT_PX = 24;
+
+const DEFAULT_PRESENTATION: HomePresentationHint = 'balanced';
+const DEFAULT_VIEWPORT_WIDTH = 1440;
+const DEFAULT_ROOT_FONT_SIZE = 16;
+
+export function normalizeHomePresentationHint(value: unknown): HomePresentationHint {
+  return value === 'focused' || value === 'expressive' || value === 'balanced'
+    ? value
+    : DEFAULT_PRESENTATION;
+}
+
+export function readHomePresentationHint(
+  storage: HomePresentationHintStorage | null | undefined
+): HomePresentationHint {
+  if (!storage) return DEFAULT_PRESENTATION;
+  try {
+    return normalizeHomePresentationHint(storage.getItem(HOME_PRESENTATION_HINT_STORAGE_KEY));
+  } catch {
+    return DEFAULT_PRESENTATION;
+  }
+}
+
+export function writeHomePresentationHint(
+  storage: HomePresentationHintStorage | null | undefined,
+  presentation: HomePresentationHint
+): void {
+  if (!storage) return;
+  try {
+    storage.setItem(
+      HOME_PRESENTATION_HINT_STORAGE_KEY,
+      normalizeHomePresentationHint(presentation)
+    );
+  } catch {
+    // Storage can be unavailable in hardened or private browser contexts.
+  }
+}
+
+export function resolveHomeLoadingLayout({
+  presentation,
+  viewportWidth,
+  rootFontSize,
+}: Readonly<{
+  presentation: HomePresentationHint;
+  viewportWidth: number;
+  rootFontSize: number;
+}>): HomeLoadingLayout {
+  const safePresentation = normalizeHomePresentationHint(presentation);
+  const safeViewportWidth = Number.isFinite(viewportWidth)
+    ? Math.max(0, viewportWidth)
+    : DEFAULT_VIEWPORT_WIDTH;
+  const safeRootFontSize = Number.isFinite(rootFontSize)
+    ? Math.max(0, rootFontSize)
+    : DEFAULT_ROOT_FONT_SIZE;
+  const largeText = safeRootFontSize >= HOME_LOADING_LARGE_TEXT_ROOT_PX;
+  const template: HomeLoadingReadTemplate =
+    largeText || safeViewportWidth < 900
+      ? 'single-column'
+      : safePresentation === 'expressive' && safeViewportWidth >= 1800
+        ? 'adaptive-wide'
+        : 'standard';
+  const dockItemCount =
+    safeViewportWidth < 600
+      ? 4
+      : safeViewportWidth >= 900 && safeViewportWidth < 1200
+        ? 6
+        : safePresentation === 'expressive' && safeViewportWidth >= 1600
+          ? 12
+          : safePresentation === 'expressive' && safeViewportWidth >= 1200
+            ? 10
+            : 8;
+  const dockPreferredWidth = Math.min(1120, Math.max(540, 240 + dockItemCount * 78));
+  const dockStacked =
+    safeViewportWidth >= 600 &&
+    (safeViewportWidth < 900 || dockPreferredWidth < 800 || dockItemCount > 10);
+
+  return {
+    presentation: safePresentation,
+    template,
+    dockItemCount,
+    dockPreferredWidth,
+    dockStacked,
+  };
+}

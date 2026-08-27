@@ -17,11 +17,21 @@ export function MessagingConnectionIndicator({ state }: { state: MessagingConnec
 
   return (
     <Chip
+      role="status"
+      aria-live="polite"
       size="small"
       variant="outlined"
       color={color}
       label={t(`conversation.connection.${state}`)}
-      sx={{ flexShrink: 0, display: { xs: 'none', md: 'inline-flex' } }}
+      sx={{
+        flexShrink: 0,
+        '& .MuiChip-label': {
+          maxWidth: { xs: 0, md: 120 },
+          px: { xs: 0.5, md: 1 },
+          overflow: 'hidden',
+        },
+        minWidth: { xs: 24, md: 'auto' },
+      }}
     />
   );
 }

@@ -29,6 +29,16 @@ test('exposes operational scope, freshness, signals, and priority filtering', as
     'Auto-refreshing'
   );
   await expect(page.getByRole('region', { name: 'Global operating metrics' })).toBeVisible();
+  const openNavigation = page.getByRole('button', { name: 'Open provider navigation' });
+  const mobileNavigation = await openNavigation.isVisible();
+  if (mobileNavigation) {
+    await openNavigation.focus();
+    await openNavigation.press('Enter');
+  }
+  const providerNavigation = page.getByRole('navigation', { name: 'Provider navigation' });
+  await expect(providerNavigation.getByRole('link', { name: 'Command center' })).toBeVisible();
+  await expect(providerNavigation.getByRole('heading', { name: 'Command center' })).toHaveCount(0);
+  if (mobileNavigation) await page.keyboard.press('Escape');
   await expect(page.getByRole('meter', { name: /tenants active/i })).toHaveAttribute(
     'aria-valuenow',
     '94'

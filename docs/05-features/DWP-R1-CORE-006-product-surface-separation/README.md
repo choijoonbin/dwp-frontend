@@ -2,8 +2,8 @@
 
 - Owner: Shared Experience Platform
 - Co-owner: Identity & Access, Approvals, HCM
-- 상태: `implementation complete (DRAFT / default-off)`
-- Gate: `G3 technical implementation complete / technical evidence complete / activation approval pending`
+- 상태: `implementation safe point (DRAFT / default-off / production blocked)`
+- Gate: `공통 IA·Runtime 구현 완료 / 제품별 권한 음성 Matrix·외부 활성화 증거 대기`
 - Roadmap: R1 Common Experience Foundation
 - Pilot: Approvals `W1a`, HCM `W1b`
 - Technical Canary: Communications·Services `W0.5`
@@ -27,7 +27,7 @@
 ## 현재 판정
 
 공통 IA, Route·Shell·Navigation 계약, Effective Product Surface Context, 권한 실패 상태,
-Technical Canary, Approvals W1a와 HCM W1b Runtime, 11개 제품 Manifest·Shell·Flag 및
+Technical Canary, Approvals W1a와 HCM W1b Runtime, 12개 제품 Manifest·Shell·Flag 및
 Rollout·Rollback 안전장치를 구현했다. Work Header에는 세부 관리 Surface 대신 단일 `앱 관리`
 진입점만 표시하고, Work와 Management Sidebar는 현재 Plane의 메뉴만 투영한다. 회사 관리 센터는
 Tenant Governance, 정확한 앱 접근 책임과 Preset 수명주기 오케스트레이션만 소유한다. 중앙 직접
@@ -60,18 +60,20 @@ Authority 항목은 노출하지 않는다. W2/W3의 Frontend DRAFT Route는 `11
 Canonical/Production Migration 기준 권한 Bundle v1~v3은 기존 바이트와 Checksum을 보존한 채 모두
 `DRAFT`이고 Active Pointer는 없다. Local verification bootstrap만 고정 Local Tenant에서 v3를
 검증용으로 승인·활성화할 수 있으며, 이 Pointer와 Evidence는 Production 승인으로 재사용하지 않는다.
-11개 Rollout 제품 목록은 별도 Checksummed Inventory로 분리했다. Production Migration의 `S` 1개,
-`E_p` 11개, `U_p` 11개는 모두 기본 Off이고, Legacy 전역 E도 신규 합성에는 영향을 주지 않는다.
+12개 Rollout 제품 목록은 별도 Checksummed Inventory로 분리했다. Production Migration의 `S` 1개,
+`E_p` 12개, `U_p` 12개, 즉 신규 합성 Flag 25개는 모두 기본 Off이고, Legacy 전역 E도 신규 합성에는
+영향을 주지 않는다.
 Local 검증 Seed만 `S=1`, Approvals·Communications·HCM·Services의 `E_p/U_p=1`로 네 제품을
-`111`에 두며, Calendar·DWAI·ON·Mail·Messaging·Notifications·Spaces·Workplace는 `100`에 둔다.
+`111`에 두며, Calendar·DWAI·ON·Mail·Meetings·Messaging·Notifications·Spaces·Workplace는
+`100`에 둔다.
 이는 Production 활성화나 승인 증거가 아니다.
 HCM은 owner-service PEP, Target Population, 실 Team·Operations API, SoD와 1회용 Step-up까지 v3
 계약에 결속했다. 제품 관리자 Preset은 통제면 책임의 제한적 2인 Bootstrap과 제품 전문 권한의
 3단계 `요청 → 승인 → 활성화`를 분리한다. 본 문서와 Surface ADR은 실제
-Product·Security·Privacy 승인 전 `Accepted`로 표시하지 않는다.
+Product·Security·Privacy의 Production 승인을 의미하지 않으며 Readiness Manifest가 유일한 출시 판정이다.
 
-W1a 운영 활성화 전에는 ADR·169개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
-Owner가 승인한다. W2/W3의 73개 Frontend DRAFT Page 계약도 제품별 Exact Capability가 다음
+W1a 운영 활성화 전에는 ADR·186개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
+Owner가 승인한다. W2/W3의 91개 Frontend DRAFT Page 계약(정적 메뉴 86개 + 동적 5개)도 제품별 Exact Capability가 다음
 불변 Bundle에 승인되기 전에는 활성화하지 않는다. 핵심 승인 Package는 다음과 같다.
 
 1. Bound `EffectiveProductSurfaceContext`·Direct Evaluation·Capability Registry
@@ -80,7 +82,7 @@ Owner가 승인한다. W2/W3의 73개 Frontend DRAFT Page 계약도 제품별 Ex
 4. Product Root, Scope Selection, Composite Decision Revision·Trusted Context·다중 Tab Invalidation
 5. Exact Action과 Legacy `MANAGE` Compatibility Delta
 6. HCM Org Design·Export, Target Population, Support Exclusive Mode
-7. Tenant-only JIT, Scope-bound SoD와 Step-up Freshness Policy
+7. R1 전 범위 JIT·Emergency 비활성 증거와 향후 재활성화용 Scope-bound SoD·Step-up Freshness Policy
 8. Named Reviewer Assigned Work와 UX Telemetry·Privacy 계약
 
 각 항목의 제안 기본값, 구현과 Test 증거는 고정되어 있다. Owner 승인 후 별도의 제품 방향 재설계
@@ -89,10 +91,10 @@ Owner가 승인한다. W2/W3의 73개 Frontend DRAFT Page 계약도 제품별 Ex
 ## 구현 순서
 
 ```text
-W0 공통 계약 [기술 완료]
-  → W0.5 Communications·Services Technical Canary [기술 완료, 외부 활성화 승인 대기]
-  → W1a Approvals Pilot [기술 완료, 외부 활성화 승인 대기]
-  → W1b HCM Pilot [기술 완료, 외부 활성화 승인 대기]
+W0 공통 계약 [구현 안전 지점, Production 증거 대기]
+  → W0.5 Communications·Services Technical Canary [Runtime 구현, 권한 음성 Matrix·외부 승인 대기]
+  → W1a Approvals Pilot [Runtime 구현, 권한 음성 Matrix·외부 승인 대기]
+  → W1b HCM Pilot [Runtime·5-vector PEP 증거 구현, 외부 활성화 승인 대기]
   → W2/W3 전체 제품 [Manifest·Shell·DRAFT Route·default-off Flag 완료, Bundle 승인 대기]
 ```
 

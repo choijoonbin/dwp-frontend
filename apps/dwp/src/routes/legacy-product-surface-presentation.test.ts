@@ -10,6 +10,7 @@ import { COMMUNICATIONS_NAVIGATION } from '../features/communications/communicat
 import { DWAION_NAVIGATION } from '../features/dwaion/dwaion-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
+import { MEETINGS_NAVIGATION } from '../features/meetings/meetings-navigation';
 import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
 import { NOTIFICATION_NAVIGATION } from '../features/notifications/notification-navigation';
 import { ROOMS_NAVIGATION } from '../features/rooms/rooms-navigation';
@@ -35,6 +36,7 @@ const NAVIGATION_BY_PRODUCT: Readonly<Record<string, readonly ProductNavigationG
   dwaion: DWAION_NAVIGATION,
   hcm: HCM_NAVIGATION,
   mail: MAIL_NAVIGATION,
+  meetings: MEETINGS_NAVIGATION,
   messaging: MESSAGING_NAVIGATION,
   notifications: NOTIFICATION_NAVIGATION,
   services: SERVICES_NAVIGATION,
@@ -99,7 +101,7 @@ function legacyAccess(
 }
 
 describe('legacy product surface presentation', () => {
-  it('projects the work plane and one App Management transition for all 11 governed manifests', () => {
+  it('projects the work plane and one App Management transition for all 12 governed manifests', () => {
     expect(Object.keys(NAVIGATION_BY_PRODUCT).sort()).toEqual(
       GOVERNED_PRODUCT_MANIFESTS.map((candidate) => candidate.id).sort()
     );

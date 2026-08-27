@@ -18,12 +18,9 @@ const authPolicy = {
   status: 'SUCCESS',
   message: 'OK',
   data: {
-    tenantId: 1,
-    defaultLoginType: 'LOCAL',
-    allowedLoginTypes: ['LOCAL'],
-    localLoginEnabled: true,
-    ssoLoginEnabled: false,
-    requireMfa: false,
+    localLoginAvailable: true,
+    ssoLoginAvailable: false,
+    preferredLoginType: 'LOCAL',
   },
 };
 
@@ -73,6 +70,7 @@ async function mockAuthenticated(
           tenantDefaultLocale: 'en',
           tenantId: 1,
           tenantCode: 'default',
+          identityPlane: 'TENANT',
           roles: ['ADMIN'],
         },
       }),

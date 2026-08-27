@@ -5,7 +5,8 @@ import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-do
 import { WORKPLACE_PRODUCT_MANIFEST } from '../features/rooms/workplace-product-manifest';
 import { normalizeProductPath } from '../components/product-manifest';
 import { RoomsLayout } from '../layouts/rooms-layout';
-import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
+import { buildDraftProductPageRouteContractSource } from './draft-product-page-route-contract-source';
+import { OFFICIAL_PRODUCT_IDS } from './official-product-page-route-contracts';
 import {
   AppRouteGuard,
   authenticationFallback,
@@ -30,9 +31,12 @@ const legacyShell = (
 );
 
 const workplaceCanonicalPaths = new Map(
-  DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
-    (route) => route.productId === 'workplace' && !route.pattern.includes(':')
-  ).map((route) => [route.pattern.toLowerCase(), route.pattern] as const)
+  buildDraftProductPageRouteContractSource(
+    [WORKPLACE_PRODUCT_MANIFEST],
+    new Set(OFFICIAL_PRODUCT_IDS)
+  )
+    .filter((route) => !route.pattern.includes(':'))
+    .map((route) => [route.pattern.toLowerCase(), route.pattern] as const)
 );
 
 export function resolveLegacyRoomsPath(pathname: string): `/${string}` | undefined {

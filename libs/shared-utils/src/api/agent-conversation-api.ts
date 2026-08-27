@@ -1,8 +1,14 @@
+import type { AgentComponents } from '@dwp-frontend/api-contracts';
+
 import { HttpError } from '../http-error';
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
-import type { AgentPlanPreview, AgentRiskTier } from './agent-plan-api';
+import {
+  isAgentActionHandoffOrigin,
+  type AgentActionHandoffOrigin,
+  type AgentPlanPreview,
+} from './agent-plan-api';
 import type { AskCitation } from './agent-runtime-api';
 import {
   DWAION_ACTION_KEYS,
@@ -10,47 +16,39 @@ import {
   type DwaionHandoffInputValue,
 } from '../dwaion-contract';
 
-export type DwaionConversationSummary = {
-  conversationId: string;
-  title: string;
-  locale: string;
-  messageCount: number;
-  createdAt: string;
-  updatedAt: string;
-  lastMessageAt: string;
-};
+type AgentSchemas = AgentComponents['schemas'];
 
-export type DwaionConversationMessage = {
-  messageId: string;
-  role: 'USER' | 'ASSISTANT';
-  content: string;
+export type DwaionConversationSummary = AgentSchemas['ConversationSummary'];
+
+export type DwaionConversationMessage = Omit<
+  AgentSchemas['ConversationMessage'],
+  'runId' | 'statusCode' | 'citations'
+> & {
   runId: string | null;
   statusCode: string | null;
   citations: AskCitation[];
-  createdAt: string;
 };
 
-export type DwaionConversation = {
+export type DwaionConversation = Omit<
+  AgentSchemas['ConversationDetail'],
+  'summary' | 'messages'
+> & {
   summary: DwaionConversationSummary;
   messages: DwaionConversationMessage[];
 };
 
-export type WorkplaceAction = {
+export type WorkplaceAction = Omit<AgentSchemas['WorkplaceAction'], 'actionKey' | 'inputFields'> & {
   actionKey: DwaionActionKey;
-  title: string;
-  description: string;
-  mode: 'REDIRECT' | 'APPROVAL_HANDOFF';
-  riskTier: AgentRiskTier;
-  requiredPermission: string;
-  targetRoute: string;
-  confirmationRequired: boolean;
   inputFields: string[];
 };
 
-export type WorkplaceActionPreview = {
+export type WorkplaceActionPreview = Omit<
+  AgentSchemas['WorkplaceActionPreview'],
+  'action' | 'reviewedInputs' | 'plan'
+> & {
   action: WorkplaceAction;
   reviewedInputs: Record<string, DwaionHandoffInputValue>;
-  plan: AgentPlanPreview;
+  plan: AgentPlanPreview & { handoffOrigin: AgentActionHandoffOrigin };
 };
 
 export async function getDwaionConversations(): Promise<DwaionConversationSummary[]> {
@@ -112,7 +110,12 @@ export async function getWorkplaceActions(): Promise<WorkplaceAction[]> {
 
 export async function previewWorkplaceAction(
   actionKey: string,
-  input: { requestId: string; inputs?: Record<string, unknown>; sourceReferences?: string[] }
+  input: {
+    requestId: string;
+    inputs?: Record<string, unknown>;
+    sourceReferences?: string[];
+    origin: AgentActionHandoffOrigin;
+  }
 ): Promise<WorkplaceActionPreview> {
   const response = await axiosInstance.post<ApiResponse<unknown>>(
     `/api/agent/v1/actions/${encodeURIComponent(actionKey)}/preview`,
@@ -120,6 +123,7 @@ export async function previewWorkplaceAction(
       requestId: input.requestId,
       inputs: input.inputs ?? {},
       sourceReferences: input.sourceReferences ?? [],
+      origin: input.origin,
     }
   );
   const value = response.data.data as WorkplaceActionPreview | undefined;
@@ -127,7 +131,8 @@ export async function previewWorkplaceAction(
     !value ||
     !isAction(value.action) ||
     !isReviewedInputs(value.reviewedInputs) ||
-    !isPlan(value.plan)
+    !isPlan(value.plan) ||
+    !isAgentActionHandoffOrigin(value.plan.handoffOrigin)
   ) {
     throw new HttpError('Workplace action preview response is invalid.', 502, response.data);
   }

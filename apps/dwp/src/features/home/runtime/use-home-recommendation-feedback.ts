@@ -10,7 +10,7 @@ import {
 
 type HiddenRecommendation = Readonly<{ recommendation: HomeRecommendation; index: number }>;
 
-/** Classic Home compatibility. Flow Home no longer renders synthetic recommendations. */
+/** Optimistically hides and restores recommendations across Classic and Flow Home. */
 export function useHomeRecommendationFeedback(queryKey: readonly unknown[]) {
   const { t } = useTranslation('home');
   const toast = useToast();

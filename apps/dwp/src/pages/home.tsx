@@ -11,7 +11,6 @@ import {
   getNotificationSummaryByApp,
   getWorkspaceApps,
   launchWorkspaceApp,
-  readRegionalPreference,
   resolveHomeBackgroundUrl,
   createHomeCommandKey,
   useAuth,
@@ -19,10 +18,10 @@ import {
   useToast,
   HttpError,
   HOME_PERSONALIZATION_V2_ENABLED,
+  HOME_WIDGET_LIBRARY_ENABLED,
   isAppResourceEntitled,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { LoadingState } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -37,8 +36,18 @@ import {
   normalizeLegacyFlowHomeSections,
 } from '../features/home/flow-home/flow-home-preference';
 import { HomeItemGallery } from '../features/home/home-item-gallery';
+import {
+  homeGalleryRestorableCount,
+  resolveHomeAppGalleryItems,
+  resolveHomeWidgetGalleryItems,
+} from '../features/home/home-item-gallery-model';
 import { HomeEditorSafeArea } from '../features/home/home-editor-safe-area';
 import { homeUserAccessFingerprint } from '../features/home/runtime/home-access-fingerprint';
+import {
+  resolveHomeBootstrapState,
+  resolveHomeDeviceClass,
+  resolveHomePageCopy,
+} from '../features/home/runtime/home-page-runtime-state';
 import { resolveHomeOverviewQueryFailureState } from '../features/home/runtime/home-overview-query-state';
 import {
   homeAuthorizedQueryData,
@@ -46,10 +55,12 @@ import {
   isHomeAuthorizationFailure,
 } from '../features/home/flow-home/home-contribution-runtime-policy';
 import { HomeFooter } from '../features/home/home-footer';
+import { HomeLoadingSkeleton } from '../components/home-loading-skeleton';
 import {
   HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
   useHomeAppsWithBadges,
 } from '../features/home/home-app-badge-policy';
+import { notificationQueryKeys } from '../features/notifications/integration-contract';
 import { RecommendationUndoSnackbar } from '../features/home/recommendation-undo-snackbar';
 import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
 import {
@@ -66,12 +77,8 @@ import {
 import {
   commitHomeDraftEdit,
   commitHomeDraftReset,
-  createHomeDraftHistory,
   homeDraftChangeCount,
   isHomeDraftDirty,
-  redoHomeDraft,
-  replaceHomeDraftHistory,
-  undoHomeDraft,
 } from '../features/home/home-draft-history';
 import { HomePreferenceConflictDialog } from '../features/home/home-preference-conflict-dialog';
 import { applyHomeDeviceOverlay } from '../features/home-personalization/home-device-overlay';
@@ -80,11 +87,16 @@ import {
   createHomeEditConflictTarget,
   rebaseHomeEditSession,
   saveHomeEditSession,
+  type HomeEditConflictTarget,
+  type HomeEditSession,
+  type HomeSaveMutation,
 } from '../features/home/runtime/home-edit-session';
 import { useHomeEditorSafety } from '../features/home/runtime/use-home-editor-safety';
 import { useHomeEditorEntryFocus } from '../features/home/runtime/use-home-editor-entry-focus';
 import { useHomeCurrentInstant } from '../features/home/runtime/use-home-current-instant';
+import { useHomeDraftController } from '../features/home/runtime/use-home-draft-controller';
 import { useHomeRecommendationFeedback } from '../features/home/runtime/use-home-recommendation-feedback';
+import { resolveHomeTimeZone } from '../features/home/runtime/home-time-zone';
 import { activeHomeStoreUsesViews } from '../features/home/runtime/home-store-capabilities';
 import { HomeEditorGuards } from '../features/home/runtime/home-editor-guards';
 import {
@@ -96,22 +108,15 @@ import {
   createDefaultLaunchpadLayout,
   localizeHomeApps,
   mergeEntitledLaunchpadProjection,
+  placeLaunchpadApp,
   reconcileLaunchpadLayout,
   resolveHomeLaunchpadCatalog,
-  restoreLaunchpadApp,
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
 import { useGovernedHomeAppCatalog } from '../features/shell/use-governed-home-app-catalog';
 
-import type { HomePresentation, HomeWidgetPreference } from '@dwp-frontend/shared-utils';
-import type { LaunchpadLayout } from '../components/workspace-composer/app-launchpad-model';
 import type { FlowHomeSectionPreference } from '../features/home/flow-home/flow-home-preference';
 import type { HomeDraft } from '../features/home/home-draft-history';
-import type {
-  HomeEditConflictTarget,
-  HomeEditSession,
-  HomeSaveMutation,
-} from '../features/home/runtime/home-edit-session';
 export default function HomePage() {
   const { t, i18n } = useTranslation('home');
   const auth = useAuth();
@@ -125,6 +130,10 @@ export default function HomePage() {
   const [editorOpen, setEditorOpen] = useState(searchParams.get('edit') === 'home');
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [studioOpen, setStudioOpen] = useState(false);
+  const openStudioFromGallery = () => {
+    setGalleryOpen(false);
+    setStudioOpen(true);
+  };
   const [discardEditorOpen, setDiscardEditorOpen] = useState(false);
   const [editBaseDraft, setEditBaseDraft] = useState<HomeDraft | null>(null);
   const [editSession, setEditSession] = useState<HomeEditSession | null>(null);
@@ -163,12 +172,7 @@ export default function HomePage() {
     });
   }, [searchParams, setSearchParams]);
   const firstName = auth.user?.displayName?.split(' ')[0];
-  const timeZone = useMemo(() => {
-    const preference = readRegionalPreference().timeZone;
-    return preference === 'system'
-      ? Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul'
-      : preference;
-  }, []);
+  const timeZone = useMemo(resolveHomeTimeZone, []);
   const accessFingerprint = homeUserAccessFingerprint(permissions, auth.user);
   const homeOverviewQueryKey = [
     'home-overview',
@@ -188,12 +192,11 @@ export default function HomePage() {
   const homeOverview = homeAuthorizedQueryData(homeOverviewQuery.data, homeOverviewQuery.error);
   const recommendationFeedback = useHomeRecommendationFeedback(homeOverviewQueryKey);
   const notificationSummaryQuery = useQuery({
-    queryKey: [
-      'notification-app-summary',
-      auth.user?.tenantId,
-      auth.user?.userId,
+    queryKey: notificationQueryKeys.appSummary({
+      tenantId: auth.user?.tenantId,
+      userId: auth.user?.userId,
       accessFingerprint,
-    ],
+    }),
     queryFn: ({ signal }) => getNotificationSummaryByApp(signal),
     enabled: Boolean(
       auth.user?.tenantId && auth.user?.userId && hasPermission('APP.NOTIFICATIONS', 'VIEW')
@@ -242,47 +245,24 @@ export default function HomePage() {
     notificationSummaryNow: currentInstant,
   });
   const entitledApps = useGovernedHomeAppCatalog(entitledAppsWithBadges);
-  const [draftHistory, setDraftHistory] = useState(() =>
-    createHomeDraftHistory({
-      widgets: defaultHomeWidgets(registeredWidgetKeys),
-      appLayout: createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups),
-      presentation: 'balanced',
-      resetIntent: false,
-    })
-  );
+  const {
+    draftHistory,
+    setDraftHistory,
+    setDraftWidgets,
+    setDraftAppLayout,
+    setDraftPresentation,
+    replaceDraft,
+    undoDraft,
+    redoDraft,
+  } = useHomeDraftController(() => ({
+    widgets: defaultHomeWidgets(registeredWidgetKeys),
+    appLayout: createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups),
+    presentation: 'balanced',
+    resetIntent: false,
+  }));
   const draftWidgets = draftHistory.present.widgets;
   const draftAppLayout = draftHistory.present.appLayout;
   const draftPresentation = draftHistory.present.presentation;
-  const updateDraft = useCallback((update: (draft: HomeDraft) => HomeDraft) => {
-    setDraftHistory((current) => commitHomeDraftEdit(current, update(current.present)));
-  }, []);
-  const setDraftWidgets = useCallback(
-    (value: React.SetStateAction<HomeWidgetPreference[]>) => {
-      updateDraft((current) => ({
-        ...current,
-        widgets: typeof value === 'function' ? value(current.widgets) : value,
-      }));
-    },
-    [updateDraft]
-  );
-  const setDraftAppLayout = useCallback(
-    (value: React.SetStateAction<LaunchpadLayout>) => {
-      updateDraft((current) => ({
-        ...current,
-        appLayout: typeof value === 'function' ? value(current.appLayout) : value,
-      }));
-    },
-    [updateDraft]
-  );
-  const setDraftPresentation = useCallback(
-    (value: React.SetStateAction<HomePresentation>) => {
-      updateDraft((current) => ({
-        ...current,
-        presentation: typeof value === 'function' ? value(current.presentation) : value,
-      }));
-    },
-    [updateDraft]
-  );
   const workspaceAppsQuery = useQuery({
     queryKey: ['workspace', 'apps'],
     queryFn: getWorkspaceApps,
@@ -293,8 +273,8 @@ export default function HomePage() {
   const flowHomeEnabled = homeExperience?.effectiveExperienceVariant === 'FLOW_V1';
   const advancedPersonalizationEnabled = Boolean(
     HOME_PERSONALIZATION_V2_ENABLED &&
-      flowHomeEnabled &&
-      homeExperience?.advancedPersonalizationEnabled
+    flowHomeEnabled &&
+    homeExperience?.advancedPersonalizationEnabled
   );
   const composerEnabled = Boolean(
     advancedPersonalizationEnabled && homeExperience?.composerEnabled
@@ -325,17 +305,6 @@ export default function HomePage() {
   const announcementsZone = governedHomeZone(compositionPolicy, 'announcements');
   const personalCustomizationEnabled =
     homeExperienceQuery.isSuccess && compositionPolicy.personalCustomizationEnabled;
-  const localizedHomeCopy = useMemo(() => {
-    if (!homeExperience) return undefined;
-    const locale = (i18n.resolvedLanguage || i18n.language || '').toLowerCase();
-    const language = locale.split('-')[0];
-    return (
-      homeExperience.localizedContent?.[locale] ||
-      homeExperience.localizedContent?.[language] ||
-      homeExperience.localizedContent?.[homeExperience.defaultLocale] ||
-      undefined
-    );
-  }, [homeExperience, i18n.language, i18n.resolvedLanguage]);
   const homePreference = homePreferenceQuery.data;
   const selectedHomeView = useMemo(
     () => homeViewsQuery.data?.find((view) => view.isDefault) ?? homeViewsQuery.data?.[0] ?? null,
@@ -398,14 +367,11 @@ export default function HomePage() {
         : defaultHomeWidgets(registeredWidgetKeys, audienceProfile),
     [audienceProfile, effectiveHomeLayout, homeCustomized, registeredWidgetKeys]
   );
-  const deviceClass =
-    editorOpen && editSession !== null
-      ? previewDevice === 'mobile'
-        ? 'MOBILE'
-        : 'DESKTOP'
-      : runtimeMobile
-        ? 'MOBILE'
-        : 'DESKTOP';
+  const deviceClass = resolveHomeDeviceClass({
+    editPreviewActive: editorOpen && editSession !== null,
+    previewDevice,
+    runtimeMobile,
+  });
   const activeDeviceOverlay = activeStoreUsesViews
     ? homeDeviceLayoutsQuery.data?.find((layout) => layout.deviceClass === deviceClass)?.overlay
     : undefined;
@@ -434,6 +400,13 @@ export default function HomePage() {
   const persistedSourceLoading = activeStoreUsesViews
     ? homeViewsQuery.isLoading
     : homePreferenceQuery.isLoading;
+  const homeBootstrapState = resolveHomeBootstrapState({
+    experiencePending: homeExperienceQuery.isPending,
+    experienceReady: homeExperienceQuery.isSuccess,
+    layoutPending: activeStoreUsesViews ? homeViewsQuery.isPending : homePreferenceQuery.isPending,
+    deviceLayoutPending:
+      activeStoreUsesViews && Boolean(sourceHomeView) && homeDeviceLayoutsQuery.isPending,
+  });
   const persistedSourceFailed = activeStoreUsesViews
     ? homeViewsQuery.isError
     : homePreferenceQuery.isError;
@@ -460,10 +433,7 @@ export default function HomePage() {
   const editorActive = editorOpen && editSession !== null;
   const editorResetAvailable =
     editorActive && editSession ? editSession.resetAvailable : durableResetAvailable;
-  const editorSourceFailed = Boolean(
-    homeExperienceQuery.isError ||
-      (activeStoreUsesViews ? homeViewsQuery.isError : homePreferenceQuery.isError)
-  );
+  const editorSourceFailed = homeExperienceQuery.isError || persistedSourceFailed;
   const persistedDraft = useMemo<HomeDraft>(
     () => ({
       appLayout,
@@ -475,6 +445,19 @@ export default function HomePage() {
   );
   const activeAppLayout = editorActive ? draftAppLayout : appLayout;
   const activeWidgets = editorActive ? draftWidgets : runtimeWidgetPreferences;
+  const restorableHomeItemCount = useMemo(
+    () =>
+      homeGalleryRestorableCount([
+        ...resolveHomeAppGalleryItems(entitledApps, activeAppLayout),
+        ...resolveHomeWidgetGalleryItems(
+          registeredWidgetKeys,
+          activeWidgets,
+          entitledApps,
+          editorFlowHomeEnabled
+        ),
+      ]),
+    [activeAppLayout, activeWidgets, editorFlowHomeEnabled, entitledApps, registeredWidgetKeys]
+  );
   const activePresentation = editorActive
     ? draftPresentation
     : (effectiveHomeLayout?.presentation ?? 'balanced');
@@ -518,17 +501,13 @@ export default function HomePage() {
       widgets: applyFlowHomeSections(persistedDraft.widgets, canonicalSections),
     };
   }, [editorFlowHomeEnabled, homeCustomized, legacyFlowGeometryMigrationEligible, persistedDraft]);
-  const hiddenWidgetKeys = activeWidgets
-    .filter((widget) => !widget.visible)
-    .map((widget) => widget.widgetKey);
-  const hiddenApps = entitledApps.filter((app) => activeAppLayout.hiddenAppIds.includes(app.id));
   useEffect(() => {
     if (homeExperienceQuery.isSuccess && !personalCustomizationEnabled && editorOpen) {
       closeEditor();
       return;
     }
     if (!editorOpen) {
-      setDraftHistory(replaceHomeDraftHistory(persistedDraft));
+      replaceDraft(persistedDraft);
       return;
     }
     if (editSession === null) {
@@ -537,7 +516,7 @@ export default function HomePage() {
         return;
       }
       if (!homeExperienceQuery.isSuccess || persistedSourceLoading) return;
-      setDraftHistory(replaceHomeDraftHistory(initialEditingDraft));
+      replaceDraft(initialEditingDraft);
       setEditBaseDraft(initialEditingDraft);
       setEditSession(currentEditSession);
       return;
@@ -545,7 +524,7 @@ export default function HomePage() {
     const conflictResolution = conflictResolutionRef.current;
     if (conflictResolution) {
       if (conflictResolution === 'reload') {
-        setDraftHistory(replaceHomeDraftHistory(initialEditingDraft));
+        replaceDraft(initialEditingDraft);
       }
       setEditBaseDraft(initialEditingDraft);
       conflictResolutionRef.current = null;
@@ -563,6 +542,7 @@ export default function HomePage() {
     personalCustomizationEnabled,
     persistedDraft,
     persistedVersion,
+    replaceDraft,
   ]);
   const beginEditing = () => {
     if (
@@ -576,7 +556,7 @@ export default function HomePage() {
     editEntryFocusRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     editEntryScrollRef.current = document.scrollingElement?.scrollTop ?? window.scrollY;
-    setDraftHistory(replaceHomeDraftHistory(initialEditingDraft));
+    replaceDraft(initialEditingDraft);
     setEditBaseDraft(initialEditingDraft);
     setEditSession(currentEditSession);
     setEditorOpen(true);
@@ -587,10 +567,10 @@ export default function HomePage() {
     }
   };
   const cancelEditing = useCallback(() => {
-    setDraftHistory(replaceHomeDraftHistory(persistedDraft));
+    replaceDraft(persistedDraft);
     closeEditor();
     window.requestAnimationFrame(() => window.scrollTo({ top: editEntryScrollRef.current }));
-  }, [closeEditor, persistedDraft]);
+  }, [closeEditor, persistedDraft, replaceDraft]);
   const requestCancelEditing = useCallback(() => {
     if (draftDirty) {
       setDiscardEditorOpen(true);
@@ -746,9 +726,6 @@ export default function HomePage() {
   const updateFlowSections = (sections: FlowHomeSectionPreference[]) => {
     setDraftWidgets((current) => applyFlowHomeSections(current, sections));
   };
-  const undoDraft = () => setDraftHistory((current) => undoHomeDraft(current));
-  const redoDraft = () => setDraftHistory((current) => redoHomeDraft(current));
-
   const launcherSummaryPartial =
     hasPermission('APP.NOTIFICATIONS', 'VIEW') &&
     !notificationAuthorizationFailed &&
@@ -805,12 +782,12 @@ export default function HomePage() {
     requestFailed: homeOverviewHardFailed,
     onRetry: () => void homeOverviewQuery.refetch(),
   });
-  const homeHeadline =
-    localizedHomeCopy?.headline ||
-    homeExperience?.headline ||
-    (firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'));
-  const homeSubheadline =
-    localizedHomeCopy?.subheadline || homeExperience?.subheadline || t('page.commandDescription');
+  const { headline: homeHeadline, subheadline: homeSubheadline } = resolveHomePageCopy({
+    experience: homeExperience,
+    locale: i18n.resolvedLanguage || i18n.language || '',
+    fallbackHeadline: firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'),
+    fallbackSubheadline: t('page.commandDescription'),
+  });
   const homeAssistantAvailable = !editorOpen && isAppResourceEntitled('APP.ASK', permissions);
 
   return (
@@ -824,12 +801,16 @@ export default function HomePage() {
         '& > footer': { mt: 'auto' },
       }}
     >
-      {homeExperienceQuery.isLoading ? (
+      {homeBootstrapState ? (
         <Box
           data-testid="home-experience-bootstrap"
-          sx={{ width: 1, maxWidth: 1600, minHeight: 420, mx: 'auto', px: { xs: 2, md: 4 }, py: 4 }}
+          data-home-bootstrap-state={homeBootstrapState}
+          aria-busy="true"
+          aria-label={t('page.loadingHome')}
+          aria-live="polite"
+          role="status"
         >
-          <LoadingState label={t('page.loadingHome')} variant="skeleton" />
+          <HomeLoadingSkeleton />
         </Box>
       ) : editorFlowHomeEnabled ? (
         <FlowHome
@@ -842,6 +823,11 @@ export default function HomePage() {
           timeZone={timeZone}
           backgroundUrl={backgroundUrl}
           backgroundPosition={homeExperience?.backgroundPosition ?? 'RIGHT'}
+          focalX={homeExperience?.backgroundFocalX}
+          focalY={homeExperience?.backgroundFocalY}
+          mobileFocalX={homeExperience?.mobileBackgroundFocalX}
+          mobileFocalY={homeExperience?.mobileBackgroundFocalY}
+          contentAlignment={homeExperience?.contentAlignment}
           overlayOpacity={homeExperience?.overlayOpacity ?? 18}
           apps={entitledApps}
           appGroups={launchpadCatalog.groups}
@@ -923,23 +909,34 @@ export default function HomePage() {
 
       <HomeItemGallery
         open={galleryOpen}
-        hiddenApps={hiddenApps}
-        hiddenWidgetKeys={hiddenWidgetKeys}
+        availableApps={entitledApps}
+        appLayout={activeAppLayout}
+        availableWidgetKeys={registeredWidgetKeys}
+        widgetPreferences={activeWidgets}
+        catalogEnabled={HOME_WIDGET_LIBRARY_ENABLED}
         flow={editorFlowHomeEnabled}
         busy={customizationBusy}
         onClose={() => setGalleryOpen(false)}
-        onAddApp={(app) => setDraftAppLayout((current) => restoreLaunchpadApp(current, app))}
+        onAddApp={(app) => setDraftAppLayout((current) => placeLaunchpadApp(current, app))}
         onAddWidget={(widgetKey) =>
           setDraftWidgets((current) => setHomeWidgetVisibility(current, widgetKey, true))
         }
+        onOpenStudio={homeStudioEnabled ? openStudioFromGallery : undefined}
       />
-
       {editorActive && personalCustomizationEnabled && (
         <WorkspaceComposerToolbar
           placement="floating"
           widePresentation={editorFlowHomeEnabled}
           presentation={draftPresentation}
           busy={customizationBusy}
+          addLabel={t(
+            HOME_WIDGET_LIBRARY_ENABLED ? 'editor.addItems' : 'editor.restoreHiddenItems'
+          )}
+          addUnavailableReason={
+            !HOME_WIDGET_LIBRARY_ENABLED && restorableHomeItemCount === 0
+              ? t('editor.noHiddenItemsAvailable')
+              : undefined
+          }
           onPresentationChange={setDraftPresentation}
           onAdd={() => setGalleryOpen(true)}
           onReset={resetDraft}
@@ -956,7 +953,6 @@ export default function HomePage() {
           onPreviewDeviceChange={editorFlowHomeEnabled ? setPreviewDevice : undefined}
         />
       )}
-
       <HomePreferenceConflictDialog
         open={conflictTarget !== null}
         changeCount={draftChangeCount}
@@ -966,7 +962,6 @@ export default function HomePage() {
         onReapply={reapplyAfterConflict}
         onClose={() => setConflictTarget(null)}
       />
-
       <HomeEditorGuards
         discardOpen={discardEditorOpen}
         navigationBlocked={navigationBlocker.state === 'blocked'}
@@ -975,7 +970,6 @@ export default function HomePage() {
         onStayOnHome={() => navigationBlocker.reset?.()}
         onLeaveHome={() => navigationBlocker.proceed?.()}
       />
-
       {homeStudioEnabled && (
         <Suspense fallback={null}>
           <LazyHomePersonalizationStudio

@@ -52,12 +52,27 @@ export function resolveHomeAppsWithBadges({
     notificationSummaryHealthy &&
     isHomeNotificationSummaryFresh(notificationSummary, notificationSummaryNow)
   ) {
+    const aggregate = {
+      totalUnread: 0,
+      actionableUnread: 0,
+      urgentUnread: 0,
+    };
     for (const summary of notificationSummary?.apps ?? []) {
-      badgeCounts.set(String(summary.appKey), {
+      const appKey = String(summary.appKey);
+      const counter = {
         totalUnread: summary.totalUnread,
         actionableUnread: summary.actionableUnread,
         urgentUnread: summary.urgentUnread,
-      });
+      };
+      badgeCounts.set(appKey, counter);
+      if (appKey !== 'notifications') {
+        aggregate.totalUnread += counter.totalUnread;
+        aggregate.actionableUnread += counter.actionableUnread;
+        aggregate.urgentUnread += counter.urgentUnread;
+      }
+    }
+    if (aggregate.totalUnread > 0 || !badgeCounts.has('notifications')) {
+      badgeCounts.set('notifications', aggregate);
     }
   }
 

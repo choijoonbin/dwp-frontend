@@ -32,7 +32,8 @@ const securityHeaders = (development = false, apiOrigin = '') => {
       `img-src 'self' data: blob:${trustedApiSource}; font-src 'self' data:; ` +
       `connect-src 'self' ws:${trustedApiSource}; ` +
       "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+    'Permissions-Policy':
+      'camera=(self), microphone=(self), display-capture=(self), geolocation=(), payment=(), usb=()',
     'Referrer-Policy': 'no-referrer',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',

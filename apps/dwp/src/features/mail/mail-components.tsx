@@ -50,7 +50,12 @@ export function MailPageHeading({
             {eyebrow}
           </Typography>
         )}
-        <Typography component="h1" variant="h4" fontWeight={800} sx={{ mt: eyebrow ? 0.25 : 0 }}>
+        <Typography
+          component="h1"
+          variant="h4"
+          fontWeight={800}
+          sx={{ mt: eyebrow ? 0.25 : 0, '&:focus': { outline: 'none' } }}
+        >
           {title}
         </Typography>
         <Typography color="text.secondary" sx={{ mt: 0.6, maxWidth: 760 }}>

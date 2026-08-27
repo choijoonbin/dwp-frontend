@@ -11,6 +11,18 @@ export const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
   },
+  focus: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
+  },
+  invitations: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
+  },
+  trash: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
+  },
   availability: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
@@ -23,6 +35,10 @@ export const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR
 
 export const CALENDAR_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGATION, {
   'admin-overview': {
+    taskKind: 'operations',
+    access: { type: 'capability', capabilityContractKey: 'calendar.operations.read' },
+  },
+  'admin-company-calendars': {
     taskKind: 'operations',
     access: { type: 'capability', capabilityContractKey: 'calendar.operations.read' },
   },

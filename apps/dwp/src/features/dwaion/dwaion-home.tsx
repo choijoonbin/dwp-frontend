@@ -1,12 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
   Bot,
   Clock3,
   History,
+  Inbox,
   ListChecks,
   MessageSquarePlus,
   ShieldCheck,
@@ -16,7 +17,10 @@ import {
 import { ActionButton, GuidedEmptyState, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
+  createDwaionQuestionLaunchState,
+  createQuestionLaunch,
   getDwaionConversations,
+  getDwaionProposals,
   getWorkspaceWorkQueue,
   getWorkplaceActions,
   isAppResourceEntitled,
@@ -24,6 +28,7 @@ import {
   type RuntimeRegistryEntry,
   useAuth,
   usePermissions,
+  useToast,
 } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
@@ -53,9 +58,12 @@ function isDwaionRuntimeAgent(
 export function DwaionHome() {
   const { t, i18n } = useTranslation('work');
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const auth = useAuth();
+  const toast = useToast();
   const { permissions } = usePermissions();
   const [query, setQuery] = useState('');
+  const [launchPending, setLaunchPending] = useState(false);
   const conversations = useQuery({
     queryKey: ['dwaion', 'conversations'],
     queryFn: getDwaionConversations,
@@ -76,6 +84,11 @@ export function DwaionHome() {
     queryFn: getWorkplaceActions,
     staleTime: 60_000,
   });
+  const proposals = useQuery({
+    queryKey: ['dwaion', 'proposals', 'ACTIVE', 'home'],
+    queryFn: () => getDwaionProposals('ACTIVE', 1),
+    staleTime: 20_000,
+  });
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const canUseApprovalExpert = isAppResourceEntitled('APP.APPROVALS', permissions);
   const visibleAgents = useMemo(
@@ -92,10 +105,32 @@ export function DwaionHome() {
     [work.data?.items]
   );
 
-  const start = (value = query, agentKey?: DwaionAgentKey) => {
+  const start = async (value = query, agentKey?: DwaionAgentKey) => {
     const normalized = value.trim();
-    navigate(dwaionWorkspaceRoute(normalized || undefined, undefined, agentKey));
+    if (!normalized) {
+      navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey));
+      return;
+    }
+    if (launchPending) return;
+    setLaunchPending(true);
+    try {
+      const receipt = await createQuestionLaunch(normalized);
+      const state = createDwaionQuestionLaunchState(receipt.launchId);
+      if (!state) throw new Error('Question launch receipt is invalid.');
+      navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { state });
+    } catch {
+      toast.error(t('dwaionHome.launchUnavailable'));
+    } finally {
+      setLaunchPending(false);
+    }
   };
+
+  useEffect(() => {
+    if (!searchParams.has('q')) return;
+    const sanitized = new URLSearchParams(searchParams);
+    sanitized.delete('q');
+    setSearchParams(sanitized, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   return (
     <PageCanvas>
@@ -136,9 +171,9 @@ export function DwaionHome() {
         </Typography>
         <DwaionWorkspaceComposer
           value={query}
-          loading={false}
+          loading={launchPending}
           onChange={setQuery}
-          onSubmit={() => start()}
+          onSubmit={() => void start()}
         />
         <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 1.25 }}>
           {(['brief', 'blockers', 'meeting'] as const).map((mode) => (
@@ -146,7 +181,8 @@ export function DwaionHome() {
               key={mode}
               intent="quiet"
               size="small"
-              onClick={() => start(t(`askPage.modes.items.${mode}.prompt`))}
+              disabled={launchPending}
+              onClick={() => void start(t(`askPage.modes.items.${mode}.prompt`))}
             >
               {t(`askPage.modes.items.${mode}.title`)}
             </ActionButton>
@@ -160,7 +196,7 @@ export function DwaionHome() {
         sx={{
           mt: 3,
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, minmax(0, 1fr))' },
+          gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(5, minmax(0, 1fr))' },
           borderBlock: 1,
           borderColor: 'divider',
         }}
@@ -178,6 +214,14 @@ export function DwaionHome() {
           detail={t('dwaionHome.metrics.conversationsDetail')}
         />
         <HomeMetric
+          icon={Inbox}
+          label={t('dwaionHome.metrics.proposals')}
+          value={proposals.data?.summary.active ?? 0}
+          detail={t('dwaionHome.metrics.proposalsDetail', {
+            count: proposals.data?.summary.highPriority ?? 0,
+          })}
+        />
+        <HomeMetric
           icon={Bot}
           label={t('dwaionHome.metrics.agents')}
           value={visibleAgents.length}
@@ -191,7 +235,11 @@ export function DwaionHome() {
         />
       </Box>
 
-      {(work.isError || conversations.isError || agents.isError || actions.isError) && (
+      {(work.isError ||
+        conversations.isError ||
+        proposals.isError ||
+        agents.isError ||
+        actions.isError) && (
         <Alert severity="warning" sx={{ mt: 2 }}>
           {t('dwaionHome.partialLoadError')}
         </Alert>
@@ -336,7 +384,8 @@ export function DwaionHome() {
                       intent="quiet"
                       size="small"
                       startIcon={<MessageSquarePlus size={15} />}
-                      onClick={() => start('', agent.entryKey)}
+                      disabled={launchPending}
+                      onClick={() => void start('', agent.entryKey)}
                     >
                       {t('dwaionHome.agents.start')}
                     </ActionButton>

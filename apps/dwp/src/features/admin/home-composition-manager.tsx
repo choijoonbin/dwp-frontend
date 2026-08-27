@@ -1,9 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LayoutGrid, LockKeyhole, Save, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import {
+  FileStack,
+  LayoutGrid,
+  LibraryBig,
+  LockKeyhole,
+  Save,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+  UserRound,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system';
 import {
+  HOME_WIDGET_LIBRARY_ENABLED,
   getAdminHomeExperience,
   updateHomeCompositionPolicy,
   useToast,
@@ -14,6 +26,8 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
@@ -36,6 +50,7 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
+import { TenantHomeBlueprintPanel, TenantWidgetCatalogPanel } from './home-widget-manager';
 
 import type {
   GovernedHomeZone,
@@ -60,7 +75,65 @@ function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
+type HomeManagementTab = 'catalog' | 'blueprints' | 'policy';
+
 export function HomeCompositionManager() {
+  const { t } = useTranslation('admin');
+  const [searchParams, setSearchParams] = useSearchParams();
+  if (!HOME_WIDGET_LIBRARY_ENABLED) return <HomeCompositionPolicyPanel />;
+  const requestedTab = searchParams.get('tab');
+  const tab: HomeManagementTab =
+    requestedTab === 'catalog' || requestedTab === 'blueprints' ? requestedTab : 'policy';
+  const selectTab = (nextTab: HomeManagementTab) => {
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.set('tab', nextTab);
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  return (
+    <Stack gap={3}>
+      <Tabs
+        value={tab}
+        onChange={(_, value: HomeManagementTab) => selectTab(value)}
+        variant="scrollable"
+        allowScrollButtonsMobile
+        aria-label={t('homeWidgets.tabs.label')}
+        sx={{ borderBottom: 1, borderColor: 'divider' }}
+      >
+        <Tab
+          value="catalog"
+          icon={<LibraryBig size={17} aria-hidden="true" />}
+          iconPosition="start"
+          label={t('homeWidgets.tabs.catalog')}
+        />
+        <Tab
+          value="blueprints"
+          icon={<FileStack size={17} aria-hidden="true" />}
+          iconPosition="start"
+          label={t('homeWidgets.tabs.blueprints')}
+        />
+        <Tab
+          value="policy"
+          icon={<SlidersHorizontal size={17} aria-hidden="true" />}
+          iconPosition="start"
+          label={t('homeWidgets.tabs.policy')}
+        />
+      </Tabs>
+      <Box role="tabpanel" aria-label={t(`homeWidgets.tabs.${tab}`)}>
+        {tab === 'catalog' && <TenantWidgetCatalogPanel onOpenPolicy={() => selectTab('policy')} />}
+        {tab === 'blueprints' && <TenantHomeBlueprintPanel />}
+        {tab === 'policy' && <HomeCompositionPolicyPanel />}
+      </Box>
+    </Stack>
+  );
+}
+
+function HomeCompositionPolicyPanel() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();

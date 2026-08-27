@@ -9,6 +9,7 @@ import { communicationsRoutes } from './communications-routes';
 import { dwaionRoutes } from './dwaion-routes';
 import { hcmRoutes } from './hcm-routes';
 import { mailRoutes } from './mail-routes';
+import { meetingsRoutes } from './meetings-routes';
 import { messagingRoutes } from './messaging-routes';
 import { notificationRoutes } from './notification-routes';
 import { platformRoutes } from './platform-routes';
@@ -26,6 +27,7 @@ export const routesSection: RouteObject[] = [
   ...calendarRoutes,
   ...roomsRoutes,
   ...mailRoutes,
+  ...meetingsRoutes,
   ...messagingRoutes,
   ...notificationRoutes,
   ...spacesRoutes,

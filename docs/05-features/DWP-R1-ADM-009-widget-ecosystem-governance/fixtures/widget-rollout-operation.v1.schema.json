@@ -1,0 +1,1556 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dwp.example/schemas/widget-rollout-operation.v1.schema.json",
+  "title": "DWP Widget Rollout Operations and Expiry Gate V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixtureVersion", "promotionGate", "examples"],
+  "properties": {
+    "fixtureVersion": {
+      "const": 1
+    },
+    "examples": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/operationExample"
+      }
+    },
+    "promotionGate": {
+      "$ref": "#/definitions/promotionGatePolicy"
+    }
+  },
+  "definitions": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:[0-9]{4}-(?:(?:01|03|05|07|08|10|12)-(?:0[1-9]|[12][0-9]|3[01])|(?:04|06|09|11)-(?:0[1-9]|[12][0-9]|30)|02-(?:0[1-9]|1[0-9]|2[0-8]))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:[02468][048]|[13579][26])00)-02-29)T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$",
+      "not": {
+        "pattern": "^0000-"
+      }
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "opaqueRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:@/-]+$"
+    },
+    "compactJws": {
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 8192,
+      "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "basisPoints": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "rolloutRevision",
+        "ring",
+        "ringBps",
+        "clockSource",
+        "evaluatedAt"
+      ],
+      "properties": {
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "ring": {
+          "enum": ["STATIC", "STAGING_BOOTSTRAP", "STAGING_SHADOW"]
+        },
+        "ringBps": {
+          "$ref": "#/definitions/basisPoints"
+        },
+        "clockSource": {
+          "const": "DATABASE"
+        },
+        "evaluatedAt": {
+          "$ref": "#/definitions/timestamp"
+        }
+      }
+    },
+    "rolloutApprovalCreateBootstrapRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "environment",
+        "rolloutRevision",
+        "expectedHeadVersion",
+        "fromRingBps",
+        "toRingBps",
+        "bootstrapPrerequisite",
+        "ciAttestation",
+        "selectorKeyId",
+        "proposerRef",
+        "approverRefs",
+        "expiresAt"
+      ],
+      "properties": {
+        "kind": {
+          "const": "BOOTSTRAP"
+        },
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "expectedHeadVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "proposerRef": {
+          "$ref": "#/definitions/opaqueRef"
+        },
+        "approverRefs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/opaqueRef"
+          }
+        },
+        "expiresAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "fromRingBps": {
+          "const": 0
+        },
+        "toRingBps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "bootstrapPrerequisite": {
+          "$ref": "widget-bootstrap-prerequisite.v1.schema.json"
+        },
+        "ciAttestation": {
+          "$ref": "#/definitions/attestationReference"
+        }
+      }
+    },
+    "rolloutApprovalCreatePromotionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "environment",
+        "rolloutRevision",
+        "expectedHeadVersion",
+        "fromRingBps",
+        "toRingBps",
+        "rolloutEvidence",
+        "evidenceAuthorityAttestation",
+        "selectorKeyId",
+        "proposerRef",
+        "approverRefs",
+        "expiresAt"
+      ],
+      "properties": {
+        "kind": {
+          "const": "PROMOTION"
+        },
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "expectedHeadVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "proposerRef": {
+          "$ref": "#/definitions/opaqueRef"
+        },
+        "approverRefs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/opaqueRef"
+          }
+        },
+        "expiresAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "fromRingBps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9999
+        },
+        "toRingBps": {
+          "type": "integer",
+          "minimum": 101,
+          "maximum": 10000
+        },
+        "rolloutEvidence": {
+          "$ref": "widget-rollout-evidence.v1.schema.json"
+        },
+        "evidenceAuthorityAttestation": {
+          "$ref": "#/definitions/attestationReference"
+        }
+      }
+    },
+    "rolloutActivateRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approvalId", "approvalRevision", "expectedHeadVersion"],
+      "properties": {
+        "approvalId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "approvalRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "expectedHeadVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        }
+      }
+    },
+    "rolloutStopRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expectedHeadVersion", "reasonCode", "incidentRef"],
+      "properties": {
+        "expectedHeadVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "reasonCode": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 64,
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "incidentRef": {
+          "$ref": "#/definitions/opaqueRef"
+        }
+      }
+    },
+    "rolloutEvidenceReadRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceId"],
+      "properties": {
+        "evidenceId": {
+          "$ref": "#/definitions/uuid"
+        }
+      }
+    },
+    "widgetCatalogRolloutApprovalResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "approvalRevision",
+        "kind",
+        "state",
+        "environment",
+        "rolloutRevision",
+        "fromRingBps",
+        "toRingBps",
+        "selectorKeyId",
+        "bootstrapPrerequisiteId",
+        "bootstrapPrerequisiteDigest",
+        "ciAttestationJti",
+        "rolloutEvidenceId",
+        "rolloutEvidenceDigest",
+        "evidenceAttestationJti",
+        "createdAt",
+        "activationDeadline",
+        "expiresAt",
+        "headVersion"
+      ],
+      "properties": {
+        "approvalId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "approvalRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "kind": {
+          "enum": ["BOOTSTRAP", "PROMOTION"]
+        },
+        "state": {
+          "enum": ["ACTIVE", "REVOKED", "EXPIRED"]
+        },
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "fromRingBps": {
+          "$ref": "#/definitions/basisPoints"
+        },
+        "toRingBps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "bootstrapPrerequisiteId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "bootstrapPrerequisiteDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "ciAttestationJti": {
+          "$ref": "#/definitions/uuid"
+        },
+        "rolloutEvidenceId": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rolloutEvidenceDigest": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidenceAttestationJti": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activationDeadline": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "expiresAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "headVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/timestamp"
+        }
+      },
+      "oneOf": [
+        {
+          "title": "Bootstrap approval nullability",
+          "properties": {
+            "kind": {
+              "const": "BOOTSTRAP"
+            },
+            "fromRingBps": {
+              "const": 0
+            },
+            "toRingBps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "rolloutEvidenceId": {
+              "type": "null"
+            },
+            "rolloutEvidenceDigest": {
+              "type": "null"
+            },
+            "evidenceAttestationJti": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "title": "Promotion approval nullability",
+          "properties": {
+            "kind": {
+              "const": "PROMOTION"
+            },
+            "fromRingBps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9999
+            },
+            "toRingBps": {
+              "type": "integer",
+              "minimum": 101,
+              "maximum": 10000
+            },
+            "rolloutEvidenceId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "rolloutEvidenceDigest": {
+              "$ref": "#/definitions/sha256"
+            },
+            "evidenceAttestationJti": {
+              "$ref": "#/definitions/uuid"
+            }
+          }
+        }
+      ]
+    },
+    "widgetCatalogRolloutStateResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "phase",
+        "rolloutRevision",
+        "headVersion",
+        "ringBps",
+        "selectorKeyId",
+        "activeApprovalId",
+        "activeApprovalRevision",
+        "activeApprovalExpiresAt",
+        "bootstrapPrerequisiteId",
+        "bootstrapPrerequisiteDigest",
+        "ciAttestationJti",
+        "activeRolloutEvidenceId",
+        "activeRolloutEvidenceDigest"
+      ],
+      "properties": {
+        "environment": {
+          "const": "STAGING"
+        },
+        "phase": {
+          "enum": ["STATIC", "BOOTSTRAP", "SHADOW"]
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "headVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "ringBps": {
+          "$ref": "#/definitions/basisPoints"
+        },
+        "selectorKeyId": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/revision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activeApprovalId": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activeApprovalRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/positiveInteger"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activeApprovalExpiresAt": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bootstrapPrerequisiteId": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bootstrapPrerequisiteDigest": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ciAttestationJti": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activeRolloutEvidenceId": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activeRolloutEvidenceDigest": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "title": "Static state nullability",
+          "properties": {
+            "phase": {
+              "const": "STATIC"
+            },
+            "ringBps": {
+              "const": 0
+            },
+            "selectorKeyId": {
+              "type": "null"
+            },
+            "activeApprovalId": {
+              "type": "null"
+            },
+            "activeApprovalRevision": {
+              "type": "null"
+            },
+            "activeApprovalExpiresAt": {
+              "type": "null"
+            },
+            "bootstrapPrerequisiteId": {
+              "type": "null"
+            },
+            "bootstrapPrerequisiteDigest": {
+              "type": "null"
+            },
+            "ciAttestationJti": {
+              "type": "null"
+            },
+            "activeRolloutEvidenceId": {
+              "type": "null"
+            },
+            "activeRolloutEvidenceDigest": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "title": "Bootstrap state nullability",
+          "properties": {
+            "phase": {
+              "const": "BOOTSTRAP"
+            },
+            "ringBps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "selectorKeyId": {
+              "$ref": "#/definitions/revision"
+            },
+            "activeApprovalId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "activeApprovalRevision": {
+              "$ref": "#/definitions/positiveInteger"
+            },
+            "activeApprovalExpiresAt": {
+              "$ref": "#/definitions/timestamp"
+            },
+            "bootstrapPrerequisiteId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "bootstrapPrerequisiteDigest": {
+              "$ref": "#/definitions/sha256"
+            },
+            "ciAttestationJti": {
+              "$ref": "#/definitions/uuid"
+            },
+            "activeRolloutEvidenceId": {
+              "type": "null"
+            },
+            "activeRolloutEvidenceDigest": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "title": "Shadow state nullability",
+          "properties": {
+            "phase": {
+              "const": "SHADOW"
+            },
+            "ringBps": {
+              "type": "integer",
+              "minimum": 101,
+              "maximum": 10000
+            },
+            "selectorKeyId": {
+              "$ref": "#/definitions/revision"
+            },
+            "activeApprovalId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "activeApprovalRevision": {
+              "$ref": "#/definitions/positiveInteger"
+            },
+            "activeApprovalExpiresAt": {
+              "$ref": "#/definitions/timestamp"
+            },
+            "bootstrapPrerequisiteId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "bootstrapPrerequisiteDigest": {
+              "$ref": "#/definitions/sha256"
+            },
+            "ciAttestationJti": {
+              "$ref": "#/definitions/uuid"
+            },
+            "activeRolloutEvidenceId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "activeRolloutEvidenceDigest": {
+              "$ref": "#/definitions/sha256"
+            }
+          }
+        }
+      ]
+    },
+    "widgetCatalogRolloutEvidenceResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "evidenceDigest",
+        "rolloutRevision",
+        "ring",
+        "querySetRevision",
+        "immutableSnapshotRefHash",
+        "windowStart",
+        "windowEnd",
+        "verifiedAt",
+        "deploymentBuildDigest",
+        "catalogRevision",
+        "bindingCatalogRevision",
+        "policyRevision",
+        "safetyRevision",
+        "selectorKeyId",
+        "ringBps",
+        "evidenceAttestationJti"
+      ],
+      "properties": {
+        "evidenceId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "evidenceDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "querySetRevision": {
+          "$ref": "#/definitions/sha256"
+        },
+        "immutableSnapshotRefHash": {
+          "$ref": "#/definitions/sha256"
+        },
+        "windowStart": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "windowEnd": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "verifiedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "deploymentBuildDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "catalogRevision": {
+          "$ref": "#/definitions/revision"
+        },
+        "bindingCatalogRevision": {
+          "$ref": "#/definitions/sha256"
+        },
+        "policyRevision": {
+          "$ref": "#/definitions/revision"
+        },
+        "safetyRevision": {
+          "$ref": "#/definitions/revision"
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "ringBps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "evidenceAttestationJti": {
+          "$ref": "#/definitions/uuid"
+        },
+        "rolloutRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ring": {
+          "enum": ["STAGING_BOOTSTRAP", "STAGING_SHADOW"]
+        }
+      }
+    },
+    "approveBootstrapExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exampleId",
+        "operation",
+        "provenance",
+        "trustedAttestationVerification",
+        "request",
+        "response"
+      ],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "APPROVE"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutApprovalCreateBootstrapRequest"
+        },
+        "response": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/widgetCatalogRolloutApprovalResponse"
+            },
+            {
+              "properties": {
+                "kind": {
+                  "const": "BOOTSTRAP"
+                }
+              }
+            }
+          ]
+        },
+        "trustedAttestationVerification": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/trustedAttestationVerification"
+            },
+            {
+              "properties": {
+                "kind": {
+                  "const": "CI_BOOTSTRAP"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "approvePromotionExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exampleId",
+        "operation",
+        "provenance",
+        "trustedCurrentHead",
+        "trustedHeadActivatedAt",
+        "committedTransitionsAfterTrustedHead",
+        "trustedAttestationVerification",
+        "request",
+        "response"
+      ],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "APPROVE"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutApprovalCreatePromotionRequest"
+        },
+        "response": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/widgetCatalogRolloutApprovalResponse"
+            },
+            {
+              "properties": {
+                "kind": {
+                  "const": "PROMOTION"
+                }
+              }
+            }
+          ]
+        },
+        "trustedCurrentHead": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/widgetCatalogRolloutStateResponse"
+            },
+            {
+              "properties": {
+                "phase": {
+                  "enum": ["BOOTSTRAP", "SHADOW"]
+                }
+              }
+            }
+          ]
+        },
+        "trustedAttestationVerification": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/trustedAttestationVerification"
+            },
+            {
+              "properties": {
+                "kind": {
+                  "const": "EVIDENCE_AUTHORITY"
+                }
+              }
+            }
+          ]
+        },
+        "trustedHeadActivatedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "committedTransitionsAfterTrustedHead": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/definitions/trustedHeadTransition"
+          }
+        }
+      }
+    },
+    "activateBootstrapExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exampleId",
+        "operation",
+        "provenance",
+        "lockedApprovalState",
+        "request",
+        "response"
+      ],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "ACTIVATE"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "lockedApprovalState": {
+          "enum": ["ACTIVE", "REVOKED", "EXPIRED"]
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutActivateRequest"
+        },
+        "response": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/widgetCatalogRolloutStateResponse"
+            },
+            {
+              "properties": {
+                "phase": {
+                  "const": "BOOTSTRAP"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "activateShadowExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exampleId",
+        "operation",
+        "provenance",
+        "lockedApprovalState",
+        "request",
+        "response"
+      ],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "ACTIVATE"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "lockedApprovalState": {
+          "enum": ["ACTIVE", "REVOKED", "EXPIRED"]
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutActivateRequest"
+        },
+        "response": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/widgetCatalogRolloutStateResponse"
+            },
+            {
+              "properties": {
+                "phase": {
+                  "const": "SHADOW"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "stopExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exampleId", "operation", "provenance", "request", "response"],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "STOP"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutStopRequest"
+        },
+        "response": {
+          "$ref": "#/definitions/rolloutStoppedResponse"
+        }
+      }
+    },
+    "readEvidenceExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exampleId", "operation", "provenance", "request", "response"],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "READ_EVIDENCE"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutEvidenceReadRequest"
+        },
+        "response": {
+          "$ref": "#/definitions/widgetCatalogRolloutEvidenceResponse"
+        }
+      }
+    },
+    "operationExample": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/approveBootstrapExample"
+        },
+        {
+          "$ref": "#/definitions/approvePromotionExample"
+        },
+        {
+          "$ref": "#/definitions/activateBootstrapExample"
+        },
+        {
+          "$ref": "#/definitions/activateShadowExample"
+        },
+        {
+          "$ref": "#/definitions/stopExample"
+        },
+        {
+          "$ref": "#/definitions/expireExample"
+        },
+        {
+          "$ref": "#/definitions/readEvidenceExample"
+        }
+      ]
+    },
+    "rolloutExpiryEvaluationRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "clockSource",
+        "evaluatedAt",
+        "activeApprovalId",
+        "activeApprovalRevision",
+        "activeApprovalExpiresAt",
+        "expectedHeadVersion",
+        "failureMode",
+        "transitionIntent",
+        "idempotencyPolicy",
+        "transitionIdempotencyTarget"
+      ],
+      "properties": {
+        "environment": {
+          "const": "STAGING"
+        },
+        "clockSource": {
+          "const": "DATABASE"
+        },
+        "evaluatedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "activeApprovalId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "activeApprovalRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "activeApprovalExpiresAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "expectedHeadVersion": {
+          "$ref": "#/definitions/nonNegativeInteger"
+        },
+        "failureMode": {
+          "const": "STOP_FAIL_CLOSED"
+        },
+        "transitionIdempotencyTarget": {
+          "const": "ROLLOUT_HEAD:STAGING"
+        },
+        "transitionIntent": {
+          "const": "EXPIRE_ACTIVE_APPROVAL_AND_RESET_HEAD"
+        },
+        "idempotencyPolicy": {
+          "const": "RETURN_STORED_RESULT"
+        }
+      }
+    },
+    "rolloutStoppedResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "cause",
+        "terminalApprovalState",
+        "transitionIntent",
+        "transitionIdempotencyTarget",
+        "idempotencyPolicy",
+        "evaluatedAt",
+        "state"
+      ],
+      "properties": {
+        "operation": {
+          "const": "STOPPED"
+        },
+        "cause": {
+          "enum": ["SAFETY_STOP", "APPROVAL_EXPIRED"]
+        },
+        "terminalApprovalState": {
+          "enum": ["REVOKED", "EXPIRED"]
+        },
+        "transitionIntent": {
+          "enum": ["REVOKE_ACTIVE_APPROVAL_AND_RESET_HEAD", "EXPIRE_ACTIVE_APPROVAL_AND_RESET_HEAD"]
+        },
+        "transitionIdempotencyTarget": {
+          "const": "ROLLOUT_HEAD:STAGING"
+        },
+        "evaluatedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "state": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/widgetCatalogRolloutStateResponse"
+            },
+            {
+              "properties": {
+                "phase": {
+                  "const": "STATIC"
+                }
+              }
+            }
+          ]
+        },
+        "idempotencyPolicy": {
+          "const": "RETURN_STORED_RESULT"
+        }
+      },
+      "oneOf": [
+        {
+          "title": "Safety stop transition",
+          "properties": {
+            "cause": {
+              "const": "SAFETY_STOP"
+            },
+            "terminalApprovalState": {
+              "const": "REVOKED"
+            },
+            "transitionIntent": {
+              "const": "REVOKE_ACTIVE_APPROVAL_AND_RESET_HEAD"
+            }
+          }
+        },
+        {
+          "title": "Approval expiry hard-stop transition",
+          "properties": {
+            "cause": {
+              "const": "APPROVAL_EXPIRED"
+            },
+            "terminalApprovalState": {
+              "const": "EXPIRED"
+            },
+            "transitionIntent": {
+              "const": "EXPIRE_ACTIVE_APPROVAL_AND_RESET_HEAD"
+            }
+          }
+        }
+      ]
+    },
+    "expireExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exampleId", "operation", "provenance", "request", "response"],
+      "properties": {
+        "exampleId": {
+          "$ref": "#/definitions/revision"
+        },
+        "operation": {
+          "const": "EXPIRE"
+        },
+        "provenance": {
+          "$ref": "#/definitions/provenance"
+        },
+        "request": {
+          "$ref": "#/definitions/rolloutExpiryEvaluationRequest"
+        },
+        "response": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/rolloutStoppedResponse"
+            },
+            {
+              "properties": {
+                "cause": {
+                  "const": "APPROVAL_EXPIRED"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "promotionGatePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "windowDurationSeconds",
+        "totalSamplesMinimum",
+        "placementSamplesMinimum",
+        "diffCountMaximum",
+        "unsafeAllowCountMaximum",
+        "maxRolling15MinuteRejectionRateBps",
+        "maxRolling15MinuteEvaluationErrorRateBps",
+        "maxRolling15MinuteDurationP99Milliseconds",
+        "maxOneMinuteRejectionRateBps",
+        "maxOneMinuteEvaluationErrorRateBps",
+        "maxOneMinuteDurationP99Milliseconds",
+        "depth230ConsecutiveSecondsMaximumExclusive",
+        "oldestUnpublishedAgeMillisecondsMaximum",
+        "maxFiveMinuteDeliveryErrorRateBps",
+        "deadLetterIncreaseMaximum",
+        "controlDecisionP99MillisecondsMaximum",
+        "wouldDecisionMaximumMilliseconds",
+        "legacyMismatchCountMaximum",
+        "rateRounding",
+        "countRounding",
+        "sampleTotalFormula",
+        "evidenceFreshnessMaximumSeconds",
+        "approvalActivationBudgetSeconds",
+        "approvalExpiryMinimumExclusiveSeconds",
+        "approvalExpiryMaximumInclusiveSeconds"
+      ],
+      "properties": {
+        "windowDurationSeconds": {
+          "const": 86400
+        },
+        "totalSamplesMinimum": {
+          "const": 100000
+        },
+        "placementSamplesMinimum": {
+          "const": 1000
+        },
+        "diffCountMaximum": {
+          "const": 0
+        },
+        "unsafeAllowCountMaximum": {
+          "const": 0
+        },
+        "maxRolling15MinuteRejectionRateBps": {
+          "const": 10
+        },
+        "maxRolling15MinuteEvaluationErrorRateBps": {
+          "const": 50
+        },
+        "maxRolling15MinuteDurationP99Milliseconds": {
+          "const": 150
+        },
+        "maxOneMinuteRejectionRateBps": {
+          "const": 100
+        },
+        "maxOneMinuteEvaluationErrorRateBps": {
+          "const": 200
+        },
+        "maxOneMinuteDurationP99Milliseconds": {
+          "const": 250
+        },
+        "depth230ConsecutiveSecondsMaximumExclusive": {
+          "const": 300
+        },
+        "oldestUnpublishedAgeMillisecondsMaximum": {
+          "const": 30000
+        },
+        "maxFiveMinuteDeliveryErrorRateBps": {
+          "const": 100
+        },
+        "deadLetterIncreaseMaximum": {
+          "const": 0
+        },
+        "controlDecisionP99MillisecondsMaximum": {
+          "const": 30000
+        },
+        "wouldDecisionMaximumMilliseconds": {
+          "const": 60000
+        },
+        "legacyMismatchCountMaximum": {
+          "const": 0
+        },
+        "rateRounding": {
+          "const": "CEIL"
+        },
+        "countRounding": {
+          "const": "FLOOR"
+        },
+        "sampleTotalFormula": {
+          "const": "CLASSIC_PERSONAL+FLOW_PERSONAL+FLOW_GOVERNED"
+        },
+        "evidenceFreshnessMaximumSeconds": {
+          "const": 600
+        },
+        "approvalActivationBudgetSeconds": {
+          "const": 600
+        },
+        "approvalExpiryMinimumExclusiveSeconds": {
+          "const": 86400
+        },
+        "approvalExpiryMaximumInclusiveSeconds": {
+          "const": 93600
+        }
+      }
+    },
+    "attestationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verificationRecordId", "assertionSha256"],
+      "properties": {
+        "verificationRecordId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "assertionSha256": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "trustedHeadTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "committedAt",
+        "environment",
+        "rolloutRevision",
+        "headVersion",
+        "resultingPhase"
+      ],
+      "properties": {
+        "operation": {
+          "enum": ["ACTIVATE", "STOP", "EXPIRE"]
+        },
+        "committedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "headVersion": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "resultingPhase": {
+          "enum": ["BOOTSTRAP", "SHADOW", "STATIC"]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "operation": {
+              "const": "ACTIVATE"
+            },
+            "resultingPhase": {
+              "enum": ["BOOTSTRAP", "SHADOW"]
+            }
+          }
+        },
+        {
+          "properties": {
+            "operation": {
+              "enum": ["STOP", "EXPIRE"]
+            },
+            "resultingPhase": {
+              "const": "STATIC"
+            }
+          }
+        }
+      ]
+    },
+    "bootstrapAttestationBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "rolloutRevision",
+        "selectorKeyId",
+        "prerequisiteId",
+        "prerequisiteDigest",
+        "requestDigest"
+      ],
+      "properties": {
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "prerequisiteId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "prerequisiteDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "requestDigest": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "evidenceAttestationBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "rolloutRevision",
+        "selectorKeyId",
+        "evidenceId",
+        "evidenceDigest",
+        "querySetRevision",
+        "immutableSnapshotRefHash",
+        "requestDigest"
+      ],
+      "properties": {
+        "environment": {
+          "const": "STAGING"
+        },
+        "rolloutRevision": {
+          "$ref": "#/definitions/positiveInteger"
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "evidenceId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "evidenceDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "querySetRevision": {
+          "$ref": "#/definitions/sha256"
+        },
+        "immutableSnapshotRefHash": {
+          "$ref": "#/definitions/sha256"
+        },
+        "requestDigest": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "trustedAttestationVerification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verificationRecordId",
+        "assertionSha256",
+        "kind",
+        "issuer",
+        "jti",
+        "kid",
+        "publicKeyFingerprint",
+        "verifiedAt",
+        "expiresAt",
+        "result",
+        "bindings"
+      ],
+      "properties": {
+        "verificationRecordId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "assertionSha256": {
+          "$ref": "#/definitions/sha256"
+        },
+        "kind": {
+          "enum": ["CI_BOOTSTRAP", "EVIDENCE_AUTHORITY"]
+        },
+        "issuer": {
+          "enum": ["dwp-ci-attestation-authority", "dwp-release-approval-authority"]
+        },
+        "jti": {
+          "$ref": "#/definitions/uuid"
+        },
+        "kid": {
+          "$ref": "#/definitions/revision"
+        },
+        "publicKeyFingerprint": {
+          "$ref": "#/definitions/sha256"
+        },
+        "verifiedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "expiresAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "result": {
+          "const": "SUCCESS"
+        },
+        "bindings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/bootstrapAttestationBindings"
+            },
+            {
+              "$ref": "#/definitions/evidenceAttestationBindings"
+            }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "CI_BOOTSTRAP"
+            },
+            "issuer": {
+              "const": "dwp-ci-attestation-authority"
+            },
+            "bindings": {
+              "$ref": "#/definitions/bootstrapAttestationBindings"
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "EVIDENCE_AUTHORITY"
+            },
+            "issuer": {
+              "const": "dwp-release-approval-authority"
+            },
+            "bindings": {
+              "$ref": "#/definitions/evidenceAttestationBindings"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

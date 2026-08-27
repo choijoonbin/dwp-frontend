@@ -1,5 +1,6 @@
 import routerSource from '../../../../architecture/product-page-routes.v1.json';
 import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
+import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 
 import {
   defineProductLegacyRouteSource,
@@ -19,9 +20,7 @@ type ProductPageRouterSourceDocument = {
 const PRODUCT_PAGE_ROUTER_SOURCE = routerSource as ProductPageRouterSourceDocument;
 
 /** Frontend Router-owned PAGE metadata. It intentionally excludes authorization and API bindings. */
-export const PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE = defineProductRouteContractSource(
-  PRODUCT_PAGE_ROUTER_SOURCE.pageRoutes
-);
+export const PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE = OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE;
 
 export const ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE = defineProductRouteContractSource([
   ...PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,

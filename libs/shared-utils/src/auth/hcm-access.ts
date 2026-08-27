@@ -14,9 +14,7 @@ export function isHcmReadEntitled(
   legacyRoleFallbackAllowed = false
 ): boolean {
   if (permissions.length === 0) {
-    return (
-      legacyRoleFallbackAllowed && roles.some((role) => LEGACY_HCM_ROLES.has(token(role)))
-    );
+    return legacyRoleFallbackAllowed && roles.some((role) => LEGACY_HCM_ROLES.has(token(role)));
   }
 
   const hcmKeys = new Set(appResourceAliasCandidates('APP.HCM'));

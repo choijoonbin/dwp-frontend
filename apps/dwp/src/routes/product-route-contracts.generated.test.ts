@@ -15,6 +15,14 @@ import {
 } from './product-surface-authorization.generated';
 import { resolveProductLegacyRoute } from './product-route-contract-source';
 
+const MAIL_ORGANIZATION_PAGE_ROUTE_KEYS = [
+  'route.mail.work.archive.page',
+  'route.mail.work.spam.page',
+  'route.mail.work.trash.page',
+  'route.mail.work.folders.page',
+  'route.mail.work.organization.page',
+] as const;
+
 describe('generated product route authorization contracts', () => {
   it('closes PAGE Router source and Registry projections in both directions', () => {
     const router = [...PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE].sort((left, right) =>
@@ -41,6 +49,7 @@ describe('generated product route authorization contracts', () => {
       'dwaion',
       'hcm',
       'mail',
+      'meetings',
       'messaging',
       'notifications',
       'services',
@@ -64,12 +73,53 @@ describe('generated product route authorization contracts', () => {
     expect(countByKind).toEqual({ ACTION: 59, DATA: 12, PAGE: 58 });
     expect(nonPages).toHaveLength(71);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(73);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(131);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(131);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(149);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(149);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );
+    expect(
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+        (route) => route.routeContractKey === 'route.dwaion.work.activity.page'
+      )
+    ).toBe(false);
+    expect(
+      DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+        (route) => route.routeContractKey === 'route.dwaion.work.activity.page'
+      )
+    ).toEqual([
+      {
+        routeId: 'dwaion.work.activity',
+        pattern: '/dwaion/activity',
+        productId: 'dwaion',
+        surfaceId: 'dwaion.work',
+        routeContractKey: 'route.dwaion.work.activity.page',
+      },
+    ]);
+  });
+
+  it('keeps the five Mail organization routes as frontend-owned PAGE records only', () => {
+    const mailRouteKeys = new Set<string>(MAIL_ORGANIZATION_PAGE_ROUTE_KEYS);
+    const draftRoutes = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) =>
+      mailRouteKeys.has(route.routeContractKey)
+    );
+    const registeredRoutes = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter((route) =>
+      mailRouteKeys.has(route.routeContractKey)
+    );
+
+    expect(draftRoutes.map((route) => route.routeContractKey).sort()).toEqual(
+      [...MAIL_ORGANIZATION_PAGE_ROUTE_KEYS].sort()
+    );
+    expect(registeredRoutes.map((route) => route.routeContractKey).sort()).toEqual(
+      [...MAIL_ORGANIZATION_PAGE_ROUTE_KEYS].sort()
+    );
+    expect(registeredRoutes.every((route) => route.routeKind === 'PAGE')).toBe(true);
+    expect(
+      PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter((route) =>
+        mailRouteKeys.has(route.routeContractKey)
+      )
+    ).toEqual([]);
   });
 
   it('owns only the exact Canary dynamic PAGE 4+2 allowlist', () => {

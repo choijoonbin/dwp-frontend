@@ -210,7 +210,9 @@ export function ProductCanaryRouteBoundary({
   }
   return (
     <Suspense fallback={null}>
-      <ProductSurfaceGuard decision={decision}>{children}</ProductSurfaceGuard>
+      <ProductSurfaceGuard decision={decision} boundaryKind="exact-route">
+        {children}
+      </ProductSurfaceGuard>
     </Suspense>
   );
 }

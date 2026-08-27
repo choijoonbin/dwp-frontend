@@ -80,6 +80,14 @@ service ports, internal service routes, ad hoc Axios clients, `fetch`, WebSocket
 beacon transports. Cross-product workflows consequently use authenticated Gateway APIs or
 versioned backend domain events rather than direct browser-to-service or app-to-app calls.
 
+Work questions move between independently deployed products through a server-issued, encrypted,
+session-bound, one-time ticket. The browser URL, history state, and web storage may contain only
+the opaque ticket identifier, never the question. The retired `/ask?q=...` ingress is redirected
+without access logging so a legacy query cannot enter edge logs before client-side canonicalization.
+The generated Nginx policy uses a local `return 308 /dwaion/new` redirect; Nginx 1.31 runtime
+verification confirms that this form omits the original arguments from `Location`. The architecture
+Gate rejects `$args`, `$request_uri`, or trailing-query reconstruction in either legacy location.
+
 ## Governance
 
 The manifest, generated ingress configuration, OpenAPI snapshot, and CI checks are executable

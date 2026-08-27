@@ -3,7 +3,7 @@
   "entryGzipBytes": 145000,
   "initialRawBytes": 921600,
   "initialGzipBytes": 286720,
-  "initialRequestCount": 24,
+  "initialRequestCount": 5,
   "largestAsyncRawBytes": 819200,
   "largestAsyncGzipBytes": 266240
 }

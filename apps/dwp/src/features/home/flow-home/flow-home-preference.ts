@@ -2,6 +2,7 @@ import { Activity, CalendarRange, Inbox, ListTodo } from 'lucide-react';
 
 import {
   isWorkspaceHomeWidgetSizeAllowed,
+  type HomeAudienceProfile,
   type HomeWidgetHeight,
   type HomeWidgetKey,
   type HomeWidgetSize,
@@ -104,20 +105,23 @@ const defaultFlowSectionHeight = Object.fromEntries(
 ) as Record<FlowHomeSectionKey, HomeWidgetHeight>;
 
 /**
- * The wide template is only eligible while all four personal footprints remain
- * untouched. Role order is intentionally not part of the predicate: Operator
- * uses a different governed default order with the same bounded footprints.
+ * Adaptive read templates are only eligible while the complete role default
+ * remains intact. Height is deliberately excluded: it is a saved content-depth
+ * preference, not a placement footprint, and must survive an adaptive render.
  */
 export function isFlowAdaptiveTemplateEligible(
-  sections: readonly FlowHomeSectionPreference[]
+  sections: readonly FlowHomeSectionPreference[],
+  audience: HomeAudienceProfile
 ): boolean {
-  const visibleSections = sections.filter((section) => section.visible);
-  if (visibleSections.length !== FLOW_HOME_SECTION_REGISTRY.length) return false;
-  const seen = new Set<FlowHomeSectionKey>();
-  return visibleSections.every((section) => {
-    if (seen.has(section.widgetKey)) return false;
-    seen.add(section.widgetKey);
-    return section.size === defaultFlowSectionSize[section.widgetKey];
+  const expectedOrder =
+    audience === 'OPERATOR' ? FLOW_HOME_OPERATOR_SECTION_ORDER : FLOW_HOME_MEMBER_SECTION_ORDER;
+  if (sections.length !== expectedOrder.length) return false;
+  return sections.every((section, index) => {
+    return (
+      section.widgetKey === expectedOrder[index] &&
+      section.visible &&
+      section.size === defaultFlowSectionSize[section.widgetKey]
+    );
   });
 }
 

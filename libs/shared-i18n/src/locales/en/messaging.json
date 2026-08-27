@@ -42,43 +42,115 @@
     "cancel": "Cancel",
     "close": "Close"
   },
+  "expressions": {
+    "open": "Open emoji",
+    "search": "Search emoji or work expression",
+    "empty": "No matching expression.",
+    "recentEmpty": "Your recently used emoji will appear here.",
+    "categories": {
+      "label": "Emoji categories",
+      "recent": "Recent",
+      "people": "People",
+      "work": "Work",
+      "objects": "Tools",
+      "symbols": "Symbols",
+      "stamps": "Quick phrases"
+    }
+  },
+  "mentions": {
+    "open": "Mention a member",
+    "suggestionsLabel": "Mention suggestions",
+    "everyone": "Everyone",
+    "empty": "No matching conversation member.",
+    "participantCount": "Notify {{count}} conversation members"
+  },
   "home": {
     "eyebrow": "DWP Messaging",
     "greetingMorning": "Good morning",
     "greetingAfternoon": "Hello",
     "greetingEvening": "Good evening",
     "member": "member",
-    "title": "{{name}}, your important conversations are ready",
-    "description": "Space, direct messages, announcements, and follow-ups are organized as one work signal.",
-    "signalSummary": "{{unread}} unread, {{mentions}} mentions, {{urgent}} urgent conversations",
+    "title": "{{greeting}}, {{name}}",
+    "description": "Conversations that need attention and work to resume are organized in one view.",
+    "signalSummary": "{{unread}} unread conversations, {{mentions}} mentions, {{saved}} saved items",
     "loadError": "Messenger home could not be loaded.",
-    "metrics": {
-      "unread": "Unread",
-      "unreadDetail": "Conversations waiting in your flow",
-      "mentions": "Mentions",
-      "mentionsDetail": "Messages asking for you directly",
-      "spaces": "Spaces",
-      "spacesDetail": "Connected to your Spaces",
-      "direct": "DMs",
-      "directDetail": "Direct and small-group conversations",
-      "saved": "Saved items",
-      "savedDetail": "Messages saved privately for follow-up"
+    "sync": {
+      "current": "Up to date",
+      "refreshing": "Updating",
+      "updated": "Retrieved {{time}}"
     },
-    "priority": {
-      "title": "Priority conversations",
-      "description": "Sorted by mentions, urgency, and recent activity.",
+    "attention": {
+      "eyebrow": "Today's focus",
+      "openInbox": "Open inbox",
+      "states": {
+        "mentions": {
+          "title": "{{count}} mentions are waiting for you",
+          "description": "Review mentions first, then continue with {{unread}} unread conversations and {{saved}} saved items."
+        },
+        "unread": {
+          "title": "Start with {{count}} unread conversations",
+          "description": "Unread direct messages are followed by Space and channel conversations."
+        },
+        "saved": {
+          "title": "Continue with {{count}} saved items",
+          "description": "New requests are clear. Resume work from messages you saved yourself."
+        },
+        "clear": {
+          "title": "You're caught up on important conversations",
+          "description": "New requests will appear here first."
+        }
+      }
+    },
+    "signals": {
+      "mentions": {
+        "label": "Mentions for you",
+        "action": "Review {{count}} mentions in the inbox"
+      },
+      "unread": {
+        "label": "Unread conversations",
+        "action": "Open {{count}} unread conversations"
+      },
+      "saved": {
+        "label": "Saved items",
+        "action": "Open {{count}} saved items"
+      }
+    },
+    "focus": {
+      "title": "Conversations to handle now",
+      "description": "Up to six unread direct, Space, and other conversations in that order.",
       "open": "View all",
-      "emptyTitle": "No conversations need attention",
-      "emptyDescription": "New messages will appear here first."
+      "loading": "Loading conversations that need action",
+      "partial": "The full conversation list could not be refreshed, so the latest home snapshot is shown.",
+      "emptyTitle": "No new conversations need action",
+      "emptyDescription": "Unread conversations will appear here first.",
+      "noPreview": "No message preview is available yet.",
+      "protectedPreview": "Protected conversation content is hidden from the home view.",
+      "reasons": {
+        "unread": "{{count}} unread",
+        "pinned": "Pinned",
+        "favorite": "Favorite",
+        "recent": "Recent activity"
+      }
     },
     "spaces": {
-      "title": "Active Spaces",
-      "description": "Conversation status for Spaces you belong to."
+      "title": "My Space flow",
+      "description": "Space conversations available through your current membership.",
+      "open": "Open all Space conversations",
+      "spaceLinked": "Space-linked conversation",
+      "spaceCount": "{{count}} Spaces",
+      "directCount": "{{count}} DMs",
+      "emptyTitle": "No Space conversations are connected",
+      "emptyDescription": "They will appear after Space membership is synchronized."
     },
-    "people": {
-      "title": "People to connect with",
-      "description": "Recommended from organization and Space context.",
-      "open": "Open chat"
+    "continue": {
+      "title": "Continue where you left off",
+      "description": "Resume work from messages you explicitly saved.",
+      "open": "Open all saved items",
+      "loading": "Loading saved items",
+      "loadError": "Saved items could not be loaded.",
+      "emptyTitle": "No saved messages",
+      "emptyDescription": "Save a message to resume it from here later.",
+      "startDirect": "Find a person and start a new DM"
     }
   },
   "type": {
@@ -98,6 +170,8 @@
     "selectDescription": "Choose a conversation on the left to review messages, members, and policy context.",
     "loadError": "Conversation could not be loaded.",
     "timeline": "Messages",
+    "unread": "Unread messages",
+    "newMessages": "{{count}} new messages",
     "history": {
       "loadOlder": "Load earlier messages",
       "loading": "Loading earlier messages",
@@ -147,6 +221,11 @@
       "saved": "Conversation settings saved.",
       "saveError": "Conversation settings could not be saved. Refresh and try again.",
       "loadError": "Conversation settings could not be loaded.",
+      "sectionsLabel": "Conversation setting sections",
+      "sections": {
+        "general": "General",
+        "display": "Display"
+      },
       "favorite": "Favorite",
       "favoriteDescription": "Show this conversation in Favorites.",
       "pinned": "Pin to top",
@@ -160,7 +239,43 @@
         "MUTE": "Mute"
       }
     },
+    "display": {
+      "saved": "Messaging display preferences saved.",
+      "saveError": "Display preferences could not be saved. Review changes from another session and try again.",
+      "loadError": "Display preferences could not be loaded.",
+      "scopeLabel": "Display preference scope",
+      "scopeConversation": "This conversation",
+      "scopeGlobal": "All conversations",
+      "layout": "Message layout",
+      "layoutDescription": "Let DWP adapt to the conversation type, or choose bubbles or a collaboration stream.",
+      "density": "Information density",
+      "densityDescription": "Choose the spacing and number of messages visible during long work sessions.",
+      "theme": "Conversation background",
+      "themeDescription": "Only tenant-approved, low-saturation presets are applied to your view.",
+      "showAvatars": "Show sender avatars",
+      "alwaysTimestamps": "Show a time on every message",
+      "messagePreview": "Show message previews in the conversation list",
+      "reset": "Reset this conversation to my defaults",
+      "resetSuccess": "This conversation now follows your Messaging defaults.",
+      "values": {
+        "INHERIT": "Default",
+        "AUTO": "Automatic",
+        "CONVERSATIONAL": "Conversational",
+        "COLLABORATIVE": "Collaborative",
+        "COMFORTABLE": "Comfortable",
+        "COMPACT": "Compact",
+        "DEFAULT": "Default",
+        "MIST": "Mist",
+        "SAGE": "Sage",
+        "ROSE": "Rose"
+      },
+      "policy": {
+        "RESTRICTED_CONVERSATION": "Restricted conversations use the approved default surface to protect security indicators and contrast.",
+        "STRUCTURED_CONVERSATION": "Announcements, incidents, and meeting conversations use a collaborative structure to preserve their work meaning. You can still personalize density and approved themes."
+      }
+    },
     "meetingAction": "Meeting",
+    "composerMeetingAction": "Start or join a meeting",
     "meetingDialog": {
       "title": "Conversation meeting",
       "description": "Check your camera and microphone, then connect with the conversation members.",
@@ -182,7 +297,14 @@
       "permissionError": "Check your camera or microphone permission.",
       "disconnected": "You left the meeting.",
       "endForEveryone": "End meeting for everyone",
-      "ending": "Ending meeting"
+      "ending": "Ending meeting",
+      "history": {
+        "title": "Recent meetings",
+        "description": "Operational meeting history for this conversation.",
+        "empty": "No completed meetings yet.",
+        "endedBy": "Ended by {{name}}",
+        "minutes": "About {{count}} min"
+      }
     },
     "me": "Me",
     "deleted": "This message was deleted"

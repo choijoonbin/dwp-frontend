@@ -5,7 +5,17 @@ import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-sess
 
 type CompatibilityProductScenario = {
   id: string;
-  areaKey: 'calendar' | 'mail' | 'messaging' | 'rooms' | 'spaces' | 'notifications' | 'dwaion';
+  areaKey:
+    | 'calendar'
+    | 'communications'
+    | 'dwaion'
+    | 'mail'
+    | 'meetings'
+    | 'messaging'
+    | 'notifications'
+    | 'rooms'
+    | 'services'
+    | 'spaces';
   workPath: `/${string}`;
   managementPath: `/${string}`;
   workItem: string;
@@ -21,9 +31,13 @@ const allowView = (resourceType: 'APP' | 'ADMIN', resourceKey: string) => ({
 
 const COMPATIBILITY_ADMIN_PERMISSIONS = [
   ...FULL_PRODUCT_PERMISSIONS,
+  allowView('APP', 'APP.COMMUNICATIONS'),
+  allowView('APP', 'APP.EMPLOYEE_SERVICES'),
+  allowView('APP', 'APP.MEETINGS'),
   allowView('APP', 'APP.MESSAGING'),
   allowView('APP', 'APP.NOTIFICATIONS'),
   allowView('ADMIN', 'ADMIN.MAIL'),
+  allowView('ADMIN', 'ADMIN.MEETINGS'),
   allowView('ADMIN', 'ADMIN.MESSAGING'),
   allowView('ADMIN', 'ADMIN.NOTIFICATION_OPERATIONS'),
   allowView('ADMIN', 'ADMIN.NOTIFICATION_CONTRACT'),
@@ -40,6 +54,30 @@ const COMPATIBILITY_ADMIN_PERMISSIONS = [
 ] as const;
 
 const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
+  {
+    id: 'communications',
+    areaKey: 'communications',
+    workPath: '/communications/home',
+    managementPath: '/communications/admin/content',
+    workItem: 'home',
+    managementItem: 'admin-content',
+  },
+  {
+    id: 'services',
+    areaKey: 'services',
+    workPath: '/services/home',
+    managementPath: '/services/admin/catalog',
+    workItem: 'home',
+    managementItem: 'admin-catalog',
+  },
+  {
+    id: 'meetings',
+    areaKey: 'meetings',
+    workPath: '/meetings/home',
+    managementPath: '/meetings/admin/operations',
+    workItem: 'home',
+    managementItem: 'admin-operations',
+  },
   {
     id: 'calendar',
     areaKey: 'calendar',
@@ -127,21 +165,13 @@ async function closeProductSidebar(page: Page, areaKey: string) {
 }
 
 async function managementEntry(page: Page, scenario: CompatibilityProductScenario) {
-  if (!isMobile(page)) {
-    const switcher = page.getByTestId(`${scenario.areaKey}-desktop-surface-switcher`);
-    await expect(switcher).toBeVisible();
-    const entry = switcher.locator(`a[href="${scenario.managementPath}"]`);
-    await expect(entry).toHaveCount(1);
-    return entry;
-  }
-
-  const switcher = page.getByTestId(`${scenario.areaKey}-mobile-surface-switcher`);
+  const switcher = page.getByTestId(
+    `${scenario.areaKey}-${isMobile(page) ? 'mobile' : 'desktop'}-surface-switcher`
+  );
   await expect(switcher).toBeVisible();
-  await switcher.getByRole('button').click();
-  const disclosure = page.getByTestId('product-surface-mobile-disclosure');
-  await expect(disclosure).toBeVisible();
-  const entry = disclosure.locator(`a[href="${scenario.managementPath}"]`);
+  const entry = switcher.getByTestId('product-surface-management-entry');
   await expect(entry).toHaveCount(1);
+  await expect(entry).toHaveAttribute('href', scenario.managementPath);
   return entry;
 }
 
@@ -227,6 +257,78 @@ test.describe('compatibility 제품 Work·Management 메뉴 분리', () => {
         `${scenario.managementPath.replace(/\/overview$/u, '')}/not/a/registered-route`
       );
     });
+  }
+});
+
+test('대표 앱의 Work·Management 전환은 1440·1024·390·320에서 제품 문맥과 복귀를 보존한다', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', '공통 반응형 Product Surface 계약 전용 검증');
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'PRODUCT_ADMIN'], {
+    locale: 'ko',
+    permissions: [...COMPATIBILITY_ADMIN_PERMISSIONS],
+  });
+
+  const representativeProducts = COMPATIBILITY_PRODUCTS.filter(({ id }) =>
+    ['calendar', 'meetings', 'mail'].includes(id)
+  );
+  for (const scenario of representativeProducts) {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1024, height: 768 },
+      { width: 390, height: 844 },
+      { width: 320, height: 720 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto(scenario.workPath);
+      const header = page.getByTestId(`${scenario.areaKey}-header`);
+      const applicationContext = header.getByTestId('shell-application-context');
+      await expect(applicationContext).toBeVisible();
+
+      const entry = await managementEntry(page, scenario);
+      await expect(entry).toHaveAccessibleName(/앱 관리/u);
+      if (viewport.width <= 360) {
+        const workRail = header.getByTestId('shell-mobile-context-rail');
+        await expect(workRail).toBeVisible();
+        await expect(workRail.getByText('관리', { exact: true })).toBeVisible();
+      } else if (viewport.width < 1200) {
+        await expect(header.getByTestId('shell-mobile-context-rail')).toHaveCount(0);
+      }
+
+      await entry.click();
+      await expect(page).toHaveURL((url) => url.pathname === scenario.managementPath);
+      if (viewport.width < 1200) {
+        const managementRail = header.getByTestId('shell-mobile-context-rail');
+        await expect(managementRail).toBeVisible();
+        await expect(managementRail.getByTestId('product-surface-management-mode')).toBeVisible();
+        await expect(managementRail.getByTestId('product-surface-work-return')).toBeVisible();
+        await expect(managementRail.getByTestId('product-surface-compatibility-tenant')).toHaveText(
+          'SKAX'
+        );
+        await expect(managementRail.getByTestId('product-surface-read-only-status')).toHaveCount(0);
+        await expect(managementRail.getByTestId('product-surface-revalidation-status')).toHaveCount(
+          0
+        );
+      } else {
+        const desktopSwitcher = page.getByTestId(`${scenario.areaKey}-desktop-surface-switcher`);
+        await expect(desktopSwitcher.getByTestId('product-surface-management-mode')).toBeVisible();
+        await expect(desktopSwitcher.getByTestId('product-surface-work-return')).toBeVisible();
+      }
+
+      const [headerBox, mainPaddingTop, headerOverflow, pageOverflow] = await Promise.all([
+        header.boundingBox(),
+        page
+          .locator('#dwp-main-content')
+          .evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
+        header.evaluate((element) => element.scrollWidth - element.clientWidth),
+        page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+        ),
+      ]);
+      expect(Math.abs(mainPaddingTop - (headerBox?.height ?? 0))).toBeLessThanOrEqual(1);
+      expect(headerOverflow).toBeLessThanOrEqual(1);
+      expect(pageOverflow).toBeLessThanOrEqual(1);
+    }
   }
 });
 
@@ -352,16 +454,23 @@ test('HCM personal·team·operations·management Surface는 메뉴와 업무 복
       const switcher = page.getByTestId(
         isMobile(page) ? 'hcm-mobile-surface-switcher' : 'hcm-desktop-surface-switcher'
       );
+      await expect(switcher.getByTestId('product-surface-management-entry')).toHaveCount(1);
       if (isMobile(page)) {
         await switcher.getByRole('button').click();
         await expect(
           page
             .getByTestId('product-surface-mobile-disclosure')
             .locator('a[href^="/hr/design/organization"]')
-        ).toHaveCount(1);
+        ).toHaveCount(0);
+        await expect(
+          page.getByTestId('product-surface-mobile-disclosure').locator('a[href^="/hr/"]')
+        ).toHaveCount(2);
         await page.keyboard.press('Escape');
       } else {
-        await expect(switcher.locator('a[href^="/hr/design/organization"]')).toHaveCount(1);
+        await expect(switcher.getByTestId('product-surface-management-entry')).toHaveAttribute(
+          'href',
+          /\/hr\/design\/organization/u
+        );
       }
     }
   }
@@ -390,6 +499,132 @@ test('HCM personal·team·operations·management Surface는 메뉴와 업무 복
       url.hash === '#missing'
   );
   await expect(page.getByTestId('product-surface-local-not-found')).toBeVisible();
+});
+
+test('HCM 다중 Surface 전환은 320px·200% text에서도 한 줄과 키보드 문맥을 보존한다', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '모바일 임계 폭 전용 검증');
+  await page.setViewportSize({ width: 320, height: 720 });
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'MANAGER', 'HR_ADMIN'], {
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockHcmProductSurfaceAuthority(page);
+
+  const expectNoHorizontalOverflow = async () => {
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  };
+
+  for (const zoomed of [false, true]) {
+    await page.goto('/hr/home');
+    if (zoomed) await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+
+    const switcher = page.getByTestId('hcm-mobile-surface-switcher');
+    const areaTrigger = switcher.getByRole('button', { name: '현재 영역: 나의 인사' });
+    const managementEntry = switcher.getByTestId('product-surface-management-entry');
+    await expect(areaTrigger).toBeVisible();
+    await expect(managementEntry).toBeVisible();
+    await expect(managementEntry).toHaveAccessibleName('앱 관리: 인사');
+    await managementEntry.focus();
+    await expect(managementEntry).toBeFocused();
+
+    await areaTrigger.click();
+    const workMenu = page.getByTestId('product-surface-mobile-disclosure');
+    await expect(workMenu.getByRole('menuitem', { name: '나의 인사' })).toBeVisible();
+    await expect(workMenu.getByRole('menuitem', { name: '팀 관리' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(areaTrigger).toBeFocused();
+    await expect(workMenu).toHaveCount(0);
+    await expectNoHorizontalOverflow();
+  }
+
+  for (const zoomed of [false, true]) {
+    await page.goto('/hr/design/organization');
+    if (zoomed) await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+
+    const switcher = page.getByTestId('hcm-mobile-surface-switcher');
+    const areaTrigger = switcher.getByRole('button', { name: '현재 영역: 데이터 및 연계' });
+    const workReturn = switcher.getByTestId('product-surface-work-return');
+    await expect(areaTrigger).toBeVisible();
+    await expect(workReturn).toBeVisible();
+    await expect(workReturn).toHaveAccessibleName('업무로 돌아가기: 인사');
+    await workReturn.focus();
+    await expect(workReturn).toBeFocused();
+
+    await areaTrigger.click();
+    const managementMenu = page.getByTestId('product-surface-mobile-disclosure');
+    await expect(managementMenu.getByRole('menuitem', { name: 'HR 운영' })).toBeVisible();
+    await expect(managementMenu.getByRole('menuitem', { name: '데이터 및 연계' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(areaTrigger).toBeFocused();
+    await expect(managementMenu).toHaveCount(0);
+    await expectNoHorizontalOverflow();
+  }
+});
+
+test('HCM 관리 헤더는 1280·1440·200% text에서 현재 영역과 복귀 동작을 균형 있게 유지한다', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', '데스크톱 헤더 임계 폭 전용 검증');
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'MANAGER', 'HR_ADMIN'], {
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockHcmProductSurfaceAuthority(page);
+
+  for (const scenario of [
+    { width: 1280, height: 720, zoomed: false },
+    { width: 1440, height: 900, zoomed: false },
+    { width: 1280, height: 720, zoomed: true },
+  ]) {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height });
+    await page.goto('/hr/design/organization');
+    if (scenario.zoomed) {
+      await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+    }
+
+    const header = page.getByTestId('hcm-header');
+    const switcher = page.getByTestId('hcm-desktop-surface-switcher');
+    const managementMode = switcher.getByTestId('product-surface-management-mode');
+    const areaTrigger = switcher.getByRole('button', { name: '현재 영역: 데이터 및 연계' });
+    const workReturn = switcher.getByTestId('product-surface-work-return');
+    await expect(managementMode).toBeVisible();
+    await expect(areaTrigger).toBeVisible();
+    await expect(workReturn).toBeVisible();
+    await expect(workReturn).toHaveAccessibleName('업무로 돌아가기: 인사');
+
+    if (!scenario.zoomed) {
+      const visibleAreaLabel = areaTrigger.getByText('데이터 및 연계', { exact: true });
+      await expect(visibleAreaLabel).toBeVisible();
+      expect(
+        await visibleAreaLabel.evaluate((element) => element.scrollWidth - element.clientWidth <= 1)
+      ).toBe(true);
+    }
+
+    const controlBoxes = await Promise.all([
+      managementMode.boundingBox(),
+      areaTrigger.boundingBox(),
+      workReturn.boundingBox(),
+    ]);
+    expect(controlBoxes.every(Boolean)).toBe(true);
+    const controlCenters = controlBoxes.map((box) => (box ? box.y + box.height / 2 : 0));
+    expect(Math.max(...controlCenters) - Math.min(...controlCenters)).toBeLessThanOrEqual(1);
+
+    await areaTrigger.click();
+    const managementMenu = page.getByTestId('product-surface-desktop-disclosure');
+    await expect(managementMenu.getByRole('menuitem', { name: 'HR 운영' })).toBeVisible();
+    await expect(managementMenu.getByRole('menuitem', { name: '데이터 및 연계' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(areaTrigger).toBeFocused();
+    await expect(managementMenu).toHaveCount(0);
+
+    const overflow = await header.evaluate((element) => element.scrollWidth - element.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
+  }
 });
 
 const LEGACY_ALIASES = [
@@ -422,6 +657,7 @@ const LEGACY_ALIASES = [
     targetPath: '/dwaion/new',
     queryKey: 'agent',
     queryValue: 'calendar',
+    removedQueryKeys: ['q'],
     hash: '#composer',
     shell: 'dwaion-shell',
   },
@@ -457,6 +693,8 @@ test('주요 legacy alias는 canonical 제품 shell에서 query와 hash를 한 �
       (url) =>
         url.pathname === alias.targetPath &&
         url.searchParams.get(alias.queryKey) === alias.queryValue &&
+        (!('removedQueryKeys' in alias) ||
+          alias.removedQueryKeys.every((queryKey) => !url.searchParams.has(queryKey))) &&
         url.hash === alias.hash
     );
     await expect(page.getByTestId(alias.shell)).toBeVisible();

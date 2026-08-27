@@ -50,7 +50,13 @@ export function FilterBar({
       aria-label={ariaLabel}
       sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider', py: 1.5 }}
     >
-      <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ md: 'center' }} gap={1.25}>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        alignItems={{ md: 'center' }}
+        gap={1.25}
+        useFlexGap
+        flexWrap={{ md: 'wrap', xl: 'nowrap' }}
+      >
         <TextField
           size="small"
           label={searchLabel}
@@ -70,16 +76,29 @@ export function FilterBar({
         />
         {filters && (
           <Box
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0, overflowX: 'auto' }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              minWidth: 0,
+              flex: 1,
+              flexWrap: 'wrap',
+            }}
           >
             {filters}
           </Box>
         )}
-        <Box sx={{ flex: 1 }} />
+        {!filters && <Box sx={{ flex: 1 }} />}
         {savedViews}
         {actions}
         {resultLabel && (
-          <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+          <Typography
+            role="status"
+            aria-live="polite"
+            variant="body2"
+            color="text.secondary"
+            sx={{ whiteSpace: 'nowrap', ml: 'auto' }}
+          >
             {resultLabel}
           </Typography>
         )}
@@ -106,7 +125,7 @@ export function FilterBar({
   );
 }
 
-export type SearchParamValue = string | readonly string[] | null | undefined;
+export type SearchParamValue = string | number | boolean | readonly string[] | null | undefined;
 
 export function mergeFilterSearchParams(
   current: URLSearchParams,

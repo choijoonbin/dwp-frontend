@@ -504,8 +504,12 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
   },
 ] as const satisfies readonly ApprovalGovernedMutationApiContract[];
 
-export async function getApprovalHome(): Promise<ApprovalHome> {
-  const response = await axiosInstance.get<ApiResponse<ApprovalHome>>(`${base}/home`);
+export function getApprovalHome(): Promise<ApprovalHome>;
+export function getApprovalHome(contextScopeKey: string): Promise<ApprovalHome>;
+export async function getApprovalHome(contextScopeKey?: string): Promise<ApprovalHome> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalHome>>(`${base}/home`, {
+    contextScopeKey,
+  });
   return response.data.data;
 }
 export async function getApprovalTasks(view = 'INBOX'): Promise<ApprovalTask[]> {

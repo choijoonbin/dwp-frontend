@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bell, Pin, Settings2, Star } from 'lucide-react';
+import { Bell, Palette, Pin, Settings2, SlidersHorizontal, Star } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionIconButton, SelectField } from '@dwp-frontend/design-system';
 import {
@@ -17,7 +17,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
+
+import { MessagingDisplayPreferencePanel } from './messaging-display-preference-panel';
 
 import type {
   MessagingConversation,
@@ -36,6 +40,7 @@ export function MessagingConversationSettings({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [section, setSection] = useState<'GENERAL' | 'DISPLAY'>('GENERAL');
   const preferencesAvailable = MESSAGING_API_CAPABILITIES.conversationPreferences;
   const settingsQuery = useQuery({
     queryKey: ['messaging', 'conversation-settings', conversation.conversationId],
@@ -87,7 +92,9 @@ export function MessagingConversationSettings({
           paper: {
             sx: {
               mt: 0.75,
-              width: 'min(380px, calc(100vw - 24px))',
+              width: 'min(430px, calc(100vw - 24px))',
+              maxHeight: 'min(720px, calc(100dvh - 32px))',
+              overflowY: 'auto',
               borderRadius: 1,
               boxShadow: '0 22px 58px rgba(15, 23, 42, 0.18)',
             },
@@ -103,53 +110,78 @@ export function MessagingConversationSettings({
               {t('conversation.settings.description')}
             </Typography>
           </Box>
-          {!preferencesAvailable ? (
-            <Alert severity="info">{t('conversation.settings.connectionRequired')}</Alert>
-          ) : settingsQuery.isError ? (
-            <Alert severity="error">{t('conversation.settings.loadError')}</Alert>
-          ) : null}
-          <Stack spacing={1.25} divider={<Divider flexItem />}>
-            <PreferenceToggle
-              icon={<Star size={17} />}
-              label={t('conversation.settings.favorite')}
-              description={t('conversation.settings.favoriteDescription')}
-              checked={settings?.favorite ?? conversation.favorite}
-              disabled={!preferencesAvailable || !settings || updateMutation.isPending}
-              onChange={(checked) => updateSettings({ favorite: checked })}
+          <Tabs
+            value={section}
+            onChange={(_, value: 'GENERAL' | 'DISPLAY') => setSection(value)}
+            variant="fullWidth"
+            aria-label={t('conversation.settings.sectionsLabel')}
+          >
+            <Tab
+              value="GENERAL"
+              icon={<SlidersHorizontal size={16} />}
+              iconPosition="start"
+              label={t('conversation.settings.sections.general')}
             />
-            <PreferenceToggle
-              icon={<Pin size={17} />}
-              label={t('conversation.settings.pinned')}
-              description={t('conversation.settings.pinnedDescription')}
-              checked={settings?.pinned ?? conversation.pinned}
-              disabled={!preferencesAvailable || !settings || updateMutation.isPending}
-              onChange={(checked) => updateSettings({ pinned: checked })}
+            <Tab
+              value="DISPLAY"
+              icon={<Palette size={16} />}
+              iconPosition="start"
+              label={t('conversation.settings.sections.display')}
             />
-            <Stack direction="row" spacing={1.25} alignItems="flex-start">
-              <Box sx={{ color: 'text.secondary', pt: 1.2 }}>
-                <Bell size={17} />
-              </Box>
-              <Box sx={{ minWidth: 0, flex: 1 }}>
-                <SelectField
-                  label={t('conversation.settings.notifications')}
-                  value={
-                    settings?.notificationLevel ?? currentMember?.notificationLevel ?? 'DEFAULT'
-                  }
+          </Tabs>
+          {section === 'DISPLAY' ? (
+            <MessagingDisplayPreferencePanel conversation={conversation} />
+          ) : (
+            <>
+              {!preferencesAvailable ? (
+                <Alert severity="info">{t('conversation.settings.connectionRequired')}</Alert>
+              ) : settingsQuery.isError ? (
+                <Alert severity="error">{t('conversation.settings.loadError')}</Alert>
+              ) : null}
+              <Stack spacing={1.25} divider={<Divider flexItem />}>
+                <PreferenceToggle
+                  icon={<Star size={17} />}
+                  label={t('conversation.settings.favorite')}
+                  description={t('conversation.settings.favoriteDescription')}
+                  checked={settings?.favorite ?? conversation.favorite}
                   disabled={!preferencesAvailable || !settings || updateMutation.isPending}
-                  onValueChange={(value) => {
-                    if (value) updateSettings({ notificationLevel: value });
-                  }}
-                  options={(['DEFAULT', 'ALL', 'MENTIONS', 'MUTE'] as const).map((value) => ({
-                    value,
-                    label: t(`conversation.settings.notificationLevels.${value}`),
-                  }))}
+                  onChange={(checked) => updateSettings({ favorite: checked })}
                 />
-                <Typography variant="caption" color="text.secondary">
-                  {t('conversation.settings.notificationsDescription')}
-                </Typography>
-              </Box>
-            </Stack>
-          </Stack>
+                <PreferenceToggle
+                  icon={<Pin size={17} />}
+                  label={t('conversation.settings.pinned')}
+                  description={t('conversation.settings.pinnedDescription')}
+                  checked={settings?.pinned ?? conversation.pinned}
+                  disabled={!preferencesAvailable || !settings || updateMutation.isPending}
+                  onChange={(checked) => updateSettings({ pinned: checked })}
+                />
+                <Stack direction="row" spacing={1.25} alignItems="flex-start">
+                  <Box sx={{ color: 'text.secondary', pt: 1.2 }}>
+                    <Bell size={17} />
+                  </Box>
+                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <SelectField
+                      label={t('conversation.settings.notifications')}
+                      value={
+                        settings?.notificationLevel ?? currentMember?.notificationLevel ?? 'DEFAULT'
+                      }
+                      disabled={!preferencesAvailable || !settings || updateMutation.isPending}
+                      onValueChange={(value) => {
+                        if (value) updateSettings({ notificationLevel: value });
+                      }}
+                      options={(['DEFAULT', 'ALL', 'MENTIONS', 'MUTE'] as const).map((value) => ({
+                        value,
+                        label: t(`conversation.settings.notificationLevels.${value}`),
+                      }))}
+                    />
+                    <Typography variant="caption" color="text.secondary">
+                      {t('conversation.settings.notificationsDescription')}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Stack>
+            </>
+          )}
         </Stack>
       </Popover>
     </>

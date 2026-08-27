@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { DwaionVoiceInputControl } from './dwaion-voice-controls';
+
 type DwaionPanelComposerProps = {
   value: string;
   busy: boolean;
@@ -25,7 +27,7 @@ export function DwaionPanelComposer({
   onSend,
   onCancel,
 }: DwaionPanelComposerProps) {
-  const { t } = useTranslation('home');
+  const { t, i18n } = useTranslation('home');
 
   return (
     <Box
@@ -36,7 +38,7 @@ export function DwaionPanelComposer({
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) 38px',
+          gridTemplateColumns: 'minmax(0, 1fr) auto 44px',
           gap: 0.75,
           alignItems: 'end',
         }}
@@ -63,6 +65,12 @@ export function DwaionPanelComposer({
             '& textarea': { lineHeight: 1.45 },
           }}
         />
+        <DwaionVoiceInputControl
+          namespace="home"
+          locale={i18n.resolvedLanguage || i18n.language || 'en'}
+          disabled={!enabled || busy}
+          onTranscript={(text) => onChange([value.trim(), text].filter(Boolean).join(' '))}
+        />
         <ActionIconButton
           label={busy ? t('dwaion.composer.cancel') : t('dwaion.composer.send')}
           intent="primary"
@@ -70,8 +78,8 @@ export function DwaionPanelComposer({
           disabled={!busy && (!enabled || !value.trim())}
           onClick={busy ? onCancel : undefined}
           sx={{
-            width: 38,
-            height: 38,
+            width: 44,
+            height: 44,
             bgcolor: 'primary.main',
             color: 'primary.contrastText',
             '&:hover': { bgcolor: 'primary.dark' },

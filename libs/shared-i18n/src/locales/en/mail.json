@@ -25,7 +25,12 @@
         "inbox": { "label": "Inbox" },
         "sent": { "label": "Sent" },
         "drafts": { "label": "Drafts" },
+        "archive": { "label": "Archive" },
+        "spam": { "label": "Spam" },
+        "trash": { "label": "Trash" },
+        "folders": { "label": "My folders" },
         "shared": { "label": "Shared inboxes" },
+        "organization": { "label": "Folders and rules" },
         "accounts": { "label": "Connected accounts" },
         "admin-overview": { "label": "Operations overview" },
         "admin-connections": { "label": "Mail connections" },
@@ -60,8 +65,19 @@
       "urgentDetail": "Messages requiring action today",
       "needsReply": "Needs reply",
       "needsReplyDetail": "Conversations waiting for an answer",
+      "snoozed": "Later",
       "assistant": "Action proposals",
       "assistantDetail": "Suggestions ready for review"
+    },
+    "journey": {
+      "badge": "Today's mail flow",
+      "attentionTitle": "{{count}} important signals are waiting for a decision",
+      "clearTitle": "Your priority mail is under control",
+      "description": "The shortest path through your mail is organized by business impact and next action, not arrival time.",
+      "start": "Start focused triage",
+      "openInbox": "Open inbox",
+      "flowTitle": "Processing rhythm",
+      "flowDescription": "See review, reply, later, and action suggestions as one continuous flow."
     },
     "focus": {
       "title": "Focus queue",
@@ -81,6 +97,19 @@
       "description": "Monitor response health for mail handled by a team.",
       "open": "{{count}} open",
       "overdue": "{{count}} overdue"
+    },
+    "automation": {
+      "title": "Automatic organization rhythm",
+      "description": "See how personal folders and rules reduce repetitive sorting.",
+      "loadError": "The latest folder and rule state could not be loaded.",
+      "manage": "Manage folders and rules",
+      "activeRules": "Active rules",
+      "activeRulesDetail": "Ready for incoming and manual runs",
+      "personalFolders": "Personal folders",
+      "personalFoldersDetail": "Organized around your work context",
+      "latestRun": "Latest automatic organization",
+      "latestRunDetail": "{{count}} messages matched",
+      "neverRun": "No rule run yet"
     }
   },
   "mailbox": {
@@ -111,6 +140,36 @@
       "description": "Continue unfinished messages and send them when ready.",
       "emptyTitle": "No messages in progress",
       "emptyDescription": "Messages saved from the composer will appear here."
+    },
+    "archive": {
+      "eyebrow": "Quiet reference",
+      "title": "Archive",
+      "description": "Keep completed conversations available without leaving them in your active inbox.",
+      "emptyTitle": "No archived mail",
+      "emptyDescription": "Conversations you archive from the inbox will appear here."
+    },
+    "spam": {
+      "eyebrow": "Risk signal isolation",
+      "title": "Spam",
+      "description": "Keep suspicious senders and unwanted messages away from active mail.",
+      "emptyTitle": "No spam mail",
+      "emptyDescription": "Conversations you report as spam will appear here."
+    },
+    "trash": {
+      "eyebrow": "Review before removal",
+      "title": "Trash",
+      "description": "Restore deleted conversations or permanently remove them when your access permits.",
+      "emptyTitle": "Trash is empty",
+      "emptyDescription": "Deleted conversations will appear here."
+    },
+    "custom": {
+      "eyebrow": "Your work context",
+      "title": "My folders",
+      "description": "Continue work organized around projects, customers, and topics you define.",
+      "folderLabel": "Folder",
+      "folderPlaceholder": "Select a folder",
+      "emptyTitle": "No mail in this folder",
+      "emptyDescription": "Move mail here or run a rule to organize matching conversations."
     },
     "shared": {
       "eyebrow": "Team Inbox",
@@ -182,6 +241,153 @@
     "INTERNAL": "Internal",
     "CONFIDENTIAL": "Confidential",
     "RESTRICTED": "Restricted"
+  },
+  "importance": {
+    "LOW": "Low",
+    "NORMAL": "Normal",
+    "HIGH": "High",
+    "URGENT": "Urgent"
+  },
+  "lifecycle": {
+    "move": "Move to folder",
+    "restore": "Restore to previous location",
+    "spam": "Move to spam",
+    "trash": "Move to trash",
+    "deleteForever": "Delete permanently",
+    "deleteTitle": "Permanently delete this conversation?",
+    "deleteDescription": "This cannot be undone. Shared inbox deletion requires manager access.",
+    "deleting": "Deleting",
+    "error": "The conversation could not be moved. Refresh and try again.",
+    "success": {
+      "MOVE": "The conversation was moved to the selected folder.",
+      "ARCHIVE": "The conversation was archived.",
+      "TRASH": "The conversation was moved to trash.",
+      "SPAM": "The conversation was marked as spam.",
+      "RESTORE": "The conversation was restored to its previous location.",
+      "DELETE_FOREVER": "The conversation was permanently deleted."
+    }
+  },
+  "organization": {
+    "eyebrow": "Personal Mail Organization",
+    "title": "Folders and rules",
+    "description": "Create folders around your work and automate repetitive mail organization with clear, reversible rules.",
+    "loadError": "Folders and rules could not be loaded.",
+    "tabsLabel": "Mail organization mode",
+    "tabs": { "folders": "My folders", "rules": "Organization rules" },
+    "edit": "Edit",
+    "archive": "Archive item",
+    "remove": "Remove item",
+    "archived": "The selected item was archived.",
+    "archiveError": "The item could not be archived.",
+    "archiveTitle": "Archive this item?",
+    "archiveDescription": "{{name}} will be hidden from the list. Resolve child folders or active rule references first.",
+    "archiveConfirm": "Archive",
+    "archiving": "Archiving",
+    "validation": { "required": "This field is required." },
+    "pulse": {
+      "title": "Your mail organization posture",
+      "description": "Local rules and provider synchronization are shown separately so the real application scope stays clear.",
+      "localRules": "{{count}} DWP-only rules",
+      "syncIssues": "{{count}} sync items need attention",
+      "syncHealthy": "No synchronization issues",
+      "organized": "Mail in personal folders",
+      "organizedDetail": "Across your custom folders",
+      "activeRules": "Active rules",
+      "activeRulesDetail": "Available for incoming and manual runs"
+    },
+    "folder": {
+      "new": "New folder",
+      "createTitle": "Create a personal folder",
+      "editTitle": "Edit folder",
+      "dialogDescription": "Folders stay within the selected personal account and are never mixed with shared accounts.",
+      "account": "Mail account",
+      "name": "Folder name",
+      "parent": "Parent folder",
+      "noParent": "Top level",
+      "color": "Identification color",
+      "saved": "The folder was saved.",
+      "saveError": "The folder could not be saved. Check its name and hierarchy.",
+      "counts": "{{total}} total · {{unread}} unread",
+      "open": "Open folder",
+      "emptyTitle": "No personal folders yet",
+      "emptyDescription": "Create your first folder around a project, customer, or work topic."
+    },
+    "rule": {
+      "new": "New rule",
+      "createTitle": "Create a mail organization rule",
+      "editTitle": "Edit organization rule",
+      "dialogDescription": "Combine explicit conditions and actions. Local rules remain visibly separate from provider-synchronized rules.",
+      "name": "Rule name",
+      "priority": "Priority",
+      "conditions": "Conditions",
+      "conditionsDescription": "Combine up to 10 conditions using all or any matching.",
+      "matchMode": "Condition matching",
+      "field": "Field",
+      "operator": "Comparison",
+      "value": "Value",
+      "addCondition": "Add condition",
+      "actions": "Actions",
+      "actionsDescription": "Destructive actions such as deletion are intentionally unavailable in automatic rules.",
+      "action": "Action",
+      "targetFolder": "Destination folder",
+      "targetFolderPlaceholder": "Select a folder",
+      "importance": "Importance",
+      "addAction": "Add action",
+      "enabled": "Enable rule",
+      "stopProcessing": "Stop after this rule matches",
+      "saved": "The rule was saved.",
+      "saveError": "The rule could not be saved. Check its conditions and actions.",
+      "run": "Run now",
+      "runCompleted": "The rule organized {{count}} conversations.",
+      "runError": "The rule could not be run.",
+      "lastRun": "Last run · {{count}} matched",
+      "neverRun": "Not run yet",
+      "moveSummary": "Move to {{folder}}",
+      "emptyTitle": "No organization rules yet",
+      "emptyDescription": "Automate the first message pattern you repeatedly move or mark."
+    },
+    "matchMode": { "ALL": "Match all", "ANY": "Match any" },
+    "fields": {
+      "SENDER": "Sender",
+      "RECIPIENT": "Recipient",
+      "SUBJECT": "Subject",
+      "BODY": "Message body",
+      "HAS_ATTACHMENT": "Attachment",
+      "IMPORTANCE": "Importance"
+    },
+    "operators": {
+      "CONTAINS": "Contains",
+      "EQUALS": "Equals",
+      "STARTS_WITH": "Starts with",
+      "ENDS_WITH": "Ends with",
+      "IS": "Is"
+    },
+    "actions": {
+      "MOVE_TO_FOLDER": "Move to folder",
+      "MARK_READ": "Mark as read",
+      "STAR": "Star",
+      "SET_IMPORTANCE": "Set importance"
+    },
+    "actionDescriptions": {
+      "MARK_READ": "Mark matching conversations as read.",
+      "STAR": "Add a star to matching conversations."
+    },
+    "boolean": { "yes": "Yes", "no": "No" },
+    "colors": {
+      "NEUTRAL": "Neutral",
+      "BLUE": "Blue",
+      "TEAL": "Teal",
+      "GREEN": "Green",
+      "AMBER": "Amber",
+      "CORAL": "Coral",
+      "VIOLET": "Violet"
+    },
+    "sync": {
+      "LOCAL_ONLY": "Applied in DWP only",
+      "PENDING": "Provider sync pending",
+      "SYNCED": "Synchronized with provider",
+      "ERROR": "Synchronization needs attention"
+    }
   },
   "proposal": {
     "assistant": "DWP action proposal",

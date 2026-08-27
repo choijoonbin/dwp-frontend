@@ -139,7 +139,7 @@ Grant, Work Entitlement와 Product Service의 Relationship Eligibility를 Gatewa
 
 ### Rollout Envelope 불변식
 
-- `rollouts[]`는 Checksummed Inventory의 11개 Product를 정확히 한 번씩 포함한다. 예시는 Local
+- `rollouts[]`는 Checksummed Inventory의 12개 Product를 정확히 한 번씩 포함한다. 예시는 Local
   Truth Table 중 두 행만 축약해 표시했다.
 - 각 `state`는 해당 Product `p`의 `(S,E_p,U_p)`를 `000|100|110|111`로 직렬화한다.
   `S=access.product-surfaces.context-shadow.v1`,
@@ -300,7 +300,7 @@ Versioned Registry에 고정한다.
 | 필드                                       | 계약                                                                                      |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
 | `routeContractKey`                         | 위 Product/비제품 Namespace의 영구 ID; `route-path`는 하나 이상의 lower-kebab 점 구간     |
-| `navigationContextId`                      | 169 메뉴 분류표의 Governed Context 결속                                                   |
+| `navigationContextId`                      | 현재 186 메뉴 분류표의 Governed Context 결속                                              |
 | `subject`                                  | `PRODUCT(productKey,surfaceKey)` 또는 `GOVERNED_CONTEXT`; Context ID는 Top-level에만 존재 |
 | `routeKind`, `uiRouteId`, `uiRoutePattern` | PAGE/DATA/ACTION; PAGE만 Router ID·Pattern 필수                                           |
 | `sideEffectFree`                           | POST DATA만 true 필수; Business State·Workflow Outbox 변경 금지                           |
@@ -504,7 +504,7 @@ Surface Entry·Route 외의 Consumer를 추론하지 않는다.
     `route.context.work__work.review-decision.action`
 
 Named Reviewer Route는 `navigationContextId=work.work`, Product/Surface 없음인 Governed Route다.
-Product Surface Registry나 121개 업무 앱 Menu 소유권으로 투영하지 않는다.
+Product Surface Registry나 현재 138개 업무 앱 Menu 소유권으로 투영하지 않는다.
 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간만 허용하며 비제품 Key의
 `navigation-context-token=work__work`는 점↔`__` 총함수로 `work.work`에 유일하게 역해석되어야
 한다. Subject에 Context ID를 중복 저장하거나 Key Token과 Top-level Context가 다르면 Bundle
@@ -1076,10 +1076,12 @@ Audit Duty 자체가 Authority Source이므로 Global `AUDITOR` Role·Global `AL
 
 ### 9.3 JIT Scope
 
-- 단기 JIT는 `TENANT` Scope만 지원한다. `ORG_UNIT`과 `RESOURCE` JIT는 Scope-aware PEP가 완성될
-  때까지 HTTP 422 `JIT_SCOPE_UNSUPPORTED`로 Request·Grant Record 생성 전에 거부하고
-  Denied Audit만 남긴다.
-- App Scope는 기존 Responsibility + Resource Set + Validity를 사용한다.
+- R1 Production은 `TENANT`, `ORG_UNIT`, `RESOURCE`를 포함한 모든 JIT·Emergency Activation을
+  비활성화한다. Auth Service Rollout Gate와 DB Trigger가 Request·Grant 생성 전에 거부하며 환경
+  Override는 허용하지 않는다.
+- `JIT_SCOPE_UNSUPPORTED`와 Tenant-only Descriptor는 향후 재활성화 정책을 검증하는 서명된
+  Contract-test 전용이며 Production 활성 계약이 아니다.
+- App Scope 위임은 JIT로 가장하지 않고 기존 Responsibility + Resource Set + Validity를 사용한다.
 - 정책 누락·Resolver 장애는 Fail Closed한다.
 
 ## 10. Gateway와 Service PEP
@@ -1112,9 +1114,10 @@ Audit Duty 자체가 Authority Source이므로 Global `AUDITOR` Role·Global `AL
 - Permission Payload가 비어 있으면 신규 Product는 Fail Closed한다.
 - Responsibility A + Capability B + Scope C의 교차 조합이 거부된다.
 - 같은 `S/E_p`에서 `U_p` On/Off가 같은 Effective Context·Guard·PEP Authorization Decision을 낸다.
-- 11개 제품의 `E_p`가 Exact Flag Key로 평가되고 Legacy 전역 E는 상태 합성에 사용되지 않는다.
+- 12개 제품의 `E_p`가 Exact Flag Key로 평가되고 Legacy 전역 E는 상태 합성에 사용되지 않는다.
 - 한 Context Envelope에서 `S`만 모든 제품에 동일하고 `E_p/U_p` 혼합 상태가 허용된다.
 - Support와 NORMAL 권한을 동시에 가진 Fixture에서도 Support Context가 NORMAL Write를 합치지 않는다.
 - Named Reviewer Relationship만으로 `/admin/**` 어느 Route도 열리지 않는다.
-- 미지원 Scoped JIT 거부 후 Request·Grant Row는 0이고 Denied Audit만 1건이다.
+- R1의 모든 JIT·Emergency Activation 거부 후 Active/Pending Request·Grant Row는 0이다. 향후
+  Scope 정책용 `JIT_SCOPE_UNSUPPORTED` Denied Audit은 Contract-test에서만 검증한다.
 - Scope 밖 Target과 실제 미존재 Target은 Client에 같은 404 Code를 반환한다.

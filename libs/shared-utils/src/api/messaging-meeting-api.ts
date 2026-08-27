@@ -33,6 +33,16 @@ export type MessagingMeetingJoinCredential = {
   expiresAt: string;
 };
 
+export type MessagingMeetingHistoryItem = MessagingMeetingSession & {
+  startedByName: string;
+  endedByName?: string | null;
+  durationSeconds: number;
+};
+
+type MeetingHistoryResponse = {
+  items: MessagingMeetingHistoryItem[];
+};
+
 type CurrentMeetingResponse = {
   session?: MessagingMeetingSession | null;
 };
@@ -70,6 +80,17 @@ export async function getCurrentMessagingMeeting(
     meetingPath(conversationId, 'current')
   );
   return response.data.data.session ?? null;
+}
+
+export async function getMessagingMeetingHistory(
+  conversationId: string,
+  limit = 5
+): Promise<MessagingMeetingHistoryItem[]> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  const response = await axiosInstance.get<ApiResponse<MeetingHistoryResponse>>(
+    `${meetingPath(conversationId, 'history')}?${params.toString()}`
+  );
+  return response.data.data.items;
 }
 
 export async function startMessagingMeeting(

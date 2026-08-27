@@ -41,6 +41,7 @@ async function mockAuthenticatedAdminSession(page: Page) {
           tenantId: 1,
           tenantCode: 'default',
           tenantName: 'SKAX',
+          identityPlane: 'TENANT',
           preferredLocale: 'en',
           tenantDefaultLocale: 'en',
           roles: ['ADMIN'],
@@ -451,12 +452,9 @@ test('unauthenticated users see the login shell without business navigation', as
         status: 'SUCCESS',
         message: 'OK',
         data: {
-          tenantId: 1,
-          defaultLoginType: 'LOCAL',
-          allowedLoginTypes: ['LOCAL'],
-          localLoginEnabled: true,
-          ssoLoginEnabled: false,
-          requireMfa: false,
+          localLoginAvailable: true,
+          ssoLoginAvailable: false,
+          preferredLoginType: 'LOCAL',
         },
       }),
     });
@@ -533,6 +531,7 @@ test('local sign-in stays on the login surface until tenant branding is ready', 
                 email: 'admin@dwp.local',
                 tenantId: 1,
                 tenantCode: 'default',
+                identityPlane: 'TENANT',
                 roles: ['ADMIN'],
               },
             }),
@@ -561,12 +560,9 @@ test('local sign-in stays on the login surface until tenant branding is ready', 
         status: 'SUCCESS',
         message: 'OK',
         data: {
-          tenantId: 1,
-          defaultLoginType: 'LOCAL',
-          allowedLoginTypes: ['LOCAL'],
-          localLoginEnabled: true,
-          ssoLoginEnabled: false,
-          requireMfa: false,
+          localLoginAvailable: true,
+          ssoLoginAvailable: false,
+          preferredLoginType: 'LOCAL',
         },
       }),
     })
@@ -633,7 +629,7 @@ test('local sign-in stays on the login surface until tenant branding is ready', 
   ).toBe(false);
 });
 
-test('tenant policy promotes the configured SSO provider without hiding local access', async ({
+test('tenant policy promotes SSO without exposing the configured provider key', async ({
   page,
 }) => {
   await page.route('**/api/auth/me', (route) =>
@@ -650,44 +646,17 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
         status: 'SUCCESS',
         message: 'OK',
         data: {
-          tenantId: 1,
-          defaultLoginType: 'SSO',
-          allowedLoginTypes: ['LOCAL', 'SSO'],
-          localLoginEnabled: true,
-          ssoLoginEnabled: true,
-          ssoProviderKey: 'entra-workforce',
-          requireMfa: false,
+          localLoginAvailable: true,
+          ssoLoginAvailable: true,
+          preferredLoginType: 'SSO',
         },
       }),
     })
   );
-  await page.route('**/api/auth/idp', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: [
-          {
-            tenantId: 1,
-            enabled: true,
-            providerType: 'OIDC',
-            providerKey: 'unrelated-provider',
-          },
-          {
-            tenantId: 1,
-            enabled: true,
-            providerType: 'OIDC',
-            providerKey: 'entra-workforce',
-          },
-        ],
-      }),
-    })
-  );
 
-  let requestedProvider = '';
+  let oidcQuery = new URLSearchParams();
   await page.route('**/api/auth/oidc/login?**', async (route) => {
-    requestedProvider = new URL(route.request().url()).searchParams.get('providerKey') || '';
+    oidcQuery = new URL(route.request().url()).searchParams;
     await route.fulfill({ status: 204 });
   });
 
@@ -708,7 +677,8 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
   ).toBe(true);
 
   await ssoButton.click();
-  await expect.poll(() => requestedProvider).toBe('entra-workforce');
+  await expect.poll(() => oidcQuery.get('tenantId')).toBe('1');
+  expect(oidcQuery.has('providerKey')).toBe(false);
 });
 
 test('authenticated users enter a personal home before the business shell', async ({
@@ -724,6 +694,7 @@ test('authenticated users enter a personal home before the business shell', asyn
     tenantDefaultLocale: 'en',
     tenantId: 1,
     tenantCode: 'default',
+    identityPlane: 'TENANT',
     roles: ['ADMIN'],
   });
   await page.route('**/api/auth/me', async (route) => {
@@ -783,10 +754,11 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect.poll(() => page.evaluate(() => localStorage.getItem('dwp.accessToken'))).toBeNull();
   await expect(page.getByTestId('home-header').locator('nav')).toHaveCount(0);
   if (testInfo.project.name === 'mobile') {
-    await expect(page.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
+    await expect(page.getByTestId('shell-workspace-identity')).toBeHidden();
   } else {
-    await expect(page.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+    await expect(page.getByTestId('shell-workspace-identity')).toBeVisible();
   }
+  await expect(page.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
@@ -867,16 +839,12 @@ test('authenticated users enter a personal home before the business shell', asyn
       ? page.getByTestId('work-mobile-sidebar')
       : page.getByTestId('work-sidebar');
   if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.getByTestId('work-mobile-navigation-trigger').click();
   }
   await expect(businessSidebar.getByRole('link', { name: 'Back to personal home' })).toBeVisible();
   await expect(businessSidebar.getByRole('link', { name: 'DWAI·ON', exact: true })).toHaveCount(0);
   await expect(businessSidebar.locator('img')).toHaveCount(0);
-  if (testInfo.project.name === 'mobile') {
-    await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
-  } else {
-    await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
-  }
+  await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
   await page.evaluate(() => {
     (window as typeof window & { __dwpSpaNavigationMarker?: string }).__dwpSpaNavigationMarker =
       'preserved';
@@ -1111,7 +1079,8 @@ test('home mounts its final logo-bearing header only after tenant branding resol
   await expect(brand).toBeVisible();
   await expect(tenantLogo).toBeVisible();
   await expect(header.getByText('Digital Workplace', { exact: true })).toBeVisible();
-  await expect(header.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+  await expect(header.getByTestId('shell-workspace-identity')).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
   expect((await tenantLogo.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(38);
 });
 
@@ -1156,7 +1125,8 @@ test('home falls back to the tenant name when branding has no logo', async ({ pa
   await expect(brand.getByTestId('tenant-brand-logo')).toHaveCount(0);
   await expect(brand).toContainText('Digital Workplace');
   await expect(brand.getByTestId('tenant-brand-name-fallback')).toHaveText('SK AX');
-  await expect(header.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+  await expect(header.getByTestId('shell-workspace-identity')).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
 });
 
 test('workspace widget surfaces use the governed responsive visual gap', async ({
@@ -1260,6 +1230,7 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
           tenantId: 1,
           tenantCode: 'default',
           tenantName: 'SKAX',
+          identityPlane: 'TENANT',
           preferredLocale: 'en',
           tenantDefaultLocale: 'en',
           roles: ['ADMIN'],
@@ -1342,6 +1313,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
           tenantId: 1,
           tenantCode: 'default',
           tenantName: 'SKAX',
+          identityPlane: 'TENANT',
           preferredLocale: 'en',
           tenantDefaultLocale: 'en',
           roles: ['ADMIN'],
@@ -1735,6 +1707,7 @@ test('personal home widgets persist user choices and restore governed defaults',
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
+          identityPlane: 'TENANT',
           roles: ['ADMIN'],
         },
       }),
@@ -1919,6 +1892,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
           email: 'min@dwp.local',
           tenantId: 2,
           tenantCode: 'pilot',
+          identityPlane: 'TENANT',
           roles: ['ADMIN'],
         },
       }),
@@ -1988,6 +1962,7 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
+          identityPlane: 'TENANT',
           roles: ['ADMIN'],
         },
       }),
@@ -2081,6 +2056,7 @@ test('users can review and revoke another browser session', async ({ page }) => 
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
+          identityPlane: 'TENANT',
           roles: ['ADMIN'],
         },
       }),

@@ -11,7 +11,6 @@ import {
   PauseCircle,
   PlayCircle,
   Plus,
-  Send,
   ShieldCheck,
   TriangleAlert,
   UserCheck,
@@ -24,7 +23,6 @@ import {
   getProviderDomainChallenge,
   getProviderOperatorProfile,
   getProviderTenant,
-  issueProviderAdministratorInvitation,
   listProviderEntitlements,
   listProviderSupportSessions,
   replaceProviderTenantEntitlements,
@@ -56,7 +54,6 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import type {
-  ProviderAdministratorInvitation,
   ProviderDomainChallenge,
   ProviderTenant,
   ProviderTenantDomain,
@@ -70,6 +67,8 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import { ProviderTenantDiagnosisBoundary } from './provider-tenant-diagnosis-boundary';
+import { providerOperationalSnapshotState } from './provider-operational-freshness';
 
 function DetailField({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -275,51 +274,6 @@ function DomainChallengeDialog({
   );
 }
 
-function InvitationDialog({
-  invitation,
-  onClose,
-}: {
-  invitation: ProviderAdministratorInvitation;
-  onClose: () => void;
-}) {
-  const { t } = useTranslation('provider');
-  const toast = useToast();
-  const activationUrl = `${window.location.origin}${invitation.activationPath}`;
-  const copy = async () => {
-    await navigator.clipboard.writeText(activationUrl);
-    toast.success(t('actions.copied'));
-  };
-  return (
-    <Dialog open onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('tenantDetail.administrators.invitationTitle')}</DialogTitle>
-      <DialogContent dividers>
-        <Stack gap={2}>
-          <Alert severity="info">{t('tenantDetail.administrators.invitationOnce')}</Alert>
-          <TextField
-            fullWidth
-            multiline
-            minRows={3}
-            label={t('tenantDetail.administrators.activationLink')}
-            value={activationUrl}
-            slotProps={{ input: { readOnly: true } }}
-          />
-          <Typography variant="body2" color="text.secondary">
-            {t('tenantDetail.administrators.expires', {
-              value: formatProviderDate(invitation.expiresAt),
-            })}
-          </Typography>
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>{t('actions.close')}</Button>
-        <Button variant="contained" startIcon={<Copy size={17} />} onClick={() => void copy()}>
-          {t('actions.copy')}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
 export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
   const { t } = useTranslation('provider');
   const navigate = useNavigate();
@@ -339,27 +293,29 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
   const [lifecycleOpen, setLifecycleOpen] = useState(false);
   const [domainOpen, setDomainOpen] = useState(false);
   const [challenge, setChallenge] = useState<ProviderDomainChallenge | null>(null);
-  const [invitation, setInvitation] = useState<ProviderAdministratorInvitation | null>(null);
   const [selectedEntitlements, setSelectedEntitlements] = useState<Set<string>>(new Set());
   const [entitlementReason, setEntitlementReason] = useState('');
-
   const tenant = useQuery({
     queryKey: ['provider', 'tenant', tenantId],
     queryFn: () => getProviderTenant(tenantId),
+    refetchInterval: 60_000,
   });
   const catalog = useQuery({
     queryKey: ['provider', 'entitlements'],
     queryFn: listProviderEntitlements,
   });
-  const sessions = useQuery({
-    queryKey: ['provider', 'support', tenantId],
-    queryFn: () => listProviderSupportSessions(tenantId),
-  });
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
   });
-
+  const permissions = operator.data?.permissions ?? [];
+  const canReadSupportLedger = permissions.includes('SUPPORT_ACCESS_READ');
+  const sessions = useQuery({
+    queryKey: ['provider', 'support', tenantId],
+    queryFn: () => listProviderSupportSessions(tenantId),
+    enabled: canReadSupportLedger,
+    refetchInterval: canReadSupportLedger ? 60_000 : false,
+  });
   useEffect(() => {
     if (tenant.data) {
       setSelectedEntitlements(
@@ -368,10 +324,9 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     }
   }, [tenant.data]);
 
-  const permissions = operator.data?.permissions ?? [];
   const canWrite = permissions.includes('TENANT_WRITE');
   const canWriteEntitlements = permissions.includes('ENTITLEMENT_WRITE');
-  const canSupport = permissions.includes('SUPPORT_SESSION_WRITE');
+  const canSupport = canReadSupportLedger && permissions.includes('SUPPORT_SESSION_WRITE');
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ['provider'] });
   };
@@ -437,18 +392,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     )
       setChallenge(null);
   };
-  const invite = async (administratorId: string) => {
-    setBusy(true);
-    try {
-      setInvitation(await issueProviderAdministratorInvitation(tenantId, administratorId));
-      await invalidate();
-      toast.success(t('tenantDetail.administrators.invited'));
-    } catch (error) {
-      toast.error(providerError(error, t('errors.operation')));
-    } finally {
-      setBusy(false);
-    }
-  };
   const saveEntitlements = async () => {
     if (!tenant.data) return;
     if (
@@ -470,28 +413,13 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     [tenant.data]
   );
 
-  if (
-    tenant.isLoading ||
-    catalog.isLoading ||
-    sessions.isLoading ||
-    (operator.isLoading && !operator.data)
-  )
-    return <ProviderLoading />;
-  if (tenant.isError || catalog.isError || sessions.isError || (operator.isError && !operator.data))
+  if (tenant.isLoading || (operator.isLoading && !operator.data)) return <ProviderLoading />;
+  if (tenant.isError || (operator.isError && !operator.data))
     return (
       <ProviderError
-        error={tenant.error ?? catalog.error ?? sessions.error ?? operator.error}
-        onRetry={() =>
-          void Promise.all([
-            tenant.refetch(),
-            catalog.refetch(),
-            sessions.refetch(),
-            operator.refetch(),
-          ])
-        }
-        retrying={
-          tenant.isFetching || catalog.isFetching || sessions.isFetching || operator.isFetching
-        }
+        error={tenant.error ?? operator.error}
+        onRetry={() => void Promise.all([tenant.refetch(), operator.refetch()])}
+        retrying={tenant.isFetching || operator.isFetching}
       />
     );
   if (!tenant.data) return null;
@@ -502,12 +430,11 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
   const verifiedDomains = value.domains.filter(
     (domain) => domain.verificationState === 'VERIFIED'
   ).length;
-  const activeAdministrators = value.administrators.filter(
-    (administrator) => administrator.lifecycleState === 'ACTIVE'
-  ).length;
-  const activeSupportSessions = (sessions.data ?? []).filter(
-    (session) => session.lifecycleState === 'ACTIVE'
-  ).length;
+  const activeAdministrators = value.administratorPosture.activeCount;
+  const activeSupportSessions =
+    canReadSupportLedger && !sessions.isError
+      ? (sessions.data ?? []).filter((session) => session.lifecycleState === 'ACTIVE').length
+      : null;
   const tenantState = value.services.some((service) => service.lifecycleState === 'FAILED')
     ? 'CRITICAL'
     : value.lifecycleState !== 'ACTIVE' ||
@@ -519,8 +446,17 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
       : 'HEALTHY';
   const tenantTone =
     tenantState === 'CRITICAL' ? 'error' : tenantState === 'ATTENTION' ? 'warning' : 'success';
-  const observedAt = Math.max(tenant.dataUpdatedAt, sessions.dataUpdatedAt);
-
+  const loadedAt = tenant.dataUpdatedAt;
+  const liveState = providerOperationalSnapshotState({
+    fetching:
+      tenant.isFetching || catalog.isFetching || (canReadSupportLedger && sessions.isFetching),
+    partial: catalog.isError || (canReadSupportLedger && sessions.isError),
+    sourceObservedAt: 0,
+  });
+  const liveLabel =
+    liveState === 'stale'
+      ? t('tenantDetail.live.loadedWithoutSourceTime')
+      : t(`tenantDetail.live.${liveState}`);
   return (
     <Stack gap={2.5} sx={{ width: 1, maxWidth: 1600, mx: 'auto' }}>
       <Box>
@@ -546,6 +482,8 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
         </Box>
       </Box>
 
+      <ProviderTenantDiagnosisBoundary tenantId={tenantId} canSupport={canSupport} />
+
       <OperationalContextBar
         label={t('tenantDetail.context.label')}
         items={[
@@ -567,17 +505,17 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
         ]}
         status={
           <LiveStatus
-            state={tenant.isFetching || sessions.isFetching ? 'syncing' : 'live'}
-            label={t(
-              tenant.isFetching || sessions.isFetching
-                ? 'tenantDetail.live.syncing'
-                : 'tenantDetail.live.live'
-            )}
+            state={liveState}
+            label={liveLabel}
             detail={t('tenantDetail.context.lastLoaded', {
-              value: formatProviderDate(new Date(observedAt).toISOString()),
+              value: formatProviderDate(new Date(loadedAt).toISOString()),
             })}
             refreshLabel={t('actions.refresh')}
-            refreshing={tenant.isFetching || sessions.isFetching}
+            refreshing={
+              tenant.isFetching ||
+              catalog.isFetching ||
+              (canReadSupportLedger && sessions.isFetching)
+            }
             onRefresh={() => void invalidate()}
           />
         }
@@ -643,12 +581,22 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
                 {value.subscription && (
                   <ProviderStatusChip state={value.subscription.lifecycleState} />
                 )}
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  color={activeSupportSessions ? 'warning' : 'default'}
-                  label={t('tenantDetail.pulse.support', { count: activeSupportSessions })}
-                />
+                {canReadSupportLedger && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color={
+                      activeSupportSessions === null || activeSupportSessions
+                        ? 'warning'
+                        : 'default'
+                    }
+                    label={
+                      activeSupportSessions === null
+                        ? t('tenantDetail.pulse.supportUnavailable')
+                        : t('tenantDetail.pulse.support', { count: activeSupportSessions })
+                    }
+                  />
+                )}
               </Stack>
             </Box>
           </Stack>
@@ -710,7 +658,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
         />
         <SignalMetric
           label={t('tenantDetail.signals.administrators')}
-          value={`${activeAdministrators}/${value.administrators.length}`}
+          value={`${activeAdministrators}/${value.administratorPosture.configuredCount}`}
           detail={t('tenantDetail.signals.administratorsDetail')}
           icon={<UserCheck size={18} />}
           tone={activeAdministrators ? 'success' : 'error'}
@@ -733,7 +681,11 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
           aria-label={t('tenantDetail.tabs.label')}
         >
           {tenantTabs.map((item) => (
-            <Tab key={item} label={t(`tenantDetail.tabs.${item}`)} />
+            <Tab
+              key={item}
+              label={t(`tenantDetail.tabs.${item}`)}
+              disabled={item === 'support' && !canReadSupportLedger}
+            />
           ))}
         </Tabs>
       </Box>
@@ -881,47 +833,52 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
           </Box>
           <Box component="section">
             <ProviderSectionHeading title={t('tenantDetail.administrators.title')} />
-            <Stack
-              divider={<Divider flexItem />}
-              sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}
+            <Alert severity="info" sx={{ mt: 1.25 }}>
+              {t('tenantDetail.administrators.customerDeliveryRequired')}
+            </Alert>
+            <Box
+              component="dl"
+              sx={{
+                mt: 1.25,
+                mb: 0,
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(4, minmax(0, 1fr))' },
+                borderBlock: 1,
+                borderColor: 'divider',
+              }}
             >
-              {value.administrators.map((administrator) => (
-                <Stack
-                  key={administrator.tenantAdministratorId}
-                  direction={{ xs: 'column', sm: 'row' }}
-                  alignItems={{ xs: 'stretch', sm: 'center' }}
-                  gap={1.25}
-                  sx={{ py: 1.25 }}
-                >
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography variant="body2" fontWeight={700}>
-                      {administrator.displayName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {administrator.email}
-                    </Typography>
-                  </Box>
-                  {administrator.primaryAdministrator && (
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      label={t('tenantDetail.administrators.primary')}
-                    />
-                  )}
-                  <ProviderStatusChip state={administrator.lifecycleState} />
-                  {canWrite && administrator.authUserId && (
-                    <Button
-                      size="small"
-                      startIcon={<Send size={16} />}
-                      disabled={busy}
-                      onClick={() => void invite(administrator.tenantAdministratorId)}
-                    >
-                      {t('tenantDetail.administrators.invite')}
-                    </Button>
-                  )}
-                </Stack>
+              {[
+                [
+                  t('tenantDetail.administrators.configured'),
+                  formatNumber(value.administratorPosture.configuredCount),
+                ],
+                [
+                  t('tenantDetail.administrators.active'),
+                  formatNumber(value.administratorPosture.activeCount),
+                ],
+                [
+                  t('tenantDetail.administrators.pendingDelivery'),
+                  formatNumber(value.administratorPosture.pendingDeliveryCount),
+                ],
+                [
+                  t('tenantDetail.administrators.primary'),
+                  t(
+                    value.administratorPosture.primaryConfigured
+                      ? 'tenantDetail.administrators.configuredState'
+                      : 'tenantDetail.administrators.notConfiguredState'
+                  ),
+                ],
+              ].map(([label, metric]) => (
+                <Box key={label} sx={{ px: 1.5, py: 1.25, minWidth: 0 }}>
+                  <Typography component="dt" variant="caption" color="text.secondary">
+                    {label}
+                  </Typography>
+                  <Typography component="dd" variant="subtitle2" sx={{ m: 0, mt: 0.25 }}>
+                    {metric}
+                  </Typography>
+                </Box>
               ))}
-            </Stack>
+            </Box>
           </Box>
         </Stack>
       )}
@@ -929,49 +886,69 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
       {tab === 3 && (
         <Box component="section">
           <ProviderSectionHeading title={t('entitlements.title', { tenant: value.displayName })} />
-          <FormGroup
-            sx={{
-              mt: 1.25,
-              py: 1,
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
-              borderBlock: 1,
-              borderColor: 'divider',
-            }}
-          >
-            {(catalog.data ?? []).map((entitlement) => (
-              <FormControlLabel
-                key={entitlement.entitlementId}
-                control={
-                  <Checkbox
-                    disabled={!canWriteEntitlements}
-                    checked={selectedEntitlements.has(entitlement.entitlementKey)}
-                    onChange={() =>
-                      setSelectedEntitlements((current) => {
-                        const next = new Set(current);
-                        if (next.has(entitlement.entitlementKey))
-                          next.delete(entitlement.entitlementKey);
-                        else next.add(entitlement.entitlementKey);
-                        return next;
-                      })
-                    }
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography variant="body2" fontWeight={700}>
-                      {entitlement.name}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {entitlement.entitlementKey} / {entitlement.entitlementType}
-                    </Typography>
-                  </Box>
-                }
-                sx={{ m: 0, px: 0.5, alignItems: 'flex-start' }}
-              />
-            ))}
-          </FormGroup>
-          {canWriteEntitlements && (
+          {catalog.isLoading && (
+            <Alert severity="info" sx={{ mt: 1.25 }}>
+              {t('tenantDetail.entitlements.catalogLoading')}
+            </Alert>
+          )}
+          {catalog.isError && (
+            <Alert
+              severity="warning"
+              sx={{ mt: 1.25 }}
+              action={
+                <Button size="small" color="inherit" onClick={() => void catalog.refetch()}>
+                  {t('actions.retryLoad')}
+                </Button>
+              }
+            >
+              {t('tenantDetail.entitlements.catalogUnavailable')}
+            </Alert>
+          )}
+          {catalog.isSuccess && (
+            <FormGroup
+              sx={{
+                mt: 1.25,
+                py: 1,
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                borderBlock: 1,
+                borderColor: 'divider',
+              }}
+            >
+              {(catalog.data ?? []).map((entitlement) => (
+                <FormControlLabel
+                  key={entitlement.entitlementId}
+                  control={
+                    <Checkbox
+                      disabled={!canWriteEntitlements}
+                      checked={selectedEntitlements.has(entitlement.entitlementKey)}
+                      onChange={() =>
+                        setSelectedEntitlements((current) => {
+                          const next = new Set(current);
+                          if (next.has(entitlement.entitlementKey))
+                            next.delete(entitlement.entitlementKey);
+                          else next.add(entitlement.entitlementKey);
+                          return next;
+                        })
+                      }
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Typography variant="body2" fontWeight={700}>
+                        {entitlement.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {entitlement.entitlementKey} / {entitlement.entitlementType}
+                      </Typography>
+                    </Box>
+                  }
+                  sx={{ m: 0, px: 0.5, alignItems: 'flex-start' }}
+                />
+              ))}
+            </FormGroup>
+          )}
+          {canWriteEntitlements && catalog.isSuccess && (
             <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} sx={{ mt: 2 }}>
               <TextField
                 fullWidth
@@ -1004,44 +981,68 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
                   startIcon={<KeyRound size={17} />}
                   onClick={() => navigate(`/provider/support?tenantId=${tenantId}`)}
                 >
-                  {t('tenantDetail.support.create')}
+                  {t('tenantDetail.diagnosis.start')}
                 </Button>
               ) : undefined
             }
           />
-          <Stack
-            divider={<Divider flexItem />}
-            sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}
-          >
-            {(sessions.data ?? []).length === 0 ? (
-              <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-                {t('tenantDetail.support.empty')}
-              </Typography>
+          {!canReadSupportLedger && (
+            <Alert severity="info" sx={{ mt: 1.25 }}>
+              {t('tenantDetail.support.restricted')}
+            </Alert>
+          )}
+          {canReadSupportLedger &&
+            (sessions.isLoading ? (
+              <Alert severity="info" sx={{ mt: 1.25 }}>
+                {t('tenantDetail.support.loading')}
+              </Alert>
+            ) : sessions.isError ? (
+              <Alert
+                severity="warning"
+                sx={{ mt: 1.25 }}
+                action={
+                  <Button size="small" color="inherit" onClick={() => void sessions.refetch()}>
+                    {t('actions.retryLoad')}
+                  </Button>
+                }
+              >
+                {t('tenantDetail.support.unavailable')}
+              </Alert>
             ) : (
-              (sessions.data ?? []).map((session) => (
-                <Stack
-                  key={session.supportSessionId}
-                  direction={{ xs: 'column', sm: 'row' }}
-                  alignItems={{ xs: 'stretch', sm: 'center' }}
-                  gap={1.25}
-                  sx={{ py: 1.25 }}
-                >
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography variant="body2" fontWeight={700}>
-                      {session.operatorName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {session.scopes.map((scope) => t(`support.scopes.${scope}`)).join(', ')}
-                    </Typography>
-                  </Box>
-                  <Typography variant="caption" color="text.secondary">
-                    {formatProviderDate(session.expiresAt)}
+              <Stack
+                divider={<Divider flexItem />}
+                sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}
+              >
+                {(sessions.data ?? []).length === 0 ? (
+                  <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                    {t('tenantDetail.support.empty')}
                   </Typography>
-                  <ProviderStatusChip state={session.lifecycleState} />
-                </Stack>
-              ))
-            )}
-          </Stack>
+                ) : (
+                  (sessions.data ?? []).map((session) => (
+                    <Stack
+                      key={session.supportSessionId}
+                      direction={{ xs: 'column', sm: 'row' }}
+                      alignItems={{ xs: 'stretch', sm: 'center' }}
+                      gap={1.25}
+                      sx={{ py: 1.25 }}
+                    >
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" fontWeight={700}>
+                          {session.operatorName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {session.scopes.map((scope) => t(`support.scopes.${scope}`)).join(', ')}
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {formatProviderDate(session.expiresAt)}
+                      </Typography>
+                      <ProviderStatusChip state={session.lifecycleState} />
+                    </Stack>
+                  ))
+                )}
+              </Stack>
+            ))}
         </Box>
       )}
 
@@ -1067,9 +1068,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
           onClose={() => setChallenge(null)}
           onVerify={verifyDomain}
         />
-      )}
-      {invitation && (
-        <InvitationDialog invitation={invitation} onClose={() => setInvitation(null)} />
       )}
     </Stack>
   );

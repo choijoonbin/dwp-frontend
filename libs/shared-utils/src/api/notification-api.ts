@@ -24,6 +24,7 @@ export type NotificationEntityVersion = NotificationDecimalVersion;
 
 export type NotificationView = 'PRIORITY' | 'ALL' | 'MENTIONS' | 'SAVED' | 'SNOOZED' | 'DONE';
 export type NotificationPriority = 'URGENT' | 'HIGH' | 'NORMAL' | 'LOW';
+export type NotificationInterruptionLevel = 'PASSIVE' | 'ACTIVE' | 'TIME_SENSITIVE' | 'CRITICAL';
 export type NotificationChannel =
   'IN_APP' | 'EMAIL' | 'WEB_PUSH' | 'MOBILE_PUSH' | 'TEAMS' | 'SLACK';
 export type NotificationCapabilities = {
@@ -72,6 +73,7 @@ export type NotificationItem = {
   preview?: string | null;
   actorLabel?: string | null;
   priority: NotificationPriority;
+  interruptionLevel?: NotificationInterruptionLevel;
   reason: NotificationReason;
   receivedAt: string;
   lastActivityAt: string;

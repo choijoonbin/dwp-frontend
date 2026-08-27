@@ -25,6 +25,12 @@ export type MessagingReaction = {
   mine: boolean;
 };
 
+export type MessagingMention = {
+  userId: number;
+  displayName: string;
+  mentionKind: 'USER' | 'ALL';
+};
+
 export type MessagingAttachmentStatus =
   'QUARANTINED' | 'SCANNING' | 'CLEAN' | 'REJECTED' | 'EXPIRED';
 
@@ -71,6 +77,7 @@ export type MessagingMessage = {
   version: number;
   reactions: MessagingReaction[];
   attachments: MessagingAttachment[];
+  mentions?: MessagingMention[];
   replyCount?: number;
   rootPreview?: MessagingThreadRootPreview | null;
 };
@@ -143,6 +150,7 @@ export const MESSAGING_API_CAPABILITIES = {
   conversationPreferences: true,
   remoteTyping: true,
   attachments: true,
+  displayPreferences: true,
 } as const;
 
 export type MessagingConversationDetail = {
@@ -293,6 +301,48 @@ export type MessagingConversationSettings = {
   notificationLevel: 'DEFAULT' | 'ALL' | 'MENTIONS' | 'MUTE';
   favorite: boolean;
   pinned: boolean;
+  version: number;
+};
+
+export type MessagingDisplayLayout = 'AUTO' | 'CONVERSATIONAL' | 'COLLABORATIVE';
+export type MessagingDisplayDensity = 'COMFORTABLE' | 'COMPACT';
+export type MessagingDisplayTheme = 'DEFAULT' | 'MIST' | 'SAGE' | 'ROSE';
+export type MessagingTimestampMode = 'SMART' | 'ALWAYS';
+export type MessagingConversationDisplayLayout = 'INHERIT' | MessagingDisplayLayout;
+export type MessagingConversationDisplayDensity = 'INHERIT' | MessagingDisplayDensity;
+export type MessagingConversationDisplayTheme = 'INHERIT' | MessagingDisplayTheme;
+
+export type MessagingAppearancePolicy = {
+  allowedThemes: MessagingDisplayTheme[];
+  allowPersonalBackgrounds: boolean;
+  allowThemeSharing: boolean;
+  version: number;
+};
+
+export type MessagingDisplayPreference = {
+  layoutMode: MessagingDisplayLayout;
+  density: MessagingDisplayDensity;
+  theme: MessagingDisplayTheme;
+  showAvatars: boolean;
+  timestampMode: MessagingTimestampMode;
+  messagePreview: boolean;
+  version: number;
+  policy: MessagingAppearancePolicy;
+};
+
+export type MessagingConversationDisplayPreference = {
+  conversationId: string;
+  layoutMode: MessagingConversationDisplayLayout;
+  density: MessagingConversationDisplayDensity;
+  theme: MessagingConversationDisplayTheme;
+  effectiveLayoutMode: Exclude<MessagingDisplayLayout, 'AUTO'>;
+  effectiveDensity: MessagingDisplayDensity;
+  effectiveTheme: MessagingDisplayTheme;
+  showAvatars: boolean;
+  timestampMode: MessagingTimestampMode;
+  messagePreview: boolean;
+  policyLocked: boolean;
+  policyReason?: 'RESTRICTED_CONVERSATION' | 'STRUCTURED_CONVERSATION' | null;
   version: number;
 };
 
@@ -480,6 +530,7 @@ export async function sendMessagingMessage(input: {
   replyToMessageId?: string | null;
   idempotencyKey: string;
   attachmentIds?: string[];
+  mentionedUserIds?: number[];
 }): Promise<MessagingMessage> {
   const response = await axiosInstance.post<
     ApiResponse<MessagingMessage>,
@@ -488,12 +539,14 @@ export async function sendMessagingMessage(input: {
       replyToMessageId?: string | null;
       idempotencyKey: string;
       attachmentIds: string[];
+      mentionedUserIds: number[];
     }
   >(`/api/messaging/v1/conversations/${encodeURIComponent(input.conversationId)}/messages`, {
     body: input.body,
     replyToMessageId: input.replyToMessageId,
     idempotencyKey: input.idempotencyKey,
     attachmentIds: input.attachmentIds ?? [],
+    mentionedUserIds: input.mentionedUserIds ?? [],
   });
   return response.data.data;
 }
@@ -663,6 +716,72 @@ export async function updateMessagingConversationSettings(
     pinned: input.pinned,
     version: input.version,
   });
+  return response.data.data;
+}
+
+export async function getMessagingDisplayPreference(): Promise<MessagingDisplayPreference> {
+  const response = await axiosInstance.get<ApiResponse<MessagingDisplayPreference>>(
+    '/api/messaging/v1/display-preferences'
+  );
+  return response.data.data;
+}
+
+export async function updateMessagingDisplayPreference(
+  input: Omit<MessagingDisplayPreference, 'policy'>
+): Promise<MessagingDisplayPreference> {
+  const response = await axiosInstance.put<
+    ApiResponse<MessagingDisplayPreference>,
+    Omit<MessagingDisplayPreference, 'policy'>
+  >('/api/messaging/v1/display-preferences', {
+    layoutMode: input.layoutMode,
+    density: input.density,
+    theme: input.theme,
+    showAvatars: input.showAvatars,
+    timestampMode: input.timestampMode,
+    messagePreview: input.messagePreview,
+    version: input.version,
+  });
+  return response.data.data;
+}
+
+export async function getMessagingConversationDisplayPreference(
+  conversationId: string
+): Promise<MessagingConversationDisplayPreference> {
+  const response = await axiosInstance.get<ApiResponse<MessagingConversationDisplayPreference>>(
+    `/api/messaging/v1/conversations/${encodeURIComponent(conversationId)}/display-preference`
+  );
+  return response.data.data;
+}
+
+export async function updateMessagingConversationDisplayPreference(
+  input: Pick<
+    MessagingConversationDisplayPreference,
+    'conversationId' | 'layoutMode' | 'density' | 'theme' | 'version'
+  >
+): Promise<MessagingConversationDisplayPreference> {
+  const response = await axiosInstance.put<
+    ApiResponse<MessagingConversationDisplayPreference>,
+    Omit<typeof input, 'conversationId'>
+  >(
+    `/api/messaging/v1/conversations/${encodeURIComponent(input.conversationId)}/display-preference`,
+    {
+      layoutMode: input.layoutMode,
+      density: input.density,
+      theme: input.theme,
+      version: input.version,
+    }
+  );
+  return response.data.data;
+}
+
+export async function resetMessagingConversationDisplayPreference(
+  conversationId: string,
+  version: number
+): Promise<MessagingConversationDisplayPreference> {
+  const search = new URLSearchParams({ version: String(version) });
+  const response = await axiosInstance.delete<ApiResponse<MessagingConversationDisplayPreference>>(
+    `/api/messaging/v1/conversations/${encodeURIComponent(conversationId)}/display-preference?${search.toString()}`
+  );
   return response.data.data;
 }
 

@@ -1,7 +1,7 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
-import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -19,9 +19,8 @@ export default function AdminPage() {
   const { t } = useTranslation('admin');
   const auth = useAuth();
   const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
-  const supportContext = useProviderSupportContext(
-    hasProviderControlPlaneRole(auth.user?.roles ?? [])
-  );
+  const providerAccount = isProviderIdentity(auth.user);
+  const supportContext = useProviderSupportContext(providerAccount);
   const { section, view } = useParams();
   const page = findAdminNavigationItem(section, view);
 
@@ -87,8 +86,7 @@ export default function AdminPage() {
           label={t('page.tenantScope', {
             tenant:
               supportContext.data?.tenantName ||
-              auth.user?.tenantName ||
-              auth.user?.tenantCode ||
+              (!providerAccount && (auth.user?.tenantName || auth.user?.tenantCode)) ||
               t('shell.tenantFallback'),
           })}
           color="info"

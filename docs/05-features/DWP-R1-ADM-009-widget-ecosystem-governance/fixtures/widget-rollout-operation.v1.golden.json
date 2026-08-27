@@ -1,0 +1,798 @@
+{
+  "fixtureVersion": 1,
+  "examples": [
+    {
+      "exampleId": "approve-bootstrap",
+      "operation": "APPROVE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 7,
+        "ring": "STAGING_BOOTSTRAP",
+        "ringBps": 100,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-27T06:50:00Z"
+      },
+      "request": {
+        "kind": "BOOTSTRAP",
+        "environment": "STAGING",
+        "rolloutRevision": 7,
+        "expectedHeadVersion": 41,
+        "fromRingBps": 0,
+        "toRingBps": 100,
+        "bootstrapPrerequisite": {
+          "schemaVersion": 1,
+          "prerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+          "environment": "STAGING",
+          "source": {
+            "sourceCommitSha": "bab6c0ab9b0e01d19ecbc6cee8c111a021ae27e0",
+            "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
+            "workflowDigest": "a84cbf72a3bb64e9c38b23d3b7296931369e516d60484fb28b03b721737ec6e4",
+            "generatedAt": "2026-08-27T06:00:00Z"
+          },
+          "migrations": {
+            "platform": {
+              "latestVersion": "V200",
+              "migrationSetDigest": "a4fec39356b6afa4b7a0c2391dfcb1fd58e4c8c576eb017c54b91e8ad55148b1"
+            },
+            "provider": {
+              "latestVersion": "V49",
+              "migrationSetDigest": "06301fe3a486f4a0c10c945a9142d790d72a9425f305c737663bce27d07100e7"
+            },
+            "auth": {
+              "latestVersion": "V106",
+              "migrationSetDigest": "d823396138c3fcb984acb579d1825529bfe5a324b058cf2f95dd029104e71871"
+            }
+          },
+          "revisions": {
+            "manifestFixtureRevision": "612d9c7037040ae55da8a7ee9ae850400b54724914bf3085b33cd0e67f5c6139",
+            "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
+            "tenantPolicyFixtureRevision": "cd91459ee7ae40e1ec4082b5d66bc848b9cbe59d57bae7b3f7f3d3dcc5e8c92b",
+            "rolloutQuerySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480"
+          },
+          "verificationArtifacts": {
+            "manifestGolden": {
+              "immutableRefHash": "f0f734c47f135c8a97a467c0e6d0f581c4428686ea16e139453a33f39251f73c",
+              "contentDigest": "612d9c7037040ae55da8a7ee9ae850400b54724914bf3085b33cd0e67f5c6139"
+            },
+            "bindingCatalogGolden": {
+              "immutableRefHash": "9c34aca4882073b53a12a3b6c647a47d8f569f5de0d99fec8f53eff36cf70400",
+              "contentDigest": "7c8d38e25ef876667933c57bb6ee9450772a93350a0cc4d0edf9fdda1732cc2f"
+            },
+            "tenantPolicyGolden": {
+              "immutableRefHash": "f6b5417efbfbb8a19e8451feed6928dff9c75dd4daacbce9155e7548afade20a",
+              "contentDigest": "f38b177a82ca976ca7352b3827315b9ce9b05fc4c1d6fd758dbbdd0c6e83ea08"
+            },
+            "rolloutQuerySet": {
+              "immutableRefHash": "2fa9c7eba616ac6d6b5d343efbbeddc941009669f75702ddc714df71320e4801",
+              "contentDigest": "65a35c973706db67f692fdf30740b9fab6dd312dc55f176714dab17a9670c041"
+            },
+            "migrationTest": {
+              "immutableRefHash": "c7d77facf98ec5abfe84d39c06ff69c33d0e3ed15956089b28690be4fa8e1a6e",
+              "contentDigest": "2ef215271eaa728bebb1362ff04234e9f8012f708fd16c74212b6d57fb8f0ce4",
+              "conclusion": "SUCCESS"
+            },
+            "contractTest": {
+              "immutableRefHash": "24a937a4a0283a0f3f468093978702b30ce180bc2abcbc07e34a7f0128924873",
+              "contentDigest": "a15ef8ff8677546ed14d32e6c7b16ef146789c82bc20a9ebcff2ebb4c2775da8",
+              "conclusion": "SUCCESS"
+            },
+            "negativeContractTest": {
+              "immutableRefHash": "697b0619dff7892b789c080b8635efe3520af1d9e96f52a9aa0f65c26e1d2415",
+              "contentDigest": "0ce5376f004943f3bfb531afa06199b23ed6a4992179e169d8814a61e5a74518",
+              "conclusion": "SUCCESS"
+            },
+            "flagsOffRegressionTest": {
+              "immutableRefHash": "a16a2690e636a045eff8665d206d7c454fde5bf2a7c2e602316b70824aeafeff",
+              "contentDigest": "df8c552b4a03d2a80e5de268c81e0d07e57cffa8f3882aa43ce05c05b06447f9",
+              "conclusion": "SUCCESS"
+            },
+            "nonInjectionDependencyTest": {
+              "immutableRefHash": "4390e318d4b4ba17fbc310dc94c3ff98b7f8fd9da509bc435fd45412d2dd7391",
+              "contentDigest": "e3a335d1e7ce753247a9080db3af3c3c6a3d186f7aeef07225920d70c8e9ef90",
+              "conclusion": "SUCCESS"
+            }
+          },
+          "operationalArtifacts": {
+            "dashboard": {
+              "path": "docs/05-features/DWP-R1-ADM-009-widget-ecosystem-governance/operations/widget-shadow-dashboard.v1.json",
+              "immutableRefHash": "eeec396f94da1255c0dc5e8abd44e9ca46eb0c2a0f27ae05fee5daa38f8d3eea",
+              "contentDigest": "f43488d68923f0198a61ddcdb3aab1f6cf653e620f74ad2980c6ab1971244137"
+            },
+            "alerts": {
+              "path": "docs/05-features/DWP-R1-ADM-009-widget-ecosystem-governance/operations/widget-shadow-alerts.v1.json",
+              "immutableRefHash": "c3054481fe62eff5c745fac7c5605fcdfc015fe73371e675b339a02566afcfae",
+              "contentDigest": "6da8a33e2946e6a763210d0776f72e413623226a21c50b136095815de25199cb"
+            },
+            "runbooks": {
+              "shadowStop": {
+                "path": "docs/07-runbooks/widget-shadow-stop.md",
+                "immutableRefHash": "f9e9176de203ded3d487944288ea7d05725d81ec25ec4648bbaa162075cbaf66",
+                "contentDigest": "2cb55721fb6d36624b4ee6cb2627da302401a997d256f4686e8a515fa7691a03"
+              },
+              "catalogKill": {
+                "path": "docs/07-runbooks/widget-catalog-kill.md",
+                "immutableRefHash": "0380408901a2bb21959bdf445f64116e65d3836cc51aaceab9502a4c6c576aa6",
+                "contentDigest": "3f81d7485dcdb466deda90bf2bcbfbb02da90291c0d00c16551d9ee6b489f21c"
+              },
+              "quarantine": {
+                "path": "docs/07-runbooks/widget-quarantine.md",
+                "immutableRefHash": "949d20523fa42f8ede485393951a8fcd4eb03a6476228cdf8b1e99dc2d581080",
+                "contentDigest": "a2286157f4d86af7d757b8e16560e7a4d14465db55f3878f755fb5750fa4429d"
+              },
+              "channelRollback": {
+                "path": "docs/07-runbooks/widget-channel-rollback.md",
+                "immutableRefHash": "3a338880bee0e3e6e8265535e8f9d290c5e8975fb5c5fc017fab116761252d72",
+                "contentDigest": "b74237e6b8f194eb21bc63de0a36cc4a6cf1f1e9fc8dc8941438e9c1af4ed654"
+              },
+              "policyRollback": {
+                "path": "docs/07-runbooks/widget-policy-rollback.md",
+                "immutableRefHash": "15b6edbfe0ae7f93da8f5b23075d25356a88c77232708c6c9f890c2b33884e82",
+                "contentDigest": "dc7badf463667bdb68609bd9fe297f838ad2b3c6b36eab86c171d678c8a311a7"
+              },
+              "outboxReplay": {
+                "path": "docs/07-runbooks/widget-outbox-replay.md",
+                "immutableRefHash": "d50f00544ae5f867bff57be55d18f9904bfd70186b21a67a5f7d14b8a456d1e9",
+                "contentDigest": "ef0c114f4f25fd181f85a404d4f08432da01c49a9f1fbfb58ab7b10006b3f2d2"
+              },
+              "commandReconciliation": {
+                "path": "docs/07-runbooks/widget-command-reconciliation.md",
+                "immutableRefHash": "47d2a6ed8dbd688e10600ac7401430c88162c82279dd920823040b83ecfa6104",
+                "contentDigest": "d364f76417e2a015b3a7e82f493bcb64031927c18de9bc2d7b76393542efb22d"
+              },
+              "bindingCatalogRelease": {
+                "path": "docs/07-runbooks/widget-binding-catalog-release.md",
+                "immutableRefHash": "058acb78c2886fcd25095f550bebaecafbb353d263efc6f1ce65e192934d90e1",
+                "contentDigest": "399efab9cf647ad12a99c477714ee77fa48754da29bbe23f6f2618656e24298a"
+              },
+              "authoritativeRecovery": {
+                "path": "docs/07-runbooks/widget-authoritative-recovery.md",
+                "immutableRefHash": "7b98087e09f38b3f95b921065382f4b66d003355609412a1c2e7ada5f19ff55c",
+                "contentDigest": "981fc4d9fad23e3b7d334d97e129e8c3560a36992cf3b1ce022eb16aecb26cad"
+              }
+            }
+          }
+        },
+        "ciAttestation": {
+          "verificationRecordId": "c1111111-1111-4111-8111-111111111111",
+          "assertionSha256": "244cafbd044914b7fe2a16fa19d90e9706ba1c390ceb55b1aa351db531a2e769"
+        },
+        "selectorKeyId": "selector-2026-08-a",
+        "proposerRef": "actor:release:proposer",
+        "approverRefs": ["actor:control:approver-a", "actor:control:approver-b"],
+        "expiresAt": "2026-08-28T07:50:00Z"
+      },
+      "response": {
+        "approvalId": "11111111-1111-4111-8111-111111111111",
+        "approvalRevision": 1,
+        "state": "ACTIVE",
+        "environment": "STAGING",
+        "selectorKeyId": "selector-2026-08-a",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "activationDeadline": "2026-08-27T07:00:00Z",
+        "expiresAt": "2026-08-28T07:50:00Z",
+        "kind": "BOOTSTRAP",
+        "rolloutRevision": 7,
+        "fromRingBps": 0,
+        "toRingBps": 100,
+        "rolloutEvidenceId": null,
+        "rolloutEvidenceDigest": null,
+        "evidenceAttestationJti": null,
+        "headVersion": 41,
+        "createdAt": "2026-08-27T06:50:00Z"
+      },
+      "trustedAttestationVerification": {
+        "verificationRecordId": "c1111111-1111-4111-8111-111111111111",
+        "assertionSha256": "244cafbd044914b7fe2a16fa19d90e9706ba1c390ceb55b1aa351db531a2e769",
+        "kind": "CI_BOOTSTRAP",
+        "issuer": "dwp-ci-attestation-authority",
+        "jti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "kid": "ci-widget-bootstrap-2026-08",
+        "publicKeyFingerprint": "dc8fd8ed454e0b4ba28919436c4b417b4e5e2ff665d53feacbe0fd84b4bc0201",
+        "verifiedAt": "2026-08-27T06:49:00Z",
+        "expiresAt": "2026-08-27T06:55:00Z",
+        "result": "SUCCESS",
+        "bindings": {
+          "environment": "STAGING",
+          "rolloutRevision": 7,
+          "selectorKeyId": "selector-2026-08-a",
+          "prerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+          "prerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+          "requestDigest": "fbf6f71b70e91fe7e626cd3e2463fb7d3acd8959dcf3708db0a2676df8128d35"
+        }
+      }
+    },
+    {
+      "exampleId": "approve-promotion",
+      "operation": "APPROVE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 8,
+        "ring": "STAGING_SHADOW",
+        "ringBps": 1000,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-28T07:05:00Z"
+      },
+      "request": {
+        "kind": "PROMOTION",
+        "environment": "STAGING",
+        "rolloutRevision": 8,
+        "expectedHeadVersion": 42,
+        "fromRingBps": 100,
+        "toRingBps": 1000,
+        "rolloutEvidence": {
+          "schemaVersion": 1,
+          "evidenceId": "33333333-3333-4333-8333-333333333333",
+          "environment": "STAGING",
+          "window": {
+            "startAt": "2026-08-27T07:00:00Z",
+            "endAt": "2026-08-28T07:00:00Z",
+            "durationSeconds": 86400,
+            "missingSampleBuckets": 0
+          },
+          "source": {
+            "provider": "PROMETHEUS",
+            "querySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
+            "immutableSnapshotRefHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "collectorBuildDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "collectedAt": "2026-08-28T07:01:00Z"
+          },
+          "revisions": {
+            "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
+            "catalogRevision": "catalog-2026.08.27.1",
+            "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
+            "policyRevision": "policy-2026.08.27.1",
+            "safetyRevision": "safety-2026.08.27.1",
+            "rolloutRevision": 7,
+            "selectorKeyId": "selector-2026-08-a",
+            "ring": "staging-bootstrap",
+            "ringBps": 100
+          },
+          "samples": {
+            "total": 100000,
+            "placementContexts": {
+              "CLASSIC_PERSONAL": 33000,
+              "FLOW_PERSONAL": 33000,
+              "FLOW_GOVERNED": 34000
+            }
+          },
+          "diffCounts": {
+            "STATIC_ONLY": 0,
+            "SHADOW_ONLY": 0,
+            "STATE_MISMATCH": 0,
+            "ADDABILITY_MISMATCH": 0,
+            "VERSION_UNRESOLVED": 0,
+            "BINDING_MISMATCH": 0,
+            "SAFETY_MISMATCH": 0
+          },
+          "unsafeAllowCount": 0,
+          "queue": {
+            "rejectionCount": 100,
+            "enqueueAttemptCount": 100000,
+            "rejectionRateBps": 10,
+            "maxRolling15MinuteRejectionRateBps": 10,
+            "maxOneMinuteRejectionRateBps": 100,
+            "evaluationErrorCount": 500,
+            "evaluationCount": 100000,
+            "evaluationErrorRateBps": 50,
+            "maxRolling15MinuteEvaluationErrorRateBps": 50,
+            "maxOneMinuteEvaluationErrorRateBps": 200,
+            "durationP99Milliseconds": 150,
+            "maxRolling15MinuteDurationP99Milliseconds": 150,
+            "maxOneMinuteDurationP99Milliseconds": 250,
+            "maxDepth": 230,
+            "maximumConsecutiveSecondsAboveDepth230": 299
+          },
+          "outbox": {
+            "oldestUnpublishedAgeMillisecondsMax": 30000,
+            "deliveryErrorCount": 1000,
+            "deliveryAttemptCount": 100000,
+            "maxFiveMinuteDeliveryErrorRateBps": 100,
+            "deadLetterIncrease": 0
+          },
+          "drill": {
+            "killDecisionP99Milliseconds": 30000,
+            "quarantineDecisionP99Milliseconds": 30000,
+            "wouldDenyMaximumMilliseconds": 60000,
+            "wouldStopDataMaximumMilliseconds": 60000,
+            "legacyPayloadMismatchCount": 0,
+            "legacyDataMismatchCount": 0
+          }
+        },
+        "evidenceAuthorityAttestation": {
+          "verificationRecordId": "c2222222-2222-4222-8222-222222222222",
+          "assertionSha256": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "selectorKeyId": "selector-2026-08-a",
+        "proposerRef": "actor:release:proposer",
+        "approverRefs": ["actor:control:approver-a", "actor:control:approver-b"],
+        "expiresAt": "2026-08-29T08:05:00Z"
+      },
+      "response": {
+        "approvalId": "22222222-2222-4222-8222-222222222222",
+        "approvalRevision": 1,
+        "state": "ACTIVE",
+        "environment": "STAGING",
+        "selectorKeyId": "selector-2026-08-a",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "activationDeadline": "2026-08-28T07:15:00Z",
+        "expiresAt": "2026-08-29T08:05:00Z",
+        "kind": "PROMOTION",
+        "rolloutRevision": 8,
+        "fromRingBps": 100,
+        "toRingBps": 1000,
+        "rolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
+        "rolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097",
+        "evidenceAttestationJti": "55555555-5555-4555-8555-555555555555",
+        "headVersion": 42,
+        "createdAt": "2026-08-28T07:05:00Z"
+      },
+      "trustedCurrentHead": {
+        "environment": "STAGING",
+        "phase": "BOOTSTRAP",
+        "rolloutRevision": 7,
+        "headVersion": 42,
+        "ringBps": 100,
+        "selectorKeyId": "selector-2026-08-a",
+        "activeApprovalId": "11111111-1111-4111-8111-111111111111",
+        "activeApprovalRevision": 1,
+        "activeApprovalExpiresAt": "2026-08-28T07:50:00Z",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "activeRolloutEvidenceId": null,
+        "activeRolloutEvidenceDigest": null
+      },
+      "trustedHeadActivatedAt": "2026-08-27T07:00:00Z",
+      "committedTransitionsAfterTrustedHead": [],
+      "trustedAttestationVerification": {
+        "verificationRecordId": "c2222222-2222-4222-8222-222222222222",
+        "assertionSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "kind": "EVIDENCE_AUTHORITY",
+        "issuer": "dwp-release-approval-authority",
+        "jti": "55555555-5555-4555-8555-555555555555",
+        "kid": "evidence-widget-rollout-2026-08",
+        "publicKeyFingerprint": "5555555555555555555555555555555555555555555555555555555555555555",
+        "verifiedAt": "2026-08-28T07:02:00Z",
+        "expiresAt": "2026-08-28T07:10:00Z",
+        "result": "SUCCESS",
+        "bindings": {
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "selectorKeyId": "selector-2026-08-a",
+          "evidenceId": "33333333-3333-4333-8333-333333333333",
+          "evidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097",
+          "querySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
+          "immutableSnapshotRefHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "requestDigest": "587fd0019c7607715b9e0842f732e87254234b21601b471865b44c8a6dde9148"
+        }
+      }
+    },
+    {
+      "exampleId": "approve-promotion-shadow-to-shadow",
+      "operation": "APPROVE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 9,
+        "ring": "STAGING_SHADOW",
+        "ringBps": 10000,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-29T07:20:00Z"
+      },
+      "trustedCurrentHead": {
+        "environment": "STAGING",
+        "phase": "SHADOW",
+        "rolloutRevision": 8,
+        "headVersion": 43,
+        "ringBps": 1000,
+        "selectorKeyId": "selector-2026-08-a",
+        "activeApprovalId": "22222222-2222-4222-8222-222222222222",
+        "activeApprovalRevision": 1,
+        "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "activeRolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
+        "activeRolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097"
+      },
+      "request": {
+        "kind": "PROMOTION",
+        "environment": "STAGING",
+        "rolloutRevision": 9,
+        "expectedHeadVersion": 43,
+        "fromRingBps": 1000,
+        "toRingBps": 10000,
+        "rolloutEvidence": {
+          "schemaVersion": 1,
+          "evidenceId": "66666666-6666-4666-8666-666666666666",
+          "environment": "STAGING",
+          "window": {
+            "startAt": "2026-08-28T07:15:00Z",
+            "endAt": "2026-08-29T07:15:00Z",
+            "durationSeconds": 86400,
+            "missingSampleBuckets": 0
+          },
+          "source": {
+            "provider": "PROMETHEUS",
+            "querySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
+            "immutableSnapshotRefHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "collectorBuildDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "collectedAt": "2026-08-29T07:16:00Z"
+          },
+          "revisions": {
+            "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
+            "catalogRevision": "catalog-2026.08.27.1",
+            "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
+            "policyRevision": "policy-2026.08.27.1",
+            "safetyRevision": "safety-2026.08.27.1",
+            "rolloutRevision": 8,
+            "selectorKeyId": "selector-2026-08-a",
+            "ring": "staging-shadow",
+            "ringBps": 1000
+          },
+          "samples": {
+            "total": 100000,
+            "placementContexts": {
+              "CLASSIC_PERSONAL": 33000,
+              "FLOW_PERSONAL": 33000,
+              "FLOW_GOVERNED": 34000
+            }
+          },
+          "diffCounts": {
+            "STATIC_ONLY": 0,
+            "SHADOW_ONLY": 0,
+            "STATE_MISMATCH": 0,
+            "ADDABILITY_MISMATCH": 0,
+            "VERSION_UNRESOLVED": 0,
+            "BINDING_MISMATCH": 0,
+            "SAFETY_MISMATCH": 0
+          },
+          "unsafeAllowCount": 0,
+          "queue": {
+            "rejectionCount": 100,
+            "enqueueAttemptCount": 100000,
+            "rejectionRateBps": 10,
+            "maxRolling15MinuteRejectionRateBps": 10,
+            "maxOneMinuteRejectionRateBps": 100,
+            "evaluationErrorCount": 500,
+            "evaluationCount": 100000,
+            "evaluationErrorRateBps": 50,
+            "maxRolling15MinuteEvaluationErrorRateBps": 50,
+            "maxOneMinuteEvaluationErrorRateBps": 200,
+            "durationP99Milliseconds": 150,
+            "maxRolling15MinuteDurationP99Milliseconds": 150,
+            "maxOneMinuteDurationP99Milliseconds": 250,
+            "maxDepth": 230,
+            "maximumConsecutiveSecondsAboveDepth230": 299
+          },
+          "outbox": {
+            "oldestUnpublishedAgeMillisecondsMax": 30000,
+            "deliveryErrorCount": 1000,
+            "deliveryAttemptCount": 100000,
+            "maxFiveMinuteDeliveryErrorRateBps": 100,
+            "deadLetterIncrease": 0
+          },
+          "drill": {
+            "killDecisionP99Milliseconds": 30000,
+            "quarantineDecisionP99Milliseconds": 30000,
+            "wouldDenyMaximumMilliseconds": 60000,
+            "wouldStopDataMaximumMilliseconds": 60000,
+            "legacyPayloadMismatchCount": 0,
+            "legacyDataMismatchCount": 0
+          }
+        },
+        "evidenceAuthorityAttestation": {
+          "verificationRecordId": "c3333333-3333-4333-8333-333333333333",
+          "assertionSha256": "4444444444444444444444444444444444444444444444444444444444444444"
+        },
+        "selectorKeyId": "selector-2026-08-a",
+        "proposerRef": "actor:release:proposer",
+        "approverRefs": ["actor:control:approver-a", "actor:control:approver-b"],
+        "expiresAt": "2026-08-30T08:20:00Z"
+      },
+      "response": {
+        "approvalId": "77777777-7777-4777-8777-777777777777",
+        "approvalRevision": 1,
+        "state": "ACTIVE",
+        "environment": "STAGING",
+        "kind": "PROMOTION",
+        "rolloutRevision": 9,
+        "fromRingBps": 1000,
+        "toRingBps": 10000,
+        "selectorKeyId": "selector-2026-08-a",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "rolloutEvidenceId": "66666666-6666-4666-8666-666666666666",
+        "rolloutEvidenceDigest": "0ab6c8739bce3a3922733f6ef8e0cb6e3308927cf6d2c86fbdc0058258aaab62",
+        "evidenceAttestationJti": "88888888-8888-4888-8888-888888888888",
+        "createdAt": "2026-08-29T07:20:00Z",
+        "activationDeadline": "2026-08-29T07:30:00Z",
+        "expiresAt": "2026-08-30T08:20:00Z",
+        "headVersion": 43
+      },
+      "trustedHeadActivatedAt": "2026-08-28T07:15:00Z",
+      "committedTransitionsAfterTrustedHead": [],
+      "trustedAttestationVerification": {
+        "verificationRecordId": "c3333333-3333-4333-8333-333333333333",
+        "assertionSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "kind": "EVIDENCE_AUTHORITY",
+        "issuer": "dwp-release-approval-authority",
+        "jti": "88888888-8888-4888-8888-888888888888",
+        "kid": "evidence-widget-rollout-2026-08",
+        "publicKeyFingerprint": "5555555555555555555555555555555555555555555555555555555555555555",
+        "verifiedAt": "2026-08-29T07:17:00Z",
+        "expiresAt": "2026-08-29T07:25:00Z",
+        "result": "SUCCESS",
+        "bindings": {
+          "environment": "STAGING",
+          "rolloutRevision": 9,
+          "selectorKeyId": "selector-2026-08-a",
+          "evidenceId": "66666666-6666-4666-8666-666666666666",
+          "evidenceDigest": "0ab6c8739bce3a3922733f6ef8e0cb6e3308927cf6d2c86fbdc0058258aaab62",
+          "querySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
+          "immutableSnapshotRefHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "requestDigest": "795562853c10b2f8ea15a3ee0bc11cc463594e9f4450190faac9c7b5b4adf23a"
+        }
+      }
+    },
+    {
+      "exampleId": "activate-bootstrap",
+      "operation": "ACTIVATE",
+      "lockedApprovalState": "ACTIVE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 7,
+        "ring": "STAGING_BOOTSTRAP",
+        "ringBps": 100,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-27T07:00:00Z"
+      },
+      "request": {
+        "approvalId": "11111111-1111-4111-8111-111111111111",
+        "approvalRevision": 1,
+        "expectedHeadVersion": 41
+      },
+      "response": {
+        "environment": "STAGING",
+        "phase": "BOOTSTRAP",
+        "rolloutRevision": 7,
+        "headVersion": 42,
+        "ringBps": 100,
+        "selectorKeyId": "selector-2026-08-a",
+        "activeApprovalId": "11111111-1111-4111-8111-111111111111",
+        "activeApprovalRevision": 1,
+        "activeApprovalExpiresAt": "2026-08-28T07:50:00Z",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "activeRolloutEvidenceId": null,
+        "activeRolloutEvidenceDigest": null
+      }
+    },
+    {
+      "exampleId": "activate-shadow",
+      "operation": "ACTIVATE",
+      "lockedApprovalState": "ACTIVE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 8,
+        "ring": "STAGING_SHADOW",
+        "ringBps": 1000,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-28T07:15:00Z"
+      },
+      "request": {
+        "approvalId": "22222222-2222-4222-8222-222222222222",
+        "approvalRevision": 1,
+        "expectedHeadVersion": 42
+      },
+      "response": {
+        "environment": "STAGING",
+        "phase": "SHADOW",
+        "rolloutRevision": 8,
+        "headVersion": 43,
+        "ringBps": 1000,
+        "selectorKeyId": "selector-2026-08-a",
+        "activeApprovalId": "22222222-2222-4222-8222-222222222222",
+        "activeApprovalRevision": 1,
+        "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
+        "bootstrapPrerequisiteId": "7e6e3ac1-d36b-4b6f-8c0e-5092439615f1",
+        "bootstrapPrerequisiteDigest": "1bf687bd39eb1296370e4d00e413db534b5b7658388df74fd681857ccd99db6b",
+        "ciAttestationJti": "36be2f15-6d45-4c31-a9c1-28aac5793b73",
+        "activeRolloutEvidenceId": "33333333-3333-4333-8333-333333333333",
+        "activeRolloutEvidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097"
+      }
+    },
+    {
+      "exampleId": "stop-safety",
+      "operation": "STOP",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 9,
+        "ring": "STATIC",
+        "ringBps": 0,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-29T08:00:00Z"
+      },
+      "request": {
+        "expectedHeadVersion": 43,
+        "reasonCode": "SAFETY_GATE_BREACH",
+        "incidentRef": "incident:INC-2026-0088"
+      },
+      "response": {
+        "operation": "STOPPED",
+        "cause": "SAFETY_STOP",
+        "terminalApprovalState": "REVOKED",
+        "transitionIntent": "REVOKE_ACTIVE_APPROVAL_AND_RESET_HEAD",
+        "transitionIdempotencyTarget": "ROLLOUT_HEAD:STAGING",
+        "evaluatedAt": "2026-08-29T08:00:00Z",
+        "state": {
+          "environment": "STAGING",
+          "phase": "STATIC",
+          "rolloutRevision": 9,
+          "headVersion": 44,
+          "ringBps": 0,
+          "selectorKeyId": null,
+          "activeApprovalId": null,
+          "activeApprovalRevision": null,
+          "activeApprovalExpiresAt": null,
+          "bootstrapPrerequisiteId": null,
+          "bootstrapPrerequisiteDigest": null,
+          "ciAttestationJti": null,
+          "activeRolloutEvidenceId": null,
+          "activeRolloutEvidenceDigest": null
+        },
+        "idempotencyPolicy": "RETURN_STORED_RESULT"
+      }
+    },
+    {
+      "exampleId": "expire-approval",
+      "operation": "EXPIRE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 9,
+        "ring": "STATIC",
+        "ringBps": 0,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-29T08:06:00Z"
+      },
+      "request": {
+        "environment": "STAGING",
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-29T08:06:00Z",
+        "activeApprovalId": "22222222-2222-4222-8222-222222222222",
+        "activeApprovalRevision": 1,
+        "activeApprovalExpiresAt": "2026-08-29T08:05:00Z",
+        "expectedHeadVersion": 43,
+        "failureMode": "STOP_FAIL_CLOSED",
+        "transitionIdempotencyTarget": "ROLLOUT_HEAD:STAGING",
+        "transitionIntent": "EXPIRE_ACTIVE_APPROVAL_AND_RESET_HEAD",
+        "idempotencyPolicy": "RETURN_STORED_RESULT"
+      },
+      "response": {
+        "operation": "STOPPED",
+        "cause": "APPROVAL_EXPIRED",
+        "terminalApprovalState": "EXPIRED",
+        "transitionIntent": "EXPIRE_ACTIVE_APPROVAL_AND_RESET_HEAD",
+        "transitionIdempotencyTarget": "ROLLOUT_HEAD:STAGING",
+        "evaluatedAt": "2026-08-29T08:06:00Z",
+        "state": {
+          "environment": "STAGING",
+          "phase": "STATIC",
+          "rolloutRevision": 9,
+          "headVersion": 44,
+          "ringBps": 0,
+          "selectorKeyId": null,
+          "activeApprovalId": null,
+          "activeApprovalRevision": null,
+          "activeApprovalExpiresAt": null,
+          "bootstrapPrerequisiteId": null,
+          "bootstrapPrerequisiteDigest": null,
+          "ciAttestationJti": null,
+          "activeRolloutEvidenceId": null,
+          "activeRolloutEvidenceDigest": null
+        },
+        "idempotencyPolicy": "RETURN_STORED_RESULT"
+      }
+    },
+    {
+      "exampleId": "read-promotion-evidence",
+      "operation": "READ_EVIDENCE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 7,
+        "ring": "STAGING_BOOTSTRAP",
+        "ringBps": 100,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-28T07:02:00Z"
+      },
+      "request": {
+        "evidenceId": "33333333-3333-4333-8333-333333333333"
+      },
+      "response": {
+        "evidenceId": "33333333-3333-4333-8333-333333333333",
+        "evidenceDigest": "6bc9f4756e960c4806d0e303cf51b8438b032f4f8082b9e108623f41f7c5b097",
+        "rolloutRevision": 7,
+        "ring": "STAGING_BOOTSTRAP",
+        "querySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
+        "immutableSnapshotRefHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "windowStart": "2026-08-27T07:00:00Z",
+        "windowEnd": "2026-08-28T07:00:00Z",
+        "verifiedAt": "2026-08-28T07:02:00Z",
+        "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
+        "catalogRevision": "catalog-2026.08.27.1",
+        "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
+        "policyRevision": "policy-2026.08.27.1",
+        "safetyRevision": "safety-2026.08.27.1",
+        "selectorKeyId": "selector-2026-08-a",
+        "ringBps": 100,
+        "evidenceAttestationJti": "55555555-5555-4555-8555-555555555555"
+      }
+    },
+    {
+      "exampleId": "read-shadow-promotion-evidence",
+      "operation": "READ_EVIDENCE",
+      "provenance": {
+        "environment": "STAGING",
+        "rolloutRevision": 8,
+        "ring": "STAGING_SHADOW",
+        "ringBps": 1000,
+        "clockSource": "DATABASE",
+        "evaluatedAt": "2026-08-29T07:17:00Z"
+      },
+      "request": {
+        "evidenceId": "66666666-6666-4666-8666-666666666666"
+      },
+      "response": {
+        "evidenceId": "66666666-6666-4666-8666-666666666666",
+        "evidenceDigest": "0ab6c8739bce3a3922733f6ef8e0cb6e3308927cf6d2c86fbdc0058258aaab62",
+        "rolloutRevision": 8,
+        "ring": "STAGING_SHADOW",
+        "querySetRevision": "dbea80caee9b8da19e53fa0101c8bd7e9728fb62c207e809f15c76cbdd451480",
+        "immutableSnapshotRefHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "windowStart": "2026-08-28T07:15:00Z",
+        "windowEnd": "2026-08-29T07:15:00Z",
+        "verifiedAt": "2026-08-29T07:17:00Z",
+        "deploymentBuildDigest": "18693e60dff3e885a2337d0ed8c659ca91d9927653bea0b7f29f4f219757c1b4",
+        "catalogRevision": "catalog-2026.08.27.1",
+        "bindingCatalogRevision": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
+        "policyRevision": "policy-2026.08.27.1",
+        "safetyRevision": "safety-2026.08.27.1",
+        "selectorKeyId": "selector-2026-08-a",
+        "ringBps": 1000,
+        "evidenceAttestationJti": "88888888-8888-4888-8888-888888888888"
+      }
+    }
+  ],
+  "promotionGate": {
+    "windowDurationSeconds": 86400,
+    "totalSamplesMinimum": 100000,
+    "placementSamplesMinimum": 1000,
+    "diffCountMaximum": 0,
+    "unsafeAllowCountMaximum": 0,
+    "maxRolling15MinuteRejectionRateBps": 10,
+    "maxRolling15MinuteEvaluationErrorRateBps": 50,
+    "maxRolling15MinuteDurationP99Milliseconds": 150,
+    "maxOneMinuteRejectionRateBps": 100,
+    "maxOneMinuteEvaluationErrorRateBps": 200,
+    "maxOneMinuteDurationP99Milliseconds": 250,
+    "depth230ConsecutiveSecondsMaximumExclusive": 300,
+    "oldestUnpublishedAgeMillisecondsMaximum": 30000,
+    "maxFiveMinuteDeliveryErrorRateBps": 100,
+    "deadLetterIncreaseMaximum": 0,
+    "controlDecisionP99MillisecondsMaximum": 30000,
+    "wouldDecisionMaximumMilliseconds": 60000,
+    "legacyMismatchCountMaximum": 0,
+    "rateRounding": "CEIL",
+    "countRounding": "FLOOR",
+    "sampleTotalFormula": "CLASSIC_PERSONAL+FLOW_PERSONAL+FLOW_GOVERNED",
+    "evidenceFreshnessMaximumSeconds": 600,
+    "approvalActivationBudgetSeconds": 600,
+    "approvalExpiryMinimumExclusiveSeconds": 86400,
+    "approvalExpiryMaximumInclusiveSeconds": 93600
+  }
+}

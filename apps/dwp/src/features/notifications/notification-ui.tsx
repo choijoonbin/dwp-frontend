@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bell,
@@ -21,7 +21,6 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
@@ -42,14 +41,33 @@ const SOURCE_ICON: Record<string, LucideIcon> = {
   security: ShieldAlert,
 };
 
-function relativeTimestamp(value: string): string {
+function relativeTimestamp(value: string, now: number): string {
   const timestamp = new Date(value).getTime();
-  const difference = timestamp - Date.now();
+  const difference = timestamp - now;
   const minutes = Math.round(difference / 60_000);
   if (Math.abs(minutes) < 60) return formatRelativeTime(minutes, 'minute');
   const hours = Math.round(minutes / 60);
   if (Math.abs(hours) < 24) return formatRelativeTime(hours, 'hour');
   return formatRelativeTime(Math.round(hours / 24), 'day');
+}
+
+export function useNotificationClock(): number {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    let interval: number | undefined;
+    const delay = 60_000 - (Date.now() % 60_000);
+    const timeout = window.setTimeout(() => {
+      setNow(Date.now());
+      interval = window.setInterval(() => setNow(Date.now()), 60_000);
+    }, delay);
+    return () => {
+      window.clearTimeout(timeout);
+      if (interval !== undefined) window.clearInterval(interval);
+    };
+  }, []);
+
+  return now;
 }
 
 function priorityColor(priority: NotificationPriority): 'error' | 'warning' | 'info' | 'default' {
@@ -178,6 +196,7 @@ export function NotificationItemRow({
   concealContext = false,
   tabIndex,
   rowRef,
+  now = Date.now(),
 }: {
   item: NotificationItem;
   selected?: boolean;
@@ -187,10 +206,15 @@ export function NotificationItemRow({
   concealContext?: boolean;
   tabIndex?: number;
   rowRef?: (element: HTMLButtonElement | null) => void;
+  now?: number;
 }) {
   const { t } = useTranslation('notifications');
   const Icon = SOURCE_ICON[item.source.appKey] ?? Bell;
-  const timestamp = useMemo(() => relativeTimestamp(item.lastActivityAt), [item.lastActivityAt]);
+  const timestamp = relativeTimestamp(item.lastActivityAt, now);
+  const absoluteTimestamp = formatDate(item.lastActivityAt, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
   const unread = !item.readAt;
 
   return (
@@ -201,13 +225,18 @@ export function NotificationItemRow({
         alignItems: 'stretch',
         borderBottom: 1,
         borderColor: 'divider',
+        borderLeft: 3,
+        borderLeftColor: selected ? 'primary.main' : 'transparent',
         bgcolor: selected ? 'action.selected' : 'background.paper',
         '&:last-of-type': { borderBottom: 0 },
+        '@media (forced-colors: active)': selected
+          ? { outline: '2px solid Highlight', outlineOffset: -2 }
+          : undefined,
       }}
     >
       <ButtonBase
         ref={rowRef}
-        aria-pressed={selected}
+        aria-current={selected ? 'true' : undefined}
         aria-label={`${t(`filters.read.${unread ? 'UNREAD' : 'READ'}`)}. ${item.title}`}
         tabIndex={tabIndex}
         data-notification-focus-id={item.notificationId}
@@ -265,17 +294,17 @@ export function NotificationItemRow({
             <Typography variant="body2" fontWeight={unread ? 760 : 620} noWrap sx={{ minWidth: 0 }}>
               {item.title}
             </Typography>
-            <Tooltip
-              title={formatDate(item.lastActivityAt, { dateStyle: 'medium', timeStyle: 'short' })}
+            <Typography
+              component="time"
+              dateTime={item.lastActivityAt}
+              title={absoluteTimestamp}
+              aria-label={absoluteTimestamp}
+              variant="caption"
+              color="text.secondary"
+              sx={{ flex: '0 0 auto', whiteSpace: 'nowrap' }}
             >
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ flex: '0 0 auto', whiteSpace: 'nowrap' }}
-              >
-                {timestamp}
-              </Typography>
-            </Tooltip>
+              {timestamp}
+            </Typography>
           </Stack>
           {item.preview && (
             <Typography

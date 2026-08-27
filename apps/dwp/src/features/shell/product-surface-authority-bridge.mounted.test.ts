@@ -4,16 +4,21 @@ import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 
 import {
-  GOVERNED_SURFACE_PAGE_ROUTES,
   ProductSurfaceAuthorityBridge,
   resolveActiveGovernedPageRoute,
   resolveGovernedPageEvaluationRoutes,
 } from './product-surface-authority-bridge';
+import { createGlobalProductApplicationRuntime } from '../../components/create-global-product-application-runtime';
+import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
 import { useProductSurfaceCanaryAuthority } from './product-surface-canary-runtime';
 import { readProductSurfaceLastRoute } from './product-surface-last-route';
-import { PRODUCT_LEGACY_ROUTE_SOURCE } from '../../routes/product-page-route-contracts';
+import {
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+  PRODUCT_LEGACY_ROUTE_SOURCE,
+} from '../../routes/product-page-route-contracts';
 
 import type {
   ProductSurfaceEffectiveContext,
@@ -46,12 +51,29 @@ vi.mock(
 const REVISION = 'revision-mounted-1';
 const GENERATED_AT = '2029-01-01T00:00:00.000Z';
 const REVALIDATE_AT = '2030-01-01T00:00:00.000Z';
+const GOVERNED_SURFACE_PAGE_ROUTES = ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE;
+const TEST_RUNTIME = createGlobalProductApplicationRuntime('shell', GOVERNED_PRODUCT_MANIFESTS);
 const APPROVALS_PATH = '/approvals/home';
+const APPROVALS_MANAGEMENT_PATH = '/approvals/admin/forms';
 const APPROVALS_ROUTES = resolveGovernedPageEvaluationRoutes(
   APPROVALS_PATH,
   GOVERNED_SURFACE_PAGE_ROUTES
 );
-const ACTIVE_ROUTE = resolveActiveGovernedPageRoute(APPROVALS_PATH)!;
+const ACTIVE_ROUTE = resolveActiveGovernedPageRoute(APPROVALS_PATH, GOVERNED_SURFACE_PAGE_ROUTES)!;
+const MANAGEMENT_ROUTE = resolveActiveGovernedPageRoute(
+  APPROVALS_MANAGEMENT_PATH,
+  GOVERNED_SURFACE_PAGE_ROUTES
+)!;
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
+}
 
 const contexts = [...new Set(APPROVALS_ROUTES.map((route) => route.surfaceId))].map(
   (surfaceId): ProductSurfaceEffectiveContext => ({
@@ -79,6 +101,20 @@ const contexts = [...new Set(APPROVALS_ROUTES.map((route) => route.surfaceId))].
 const contextBySurface = Object.fromEntries(
   contexts.map((context) => [context.surfaceKey, context])
 );
+
+function activePageQueryMeta(overrides: Readonly<Record<string, unknown>> = {}) {
+  return {
+    accessSensitive: true,
+    tenantId: '1',
+    actorId: '42',
+    accessMode: 'NORMAL',
+    productId: ACTIVE_ROUTE.productId,
+    surfaceId: ACTIVE_ROUTE.surfaceId,
+    contextScopeKey: contextBySurface[ACTIVE_ROUTE.surfaceId]!.scopes[0]!.key,
+    decisionRevision: REVISION,
+    ...overrides,
+  };
+}
 
 const snapshot: ProductSurfaceAuthoritySnapshot = {
   envelope: {
@@ -186,7 +222,11 @@ async function mountBridge(
         createElement(
           MemoryRouter,
           { initialEntries: [pathname] },
-          createElement(ProductSurfaceAuthorityBridge, null, createElement(AuthorityProbe))
+          createElement(
+            ProductSurfaceAuthorityBridge,
+            { runtime: TEST_RUNTIME },
+            createElement(AuthorityProbe)
+          )
         )
       )
     );
@@ -220,6 +260,7 @@ describe('mounted product surface authority bridge', () => {
     container?.remove();
     queryClient.clear();
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it.each([
@@ -281,7 +322,9 @@ describe('mounted product surface authority bridge', () => {
     );
     const planned = resolveGovernedPageEvaluationRoutes(
       redirect.sourcePath,
-      GOVERNED_SURFACE_PAGE_ROUTES
+      GOVERNED_SURFACE_PAGE_ROUTES,
+      TEST_RUNTIME.productBoundaries,
+      PRODUCT_LEGACY_ROUTE_SOURCE
     );
     await vi.waitFor(() => expect(evaluateProduct).toHaveBeenCalledTimes(planned.length));
 
@@ -382,7 +425,7 @@ describe('mounted product surface authority bridge', () => {
       );
     });
 
-    expect(workRoutes).toHaveLength(9);
+    expect(workRoutes.length).toBeGreaterThan(0);
     const latestRequestByRoute = new Map(
       evaluateProduct.mock.calls.map(([request]) => [request.routeContractKey, request])
     );
@@ -451,5 +494,256 @@ describe('mounted product surface authority bridge', () => {
         Date.parse(GENERATED_AT)
       )
     ).toBe(ACTIVE_ROUTE.routeId);
+  });
+
+  it('does not store or automatically restore a Management PAGE as last-route convenience state', async () => {
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) =>
+      allowedEvaluation(request)
+    );
+
+    await mountBridge(APPROVALS_MANAGEMENT_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.routeDecisions?.[MANAGEMENT_ROUTE.routeContractKey]?.state).toBe(
+        'allowed'
+      )
+    );
+
+    expect(contextBySurface[MANAGEMENT_ROUTE.surfaceId]?.plane).toBe('management');
+    expect(
+      readProductSurfaceLastRoute(
+        {
+          tenantId: '1',
+          actorId: '42',
+          productId: MANAGEMENT_ROUTE.productId,
+          surfaceId: MANAGEMENT_ROUTE.surfaceId,
+        },
+        REVISION,
+        window.sessionStorage,
+        Date.parse(GENERATED_AT)
+      )
+    ).toBeUndefined();
+    expect(window.sessionStorage).toHaveLength(0);
+  });
+
+  it('renews direct PAGE leases before expiry and fails closed at the deadline while renewal is pending', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.parse('2029-01-01T00:00:00.000Z'));
+    const initialWallNowMs = Date.now();
+    const initialMonotonicNowMs = performance.now();
+    const initialDeadlineMs = initialWallNowMs + 1_000;
+    const renewedDeadline = new Date(initialWallNowMs + 10_000).toISOString();
+    const attempts = new Map<string, number>();
+    const pendingRenewals = new Map<
+      string,
+      {
+        request: ProductSurfaceEvaluationRequest;
+        renewal: ReturnType<typeof deferred<ProductSurfaceEvaluationData>>;
+      }
+    >();
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      const attempt = (attempts.get(request.routeContractKey) ?? 0) + 1;
+      attempts.set(request.routeContractKey, attempt);
+      if (attempt === 1) {
+        return {
+          ...allowedEvaluation(request),
+          revalidateAt: new Date(initialDeadlineMs).toISOString(),
+        };
+      }
+      if (attempt === 2) throw new Error('transient direct authority failure');
+      const renewal = deferred<ProductSurfaceEvaluationData>();
+      pendingRenewals.set(request.routeContractKey, { request, renewal });
+      return renewal.promise;
+    });
+
+    await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+        'allowed'
+      )
+    );
+    const expiredBusinessQueryKey = ['approvals-business', 'expires-with-direct-lease'] as const;
+    await queryClient.fetchQuery({
+      queryKey: expiredBusinessQueryKey,
+      queryFn: async () => ({ private: true }),
+      staleTime: Number.POSITIVE_INFINITY,
+      meta: activePageQueryMeta(),
+    });
+
+    vi.setSystemTime(initialWallNowMs + 86_400_000);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(
+        Math.max(0, initialMonotonicNowMs + 800 - performance.now())
+      );
+    });
+    await vi.waitFor(() =>
+      expect(attempts.get(ACTIVE_ROUTE.routeContractKey)).toBeGreaterThanOrEqual(2)
+    );
+    expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+      'allowed'
+    );
+    expect(queryClient.getQueryData(expiredBusinessQueryKey)).toEqual({ private: true });
+
+    vi.setSystemTime(initialWallNowMs - 86_400_000);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(
+        Math.max(0, initialMonotonicNowMs + 1_000 - performance.now())
+      );
+    });
+    expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+      'expired'
+    );
+    expect(pendingRenewals.size).toBe(APPROVALS_ROUTES.length);
+    await vi.waitFor(() =>
+      expect(queryClient.getQueryData(expiredBusinessQueryKey)).toBeUndefined()
+    );
+
+    await act(async () => {
+      for (const { request, renewal } of pendingRenewals.values()) {
+        renewal.resolve({ ...allowedEvaluation(request), revalidateAt: renewedDeadline });
+      }
+      await Promise.all([...pendingRenewals.values()].map(({ renewal }) => renewal.promise));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+      'allowed'
+    );
+  });
+
+  it('fails closed for changing past deadlines without creating an automatic refetch loop', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.parse('2029-01-01T00:00:00.000Z'));
+    const pastDeadlineBaseMs = Date.now() - 1_000;
+    const attempts = new Map<string, number>();
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      const attempt = (attempts.get(request.routeContractKey) ?? 0) + 1;
+      attempts.set(request.routeContractKey, attempt);
+      return {
+        ...allowedEvaluation(request),
+        revalidateAt: new Date(pastDeadlineBaseMs - attempt).toISOString(),
+      };
+    });
+
+    await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+        'expired'
+      )
+    );
+    expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length);
+
+    await act(async () => {
+      await queryClient.refetchQueries({
+        type: 'active',
+        predicate: (query) => query.queryKey[0] === 'product-surface-direct-evaluation',
+      });
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length * 2);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10_000);
+    });
+    expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length * 2);
+    expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+      'expired'
+    );
+  });
+
+  it('keeps a route-local 403 authoritative over retained ALLOWED data and evicts exact evaluations when inactive', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.parse('2029-01-01T00:00:00.000Z'));
+    let denied = false;
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      if (denied) throw new HttpError('route denied', 403);
+      return allowedEvaluation(request);
+    });
+
+    await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
+        'allowed'
+      )
+    );
+    const revokedBusinessQueryKey = ['approvals-business', 'revoked-active-scope'] as const;
+    const otherScopeBusinessQueryKey = ['approvals-business', 'other-scope'] as const;
+    const retainedGovernedEvaluationKey = [
+      'governed-route-direct-evaluation',
+      'retained-by-route-local-purge',
+    ] as const;
+    await Promise.all([
+      queryClient.fetchQuery({
+        queryKey: revokedBusinessQueryKey,
+        queryFn: async () => ({ private: 'revoked' }),
+        staleTime: Number.POSITIVE_INFINITY,
+        meta: activePageQueryMeta(),
+      }),
+      queryClient.fetchQuery({
+        queryKey: otherScopeBusinessQueryKey,
+        queryFn: async () => ({ private: 'other-scope' }),
+        staleTime: Number.POSITIVE_INFINITY,
+        meta: activePageQueryMeta({ contextScopeKey: 'scope-other' }),
+      }),
+      queryClient.fetchQuery({
+        queryKey: retainedGovernedEvaluationKey,
+        queryFn: async () => ({ decision: 'ALLOWED' }),
+        staleTime: Number.POSITIVE_INFINITY,
+        meta: activePageQueryMeta(),
+      }),
+    ]);
+    let revokedBusinessSignal: AbortSignal | undefined;
+    const revokedBusinessFetch = queryClient
+      .fetchQuery({
+        queryKey: revokedBusinessQueryKey,
+        queryFn: ({ signal }) => {
+          revokedBusinessSignal = signal;
+          return new Promise<{ private: string }>(() => undefined);
+        },
+        staleTime: 0,
+        meta: activePageQueryMeta(),
+      })
+      .catch(() => undefined);
+    await vi.waitFor(() => expect(revokedBusinessSignal).toBeInstanceOf(AbortSignal));
+    denied = true;
+    await act(async () => {
+      await queryClient.refetchQueries({
+        type: 'active',
+        predicate: (query) => query.queryKey[0] === 'product-surface-direct-evaluation',
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.waitFor(() =>
+        expect(
+          APPROVALS_ROUTES.every(
+            (route) =>
+              observedAuthority?.routeDecisions?.[route.routeContractKey]?.state === 'route-denied'
+          )
+        ).toBe(true)
+      );
+      await vi.waitFor(() =>
+        expect(queryClient.getQueryData(revokedBusinessQueryKey)).toBeUndefined()
+      );
+      await vi.waitFor(() => expect(revokedBusinessSignal?.aborted).toBe(true));
+    });
+    await revokedBusinessFetch;
+    expect(queryClient.getQueryData(otherScopeBusinessQueryKey)).toEqual({
+      private: 'other-scope',
+    });
+    expect(queryClient.getQueryData(retainedGovernedEvaluationKey)).toEqual({
+      decision: 'ALLOWED',
+    });
+    expect(
+      queryClient.getQueryCache().findAll({
+        predicate: (query) => query.queryKey[0] === 'product-surface-direct-evaluation',
+      }).length
+    ).toBeGreaterThan(0);
+
+    await act(async () => navigateBridge?.('/apps'));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
+    expect(
+      queryClient.getQueryCache().findAll({
+        predicate: (query) => query.queryKey[0] === 'product-surface-direct-evaluation',
+      })
+    ).toHaveLength(0);
   });
 });

@@ -78,7 +78,9 @@ function renderGuard(item: GovernedProductAreaNavigationItem) {
 
 describe('legacy product area page access guard', () => {
   beforeEach(() => {
-    accessMocks.useAuth.mockReturnValue({ user: { roles: [] } });
+    accessMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'TENANT', roles: [], resourceRoles: [] },
+    });
     accessMocks.useProviderSupportContext.mockReturnValue({ isLoading: false, data: undefined });
     accessMocks.usePermissions.mockReturnValue({
       isLoaded: true,
@@ -122,7 +124,9 @@ describe('legacy product area page access guard', () => {
     });
     expect(renderGuard({})).toBe('');
 
-    accessMocks.useAuth.mockReturnValue({ user: { roles: ['PROVIDER_SUPPORT'] } });
+    accessMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'PROVIDER', roles: ['PROVIDER_SUPPORT'], resourceRoles: [] },
+    });
     accessMocks.usePermissions.mockReturnValue({
       isLoaded: true,
       hasPermission: vi.fn(() => true),
@@ -132,7 +136,9 @@ describe('legacy product area page access guard', () => {
   });
 
   it('fails closed without a support session and with a resolved empty scope list', () => {
-    accessMocks.useAuth.mockReturnValue({ user: { roles: ['PROVIDER_SUPPORT'] } });
+    accessMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'PROVIDER', roles: ['PROVIDER_SUPPORT'], resourceRoles: [] },
+    });
     accessMocks.usePermissions.mockReturnValue({
       isLoaded: true,
       hasPermission: vi.fn(() => true),
@@ -151,20 +157,24 @@ describe('legacy product area page access guard', () => {
     );
   });
 
-  it('uses only scopes from a resolved provider session and ignores cached support data for tenants', () => {
+  it('never resolves retired provider support scopes into a tenant product page', () => {
     const scopedItem = {
       requiredResourceKey: 'ADMIN.EXAMPLE',
       requiredPermissionCode: 'VIEW',
       requiredAnySupportScopes: ['WORKFORCE_READ'],
     };
-    accessMocks.useAuth.mockReturnValue({ user: { roles: ['PROVIDER_SUPPORT'] } });
+    accessMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'PROVIDER', roles: ['PROVIDER_SUPPORT'], resourceRoles: [] },
+    });
     accessMocks.useProviderSupportContext.mockReturnValue({
       isLoading: false,
       data: { scopes: ['WORKFORCE_READ'] },
     });
-    expect(renderGuard(scopedItem)).toContain('data-testid="management-page"');
+    expect(renderGuard(scopedItem)).toContain('data-product-access-state="support-scope-denied"');
 
-    accessMocks.useAuth.mockReturnValue({ user: { roles: [] } });
+    accessMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'TENANT', roles: [], resourceRoles: [] },
+    });
     expect(renderGuard(scopedItem)).toContain('data-product-access-state="route-denied"');
   });
 });

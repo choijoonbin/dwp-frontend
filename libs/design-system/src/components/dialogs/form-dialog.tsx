@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ActionButton } from '../actions';
 
@@ -27,6 +28,7 @@ export type FormDialogProps = {
   submitIntent?: ActionIntent;
   secondaryActions?: React.ReactNode;
   maxWidth?: DialogProps['maxWidth'];
+  mobileFullScreen?: boolean;
   showCancel?: boolean;
   showSubmit?: boolean;
 };
@@ -46,16 +48,20 @@ export function FormDialog({
   submitIntent = 'primary',
   secondaryActions,
   maxWidth = 'sm',
+  mobileFullScreen = false,
   showCancel = true,
   showSubmit = true,
 }: FormDialogProps) {
   const titleId = useId();
   const descriptionId = useId();
+  const compact = useMediaQuery('(max-width:599.95px)', { noSsr: true });
+  const fullScreen = mobileFullScreen && compact;
 
   return (
     <Dialog
       open={open}
       fullWidth
+      fullScreen={fullScreen}
       maxWidth={maxWidth}
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
@@ -67,7 +73,7 @@ export function FormDialog({
           display: 'flex',
           flexDirection: 'column',
           minHeight: 0,
-          maxHeight: 'calc(100dvh - 64px)',
+          maxHeight: fullScreen ? '100dvh' : 'calc(100dvh - 64px)',
         }}
         onSubmit={(event) => {
           event.preventDefault();
@@ -86,11 +92,21 @@ export function FormDialog({
         <DialogActions
           sx={{
             flex: '0 0 auto',
+            flexWrap: 'wrap',
+            gap: 1,
             justifyContent: secondaryActions ? 'space-between' : 'flex-end',
           }}
         >
-          {secondaryActions && <Box>{secondaryActions}</Box>}
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          {secondaryActions && <Box sx={{ width: { xs: 1, sm: 'auto' } }}>{secondaryActions}</Box>}
+          <Box
+            sx={{
+              width: { xs: 1, sm: 'auto' },
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 1,
+              '& > *': { flex: { xs: '1 1 120px', sm: '0 0 auto' } },
+            }}
+          >
             {showCancel && (
               <ActionButton intent="quiet" onClick={onClose} disabled={busy}>
                 {cancelLabel}

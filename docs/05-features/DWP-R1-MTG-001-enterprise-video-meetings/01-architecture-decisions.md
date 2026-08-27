@@ -1,0 +1,132 @@
+# Architecture Decisions
+
+## ADR-001: A separate meeting service owns formal meetings
+
+**Decision:** Create `dwp-meeting-server` and `dwp_meetings` rather than extend
+conversation-owned `msg_meeting_sessions`.
+
+**Reason:** A formal meeting can exist before a conversation, recur, invite
+external guests, wait for admission, produce governed artifacts, and survive a
+messenger channel archive. It has a different workload and retention profile.
+
+**Integration:** Calendar, Messenger, Space, and notification services exchange
+opaque `meetingId` references and domain events. They do not query meeting tables.
+
+## ADR-002: LiveKit is the media plane, not the product database
+
+**Decision:** Keep the open-source LiveKit SFU and React client SDK. Wrap its room,
+token, and termination APIs behind a provider port.
+
+**Reason:** Reimplementing WebRTC routing, congestion control, TURN, simulcast,
+screen sharing, and reconnect behavior is both unsafe and unnecessary. The DWP
+service remains provider-abstracted for future managed or regional deployments.
+
+## ADR-003: Admission precedes token issuance
+
+**Decision:** A waiting participant receives no main-room token. The organizer or
+co-host admits the membership first; only then may the service issue a short-lived
+join credential.
+
+**Reason:** A visual waiting screen without a token boundary is not a security
+control. This design also permits denial, expiry, and audit before media access.
+
+## ADR-004: Administrative authority does not imply content access
+
+**Decision:** `MEETING_ADMIN` manages policy and operational health. Meeting
+organizers and delegated co-hosts manage participants. Future compliance access
+to recordings and transcripts requires a separate scoped role and evidence.
+
+**Reason:** Tenant administration, host authority, and content custody are
+different duties. Combining them creates unnecessary insider access.
+
+## ADR-005: Recording and AI remain explicit controlled capabilities
+
+**Decision:** Recording, transcription, and AI notes are capability states, not
+decorative UI. When Egress, storage, consent, or STT is unavailable, the product
+shows that limitation instead of generating pretend artifacts.
+
+**Reason:** Recording changes privacy, retention, regional storage, eDiscovery,
+and legal-hold obligations. AI notes are editable drafts with source timestamps,
+never an authoritative record by themselves.
+
+## ADR-006: Media authorization is an explicit, least-privilege grant
+
+**Decision:** The meeting service issues short-lived LiveKit tokens with explicit
+room join, publish, subscribe, data, and source grants. It derives those grants
+from both the participant role and the current tenant policy, and returns the
+effective permission contract to the client.
+
+**Reason:** A product-level role name is not a media-plane authorization boundary.
+Explicit grants keep disabled capabilities unavailable even when a client is
+modified or stale.
+
+## ADR-007: Provider events will be the attendance authority
+
+**Decision:** Token issuance does not mark a participant connected. The current
+client sends connected and leave acknowledgements for immediate UX state, while
+the production attendance record must converge from signed LiveKit webhooks and
+periodic provider reconciliation.
+
+**Reason:** A browser can crash, lose connectivity, or omit a leave request.
+Provider-originated events plus reconciliation are required for reliable attendance,
+capacity, billing, and audit evidence.
+
+## ADR-008: Unverified guest paths fail closed
+
+**Decision:** External guest entry and join-before-host remain unavailable until
+verified identity, scoped one-time invitations, expiry, rate limiting, revocation,
+and audit evidence are delivered as one controlled flow.
+
+**Reason:** A public code or display name alone is not sufficient identity for an
+enterprise meeting. Hiding an unsafe path is preferable to presenting a control
+that the backend cannot enforce.
+
+## ADR-009: Provider lifecycle needs a durable operation boundary
+
+**Decision:** Production room create and end operations require a durable command
+receipt and explicit preparing, running, ending, and failed states. A worker must
+retry or compensate provider operations and reconciliation must repair drift.
+
+**Reason:** A LiveKit API call and a PostgreSQL transaction cannot commit atomically.
+Calling the provider inline is suitable for the local pilot, but it is not sufficient
+evidence that an enterprise room cannot be orphaned or falsely remain live.
+
+## Runtime target
+
+```text
+public edge -> regional L4 load balancer -> LiveKit nodes
+                              |               |
+                              |               +-- UDP/ICE and WebRTC/TCP
+                              +-- TURN/TLS 443
+
+meeting API -> PostgreSQL
+            -> Kafka outbox/inbox
+            -> LiveKit Server API
+            -> signed webhook receiver
+
+Egress pool -> KMS-encrypted S3-compatible storage
+STT workers -> transcript object + searchable ACL metadata
+```
+
+Redis is mandatory for redundant LiveKit deployments. Nodes drain active rooms
+before shutdown. Egress and STT run in separate worker pools so recording load
+cannot destabilize interactive media.
+
+### Local Docker media path
+
+Docker Desktop development explicitly advertises `127.0.0.1` as the LiveKit
+node IP and publishes UDP `7882` plus WebRTC/TCP `7881`. This prevents the browser
+from receiving an unreachable container-network ICE candidate. It is a local-only
+setting: production nodes must advertise a routable address and provide TLS/WSS,
+TURN/TLS, load balancer, firewall, and regional failover evidence.
+
+## Operational telemetry
+
+- Join success and rejection reason.
+- Pre-join to active-media latency.
+- ICE path and TURN fallback ratio.
+- RTT, jitter, packet loss, connection quality, and reconnects.
+- Waiting-room age and admission latency.
+- Webhook delivery and reconciliation lag.
+- Recording and transcript readiness latency.
+- Tenant, region, browser, and device dimensions without content bodies.

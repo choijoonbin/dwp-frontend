@@ -70,6 +70,7 @@ async function mockSpaceSession(page: Page, options: SpaceSession = {}) {
         email: 'mina.kim@sk.com',
         tenantId: 1,
         tenantCode: 'SKAX',
+        identityPlane: 'TENANT',
         tenantName: 'SKAX',
         roles: options.roles ?? ['WORKSPACE_MEMBER'],
         groups: [{ groupRef: 'SKAX_ALL_EMPLOYEES', displayName: 'All employees' }],

@@ -89,7 +89,7 @@ Page/API는 Every-request 인가를 다시 수행한다.
   `type: capability-expression` + `mode: ANY|ALL` + Non-empty `capabilityContractKeys`, 또는 Policy
   Key 중 하나다.
 - 기존 `adminMode`는 Ownership 호환값으로 읽되 Surface가 우선
-- 169 Menu Golden Count와 `navigationContextId`, 업무 앱 121개의 단일 Product Surface,
+- 현재 186 Menu Golden Count와 `navigationContextId`, 업무 앱 138개의 단일 Product Surface,
   Route/Navigation 존재와 중복 정적 검사
 - 나머지 비제품 48개는 `productSurfaceId` 필드가 없어야 하며 Product Surface Projection 시 Build Fail
 - Legacy Redirect Definition은 Source Matcher, Static/Path-map/Registered-suffix Target,
@@ -234,7 +234,7 @@ Method Mismatch를 CI·Direct Evaluation에서 거부한다.
 - Auth 장애 시 Cached Allow로 Mutation하지 않음
 - Responsibility와 `ADMIN.*`를 Frontend에서 합성하지 않음
 
-`ProductSurfaceAuthorityBridge`는 로그인 시 전체 11개 제품 PAGE를 선평가하지 않는다. 현재 URL을
+`ProductSurfaceAuthorityBridge`는 로그인 시 전체 12개 제품 PAGE를 선평가하지 않는다. 현재 URL을
 PAGE Catalog, Product Manifest의 Base/Surface Index, 공식 Legacy Redirect Registry 순서로 해석해
 소유 제품 하나의 PAGE만 Direct Evaluation Plan에 넣는다. Router와 동일하게 소유권 비교는
 대소문자를 구분하지 않지만 원 URL·Query·Hash는 보존한다. Legacy Alias는 Target Product뿐 아니라
@@ -1471,7 +1471,7 @@ Export Create Request는 `datasetKey`, `datasetContractVersion`, Target Populati
 
 | Control/Flag                                                       | Owner             | Default | Scope          | 합성 역할                                    |
 | ------------------------------------------------------------------ | ----------------- | ------- | -------------- | -------------------------------------------- |
-| `access.product-surfaces.context-shadow.v1`                        | Identity/Platform | off     | Tenant-global  | `S`; 11개 Product가 같은 bit·revision 사용   |
+| `access.product-surfaces.context-shadow.v1`                        | Identity/Platform | off     | Tenant-global  | `S`; 12개 Product가 같은 bit·revision 사용   |
 | `access.product-surfaces.capability-enforcement.v1`                | Security/Platform | off     | Legacy Tenant  | 전환 증거·구버전 호환만; 신규 합성 참조 금지 |
 | `access.product-surfaces.capability-enforcement.approvals.v1`      | Approvals         | off     | Tenant+Product | Approvals `E_p`                              |
 | `access.product-surfaces.capability-enforcement.calendar.v1`       | Calendar          | off     | Tenant+Product | Calendar `E_p`                               |
@@ -1479,6 +1479,7 @@ Export Create Request는 `datasetKey`, `datasetContractVersion`, Target Populati
 | `access.product-surfaces.capability-enforcement.dwaion.v1`         | DWAI·ON           | off     | Tenant+Product | DWAI·ON `E_p`                                |
 | `access.product-surfaces.capability-enforcement.hcm.v1`            | HCM               | off     | Tenant+Product | HCM `E_p`                                    |
 | `access.product-surfaces.capability-enforcement.mail.v1`           | Mail              | off     | Tenant+Product | Mail `E_p`                                   |
+| `access.product-surfaces.capability-enforcement.meetings.v1`       | Meetings          | off     | Tenant+Product | Meetings `E_p`                               |
 | `access.product-surfaces.capability-enforcement.messaging.v1`      | Messaging         | off     | Tenant+Product | Messaging `E_p`                              |
 | `access.product-surfaces.capability-enforcement.notifications.v1`  | Notifications     | off     | Tenant+Product | Notifications `E_p`                          |
 | `access.product-surfaces.capability-enforcement.services.v1`       | Shared Experience | off     | Tenant+Product | Services `E_p`                               |
@@ -1490,6 +1491,7 @@ Export Create Request는 `datasetKey`, `datasetContractVersion`, Target Populati
 | `ux.product-surfaces.dwaion.v1`                                    | DWAI·ON           | off     | Tenant+Product | DWAI·ON `U_p`                                |
 | `ux.product-surfaces.hcm.v1`                                       | HCM               | off     | Tenant+Product | HCM `U_p`                                    |
 | `ux.product-surfaces.mail.v1`                                      | Mail              | off     | Tenant+Product | Mail `U_p`                                   |
+| `ux.product-surfaces.meetings.v1`                                  | Meetings          | off     | Tenant+Product | Meetings `U_p`                               |
 | `ux.product-surfaces.messaging.v1`                                 | Messaging         | off     | Tenant+Product | Messaging `U_p`                              |
 | `ux.product-surfaces.notifications.v1`                             | Notifications     | off     | Tenant+Product | Notifications `U_p`                          |
 | `ux.product-surfaces.services.v1`                                  | Shared Experience | off     | Tenant+Product | Services `U_p`                               |
@@ -1516,13 +1518,13 @@ Provider 장애에서 Snapshot이 있으면 `S/E_p`를 복원하고 `U_p=0`으�
 
 Local 전용 Seed의 정확한 제품 Truth Table은 다음과 같다.
 
-| Local 제품군                                                   | `S` | `E_p` | `U_p` |  상태 | Authorization Bundle                |
-| -------------------------------------------------------------- | --: | ----: | ----: | ----: | ----------------------------------- |
-| Approvals·Communications·HCM·Services                          |   1 |     1 |     1 | `111` | 불변 v3에 Exact PAGE 58개 포함      |
-| Calendar·DWAI·ON·Mail·Messaging·Notifications·Spaces·Workplace |   1 |     0 |     0 | `100` | W2/W3 DRAFT; Exact Authority 미평가 |
+| Local 제품군                                                            | `S` | `E_p` | `U_p` |  상태 | Authorization Bundle                |
+| ----------------------------------------------------------------------- | --: | ----: | ----: | ----: | ----------------------------------- |
+| Approvals·Communications·HCM·Services                                   |   1 |     1 |     1 | `111` | 불변 v3에 Exact PAGE 58개 포함      |
+| Calendar·DWAI·ON·Mail·Meetings·Messaging·Notifications·Spaces·Workplace |   1 |     0 |     0 | `100` | W2/W3 DRAFT; Exact Authority 미평가 |
 
 불변 v3에 없는 W2/W3 제품을 `110/111`로 만들면 Gateway는 503 Fail Closed한다. Local Seed는
-Production Rollout이 아니며 신규 상태 합성에 참여하는 Production의 `S/E_p/U_p` 23개 Flag는 모두
+Production Rollout이 아니며 신규 상태 합성에 참여하는 Production의 `S/E_p/U_p` 25개 Flag는 모두
 default-off다. Local Auth v3 Active Pointer도 고정 Local Tenant의 검증용일 뿐 Production 승인
 Evidence로 재사용하지 않는다. 외부
 Product·Security·Privacy 승인 전 Production Flag, Active Pointer와 운영 Assignment를 변경하지
@@ -1548,25 +1550,25 @@ Rollback Rehearsal을 Canary에서 통과한다.
 
 ## 10. 위험과 대응
 
-| 위험                                | 영향                             | 대응                                             |
-| ----------------------------------- | -------------------------------- | ------------------------------------------------ |
-| Responsibility/Permission 계약 공백 | 빈 관리 Shell 또는 과도한 Allow  | 서버 Context + Capability Registry               |
-| Parent App Guard 결합               | 관리-only 사용자 차단            | Sibling Route Guard                              |
-| Global `MANAGE` Fallback            | 고위험 Action 확대               | Exact Action·Implication Policy                  |
-| HCM `canOperate` 재사용             | Support Read가 관리 Write로 확대 | Surface별 Typed Predicate                        |
-| Named Reviewer Admin Shell 진입     | 일반 사용자를 관리자처럼 인식    | Assigned-work 분리                               |
-| Legacy Deep Link 손실               | 운영 Bookmark·알림 실패          | Canonical Redirect Contract                      |
-| Context Cache Stale                 | 회수 후 민감 Data 잔류           | Decision Revision + `revalidateAt` + Cache purge |
-| Telemetry 부재                      | Rollout 판단 불가                | W0 선행 Pipeline                                 |
-| 두 Pilot 동시 구현                  | 원인 분리 불가                   | Approvals → HCM 순차 Gate                        |
-| Unsupported Scoped JIT              | ACTIVE지만 권한 무효 상태        | Activation Fail Closed                           |
+| 위험                                | 영향                             | 대응                                              |
+| ----------------------------------- | -------------------------------- | ------------------------------------------------- |
+| Responsibility/Permission 계약 공백 | 빈 관리 Shell 또는 과도한 Allow  | 서버 Context + Capability Registry                |
+| Parent App Guard 결합               | 관리-only 사용자 차단            | Sibling Route Guard                               |
+| Global `MANAGE` Fallback            | 고위험 Action 확대               | Exact Action·Implication Policy                   |
+| HCM `canOperate` 재사용             | Support Read가 관리 Write로 확대 | Surface별 Typed Predicate                         |
+| Named Reviewer Admin Shell 진입     | 일반 사용자를 관리자처럼 인식    | Assigned-work 분리                                |
+| Legacy Deep Link 손실               | 운영 Bookmark·알림 실패          | Canonical Redirect Contract                       |
+| Context Cache Stale                 | 회수 후 민감 Data 잔류           | Decision Revision + `revalidateAt` + Cache purge  |
+| Telemetry 부재                      | Rollout 판단 불가                | W0 선행 Pipeline                                  |
+| 두 Pilot 동시 구현                  | 원인 분리 불가                   | Approvals → HCM 순차 Gate                         |
+| R1 JIT·Emergency 활성 시도          | 미검증 권한 상승                 | Service Gate + DB Trigger에서 전 범위 Fail Closed |
 
 ## 11. 운영 활성화 판정
 
 다음은 기술 구현 완료와 별개인 외부 승인 Gate다. 모두 체크되기 전에는 W1a 또는 W1b를
 Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bundle로 승격하지 않는다.
 
-- [ ] 사용자·Product·Security Owner가 ADR, 169개 분류표와 `PS-01`~`PS-11` 승인
+- [ ] 사용자·Product·Security Owner가 ADR, 186개 분류표와 `PS-01`~`PS-11` 승인
 - [ ] Bound Context·Direct Evaluation·Reason Code OpenAPI와 Support/NORMAL Exclusive Mode 승인
 - [ ] Capability Registry, Responsibility AND Capability, Permission-only 관리자 Backfill/Review 승인
 - [ ] 05 Descriptor + 10 Seed를 전사한 단일 Canonical YAML, `product-surfaces` v1→v2→v3
@@ -1582,7 +1584,7 @@ Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bu
 - [ ] HCM Org Design·Export, Target Population·Support Endpoint/Method Allowlist 승인
 - [ ] Named Reviewer Non-admin API, Canary Dynamic 4+2, Approvals Home/Forms DATA,
       HCM Team·Overview·Candidate의 OpenAPI·PEP·Frontend Inventory 승인
-- [ ] Tenant-only JIT, Scope-bound SoD·Step-up Freshness 정책 승인
+- [ ] R1 JIT·Emergency 전 범위 비활성 증거와 재활성화용 Scope-bound SoD·Step-up Freshness 정책 승인
 - [ ] Telemetry Privacy·Retention·수집 Pipeline과 사전 등록 KPI·표본 Gate 승인
 - [ ] Exact Fixture를 재사용하는 Canary·Pilot Unit·Contract·E2E Issue 연결
 - [ ] Figma 또는 Storybook 핵심 Frame 승인
@@ -1590,8 +1592,8 @@ Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bu
       Rehearsal, Observation·Rollback Owner 지정
 
 기술 구현은 검증 가능한 DRAFT Migration과 default-off Runtime으로 완료했다. 불변 v1~v3
-Bundle의 바이트·Checksum은 보존하고, 11개 제품 Rollout 참여 목록은 별도 Checksummed Inventory로
-관리한다. W2/W3의 73개 Page 계약은 제품별 권한 Owner 검토 전 Frontend DRAFT로 유지하며 다음
+Bundle의 바이트·Checksum은 보존하고, 12개 제품 Rollout 참여 목록은 별도 Checksummed Inventory로
+관리한다. W2/W3의 91개 Page 계약(정적 메뉴 86개 + 동적 5개)은 제품별 권한 Owner 검토 전 Frontend DRAFT로 유지하며 다음
 승인 Bundle에 포함되기 전에는 `110`과 `111` 모두에서 Gateway가 Fail Closed한다. `110`의
 Compatibility UI는 기존 Route를 유지하기 위한 것이며 DRAFT Route를 활성화하는 우회 수단이
 아니다. 승인 전에는 운영 Role Assignment, Active Pointer와 Production Flag를 변경하지 않는다.

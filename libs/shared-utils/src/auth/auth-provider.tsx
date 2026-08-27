@@ -19,6 +19,7 @@ import {
   logout as logoutApi,
 } from '../api/auth-api';
 import { HttpError } from '../http-error';
+import { IdentityPlaneContractError, resolveIdentityPlane } from './control-plane-access';
 
 import type { MeResponse, LoginRequest } from '../api/auth-api';
 
@@ -59,7 +60,7 @@ function securityScopeFingerprint(user: MeResponse, permissions: readonly unknow
     )
     .sort();
   return JSON.stringify({
-    identity: `${user.tenantId}:${user.userId}:${user.personPublicId ?? ''}`,
+    identity: `${user.identityPlane}:${user.tenantId}:${user.userId}:${user.personPublicId ?? ''}`,
     roles: [...user.roles].sort(),
     groups,
     resourceRoles,
@@ -92,7 +93,8 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
       const verification = (async () => {
         try {
           const meResponse = await getMe();
-          const nextIdentity = `${meResponse.data.tenantId}:${meResponse.data.userId}`;
+          const identityPlane = resolveIdentityPlane(meResponse.data);
+          const nextIdentity = `${identityPlane}:${meResponse.data.tenantId}:${meResponse.data.userId}`;
           const sessionPreparation = prepareAuthenticatedSession
             ? prepareAuthenticatedSession(meResponse.data)
             : Promise.resolve();
@@ -121,6 +123,7 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
           // may revoke it. Foreground verification remains fail-closed.
           if (
             showLoading ||
+            error instanceof IdentityPlaneContractError ||
             (error instanceof HttpError && (error.status === 401 || error.status === 403))
           ) {
             invalidateSession();
@@ -187,10 +190,23 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
     }
   }, [invalidateSession]);
 
-  const setPreferredLocale = useCallback(async (locale: string) => {
-    const response = await updateMyPreferredLocale(locale);
-    setUser(response.data);
-  }, []);
+  const setPreferredLocale = useCallback(
+    async (locale: string) => {
+      const response = await updateMyPreferredLocale(locale);
+      const nextPlane = resolveIdentityPlane(response.data);
+      if (
+        !user ||
+        response.data.userId !== user.userId ||
+        response.data.tenantId !== user.tenantId ||
+        nextPlane !== resolveIdentityPlane(user)
+      ) {
+        invalidateSession();
+        throw new IdentityPlaneContractError('locale response changed the verified identity');
+      }
+      setUser(response.data);
+    },
+    [invalidateSession, user]
+  );
 
   const value = useMemo(
     () => ({

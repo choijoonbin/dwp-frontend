@@ -4,7 +4,7 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
 import { ServicesLayout } from '../layouts/services-layout';
-import { productPageRelativePattern } from './product-page-route-contracts';
+import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
   AppRouteGuard,
   authenticationFallback,
@@ -72,7 +72,7 @@ const servicesManagementIndexCandidates = [
 
 function servicesWorkRoute(routeContractKey: string, element: React.ReactNode): RouteObject {
   return {
-    path: productPageRelativePattern(routeContractKey, '/services'),
+    path: officialProductPageRelativePattern(routeContractKey, '/services'),
     handle: { routeContractKey },
     element: (
       <ProductCanaryRouteBoundary
@@ -92,7 +92,7 @@ function servicesManagementRoute(
   element: React.ReactNode
 ): RouteObject {
   return {
-    path: productPageRelativePattern(routeContractKey, '/services/admin'),
+    path: officialProductPageRelativePattern(routeContractKey, '/services/admin'),
     handle: { routeContractKey },
     element: (
       <ProductCanaryRouteBoundary
@@ -195,6 +195,12 @@ export const servicesRoutes: RouteObject[] = [
           },
           {
             path: ':view/:requestId',
+            element: (
+              <ProductCanaryUnknownRoute productId="services" legacy={page(<ServicesPage />)} />
+            ),
+          },
+          {
+            path: '*',
             element: (
               <ProductCanaryUnknownRoute productId="services" legacy={page(<ServicesPage />)} />
             ),

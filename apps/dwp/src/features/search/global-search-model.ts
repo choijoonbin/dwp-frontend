@@ -79,8 +79,8 @@ export type GlobalSearchTranslate = (
   options?: Record<string, string | number>
 ) => string;
 
-function askRoute(query: string): string {
-  return '/dwaion?q=' + encodeURIComponent(query);
+function askRoute(): string {
+  return '/dwaion/new';
 }
 
 function normalize(value: string): string {
@@ -284,7 +284,7 @@ export function createAskSearchItem(
       'search.askQuery.description',
       'Prepare a permission-scoped answer with evidence and sources'
     ),
-    route: askRoute(value),
+    route: askRoute(),
     keywords: [],
     source: translated(translate, 'search.sources.ask', 'DWAI·ON'),
   };

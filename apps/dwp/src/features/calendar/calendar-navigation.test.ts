@@ -13,9 +13,13 @@ describe('calendar product navigation', () => {
     expect(items.map((item) => item.view)).toEqual([
       'home',
       'schedule',
+      'focus',
+      'invitations',
       'availability',
       'insights',
+      'trash',
       'admin-overview',
+      'admin-company-calendars',
       'admin-policies',
     ]);
     expect(
@@ -28,6 +32,7 @@ describe('calendar product navigation', () => {
   it('normalizes trailing slashes without accepting unrelated paths', () => {
     expect(CALENDAR_DEFAULT_PATH).toBe('/calendar/home');
     expect(findCalendarNavigationItem('/calendar/schedule/')?.view).toBe('schedule');
+    expect(findCalendarNavigationItem('/calendar/focus/')?.view).toBe('focus');
     expect(findCalendarNavigationItem('/calendar/not-a-view')).toBeUndefined();
   });
 });

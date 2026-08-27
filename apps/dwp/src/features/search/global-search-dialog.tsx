@@ -14,6 +14,8 @@ import {
   X,
 } from 'lucide-react';
 import {
+  createDwaionQuestionLaunchState,
+  createQuestionLaunch,
   getCatalogOverview,
   getOrganizationChart,
   getProviderDataGovernance,
@@ -24,6 +26,7 @@ import {
   listProviderAuditEvents,
   listProviderTenants,
   recordGlobalSearchAudit,
+  useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
@@ -86,6 +89,7 @@ export function GlobalSearchDialog({
   const display = useDisplayDictionary();
   const { t: tWork } = useTranslation('work');
   const navigate = useNavigate();
+  const toast = useToast();
   const theme = useTheme();
   const compactSearchLabel = useMediaQuery(theme.breakpoints.down('sm'));
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -93,6 +97,7 @@ export function GlobalSearchDialog({
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [auditUnavailable, setAuditUnavailable] = useState(false);
+  const [launchingAsk, setLaunchingAsk] = useState(false);
   const workQuery = useQuery({
     queryKey: ['workspace', 'work-queue'],
     queryFn: getWorkspaceWorkQueue,
@@ -366,7 +371,8 @@ export function GlobalSearchDialog({
     setActiveIndex(0);
     onClose();
   };
-  const select = (item: GlobalSearchItem) => {
+  const select = async (item: GlobalSearchItem) => {
+    if (item.kind === 'ask' && launchingAsk) return;
     if (normalizedQuery.length >= 2) {
       void recordGlobalSearchAudit({
         phase: 'SELECTION',
@@ -377,8 +383,23 @@ export function GlobalSearchDialog({
         selectedId: item.id,
       }).catch(() => undefined);
     }
-    close();
-    navigate(item.route);
+    if (item.kind !== 'ask') {
+      close();
+      navigate(item.route);
+      return;
+    }
+    setLaunchingAsk(true);
+    try {
+      const receipt = await createQuestionLaunch(normalizedQuery);
+      const state = createDwaionQuestionLaunchState(receipt.launchId);
+      if (!state) throw new Error('Question launch receipt is invalid.');
+      close();
+      navigate(item.route, { state });
+    } catch {
+      toast.error(t('search.questionLaunchUnavailable'));
+    } finally {
+      setLaunchingAsk(false);
+    }
   };
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (results.length === 0) return;
@@ -390,7 +411,7 @@ export function GlobalSearchDialog({
       setActiveIndex((current) => Math.max(current - 1, 0));
     } else if (event.key === 'Enter' && results[activeIndex]) {
       event.preventDefault();
-      select(results[activeIndex]);
+      void select(results[activeIndex]);
     }
   };
 
@@ -537,7 +558,8 @@ export function GlobalSearchDialog({
                     aria-selected={selected}
                     onMouseEnter={() => setActiveIndex(index)}
                     onFocus={() => setActiveIndex(index)}
-                    onClick={() => select(item)}
+                    disabled={launchingAsk && item.kind === 'ask'}
+                    onClick={() => void select(item)}
                     sx={{
                       width: 1,
                       minHeight: 62,

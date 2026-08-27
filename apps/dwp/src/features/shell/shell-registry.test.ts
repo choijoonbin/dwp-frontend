@@ -16,6 +16,7 @@ describe('global shell registry', () => {
     expect(resolveShellKey('/hr/directory')).toBe('hcm');
     expect(resolveShellKey('/hr/design/organization')).toBe('hcm');
     expect(resolveShellKey('/calendar/availability')).toBe('calendar');
+    expect(resolveShellKey('/meetings/admin/policies')).toBe('meetings');
     expect(resolveShellKey('/rooms/find')).toBe('rooms');
     expect(resolveShellKey('/account/settings')).toBe('account');
     expect(resolveShellKey('/admin/platform/reference-data')).toBe('admin');
@@ -31,6 +32,17 @@ describe('global shell registry', () => {
     expect(shellRegistry.admin.showWorkspace).toBe(true);
   });
 
+  it('registers meetings as a workspace-aware tenant product shell', () => {
+    expect(shellRegistry.meetings).toMatchObject({
+      key: 'meetings',
+      routePrefixes: ['/meetings'],
+      scope: 'tenant',
+      brandMode: 'product',
+      showWorkspace: true,
+      context: { labelKey: 'shell.meetings.name' },
+    });
+  });
+
   it('reserves the wider navigation only for control-plane shells', () => {
     expect(shellRegistry.work.desktopNavigationWidth).toBeLessThan(
       shellRegistry.admin.desktopNavigationWidth
@@ -42,6 +54,9 @@ describe('global shell registry', () => {
       shellRegistry.work.desktopNavigationWidth
     );
     expect(shellRegistry.services.desktopNavigationWidth).toBe(
+      shellRegistry.work.desktopNavigationWidth
+    );
+    expect(shellRegistry.meetings.desktopNavigationWidth).toBe(
       shellRegistry.work.desktopNavigationWidth
     );
     expect(shellRegistry.provider.desktopNavigationWidth).toBe(

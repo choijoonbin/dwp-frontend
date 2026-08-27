@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isHcmReadEntitled } from '@dwp-frontend/shared-utils/auth/hcm-access';
-import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { mapLegacyHrPath } from '../features/hcm/hcm-legacy-paths';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
-import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './product-page-route-contracts';
+import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 import {
   ProductCanaryRoot,
   ProductCanaryFirstAllowedIndex,
@@ -20,7 +20,12 @@ import {
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
 } from './product-surface-canary-routes';
-import { authenticationFallback, RouteFallback, routeFallback } from './route-support';
+import {
+  authenticationFallback,
+  RouteFallback,
+  routeFallback,
+  WorkspaceRouteGuard,
+} from './route-support';
 
 const HcmPage = lazy(() => import('../pages/hcm'));
 const HcmLayout = lazy(() =>
@@ -30,7 +35,6 @@ const HcmLayout = lazy(() =>
 export function resolveLegacyHcmShellAccess({
   providerRole,
   supportContextLoading,
-  supportScopes,
   entitled,
 }: {
   providerRole: boolean;
@@ -40,7 +44,7 @@ export function resolveLegacyHcmShellAccess({
 }): 'loading' | 'allowed' | 'denied' {
   if (providerRole) {
     if (supportContextLoading) return 'loading';
-    return supportScopes?.includes('WORKFORCE_READ') ? 'allowed' : 'denied';
+    return 'denied';
   }
   return entitled ? 'allowed' : 'denied';
 }
@@ -49,9 +53,8 @@ function HcmRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
   const governedSurface = useOptionalAllowedProductSurface();
-  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
-  if (governedSurface) return children;
   const entitled = isHcmReadEntitled(
     permissions,
     auth.user?.roles ?? [],
@@ -64,6 +67,8 @@ function HcmRouteGuard({ children }: { children: React.ReactNode }) {
     entitled,
   });
   if (access === 'loading') return <RouteFallback />;
+  if (providerRole) return <Navigate to="/403" replace />;
+  if (governedSurface) return children;
   return access === 'allowed' ? children : <Navigate to="/403" replace />;
 }
 
@@ -96,7 +101,7 @@ const legacyHcmShell = (
   </HcmRouteGuard>
 );
 
-const hcmPageRoutes = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+const hcmPageRoutes = OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
   (route) => route.productId === 'hcm'
 );
 
@@ -269,7 +274,9 @@ export const hcmRoutes: RouteObject[] = [
     path: 'hr',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <Outlet />
+        <WorkspaceRouteGuard>
+          <Outlet />
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: hcmSurfaceRoutes(),
@@ -278,7 +285,9 @@ export const hcmRoutes: RouteObject[] = [
     path: 'people/*',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <LegacyPeopleRedirect />
+        <WorkspaceRouteGuard>
+          <LegacyPeopleRedirect />
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
   },
@@ -286,7 +295,9 @@ export const hcmRoutes: RouteObject[] = [
     path: 'workforce/*',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <LegacyPeopleRedirect />
+        <WorkspaceRouteGuard>
+          <LegacyPeopleRedirect />
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
   },

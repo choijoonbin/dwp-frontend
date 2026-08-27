@@ -5,6 +5,7 @@ import {
   createWorkplaceBooking,
   createWorkplaceReleaseWindow,
   getWorkplaceExplore,
+  relocateWorkplaceBooking,
   saveWorkplaceLayout,
   updateWorkplaceBookingLegalHold,
 } from './workplace-api';
@@ -94,6 +95,34 @@ describe('Workplace API boundary', () => {
           version: 3,
         }),
       ],
+    });
+  });
+
+  it('relocates a booking with only the server-authoritative change fields', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', version: 5 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await relocateWorkplaceBooking('booking/1', {
+      resourceId: 'desk-2',
+      startsAt: '2026-08-19T02:00:00Z',
+      endsAt: '2026-08-19T03:00:00Z',
+      reason: 'Customer workshop moved',
+      version: 4,
+    });
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/workplace/bookings/booking%2F1/relocate'
+    );
+    expect(JSON.parse(String(request.body))).toEqual({
+      resourceId: 'desk-2',
+      startsAt: '2026-08-19T02:00:00Z',
+      endsAt: '2026-08-19T03:00:00Z',
+      reason: 'Customer workshop moved',
+      version: 4,
     });
   });
 

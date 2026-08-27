@@ -125,6 +125,18 @@ export function setWorkspaceWidgetVisibility<WidgetKey extends string>(
 ): PersonalHomeWidgetPreference<WidgetKey>[] {
   const definition = registry.find((widget) => widget.key === widgetKey);
   if (!definition || (!definition.canHide && !visible)) return [...widgets];
+  const existing = widgets.some((widget) => widget.widgetKey === widgetKey);
+  if (visible && !existing) {
+    return [
+      ...widgets,
+      {
+        widgetKey: definition.key,
+        visible: true,
+        size: definition.defaultSize,
+        height: definition.defaultHeight,
+      },
+    ];
+  }
   const eligibleKeys = new Set(registry.map((widget) => widget.key));
   if (
     !visible &&

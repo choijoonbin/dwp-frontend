@@ -652,9 +652,9 @@ Connector·Nonce 재사용을 허용하지 않는다.
 
 ### `FX-C-ROLLOUT-MIXED`
 
-Local Tenant의 `S=1`을 11개 제품이 공유한다. Approvals·Communications·HCM·Services는 각
-`E_p=1,U_p=1`로 `111`, Calendar·DWAI·ON·Mail·Messaging·Notifications·Spaces·Workplace는 각
-`E_p=0,U_p=0`으로 `100`이다. 한 Context Envelope에서 11개 Product가 정확히 한 번씩 반환되고
+Local Tenant의 `S=1`을 12개 제품이 공유한다. Approvals·Communications·HCM·Services는 각
+`E_p=1,U_p=1`로 `111`, Calendar·DWAI·ON·Mail·Meetings·Messaging·Notifications·Spaces·Workplace는 각
+`E_p=0,U_p=0`으로 `100`이다. 한 Context Envelope에서 12개 Product가 정확히 한 번씩 반환되고
 전자의 불변 v3 PAGE 58개만 Exact Authority를 평가한다. 제품별 `E_p/U_p`가 다르다는 이유로 Envelope
 전체를 거부하거나, Legacy 전역 E로 후자의 상태를 `110/111`로 올리면 실패다.
 

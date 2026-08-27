@@ -27,6 +27,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { WorkspaceComposerToolbar } from '../../components/workspace-composer/workspace-composer-toolbar';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import {
   defaultWorkspaceWidgets,
   reconcileWorkspaceWidgets,
@@ -79,6 +80,10 @@ export function ApprovalHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const experience = useApprovalExperience();
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'approvals',
+    surfaceKey: 'approvals.work',
+  });
   const [editing, setEditing] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [baseVersion, setBaseVersion] = useState<number | null>(null);
@@ -95,16 +100,23 @@ export function ApprovalHome() {
     [experience.canAdmin]
   );
   const home = useQuery({
-    queryKey: ['approvals', 'home', auth.user?.tenantId, auth.user?.userId],
-    queryFn: getApprovalHome,
+    queryKey: ['approvals', 'home', ...requestScope.cacheKey],
+    queryFn: () =>
+      requestScope.contextScopeKey
+        ? getApprovalHome(requestScope.contextScopeKey)
+        : getApprovalHome(),
+    enabled: requestScope.ready,
     staleTime: 30_000,
     retry: 1,
+    meta: requestScope.queryMeta,
   });
   const preference = useQuery({
-    queryKey: ['home-preference', 'approval-home', auth.user?.tenantId, auth.user?.userId],
-    queryFn: () => getApprovalHomePreference<ApprovalHomeWidgetKey>(),
+    queryKey: ['home-preference', 'approval-home', ...requestScope.cacheKey],
+    queryFn: () => getApprovalHomePreference<ApprovalHomeWidgetKey>(requestScope.contextScopeKey),
+    enabled: requestScope.ready,
     staleTime: 5 * 60_000,
     retry: 1,
+    meta: requestScope.queryMeta,
   });
   const persistedWidgets = useMemo(
     () => reconcileWorkspaceWidgets(preference.data?.layout.widgets, APPROVAL_HOME_WIDGET_REGISTRY),
@@ -141,7 +153,7 @@ export function ApprovalHome() {
       ),
     onSuccess: (next) => {
       queryClient.setQueryData(
-        ['home-preference', 'approval-home', auth.user?.tenantId, auth.user?.userId],
+        ['home-preference', 'approval-home', ...requestScope.cacheKey],
         next
       );
       closeEditor();
@@ -161,7 +173,6 @@ export function ApprovalHome() {
     },
   });
 
-  if (home.isLoading || !home.data) return <LoadingHome />;
   if (home.isError)
     return (
       <PageCanvas>
@@ -177,6 +188,7 @@ export function ApprovalHome() {
         </Alert>
       </PageCanvas>
     );
+  if (home.isLoading || !home.data) return <LoadingHome />;
 
   const data = home.data;
   const renderWidget = (key: ApprovalHomeWidgetKey, _size: HomeWidgetSize) => {

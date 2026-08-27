@@ -1,7 +1,7 @@
 # R1 권한 계층 및 앱 접근 거버넌스 ADR
 
 - 상태: Accepted
-- 최종 검증: 2026-08-14
+- 최종 정책 정합화: 2026-08-26
 - 적용 범위: Auth, Platform, Provider, Gateway, DWP Frontend
 
 > UI 투영 후속 검토(2026-08-21):
@@ -133,6 +133,12 @@ Correlation ID와 구체 Reason Code를 독립 감사 Transaction에 남긴다.
 관리 센터에 직접 들어가지 않으며, 지원 접근 요청·고객 승인·범위·만료가 유효한
 지원 세션에서만 허용된 테넌트 기능을 위임받는다.
 
+Provider와 Tenant Role은 같은 Principal에 공존할 수 없다. 동일한 사람이 두 책임을 가지면
+별도 Principal·자격 증명·Session을 사용한다. 지원 세션은 Tenant Role Assignment가 아니라
+Provider Actor를 유지하는 시간·Tenant·Scope 제한 위임이다. 세부 JIT Lifecycle과 현재
+`approvalReference` 기반 고객 승인 증거의 보장 범위는
+[R0 Provider Control Plane 및 Tenant Estate ADR](R0%20Provider%20Control%20Plane%20및%20Tenant%20Estate%20ADR.md)을 따른다.
+
 ## 3. 앱 접근 수명주기
 
 ```mermaid
@@ -204,7 +210,8 @@ DWP 내부 권한을 가짜 성공으로 표시하지 않으며, 외부 시스�
 3. 요청자, 승인자, 이행자는 동일 요청에서 필요한 직무 분리를 지킨다.
 4. 역할과 Entitlement는 유효 기간, Revision, Actor, 사유, Correlation ID를 보존한다.
 5. 회수·만료된 권한은 동적 권한 계산에서 즉시 제외한다.
-6. Provider와 Tenant 역할은 서로의 Control Plane 진입 권한으로 사용하지 않는다.
+6. Provider와 Tenant 역할은 한 Principal에 함께 부여하지 않으며 서로의 Control Plane 진입
+   권한으로 사용하지 않는다.
 7. HR 운영, 감사, ID, 앱, Provider 권한은 명시적 겸직 정책 없이 합성하지 않는다.
 8. Agent가 향후 권한 도구를 호출하더라도 같은 승인 Token, Scope, 멱등성, 감사와
    보상·회수 규칙을 우회할 수 없다.
@@ -226,3 +233,5 @@ DWP 내부 권한을 가짜 성공으로 표시하지 않으며, 외부 시스�
 - 권한 적용·회수 후 `/api/auth/me`와 다음 API 요청의 Effective Permission이 재로그인
   없이 바뀐다.
 - 모든 성공·실패·거부가 감사 이벤트와 Correlation ID로 추적된다.
+- Provider Role Assignment 대상에 Tenant Role·Resource Role·Workspace Entitlement가 있거나
+  그 반대이면 UI, API와 DB 정합성 Gate가 모두 거부하며 Production 후보 혼합 Principal은 0건이다.

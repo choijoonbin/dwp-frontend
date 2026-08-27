@@ -3,7 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, MailPlus, RefreshCw, ShieldCheck, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { decideMailProposal, getMailHome, useAuth, useToast } from '@dwp-frontend/shared-utils';
+import {
+  decideMailProposal,
+  getMailHome,
+  getMailOrganization,
+  useAuth,
+  useToast,
+} from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ConfirmDialog,
@@ -18,12 +24,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {
-  MailMetric,
-  MailPageHeading,
-  MailProposalCard,
-  MailThreadListItem,
-} from './mail-components';
+import { MailPageHeading, MailProposalCard, MailThreadListItem } from './mail-components';
+import { MailAutomationRhythm, MailDailyFlow } from './mail-home-journey';
 
 import type { MailActionProposal } from '@dwp-frontend/shared-utils';
 
@@ -37,6 +39,12 @@ export function MailHome() {
   const query = useQuery({
     queryKey: ['mail', 'home'],
     queryFn: getMailHome,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const organizationQuery = useQuery({
+    queryKey: ['mail', 'organization'],
+    queryFn: getMailOrganization,
     staleTime: 30_000,
     retry: 1,
   });
@@ -118,46 +126,7 @@ export function MailHome() {
         </Stack>
       ) : data ? (
         <Stack spacing={3}>
-          <Box
-            component="section"
-            aria-label={t('home.signalSummary')}
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, minmax(0, 1fr))' },
-              border: 1,
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-              borderRadius: 1,
-              overflow: 'hidden',
-              '& > *': { borderBottom: { xs: 1, lg: 0 }, borderColor: 'divider' },
-              '& > *:not(:last-child)': { borderRight: 1, borderColor: 'divider' },
-            }}
-          >
-            <MailMetric
-              label={t('home.metrics.unread')}
-              value={data.metrics.unread}
-              detail={t('home.metrics.unreadDetail')}
-              tone="#176B63"
-            />
-            <MailMetric
-              label={t('home.metrics.urgent')}
-              value={data.metrics.urgent}
-              detail={t('home.metrics.urgentDetail')}
-              tone="#A73549"
-            />
-            <MailMetric
-              label={t('home.metrics.needsReply')}
-              value={data.metrics.needsReply}
-              detail={t('home.metrics.needsReplyDetail')}
-              tone="#B66A0A"
-            />
-            <MailMetric
-              label={t('home.metrics.assistant')}
-              value={data.metrics.activeProposals}
-              detail={t('home.metrics.assistantDetail')}
-              tone="#5267A8"
-            />
-          </Box>
+          <MailDailyFlow metrics={data.metrics} onNavigate={navigate} />
 
           <Box
             sx={{
@@ -298,6 +267,26 @@ export function MailHome() {
                 ))}
               </Box>
             </Box>
+          )}
+
+          {organizationQuery.isError ? (
+            <Alert
+              severity="warning"
+              action={
+                <ActionButton intent="quiet" onClick={() => organizationQuery.refetch()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              {t('home.automation.loadError')}
+            </Alert>
+          ) : organizationQuery.isLoading ? (
+            <Skeleton variant="rounded" height={132} />
+          ) : (
+            <MailAutomationRhythm
+              organization={organizationQuery.data}
+              onOpen={() => navigate('/mail/organization')}
+            />
           )}
         </Stack>
       ) : null}

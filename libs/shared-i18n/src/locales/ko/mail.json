@@ -25,7 +25,12 @@
         "inbox": { "label": "받은 메일" },
         "sent": { "label": "보낸 메일" },
         "drafts": { "label": "임시 보관함" },
+        "archive": { "label": "보관함" },
+        "spam": { "label": "스팸" },
+        "trash": { "label": "휴지통" },
+        "folders": { "label": "내 폴더" },
         "shared": { "label": "공유 메일함" },
+        "organization": { "label": "폴더 및 규칙" },
         "accounts": { "label": "연결된 계정" },
         "admin-overview": { "label": "운영 현황" },
         "admin-connections": { "label": "메일 연결" },
@@ -60,8 +65,19 @@
       "urgentDetail": "오늘 대응이 필요한 메일",
       "needsReply": "회신 필요",
       "needsReplyDetail": "답변을 기다리는 대화",
+      "snoozed": "나중에",
       "assistant": "실행 제안",
       "assistantDetail": "검토 후 진행할 수 있는 제안"
+    },
+    "journey": {
+      "badge": "오늘의 메일 흐름",
+      "attentionTitle": "지금 {{count}}개의 중요 신호가 판단을 기다립니다",
+      "clearTitle": "중요한 메일을 모두 정리했습니다",
+      "description": "도착 순서보다 업무 영향과 다음 행동을 기준으로 가장 짧은 처리 경로를 제안합니다.",
+      "start": "집중 처리 시작",
+      "openInbox": "받은 메일 보기",
+      "flowTitle": "처리 리듬",
+      "flowDescription": "확인, 회신, 나중 처리와 실행 제안을 한눈에 살펴봅니다."
     },
     "focus": {
       "title": "집중 큐",
@@ -81,6 +97,19 @@
       "description": "담당자가 함께 처리하는 메일의 응답 상태를 확인합니다.",
       "open": "처리 중 {{count}}건",
       "overdue": "기한 초과 {{count}}건"
+    },
+    "automation": {
+      "title": "자동 정리 리듬",
+      "description": "내 폴더와 규칙이 반복적인 분류를 얼마나 덜어주는지 확인합니다.",
+      "loadError": "폴더와 규칙의 최신 상태를 불러오지 못했습니다.",
+      "manage": "폴더 및 규칙 관리",
+      "activeRules": "활성 규칙",
+      "activeRulesDetail": "새 메일에 적용할 준비됨",
+      "personalFolders": "개인 폴더",
+      "personalFoldersDetail": "내 업무 맥락으로 구성",
+      "latestRun": "최근 자동 정리",
+      "latestRunDetail": "{{count}}건의 조건 일치",
+      "neverRun": "아직 실행 이력 없음"
     }
   },
   "mailbox": {
@@ -92,7 +121,7 @@
     "previousPage": "이전 페이지",
     "nextPage": "다음 페이지",
     "inbox": {
-      "eyebrow": "Split Inbox",
+      "eyebrow": "우선순위 받은편지함",
       "title": "받은 메일",
       "description": "중요도와 필요한 행동을 기준으로 나눈 메일을 빠르게 처리합니다.",
       "emptyTitle": "이 구역에 메일이 없습니다",
@@ -112,8 +141,38 @@
       "emptyTitle": "작성 중인 메일이 없습니다",
       "emptyDescription": "작성 화면에서 임시 저장한 메일이 여기에 표시됩니다."
     },
+    "archive": {
+      "eyebrow": "조용한 보관",
+      "title": "보관함",
+      "description": "처리는 끝났지만 다시 참고할 대화를 안전하게 보관합니다.",
+      "emptyTitle": "보관한 메일이 없습니다",
+      "emptyDescription": "받은 메일에서 보관한 대화가 여기에 표시됩니다."
+    },
+    "spam": {
+      "eyebrow": "위험 신호 격리",
+      "title": "스팸",
+      "description": "의심스러운 발신자와 원치 않는 메시지를 받은 메일과 분리합니다.",
+      "emptyTitle": "스팸 메일이 없습니다",
+      "emptyDescription": "스팸으로 분류한 대화가 여기에 표시됩니다."
+    },
+    "trash": {
+      "eyebrow": "삭제 전 확인",
+      "title": "휴지통",
+      "description": "삭제한 대화를 복원하거나 권한에 따라 영구 삭제합니다.",
+      "emptyTitle": "휴지통이 비어 있습니다",
+      "emptyDescription": "삭제한 메일이 여기에 표시됩니다."
+    },
+    "custom": {
+      "eyebrow": "내 업무 맥락",
+      "title": "내 폴더",
+      "description": "직접 만든 폴더에서 프로젝트와 주제별 메일을 이어서 처리합니다.",
+      "folderLabel": "폴더",
+      "folderPlaceholder": "폴더 선택",
+      "emptyTitle": "이 폴더에 메일이 없습니다",
+      "emptyDescription": "메일을 이동하거나 규칙을 실행하면 여기에 정리됩니다."
+    },
     "shared": {
-      "eyebrow": "Team Inbox",
+      "eyebrow": "팀 받은편지함",
       "title": "공유 메일함",
       "description": "팀 문의를 배정하고 내부 의견을 나누며 중복 응답을 방지합니다.",
       "emptyTitle": "공유 메일이 없습니다",
@@ -182,6 +241,153 @@
     "INTERNAL": "사내",
     "CONFIDENTIAL": "대외비",
     "RESTRICTED": "제한"
+  },
+  "importance": {
+    "LOW": "낮음",
+    "NORMAL": "보통",
+    "HIGH": "높음",
+    "URGENT": "긴급"
+  },
+  "lifecycle": {
+    "move": "폴더로 이동",
+    "restore": "원래 위치로 복원",
+    "spam": "스팸으로 이동",
+    "trash": "휴지통으로 이동",
+    "deleteForever": "영구 삭제",
+    "deleteTitle": "메일을 영구 삭제할까요?",
+    "deleteDescription": "이 작업은 되돌릴 수 없으며 공유 메일함에서는 관리자 권한이 필요합니다.",
+    "deleting": "삭제 중",
+    "error": "메일 위치를 변경하지 못했습니다. 새로고침 후 다시 시도해 주세요.",
+    "success": {
+      "MOVE": "메일을 선택한 폴더로 이동했습니다.",
+      "ARCHIVE": "메일을 보관했습니다.",
+      "TRASH": "메일을 휴지통으로 이동했습니다.",
+      "SPAM": "메일을 스팸으로 분류했습니다.",
+      "RESTORE": "메일을 원래 위치로 복원했습니다.",
+      "DELETE_FOREVER": "메일을 영구 삭제했습니다."
+    }
+  },
+  "organization": {
+    "eyebrow": "개인 메일 정리",
+    "title": "폴더 및 규칙",
+    "description": "업무 맥락에 맞는 폴더를 만들고 반복되는 메일 정리를 안전한 규칙으로 자동화합니다.",
+    "loadError": "폴더와 규칙을 불러오지 못했습니다.",
+    "tabsLabel": "메일 정리 방식",
+    "tabs": { "folders": "내 폴더", "rules": "정리 규칙" },
+    "edit": "편집",
+    "archive": "보관 처리",
+    "remove": "항목 제거",
+    "archived": "선택한 항목을 보관 처리했습니다.",
+    "archiveError": "항목을 보관 처리하지 못했습니다.",
+    "archiveTitle": "이 항목을 보관 처리할까요?",
+    "archiveDescription": "{{name}}은 목록에서 숨겨집니다. 연결된 하위 폴더나 활성 규칙이 있으면 먼저 정리해야 합니다.",
+    "archiveConfirm": "보관 처리",
+    "archiving": "처리 중",
+    "validation": { "required": "필수 입력입니다." },
+    "pulse": {
+      "title": "내 메일 정리 상태",
+      "description": "로컬 규칙과 공급자 동기화 상태를 구분해 실제 적용 범위를 투명하게 보여줍니다.",
+      "localRules": "DWP 전용 규칙 {{count}}개",
+      "syncIssues": "동기화 확인 필요 {{count}}개",
+      "syncHealthy": "동기화 이상 없음",
+      "organized": "폴더에 정리된 메일",
+      "organizedDetail": "개인 폴더 기준",
+      "activeRules": "활성 규칙",
+      "activeRulesDetail": "수신·수동 실행 가능"
+    },
+    "folder": {
+      "new": "새 폴더",
+      "createTitle": "새 폴더 만들기",
+      "editTitle": "폴더 편집",
+      "dialogDescription": "폴더는 선택한 개인 계정 안에서만 사용되며 공유 계정과 섞이지 않습니다.",
+      "account": "메일 계정",
+      "name": "폴더 이름",
+      "parent": "상위 폴더",
+      "noParent": "최상위 폴더",
+      "color": "식별 색상",
+      "saved": "폴더를 저장했습니다.",
+      "saveError": "폴더를 저장하지 못했습니다. 같은 이름이나 계층을 확인해 주세요.",
+      "counts": "전체 {{total}} · 읽지 않음 {{unread}}",
+      "open": "폴더 열기",
+      "emptyTitle": "아직 개인 폴더가 없습니다",
+      "emptyDescription": "프로젝트, 고객 또는 업무 주제에 맞는 첫 폴더를 만들어 보세요."
+    },
+    "rule": {
+      "new": "새 규칙",
+      "createTitle": "메일 정리 규칙 만들기",
+      "editTitle": "메일 정리 규칙 편집",
+      "dialogDescription": "조건과 동작을 명확히 조합하고, 공급자에 반영되지 않은 로컬 규칙은 그대로 표시합니다.",
+      "name": "규칙 이름",
+      "priority": "우선순위",
+      "conditions": "적용 조건",
+      "conditionsDescription": "최대 10개 조건을 모두 또는 하나 이상 일치하도록 구성합니다.",
+      "matchMode": "조건 결합",
+      "field": "대상",
+      "operator": "비교",
+      "value": "값",
+      "addCondition": "조건 추가",
+      "actions": "실행 동작",
+      "actionsDescription": "삭제처럼 되돌리기 어려운 동작은 자동 규칙에서 허용하지 않습니다.",
+      "action": "동작",
+      "targetFolder": "이동할 폴더",
+      "targetFolderPlaceholder": "폴더 선택",
+      "importance": "중요도",
+      "addAction": "동작 추가",
+      "enabled": "규칙 사용",
+      "stopProcessing": "일치하면 다음 규칙 중지",
+      "saved": "규칙을 저장했습니다.",
+      "saveError": "규칙을 저장하지 못했습니다. 조건과 동작을 확인해 주세요.",
+      "run": "지금 실행",
+      "runCompleted": "규칙으로 {{count}}건을 정리했습니다.",
+      "runError": "규칙을 실행하지 못했습니다.",
+      "lastRun": "최근 실행 · {{count}}건 일치",
+      "neverRun": "아직 실행하지 않음",
+      "moveSummary": "{{folder}} 폴더로 이동",
+      "emptyTitle": "아직 정리 규칙이 없습니다",
+      "emptyDescription": "반복해서 이동하거나 표시하는 메일부터 첫 규칙으로 자동화해 보세요."
+    },
+    "matchMode": { "ALL": "모두 일치", "ANY": "하나 이상" },
+    "fields": {
+      "SENDER": "보낸 사람",
+      "RECIPIENT": "받는 사람",
+      "SUBJECT": "제목",
+      "BODY": "본문",
+      "HAS_ATTACHMENT": "첨부파일",
+      "IMPORTANCE": "중요도"
+    },
+    "operators": {
+      "CONTAINS": "포함",
+      "EQUALS": "일치",
+      "STARTS_WITH": "시작",
+      "ENDS_WITH": "끝남",
+      "IS": "해당함"
+    },
+    "actions": {
+      "MOVE_TO_FOLDER": "폴더로 이동",
+      "MARK_READ": "읽음 표시",
+      "STAR": "중요 표시",
+      "SET_IMPORTANCE": "중요도 설정"
+    },
+    "actionDescriptions": {
+      "MARK_READ": "일치한 메일을 읽음으로 표시합니다.",
+      "STAR": "일치한 메일에 중요 표시를 추가합니다."
+    },
+    "boolean": { "yes": "있음", "no": "없음" },
+    "colors": {
+      "NEUTRAL": "중립",
+      "BLUE": "파랑",
+      "TEAL": "청록",
+      "GREEN": "초록",
+      "AMBER": "주황",
+      "CORAL": "코랄",
+      "VIOLET": "보라"
+    },
+    "sync": {
+      "LOCAL_ONLY": "DWP에서만 적용",
+      "PENDING": "공급자 반영 대기",
+      "SYNCED": "공급자와 동기화",
+      "ERROR": "동기화 확인 필요"
+    }
   },
   "proposal": {
     "assistant": "DWP 실행 제안",
@@ -315,7 +521,7 @@
       "aiApproval": "AI 자동 실행 차단 및 사용자 승인"
     },
     "connections": {
-      "eyebrow": "Provider Adapter",
+      "eyebrow": "메일 공급자 연결",
       "title": "메일 연결",
       "description": "Microsoft, Google, NAVER WORKS와 표준 회사 메일 서버 연결을 일관된 계약으로 관리합니다.",
       "configure": "연결 설정",
@@ -333,7 +539,7 @@
       "saveError": "메일 연결 설정을 저장하지 못했습니다."
     },
     "shared": {
-      "eyebrow": "Team Inbox Operations",
+      "eyebrow": "팀 받은편지함 운영",
       "title": "공유함 운영",
       "description": "팀 메일의 담당 현황과 서비스 목표 초과를 개인 메일 내용 없이 확인합니다.",
       "open": "처리 중",
@@ -355,7 +561,7 @@
       "emptyDescription": "공유 메일함을 연결하면 서비스 상태가 여기에 표시됩니다."
     },
     "policies": {
-      "eyebrow": "Security & AI Guardrails",
+      "eyebrow": "보안 및 AI 통제",
       "title": "보안 및 AI 정책",
       "description": "외부 콘텐츠, 보존 기간과 AI가 제안할 수 있는 업무 범위를 테넌트 단위로 통제합니다.",
       "externalBanner": "외부 발신자 경고",

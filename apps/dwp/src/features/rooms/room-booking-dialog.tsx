@@ -1,10 +1,11 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BellRing, Building2, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createRoomBooking,
   listPeople,
+  resolveIdempotentMutationIntent,
   updateRoomBooking,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -28,12 +29,14 @@ import {
   validateRoomBookingRange,
 } from './room-availability-model';
 import { useRoomsCapabilities } from './rooms-capabilities';
+import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { RoomsPermissionNotice } from './rooms-ui';
 
 import type {
   CalendarEvent,
   CalendarPolicy,
   CalendarResource,
+  IdempotentMutationIntent,
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
@@ -71,7 +74,10 @@ export function RoomBookingDialog({
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
   const effectivePolicy = policy ?? DEFAULT_ROOM_POLICY;
-  const canSave = event ? capabilities.canUpdateRoomBooking : capabilities.canCreateRoomBooking;
+  const policyAvailable = Boolean(policy);
+  const canSave = event
+    ? roomBookingActionPolicy(event, capabilities.canUpdateRoomBooking).canEdit
+    : capabilities.canCreateRoomBooking;
   const [title, setTitle] = useState('');
   const [agenda, setAgenda] = useState('');
   const [startsAt, setStartsAt] = useState('');
@@ -79,7 +85,12 @@ export function RoomBookingDialog({
   const [attendees, setAttendees] = useState<AttendeeOption[]>([]);
   const [attendeeQuery, setAttendeeQuery] = useState('');
   const [showValidation, setShowValidation] = useState(false);
+  const createIntent = useRef<IdempotentMutationIntent | null>(null);
   const deferredAttendeeQuery = useDeferredValue(attendeeQuery.trim());
+
+  useEffect(() => {
+    if (!open || event) createIntent.current = null;
+  }, [event, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -141,6 +152,7 @@ export function RoomBookingDialog({
   const mutation = useMutation({
     mutationFn: async () => {
       if (!room) throw new Error(t('booking.roomRequired'));
+      if (!policyAvailable) throw new Error(t('booking.policyUnavailable'));
       if (!canSave) throw new Error(t('permissions.roomBookingReadOnly'));
       const attendeeInput = attendees
         .filter((person) => person.workEmail)
@@ -172,9 +184,10 @@ export function RoomBookingDialog({
         attendees: attendeeInput,
         resourceId: room.resourceId,
       };
-      return event
-        ? updateRoomBooking(event.eventId, { ...input, version: event.version })
-        : createRoomBooking({ ...input, idempotencyKey: crypto.randomUUID() });
+      if (event) return updateRoomBooking(event.eventId, { ...input, version: event.version });
+      const intent = resolveIdempotentMutationIntent(createIntent.current, input);
+      createIntent.current = intent;
+      return createRoomBooking({ ...input, idempotencyKey: intent.key });
     },
     onSuccess: async (saved) => {
       await Promise.all([
@@ -182,6 +195,7 @@ export function RoomBookingDialog({
         queryClient.invalidateQueries({ queryKey: ['calendar'] }),
       ]);
       toast.success(t(event ? 'booking.updated' : 'booking.created'));
+      createIntent.current = null;
       onSaved?.(saved);
       onClose();
     },
@@ -197,7 +211,7 @@ export function RoomBookingDialog({
       submitLabel={t(event ? 'actions.save' : 'actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!valid || !canSave}
+      submitDisabled={!valid || !canSave || !policyAvailable}
       onClose={onClose}
       onSubmit={() => {
         if (!valid) {
@@ -214,6 +228,7 @@ export function RoomBookingDialog({
             {t(event ? 'permissions.roomUpdateReadOnly' : 'permissions.roomBookingReadOnly')}
           </RoomsPermissionNotice>
         )}
+        {!policyAvailable && <Alert severity="error">{t('booking.policyUnavailable')}</Alert>}
         {room && (
           <Stack
             direction={{ xs: 'column', sm: 'row' }}

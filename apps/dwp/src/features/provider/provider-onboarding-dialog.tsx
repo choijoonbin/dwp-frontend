@@ -301,6 +301,10 @@ export function ProviderOnboardingDialog({
         {step === 2 && (
           <Stack gap={2}>
             <Typography variant="subtitle2">{t('onboarding.initialAdministrator')}</Typography>
+            <Alert severity="warning">
+              <Typography variant="subtitle2">{t('onboarding.identityStaging.title')}</Typography>
+              <Typography variant="body2">{t('onboarding.identityStaging.description')}</Typography>
+            </Alert>
             <TextField
               autoFocus
               required
@@ -327,6 +331,10 @@ export function ProviderOnboardingDialog({
         {step === 3 && (
           <Stack gap={2.25}>
             <Alert severity="info">{t('onboarding.review.notice')}</Alert>
+            <Alert severity="warning">
+              <Typography variant="subtitle2">{t('onboarding.identityStaging.title')}</Typography>
+              <Typography variant="body2">{t('onboarding.identityStaging.description')}</Typography>
+            </Alert>
             <Box
               sx={{
                 display: 'grid',

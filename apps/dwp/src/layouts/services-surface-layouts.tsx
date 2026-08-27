@@ -1,4 +1,5 @@
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
+import type { ProductSurfaceManifest } from '../components/product-manifest';
 import {
   SERVICES_MANAGEMENT_NAVIGATION,
   SERVICES_WORK_NAVIGATION,
@@ -6,10 +7,16 @@ import {
 import { ProductManagementLayout } from './product-management-layout';
 import { ProductWorkLayout } from './product-work-layout';
 
-export function ServicesWorkLayout({ surface }: { surface: ProductSurfaceLayoutRuntime }) {
+type ServicesSurfaceLayoutProps = {
+  manifest: ProductSurfaceManifest;
+  surface: ProductSurfaceLayoutRuntime;
+};
+
+export function ServicesWorkLayout({ manifest, surface }: ServicesSurfaceLayoutProps) {
   return (
     <ProductWorkLayout
       areaKey="services"
+      manifest={manifest}
       navigation={SERVICES_WORK_NAVIGATION}
       translationNamespace="services"
       surface={surface}
@@ -17,10 +24,11 @@ export function ServicesWorkLayout({ surface }: { surface: ProductSurfaceLayoutR
   );
 }
 
-export function ServicesManagementLayout({ surface }: { surface: ProductSurfaceLayoutRuntime }) {
+export function ServicesManagementLayout({ manifest, surface }: ServicesSurfaceLayoutProps) {
   return (
     <ProductManagementLayout
       areaKey="services"
+      manifest={manifest}
       navigation={SERVICES_MANAGEMENT_NAVIGATION}
       translationNamespace="services"
       surface={surface}

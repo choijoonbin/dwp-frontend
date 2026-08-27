@@ -29,7 +29,11 @@ export type ResourceRoleDTO = {
   validTo?: string | null;
 };
 
+export type IdentityPlane = 'PROVIDER' | 'TENANT';
+
 export type LoginResponseData = {
+  // Authentication bootstrap metadata only. Plane authority is accepted solely
+  // from the immediately verified `/api/auth/me` response.
   expiresIn?: number;
   userId?: string;
   tenantId?: string;
@@ -47,6 +51,7 @@ export type MeResponse = {
   tenantId: number;
   tenantCode: string;
   tenantName?: string | null;
+  identityPlane: IdentityPlane;
   roles: string[];
   legacyRoleFallbackAllowed?: boolean;
   groups?: Array<{
@@ -473,10 +478,12 @@ export async function getPermissions(): Promise<ApiResponse<PermissionDTO[]>> {
   return (await axiosInstance.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions')).data;
 }
 
-export async function getProductSurfaceContexts(): Promise<ProductSurfaceContextListData> {
+export async function getProductSurfaceContexts(
+  options: { signal?: AbortSignal } = {}
+): Promise<ProductSurfaceContextListData> {
   const response = await axiosInstance.get<ApiResponse<ProductSurfaceContextListData>>(
     PRODUCT_SURFACE_CONTEXTS_ENDPOINT,
-    { timeoutMs: 8_000 }
+    { timeoutMs: 8_000, signal: options.signal }
   );
   return response.data.data;
 }
@@ -612,9 +619,8 @@ export async function getOidcCallback(params: OidcCallbackParams): Promise<OidcC
   return { purpose: 'STEP_UP', response: callback.data, flowId, returnTo };
 }
 
-export function buildOidcLoginUrl(providerKey: string): string {
+export function buildOidcLoginUrl(): string {
   const search = new URLSearchParams({
-    providerKey,
     tenantId: getTenantId(),
   });
   return API_URL + '/api/auth/oidc/login?' + search.toString();

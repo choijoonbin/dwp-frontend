@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
+import type { MailOrganization } from '@dwp-frontend/shared-utils';
+
 import { mockShellSession } from './support/shell-session';
 
 const MEMBER_PERMISSIONS = [
@@ -108,6 +110,56 @@ function detail(item: ReturnType<typeof thread>, deliveryState = 'FAILED') {
   };
 }
 
+function mailOrganization(): MailOrganization {
+  return {
+    accounts: [
+      {
+        accountId: '10000000-0000-0000-0000-000000000001',
+        emailAddress: 'mina.kim@sk.com',
+        displayName: 'Mina Kim',
+        accountKind: 'PERSONAL',
+        providerType: 'DWP_SANDBOX',
+        connectionState: 'ACTIVE',
+        synchronizationState: 'SYNCED',
+        defaultAccount: true,
+      },
+    ],
+    folders: [
+      {
+        folderId: '11000000-0000-0000-0000-000000000001',
+        accountId: '10000000-0000-0000-0000-000000000001',
+        parentFolderId: null,
+        folderKey: 'inbox',
+        displayName: 'Inbox',
+        folderType: 'INBOX',
+        color: 'BLUE',
+        synchronizationState: 'SYNCED',
+        sortOrder: 10,
+        totalCount: 6,
+        unreadCount: 2,
+        version: 0,
+      },
+      {
+        folderId: '11000000-0000-0000-0000-000000000002',
+        accountId: '10000000-0000-0000-0000-000000000001',
+        parentFolderId: null,
+        folderKey: 'projects',
+        displayName: 'Projects',
+        folderType: 'CUSTOM',
+        color: 'TEAL',
+        synchronizationState: 'LOCAL_ONLY',
+        sortOrder: 100,
+        totalCount: 3,
+        unreadCount: 1,
+        version: 0,
+      },
+    ],
+    rules: [],
+    recentRuns: [],
+    generatedAt: '2026-08-27T08:00:00Z',
+  };
+}
+
 async function mockMailMember(page: Page) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'en',
@@ -119,6 +171,9 @@ async function mockMailMember(page: Page) {
 
 test('mail home exposes work signals without serious accessibility defects', async ({ page }) => {
   await mockMailMember(page);
+  await page.route('**/api/platform/v1/mail/organization', (route) =>
+    fulfill(route, mailOrganization())
+  );
   await page.route('**/api/platform/v1/mail/home', (route) =>
     fulfill(route, {
       accounts: [],
@@ -141,8 +196,12 @@ test('mail home exposes work signals without serious accessibility defects', asy
   );
 
   await page.goto('/mail/home');
+  await expect(
+    page.getByRole('heading', { name: '3 important signals are waiting for a decision' })
+  ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Focus queue' })).toBeVisible();
   await expect(page.getByText('Customer launch review')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Automatic organization rhythm' })).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -152,6 +211,104 @@ test('mail home exposes work signals without serious accessibility defects', asy
   ).toEqual([]);
 
   await page.setViewportSize({ width: 390, height: 844 });
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test('personal folders and sender rules can be created and run from one workspace', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const state = mailOrganization();
+  let createdFolderName = '';
+  let createdRuleName = '';
+  let executedRule = false;
+  await page.route('**/api/platform/v1/mail/organization**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/organization')) {
+      return fulfill(route, state);
+    }
+    if (request.method() === 'POST' && path.endsWith('/v1/mail/organization/folders')) {
+      const input = await request.postDataJSON();
+      createdFolderName = input.displayName;
+      const folder = {
+        ...state.folders[1],
+        folderId: '11000000-0000-0000-0000-000000000003',
+        folderKey: 'customer-launch',
+        displayName: input.displayName,
+        color: input.color,
+      };
+      state.folders.push(folder);
+      return fulfill(route, folder);
+    }
+    if (request.method() === 'POST' && path.endsWith('/v1/mail/organization/rules')) {
+      const input = await request.postDataJSON();
+      createdRuleName = input.displayName;
+      expect(input.conditions).toEqual([
+        { field: 'SENDER', operator: 'CONTAINS', value: '@partner.example' },
+      ]);
+      expect(input.actions[0].type).toBe('MOVE_TO_FOLDER');
+      const rule = {
+        ruleId: '12000000-0000-0000-0000-000000000001',
+        ...input,
+        synchronizationState: 'LOCAL_ONLY',
+        lastRunAt: null,
+        lastMatchCount: 0,
+        version: 0,
+      };
+      state.rules.push(rule);
+      return fulfill(route, rule);
+    }
+    if (request.method() === 'POST' && path.endsWith('/run')) {
+      executedRule = true;
+      state.rules[0]!.lastRunAt = '2026-08-27T08:10:00Z';
+      state.rules[0]!.lastMatchCount = 2;
+      return fulfill(route, {
+        runId: '13000000-0000-0000-0000-000000000001',
+        ruleId: state.rules[0]!.ruleId,
+        triggerKind: 'MANUAL',
+        status: 'SUCCEEDED',
+        scannedCount: 6,
+        matchedCount: 2,
+        changedCount: 2,
+        startedAt: '2026-08-27T08:10:00Z',
+        completedAt: '2026-08-27T08:10:01Z',
+      });
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/organization');
+  await expect(page.getByRole('heading', { name: 'Folders and rules' })).toBeVisible();
+  await page.getByRole('button', { name: 'New folder' }).click();
+  const folderDialog = page.getByRole('dialog');
+  await folderDialog.getByLabel('Folder name').fill('Customer launch');
+  await folderDialog.getByRole('button', { name: 'Save' }).click();
+  await expect.poll(() => createdFolderName).toBe('Customer launch');
+  await expect(page.getByText('Customer launch', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'New rule' }).click();
+  const ruleDialog = page.getByRole('dialog');
+  await ruleDialog.getByLabel('Rule name').fill('Partner launch mail');
+  await ruleDialog.getByLabel('Value').fill('@partner.example');
+  await ruleDialog.getByLabel('Destination folder').click();
+  await page.getByRole('option', { name: 'Customer launch' }).click();
+  await ruleDialog.getByRole('button', { name: 'Save' }).click();
+  await expect.poll(() => createdRuleName).toBe('Partner launch mail');
+  await expect(page.getByText('Partner launch mail')).toBeVisible();
+  await page.getByRole('button', { name: 'Run now' }).click();
+  await expect.poll(() => executedRule).toBe(true);
+  await expect(page.locator('span:visible', { hasText: 'Last run · 2 matched' })).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
@@ -239,6 +396,70 @@ test('mailbox pagination, shared ownership, and failed delivery retry are comple
   await page.getByRole('option', { name: /Jin Lee/ }).click();
   await page.getByRole('button', { name: 'Assign', exact: true }).click();
   await expect(page.getByText('Assigned to Jin Lee')).toBeVisible();
+});
+
+test('trash and restore keep the mailbox lifecycle reversible', async ({ page }) => {
+  await mockMailMember(page);
+  const organization = mailOrganization();
+  let current = thread('40000000-0000-0000-0000-000000000009', {
+    subject: 'Reversible lifecycle review',
+  });
+  const lifecycleActions: string[] = [];
+  await page.route('**/api/platform/v1/mail/organization', (route) => fulfill(route, organization));
+  await page.route('**/api/platform/v1/mail/threads**', async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const path = url.pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/threads')) {
+      const requestedFolder = url.searchParams.get('folder');
+      const visible =
+        (requestedFolder === 'INBOX' && current.folderType === 'INBOX') ||
+        (requestedFolder === 'TRASH' && current.folderType === 'TRASH');
+      return fulfill(route, {
+        items: visible ? [current] : [],
+        total: visible ? 1 : 0,
+        page: 0,
+        pageSize: 30,
+      });
+    }
+    if (request.method() === 'POST' && path.endsWith('/lifecycle')) {
+      const input = await request.postDataJSON();
+      lifecycleActions.push(input.action);
+      current =
+        input.action === 'RESTORE'
+          ? { ...current, folderType: 'INBOX', workflowState: 'OPEN', version: current.version + 1 }
+          : {
+              ...current,
+              folderType: 'TRASH',
+              workflowState: 'TRASHED',
+              unread: false,
+              version: current.version + 1,
+            };
+      return fulfill(route, { thread: current, deleted: false });
+    }
+    if (request.method() === 'GET' && path.endsWith(`/${current.threadId}`)) {
+      return fulfill(route, detail(current, 'SENT'));
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/inbox');
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (mobile) {
+    await page.getByRole('button', { name: /Reversible lifecycle review/ }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'Reversible lifecycle review' })).toBeVisible();
+  await page.getByRole('button', { name: 'Move to folder' }).click();
+  await page.getByRole('menuitem', { name: 'Move to trash' }).click();
+  await expect.poll(() => lifecycleActions).toEqual(['TRASH']);
+
+  await page.goto('/mail/trash');
+  if (mobile) {
+    await page.getByRole('button', { name: /Reversible lifecycle review/ }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'Reversible lifecycle review' })).toBeVisible();
+  await page.getByRole('button', { name: 'Restore to previous location' }).click();
+  await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE']);
 });
 
 test('mail administrators see contract readiness separately from deployed adapters', async ({

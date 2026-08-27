@@ -13,12 +13,13 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   executeProviderOperation,
   getProviderEstateOverview,
   getProviderOperatorProfile,
+  getProviderTenant,
   listProviderEntitlements,
   listProviderRegions,
   listProviderTenants,
@@ -38,9 +39,11 @@ import {
   foundationTokens,
 } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -59,7 +62,6 @@ import type {
 
 import { ProviderOnboardingDialog } from './provider-onboarding-dialog';
 import { ProviderOperationDialog } from './provider-operation-dialog';
-import { GovernedSavedViewControl } from '../../components/governed-saved-view-control';
 import {
   formatProviderDate,
   ProviderError,
@@ -68,19 +70,16 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
-
-const LIFECYCLE_STATES = ['ALL', 'PROVISIONING', 'ACTIVE', 'SUSPENDED', 'RETIRED'] as const;
-const SERVICE_TIERS = ['ALL', 'STANDARD', 'ENTERPRISE', 'REGULATED'] as const;
-const ISOLATION_MODELS = ['ALL', 'POOL', 'BRIDGE', 'SILO'] as const;
-
-function tenantServiceHealth(tenant: ProviderTenant): string {
-  if (tenant.services.some((service) => service.lifecycleState === 'FAILED')) return 'FAILED';
-  if (tenant.services.some((service) => service.lifecycleState === 'DEGRADED')) return 'DEGRADED';
-  if (tenant.services.some((service) => service.lifecycleState === 'PROVISIONING')) {
-    return 'PROVISIONING';
-  }
-  return 'READY';
-}
+import {
+  PROVIDER_TENANT_ISOLATION_MODELS,
+  PROVIDER_TENANT_LIFECYCLE_STATES,
+  PROVIDER_TENANT_PAGE_SIZES,
+  PROVIDER_TENANT_SERVICE_TIERS,
+  providerEstateState,
+  providerTenantPagination,
+  providerTenantServiceHealth,
+} from './provider-tenant-estate-model';
+import { providerOperationalSnapshotState } from './provider-operational-freshness';
 
 export function ProviderTenants() {
   const { t } = useTranslation('provider');
@@ -94,6 +93,10 @@ export function ProviderTenants() {
   const region = searchParams.get('region') ?? 'ALL';
   const serviceTier = searchParams.get('tier') ?? 'ALL';
   const isolationModel = searchParams.get('isolation') ?? 'ALL';
+  const paginationModel = providerTenantPagination(
+    searchParams.get('page'),
+    searchParams.get('size')
+  );
   const comparisonIds = useMemo(
     () => (searchParams.get('compare') ?? '').split(',').filter(Boolean).slice(0, 3),
     [searchParams]
@@ -110,91 +113,22 @@ export function ProviderTenants() {
       setSearchParams((current) => mergeFilterSearchParams(current, values), { replace: true }),
     [setSearchParams]
   );
-  const currentViewConfiguration = useMemo(
-    () => ({
-      q: query,
-      state,
-      region,
-      tier: serviceTier,
-      isolation: isolationModel,
-      compare: comparisonIds.join(','),
-    }),
-    [comparisonIds, isolationModel, query, region, serviceTier, state]
-  );
-  const selectedBuiltInViewId =
-    !query &&
-    region === 'ALL' &&
-    serviceTier === 'ALL' &&
-    isolationModel === 'ALL' &&
-    comparisonIds.length === 0
-      ? state === 'ALL'
-        ? 'all-estate'
-        : state === 'ACTIVE'
-          ? 'active-estate'
-          : state === 'PROVISIONING'
-            ? 'onboarding-estate'
-            : null
-      : null;
-  const builtInViews = useMemo(
-    () => [
-      {
-        id: 'all-estate',
-        name: t('tenants.savedViews.all'),
-        configuration: {
-          q: '',
-          state: 'ALL',
-          region: 'ALL',
-          tier: 'ALL',
-          isolation: 'ALL',
-          compare: '',
-        },
-        isDefault: true,
-      },
-      {
-        id: 'active-estate',
-        name: t('tenants.savedViews.active'),
-        configuration: {
-          q: '',
-          state: 'ACTIVE',
-          region: 'ALL',
-          tier: 'ALL',
-          isolation: 'ALL',
-          compare: '',
-        },
-      },
-      {
-        id: 'onboarding-estate',
-        name: t('tenants.savedViews.onboarding'),
-        configuration: {
-          q: '',
-          state: 'PROVISIONING',
-          region: 'ALL',
-          tier: 'ALL',
-          isolation: 'ALL',
-          compare: '',
-        },
-      },
-    ],
-    [t]
-  );
-  const applySavedView = useCallback(
-    (configuration: Record<string, unknown>) => {
-      const value = (key: string, fallback: string) =>
-        typeof configuration[key] === 'string' ? String(configuration[key]) : fallback;
-      updateFilters({
-        q: value('q', ''),
-        state: value('state', 'ALL') === 'ALL' ? null : value('state', 'ALL'),
-        region: value('region', 'ALL') === 'ALL' ? null : value('region', 'ALL'),
-        tier: value('tier', 'ALL') === 'ALL' ? null : value('tier', 'ALL'),
-        isolation: value('isolation', 'ALL') === 'ALL' ? null : value('isolation', 'ALL'),
-        compare: value('compare', '') || null,
-      });
-    },
+  const updateTenantFilters = useCallback(
+    (values: Record<string, string | null>) => updateFilters({ ...values, page: null }),
     [updateFilters]
   );
-
   const tenants = useQuery({
-    queryKey: ['provider', 'tenants', deferredQuery, state, region, serviceTier, isolationModel],
+    queryKey: [
+      'provider',
+      'tenants',
+      deferredQuery,
+      state,
+      region,
+      serviceTier,
+      isolationModel,
+      paginationModel.page,
+      paginationModel.pageSize,
+    ],
     queryFn: () =>
       listProviderTenants({
         query: deferredQuery,
@@ -202,13 +136,16 @@ export function ProviderTenants() {
         region: region === 'ALL' ? undefined : region,
         serviceTier: serviceTier === 'ALL' ? undefined : serviceTier,
         isolationModel: isolationModel === 'ALL' ? undefined : isolationModel,
-        page: 0,
-        size: 100,
+        page: paginationModel.page,
+        size: paginationModel.pageSize,
       }),
+    placeholderData: (previous) => previous,
+    refetchInterval: 60_000,
   });
   const estate = useQuery({
     queryKey: ['provider', 'estate-overview'],
     queryFn: getProviderEstateOverview,
+    refetchInterval: 60_000,
   });
   const entitlements = useQuery({
     queryKey: ['provider', 'entitlements'],
@@ -222,7 +159,17 @@ export function ProviderTenants() {
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
   });
+  const comparisonTenants = useQueries({
+    queries: comparisonIds.map((tenantId) => ({
+      queryKey: ['provider', 'tenant', tenantId],
+      queryFn: () => getProviderTenant(tenantId),
+      staleTime: 60_000,
+    })),
+  });
   const canWrite = operator.data?.permissions.includes('TENANT_WRITE') ?? false;
+  const onboardingCatalogReady = entitlements.isSuccess && regions.isSuccess;
+  const onboardingCatalogUnavailable = entitlements.isError || regions.isError;
+  const canOnboard = canWrite && onboardingCatalogReady;
 
   const columns = useMemo<GridColDef<ProviderTenant>[]>(
     () => [
@@ -265,7 +212,7 @@ export function ProviderTenants() {
         field: 'serviceHealth',
         headerName: t('tenants.columns.health'),
         width: 125,
-        valueGetter: (_value, row) => tenantServiceHealth(row),
+        valueGetter: (_value, row) => providerTenantServiceHealth(row),
         renderCell: ({ value }) => <ProviderStatusChip state={String(value)} />,
       },
       {
@@ -320,50 +267,40 @@ export function ProviderTenants() {
     }
   };
 
-  if (
-    tenants.isLoading ||
-    estate.isLoading ||
-    entitlements.isLoading ||
-    regions.isLoading ||
-    (operator.isLoading && !operator.data)
-  )
+  if (tenants.isLoading || estate.isLoading || (operator.isLoading && !operator.data))
     return <ProviderLoading />;
-  if (
-    tenants.isError ||
-    estate.isError ||
-    entitlements.isError ||
-    regions.isError ||
-    (operator.isError && !operator.data)
-  )
+  if (tenants.isError || estate.isError || (operator.isError && !operator.data))
     return (
       <ProviderError
-        error={
-          tenants.error ?? estate.error ?? entitlements.error ?? regions.error ?? operator.error
-        }
-        onRetry={() =>
-          void Promise.all([
-            tenants.refetch(),
-            estate.refetch(),
-            entitlements.refetch(),
-            regions.refetch(),
-            operator.refetch(),
-          ])
-        }
-        retrying={
-          tenants.isFetching ||
-          estate.isFetching ||
-          entitlements.isFetching ||
-          regions.isFetching ||
-          operator.isFetching
-        }
+        error={tenants.error ?? estate.error ?? operator.error}
+        onRetry={() => void Promise.all([tenants.refetch(), estate.refetch(), operator.refetch()])}
+        retrying={tenants.isFetching || estate.isFetching || operator.isFetching}
       />
     );
 
   const estateValue = estate.data;
   const visibleTenants = tenants.data?.content ?? [];
   const selectedTenants = comparisonIds
-    .map((tenantId) => visibleTenants.find((tenant) => tenant.tenantId === tenantId))
+    .map(
+      (tenantId, index) =>
+        visibleTenants.find((tenant) => tenant.tenantId === tenantId) ??
+        comparisonTenants[index]?.data
+    )
     .filter((tenant): tenant is ProviderTenant => Boolean(tenant));
+  const comparisonUnavailable = comparisonTenants.some((query) => query.isError);
+  const comparisonLoading = comparisonTenants.some((query) => query.isLoading && !query.data);
+  const comparisonDescription = comparisonLoading
+    ? t('tenants.compare.loading')
+    : comparisonUnavailable && selectedTenants.length === 0
+      ? t('tenants.compare.allUnavailable')
+      : comparisonUnavailable
+        ? t('tenants.compare.partial', {
+            available: selectedTenants.length,
+            total: comparisonIds.length,
+          })
+        : comparisonIds.length < 2
+          ? t('tenants.compare.selectMore')
+          : t('tenants.compare.description', { count: selectedTenants.length });
   const rowSelectionModel: GridRowSelectionModel = {
     type: 'include',
     ids: new Set(comparisonIds),
@@ -375,7 +312,7 @@ export function ProviderTenants() {
     serviceTier !== 'ALL' ||
     isolationModel !== 'ALL';
   const resetFilters = () =>
-    updateFilters({
+    updateTenantFilters({
       q: null,
       state: null,
       region: null,
@@ -400,14 +337,19 @@ export function ProviderTenants() {
   const attentionTenants = visibleTenants.filter((tenant) =>
     tenant.services.some((service) => ['DEGRADED', 'FAILED'].includes(service.lifecycleState))
   );
-  const estateState = estateValue?.failedTenants
-    ? 'CRITICAL'
-    : estateValue?.provisioningTenants || estateValue?.suspendedTenants
-      ? 'ATTENTION'
-      : 'HEALTHY';
+  const estateState = providerEstateState(estateValue);
   const estateTone =
     estateState === 'CRITICAL' ? 'error' : estateState === 'ATTENTION' ? 'warning' : 'success';
-  const observedAt = Math.max(tenants.dataUpdatedAt, estate.dataUpdatedAt);
+  const loadedAt = Math.max(tenants.dataUpdatedAt, estate.dataUpdatedAt);
+  const liveState = providerOperationalSnapshotState({
+    fetching: tenants.isFetching || estate.isFetching,
+    partial: onboardingCatalogUnavailable,
+    sourceObservedAt: 0,
+  });
+  const liveLabel =
+    liveState === 'stale'
+      ? t('tenants.live.loadedWithoutSourceTime')
+      : t(`tenants.live.${liveState}`);
   const totalRegionTenants = (estateValue?.regions ?? []).reduce(
     (sum, item) => sum + item.count,
     0
@@ -453,12 +395,10 @@ export function ProviderTenants() {
         ]}
         status={
           <LiveStatus
-            state={tenants.isFetching || estate.isFetching ? 'syncing' : 'live'}
-            label={t(
-              tenants.isFetching || estate.isFetching ? 'tenants.live.syncing' : 'tenants.live.live'
-            )}
+            state={liveState}
+            label={liveLabel}
             detail={t('tenants.context.lastLoaded', {
-              value: formatProviderDate(new Date(observedAt).toISOString()),
+              value: formatProviderDate(new Date(loadedAt).toISOString()),
             })}
             refreshLabel={t('actions.refresh')}
             refreshing={tenants.isFetching || estate.isFetching}
@@ -552,6 +492,7 @@ export function ProviderTenants() {
             <Button
               variant="contained"
               startIcon={<Plus size={17} />}
+              disabled={!onboardingCatalogReady}
               onClick={() => setOnboardingOpen(true)}
               sx={{ alignSelf: { xs: 'flex-start', md: 'center' }, flexShrink: 0 }}
             >
@@ -560,6 +501,22 @@ export function ProviderTenants() {
           )}
         </Stack>
       </Paper>
+      {canWrite && onboardingCatalogUnavailable && (
+        <Alert
+          severity="warning"
+          action={
+            <ActionButton
+              intent="quiet"
+              size="small"
+              onClick={() => void Promise.all([entitlements.refetch(), regions.refetch()])}
+            >
+              {t('actions.retryLoad')}
+            </ActionButton>
+          }
+        >
+          {t('tenants.onboardingCatalogUnavailable')}
+        </Alert>
+      )}
       <Box
         component="section"
         aria-label={t('tenants.signals.label')}
@@ -639,13 +596,6 @@ export function ProviderTenants() {
             description={t('tenants.description')}
             action={
               <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-                <GovernedSavedViewControl
-                  surfaceKey="provider.customer-estate"
-                  currentConfiguration={currentViewConfiguration}
-                  builtInViews={builtInViews}
-                  selectedBuiltInViewId={selectedBuiltInViewId}
-                  onApply={applySavedView}
-                />
                 <Chip
                   size="small"
                   variant="outlined"
@@ -666,7 +616,7 @@ export function ProviderTenants() {
             <TextField
               size="small"
               value={query}
-              onChange={(event) => updateFilters({ q: event.target.value || null })}
+              onChange={(event) => updateTenantFilters({ q: event.target.value || null })}
               label={t('tenants.search')}
               sx={{ minWidth: { lg: 300 } }}
               slotProps={{
@@ -685,12 +635,12 @@ export function ProviderTenants() {
                 size="small"
                 value={state}
                 onChange={(_event, value: string | null) =>
-                  value && updateFilters({ state: value === 'ALL' ? null : value })
+                  value && updateTenantFilters({ state: value === 'ALL' ? null : value })
                 }
                 aria-label={t('fields.lifecycle')}
                 sx={{ minWidth: 'max-content' }}
               >
-                {LIFECYCLE_STATES.map((value) => (
+                {PROVIDER_TENANT_LIFECYCLE_STATES.map((value) => (
                   <ToggleButton key={value} value={value}>
                     {t(`states.${value}`, { defaultValue: value })}
                   </ToggleButton>
@@ -717,7 +667,7 @@ export function ProviderTenants() {
                 })),
               ]}
               onValueChange={(value) =>
-                updateFilters({ region: value === 'ALL' ? null : String(value) })
+                updateTenantFilters({ region: value === 'ALL' ? null : String(value) })
               }
               sx={{ minWidth: { sm: 180 } }}
             />
@@ -725,7 +675,7 @@ export function ProviderTenants() {
               size="small"
               label={t('tenants.filters.tier')}
               value={serviceTier}
-              options={SERVICE_TIERS.map((value) => ({
+              options={PROVIDER_TENANT_SERVICE_TIERS.map((value) => ({
                 value,
                 label:
                   value === 'ALL'
@@ -733,7 +683,7 @@ export function ProviderTenants() {
                     : t(`tiers.${value}`, { defaultValue: value }),
               }))}
               onValueChange={(value) =>
-                updateFilters({ tier: value === 'ALL' ? null : String(value) })
+                updateTenantFilters({ tier: value === 'ALL' ? null : String(value) })
               }
               sx={{ minWidth: { sm: 160 } }}
             />
@@ -741,7 +691,7 @@ export function ProviderTenants() {
               size="small"
               label={t('tenants.filters.isolation')}
               value={isolationModel}
-              options={ISOLATION_MODELS.map((value) => ({
+              options={PROVIDER_TENANT_ISOLATION_MODELS.map((value) => ({
                 value,
                 label:
                   value === 'ALL'
@@ -749,7 +699,7 @@ export function ProviderTenants() {
                     : t(`isolation.${value}`, { defaultValue: value }),
               }))}
               onValueChange={(value) =>
-                updateFilters({
+                updateTenantFilters({
                   isolation: value === 'ALL' ? null : String(value),
                 })
               }
@@ -762,7 +712,7 @@ export function ProviderTenants() {
             )}
           </Stack>
 
-          {selectedTenants.length > 0 && (
+          {comparisonIds.length > 0 && (
             <Box
               component="section"
               aria-label={t('tenants.compare.title')}
@@ -788,9 +738,7 @@ export function ProviderTenants() {
                       {t('tenants.compare.title')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {selectedTenants.length < 2
-                        ? t('tenants.compare.selectMore')
-                        : t('tenants.compare.description', { count: selectedTenants.length })}
+                      {comparisonDescription}
                     </Typography>
                   </Box>
                 </Stack>
@@ -802,68 +750,88 @@ export function ProviderTenants() {
                   {t('tenants.compare.clear')}
                 </ActionButton>
               </Stack>
-              <Box sx={{ overflowX: 'auto' }}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${selectedTenants.length}, minmax(230px, 1fr))`,
-                    minWidth: selectedTenants.length > 1 ? selectedTenants.length * 230 : 0,
-                  }}
-                >
-                  {selectedTenants.map((tenant, index) => (
-                    <Box
-                      key={tenant.tenantId}
-                      sx={{
-                        minWidth: 0,
-                        p: 1.5,
-                        borderLeft: index ? 1 : 0,
-                        borderColor: 'divider',
-                      }}
-                    >
-                      <Typography variant="subtitle2" noWrap title={tenant.displayName}>
-                        {tenant.displayName}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" display="block">
-                        {tenant.tenantKey} / {tenant.environmentKey}
-                      </Typography>
-                      <Stack gap={0.85} sx={{ mt: 1.25 }}>
-                        {[
-                          [t('tenants.columns.region'), tenant.dataRegion],
-                          [
-                            t('tenants.columns.tier'),
-                            t(`tiers.${tenant.serviceTier}`, { defaultValue: tenant.serviceTier }),
-                          ],
-                          [
-                            t('tenants.columns.isolation'),
-                            t(`isolation.${tenant.isolationModel}`, {
-                              defaultValue: tenant.isolationModel,
-                            }),
-                          ],
-                          [
-                            t('tenants.columns.subscription'),
-                            tenant.subscription?.planName ?? t('tenants.noSubscription'),
-                          ],
-                        ].map(([label, value]) => (
-                          <Stack key={label} direction="row" justifyContent="space-between" gap={1}>
+              {comparisonUnavailable && (
+                <Alert severity="warning" square>
+                  {t('tenants.compare.unavailable')}
+                </Alert>
+              )}
+              {comparisonLoading && (
+                <Stack direction="row" alignItems="center" gap={1} sx={{ px: 1.5, py: 2 }}>
+                  <CircularProgress size={18} />
+                  <Typography variant="body2">{t('tenants.compare.loading')}</Typography>
+                </Stack>
+              )}
+              {selectedTenants.length > 0 && (
+                <Box sx={{ overflowX: 'auto' }}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${selectedTenants.length}, minmax(230px, 1fr))`,
+                      minWidth: selectedTenants.length > 1 ? selectedTenants.length * 230 : 0,
+                    }}
+                  >
+                    {selectedTenants.map((tenant, index) => (
+                      <Box
+                        key={tenant.tenantId}
+                        sx={{
+                          minWidth: 0,
+                          p: 1.5,
+                          borderLeft: index ? 1 : 0,
+                          borderColor: 'divider',
+                        }}
+                      >
+                        <Typography variant="subtitle2" noWrap title={tenant.displayName}>
+                          {tenant.displayName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" display="block">
+                          {tenant.tenantKey} / {tenant.environmentKey}
+                        </Typography>
+                        <Stack gap={0.85} sx={{ mt: 1.25 }}>
+                          {[
+                            [t('tenants.columns.region'), tenant.dataRegion],
+                            [
+                              t('tenants.columns.tier'),
+                              t(`tiers.${tenant.serviceTier}`, {
+                                defaultValue: tenant.serviceTier,
+                              }),
+                            ],
+                            [
+                              t('tenants.columns.isolation'),
+                              t(`isolation.${tenant.isolationModel}`, {
+                                defaultValue: tenant.isolationModel,
+                              }),
+                            ],
+                            [
+                              t('tenants.columns.subscription'),
+                              tenant.subscription?.planName ?? t('tenants.noSubscription'),
+                            ],
+                          ].map(([label, value]) => (
+                            <Stack
+                              key={label}
+                              direction="row"
+                              justifyContent="space-between"
+                              gap={1}
+                            >
+                              <Typography variant="caption" color="text.secondary">
+                                {label}
+                              </Typography>
+                              <Typography variant="caption" fontWeight={700} textAlign="right">
+                                {value}
+                              </Typography>
+                            </Stack>
+                          ))}
+                          <Stack direction="row" justifyContent="space-between" gap={1}>
                             <Typography variant="caption" color="text.secondary">
-                              {label}
+                              {t('tenants.columns.health')}
                             </Typography>
-                            <Typography variant="caption" fontWeight={700} textAlign="right">
-                              {value}
-                            </Typography>
+                            <ProviderStatusChip state={providerTenantServiceHealth(tenant)} />
                           </Stack>
-                        ))}
-                        <Stack direction="row" justifyContent="space-between" gap={1}>
-                          <Typography variant="caption" color="text.secondary">
-                            {t('tenants.columns.health')}
-                          </Typography>
-                          <ProviderStatusChip state={tenantServiceHealth(tenant)} />
                         </Stack>
-                      </Stack>
-                    </Box>
-                  ))}
+                      </Box>
+                    ))}
+                  </Box>
                 </Box>
-              </Box>
+              )}
             </Box>
           )}
 
@@ -882,7 +850,16 @@ export function ProviderTenants() {
               }
               onRowClick={({ row }) => navigate(`/provider/tenants/${row.tenantId}`)}
               loading={tenants.isFetching}
-              hideFooter
+              mode="server"
+              rowCount={tenants.data?.totalElements ?? 0}
+              paginationModel={paginationModel}
+              onPaginationModelChange={(next) =>
+                updateFilters({
+                  page: next.page > 0 ? String(next.page + 1) : null,
+                  size: next.pageSize === 25 ? null : String(next.pageSize),
+                })
+              }
+              pageSizeOptions={[...PROVIDER_TENANT_PAGE_SIZES]}
               maxVisibleRows={12}
               sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
             />
@@ -900,12 +877,12 @@ export function ProviderTenants() {
               actionLabel={
                 hasFilters
                   ? t('tenants.empty.reset')
-                  : canWrite
+                  : canOnboard
                     ? t('tenants.actions.onboard')
                     : undefined
               }
               onAction={
-                hasFilters ? resetFilters : canWrite ? () => setOnboardingOpen(true) : undefined
+                hasFilters ? resetFilters : canOnboard ? () => setOnboardingOpen(true) : undefined
               }
               size="standard"
             />

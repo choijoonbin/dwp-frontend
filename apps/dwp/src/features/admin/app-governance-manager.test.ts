@@ -71,6 +71,8 @@ describe('tenant governance assignment authority', () => {
     principalRef: '30',
     responsibilityCode: 'APP_ACCESS_REVIEWER',
     resourceSetId: 'rs-approvals',
+    assignmentSource: 'MANUAL',
+    firstApproverBootstrapEligible: false,
   } as AppAdminAssignment;
 
   it('keeps broad tenant and catalog roles out of scoped access decisions', () => {
@@ -78,6 +80,7 @@ describe('tenant governance assignment authority', () => {
       expect(resolveAssignmentActions(assignment, actor(20, [], [role]))).toEqual({
         mayApprove: false,
         mayRevoke: false,
+        approvalMode: null,
       });
     }
   });
@@ -85,8 +88,7 @@ describe('tenant governance assignment authority', () => {
   it('requires exact-scope approver and manager responsibilities', () => {
     expect(
       resolveAssignmentActions(assignment, actor(20, [scopedRole('APP_ACCESS_APPROVER')]))
-        .mayApprove
-    ).toBe(true);
+    ).toMatchObject({ mayApprove: true, approvalMode: 'STANDARD' });
     expect(
       resolveAssignmentActions(
         assignment,
@@ -120,6 +122,61 @@ describe('tenant governance assignment authority', () => {
     expect(
       resolveAssignmentActions(activeOwner, actor(20, [], ['APP_CATALOG_ADMIN'])).mayRevoke
     ).toBe(true);
+  });
+
+  it('exposes the Auth-computed one-time first approver bootstrap to an independent catalog admin', () => {
+    const firstApproverRequest = {
+      ...assignment,
+      responsibilityCode: 'APP_ACCESS_APPROVER',
+      principalRef: '30',
+      firstApproverBootstrapEligible: true,
+    } as AppAdminAssignment;
+
+    expect(
+      resolveAssignmentActions(firstApproverRequest, actor(20, [], ['APP_CATALOG_ADMIN']))
+    ).toEqual({
+      mayApprove: true,
+      mayRevoke: false,
+      approvalMode: 'FIRST_APPROVER_BOOTSTRAP',
+    });
+  });
+
+  it('does not widen the bootstrap hint to later, self, group, or non-catalog decisions', () => {
+    const hinted = {
+      ...assignment,
+      responsibilityCode: 'APP_ACCESS_APPROVER',
+      principalRef: '30',
+      firstApproverBootstrapEligible: true,
+    } as AppAdminAssignment;
+
+    expect(resolveAssignmentActions(hinted, actor(20))).toMatchObject({ mayApprove: false });
+    expect(
+      resolveAssignmentActions(
+        { ...hinted, firstApproverBootstrapEligible: false },
+        actor(20, [], ['APP_CATALOG_ADMIN'])
+      )
+    ).toMatchObject({ mayApprove: false, approvalMode: null });
+    expect(
+      resolveAssignmentActions({ ...hinted, requestedBy: 20 }, actor(20, [], ['APP_CATALOG_ADMIN']))
+    ).toMatchObject({ mayApprove: false, approvalMode: null });
+    expect(
+      resolveAssignmentActions(
+        { ...hinted, requestedBy: null },
+        actor(20, [], ['APP_CATALOG_ADMIN'])
+      )
+    ).toMatchObject({ mayApprove: false, approvalMode: null });
+    expect(
+      resolveAssignmentActions(
+        { ...hinted, principalRef: '20' },
+        actor(20, [], ['APP_CATALOG_ADMIN'])
+      )
+    ).toMatchObject({ mayApprove: false, approvalMode: null });
+    expect(
+      resolveAssignmentActions(
+        { ...hinted, principalType: 'GROUP' },
+        actor(20, [], ['APP_CATALOG_ADMIN'])
+      )
+    ).toMatchObject({ mayApprove: false, approvalMode: null });
   });
 
   it('lets catalog admins request across the catalog and owners only within owned sets', () => {

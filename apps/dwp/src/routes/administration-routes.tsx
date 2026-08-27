@@ -1,9 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
-import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
+import {
+  isProviderSupportSessionActive,
+  useProviderSupportContext,
+} from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import {
   Navigate,
@@ -18,11 +21,7 @@ import {
   canEnterCompanyAdministration,
 } from '../features/admin/admin-access-policy';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
-import { AdminLayout } from '../layouts/admin-layout';
-import {
-  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
-  PRODUCT_LEGACY_ROUTE_SOURCE,
-} from './product-page-route-contracts';
+import { createGlobalProductApplicationRuntime } from '../components/create-global-product-application-runtime';
 import { resolveProductLegacyRoute } from './product-route-contract-source';
 import {
   ProductCanaryRouteBoundary,
@@ -37,27 +36,41 @@ import {
 } from './route-support';
 
 const AdminPage = lazy(() => import('../pages/admin'));
+const AdminLayout = lazy(() =>
+  import('../layouts/admin-layout').then((module) => ({ default: module.AdminLayout }))
+);
+const ADMINISTRATION_PRODUCT_RUNTIME = createGlobalProductApplicationRuntime('administration');
+const ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE = ADMINISTRATION_PRODUCT_RUNTIME.pageRoutes;
+const PRODUCT_LEGACY_ROUTE_SOURCE = ADMINISTRATION_PRODUCT_RUNTIME.legacyRoutes;
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
   const roles = auth.user?.roles ?? [];
-  const providerRole = hasProviderControlPlaneRole(roles);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
   const resourceRoles = auth.user?.resourceRoles ?? [];
+  if (providerRole) {
+    if (supportContext.isLoading) return <RouteFallback />;
+    const activeSupportContext =
+      !supportContext.isError && isProviderSupportSessionActive(supportContext.data)
+        ? supportContext.data
+        : null;
+    return canEnterCompanyAdministration(
+      roles,
+      appPermitted,
+      Boolean(activeSupportContext),
+      resourceRoles,
+      activeSupportContext?.scopes
+    ) ? (
+      children
+    ) : (
+      <Navigate to="/provider" replace />
+    );
+  }
   const regularAccess = canEnterCompanyAdministration(roles, appPermitted, false, resourceRoles);
-  if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
-  return canEnterCompanyAdministration(
-    roles,
-    appPermitted,
-    Boolean(supportContext.data),
-    resourceRoles
-  ) ? (
-    children
-  ) : (
-    <Navigate to="/403" replace />
-  );
+  return regularAccess ? children : <Navigate to="/403" replace />;
 }
 
 function AdminLegacyRedirect() {
@@ -65,7 +78,7 @@ function AdminLegacyRedirect() {
   const { hasPermission, isLoaded } = usePermissions();
   const [searchParams] = useSearchParams();
   const roles = auth.user?.roles ?? [];
-  const providerRole = hasProviderControlPlaneRole(roles);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
   const items = ADMIN_NAVIGATION.flatMap((group) => group.items).filter((item) =>
@@ -97,7 +110,7 @@ function AdminSectionRedirect() {
   const { section } = useParams();
   const { hasPermission, isLoaded } = usePermissions();
   const roles = auth.user?.roles ?? [];
-  const providerRole = hasProviderControlPlaneRole(roles);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
   const destination = ADMIN_NAVIGATION.find((group) => group.id === section)?.items.find((item) =>
@@ -206,7 +219,9 @@ export const administrationRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <AdminRouteGuard>
-          <AdminLayout />
+          <Suspense fallback={routeFallback}>
+            <AdminLayout />
+          </Suspense>
         </AdminRouteGuard>
       </AuthGuard>
     ),

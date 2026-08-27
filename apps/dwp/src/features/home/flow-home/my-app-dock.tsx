@@ -9,13 +9,18 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AppLaunchpad } from '../app-launchpad';
+import { HOME_MOTION_TOKENS } from '../../../components/home-surface-tokens';
+import {
+  resolveFlowAppDockModel,
+  summarizeHiddenFlowAppNotifications,
+} from './flow-app-dock-model';
 
 import type {
   HomeAppDefinition,
   HomeAppGroup,
   LaunchpadLayout,
 } from '../../../components/workspace-composer/app-launchpad-model';
-import type { HomeBackgroundPosition, HomePresentation } from '@dwp-frontend/shared-utils';
+import type { HomeContentAlignment, HomePresentation } from '@dwp-frontend/shared-utils';
 
 type MyAppDockProps = {
   apps: readonly HomeAppDefinition[];
@@ -27,7 +32,7 @@ type MyAppDockProps = {
   compact?: boolean;
   priorityCompact?: boolean;
   presentation: HomePresentation;
-  backgroundPosition: HomeBackgroundPosition;
+  contentAlignment: HomeContentAlignment;
   onBrowseAll: () => void;
   onLaunch: (app: HomeAppDefinition) => void;
   onManage?: (app: HomeAppDefinition) => void;
@@ -45,7 +50,7 @@ export function MyAppDock({
   compact = false,
   priorityCompact = false,
   presentation,
-  backgroundPosition,
+  contentAlignment,
   onBrowseAll,
   onLaunch,
   onManage,
@@ -71,27 +76,13 @@ export function MyAppDock({
               ? 10
               : 8
           : 8;
-  const availableItemIds = new Set([...apps.map((app) => app.id), ...Object.keys(layout.folders)]);
-  const orderedItemIds = groups
-    .flatMap((group) => layout.groups[group.id] ?? [])
-    .filter((itemId) => availableItemIds.has(itemId));
-  const visibleItemIds = orderedItemIds.slice(0, itemLimit);
-  const visibleItemCount = visibleItemIds.length;
-  const hiddenItemCount = Math.max(0, orderedItemIds.length - visibleItemCount);
+  const dockModel = resolveFlowAppDockModel({ apps, groups, layout, itemLimit });
+  const visibleItemCount = dockModel.visibleItemCount;
+  const hiddenItemCount = dockModel.hiddenItemCount;
   const preferredDockWidth = Math.min(1120, Math.max(540, 240 + visibleItemCount * 78));
-  const visibleAppIds = new Set(
-    visibleItemIds.flatMap((itemId) => layout.folders[itemId]?.appIds ?? [itemId])
-  );
-  const hiddenNotificationSummary = apps
-    .filter((app) => !visibleAppIds.has(app.id))
-    .reduce(
-      (summary, app) => ({
-        total: summary.total + (app.badgeMetadata?.totalUnread ?? 0),
-        actionable: summary.actionable + (app.badgeMetadata?.actionableUnread ?? 0),
-        urgent: summary.urgent + (app.badgeMetadata?.urgentUnread ?? 0),
-      }),
-      { total: 0, actionable: 0, urgent: 0 }
-    );
+  const visibleAppIds = new Set(dockModel.visibleAppIds);
+  const hiddenAppCount = dockModel.hiddenAppCount;
+  const hiddenNotificationSummary = summarizeHiddenFlowAppNotifications(apps, visibleAppIds);
   const hiddenBadgeIntent =
     hiddenNotificationSummary.urgent > 0
       ? 'urgent'
@@ -112,15 +103,16 @@ export function MyAppDock({
       data-flow-dock-shell
       data-flow-dock-item-limit={itemLimit}
       data-flow-dock-visible-count={visibleItemCount}
-      data-flow-dock-hidden-count={hiddenItemCount}
+      data-flow-dock-hidden-count={hiddenAppCount}
+      data-flow-dock-hidden-tile-count={hiddenItemCount}
       sx={(theme) => ({
         minWidth: 0,
         width: editing ? 1 : { xs: 1, md: `min(100%, ${preferredDockWidth}px)` },
         alignSelf: editing
           ? 'stretch'
-          : backgroundPosition === 'LEFT'
+          : contentAlignment === 'RIGHT'
             ? { xs: 'stretch', md: 'flex-end' }
-            : backgroundPosition === 'CENTER'
+            : contentAlignment === 'CENTER'
               ? { xs: 'stretch', md: 'center' }
               : { xs: 'stretch', md: 'flex-start' },
         minHeight: editing ? 0 : { xs: 136, sm: 132 },
@@ -142,6 +134,12 @@ export function MyAppDock({
             : 'inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 30px rgba(1,10,28,0.30)',
         '& [data-flow-dock-meta] .MuiTypography-root': { color: '#F8FAFC' },
         '& [data-flow-app-dock-list]': { color: '#F8FAFC' },
+        '& [data-flow-dock-launch]': {
+          transition: `transform ${HOME_MOTION_TOKENS.quick} ${HOME_MOTION_TOKENS.easing}, background-color ${HOME_MOTION_TOKENS.quick} ${HOME_MOTION_TOKENS.easing}`,
+        },
+        '& [data-flow-dock-launch]:hover': {
+          transform: HOME_MOTION_TOKENS.lift,
+        },
         ...(priorityCompact
           ? {
               py: 1,
@@ -164,6 +162,12 @@ export function MyAppDock({
           boxShadow: '0 6px 18px rgba(0,0,0,0.24)',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          '& [data-flow-dock-launch], & [data-flow-dock-launch]:hover': {
+            transition: 'none',
+            transform: 'none',
+          },
         },
       })}
     >
@@ -204,9 +208,9 @@ export function MyAppDock({
             {editing && (
               <Chip
                 size="small"
-                label={t('flow.dock.editingCount', { count: orderedItemIds.length })}
+                label={t('flow.dock.editingCount', { count: dockModel.totalValidAppCount })}
                 aria-label={t('flow.dock.visibleCount', {
-                  visible: orderedItemIds.length,
+                  visible: dockModel.totalValidAppCount,
                   total: apps.length,
                 })}
                 sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}
@@ -290,10 +294,10 @@ export function MyAppDock({
             hiddenNotificationSummary.total > 0
               ? t('flow.dock.allAppsNotifications', {
                   ...hiddenNotificationSummary,
-                  hidden: hiddenItemCount,
+                  hidden: hiddenAppCount,
                 })
-              : hiddenItemCount > 0
-                ? t('flow.dock.allAppsWithCount', { count: hiddenItemCount })
+              : hiddenAppCount > 0
+                ? t('flow.dock.allAppsWithCount', { count: hiddenAppCount })
                 : t('launchpad.allApps')
           }
           sx={{
@@ -308,7 +312,7 @@ export function MyAppDock({
           }}
         >
           {visibleItemCount === 0 ? t('flow.dock.emptyAction') : t('launchpad.allApps')}
-          {hiddenItemCount > 0 && (
+          {hiddenAppCount > 0 && (
             <Box
               component="span"
               aria-hidden="true"
@@ -326,7 +330,7 @@ export function MyAppDock({
                 fontSize: 10.5,
               }}
             >
-              {t('flow.dock.moreApps', { count: hiddenItemCount })}
+              {t('flow.dock.moreApps', { count: hiddenAppCount })}
             </Box>
           )}
           {hiddenNotificationSummary.total > 0 && (

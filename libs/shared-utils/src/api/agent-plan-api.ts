@@ -1,48 +1,29 @@
+import type { AgentComponents } from '@dwp-frontend/api-contracts';
+
 import { HttpError } from '../http-error';
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
-export type AgentRiskTier = 'L0' | 'L1' | 'L2' | 'L3';
+type AgentSchemas = AgentComponents['schemas'];
 
-export type AgentPlanPreviewRequest = {
-  requestId: string;
-  intent: string;
-  action: string;
-  target: string;
-  sourceReferences: string[];
-  agentKey: string;
+export type AgentRiskTier = AgentSchemas['RiskTier'];
+
+export type AgentActionHandoffOrigin = Omit<
+  AgentSchemas['ActionHandoffOrigin'],
+  'conversationId'
+> & {
+  conversationId: string | null;
 };
 
-export type AgentRegistryResolution = {
-  entryKey: string;
-  revision: number;
-  artifactVersion: string;
-  riskTier: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  resolution: 'ACTIVE' | 'REFERENCE_FALLBACK';
-};
+export type AgentPlanPreviewRequest = AgentSchemas['PlanPreviewRequest'];
 
-export type AgentPlanStep = {
-  id: string;
-  title: string;
-  tool: string;
-  description: string;
-};
+export type AgentRegistryResolution = AgentSchemas['AgentRegistryResolution'];
 
-export type AgentPlanPreview = {
-  runId: string;
-  auditId: string;
-  planHash: string;
-  correlationId: string;
-  state: 'REVIEW';
-  riskTier: AgentRiskTier;
-  approvalRequired: boolean;
-  mutationAllowed: boolean;
-  summary: string;
-  steps: AgentPlanStep[];
-  sourceReferences: string[];
-  referenceMode: boolean;
-  agentRegistry: AgentRegistryResolution;
+export type AgentPlanStep = AgentSchemas['PlanStep'];
+
+export type AgentPlanPreview = Omit<AgentSchemas['PlanPreviewResponse'], 'handoffOrigin'> & {
+  handoffOrigin?: AgentActionHandoffOrigin | null;
 };
 
 const RISK_TIERS: ReadonlySet<AgentRiskTier> = new Set(['L0', 'L1', 'L2', 'L3']);
@@ -78,6 +59,24 @@ function isAgentRegistryResolution(value: unknown): value is AgentRegistryResolu
   );
 }
 
+export function isAgentActionHandoffOrigin(value: unknown): value is AgentActionHandoffOrigin {
+  if (typeof value !== 'object' || value === null) return false;
+  const origin = value as Record<string, unknown>;
+  return (
+    origin.appKey === 'APP.ASK' &&
+    typeof origin.route === 'string' &&
+    /^\/dwaion\/(?:new|conversations\/[0-9a-f-]{36})$/.test(origin.route) &&
+    origin.surface === 'action-shelf' &&
+    typeof origin.sourceRunId === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(
+      origin.sourceRunId
+    ) &&
+    isNonEmptyString(origin.sourceRequestId) &&
+    isNonEmptyString(origin.sourceCorrelationId) &&
+    (origin.conversationId === null || typeof origin.conversationId === 'string')
+  );
+}
+
 function isGovernedPlanPreview(value: unknown): value is AgentPlanPreview {
   if (typeof value !== 'object' || value === null) return false;
   const plan = value as Record<string, unknown>;
@@ -103,7 +102,10 @@ function isGovernedPlanPreview(value: unknown): value is AgentPlanPreview {
     Array.isArray(plan.sourceReferences) &&
     plan.sourceReferences.every(isNonEmptyString) &&
     plan.referenceMode === true &&
-    isAgentRegistryResolution(plan.agentRegistry)
+    isAgentRegistryResolution(plan.agentRegistry) &&
+    (plan.handoffOrigin === undefined ||
+      plan.handoffOrigin === null ||
+      isAgentActionHandoffOrigin(plan.handoffOrigin))
   );
 }
 

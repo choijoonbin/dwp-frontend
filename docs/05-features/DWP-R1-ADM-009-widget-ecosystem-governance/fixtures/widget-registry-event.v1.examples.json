@@ -1,0 +1,3648 @@
+{
+  "fixtureVersion": 1,
+  "positive": [
+    {
+      "name": "command-definition",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000001",
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "ddd4537889c6bea592dbbebb9a1ac4bc87a7cdbc41e89a193aa2214ba549582e",
+        "projectionSchemaVersion": 1,
+        "projectionType": "DefinitionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "DefinitionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "state": "ACTIVE",
+          "rowVersion": 1
+        }
+      }
+    },
+    {
+      "name": "command-version",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000002",
+        "commandId": "10000000-0000-4000-8000-000000000002",
+        "eventType": "WIDGET_VERSION_QUARANTINED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 17,
+        "occurredAt": "2026-08-27T05:00:02Z",
+        "correlationId": "20000000-0000-4000-8000-000000000002",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "SECURITY_INCIDENT",
+        "beforeHash": "192878cccc63f9a0d25803652e6a6d2a244c2b51c3516e518df3c660c7c266d3",
+        "afterHash": "ccc89236ea8ef9ce8ff35e5b94f388ff0026e7d715d0a324dbafaa56977de170",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 16
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "00000000-0000-4000-8000-000000000002",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 17
+        }
+      }
+    },
+    {
+      "name": "command-evidence-recorded",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000003",
+        "commandId": "10000000-0000-4000-8000-000000000003",
+        "eventType": "WIDGET_EVIDENCE_RECORDED",
+        "aggregateType": "WIDGET_EVIDENCE",
+        "aggregateId": "50000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:03Z",
+        "correlationId": "20000000-0000-4000-8000-000000000003",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceId": "50000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "EVIDENCE_REVIEW_COMPLETED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "f1716e770fd11b03a94e7ff7d2a34bc164d5330cb122d20ce1b69c0851c4a7ff",
+        "projectionSchemaVersion": 1,
+        "projectionType": "EvidenceDecision"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "EvidenceDecision",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "evidenceId": "50000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceType": "PERFORMANCE",
+          "status": "PASS",
+          "evidenceRefHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "decisionRevision": 1,
+          "rowVersion": 1
+        }
+      }
+    },
+    {
+      "name": "command-evidence-waived",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000004",
+        "commandId": "10000000-0000-4000-8000-000000000004",
+        "eventType": "WIDGET_EVIDENCE_WAIVED",
+        "aggregateType": "WIDGET_EVIDENCE",
+        "aggregateId": "51000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:04Z",
+        "correlationId": "20000000-0000-4000-8000-000000000004",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceId": "51000000-0000-4000-8000-000000000001",
+          "waivedEvidenceId": "50000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "EVIDENCE_WAIVER_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "d70b932756c09e28ea0b6c4f98a89828ad6290d88550bb6546ba8e0e8540b1c8",
+        "projectionSchemaVersion": 1,
+        "projectionType": "EvidenceDecision"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "EvidenceDecision",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "evidenceId": "51000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceType": "PERFORMANCE",
+          "status": "WAIVED",
+          "evidenceRefHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "decisionRevision": 1,
+          "rowVersion": 1
+        }
+      }
+    },
+    {
+      "name": "command-clearance-approved",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000005",
+        "commandId": "10000000-0000-4000-8000-000000000005",
+        "eventType": "WIDGET_QUARANTINE_CLEAR_APPROVED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 18,
+        "occurredAt": "2026-08-27T05:00:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000005",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_REVIEWED",
+        "beforeHash": "50d924ee3fec007b12a58a5acbc4aa4de06e172c4c8d4e833f02d2d5e304018f",
+        "afterHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 17
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        }
+      }
+    },
+    {
+      "name": "command-clearance-executed",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "afterHash": "21fa08d7beb6cbf7886c71b6cd4e9da449e034c2763eb4142342cea51568b54d",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      }
+    },
+    {
+      "name": "command-release-channel",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000007",
+        "commandId": "10000000-0000-4000-8000-000000000007",
+        "eventType": "WIDGET_CHANNEL_PROMOTED",
+        "aggregateType": "WIDGET_RELEASE_CHANNEL",
+        "aggregateId": "channel:30000000-0000-4000-8000-000000000001:STABLE",
+        "aggregateSequence": 4,
+        "occurredAt": "2026-08-27T05:00:07Z",
+        "correlationId": "20000000-0000-4000-8000-000000000007",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "channel": "STABLE"
+        },
+        "reasonCode": "CHANNEL_PROMOTION_APPROVED",
+        "beforeHash": "7cfc9adbc4937ceedc8739b6488ff839507d0750033677b412c3648b72dc1143",
+        "afterHash": "cc95a2bdab0b0c1ab07798debfc599ad30fcb1f1d12c7f53ac8e5d993abf4b66",
+        "projectionSchemaVersion": 1,
+        "projectionType": "ReleaseChannelHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "ReleaseChannelHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "channel": "STABLE",
+          "currentVersionId": "42000000-0000-4000-8000-000000000001",
+          "previousVersionId": null,
+          "headRevision": 3
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "channel": "STABLE",
+          "currentVersionId": "40000000-0000-4000-8000-000000000001",
+          "previousVersionId": "42000000-0000-4000-8000-000000000001",
+          "headRevision": 4
+        }
+      }
+    },
+    {
+      "name": "command-runtime-global",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000008",
+        "commandId": "10000000-0000-4000-8000-000000000008",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:08Z",
+        "correlationId": "20000000-0000-4000-8000-000000000008",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "DISABLED"
+        },
+        "reasonCode": "GLOBAL_KILL_ENABLED",
+        "beforeHash": "c15cf7cc50d4bc4a53af5085cdbaa189fd6c9998e24bdd6a79e66c16546073e1",
+        "afterHash": "fbda748bf9ee85d4d06b47fc199c63608494eac966cef9c9a50bab127c544e62",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        }
+      }
+    },
+    {
+      "name": "command-runtime-definition",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000009",
+        "commandId": "10000000-0000-4000-8000-000000000009",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000002",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:09Z",
+        "correlationId": "20000000-0000-4000-8000-000000000009",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000002",
+          "targetType": "DEFINITION",
+          "resultingState": "DISABLED",
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CONTROL_DISABLED",
+        "beforeHash": "5135852b0733c9d6fd4a498d8735cd1d04b10e002f9c47be18957af199f5462e",
+        "afterHash": "1d86851047cf0676f946432c6f0588f10d32f984b68ab425c593c2f9b4696635",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000002",
+          "targetType": "DEFINITION",
+          "targetId": "30000000-0000-4000-8000-000000000001",
+          "state": "ENABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000002",
+          "targetType": "DEFINITION",
+          "targetId": "30000000-0000-4000-8000-000000000001",
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        }
+      }
+    },
+    {
+      "name": "command-runtime-version",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000010",
+        "commandId": "10000000-0000-4000-8000-000000000010",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000003",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:10Z",
+        "correlationId": "20000000-0000-4000-8000-000000000010",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000003",
+          "targetType": "VERSION",
+          "resultingState": "DISABLED",
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "VERSION_CONTROL_DISABLED",
+        "beforeHash": "532cb1bbca96741a2d730bbde34b43cf173059241227c178071b94943ca058b2",
+        "afterHash": "370d29ab4d0453b035f7bbcacb77f98ad343a989bf61c000d7f5cd7c6dfe53f0",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000003",
+          "targetType": "VERSION",
+          "targetId": "40000000-0000-4000-8000-000000000001",
+          "state": "ENABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000003",
+          "targetType": "VERSION",
+          "targetId": "40000000-0000-4000-8000-000000000001",
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        }
+      }
+    },
+    {
+      "name": "command-runtime-global-enabled",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "a754abec602acb9f17fdcfbec20d1db754fa7fbf24c47d9c4ca69911b16ab592",
+        "afterHash": "2a9f926a4ac2917fa5710fe19d0161c2eb8d778ba5fdc2ece425226ce471b80a",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      }
+    },
+    {
+      "name": "command-runtime-definition-enabled",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000126",
+        "commandId": "10000000-0000-4000-8000-000000000126",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000002",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000126",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000002",
+          "targetType": "DEFINITION",
+          "resultingState": "ENABLED",
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000003"
+        },
+        "reasonCode": "DEFINITION_CONTROL_ENABLED",
+        "beforeHash": "da995895bc368fbaf77510ec59618b6832fcaac2a973071142f8fb01373ff48a",
+        "afterHash": "0d94f1c9d28671d1943ff3699f57815cb3e0d69852f2c3711d336bc3f4770180",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000002",
+          "targetType": "DEFINITION",
+          "targetId": "30000000-0000-4000-8000-000000000001",
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000003",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000002",
+          "targetType": "DEFINITION",
+          "targetId": "30000000-0000-4000-8000-000000000001",
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000003",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000126"
+          }
+        }
+      }
+    },
+    {
+      "name": "command-runtime-version-enabled",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000127",
+        "commandId": "10000000-0000-4000-8000-000000000127",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000003",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:07Z",
+        "correlationId": "20000000-0000-4000-8000-000000000127",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000003",
+          "targetType": "VERSION",
+          "resultingState": "ENABLED",
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000004"
+        },
+        "reasonCode": "VERSION_CONTROL_ENABLED",
+        "beforeHash": "c07e77f12e37ca9cc9e3447588d7ad4df79bc4a478843dab7477de3b2bc46455",
+        "afterHash": "ad42e2eb5a899bd3502a72eb5059e6f821e6b8b3b509e742300138fcf94d95a3",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000003",
+          "targetType": "VERSION",
+          "targetId": "40000000-0000-4000-8000-000000000001",
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000004",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000003",
+          "targetType": "VERSION",
+          "targetId": "40000000-0000-4000-8000-000000000001",
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000004",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:07Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000127"
+          }
+        }
+      }
+    },
+    {
+      "name": "command-tenant-policy",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000011",
+        "commandId": "10000000-0000-4000-8000-000000000011",
+        "eventType": "TENANT_WIDGET_POLICY_PUBLISHED",
+        "aggregateType": "TENANT_WIDGET_POLICY",
+        "aggregateId": "tenant-policy:tnr_acme8f4c2d1e9a77:30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 3,
+        "occurredAt": "2026-08-27T05:00:11Z",
+        "correlationId": "20000000-0000-4000-8000-000000000011",
+        "actor": {
+          "plane": "TENANT",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "tenantRef": "tnr_acme8f4c2d1e9a77",
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "policyRevisionId": "80000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "TENANT_POLICY_APPROVED",
+        "beforeHash": "e5a7b674142efd394b90024309d659e0027c57e12ae3b6a11ba04af4b7fb37f3",
+        "afterHash": "792103ff7ec7e71fb60edf7f6a16fa48260357b456e43c9963e6a3bc997db3e9",
+        "projectionSchemaVersion": 1,
+        "projectionType": "TenantPolicyHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "TenantPolicyHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "tenantRef": "tnr_acme8f4c2d1e9a77",
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "headRevisionId": "80000000-0000-4000-8000-000000000002",
+          "revision": 2,
+          "state": "PUBLISHED",
+          "impactRevision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "policyCatalogRevision": 2
+        },
+        "after": {
+          "tenantRef": "tnr_acme8f4c2d1e9a77",
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "headRevisionId": "80000000-0000-4000-8000-000000000001",
+          "revision": 3,
+          "state": "PUBLISHED",
+          "impactRevision": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "policyCatalogRevision": 3
+        }
+      }
+    },
+    {
+      "name": "command-rollout-approved",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000012",
+        "commandId": "10000000-0000-4000-8000-000000000012",
+        "eventType": "WIDGET_ROLLOUT_APPROVED",
+        "aggregateType": "WIDGET_CATALOG_ROLLOUT_APPROVAL",
+        "aggregateId": "90000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:12Z",
+        "correlationId": "20000000-0000-4000-8000-000000000012",
+        "actor": {
+          "plane": "DEPLOYMENT_CONTROLLER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "environment": "STAGING",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "approvalRevision": 1,
+          "rolloutRevision": 7
+        },
+        "reasonCode": "ROLLOUT_APPROVAL_RECORDED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "54f7352a2809ebdc76fc93bc424004c175142061b59b77372a58b9b60c2853c7",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RolloutApproval"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RolloutApproval",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "environment": "STAGING",
+          "approvalRevision": 1,
+          "rolloutRevision": 7,
+          "state": "ACTIVE",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        }
+      }
+    },
+    {
+      "name": "command-rollout-activated",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000013",
+        "commandId": "10000000-0000-4000-8000-000000000013",
+        "eventType": "WIDGET_ROLLOUT_ACTIVATED",
+        "aggregateType": "WIDGET_CATALOG_ROLLOUT",
+        "aggregateId": "rollout:STAGING",
+        "aggregateSequence": 7,
+        "occurredAt": "2026-08-27T05:00:13Z",
+        "correlationId": "20000000-0000-4000-8000-000000000013",
+        "actor": {
+          "plane": "DEPLOYMENT_CONTROLLER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "environment": "STAGING",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "approvalRevision": 1,
+          "rolloutRevision": 7
+        },
+        "reasonCode": "ROLLOUT_ACTIVATED",
+        "beforeHash": "5e0c094b2d6b6c851b3cf4f4f7c241bd01cb2cccda7997fb6a6e50b9699ad502",
+        "afterHash": "1db91653bbd9bfe7dbef4506e8d541378f5332ba630df8e98d04e2475ef74831",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RolloutHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RolloutHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "environment": "STAGING",
+          "rolloutRevision": 6,
+          "state": "STATIC",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        },
+        "after": {
+          "environment": "STAGING",
+          "rolloutRevision": 7,
+          "state": "ACTIVE",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        }
+      }
+    },
+    {
+      "name": "command-rollout-stopped",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000014",
+        "commandId": "10000000-0000-4000-8000-000000000014",
+        "eventType": "WIDGET_ROLLOUT_STOPPED",
+        "aggregateType": "WIDGET_CATALOG_ROLLOUT",
+        "aggregateId": "rollout:STAGING",
+        "aggregateSequence": 8,
+        "occurredAt": "2026-08-27T05:00:14Z",
+        "correlationId": "20000000-0000-4000-8000-000000000014",
+        "actor": {
+          "plane": "DEPLOYMENT_CONTROLLER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "approvalExpiresAt": "2026-08-28T05:00:12Z",
+          "stopCause": "SAFETY_THRESHOLD"
+        },
+        "reasonCode": "ROLLOUT_SAFETY_STOP",
+        "beforeHash": "1db91653bbd9bfe7dbef4506e8d541378f5332ba630df8e98d04e2475ef74831",
+        "afterHash": "ee7475a3617403a98a5abf92257ada0d9be2b4866367041a57fdcf3076316a47",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RolloutHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RolloutHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "environment": "STAGING",
+          "rolloutRevision": 7,
+          "state": "ACTIVE",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        },
+        "after": {
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "state": "STOPPED",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        }
+      }
+    },
+    {
+      "name": "command-rollout-approval-expired",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000129",
+        "commandId": "10000000-0000-4000-8000-000000000129",
+        "eventType": "WIDGET_ROLLOUT_STOPPED",
+        "aggregateType": "WIDGET_CATALOG_ROLLOUT",
+        "aggregateId": "rollout:STAGING",
+        "aggregateSequence": 9,
+        "occurredAt": "2026-08-28T05:00:12Z",
+        "correlationId": "20000000-0000-4000-8000-000000000129",
+        "actor": {
+          "plane": "DEPLOYMENT_CONTROLLER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "environment": "STAGING",
+          "rolloutRevision": 9,
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "approvalExpiresAt": "2026-08-28T05:00:12Z",
+          "stopCause": "APPROVAL_EXPIRED"
+        },
+        "reasonCode": "ROLLOUT_APPROVAL_EXPIRED",
+        "beforeHash": "878c9737e1c17d39583f055c3ee6820a16757616be152dc2b82afec10af9d5b4",
+        "afterHash": "9bacec9218a6a01b2d787567a52efeddf33edeb3b69407ff7f0cddd5d18aa296",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RolloutHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RolloutHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "state": "ACTIVE",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        },
+        "after": {
+          "environment": "STAGING",
+          "rolloutRevision": 9,
+          "state": "STOPPED",
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "registryRevision": 42,
+          "tenantPolicyRevision": 17,
+          "safetyRevision": 9
+        }
+      }
+    },
+    {
+      "name": "scheduler-evidence-expired",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000015",
+        "eventType": "WIDGET_EVIDENCE_EXPIRED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 20,
+        "occurredAt": "2026-08-27T05:00:15Z",
+        "causeDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "SYSTEM_EVIDENCE_EXPIRY",
+        "beforeHash": "22618d4da0ff8f11cf1c967dc4195750f798ffcb25c7d9c4e28125537c6b1903",
+        "afterHash": "353473bf7949aeded825d9c732375ce8dad68387d97ef2c9aed08aa01bb3b03a",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 19
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "00000000-0000-4000-8000-000000000015",
+          "currentQuarantineRevision": 20,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 20
+        }
+      }
+    },
+    {
+      "name": "shadow-mismatch",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000016",
+        "eventType": "WIDGET_SHADOW_MISMATCH_DETECTED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:16Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000001",
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7
+        },
+        "diffBucket": "SAFETY_MISMATCH"
+      }
+    },
+    {
+      "name": "shadow-recovered",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000017",
+        "eventType": "WIDGET_SHADOW_RECOVERED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:00:17Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000002",
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7
+        },
+        "diffBucket": "SAFETY_MISMATCH"
+      }
+    },
+    {
+      "name": "command-version-updated",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000018",
+        "commandId": "10000000-0000-4000-8000-000000000018",
+        "eventType": "WIDGET_VERSION_UPDATED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 21,
+        "occurredAt": "2026-08-27T05:00:18Z",
+        "correlationId": "20000000-0000-4000-8000-000000000018",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "VERSION_DRAFT_UPDATED",
+        "beforeHash": "af52b63e3472d043e124556630faf94e6bded7efbe0907ffbf4b1517380993dd",
+        "afterHash": "0dd96ae57817fd9b6311f6f27773354bc4b2ba82224c5df91a92dd2acaf47a70",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 20
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 21
+        }
+      }
+    },
+    {
+      "name": "command-version-validated",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000019",
+        "commandId": "10000000-0000-4000-8000-000000000019",
+        "eventType": "WIDGET_VERSION_VALIDATED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 22,
+        "occurredAt": "2026-08-27T05:00:19Z",
+        "correlationId": "20000000-0000-4000-8000-000000000019",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "validationRunId": "41000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "VERSION_VALIDATION_COMPLETED",
+        "beforeHash": "0dd96ae57817fd9b6311f6f27773354bc4b2ba82224c5df91a92dd2acaf47a70",
+        "afterHash": "d6e710bda11339f0b8c4519b770eb733b835e4603992f12020db9ccd5f55d603",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 21
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": "41000000-0000-4000-8000-000000000001",
+          "latestClearanceApproval": null,
+          "rowVersion": 22
+        }
+      }
+    },
+    {
+      "name": "command-runtime-enable-approved",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000020",
+        "commandId": "10000000-0000-4000-8000-000000000020",
+        "eventType": "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000004",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:20Z",
+        "correlationId": "20000000-0000-4000-8000-000000000020",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000004",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "RUNTIME_CONTROL_ENABLE_APPROVED",
+        "beforeHash": "79e581b697a69a1bcb7f1d48ae1cfcd170a285f4a5c19acd2d2159d18d9f13df",
+        "afterHash": "0dc8432063c186e4451064144188f0e4b9e6f90a4d2a98049960180c9f54656b",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000004",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000004",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000001",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:20Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        }
+      }
+    }
+  ],
+  "negative": [
+    {
+      "name": "command-missing-command-id",
+      "expectedError": "FIELD_REQUIRED:commandId",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000101",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000101",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-wrong-actor-plane",
+      "expectedError": "ACTOR_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000102",
+        "commandId": "10000000-0000-4000-8000-000000000102",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:02Z",
+        "correlationId": "20000000-0000-4000-8000-000000000102",
+        "actor": {
+          "plane": "TENANT",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-wrong-target-shape",
+      "expectedError": "TARGET_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000103",
+        "commandId": "10000000-0000-4000-8000-000000000103",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:03Z",
+        "correlationId": "20000000-0000-4000-8000-000000000103",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-raw-tenant-id",
+      "expectedError": "RAW_IDENTITY_FIELD:tenantId",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000104",
+        "commandId": "10000000-0000-4000-8000-000000000104",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:04Z",
+        "correlationId": "20000000-0000-4000-8000-000000000104",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "tenantId": 42
+      }
+    },
+    {
+      "name": "scheduler-command-id-forbidden",
+      "expectedError": "FIELD_FORBIDDEN:commandId",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000105",
+        "commandId": "10000000-0000-4000-8000-000000000105",
+        "eventType": "WIDGET_EVIDENCE_EXPIRED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 20,
+        "occurredAt": "2026-08-27T05:01:05Z",
+        "causeDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "SYSTEM_EVIDENCE_EXPIRY",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "scheduler-actor-forbidden",
+      "expectedError": "FIELD_FORBIDDEN:actor",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000106",
+        "eventType": "WIDGET_EVIDENCE_EXPIRED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 20,
+        "occurredAt": "2026-08-27T05:01:06Z",
+        "causeDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "SYSTEM_EVIDENCE_EXPIRY",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "scheduler-missing-cause-digest",
+      "expectedError": "FIELD_REQUIRED:causeDigest",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000107",
+        "eventType": "WIDGET_EVIDENCE_EXPIRED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 20,
+        "occurredAt": "2026-08-27T05:01:07Z",
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "SYSTEM_EVIDENCE_EXPIRY",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "shadow-command-id-forbidden",
+      "expectedError": "FIELD_FORBIDDEN:commandId",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000108",
+        "commandId": "10000000-0000-4000-8000-000000000108",
+        "eventType": "WIDGET_SHADOW_MISMATCH_DETECTED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:08Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000108",
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7
+        },
+        "diffBucket": "SAFETY_MISMATCH"
+      }
+    },
+    {
+      "name": "shadow-actor-forbidden",
+      "expectedError": "FIELD_FORBIDDEN:actor",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000109",
+        "eventType": "WIDGET_SHADOW_MISMATCH_DETECTED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:09Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000109",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7
+        },
+        "diffBucket": "SAFETY_MISMATCH"
+      }
+    },
+    {
+      "name": "shadow-missing-diff-bucket",
+      "expectedError": "FIELD_REQUIRED:diffBucket",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000110",
+        "eventType": "WIDGET_SHADOW_MISMATCH_DETECTED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:10Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000110",
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7
+        }
+      }
+    },
+    {
+      "name": "shadow-unknown-diff-bucket",
+      "expectedError": "DIFF_BUCKET",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000111",
+        "eventType": "WIDGET_SHADOW_MISMATCH_DETECTED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:11Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000111",
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7
+        },
+        "diffBucket": "UNKNOWN_BUCKET"
+      }
+    },
+    {
+      "name": "shadow-raw-user-id",
+      "expectedError": "RAW_IDENTITY_FIELD:userId",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000112",
+        "eventType": "WIDGET_SHADOW_MISMATCH_DETECTED",
+        "aggregateType": "WIDGET_SHADOW_EVALUATION",
+        "aggregateId": "agg_shadowcheck8f4c2d1e9a77",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:12Z",
+        "evaluationId": "a0000000-0000-4000-8000-000000000112",
+        "target": {
+          "aggregateRef": "agg_shadowcheck8f4c2d1e9a77"
+        },
+        "rolloutContext": {
+          "ring": "staging-shadow",
+          "surface": "workspace-home",
+          "placementContext": "FLOW_GOVERNED",
+          "rolloutRevision": 7,
+          "userId": 77
+        },
+        "diffBucket": "SAFETY_MISMATCH"
+      }
+    },
+    {
+      "name": "tenant-policy-raw-tenant-id",
+      "expectedError": "RAW_IDENTITY_FIELD:tenantId",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000113",
+        "commandId": "10000000-0000-4000-8000-000000000113",
+        "eventType": "TENANT_WIDGET_POLICY_PUBLISHED",
+        "aggregateType": "TENANT_WIDGET_POLICY",
+        "aggregateId": "tenant-policy:tnr_acme8f4c2d1e9a77:30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 3,
+        "occurredAt": "2026-08-27T05:01:13Z",
+        "correlationId": "20000000-0000-4000-8000-000000000113",
+        "actor": {
+          "plane": "TENANT",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "tenantId": 42,
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "policyRevisionId": "80000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "TENANT_POLICY_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "runtime-control-target-mismatch",
+      "expectedError": "TARGET_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000114",
+        "commandId": "10000000-0000-4000-8000-000000000114",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:14Z",
+        "correlationId": "20000000-0000-4000-8000-000000000114",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "DISABLED",
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "GLOBAL_KILL_ENABLED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "unknown-event-type",
+      "expectedError": "EVENT_TYPE",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000115",
+        "eventType": "WIDGET_UNKNOWN_EVENT",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:15Z"
+      }
+    },
+    {
+      "name": "command-invalid-before-hash",
+      "expectedError": "DIGEST",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000116",
+        "commandId": "10000000-0000-4000-8000-000000000116",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:16Z",
+        "correlationId": "20000000-0000-4000-8000-000000000116",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "not-a-digest",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-aggregate-binding-mismatch",
+      "expectedError": "AGGREGATE_BINDING",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000117",
+        "commandId": "10000000-0000-4000-8000-000000000117",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000099",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:17Z",
+        "correlationId": "20000000-0000-4000-8000-000000000117",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "runtime-enable-approval-target-missing-approval",
+      "expectedError": "TARGET_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000118",
+        "commandId": "10000000-0000-4000-8000-000000000118",
+        "eventType": "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000004",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:18Z",
+        "correlationId": "20000000-0000-4000-8000-000000000118",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000004"
+        },
+        "reasonCode": "RUNTIME_CONTROL_ENABLE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "evidence-waiver-self-reference",
+      "expectedError": "TARGET_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000119",
+        "commandId": "10000000-0000-4000-8000-000000000119",
+        "eventType": "WIDGET_EVIDENCE_WAIVED",
+        "aggregateType": "WIDGET_EVIDENCE",
+        "aggregateId": "51000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:01:19Z",
+        "correlationId": "20000000-0000-4000-8000-000000000119",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceId": "51000000-0000-4000-8000-000000000001",
+          "waivedEvidenceId": "51000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "EVIDENCE_WAIVER_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "version-validated-target-missing-run",
+      "expectedError": "TARGET_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000120",
+        "commandId": "10000000-0000-4000-8000-000000000120",
+        "eventType": "WIDGET_VERSION_VALIDATED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 22,
+        "occurredAt": "2026-08-27T05:01:20Z",
+        "correlationId": "20000000-0000-4000-8000-000000000120",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "VERSION_VALIDATION_COMPLETED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-reason-taxonomy-swapped",
+      "expectedError": "REASON_CODE",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000121",
+        "commandId": "10000000-0000-4000-8000-000000000121",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:21Z",
+        "correlationId": "20000000-0000-4000-8000-000000000121",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "SECURITY_INCIDENT",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-created-non-absent-before-hash",
+      "expectedError": "BEFORE_HASH_CONTRACT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000122",
+        "commandId": "10000000-0000-4000-8000-000000000122",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:01:22Z",
+        "correlationId": "20000000-0000-4000-8000-000000000122",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-invalid-calendar-date",
+      "expectedError": "OCCURRED_AT",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000123",
+        "commandId": "10000000-0000-4000-8000-000000000123",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-02-30T05:01:23Z",
+        "correlationId": "20000000-0000-4000-8000-000000000123",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "command-created-sequence-gap",
+      "expectedError": "AGGREGATE_SEQUENCE",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000124",
+        "commandId": "10000000-0000-4000-8000-000000000124",
+        "eventType": "WIDGET_EVIDENCE_WAIVED",
+        "aggregateType": "WIDGET_EVIDENCE",
+        "aggregateId": "51000000-0000-4000-8000-000000000024",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:01:24Z",
+        "correlationId": "20000000-0000-4000-8000-000000000124",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceId": "51000000-0000-4000-8000-000000000024",
+          "waivedEvidenceId": "50000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "EVIDENCE_WAIVER_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "runtime-control-target-reason-swapped",
+      "expectedError": "RUNTIME_REASON_BINDING",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000128",
+        "commandId": "10000000-0000-4000-8000-000000000128",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 3,
+        "occurredAt": "2026-08-27T05:02:08Z",
+        "correlationId": "20000000-0000-4000-8000-000000000128",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "VERSION_CONTROL_ENABLED",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "rollout-stop-cause-reason-swapped",
+      "expectedError": "ROLLOUT_STOP_REASON_BINDING",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000130",
+        "commandId": "10000000-0000-4000-8000-000000000130",
+        "eventType": "WIDGET_ROLLOUT_STOPPED",
+        "aggregateType": "WIDGET_CATALOG_ROLLOUT",
+        "aggregateId": "rollout:STAGING",
+        "aggregateSequence": 10,
+        "occurredAt": "2026-08-28T05:00:13Z",
+        "correlationId": "20000000-0000-4000-8000-000000000130",
+        "actor": {
+          "plane": "DEPLOYMENT_CONTROLLER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "environment": "STAGING",
+          "rolloutRevision": 10,
+          "approvalId": "90000000-0000-4000-8000-000000000001",
+          "approvalExpiresAt": "2026-08-28T05:00:12Z",
+          "stopCause": "APPROVAL_EXPIRED"
+        },
+        "reasonCode": "ROLLOUT_SAFETY_STOP",
+        "beforeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "afterHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "name": "projection-arbitrary-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000001",
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "projectionSchemaVersion": 1,
+        "projectionType": "DefinitionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "DefinitionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "state": "ACTIVE",
+          "rowVersion": 1
+        }
+      },
+      "expectedError": "AFTER_HASH_MISMATCH"
+    },
+    {
+      "name": "projection-wrong-type-for-event",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000001",
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "ddd4537889c6bea592dbbebb9a1ac4bc87a7cdbc41e89a193aa2214ba549582e",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "state": "ACTIVE",
+          "rowVersion": 1
+        }
+      },
+      "expectedError": "PROJECTION_TYPE_BINDING"
+    },
+    {
+      "name": "projection-extra-field",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000001",
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "01a875a637d1f3f7fb1d9abed59b3268e40e6ff659a2a2046f35e3bb8ca926b3",
+        "projectionSchemaVersion": 1,
+        "projectionType": "DefinitionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "DefinitionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "state": "ACTIVE",
+          "rowVersion": 1,
+          "debug": true
+        }
+      },
+      "expectedError": "PROJECTION_SHAPE"
+    },
+    {
+      "name": "projection-missing-field",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000001",
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "4d26f42ee65dcf1ec159130b016c7c97f797d8a61f33bae27dbfa976b529e096",
+        "projectionSchemaVersion": 1,
+        "projectionType": "DefinitionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "DefinitionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "rowVersion": 1
+        }
+      },
+      "expectedError": "PROJECTION_SHAPE"
+    },
+    {
+      "name": "projection-before-after-swapped",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000018",
+        "commandId": "10000000-0000-4000-8000-000000000018",
+        "eventType": "WIDGET_VERSION_UPDATED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 21,
+        "occurredAt": "2026-08-27T05:00:18Z",
+        "correlationId": "20000000-0000-4000-8000-000000000018",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "VERSION_DRAFT_UPDATED",
+        "beforeHash": "af52b63e3472d043e124556630faf94e6bded7efbe0907ffbf4b1517380993dd",
+        "afterHash": "0dd96ae57817fd9b6311f6f27773354bc4b2ba82224c5df91a92dd2acaf47a70",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 21
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 20
+        }
+      },
+      "expectedError": "BEFORE_HASH_MISMATCH"
+    },
+    {
+      "name": "projection-before-cross-aggregate-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000018",
+        "commandId": "10000000-0000-4000-8000-000000000018",
+        "eventType": "WIDGET_VERSION_UPDATED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 21,
+        "occurredAt": "2026-08-27T05:00:18Z",
+        "correlationId": "20000000-0000-4000-8000-000000000018",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "VERSION_DRAFT_UPDATED",
+        "beforeHash": "9a78a85777dc6ff85aa5fdb890be56de45eef7a23146771ccb7bc26c5df921de",
+        "afterHash": "0dd96ae57817fd9b6311f6f27773354bc4b2ba82224c5df91a92dd2acaf47a70",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000099",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 20
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 21
+        }
+      },
+      "expectedError": "BEFORE_PROJECTION_TARGET_BINDING"
+    },
+    {
+      "name": "projection-raw-user-id",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000001",
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "eventType": "WIDGET_DEFINITION_CREATED",
+        "aggregateType": "WIDGET_DEFINITION",
+        "aggregateId": "30000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:01Z",
+        "correlationId": "20000000-0000-4000-8000-000000000001",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "DEFINITION_CREATE_APPROVED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "b184195f64ab617e28522f6a62871cddc2e21ca832033ba8c668c42b7cd88da4",
+        "projectionSchemaVersion": 1,
+        "projectionType": "DefinitionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "DefinitionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "state": "ACTIVE",
+          "rowVersion": 1,
+          "userId": "raw-user-42"
+        }
+      },
+      "expectedError": "RAW_IDENTITY_FIELD:userId"
+    },
+    {
+      "name": "projection-raw-evidence-reference",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000003",
+        "commandId": "10000000-0000-4000-8000-000000000003",
+        "eventType": "WIDGET_EVIDENCE_RECORDED",
+        "aggregateType": "WIDGET_EVIDENCE",
+        "aggregateId": "50000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:03Z",
+        "correlationId": "20000000-0000-4000-8000-000000000003",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceId": "50000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "EVIDENCE_REVIEW_COMPLETED",
+        "beforeHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "afterHash": "3cbce669f75eb6805a6e8d5461e9a301c8732d9b32f01fa1501e75fb2c3c69cf",
+        "projectionSchemaVersion": 1,
+        "projectionType": "EvidenceDecision"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "EvidenceDecision",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": null,
+        "after": {
+          "evidenceId": "50000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "evidenceType": "PERFORMANCE",
+          "status": "PASS",
+          "evidenceRefHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "decisionRevision": 1,
+          "rowVersion": 1,
+          "evidenceRef": "s3://private-bucket/raw-object"
+        }
+      },
+      "expectedError": "RAW_EVIDENCE_REFERENCE"
+    },
+    {
+      "name": "projection-runtime-child-approval-mismatch",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000020",
+        "commandId": "10000000-0000-4000-8000-000000000020",
+        "eventType": "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000004",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:20Z",
+        "correlationId": "20000000-0000-4000-8000-000000000020",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000004",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "RUNTIME_CONTROL_ENABLE_APPROVED",
+        "beforeHash": "79e581b697a69a1bcb7f1d48ae1cfcd170a285f4a5c19acd2d2159d18d9f13df",
+        "afterHash": "30be448d1a55d21e728ed8ea9fd29c50fdae3f7b649ac9daa4097d06b6d582c5",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000004",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000004",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000099",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:20Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "projection-runtime-enable-missing-consumed-approval",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "a754abec602acb9f17fdcfbec20d1db754fa7fbf24c47d9c4ca69911b16ab592",
+        "afterHash": "71c73935382552266cc5a5a3d4a1c8c32b1d5d0255bcb5460c1642330ab08ca3",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": null
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "runtime-enable-command-approval-swapped",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000099"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "a754abec602acb9f17fdcfbec20d1db754fa7fbf24c47d9c4ca69911b16ab592",
+        "afterHash": "2a9f926a4ac2917fa5710fe19d0161c2eb8d778ba5fdc2ece425226ce471b80a",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "runtime-enable-command-approval-missing",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "a754abec602acb9f17fdcfbec20d1db754fa7fbf24c47d9c4ca69911b16ab592",
+        "afterHash": "2a9f926a4ac2917fa5710fe19d0161c2eb8d778ba5fdc2ece425226ce471b80a",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "TARGET_CONTRACT"
+    },
+    {
+      "name": "runtime-disable-command-approval-unexpected",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000008",
+        "commandId": "10000000-0000-4000-8000-000000000008",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 1,
+        "occurredAt": "2026-08-27T05:00:08Z",
+        "correlationId": "20000000-0000-4000-8000-000000000008",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "DISABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_ENABLED",
+        "beforeHash": "c15cf7cc50d4bc4a53af5085cdbaa189fd6c9998e24bdd6a79e66c16546073e1",
+        "afterHash": "fbda748bf9ee85d4d06b47fc199c63608494eac966cef9c9a50bab127c544e62",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": null
+        }
+      },
+      "expectedError": "TARGET_CONTRACT"
+    },
+    {
+      "name": "projection-runtime-enable-before-approval-swapped-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "f5fbb83b5db0bf50c03e0ef7970c3e94f44e03568614329745faf7bf6a8bcd0d",
+        "afterHash": "2a9f926a4ac2917fa5710fe19d0161c2eb8d778ba5fdc2ece425226ce471b80a",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000099",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "projection-runtime-enable-stale-approval-revision-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "128300f2343f13336bbcb04dc7b701382862e7d8d39ebc1446a2214ba660d8c5",
+        "afterHash": "0ff7d2896a2b396b4fdf6a88b05dd20e5a8cad45a0abe6e27d7696e37397dc67",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 2,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 2,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_REVISION_BINDING"
+    },
+    {
+      "name": "projection-runtime-enable-before-not-active-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "cd0d30afc7d922a4ef895f50f7d581ee20381ddcc009c7f527b46080a30ba01f",
+        "afterHash": "2a9f926a4ac2917fa5710fe19d0161c2eb8d778ba5fdc2ece425226ce471b80a",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_PRECONDITION"
+    },
+    {
+      "name": "projection-runtime-enable-consumed-at-mismatch-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "a754abec602acb9f17fdcfbec20d1db754fa7fbf24c47d9c4ca69911b16ab592",
+        "afterHash": "cf8ccc0412d9fcf696e4b5c2db923e157910896ce0fd4d0b2d3f822b37f525d9",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T06:00:00Z",
+            "consumedAt": "2026-08-27T05:02:04Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_CONSUMPTION"
+    },
+    {
+      "name": "projection-runtime-enable-expired-approval-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000125",
+        "commandId": "10000000-0000-4000-8000-000000000125",
+        "eventType": "WIDGET_RUNTIME_CONTROL_CHANGED",
+        "aggregateType": "WIDGET_RUNTIME_CONTROL",
+        "aggregateId": "70000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 2,
+        "occurredAt": "2026-08-27T05:02:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000125",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "resultingState": "ENABLED",
+          "enableApprovalId": "71000000-0000-4000-8000-000000000002"
+        },
+        "reasonCode": "GLOBAL_KILL_RELEASED",
+        "beforeHash": "425936be82bb21695b8671cc19eef312c635a27535664659171b19ca8717ffd6",
+        "afterHash": "9bba646c09f8ea05e60c4b7c07f73873c0555f05c94cb3c3ebff85ddae953153",
+        "projectionSchemaVersion": 1,
+        "projectionType": "RuntimeControlHead"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "RuntimeControlHead",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "controlRevision": 1,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:02:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "after": {
+          "controlId": "70000000-0000-4000-8000-000000000001",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "controlRevision": 2,
+          "latestEnableApproval": {
+            "approvalId": "71000000-0000-4000-8000-000000000002",
+            "controlRevision": 1,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:02:05Z",
+            "consumedAt": "2026-08-27T05:02:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000125"
+          }
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_EXPIRY_BINDING"
+    },
+    {
+      "name": "projection-clearance-child-approval-mismatch",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000005",
+        "commandId": "10000000-0000-4000-8000-000000000005",
+        "eventType": "WIDGET_QUARANTINE_CLEAR_APPROVED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 18,
+        "occurredAt": "2026-08-27T05:00:05Z",
+        "correlationId": "20000000-0000-4000-8000-000000000005",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_REVIEWED",
+        "beforeHash": "50d924ee3fec007b12a58a5acbc4aa4de06e172c4c8d4e833f02d2d5e304018f",
+        "afterHash": "b35c6ca7858904f45c479f32b579fe7451823705c6d03ed090c9e5f5afe57c20",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": null,
+          "rowVersion": 17
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000099",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "clearance-command-approval-swapped",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000099",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "afterHash": "21fa08d7beb6cbf7886c71b6cd4e9da449e034c2763eb4142342cea51568b54d",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "clearance-command-incident-swapped",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000099"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "afterHash": "21fa08d7beb6cbf7886c71b6cd4e9da449e034c2763eb4142342cea51568b54d",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "clearance-command-incident-missing",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "afterHash": "21fa08d7beb6cbf7886c71b6cd4e9da449e034c2763eb4142342cea51568b54d",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "TARGET_CONTRACT"
+    },
+    {
+      "name": "projection-clearance-before-approval-swapped-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "b35c6ca7858904f45c479f32b579fe7451823705c6d03ed090c9e5f5afe57c20",
+        "afterHash": "21fa08d7beb6cbf7886c71b6cd4e9da449e034c2763eb4142342cea51568b54d",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000099",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "name": "projection-clearance-stale-incident-revision-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "86b10b3ff607a2a892d02d052b6ad4a277cf6efe849a16d345153764d70c2a10",
+        "afterHash": "a01b33b7b5ee82f3c774be396320589ef1f7c62ee4f882d7f86fcce404d9629e",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 16,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 16,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "QUARANTINE_REVISION_BINDING"
+    },
+    {
+      "name": "projection-clearance-before-not-active-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "57c4b12ced6a2d82525f714889a8d069b7aaf2466c2d19348db5e049a1b39983",
+        "afterHash": "21fa08d7beb6cbf7886c71b6cd4e9da449e034c2763eb4142342cea51568b54d",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_PRECONDITION"
+    },
+    {
+      "name": "projection-clearance-consumed-at-mismatch-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "afterHash": "061dfca81159a45d3967b4a94b899fecac1fbf38fe960b882fe2fcf60b80247b",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:05Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_CONSUMPTION"
+    },
+    {
+      "name": "projection-clearance-expired-approval-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "ea8f05a197e7d3fa5f8568a6379bd72b3b8789473ee1505bc916bad2cd291c37",
+        "afterHash": "49950f1de9910f4a4f5ee926b12bb5e391e1aea249d8547ad6010f890b148eda",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:00:06Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:00:06Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000006"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_EXPIRY_BINDING"
+    },
+    {
+      "name": "projection-clearance-command-consumer-mismatch-rehash",
+      "event": {
+        "schemaVersion": 1,
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "eventType": "WIDGET_QUARANTINE_CLEARED",
+        "aggregateType": "WIDGET_VERSION",
+        "aggregateId": "40000000-0000-4000-8000-000000000001",
+        "aggregateSequence": 19,
+        "occurredAt": "2026-08-27T05:00:06Z",
+        "correlationId": "20000000-0000-4000-8000-000000000006",
+        "actor": {
+          "plane": "PROVIDER",
+          "auditRefHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "clearanceApprovalId": "60000000-0000-4000-8000-000000000001",
+          "quarantineEventId": "65000000-0000-4000-8000-000000000001"
+        },
+        "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+        "beforeHash": "d2b5cc805afcc196be2e64d184fe093473367c0208d53a32d8ee47a68f9c37a2",
+        "afterHash": "5d026b00cc3711ca147fe118db6e86ade92992b37221f42b7460bc07d66632aa",
+        "projectionSchemaVersion": 1,
+        "projectionType": "VersionState"
+      },
+      "projection": {
+        "schemaVersion": 1,
+        "type": "VersionState",
+        "source": "LOCKED_DB_ROW",
+        "canonicalization": "RFC8785_JCS",
+        "before": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "65000000-0000-4000-8000-000000000001",
+          "currentQuarantineRevision": 17,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          },
+          "rowVersion": 18
+        },
+        "after": {
+          "definitionId": "30000000-0000-4000-8000-000000000001",
+          "versionId": "40000000-0000-4000-8000-000000000001",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "currentQuarantineEventId": null,
+          "currentQuarantineRevision": null,
+          "validationRunId": null,
+          "latestClearanceApproval": {
+            "approvalId": "60000000-0000-4000-8000-000000000001",
+            "quarantineEventId": "65000000-0000-4000-8000-000000000001",
+            "quarantineRevision": 17,
+            "state": "CONSUMED",
+            "expiresAt": "2026-08-27T05:30:05Z",
+            "consumedAt": "2026-08-27T05:00:06Z",
+            "consumedByCommandId": "10000000-0000-4000-8000-000000000099"
+          },
+          "rowVersion": 19
+        }
+      },
+      "expectedError": "CHILD_APPROVAL_CONSUMPTION"
+    }
+  ]
+}

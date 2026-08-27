@@ -29,7 +29,11 @@ import {
   CALENDAR_FOCUS_FIXTURE,
   CALENDAR_HOME_FIXTURE,
   CALENDAR_RESOURCES_FIXTURE,
+  CALENDAR_SHARES_FIXTURE,
   CALENDAR_SUMMARIES_FIXTURE,
+  CALENDAR_TRASH_FIXTURE,
+  COMPANY_CALENDARS_FIXTURE,
+  COMPANY_CALENDAR_EVENTS_FIXTURE,
   HR_ABSENCE_FIXTURE,
   HR_BENEFITS_FIXTURE,
   HR_HOME_FIXTURE,
@@ -59,6 +63,8 @@ type Appearance = {
 
 type ShellSessionOptions = {
   userId?: number;
+  /** null deliberately omits the field for identity-plane contract tests. */
+  identityPlane?: string | null;
   personPublicId?: string | null;
   locale?: 'en' | 'ko';
   displayName?: string;
@@ -459,19 +465,13 @@ const PROVIDER_TENANT_FIXTURE = {
       version: 1,
     },
   ],
-  administrators: [
-    {
-      tenantAdministratorId: 'administrator-skax',
-      authUserId: 1,
-      email: 'hyunwoo.park@sk.com',
-      displayName: 'Park Hyunwoo',
-      roleCode: 'TENANT_ADMIN',
-      lifecycleState: 'ACTIVE',
-      primaryAdministrator: true,
-      activatedAt: '2026-01-10T00:00:00Z',
-      version: 1,
-    },
-  ],
+  administratorPosture: {
+    configuredCount: 1,
+    activeCount: 1,
+    pendingDeliveryCount: 0,
+    primaryConfigured: true,
+    lastInvitedAt: '2026-01-10T00:00:00Z',
+  },
 };
 
 const PROVIDER_SECOND_TENANT_FIXTURE = {
@@ -502,8 +502,51 @@ const PROVIDER_SECOND_TENANT_FIXTURE = {
     externalResourceId: 'identity-acme',
   })),
   domains: [],
-  administrators: [],
+  administratorPosture: {
+    configuredCount: 0,
+    activeCount: 0,
+    pendingDeliveryCount: 0,
+    primaryConfigured: false,
+    lastInvitedAt: null,
+  },
 };
+
+const PROVIDER_TENANT_FIXTURES = [
+  PROVIDER_TENANT_FIXTURE,
+  PROVIDER_SECOND_TENANT_FIXTURE,
+  ...Array.from({ length: 148 }, (_, index) => {
+    const ordinal = index + 3;
+    const key = String(ordinal).padStart(3, '0');
+    return {
+      ...PROVIDER_TENANT_FIXTURE,
+      tenantId: `tenant-customer-${key}`,
+      organizationId: `organization-customer-${key}`,
+      organizationKey: `CUSTOMER-${key}`,
+      organizationName: `Customer ${key}`,
+      tenantKey: `tenant-${key}-production`,
+      displayName: `Tenant ${key} Production`,
+      authTenantId: ordinal,
+      subscription: {
+        ...PROVIDER_TENANT_FIXTURE.subscription,
+        subscriptionId: `subscription-customer-${key}`,
+        contractReference: `CUSTOMER-${key}-2026`,
+      },
+      services: PROVIDER_TENANT_FIXTURE.services.map((service) => ({
+        ...service,
+        serviceInstanceId: `service-customer-${key}-identity`,
+        externalResourceId: `identity-customer-${key}`,
+      })),
+      domains: [],
+      administratorPosture: {
+        configuredCount: 0,
+        activeCount: 0,
+        pendingDeliveryCount: 0,
+        primaryConfigured: false,
+        lastInvitedAt: null,
+      },
+    };
+  }),
+];
 
 function workforceOverviewChartFixture(asOf: string) {
   const current = asOf >= '2026-08-01';
@@ -919,7 +962,13 @@ export async function mockShellSession(
   options: ShellSessionOptions = {}
 ) {
   await mockShellNotificationRuntime(page);
-  const provider = roles.some((role) => role.startsWith('PROVIDER_'));
+  const identityPlane =
+    options.identityPlane === undefined
+      ? roles.some((role) => role.startsWith('PROVIDER_'))
+        ? 'PROVIDER'
+        : 'TENANT'
+      : options.identityPlane;
+  const provider = identityPlane === 'PROVIDER';
   const locale = options.locale ?? 'en';
   const appearance = options.appearance ?? {
     mode: 'system',
@@ -1181,6 +1230,7 @@ export async function mockShellSession(
         tenantId: 1,
         tenantCode: 'default',
         tenantName: 'SKAX',
+        ...(identityPlane === null ? {} : { identityPlane }),
         preferredLocale: locale,
         tenantDefaultLocale: locale,
         roles,
@@ -1211,6 +1261,13 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/auth/policy') {
+      return fulfillSuccess(route, {
+        localLoginAvailable: true,
+        ssoLoginAvailable: false,
+        preferredLoginType: 'LOCAL',
+      });
+    }
+    if (path === '/api/auth/me/policy') {
       return fulfillSuccess(route, {
         tenantId: 1,
         defaultLoginType: 'LOCAL',
@@ -1670,6 +1727,27 @@ export async function mockShellSession(
     if (path === '/api/platform/v1/calendar/calendars') {
       return fulfillSuccess(route, CALENDAR_SUMMARIES_FIXTURE);
     }
+    if (/^\/api\/platform\/v1\/calendar\/calendars\/[^/]+\/subscription$/u.test(path)) {
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      return fulfillSuccess(route, { ...(body ?? {}), version: Number(body?.version ?? 0) + 1 });
+    }
+    if (/^\/api\/platform\/v1\/calendar\/calendars\/[^/]+\/shares$/u.test(path)) {
+      return fulfillSuccess(route, CALENDAR_SHARES_FIXTURE);
+    }
+    if (/^\/api\/platform\/v1\/calendar\/calendars\/[^/]+\/shares\/[^/]+$/u.test(path)) {
+      if (request.method() === 'DELETE') return fulfillSuccess(route, null);
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      return fulfillSuccess(route, {
+        ...CALENDAR_SHARES_FIXTURE[0],
+        ...(body ?? {}),
+        grantId: CALENDAR_SHARES_FIXTURE[0].grantId,
+        lifecycleState: 'ACTIVE',
+        version: Number(body?.version ?? 0) + 1,
+      });
+    }
+    if (path === '/api/platform/v1/calendar/trash') {
+      return fulfillSuccess(route, CALENDAR_TRASH_FIXTURE);
+    }
     if (path === '/api/platform/v1/calendar/events') {
       return fulfillSuccess(
         route,
@@ -1691,11 +1769,66 @@ export async function mockShellSession(
     if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+\/cancel$/u.test(path)) {
       return fulfillSuccess(route, null);
     }
+    if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+\/(trash|restore)$/u.test(path)) {
+      return fulfillSuccess(route, CALENDAR_TRASH_FIXTURE[0].capabilities);
+    }
+    if (path === '/api/platform/v1/admin/calendar/company-calendars') {
+      if (request.method() === 'GET') return fulfillSuccess(route, COMPANY_CALENDARS_FIXTURE);
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      return fulfillSuccess(route, { ...COMPANY_CALENDARS_FIXTURE[0], ...(body ?? {}) });
+    }
+    if (/^\/api\/platform\/v1\/admin\/calendar\/company-calendars\/[^/]+$/u.test(path)) {
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      return fulfillSuccess(route, { ...COMPANY_CALENDARS_FIXTURE[0], ...(body ?? {}) });
+    }
+    if (/^\/api\/platform\/v1\/admin\/calendar\/company-calendars\/[^/]+\/events$/u.test(path)) {
+      if (request.method() === 'GET') {
+        return fulfillSuccess(
+          route,
+          url.searchParams.get('deleted') === 'true' ? [] : COMPANY_CALENDAR_EVENTS_FIXTURE
+        );
+      }
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      return fulfillSuccess(route, { ...COMPANY_CALENDAR_EVENTS_FIXTURE[0], ...(body ?? {}) });
+    }
+    if (
+      /^\/api\/platform\/v1\/admin\/calendar\/company-calendars\/[^/]+\/events\/[^/]+(?:\/(?:trash|restore))?$/u.test(
+        path
+      )
+    ) {
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      return fulfillSuccess(route, {
+        ...COMPANY_CALENDAR_EVENTS_FIXTURE[0],
+        ...(body ?? {}),
+        version: COMPANY_CALENDAR_EVENTS_FIXTURE[0].version + 1,
+      });
+    }
     if (path === '/api/platform/v1/calendar/resources') {
       return fulfillSuccess(route, CALENDAR_RESOURCES_FIXTURE);
     }
+    if (path === '/api/platform/v1/calendar/policy') {
+      return fulfillSuccess(route, CALENDAR_ADMIN_FIXTURE.policy);
+    }
     if (path === '/api/platform/v1/calendar/availability') {
       return fulfillSuccess(route, CALENDAR_AVAILABILITY_FIXTURE);
+    }
+    if (path === '/api/platform/v1/calendar/scheduling/evaluations') {
+      return fulfillSuccess(route, {
+        evaluationId: 'calendar-evaluation-2026-08-11',
+        criteriaHash: 'a'.repeat(64),
+        completeness: 'COMPLETE',
+        sources: [
+          {
+            sourceType: 'DWP_NATIVE',
+            status: 'HEALTHY',
+            lastSuccessfulSyncAt: '2026-08-11T00:20:00Z',
+          },
+        ],
+        availability: CALENDAR_AVAILABILITY_FIXTURE,
+        rooms: CALENDAR_RESOURCES_FIXTURE,
+        generatedAt: '2026-08-11T00:20:00Z',
+        validUntil: '2026-08-11T00:20:30Z',
+      });
     }
     if (path === '/api/platform/v1/rooms/availability') {
       return fulfillSuccess(route, {
@@ -2269,6 +2402,35 @@ export async function mockShellSession(
           version: 1,
         },
       ]);
+    }
+    if (path === '/api/platform/v1/admin/saved-view-ownership/users') {
+      return fulfillSuccess(route, [
+        {
+          tenantId: 1,
+          userId: 42,
+          displayName: '퇴직 예정 사용자',
+          email: 'departing.user@sk.com',
+          jobTitle: '업무 담당자',
+          status: 'INACTIVE',
+          identityPlane: 'TENANT',
+          eligibilityStatus: 'NOT_EVALUATED',
+          ineligibilityReasons: [],
+        },
+        {
+          tenantId: 1,
+          userId: 43,
+          displayName: '새 업무 담당자',
+          email: 'successor.user@sk.com',
+          jobTitle: '업무 담당자',
+          status: 'ACTIVE',
+          identityPlane: 'TENANT',
+          eligibilityStatus: 'ELIGIBLE',
+          ineligibilityReasons: [],
+        },
+      ]);
+    }
+    if (path === '/api/platform/v1/admin/saved-view-ownership/orphaned/actions') {
+      return fulfillSuccess(route, []);
     }
     if (path === '/api/platform/v1/admin/saved-view-ownership/orphaned') {
       return fulfillSuccess(route, [
@@ -2916,6 +3078,7 @@ export async function mockShellSession(
           'INCIDENT_WRITE',
           'MAINTENANCE_WRITE',
           'SUPPORT_SESSION_WRITE',
+          'SUPPORT_ACCESS_READ',
           'SUPPORT_ACCESS_REVIEW',
           'SUPPORT_POST_REVIEW',
           'BREAK_GLASS_SUPPORT',
@@ -3112,16 +3275,43 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/provider/v1/admin/tenants') {
+      const query = (url.searchParams.get('query') ?? '').trim().toLowerCase();
+      const state = url.searchParams.get('state');
+      const region = url.searchParams.get('region');
+      const serviceTier = url.searchParams.get('serviceTier');
+      const isolationModel = url.searchParams.get('isolationModel');
+      const page = Math.max(0, Number(url.searchParams.get('page') ?? 0));
+      const size = Math.max(1, Number(url.searchParams.get('size') ?? 50));
+      const matching = PROVIDER_TENANT_FIXTURES.filter(
+        (tenant) =>
+          (!query ||
+            [
+              tenant.displayName,
+              tenant.tenantKey,
+              tenant.organizationName,
+              tenant.organizationKey,
+            ].some((value) => value.toLowerCase().includes(query))) &&
+          (!state || tenant.lifecycleState === state) &&
+          (!region || tenant.dataRegion === region) &&
+          (!serviceTier || tenant.serviceTier === serviceTier) &&
+          (!isolationModel || tenant.isolationModel === isolationModel)
+      );
+      const content = matching.slice(page * size, page * size + size);
       return fulfillSuccess(route, {
-        content: [PROVIDER_TENANT_FIXTURE, PROVIDER_SECOND_TENANT_FIXTURE],
-        page: 0,
-        size: 100,
-        totalElements: 2,
-        totalPages: 1,
+        content,
+        page,
+        size,
+        totalElements: matching.length,
+        totalPages: Math.ceil(matching.length / size),
       });
     }
     if (path === '/api/provider/v1/admin/tenants/tenant-skax') {
       return fulfillSuccess(route, PROVIDER_TENANT_FIXTURE);
+    }
+    if (path.startsWith('/api/provider/v1/admin/tenants/')) {
+      const tenantId = decodeURIComponent(path.slice('/api/provider/v1/admin/tenants/'.length));
+      const tenant = PROVIDER_TENANT_FIXTURES.find((candidate) => candidate.tenantId === tenantId);
+      if (tenant) return fulfillSuccess(route, tenant);
     }
     if (path === '/api/provider/v1/admin/regions') {
       return fulfillSuccess(route, [
@@ -3304,20 +3494,83 @@ export async function mockShellSession(
           tenantId: 'tenant-skax',
           tenantKey: 'skax-production',
           tenantName: 'SKAX Production',
-          operatorId: 1,
+          operatorOwned: true,
           operatorName: 'Provider Admin',
           lifecycleState: 'ACTIVE',
-          justification: 'Investigate the customer-reported workspace latency.',
-          scopes: ['TENANT_DIAGNOSTICS_READ'],
+          scopes: ['TENANT_EXPERIENCE_PREVIEW'],
           accessMode: 'STANDARD',
-          customerApprovalRequired: false,
           riskTier: 'L1',
           startedAt: '2026-08-10T23:40:00Z',
           expiresAt: '2026-08-11T01:40:00Z',
           lastUsedAt: '2026-08-11T00:00:00Z',
           version: 1,
         },
+        {
+          supportSessionId: 'support-session-history',
+          tenantId: 'tenant-skax',
+          tenantKey: 'skax-production',
+          tenantName: 'SKAX Production',
+          operatorOwned: false,
+          operatorName: 'Provider Support Engineer',
+          lifecycleState: 'REVOKED',
+          scopes: ['TENANT_EXPERIENCE_PREVIEW'],
+          accessMode: 'STANDARD',
+          riskTier: 'L1',
+          startedAt: '2026-08-10T21:10:00Z',
+          expiresAt: '2026-08-10T21:25:00Z',
+          lastUsedAt: '2026-08-10T21:24:00Z',
+          revokedAt: '2026-08-10T21:25:00Z',
+          version: 3,
+        },
       ]);
+    }
+    if (
+      path ===
+      '/api/provider/v1/admin/support-access-requests/support-request-review/post-review-evidence'
+    ) {
+      return fulfillSuccess(route, {
+        supportAccessRequestId: 'support-request-review',
+        supportSessionId: 'support-session-history',
+        tenantId: 'tenant-skax',
+        sessionLifecycleState: 'REVOKED',
+        evidenceFrom: '2026-08-10T21:10:00Z',
+        evidenceThrough: '2026-08-10T21:25:00Z',
+        grantedScopes: ['TENANT_EXPERIENCE_PREVIEW'],
+        observedScopes: ['TENANT_EXPERIENCE_PREVIEW'],
+        totalEventCount: 12,
+        actualUseCount: 10,
+        deniedAttemptCount: 2,
+        evidenceComplete: true,
+        displayTruncated: true,
+        noUseConfirmed: false,
+        readiness: 'READY_WITH_USE',
+        anomalies: ['DENIED_ATTEMPTS'],
+        events: [
+          {
+            auditEventId: 'audit-support-review-allow',
+            occurredAt: '2026-08-10T21:20:00Z',
+            decision: 'ALLOW',
+            method: 'GET',
+            routeTemplate: '/api/platform/v1/admin/tenant-experience-preview',
+            scope: 'TENANT_EXPERIENCE_PREVIEW',
+            outcome: 'SUCCESS',
+            reasonCode: null,
+            correlationId: '0123456789abcdef0123456789abcdef',
+          },
+          {
+            auditEventId: 'audit-support-review-deny',
+            occurredAt: '2026-08-10T21:19:00Z',
+            decision: 'DENY',
+            method: 'GET',
+            routeTemplate: '/api/platform/v1/admin/tenant-experience-preview',
+            scope: 'TENANT_EXPERIENCE_PREVIEW',
+            outcome: 'DENIED',
+            reasonCode: 'SCOPE_INSUFFICIENT',
+            correlationId:
+              'sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+          },
+        ],
+      });
     }
     if (path === '/api/provider/v1/admin/support-access-requests') {
       return fulfillSuccess(route, [
@@ -3326,17 +3579,16 @@ export async function mockShellSession(
           tenantId: 'tenant-skax',
           tenantKey: 'skax-production',
           tenantName: 'SKAX Production',
-          requesterOperatorId: 2,
+          requesterOwned: false,
           requesterName: 'Provider Support Engineer',
           lifecycleState: 'PENDING_APPROVAL',
           accessMode: 'STANDARD',
-          justification: 'Investigate the customer-approved workspace latency case.',
-          scopes: ['TENANT_CONFIGURATION_WRITE'],
+          justification: 'Preview the customer-approved tenant experience configuration.',
+          scopes: ['TENANT_EXPERIENCE_PREVIEW'],
           durationMinutes: 30,
           approvalReference: 'SKAX-CASE-2408',
           customerApprovalRequired: true,
-          riskTier: 'L3',
-          requestKey: 'support-case-2408',
+          riskTier: 'L1',
           requestedAt: '2026-08-11T00:00:00Z',
           decisionDueAt: '2026-08-12T00:00:00Z',
           postReviewState: 'NOT_REQUIRED',
@@ -3347,23 +3599,18 @@ export async function mockShellSession(
           tenantId: 'tenant-skax',
           tenantKey: 'skax-production',
           tenantName: 'SKAX Production',
-          requesterOperatorId: 2,
+          requesterOwned: false,
           requesterName: 'Provider Support Engineer',
           lifecycleState: 'COMPLETED',
           accessMode: 'STANDARD',
           justification: 'Validate the tenant configuration after the approved change.',
-          scopes: ['TENANT_CONFIGURATION_WRITE'],
+          scopes: ['TENANT_EXPERIENCE_PREVIEW'],
           durationMinutes: 15,
           approvalReference: 'SKAX-CASE-2401',
           customerApprovalRequired: true,
-          riskTier: 'L3',
-          requestKey: 'support-case-2401',
+          riskTier: 'L1',
           requestedAt: '2026-08-10T21:00:00Z',
           decisionDueAt: '2026-08-11T21:00:00Z',
-          decidedAt: '2026-08-10T21:05:00Z',
-          decidedBy: 1,
-          decidedByName: 'Provider Admin',
-          decisionReason: 'Customer evidence and least privilege confirmed.',
           supportSessionId: 'support-session-history',
           activatedAt: '2026-08-10T21:10:00Z',
           completedAt: '2026-08-10T21:25:00Z',
@@ -3375,18 +3622,32 @@ export async function mockShellSession(
     if (path === '/api/provider/v1/admin/support-scopes') {
       return fulfillSuccess(route, [
         {
-          scopeCode: 'TENANT_DIAGNOSTICS_READ',
-          displayName: 'Tenant diagnostics read',
+          scopeCode: 'TENANT_EXPERIENCE_PREVIEW',
+          displayName: 'Preview redacted tenant experience configuration',
           riskTier: 'L1',
-          requiresCustomerApproval: false,
+          requiresCustomerApproval: true,
           lifecycleState: 'ACTIVE',
+        },
+        {
+          scopeCode: 'TENANT_CONFIGURATION_READ',
+          displayName: 'Read tenant configuration',
+          riskTier: 'L1',
+          requiresCustomerApproval: true,
+          lifecycleState: 'RETIRED',
         },
         {
           scopeCode: 'TENANT_CONFIGURATION_WRITE',
           displayName: 'Tenant configuration write',
           riskTier: 'L3',
           requiresCustomerApproval: true,
-          lifecycleState: 'ACTIVE',
+          lifecycleState: 'RETIRED',
+        },
+        {
+          scopeCode: 'WORKFORCE_READ',
+          displayName: 'Read workforce data',
+          riskTier: 'L2',
+          requiresCustomerApproval: true,
+          lifecycleState: 'RETIRED',
         },
       ]);
     }
@@ -3569,8 +3830,39 @@ export async function mockShellSession(
           eventCategory: 'SUPPORT',
           outcome: 'SUCCESS',
           correlationId: 'corr-support-1',
-          redactedSnapshot: '{"scope":"TENANT_DIAGNOSTICS_READ"}',
+          redactedSnapshot: '{"scope":"TENANT_CONFIGURATION_WRITE"}',
           occurredAt: '2026-08-10T23:40:00Z',
+        },
+        {
+          auditEventId: 'provider-audit-review-1',
+          operatorId: 2,
+          operatorName: 'Provider Support Engineer',
+          tenantId: 'tenant-skax',
+          tenantKey: 'skax-production',
+          action: 'SUPPORT_SESSION_STARTED',
+          targetType: 'SUPPORT_ACCESS_REQUEST',
+          targetId: 'support-request-review',
+          eventCategory: 'SUPPORT',
+          outcome: 'SUCCESS',
+          correlationId: 'corr-support-review-1',
+          redactedSnapshot:
+            '{"supportAccessRequestId":"support-request-review","supportSessionId":"support-session-history"}',
+          occurredAt: '2026-08-10T21:10:00Z',
+        },
+        {
+          auditEventId: 'provider-audit-review-2',
+          operatorId: 2,
+          operatorName: 'Provider Support Engineer',
+          tenantId: 'tenant-skax',
+          tenantKey: 'skax-production',
+          action: 'SUPPORT_SESSION_REVOKED',
+          targetType: 'SUPPORT_SESSION',
+          targetId: 'support-session-history',
+          eventCategory: 'SUPPORT',
+          outcome: 'SUCCESS',
+          correlationId: 'corr-support-review-1',
+          redactedSnapshot: '{"supportSessionId":"support-session-history"}',
+          occurredAt: '2026-08-10T21:25:00Z',
         },
       ]);
     }

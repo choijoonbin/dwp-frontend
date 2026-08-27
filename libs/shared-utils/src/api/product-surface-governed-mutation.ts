@@ -22,8 +22,7 @@ export type ProductSurfaceSecureMutationAuthority = Readonly<{
 }>;
 
 export type ProductSurfaceGovernedMutationAuthority =
-  | ProductSurfaceLegacyMutationAuthority
-  | ProductSurfaceSecureMutationAuthority;
+  ProductSurfaceLegacyMutationAuthority | ProductSurfaceSecureMutationAuthority;
 
 export const PRODUCT_SURFACE_EXPECTED_DECISION_REVISION_HEADER =
   'X-DWP-Expected-Decision-Revision' as const;

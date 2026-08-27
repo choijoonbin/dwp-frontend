@@ -1,0 +1,1844 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-command-completion.v1.schema.json",
+  "title": "DWP Widget Registry Command Completion V1",
+  "description": "Closed durable completion response binding command identity, outcome, operation-specific public body/status/ETag, and canonical response hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "commandId",
+    "operationId",
+    "commandType",
+    "target",
+    "outcome",
+    "responseStatus",
+    "responseBody",
+    "responseEtag",
+    "responseHash",
+    "completedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "commandId": {
+      "$ref": "#/$defs/uuid"
+    },
+    "operationId": {
+      "enum": [
+        "createWidgetDefinition",
+        "createWidgetDefinitionVersion",
+        "updateWidgetDefinitionVersion",
+        "validateWidgetDefinitionVersion",
+        "submitWidgetDefinitionVersion",
+        "decideWidgetDefinitionVersion",
+        "reworkWidgetDefinitionVersion",
+        "recordWidgetCertificationEvidence",
+        "waiveWidgetCertificationEvidence",
+        "publishWidgetDefinitionVersion",
+        "deprecateWidgetDefinitionVersion",
+        "quarantineWidgetDefinitionVersion",
+        "approveWidgetQuarantineClearance",
+        "clearWidgetVersionQuarantine",
+        "revokeWidgetDefinitionVersion",
+        "retireWidgetDefinition",
+        "promoteWidgetReleaseChannel",
+        "rollbackWidgetReleaseChannel",
+        "disableWidgetRuntimeControl",
+        "approveWidgetRuntimeControlEnable",
+        "enableWidgetRuntimeControl"
+      ]
+    },
+    "commandType": {
+      "enum": [
+        "CREATE_DEFINITION",
+        "CREATE_VERSION",
+        "UPDATE_VERSION",
+        "VALIDATE",
+        "SUBMIT",
+        "DECIDE",
+        "REWORK",
+        "RECORD_EVIDENCE",
+        "WAIVE_EVIDENCE",
+        "PUBLISH",
+        "DEPRECATE",
+        "QUARANTINE",
+        "APPROVE_QUARANTINE_CLEARANCE",
+        "CLEAR_QUARANTINE",
+        "REVOKE",
+        "RETIRE",
+        "PROMOTE",
+        "ROLLBACK",
+        "DISABLE_RUNTIME_CONTROL",
+        "APPROVE_RUNTIME_CONTROL_ENABLE",
+        "ENABLE_RUNTIME_CONTROL"
+      ]
+    },
+    "target": {
+      "type": "object"
+    },
+    "outcome": {
+      "enum": ["SUCCEEDED", "REJECTED", "NOT_EXECUTED"]
+    },
+    "responseStatus": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "responseBody": {
+      "type": "object"
+    },
+    "responseEtag": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/etag"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "responseHash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "completedAt": {
+      "$ref": "#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "commandType": {
+              "const": "CREATE_DEFINITION"
+            },
+            "operationId": {
+              "const": "createWidgetDefinition"
+            },
+            "target": {
+              "$ref": "#/$defs/targetHash",
+              "properties": {
+                "targetType": {
+                  "const": "DEFINITION_KEY_HASH"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "CREATE_VERSION"
+            },
+            "operationId": {
+              "const": "createWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetHash",
+              "properties": {
+                "targetType": {
+                  "const": "DEFINITION_SEMVER_HASH"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "UPDATE_VERSION"
+            },
+            "operationId": {
+              "const": "updateWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "VALIDATE"
+            },
+            "operationId": {
+              "const": "validateWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "SUBMIT"
+            },
+            "operationId": {
+              "const": "submitWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "DECIDE"
+            },
+            "operationId": {
+              "const": "decideWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "REWORK"
+            },
+            "operationId": {
+              "const": "reworkWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "RECORD_EVIDENCE"
+            },
+            "operationId": {
+              "const": "recordWidgetCertificationEvidence"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "WAIVE_EVIDENCE"
+            },
+            "operationId": {
+              "const": "waiveWidgetCertificationEvidence"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "EVIDENCE"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "PUBLISH"
+            },
+            "operationId": {
+              "const": "publishWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "DEPRECATE"
+            },
+            "operationId": {
+              "const": "deprecateWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "QUARANTINE"
+            },
+            "operationId": {
+              "const": "quarantineWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "APPROVE_QUARANTINE_CLEARANCE"
+            },
+            "operationId": {
+              "const": "approveWidgetQuarantineClearance"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "CLEAR_QUARANTINE"
+            },
+            "operationId": {
+              "const": "clearWidgetVersionQuarantine"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "REVOKE"
+            },
+            "operationId": {
+              "const": "revokeWidgetDefinitionVersion"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "VERSION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "RETIRE"
+            },
+            "operationId": {
+              "const": "retireWidgetDefinition"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "DEFINITION"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "PROMOTE"
+            },
+            "operationId": {
+              "const": "promoteWidgetReleaseChannel"
+            },
+            "target": {
+              "$ref": "#/$defs/targetHash",
+              "properties": {
+                "targetType": {
+                  "const": "DEFINITION_CHANNEL_HASH"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "ROLLBACK"
+            },
+            "operationId": {
+              "const": "rollbackWidgetReleaseChannel"
+            },
+            "target": {
+              "$ref": "#/$defs/targetHash",
+              "properties": {
+                "targetType": {
+                  "const": "DEFINITION_CHANNEL_HASH"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "DISABLE_RUNTIME_CONTROL"
+            },
+            "operationId": {
+              "const": "disableWidgetRuntimeControl"
+            },
+            "target": {
+              "$ref": "#/$defs/targetHash",
+              "properties": {
+                "targetType": {
+                  "const": "RUNTIME_CONTROL_SCOPE_HASH"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "APPROVE_RUNTIME_CONTROL_ENABLE"
+            },
+            "operationId": {
+              "const": "approveWidgetRuntimeControlEnable"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "RUNTIME_CONTROL"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "commandType": {
+              "const": "ENABLE_RUNTIME_CONTROL"
+            },
+            "operationId": {
+              "const": "enableWidgetRuntimeControl"
+            },
+            "target": {
+              "$ref": "#/$defs/targetUuid",
+              "properties": {
+                "targetType": {
+                  "const": "RUNTIME_CONTROL"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "operationId": {
+              "const": "createWidgetDefinition"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 201
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetDefinitionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "createWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 201
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "updateWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "validateWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetValidationResponse"
+            },
+            "responseEtag": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "submitWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "decideWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "reworkWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "recordWidgetCertificationEvidence"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 201
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetEvidenceResponse"
+            },
+            "responseEtag": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "waiveWidgetCertificationEvidence"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetEvidenceResponse"
+            },
+            "responseEtag": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "publishWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "deprecateWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "quarantineWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "approveWidgetQuarantineClearance"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetClearanceApprovalResponse",
+              "properties": {
+                "reviewDecision": {
+                  "const": "APPROVE"
+                }
+              }
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "clearWidgetVersionQuarantine"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "revokeWidgetDefinitionVersion"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetVersionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "retireWidgetDefinition"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetDefinitionResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "promoteWidgetReleaseChannel"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetReleaseChannelResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "rollbackWidgetReleaseChannel"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 200
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetReleaseChannelResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "disableWidgetRuntimeControl"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 201
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetRuntimeControlResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "approveWidgetRuntimeControlEnable"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 201
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetRuntimeEnableApprovalResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "operationId": {
+              "const": "enableWidgetRuntimeControl"
+            },
+            "outcome": {
+              "const": "SUCCEEDED"
+            },
+            "responseStatus": {
+              "const": 201
+            },
+            "responseBody": {
+              "$ref": "#/$defs/widgetRuntimeControlResponse"
+            },
+            "responseEtag": {
+              "$ref": "#/$defs/etag"
+            }
+          }
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "REJECTED"
+            },
+            "responseEtag": {
+              "type": "null"
+            }
+          },
+          "oneOf": [
+            {
+              "properties": {
+                "responseStatus": {
+                  "const": 400
+                },
+                "responseBody": {
+                  "$ref": "#/$defs/error400"
+                }
+              }
+            },
+            {
+              "properties": {
+                "responseStatus": {
+                  "const": 403
+                },
+                "responseBody": {
+                  "$ref": "#/$defs/error403"
+                }
+              }
+            },
+            {
+              "properties": {
+                "responseStatus": {
+                  "const": 404
+                },
+                "responseBody": {
+                  "$ref": "#/$defs/error404"
+                }
+              }
+            },
+            {
+              "properties": {
+                "responseStatus": {
+                  "const": 409
+                },
+                "responseBody": {
+                  "$ref": "#/$defs/error409"
+                }
+              }
+            },
+            {
+              "properties": {
+                "responseStatus": {
+                  "const": 422
+                },
+                "responseBody": {
+                  "$ref": "#/$defs/error422"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "NOT_EXECUTED"
+            },
+            "responseStatus": {
+              "const": 503
+            },
+            "responseBody": {
+              "$ref": "#/$defs/error503NotExecuted"
+            },
+            "responseEtag": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "x-dwp-responseHashContract": {
+    "algorithm": "SHA-256",
+    "encoding": "UTF-8",
+    "canonicalization": "RFC8785-JCS",
+    "fields": ["status", "body", "etag"]
+  },
+  "x-dwp-successTargetBindings": {
+    "CREATE_DEFINITION": "DEFINITION_KEY_HASH",
+    "CREATE_VERSION": "DEFINITION_SEMVER_HASH",
+    "UPDATE_VERSION": "BODY_VERSION_ID",
+    "VALIDATE": "BODY_VERSION_ID",
+    "SUBMIT": "BODY_VERSION_ID",
+    "DECIDE": "BODY_VERSION_ID",
+    "REWORK": "BODY_VERSION_ID",
+    "RECORD_EVIDENCE": "BODY_VERSION_ID",
+    "WAIVE_EVIDENCE": "WAIVED_EVIDENCE_ID",
+    "PUBLISH": "BODY_VERSION_ID",
+    "DEPRECATE": "BODY_VERSION_ID",
+    "QUARANTINE": "BODY_VERSION_ID",
+    "APPROVE_QUARANTINE_CLEARANCE": "BODY_VERSION_ID",
+    "CLEAR_QUARANTINE": "BODY_VERSION_ID",
+    "REVOKE": "BODY_VERSION_ID",
+    "RETIRE": "BODY_DEFINITION_ID",
+    "PROMOTE": "DEFINITION_CHANNEL_HASH",
+    "ROLLBACK": "DEFINITION_CHANNEL_HASH",
+    "DISABLE_RUNTIME_CONTROL": "RUNTIME_CONTROL_SCOPE_HASH",
+    "APPROVE_RUNTIME_CONTROL_ENABLE": "BODY_CONTROL_ID",
+    "ENABLE_RUNTIME_CONTROL": "BODY_CONTROL_ID"
+  },
+  "x-dwp-successSemanticContract": {
+    "trustedInputs": [
+      "durableCommandLedger.fullTarget",
+      "durableCommandLedger.requestProjection",
+      "currentTargetProjection",
+      "postMutationApprovalProjection"
+    ],
+    "manifestHash": "SHA-256(RFC8785-JCS(responseBody.manifest))",
+    "approvalEvidenceRefHashes": "ascending(SHA-256(UTF-8(each durableCommandLedger.requestProjection.evidenceRefs)))",
+    "clearanceExecutionApproval": "durable request clearanceApprovalId/quarantineEventId exactly bind the locked current quarantined Version and its ACTIVE unconsumed unexpired child approval; the same transaction consumes it with response.commandId",
+    "runtimeEnableApproval": "durable request enableApprovalId/controlRevision exactly bind the locked current Runtime Control head and its ACTIVE unconsumed unexpired child approval; the same transaction consumes it with response.commandId",
+    "waivedEvidenceSource": "responseBody type/ref/hash exactly equal currentTargetProjection bound to command target/version/manifest",
+    "etag": "strong ETag \"v\" + decimal(responseBody.version ?? responseBody.revision)",
+    "enforcement": "verify-command-completion-contract.mjs"
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "opaqueRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "etag": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 132,
+      "pattern": "^\"[A-Za-z0-9._:-]{1,128}\"$"
+    },
+    "upperCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "lowerKey": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "semanticVersion": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "targetHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId"],
+      "properties": {
+        "targetType": {
+          "enum": [
+            "DEFINITION_KEY_HASH",
+            "DEFINITION_SEMVER_HASH",
+            "DEFINITION_CHANNEL_HASH",
+            "RUNTIME_CONTROL_SCOPE_HASH"
+          ]
+        },
+        "targetId": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "targetUuid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId"],
+      "properties": {
+        "targetType": {
+          "enum": ["VERSION", "EVIDENCE", "DEFINITION", "RUNTIME_CONTROL"]
+        },
+        "targetId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "widgetDefinitionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definitionId",
+        "definitionKey",
+        "ownerProductKey",
+        "ownerTeamKey",
+        "riskTier",
+        "dataClassification",
+        "definitionState",
+        "version",
+        "createdAt",
+        "updatedAt",
+        "allowedTransitions"
+      ],
+      "properties": {
+        "definitionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "definitionKey": {
+          "$ref": "#/$defs/lowerKey"
+        },
+        "legacyWidgetKey": {
+          "$ref": "#/$defs/lowerKey"
+        },
+        "ownerProductKey": {
+          "$ref": "#/$defs/lowerKey"
+        },
+        "ownerTeamKey": {
+          "$ref": "#/$defs/lowerKey"
+        },
+        "riskTier": {
+          "enum": ["LOW", "MEDIUM", "HIGH"]
+        },
+        "dataClassification": {
+          "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]
+        },
+        "definitionState": {
+          "enum": ["ACTIVE", "RETIRED"]
+        },
+        "version": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "allowedTransitions": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/upperCode"
+          }
+        }
+      }
+    },
+    "widgetVersionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "definitionId",
+        "semanticVersion",
+        "manifest",
+        "manifestHash",
+        "workflowState",
+        "releaseState",
+        "safetyState",
+        "attestation",
+        "certificationStatus",
+        "currentReviewDecisionId",
+        "currentQuarantineEventId",
+        "version",
+        "createdAt",
+        "updatedAt",
+        "allowedTransitions"
+      ],
+      "properties": {
+        "versionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "definitionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "semanticVersion": {
+          "$ref": "#/$defs/semanticVersion"
+        },
+        "manifest": {
+          "$ref": "https://dwp.example/schemas/widget-manifest.v1.schema.json"
+        },
+        "manifestHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "workflowState": {
+          "enum": ["DRAFT", "SUBMITTED", "APPROVED", "REJECTED"]
+        },
+        "releaseState": {
+          "enum": ["UNPUBLISHED", "PUBLISHED", "DEPRECATED"]
+        },
+        "safetyState": {
+          "enum": ["CLEAR", "QUARANTINED", "REVOKED"]
+        },
+        "attestation": {
+          "enum": ["PENDING", "PROVIDER_CERTIFIED", "LEGACY_UNVERIFIED"]
+        },
+        "certificationStatus": {
+          "enum": ["NOT_RUN", "PASS", "FAIL", "EXPIRED", "WAIVED"]
+        },
+        "predecessorVersionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "replacementVersionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "validationRunId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "currentReviewDecisionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currentQuarantineEventId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bindingCatalogRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "version": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "allowedTransitions": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/upperCode"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "workflowState": {
+                  "const": "REJECTED"
+                },
+                "currentReviewDecisionId": {
+                  "$ref": "#/$defs/uuid"
+                }
+              }
+            },
+            {
+              "properties": {
+                "workflowState": {
+                  "enum": ["DRAFT", "SUBMITTED", "APPROVED"]
+                },
+                "currentReviewDecisionId": {
+                  "type": "null"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "safetyState": {
+                  "const": "QUARANTINED"
+                },
+                "currentQuarantineEventId": {
+                  "$ref": "#/$defs/uuid"
+                }
+              }
+            },
+            {
+              "properties": {
+                "safetyState": {
+                  "enum": ["CLEAR", "REVOKED"]
+                },
+                "currentQuarantineEventId": {
+                  "type": "null"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "validationError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "jsonPointer"],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/upperCode"
+        },
+        "jsonPointer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^/(?:[^~/]|~0|~1)*(?:/(?:[^~/]|~0|~1)*)*$"
+        }
+      }
+    },
+    "widgetValidationResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validationRunId",
+        "versionId",
+        "manifestHash",
+        "status",
+        "parentDefinitionVersion",
+        "bindingCatalogRevision",
+        "bindingHeadVersion",
+        "productAppRevision",
+        "rendererRevision",
+        "capabilityRevision",
+        "errors",
+        "validatedAt"
+      ],
+      "properties": {
+        "validationRunId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "versionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "manifestHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "enum": ["PASS", "FAIL"]
+        },
+        "parentDefinitionVersion": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "bindingCatalogRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "bindingHeadVersion": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "productAppRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "rendererRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "capabilityRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "errors": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/validationError"
+          }
+        },
+        "validatedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "widgetEvidenceResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "versionId",
+        "evidenceType",
+        "status",
+        "manifestHash",
+        "evidenceRef",
+        "evidenceSha256",
+        "decisionRevision",
+        "reviewedBy",
+        "createdAt"
+      ],
+      "properties": {
+        "evidenceId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "versionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "evidenceType": {
+          "enum": ["MANIFEST", "SECURITY", "PRIVACY", "A11Y", "PERFORMANCE", "LOCALIZATION"]
+        },
+        "status": {
+          "enum": ["NOT_RUN", "PASS", "FAIL", "EXPIRED", "WAIVED"]
+        },
+        "manifestHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "evidenceRef": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "evidenceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "decisionRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "waivedEvidenceId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "trackingTicketRef": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "reviewedBy": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["waivedEvidenceId", "trackingTicketRef", "expiresAt"],
+          "properties": {
+            "status": {
+              "const": "WAIVED"
+            }
+          }
+        },
+        {
+          "properties": {
+            "status": {
+              "enum": ["NOT_RUN", "PASS", "FAIL", "EXPIRED"]
+            }
+          },
+          "allOf": [
+            {
+              "not": {
+                "required": ["waivedEvidenceId"]
+              }
+            },
+            {
+              "not": {
+                "required": ["trackingTicketRef"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "widgetClearanceApprovalResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "versionId",
+        "quarantineEventId",
+        "reviewDecision",
+        "state",
+        "evidenceRefHashes",
+        "expiresAt",
+        "consumedAt",
+        "approvedBy",
+        "version",
+        "createdAt"
+      ],
+      "properties": {
+        "approvalId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "versionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "quarantineEventId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "reviewDecision": {
+          "enum": ["APPROVE", "REJECT"]
+        },
+        "state": {
+          "enum": ["ACTIVE", "CONSUMED", "REVOKED", "EXPIRED"]
+        },
+        "evidenceRefHashes": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "consumedAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approvedBy": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "version": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "widgetReleaseChannelResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "channel", "version", "updatedAt", "allowedTransitions"],
+      "properties": {
+        "definitionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "channel": {
+          "enum": ["STABLE", "PREVIEW"]
+        },
+        "currentVersionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "previousVersionId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "version": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "allowedTransitions": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/upperCode"
+          }
+        }
+      }
+    },
+    "widgetRuntimeControlResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "controlId",
+        "scope",
+        "targetType",
+        "targetId",
+        "state",
+        "revision",
+        "expiresAt",
+        "publicReasonCode",
+        "createdAt",
+        "createdBy",
+        "safetyRevision"
+      ],
+      "properties": {
+        "controlId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "scope": {
+          "enum": ["CATALOG_MUTATIONS", "CATALOG_DISCOVERY", "RUNTIME_RENDER", "RUNTIME_ACTION"]
+        },
+        "targetType": {
+          "enum": ["GLOBAL", "DEFINITION", "VERSION"]
+        },
+        "targetId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": ["ENABLED", "DISABLED"]
+        },
+        "revision": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "expiresAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publicReasonCode": {
+          "$ref": "#/$defs/upperCode"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "createdBy": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "safetyRevision": {
+          "$ref": "#/$defs/opaqueRef"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "targetType": {
+              "const": "GLOBAL"
+            },
+            "targetId": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "targetType": {
+              "enum": ["DEFINITION", "VERSION"]
+            },
+            "targetId": {
+              "$ref": "#/$defs/uuid"
+            }
+          }
+        }
+      ]
+    },
+    "widgetRuntimeEnableApprovalResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "controlId",
+        "controlRevision",
+        "state",
+        "evidenceRefHashes",
+        "expiresAt",
+        "consumedAt",
+        "approvedBy",
+        "version",
+        "createdAt"
+      ],
+      "properties": {
+        "approvalId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "controlId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "controlRevision": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "state": {
+          "enum": ["ACTIVE", "CONSUMED", "REVOKED", "EXPIRED"]
+        },
+        "evidenceRefHashes": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "consumedAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approvedBy": {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        "version": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "createdAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "error400": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "correlationId"],
+      "properties": {
+        "code": {
+          "enum": ["INVALID_INPUT_VALUE"]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "correlationId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "error403": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "correlationId"],
+      "properties": {
+        "code": {
+          "enum": ["FORBIDDEN", "SOD_CONFLICT", "WIDGET_ACTION_DISABLED"]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "correlationId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "error404": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "correlationId"],
+      "properties": {
+        "code": {
+          "enum": ["NOT_FOUND"]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "correlationId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "error409": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "correlationId"],
+      "properties": {
+        "code": {
+          "enum": [
+            "OBJECT_VERSION_CONFLICT",
+            "DECISION_REVISION_CONFLICT",
+            "MANIFEST_BINDING_REVISION_CHANGED",
+            "INVALID_CATALOG_MODE_COMBINATION",
+            "RESOURCE_CONFLICT"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "correlationId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "error422": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "correlationId"],
+      "properties": {
+        "code": {
+          "enum": [
+            "EVIDENCE_GATE_FAILED",
+            "MANIFEST_TOO_LARGE",
+            "MANIFEST_OWNERSHIP_MISMATCH",
+            "RESPONSE_CONTRACT_TOO_LARGE"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "correlationId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "error503NotExecuted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "correlationId"],
+      "properties": {
+        "code": {
+          "const": "COMMAND_NOT_EXECUTED"
+        },
+        "message": {
+          "const": "The command was sealed without target execution."
+        },
+        "correlationId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    }
+  }
+}

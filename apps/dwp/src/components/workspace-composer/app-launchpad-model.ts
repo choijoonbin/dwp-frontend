@@ -20,6 +20,7 @@ export type HomeAppIconKey =
   | 'knowledge'
   | 'legacy'
   | 'mail'
+  | 'meetings'
   | 'messaging'
   | 'notifications'
   | 'rooms'
@@ -183,6 +184,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'notifications',
     tone: '#2F5E8A',
     resourceKey: 'APP.NOTIFICATIONS',
+    notificationSourceKey: 'notifications',
   },
   {
     id: 'dwp-approvals',
@@ -252,6 +254,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     tone: '#2856C7',
     resourceKey: 'APP.MESSAGING',
     notificationSourceKey: 'messaging',
+  },
+  {
+    id: 'dwp-meetings',
+    name: 'Video meetings',
+    shortName: 'Meetings',
+    description: 'Secure video meetings, scheduled sessions, and governed follow-ups',
+    groupId: 'connect',
+    route: '/meetings/home',
+    iconKey: 'meetings',
+    tone: '#0B6B74',
+    resourceKey: 'APP.MEETINGS',
   },
   {
     id: 'dwp-spaces',
@@ -836,6 +849,23 @@ export function restoreLaunchpadApp(
   if (!layout.hiddenAppIds.includes(app.id)) return layout;
   const next = copyLayout(layout);
   next.hiddenAppIds = next.hiddenAppIds.filter((appId) => appId !== app.id);
+  const targetGroup = next.groups[app.groupId] ?? next.groups[Object.keys(next.groups)[0] ?? ''];
+  if (!targetGroup) return layout;
+  targetGroup.push(app.id);
+  return next;
+}
+
+export function placeLaunchpadApp(
+  layout: LaunchpadLayout,
+  app: Pick<HomeAppDefinition, 'id' | 'groupId'>
+): LaunchpadLayout {
+  if (layout.hiddenAppIds.includes(app.id)) return restoreLaunchpadApp(layout, app);
+  const alreadyPlaced =
+    Object.values(layout.groups).some((items) => items.includes(app.id)) ||
+    Object.values(layout.folders).some((folder) => folder.appIds.includes(app.id));
+  if (alreadyPlaced) return layout;
+
+  const next = copyLayout(layout);
   const targetGroup = next.groups[app.groupId] ?? next.groups[Object.keys(next.groups)[0] ?? ''];
   if (!targetGroup) return layout;
   targetGroup.push(app.id);

@@ -12,6 +12,8 @@ export type AppGovernanceActor = {
   groupRefs?: readonly string[];
 };
 
+export type AppGovernanceApprovalMode = 'STANDARD' | 'FIRST_APPROVER_BOOTSTRAP';
+
 export function hasScopedAppResponsibility(
   resourceRoles: readonly ResourceRoleDTO[],
   responsibilityCode: string,
@@ -51,18 +53,34 @@ export function resolveAssignmentActions(
 ) {
   const ownerAssignment = assignment.responsibilityCode === 'APP_OWNER';
   const hasCatalogAuthority = actor.roles.includes('APP_CATALOG_ADMIN');
-  const mayApprove =
+  const independentPendingDecision =
     assignment.lifecycleState === 'PENDING_APPROVAL' &&
     actor.userId !== undefined &&
+    assignment.requestedBy !== undefined &&
+    assignment.requestedBy !== null &&
     assignment.requestedBy !== actor.userId &&
-    !actorIsPrincipal(assignment.principalType, assignment.principalRef, actor) &&
-    (ownerAssignment
-      ? hasCatalogAuthority
-      : hasScopedAppResponsibility(
-          actor.resourceRoles,
-          'APP_ACCESS_APPROVER',
-          assignment.resourceSetId
-        ));
+    !actorIsPrincipal(assignment.principalType, assignment.principalRef, actor);
+  const hasStandardApprovalAuthority = ownerAssignment
+    ? hasCatalogAuthority
+    : hasScopedAppResponsibility(
+        actor.resourceRoles,
+        'APP_ACCESS_APPROVER',
+        assignment.resourceSetId
+      );
+  const hasFirstApproverBootstrapAuthority =
+    hasCatalogAuthority &&
+    assignment.firstApproverBootstrapEligible === true &&
+    assignment.responsibilityCode === 'APP_ACCESS_APPROVER' &&
+    assignment.assignmentSource === 'MANUAL' &&
+    assignment.principalType === 'USER';
+  const mayApprove =
+    independentPendingDecision &&
+    (hasStandardApprovalAuthority || hasFirstApproverBootstrapAuthority);
+  const approvalMode: AppGovernanceApprovalMode | null = mayApprove
+    ? hasFirstApproverBootstrapAuthority && !hasStandardApprovalAuthority
+      ? 'FIRST_APPROVER_BOOTSTRAP'
+      : 'STANDARD'
+    : null;
   const mayRevoke =
     assignment.lifecycleState === 'ACTIVE' &&
     (ownerAssignment
@@ -73,7 +91,7 @@ export function resolveAssignmentActions(
           assignment.resourceSetId
         ));
 
-  return { mayApprove, mayRevoke };
+  return { mayApprove, mayRevoke, approvalMode };
 }
 
 export function resolvePresetAssignmentActions(

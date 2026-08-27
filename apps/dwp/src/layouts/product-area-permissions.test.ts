@@ -67,7 +67,7 @@ describe('product area navigation access', () => {
     ).toBe(true);
   });
 
-  it('exposes only explicitly scoped product operations during provider support', () => {
+  it('keeps all tenant product operations closed during provider support', () => {
     const hasPermission = vi.fn(() => true);
     const scopes = ['TENANT_CONFIGURATION_READ'];
 
@@ -89,7 +89,15 @@ describe('product area navigation access', () => {
         hasPermission,
         scopes
       )
-    ).toBe(true);
+    ).toBe(false);
+
+    expect(
+      canAccessProductAreaNavigationItem(
+        { requiredAnySupportScopes: ['TENANT_EXPERIENCE_PREVIEW'] },
+        hasPermission,
+        ['TENANT_EXPERIENCE_PREVIEW']
+      )
+    ).toBe(false);
 
     expect(canAccessProductAreaNavigationItem({}, hasPermission, [])).toBe(false);
   });

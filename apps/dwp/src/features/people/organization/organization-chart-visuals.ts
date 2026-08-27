@@ -5,12 +5,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export type OrganizationLens =
-  | 'structure'
-  | 'health'
-  | 'headcount'
-  | 'span'
-  | 'vacancy'
-  | 'changes';
+  'structure' | 'health' | 'headcount' | 'span' | 'vacancy' | 'changes';
 
 export const ORGANIZATION_LENSES: readonly OrganizationLens[] = [
   'structure',

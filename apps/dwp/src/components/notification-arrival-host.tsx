@@ -47,6 +47,23 @@ const MAXIMUM_RETRY_ATTEMPTS = 3;
 const ARRIVAL_DURATION_MS = 8_000;
 const ARRIVAL_RETRY_DELAY_MS = 1_500;
 
+function useReducedMotionPreference(): boolean {
+  const [reducedMotion, setReducedMotion] = useState(
+    () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!media) return undefined;
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  return reducedMotion;
+}
+
 type ArrivalPolicyState = {
   ready: boolean;
   profile: NotificationDeliveryProfile | undefined;
@@ -259,10 +276,7 @@ export function NotificationArrivalHost() {
       )
     : null;
   const assertive = currentUrgent ? isAssertiveNotificationArrival(currentUrgent.item) : false;
-  const reducedMotion = useMemo(
-    () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
-    []
-  );
+  const reducedMotion = useReducedMotionPreference();
   const close = useCallback(() => {
     if (currentUrgent) {
       setUrgentQueue((items) => items.slice(1));

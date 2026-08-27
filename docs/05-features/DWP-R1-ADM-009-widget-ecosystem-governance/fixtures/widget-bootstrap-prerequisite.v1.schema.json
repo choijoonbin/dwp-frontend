@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-bootstrap-prerequisite.v1.schema.json",
+  "title": "DWP Widget Bootstrap Prerequisite V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "prerequisiteId",
+    "environment",
+    "source",
+    "migrations",
+    "revisions",
+    "verificationArtifacts",
+    "operationalArtifacts"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "prerequisiteId": { "$ref": "#/$defs/uuid" },
+    "environment": { "const": "STAGING" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceCommitSha", "deploymentBuildDigest", "workflowDigest", "generatedAt"],
+      "properties": {
+        "sourceCommitSha": { "$ref": "#/$defs/gitSha" },
+        "deploymentBuildDigest": { "$ref": "#/$defs/sha256" },
+        "workflowDigest": { "$ref": "#/$defs/sha256" },
+        "generatedAt": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "migrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "provider", "auth"],
+      "properties": {
+        "platform": { "$ref": "#/$defs/migrationSnapshot" },
+        "provider": { "$ref": "#/$defs/migrationSnapshot" },
+        "auth": { "$ref": "#/$defs/migrationSnapshot" }
+      }
+    },
+    "revisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestFixtureRevision",
+        "bindingCatalogRevision",
+        "tenantPolicyFixtureRevision",
+        "rolloutQuerySetRevision"
+      ],
+      "properties": {
+        "manifestFixtureRevision": { "$ref": "#/$defs/sha256" },
+        "bindingCatalogRevision": { "$ref": "#/$defs/sha256" },
+        "tenantPolicyFixtureRevision": { "$ref": "#/$defs/sha256" },
+        "rolloutQuerySetRevision": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "verificationArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestGolden",
+        "bindingCatalogGolden",
+        "tenantPolicyGolden",
+        "rolloutQuerySet",
+        "migrationTest",
+        "contractTest",
+        "negativeContractTest",
+        "flagsOffRegressionTest",
+        "nonInjectionDependencyTest"
+      ],
+      "properties": {
+        "manifestGolden": { "$ref": "#/$defs/contentArtifact" },
+        "bindingCatalogGolden": { "$ref": "#/$defs/contentArtifact" },
+        "tenantPolicyGolden": { "$ref": "#/$defs/contentArtifact" },
+        "rolloutQuerySet": { "$ref": "#/$defs/contentArtifact" },
+        "migrationTest": { "$ref": "#/$defs/testArtifact" },
+        "contractTest": { "$ref": "#/$defs/testArtifact" },
+        "negativeContractTest": { "$ref": "#/$defs/testArtifact" },
+        "flagsOffRegressionTest": { "$ref": "#/$defs/testArtifact" },
+        "nonInjectionDependencyTest": { "$ref": "#/$defs/testArtifact" }
+      }
+    },
+    "operationalArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dashboard", "alerts", "runbooks"],
+      "properties": {
+        "dashboard": { "$ref": "#/$defs/operationalArtifact" },
+        "alerts": { "$ref": "#/$defs/operationalArtifact" },
+        "runbooks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "shadowStop",
+            "catalogKill",
+            "quarantine",
+            "channelRollback",
+            "policyRollback",
+            "outboxReplay",
+            "commandReconciliation",
+            "bindingCatalogRelease",
+            "authoritativeRecovery"
+          ],
+          "properties": {
+            "shadowStop": { "$ref": "#/$defs/runbookArtifact" },
+            "catalogKill": { "$ref": "#/$defs/runbookArtifact" },
+            "quarantine": { "$ref": "#/$defs/runbookArtifact" },
+            "channelRollback": { "$ref": "#/$defs/runbookArtifact" },
+            "policyRollback": { "$ref": "#/$defs/runbookArtifact" },
+            "outboxReplay": { "$ref": "#/$defs/runbookArtifact" },
+            "commandReconciliation": { "$ref": "#/$defs/runbookArtifact" },
+            "bindingCatalogRelease": { "$ref": "#/$defs/runbookArtifact" },
+            "authoritativeRecovery": { "$ref": "#/$defs/runbookArtifact" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "migrationSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latestVersion", "migrationSetDigest"],
+      "properties": {
+        "latestVersion": { "type": "string", "pattern": "^V[1-9][0-9]*$" },
+        "migrationSetDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "contentArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["immutableRefHash", "contentDigest"],
+      "properties": {
+        "immutableRefHash": { "$ref": "#/$defs/sha256" },
+        "contentDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "testArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["immutableRefHash", "contentDigest", "conclusion"],
+      "properties": {
+        "immutableRefHash": { "$ref": "#/$defs/sha256" },
+        "contentDigest": { "$ref": "#/$defs/sha256" },
+        "conclusion": { "const": "SUCCESS" }
+      }
+    },
+    "operationalArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "immutableRefHash", "contentDigest"],
+      "properties": {
+        "path": {
+          "enum": [
+            "docs/05-features/DWP-R1-ADM-009-widget-ecosystem-governance/operations/widget-shadow-dashboard.v1.json",
+            "docs/05-features/DWP-R1-ADM-009-widget-ecosystem-governance/operations/widget-shadow-alerts.v1.json"
+          ]
+        },
+        "immutableRefHash": { "$ref": "#/$defs/sha256" },
+        "contentDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "runbookArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "immutableRefHash", "contentDigest"],
+      "properties": {
+        "path": {
+          "enum": [
+            "docs/07-runbooks/widget-shadow-stop.md",
+            "docs/07-runbooks/widget-catalog-kill.md",
+            "docs/07-runbooks/widget-quarantine.md",
+            "docs/07-runbooks/widget-channel-rollback.md",
+            "docs/07-runbooks/widget-policy-rollback.md",
+            "docs/07-runbooks/widget-outbox-replay.md",
+            "docs/07-runbooks/widget-command-reconciliation.md",
+            "docs/07-runbooks/widget-binding-catalog-release.md",
+            "docs/07-runbooks/widget-authoritative-recovery.md"
+          ]
+        },
+        "immutableRefHash": { "$ref": "#/$defs/sha256" },
+        "contentDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "ciAttestationProtectedHeaderV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alg", "kid", "typ"],
+      "properties": {
+        "alg": { "const": "ES256" },
+        "kid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "typ": { "const": "JWT" }
+      }
+    },
+    "verificationArtifactDigestsV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestGolden",
+        "bindingCatalogGolden",
+        "tenantPolicyGolden",
+        "rolloutQuerySet",
+        "migrationTest",
+        "contractTest",
+        "negativeContractTest",
+        "flagsOffRegressionTest",
+        "nonInjectionDependencyTest"
+      ],
+      "properties": {
+        "manifestGolden": { "$ref": "#/$defs/sha256" },
+        "bindingCatalogGolden": { "$ref": "#/$defs/sha256" },
+        "tenantPolicyGolden": { "$ref": "#/$defs/sha256" },
+        "rolloutQuerySet": { "$ref": "#/$defs/sha256" },
+        "migrationTest": { "$ref": "#/$defs/sha256" },
+        "contractTest": { "$ref": "#/$defs/sha256" },
+        "negativeContractTest": { "$ref": "#/$defs/sha256" },
+        "flagsOffRegressionTest": { "$ref": "#/$defs/sha256" },
+        "nonInjectionDependencyTest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "ciAttestationClaimsV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iss",
+        "sub",
+        "azp",
+        "aud",
+        "iat",
+        "nbf",
+        "exp",
+        "jti",
+        "environment",
+        "prerequisiteId",
+        "prerequisiteDigest",
+        "sourceCommitSha",
+        "deploymentBuildDigest",
+        "workflowDigest",
+        "verificationArtifactDigests",
+        "conclusion"
+      ],
+      "properties": {
+        "iss": { "const": "dwp-ci-attestation-authority" },
+        "sub": { "const": "dwp-release-readiness" },
+        "azp": { "const": "dwp-release-readiness" },
+        "aud": { "const": "dwp-platform-widget-rollout" },
+        "iat": { "type": "integer", "minimum": 0 },
+        "nbf": { "type": "integer", "minimum": 0 },
+        "exp": { "type": "integer", "minimum": 0 },
+        "jti": { "$ref": "#/$defs/uuid" },
+        "environment": { "const": "STAGING" },
+        "prerequisiteId": { "$ref": "#/$defs/uuid" },
+        "prerequisiteDigest": { "$ref": "#/$defs/sha256" },
+        "sourceCommitSha": { "$ref": "#/$defs/gitSha" },
+        "deploymentBuildDigest": { "$ref": "#/$defs/sha256" },
+        "workflowDigest": { "$ref": "#/$defs/sha256" },
+        "verificationArtifactDigests": { "$ref": "#/$defs/verificationArtifactDigestsV1" },
+        "conclusion": { "const": "SUCCESS" }
+      }
+    }
+  }
+}

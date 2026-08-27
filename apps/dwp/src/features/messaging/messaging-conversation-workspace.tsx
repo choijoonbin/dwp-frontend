@@ -56,11 +56,16 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     meetingLabels,
     realtimeConnection,
     typingNames,
+    newMessageCount,
     draft,
     setDraft,
+    draftMentions,
+    setDraftMentions,
     mainAttachmentQueue,
     threadDraft,
     setThreadDraft,
+    threadDraftMentions,
+    setThreadDraftMentions,
     threadAttachmentQueue,
     meetingDialogOpen,
     setMeetingDialogOpen,
@@ -93,7 +98,8 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     submitEditMessage,
     confirmDeleteMessage,
     loadOlderMessages,
-    markVisibleMessagesRead,
+    handleTimelineScroll,
+    jumpToLatest,
     refresh,
     conversationCreated,
     setThreadRootId,
@@ -223,15 +229,23 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                 onOpenMeeting={() => setMeetingDialogOpen(true)}
               />
               <MessagingTimelinePane
+                conversation={detail.conversation}
                 messages={rootMessages}
                 currentUserId={auth.user?.userId}
                 replyCounts={fallbackReplyCounts}
                 typingNames={typingNames}
                 scrollRef={detailScrollRef}
                 draft={draft}
+                draftMentions={draftMentions}
+                members={detail.members}
+                allowMentionAll={
+                  currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
+                }
                 sending={sendMutation.isPending}
                 sendError={sendMutation.isError}
                 attachmentQueue={mainAttachmentQueue}
+                lastReadSequence={currentMember?.lastReadSequence}
+                newMessageCount={newMessageCount}
                 hasOlder={Boolean(messageHistoryQuery.hasNextPage)}
                 loadingOlder={messageHistoryQuery.isFetchingNextPage}
                 olderLoadError={messageHistoryQuery.isFetchNextPageError}
@@ -242,13 +256,18 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                   olderLoadError: t('conversation.history.loadError'),
                   emptyTitle: t('conversation.noMessagesTitle'),
                   emptyDescription: t('conversation.noMessagesDescription'),
+                  unread: t('conversation.unread'),
+                  newMessages: t('conversation.newMessages', { count: newMessageCount }),
                 }}
-                onScroll={markVisibleMessagesRead}
+                onScroll={handleTimelineScroll}
                 onLoadOlder={loadOlderMessages}
+                onJumpToLatest={jumpToLatest}
                 onDraftChange={(value) => {
                   if (sendMutation.isError) sendMutation.reset();
                   setDraft(value);
                 }}
+                onDraftMentionsChange={setDraftMentions}
+                onOpenMeeting={() => setMeetingDialogOpen(true)}
                 onSend={send}
                 onRetrySend={retrySend}
                 onReply={setThreadRootId}
@@ -276,11 +295,18 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
               desktop={desktopSplitView}
               thread={thread}
               currentUserId={auth.user?.userId}
+              conversation={detail?.conversation}
               draft={threadDraft}
+              draftMentions={threadDraftMentions}
+              members={detail?.members ?? []}
+              allowMentionAll={
+                currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
+              }
               onDraftChange={(value) => {
                 if (threadSendMutation.isError) threadSendMutation.reset();
                 setThreadDraft(value);
               }}
+              onDraftMentionsChange={setThreadDraftMentions}
               onSend={sendThreadReply}
               onRetry={retryThreadReply}
               isSending={threadSendMutation.isPending}

@@ -138,10 +138,7 @@ export function TodayFlowline({
   const visible = items.slice(0, visibleBudget);
   const hiddenCount = overflow + Math.max(0, items.length - visible.length);
   const fillAvailableHeight =
-    !compact &&
-    (fillStage || !sidecar) &&
-    height !== 'short' &&
-    visible.length > 0;
+    !compact && (fillStage || !sidecar) && height !== 'short' && visible.length > 0;
   const hiddenKinds = new Set([
     ...overflowKinds,
     ...items.slice(visible.length).map((item) => item.kind),
@@ -378,11 +375,7 @@ export function TodayFlowline({
                       <Icon size={13} strokeWidth={2.4} />
                     </Box>
                   </Box>
-                  <Box
-                    component="span"
-                    data-flowline-item-copy
-                    sx={{ minWidth: 0, pb: 0.25 }}
-                  >
+                  <Box component="span" data-flowline-item-copy sx={{ minWidth: 0, pb: 0.25 }}>
                     <Stack
                       component="span"
                       direction="row"

@@ -213,17 +213,12 @@ export type ProviderTenantDomain = {
   version: number;
 };
 
-export type ProviderTenantAdministrator = {
-  tenantAdministratorId: string;
-  authUserId?: number | null;
-  email: string;
-  displayName: string;
-  roleCode: string;
-  lifecycleState: string;
-  primaryAdministrator: boolean;
+export type ProviderTenantAdministratorPosture = {
+  configuredCount: number;
+  activeCount: number;
+  pendingDeliveryCount: number;
+  primaryConfigured: boolean;
   lastInvitedAt?: string | null;
-  activatedAt?: string | null;
-  version: number;
 };
 
 export type ProviderOrganizationSubscription = {
@@ -263,7 +258,7 @@ export type ProviderTenant = {
   entitlements: ProviderEntitlement[];
   services: ProviderServiceInstance[];
   domains: ProviderTenantDomain[];
-  administrators: ProviderTenantAdministrator[];
+  administratorPosture: ProviderTenantAdministratorPosture;
 };
 
 export type ProviderRegion = {
@@ -564,14 +559,11 @@ export type ProviderSupportSession = {
   tenantId: string;
   tenantKey: string;
   tenantName: string;
-  operatorId: number;
+  operatorOwned: boolean;
   operatorName: string;
   lifecycleState: string;
-  justification: string;
   scopes: string[];
   accessMode: 'STANDARD' | 'BREAK_GLASS';
-  approvalReference?: string | null;
-  customerApprovalRequired: boolean;
   riskTier: 'L1' | 'L2' | 'L3';
   startedAt: string;
   expiresAt: string;
@@ -585,7 +577,7 @@ export type ProviderSupportAccessRequest = {
   tenantId: string;
   tenantKey: string;
   tenantName: string;
-  requesterOperatorId: number;
+  requesterOwned: boolean;
   requesterName: string;
   lifecycleState:
     | 'PENDING_APPROVAL'
@@ -603,21 +595,12 @@ export type ProviderSupportAccessRequest = {
   approvalReference?: string | null;
   customerApprovalRequired: boolean;
   riskTier: 'L1' | 'L2' | 'L3';
-  requestKey: string;
   requestedAt: string;
   decisionDueAt: string;
-  decidedAt?: string | null;
-  decidedBy?: number | null;
-  decidedByName?: string | null;
-  decisionReason?: string | null;
   supportSessionId?: string | null;
   activatedAt?: string | null;
   completedAt?: string | null;
   postReviewState: 'NOT_REQUIRED' | 'PENDING' | 'COMPLETED';
-  postReviewedAt?: string | null;
-  postReviewedBy?: number | null;
-  postReviewedByName?: string | null;
-  postReviewSummary?: string | null;
   version: number;
 };
 
@@ -632,8 +615,9 @@ export type ProviderSupportScope = {
 export type ProviderSupportSessionContext = {
   supportSessionId: string;
   tenantId: string;
-  authTenantId: number;
   tenantKey: string;
+  environmentKey?: string | null;
+  dataRegion?: string | null;
   tenantName: string;
   scopes: string[];
   accessMode: 'STANDARD' | 'BREAK_GLASS';
@@ -655,6 +639,38 @@ export type ProviderAuditEvent = {
   correlationId?: string | null;
   redactedSnapshot: string;
   occurredAt: string;
+};
+
+export type ProviderSupportPostReviewEvidenceEvent = {
+  auditEventId: string;
+  occurredAt: string;
+  decision: 'ALLOW' | 'DENY';
+  method: string;
+  routeTemplate: string;
+  scope?: string | null;
+  outcome: 'SUCCESS' | 'DENIED';
+  reasonCode?: string | null;
+  correlationId: string;
+};
+
+export type ProviderSupportPostReviewEvidence = {
+  supportAccessRequestId: string;
+  supportSessionId: string;
+  tenantId: string;
+  sessionLifecycleState: string;
+  evidenceFrom: string;
+  evidenceThrough: string;
+  grantedScopes: string[];
+  observedScopes: string[];
+  totalEventCount: number;
+  actualUseCount: number;
+  deniedAttemptCount: number;
+  evidenceComplete: boolean;
+  displayTruncated: boolean;
+  noUseConfirmed: boolean;
+  readiness: 'INCOMPLETE' | 'READY_WITH_USE' | 'READY_NO_USE';
+  anomalies: string[];
+  events: ProviderSupportPostReviewEvidenceEvent[];
 };
 
 export type ProviderDataGovernanceSummary = {
@@ -850,16 +866,6 @@ export type ProviderDomainChallenge = {
   recordName: string;
   recordType: string;
   recordValue: string;
-};
-
-export type ProviderAdministratorInvitation = {
-  tenantAdministratorId: string;
-  authTenantId: number;
-  authUserId: number;
-  email: string;
-  activationToken: string;
-  activationPath: string;
-  expiresAt: string;
 };
 
 export type OnboardingPlanRequest = {
@@ -1234,21 +1240,6 @@ export async function verifyProviderTenantDomain(
   return response.data.data;
 }
 
-export async function issueProviderAdministratorInvitation(
-  tenantId: string,
-  administratorId: string,
-  expiresInMinutes = 1440
-): Promise<ProviderAdministratorInvitation> {
-  const response = await axiosInstance.post<
-    ApiResponse<ProviderAdministratorInvitation>,
-    { expiresInMinutes: number; justification: string }
-  >(`${BASE}/tenants/${tenantId}/administrators/${administratorId}/invitations`, {
-    expiresInMinutes,
-    justification: 'Provider-issued initial tenant administrator invitation',
-  });
-  return response.data.data;
-}
-
 export async function listProviderSupportSessions(
   tenantId?: string
 ): Promise<ProviderSupportSession[]> {
@@ -1347,22 +1338,6 @@ export async function reviewProviderSupportAccessRequest(
   return response.data.data;
 }
 
-export async function createProviderSupportSession(request: {
-  tenantId: string;
-  scopes: string[];
-  durationMinutes: number;
-  justification: string;
-  approvalReference?: string | null;
-  emergencyAccess: boolean;
-  requestKey?: string;
-}): Promise<ProviderSupportSession> {
-  const response = await axiosInstance.post<ApiResponse<ProviderSupportSession>, typeof request>(
-    `${BASE}/support-sessions`,
-    { ...request, requestKey: request.requestKey ?? `break-glass-${crypto.randomUUID()}` }
-  );
-  return response.data.data;
-}
-
 export async function getProviderSupportSessionContext(): Promise<ProviderSupportSessionContext | null> {
   const response = await axiosInstance.get<ApiResponse<ProviderSupportSessionContext | null>>(
     `${BASE}/support-session-context`
@@ -1389,6 +1364,15 @@ export async function listProviderAuditEvents(tenantId?: string): Promise<Provid
   if (tenantId) search.set('tenantId', tenantId);
   const response = await axiosInstance.get<ApiResponse<ProviderAuditEvent[]>>(
     `${BASE}/audit-events?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function getProviderSupportPostReviewEvidence(
+  supportAccessRequestId: string
+): Promise<ProviderSupportPostReviewEvidence> {
+  const response = await axiosInstance.get<ApiResponse<ProviderSupportPostReviewEvidence>>(
+    `${BASE}/support-access-requests/${encodeURIComponent(supportAccessRequestId)}/post-review-evidence`
   );
   return response.data.data;
 }

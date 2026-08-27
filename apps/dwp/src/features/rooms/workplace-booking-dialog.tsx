@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3, Eye, MapPin, ShieldCheck } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createWorkplaceBooking, useToast } from '@dwp-frontend/shared-utils';
+import {
+  createWorkplaceBooking,
+  createWorkplaceIdempotencyKey,
+  useToast,
+} from '@dwp-frontend/shared-utils';
 import {
   DateTimePickerField,
   DwpDateTimeProvider,
@@ -65,6 +69,7 @@ export function WorkplaceBookingDialog({
   const [endsAt, setEndsAt] = useState(initialEnd);
   const [purpose, setPurpose] = useState('');
   const [visible, setVisible] = useState(true);
+  const commandRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -72,6 +77,7 @@ export function WorkplaceBookingDialog({
     setEndsAt(initialEnd);
     setPurpose('');
     setVisible(true);
+    commandRef.current = null;
   }, [initialEnd, initialStart, open, resource?.resourceId]);
 
   const rangeError =
@@ -84,22 +90,37 @@ export function WorkplaceBookingDialog({
       if (!canCreateWorkplaceBooking) {
         throw new Error(t('permissions.workplaceBookingReadOnly'));
       }
-      return createWorkplaceBooking({
+      const input = {
         resourceId: resource.resourceId,
         startsAt,
         endsAt,
         purpose: purpose.trim(),
         visibleToColleagues: visible,
-      });
+      };
+      const fingerprint = JSON.stringify(input);
+      const command =
+        commandRef.current?.fingerprint === fingerprint
+          ? commandRef.current
+          : {
+              fingerprint,
+              key: createWorkplaceIdempotencyKey('booking'),
+            };
+      commandRef.current = command;
+      return createWorkplaceBooking(input, command.key);
     },
     onSuccess: async (booking) => {
+      commandRef.current = null;
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
       toast.success(t('workplace.booking.created'));
       onSaved?.(booking);
       onClose();
     },
-    onError: (error) => toast.error(errorMessage(error, t('workplace.booking.saveError'))),
   });
+
+  const closeDialog = () => {
+    mutation.reset();
+    onClose();
+  };
 
   return (
     <FormDialog
@@ -111,11 +132,16 @@ export function WorkplaceBookingDialog({
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
       submitDisabled={!resource || Boolean(rangeError) || !canCreateWorkplaceBooking}
-      onClose={onClose}
+      onClose={closeDialog}
       onSubmit={() => mutation.mutate()}
       maxWidth="sm"
     >
       <Stack spacing={2}>
+        {mutation.isError && (
+          <Alert severity="error">
+            {errorMessage(mutation.error, t('workplace.booking.saveError'))}
+          </Alert>
+        )}
         {!canCreateWorkplaceBooking && (
           <RoomsPermissionNotice>{t('permissions.workplaceBookingReadOnly')}</RoomsPermissionNotice>
         )}
@@ -131,9 +157,13 @@ export function WorkplaceBookingDialog({
             <Stack direction="row" justifyContent="space-between" gap={1.5}>
               <Box sx={{ minWidth: 0 }}>
                 <Typography fontWeight={750}>{resource.name}</Typography>
-                <Stack direction="row" gap={0.6} alignItems="center" sx={{ mt: 0.35 }}>
+                <Stack direction="row" gap={0.6} alignItems="flex-start" sx={{ mt: 0.35 }}>
                   <MapPin size={14} />
-                  <Typography variant="caption" color="text.secondary" noWrap>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ overflowWrap: 'anywhere' }}
+                  >
                     {siteName} · {floorName} · {resource.neighborhood}
                   </Typography>
                 </Stack>

@@ -600,10 +600,7 @@ export function WorkSignals({
                       />
                     )}
                     {detailed && (!narrow || supportStack) && (
-                      <SignalSeries
-                        signal={signal}
-                        compact={height === 'tall' || supportStack}
-                      />
+                      <SignalSeries signal={signal} compact={height === 'tall' || supportStack} />
                     )}
                     {detailed && (
                       <Typography
@@ -622,7 +619,6 @@ export function WorkSignals({
             })}
           </Box>
         )}
-
     </Box>
   );
 }

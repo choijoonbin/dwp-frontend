@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Menu } from 'lucide-react';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -14,7 +15,7 @@ import {
   FullscreenControl,
   NotificationMenu,
   SearchControl,
-  WorkspaceMenu,
+  WorkspaceIdentity,
 } from './shell-controls';
 
 import {
@@ -22,6 +23,7 @@ import {
   type ShellKey,
   type ShellScope,
 } from '../features/shell/shell-registry';
+import { resolveGlobalSearchPersona } from '../features/search/global-search-access-policy';
 
 import type { SxProps, Theme } from '@mui/material/styles';
 
@@ -42,6 +44,8 @@ type ShellHeaderProps = {
   brand?: ReactNode;
   leading?: ReactNode;
   navigation?: {
+    controlsId?: string;
+    expanded?: boolean;
     label: string;
     testId?: string;
     onOpen: (trigger: HTMLButtonElement) => void;
@@ -49,12 +53,15 @@ type ShellHeaderProps = {
   showWorkspace?: boolean;
   primaryNavigation?: ReactNode;
   mobilePrimaryNavigation?: ReactNode;
+  mobileContextRail?: ReactNode;
   contextControls?: ReactNode;
   compactSearch?: boolean;
   maxContentWidth?: number;
   trailing?: ReactNode;
   sx?: SxProps<Theme>;
 };
+
+export const shellMobileContextRailHeight = 44;
 
 export function ShellHeader({
   context,
@@ -70,6 +77,7 @@ export function ShellHeader({
   showWorkspace = false,
   primaryNavigation,
   mobilePrimaryNavigation,
+  mobileContextRail,
   contextControls,
   compactSearch = false,
   maxContentWidth,
@@ -78,6 +86,8 @@ export function ShellHeader({
 }: ShellHeaderProps) {
   const glass = surface === 'glass';
   const ContextIcon = context?.icon;
+  const auth = useAuth();
+  const searchPersona = resolveGlobalSearchPersona(auth.user);
 
   return (
     <AppBar
@@ -134,8 +144,12 @@ export function ShellHeader({
           >
             <ActionIconButton
               data-testid={navigation.testId}
+              aria-controls={navigation.controlsId}
+              aria-expanded={navigation.expanded}
               label={navigation.label}
               tooltipPlacement="bottom"
+              tooltipDisablePortal
+              tooltipDisableInteractive
               onClick={(event) => navigation.onOpen(event.currentTarget)}
               sx={{ width: 40, height: 40 }}
             >
@@ -158,6 +172,13 @@ export function ShellHeader({
               alignItems: 'center',
               gap: 1,
               px: 0.5,
+              ...(mobilePrimaryNavigation
+                ? {
+                    '@container dwp-shell-header (max-width: 360px)': {
+                      display: 'none',
+                    },
+                  }
+                : undefined),
             }}
           >
             <Box
@@ -210,9 +231,14 @@ export function ShellHeader({
               display: { xs: 'none', md: 'block' },
               flex: '0 1 auto',
               '@container dwp-shell-header (max-width: 900px)': { display: 'none' },
+              ...(primaryNavigation
+                ? {
+                    '@container dwp-shell-header (max-width: 1400px)': { display: 'none' },
+                  }
+                : undefined),
             }}
           >
-            <WorkspaceMenu />
+            <WorkspaceIdentity />
           </Box>
         )}
 
@@ -234,7 +260,11 @@ export function ShellHeader({
           </Box>
         )}
 
-        {contextControls}
+        {contextControls && (
+          <Box sx={mobileContextRail ? { display: { xs: 'none', lg: 'block' } } : undefined}>
+            {contextControls}
+          </Box>
+        )}
 
         <Box sx={{ flexGrow: 1, minWidth: 4 }} />
 
@@ -242,7 +272,21 @@ export function ShellHeader({
           data-testid="shell-global-actions"
           sx={{ display: 'flex', alignItems: 'center', flex: '0 0 auto' }}
         >
-          <SearchControl compact={compactSearch} />
+          {searchPersona.searchVisible && (
+            <Box
+              data-shell-global-action="search"
+              sx={{
+                display: 'flex',
+                // At the narrowest supported width, preserve the primary
+                // notification, account, and assistant actions without making
+                // the header horizontally scrollable. The search command
+                // remains available through its global keyboard shortcut.
+                '@container dwp-shell-header (max-width: 359px)': { display: 'none' },
+              }}
+            >
+              <SearchControl compact={compactSearch} />
+            </Box>
+          )}
           <Box
             sx={{
               ml: { xs: 0, md: 1 },
@@ -252,7 +296,7 @@ export function ShellHeader({
             }}
           >
             <FullscreenControl />
-            <NotificationMenu />
+            {!searchPersona.providerAccount && <NotificationMenu />}
           </Box>
           <Box
             sx={{
@@ -262,11 +306,33 @@ export function ShellHeader({
               borderColor: 'divider',
             }}
           >
-            <AccountMenu showIdentity />
+            <AccountMenu
+              showIdentity
+              collapseIdentityEarly={Boolean(primaryNavigation || mobilePrimaryNavigation)}
+            />
           </Box>
           {trailing}
         </Box>
       </Toolbar>
+      {mobileContextRail && (
+        <Box
+          data-testid="shell-mobile-context-rail"
+          sx={{
+            display: { xs: 'flex', lg: 'none' },
+            alignItems: 'center',
+            width: 1,
+            height: shellMobileContextRailHeight,
+            minHeight: shellMobileContextRailHeight,
+            px: { xs: 1, sm: 1.5 },
+            overflow: 'hidden',
+            borderTop: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          {mobileContextRail}
+        </Box>
+      )}
     </AppBar>
   );
 }

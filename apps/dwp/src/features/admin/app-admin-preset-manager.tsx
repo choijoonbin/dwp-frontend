@@ -340,7 +340,9 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
         title={t(
           presetAction
             ? `appGovernance.dialog.preset${presetAction.decision}Title`
-            : `appGovernance.dialog.review${reviewAction?.decision}Title`
+            : reviewAction
+              ? `appGovernance.dialog.review${reviewAction.decision}Title`
+              : 'appGovernance.dialog.decisionTitle'
         )}
         onClose={() => {
           setPresetAction(null);
@@ -433,10 +435,10 @@ function PresetRequestDialog({
   const valid =
     Boolean(
       selectedPrincipal &&
-        selectedPreset?.requestable !== false &&
-        resourceSetId &&
-        validTo &&
-        reviewDueAt
+      selectedPreset?.requestable !== false &&
+      resourceSetId &&
+      validTo &&
+      reviewDueAt
     ) &&
     !invalidValidity &&
     !invalidReview &&

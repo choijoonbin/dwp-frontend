@@ -20,6 +20,8 @@ import Typography from '@mui/material/Typography';
 
 import type { AskCitation, AskDwpResponse, AskProgressStage } from '@dwp-frontend/shared-utils';
 
+import { DwaionSpeechButton } from './dwaion-voice-controls';
+
 export type DwaionPanelRequestState = 'idle' | 'loading' | 'ready' | 'error';
 
 type DwaionPanelResultProps = {
@@ -29,6 +31,7 @@ type DwaionPanelResultProps = {
   progressStage: AskProgressStage | null;
   onRetry: () => void;
   onOpenWorkspace?: () => void;
+  openingWorkspace?: boolean;
   onSelectCitation: (citation: AskCitation) => void;
 };
 
@@ -49,9 +52,10 @@ export function DwaionPanelResult({
   progressStage,
   onRetry,
   onOpenWorkspace,
+  openingWorkspace = false,
   onSelectCitation,
 }: DwaionPanelResultProps) {
-  const { t } = useTranslation('home');
+  const { t, i18n } = useTranslation('home');
   const [feedback, setFeedback] = useState<'UP' | 'DOWN' | null>(null);
   const [feedbackError, setFeedbackError] = useState(false);
 
@@ -207,6 +211,8 @@ export function DwaionPanelResult({
                 size="small"
                 endIcon={<ArrowRight size={14} aria-hidden="true" />}
                 onClick={onOpenWorkspace}
+                loading={openingWorkspace}
+                loadingLabel={t('dwaion.openingWorkspace')}
                 sx={{ px: 0 }}
               >
                 {t('dwaion.viewWorkspace')}
@@ -215,6 +221,13 @@ export function DwaionPanelResult({
               <span />
             )}
             <Stack direction="row" alignItems="center" spacing={0.25}>
+              {response.answer && (
+                <DwaionSpeechButton
+                  text={response.answer}
+                  locale={i18n.resolvedLanguage || i18n.language || 'en'}
+                  namespace="home"
+                />
+              )}
               <ActionIconButton
                 label={t('dwaion.feedback.helpful')}
                 size="small"

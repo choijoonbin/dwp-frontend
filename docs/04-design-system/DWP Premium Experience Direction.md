@@ -160,10 +160,14 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 - 현재 Workspace, 연결 상태, Notification, Account를 한 Header에서 제공한다.
 - Work·Ask·Activity·Apps를 동일한 Navigation 문법으로 제공하고 Product Mark는 Home으로
   복귀한다. Today는 Home 내부 정보 계층으로 제공한다.
-- 72px Compact Rail에서는 Product Mark를 Rail 중심에 고정한다. Collapse·Expand 제어는
-  Logo나 Rail 경계 위에 띄우지 않고 Global Header의 첫 번째 40px Action으로 제공한다.
-- Collapse 제어는 `aria-controls`, `aria-expanded`, 상태별 Tooltip을 제공하며 Logo와
-  최소 24px의 시각 간격을 유지한다.
+- Expanded Sidebar의 Collapse 제어는 Sidebar 상단 Product Lockup 행 오른쪽의 40px Action으로
+  제공한다. Global Header나 Rail 경계 위에 띄우지 않는다.
+- 72px Compact Rail에서는 동일한 40px Action과 Focus를 유지한 채 기본 상태에 Product Mark를
+  Rail 중심에 표시한다. Hover·`focus-visible`에서는 Product Mark가 방향성 있는 Expand Icon으로
+  전환되어 제어의 목적을 분명히 한다.
+- Collapse·Expand 제어는 `aria-controls`, `aria-expanded`, 상태별 Accessible Name과 우측
+  Tooltip을 제공한다. Hover에만 의존하지 않고 Keyboard Focus와 Forced Colors에서도 같은
+  상태 변화를 전달한다.
 - Collapse·Expand 시 Sidebar, Header와 Main Width를 같은 180ms Motion으로 전환한다.
   Reduced Motion에서는 즉시 전환하며 Overlay, Horizontal Scroll이나 빈 Max-width 여백을
   만들지 않는다.

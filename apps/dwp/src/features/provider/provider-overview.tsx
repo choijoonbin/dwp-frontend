@@ -51,6 +51,7 @@ import {
   ProviderSectionHeading,
   ProviderStatusChip,
 } from './provider-ui';
+import { providerOperationalSnapshotState } from './provider-operational-freshness';
 
 type QueueFilter = 'ALL' | 'CRITICAL' | 'REVIEW';
 
@@ -182,8 +183,20 @@ export function ProviderOverview() {
     : 0;
   const criticalActions = data.actionQueue.filter((item) => item.severity === 'CRITICAL').length;
   const primaryAction = data.actionQueue[0];
-  const objectiveRisk =
-    (reliability.data?.atRiskObjectives ?? 0) + (reliability.data?.exhaustedObjectives ?? 0);
+  const reliabilityAvailable = Boolean(reliability.data && !reliability.isError);
+  const objectiveRisk = reliabilityAvailable
+    ? (reliability.data?.atRiskObjectives ?? 0) + (reliability.data?.exhaustedObjectives ?? 0)
+    : null;
+  const liveState = providerOperationalSnapshotState({
+    fetching: command.isFetching || reliability.isFetching,
+    partial: reliability.isError || !reliability.data,
+    sourceObservedAt: Math.min(
+      Date.parse(data.generatedAt),
+      reliability.data?.generatedAt
+        ? Date.parse(reliability.data.generatedAt)
+        : Number.POSITIVE_INFINITY
+    ),
+  });
   const operatingTone =
     data.operatingState === 'CRITICAL'
       ? 'error'
@@ -221,12 +234,8 @@ export function ProviderOverview() {
         ]}
         status={
           <LiveStatus
-            state={command.isFetching || reliability.isFetching ? 'syncing' : 'live'}
-            label={t(
-              command.isFetching || reliability.isFetching
-                ? 'command.live.syncing'
-                : 'command.live.live'
-            )}
+            state={liveState}
+            label={t(`command.live.${liveState}`)}
             detail={t('command.lastEvaluated', { value: formatProviderDate(data.generatedAt) })}
             refreshLabel={t('actions.refresh')}
             refreshing={command.isFetching || reliability.isFetching}
@@ -388,10 +397,16 @@ export function ProviderOverview() {
           value={formatNumber(data.estate.openOperations)}
           detail={t('command.signals.controlLoadDetail', {
             support: data.estate.activeSupportSessions,
-            objectives: objectiveRisk,
+            objectives: objectiveRisk ?? t('command.signals.unavailable'),
           })}
           icon={<Activity size={18} />}
-          tone={data.estate.openOperations || objectiveRisk ? 'warning' : 'info'}
+          tone={
+            data.estate.openOperations || (objectiveRisk !== null && objectiveRisk > 0)
+              ? 'warning'
+              : objectiveRisk === null
+                ? 'neutral'
+                : 'info'
+          }
           actionLabel={t('command.signals.openChanges')}
           onClick={() => navigate('/provider/operations')}
         />

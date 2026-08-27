@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CalendarPlus, FileCheck2, MailPlus, Wrench } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ActionButton, ConfirmDialog } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
@@ -46,6 +46,7 @@ export function DwaionActionShelf({
   response: AskDwpResponse | null;
 }) {
   const { t, i18n } = useTranslation('work');
+  const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
   const [selected, setSelected] = useState<WorkplaceAction | null>(null);
@@ -67,6 +68,15 @@ export function DwaionActionShelf({
         requestId: globalThis.crypto.randomUUID(),
         inputs: buildDwaionActionDraftInputs(action.actionKey, query, response),
         sourceReferences: response?.citations.map((citation) => citation.sourceId) ?? [],
+        origin: {
+          appKey: 'APP.ASK',
+          route: location.pathname,
+          surface: 'action-shelf',
+          sourceRunId: response!.runId,
+          sourceRequestId: response!.requestId,
+          sourceCorrelationId: response!.correlationId,
+          conversationId: response!.conversationId,
+        },
       }),
     onSuccess: setPreview,
     onError: () => {
@@ -97,6 +107,7 @@ export function DwaionActionShelf({
             planHash: preview.plan.planHash,
             reviewedInputs: preview.reviewedInputs,
             sourceReferences: preview.plan.sourceReferences,
+            origin: preview.plan.handoffOrigin,
           }),
         },
       },

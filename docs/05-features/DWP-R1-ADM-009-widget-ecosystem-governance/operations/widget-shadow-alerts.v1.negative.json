@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "ADD_UNKNOWN_ROOT",
+      "mutation": "ADD_UNKNOWN_ROOT",
+      "expectedErrorCode": "SCHEMA_UNKNOWN_FIELD"
+    },
+    {
+      "id": "REMOVE_QUEUE_REJECTION",
+      "mutation": "REMOVE_QUEUE_REJECTION",
+      "expectedErrorCode": "SCHEMA_MIN_ITEMS"
+    },
+    {
+      "id": "QUEUE_THRESHOLD_10",
+      "mutation": "QUEUE_THRESHOLD_10",
+      "expectedErrorCode": "ALERT_MATRIX_MISMATCH"
+    },
+    {
+      "id": "QUEUE_FOR_300",
+      "mutation": "QUEUE_FOR_300",
+      "expectedErrorCode": "ALERT_MATRIX_MISMATCH"
+    },
+    {
+      "id": "CLAMP_DENOMINATOR_ONE",
+      "mutation": "CLAMP_DENOMINATOR_ONE",
+      "expectedErrorCode": "ALERT_MATRIX_MISMATCH"
+    },
+    {
+      "id": "DIFF_EVIDENCE_FIELD",
+      "mutation": "DIFF_EVIDENCE_FIELD",
+      "expectedErrorCode": "ALERT_MATRIX_MISMATCH"
+    },
+    {
+      "id": "WARNING_STOPS",
+      "mutation": "WARNING_STOPS",
+      "expectedErrorCode": "ALERT_MATRIX_MISMATCH"
+    },
+    {
+      "id": "ADD_PRODUCTION_RING",
+      "mutation": "ADD_PRODUCTION_RING",
+      "expectedErrorCode": "SCHEMA_MAX_ITEMS"
+    }
+  ]
+}

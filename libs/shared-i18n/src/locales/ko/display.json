@@ -38,6 +38,7 @@
     "IN_PROGRESS": "진행 중",
     "IN_REVIEW": "검토 중",
     "INVESTIGATING": "조사 중",
+    "LIVE": "진행 중",
     "MONITORING": "모니터링 중",
     "NON_COMPLIANT": "미준수",
     "NO_DATA": "데이터 없음",
@@ -151,6 +152,7 @@
     "TENANT_LIFECYCLE": "테넌트 수명주기"
   },
   "auditActions": {
+    "ARCHIVE_NOW": "즉시 보관",
     "APPLY": "적용",
     "APPROVE": "승인",
     "BLOCKED": "반출 처리 차단",
@@ -162,6 +164,8 @@
     "PUBLISH": "발행",
     "REVOKE": "회수",
     "RELEASE": "자원 조기 해제",
+    "REASSIGN": "새 담당자에게 재지정",
+    "EXTEND_RETENTION": "자동 보관 기한 연장",
     "RETRY_SCHEDULED": "반출 재시도 예약",
     "SNOOZE": "알림 다시 보기 예약",
     "UNSAVE": "알림 저장 해제",

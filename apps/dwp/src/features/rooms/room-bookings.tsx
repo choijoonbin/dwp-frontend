@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { CalendarCheck2, CalendarX2, Clock3, MapPin, Pencil, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -23,6 +24,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { RoomBookingDialog } from './room-booking-dialog';
+import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 
@@ -42,12 +44,18 @@ function queryRange(filter: BookingFilter) {
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
+function roomBookingTargetId(eventId: string) {
+  return `room-booking-${eventId.replace(/[^a-zA-Z0-9_-]/gu, '-')}`;
+}
+
 export function RoomBookings() {
   const { t, i18n } = useTranslation('rooms');
   const auth = useAuth();
   const capabilities = useRoomsCapabilities();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const requestedEventId = searchParams.get('event');
   const [filter, setFilter] = useState<BookingFilter>('upcoming');
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
@@ -71,6 +79,16 @@ export function RoomBookings() {
         ? Date.parse(left.startsAt) - Date.parse(right.startsAt)
         : Date.parse(right.startsAt) - Date.parse(left.startsAt)
     );
+  const requestedEventVisible = roomEvents.some((event) => event.eventId === requestedEventId);
+  useEffect(() => {
+    if (!requestedEventId || !requestedEventVisible) return;
+    const frame = window.requestAnimationFrame(() => {
+      const target = document.getElementById(roomBookingTargetId(requestedEventId));
+      target?.scrollIntoView({ block: 'center' });
+      target?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [requestedEventId, requestedEventVisible]);
   const isOrganizer = (event: CalendarEvent) =>
     event.organizerPersonPublicId
       ? event.organizerPersonPublicId === auth.user?.personPublicId
@@ -136,13 +154,25 @@ export function RoomBookings() {
           <Tab value="upcoming" label={t('my.upcoming')} />
           <Tab value="past" label={t('my.past')} />
         </Tabs>
+        {eventsQuery.isError && eventsQuery.data && (
+          <Alert
+            severity="warning"
+            action={
+              <ActionButton intent="quiet" onClick={() => eventsQuery.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
+            {t('workplace.staleWarning')}
+          </Alert>
+        )}
         {eventsQuery.isLoading ? (
           <Stack spacing={1} p={2}>
             {Array.from({ length: 4 }, (_, index) => (
               <Skeleton key={index} variant="rounded" height={118} />
             ))}
           </Stack>
-        ) : eventsQuery.isError ? (
+        ) : eventsQuery.isError && !eventsQuery.data ? (
           <Alert
             severity="error"
             action={
@@ -162,10 +192,27 @@ export function RoomBookings() {
         ) : (
           roomEvents.map((event, index) => {
             const organizer = isOrganizer(event);
+            const actions = roomBookingActionPolicy(event, capabilities.canUpdateRoomBooking);
+            const selected = event.eventId === requestedEventId;
             return (
               <Box
                 key={`${event.eventId}:${event.startsAt}`}
-                sx={{ p: { xs: 1.5, md: 2 }, borderTop: index ? 1 : 0, borderColor: 'divider' }}
+                id={roomBookingTargetId(event.eventId)}
+                data-testid={roomBookingTargetId(event.eventId)}
+                tabIndex={-1}
+                aria-current={selected ? 'true' : undefined}
+                sx={(theme) => ({
+                  p: { xs: 1.5, md: 2 },
+                  borderTop: index ? 1 : 0,
+                  borderColor: 'divider',
+                  bgcolor: selected ? 'var(--dwp-product-soft)' : 'transparent',
+                  boxShadow: selected ? `inset 3px 0 ${theme.palette.primary.main}` : 'none',
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: -2,
+                  },
+                })}
               >
                 <Stack
                   direction={{ xs: 'column', lg: 'row' }}
@@ -223,34 +270,35 @@ export function RoomBookings() {
                       </Stack>
                     </Stack>
                     {event.description && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }} noWrap>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 1.25, overflowWrap: 'anywhere' }}
+                      >
                         {event.description}
                       </Typography>
                     )}
                   </Box>
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    {capabilities.canUpdateRoomBooking &&
-                      !organizer &&
-                      event.myResponse === 'NEEDS_ACTION' && (
-                        <>
-                          <ActionButton
-                            intent="secondary"
-                            onClick={() => responseMutation.mutate({ event, response: 'DECLINED' })}
-                          >
-                            {t('my.decline')}
-                          </ActionButton>
-                          <ActionButton
-                            intent="primary"
-                            onClick={() => responseMutation.mutate({ event, response: 'ACCEPTED' })}
-                          >
-                            {t('my.accept')}
-                          </ActionButton>
-                        </>
-                      )}
-                    {capabilities.canUpdateRoomBooking &&
-                      organizer &&
-                      event.status !== 'CANCELLED' && (
-                        <>
+                    {actions.canRespond && (
+                      <>
+                        <ActionButton
+                          intent="secondary"
+                          onClick={() => responseMutation.mutate({ event, response: 'DECLINED' })}
+                        >
+                          {t('my.decline')}
+                        </ActionButton>
+                        <ActionButton
+                          intent="primary"
+                          onClick={() => responseMutation.mutate({ event, response: 'ACCEPTED' })}
+                        >
+                          {t('my.accept')}
+                        </ActionButton>
+                      </>
+                    )}
+                    {(actions.canEdit || actions.canCancel) && (
+                      <>
+                        {actions.canEdit && (
                           <ActionButton
                             intent="secondary"
                             startIcon={<Pencil size={16} />}
@@ -258,11 +306,14 @@ export function RoomBookings() {
                           >
                             {t('actions.edit')}
                           </ActionButton>
+                        )}
+                        {actions.canCancel && (
                           <ActionButton intent="danger" onClick={() => setCancelling(event)}>
                             {t('actions.cancelBooking')}
                           </ActionButton>
-                        </>
-                      )}
+                        )}
+                      </>
+                    )}
                   </Stack>
                 </Stack>
                 {index < roomEvents.length - 1 && <Divider sx={{ display: 'none' }} />}
@@ -273,13 +324,18 @@ export function RoomBookings() {
       </Box>
 
       <RoomBookingDialog
-        open={Boolean(editing)}
+        open={Boolean(
+          editing && roomBookingActionPolicy(editing, capabilities.canUpdateRoomBooking).canEdit
+        )}
         room={editing?.resource ?? null}
         event={editing}
         onClose={() => setEditing(null)}
       />
       <ConfirmDialog
-        open={Boolean(cancelling)}
+        open={Boolean(
+          cancelling &&
+          roomBookingActionPolicy(cancelling, capabilities.canUpdateRoomBooking).canCancel
+        )}
         title={t('my.cancelTitle')}
         description={t('my.cancelDescription')}
         cancelLabel={t('actions.keep')}
@@ -289,7 +345,12 @@ export function RoomBookings() {
         busy={cancelMutation.isPending}
         onClose={() => setCancelling(null)}
         onConfirm={() => {
-          if (cancelling) cancelMutation.mutate(cancelling);
+          if (
+            cancelling &&
+            roomBookingActionPolicy(cancelling, capabilities.canUpdateRoomBooking).canCancel
+          ) {
+            cancelMutation.mutate(cancelling);
+          }
         }}
       />
     </PageCanvas>

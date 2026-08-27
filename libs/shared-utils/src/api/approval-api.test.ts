@@ -33,10 +33,10 @@ describe('approval API boundary', () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(home));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(getApprovalHome()).resolves.toEqual(home);
+    await expect(getApprovalHome('scope-self')).resolves.toEqual(home);
 
     expect(fetchMock).toHaveBeenCalledWith(
-      '/api/approvals/v1/home',
+      '/api/approvals/v1/home?contextScopeKey=scope-self',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
     );
   });

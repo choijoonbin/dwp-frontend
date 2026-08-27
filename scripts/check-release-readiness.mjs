@@ -1,45 +1,59 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, isAbsolute, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import {
+  readJsonFile,
+  summarizeStates,
+  validateEvidenceReference,
+  validateProviderTenantManifest,
+} from './release-evidence-validation.mjs';
+import {
+  RELEASE_READINESS_EXPECTED_IDS,
+  validateReleaseReadinessPolicy,
+} from './release-readiness-policy.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const registryPath = resolve(root, 'docs/06-delivery/release-evidence/release-readiness.json');
+const providerTenantManifestPath = resolve(
+  root,
+  'docs/06-delivery/release-evidence/provider-tenant-acceptance.json'
+);
 const releaseMode = process.argv.includes('--release');
 
-const expected = {
-  qualityGates: range('R2-', 1, 5),
-  productionHardening: range('R3-', 1, 5),
-  externalDecisions: range('D-', 1, 18),
-  approvals: range('A-', 1, 5),
-};
-const allowedStates = new Set(['COMPLETE', 'BLOCKED_EXTERNAL', 'FEATURE_DISABLED']);
+const expected = RELEASE_READINESS_EXPECTED_IDS;
+const allowedStates = new Set([
+  'COMPLETE',
+  'PENDING_INTERNAL',
+  'BLOCKED_EXTERNAL',
+  'FEATURE_DISABLED',
+]);
 const errors = [];
+const externalCheckouts = new Map();
 
 const registry = JSON.parse(readFileSync(registryPath, 'utf8'));
+const providerTenantManifest = readJsonFile(providerTenantManifestPath);
 if (registry.schemaVersion !== 1) errors.push('schemaVersion must be 1.');
 if (!/^\d{4}-\d{2}-\d{2}$/.test(registry.asOf ?? '')) {
   errors.push('asOf must be an ISO date.');
 }
 
-for (const [section, expectedIds] of Object.entries(expected)) {
+for (const section of Object.keys(expected)) {
   const items = registry[section];
   if (!Array.isArray(items)) {
     errors.push(`${section} must be an array.`);
     continue;
   }
-  const ids = items.map((item) => item.id);
-  if (new Set(ids).size !== ids.length) errors.push(`${section} contains duplicate IDs.`);
-  const missing = expectedIds.filter((id) => !ids.includes(id));
-  const unknown = ids.filter((id) => !expectedIds.includes(id));
-  if (missing.length) errors.push(`${section} is missing ${missing.join(', ')}.`);
-  if (unknown.length) errors.push(`${section} has unknown IDs ${unknown.join(', ')}.`);
-
   for (const item of items) validateItem(section, item);
 }
+errors.push(...validateReleaseReadinessPolicy(registry));
 
-if (registry.status === 'READY' && releaseItems().some((item) => item.state !== 'COMPLETE')) {
-  errors.push('Registry status cannot be READY while a release-required item is incomplete.');
-}
+const providerTenantValidation = validateProviderTenantManifest(providerTenantManifest, {
+  root,
+  releaseMode,
+  environment: process.env,
+});
+errors.push(...providerTenantValidation.errors);
 
 if (errors.length) {
   console.error('Release evidence registry is invalid:\n');
@@ -56,14 +70,26 @@ console.log('DWP release evidence registry');
 console.log(`- release: ${registry.release}`);
 console.log(`- complete: ${(counts.COMPLETE ?? []).length}`);
 console.log(`- safely disabled: ${(counts.FEATURE_DISABLED ?? []).length}`);
+console.log(`- internal evidence pending: ${(counts.PENDING_INTERNAL ?? []).length}`);
 console.log(`- external evidence pending: ${(counts.BLOCKED_EXTERNAL ?? []).length}`);
+const providerTenantCounts = summarizeStates(providerTenantValidation.items);
+console.log('- Provider-Tenant acceptance:');
+console.log(`  - exact IDs: ${providerTenantValidation.items.length}`);
+console.log(`  - complete: ${providerTenantCounts.COMPLETE}`);
+console.log(`  - pending internal: ${providerTenantCounts.PENDING_INTERNAL}`);
+console.log(`  - blocked external: ${providerTenantCounts.BLOCKED_EXTERNAL}`);
+console.log(`  - feature disabled: ${providerTenantCounts.FEATURE_DISABLED}`);
 
 if (releaseMode) {
   const blocked = releaseItems().filter((item) => item.state !== 'COMPLETE');
   const enabledWithoutDecision = registry.externalDecisions.filter(
     (item) => item.releaseRequired && item.state !== 'COMPLETE'
   );
-  const unresolved = [...blocked, ...enabledWithoutDecision];
+  const unresolved = [
+    ...blocked,
+    ...enabledWithoutDecision,
+    ...providerTenantValidation.releaseBlocked,
+  ];
   if (unresolved.length) {
     console.error('\nRelease gate blocked by required evidence:');
     unresolved.forEach((item) =>
@@ -93,6 +119,14 @@ function validateItem(section, item) {
   if (item.state === 'BLOCKED_EXTERNAL' && !nonEmpty(item.blockers)) {
     errors.push(`${item.id} requires explicit blockers.`);
   }
+  if (item.state === 'PENDING_INTERNAL') {
+    if (!item.releaseRequired)
+      errors.push(`${item.id} internal work must remain release-required.`);
+    if (!nonEmpty(item.blockers)) errors.push(`${item.id} requires explicit internal blockers.`);
+    if (!nonEmpty(item.failClosedEvidence)) {
+      errors.push(`${item.id} requires failClosedEvidence while internal work remains.`);
+    }
+  }
   if (item.state === 'FEATURE_DISABLED') {
     if (item.releaseRequired) errors.push(`${item.id} cannot be disabled and release-required.`);
     if (!nonEmpty(item.failClosedEvidence)) {
@@ -103,13 +137,13 @@ function validateItem(section, item) {
     errors.push(`${item.id} cannot be complete without evidence.`);
   }
   for (const evidence of [...(item.evidence ?? []), ...(item.failClosedEvidence ?? [])]) {
-    if (typeof evidence !== 'string' || !evidence.trim()) {
-      errors.push(`${item.id} has an empty evidence reference.`);
-      continue;
-    }
-    if (/^https:\/\//.test(evidence)) continue;
-    const target = isAbsolute(evidence) ? evidence : resolve(root, evidence);
-    if (!existsSync(target)) errors.push(`${item.id} evidence does not exist: ${evidence}.`);
+    errors.push(
+      ...validateEvidenceReference(
+        evidence,
+        { root, releaseMode, environment: process.env, externalCheckouts },
+        item.id
+      )
+    );
   }
 }
 
@@ -121,11 +155,4 @@ function releaseItems() {
 
 function nonEmpty(value) {
   return Array.isArray(value) && value.length > 0;
-}
-
-function range(prefix, start, end) {
-  return Array.from(
-    { length: end - start + 1 },
-    (_, index) => `${prefix}${String(start + index).padStart(2, '0')}`
-  );
 }

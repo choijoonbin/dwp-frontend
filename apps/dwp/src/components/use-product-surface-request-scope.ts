@@ -18,6 +18,8 @@ export type ProductSurfaceRequestScope = Readonly<{
     accessMode: string;
     productId: string;
     surfaceId: string;
+    contextScopeKey?: string;
+    decisionRevision: string;
   }>;
 }>;
 
@@ -43,6 +45,8 @@ export function resolveProductSurfaceRequestScope({
   const governed = decision !== null;
   const contextScopeKey = entryContext ? governedDecision?.scope.key : undefined;
   const accessMode = entryContext?.accessMode ?? snapshot?.envelope.activeAccessMode ?? 'LEGACY';
+  const decisionRevision =
+    governedDecision?.decisionRevision ?? snapshot?.envelope.decisionRevision ?? '';
   return {
     governed,
     ready: !governed || Boolean(entryContext && contextScopeKey),
@@ -62,6 +66,8 @@ export function resolveProductSurfaceRequestScope({
       accessMode,
       productId: productKey,
       surfaceId: surfaceKey,
+      ...(contextScopeKey ? { contextScopeKey } : {}),
+      decisionRevision,
     },
   };
 }

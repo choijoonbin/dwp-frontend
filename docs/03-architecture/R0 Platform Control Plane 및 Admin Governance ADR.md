@@ -1,8 +1,8 @@
 # R0 Platform Control Plane 및 Admin Governance ADR
 
-> 상태: Accepted and Implemented Local Baseline v1.2
+> 상태: Accepted. Local Baseline v1.2 구현 완료, Provider/Tenant Hardening v1.3 정합화
 >
-> 기준일: 2026-08-11
+> 기준일: 2026-08-26
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`, `dwp_agent`
 
@@ -12,6 +12,11 @@ DWP는 여러 Tenant의 사용자, 업무 시스템, 앱, Connector와 AI Agent�
 따라서 관리 기능은 화면 몇 개가 아니라 제품 전체의 권한, 구성, 배포와 감사 기준을
 소유하는 Control Plane이어야 한다. 인증 성공만으로 Tenant 격리가 보장되지 않으며,
 각 데이터 접근에서 검증된 Tenant Context를 일관되게 적용해야 한다.
+
+Provider Principal, JIT 지원 접근, 다중 Tenant Context 전환, 진단·Preview와 Break-glass의
+정본은 [R0 Provider Control Plane 및 Tenant Estate ADR](./R0%20Provider%20Control%20Plane%20및%20Tenant%20Estate%20ADR.md)이다.
+이 문서는 Tenant 내부 관리 Plane과 공통 Platform Governance만 소유하며 Provider 접근 규칙을
+별도로 재정의하지 않는다.
 
 ## 2. 결정
 
@@ -41,16 +46,26 @@ Provider Admin API는 Tenant Admin API에 Cross-tenant 조건을 추가하는 �
 
 실제 제품 진입점도 같은 경계를 따른다.
 
-- `계정 설정`은 인증된 모든 사용자의 Profile, 환경 설정, 보안·Session과 개인 홈 구성을
-  소유한다. 설정은 `(tenant_id, user_id)` 단위의 Versioned Personal Preference로 저장한다.
+- `계정 설정`은 현재 Principal에게 적용 가능한 Profile, 환경 설정과 보안·Session을 소유한다.
+  Tenant Principal의 개인 홈 설정은 `(tenant_id, user_id)` 단위 Versioned Preference이고,
+  Provider Principal의 언어는 Auth `preferredLocale`, 비민감 표시·접근성·지역 형식은 격리된 Browser
+  `localStorage` Baseline을 사용한다. Provider Context는 Tenant Branding·Personal Preference
+  API를 호출하지 않고 개인 홈이나 고객 Tenant 관리형 설정을 노출·생성하지 않는다. Provider
+  표시 Preference의 Cross-device Server Sync는 후속 Backend Gate다.
 - `관리 콘솔`은 현재 Tenant만 관리한다. 전체 Tenant 관리자, 감사 전용 사용자와 위임된
   Permission 사용자는 공통 정책으로 자신에게 허용된 메뉴만 본다.
 - `Provider Control Plane`은 활성 Provider Operator 전용이며 전 Tenant Estate를 다룬다.
   Provider 역할은 Tenant 관리자 역할과 합치지 않고 화면별 Provider Permission을 재검증한다.
+- 한 Principal에는 Provider와 Tenant Role을 동시에 부여할 수 없다. 같은 사람이 두 책임을
+  수행하면 별도 Principal·자격 증명·Session을 사용한다. 이 배타 규칙은 Assignment, Token,
+  Gateway와 Service에서 강제하며 `PROVIDER_ADMIN`이나 로컬 Seed도 예외가 아니다.
 - 화면의 직책명은 설명 Metadata일 뿐 권한으로 사용하지 않는다. 계정 메뉴와 Route는 실제
   Role·Permission에서 권한 명칭과 진입 가능 영역을 계산한다.
 - Provider 운영자가 Tenant 화면에 들어갈 때는 지원 세션이 필수다. 지원 중에는 일반
   Workspace와 개인 설정으로 이동하지 않고 허용 Scope의 Tenant Admin 화면만 사용한다.
+- Provider의 Tenant 선택은 Estate 조사 Scope일 뿐 Tenant Context 변경이 아니다. 대상 Tenant
+  Context는 승인된 단일 JIT 지원 세션에서만 Gateway가 투영하며, 지원 중에도 Provider Actor를
+  고객 사용자로 가장하지 않는다.
 
 ### 2.3 관리 데이터의 성격을 구분한다
 

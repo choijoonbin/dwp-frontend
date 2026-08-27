@@ -11,7 +11,8 @@ export type ProductExperienceKey =
   | 'mail'
   | 'messaging'
   | 'notifications'
-  | 'spaces';
+  | 'spaces'
+  | 'meetings';
 
 export type ProductExperienceProfile = {
   key: ProductExperienceKey;
@@ -28,7 +29,8 @@ export type ProductExperienceProfile = {
     | 'communication-flow'
     | 'conversation-flow'
     | 'collaboration-flow'
-    | 'attention-flow';
+    | 'attention-flow'
+    | 'meeting-flow';
   density: 'comfortable' | 'standard';
   accent: string;
   secondary: string;
@@ -181,6 +183,17 @@ export const productExperienceRegistry = {
     canvas: '#F5F7F7',
     sidebar: '#FBFCFC',
     selection: '#E5EDF2',
+  },
+  meetings: {
+    key: 'meetings',
+    concept: 'meeting-flow',
+    density: 'standard',
+    accent: '#2A61C9',
+    secondary: '#0B6B74',
+    softSurface: '#E8F0FC',
+    canvas: '#F6F8FC',
+    sidebar: '#FBFCFF',
+    selection: '#E6EEFB',
   },
 } as const satisfies Record<ProductExperienceKey, ProductExperienceProfile>;
 

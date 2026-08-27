@@ -20,6 +20,7 @@ async function mockAuditSession(page: Page) {
         email: 'admin@dwp.local',
         tenantId: 1,
         tenantCode: 'default',
+        identityPlane: 'TENANT',
         roles: ['ADMIN', 'AUDIT_ADMIN'],
       }),
     })

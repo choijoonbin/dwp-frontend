@@ -6,6 +6,7 @@ import { setTenantId } from '../tenant-util';
 import {
   evaluateGovernedRouteAccess,
   evaluateProductSurfaceAccess,
+  buildOidcLoginUrl,
   getOidcCallback,
   getProductSurfaceContexts,
   getProductSurfaceStepUpContinuation,
@@ -51,6 +52,16 @@ describe('auth login API', () => {
       tenantId: 'default',
     });
     expect(String(request.body)).not.toContain('username');
+  });
+
+  it('starts tenant-routed OIDC without exposing the server-selected provider key', () => {
+    setTenantId('7');
+
+    const url = new URL(buildOidcLoginUrl(), 'https://workspace.example.test');
+
+    expect(url.pathname).toBe('/api/auth/oidc/login');
+    expect(url.searchParams.get('tenantId')).toBe('7');
+    expect(url.searchParams.has('providerKey')).toBe(false);
   });
 
   it('calls the exact Gateway context endpoint without client subject inputs', async () => {

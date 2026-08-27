@@ -1,9 +1,9 @@
 # R1 제품 업무·관리 Surface 분리 및 관리 Context ADR
 
-- 상태: Proposed for approval (`review-ready`)
-- 최종 기술 검증일: 2026-08-25
-- 구현 Frontend Branch: `codex/core006-frontend`
-- 구현 Backend Branch: `codex/core006-backend`
+- 상태: 승인 완료 (`accepted`), Production 활성화는 §14 Gate 적용
+- 최종 기술 검증일: 2026-08-27
+- 구현 Frontend Branch: `dwp-dev`
+- 구현 Backend Branch: `dwp-dev`
 - 적용 범위: DWP Global Shell, 모든 Business App, Tenant Control Center, Provider Support,
   Auth, Gateway와 제품별 관리 API
 - 결정 Owner: Shared Experience Platform, Identity & Access, 각 Product Owner
@@ -51,6 +51,17 @@ Navigation Group을 하나의 배열과 Sidebar에 합쳐 표시한다. 제품 �
 | Provider Control Plane             |   10 | 별도 Shell 유지                                               |
 | Workspace·Work·Activity·Account 등 |   14 | 업무·개인 설정 Surface 유지                                   |
 | 전체                               |  169 | ID와 Path 중복은 없음                                         |
+
+위 169개는 의사결정 당시의 변경 전 역사 기준이며 삭제하거나 현재 수치로 덮어쓰지 않는다. 2026-08-27
+현재 계약은 Meetings 메뉴, Calendar의 휴지통·회사 캘린더 관리, DWAI·ON AI 실행 이력과 Mail의
+보관함·스팸·휴지통·내 폴더·폴더 및 규칙 메뉴와 DWAI·ON AI 제안함이 추가된 **전체 186개,
+12개 업무 앱, 업무 앱 메뉴 138개**다. 나머지
+48개는 비제품 문맥에 속한다. 승인 Authorization Bundle v3는 4개 제품의 Exact PAGE Route 58개를
+닫으며, Meetings는 DRAFT 제품이므로 해당 활성 Bundle에는 포함되지 않는다.
+현재 Canonical Menu Ledger SHA-256은
+`0d9c3ae9e412c4358a5a513cf68663f361cbf3d75381d4d896045af8bed8b257`다. DWAI·ON의
+`/dwaion/activity`와 `/dwaion/proposals`는 `work/work`, `dwaion.work`, `W2`에 속하며 Backend
+승인 Bundle에 추가하지 않고 DRAFT PAGE로 유지한다.
 
 현재 `adminMode: none | embedded | control-center`는 DWAI·ON만 선언하고 Runtime에서 사용하지
 않는다. HCM은 권한 있는 Audience의 메뉴를 합집합으로 만들며, 일부 Wildcard Page는 Sidebar가
@@ -248,16 +259,16 @@ type GovernedMenuRecord = {
 ```
 
 `ProductSurfaceDefinition`은 업무 앱의 `work | management` Shell 계약이다. 이 Type을 회사 관리,
-Provider 또는 Account에 억지로 확장하지 않는다. 대신 `GovernedMenuRecord`가 정적 메뉴 169개
-모두를 한 `GovernedMenuPlane`과 `navigationContextId`에 귀속한다. 그중 11개 업무 앱의 메뉴
-121개는 `productSurfaceId`도 정확히 하나 가져야 한다. 고정 Context ID는 `home`, `catalog`,
+Provider 또는 Account에 억지로 확장하지 않는다. 대신 `GovernedMenuRecord`가 현재 정적 메뉴 186개
+모두를 한 `GovernedMenuPlane`과 `navigationContextId`에 귀속한다. 그중 12개 업무 앱의 메뉴
+138개는 `productSurfaceId`도 정확히 하나 가져야 한다. 고정 Context ID는 `home`, `catalog`,
 `work.work`, `activity.work`, 각 업무 앱 Surface ID, `tenant.admin`, `provider.control`,
 `account.settings`다.
 
 모든 제품은 다음 정적 검사를 통과해야 한다.
 
-- 정적 Menu Route 169개는 정확히 한 `navigationContextId`에 속한다.
-- 11개 업무 앱 Menu Route 121개는 정확히 한 Product Surface에도 속한다.
+- 정적 Menu Route 186개는 정확히 한 `navigationContextId`에 속한다.
+- 12개 업무 앱 Menu Route 138개는 정확히 한 Product Surface에도 속한다.
 - 나머지 48개(Home·Catalog·Work·Activity·Tenant Governance·Provider·Account)는
   `productSurfaceId` 필드를 갖지 않으며 Product Surface로 잘못 투영되면 Build를 실패시킨다.
 - 등록된 Menu Item의 Task Kind는 Surface의 `taskKinds`에 포함되고 정확히 하나다.
@@ -418,7 +429,7 @@ Pair에 동일하게 저장하고 PEP가 실제 값과 재대조한다. 누락·
 Product Route는 `subject.type=PRODUCT`, 비제품 Governed Route는
 `subject.type=GOVERNED_CONTEXT`로 고정한다. Named Reviewer의 Work Queue는
 `navigationContextId=work.work`인 비제품 Route로
-등록하며 Product Surface 121개에 포함하지 않는다.
+등록하며 현재 Product Surface 메뉴 138개에 포함하지 않는다.
 `navigationContextId`의 권위는 Contract Top-level 필드 하나뿐이며 Subject 안에 중복 저장하지
 않는다. Non-product Key의 `navigation-context-token`을 위 총함수로 Decode한 값이 Top-level
 `navigationContextId`와 다르거나 `_`가 포함된 Context ID·비정규 Token이면 Bundle Build를
@@ -520,16 +531,17 @@ Navigation, Route, Gateway와 Service PEP가 같은 Implication Policy를 사용
 ### 7.2 Product Management Shell
 
 - 동일한 DWP Design System과 제품 Brand를 유지하되 별도 Navigation Collection을 사용한다.
-- Header에 Shield Icon, 제품명, `운영` 또는 `관리`, 현재 Tenant·Scope를 Text로 고정 표시한다.
+- Header에는 Settings 계열 Icon과 `{제품명} 관리`, `관리 모드`, 현재 Tenant·Scope를 Text로
+  표시한다. Compact 화면에서도 짧은 `관리`/`Manage` 상태 Token을 먼저 보존한다.
 - 색상 하나로 모드를 구분하지 않는다.
 - Sidebar에는 현재 Management Surface의 메뉴만 표시하고 `업무로 돌아가기`를 제공한다.
 - 여러 제품·범위를 관리하면 Surface Switcher와 Scope Switcher를 시각·의미적으로 분리한다.
 - Scope가 하나면 Selector를 숨기고 고정 Label만 표시한다.
 
-Desktop Surface Switcher는 Native Link Navigation으로 구현한다. Mobile은 현재 Surface
-Button이 Link 목록 Disclosure를 열며, 닫을 때 Trigger로 Focus를 복원한다. Route 전환 후
-Document Title과 H1을 갱신한다. Tab Panel처럼 보이더라도 `role=tab`인 Local Content 전환으로
-구현하지 않는다.
+Desktop과 Mobile의 `앱 관리`·`업무로 돌아가기`는 모두 직접 Native Link로 구현한다. 같은 Plane에
+둘 이상의 Surface가 있을 때만 현재 Surface Button이 동일 Plane Link 목록 Disclosure를 열며,
+닫을 때 Trigger로 Focus를 복원한다. Route 전환 후 Document Title과 H1을 갱신한다. Tab Panel처럼
+보이더라도 `role=tab`인 Local Content 전환으로 구현하지 않는다.
 
 Native `<a href>`는 W3C APG의 강한 권고이자 이 ADR의 제품 구현 결정이다. WCAG 수용 기준은
 Name·Role·Value, Keyboard, Focus, 320 CSS px Reflow와 Status Message 의미를 별도로 검증한다.
@@ -547,11 +559,20 @@ Name·Role·Value, Keyboard, Focus, 320 CSS px Reflow와 Status Message 의미�
    서버 Context를 재검사한다.
 4. Tenant Admin Hub의 앱 Card는 해당 앱 Management Route로 Deep Link할 수 있지만 제품
    권한을 자동 부여하지 않는다.
-5. 마지막 위치 편의값은 `tenant + user + product + surface` Key 아래 `routeId`와 허용된
-   비식별 Filter만 `sessionStorage`에 저장한다.
-6. 사람·결재·요청·초안 ID, Raw URL, `scope`, Support Session과 권한 정보를 편의 저장소에
-   저장하지 않는다.
-7. Logout, Tenant 변경, 권한 Revision 변경과 만료 시 관련 편의값과 Query Cache를 제거한다.
+5. 마지막 위치 편의값은 **Management에서 Work로 돌아갈 때만** 사용한다. Work Surface의
+   `tenant + user + product + surface` Key 아래 `routeId`와 허용된 비식별 Filter만
+   `sessionStorage`에 저장한다.
+6. 이름이 `앱 관리`인 전환은 항상 Manifest가 선언한 대표 Management Landing으로 이동한다.
+   이전 Management Route를 읽어 자동 복원하지 않으며, `앱 관리`를 암묵적인 `관리 이어하기`로
+   해석하지 않는다. 이는 권한·책임·Scope가 바뀐 뒤 과거의 고위험 관리 문맥으로 예기치 않게
+   복귀하는 것을 막는 예측 가능성 경계다.
+7. 제품이 장시간 관리 작업 재개를 제공해야 한다면 별도 이름의 명시적 `관리 이어하기` Action과
+   후속 계약을 사용한다. 사용자가 Action을 실행한 시점에 Exact PAGE, 현재 Decision Revision,
+   만료, Tenant·Actor·Product·Surface를 서버에 다시 검증한 뒤에만 이동한다. 저장 가능한 값은
+   `routeId`뿐이며 사람·결재·요청·초안 ID, Raw URL, Filter, `scope`, Support Session과 권한
+   정보는 저장하지 않는다. 검증 실패는 대표 Management Landing으로 종료하고 과거 관리 Data를
+   복원하지 않는다.
+8. Logout, Tenant 변경, 권한 Revision 변경과 만료 시 관련 편의값과 Query Cache를 제거한다.
 
 ## 9. 권한과 Effective Product Surface Context
 
@@ -736,10 +757,14 @@ Union으로 매핑하고 알 수 없는 값은 `AUTHORITY_UNAVAILABLE`로 Fail C
 - Provider Support는 승인된 Session, Tenant, Scope, Read-only/Write, 사유와 만료를 지속
   표시한다. `WORKFORCE_READ`는 HCM Operations Read-only를 열 수 있지만 HCM Management나
   쓰기를 열 수 없다.
-- Pilot의 단기 JIT는 `TENANT` Scope만 지원한다. 현재 Effective Permission Projection이
-  `ORG_UNIT`, `RESOURCE` Grant를 End-to-end로 투영하지 못하므로 두 Scope의 Activation 요청은
-  Request·Grant Record를 만들기 전에 거부하고 Denied Audit만 남긴다. 앱 범위 위임은 JIT를
-  가장하지 않고 기존 Responsibility + Resource Set + Validity를 사용한다.
+- R1 Production의 단기 JIT와 Emergency Activation은 **모든 Scope에서 비활성화**한다. 현재
+  Effective Permission Projection은 `ORG_UNIT`, `RESOURCE` Grant를 모든 서비스 PEP까지
+  End-to-end로 투영하지 못하며, Approval 중 Eligibility·Policy Revision 변경을 결속하는 승인
+  증거도 완료되지 않았다. Auth Service의 환경 변수 없는 Rollout Gate와 DB Trigger가 정책 활성화,
+  승인 대기 Request와 Live Grant 생성을 각각 거부하고, 전환 Migration은 기존 Live/Pending 상태를
+  폐기한다. 재활성화는 Exact Scope PEP, Expiry 재검증, Authority Revision Binding,
+  Cross-scope 음성 Matrix와 Identity·Security Owner 승인 증거를 모두 요구한다. 앱 범위 위임은
+  JIT를 가장하지 않고 기존 Responsibility + Resource Set + Validity를 사용한다.
 - 고위험 변경은 Risk Registry에 따라 Step-up Authentication, 사유, 영향 Preview,
   Maker-checker, Before/After Audit와 Rollback을 요구한다. Step-up은 MFA `amr` 존재만 보지 않고
   `requiredAcr`, `maxAuthAgeSeconds`, `activationTtlSeconds`, Capability/Risk Policy ID와
@@ -866,7 +891,7 @@ Object와 실제 미존재 Object는 모두 공개 Code `RESOURCE_NOT_AVAILABLE`
 3. `W1a` Approvals 대표 Pilot
 4. `W1b` HCM 대표 Pilot
 5. `W2` DWAI·ON, Notifications, Spaces
-6. `W3` Calendar, Workplace/Rooms, Mail, Messaging
+6. `W3` Calendar, Workplace/Rooms, Mail, Messaging, Meetings
 
 기존 Canonical Product Admin Path와 Query/Hash Deep Link는 유지한다. 중앙의 기존 Product
 Admin Alias 14개도 대상 Product Management Path로 계속 Redirect한다. HCM은 기존
@@ -894,7 +919,7 @@ Rollout Control은 Shadow `S`, 제품별 Capability Enforcement `E_p`, 제품별
 | `U_p` | `ux.product-surfaces.<product>.v1`                            | Tenant + Product | 해당 제품의 Native Surface UI에만 사용 |
 
 `<product>`는 Checksummed Rollout Inventory의
-`approvals`, `calendar`, `communications`, `dwaion`, `hcm`, `mail`, `messaging`,
+`approvals`, `calendar`, `communications`, `dwaion`, `hcm`, `mail`, `meetings`, `messaging`,
 `notifications`, `services`, `spaces`, `workplace` 중 하나다. 기존 전역
 `access.product-surfaces.capability-enforcement.v1`은 전환 이력·호환 증거용 Legacy Flag로
 등록 상태를 유지하지만, 신규 상태·Context Envelope·인가 결정을 합성하는 `E_p`로 사용하지 않는다.
@@ -917,8 +942,9 @@ Rollback도 혼합 Sidebar, 기존 APP Parent Guard 또는 전역 `MANAGE` Fallb
 
 `E_p ⇒ S`, `U_p ⇒ E_p`를 위반하는 조합은 Invalid로 거부한다. Local 전용 검증 Seed는 `S=1`로
 고정하고 v3에 Exact PAGE 계약이 있는 `approvals`, `communications`, `hcm`, `services`만
-`E_p=1,U_p=1`, 즉 `111`로 만든다. 나머지 W2/W3 DRAFT 7개 제품은 `E_p=0,U_p=0`, 즉
-`100`으로 유지한다. 불변 `product-surfaces` v3를 변경해 이 7개 제품을 억지로 포함하지 않는다.
+`E_p=1,U_p=1`, 즉 `111`로 만든다. Meetings를 포함한 나머지 W2/W3 DRAFT 8개 제품은
+`E_p=0,U_p=0`, 즉 `100`으로 유지한다. 불변 `product-surfaces` v3를 변경해 이 8개 제품을
+억지로 포함하지 않는다.
 승인 Bundle에 없는 제품이 `110` 또는 `111`로 평가되면 Gateway는 503
 `AUTHORITY_RESOLUTION_UNAVAILABLE`로 Fail Closed한다.
 
@@ -977,21 +1003,37 @@ Product·Security·Privacy 승인 전 변경하지 않는다.
 
 다음이 승인되기 전 DRAFT 구현을 Production에서 활성화하거나 다음 Product Wave를 시작하지 않는다.
 
-1. 본 ADR과 169개 전체 메뉴 분류표 승인
+1. 본 ADR과 현재 186개 전체 메뉴 분류표 승인 — 완료
 2. `EffectiveProductSurfaceContext`·Direct Evaluation OpenAPI, 오류 Reason Code와 Invalidation 계약 승인
 3. Product Manifest, Governed Menu Ownership, Registered Route·Legacy Redirect Registry 정적 검사 승인
 4. APP Entitlement와 Management Guard 독립 Truth Table 승인
 5. HCM Organization Design 등 Granular Management Capability와 Target Population 승인
 6. Scoped JIT의 End-to-end Fail-closed 검증 또는 Pilot 범위에서 명시적 비활성화
 7. 감사 이벤트와 분리된 UX Telemetry 수집 계약·보존·개인정보 승인
-8. Approvals/HCM Pilot 설계와 Persona×Route×Scope 수용 기준 승인
+8. Approvals/HCM Pilot 설계와 Persona×Route×Scope 수용 기준 승인 — 완료
+
+ADR과 Pilot 설계 승인은 완료되었고 정적 계약·Unit·Chromium·Mobile Playwright 검증은 Frontend
+필수 Quality Gate로 고정한다. Production 활성화는 별도 운영 승인 전까지 Off 상태를 유지한다.
+
+Gate 2~7과 아래 Decision Register의 운영 승인 증거는
+`docs/06-delivery/release-evidence/product-surface-production-readiness.json`을 단일 기계 판독
+Manifest로 사용한다. 승인 Owner·승인일, 불변 Evidence checksum, 승인 OpenAPI, Rollback
+Rehearsal, Test Run, Privacy와 Accessibility·Manual AT 증거 중 각 항목이 요구하는 종류가 모두
+존재해야만 `COMPLETE`가 될 수 있다. 미승인 항목은 `PENDING_INTERNAL` 또는
+`BLOCKED_EXTERNAL`로 유지하고 현재 Off/Compatibility/Fail-closed 통제를 함께 기록한다.
+
+일반 개발과 Architecture Gate는 Manifest의 Schema·ID·상태 불변식만 검사하며 DRAFT 제품 때문에
+실패하지 않는다. 실제 Production 활성화 판단은 별도
+`yarn product-surfaces:readiness:release`가 수행하고, 하나라도 Release-required Evidence가
+미완료이면 종료 코드 2로 실패한다. 문서의 `완료` 표기나 Local Seed는 이 Manifest의 승인 증거를
+대신할 수 없다.
 
 ### 14.1 승인 Decision Register
 
 | ID      | 본 문서의 제안 기본값                                                     | 승인 Owner            |
 | ------- | ------------------------------------------------------------------------- | --------------------- |
 | `PS-01` | 기존에 명시 Seed된 Tenant Admin Product `VIEW`만 Read-only Oversight 유지 | Security·Product      |
-| `PS-02` | Pilot JIT는 `TENANT`만 지원, `ORG_UNIT/RESOURCE` Activation Fail Closed   | Identity & Access     |
+| `PS-02` | R1 JIT Off, 재활성화 시 `TENANT`부터 승인하고 다른 Scope는 Fail Closed    | Identity & Access     |
 | `PS-03` | HCM Org Design·Controlled Export에 전용 Exact Capability 추가             | HCM·Security          |
 | `PS-04` | Campaign은 `/admin`, Named Reviewer Decision은 Assigned Work로 분리       | Identity·Work         |
 | `PS-05` | UX Analytics는 Audit과 Store·Schema·Retention·Access를 분리               | Privacy·Data·Platform |
@@ -1008,16 +1050,51 @@ Product·Security·Privacy 승인 전 변경하지 않는다.
 ## 15. 공통 수용 기준
 
 - Work Sidebar의 Management 메뉴 수 `0`, Management Sidebar의 개인 Work 메뉴 수 `0`
-- 등록 Menu Route 169개가 정확히 한 Plane·Task·Navigation Context를 가짐
-- 11개 업무 앱 Menu Route 121개가 정확히 한 Product Surface를 가짐
+- 등록 Menu Route 186개가 정확히 한 Plane·Task·Navigation Context를 가짐
+- 12개 업무 앱 Menu Route 138개가 정확히 한 Product Surface를 가짐
 - Work-only, Management-only, Both, Tenant Admin without product duty가 기대대로 분리됨
 - Direct URL, Refresh, Back/Forward, 새 Tab이 동일 Surface와 Scope를 유지함
+- Desktop과 Mobile 모두 Work Header의 Settings Icon이 포함된 단일 `앱 관리` 진입점으로 관리 모드에 전환하고,
+  Management에서는 현재 관리 문맥과 업무 복귀만 노출함
+- Mobile 관리 직접 링크에서도 관리 모드, 관리 전용 Navigation, 업무 복귀를 즉시 표시하고 Work
+  메뉴와 혼합하지 않음
+- `업무로 돌아가기`는 동일 Tenant·Actor·Product의 최신 Revision에서 허용된 마지막 Work
+  `routeId`만 복원하고, 만료·Revision 변경·권한 회수 시 대표 Work Route로 안전하게 종료함
+- `앱 관리`는 이전 Management 위치가 저장돼 있어도 대표 Management Landing으로 이동하며,
+  자동 복원·Filter·Scope 복원이 `0건`임
+- 별도 `관리 이어하기`가 도입되기 전에는 Management 마지막 위치 저장·읽기가 `0건`이고, 도입
+  이후에는 명시적 사용자 Action마다 Exact PAGE·Revision·Expiry 재검증 실패 E2E가 존재함
 - 권한·Scope 만료와 회수가 재로그인 없이 다음 Query·Mutation부터 반영됨
 - Scope Escape, 권한 밖 Mutation, 만료 후 민감 Data 잔류 `0건`
 - Support Read-only가 Management Write를 열지 않음
 - 1440, 1280, 390, 320px, 200% Zoom, Keyboard, Screen Reader, High Contrast 통과
 - 사용자가 5초 안에 현재 Surface와 Scope를 95% 이상 정확히 식별함
 - 관리 핵심 작업 발견 시간 20% 이상 개선, 기존 구성원 핵심 작업 Median 회귀 10% 이하
+
+### 15.1 Global-top Production Exit Criteria
+
+다음 항목은 권고 목록이 아니라 Production Readiness Manifest가 전부 `COMPLETE`로 증명해야 하는
+Release 계약이다.
+
+1. 12개 제품 각각의 Exact `PAGE | DATA | ACTION` 계약, Gateway Binding과 소유 Service PEP가
+   양방향으로 닫히고 DRAFT Route 또는 전역 `MANAGE` Compatibility를 신규 인가에 사용하지 않는다.
+2. 브라우저가 만든 내부 Header를 제거하고 Gateway만 Trusted Context를 발급한다. Production
+   Network Policy·Private Ingress·Workload Identity 또는 동등한 Source Attestation과
+   Direct-service 우회·Replay 음성 테스트로 Confused Deputy 방지를 증명한다.
+3. Tenant·Actor·Access Mode·Product·Surface·Scope·Target Population을 요청마다 결속하고,
+   Cross-tenant IDOR/BOLA, Scope Escape, NORMAL·SUPPORT 권한 합집합과 만료 Revision Mutation이
+   `0건`임을 자동 음성 매트릭스로 증명한다.
+4. 권한 회수 후 다음 API·Mutation은 즉시 거부되고, 다중 Tab·BroadcastChannel 미지원·Tenant 및
+   Access Mode 전환을 포함해 민감 UI와 Cache 제거 지연의 승인 SLO를 충족한다.
+5. `frontend-apps.json`의 모든 Application·Route Prefix·Alias에 대해 실제 Production Nginx에서
+   Direct URL, Refresh, Query·Hash, Back/Forward, Asset Base, Unknown Route를 전수 검증하고 Reload
+   Loop와 Artifact 소유 충돌이 `0건`이다.
+6. Security Audit과 UX Telemetry의 Store·Schema·Retention·Access를 분리하고, 수집 동의·철회,
+   Tenant Privacy Policy와 보존·삭제 증거를 Privacy Owner가 승인한다.
+7. Pilot Persona×Route×Scope, 320·390·1280·1440px, 200% Zoom, Keyboard, Screen Reader, High
+   Contrast와 사용자 인지·작업시간 기준을 승인된 Browser·OS·AT Matrix 및 Manual Run으로 증명한다.
+8. Authority·Redis·Cache·Event 장애의 Fail-closed Chaos Test, Rollback Rehearsal과 외부 침투
+   테스트에서 Tenant Escape, IDOR/BOLA, Confused Deputy Critical·High가 `0건`이다.
 
 ## 16. 결과와 변경 통제
 

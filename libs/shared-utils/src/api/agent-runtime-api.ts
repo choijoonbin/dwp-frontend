@@ -1,39 +1,36 @@
+import type { AgentComponents } from '@dwp-frontend/api-contracts';
+
 import { HttpError } from '../http-error';
 import { axiosInstance, postEventStream } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 import type { AgentRegistryResolution, AgentRiskTier } from './agent-plan-api';
 
-export type AskState = 'COMPLETED' | 'ABSTAINED' | 'CONFIGURATION_REQUIRED';
-export type AskPolicyOutcome = 'ALLOW' | 'HANDOFF' | 'DENY';
-export type AskModelRouteState = 'COMPLETED' | 'NOT_INVOKED' | 'CONFIGURATION_REQUIRED' | 'REFUSED';
-export type AskConfidence = 'LOW' | 'MEDIUM' | 'HIGH';
-export type AskCitationSourceType =
-  | 'WORK_ITEM'
-  | 'MAIL'
-  | 'CALENDAR'
-  | 'APPROVAL_TASK'
-  | 'APPROVAL_REQUEST'
-  | 'APPROVAL_FORM'
-  | 'APPROVAL_OPERATION';
+type AgentSchemas = AgentComponents['schemas'];
+
+export type AskState = AgentSchemas['AskState'];
+export type AskPolicyOutcome = AgentSchemas['PolicyOutcome'];
+export type AskModelRouteState = AgentSchemas['ModelRouteState'];
+export type AskConfidence = AgentSchemas['AnswerConfidence'];
+export type AskCitationSourceType = AgentSchemas['CitationSourceType'];
 export type AskProgressStage =
   'AUTHORIZING' | 'RETRIEVING' | 'REASONING' | 'VERIFYING' | 'PERSISTING' | 'COMPLETED';
 
-export type AskPageContext = {
-  route: string;
-  appKey: string;
+export type AskPageContext = Omit<
+  AgentSchemas['AskPageContext'],
+  'surface' | 'entityType' | 'entityRef'
+> & {
   surface?: string;
   entityType?: string;
   entityRef?: string;
 };
 
-export type AskDwpRequest = {
-  requestId: string;
-  query: string;
-  locale: string;
+export type AskDwpRequest = Omit<
+  AgentSchemas['AskRequest'],
+  'agentKey' | 'conversationId' | 'pageContext'
+> & {
   agentKey?: string;
   conversationId?: string;
-  sourceScopes?: AskCitationSourceType[];
   pageContext?: AskPageContext;
 };
 
@@ -43,50 +40,39 @@ export type AskDwpOptions = {
   onProgress?: (stage: AskProgressStage) => void;
 };
 
-export type AskPolicyDecision = {
-  outcome: AskPolicyOutcome;
-  riskTier: AgentRiskTier;
-  code: string;
-  explanation: string;
-  modelAllowed: boolean;
+export type AskPolicyDecision = Omit<AgentSchemas['AskPolicyDecision'], 'mutationAllowed'> & {
   mutationAllowed: false;
 };
 
-export type AskCitation = {
-  sourceId: string;
-  sourceType: AskCitationSourceType;
-  title: string;
-  sourceSystem: string;
+export type AskCitation = Omit<AgentSchemas['AskCitation'], 'route' | 'occurredAt' | 'excerpt'> & {
   route: string | null;
   occurredAt: string | null;
   excerpt: string | null;
 };
 
-export type AskModelRoute = {
-  state: AskModelRouteState;
+export type AskModelRoute = Omit<AgentSchemas['AskModelRoute'], 'provider' | 'model'> & {
   provider: string | null;
   model: string | null;
-  inputTokens: number;
-  outputTokens: number;
-  totalTokens: number;
-  latencyMs: number;
 };
 
-export type AskDwpResponse = {
-  runId: string;
-  auditId: string;
-  requestId: string;
-  correlationId: string;
-  state: AskState;
+export type AskDwpResponse = Omit<
+  AgentSchemas['AskResponse'],
+  | 'answer'
+  | 'confidence'
+  | 'citations'
+  | 'policy'
+  | 'modelRoute'
+  | 'agentRegistry'
+  | 'conversationId'
+  | 'userMessageId'
+  | 'assistantMessageId'
+> & {
   answer: string | null;
   confidence: AskConfidence | null;
   citations: AskCitation[];
-  sourceCount: number;
   policy: AskPolicyDecision;
   modelRoute: AskModelRoute;
   agentRegistry: AgentRegistryResolution;
-  statusCode: string;
-  completedAt: string;
   conversationId: string | null;
   userMessageId: string | null;
   assistantMessageId: string | null;

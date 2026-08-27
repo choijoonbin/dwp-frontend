@@ -10,12 +10,25 @@ import {
 } from './axios-instance';
 import { HttpTransportError } from './http-error';
 
-function jsonResponse(status: number, payload: unknown): Response {
+function jsonResponse(
+  status: number,
+  payload: unknown,
+  headers: Record<string, string> = {}
+): Response {
   return {
     ok: status >= 200 && status < 300,
     status,
+    headers: new Headers(headers),
     text: async () => JSON.stringify(payload),
   } as Response;
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise;
+  });
+  return { promise, resolve };
 }
 
 describe('axiosInstance browser session contract', () => {
@@ -38,12 +51,14 @@ describe('axiosInstance browser session contract', () => {
   });
 
   it.each([
-    [403, { errorCode: 'ROUTE_CAPABILITY_REQUIRED' }, true],
-    [403, { code: 'E2001' }, true],
-    [403, { message: 'Forbidden' }, true],
+    [403, { errorCode: 'ROUTE_CAPABILITY_REQUIRED' }, false],
+    [403, { errorCode: 'SCOPE_SELECTION_REQUIRED' }, false],
+    [403, { code: 'E2001' }, false],
+    [403, { message: 'Forbidden' }, false],
     [403, { errorCode: 'STEP_UP_REQUIRED' }, false],
     [403, { errorCode: 'STEP_UP_CHALLENGE_EXPIRED' }, false],
     [403, { errorCode: 'SOD_CONFLICT' }, false],
+    [403, { errorCode: 'SCOPE_CONTEXT_EXPIRED' }, true],
     [409, { errorCode: 'DECISION_REVISION_CONFLICT' }, true],
     [409, { errorCode: 'SCOPE_CONTEXT_EXPIRED' }, true],
     [409, { errorCode: 'OBJECT_VERSION_CONFLICT' }, false],
@@ -62,14 +77,22 @@ describe('axiosInstance browser session contract', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
-        jsonResponse(409, {
-          errorCode: 'DECISION_REVISION_CONFLICT',
-          message: 'Authority revision changed.',
-        })
+        jsonResponse(
+          409,
+          {
+            errorCode: 'DECISION_REVISION_CONFLICT',
+            message: 'Authority revision changed.',
+          },
+          { 'X-DWP-Decision-Revision': 'decision-revision-8' }
+        )
       )
     );
 
-    await expect(axiosInstance.get('/api/governed-resource')).rejects.toMatchObject({
+    await expect(
+      axiosInstance.get('/api/governed-resource', {
+        headers: { 'x-dwp-expected-decision-revision': 'decision-revision-7' },
+      })
+    ).rejects.toMatchObject({
       status: 409,
       message: 'Authority revision changed.',
     });
@@ -77,10 +100,62 @@ describe('axiosInstance browser session contract', () => {
     expect(accessFailure).toHaveBeenCalledWith({
       status: 409,
       reasonCode: 'DECISION_REVISION_CONFLICT',
+      rejectedDecisionRevision: 'decision-revision-7',
+      serverDecisionRevision: 'decision-revision-8',
     });
   });
 
-  it('does not notify the authority boundary for expected workflow denials or a 401 session', async () => {
+  it('notifies the authority boundary when an issued scope has expired', async () => {
+    const accessFailure = vi.fn();
+    setAuthorizationAccessFailureHandler(accessFailure);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse(403, {
+          errorCode: 'SCOPE_CONTEXT_EXPIRED',
+          message: 'The issued scope is no longer valid.',
+        })
+      )
+    );
+
+    await expect(
+      axiosInstance.get('/api/governed-resource', { contextScopeKey: 'scope-expired' })
+    ).rejects.toMatchObject({
+      status: 403,
+      message: 'The issued scope is no longer valid.',
+    });
+
+    expect(accessFailure).toHaveBeenCalledWith({
+      status: 403,
+      reasonCode: 'SCOPE_CONTEXT_EXPIRED',
+      contextScopeKey: 'scope-expired',
+    });
+  });
+
+  it('does not deliver a late access failure to a replacement session observer', async () => {
+    const response = deferred<Response>();
+    const previousSessionFailure = vi.fn();
+    const currentSessionFailure = vi.fn();
+    setAuthorizationAccessFailureHandler(previousSessionFailure);
+    vi.stubGlobal('fetch', vi.fn().mockReturnValue(response.promise));
+
+    const pendingRequest = axiosInstance.get('/api/governed-resource', {
+      headers: { 'X-DWP-Expected-Decision-Revision': 'shared-revision' },
+    });
+    setAuthorizationAccessFailureHandler(currentSessionFailure);
+    response.resolve(
+      jsonResponse(409, {
+        errorCode: 'DECISION_REVISION_CONFLICT',
+        message: 'Authority revision changed.',
+      })
+    );
+
+    await expect(pendingRequest).rejects.toMatchObject({ status: 409 });
+    expect(previousSessionFailure).not.toHaveBeenCalled();
+    expect(currentSessionFailure).not.toHaveBeenCalled();
+  });
+
+  it('does not notify the authority boundary for authoritative denials or a 401 session', async () => {
     const accessFailure = vi.fn();
     const unauthorized = vi.fn();
     setAuthorizationAccessFailureHandler(accessFailure);
@@ -89,12 +164,18 @@ describe('axiosInstance browser session contract', () => {
       'fetch',
       vi
         .fn()
+        .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'ROUTE_CAPABILITY_REQUIRED' }))
+        .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'SCOPE_SELECTION_REQUIRED' }))
+        .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'E2001' }))
         .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'STEP_UP_REQUIRED' }))
         .mockResolvedValueOnce(jsonResponse(403, { errorCode: 'SOD_CONFLICT' }))
         .mockResolvedValueOnce(jsonResponse(409, { errorCode: 'OBJECT_VERSION_CONFLICT' }))
         .mockResolvedValueOnce(jsonResponse(401, { errorCode: 'AUTHENTICATION_REQUIRED' }))
     );
 
+    await expect(axiosInstance.get('/api/route-denied')).rejects.toMatchObject({ status: 403 });
+    await expect(axiosInstance.get('/api/scope-required')).rejects.toMatchObject({ status: 403 });
+    await expect(axiosInstance.get('/api/forbidden')).rejects.toMatchObject({ status: 403 });
     await expect(axiosInstance.get('/api/step-up')).rejects.toMatchObject({ status: 403 });
     await expect(axiosInstance.get('/api/sod')).rejects.toMatchObject({ status: 403 });
     await expect(axiosInstance.get('/api/version')).rejects.toMatchObject({ status: 409 });

@@ -465,11 +465,11 @@ export function WorkforceExportCenter() {
   );
   const canRetry = Boolean(
     selected &&
-      actionAccess.retry &&
-      selected.lifecycleState === 'FAILED' &&
-      selected.executionEnabled &&
-      !selected.blockers.length &&
-      selected.manualRetryCount < (previewQuery.data?.maximumManualRetries ?? 0)
+    actionAccess.retry &&
+    selected.lifecycleState === 'FAILED' &&
+    selected.executionEnabled &&
+    !selected.blockers.length &&
+    selected.manualRetryCount < (previewQuery.data?.maximumManualRetries ?? 0)
   );
 
   const refresh = async () => {

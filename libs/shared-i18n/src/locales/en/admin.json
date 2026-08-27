@@ -27,14 +27,14 @@
         "description": "Manage the organization identity shown across the employee experience."
       },
       "home-experience": {
-        "label": "Home experience",
-        "title": "Home experience",
-        "description": "Configure the tenant home artwork and personalized launchpad experience."
+        "label": "Home page settings",
+        "title": "Home page settings",
+        "description": "Preview, validate, and publish the tenant home background and localized welcome copy."
       },
       "home-composition": {
-        "label": "Home composition",
-        "title": "Home composition policy",
-        "description": "Govern the editing boundary between managed home zones and personal widgets."
+        "label": "Widgets & home",
+        "title": "Widget and home management",
+        "description": "Review current-build widget contracts, govern shared home blueprints, and manage existing composition policy."
       },
       "home-apps": {
         "label": "Home app layout",
@@ -138,18 +138,18 @@
       },
       "roles": {
         "label": "Roles & permissions",
-        "title": "Role governance",
-        "description": "Define roles, resource permissions, group assignments, and effective access."
+        "title": "Roles and access management",
+        "description": "Define job roles, apply them to groups, and verify privileged and effective access in one place."
       },
       "workforce-access": {
-        "label": "Workforce boundaries",
-        "title": "Workforce data boundaries",
-        "description": "Apply least-privilege population, field, and export boundaries to delegated HR administrators."
+        "label": "Workforce data access",
+        "title": "Workforce data access policies",
+        "description": "Control which organizations and workforce data HR roles or named users can read and export."
       },
       "saved-view-custody": {
-        "label": "Saved view custody",
-        "title": "Saved view custody",
-        "description": "Govern evidence-based ownership transfer and time-bound retention for personal and team views after workforce changes."
+        "label": "Saved view ownership",
+        "title": "Resolve saved views after a move or departure",
+        "description": "Transfer employees' saved searches, filters, sorting, and layouts to a new steward, or suspend and archive them automatically."
       },
       "provisioning": {
         "label": "Identity provisioning",
@@ -483,6 +483,7 @@
     "operationError": "The operation could not be completed.",
     "actions": {
       "cancel": "Cancel",
+      "confirm": "Confirm",
       "save": "Save",
       "close": "Close",
       "refresh": "Refresh",
@@ -815,6 +816,9 @@
       "subtitle": "Immutable snapshots and recoverable brand assets",
       "close": "Close brand publication history",
       "empty": "History begins with the next publication.",
+      "loading": "Loading home publication history.",
+      "error": "Home publication history could not be loaded.",
+      "retry": "Try again",
       "current": "Current",
       "restore": "Restore",
       "version": "v{{version}}",
@@ -888,6 +892,8 @@
       "canvas": "Home canvas"
     },
     "sizes": {
+      "fifth": "One-fifth row",
+      "quarter": "One-quarter row",
       "compact": "One-third row",
       "medium": "One-half row",
       "large": "Two-thirds row",
@@ -923,6 +929,95 @@
     "errors": {
       "load": "The home composition policy could not be loaded.",
       "save": "The home composition policy could not be published."
+    }
+  },
+  "homeWidgets": {
+    "tabs": {
+      "label": "Widget and home management sections",
+      "catalog": "Widget catalog",
+      "blueprints": "Home blueprints",
+      "policy": "Composition policy"
+    },
+    "states": {
+      "ACTIVE": "Included in build",
+      "DEPRECATED": "Deprecated",
+      "BLOCKED": "Blocked"
+    },
+    "runtime": {
+      "NATIVE": "Native renderer"
+    },
+    "privacy": {
+      "INTERNAL": "Internal data",
+      "CONFIDENTIAL": "Confidential data"
+    },
+    "policyClass": {
+      "PERSONAL": "Personal widget",
+      "GOVERNED": "Governed zone"
+    },
+    "fields": {
+      "definitionKey": "Definition key",
+      "ownerProduct": "Owning product",
+      "sourceApp": "Source app",
+      "dataSource": "Data source"
+    },
+    "catalog": {
+      "governanceTitle": "Built-in widget contracts in this build — development preview",
+      "governanceDescription": "Read-only preview of the static contracts packaged with this build. Definition-level Tenant enablement, versions, and sharing policy are not managed here yet; visibility never replaces source authorization.",
+      "search": "Search widget catalog",
+      "searchPlaceholder": "Search widget, owner, app, or source",
+      "openPolicy": "Open composition policy",
+      "resultCount_one": "{{count}} built-in definition",
+      "resultCount_other": "{{count}} built-in definitions",
+      "noResults": "No widget matches this search",
+      "noResultsDescription": "Try a widget name, owning product, source app, or data source.",
+      "listLabel": "Tenant widget definition catalog",
+      "providerVerified": "Registered in current build",
+      "runtimeContract": "Declared runtime values",
+      "freshness": "Declared freshness target up to {{seconds}} sec",
+      "allowedSizes": "Declared desktop widths",
+      "configurableTitle": "Bounded configuration contract declared",
+      "configurableDescription": "This build declares {{fields}} fields and {{filters}} filter presets. Widget preset sharing is not available until the server registry, recipient binding, and moderation contracts are released.",
+      "governedTitle": "Platform-composed built-in widget",
+      "governedDescription": "This static definition is composed by the platform. It is not certification evidence and cannot currently be turned into a personal preset."
+    },
+    "blueprints": {
+      "loading": "Loading home blueprints",
+      "featureDisabled": "Advanced home blueprints are not enabled",
+      "featureDisabledDescription": "The catalog remains available. Enable the approved personalization rollout before managing blueprint revisions.",
+      "loadFailed": "Home blueprints could not be loaded",
+      "loadFailedDescription": "Widget definitions remain available while the blueprint service is recovering.",
+      "retry": "Retry blueprint loading",
+      "namingTitle": "A home blueprint is not a widget preset",
+      "namingDescription": "This list uses the existing HomeTemplate API for complete home layouts. A widget preset will contain one definition reference and data-free configuration in a later contract.",
+      "title": "Shared home blueprints",
+      "count": "{{count}} blueprint revisions",
+      "openHomeStudio": "Open personal home",
+      "saved": "The home blueprint lifecycle was updated.",
+      "saveFailed": "The home blueprint lifecycle could not be updated.",
+      "empty": "No shared home blueprint exists",
+      "emptyDescription": "Authorized editors can create a draft from a personal Home Studio and return here to publish it.",
+      "allMembers": "All members",
+      "metadata": "{{audience}} · {{widgets}} widgets · Updated {{date}}",
+      "publish": "Publish",
+      "revoke": "Revoke",
+      "cancel": "Cancel",
+      "lifecycle": {
+        "DRAFT": "Draft",
+        "PUBLISHED": "Published",
+        "REVOKED": "Revoked"
+      },
+      "confirm": {
+        "publish": {
+          "title": "Publish this home blueprint?",
+          "description": "{{name}} revision v{{version}} will become available to {{audience}} with {{widgets}} widgets. Existing personal homes do not change automatically. To stop future use, revoke this revision.",
+          "action": "Publish blueprint"
+        },
+        "revoke": {
+          "title": "Revoke this home blueprint?",
+          "description": "{{name}} revision v{{version}} will no longer be available to {{audience}}. Its {{widgets}}-widget layout cannot be newly applied. Existing personal copies remain independent; to restore availability, create and publish a new revision.",
+          "action": "Revoke blueprint"
+        }
+      }
     }
   },
   "homeApps": {
@@ -990,18 +1085,20 @@
     }
   },
   "homeExperience": {
-    "title": "Home experience",
-    "description": "Compose, validate, and publish the tenant home presentation.",
-    "loading": "Loading home experience",
+    "title": "Home header & background",
+    "description": "Validate copy, responsive focal points, and readability in the real home header, then publish them as one change set.",
+    "loading": "Loading home page settings",
     "customBackground": "Custom background",
     "defaultBackground": "Default background",
     "unsaved": "Unpublished changes",
+    "published": "Matches published version",
     "version": "Published v{{version}}",
     "preview": "Home hero preview",
     "previewHeadline": "Welcome back, Administrator",
     "previewMessage": "Your assigned apps and services, ready to launch.",
     "previewDockTitle": "My apps",
     "previewAllApps": "All apps",
+    "previewEmptyApps": "The tenant-default app dock is empty. Place apps in App dock settings.",
     "builtInBackground": "Built-in DWP background",
     "fileRequirements": "PNG or JPEG / up to 10 MB",
     "locales": {
@@ -1013,18 +1110,32 @@
       "en": "EN"
     },
     "previewStudio": {
-      "title": "Experience preview",
+      "title": "Applied experience preview",
+      "scope": "Validates the home header, background, and tenant-default app dock. Check personal widgets and entitlements on a real user home.",
       "status": "{{viewport}} · {{locale}} · {{theme}}",
       "viewportLabel": "Preview viewport",
       "themeLabel": "Preview theme",
       "localeLabel": "Preview locale",
       "viewports": {
-        "DESKTOP": "Desktop",
-        "MOBILE": "Mobile"
+        "WIDE": "Wide 1920",
+        "DESKTOP": "Desktop 1440",
+        "TABLET": "Tablet 1024",
+        "MOBILE": "Mobile 390"
       },
       "themes": {
         "LIGHT": "Light shell",
         "DARK": "Dark shell"
+      },
+      "canvasSize": "Home header envelope {{width}} × {{height}}",
+      "draftBadge": "Draft preview",
+      "publishedBadge": "Current published version",
+      "sampleDate": "Start today's work",
+      "fallbackNotice": "{{fields}} is empty in {{requested}}, so the default {{resolved}} value is shown.",
+      "builtInFallbackNotice": "{{fields}} is empty in both the selected and default locales, so the built-in DWP copy is shown.",
+      "metrics": {
+        "action": "12 actions",
+        "timeline": "2 events today",
+        "response": "3 responses due"
       }
     },
     "editor": {
@@ -1035,10 +1146,19 @@
       "makeDefault": "Make default"
     },
     "asset": {
-      "title": "Background and focal area"
+      "title": "Responsive background image",
+      "description": "Keep important copy out of the bitmap and verify that the subject survives both Wide and Mobile focal points.",
+      "errors": {
+        "type": "Choose a PNG or JPEG file.",
+        "size": "The image must be 10 MB or smaller.",
+        "decode": "This image cannot be decoded. Check that the file is not damaged.",
+        "dimensions": "The image must be at least 1920 × 480 pixels.",
+        "ratio": "The image ratio must be between 2.4:1 and 6.5:1."
+      }
     },
     "quality": {
       "title": "Publication checks",
+      "description": "Resolve every blocking check before publishing this change set.",
       "notAvailable": "N/A",
       "defaultCopy": {
         "label": "Default-locale copy",
@@ -1052,12 +1172,13 @@
       "asset": {
         "label": "Image quality",
         "pending": "Pending image is {{size}} and will be validated again by the server.",
+        "pendingDimensions": "Pending image is {{width}} × {{height}}, {{size}}, and meets publication requirements.",
         "dimensions": "Published dimensions are {{width}} x {{height}}; target is at least 1440 x 400.",
         "builtIn": "The governed built-in image meets the publication profile."
       },
       "safeArea": {
         "label": "Responsive safe area",
-        "detail": "Image ratio is {{ratio}}; dashed guides show protected copy space."
+        "detail": "Image ratio is {{ratio}}. Verify the subject independently in Wide and Mobile previews."
       },
       "readability": {
         "label": "Text readability",
@@ -1068,6 +1189,9 @@
       "title": "Home publication history",
       "subtitle": "Immutable copy, presentation, and recoverable asset snapshots",
       "close": "Close home publication history",
+      "loading": "Loading home publication history…",
+      "error": "Home publication history could not be loaded.",
+      "retry": "Retry",
       "empty": "History begins with the next publication.",
       "current": "Current",
       "restore": "Restore",
@@ -1079,13 +1203,27 @@
         "SETTINGS_PUBLISHED": "Presentation published",
         "ASSET_PUBLISHED": "Background published",
         "ASSET_RESET": "Built-in background restored",
+        "EXPERIENCE_PUBLISHED": "Complete home experience published",
         "ROLLBACK": "Prior revision restored"
+      },
+      "scopes": {
+        "PRESENTATION": "Copy & presentation",
+        "BACKGROUND": "Background image",
+        "BACKGROUND_ASSET": "Background image",
+        "LAUNCHPAD": "App dock",
+        "COMPOSITION": "Home composition policy"
       }
     },
     "fields": {
       "headline": "Headline",
       "message": "Supporting message",
       "imagePosition": "Image position",
+      "compatibilityPosition": "Legacy layout position",
+      "contentAlignment": "Copy & app dock alignment",
+      "desktopFocalPoint": "Wide & Desktop image focal point",
+      "mobileFocalPoint": "Tablet & Mobile image focal point",
+      "focalX": "Horizontal focal point",
+      "focalY": "Vertical focal point",
       "overlay": "Readability overlay"
     },
     "positions": {
@@ -1100,10 +1238,30 @@
       "restore": "Restore default",
       "save": "Save presentation",
       "publish": "Publish presentation",
-      "history": "History"
+      "history": "History",
+      "discardDraft": "Discard draft",
+      "stageRestore": "Use built-in background",
+      "publishDraft": "Publish complete change set",
+      "openComposition": "Widget & layout settings",
+      "openApps": "App dock settings"
+    },
+    "restoreDialog": {
+      "title": "Restore this complete home revision?",
+      "description": "This restores the app dock and home composition policy from that point in time, as well as its copy and background.",
+      "warning": "The tenant home configuration currently shown to users will change. Review every affected scope below.",
+      "unsavedWarning": "Your current unpublished draft will also be discarded.",
+      "cancel": "Cancel",
+      "confirm": "Restore complete home",
+      "restoring": "Restoring home"
+    },
+    "navigationGuard": {
+      "title": "Keep your unpublished changes?",
+      "description": "Leaving now discards this draft, including its copy, background image, and focal points.",
+      "keepEditing": "Keep editing",
+      "discardAndLeave": "Discard and leave"
     },
     "toasts": {
-      "saved": "Home experience settings saved.",
+      "saved": "Home page settings saved.",
       "published": "Home presentation published.",
       "uploaded": "Home background uploaded.",
       "restored": "The default home background was restored.",
@@ -2292,7 +2450,7 @@
       "home-experience": {
         "background-reset": "Home Background Reset",
         "background-uploaded": "Home Background Uploaded",
-        "updated": "Home Experience Updated"
+        "updated": "Home Page Settings Updated"
       },
       "home-preference": {
         "reset": "Home Preference Reset",
@@ -2583,6 +2741,7 @@
     "notAvailable": "Not available",
     "roles": "Governed roles",
     "assignments": "Group role assignments",
+    "assignmentsDescription": "Review current assignments and revocation history, and manage which roles apply to each group, where, and for how long.",
     "effectiveAccess": "Effective access explanation",
     "effectiveLoading": "Calculating effective access",
     "effectiveRoles": "Effective roles",
@@ -2590,20 +2749,42 @@
     "accessRevision": "Access revision {{revision}}",
     "privileged": "Privileged",
     "standard": "Standard",
-    "noExpiry": "No expiry",
+    "noExpiry": "Indefinite",
     "direct": "Direct assignment",
     "tenantWide": "Tenant wide",
     "systemManaged": "Built-in system roles are governed centrally and cannot be changed here.",
+    "guide": {
+      "title": "Use this area to design access, apply it, and verify its actual impact.",
+      "description": "Work from role definition → group assignment → privileged access control → user effective access."
+    },
     "roleTypes": {
       "SYSTEM": "System",
       "CUSTOM": "Custom"
     },
     "tabs": {
       "label": "Role governance views",
-      "roles": "Roles & resources",
-      "assignments": "Group assignments",
-      "privileged": "Privileged access",
-      "effective": "Effective access"
+      "roles": "Define roles & access",
+      "assignments": "Roles by group",
+      "privileged": "Manage privileged roles",
+      "effective": "Access by user"
+    },
+    "tabHelp": {
+      "roles": {
+        "title": "Define job roles and their permissions.",
+        "description": "Bundle operations on protected resources into roles and distinguish standard roles from privileged roles."
+      },
+      "assignments": {
+        "title": "Apply roles to groups.",
+        "description": "Set the scope and validity of roles inherited by group members, and revoke assignments that are no longer needed."
+      },
+      "privileged": {
+        "title": "Control high-risk roles with approval and expiry.",
+        "description": "Review privileged requests, active grants, eligibilities, and policies to reduce standing elevated access."
+      },
+      "effective": {
+        "title": "Verify the access actually applied to a user.",
+        "description": "Trace roles received directly or through groups and the source of final permissions on each resource."
+      }
     },
     "columns": {
       "role": "Role",
@@ -2613,9 +2794,10 @@
       "status": "Status",
       "resource": "Resource",
       "group": "Group",
-      "assignmentType": "Assignment",
+      "assignmentType": "Assignment type",
       "scope": "Scope",
       "validTo": "Valid to",
+      "actions": "Actions",
       "source": "Source",
       "permission": "Permission",
       "effect": "Effect",
@@ -2631,13 +2813,15 @@
       "resourceType": "Resource type",
       "resourceKey": "Resource key",
       "group": "Group",
+      "groupSearch": "Search groups",
       "role": "Role",
       "assignmentType": "Assignment type",
       "scope": "Scope type",
       "scopeRef": "Scope reference",
       "validTo": "Expiry",
       "justification": "Justification",
-      "user": "User"
+      "user": "User",
+      "userSearch": "Search users"
     },
     "effects": {
       "NONE": "None",
@@ -2645,21 +2829,44 @@
       "DENY": "Deny"
     },
     "assignmentTypes": {
-      "ACTIVE": "Active",
-      "ELIGIBLE": "Eligible"
+      "ACTIVE": "Applies immediately",
+      "ELIGIBLE": "Activate after approval"
     },
     "scopes": {
-      "TENANT": "Tenant",
+      "TENANT": "Entire tenant",
       "ORG_UNIT": "Organization",
       "RESOURCE": "Resource"
+    },
+    "assignmentSummary": {
+      "label": "Group role assignment summary",
+      "active": "Active state",
+      "expiringSoon": "Expires in 30 days",
+      "noExpiry": "Indefinite (active)",
+      "revoked": "Revocation history",
+      "notice": "Revoked rows remain as audit history. Review approval-based privileged access under ‘Manage privileged roles’ and actual user permissions under ‘Access by user’."
+    },
+    "assignmentToolbar": {
+      "label": "Group role assignment table tools",
+      "columns": "Choose visible columns",
+      "filters": "Filter assignments",
+      "searchLabel": "Search groups or roles",
+      "searchPlaceholder": "Search group, role, or scope",
+      "refresh": "Refresh assignments"
     },
     "actions": {
       "permissions": "Edit permissions",
       "savePermissions": "Save permissions",
       "newResource": "New resource",
       "newRole": "New role",
-      "newAssignment": "New group assignment",
-      "revoke": "Revoke assignment"
+      "newAssignment": "Assign role to group",
+      "revoke": "Revoke assignment",
+      "revokeShort": "Revoke",
+      "revokeFor": "Revoke the {{role}} role assignment from {{group}}",
+      "assignmentStates": {
+        "REVOKED": "Revoked",
+        "MANAGED_ELSEWHERE": "Outside scope",
+        "NONE": "No action"
+      }
     },
     "roleDialog": {
       "create": "New governed role",
@@ -2676,6 +2883,12 @@
     "assignmentDialog": {
       "title": "Assign role to group",
       "justificationHelp": "Enter 10 to 500 characters for the audit trail. Every current member is checked against separation-of-duties policy before assignment."
+    },
+    "revokeDialog": {
+      "title": "Revoke this role assignment?",
+      "description": "Inherited permissions from this assignment will stop immediately and active sessions for members of this group will be revoked. Review the impact before continuing.",
+      "confirm": "Revoke assignment",
+      "confirming": "Revoking"
     },
     "toasts": {
       "roleCreated": "Role created.",
@@ -3127,6 +3340,14 @@
     "attention": "Review {{pending}} pending approvals and {{ownerless}} app scopes without an owner.",
     "viewLabel": "Application governance view",
     "controlResponsibilitiesNotice": "This view manages only app ownership and access approval, fulfillment, and review responsibilities. App configuration administrators and product specialist duties must be requested, approved, and activated together through an app admin preset.",
+    "bootstrap": {
+      "badge": "First approver setup",
+      "approveButton": "Approve setup",
+      "approveAction": "Approve first app access approver setup",
+      "dialogTitle": "Set up the first app access approver?",
+      "dialogHeading": "One-time independent bootstrap",
+      "dialogDescription": "An independent app catalog administrator can approve this request only while the scope has an effective app owner and no effective approver. The exception never applies to later approvers, self-request, or self-assignment, and Auth revalidates every condition when you submit."
+    },
     "views": {
       "assignments": "Responsibility assignments",
       "presets": "App admin presets",
@@ -3190,7 +3411,8 @@
       "presetDENIEDTitle": "Deny this app administrator preset?",
       "presetREVOKEDTitle": "Revoke this app administrator preset?",
       "reviewRESOLVEDTitle": "Resolve this legacy access review?",
-      "reviewDISMISSEDTitle": "Dismiss this legacy access review?"
+      "reviewDISMISSEDTitle": "Dismiss this legacy access review?",
+      "decisionTitle": "Record an application responsibility decision?"
     },
     "responsibilities": {
       "APP_OWNER": "App owner",
@@ -3338,21 +3560,73 @@
     }
   },
   "workforceAccess": {
-    "loading": "Loading workforce data boundaries",
-    "gridLabel": "Workforce data boundaries",
-    "create": "Add access boundary",
+    "loading": "Loading workforce data access policies",
+    "gridLabel": "Workforce data access policy list",
+    "create": "Create access policy",
     "userSubject": "User {{id}}",
+    "noExpiry": "No expiration",
+    "startsAt": "Starts {{date}}",
+    "overview": {
+      "ariaLabel": "Workforce data access policy sequence",
+      "title": "What this area controls",
+      "description": "In addition to permission to use a feature, these policies restrict the organizations, data, and actions that workforce APIs allow.",
+      "steps": {
+        "subject": {
+          "title": "Subject",
+          "description": "Choose an HR role or one named user."
+        },
+        "organization": {
+          "title": "Organization",
+          "description": "Define the organization and descendant scope."
+        },
+        "data": {
+          "title": "Data",
+          "description": "Choose the workforce data groups to expose."
+        },
+        "action": {
+          "title": "Action",
+          "description": "Permit reading or exporting workforce data."
+        },
+        "validity": {
+          "title": "Validity",
+          "description": "Control when access begins and ends."
+        }
+      },
+      "intersection": {
+        "title": "Both conditions must be satisfied",
+        "description": "Role permissions determine feature eligibility; this policy determines the organizations and data the subject can actually access.",
+        "rolePermission": "Role and feature permission",
+        "accessPolicy": "Workforce data access policy",
+        "effectiveAccess": "Effective data access"
+      },
+      "override": {
+        "title": "A user exception replaces role defaults",
+        "description": "When a user has an exception policy, it is not combined with role policies. Include every scope that user still needs in the exception."
+      }
+    },
     "metrics": {
-      "active": "Active boundaries",
-      "scoped": "Organization-scoped",
-      "userOverrides": "User overrides"
+      "ariaLabel": "Access policy summary",
+      "active": "In effect",
+      "activeDescription": "Policies currently applied to requests",
+      "userOverrides": "User exceptions",
+      "userOverridesDescription": "Policies that replace role defaults",
+      "exportEnabled": "Export enabled",
+      "exportEnabledDescription": "Policies that allow data export",
+      "expiringSoon": "Expires in 30 days",
+      "expiringSoonDescription": "Policies requiring renewal or closure"
+    },
+    "list": {
+      "title": "Access policies",
+      "description": "Review each subject, organization scope, permitted data and actions, and validity period."
     },
     "columns": {
       "subject": "Subject",
-      "population": "Target population",
-      "fields": "Permitted fields",
-      "validTo": "Expires",
-      "status": "Status"
+      "population": "Organizations in scope",
+      "fields": "Permitted data",
+      "allowedActions": "Permitted actions",
+      "validity": "Validity",
+      "status": "Status",
+      "actions": "Actions"
     },
     "subjectTypes": {
       "ROLE": "Role default",
@@ -3363,7 +3637,7 @@
       "PEOPLE_ADMIN": "People operations administrator"
     },
     "populations": {
-      "TENANT": "Entire tenant",
+      "TENANT": "All SKAX organizations",
       "ORG_UNIT": "Selected organization only",
       "ORG_TREE": "Selected organization and descendants"
     },
@@ -3374,11 +3648,12 @@
       "JOB_GRADE": "Job grade and level"
     },
     "actions": {
-      "READ": "Read",
-      "EXPORT": "Eligible to export"
+      "READ": "Read data",
+      "EXPORT": "Export data"
     },
     "states": {
       "ACTIVE": "Active",
+      "SCHEDULED": "Scheduled",
       "REVOKED": "Revoked",
       "EXPIRED": "Expired"
     },
@@ -3386,32 +3661,74 @@
       "subjectType": "Subject type",
       "subject": "Role or user",
       "selectSubject": "Select a subject",
-      "population": "Target population",
+      "population": "Organizations in scope",
       "organization": "Root organization",
       "selectOrganization": "Select an organization",
-      "fieldGroups": "Permitted field groups",
+      "fieldGroups": "Permitted data",
       "actions": "Permitted actions",
-      "validTo": "Expiration",
+      "validFrom": "Start date and time",
+      "validTo": "End date and time",
+      "validityError": "The end date and time must be after the start.",
+      "validityFutureError": "The end date and time must be in the future.",
       "justification": "Business justification",
-      "justificationHelp": "Record at least 10 characters explaining why this minimum access is required.",
-      "reason": "Revocation reason"
+      "justificationHelp": "Enter at least 10 characters explaining why this minimum access is required. Do not enter sensitive data.",
+      "reason": "Revocation reason",
+      "reasonHelp": "Enter at least 10 characters. The reason is retained in the audit record."
     },
     "dialog": {
-      "title": "Add a workforce data boundary",
-      "description": "A user policy overrides role defaults. The API re-evaluates the population and field groups on every request."
+      "title": "Create a workforce data access policy",
+      "description": "Define the subject, organizations, permitted data and actions, and validity period.",
+      "cancel": "Cancel",
+      "submit": "Apply policy",
+      "submitting": "Applying policy"
+    },
+    "warnings": {
+      "userOverride": "A user exception replaces rather than adds to role policies. Include every scope this user still needs.",
+      "export": "Export moves workforce data outside the product interface. Allow it only when it is required.",
+      "directoryRequired": "Basic profile data is required by every policy and cannot be cleared."
+    },
+    "references": {
+      "loading": "Loading user and organization choices.",
+      "error": "User or organization choices could not be loaded, so a new policy cannot be created. Existing policy review is unaffected.",
+      "retry": "Reload choices"
     },
     "revoke": {
-      "title": "Revoke this access boundary?",
-      "description": "The workforce data scope is blocked from the next request after revocation.",
-      "action": "Revoke"
+      "title": "Revoke this access policy?",
+      "description": "The workforce data scope for {{subject}} will be blocked from the next request.",
+      "action": "Revoke",
+      "ariaLabel": "Revoke the workforce data access policy for {{subject}}",
+      "cancel": "Cancel",
+      "submit": "Revoke now",
+      "submitting": "Revoking policy"
     },
     "empty": {
-      "title": "No workforce data boundaries",
-      "description": "An administrator role alone does not expose detailed workforce data. Add an approved minimum scope."
+      "title": "No workforce data access policies are in effect",
+      "description": "Role permission alone does not expose detailed workforce data. Choose the minimum organizations, data, and actions for the first policy.",
+      "filteredTitle": "No access policies match",
+      "filteredDescription": "Change the search term or filters."
+    },
+    "filters": {
+      "ariaLabel": "Search and filter workforce data access policies",
+      "searchLabel": "Search policies",
+      "searchPlaceholder": "Search role, user, organization, or data",
+      "state": "Status",
+      "action": "Permitted action",
+      "allStates": "All statuses",
+      "allActions": "All actions",
+      "result": "{{count}} of {{total}}",
+      "applied": "Filters applied",
+      "reset": "Reset filters"
+    },
+    "error": {
+      "title": "Workforce data access policies could not be loaded",
+      "description": "The service connection is temporarily unavailable. Existing access policies were not changed.",
+      "retry": "Try again"
     },
     "toasts": {
-      "created": "The workforce data boundary was added.",
-      "revoked": "The workforce data boundary was revoked."
+      "created": "The workforce data access policy was applied.",
+      "revoked": "The workforce data access policy was revoked.",
+      "createFailed": "The policy could not be applied. Check the list for its current state before trying again.",
+      "revokeFailed": "The policy could not be revoked. Refresh its state before trying again."
     }
   },
   "preferenceExceptions": {
@@ -3642,39 +3959,99 @@
     }
   },
   "savedViewCustody": {
-    "loading": "Loading the saved view custody workspace",
-    "readOnly": "This account can review custody status but cannot execute an ownership plan.",
+    "readOnly": "This account can review saved view ownership but cannot execute changes.",
+    "explainer": {
+      "eyebrow": "What is a saved view?",
+      "title": "Keep employees' saved workspace setups from being lost after a move or departure",
+      "description": "A saved view is not a copy of business data. It stores reusable search criteria and screen configuration. When someone leaves or changes teams, you can transfer every active view they own to a new steward, or suspend those views and archive them automatically on a specified date.",
+      "examples": {
+        "filters": "Search and filters",
+        "sort": "Sort order",
+        "columns": "Visible columns and layout"
+      },
+      "boundary": "Source business data is not moved or deleted. Only ownership and availability of the saved screen setup change.",
+      "steps": {
+        "select": {
+          "title": "Select the affected user",
+          "description": "Find the person involved in an offboarding, move, or reorganization."
+        },
+        "review": {
+          "title": "Review the full impact",
+          "description": "Inspect every active saved view they own and each view's visibility."
+        },
+        "decide": {
+          "title": "Transfer or suspend",
+          "description": "Assign a new steward or choose an automatic archive date."
+        },
+        "record": {
+          "title": "Preserve evidence",
+          "description": "Record the actor, reason, source reference, and result in immutable history."
+        }
+      }
+    },
     "metrics": {
-      "activeUsers": "Eligible active users",
-      "orphaned": "Retained without owner",
-      "recentTransfers": "Recent custody actions"
+      "label": "Saved view ownership operations",
+      "orphaned": "Awaiting archive",
+      "orphanedHelp": "Hidden from active view lists",
+      "expiringSoon": "Archiving within 7 days",
+      "expiringSoonHelp": "Deadlines that need attention",
+      "recentTransfers": "Recent action records",
+      "recentTransfersHelp": "Latest 50 records from each audit feed",
+      "refreshing": "Refreshing operational status",
+      "updatedAt": "Last successful refresh {{value}}",
+      "notUpdated": "No successful refresh yet"
     },
     "tabs": {
-      "label": "Saved view custody workspace",
-      "plan": "Custody plan",
-      "orphaned": "Unowned views {{count}}",
-      "history": "Decision history"
+      "label": "Saved view ownership workflow",
+      "plan": "Resolve ownership",
+      "orphaned": "Awaiting archive {{count}}",
+      "orphanedPlain": "Awaiting archive",
+      "history": "Action history"
     },
     "plan": {
-      "title": "Custody change plan",
-      "description": "Link authoritative workforce evidence and freeze the current impact before execution."
+      "title": "Resolve a user's saved views",
+      "description": "Enter the user, outcome, and evidence, then review the exact saved views that will change."
+    },
+    "steps": {
+      "owner": {
+        "title": "Affected user",
+        "description": "Every active saved view owned by this user will be included in the review."
+      },
+      "disposition": {
+        "title": "Outcome",
+        "description": "Transfer to a new steward when the saved views are still needed for business continuity."
+      },
+      "evidence": {
+        "title": "Change evidence",
+        "description": "Capture the workforce or organization source and the administrator's decision rationale."
+      }
     },
     "fields": {
-      "sourceOwner": "Current owner",
-      "targetOwner": "New owner",
-      "selectUser": "Select a tenant user",
-      "disposition": "Disposition",
-      "retentionUntil": "Retention deadline",
-      "retentionHelp": "The background retention policy archives the view after this deadline.",
-      "reasonCode": "Change type",
-      "sourceReference": "Authoritative evidence ID",
-      "sourceReferenceHelp": "Enter an immutable HR event, reorganization, or approved case reference.",
-      "reason": "Detailed reason",
-      "reasonHelp": "Enter at least 10 characters. This is retained as audit evidence."
+      "sourceOwner": "User to resolve",
+      "sourceOwnerHelp": "Search by name or email. Inactive accounts appear first.",
+      "selectedOwnerHelp": "The impact review will include every active saved view this user owns.",
+      "targetOwner": "New steward",
+      "targetOwnerHelp": "Only an active user in this tenant can become the new owner.",
+      "loadingUsers": "Loading users",
+      "noUsers": "No users match",
+      "noActiveUsers": "No active users match",
+      "disposition": "How should these saved views be handled?",
+      "retentionUntil": "Automatic archive date and time",
+      "retentionHelp": "Keep the views suspended until this time, then archive them automatically.",
+      "retentionWarning": "The views are immediately hidden from every active list and all favorite and default-view links are removed. Before automatic archive, an administrator can reassign a steward or extend the deadline from the waiting list, but previous favorite and default-view links are not restored.",
+      "reasonCode": "Reason type",
+      "sourceReference": "Source document or request",
+      "sourceReferenceHelp": "For example, HR-2026-0813 or CASE-12345. Enter an identifier that can be found again during an audit.",
+      "reason": "Administrator note",
+      "reasonHelp": "Enter at least 10 characters explaining the decision. This is retained as audit evidence."
     },
     "dispositions": {
-      "TRANSFER": "Transfer to an active user",
-      "RETAIN_ORPHANED": "Retain without an owner until a deadline"
+      "TRANSFER": "Transfer ownership to a new steward",
+      "RETAIN_ORPHANED": "Suspend now and archive automatically"
+    },
+    "dispositionHelp": {
+      "TRANSFER": "Keep visibility and saved configuration unchanged, and assign an active user as owner.",
+      "RETAIN_ORPHANED": "Hide the views from everyone immediately and archive them on the specified date."
     },
     "reasons": {
       "OFFBOARDING": "Offboarding or transfer",
@@ -3686,49 +4063,256 @@
       "TEAM": "Team",
       "TENANT": "Organization"
     },
+    "statuses": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "SUSPENDED": "Suspended",
+      "LOCKED": "Locked",
+      "DEACTIVATED": "Deactivated",
+      "INVITED": "Invited"
+    },
+    "surfaces": {
+      "communicationsWork": "News and messaging work",
+      "communicationsManagement": "Newsroom operations",
+      "approvalsWork": "Approvals",
+      "hcmOperations": "Workforce operations",
+      "hcmManagement": "Workforce management",
+      "servicesWork": "Service center",
+      "servicesManagement": "Service operations",
+      "workspaceHome": "Workspace home",
+      "workspaceWork": "My work",
+      "workspaceActivity": "Activity",
+      "workspaceApps": "Work apps",
+      "workforceDirectory": "Workforce directory",
+      "workforceOperations": "Workforce operations overview",
+      "calendarSchedule": "Calendar schedule"
+    },
     "preview": {
-      "title": "Impact preview",
-      "description": "Freeze the current owned views and versions, then revalidate them immediately before execution.",
-      "emptyTitle": "No custody plan has been evaluated",
-      "emptyDescription": "Complete the evidence and disposition on the left, then preview the impact.",
-      "summary": "{{count}} views will use ‘{{disposition}}’.",
-      "evaluatedAt": "Evaluated {{value}}",
-      "fingerprint": "Snapshot {{value}}…",
-      "confirmHelp": "Any input or ownership change invalidates this preview and prevents execution.",
-      "gridLabel": "Saved views affected by the custody change"
+      "title": "Review the saved views that will change",
+      "description": "Freeze the current ownership set and revalidate it immediately before execution.",
+      "emptyTitle": "No impact has been reviewed yet",
+      "emptyDescription": "Complete the three steps on the left, then select ‘Review saved views’.",
+      "staleDescription": "Review the impact again using the changed inputs before execution.",
+      "invalidated": "The inputs changed, so the previous impact review can no longer be used. Review again.",
+      "transferSummary": "Transfer all {{count}} active saved views owned by {{source}} to {{target}}.",
+      "suspendSummary": "Suspend all {{count}} active saved views owned by {{source}} and archive them automatically on {{date}}.",
+      "archiveTarget": "Archive {{value}}",
+      "scopeCount": "{{scope}} {{count}}",
+      "teamGroup": "Team: {{value}}",
+      "evaluatedAt": "Verified as of {{value}}",
+      "confirmHelp": "The final confirmation repeats the owner, impact, and evidence before execution.",
+      "gridLabel": "Saved views affected by the ownership change",
+      "noViewsTitle": "No active saved views need action",
+      "noViewsDescription": "The selected user does not currently own any active saved views.",
+      "transferImpact": "Visibility and saved filters, sorting, and column settings remain unchanged. Only the previous owner's favorite and default-view links are removed.",
+      "suspendImpact": "The views are immediately hidden from every active list and all favorite and default-view links are removed. Before automatic archive, the waiting list supports reassignment, deadline extension, or immediate archive."
+    },
+    "nameConflicts": {
+      "title_one": "{{count}} personal saved view cannot be transferred to {{target}} because of a duplicate name",
+      "title_other": "{{count}} personal saved views cannot be transferred to {{target}} because of duplicate names",
+      "runtimeTitle": "{{target}} already has a personal saved view with the same name",
+      "item": "‘{{incoming}}’ in {{surface}} conflicts with the destination view ‘{{existing}}’.",
+      "runtimeItem": "‘{{name}}’ · {{surface}}",
+      "guidance": "Choose another steward, or first rename or remove the same-named personal view owned by the selected steward. Then review the impact again."
+    },
+    "eligibility": {
+      "eligible": "Eligible for every affected saved view",
+      "ineligible": "Not eligible for this custody plan",
+      "notEvaluated": "Eligibility will be verified before review",
+      "runtimeTitle": "{{target}} cannot become the steward for this saved view",
+      "guidance": "Choose a different active steward. Your evidence and other inputs are preserved.",
+      "reasons": {
+        "TARGET_INELIGIBLE": "The selected user's eligibility changed during review and must be checked again.",
+        "NO_AFFECTED_VIEWS": "This user has no active saved views that require a successor.",
+        "SOURCE_OWNER_NOT_SUCCESSOR": "The current owner cannot be selected as their own successor.",
+        "SELF_ASSIGNMENT_NOT_ALLOWED": "The administrator executing the change cannot assign custody to themselves.",
+        "IDENTITY_NOT_ELIGIBLE": "Only an active tenant user can become the steward.",
+        "EVALUATION_UNAVAILABLE": "Eligibility evidence is temporarily unavailable for this user. Reload before selecting a steward.",
+        "MISSING_SURFACE_ACCESS": "This user does not have access to every product area used by the affected views.",
+        "MISSING_TEAM_MEMBERSHIP": "This user does not belong to every team that owns an affected view.",
+        "MISSING_SHARED_VIEW_ADMIN_ROLE": "This user is not an organization shared-view administrator.",
+        "PERSONAL_NAME_CONFLICT": "This user already owns a personal saved view with the same name on this product surface."
+      }
     },
     "actions": {
-      "preview": "Preview impact",
-      "previewing": "Evaluating impact",
-      "execute": "Execute verified plan",
-      "executing": "Changing custody"
+      "retry": "Reload",
+      "retryPreview": "Review impact again",
+      "reviewCurrentImpact": "Review current impact",
+      "preview": "Review saved views",
+      "previewing": "Reviewing impact",
+      "transfer": "Transfer {{count}} to {{name}}",
+      "suspend": "Suspend {{count}} views",
+      "executing": "Changing saved view ownership",
+      "cancel": "Cancel"
+    },
+    "validation": {
+      "sourceOwner": "Select the affected user.",
+      "targetOwner": "Select a different active user.",
+      "retentionUntil": "Select an automatic archive time later than now and within 365 days.",
+      "sourceReference": "Enter at least 3 characters for the source document or request.",
+      "reason": "Enter an administrator note of at least 10 characters.",
+      "remaining_one": "Complete {{count}} more required item to review the impact.",
+      "remaining_other": "Complete {{count}} more required items to review the impact."
+    },
+    "errors": {
+      "users": "We could not load users. Your inputs are preserved.",
+      "preview": "We could not review the impact. Try again in a moment.",
+      "executionConflict": "The reviewed plan no longer matches the current saved-view state, so no action was applied. Your inputs are preserved; review the current impact before trying again.",
+      "orphaned": "We could not load views awaiting archive.",
+      "history": "We could not load bulk ownership change history.",
+      "actionHistory": "We could not load waiting-list follow-up history. Other action records remain available."
     },
     "columns": {
       "view": "Saved view",
-      "surface": "Surface",
+      "viewReference": "Saved view reference",
+      "surface": "Used in",
       "scope": "Visibility",
       "updatedAt": "Last changed",
-      "retentionUntil": "Retention deadline",
+      "retentionUntil": "Automatic archive",
+      "suspendedAt": "Suspended",
       "sourceOwner": "Previous owner",
-      "targetOwner": "New owner",
-      "disposition": "Disposition",
+      "result": "Result",
       "affected": "Affected",
-      "sourceReference": "Evidence",
-      "executedAt": "Executed"
+      "reasonCode": "Reason",
+      "sourceReference": "Source reference",
+      "evidence": "Evidence and administrator note",
+      "actor": "Actioned by",
+      "executedAt": "Executed",
+      "actions": "Follow-up"
     },
     "orphaned": {
-      "gridLabel": "Saved views retained without an owner",
-      "emptyTitle": "No views are retained without an owner",
-      "emptyDescription": "Every active saved view has an accountable owner."
+      "title": "Awaiting automatic archive",
+      "description": "These views have no owner and are hidden from active lists. Reassign a steward, extend the archive deadline, or archive a view now when it is no longer needed.",
+      "loading": "Loading views awaiting archive",
+      "search": "Search saved view or product area",
+      "gridLabel": "Suspended saved views awaiting automatic archive",
+      "emptyTitle": "No saved views are awaiting archive",
+      "emptyDescription": "Every active saved view currently has an accountable owner.",
+      "noResultsTitle": "No saved views match",
+      "noResultsDescription": "Change the saved view or product-area search.",
+      "reassignmentBlocked": "Reassignment blocked · shared name conflict",
+      "dueNow": "Archive processing pending",
+      "daysRemaining_one": "{{count}} day remaining",
+      "daysRemaining_other": "{{count}} days remaining"
+    },
+    "orphanActions": {
+      "open": "Manage",
+      "title": "Follow up a view awaiting archive",
+      "currentArchive": "Currently scheduled to archive {{value}}",
+      "actionLabel": "What should happen to this saved view?",
+      "actions": {
+        "REASSIGN": {
+          "title": "Reassign to a new steward",
+          "description": "Keep the saved setup and visibility, then make the view available immediately."
+        },
+        "EXTEND_RETENTION": {
+          "title": "Extend the archive deadline",
+          "description": "Keep the view suspended while allowing more time for review or retention."
+        },
+        "ARCHIVE": {
+          "title": "Archive now",
+          "description": "End the waiting period and move the saved view to the archived state immediately."
+        }
+      },
+      "targetLoadError": "We could not load active users eligible for reassignment. Try again in a moment.",
+      "targetOwner": "New steward",
+      "targetOwnerHelp": "Only an active user in this tenant can be selected.",
+      "newRetentionUntil": "New automatic archive date and time",
+      "newRetentionHelp": "Choose a date later than the current deadline, {{value}}, and no more than 365 days from today.",
+      "retentionValidation": "Choose a date later than {{value}} and no more than 365 days from today.",
+      "archiveWarning": "Archiving removes this view from the waiting list immediately. This screen cannot reactivate it.",
+      "reviewAction": "Review final change",
+      "back": "Back to inputs",
+      "executing": "Applying follow-up action",
+      "conflict": "‘{{name}}’ changed in another action, so nothing was applied. The latest list is loaded; review the follow-up again.",
+      "sharedNameConflict": {
+        "title": "This view cannot be reassigned while an active shared view has the same name",
+        "description": "An active view named ‘{{name}}’ already exists at the {{scope}} scope. Shared-view uniqueness does not depend on the steward, so choosing another person will not resolve it.",
+        "guidance": "Rename or archive the existing active shared view, then try again. You can still extend this view’s archive deadline or archive it now."
+      },
+      "confirm": {
+        "view": "Saved view",
+        "outcome": "Outcome",
+        "reassignOutcome": "Reassign to {{owner}} and make active immediately",
+        "extendOutcome": "Keep suspended until {{value}}",
+        "archiveOutcome": "Move to archived state immediately",
+        "REASSIGN": {
+          "title": "Reassign ‘{{name}}’?",
+          "description": "Ownership changes to the new steward immediately and the view returns to active lists. Review the target and evidence.",
+          "action": "Reassign to new steward"
+        },
+        "EXTEND_RETENTION": {
+          "title": "Extend the deadline for ‘{{name}}’?",
+          "description": "The saved view remains hidden and will be archived automatically on the new date.",
+          "action": "Extend archive deadline"
+        },
+        "ARCHIVE": {
+          "title": "Archive ‘{{name}}’ now?",
+          "description": "The retention wait ends immediately. This screen cannot reactivate an archived saved view.",
+          "action": "Archive now"
+        }
+      },
+      "toasts": {
+        "REASSIGN": "The saved view was reassigned to its new steward.",
+        "EXTEND_RETENTION": "The automatic archive deadline was extended.",
+        "ARCHIVE": "The saved view was archived immediately.",
+        "failed": "We could not confirm the result. Retry in the same confirmation dialog; the action will not be duplicated."
+      }
     },
     "history": {
-      "gridLabel": "Saved view custody decision history",
-      "emptyTitle": "No custody decisions yet",
-      "emptyDescription": "Immutable evidence appears after a transfer or time-bound retention action."
+      "title": "Bulk ownership changes",
+      "description": "See who transferred or suspended a user's saved views, when, why, and to whom or until which date.",
+      "loading": "Loading bulk ownership changes",
+      "search": "Search user, source reference, or reason",
+      "gridLabel": "Saved view ownership action history",
+      "emptyTitle": "No ownership actions yet",
+      "emptyDescription": "Immutable evidence appears after an ownership transfer or suspension.",
+      "noResultsTitle": "No action records match",
+      "noResultsDescription": "Change the user, source reference, or reason search.",
+      "archiveOn": "Archive {{value}}"
+    },
+    "actionHistory": {
+      "title": "Waiting-list follow-up history",
+      "description": "Reassignment, deadline extension, and immediate archive commands are recorded independently from bulk ownership changes.",
+      "loading": "Loading waiting-list follow-up history",
+      "search": "Search saved view reference, target, evidence, or reason",
+      "gridLabel": "Saved view waiting-list follow-up history",
+      "immutableId": "Immutable saved view ID",
+      "emptyTitle": "No waiting-list follow-up actions yet",
+      "emptyDescription": "Immutable evidence appears after a suspended view is reassigned, extended, or archived immediately.",
+      "noResultsTitle": "No follow-up records match",
+      "noResultsDescription": "Change the saved view reference, target, evidence, or reason search.",
+      "actions": {
+        "REASSIGN": "Reassigned",
+        "EXTEND_RETENTION": "Archive deadline extended",
+        "ARCHIVE_NOW": "Archived immediately"
+      },
+      "outcomes": {
+        "REASSIGN": "New steward: {{owner}}",
+        "EXTEND_RETENTION": "New archive date: {{value}}",
+        "ARCHIVE_NOW": "Moved to archived state"
+      }
+    },
+    "confirm": {
+      "transferTitle": "Transfer {{count}} saved views?",
+      "suspendTitle": "Suspend {{count}} saved views?",
+      "transferDescription": "Ownership changes to the new steward immediately. Review the owner, visibility scope, and evidence below.",
+      "suspendDescription": "The views are immediately hidden from everyone and all favorite and default-view links are removed. Before automatic archive, the waiting list supports steward reassignment, deadline extension, or immediate archive.",
+      "ownerChange": "Ownership change",
+      "noOwner": "No owner",
+      "scope": "Impact",
+      "scopeSummary": "{{total}} total · {{personal}} personal · {{team}} team · {{tenant}} organization",
+      "teamGroups": "Team visibility references",
+      "archiveDate": "Automatic archive time",
+      "reasonType": "Reason type",
+      "sourceReference": "Source document or request",
+      "administratorNote": "Administrator note"
     },
     "userFallback": "User #{{id}}",
     "toasts": {
-      "completed": "Custody processing completed for {{count}} saved views."
+      "completed": "Ownership processing completed for {{count}} saved views.",
+      "previewFailed": "We could not review the saved views that will change.",
+      "executeFailed": "We could not confirm the result. Retry in the same confirmation dialog; the action will not be duplicated."
     }
   },
   "serviceCenter": {
@@ -3853,6 +4437,17 @@
   "supportMode": {
     "title": "Support mode · {{tenant}}",
     "expires": "Approved scope is available until {{value}}.",
+    "remaining": "Remaining · {{value}}",
+    "tenantKey": "Tenant · {{value}}",
+    "environment": "Environment · {{value}}",
+    "region": "Region · {{value}}",
+    "sessionReference": "Session · {{value}}",
+    "scopes": {
+      "TENANT_EXPERIENCE_PREVIEW": "Preview redacted tenant experience configuration",
+      "TENANT_CONFIGURATION_READ": "Read tenant configuration",
+      "TENANT_CONFIGURATION_WRITE": "Change tenant configuration",
+      "WORKFORCE_READ": "Read workforce data"
+    },
     "accessMode": {
       "STANDARD": "Approved access",
       "BREAK_GLASS": "Emergency access"

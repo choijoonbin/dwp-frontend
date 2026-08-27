@@ -32,7 +32,7 @@ test('home turns live work signals into a keyboard-operable next action', async 
   await expect(commandCenter.getByRole('heading', { name: 'Welcome back, Mina' })).toBeVisible();
   await expect(page.getByTestId('home-hero')).toHaveCSS(
     'background-image',
-    /agentic-workspace-hero-clean\.png/
+    /agentic-workspace-hero-v2\.png/
   );
   await expect(
     commandArea.getByRole('heading', { name: 'Approve software access request' })

@@ -1,0 +1,1649 @@
+{
+  "fixtureVersion": 1,
+  "canonicalization": {
+    "algorithm": "RFC8785-JCS",
+    "encoding": "UTF-8",
+    "hash": "SHA-256",
+    "responseHashInput": ["status", "body", "etag"]
+  },
+  "completions": [
+    {
+      "caseId": "success-create-definition",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000001",
+          "operationId": "createWidgetDefinition",
+          "commandType": "CREATE_DEFINITION",
+          "fullTarget": {
+            "targetType": "DEFINITION_KEY_HASH",
+            "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e"
+          }
+        },
+        "requestProjection": {
+          "definitionKey": "core.workspace.command-rail",
+          "ownerProductKey": "core.workspace",
+          "ownerTeamKey": "core.workspace-platform",
+          "riskTier": "HIGH",
+          "dataClassification": "CONFIDENTIAL"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000001",
+        "operationId": "createWidgetDefinition",
+        "commandType": "CREATE_DEFINITION",
+        "target": {
+          "targetType": "DEFINITION_KEY_HASH",
+          "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 201,
+        "responseBody": {
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "definitionKey": "core.workspace.command-rail",
+          "legacyWidgetKey": "command-rail",
+          "ownerProductKey": "core.workspace",
+          "ownerTeamKey": "core.workspace-platform",
+          "riskTier": "HIGH",
+          "dataClassification": "CONFIDENTIAL",
+          "definitionState": "ACTIVE",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": ["CREATE_VERSION", "RETIRE"]
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "bd35d67a6fcb3c233a565c32c08276c20a3fb7ac2f3f63e17abe5cdf8ddcfb2e",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-create-version",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000002",
+          "operationId": "createWidgetDefinitionVersion",
+          "commandType": "CREATE_VERSION",
+          "fullTarget": {
+            "targetType": "DEFINITION_SEMVER_HASH",
+            "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+            "definitionId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "requestProjection": {
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": { "productKey": "core.workspace", "sourceAppResourceKey": "APP.WORK" },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": { "presetEligible": false },
+            "operations": { "freshnessSeconds": 30, "analyticsKey": "home.command-rail" },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          }
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000002",
+        "operationId": "createWidgetDefinitionVersion",
+        "commandType": "CREATE_VERSION",
+        "target": {
+          "targetType": "DEFINITION_SEMVER_HASH",
+          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 201,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PENDING",
+          "certificationStatus": "NOT_RUN",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "55a3aea359427ab54674fa798e033a4ccfeddcf2f6b2d09ba3da95a960afcd94",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-update-version",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000003",
+          "operationId": "updateWidgetDefinitionVersion",
+          "commandType": "UPDATE_VERSION",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": { "productKey": "core.workspace", "sourceAppResourceKey": "APP.WORK" },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": { "presetEligible": false },
+            "operations": { "freshnessSeconds": 30, "analyticsKey": "home.command-rail" },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          }
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000003",
+        "operationId": "updateWidgetDefinitionVersion",
+        "commandType": "UPDATE_VERSION",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PENDING",
+          "certificationStatus": "NOT_RUN",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "3e94b18c79f7d16a2985eb3609ea0793d35ca026864faed52f0e5cf00afe26f6",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-validate",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000004",
+          "operationId": "validateWidgetDefinitionVersion",
+          "commandType": "VALIDATE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000004",
+        "operationId": "validateWidgetDefinitionVersion",
+        "commandType": "VALIDATE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "validationRunId": "77777777-7777-4777-8777-777777777777",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "status": "PASS",
+          "parentDefinitionVersion": 42,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "bindingHeadVersion": 42,
+          "productAppRevision": "product_app_revision_0042",
+          "rendererRevision": "renderer_revision_0042",
+          "capabilityRevision": "capability_revision_0042",
+          "errors": [],
+          "validatedAt": "2026-08-27T10:00:00Z"
+        },
+        "responseEtag": null,
+        "responseHash": "a62e282bbfaef066547544986c8a366cd821d286f61ab9c401f739aa87a84f2f",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-submit",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000005",
+          "operationId": "submitWidgetDefinitionVersion",
+          "commandType": "SUBMIT",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {},
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000005",
+        "operationId": "submitWidgetDefinitionVersion",
+        "commandType": "SUBMIT",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "SUBMITTED",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PENDING",
+          "certificationStatus": "NOT_RUN",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "a96bb1e9628f9d7073a7dfa01643b6f8909eaa6d9dd67286cd97ae577b63d88f",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-decide",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000006",
+          "operationId": "decideWidgetDefinitionVersion",
+          "commandType": "DECIDE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": { "decision": "APPROVE" },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000006",
+        "operationId": "decideWidgetDefinitionVersion",
+        "commandType": "DECIDE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "APPROVED",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PROVIDER_CERTIFIED",
+          "certificationStatus": "PASS",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "187fb6b02431a9fd97813deca34d9eea8823b8d0e7c04dda3d1425ff5fb865ae",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-rework",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000007",
+          "operationId": "reworkWidgetDefinitionVersion",
+          "commandType": "REWORK",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {},
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000007",
+        "operationId": "reworkWidgetDefinitionVersion",
+        "commandType": "REWORK",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "DRAFT",
+          "releaseState": "UNPUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PENDING",
+          "certificationStatus": "NOT_RUN",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "3e94b18c79f7d16a2985eb3609ea0793d35ca026864faed52f0e5cf00afe26f6",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-record-evidence",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000008",
+          "operationId": "recordWidgetCertificationEvidence",
+          "commandType": "RECORD_EVIDENCE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "evidenceType": "SECURITY",
+          "decision": "PASS",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "evidenceRef": "security_attestation_20260827",
+          "evidenceSha256": "4c5f0d6b25f4b3f2ce4d86663252844e7bb7c0d94a0b3a07aca2bccf14569f35",
+          "expiresAt": "2026-09-30T00:00:00Z"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000008",
+        "operationId": "recordWidgetCertificationEvidence",
+        "commandType": "RECORD_EVIDENCE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 201,
+        "responseBody": {
+          "evidenceId": "33333333-3333-4333-8333-333333333333",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "evidenceType": "SECURITY",
+          "status": "PASS",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "evidenceRef": "security_attestation_20260827",
+          "evidenceSha256": "4c5f0d6b25f4b3f2ce4d86663252844e7bb7c0d94a0b3a07aca2bccf14569f35",
+          "expiresAt": "2026-09-30T00:00:00Z",
+          "decisionRevision": "evidence_decision_revision_0042",
+          "reviewedBy": "actor_ref_widget_reviewer",
+          "createdAt": "2026-08-27T10:00:00Z"
+        },
+        "responseEtag": null,
+        "responseHash": "dd0a5b054c488f186a0b0cf7f06127bf3bd93fa58ad0388d6e850abcf8f29aad",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-waive-evidence",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000009",
+          "operationId": "waiveWidgetCertificationEvidence",
+          "commandType": "WAIVE_EVIDENCE",
+          "fullTarget": {
+            "targetType": "EVIDENCE",
+            "targetId": "33333333-3333-4333-8333-333333333333",
+            "versionId": "22222222-2222-4222-8222-222222222222",
+            "evidenceId": "33333333-3333-4333-8333-333333333333"
+          }
+        },
+        "requestProjection": {
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "waiverExpiresAt": "2026-09-15T00:00:00Z",
+          "trackingTicketRef": "DWP-ADM009-LOC-42"
+        },
+        "currentTargetProjection": {
+          "evidenceId": "33333333-3333-4333-8333-333333333333",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "evidenceType": "LOCALIZATION",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "evidenceRef": "localization_exception_20260827",
+          "evidenceSha256": "5c5f0d6b25f4b3f2ce4d86663252844e7bb7c0d94a0b3a07aca2bccf14569f35"
+        }
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000009",
+        "operationId": "waiveWidgetCertificationEvidence",
+        "commandType": "WAIVE_EVIDENCE",
+        "target": {
+          "targetType": "EVIDENCE",
+          "targetId": "33333333-3333-4333-8333-333333333333"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "evidenceId": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "evidenceType": "LOCALIZATION",
+          "status": "WAIVED",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "evidenceRef": "localization_exception_20260827",
+          "evidenceSha256": "5c5f0d6b25f4b3f2ce4d86663252844e7bb7c0d94a0b3a07aca2bccf14569f35",
+          "expiresAt": "2026-09-15T00:00:00Z",
+          "decisionRevision": "evidence_decision_revision_0043",
+          "waivedEvidenceId": "33333333-3333-4333-8333-333333333333",
+          "trackingTicketRef": "DWP-ADM009-LOC-42",
+          "reviewedBy": "actor_ref_evidence_officer",
+          "createdAt": "2026-08-27T10:00:00Z"
+        },
+        "responseEtag": null,
+        "responseHash": "81b7dc976b569d79c08f57b6d4e73e50e7ca886ce1ab2e6e236a886ed41609c6",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-publish",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000010",
+          "operationId": "publishWidgetDefinitionVersion",
+          "commandType": "PUBLISH",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000010",
+        "operationId": "publishWidgetDefinitionVersion",
+        "commandType": "PUBLISH",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PROVIDER_CERTIFIED",
+          "certificationStatus": "PASS",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "89a6f8ff34df5bd96376718c3f08aabd2b911084ccc33194e950449bdb5ff407",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-deprecate",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000011",
+          "operationId": "deprecateWidgetDefinitionVersion",
+          "commandType": "DEPRECATE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": { "replacementVersionId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000011",
+        "operationId": "deprecateWidgetDefinitionVersion",
+        "commandType": "DEPRECATE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "replacementVersionId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "APPROVED",
+          "releaseState": "DEPRECATED",
+          "safetyState": "CLEAR",
+          "attestation": "PROVIDER_CERTIFIED",
+          "certificationStatus": "PASS",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "90cc997b34a2ef5cf1cec1ba5134d0800788a74f62a771a02845b592f7fd4f0a",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-quarantine",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000012",
+          "operationId": "quarantineWidgetDefinitionVersion",
+          "commandType": "QUARANTINE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {},
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000012",
+        "operationId": "quarantineWidgetDefinitionVersion",
+        "commandType": "QUARANTINE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "QUARANTINED",
+          "attestation": "PROVIDER_CERTIFIED",
+          "certificationStatus": "PASS",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "b20c713566d2c9a91a589576caaa9445881ba6a15826ffad6ce34e671f9a84ef",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-approve-quarantine-clearance",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000013",
+          "operationId": "approveWidgetQuarantineClearance",
+          "commandType": "APPROVE_QUARANTINE_CLEARANCE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "evidenceRefs": ["evidence_security_clearance_0042"],
+          "quarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "reviewDecision": "APPROVE"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000013",
+        "operationId": "approveWidgetQuarantineClearance",
+        "commandType": "APPROVE_QUARANTINE_CLEARANCE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "approvalId": "55555555-5555-4555-8555-555555555555",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "quarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "reviewDecision": "APPROVE",
+          "state": "ACTIVE",
+          "evidenceRefHashes": ["45cac5ef95a785209cafcb9e2a21750df3fedb41e730938327f1c91fc6829715"],
+          "expiresAt": "2026-08-27T10:30:00Z",
+          "consumedAt": null,
+          "approvedBy": "actor_ref_widget_reviewer",
+          "version": 1,
+          "createdAt": "2026-08-27T10:00:00Z"
+        },
+        "responseEtag": "\"v1\"",
+        "responseHash": "c85b6f0c85f02fa2555da4d92eb9de0aa6c1b0bde89c0090e290f63ed758e3da",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-clear-quarantine",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000014",
+          "operationId": "clearWidgetVersionQuarantine",
+          "commandType": "CLEAR_QUARANTINE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "clearanceApprovalId": "55555555-5555-4555-8555-555555555555",
+          "quarantineEventId": "99999999-9999-4999-8999-999999999999"
+        },
+        "currentTargetProjection": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "safetyState": "QUARANTINED",
+          "currentQuarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "quarantineRevision": 42,
+          "latestClearanceApproval": {
+            "approvalId": "55555555-5555-4555-8555-555555555555",
+            "versionId": "22222222-2222-4222-8222-222222222222",
+            "quarantineEventId": "99999999-9999-4999-8999-999999999999",
+            "quarantineRevision": 42,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T10:30:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "postMutationApprovalProjection": {
+          "approvalId": "55555555-5555-4555-8555-555555555555",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "quarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "quarantineRevision": 42,
+          "state": "CONSUMED",
+          "expiresAt": "2026-08-27T10:30:00Z",
+          "consumedAt": "2026-08-27T10:00:00Z",
+          "consumedByCommandId": "40000000-0000-4000-8000-000000000014"
+        }
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000014",
+        "operationId": "clearWidgetVersionQuarantine",
+        "commandType": "CLEAR_QUARANTINE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "CLEAR",
+          "attestation": "PROVIDER_CERTIFIED",
+          "certificationStatus": "PASS",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "89a6f8ff34df5bd96376718c3f08aabd2b911084ccc33194e950449bdb5ff407",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-revoke",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000015",
+          "operationId": "revokeWidgetDefinitionVersion",
+          "commandType": "REVOKE",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": { "replacementVersionId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000015",
+        "operationId": "revokeWidgetDefinitionVersion",
+        "commandType": "REVOKE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "semanticVersion": "1.0.0",
+          "replacementVersionId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": {
+              "presetEligible": false
+            },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "workflowState": "APPROVED",
+          "releaseState": "PUBLISHED",
+          "safetyState": "REVOKED",
+          "attestation": "PROVIDER_CERTIFIED",
+          "certificationStatus": "PASS",
+          "currentReviewDecisionId": null,
+          "currentQuarantineEventId": null,
+          "bindingCatalogRevision": "binding_catalog_revision_0042",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "2c1a2950da23805713e37828a902da0267dd170ea0df711cb07d2677ced523a8",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-retire",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000016",
+          "operationId": "retireWidgetDefinition",
+          "commandType": "RETIRE",
+          "fullTarget": {
+            "targetType": "DEFINITION",
+            "targetId": "11111111-1111-4111-8111-111111111111",
+            "definitionId": "11111111-1111-4111-8111-111111111111"
+          }
+        },
+        "requestProjection": {},
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000016",
+        "operationId": "retireWidgetDefinition",
+        "commandType": "RETIRE",
+        "target": {
+          "targetType": "DEFINITION",
+          "targetId": "11111111-1111-4111-8111-111111111111"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "definitionKey": "core.workspace.command-rail",
+          "legacyWidgetKey": "command-rail",
+          "ownerProductKey": "core.workspace",
+          "ownerTeamKey": "core.workspace-platform",
+          "riskTier": "HIGH",
+          "dataClassification": "CONFIDENTIAL",
+          "definitionState": "RETIRED",
+          "version": 42,
+          "createdAt": "2026-08-27T09:00:00Z",
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": []
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "1b9bd6e5d6960bd7d413c2d1c0257657f87050b2894c2e1cd94220a8e38649f2",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-promote",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000017",
+          "operationId": "promoteWidgetReleaseChannel",
+          "commandType": "PROMOTE",
+          "fullTarget": {
+            "targetType": "DEFINITION_CHANNEL_HASH",
+            "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+            "definitionId": "11111111-1111-4111-8111-111111111111",
+            "channel": "STABLE"
+          }
+        },
+        "requestProjection": { "versionId": "22222222-2222-4222-8222-222222222222" },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000017",
+        "operationId": "promoteWidgetReleaseChannel",
+        "commandType": "PROMOTE",
+        "target": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "channel": "STABLE",
+          "currentVersionId": "22222222-2222-4222-8222-222222222222",
+          "version": 42,
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": ["ROLLBACK"]
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "5c3475c77ed957a8325c0c722281dcb7f00090a4818d121f4a96f9abffa29288",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-rollback",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000018",
+          "operationId": "rollbackWidgetReleaseChannel",
+          "commandType": "ROLLBACK",
+          "fullTarget": {
+            "targetType": "DEFINITION_CHANNEL_HASH",
+            "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+            "definitionId": "11111111-1111-4111-8111-111111111111",
+            "channel": "STABLE"
+          }
+        },
+        "requestProjection": {
+          "restoreVersionId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "expectedCurrentVersionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000018",
+        "operationId": "rollbackWidgetReleaseChannel",
+        "commandType": "ROLLBACK",
+        "target": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 200,
+        "responseBody": {
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "channel": "STABLE",
+          "currentVersionId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "previousVersionId": "22222222-2222-4222-8222-222222222222",
+          "version": 43,
+          "updatedAt": "2026-08-27T10:00:00Z",
+          "allowedTransitions": ["PROMOTE", "ROLLBACK"]
+        },
+        "responseEtag": "\"v43\"",
+        "responseHash": "b282a4abd8e5f5032a86349275ec108cc9b8877101a72bd2f665052165950c75",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-disable-runtime-control",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000019",
+          "operationId": "disableWidgetRuntimeControl",
+          "commandType": "DISABLE_RUNTIME_CONTROL",
+          "fullTarget": {
+            "targetType": "RUNTIME_CONTROL_SCOPE_HASH",
+            "targetId": "866f3729173fc76cb9c8b68da9868e6dfee0b3e70844a335003ace93a9a24bb9",
+            "controlScope": "RUNTIME_RENDER",
+            "runtimeTargetType": "GLOBAL",
+            "runtimeTargetId": null
+          }
+        },
+        "requestProjection": {
+          "scope": "RUNTIME_RENDER",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "expiresAt": "2026-09-30T00:00:00Z",
+          "publicReasonCode": "RUNTIME_SAFETY_STOP"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000019",
+        "operationId": "disableWidgetRuntimeControl",
+        "commandType": "DISABLE_RUNTIME_CONTROL",
+        "target": {
+          "targetType": "RUNTIME_CONTROL_SCOPE_HASH",
+          "targetId": "866f3729173fc76cb9c8b68da9868e6dfee0b3e70844a335003ace93a9a24bb9"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 201,
+        "responseBody": {
+          "controlId": "44444444-4444-4444-8444-444444444444",
+          "scope": "RUNTIME_RENDER",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "revision": 42,
+          "expiresAt": "2026-09-30T00:00:00Z",
+          "publicReasonCode": "RUNTIME_SAFETY_STOP",
+          "createdAt": "2026-08-27T10:00:00Z",
+          "createdBy": "actor_ref_security_responder",
+          "safetyRevision": "safety_revision_0042"
+        },
+        "responseEtag": "\"v42\"",
+        "responseHash": "052743f6e2f3fd053d73e2012698b494f01f33f2d26a9ed2d300cc93138b5e53",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-approve-runtime-control-enable",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000020",
+          "operationId": "approveWidgetRuntimeControlEnable",
+          "commandType": "APPROVE_RUNTIME_CONTROL_ENABLE",
+          "fullTarget": {
+            "targetType": "RUNTIME_CONTROL",
+            "targetId": "44444444-4444-4444-8444-444444444444",
+            "controlId": "44444444-4444-4444-8444-444444444444"
+          }
+        },
+        "requestProjection": {
+          "controlRevision": 42,
+          "evidenceRefs": ["evidence_incident_resolved_0044"]
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000020",
+        "operationId": "approveWidgetRuntimeControlEnable",
+        "commandType": "APPROVE_RUNTIME_CONTROL_ENABLE",
+        "target": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 201,
+        "responseBody": {
+          "approvalId": "66666666-6666-4666-8666-666666666666",
+          "controlId": "44444444-4444-4444-8444-444444444444",
+          "controlRevision": 42,
+          "state": "ACTIVE",
+          "evidenceRefHashes": ["58203e5cc42c1987b0846dfee20416310604c53d336785b2b24074e0f1a34709"],
+          "expiresAt": "2026-08-27T10:30:00Z",
+          "consumedAt": null,
+          "approvedBy": "actor_ref_widget_reviewer",
+          "version": 1,
+          "createdAt": "2026-08-27T10:00:00Z"
+        },
+        "responseEtag": "\"v1\"",
+        "responseHash": "77df70afa5336ef6c6e0de393119e8f31a02c9bb6bf9066c9954d82b0aa4e823",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "success-enable-runtime-control",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000021",
+          "operationId": "enableWidgetRuntimeControl",
+          "commandType": "ENABLE_RUNTIME_CONTROL",
+          "fullTarget": {
+            "targetType": "RUNTIME_CONTROL",
+            "targetId": "44444444-4444-4444-8444-444444444444",
+            "controlId": "44444444-4444-4444-8444-444444444444"
+          }
+        },
+        "requestProjection": {
+          "controlRevision": 42,
+          "enableApprovalId": "66666666-6666-4666-8666-666666666666"
+        },
+        "currentTargetProjection": {
+          "controlId": "44444444-4444-4444-8444-444444444444",
+          "scope": "RUNTIME_RENDER",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "DISABLED",
+          "revision": 42,
+          "latestEnableApproval": {
+            "approvalId": "66666666-6666-4666-8666-666666666666",
+            "controlId": "44444444-4444-4444-8444-444444444444",
+            "scope": "RUNTIME_RENDER",
+            "targetType": "GLOBAL",
+            "targetId": null,
+            "controlRevision": 42,
+            "state": "ACTIVE",
+            "expiresAt": "2026-08-27T10:30:00Z",
+            "consumedAt": null,
+            "consumedByCommandId": null
+          }
+        },
+        "postMutationApprovalProjection": {
+          "approvalId": "66666666-6666-4666-8666-666666666666",
+          "controlId": "44444444-4444-4444-8444-444444444444",
+          "scope": "RUNTIME_RENDER",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "controlRevision": 42,
+          "state": "CONSUMED",
+          "expiresAt": "2026-08-27T10:30:00Z",
+          "consumedAt": "2026-08-27T10:00:00Z",
+          "consumedByCommandId": "40000000-0000-4000-8000-000000000021"
+        }
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000021",
+        "operationId": "enableWidgetRuntimeControl",
+        "commandType": "ENABLE_RUNTIME_CONTROL",
+        "target": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444"
+        },
+        "outcome": "SUCCEEDED",
+        "responseStatus": 201,
+        "responseBody": {
+          "controlId": "44444444-4444-4444-8444-444444444444",
+          "scope": "RUNTIME_RENDER",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "state": "ENABLED",
+          "revision": 43,
+          "expiresAt": null,
+          "publicReasonCode": "RUNTIME_CONTROL_RELEASED",
+          "createdAt": "2026-08-27T10:00:00Z",
+          "createdBy": "actor_ref_release_manager",
+          "safetyRevision": "safety_revision_0043"
+        },
+        "responseEtag": "\"v43\"",
+        "responseHash": "a4ef2be7caa1d99440d4ae94af32a2358ac788beaa3480b2395249b3cecc7937",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "rejected-response-too-large",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000022",
+          "operationId": "createWidgetDefinition",
+          "commandType": "CREATE_DEFINITION",
+          "fullTarget": {
+            "targetType": "DEFINITION_KEY_HASH",
+            "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e"
+          }
+        },
+        "requestProjection": {
+          "definitionKey": "core.workspace.command-rail",
+          "ownerProductKey": "core.workspace",
+          "ownerTeamKey": "core.workspace-platform",
+          "riskTier": "HIGH",
+          "dataClassification": "CONFIDENTIAL"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000022",
+        "operationId": "createWidgetDefinition",
+        "commandType": "CREATE_DEFINITION",
+        "target": {
+          "targetType": "DEFINITION_KEY_HASH",
+          "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e"
+        },
+        "outcome": "REJECTED",
+        "responseStatus": 422,
+        "responseBody": {
+          "code": "RESPONSE_CONTRACT_TOO_LARGE",
+          "message": "The canonical response exceeds the durable completion limit.",
+          "correlationId": "30000000-0000-4000-8000-000000000022"
+        },
+        "responseEtag": null,
+        "responseHash": "bb201d21d6abf5688b59648f8213ac414fed418885e6d0c16f03ee05799b1450",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    },
+    {
+      "caseId": "not-executed-publish",
+      "verificationContext": {
+        "ledgerBinding": {
+          "commandId": "40000000-0000-4000-8000-000000000023",
+          "operationId": "publishWidgetDefinitionVersion",
+          "commandType": "PUBLISH",
+          "fullTarget": {
+            "targetType": "VERSION",
+            "targetId": "22222222-2222-4222-8222-222222222222",
+            "versionId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "requestProjection": {
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97"
+        },
+        "currentTargetProjection": null
+      },
+      "response": {
+        "schemaVersion": 1,
+        "commandId": "40000000-0000-4000-8000-000000000023",
+        "operationId": "publishWidgetDefinitionVersion",
+        "commandType": "PUBLISH",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222"
+        },
+        "outcome": "NOT_EXECUTED",
+        "responseStatus": 503,
+        "responseBody": {
+          "code": "COMMAND_NOT_EXECUTED",
+          "message": "The command was sealed without target execution.",
+          "correlationId": "30000000-0000-4000-8000-000000000023"
+        },
+        "responseEtag": null,
+        "responseHash": "40b7543c89d396220659ba25433f36e7432c3c4478ef873e8b2e61982f735998",
+        "completedAt": "2026-08-27T10:00:00Z"
+      }
+    }
+  ]
+}

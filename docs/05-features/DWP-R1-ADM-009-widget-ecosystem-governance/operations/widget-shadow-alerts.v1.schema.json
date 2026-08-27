@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example.com/schemas/widget-shadow-alerts.v1.schema.json",
+  "title": "Widget shadow alert rule set v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "alertSetKey",
+    "environment",
+    "evaluationCadenceSeconds",
+    "ringValues",
+    "rules"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "alertSetKey": { "const": "widget-catalog-shadow-stop-gates" },
+    "environment": { "const": "STAGING" },
+    "evaluationCadenceSeconds": { "const": 60 },
+    "ringValues": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "prefixItems": [{ "const": "staging-bootstrap" }, { "const": "staging-shadow" }],
+      "items": false
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": { "$ref": "#/$defs/rule" }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "severity",
+        "promql",
+        "comparator",
+        "threshold",
+        "unit",
+        "forSeconds",
+        "action"
+      ],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "severity": { "enum": ["WARNING", "PAGE"] },
+        "promql": { "type": "string", "minLength": 1 },
+        "comparator": { "const": ">" },
+        "threshold": { "type": "integer", "minimum": 0 },
+        "unit": { "enum": ["count", "basis_points", "milliseconds", "tasks", "seconds"] },
+        "forSeconds": { "enum": [0, 60, 120, 300] },
+        "action": {
+          "enum": [
+            "WARN_DATA",
+            "STOP_AND_PAGE_SECURITY",
+            "STOP_AND_PAGE_CONTROL_PLANE",
+            "STOP_AND_PAGE_DATA"
+          ]
+        }
+      }
+    }
+  }
+}

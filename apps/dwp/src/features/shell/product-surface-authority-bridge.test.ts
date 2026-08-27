@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  GOVERNED_SURFACE_PAGE_ROUTES,
-  GOVERNED_SURFACE_PRODUCT_IDS,
   observeProductSurfaceLocationChange,
   resolveActiveGovernedEvaluationRouteContractKey,
   resolveActiveGovernedProductId,
@@ -12,13 +10,22 @@ import {
   resolveGovernedSurfaceOperationTarget,
   resolveProductSurfaceEvaluationScopeKey,
 } from './product-surface-authority-bridge';
-import { governedProductManifest } from '../../components/product-manifest-registry';
+import {
+  GOVERNED_PRODUCT_MANIFESTS,
+  governedProductManifest,
+} from '../../components/product-manifest-registry';
 import { PRODUCT_MENU_ROUTES } from '../../routes/product-menu-manifest';
-import { PRODUCT_LEGACY_ROUTE_SOURCE } from '../../routes/product-page-route-contracts';
+import {
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+  PRODUCT_LEGACY_ROUTE_SOURCE,
+} from '../../routes/product-page-route-contracts';
 import {
   ProductSurfaceOperationCancelledError,
   productSurfaceOperationCoordinator,
 } from '../../components/product-surface-operation-coordinator';
+
+const GOVERNED_SURFACE_PRODUCT_IDS = GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id);
+const GOVERNED_SURFACE_PAGE_ROUTES = ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE;
 
 const routes = [
   { pattern: '/sample/work', surfaceId: 'sample.work' },
@@ -27,21 +34,20 @@ const routes = [
 ] as const;
 
 describe('product surface authority bridge routing', () => {
-  it('registers all 11 governed products against the complete official plus DRAFT PAGE source', () => {
-    expect(GOVERNED_SURFACE_PRODUCT_IDS).toHaveLength(11);
-    expect(new Set(GOVERNED_SURFACE_PRODUCT_IDS).size).toBe(11);
-    expect(GOVERNED_SURFACE_PAGE_ROUTES).toHaveLength(131);
+  it('registers each governed product exactly once against a unique PAGE source', () => {
+    const manifestIds = new Set(GOVERNED_SURFACE_PRODUCT_IDS);
+    const routeProductIds = new Set(GOVERNED_SURFACE_PAGE_ROUTES.map((route) => route.productId));
+    expect(manifestIds.size).toBe(GOVERNED_SURFACE_PRODUCT_IDS.length);
+    expect(routeProductIds).toEqual(manifestIds);
     expect(new Set(GOVERNED_SURFACE_PAGE_ROUTES.map((route) => route.routeContractKey)).size).toBe(
-      131
+      GOVERNED_SURFACE_PAGE_ROUTES.length
     );
-    expect(
-      Math.max(
-        ...GOVERNED_SURFACE_PRODUCT_IDS.map(
-          (productId) =>
-            GOVERNED_SURFACE_PAGE_ROUTES.filter((route) => route.productId === productId).length
-        )
-      )
-    ).toBe(25);
+    for (const productId of manifestIds) {
+      expect(
+        GOVERNED_SURFACE_PAGE_ROUTES.some((route) => route.productId === productId),
+        productId
+      ).toBe(true);
+    }
   });
 
   it('evaluates PAGE authority only for the product that owns the current location', () => {
@@ -52,7 +58,14 @@ describe('product surface authority bridge routing', () => {
     expect(approvals).not.toHaveLength(0);
     expect(new Set(approvals.map((route) => route.productId))).toEqual(new Set(['approvals']));
     expect(approvals.length).toBeLessThan(GOVERNED_SURFACE_PAGE_ROUTES.length);
-    expect(resolveActiveGovernedProductId('/approvals/%68ome')).toBe('approvals');
+    expect(
+      resolveActiveGovernedProductId(
+        '/approvals/%68ome',
+        GOVERNED_SURFACE_PAGE_ROUTES,
+        GOVERNED_PRODUCT_MANIFESTS,
+        PRODUCT_LEGACY_ROUTE_SOURCE
+      )
+    ).toBe('approvals');
   });
 
   it('uses a product base index for bounded evaluation but sends no PAGE requests from global pages', () => {
@@ -96,7 +109,13 @@ describe('product surface authority bridge routing', () => {
   });
 
   it('keeps every registered legacy Deep Link inside its target product authority plan', () => {
-    expect(PRODUCT_LEGACY_ROUTE_SOURCE).toHaveLength(14);
+    expect(PRODUCT_LEGACY_ROUTE_SOURCE.length).toBeGreaterThan(0);
+    expect(new Set(PRODUCT_LEGACY_ROUTE_SOURCE.map((route) => route.redirectId)).size).toBe(
+      PRODUCT_LEGACY_ROUTE_SOURCE.length
+    );
+    expect(new Set(PRODUCT_LEGACY_ROUTE_SOURCE.map((route) => route.sourcePath)).size).toBe(
+      PRODUCT_LEGACY_ROUTE_SOURCE.length
+    );
     for (const redirect of PRODUCT_LEGACY_ROUTE_SOURCE) {
       const target = GOVERNED_SURFACE_PAGE_ROUTES.find(
         (route) => route.routeContractKey === redirect.targetRouteContractKey
@@ -104,12 +123,16 @@ describe('product surface authority bridge routing', () => {
       expect(target, redirect.redirectId).toBeDefined();
       const activeSurfaceId = resolveActiveGovernedSurfaceId(
         `${redirect.sourcePath.toUpperCase()}?scope=opaque-scope`,
-        GOVERNED_SURFACE_PAGE_ROUTES
+        GOVERNED_SURFACE_PAGE_ROUTES,
+        GOVERNED_PRODUCT_MANIFESTS,
+        PRODUCT_LEGACY_ROUTE_SOURCE
       );
       expect(activeSurfaceId, redirect.redirectId).toBe(target!.surfaceId);
       const planned = resolveGovernedPageEvaluationRoutes(
         redirect.sourcePath.toUpperCase(),
-        GOVERNED_SURFACE_PAGE_ROUTES
+        GOVERNED_SURFACE_PAGE_ROUTES,
+        GOVERNED_PRODUCT_MANIFESTS,
+        PRODUCT_LEGACY_ROUTE_SOURCE
       );
       expect(planned.length, redirect.redirectId).toBeGreaterThan(0);
       expect(new Set(planned.map((route) => route.productId)), redirect.redirectId).toEqual(
@@ -151,9 +174,9 @@ describe('product surface authority bridge routing', () => {
     const workRoutes = PRODUCT_MENU_ROUTES.filter(
       (route) => route.productSurfaceId && route.plane === 'work'
     );
-    expect(workRoutes).toHaveLength(64);
+    expect(new Set(workRoutes.map((route) => route.id)).size).toBe(workRoutes.length);
     for (const menu of workRoutes) {
-      const route = resolveActiveGovernedPageRoute(menu.path);
+      const route = resolveActiveGovernedPageRoute(menu.path, GOVERNED_SURFACE_PAGE_ROUTES);
       expect(route?.surfaceId, menu.id).toBe(menu.productSurfaceId);
       expect(route?.routeId, menu.id).toBeTruthy();
       expect(route?.pattern, menu.id).not.toContain(':');

@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import {
   askDwpStream,
+  consumeQuestionLaunch,
   getDwaionConversation,
   getWorkspaceWorkQueue,
   useAuth,
@@ -18,6 +19,7 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -25,6 +27,8 @@ import Typography from '@mui/material/Typography';
 import {
   DWAION_APPROVAL_EXPERT_AGENT_KEY,
   dwaionWorkspaceRoute,
+  hasDwaionQuestionLaunchState,
+  parseDwaionQuestionLaunchState,
   resolveDwaionAgentKey,
 } from './dwaion-contract';
 import { DwaionWorkspaceAnswer } from './dwaion-workspace-answer';
@@ -44,6 +48,7 @@ import { DwaionConversationTranscript } from './dwaion-conversation-transcript';
 export function DwaionWorkspace() {
   const { t, i18n } = useTranslation('work');
   const auth = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const { conversationId: routeConversationId } = useParams<{ conversationId: string }>();
   const queryClient = useQueryClient();
@@ -57,11 +62,10 @@ export function DwaionWorkspace() {
         : ['WORK_ITEM', 'MAIL', 'CALENDAR'],
     [approvalExpert]
   );
-  const initialQuery = searchParams.get('q')?.trim() ?? '';
   const initialConversationId = approvalExpert
     ? null
     : routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
-  const [draft, setDraft] = useState(initialQuery);
+  const [draft, setDraft] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [response, setResponse] = useState<AskDwpResponse | null>(null);
   const [state, setState] = useState<DwaionWorkspaceState>('idle');
@@ -69,10 +73,11 @@ export function DwaionWorkspace() {
   const [conversationId, setConversationId] = useState<string | null>(initialConversationId);
   const [sourceScopes, setSourceScopes] = useState<AskCitationSourceType[]>(availableSourceScopes);
   const [selectedCitation, setSelectedCitation] = useState<AskCitation | null>(null);
+  const [launchFailure, setLaunchFailure] = useState(false);
   const requestSequence = useRef(0);
   const requestController = useRef<AbortController | null>(null);
   const unmountAbortTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
-  const autoSubmittedQuery = useRef<string | null>(null);
+  const consumedLaunchId = useRef<string | null>(null);
   const internalConversationNavigation = useRef<string | null>(null);
   const firstName = auth.user?.displayName?.trim().split(/\s+/)[0];
   const workQueue = useQuery({
@@ -99,6 +104,7 @@ export function DwaionWorkspace() {
     async (value: string) => {
       const normalized = value.trim();
       if (!normalized) return;
+      setLaunchFailure(false);
 
       requestController.current?.abort('superseded');
       const controller = new AbortController();
@@ -173,10 +179,33 @@ export function DwaionWorkspace() {
   );
 
   useEffect(() => {
-    if (!initialQuery || autoSubmittedQuery.current === initialQuery) return;
-    autoSubmittedQuery.current = initialQuery;
-    void prepareAnswer(initialQuery);
-  }, [initialQuery, prepareAnswer]);
+    const hasLaunchState = hasDwaionQuestionLaunchState(location.state);
+    if (!hasLaunchState) return;
+    const launchId = parseDwaionQuestionLaunchState(location.state);
+    if (launchId && consumedLaunchId.current === launchId) return;
+    if (launchId) consumedLaunchId.current = launchId;
+    const sanitized = new URLSearchParams(location.search);
+    sanitized.delete('q');
+    const search = sanitized.toString();
+    navigate(`${location.pathname}${search ? `?${search}` : ''}`, {
+      replace: true,
+      state: null,
+    });
+    if (!launchId) {
+      setLaunchFailure(true);
+      return;
+    }
+    void consumeQuestionLaunch(launchId)
+      .then((question) => prepareAnswer(question))
+      .catch(() => setLaunchFailure(true));
+  }, [location.pathname, location.search, location.state, navigate, prepareAnswer]);
+
+  useEffect(() => {
+    if (!searchParams.has('q')) return;
+    const sanitized = new URLSearchParams(searchParams);
+    sanitized.delete('q');
+    setSearchParams(sanitized, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     setSourceScopes(availableSourceScopes);
@@ -238,10 +267,6 @@ export function DwaionWorkspace() {
   const runQuestion = (value: string) => {
     const normalized = value.trim();
     if (!normalized) return;
-    const next = new URLSearchParams(searchParams);
-    next.set('q', normalized);
-    autoSubmittedQuery.current = normalized;
-    setSearchParams(next, { replace: true });
     void prepareAnswer(normalized);
   };
 
@@ -249,7 +274,6 @@ export function DwaionWorkspace() {
     requestSequence.current += 1;
     requestController.current?.abort('new-question');
     requestController.current = null;
-    autoSubmittedQuery.current = null;
     internalConversationNavigation.current = null;
     setSubmittedQuery(null);
     setResponse(null);
@@ -257,6 +281,7 @@ export function DwaionWorkspace() {
     setConversationId(null);
     setDraft('');
     setState('idle');
+    setLaunchFailure(false);
     navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { replace: true });
   };
 
@@ -281,9 +306,6 @@ export function DwaionWorkspace() {
     setResponse(null);
     setProgressStage(null);
     setState('idle');
-    const next = new URLSearchParams(searchParams);
-    next.delete('q');
-    setSearchParams(next, { replace: true });
   };
 
   const toggleSource = (source: AskCitationSourceType) => {
@@ -379,6 +401,12 @@ export function DwaionWorkspace() {
           />
         </Stack>
       </Box>
+
+      {launchFailure && (
+        <Alert severity="warning" variant="outlined" sx={{ mt: 2 }}>
+          {t('askPage.questionLaunchUnavailable')}
+        </Alert>
+      )}
 
       <Box
         sx={{

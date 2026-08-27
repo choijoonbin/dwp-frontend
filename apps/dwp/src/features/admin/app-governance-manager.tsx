@@ -58,12 +58,13 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
-import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
+import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-point-catalog';
 import { AppAdminPresetManager } from './app-admin-preset-manager';
 import {
   canRequestGovernedAssignment,
   governedRequestScopes,
   resolveAssignmentActions,
+  type AppGovernanceApprovalMode,
   type AppGovernanceActor,
 } from './app-governance-authority';
 
@@ -89,7 +90,7 @@ function statusColor(state: AppAdminAssignment['lifecycleState']) {
 
 export function resolveManagementWorkbenchEntries(resources: readonly AppResourceMember[]) {
   return resources.flatMap((resource) => {
-    const manifest = GOVERNED_PRODUCT_MANIFESTS.find(
+    const manifest = GOVERNED_PRODUCT_ENTRY_CATALOG.find(
       (candidate) => candidate.appKey === resource.resourceKey
     );
     const managementSurface =
@@ -114,6 +115,7 @@ export function AppGovernanceManager() {
   const [action, setAction] = useState<{
     assignment: AppAdminAssignment;
     decision: Decision;
+    approvalMode: AppGovernanceApprovalMode | null;
   } | null>(null);
   const [busy, setBusy] = useState(false);
   const dashboard = useQuery({ queryKey, queryFn: getAppGovernanceDashboard });
@@ -263,9 +265,17 @@ export function AppGovernanceManager() {
                 </TableHead>
                 <TableBody>
                   {data.assignments.map((assignment) => {
-                    const { mayApprove, mayRevoke } = resolveAssignmentActions(assignment, actor);
+                    const { mayApprove, mayRevoke, approvalMode } = resolveAssignmentActions(
+                      assignment,
+                      actor
+                    );
                     return (
-                      <TableRow key={assignment.assignmentId} hover sx={{ height: 58 }}>
+                      <TableRow
+                        key={assignment.assignmentId}
+                        hover
+                        sx={{ height: 58 }}
+                        data-testid={`app-governance-assignment-${assignment.assignmentId}`}
+                      >
                         <TableCell>
                           <Typography variant="subtitle2">{assignment.principalName}</Typography>
                           <Typography variant="caption" color="text.secondary">
@@ -273,9 +283,19 @@ export function AppGovernanceManager() {
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography variant="body2">
-                            {t(`appGovernance.responsibilities.${assignment.responsibilityCode}`)}
-                          </Typography>
+                          <Stack gap={0.5} alignItems="flex-start">
+                            <Typography variant="body2">
+                              {t(`appGovernance.responsibilities.${assignment.responsibilityCode}`)}
+                            </Typography>
+                            {approvalMode === 'FIRST_APPROVER_BOOTSTRAP' && (
+                              <Chip
+                                size="small"
+                                variant="outlined"
+                                color="warning"
+                                label={t('appGovernance.bootstrap.badge')}
+                              />
+                            )}
+                          </Stack>
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">{assignment.resourceSetName}</Typography>
@@ -304,18 +324,41 @@ export function AppGovernanceManager() {
                           />
                         </TableCell>
                         <TableCell align="right">
-                          <Stack direction="row" justifyContent="flex-end" gap={0.5}>
+                          <Stack
+                            direction="row"
+                            justifyContent="flex-end"
+                            flexWrap="wrap"
+                            gap={0.5}
+                          >
                             {mayApprove && (
                               <>
-                                <ActionIconButton
-                                  label={t('appGovernance.actions.approve')}
-                                  onClick={() => setAction({ assignment, decision: 'APPROVED' })}
-                                >
-                                  <Check size={17} />
-                                </ActionIconButton>
+                                {approvalMode === 'FIRST_APPROVER_BOOTSTRAP' ? (
+                                  <ActionButton
+                                    intent="secondary"
+                                    size="small"
+                                    aria-label={t('appGovernance.bootstrap.approveAction')}
+                                    startIcon={<Check size={16} aria-hidden="true" />}
+                                    onClick={() =>
+                                      setAction({ assignment, decision: 'APPROVED', approvalMode })
+                                    }
+                                  >
+                                    {t('appGovernance.bootstrap.approveButton')}
+                                  </ActionButton>
+                                ) : (
+                                  <ActionIconButton
+                                    label={t('appGovernance.actions.approve')}
+                                    onClick={() =>
+                                      setAction({ assignment, decision: 'APPROVED', approvalMode })
+                                    }
+                                  >
+                                    <Check size={17} />
+                                  </ActionIconButton>
+                                )}
                                 <ActionIconButton
                                   label={t('appGovernance.actions.deny')}
-                                  onClick={() => setAction({ assignment, decision: 'DENIED' })}
+                                  onClick={() =>
+                                    setAction({ assignment, decision: 'DENIED', approvalMode })
+                                  }
                                 >
                                   <X size={17} />
                                 </ActionIconButton>
@@ -324,7 +367,9 @@ export function AppGovernanceManager() {
                             {mayRevoke && (
                               <ActionIconButton
                                 label={t('appGovernance.actions.revoke')}
-                                onClick={() => setAction({ assignment, decision: 'REVOKED' })}
+                                onClick={() =>
+                                  setAction({ assignment, decision: 'REVOKED', approvalMode: null })
+                                }
                               >
                                 <ShieldX size={17} />
                               </ActionIconButton>
@@ -707,7 +752,11 @@ function DecisionDialog({
   onClose,
   onSubmit,
 }: {
-  action: { assignment: AppAdminAssignment; decision: Decision } | null;
+  action: {
+    assignment: AppAdminAssignment;
+    decision: Decision;
+    approvalMode: AppGovernanceApprovalMode | null;
+  } | null;
   busy: boolean;
   onClose: () => void;
   onSubmit: (reason: string) => Promise<void>;
@@ -715,10 +764,16 @@ function DecisionDialog({
   const { t } = useTranslation('admin');
   const [reason, setReason] = useState('');
   const destructive = action?.decision === 'DENIED' || action?.decision === 'REVOKED';
+  const firstApproverBootstrap =
+    action?.decision === 'APPROVED' && action.approvalMode === 'FIRST_APPROVER_BOOTSTRAP';
   return (
     <FormDialog
       open={Boolean(action)}
-      title={t(`appGovernance.dialog.${action?.decision.toLowerCase() ?? 'approved'}Title`)}
+      title={
+        firstApproverBootstrap
+          ? t('appGovernance.bootstrap.dialogTitle')
+          : t(`appGovernance.dialog.${action?.decision.toLowerCase() ?? 'approved'}Title`)
+      }
       description={`${action?.assignment.principalName ?? ''} · ${
         action?.assignment.resourceSetName ?? ''
       }`}
@@ -730,6 +785,12 @@ function DecisionDialog({
       submitDisabled={reason.trim().length < 10}
       onSubmit={() => onSubmit(reason.trim())}
     >
+      {firstApproverBootstrap && (
+        <Alert severity="warning" data-testid="first-approver-bootstrap-evidence">
+          <Typography variant="subtitle2">{t('appGovernance.bootstrap.dialogHeading')}</Typography>
+          <Typography variant="body2">{t('appGovernance.bootstrap.dialogDescription')}</Typography>
+        </Alert>
+      )}
       <FormField
         required
         multiline

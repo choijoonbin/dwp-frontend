@@ -16,7 +16,7 @@ export function canAccessProductAreaNavigationItem(
   supportScopes?: readonly string[]
 ) {
   if (supportScopes !== undefined) {
-    return Boolean(item.requiredAnySupportScopes?.some((scope) => supportScopes.includes(scope)));
+    return false;
   }
   if (item.requiredAnyAuthorities?.length) {
     return item.requiredAnyAuthorities.some(

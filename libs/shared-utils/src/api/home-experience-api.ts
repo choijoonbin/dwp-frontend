@@ -5,6 +5,7 @@ import type { ApiResponse } from '../types';
 import type { HomeWidgetHeight } from './home-preference-api';
 
 export type HomeBackgroundPosition = 'LEFT' | 'CENTER' | 'RIGHT';
+export type HomeContentAlignment = 'LEFT' | 'CENTER' | 'RIGHT';
 
 export type LocalizedHomeCopy = {
   headline?: string | null;
@@ -67,6 +68,16 @@ export type HomeExperience = {
   localizedContent: Record<string, LocalizedHomeCopy>;
   defaultLocale: string;
   backgroundPosition: HomeBackgroundPosition;
+  /** Optional while older platform nodes are rolling forward. */
+  backgroundFocalX?: number;
+  /** Optional while older platform nodes are rolling forward. */
+  backgroundFocalY?: number;
+  /** Optional while older platform nodes are rolling forward. */
+  mobileBackgroundFocalX?: number;
+  /** Optional while older platform nodes are rolling forward. */
+  mobileBackgroundFocalY?: number;
+  /** Runtime copy/dock alignment, independent from image focal position. */
+  contentAlignment?: HomeContentAlignment;
   overlayOpacity: number;
   backgroundUrl?: string | null;
   backgroundOriginalName?: string | null;
@@ -90,12 +101,20 @@ export type HomeExperience = {
 export type HomeExperienceRevision = {
   revisionId: number;
   sourceVersion: number;
-  changeType: 'BASELINE' | 'SETTINGS_PUBLISHED' | 'ASSET_PUBLISHED' | 'ASSET_RESET' | 'ROLLBACK';
+  changeType:
+    | 'BASELINE'
+    | 'SETTINGS_PUBLISHED'
+    | 'ASSET_PUBLISHED'
+    | 'ASSET_RESET'
+    | 'EXPERIENCE_PUBLISHED'
+    | 'ROLLBACK';
   headline?: string | null;
   backgroundOriginalName?: string | null;
   backgroundWidth?: number | null;
   backgroundHeight?: number | null;
   localeCount: number;
+  /** Domains restored by this revision. Older servers may omit this list. */
+  affectedScopes?: string[];
   current: boolean;
   createdAt: string;
   createdBy?: number | null;
@@ -108,11 +127,16 @@ export type UpdateHomeExperienceRequest = Pick<
   | 'localizedContent'
   | 'defaultLocale'
   | 'backgroundPosition'
+  | 'backgroundFocalX'
+  | 'backgroundFocalY'
+  | 'mobileBackgroundFocalX'
+  | 'mobileBackgroundFocalY'
+  | 'contentAlignment'
   | 'overlayOpacity'
   | 'version'
 >;
 
-export const DEFAULT_HOME_BACKGROUND_URL = '/assets/home/default/agentic-workspace-hero-clean.png';
+export const DEFAULT_HOME_BACKGROUND_URL = '/assets/home/default/agentic-workspace-hero-v2.png';
 
 export function resolveHomeBackgroundUrl(experience?: HomeExperience | null): string {
   return experience?.backgroundUrl
@@ -149,6 +173,27 @@ export async function updateHomeExperience(
     ApiResponse<HomeExperience>,
     UpdateHomeExperienceRequest
   >('/api/platform/v1/admin/home-experience', request);
+  return response.data.data;
+}
+
+/** Publishes presentation settings and an optional background as one server transaction. */
+export async function publishHomeExperience(
+  request: UpdateHomeExperienceRequest,
+  file?: File | null,
+  resetBackground = false
+): Promise<HomeExperience> {
+  const form = new FormData();
+  form.set(
+    'settings',
+    new Blob([JSON.stringify(request)], { type: 'application/json' }),
+    'settings.json'
+  );
+  if (file) form.set('file', file);
+  if (resetBackground) form.set('resetBackground', 'true');
+  const response = await axiosInstance.post<ApiResponse<HomeExperience>, FormData>(
+    '/api/platform/v1/admin/home-experience/publish',
+    form
+  );
   return response.data.data;
 }
 

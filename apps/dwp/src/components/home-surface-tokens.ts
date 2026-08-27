@@ -77,6 +77,14 @@ export const HOME_FORCED_COLOR_TOKENS = {
   backdropFilter: 'none',
 } as const;
 
+/** Motion is feedback for an action, never ambient decoration. */
+export const HOME_MOTION_TOKENS = {
+  quick: '140ms',
+  standard: '200ms',
+  easing: 'cubic-bezier(0.2, 0, 0, 1)',
+  lift: 'translateY(-2px)',
+} as const;
+
 // Stable aliases for existing Home shell consumers.
 export const HOME_LIGHT_CANVAS = HOME_SURFACE_TOKENS.light.canvas;
 export const HOME_LIGHT_SURFACE = HOME_SURFACE_TOKENS.light.section;

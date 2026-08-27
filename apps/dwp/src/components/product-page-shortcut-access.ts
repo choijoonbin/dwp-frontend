@@ -4,6 +4,7 @@ import {
   resolveProductSurfaceRolloutMode,
   useProductSurfaceCanaryAuthority,
 } from './product-surface-canary-runtime';
+import { PRODUCT_PAGE_SHORTCUT_TARGET_CATALOG } from './product-page-shortcut-target-catalog';
 
 import type { ProductSurfaceCanaryAuthority } from './product-surface-canary-runtime';
 
@@ -18,28 +19,7 @@ export type ProductPageShortcutAccess = Readonly<{
   contextScopeKey?: string;
 }>;
 
-export const PRODUCT_PAGE_SHORTCUT_TARGETS = {
-  approvalOperations: {
-    productId: 'approvals',
-    surfaceId: 'approvals.admin',
-    routeContractKey: 'route.approvals.admin.operations.page',
-  },
-  approvalWorkflows: {
-    productId: 'approvals',
-    surfaceId: 'approvals.admin',
-    routeContractKey: 'route.approvals.admin.workflows.page',
-  },
-  hcmControlledExport: {
-    productId: 'hcm',
-    surfaceId: 'hcm.management',
-    routeContractKey: 'route.hcm.management.controlled-export.page',
-  },
-  hcmOrganizationDesign: {
-    productId: 'hcm',
-    surfaceId: 'hcm.management',
-    routeContractKey: 'route.hcm.management.org-design.page',
-  },
-} as const satisfies Readonly<Record<string, ProductPageShortcutTarget>>;
+export const PRODUCT_PAGE_SHORTCUT_TARGETS = PRODUCT_PAGE_SHORTCUT_TARGET_CATALOG;
 
 /**
  * A shortcut to another PAGE is authorization disclosure, not merely navigation.

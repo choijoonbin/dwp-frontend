@@ -47,6 +47,11 @@ export type AppAdminAssignment = {
   approvedByName?: string | null;
   approvedAt?: string | null;
   decisionReason?: string | null;
+  /**
+   * Actor-specific, read-only affordance hint computed by Auth. Execution always
+   * revalidates the one-time bootstrap predicate under the resource-set lock.
+   */
+  firstApproverBootstrapEligible: boolean;
   version: number;
   createdAt: string;
   updatedAt: string;

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Boxes,
@@ -35,15 +35,11 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import Tooltip from '@mui/material/Tooltip';
-import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -54,13 +50,17 @@ import {
 } from '../../components/management-panel-state';
 import { PrivilegedAccessManager } from './privileged-access-manager';
 import { createRoleAssignmentColumns } from './role-assignment-columns';
+import { RoleAssignmentSummary } from './role-assignment-summary';
+import { RoleAssignmentRevokeDialog } from './role-assignment-revoke-dialog';
+import { RoleGovernanceLayout, type RoleGovernanceView } from './role-governance-layout';
+import { RoleGovernanceRoleDialog } from './role-governance-role-dialog';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
-  CreateGovernanceRoleRequest,
   EffectiveAccess,
   GovernanceResource,
   GovernanceRole,
+  GroupRoleAssignment,
   PermissionEffect,
   PermissionSelection,
 } from '@dwp-frontend/shared-utils';
@@ -69,103 +69,6 @@ const PERMISSION_CODES = ['VIEW', 'CREATE', 'UPDATE', 'DELETE', 'MANAGE'] as con
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
-}
-
-function RoleDialog({
-  role,
-  open,
-  busy,
-  onClose,
-  onSave,
-}: {
-  role: GovernanceRole | null;
-  open: boolean;
-  busy: boolean;
-  onClose: () => void;
-  onSave: (request: CreateGovernanceRoleRequest & { status: string }) => Promise<void>;
-}) {
-  const { t } = useTranslation('admin');
-  const [code, setCode] = useState(role?.code ?? '');
-  const [name, setName] = useState(role?.name ?? '');
-  const [description, setDescription] = useState(role?.description ?? '');
-  const [status, setStatus] = useState(role?.status ?? 'ACTIVE');
-  const [assignableToGroups, setAssignableToGroups] = useState(role?.assignableToGroups ?? true);
-
-  return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>
-        {t(role ? 'roleGovernance.roleDialog.edit' : 'roleGovernance.roleDialog.create')}
-      </DialogTitle>
-      <DialogContent sx={{ pt: '8px !important' }}>
-        <Stack gap={2}>
-          <TextField
-            autoFocus
-            required
-            disabled={Boolean(role)}
-            label={t('roleGovernance.fields.code')}
-            value={code}
-            onChange={(event) => setCode(event.target.value)}
-          />
-          <TextField
-            required
-            label={t('roleGovernance.fields.name')}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-          <TextField
-            multiline
-            minRows={2}
-            label={t('roleGovernance.fields.description')}
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-          />
-          {role && (
-            <TextField
-              select
-              label={t('roleGovernance.fields.status')}
-              value={status}
-              onChange={(event) => setStatus(event.target.value)}
-            >
-              <MenuItem value="ACTIVE">{t('common.status.ACTIVE')}</MenuItem>
-              <MenuItem value="INACTIVE">{t('common.status.INACTIVE')}</MenuItem>
-            </TextField>
-          )}
-          <Stack>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={assignableToGroups}
-                  onChange={(event) => setAssignableToGroups(event.target.checked)}
-                />
-              }
-              label={t('roleGovernance.fields.assignableToGroups')}
-            />
-          </Stack>
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={busy}>
-          {t('common.actions.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          disabled={busy || !code.trim() || !name.trim()}
-          onClick={() =>
-            void onSave({
-              code: code.trim(),
-              name: name.trim(),
-              description: description.trim(),
-              status,
-              privileged: false,
-              assignableToGroups,
-            })
-          }
-        >
-          {t('common.actions.save')}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
 }
 
 function PermissionDialog({
@@ -386,14 +289,16 @@ function RolesPanel() {
   });
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['admin', 'governance'] });
 
-  const mutate = async (action: () => Promise<unknown>, success: string) => {
+  const mutate = async (action: () => Promise<unknown>, success: string): Promise<boolean> => {
     setBusy(true);
     try {
       await action();
       await refresh();
       toast.success(success);
+      return true;
     } catch (error) {
       toast.error(errorMessage(error, t('common.operationError')));
+      return false;
     } finally {
       setBusy(false);
     }
@@ -562,13 +467,13 @@ function RolesPanel() {
         sx={{ border: 0, borderRadius: 0 }}
       />
       {dialogOpen && (
-        <RoleDialog
+        <RoleGovernanceRoleDialog
           role={editingRole}
           open
           busy={busy}
           onClose={() => setDialogOpen(false)}
           onSave={async (request) => {
-            await mutate(
+            const saved = await mutate(
               () =>
                 editingRole
                   ? updateGovernanceRole(editingRole, request)
@@ -579,7 +484,7 @@ function RolesPanel() {
                   : 'roleGovernance.toasts.roleCreated'
               )
             );
-            setDialogOpen(false);
+            if (saved) setDialogOpen(false);
           }}
         />
       )}
@@ -590,11 +495,11 @@ function RolesPanel() {
           busy={busy}
           onClose={() => setPermissionRole(null)}
           onSave={async (selection) => {
-            await mutate(
+            const saved = await mutate(
               () => replaceGovernanceRolePermissions(permissionRole, selection),
               t('roleGovernance.toasts.permissionsUpdated')
             );
-            setPermissionRole(null);
+            if (saved) setPermissionRole(null);
           }}
         />
       )}
@@ -604,11 +509,11 @@ function RolesPanel() {
           busy={busy}
           onClose={() => setResourceOpen(false)}
           onSave={async (request) => {
-            await mutate(
+            const saved = await mutate(
               () => createGovernanceResource(request),
               t('roleGovernance.toasts.resourceCreated')
             );
-            setResourceOpen(false);
+            if (saved) setResourceOpen(false);
           }}
         />
       )}
@@ -639,9 +544,11 @@ function AssignmentDialog({
 }) {
   const { t } = useTranslation('admin');
   const displayRole = useRoleDisplay();
+  const [groupQuery, setGroupQuery] = useState('');
+  const deferredGroupQuery = useDeferredValue(groupQuery);
   const groups = useQuery({
-    queryKey: ['admin', 'directory', 'groups', 'assignment'],
-    queryFn: () => listDirectoryGroups('', 'ACTIVE', 0, 100),
+    queryKey: ['admin', 'directory', 'groups', 'assignment', deferredGroupQuery],
+    queryFn: () => listDirectoryGroups(deferredGroupQuery, 'ACTIVE', 0, 100),
   });
   const [groupId, setGroupId] = useState('');
   const [roleId, setRoleId] = useState('');
@@ -655,10 +562,21 @@ function AssignmentDialog({
       <DialogContent sx={{ pt: '8px !important' }}>
         <Stack gap={2}>
           <TextField
+            label={t('roleGovernance.fields.groupSearch')}
+            value={groupQuery}
+            onChange={(event) => {
+              setGroupQuery(event.target.value);
+              setGroupId('');
+            }}
+          />
+          <TextField
             select
             required
             label={t('roleGovernance.fields.group')}
             value={groupId}
+            disabled={groups.isLoading || groups.isError}
+            error={groups.isError}
+            helperText={groups.isError ? t('common.loadError') : undefined}
             onChange={(event) => setGroupId(event.target.value)}
           >
             {(groups.data?.content ?? []).map((group) => (
@@ -728,6 +646,8 @@ function AssignmentDialog({
           variant="contained"
           disabled={
             busy ||
+            groups.isLoading ||
+            groups.isError ||
             !groupId ||
             !roleId ||
             justification.trim().length < 10 ||
@@ -759,6 +679,7 @@ function AssignmentsPanel() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [pendingRevoke, setPendingRevoke] = useState<GroupRoleAssignment | null>(null);
   const [busy, setBusy] = useState(false);
   const assignments = useQuery({
     queryKey: ['admin', 'governance', 'assignments'],
@@ -793,8 +714,10 @@ function AssignmentsPanel() {
         await action();
         await queryClient.invalidateQueries({ queryKey: ['admin', 'governance'] });
         toast.success(success);
+        return true;
       } catch (error) {
         toast.error(errorMessage(error, t('common.operationError')));
+        return false;
       } finally {
         setBusy(false);
       }
@@ -809,13 +732,9 @@ function AssignmentsPanel() {
         roleNamesByCode,
         assignableRoleCodes,
         busy,
-        onRevoke: (row) =>
-          void mutate(
-            () => revokeGroupRoleAssignment(row),
-            t('roleGovernance.toasts.assignmentRevoked')
-          ),
+        onRevoke: setPendingRevoke,
       }),
-    [assignableRoleCodes, busy, display, mutate, roleNamesByCode, t]
+    [assignableRoleCodes, busy, display, roleNamesByCode, t]
   );
   if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
     return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
@@ -824,15 +743,20 @@ function AssignmentsPanel() {
   return (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
-        <Stack direction="row" alignItems="center" gap={1}>
+        <Stack direction="row" alignItems="flex-start" gap={1}>
           <UsersRound size={18} />
-          <Typography variant="subtitle1">{t('roleGovernance.assignments')}</Typography>
-          <Chip label={assignments.data?.length ?? 0} size="small" variant="outlined" />
+          <Box>
+            <Typography variant="subtitle1">{t('roleGovernance.assignments')}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('roleGovernance.assignmentsDescription')}
+            </Typography>
+          </Box>
         </Stack>
         <Button startIcon={<Plus size={17} />} onClick={() => setDialogOpen(true)}>
           {t('roleGovernance.actions.newAssignment')}
         </Button>
       </Stack>
+      <RoleAssignmentSummary assignments={assignments.data ?? []} />
       <EnterpriseDataGrid
         ariaLabel={t('roleGovernance.assignments')}
         rows={assignments.data ?? []}
@@ -841,6 +765,17 @@ function AssignmentsPanel() {
         hideFooter
         minVisibleRows={3}
         maxVisibleRows={9}
+        stickyColumns={{ right: ['actions'] }}
+        toolbar={{
+          ariaLabel: t('roleGovernance.assignmentToolbar.label'),
+          columnsLabel: t('roleGovernance.assignmentToolbar.columns'),
+          filtersLabel: t('roleGovernance.assignmentToolbar.filters'),
+          quickFilterLabel: t('roleGovernance.assignmentToolbar.searchLabel'),
+          quickFilterPlaceholder: t('roleGovernance.assignmentToolbar.searchPlaceholder'),
+          onRefresh: () => void assignments.refetch(),
+          refreshLabel: t('roleGovernance.assignmentToolbar.refresh'),
+          refreshing: assignments.isFetching,
+        }}
         sx={{ border: 0, borderRadius: 0 }}
       />
       {dialogOpen && (
@@ -850,23 +785,43 @@ function AssignmentsPanel() {
           busy={busy}
           onClose={() => setDialogOpen(false)}
           onSave={async (request) => {
-            await mutate(
+            const saved = await mutate(
               () => createGroupRoleAssignment(request),
               t('roleGovernance.toasts.assignmentCreated')
             );
-            setDialogOpen(false);
+            if (saved) setDialogOpen(false);
           }}
         />
       )}
+      <RoleAssignmentRevokeDialog
+        assignment={pendingRevoke}
+        roleName={
+          pendingRevoke
+            ? (roleNamesByCode.get(pendingRevoke.roleCode) ?? pendingRevoke.roleCode)
+            : ''
+        }
+        busy={busy}
+        onClose={() => setPendingRevoke(null)}
+        onConfirm={async () => {
+          if (!pendingRevoke) return;
+          const revoked = await mutate(
+            () => revokeGroupRoleAssignment(pendingRevoke),
+            t('roleGovernance.toasts.assignmentRevoked')
+          );
+          if (revoked) setPendingRevoke(null);
+        }}
+      />
     </>
   );
 }
 
 function EffectiveAccessPanel() {
   const { t } = useTranslation('admin');
+  const [userQuery, setUserQuery] = useState('');
+  const deferredUserQuery = useDeferredValue(userQuery);
   const users = useQuery({
-    queryKey: ['admin', 'identity-users', 'effective-access'],
-    queryFn: () => listIdentityUsers(''),
+    queryKey: ['admin', 'identity-users', 'effective-access', deferredUserQuery],
+    queryFn: () => listIdentityUsers(deferredUserQuery),
   });
   const [userId, setUserId] = useState('');
   const access = useQuery({
@@ -930,6 +885,8 @@ function EffectiveAccessPanel() {
     [t]
   );
   if (users.isLoading) return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
+  if (users.isError)
+    return <ManagementPanelError message={errorMessage(users.error, t('common.loadError'))} />;
   return (
     <Box>
       <Stack
@@ -942,20 +899,32 @@ function EffectiveAccessPanel() {
           <UserRoundCheck size={18} />
           <Typography variant="subtitle1">{t('roleGovernance.effectiveAccess')}</Typography>
         </Stack>
-        <TextField
-          select
-          size="small"
-          label={t('roleGovernance.fields.user')}
-          value={userId}
-          onChange={(event) => setUserId(event.target.value)}
-          sx={{ minWidth: 280 }}
-        >
-          {(users.data?.content ?? []).map((user) => (
-            <MenuItem key={user.userId} value={user.userId}>
-              {user.displayName} / {user.email}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ minWidth: { sm: 420 } }}>
+          <TextField
+            size="small"
+            label={t('roleGovernance.fields.userSearch')}
+            value={userQuery}
+            onChange={(event) => {
+              setUserQuery(event.target.value);
+              setUserId('');
+            }}
+            sx={{ minWidth: 180 }}
+          />
+          <TextField
+            select
+            size="small"
+            label={t('roleGovernance.fields.user')}
+            value={userId}
+            onChange={(event) => setUserId(event.target.value)}
+            sx={{ minWidth: 230 }}
+          >
+            {(users.data?.content ?? []).map((user) => (
+              <MenuItem key={user.userId} value={user.userId}>
+                {user.displayName} / {user.email}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
       </Stack>
       {access.isLoading && <ManagementPanelLoading label={t('roleGovernance.effectiveLoading')} />}
       {access.isError && (
@@ -998,25 +967,13 @@ function EffectiveAccessPanel() {
 }
 
 export function RoleGovernanceManager() {
-  const { t } = useTranslation('admin');
-  const [tab, setTab] = useState<'roles' | 'assignments' | 'privileged' | 'effective'>('roles');
+  const [tab, setTab] = useState<RoleGovernanceView>('roles');
   return (
-    <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-      <Tabs
-        value={tab}
-        onChange={(_event, value: typeof tab) => setTab(value)}
-        aria-label={t('roleGovernance.tabs.label')}
-        sx={{ px: 2, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Tab value="roles" label={t('roleGovernance.tabs.roles')} />
-        <Tab value="assignments" label={t('roleGovernance.tabs.assignments')} />
-        <Tab value="privileged" label={t('roleGovernance.tabs.privileged')} />
-        <Tab value="effective" label={t('roleGovernance.tabs.effective')} />
-      </Tabs>
+    <RoleGovernanceLayout view={tab} onChange={setTab}>
       {tab === 'roles' && <RolesPanel />}
       {tab === 'assignments' && <AssignmentsPanel />}
       {tab === 'privileged' && <PrivilegedAccessManager />}
       {tab === 'effective' && <EffectiveAccessPanel />}
-    </Box>
+    </RoleGovernanceLayout>
   );
 }

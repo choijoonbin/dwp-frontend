@@ -13,6 +13,7 @@ import {
   moveLaunchpadItem,
   moveLaunchpadItemToGroup,
   mergeEntitledLaunchpadProjection,
+  placeLaunchpadApp,
   reconcileLaunchpadLayout,
   removeAppFromLaunchpadFolder,
   renameLaunchpadFolder,
@@ -556,6 +557,16 @@ describe('personal home launchpad layout', () => {
     const restored = restoreLaunchpadApp(hidden, workApps[1]!);
     expect(restored.hiddenAppIds).not.toContain('dwp-ask');
     expect(restored.groups.work).toContain('dwp-ask');
+  });
+
+  it('places a newly entitled app that is not yet represented in the current layout', () => {
+    const [work, ask] = workApps;
+    const initial = createDefaultLaunchpadLayout(work ? [work] : []);
+
+    const placed = placeLaunchpadApp(initial, ask!);
+
+    expect(placed.groups.work).toContain('dwp-ask');
+    expect(initial.groups.work).not.toContain('dwp-ask');
   });
 
   it('ungroups a folder without removing its apps', () => {

@@ -9,6 +9,8 @@ import {
   MapPin,
   Pencil,
   Repeat2,
+  Star,
+  Trash2,
   UsersRound,
   Video,
   X,
@@ -16,17 +18,20 @@ import {
 import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
+import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha, lighten } from '@mui/material/styles';
 
 import type { CalendarEvent, CalendarEventType } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
+
+import { CalendarSignal, type CalendarExperienceTone } from './calendar-experience';
 
 export const CALENDAR_EVENT_TONES: Record<
   CalendarEventType,
@@ -78,38 +83,97 @@ export function CalendarPageHeading({
   title,
   description,
   actions,
+  icon: HeadingIcon = CalendarDays,
 }: {
   eyebrow?: string;
   title: string;
   description: string;
   actions?: React.ReactNode;
+  icon?: LucideIcon;
 }) {
   return (
     <Box
+      component="header"
       sx={{
-        display: 'flex',
-        alignItems: { xs: 'flex-start', md: 'center' },
+        display: 'grid',
+        gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) auto' },
+        alignItems: { xs: 'stretch', md: 'center' },
         justifyContent: 'space-between',
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: 2,
-        mb: 3,
+        gap: { xs: 2, md: 3 },
+        mb: { xs: 3, md: 3.5 },
+        pb: { xs: 2.25, md: 2.75 },
+        borderBottom: 1,
+        borderColor: (theme) => alpha(theme.palette.divider, 0.72),
       }}
     >
-      <Box sx={{ minWidth: 0 }}>
-        {eyebrow && (
-          <Typography variant="overline" color="primary.main">
-            {eyebrow}
+      <Stack
+        direction="row"
+        spacing={{ xs: 1.4, sm: 1.75 }}
+        alignItems="flex-start"
+        sx={{ minWidth: 0 }}
+      >
+        <Box
+          aria-hidden="true"
+          sx={(theme) => ({
+            width: { xs: 40, sm: 44 },
+            height: { xs: 40, sm: 44 },
+            flex: { xs: '0 0 40px', sm: '0 0 44px' },
+            mt: 0.2,
+            display: 'grid',
+            placeItems: 'center',
+            borderRadius: 1,
+            color: 'primary.main',
+            bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.09),
+          })}
+        >
+          <HeadingIcon size={21} strokeWidth={1.9} />
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          {eyebrow && (
+            <Typography
+              variant="caption"
+              color="primary.main"
+              fontWeight={600}
+              sx={{ display: 'block', mb: 0.35, letterSpacing: '0.025em' }}
+            >
+              {eyebrow}
+            </Typography>
+          )}
+          <Typography
+            component="h1"
+            sx={{
+              fontSize: { xs: '1.65rem', sm: '1.9rem' },
+              lineHeight: 1.18,
+              fontWeight: 700,
+              letterSpacing: '-0.035em',
+            }}
+          >
+            {title}
           </Typography>
-        )}
-        <Typography component="h1" variant="h4" fontWeight={800} sx={{ mt: eyebrow ? 0.25 : 0 }}>
-          {title}
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.5, maxWidth: 760 }}>
-          {description}
-        </Typography>
-      </Box>
+          <Typography
+            color="text.secondary"
+            sx={{
+              mt: 0.6,
+              maxWidth: 780,
+              fontSize: { xs: '0.875rem', sm: '0.925rem' },
+              lineHeight: 1.6,
+            }}
+          >
+            {description}
+          </Typography>
+        </Box>
+      </Stack>
       {actions && (
-        <Stack direction="row" spacing={1}>
+        <Stack
+          direction="row"
+          spacing={1}
+          useFlexGap
+          sx={{
+            width: { xs: 1, md: 'auto' },
+            flexWrap: 'wrap',
+            '& > *': { flex: { xs: '1 1 auto', sm: '0 0 auto' } },
+          }}
+        >
           {actions}
         </Stack>
       )}
@@ -121,47 +185,41 @@ export function CalendarMetric({
   label,
   value,
   hint,
-  color,
+  icon,
+  tone = 'primary',
   progress,
+  progressLabel,
+  selected,
+  compact,
+  onClick,
+  actionLabel,
 }: {
   label: string;
   value: string | number;
   hint: string;
-  color: string;
+  icon: LucideIcon;
+  tone?: CalendarExperienceTone;
   progress?: number;
+  progressLabel?: string;
+  selected?: boolean;
+  compact?: boolean;
+  onClick?: () => void;
+  actionLabel?: string;
 }) {
   return (
-    <Box
-      sx={{
-        minWidth: 0,
-        py: 1.75,
-        px: 2,
-        borderLeft: '3px solid',
-        borderLeftColor: color,
-      }}
-    >
-      <Typography variant="caption" color="text.secondary" fontWeight={700}>
-        {label}
-      </Typography>
-      <Typography variant="h5" component="p" fontWeight={800} sx={{ mt: 0.35 }}>
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {hint}
-      </Typography>
-      {progress !== undefined && (
-        <LinearProgress
-          variant="determinate"
-          value={Math.min(100, progress)}
-          sx={{
-            mt: 1,
-            height: 4,
-            bgcolor: 'action.hover',
-            '& .MuiLinearProgress-bar': { bgcolor: color },
-          }}
-        />
-      )}
-    </Box>
+    <CalendarSignal
+      label={label}
+      value={value}
+      detail={hint}
+      icon={icon}
+      tone={tone}
+      progress={progress}
+      progressLabel={progressLabel}
+      selected={selected}
+      compact={compact}
+      onClick={onClick}
+      actionLabel={actionLabel}
+    />
   );
 }
 
@@ -192,7 +250,8 @@ export function CalendarAgendaItem({
         alignItems: 'center',
         borderBottom: 1,
         borderColor: 'divider',
-        bgcolor: selected ? tone.soft : 'transparent',
+        bgcolor: (theme) =>
+          selected ? alpha(tone.main, theme.palette.mode === 'dark' ? 0.22 : 0.1) : 'transparent',
         color: 'text.primary',
       }}
     >
@@ -222,7 +281,13 @@ export function CalendarAgendaItem({
         }}
       >
         <Box>
-          <Typography variant="body2" fontWeight={800} sx={{ color: tone.main }}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.42) : tone.main,
+            })}
+          >
             {calendarTime(event.startsAt, language)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -231,10 +296,17 @@ export function CalendarAgendaItem({
         </Box>
         <Box sx={{ minWidth: 0 }}>
           <Stack direction="row" spacing={0.75} alignItems="center">
-            <Avatar sx={{ width: 26, height: 26, bgcolor: tone.soft, color: tone.main }}>
+            <Avatar
+              sx={(theme) => ({
+                width: 26,
+                height: 26,
+                bgcolor: alpha(tone.main, theme.palette.mode === 'dark' ? 0.25 : 0.12),
+                color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.48) : tone.main,
+              })}
+            >
               <Icon size={14} aria-hidden="true" />
             </Avatar>
-            <Typography fontWeight={750} noWrap>
+            <Typography fontWeight={600} noWrap>
               {event.title}
             </Typography>
             {event.recurrence !== 'NONE' && <Repeat2 size={14} color="currentColor" />}
@@ -292,17 +364,27 @@ export function CalendarEventDrawer({
   event,
   open,
   canEdit,
+  canDelete,
+  canStar,
+  starBusy = false,
   onClose,
   onEdit,
   onCancel,
+  onTrash,
+  onToggleStar,
   onRespond,
 }: {
   event: CalendarEvent | null;
   open: boolean;
   canEdit: boolean;
+  canDelete: boolean;
+  canStar: boolean;
+  starBusy?: boolean;
   onClose: () => void;
   onEdit?: () => void;
   onCancel?: () => void;
+  onTrash?: () => void;
+  onToggleStar?: () => void;
   onRespond?: (response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') => void;
 }) {
   const { t, i18n } = useTranslation('calendar');
@@ -310,22 +392,68 @@ export function CalendarEventDrawer({
   const tone = CALENDAR_EVENT_TONES[event.type];
   const Icon = tone.icon;
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const cancelForEveryone = event.type === 'MEETING' && event.attendees.length > 0;
+  const destructiveAction = !canDelete
+    ? null
+    : cancelForEveryone && onCancel
+      ? { label: t('event.cancelEvent'), onClick: onCancel, icon: null }
+      : onTrash
+        ? { label: t('event.moveToTrash'), onClick: onTrash, icon: <Trash2 size={16} /> }
+        : onCancel
+          ? { label: t('event.cancelEvent'), onClick: onCancel, icon: null }
+          : null;
   return (
     <Drawer
       anchor="right"
       open={open}
       onClose={onClose}
-      slotProps={{ paper: { sx: { width: { xs: 1, sm: 440 }, maxWidth: '100%' } } }}
+      slotProps={{
+        paper: {
+          role: 'dialog',
+          'aria-modal': true,
+          'aria-labelledby': 'calendar-event-drawer-title',
+          sx: { width: { xs: 1, sm: 440 }, maxWidth: '100%' },
+        },
+      }}
     >
       <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ p: 2.5, bgcolor: tone.soft, borderBottom: 1, borderColor: 'divider' }}>
+        <Box
+          sx={(theme) => ({
+            p: 2.5,
+            bgcolor: alpha(tone.main, theme.palette.mode === 'dark' ? 0.2 : 0.1),
+            borderBottom: 1,
+            borderColor: 'divider',
+          })}
+        >
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Chip
-              icon={<Icon size={15} />}
-              label={t(`event.types.${event.type}`)}
-              sx={{ color: tone.main, bgcolor: 'background.paper', fontWeight: 750 }}
-            />
+            <Stack direction="row" spacing={0.75} alignItems="center">
+              <Chip
+                icon={<Icon size={15} />}
+                label={t(`event.types.${event.type}`)}
+                sx={(theme) => ({
+                  color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.42) : tone.main,
+                  bgcolor: 'background.paper',
+                  fontWeight: 600,
+                })}
+              />
+              {event.importance && event.importance !== 'NORMAL' && (
+                <Chip
+                  size="small"
+                  color={event.importance === 'HIGH' ? 'error' : 'default'}
+                  label={t(`event.importance.${event.importance}`)}
+                />
+              )}
+            </Stack>
             <Stack direction="row" spacing={0.5}>
+              {canStar && onToggleStar && (
+                <ActionIconButton
+                  label={t(event.starred ? 'event.unstar' : 'event.star')}
+                  onClick={onToggleStar}
+                  disabled={starBusy}
+                >
+                  <Star size={18} fill={event.starred ? 'currentColor' : 'none'} />
+                </ActionIconButton>
+              )}
               {canEdit && onEdit && (
                 <ActionIconButton label={t('actions.edit')} onClick={onEdit}>
                   <Pencil size={18} />
@@ -336,7 +464,13 @@ export function CalendarEventDrawer({
               </ActionIconButton>
             </Stack>
           </Stack>
-          <Typography component="h2" variant="h5" fontWeight={800} sx={{ mt: 2 }}>
+          <Typography
+            id="calendar-event-drawer-title"
+            component="h2"
+            variant="h5"
+            fontWeight={700}
+            sx={{ mt: 2 }}
+          >
             {event.title}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
@@ -345,6 +479,13 @@ export function CalendarEventDrawer({
         </Box>
         <Box sx={{ p: 2.5, overflowY: 'auto', flex: 1 }}>
           <Stack spacing={2.5}>
+            {event.restrictionReason && (
+              <Alert severity="info" variant="outlined">
+                {t(`event.restrictions.${event.restrictionReason}`, {
+                  defaultValue: t('event.restrictionFallback'),
+                })}
+              </Alert>
+            )}
             <Stack direction="row" spacing={1.5}>
               <CalendarDays size={19} />
               <Box>
@@ -381,34 +522,44 @@ export function CalendarEventDrawer({
               </Box>
             )}
             <Divider />
-            <Box>
-              <Typography variant="overline" color="text.secondary">
-                {t('event.organizer')}
-              </Typography>
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.75 }}>
-                <Avatar sx={{ width: 34, height: 34, bgcolor: tone.main, fontSize: 13 }}>
-                  {event.organizerName.slice(0, 1)}
-                </Avatar>
-                <Box>
-                  <Typography fontWeight={700}>{event.organizerName}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {event.organizerEmail ?? t('event.internalOrganizer')}
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
+            {event.organizerName && (
+              <Box>
+                <Typography variant="overline" color="text.secondary">
+                  {t('event.organizer')}
+                </Typography>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.75 }}>
+                  <Avatar
+                    sx={(theme) => ({
+                      width: 34,
+                      height: 34,
+                      bgcolor: tone.main,
+                      color: theme.palette.getContrastText(tone.main),
+                      fontSize: 13,
+                    })}
+                  >
+                    {event.organizerName.slice(0, 1)}
+                  </Avatar>
+                  <Box>
+                    <Typography fontWeight={700}>{event.organizerName}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {event.organizerEmail ?? t('event.internalOrganizer')}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Box>
+            )}
             {event.attendees.length > 0 && (
               <Box>
                 <Typography variant="overline" color="text.secondary">
                   {t('event.attendeeCount', { count: event.attendees.length })}
                 </Typography>
                 <Stack spacing={1} sx={{ mt: 0.75 }}>
-                  {event.attendees.slice(0, 8).map((attendee) => (
+                  {event.attendees.map((attendee) => (
                     <Stack key={attendee.email} direction="row" spacing={1} alignItems="center">
                       <Avatar sx={{ width: 30, height: 30, fontSize: 12 }}>
                         {attendee.name.slice(0, 1)}
                       </Avatar>
-                      <Typography variant="body2" sx={{ flex: 1 }} noWrap>
+                      <Typography variant="body2" sx={{ flex: 1 }} noWrap title={attendee.name}>
                         {attendee.name}
                       </Typography>
                       <Chip
@@ -424,23 +575,62 @@ export function CalendarEventDrawer({
           </Stack>
         </Box>
         <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
-          {event.myResponse === 'NEEDS_ACTION' && onRespond ? (
-            <Stack direction="row" spacing={1}>
-              <ActionButton fullWidth intent="primary" onClick={() => onRespond('ACCEPTED')}>
-                {t('event.accept')}
-              </ActionButton>
-              <ActionButton fullWidth intent="secondary" onClick={() => onRespond('TENTATIVE')}>
-                {t('event.tentative')}
-              </ActionButton>
-              <ActionButton intent="quiet" onClick={() => onRespond('DECLINED')}>
-                {t('event.decline')}
-              </ActionButton>
-            </Stack>
-          ) : (
-            <Stack direction="row" spacing={1}>
-              {canEdit && onCancel && (
-                <ActionButton intent="danger" onClick={onCancel}>
-                  {t('event.cancelEvent')}
+          <Stack spacing={1.5}>
+            {event.responseRequired && onRespond && (
+              <Box component="section" aria-label={t('event.responseTitle')}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}
+                  sx={{ mb: 1 }}
+                >
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      {t('event.responseTitle')}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('event.responseDescription')}
+                    </Typography>
+                  </Box>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(`event.responses.${event.myResponse ?? 'NEEDS_ACTION'}`)}
+                  />
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                  {(['ACCEPTED', 'TENTATIVE', 'DECLINED'] as const).map((response) => {
+                    const selected = event.myResponse === response;
+                    return (
+                      <ActionButton
+                        key={response}
+                        fullWidth
+                        intent={selected ? 'primary' : 'secondary'}
+                        aria-pressed={selected}
+                        onClick={() => onRespond(response)}
+                      >
+                        {t(
+                          response === 'ACCEPTED'
+                            ? 'event.accept'
+                            : response === 'TENTATIVE'
+                              ? 'event.tentative'
+                              : 'event.decline'
+                        )}
+                      </ActionButton>
+                    );
+                  })}
+                </Stack>
+              </Box>
+            )}
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              {destructiveAction && (
+                <ActionButton
+                  intent="danger"
+                  startIcon={destructiveAction.icon}
+                  onClick={destructiveAction.onClick}
+                >
+                  {destructiveAction.label}
                 </ActionButton>
               )}
               {event.conferenceUrl ? (
@@ -458,7 +648,7 @@ export function CalendarEventDrawer({
                 </ActionButton>
               )}
             </Stack>
-          )}
+          </Stack>
         </Box>
       </Box>
     </Drawer>

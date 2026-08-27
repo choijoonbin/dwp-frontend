@@ -38,6 +38,7 @@
     "IN_PROGRESS": "In progress",
     "IN_REVIEW": "In review",
     "INVESTIGATING": "Investigating",
+    "LIVE": "Live",
     "MONITORING": "Monitoring",
     "NON_COMPLIANT": "Non-compliant",
     "NO_DATA": "No data",
@@ -151,6 +152,7 @@
     "TENANT_LIFECYCLE": "Tenant lifecycle"
   },
   "auditActions": {
+    "ARCHIVE_NOW": "Archived immediately",
     "APPLY": "Applied",
     "APPROVE": "Approved",
     "BLOCKED": "Export processing blocked",
@@ -162,6 +164,8 @@
     "PUBLISH": "Publish",
     "REVOKE": "Revoked",
     "RELEASE": "Resource released",
+    "REASSIGN": "Reassigned",
+    "EXTEND_RETENTION": "Archive deadline extended",
     "RETRY_SCHEDULED": "Export retry scheduled",
     "SNOOZE": "Notification snoozed",
     "UNSAVE": "Notification removed from saved items",

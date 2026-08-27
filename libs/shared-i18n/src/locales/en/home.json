@@ -64,6 +64,7 @@
     "viewAll": "View all",
     "purpose": {
       "partial": "Some data is delayed",
+      "protectedItem": "Protected item",
       "loading": "Loading work data.",
       "partialEmpty": "Some items could not be verified",
       "partialEmptyDescription": "No verified data is available yet. Try again in a moment.",
@@ -72,6 +73,8 @@
       "stale": "Update delayed",
       "count": "{{count}}",
       "more": "View {{count}} more",
+      "viewAllWithCount": "View all · {{count}} more",
+      "featuredFirst": "First to handle",
       "allDay": "All day",
       "scope": {
         "me": "My work",
@@ -134,14 +137,14 @@
         "emptyDescription": "New work will appear here based on deadline and risk."
       },
       "timeline": {
-        "title": "Today",
-        "description": "Meetings, due work, and workplace bookings in time order.",
+        "title": "Today's schedule",
+        "description": "Today's schedule, deadlines, and bookings in time order.",
         "listLabel": "Today's timeline",
         "empty": "Nothing is scheduled today",
         "emptyDescription": "You have room to plan focused work."
       },
       "response": {
-        "title": "Needs response",
+        "title": "Replies & confirmations",
         "description": "Invitations, notices, and requests waiting for your reply.",
         "listLabel": "Items waiting for a response",
         "empty": "No responses are waiting",
@@ -152,12 +155,22 @@
         "description": "The current stage of approvals and service requests you submitted.",
         "listLabel": "Requests in progress",
         "empty": "No requests are in progress",
-        "emptyDescription": "New requests will show their next stage and required action here."
+        "emptyDescription": "New requests will show their next stage and required action here.",
+        "emptyJourneyLabel": "Typical request process",
+        "emptyJourney": {
+          "submitted": "Submitted",
+          "review": "Review",
+          "complete": "Complete"
+        }
       },
       "pulse": {
-        "title": "Work pulse",
-        "description": "A concise view of obligations and exceptions in your role scope.",
+        "title": "Role work status",
+        "description": "See obligations and exceptions across your role.",
         "listLabel": "Role-scope work status",
+        "calendarLoadInsight": "7-day schedule load",
+        "scheduleConflicts": "Review {{count}} schedule conflict",
+        "scheduleConflicts_other": "Review {{count}} schedule conflicts",
+        "scheduleHealthy": "No schedule conflicts in the last 7 days",
         "empty": "No exceptions need review",
         "emptyDescription": "Work in your role scope is currently healthy."
       }
@@ -209,7 +222,12 @@
         "label": "Today's work summary",
         "action": "To handle",
         "timeline": "Today",
-        "response": "New replies"
+        "response": "Needs reply"
+      },
+      "metricsShort": {
+        "action": "Work",
+        "timeline": "Plans",
+        "response": "Replies"
       },
       "domains": {
         "overview": "Work summary",
@@ -378,10 +396,10 @@
       "discardChanges": "Discard changes",
       "leaveHome": "Leave home",
       "sections": {
-        "today": "Today",
-        "response-hub": "Needs response",
+        "today": "Today's schedule",
+        "response-hub": "Replies & confirmations",
         "request-tracker": "My requests",
-        "role-pulse": "Work pulse",
+        "role-pulse": "Role work status",
         "today-flowline": "Today's schedule and deadlines",
         "work-signals": "Work overview",
         "next-actions": "Prepare next"
@@ -475,6 +493,11 @@
         "shortName": "Messages",
         "description": "Governed conversations with people, Spaces, and teams"
       },
+      "dwp-meetings": {
+        "name": "Video meetings",
+        "shortName": "Meetings",
+        "description": "Secure video meetings, scheduled sessions, and governed follow-ups"
+      },
       "dwp-spaces": {
         "name": "Spaces",
         "shortName": "Spaces",
@@ -566,6 +589,8 @@
     "panelLabel": "DWAI·ON conversation and support panel",
     "newQuestion": "New question",
     "expand": "Open in DWAI·ON Workspace",
+    "openingWorkspace": "Opening DWAI·ON Workspace",
+    "launchUnavailable": "The secure question handoff could not be prepared. Keep this panel open and try again.",
     "status": {
       "ready": "Policy boundary active",
       "thinking": "Checking evidence"
@@ -680,22 +705,101 @@
       "safeFallback": "The request ended without a verified answer. Try again later."
     }
   },
+  "dwaionVoice": {
+    "input": {
+      "idle": "Enter by voice",
+      "requesting": "Checking microphone access",
+      "listening": "Listening · press to stop",
+      "transcribing": "Transcribing",
+      "review": "Transcript ready · review before sending",
+      "error": "Try voice input again",
+      "unsupported": "Voice input is not supported in this browser"
+    },
+    "speech": {
+      "idle": "Listen to answer",
+      "loading": "Preparing speech · press to stop",
+      "playing": "Stop spoken answer",
+      "error": "Try spoken answer again"
+    }
+  },
   "editor": {
     "editing": "Editing",
     "closeLabel": "Close home editor",
     "toolbarLabel": "Home editing tools",
     "addItems": "Add items",
+    "restoreHiddenItems": "Restore hidden items",
+    "noHiddenItemsAvailable": "Nothing is hidden in this home draft.",
     "reset": "Reset to default layout",
     "cancel": "Cancel editing",
     "done": "Finish editing",
     "galleryTitle": "Add to home",
-    "gallerySubtitle": "Restore hidden apps and information widgets to your home.",
-    "galleryTabs": "Types of home items to add",
+    "gallerySubtitle": "Browse items or restore hidden ones. Changes save when you finish editing.",
+    "closeGalleryLabel": "Close the home item library",
+    "galleryTabs": "Home item library views",
+    "closeHiddenItemsLabel": "Close hidden items",
+    "hiddenItemsViews": "Hidden home items",
+    "libraryTab": "Library {{count}}",
+    "hiddenTab": "Hidden {{count}}",
     "appsTab": "Apps {{count}}",
     "widgetsTab": "Widgets {{count}}",
-    "nothingHidden": "There is nothing to add",
-    "nothingHiddenDescription": "Every available item is already visible on your home.",
+    "nothingHidden": "No hidden items",
+    "nothingHiddenDescription": "Apps and widgets you hide from this home will appear here for restoration.",
+    "noAvailableWidgets": "No item is provided for this home",
+    "noAvailableWidgetsDescription": "No built-in app or widget can be shown with the current app access and home surface.",
+    "widgetLibraryTitle": "Home item library preview",
+    "widgetLibraryDescription": "Browse items packaged with this build. This preview is not a Provider certification or Tenant policy, and content still uses your own account and source permissions.",
+    "widgetLibraryDescriptionCompact": "Build preview, not Provider certification or Tenant policy. Data follows your permissions.",
+    "hiddenItemsTitle": "Hidden items",
+    "hiddenItemsDescription": "Restore apps and widgets that you previously removed from this home.",
+    "libraryOffTitle": "The item library preview is off",
+    "libraryOffDescription": "You can still restore hidden items. Dynamic Provider definitions and Tenant widget policy are not enabled.",
+    "searchLabel": "Search apps and widgets",
+    "searchPlaceholder": "Search by name, description, or owning app",
+    "kindFilterLabel": "Filter by item type",
+    "kindFilter": {
+      "ALL": "All",
+      "APP": "Apps",
+      "WIDGET": "Widgets"
+    },
+    "statusFilterLabel": "Filter by home status",
+    "statusFilter": {
+      "ALL": "All states",
+      "ACTIONABLE": "Add or restore",
+      "ADDED": "On home"
+    },
+    "resetFilters": "Reset filters",
+    "resultCount": "Showing {{shown}} of {{total}} items",
+    "allItemsAddedTitle": "Every supported item is already on your home",
+    "allItemsAddedDescription": "You can search this build preview or hide an item from the editor before restoring it here.",
+    "allItemsAddedDescriptionWithStudio": "You can search this build preview, open home widget settings, or hide an item from the editor before restoring it here.",
+    "noSearchResults": "No item matches this search and filter",
+    "noSearchResultsDescription": "Change the search term or reset the item type and status filters.",
+    "section": {
+      "APP": "Apps {{count}}",
+      "WIDGET": "Widgets {{count}}"
+    },
+    "itemType": {
+      "APP": "app",
+      "WIDGET": "widget"
+    },
+    "openWidgetStudio": "Home widget settings",
+    "alreadyAdded": "On home",
+    "locked": "Fixed by organization",
+    "forbidden": "Access required",
+    "widgetConfigurable": "Content can be configured within the registered contract",
     "add": "Add",
+    "restore": "Restore",
+    "addItemLabel": "Add {{item}} {{type}} to home",
+    "restoreItemLabel": "Restore {{item}} {{type}} to home",
+    "announcement": {
+      "added": "{{item}} was added to the home draft. Finish editing to save this change.",
+      "restored": "{{item}} was restored to the home draft. Finish editing to save this change."
+    },
+    "returnToHomeEditing": "Return to home editing",
+    "appMetadata": "App",
+    "widgetTypeMetadata": "Widget · {{app}}",
+    "configurableWidgetMetadata": "Configurable widget · {{app}}",
+    "platformOwner": "DWP platform",
     "widgetMetadata": "{{source}} / up to {{minutes}} min freshness",
     "dragWidgetLabel": "Move {{widget}} widget",
     "removeWidget": "Remove from home",

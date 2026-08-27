@@ -63,7 +63,9 @@ function legacyPageGuard(routeContractKey: string) {
 
 describe('Communications legacy PAGE access', () => {
   beforeEach(() => {
-    accessMocks.useAuth.mockReturnValue({ user: { roles: ['PROVIDER_SUPPORT'] } });
+    accessMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'PROVIDER', roles: ['PROVIDER_SUPPORT'], resourceRoles: [] },
+    });
     accessMocks.usePermissions.mockReturnValue({
       isLoaded: true,
       hasPermission: vi.fn(() => true),

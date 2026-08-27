@@ -18,6 +18,7 @@ import {
   notificationArrivalContent,
   notificationArrivalSignalKey,
   shouldSurfaceNotificationArrival,
+  type NotificationArrival,
   upsertPersistentNotificationArrival,
 } from './notification-arrival-policy';
 
@@ -138,6 +139,23 @@ describe('notification arrival signal identity', () => {
     };
 
     expect(upsertPersistentNotificationArrival([original], updated)).toEqual([updated]);
+  });
+
+  it('bounds persistent arrival bursts while retaining the visible and newest items', () => {
+    const arrivals = [1, 2, 3, 4].reduce(
+      (queued, value) =>
+        upsertPersistentNotificationArrival(queued, {
+          item: { ...messagingItem, notificationId: `notification-${value}` },
+          href: `/messages/${value}`,
+        }),
+      [] as NotificationArrival[]
+    );
+
+    expect(arrivals.map(({ item }) => item.notificationId)).toEqual([
+      'notification-1',
+      'notification-3',
+      'notification-4',
+    ]);
   });
 
   it('never treats user triage refreshes as new arrivals', () => {
@@ -268,10 +286,13 @@ describe('notification arrival policy', () => {
       ...urgentMessage,
       source: { appKey: 'security', appName: 'Security' },
       typeKey: 'SECURITY.ACCOUNT_COMPROMISE',
+      interruptionLevel: 'CRITICAL' as const,
     };
+    const markerOnlySecurity = { ...urgentSecurity, interruptionLevel: undefined };
 
     expect(isPersistentNotificationArrival(urgentMessage)).toBe(true);
     expect(isAssertiveNotificationArrival(urgentMessage)).toBe(false);
     expect(isAssertiveNotificationArrival(urgentSecurity)).toBe(true);
+    expect(isAssertiveNotificationArrival(markerOnlySecurity)).toBe(false);
   });
 });

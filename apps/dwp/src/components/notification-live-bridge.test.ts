@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   notificationLiveChannelName,
   notificationStreamUrl,
+  resolveNotificationStreamClientId,
   newestNotificationCursor,
   isNotificationConnectionRequest,
   parseNotificationConnectionChannelMessage,
@@ -96,8 +97,32 @@ describe('notification live bridge boundary', () => {
       '9007199254740994'
     );
     expect(notificationStreamUrl(null)).toBe('/api/notifications/v1/stream');
-    expect(notificationStreamUrl('9007199254740994')).toBe(
-      '/api/notifications/v1/stream?after=9007199254740994'
+    expect(notificationStreamUrl('9007199254740994', '42000000-0000-4000-8000-000000000001')).toBe(
+      '/api/notifications/v1/stream?clientId=42000000-0000-4000-8000-000000000001&after=9007199254740994'
     );
+  });
+
+  it('keeps one stable stream identity across reconnects and runtime remounts', () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    };
+    const first = '42000000-0000-4000-8000-000000000002';
+    const second = '42000000-0000-4000-8000-000000000003';
+
+    expect(
+      resolveNotificationStreamClientId('notification-client-test', storage, () => first)
+    ).toBe(first);
+    expect(
+      resolveNotificationStreamClientId('notification-client-test', storage, () => second)
+    ).toBe(first);
+    expect(values.get('notification-client-test')).toBe(first);
+  });
+
+  it('rejects malformed generated stream identities', () => {
+    expect(() =>
+      resolveNotificationStreamClientId('invalid-client-test', null, () => 'bad')
+    ).toThrow('must be a UUID');
   });
 });

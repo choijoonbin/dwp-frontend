@@ -22,6 +22,8 @@ import Typography from '@mui/material/Typography';
 import type { AskCitationSourceType } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
 
+import { DwaionVoiceInputControl } from '../../components/dwaion-assistant/dwaion-voice-controls';
+
 type DwaionWorkspaceComposerProps = {
   value: string;
   loading: boolean;
@@ -57,7 +59,7 @@ export function DwaionWorkspaceComposer({
   onChange,
   onSubmit,
 }: DwaionWorkspaceComposerProps) {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -161,25 +163,33 @@ export function DwaionWorkspaceComposer({
           )}
         </Stack>
 
-        <ActionIconButton
-          type={loading ? 'button' : 'submit'}
-          label={loading ? t('askPage.composer.cancel') : t('askPage.composer.send')}
-          tooltip={loading ? t('askPage.composer.cancel') : t('askPage.composer.sendHint')}
-          intent="primary"
-          disabled={!loading && !value.trim()}
-          onClick={loading ? onCancel : undefined}
-          sx={{ width: 36, height: 36, flex: '0 0 auto' }}
-        >
-          {loading ? (
-            onCancel ? (
-              <Square size={15} fill="currentColor" aria-hidden="true" />
+        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flex: '0 0 auto' }}>
+          <DwaionVoiceInputControl
+            namespace="work"
+            locale={i18n.resolvedLanguage || i18n.language || 'en'}
+            disabled={loading}
+            onTranscript={(text) => onChange([value.trim(), text].filter(Boolean).join(' '))}
+          />
+          <ActionIconButton
+            type={loading ? 'button' : 'submit'}
+            label={loading ? t('askPage.composer.cancel') : t('askPage.composer.send')}
+            tooltip={loading ? t('askPage.composer.cancel') : t('askPage.composer.sendHint')}
+            intent="primary"
+            disabled={!loading && !value.trim()}
+            onClick={loading ? onCancel : undefined}
+            sx={{ width: 44, height: 44, flex: '0 0 auto' }}
+          >
+            {loading ? (
+              onCancel ? (
+                <Square size={15} fill="currentColor" aria-hidden="true" />
+              ) : (
+                <CircularProgress size={17} color="inherit" />
+              )
             ) : (
-              <CircularProgress size={17} color="inherit" />
-            )
-          ) : (
-            <ArrowUp size={18} strokeWidth={2} aria-hidden="true" />
-          )}
-        </ActionIconButton>
+              <ArrowUp size={18} strokeWidth={2} aria-hidden="true" />
+            )}
+          </ActionIconButton>
+        </Stack>
       </Box>
     </Box>
   );

@@ -188,10 +188,14 @@ export function validateRoomBookingRange(
 export function roomSlotOverlaps(
   start: Date,
   end: Date,
-  occupancy: readonly RoomOccupancy[]
+  occupancy: readonly RoomOccupancy[],
+  bufferMinutes = 0
 ): boolean {
+  const bufferMilliseconds = Math.max(0, bufferMinutes) * 60_000;
   return occupancy.some(
-    (busy) => Date.parse(busy.startsAt) < end.getTime() && Date.parse(busy.endsAt) > start.getTime()
+    (busy) =>
+      Date.parse(busy.startsAt) < end.getTime() + bufferMilliseconds &&
+      Date.parse(busy.endsAt) > start.getTime() - bufferMilliseconds
   );
 }
 
@@ -200,11 +204,13 @@ export function roomSlotAvailable({
   end,
   occupancy,
   active,
+  bufferMinutes = 0,
 }: {
   start: Date;
   end: Date;
   occupancy: readonly RoomOccupancy[];
   active: boolean;
+  bufferMinutes?: number;
 }): boolean {
-  return active && end > start && !roomSlotOverlaps(start, end, occupancy);
+  return active && end > start && !roomSlotOverlaps(start, end, occupancy, bufferMinutes);
 }

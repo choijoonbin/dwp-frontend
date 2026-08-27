@@ -54,6 +54,7 @@ describe('messaging API boundary', () => {
         replyToMessageId: 'message-root',
         idempotencyKey: 'idempotency-1',
         attachmentIds: ['attachment-1'],
+        mentionedUserIds: [202, 303],
       })
     ).resolves.toEqual(message);
 
@@ -66,6 +67,7 @@ describe('messaging API boundary', () => {
       replyToMessageId: 'message-root',
       idempotencyKey: 'idempotency-1',
       attachmentIds: ['attachment-1'],
+      mentionedUserIds: [202, 303],
     });
   });
 

@@ -3,8 +3,13 @@ import { describe, expect, it } from 'vitest';
 import {
   isExclusiveProviderSupportContext,
   parseProductSurfaceAuthoritySnapshot,
+  productSurfaceAuthoritySemanticsMatch,
+  productSurfaceBackgroundRefreshDelay,
+  productSurfaceExpiryDelay,
+  productSurfaceLeaseAdvanced,
   productSurfaceRefreshDelay,
   productSurfaceServerNow,
+  productSurfaceSnapshotRemainsValid,
   resolveProductRollout,
 } from './product-surface-authority-model';
 import { PRODUCT_SCOPE_KINDS } from './product-surface-scope-kind';
@@ -45,6 +50,7 @@ function envelope() {
             displayName: 'My work',
             isDefault: true,
             readOnly: false,
+            validUntil: '2026-08-24T01:01:00Z',
           },
         ],
         revalidateAt: '2026-08-24T01:01:00Z',
@@ -95,6 +101,7 @@ function providerSupportEnvelope() {
       displayName: 'Approved support session',
       isDefault: true,
       readOnly: true,
+      validUntil: '2026-08-24T01:01:00Z',
     },
   ];
   return candidate;
@@ -108,8 +115,45 @@ describe('product surface authority model', () => {
     expect(productSurfaceServerNow(snapshot, RECEIVED_AT + 20_000)).toBe(
       Date.parse('2026-08-24T01:00:20Z')
     );
+    expect(productSurfaceExpiryDelay(snapshot, RECEIVED_AT + 20_000)).toBe(40_000);
+    expect(productSurfaceBackgroundRefreshDelay(snapshot, RECEIVED_AT + 20_000)).toBe(30_000);
     expect(productSurfaceRefreshDelay(snapshot, RECEIVED_AT + 20_000)).toBe(40_000);
+    expect(productSurfaceSnapshotRemainsValid(snapshot, RECEIVED_AT + 59_999)).toBe(true);
+    expect(productSurfaceSnapshotRemainsValid(snapshot, RECEIVED_AT + 60_000)).toBe(false);
     expect(productSurfaceRefreshDelay(snapshot, RECEIVED_AT + 61_000)).toBe(0);
+  });
+
+  it('refreshes short-lived authority halfway to expiry without creating an immediate loop', () => {
+    const snapshot = parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT);
+
+    expect(productSurfaceBackgroundRefreshDelay(snapshot, RECEIVED_AT + 57_000)).toBe(1_500);
+  });
+
+  it('accepts only a semantic no-op with a strictly advanced lease as a background renewal', () => {
+    const previous = parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT);
+    const renewedEnvelope = envelope();
+    renewedEnvelope.generatedAt = '2026-08-24T01:00:20Z';
+    renewedEnvelope.contexts[0]!.revalidateAt = '2026-08-24T01:01:20Z';
+    renewedEnvelope.contexts[0]!.scopes[0]!.validUntil = '2026-08-24T01:01:20Z';
+    const previousWithScopeLeaseEnvelope = envelope();
+    previousWithScopeLeaseEnvelope.contexts[0]!.scopes[0]!.validUntil = '2026-08-24T01:01:00Z';
+    const previousWithScopeLease = parseProductSurfaceAuthoritySnapshot(
+      previousWithScopeLeaseEnvelope,
+      RECEIVED_AT
+    );
+    const renewed = parseProductSurfaceAuthoritySnapshot(renewedEnvelope, RECEIVED_AT + 20_000);
+    const unchangedLease = parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT + 20_000);
+    const changedAuthorityEnvelope = structuredClone(renewedEnvelope);
+    changedAuthorityEnvelope.contexts[0]!.scopes[0]!.readOnly = true;
+    const changedAuthority = parseProductSurfaceAuthoritySnapshot(
+      changedAuthorityEnvelope,
+      RECEIVED_AT + 20_000
+    );
+
+    expect(productSurfaceAuthoritySemanticsMatch(previousWithScopeLease, renewed)).toBe(true);
+    expect(productSurfaceLeaseAdvanced(previous, renewed)).toBe(true);
+    expect(productSurfaceLeaseAdvanced(previous, unchangedLease)).toBe(false);
+    expect(productSurfaceAuthoritySemanticsMatch(previous, changedAuthority)).toBe(false);
   });
 
   it('fails a governed product closed for missing, duplicate, or inconsistent rollout data', () => {

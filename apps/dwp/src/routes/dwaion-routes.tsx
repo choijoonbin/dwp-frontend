@@ -24,6 +24,16 @@ const DwaionConversations = lazy(() =>
     default: module.DwaionConversations,
   }))
 );
+const DwaionActivity = lazy(() =>
+  import('../features/dwaion/dwaion-activity').then((module) => ({
+    default: module.DwaionActivity,
+  }))
+);
+const DwaionProposals = lazy(() =>
+  import('../features/dwaion/dwaion-proposals').then((module) => ({
+    default: module.DwaionProposals,
+  }))
+);
 const DwaionAgents = lazy(() =>
   import('../features/dwaion/dwaion-agents').then((module) => ({ default: module.DwaionAgents }))
 );
@@ -129,15 +139,18 @@ function LegacyDwaionEntry() {
   const { search, hash } = useLocation();
   const params = new URLSearchParams(search);
   const conversationId = params.get('conversation')?.trim();
-  const hasNewConversationContext = Boolean(params.get('q')?.trim() || params.get('agent')?.trim());
+  const hasLegacyQuestion = params.has('q');
+  const hasNewConversationContext = hasLegacyQuestion || Boolean(params.get('agent')?.trim());
   params.delete('conversation');
+  params.delete('q');
+  const canonicalSearch = params.toString() ? `?${params.toString()}` : '';
 
   if (conversationId) {
     return (
       <Navigate
         to={{
           pathname: `/dwaion/conversations/${encodeURIComponent(conversationId)}`,
-          search: params.toString() ? `?${params.toString()}` : '',
+          search: canonicalSearch,
           hash,
         }}
         replace
@@ -146,7 +159,11 @@ function LegacyDwaionEntry() {
   }
   return (
     <Navigate
-      to={{ pathname: hasNewConversationContext ? '/dwaion/new' : '/dwaion/home', search, hash }}
+      to={{
+        pathname: hasNewConversationContext ? '/dwaion/new' : '/dwaion/home',
+        search: canonicalSearch,
+        hash,
+      }}
       replace
     />
   );
@@ -165,6 +182,10 @@ function dwaionRoutePage(pattern: string) {
   const component =
     pattern === '/dwaion/home' ? (
       <DwaionHome />
+    ) : pattern === '/dwaion/activity' ? (
+      <DwaionActivity />
+    ) : pattern === '/dwaion/proposals' ? (
+      <DwaionProposals />
     ) : pattern === '/dwaion/conversations' ? (
       <DwaionConversations />
     ) : pattern === '/dwaion/agents' ? (

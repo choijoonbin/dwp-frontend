@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/react/daygrid';
 import interactionPlugin from '@fullcalendar/react/interaction';
@@ -11,12 +12,19 @@ import { LockKeyhole, MapPin } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import '@fullcalendar/react/skeleton.css';
 import '@fullcalendar/react/themes/forma/theme.css';
 import '@fullcalendar/react/themes/forma/palettes/blue.css';
 
-import { CALENDAR_EVENT_TONES } from './calendar-components';
+import { CALENDAR_EVENT_TONES, calendarDate, calendarTime } from './calendar-components';
+import {
+  calendarScheduleDateValue,
+  fullCalendarView,
+  scheduleViewFromFullCalendar,
+  type CalendarScheduleView,
+} from './calendar-schedule-state';
 
 import type {
   CalendarRef,
@@ -36,10 +44,15 @@ type CalendarInteractiveGridProps = {
   language: string;
   compact: boolean;
   loading: boolean;
+  view: CalendarScheduleView;
   navigateDate?: Date;
+  weekStart: number;
+  workingDayStart: string;
+  workingDayEnd: string;
   canCreate: boolean;
   canMove: (event: CalendarEvent) => boolean;
   onRangeChange: (range: CalendarRange) => void;
+  onCalendarStateChange: (view: CalendarScheduleView, date: Date) => void;
   onCreateRange: (start: Date, end: Date, allDay: boolean) => void;
   onOpenEvent: (event: CalendarEvent) => void;
   onMoveEvent: (
@@ -68,7 +81,7 @@ function eventInputs(
       end: event.endsAt,
       allDay: event.allDay,
       backgroundColor: tone.soft,
-      borderColor: event.conflict ? '#C62828' : tone.main,
+      borderColor: event.conflict ? '#C62828' : event.calendarColor || tone.main,
       textColor: '#172033',
       editable,
       startEditable: editable,
@@ -93,20 +106,46 @@ export function CalendarInteractiveGrid({
   language,
   compact,
   loading,
+  view,
   navigateDate,
+  weekStart,
+  workingDayStart,
+  workingDayEnd,
   canCreate,
   canMove,
   onRangeChange,
+  onCalendarStateChange,
   onCreateRange,
   onOpenEvent,
   onMoveEvent,
 }: CalendarInteractiveGridProps) {
+  const { t } = useTranslation('calendar');
   const calendarRef = useRef<CalendarRef>(null);
+  const applyingViewRef = useRef<string | null>(null);
+  const applyingDateRef = useRef<string | null>(null);
+  const eventKeyboardHandlersRef = useRef(
+    new WeakMap<HTMLElement, (event: KeyboardEvent) => void>()
+  );
+  const [activeView, setActiveView] = useState<CalendarScheduleView>(view);
   const inputs = useMemo(() => eventInputs(events, canMove), [canMove, events]);
 
   useEffect(() => {
-    if (navigateDate) calendarRef.current?.getApi().gotoDate(navigateDate);
+    const calendar = calendarRef.current?.getApi();
+    if (!calendar || !navigateDate) return;
+    const nextDate = calendarScheduleDateValue(navigateDate);
+    if (calendarScheduleDateValue(calendar.getDate()) === nextDate) return;
+    applyingDateRef.current = nextDate;
+    calendar.gotoDate(navigateDate);
   }, [navigateDate]);
+
+  useEffect(() => {
+    const calendar = calendarRef.current?.getApi();
+    const nextView = fullCalendarView(view);
+    if (calendar && calendar.view.type !== nextView) {
+      applyingViewRef.current = nextView;
+      calendar.changeView(nextView);
+    }
+  }, [activeView, view]);
 
   const select = (selection: DateSelectInfo) => {
     if (selection.allDay) {
@@ -123,53 +162,134 @@ export function CalendarInteractiveGrid({
     onMoveEvent(sourceEvent(info), mutationRange(info), info.revert);
   };
 
+  const accessibleEventLabel = (event: CalendarEvent, editable: boolean) => {
+    const state = [
+      event.recurrence !== 'NONE' ? t('schedule.recurringEvent') : '',
+      event.conflict ? t('event.conflict') : '',
+      event.myResponse ? t(`event.responses.${event.myResponse}`) : '',
+      editable ? t('schedule.editableEvent') : t('schedule.readOnlyEvent'),
+    ]
+      .filter(Boolean)
+      .join(', ');
+    return t('schedule.eventAccessibleLabel', {
+      date: calendarDate(event.startsAt, language),
+      start: calendarTime(event.startsAt, language),
+      end: calendarTime(event.endsAt, language),
+      title: event.title,
+      calendar: event.calendarName,
+      type: t(`event.types.${event.type}`),
+      state,
+    });
+  };
+
   return (
     <Box
       data-testid="interactive-calendar"
+      data-controlled-view={view}
+      data-active-view={activeView}
       aria-busy={loading}
       sx={(theme) => ({
         minWidth: 0,
-        '--fc-border-color': theme.palette.divider,
+        '--fc-border-color': alpha(theme.palette.divider, 0.72),
         '--fc-page-bg-color': theme.palette.background.paper,
         '--fc-neutral-bg-color': theme.palette.action.hover,
-        '--fc-today-bg-color': theme.palette.mode === 'dark' ? '#17304B' : '#F0F6FF',
+        '--fc-today-bg-color': alpha(
+          theme.palette.primary.main,
+          theme.palette.mode === 'dark' ? 0.18 : 0.06
+        ),
         '--fc-now-indicator-color': theme.palette.error.main,
         '& .fc': { color: theme.palette.text.primary, fontFamily: theme.typography.fontFamily },
         '& .fc-header-toolbar': {
           gap: 1,
-          px: { xs: 1, md: 2 },
-          py: 1.25,
+          px: { xs: 1.25, md: 2 },
+          py: { xs: 1.25, md: 1.5 },
           mb: '0 !important',
           flexWrap: 'wrap',
           borderBottom: 1,
-          borderColor: 'divider',
+          borderColor: alpha(theme.palette.divider, 0.72),
+          bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.025),
         },
         '& .fc-toolbar-title': {
           fontSize: { xs: '1rem', md: '1.125rem' },
-          fontWeight: 800,
+          fontWeight: 600,
           letterSpacing: 0,
         },
-        '& .fc-button': { minHeight: 34, borderRadius: '4px !important', fontWeight: 700 },
-        '& .fc-col-header-cell-cushion': { py: 1.25, fontWeight: 750, color: 'text.secondary' },
+        '& .fc-button': {
+          minHeight: 34,
+          border: '0 !important',
+          borderRadius: '9px !important',
+          boxShadow: 'none !important',
+          bgcolor: 'transparent !important',
+          color: `${theme.palette.text.secondary} !important`,
+          fontWeight: 700,
+        },
+        '& .fc-button:hover': {
+          bgcolor: `${theme.palette.action.hover} !important`,
+          color: `${theme.palette.text.primary} !important`,
+        },
+        '& .fc-button-active': {
+          bgcolor: `${alpha(theme.palette.primary.main, 0.12)} !important`,
+          color: `${theme.palette.primary.main} !important`,
+        },
+        '& .fc-col-header-cell': {
+          bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.06 : 0.018),
+        },
+        '& .fc-col-header-cell-cushion': {
+          py: 1.35,
+          fontWeight: 720,
+          color: 'text.secondary',
+        },
         '& .fc-timegrid-slot': { height: '2.8rem' },
         '& .fc-timegrid-slot-label-cushion': { color: 'text.secondary', fontSize: '0.72rem' },
-        '& .fc-event': { borderRadius: 4, boxShadow: 'none', cursor: 'pointer' },
-        '& .fc-event:hover': { boxShadow: theme.shadows[2] },
+        '& .fc-event': {
+          borderRadius: '7px',
+          boxShadow: 'none',
+          cursor: 'pointer',
+          transition: theme.transitions.create('filter', {
+            duration: theme.transitions.duration.shorter,
+          }),
+        },
+        '& .fc-event:hover': { filter: 'saturate(1.08)' },
         '& .fc-event:focus': {
           outline: `2px solid ${theme.palette.primary.main}`,
           outlineOffset: 1,
         },
         '& .fc-event-main': { color: 'inherit', p: 0 },
         '& .fc-list-event:hover td': { bgcolor: 'action.hover' },
-        '& .fc-daygrid-day-number': { color: 'text.primary', p: 1 },
-        '& .fc-popover': { borderRadius: 1, boxShadow: theme.shadows[8] },
+        '& .fc-daygrid-day-number': { color: 'text.primary', p: 1, fontWeight: 650 },
+        '& .fc-day-today .fc-daygrid-day-number': {
+          minWidth: 28,
+          height: 28,
+          display: 'grid',
+          placeItems: 'center',
+          m: 0.5,
+          p: 0,
+          borderRadius: '50%',
+          bgcolor: 'primary.main',
+          color: 'primary.contrastText',
+        },
+        '& .fc-popover': { borderRadius: 2, boxShadow: theme.shadows[8] },
+        '@media (prefers-reduced-motion: reduce)': {
+          '& .fc-event': { transition: 'none' },
+        },
+        '@media (forced-colors: active)': {
+          '& .fc-event': {
+            forcedColorAdjust: 'auto',
+            border: '1px solid CanvasText !important',
+          },
+          '& .fc-event:focus': { outlineColor: 'Highlight' },
+          '& .fc-day-today .fc-daygrid-day-number': {
+            border: '1px solid CanvasText',
+          },
+        },
       })}
     >
       <FullCalendar
         ref={calendarRef}
         plugins={[formaThemePlugin, dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         locale={language.startsWith('ko') ? koLocale : 'en'}
-        initialView={compact ? 'listMonth' : 'timeGridWeek'}
+        initialView={fullCalendarView(view)}
+        firstDay={weekStart}
         headerToolbar={
           compact
             ? { start: 'prev,next today', center: 'title', end: 'timeGridDay,listMonth' }
@@ -180,9 +300,17 @@ export function CalendarInteractiveGrid({
               }
         }
         events={inputs}
-        datesSet={(info: DatesSetInfo) =>
-          onRangeChange({ from: info.start.toISOString(), to: info.end.toISOString() })
-        }
+        datesSet={(info: DatesSetInfo) => {
+          const nextActiveView = scheduleViewFromFullCalendar(info.view.type);
+          setActiveView((current) => (current === nextActiveView ? current : nextActiveView));
+          const controlledTransition = Boolean(applyingViewRef.current || applyingDateRef.current);
+          if (applyingViewRef.current === info.view.type) applyingViewRef.current = null;
+          const activeDate = calendarScheduleDateValue(info.view.calendar.getDate());
+          if (applyingDateRef.current === activeDate) applyingDateRef.current = null;
+          onRangeChange({ from: info.start.toISOString(), to: info.end.toISOString() });
+          if (controlledTransition) return;
+          onCalendarStateChange(nextActiveView, info.view.calendar.getDate());
+        }}
         selectable={canCreate}
         selectMirror={canCreate}
         selectMinDistance={4}
@@ -197,15 +325,57 @@ export function CalendarInteractiveGrid({
         eventContent={(info) => {
           const event = info.event.extendedProps.source as CalendarEvent;
           const editable = Boolean(info.event.extendedProps.editable);
-          return (
-            <Box sx={{ minWidth: 0, px: 0.75, py: 0.4 }}>
+          const listView = info.view.type.startsWith('list');
+          const label = accessibleEventLabel(event, editable);
+          const content = listView ? (
+            <Box sx={{ minWidth: 0 }}>
+              {info.timeText && (
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={650}
+                  sx={{ display: 'block', fontVariantNumeric: 'tabular-nums' }}
+                >
+                  {info.timeText}
+                </Typography>
+              )}
+              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 0 }}>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{
+                    minWidth: 0,
+                    display: '-webkit-box',
+                    overflow: 'hidden',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                  }}
+                >
+                  {event.title}
+                </Typography>
+                {!editable && <LockKeyhole size={11} aria-hidden="true" />}
+              </Stack>
+              <Typography
+                component="span"
+                variant="caption"
+                color="text.secondary"
+                noWrap
+                sx={{ display: 'block', mt: 0.2 }}
+              >
+                {[event.calendarName, event.location].filter(Boolean).join(' · ')}
+              </Typography>
+            </Box>
+          ) : (
+            <>
               <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 0 }}>
                 {info.timeText && (
-                  <Typography component="span" variant="caption" fontWeight={800} noWrap>
+                  <Typography component="span" variant="caption" fontWeight={600} noWrap>
                     {info.timeText}
                   </Typography>
                 )}
-                <Typography component="span" variant="caption" fontWeight={750} noWrap>
+                <Typography component="span" variant="caption" fontWeight={600} noWrap>
                   {event.title}
                 </Typography>
                 {!editable && <LockKeyhole size={11} aria-hidden="true" />}
@@ -218,17 +388,92 @@ export function CalendarInteractiveGrid({
                   </Typography>
                 </Stack>
               )}
-            </Box>
+            </>
           );
+          const contentSx = {
+            minWidth: 0,
+            px: listView ? 1 : 0.75,
+            py: listView ? 0.75 : 0.4,
+            borderLeft: '3px solid',
+            borderLeftColor: event.calendarColor || 'primary.main',
+          } as const;
+
+          if (listView) {
+            return (
+              <Box
+                component="button"
+                type="button"
+                aria-label={label}
+                title={label}
+                onClick={(clickEvent) => {
+                  clickEvent.stopPropagation();
+                  onOpenEvent(event);
+                }}
+                sx={{
+                  ...contentSx,
+                  appearance: 'none',
+                  display: 'block',
+                  width: '100%',
+                  m: 0,
+                  borderTop: 0,
+                  borderRight: 0,
+                  borderBottom: 0,
+                  bgcolor: 'transparent',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  font: 'inherit',
+                  textAlign: 'left',
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: -2,
+                  },
+                }}
+              >
+                {content}
+              </Box>
+            );
+          }
+
+          return <Box sx={contentSx}>{content}</Box>;
         }}
         eventDidMount={(info) => {
           const event = info.event.extendedProps.source as CalendarEvent;
-          info.el.setAttribute('aria-label', `${info.timeText} ${event.title}`.trim());
-          info.el.title = event.title;
+          const editable = Boolean(info.event.extendedProps.editable);
+          const label = accessibleEventLabel(event, editable);
+          info.el.dataset.calendarEventShell = event.eventId;
+          if (info.view.type.startsWith('list')) {
+            info.el.setAttribute('role', 'listitem');
+            info.el.removeAttribute('tabindex');
+            info.el.removeAttribute('aria-label');
+            info.el.removeAttribute('title');
+          } else {
+            const keyboardHandler = (keyboardEvent: KeyboardEvent) => {
+              if (keyboardEvent.key !== 'Enter' && keyboardEvent.key !== ' ') return;
+              keyboardEvent.preventDefault();
+              onOpenEvent(event);
+            };
+            info.el.setAttribute('role', 'button');
+            info.el.setAttribute('tabindex', '0');
+            info.el.setAttribute('aria-label', label);
+            info.el.title = label;
+            info.el.addEventListener('keydown', keyboardHandler);
+            eventKeyboardHandlersRef.current.set(info.el, keyboardHandler);
+          }
+        }}
+        eventWillUnmount={(info) => {
+          const keyboardHandler = eventKeyboardHandlersRef.current.get(info.el);
+          if (!keyboardHandler) return;
+          info.el.removeEventListener('keydown', keyboardHandler);
+          eventKeyboardHandlersRef.current.delete(info.el);
         }}
         nowIndicator
         navLinks
-        businessHours={{ daysOfWeek: [1, 2, 3, 4, 5], startTime: '08:00', endTime: '19:00' }}
+        businessHours={{
+          daysOfWeek: [1, 2, 3, 4, 5],
+          startTime: workingDayStart,
+          endTime: workingDayEnd,
+        }}
         slotMinTime="06:00:00"
         slotMaxTime="22:00:00"
         scrollTime="08:00:00"

@@ -98,14 +98,13 @@ export function visibleFlowUnreadCount(
 }
 
 export function flowUpdatesResponsiveItemLimit(
-  containerWidth: number | undefined,
-  height: HomeWidgetHeight,
+  _containerWidth: number | undefined,
+  _height: HomeWidgetHeight,
   itemLimit: number
 ): number {
-  const requestedLimit = Math.max(0, Math.floor(itemLimit));
-  if (containerWidth === undefined || containerWidth >= 720) return requestedLimit;
-  if (height === 'short') return Math.min(containerWidth < 420 ? 1 : 2, requestedLimit);
-  return Math.min(containerWidth < 420 ? 2 : 3, requestedLimit);
+  // Width and height change the editorial composition and copy density, not
+  // the set of records the user chose to keep on Home.
+  return Math.max(0, Math.floor(itemLimit));
 }
 
 export function flowUpdatesVisibleStories(
@@ -128,6 +127,33 @@ export function flowUpdatesVisibleStories(
     unreadCount: visible.filter((story) => story.readerState.unread).length,
     overflowCount: Math.max(0, stories.length - visible.length),
   };
+}
+
+export type FlowUpdatesLayoutMode = 'stack' | 'feature-rail' | 'wide-6-3-3';
+
+export function flowUpdatesLayoutMode(
+  containerWidth: number | undefined,
+  visibleCount: number
+): FlowUpdatesLayoutMode {
+  if (containerWidth !== undefined && containerWidth >= 1_200 && visibleCount >= 3) {
+    return 'wide-6-3-3';
+  }
+  if (containerWidth !== undefined && containerWidth >= 720 && visibleCount >= 2) {
+    return 'feature-rail';
+  }
+  return 'stack';
+}
+
+export function flowRequiredNoticeDestination(
+  storyId: number | undefined,
+  requiredCount: number,
+  hasCriticalOnly: boolean
+): string {
+  if (!storyId) return hasCriticalOnly ? '/communications/for-you' : '/communications/required';
+  if (hasCriticalOnly) {
+    return requiredCount === 1 ? `/communications/for-you/${storyId}` : '/communications/for-you';
+  }
+  return requiredCount > 1 ? '/communications/required' : `/communications/required/${storyId}`;
 }
 
 function StoryMeta({ story }: { story: CommunicationItem }) {
@@ -209,13 +235,11 @@ export function FlowRequiredNotice({
         data-flow-notice-tone="unavailable"
         data-home-governance="ORGANIZATION"
         sx={(theme) => ({
+          width: 1,
+          maxWidth: 'none',
           minHeight: 56,
-          px: { xs: 2, md: 2.5 },
+          px: { xs: 1.5, md: 2 },
           py: 1,
-          display: 'grid',
-          gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-          alignItems: 'center',
-          gap: 1.25,
           bgcolor: alpha(theme.palette.warning.main, theme.palette.mode === 'dark' ? 0.14 : 0.065),
           border: 1,
           borderColor: alpha(theme.palette.warning.main, 0.32),
@@ -223,28 +247,53 @@ export function FlowRequiredNotice({
           '@media (forced-colors: active)': { bgcolor: 'Canvas', borderColor: 'CanvasText' },
         })}
       >
-        <Box sx={{ display: 'inline-flex', color: 'warning.main' }}>
-          <BellRing size={19} aria-hidden="true" />
-        </Box>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="caption" color="warning.main" fontWeight={750}>
-            {t('flow.updates.requiredUnavailable')}
-            {editing && ` · ${t('flow.updates.organizationFixed')}`}
-          </Typography>
-          <Typography component="p" variant="subtitle2">
-            {t('flow.updates.requiredUnavailableDescription')}
-          </Typography>
-        </Box>
-        <ActionButton
-          intent="quiet"
-          size="small"
-          onClick={onRetry}
-          loading={fetching}
-          loadingLabel={t('page.retry')}
-          sx={{ minWidth: 44, minHeight: 44 }}
+        <Box
+          data-flow-required-lane
+          sx={{
+            width: 1,
+            minHeight: 44,
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'auto minmax(0, 1fr)',
+              sm: 'auto minmax(0, 1fr) auto',
+            },
+            alignItems: 'center',
+            justifyContent: 'stretch',
+            gap: 1.25,
+          }}
         >
-          {t('page.retry')}
-        </ActionButton>
+          <Box sx={{ display: 'inline-flex', color: 'warning.main' }}>
+            <BellRing size={19} aria-hidden="true" />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="caption" color="warning.main" fontWeight={750}>
+              {t('flow.updates.requiredUnavailable')}
+              {editing && ` · ${t('flow.updates.organizationFixed')}`}
+            </Typography>
+            <Typography
+              component="p"
+              variant="subtitle2"
+              sx={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
+            >
+              {t('flow.updates.requiredUnavailableDescription')}
+            </Typography>
+          </Box>
+          <ActionButton
+            intent="quiet"
+            size="small"
+            onClick={onRetry}
+            loading={fetching}
+            loadingLabel={t('page.retry')}
+            sx={{
+              minWidth: 44,
+              minHeight: 44,
+              gridColumn: { xs: 2, sm: 'auto' },
+              justifySelf: { xs: 'start', sm: 'end' },
+            }}
+          >
+            {t('page.retry')}
+          </ActionButton>
+        </Box>
       </Box>
     );
   }
@@ -255,17 +304,11 @@ export function FlowRequiredNotice({
       ? Math.max(0, summaryActionableCount - summaryRequiredCount)
       : 0;
   const hasCriticalOnly = authoritativeCriticalOnlyCount > 0 || sampledCriticalOnlyCount > 0;
-  const destination = !story
-    ? hasCriticalOnly
-      ? '/communications/for-you'
-      : '/communications/required'
-    : hasCriticalOnly
-      ? requiredCount === 1
-        ? `/communications/for-you/${story.communicationId}`
-        : '/communications/for-you'
-      : requiredCount > 1
-        ? '/communications/required'
-        : `/communications/required/${story.communicationId}`;
+  const destination = flowRequiredNoticeDestination(
+    story?.communicationId,
+    requiredCount,
+    hasCriticalOnly
+  );
   const critical =
     summaryCriticalUnreadCount > 0 ||
     requiredStories.some((candidate) => candidate.severity === 'CRITICAL');
@@ -277,20 +320,18 @@ export function FlowRequiredNotice({
 
   return (
     <Box
-      component={Link}
-      to={destination}
+      component="section"
+      aria-labelledby="flow-required-notice-title"
       data-flow-section="required-notice"
       data-flow-notice-tone={critical ? 'critical' : 'required'}
       data-flow-notice-completeness={completeness}
       data-home-governance="ORGANIZATION"
       sx={(theme) => ({
+        width: 1,
+        maxWidth: 'none',
         minHeight: 56,
-        px: { xs: 2, md: 2.5 },
+        px: { xs: 1.5, md: 2 },
         py: 1,
-        display: 'grid',
-        gridTemplateColumns: { xs: 'auto minmax(0, 1fr)', sm: 'auto minmax(0, 1fr) auto' },
-        alignItems: 'center',
-        gap: 1.25,
         color: 'text.primary',
         bgcolor: alpha(
           critical ? theme.palette.error.main : theme.palette.warning.main,
@@ -299,64 +340,83 @@ export function FlowRequiredNotice({
         border: 1,
         borderColor: alpha(critical ? theme.palette.error.main : theme.palette.warning.main, 0.32),
         borderRadius: 'var(--home-radius-item)',
-        textDecoration: 'none',
-        '&:hover': {
-          bgcolor: alpha(
-            critical ? theme.palette.error.main : theme.palette.warning.main,
-            theme.palette.mode === 'dark' ? 0.2 : 0.11
-          ),
-        },
-        '&:focus-visible': {
-          outline: '3px solid var(--dwp-focus-ring, currentColor)',
-          outlineOffset: 2,
-        },
         '@media (forced-colors: active)': {
           bgcolor: 'Canvas',
           borderColor: 'CanvasText',
         },
       })}
     >
-      <Box sx={{ display: 'inline-flex', color: critical ? 'error.main' : 'warning.main' }}>
-        <BellRing size={19} aria-hidden="true" />
-      </Box>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography
-          variant="caption"
-          color={critical ? 'error.main' : 'warning.main'}
-          fontWeight={750}
-        >
-          {critical
-            ? requiredCount > 1
-              ? t('flow.updates.urgentCount', { count: requiredCount })
-              : t('flow.updates.urgent')
-            : requiredCount > 1
-              ? t('flow.updates.requiredCount', { count: requiredCount })
-              : t('flow.updates.required')}
-          {editing && ` · ${t('flow.updates.organizationFixed')}`}
-        </Typography>
-        <Typography
-          component="p"
-          variant="subtitle2"
+      <Box
+        data-flow-required-lane
+        sx={{
+          width: 1,
+          minHeight: 44,
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'auto minmax(0, 1fr)',
+            sm: 'auto minmax(0, 1fr) auto',
+          },
+          alignItems: 'center',
+          justifyContent: 'stretch',
+          gap: 1.25,
+        }}
+      >
+        <Box sx={{ display: 'inline-flex', color: critical ? 'error.main' : 'warning.main' }}>
+          <BellRing size={19} aria-hidden="true" />
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            id="flow-required-notice-title"
+            variant="caption"
+            color={critical ? 'error.main' : 'warning.main'}
+            fontWeight={750}
+          >
+            {critical
+              ? requiredCount > 1
+                ? t('flow.updates.urgentCount', { count: requiredCount })
+                : t('flow.updates.urgent')
+              : requiredCount > 1
+                ? t('flow.updates.requiredCount', { count: requiredCount })
+                : t('flow.updates.required')}
+            {editing && ` · ${t('flow.updates.organizationFixed')}`}
+          </Typography>
+          <Typography
+            component="p"
+            variant="subtitle2"
+            sx={{
+              display: '-webkit-box',
+              overflow: 'hidden',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: { xs: 2, sm: 1 },
+              wordBreak: 'keep-all',
+              overflowWrap: 'break-word',
+            }}
+          >
+            {story?.title ?? t('flow.updates.requiredPendingDescription')}
+          </Typography>
+        </Box>
+        <ActionButton
+          component={Link}
+          to={destination}
+          data-flow-required-cta
+          intent="quiet"
+          size="small"
+          endIcon={<ArrowRight size={15} aria-hidden="true" />}
           sx={{
-            display: '-webkit-box',
-            overflow: 'hidden',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: { xs: 2, sm: 1 },
+            minWidth: 44,
+            minHeight: 44,
+            gridColumn: { xs: 2, sm: 'auto' },
+            justifySelf: { xs: 'start', sm: 'end' },
+            whiteSpace: 'nowrap',
+            '&:focus-visible': {
+              outline: '3px solid var(--dwp-focus-ring, currentColor)',
+              outlineOffset: 2,
+            },
           }}
         >
-          {story?.title ?? t('flow.updates.requiredPendingDescription')}
-        </Typography>
+          {t('flow.updates.review')}
+        </ActionButton>
       </Box>
-      <Stack
-        direction="row"
-        alignItems="center"
-        gap={0.5}
-        color="primary.main"
-        sx={{ display: { xs: 'none', sm: 'flex' }, fontWeight: 700 }}
-      >
-        <Typography variant="body2">{t('flow.updates.review')}</Typography>
-        <ArrowRight size={15} aria-hidden="true" />
-      </Stack>
     </Box>
   );
 }
@@ -395,6 +455,8 @@ export function FlowUpdates({
     generalStories,
     responsiveItemLimit
   );
+  const layoutMode = flowUpdatesLayoutMode(containerWidth, visible.length);
+  const wideThreeCardLayout = visible.length >= 3;
   const editorial = wide && !compact && (size === 'large' || size === 'full');
   const bodyHeight = 136;
 
@@ -409,7 +471,7 @@ export function FlowUpdates({
       aria-labelledby="flow-updates-heading"
       data-flow-section="updates"
       data-flow-updates-wide={editorial ? 'true' : 'false'}
-      data-flow-updates-layout="container-responsive"
+      data-flow-updates-layout={layoutMode}
       data-flow-updates-size={size}
       data-flow-updates-height={height}
       data-flow-updates-visible-limit={responsiveItemLimit}
@@ -419,7 +481,7 @@ export function FlowUpdates({
         minWidth: 0,
         height: 'auto',
         pl: 2,
-        pr: { xs: 7, sm: 9 },
+        pr: 2,
         py: 2,
         display: 'flex',
         flexDirection: 'column',
@@ -474,7 +536,12 @@ export function FlowUpdates({
           intent="quiet"
           size="small"
           endIcon={<ArrowRight size={15} aria-hidden="true" />}
-          sx={{ minHeight: 44, flex: '0 0 auto', ml: 'auto' }}
+          sx={{
+            minHeight: 44,
+            flex: '0 0 auto',
+            ml: 'auto',
+            '@media (min-width: 900px)': { mr: 10 },
+          }}
         >
           {t('flow.viewAll', { ns: 'home' })}
         </ActionButton>
@@ -517,7 +584,7 @@ export function FlowUpdates({
             flex: '0 0 auto',
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 1fr)',
-            alignItems: 'start',
+            alignItems: 'stretch',
             gap: 1,
             '@container flow-updates (min-width: 720px)': secondary.length
               ? {
@@ -530,6 +597,13 @@ export function FlowUpdates({
                   gridTemplateColumns: 'minmax(0, 2fr) minmax(260px, 1fr)',
                 }
               : undefined,
+            '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+              ? {
+                  gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
+                  alignItems: 'stretch',
+                  gap: 1.5,
+                }
+              : undefined,
           }}
         >
           <Box
@@ -538,8 +612,9 @@ export function FlowUpdates({
             data-news-featured
             sx={{
               minWidth: 0,
+              width: 1,
               minHeight: compact ? 200 : bodyHeight,
-              height: '100%',
+              height: 'auto',
               display: 'grid',
               gridTemplateColumns: 'minmax(0, 1fr)',
               alignItems: 'stretch',
@@ -567,6 +642,16 @@ export function FlowUpdates({
                         : 'minmax(200px, 356px) minmax(220px, 1fr)',
                   }
                 : undefined,
+              '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+                ? { gridColumn: 'span 6' }
+                : undefined,
+              '@media (forced-colors: active)': {
+                minHeight: 0,
+                // Container-query rules are emitted in a separate cascade layer.
+                // Keep forced-colors authoritative so hidden artwork cannot leave
+                // an empty media track beside the story content.
+                gridTemplateColumns: 'minmax(0, 1fr) !important',
+              },
             }}
           >
             {featured.coverImageUrl && (
@@ -587,7 +672,10 @@ export function FlowUpdates({
                   '@container flow-updates (min-width: 420px)': {
                     aspectRatio: compact ? '4 / 3' : 'auto',
                   },
-                  '@media (forced-colors: active)': { backgroundImage: 'none' },
+                  '@media (forced-colors: active)': {
+                    display: 'none',
+                    backgroundImage: 'none',
+                  },
                 }}
               />
             )}
@@ -677,23 +765,51 @@ export function FlowUpdates({
                 flexDirection: 'column',
                 gap: 0,
                 listStyle: 'none',
+                '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+                  ? {
+                      gridColumn: 'span 6',
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${Math.min(3, secondary.length)}, minmax(0, 1fr))`,
+                      alignItems: 'stretch',
+                      height: 'auto',
+                      gap: 1,
+                    }
+                  : undefined,
               }}
             >
               {secondary.map((story, index) => (
                 <Box
                   component="li"
                   key={story.communicationId}
+                  data-news-secondary-card
                   data-news-secondary-index={index + 1}
+                  sx={{
+                    minWidth: 0,
+                    display: 'flex',
+                    '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+                      ? {
+                          minHeight: bodyHeight,
+                          overflow: 'hidden',
+                          bgcolor: 'var(--home-surface-subtle)',
+                          border: 1,
+                          borderColor: 'divider',
+                          borderRadius: 'var(--home-radius-item)',
+                        }
+                      : undefined,
+                  }}
                 >
                   <Box
                     component={Link}
                     to={`/communications/for-you/${story.communicationId}`}
-                    data-news-secondary-card
+                    data-news-secondary-link
                     sx={{
-                      minHeight: 62,
-                      p: 1.25,
+                      minHeight: 52,
+                      width: 1,
+                      p: 0.75,
                       display: 'flex',
-                      flexDirection: 'column',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 0.75,
                       color: 'text.primary',
                       bgcolor: 'transparent',
                       border: 0,
@@ -706,35 +822,97 @@ export function FlowUpdates({
                         outline: '3px solid var(--dwp-focus-ring, currentColor)',
                         outlineOffset: 2,
                       },
+                      '@media (min-width: 900px)': { mr: 10 },
                       '@container flow-updates (min-width: 720px)': {
                         minHeight: 68,
+                        p: 1.25,
+                        flexDirection: 'column',
+                        alignItems: 'stretch',
+                        gap: 0,
                       },
+                      '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+                        ? {
+                            height: 'auto',
+                            flex: '1 1 auto',
+                            minHeight: bodyHeight,
+                            p: 1.5,
+                            mr: index === secondary.length - 1 ? 10 : 0,
+                            bgcolor: 'transparent',
+                            border: 0,
+                            borderRadius: 0,
+                          }
+                        : undefined,
                     }}
                   >
-                    <Typography variant="caption" color="primary.main" fontWeight={700}>
+                    <Typography
+                      variant="caption"
+                      color="primary.main"
+                      fontWeight={700}
+                      sx={{ flex: '0 0 auto', whiteSpace: 'nowrap' }}
+                    >
                       {t(`categories.${story.categoryKey}`, {
                         ns: 'communications',
                         defaultValue: story.categoryKey,
                       })}
                     </Typography>
+                    <Stack
+                      direction="row"
+                      alignItems="flex-start"
+                      gap={0.75}
+                      sx={{ mt: { xs: 0, sm: 0.35 }, minWidth: 0, flex: 1 }}
+                    >
+                      <Typography
+                        component="h3"
+                        variant="subtitle2"
+                        fontWeight={700}
+                        sx={{
+                          minWidth: 0,
+                          flex: 1,
+                          display: '-webkit-box',
+                          overflow: 'hidden',
+                          WebkitBoxOrient: 'vertical',
+                          WebkitLineClamp: 1,
+                          '@container flow-updates (min-width: 720px)': {
+                            WebkitLineClamp: height === 'short' ? 1 : 2,
+                          },
+                        }}
+                      >
+                        {story.title}
+                      </Typography>
+                      <Box
+                        data-news-secondary-link-cue
+                        aria-hidden="true"
+                        sx={{ display: 'inline-flex', flex: '0 0 auto', color: 'text.secondary' }}
+                      >
+                        <ArrowRight size={14} />
+                      </Box>
+                    </Stack>
                     <Typography
-                      component="h3"
-                      variant="subtitle2"
-                      fontWeight={700}
+                      data-news-secondary-summary
+                      variant="body2"
+                      color="text.secondary"
                       sx={{
-                        mt: 0.35,
-                        display: '-webkit-box',
+                        mt: 0.65,
+                        display: 'none',
                         overflow: 'hidden',
                         WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: 1,
-                        '@container flow-updates (min-width: 720px)': {
-                          WebkitLineClamp: height === 'short' ? 1 : 2,
-                        },
+                        WebkitLineClamp: 2,
+                        '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+                          ? { display: '-webkit-box' }
+                          : undefined,
                       }}
                     >
-                      {story.title}
+                      {story.summary}
                     </Typography>
-                    <Box sx={{ mt: 0.75, display: height === 'short' ? 'none' : 'block' }}>
+                    <Box
+                      sx={{
+                        mt: 0.75,
+                        display: height === 'short' ? 'none' : 'block',
+                        '@container flow-updates (min-width: 1200px)': wideThreeCardLayout
+                          ? { display: 'block', mt: 'auto', pt: 1 }
+                          : undefined,
+                      }}
+                    >
                       <StoryMeta story={story} />
                     </Box>
                   </Box>

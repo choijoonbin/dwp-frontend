@@ -27,7 +27,7 @@ type DwaionPanelProps = {
   pageContext?: AskPageContext;
   suggestionKeys?: readonly string[];
   onClose: () => void;
-  onOpenWorkspace?: (query?: string, conversationId?: string) => void;
+  onOpenWorkspace?: (query?: string, conversationId?: string) => boolean | Promise<boolean>;
   onOpenGuide?: () => void;
   onOpenContacts?: () => void;
   onOpenStatus: () => void;
@@ -57,6 +57,7 @@ export function DwaionPanel({
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [activeTool, setActiveTool] = useState<DwaionSupportTool | null>(null);
   const [selectedCitation, setSelectedCitation] = useState<AskCitation | null>(null);
+  const [workspaceOpening, setWorkspaceOpening] = useState(false);
   const requestController = useRef<AbortController | null>(null);
   const requestSequence = useRef(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -148,11 +149,16 @@ export function DwaionPanel({
     setRequestState('idle');
   };
 
-  const openWorkspace = () => {
-    if (!onOpenWorkspace) return;
+  const openWorkspace = async () => {
+    if (!onOpenWorkspace || workspaceOpening) return;
     const currentQuery = submittedQuery || query.trim() || undefined;
-    onClose();
-    onOpenWorkspace(currentQuery, conversationId ?? undefined);
+    setWorkspaceOpening(true);
+    try {
+      const opened = await onOpenWorkspace(currentQuery, conversationId ?? undefined);
+      if (opened) onClose();
+    } finally {
+      setWorkspaceOpening(false);
+    }
   };
 
   const submit = (event: React.FormEvent) => {
@@ -286,7 +292,8 @@ export function DwaionPanel({
             requestState={requestState}
             response={response}
             onRetry={() => void runQuestion(submittedQuery)}
-            onOpenWorkspace={onOpenWorkspace ? openWorkspace : undefined}
+            onOpenWorkspace={onOpenWorkspace ? () => void openWorkspace() : undefined}
+            openingWorkspace={workspaceOpening}
             progressStage={progressStage}
             onSelectCitation={setSelectedCitation}
           />

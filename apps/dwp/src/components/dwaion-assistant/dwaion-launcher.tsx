@@ -1,21 +1,35 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { keyframes } from '@emotion/react';
 import { ActionIconButton } from '@dwp-frontend/design-system';
 
 import type { AskPageContext } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import type { PopoverActions } from '@mui/material/Popover';
 
 import { DwaionPanel } from './dwaion-panel';
 
+const mascotFloat = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+`;
+
+const mascotGreeting = keyframes`
+  0%, 72%, 100% { transform: rotate(0deg) scale(1); }
+  80% { transform: rotate(-2.5deg) scale(1.015); }
+  88% { transform: rotate(2deg) scale(1.015); }
+`;
+
 type DwaionLauncherProps = {
   firstName?: string;
   pageContext?: AskPageContext;
   suggestionKeys?: readonly string[];
-  onOpenWorkspace?: (query?: string, conversationId?: string) => void;
+  onOpenWorkspace?: (query?: string, conversationId?: string) => boolean | Promise<boolean>;
   onOpenGuide?: () => void;
   onOpenContacts?: () => void;
   onOpenStatus: () => void;
@@ -32,48 +46,89 @@ export function DwaionLauncher({
 }: DwaionLauncherProps) {
   const { t } = useTranslation('home');
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [headerActions, setHeaderActions] = useState<HTMLElement | null>(null);
   const popoverActions = useRef<PopoverActions>(null);
+  const compactHeaderDock = useMediaQuery('(max-width: 899.95px)', { noSsr: true });
   const open = Boolean(anchorEl);
   const panelId = 'dwaion-home-panel';
   const closePanel = () => setAnchorEl(null);
 
-  return (
+  useEffect(() => {
+    if (!compactHeaderDock) {
+      setHeaderActions(null);
+      return undefined;
+    }
+
+    const resolveTarget = () => {
+      const next = document.querySelector<HTMLElement>('[data-testid="shell-global-actions"]');
+      setHeaderActions((current) => (current === next ? current : next));
+    };
+    resolveTarget();
+    const observer = new MutationObserver(resolveTarget);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [compactHeaderDock]);
+
+  const headerDocked = compactHeaderDock && Boolean(headerActions);
+
+  const launcherSize = headerDocked ? 44 : { xs: 48, sm: 56 };
+  const placement = headerDocked ? 'header' : 'floating';
+  const launcher = (
     <Box
       data-testid="dwaion-launcher"
+      data-shell-auxiliary-layer=""
+      data-shell-auxiliary-placement={placement}
+      data-shell-auxiliary-edge={headerDocked ? 'header inline-end' : 'block-end inline-end'}
       sx={{
-        position: 'fixed',
-        right: {
-          xs: 'calc(16px + env(safe-area-inset-right, 0px))',
-          sm: 'calc(24px + env(safe-area-inset-right, 0px))',
+        position: headerDocked ? 'relative' : 'fixed',
+        right: headerDocked
+          ? 'auto'
+          : {
+              xs: 'calc(16px + env(safe-area-inset-right, 0px))',
+              sm: 'calc(24px + env(safe-area-inset-right, 0px))',
+            },
+        bottom: headerDocked
+          ? 'auto'
+          : {
+              xs: 'calc(16px + env(safe-area-inset-bottom, 0px))',
+              sm: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+            },
+        // Navigation drawers and modal surfaces must always own focus and pointer input.
+        zIndex: headerDocked ? 'auto' : (theme) => theme.zIndex.drawer - 1,
+        width: launcherSize,
+        height: launcherSize,
+        ml: headerDocked ? 0.25 : 0,
+        flex: '0 0 auto',
+        borderRadius: '50%',
+        bgcolor: headerDocked ? 'transparent' : 'background.default',
+        boxShadow: headerDocked
+          ? 'none'
+          : (theme) => `0 0 0 5px ${theme.palette.background.default}`,
+        '@media (forced-colors: active)': {
+          boxShadow: headerDocked ? 'none' : '0 0 0 3px Canvas',
         },
-        bottom: {
-          xs: 'calc(16px + env(safe-area-inset-bottom, 0px))',
-          sm: 'calc(24px + env(safe-area-inset-bottom, 0px))',
-        },
-        // Dialogs and their backdrops must always own focus and pointer input.
-        zIndex: (theme) => theme.zIndex.modal - 1,
-        width: { xs: 48, sm: 56 },
-        height: { xs: 48, sm: 56 },
       }}
     >
       <ActionIconButton
         label={t(open ? 'dwaion.close' : 'dwaion.open')}
         tooltip={t(open ? 'dwaion.close' : 'dwaion.open')}
-        tooltipPlacement="left"
+        tooltipPlacement={headerDocked ? 'bottom' : 'left'}
         aria-controls={open ? panelId : undefined}
         aria-expanded={open || undefined}
         aria-haspopup="dialog"
         disableRipple
         onClick={(event) => setAnchorEl(open ? null : event.currentTarget)}
         sx={(theme) => ({
-          width: { xs: 48, sm: 56 },
-          height: { xs: 48, sm: 56 },
+          width: launcherSize,
+          height: launcherSize,
           p: 0,
           overflow: 'visible',
           bgcolor: 'rgba(5, 18, 42, 0.94)',
           border: '1px solid',
           borderColor: 'rgba(178, 218, 255, 0.76)',
-          boxShadow: '0 12px 30px rgba(0, 13, 43, 0.26), inset 0 1px 0 rgba(255,255,255,0.18)',
+          boxShadow: headerDocked
+            ? '0 4px 12px rgba(0, 13, 43, 0.2), inset 0 1px 0 rgba(255,255,255,0.18)'
+            : '0 12px 30px rgba(0, 13, 43, 0.26), inset 0 1px 0 rgba(255,255,255,0.18)',
           transition: theme.transitions.create(['background-color', 'border-color', 'box-shadow'], {
             duration: theme.transitions.duration.shorter,
           }),
@@ -109,8 +164,10 @@ export function DwaionLauncher({
         <Box
           data-testid="dwaion-mascot-motion"
           sx={{
-            width: { xs: 48, sm: 56 },
-            height: { xs: 48, sm: 56 },
+            width: launcherSize,
+            height: launcherSize,
+            animation: `${mascotFloat} 4.8s ease-in-out infinite`,
+            '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
           }}
         >
           <Box
@@ -119,6 +176,8 @@ export function DwaionLauncher({
               width: 1,
               height: 1,
               transformOrigin: '50% 72%',
+              animation: open ? 'none' : `${mascotGreeting} 3.6s ease-in-out infinite`,
+              '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
             }}
           >
             <Box
@@ -155,8 +214,8 @@ export function DwaionLauncher({
         open={open}
         anchorEl={anchorEl}
         onClose={closePanel}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: headerDocked ? 'bottom' : 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: headerDocked ? 'top' : 'bottom', horizontal: 'right' }}
         marginThreshold={12}
         disableScrollLock
         slotProps={{
@@ -164,7 +223,8 @@ export function DwaionLauncher({
             sx: {
               width: { xs: 'calc(100vw - 24px)', sm: 420 },
               maxWidth: 420,
-              mb: 1.25,
+              mt: headerDocked ? 1.25 : 0,
+              mb: headerDocked ? 0 : 1.25,
               overflow: 'hidden',
               border: 1,
               borderColor: 'rgba(102, 132, 171, 0.34)',
@@ -203,4 +263,7 @@ export function DwaionLauncher({
       </Popover>
     </Box>
   );
+
+  if (compactHeaderDock && !headerActions) return null;
+  return headerDocked && headerActions ? createPortal(launcher, headerActions) : launcher;
 }

@@ -57,6 +57,18 @@ const routeOwners = applications
   )
   .sort((left, right) => right.prefix.length - left.prefix.length);
 for (const route of routeOwners) {
+  if (route.prefix === '/ask') {
+    lines.push('location = /ask {');
+    lines.push('  # Legacy question query strings are sensitive and must never enter edge logs.');
+    lines.push('  access_log off;');
+    lines.push('  return 308 /dwaion/new;');
+    lines.push('}', '');
+    lines.push('location ^~ /ask/ {');
+    lines.push('  access_log off;');
+    lines.push('  return 308 /dwaion/new;');
+    lines.push('}', '');
+    continue;
+  }
   lines.push(`location = ${route.prefix} {`);
   lines.push(`  try_files /__dwp-route-miss__ /__dwp/${route.applicationId}/index.html;`);
   lines.push('}', '');

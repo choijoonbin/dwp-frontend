@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { PanelLeft, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
+import { ProductGlyph } from '@dwp-frontend/design-system/components/product-mark';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
@@ -89,29 +90,100 @@ export function DesktopNavigationToggle({
 }) {
   const { t } = useTranslation('shell');
   const label = compact ? t('navigation.expand') : t('navigation.collapse');
+  const restingKind = compact ? 'product-mark' : 'sidebar';
+  const activeKind = compact ? 'expand' : 'collapse';
 
   return (
     <ActionIconButton
+      data-testid="desktop-navigation-toggle"
+      data-navigation-toggle-state={compact ? 'compact' : 'expanded'}
       size="small"
       label={label}
-      tooltipPlacement="bottom"
+      tooltipPlacement="right"
       aria-controls={controlsId}
       aria-expanded={!compact}
       onClick={onToggle}
       sx={{
-        mr: 0.5,
         width: 40,
         height: 40,
+        flex: '0 0 40px',
+        position: 'relative',
+        p: 0,
         display: { xs: 'none', lg: 'inline-flex' },
         color: 'text.secondary',
-        '&:hover': { color: 'text.primary' },
+        '& .DwpDesktopNavigationToggle-visual': {
+          position: 'absolute',
+          inset: 0,
+          display: 'grid',
+          placeItems: 'center',
+          transition: (theme) =>
+            theme.transitions.create(['opacity', 'transform'], {
+              duration: theme.transitions.duration.shortest,
+            }),
+        },
+        '& .DwpDesktopNavigationToggle-resting': {
+          opacity: 1,
+          transform: 'scale(1)',
+        },
+        '& .DwpDesktopNavigationToggle-active': {
+          opacity: 0,
+          transform: 'scale(0.86)',
+        },
+        '&:hover, &:focus-visible': {
+          color: 'text.primary',
+          bgcolor: 'action.hover',
+        },
+        '&:hover .DwpDesktopNavigationToggle-resting, &:focus-visible .DwpDesktopNavigationToggle-resting':
+          {
+            opacity: 0,
+            transform: 'scale(0.86)',
+          },
+        '&:hover .DwpDesktopNavigationToggle-active, &:focus-visible .DwpDesktopNavigationToggle-active':
+          {
+            opacity: 1,
+            transform: 'scale(1)',
+          },
+        '&:focus-visible': {
+          outline: '3px solid',
+          outlineColor: 'primary.main',
+          outlineOffset: 2,
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          '& .DwpDesktopNavigationToggle-visual': { transition: 'none' },
+        },
+        '@media (forced-colors: active)': {
+          '&:hover, &:focus-visible': {
+            color: 'ButtonText',
+            bgcolor: 'Canvas',
+            outline: '2px solid Highlight',
+          },
+        },
       }}
     >
-      {compact ? (
-        <PanelLeftOpen size={18} strokeWidth={1.8} />
-      ) : (
-        <PanelLeftClose size={18} strokeWidth={1.8} />
-      )}
+      <span
+        className="DwpDesktopNavigationToggle-visual DwpDesktopNavigationToggle-resting"
+        data-navigation-toggle-visual="resting"
+        data-navigation-toggle-visual-kind={restingKind}
+        aria-hidden="true"
+      >
+        {compact ? (
+          <ProductGlyph component="span" />
+        ) : (
+          <PanelLeft size={18} strokeWidth={1.8} aria-hidden="true" />
+        )}
+      </span>
+      <span
+        className="DwpDesktopNavigationToggle-visual DwpDesktopNavigationToggle-active"
+        data-navigation-toggle-visual="active"
+        data-navigation-toggle-visual-kind={activeKind}
+        aria-hidden="true"
+      >
+        {compact ? (
+          <PanelLeftOpen size={18} strokeWidth={1.8} aria-hidden="true" />
+        ) : (
+          <PanelLeftClose size={18} strokeWidth={1.8} aria-hidden="true" />
+        )}
+      </span>
     </ActionIconButton>
   );
 }

@@ -262,6 +262,11 @@ export function WorkplaceLayoutEditor({
       ),
     [availableResources, items]
   );
+  const resourceToAddValue = unplacedResources.some(
+    (resource) => resource.resourceId === resourceToAdd
+  )
+    ? resourceToAdd
+    : '';
   useEffect(() => {
     if (!unplacedResources.length) setResourceToAdd('');
     else if (!unplacedResources.some((resource) => resource.resourceId === resourceToAdd)) {
@@ -401,7 +406,7 @@ export function WorkplaceLayoutEditor({
         >
           <SelectField
             label={t('workplace.admin.locations.unplacedResource')}
-            value={resourceToAdd}
+            value={resourceToAddValue}
             disabled={!unplacedResources.length}
             options={unplacedResources.map((resource) => ({
               value: resource.resourceId,
@@ -412,7 +417,7 @@ export function WorkplaceLayoutEditor({
           <ActionButton
             intent="secondary"
             startIcon={<Plus size={16} />}
-            disabled={!resourceToAdd}
+            disabled={!resourceToAddValue}
             onClick={addResource}
           >
             {t('workplace.admin.locations.addToLayout')}

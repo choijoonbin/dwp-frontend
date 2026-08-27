@@ -82,7 +82,7 @@ describe('Flow Home preference alias migration', () => {
     ]);
   });
 
-  it('treats role order as presentation and only gates adaptive layout on untouched footprints', () => {
+  it('gates adaptive layout on the complete role default order, visibility, and width', () => {
     const member = deriveFlowHomeSections(defaultHomeWidgets(undefined, 'MEMBER'), false);
     const operator = deriveFlowHomeSections(defaultHomeWidgets(undefined, 'OPERATOR'), false);
     const resized = member.map((section) =>
@@ -91,11 +91,20 @@ describe('Flow Home preference alias migration', () => {
     const hidden = member.map((section) =>
       section.widgetKey === 'role-pulse' ? { ...section, visible: false } : section
     );
+    const reordered = [member[1]!, member[0]!, ...member.slice(2)];
+    const heightOnly = member.map((section) =>
+      section.widgetKey === 'today' ? { ...section, height: 'tall' as const } : section
+    );
 
-    expect(isFlowAdaptiveTemplateEligible(member)).toBe(true);
-    expect(isFlowAdaptiveTemplateEligible(operator)).toBe(true);
-    expect(isFlowAdaptiveTemplateEligible(resized)).toBe(false);
-    expect(isFlowAdaptiveTemplateEligible(hidden)).toBe(false);
+    expect(isFlowAdaptiveTemplateEligible(member, 'MEMBER')).toBe(true);
+    expect(isFlowAdaptiveTemplateEligible(member, 'MANAGER')).toBe(true);
+    expect(isFlowAdaptiveTemplateEligible(operator, 'OPERATOR')).toBe(true);
+    expect(isFlowAdaptiveTemplateEligible(member, 'OPERATOR')).toBe(false);
+    expect(isFlowAdaptiveTemplateEligible(operator, 'MEMBER')).toBe(false);
+    expect(isFlowAdaptiveTemplateEligible(resized, 'MEMBER')).toBe(false);
+    expect(isFlowAdaptiveTemplateEligible(hidden, 'MEMBER')).toBe(false);
+    expect(isFlowAdaptiveTemplateEligible(reordered, 'MEMBER')).toBe(false);
+    expect(isFlowAdaptiveTemplateEligible(heightOnly, 'MEMBER')).toBe(true);
   });
 
   it('normalizes only the complete obsolete Classic geometry signature', () => {

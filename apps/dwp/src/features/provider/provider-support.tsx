@@ -20,17 +20,21 @@ import {
   activateProviderSupportAccessRequest,
   cancelProviderSupportAccessRequest,
   createProviderSupportAccessRequest,
-  createProviderSupportSession,
   decideProviderSupportAccessRequest,
   getProviderOperatorProfile,
   listProviderSupportScopes,
   listProviderSupportAccessRequests,
   listProviderSupportSessions,
-  listProviderTenants,
   revokeProviderSupportSession,
   reviewProviderSupportAccessRequest,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import {
+  isProviderSupportSessionActive,
+  providerSupportContextQueryKey,
+  publishProviderSupportContextRevision,
+  useCurrentProviderSupportContext,
+} from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import {
   ActionButton,
   ActionIconButton,
@@ -45,7 +49,6 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
@@ -53,7 +56,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -70,20 +72,27 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import {
+  cancelTenantDiagnosisWindow,
+  completeTenantDiagnosisWindow,
+  isExecutableProviderDiagnosisScopeSet,
+  reserveTenantDiagnosisWindow,
+  TENANT_EXPERIENCE_PREVIEW_SCOPE,
+} from './provider-diagnosis-policy';
+import { purgeProviderSupportTenantCache } from './provider-support-cache';
+import { ProviderSupportRequestEvidence } from './provider-support-request-evidence';
+import { ProviderSupportPostReviewEvidence } from './provider-support-post-review-evidence';
+import { ProviderTenantPicker } from './provider-tenant-picker';
 
 function CreateSupportSessionDialog({
-  tenants,
   scopeCatalog,
   busy,
-  canBreakGlass,
   initialTenantId,
   onClose,
   onCreate,
 }: {
-  tenants: { tenantId: string; displayName: string; tenantKey: string }[];
   scopeCatalog: ProviderSupportScope[];
   busy: boolean;
-  canBreakGlass: boolean;
   initialTenantId?: string;
   onClose: () => void;
   onCreate: (request: {
@@ -92,7 +101,6 @@ function CreateSupportSessionDialog({
     durationMinutes: number;
     justification: string;
     approvalReference?: string | null;
-    emergencyAccess: boolean;
   }) => Promise<void>;
 }) {
   const { t } = useTranslation('provider');
@@ -101,16 +109,15 @@ function CreateSupportSessionDialog({
   const [scopes, setScopes] = useState<Set<string>>(new Set());
   const [durationMinutes, setDurationMinutes] = useState(15);
   const [justification, setJustification] = useState('');
-  const [accessMode, setAccessMode] = useState<'STANDARD' | 'BREAK_GLASS'>('STANDARD');
   const [approvalReference, setApprovalReference] = useState('');
   useEffect(() => {
     if (scopes.size === 0 && scopeCatalog[0]) {
       setScopes(new Set([scopeCatalog[0].scopeCode]));
     }
   }, [scopeCatalog, scopes.size]);
-  const requiresApproval =
-    accessMode === 'STANDARD' &&
-    scopeCatalog.some((scope) => scopes.has(scope.scopeCode) && scope.requiresCustomerApproval);
+  const requiresApproval = scopeCatalog.some(
+    (scope) => scopes.has(scope.scopeCode) && scope.requiresCustomerApproval
+  );
   const toggle = (scope: string) =>
     setScopes((current) => {
       const next = new Set(current);
@@ -124,12 +131,8 @@ function CreateSupportSessionDialog({
       open
       title={t('support.createTitle')}
       cancelLabel={t('actions.cancel')}
-      submitLabel={t(
-        accessMode === 'BREAK_GLASS'
-          ? 'support.actions.activateEmergency'
-          : 'support.actions.request'
-      )}
-      submitIntent={accessMode === 'BREAK_GLASS' ? 'danger' : 'primary'}
+      submitLabel={t('support.actions.request')}
+      submitIntent="primary"
       busy={busy}
       submitDisabled={
         !tenantId ||
@@ -144,58 +147,13 @@ function CreateSupportSessionDialog({
           scopes: [...scopes],
           durationMinutes,
           justification: justification.trim(),
-          approvalReference:
-            accessMode === 'STANDARD' && approvalReference.trim() ? approvalReference.trim() : null,
-          emergencyAccess: accessMode === 'BREAK_GLASS',
+          approvalReference: approvalReference.trim() ? approvalReference.trim() : null,
         })
       }
     >
       <Stack gap={2.25}>
-        <Alert severity={accessMode === 'BREAK_GLASS' ? 'error' : 'info'}>
-          {t(
-            accessMode === 'BREAK_GLASS' ? 'support.breakGlassWarning' : 'support.elevationWarning'
-          )}
-        </Alert>
-        <Box>
-          <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
-            {t('support.accessMode')}
-          </Typography>
-          <ToggleButtonGroup
-            exclusive
-            fullWidth
-            size="small"
-            value={accessMode}
-            onChange={(_event, value: 'STANDARD' | 'BREAK_GLASS' | null) =>
-              value && setAccessMode(value)
-            }
-            aria-label={t('support.accessMode')}
-          >
-            <ToggleButton value="STANDARD">
-              <ShieldCheck size={16} />
-              <Box component="span" sx={{ ml: 0.75 }}>
-                {t('support.modes.STANDARD')}
-              </Box>
-            </ToggleButton>
-            {canBreakGlass && (
-              <ToggleButton value="BREAK_GLASS">
-                <ShieldAlert size={16} />
-                <Box component="span" sx={{ ml: 0.75 }}>
-                  {t('support.modes.BREAK_GLASS')}
-                </Box>
-              </ToggleButton>
-            )}
-          </ToggleButtonGroup>
-        </Box>
-        <SelectField
-          required
-          label={t('fields.tenant')}
-          value={tenantId}
-          options={tenants.map((tenant) => ({
-            value: tenant.tenantId,
-            label: `${tenant.displayName} (${tenant.tenantKey})`,
-          }))}
-          onValueChange={setTenantId}
-        />
+        <Alert severity="info">{t('support.elevationWarning')}</Alert>
+        <ProviderTenantPicker value={tenantId} onChange={setTenantId} />
         <Box>
           <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
             {t('fields.scopes')}
@@ -245,15 +203,13 @@ function CreateSupportSessionDialog({
           value={justification}
           onChange={(event) => setJustification(event.target.value)}
         />
-        {accessMode === 'STANDARD' && (
-          <FormField
-            required={requiresApproval}
-            label={t('support.approvalReference')}
-            supportingText={t('support.approvalReferenceHelp')}
-            value={approvalReference}
-            onChange={(event) => setApprovalReference(event.target.value)}
-          />
-        )}
+        <FormField
+          required={requiresApproval}
+          label={t('support.approvalReference')}
+          supportingText={t('support.approvalReferenceHelp')}
+          value={approvalReference}
+          onChange={(event) => setApprovalReference(event.target.value)}
+        />
       </Stack>
     </FormDialog>
   );
@@ -262,11 +218,13 @@ function CreateSupportSessionDialog({
 type SupportAction = 'APPROVED' | 'DENIED' | 'CANCELLED' | 'REVIEWED';
 
 function SupportActionDialog({
+  request,
   action,
   busy,
   onClose,
   onConfirm,
 }: {
+  request: ProviderSupportAccessRequest;
   action: SupportAction;
   busy: boolean;
   onClose: () => void;
@@ -274,6 +232,8 @@ function SupportActionDialog({
 }) {
   const { t } = useTranslation('provider');
   const [reason, setReason] = useState('');
+  const [postReviewEvidenceReady, setPostReviewEvidenceReady] = useState(action !== 'REVIEWED');
+  useEffect(() => setPostReviewEvidenceReady(action !== 'REVIEWED'), [action]);
   return (
     <FormDialog
       open
@@ -282,21 +242,30 @@ function SupportActionDialog({
       cancelLabel={t('actions.cancel')}
       submitLabel={t(`support.actions.${action}`)}
       submitIntent={action === 'DENIED' || action === 'CANCELLED' ? 'danger' : 'primary'}
-      submitDisabled={!reason.trim()}
+      submitDisabled={!reason.trim() || !postReviewEvidenceReady}
       busy={busy}
       onClose={onClose}
       onSubmit={() => onConfirm(reason.trim())}
     >
-      <FormField
-        required
-        multiline
-        minRows={3}
-        label={t(
-          action === 'REVIEWED' ? 'support.actionDialog.reviewSummary' : 'fields.justification'
+      <Stack gap={2}>
+        <ProviderSupportRequestEvidence request={request} />
+        {action === 'REVIEWED' && (
+          <ProviderSupportPostReviewEvidence
+            request={request}
+            onReadyChange={setPostReviewEvidenceReady}
+          />
         )}
-        value={reason}
-        onChange={(event) => setReason(event.target.value)}
-      />
+        <FormField
+          required
+          multiline
+          minRows={3}
+          label={t(
+            action === 'REVIEWED' ? 'support.actionDialog.reviewSummary' : 'fields.justification'
+          )}
+          value={reason}
+          onChange={(event) => setReason(event.target.value)}
+        />
+      </Stack>
     </FormDialog>
   );
 }
@@ -304,12 +273,12 @@ function SupportActionDialog({
 export function ProviderSupport() {
   const { t } = useTranslation('provider');
   const display = useDisplayDictionary();
-  const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const wideRequestLedger = useMediaQuery('(min-width:1400px)');
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const supportContext = useCurrentProviderSupportContext();
   const [createOpen, setCreateOpen] = useState(false);
   const [actionTarget, setActionTarget] = useState<{
     request: ProviderSupportAccessRequest;
@@ -325,10 +294,6 @@ export function ProviderSupport() {
     queryKey: ['provider', 'support-access-requests'],
     queryFn: () => listProviderSupportAccessRequests(),
   });
-  const tenants = useQuery({
-    queryKey: ['provider', 'tenants', 'support'],
-    queryFn: () => listProviderTenants({ state: 'ACTIVE', page: 0, size: 100 }),
-  });
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
@@ -337,10 +302,27 @@ export function ProviderSupport() {
     queryKey: ['provider', 'support-scopes'],
     queryFn: listProviderSupportScopes,
   });
+  const executableScopeCatalog = useMemo(
+    () =>
+      (scopeCatalog.data ?? []).filter(
+        (scope) =>
+          scope.scopeCode === TENANT_EXPERIENCE_PREVIEW_SCOPE && scope.lifecycleState === 'ACTIVE'
+      ),
+    [scopeCatalog.data]
+  );
   const canWrite = operator.data?.permissions.includes('SUPPORT_SESSION_WRITE') ?? false;
-  const canBreakGlass = operator.data?.permissions.includes('BREAK_GLASS_SUPPORT') ?? false;
   const canReview = operator.data?.permissions.includes('SUPPORT_ACCESS_REVIEW') ?? false;
   const canPostReview = operator.data?.permissions.includes('SUPPORT_POST_REVIEW') ?? false;
+  const activeSupportContext =
+    !supportContext.isError && isProviderSupportSessionActive(supportContext.data)
+      ? supportContext.data
+      : null;
+  const canStartDiagnosis =
+    canWrite &&
+    executableScopeCatalog.length === 1 &&
+    !activeSupportContext &&
+    !supportContext.isLoading &&
+    !supportContext.isError;
   const requestedTenantId = searchParams.get('tenantId') ?? undefined;
   const scopeLabels = useMemo(
     () =>
@@ -354,8 +336,8 @@ export function ProviderSupport() {
   );
 
   useEffect(() => {
-    if (requestedTenantId && canWrite) setCreateOpen(true);
-  }, [canWrite, requestedTenantId]);
+    if (requestedTenantId && canStartDiagnosis) setCreateOpen(true);
+  }, [canStartDiagnosis, requestedTenantId]);
 
   const refreshSupport = useCallback(async () => {
     await Promise.all([
@@ -365,31 +347,53 @@ export function ProviderSupport() {
     ]);
   }, [queryClient]);
 
-  const activateRequest = useCallback(
-    async (request: ProviderSupportAccessRequest) => {
+  const revokeSession = useCallback(
+    async (session: Pick<ProviderSupportSession, 'supportSessionId' | 'version'>) => {
+      if (busy) return;
       setBusy(true);
       try {
-        await activateProviderSupportAccessRequest(request);
+        await revokeProviderSupportSession(session, t('support.revokeReason'));
+        queryClient.setQueryData(providerSupportContextQueryKey, null);
+        await purgeProviderSupportTenantCache(queryClient);
+        publishProviderSupportContextRevision();
         await refreshSupport();
-        toast.success(t('support.activated'));
-        navigate(
-          request.scopes.includes('TENANT_CONFIGURATION_READ') ||
-            request.scopes.includes('TENANT_CONFIGURATION_WRITE')
-            ? '/admin/experience/branding'
-            : '/hr/design/organization'
-        );
+        toast.success(t('support.revoked'));
       } catch (error) {
         toast.error(providerError(error, t('errors.operation')));
       } finally {
         setBusy(false);
       }
     },
-    [navigate, refreshSupport, t, toast]
+    [busy, queryClient, refreshSupport, t, toast]
+  );
+
+  const activateRequest = useCallback(
+    async (request: ProviderSupportAccessRequest) => {
+      if (busy) return;
+      if (!isExecutableProviderDiagnosisScopeSet(request.scopes)) {
+        toast.error(t('support.scopeRetired'));
+        return;
+      }
+      const diagnosisWindow = reserveTenantDiagnosisWindow(request.tenantId, request.scopes);
+      setBusy(true);
+      try {
+        await activateProviderSupportAccessRequest(request);
+        await refreshSupport();
+        toast.success(t('support.activated'));
+        completeTenantDiagnosisWindow(diagnosisWindow, (destination) => navigate(destination));
+      } catch (error) {
+        cancelTenantDiagnosisWindow(diagnosisWindow);
+        toast.error(providerError(error, t('errors.operation')));
+      } finally {
+        setBusy(false);
+      }
+    },
+    [busy, navigate, refreshSupport, t, toast]
   );
 
   const requestActions = useCallback(
     (row: ProviderSupportAccessRequest) => {
-      const ownRequest = row.requesterOperatorId === operator.data?.operatorId;
+      const ownRequest = row.requesterOwned;
       const audit = (
         <ActionIconButton
           label={t('support.actions.audit')}
@@ -406,16 +410,19 @@ export function ProviderSupport() {
         </ActionIconButton>
       );
       if (row.lifecycleState === 'PENDING_APPROVAL' && canReview && !ownRequest) {
+        const executable = isExecutableProviderDiagnosisScopeSet(row.scopes);
         return (
           <Stack direction="row" gap={0.5}>
-            <ActionIconButton
-              label={t('support.actions.APPROVED')}
-              intent="primary"
-              size="small"
-              onClick={() => setActionTarget({ request: row, action: 'APPROVED' })}
-            >
-              <Check size={17} />
-            </ActionIconButton>
+            {executable && (
+              <ActionIconButton
+                label={t('support.actions.APPROVED')}
+                intent="primary"
+                size="small"
+                onClick={() => setActionTarget({ request: row, action: 'APPROVED' })}
+              >
+                <Check size={17} />
+              </ActionIconButton>
+            )}
             <ActionIconButton
               label={t('support.actions.DENIED')}
               intent="danger"
@@ -428,12 +435,17 @@ export function ProviderSupport() {
           </Stack>
         );
       }
-      if (row.lifecycleState === 'APPROVED' && ownRequest) {
+      if (
+        row.lifecycleState === 'APPROVED' &&
+        ownRequest &&
+        isExecutableProviderDiagnosisScopeSet(row.scopes)
+      ) {
         return (
           <Stack direction="row" alignItems="center" gap={0.5}>
             <ActionButton
               intent="quiet"
               size="small"
+              disabled={busy}
               startIcon={<Play size={15} />}
               onClick={() => void activateRequest(row)}
             >
@@ -477,7 +489,7 @@ export function ProviderSupport() {
       }
       return audit;
     },
-    [activateRequest, canPostReview, canReview, navigate, operator.data?.operatorId, t]
+    [activateRequest, busy, canPostReview, canReview, navigate, t]
   );
 
   const columns = useMemo<GridColDef<ProviderSupportSession>[]>(
@@ -555,18 +567,9 @@ export function ProviderSupport() {
               label={t('support.actions.revoke')}
               intent="danger"
               size="small"
-              onClick={async (event) => {
+              onClick={(event) => {
                 event.stopPropagation();
-                setBusy(true);
-                try {
-                  await revokeProviderSupportSession(row, t('support.revokeReason'));
-                  toast.success(t('support.revoked'));
-                  await queryClient.invalidateQueries({ queryKey: ['provider', 'support'] });
-                } catch (error) {
-                  toast.error(providerError(error, t('errors.operation')));
-                } finally {
-                  setBusy(false);
-                }
+                void revokeSession(row);
               }}
             >
               <ShieldOff size={17} />
@@ -574,15 +577,15 @@ export function ProviderSupport() {
           ) : null,
       },
     ],
-    [canWrite, queryClient, scopeLabels, t, toast]
+    [canWrite, revokeSession, scopeLabels, t]
   );
 
   const requestColumns = useMemo<GridColDef<ProviderSupportAccessRequest>[]>(
     () => [
       {
         field: 'tenantName',
-        headerName: t('support.columns.tenant'),
-        minWidth: 190,
+        headerName: t('support.columns.tenantAndRequester'),
+        minWidth: 230,
         flex: 0.9,
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
@@ -590,42 +593,46 @@ export function ProviderSupport() {
               {row.tenantName}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {row.tenantKey}
+              {row.tenantKey} · {row.requesterName}
             </Typography>
           </Box>
         ),
       },
       {
-        field: 'requesterName',
-        headerName: t('support.columns.requester'),
-        minWidth: 160,
-        flex: 0.7,
-      },
-      {
-        field: 'justification',
-        headerName: t('support.columns.purpose'),
-        minWidth: 260,
-        flex: 1.25,
-      },
-      {
-        field: 'riskTier',
-        headerName: t('support.columns.risk'),
-        width: 80,
-        renderCell: ({ value }) => (
-          <Chip size="small" variant="outlined" label={display('riskTiers', String(value))} />
+        field: 'grantEvidence',
+        headerName: t('support.columns.exactGrant'),
+        minWidth: 300,
+        flex: 1.2,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => (
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="body2" noWrap>
+              {row.scopes
+                .map((scope) => t(`support.scopes.${scope}`, { defaultValue: scope }))
+                .join(', ')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('support.minutes', { count: row.durationMinutes })} ·{' '}
+              {display('riskTiers', row.riskTier)}
+            </Typography>
+          </Box>
         ),
       },
       {
-        field: 'decisionDueAt',
-        headerName: t('support.columns.decisionDue'),
-        width: 175,
-        valueFormatter: (value?: string | null) => formatProviderDate(value),
-      },
-      {
-        field: 'lifecycleState',
-        headerName: t('support.columns.state'),
-        width: 145,
-        renderCell: ({ value }) => <ProviderStatusChip state={String(value)} />,
+        field: 'stateEvidence',
+        headerName: t('support.columns.stateAndDue'),
+        width: 205,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => (
+          <Box>
+            <ProviderStatusChip state={row.lifecycleState} />
+            <Typography variant="caption" color="text.secondary" display="block">
+              {formatProviderDate(row.decisionDueAt)}
+            </Typography>
+          </Box>
+        ),
       },
       {
         field: 'requestActions',
@@ -644,6 +651,11 @@ export function ProviderSupport() {
     setBusy(true);
     try {
       const { request, action } = actionTarget;
+      if (action === 'APPROVED' && !isExecutableProviderDiagnosisScopeSet(request.scopes)) {
+        setActionTarget(null);
+        toast.error(t('support.scopeRetired'));
+        return;
+      }
       if (action === 'APPROVED' || action === 'DENIED') {
         await decideProviderSupportAccessRequest(request, action, reason);
       } else if (action === 'CANCELLED') {
@@ -667,37 +679,25 @@ export function ProviderSupport() {
     durationMinutes: number;
     justification: string;
     approvalReference?: string | null;
-    emergencyAccess: boolean;
   }) => {
+    if (!isExecutableProviderDiagnosisScopeSet(request.scopes)) {
+      toast.error(t('support.scopeRetired'));
+      return;
+    }
     setBusy(true);
     try {
-      if (request.emergencyAccess) {
-        await createProviderSupportSession({
-          ...request,
-          requestKey: `break-glass-${crypto.randomUUID()}`,
-        });
-      } else {
-        await createProviderSupportAccessRequest({
-          tenantId: request.tenantId,
-          scopes: request.scopes,
-          durationMinutes: request.durationMinutes,
-          justification: request.justification,
-          approvalReference: request.approvalReference,
-          requestKey: `support-${crypto.randomUUID()}`,
-        });
-      }
+      await createProviderSupportAccessRequest({
+        tenantId: request.tenantId,
+        scopes: request.scopes,
+        durationMinutes: request.durationMinutes,
+        justification: request.justification,
+        approvalReference: request.approvalReference,
+        requestKey: `support-${crypto.randomUUID()}`,
+      });
       setCreateOpen(false);
       if (requestedTenantId) setSearchParams({}, { replace: true });
       await refreshSupport();
-      toast.success(t(request.emergencyAccess ? 'support.activated' : 'support.requestSubmitted'));
-      if (request.emergencyAccess) {
-        navigate(
-          request.scopes.includes('TENANT_CONFIGURATION_READ') ||
-            request.scopes.includes('TENANT_CONFIGURATION_WRITE')
-            ? '/admin/experience/branding'
-            : '/hr/design/organization'
-        );
-      }
+      toast.success(t('support.requestSubmitted'));
     } catch (error) {
       toast.error(providerError(error, t('errors.operation')));
     } finally {
@@ -705,41 +705,22 @@ export function ProviderSupport() {
     }
   };
 
-  if (
-    sessions.isLoading ||
-    tenants.isLoading ||
-    scopeCatalog.isLoading ||
-    (operator.isLoading && !operator.data)
-  )
+  if (sessions.isLoading || scopeCatalog.isLoading || (operator.isLoading && !operator.data))
     return <ProviderLoading />;
-  if (
-    sessions.isError ||
-    tenants.isError ||
-    scopeCatalog.isError ||
-    (operator.isError && !operator.data)
-  )
+  if (sessions.isError || scopeCatalog.isError || (operator.isError && !operator.data))
     return (
       <ProviderError
-        error={sessions.error ?? tenants.error ?? operator.error ?? scopeCatalog.error}
+        error={sessions.error ?? operator.error ?? scopeCatalog.error}
         onRetry={() =>
-          void Promise.all([
-            sessions.refetch(),
-            tenants.refetch(),
-            scopeCatalog.refetch(),
-            operator.refetch(),
-          ])
+          void Promise.all([sessions.refetch(), scopeCatalog.refetch(), operator.refetch()])
         }
-        retrying={
-          sessions.isFetching ||
-          tenants.isFetching ||
-          scopeCatalog.isFetching ||
-          operator.isFetching
-        }
+        retrying={sessions.isFetching || scopeCatalog.isFetching || operator.isFetching}
       />
     );
 
   const allSessions = sessions.data ?? [];
   const allRequests = requests.data ?? [];
+  const requestMetricsUnavailable = !requests.data && (requests.isLoading || requests.isError);
   const visibleSessions = allSessions.filter((session) => {
     if (sessionFilter === 'ALL') return true;
     return sessionFilter === 'ACTIVE'
@@ -749,13 +730,17 @@ export function ProviderSupport() {
   const metrics = [
     {
       label: t('support.metrics.pendingApproval'),
-      value: allRequests.filter((request) => request.lifecycleState === 'PENDING_APPROVAL').length,
+      value: requestMetricsUnavailable
+        ? '—'
+        : allRequests.filter((request) => request.lifecycleState === 'PENDING_APPROVAL').length,
       icon: ShieldCheck,
+      unavailable: requestMetricsUnavailable,
     },
     {
       label: t('support.metrics.active'),
       value: allSessions.filter((session) => session.lifecycleState === 'ACTIVE').length,
       icon: KeyRound,
+      unavailable: false,
     },
     {
       label: t('support.metrics.breakGlass'),
@@ -763,16 +748,24 @@ export function ProviderSupport() {
         (session) => session.lifecycleState === 'ACTIVE' && session.accessMode === 'BREAK_GLASS'
       ).length,
       icon: ShieldAlert,
+      unavailable: false,
     },
     {
       label: t('support.metrics.pendingReview'),
-      value: allRequests.filter((request) => request.postReviewState === 'PENDING').length,
+      value: requestMetricsUnavailable
+        ? '—'
+        : allRequests.filter((request) => request.postReviewState === 'PENDING').length,
       icon: ClipboardCheck,
+      unavailable: requestMetricsUnavailable,
     },
   ];
 
   return (
     <Stack gap={3}>
+      {activeSupportContext && <Alert severity="info">{t('diagnosis.active.singleSession')}</Alert>}
+      {supportContext.isError && !supportContext.data && (
+        <Alert severity="warning">{t('diagnosis.contextUnavailable')}</Alert>
+      )}
       <Box
         sx={{
           display: 'grid',
@@ -781,9 +774,12 @@ export function ProviderSupport() {
           borderColor: 'divider',
         }}
       >
-        {metrics.map(({ label, value, icon: Icon }, index) => (
+        {metrics.map(({ label, value, icon: Icon, unavailable }, index) => (
           <Box
             key={label}
+            aria-label={
+              unavailable ? t('support.metrics.unavailable', { metric: label }) : undefined
+            }
             sx={{
               p: 1.75,
               borderLeft: { sm: index ? 1 : 0 },
@@ -805,17 +801,20 @@ export function ProviderSupport() {
         title={t('support.workflowTitle')}
         description={t('support.workflowDescription')}
         action={
-          canWrite ? (
+          canStartDiagnosis ? (
             <ActionButton
               intent="primary"
               startIcon={<Plus size={17} />}
               onClick={() => setCreateOpen(true)}
             >
-              {t('support.actions.create')}
+              {t('support.actions.startDiagnosis')}
             </ActionButton>
           ) : undefined
         }
       />
+      {canWrite && executableScopeCatalog.length === 0 && (
+        <Alert severity="warning">{t('support.previewScopeUnavailable')}</Alert>
+      )}
       {requests.isError ? (
         <Alert
           severity="warning"
@@ -828,7 +827,7 @@ export function ProviderSupport() {
           {t('support.partialRequests')}
         </Alert>
       ) : allRequests.length > 0 || requests.isFetching ? (
-        desktop ? (
+        wideRequestLedger ? (
           <EnterpriseDataGrid
             ariaLabel={t('support.workflowTitle')}
             rows={allRequests}
@@ -842,11 +841,19 @@ export function ProviderSupport() {
           <Stack
             component="ul"
             aria-label={t('support.workflowTitle')}
-            divider={<Divider flexItem />}
             sx={{ m: 0, p: 0, listStyle: 'none', borderBlock: 1, borderColor: 'divider' }}
           >
             {allRequests.map((request) => (
-              <Box component="li" key={request.supportAccessRequestId} sx={{ py: 1.5 }}>
+              <Box
+                component="li"
+                key={request.supportAccessRequestId}
+                sx={{
+                  py: 1.5,
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  '&:last-of-type': { borderBottom: 0 },
+                }}
+              >
                 <Stack
                   direction="row"
                   justifyContent="space-between"
@@ -861,17 +868,9 @@ export function ProviderSupport() {
                   </Box>
                   <ProviderStatusChip state={request.lifecycleState} />
                 </Stack>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  {request.justification}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  sx={{ mt: 0.5 }}
-                >
-                  {t('support.columns.decisionDue')}: {formatProviderDate(request.decisionDueAt)}
-                </Typography>
+                <Box sx={{ mt: 1.25 }}>
+                  <ProviderSupportRequestEvidence request={request} showHeading={false} />
+                </Box>
                 <Box sx={{ mt: 1 }}>{requestActions(request)}</Box>
               </Box>
             ))}
@@ -882,8 +881,8 @@ export function ProviderSupport() {
           kind="first-use"
           title={t('support.empty.noRequestsTitle')}
           description={t('support.empty.noRequestsDescription')}
-          actionLabel={canWrite ? t('support.actions.create') : undefined}
-          onAction={canWrite ? () => setCreateOpen(true) : undefined}
+          actionLabel={canStartDiagnosis ? t('support.actions.startDiagnosis') : undefined}
+          onAction={canStartDiagnosis ? () => setCreateOpen(true) : undefined}
           size="compact"
         />
       )}
@@ -930,27 +929,25 @@ export function ProviderSupport() {
           actionLabel={
             allSessions.length
               ? t('support.empty.showAll')
-              : canWrite
-                ? t('support.actions.create')
+              : canStartDiagnosis
+                ? t('support.actions.startDiagnosis')
                 : undefined
           }
           onAction={
             allSessions.length
               ? () => setSessionFilter('ALL')
-              : canWrite
+              : canStartDiagnosis
                 ? () => setCreateOpen(true)
                 : undefined
           }
           size="standard"
         />
       )}
-      {createOpen && (
+      {createOpen && canStartDiagnosis && (
         <CreateSupportSessionDialog
           initialTenantId={requestedTenantId}
-          tenants={tenants.data?.content ?? []}
-          scopeCatalog={scopeCatalog.data ?? []}
+          scopeCatalog={executableScopeCatalog}
           busy={busy}
-          canBreakGlass={canBreakGlass}
           onClose={() => {
             setCreateOpen(false);
             if (requestedTenantId) setSearchParams({}, { replace: true });
@@ -960,6 +957,7 @@ export function ProviderSupport() {
       )}
       {actionTarget && (
         <SupportActionDialog
+          request={actionTarget.request}
           action={actionTarget.action}
           busy={busy}
           onClose={() => setActionTarget(null)}

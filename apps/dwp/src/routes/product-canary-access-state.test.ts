@@ -8,6 +8,8 @@ import {
 
 import type { ProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
 import type { AllowedSurfaceDecision } from '../features/shell/product-surface-context';
+import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
+import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 
 describe('Canary typed access-state actions', () => {
   it('never offers an access request for unknown or unavailable authority', () => {
@@ -96,9 +98,15 @@ describe('Canary access-state safe return', () => {
   } satisfies ProductSurfaceCanaryAuthority;
 
   it('returns management denials to the last allowed registered Work route', () => {
-    expect(resolveCanarySafeReturnPath(authority, 'approvals', 'approvals.admin')).toBe(
-      '/approvals/inbox?scope=scope%3Aapprovals%3Aself'
-    );
+    expect(
+      resolveCanarySafeReturnPath(
+        authority,
+        'approvals',
+        'approvals.admin',
+        APPROVAL_PRODUCT_MANIFEST,
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG
+      )
+    ).toBe('/approvals/inbox?scope=scope%3Aapprovals%3Aself');
   });
 
   it('returns management-only and unknown product denials to the catalog', () => {
@@ -106,7 +114,9 @@ describe('Canary access-state safe return', () => {
       resolveCanarySafeReturnPath(
         { ...authority, routeDecisions: {}, lastAllowedWorkRouteIds: {} },
         'approvals',
-        'approvals.admin'
+        'approvals.admin',
+        APPROVAL_PRODUCT_MANIFEST,
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG
       )
     ).toBe('/apps');
     expect(resolveCanarySafeReturnPath(authority, 'unknown', 'unknown.admin')).toBe('/apps');
@@ -184,16 +194,24 @@ describe('Canary access-state scope chooser', () => {
         decision,
         'approvals',
         'approvals.admin',
-        'route.approvals.admin.forms.page'
+        'route.approvals.admin.forms.page',
+        APPROVAL_PRODUCT_MANIFEST,
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG
       ).map((scope) => scope.key)
     ).toEqual(['scope:approvals:eligible']);
   });
 
   it('offers only scopes that can reach at least one registered index destination', () => {
     expect(
-      resolveCanarySelectableScopes(authority, decision, 'approvals', 'approvals.admin').map(
-        (scope) => scope.key
-      )
+      resolveCanarySelectableScopes(
+        authority,
+        decision,
+        'approvals',
+        'approvals.admin',
+        undefined,
+        APPROVAL_PRODUCT_MANIFEST,
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG
+      ).map((scope) => scope.key)
     ).toEqual(['scope:approvals:eligible']);
   });
 
@@ -204,7 +222,9 @@ describe('Canary access-state scope chooser', () => {
         { state: 'scope-selection-required' },
         'approvals',
         'approvals.admin',
-        'route.approvals.admin.forms.page'
+        'route.approvals.admin.forms.page',
+        APPROVAL_PRODUCT_MANIFEST,
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG
       )
     ).toEqual([]);
     expect(
@@ -219,7 +239,9 @@ describe('Canary access-state scope chooser', () => {
         decision,
         'approvals',
         'approvals.admin',
-        'route.approvals.admin.forms.page'
+        'route.approvals.admin.forms.page',
+        APPROVAL_PRODUCT_MANIFEST,
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG
       )
     ).toEqual([]);
   });

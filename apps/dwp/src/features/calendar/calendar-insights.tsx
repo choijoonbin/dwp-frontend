@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
   BarChart3,
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getCalendarHome, usePermissions } from '@dwp-frontend/shared-utils';
-import { ActionButton, ErrorState, PageCanvas, SignalMetric } from '@dwp-frontend/design-system';
+import { ActionButton, ErrorState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -20,9 +21,20 @@ import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
-import { CalendarPageHeading, calendarDate } from './calendar-components';
+import {
+  CalendarMetric,
+  CalendarPageHeading,
+  calendarDate,
+  calendarTime,
+} from './calendar-components';
+import {
+  CalendarCanvas,
+  CalendarSectionHeader,
+  CalendarWeekBalanceRail,
+} from './calendar-experience';
 
 function hours(value: number) {
   return (value / 60).toFixed(value % 60 === 0 ? 0 : 1);
@@ -31,6 +43,7 @@ function hours(value: number) {
 export function CalendarInsights() {
   const { t, i18n } = useTranslation('calendar');
   const { hasPermission } = usePermissions();
+  const navigate = useNavigate();
   const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const [focusDialog, setFocusDialog] = useState(false);
   const language = i18n.resolvedLanguage ?? i18n.language;
@@ -61,20 +74,23 @@ export function CalendarInsights() {
   }, [query.data]);
 
   return (
-    <PageCanvas>
+    <CalendarCanvas archetype="command">
       <CalendarPageHeading
+        icon={BarChart3}
         eyebrow={t('insights.eyebrow')}
         title={t('insights.title')}
         description={t('insights.description')}
-        actions={canCreate ? (
-          <ActionButton
-            intent="primary"
-            startIcon={<CalendarPlus size={17} />}
-            onClick={() => setFocusDialog(true)}
-          >
-            {t('insights.protectFocus')}
-          </ActionButton>
-        ) : undefined}
+        actions={
+          canCreate ? (
+            <ActionButton
+              intent="primary"
+              startIcon={<CalendarPlus size={17} />}
+              onClick={() => setFocusDialog(true)}
+            >
+              {t('insights.protectFocus')}
+            </ActionButton>
+          ) : undefined
+        }
       />
 
       {query.isError ? (
@@ -94,49 +110,6 @@ export function CalendarInsights() {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: 'repeat(2, minmax(0, 1fr))',
-                xl: 'repeat(4, minmax(0, 1fr))',
-              },
-              gap: 1.5,
-            }}
-          >
-            <SignalMetric
-              label={t('insights.metrics.meetingTime')}
-              value={`${hours(query.data.metrics.meetingMinutes)}h`}
-              detail={t('insights.metrics.meetingShare', { value: derived.meetingShare })}
-              icon={<UsersRound size={17} />}
-              tone="primary"
-            />
-            <SignalMetric
-              label={t('insights.metrics.focusTime')}
-              value={`${hours(query.data.metrics.focusMinutes)}h`}
-              detail={t('insights.metrics.focusTarget')}
-              icon={<Focus size={17} />}
-              tone="success"
-              progress={derived.focusProgress}
-              progressLabel={`${derived.focusProgress}%`}
-            />
-            <SignalMetric
-              label={t('insights.metrics.overloadDays')}
-              value={String(derived.overloaded)}
-              detail={t('insights.metrics.overloadDescription')}
-              icon={<Gauge size={17} />}
-              tone={derived.overloaded ? 'warning' : 'neutral'}
-            />
-            <SignalMetric
-              label={t('insights.metrics.conflicts')}
-              value={String(query.data.metrics.conflictCount)}
-              detail={t('insights.metrics.conflictDescription')}
-              icon={<AlertTriangle size={17} />}
-              tone={query.data.metrics.conflictCount ? 'error' : 'neutral'}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: 'grid',
               gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.7fr) minmax(300px, 0.8fr)' },
               gap: 2,
             }}
@@ -151,88 +124,44 @@ export function CalendarInsights() {
                 overflow: 'hidden',
               }}
             >
-              <Box sx={{ p: 2.25 }}>
-                <Typography component="h2" variant="h6" fontWeight={800}>
-                  {t('insights.weekPattern')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t('insights.weekPatternDescription')}
-                </Typography>
-              </Box>
+              <CalendarSectionHeader
+                icon={BarChart3}
+                title={t('insights.weekPattern')}
+                description={t('insights.weekPatternDescription')}
+              />
               <Divider />
-              <Stack spacing={2.25} sx={{ p: 2.5 }}>
-                {query.data.weekLoad.map((day) => {
-                  const max = Math.max(480, day.meetingMinutes + day.focusMinutes);
-                  return (
-                    <Box key={day.date}>
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        gap={1}
-                        sx={{ mb: 0.8 }}
-                      >
-                        <Typography variant="body2" fontWeight={750}>
-                          {calendarDate(day.date, language)}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color={day.loadPercent > 100 ? 'error.main' : 'text.secondary'}
-                          fontWeight={700}
-                        >
-                          {t('insights.utilization', { value: day.loadPercent })}
-                        </Typography>
-                      </Stack>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          height: 14,
-                          bgcolor: 'action.hover',
-                          borderRadius: 0.5,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <Box
-                          sx={{ width: `${(day.meetingMinutes * 100) / max}%`, bgcolor: '#2563EB' }}
-                        />
-                        <Box
-                          sx={{ width: `${(day.focusMinutes * 100) / max}%`, bgcolor: '#0F766E' }}
-                        />
-                      </Box>
-                      <Stack direction="row" spacing={2} sx={{ mt: 0.6 }}>
-                        <Typography variant="caption" color="text.secondary">
-                          {t('insights.meetingMinutes', { count: day.meetingMinutes })}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {t('insights.focusMinutes', { count: day.focusMinutes })}
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  );
-                })}
-              </Stack>
+              <Box sx={{ p: 2.5 }}>
+                <CalendarWeekBalanceRail
+                  days={query.data.weekLoad.map((day) => ({
+                    key: day.date,
+                    label: calendarDate(day.date, language),
+                    meetingMinutes: day.meetingMinutes,
+                    focusMinutes: day.focusMinutes,
+                    loadPercent: day.loadPercent,
+                  }))}
+                  meetingLabel={`${t('home.metrics.meetings')} (${t('units.minute')})`}
+                  focusLabel={`${t('home.metrics.focus')} (${t('units.minute')})`}
+                  utilizationLabel={(day) => t('insights.utilization', { value: day.loadPercent })}
+                />
+              </Box>
             </Box>
 
             <Box
               component="section"
               sx={{
-                bgcolor: '#F6F8FB',
+                bgcolor: (theme) =>
+                  alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.09 : 0.035),
                 border: 1,
                 borderColor: 'divider',
                 borderRadius: 1,
                 overflow: 'hidden',
               }}
             >
-              <Box sx={{ p: 2.25, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Sparkles size={19} color="#7C3AED" />
-                <Box>
-                  <Typography component="h2" variant="h6" fontWeight={800}>
-                    {t('insights.recommendations')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('insights.recommendationsDescription')}
-                  </Typography>
-                </Box>
-              </Box>
+              <CalendarSectionHeader
+                icon={Sparkles}
+                title={t('insights.recommendations')}
+                description={t('insights.recommendationsDescription')}
+              />
               <Divider />
               <Stack divider={<Divider flexItem />}>
                 <Box sx={{ p: 2 }}>
@@ -243,7 +172,7 @@ export function CalendarInsights() {
                     color={derived.focusProgress >= 100 ? 'success' : 'warning'}
                     variant="outlined"
                   />
-                  <Typography fontWeight={750} sx={{ mt: 1 }}>
+                  <Typography fontWeight={600} sx={{ mt: 1 }}>
                     {derived.focusProgress >= 100
                       ? t('insights.focusProtected')
                       : t('insights.focusGap', {
@@ -264,7 +193,7 @@ export function CalendarInsights() {
                     label={t('insights.balanceLabel')}
                     variant="outlined"
                   />
-                  <Typography fontWeight={750} sx={{ mt: 1 }}>
+                  <Typography fontWeight={600} sx={{ mt: 1 }}>
                     {derived.healthiest
                       ? t('insights.bestWindow', {
                           date: calendarDate(derived.healthiest.date, language),
@@ -282,7 +211,7 @@ export function CalendarInsights() {
                     label={t('insights.meetingLabel')}
                     variant="outlined"
                   />
-                  <Typography fontWeight={750} sx={{ mt: 1 }}>
+                  <Typography fontWeight={600} sx={{ mt: 1 }}>
                     {derived.meetingShare > 70
                       ? t('insights.meetingHeavy')
                       : t('insights.meetingBalanced')}
@@ -295,9 +224,70 @@ export function CalendarInsights() {
             </Box>
           </Box>
 
-          <Stack direction="row" spacing={1} alignItems="center" color="text.secondary">
-            <Clock3 size={15} />
-            <Typography variant="caption">{t('insights.privateHint')}</Typography>
+          <Box
+            component="section"
+            aria-label={t('insights.title')}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, minmax(0, 1fr))',
+                xl: 'repeat(4, minmax(0, 1fr))',
+              },
+              gap: 1.5,
+            }}
+          >
+            <CalendarMetric
+              label={t('insights.metrics.meetingTime')}
+              value={`${hours(query.data.metrics.meetingMinutes)}${t('units.hour')}`}
+              hint={t('insights.metrics.meetingShare', { value: derived.meetingShare })}
+              icon={UsersRound}
+              tone="primary"
+              onClick={() => navigate('/calendar/schedule')}
+            />
+            <CalendarMetric
+              label={t('insights.metrics.focusTime')}
+              value={`${hours(query.data.metrics.focusMinutes)}${t('units.hour')}`}
+              hint={t('insights.metrics.focusTarget')}
+              icon={Focus}
+              tone="success"
+              progress={derived.focusProgress}
+              progressLabel={`${derived.focusProgress}%`}
+              onClick={() => navigate('/calendar/focus')}
+            />
+            <CalendarMetric
+              label={t('insights.metrics.overloadDays')}
+              value={String(derived.overloaded)}
+              hint={t('insights.metrics.overloadDescription')}
+              icon={Gauge}
+              tone={derived.overloaded ? 'warning' : 'neutral'}
+            />
+            <CalendarMetric
+              label={t('insights.metrics.conflicts')}
+              value={String(query.data.metrics.conflictCount)}
+              hint={t('insights.metrics.conflictDescription')}
+              icon={AlertTriangle}
+              tone={query.data.metrics.conflictCount ? 'error' : 'neutral'}
+              onClick={() => navigate('/calendar/invitations')}
+            />
+          </Box>
+
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1}
+            alignItems={{ xs: 'flex-start', sm: 'center' }}
+            justifyContent="space-between"
+            color="text.secondary"
+          >
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Clock3 size={15} />
+              <Typography variant="caption">{t('insights.privateHint')}</Typography>
+            </Stack>
+            <Typography variant="caption">
+              {t('insights.updatedAt', {
+                time: calendarTime(query.data.generatedAt, language),
+              })}
+            </Typography>
           </Stack>
         </Stack>
       )}
@@ -309,6 +299,6 @@ export function CalendarInsights() {
           onClose={() => setFocusDialog(false)}
         />
       )}
-    </PageCanvas>
+    </CalendarCanvas>
   );
 }

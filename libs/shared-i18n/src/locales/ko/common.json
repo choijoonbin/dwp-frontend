@@ -71,9 +71,15 @@
     "operationFailed": "작업을 완료하지 못했습니다."
   },
   "productSurface": {
+    "contextBar": {
+      "loadError": "관리 컨텍스트를 불러오지 못했습니다.",
+      "reloadPage": "페이지 새로고침"
+    },
     "notFound": {
       "title": "이 제품 페이지를 찾을 수 없습니다",
-      "description": "주소가 올바른지 확인하거나 현재 제품 메뉴에서 다른 업무를 선택해 주세요."
+      "description": "주소가 올바른지 확인하거나 현재 제품 메뉴에서 다른 업무를 선택해 주세요.",
+      "productHome": "제품 홈으로 이동",
+      "dwpHome": "DWP 홈으로 이동"
     },
     "scopeChooser": {
       "title": "허용된 관리 범위 선택",
@@ -81,17 +87,27 @@
     },
     "expiry": {
       "warning": "5분 이내에 관리 권한을 다시 확인합니다",
-      "revalidating": "관리 권한을 다시 확인하는 중입니다"
+      "warningCompact": "5분 이내",
+      "revalidating": "관리 권한을 다시 확인하는 중입니다",
+      "revalidatingCompact": "재확인 중"
     },
     "labels": {
       "work": "업무",
       "management": "제품 관리",
       "appManagement": "앱 관리",
+      "appManagementForProduct": "앱 관리: {{product}}",
       "returnToWork": "업무로 돌아가기",
+      "returnToWorkForProduct": "업무로 돌아가기: {{product}}",
+      "managementMode": "관리 모드",
+      "managementModeCompact": "관리",
+      "managementTitle": "{{product}} 관리",
       "scope": "범위",
       "readOnly": "읽기 전용",
       "revalidateAt": "{{time}}에 접근 재확인",
-      "surfaceNavigation": "제품 업무 및 관리 영역",
+      "revalidation": "접근 재확인",
+      "surfaceNavigation": "앱 영역 전환",
+      "workAreas": "업무 영역",
+      "managementAreas": "관리 영역",
       "currentSurface": "현재 영역: {{surface}}",
       "unknownSurface": "제품 영역",
       "managementScope": "관리 범위",

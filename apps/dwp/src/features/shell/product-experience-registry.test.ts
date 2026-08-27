@@ -19,4 +19,13 @@ describe('product experience registry', () => {
       density: 'comfortable',
     });
   });
+
+  it('gives meetings a standard-density session profile with distinct action and readiness tones', () => {
+    expect(getProductExperienceProfile('meetings')).toMatchObject({
+      concept: 'meeting-flow',
+      density: 'standard',
+      accent: '#2A61C9',
+      secondary: '#0B6B74',
+    });
+  });
 });

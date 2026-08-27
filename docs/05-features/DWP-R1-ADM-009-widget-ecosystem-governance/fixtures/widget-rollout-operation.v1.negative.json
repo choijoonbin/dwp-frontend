@@ -1,0 +1,1323 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "caseId": "static-selector-must-be-null",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/state/selectorKeyId",
+        "value": "selector-leaked"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "static-active-approval-must-be-null",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/state/activeApprovalId",
+        "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "bootstrap-state-must-not-expose-evidence",
+      "baseExampleId": "activate-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/activeRolloutEvidenceId",
+        "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "shadow-state-requires-evidence-digest",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/activeRolloutEvidenceDigest",
+        "value": null
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "bootstrap-approval-must-not-expose-evidence",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/rolloutEvidenceId",
+        "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "promotion-approval-requires-evidence",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/rolloutEvidenceId",
+        "value": null
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "bootstrap-request-requires-prerequisite",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "remove",
+        "path": "/request/bootstrapPrerequisite"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "bootstrap-request-forbids-rollout-evidence",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "add",
+        "path": "/request/rolloutEvidence",
+        "value": {}
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "promotion-request-forbids-prerequisite-replay",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "add",
+        "path": "/request/bootstrapPrerequisite",
+        "value": {}
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "promotion-request-requires-authority-attestation",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "remove",
+        "path": "/request/evidenceAuthorityAttestation"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "activate-request-is-closed",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "add",
+        "path": "/request/reasonCode",
+        "value": "UNEXPECTED"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "stop-request-is-closed",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "add",
+        "path": "/request/clientTimestamp",
+        "value": "2026-08-28T08:00:00Z"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "stop-reason-code-is-closed-format",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/reasonCode",
+        "value": "safety-stop"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "approval-response-must-not-leak-jws",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "add",
+        "path": "/response/rawJws",
+        "value": "secret"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "evidence-response-must-not-leak-metrics",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "add",
+        "path": "/response/metricPayload",
+        "value": {}
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "evidence-response-ring-is-closed",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/ring",
+        "value": "STATIC"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "shadow-ring-cannot-be-bootstrap-range",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/ringBps",
+        "value": 100
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "expiry-clock-must-be-database",
+      "baseExampleId": "expire-approval",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/clockSource",
+        "value": "CLIENT"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "expiry-failure-mode-must-fail-closed",
+      "baseExampleId": "expire-approval",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/failureMode",
+        "value": "KEEP_ACTIVE"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "expiry-result-cause-cannot-be-safety",
+      "baseExampleId": "expire-approval",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/cause",
+        "value": "SAFETY_STOP"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "promotion-ring-must-increase",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/fromRingBps",
+        "value": 1000
+      },
+      "expectedCode": "RING_ORDER"
+    },
+    {
+      "caseId": "approval-provenance-revision-must-bind",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/rolloutRevision",
+        "value": 9
+      },
+      "expectedCode": "PROVENANCE_MISMATCH"
+    },
+    {
+      "caseId": "bootstrap-canonical-digest-must-bind",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/bootstrapPrerequisiteDigest",
+        "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      "expectedCode": "BOOTSTRAP_DIGEST"
+    },
+    {
+      "caseId": "activation-approval-id-must-bind",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/approvalId",
+        "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "expectedCode": "ACTIVATION_BINDING"
+    },
+    {
+      "caseId": "stop-head-transition-must-increment-once",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/state/headVersion",
+        "value": 45
+      },
+      "expectedCode": "STOP_TRANSITION"
+    },
+    {
+      "caseId": "evidence-response-digest-must-bind",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/evidenceDigest",
+        "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      "expectedCode": "EVIDENCE_BINDING"
+    },
+    {
+      "caseId": "expiry-must-be-reached-by-db-clock",
+      "baseExampleId": "expire-approval",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/evaluatedAt",
+        "value": "2026-08-28T08:04:59Z"
+      },
+      "expectedCode": "EXPIRY_NOT_REACHED"
+    },
+    {
+      "caseId": "expiry-response-time-must-bind",
+      "baseExampleId": "expire-approval",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/evaluatedAt",
+        "value": "2026-08-29T08:00:01Z"
+      },
+      "expectedCode": "EXPIRY_TRANSITION"
+    },
+    {
+      "caseId": "rollout-actors-must-be-separated",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/proposerRef",
+        "value": "actor:control:approver-a"
+      },
+      "expectedCode": "SOD_VIOLATION"
+    },
+    {
+      "caseId": "approver-refs-must-be-canonically-sorted",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/approverRefs/0",
+        "value": "actor:control:approver-z"
+      },
+      "expectedCode": "ACTOR_ORDER"
+    },
+    {
+      "caseId": "promotion-evidence-must-be-prior-revision",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/revisions/rolloutRevision",
+        "value": 6
+      },
+      "expectedCode": "EVIDENCE_PROVENANCE"
+    },
+    {
+      "caseId": "promotion-evidence-ring-must-bind-from-ring",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/revisions/ringBps",
+        "value": 99
+      },
+      "expectedCode": "EVIDENCE_PROVENANCE"
+    },
+    {
+      "caseId": "evidence-response-rollout-revision-must-bind",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/rolloutRevision",
+        "value": 8
+      },
+      "expectedCode": "PROVENANCE_MISMATCH"
+    },
+    {
+      "caseId": "evidence-fixture-provenance-ring-must-bind",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/ring",
+        "value": "STAGING_SHADOW"
+      },
+      "expectedCode": "PROVENANCE_MISMATCH"
+    },
+    {
+      "caseId": "promotion-sample-total-minimum-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/samples",
+        "value": {
+          "total": 99999,
+          "placementContexts": {
+            "CLASSIC_PERSONAL": 33000,
+            "FLOW_PERSONAL": 33000,
+            "FLOW_GOVERNED": 33999
+          }
+        }
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-placement-minimum-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/samples",
+        "value": {
+          "total": 100000,
+          "placementContexts": {
+            "CLASSIC_PERSONAL": 999,
+            "FLOW_PERSONAL": 33001,
+            "FLOW_GOVERNED": 66000
+          }
+        }
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-diff-must-be-zero",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/diffCounts/STATE_MISMATCH",
+        "value": 1
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-unsafe-allow-must-be-zero",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/unsafeAllowCount",
+        "value": 1
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-15m-rejection-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maxRolling15MinuteRejectionRateBps",
+        "value": 11
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-15m-error-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maxRolling15MinuteEvaluationErrorRateBps",
+        "value": 51
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-15m-p99-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maxRolling15MinuteDurationP99Milliseconds",
+        "value": 151
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-1m-rejection-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maxOneMinuteRejectionRateBps",
+        "value": 101
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-1m-error-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maxOneMinuteEvaluationErrorRateBps",
+        "value": 201
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-1m-p99-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maxOneMinuteDurationP99Milliseconds",
+        "value": 251
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-depth-five-minute-boundary-stops",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/maximumConsecutiveSecondsAboveDepth230",
+        "value": 300
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-outbox-age-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/outbox/oldestUnpublishedAgeMillisecondsMax",
+        "value": 30001
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-outbox-error-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/outbox/maxFiveMinuteDeliveryErrorRateBps",
+        "value": 101
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-dlq-increase-must-be-zero",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/outbox/deadLetterIncrease",
+        "value": 1
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-kill-drill-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/drill/killDecisionP99Milliseconds",
+        "value": 30001
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-quarantine-drill-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/drill/quarantineDecisionP99Milliseconds",
+        "value": 30001
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-would-deny-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/drill/wouldDenyMaximumMilliseconds",
+        "value": 60001
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-would-stop-data-boundary-is-inclusive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/drill/wouldStopDataMaximumMilliseconds",
+        "value": 60001
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-legacy-payload-mismatch-must-be-zero",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/drill/legacyPayloadMismatchCount",
+        "value": 1
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-legacy-data-mismatch-must-be-zero",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/drill/legacyDataMismatchCount",
+        "value": 1
+      },
+      "expectedCode": "PROMOTION_GATE"
+    },
+    {
+      "caseId": "promotion-window-requires-valid-gregorian-utc",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/window/startAt",
+        "value": "2026-02-30T07:00:00Z"
+      },
+      "expectedCode": "EVIDENCE_TIME"
+    },
+    {
+      "caseId": "promotion-window-must-be-exactly-86400-seconds",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/window/endAt",
+        "value": "2026-08-27T06:59:59Z"
+      },
+      "expectedCode": "EVIDENCE_TIME"
+    },
+    {
+      "caseId": "promotion-collection-must-follow-window",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/source/collectedAt",
+        "value": "2026-08-27T06:59:59Z"
+      },
+      "expectedCode": "EVIDENCE_TIME"
+    },
+    {
+      "caseId": "promotion-verification-must-follow-collection",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/verifiedAt",
+        "value": "2026-08-27T07:00:59Z"
+      },
+      "expectedCode": "EVIDENCE_TIME"
+    },
+    {
+      "caseId": "promotion-rollout-revision-must-be-positive",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/revisions/rolloutRevision",
+        "value": 0
+      },
+      "expectedCode": "EVIDENCE_PROVENANCE"
+    },
+    {
+      "caseId": "query-rounding-rejection-rate-must-use-ceil",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/rejectionRateBps",
+        "value": 9
+      },
+      "expectedCode": "EVIDENCE_ROUNDING"
+    },
+    {
+      "caseId": "query-rounding-evaluation-error-rate-must-use-ceil",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/evaluationErrorRateBps",
+        "value": 49
+      },
+      "expectedCode": "EVIDENCE_ROUNDING"
+    },
+    {
+      "caseId": "provenance-requires-db-evaluated-at",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "remove",
+        "path": "/provenance/evaluatedAt"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "provenance-clock-source-must-be-database",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/clockSource",
+        "value": "CLIENT"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "approval-response-requires-created-at",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "remove",
+        "path": "/response/createdAt"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "approval-db-evaluation-must-equal-created-at",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/evaluatedAt",
+        "value": "2026-08-27T07:05:01Z"
+      },
+      "expectedCode": "APPROVAL_CREATED_AT"
+    },
+    {
+      "caseId": "promotion-collection-cannot-be-future-of-approval",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/source/collectedAt",
+        "value": "2026-08-28T07:06:00Z"
+      },
+      "expectedCode": "EVIDENCE_TIME"
+    },
+    {
+      "caseId": "promotion-verification-cannot-be-future-of-approval",
+      "baseExampleId": "read-promotion-evidence",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/verifiedAt",
+        "value": "2026-08-28T07:06:00Z"
+      },
+      "expectedCode": "EVIDENCE_FUTURE"
+    },
+    {
+      "caseId": "promotion-window-must-be-fresh",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/window",
+        "value": {
+          "startAt": "2026-08-26T06:50:00Z",
+          "endAt": "2026-08-27T06:50:00Z",
+          "durationSeconds": 86400,
+          "missingSampleBuckets": 0
+        }
+      },
+      "expectedCode": "EVIDENCE_STALE"
+    },
+    {
+      "caseId": "activation-cannot-precede-approval-created-at",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/evaluatedAt",
+        "value": "2026-08-27T07:04:59Z"
+      },
+      "expectedCode": "ACTIVATION_BEFORE_CREATED"
+    },
+    {
+      "caseId": "activation-deadline-is-inclusive",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/evaluatedAt",
+        "value": "2026-08-28T07:15:01Z"
+      },
+      "expectedCode": "ACTIVATION_DEADLINE"
+    },
+    {
+      "caseId": "activation-must-fail-closed-at-expiry",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/provenance/evaluatedAt",
+        "value": "2026-08-29T08:05:00Z"
+      },
+      "expectedCode": "ACTIVATION_EXPIRED"
+    },
+    {
+      "caseId": "activation-deadline-must-equal-created-plus-budget",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/activationDeadline",
+        "value": "2026-08-27T07:15:01Z"
+      },
+      "expectedCode": "APPROVAL_DEADLINE"
+    },
+    {
+      "caseId": "approval-expiry-must-exceed-24-hours",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/expiresAt",
+        "value": "2026-08-28T07:05:00Z"
+      },
+      "expectedCode": "APPROVAL_EXPIRY"
+    },
+    {
+      "caseId": "approval-expiry-must-not-exceed-26-hours",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/expiresAt",
+        "value": "2026-08-28T09:05:01Z"
+      },
+      "expectedCode": "APPROVAL_EXPIRY"
+    },
+    {
+      "caseId": "bootstrap-predecessor-ring-swap-rehashed",
+      "baseExampleId": "approve-promotion",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/revisions/ring",
+          "value": "staging-shadow"
+        },
+        {
+          "op": "replace",
+          "path": "/response/rolloutEvidenceDigest",
+          "value": "e6db5ee54690cd028bfb1edd33938665989050507c9c5f880065e996ad06cf37"
+        }
+      ],
+      "expectedCode": "EVIDENCE_PROVENANCE",
+      "precondition": "EVIDENCE_DIGEST_REHASHED"
+    },
+    {
+      "caseId": "shadow-predecessor-ring-swap-rehashed",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/revisions/ring",
+          "value": "staging-bootstrap"
+        },
+        {
+          "op": "replace",
+          "path": "/response/rolloutEvidenceDigest",
+          "value": "bc0593859d0796353975e8d092fc6e3c0638d9abf70cbdd955ee73ea4e979464"
+        }
+      ],
+      "expectedCode": "EVIDENCE_PROVENANCE",
+      "precondition": "EVIDENCE_DIGEST_REHASHED"
+    },
+    {
+      "caseId": "stale-current-head-tuple-resigned-and-rehashed",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/expectedHeadVersion",
+          "value": 42
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutRevision",
+          "value": 8
+        },
+        {
+          "op": "replace",
+          "path": "/request/fromRingBps",
+          "value": 100
+        },
+        {
+          "op": "replace",
+          "path": "/request/selectorKeyId",
+          "value": "selector-stale-2026-07"
+        },
+        {
+          "op": "replace",
+          "path": "/request/evidenceAuthorityAttestation",
+          "value": {
+            "verificationRecordId": "c9999999-9999-4999-8999-999999999999",
+            "assertionSha256": "9999999999999999999999999999999999999999999999999999999999999999"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/revisions/rolloutRevision",
+          "value": 7
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/revisions/ring",
+          "value": "staging-bootstrap"
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/revisions/ringBps",
+          "value": 100
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/revisions/selectorKeyId",
+          "value": "selector-stale-2026-07"
+        },
+        {
+          "op": "replace",
+          "path": "/response/rolloutRevision",
+          "value": 8
+        },
+        {
+          "op": "replace",
+          "path": "/response/fromRingBps",
+          "value": 100
+        },
+        {
+          "op": "replace",
+          "path": "/response/headVersion",
+          "value": 42
+        },
+        {
+          "op": "replace",
+          "path": "/response/selectorKeyId",
+          "value": "selector-stale-2026-07"
+        },
+        {
+          "op": "replace",
+          "path": "/response/bootstrapPrerequisiteId",
+          "value": "99999999-9999-4999-8999-999999999999"
+        },
+        {
+          "op": "replace",
+          "path": "/response/bootstrapPrerequisiteDigest",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        {
+          "op": "replace",
+          "path": "/response/ciAttestationJti",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/rolloutEvidenceDigest",
+          "value": "022cfa56893197afb7ce8c3b23a58be290228f40fa0d75f19e724cadb0ead99d"
+        },
+        {
+          "op": "replace",
+          "path": "/response/evidenceAttestationJti",
+          "value": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+        },
+        {
+          "op": "replace",
+          "path": "/provenance/rolloutRevision",
+          "value": 8
+        }
+      ],
+      "expectedCode": "CURRENT_HEAD_BINDING",
+      "precondition": "STALE_TUPLE_RESIGNED_REHASHED"
+    },
+    {
+      "caseId": "promotion-expected-head-version-binds-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/expectedHeadVersion",
+        "value": 42
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "promotion-next-revision-binds-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutRevision",
+        "value": 10
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "promotion-from-ring-binds-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/fromRingBps",
+        "value": 500
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "promotion-selector-binds-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/selectorKeyId",
+        "value": "selector-stale-2026-07"
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "promotion-prerequisite-id-carries-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/bootstrapPrerequisiteId",
+        "value": "99999999-9999-4999-8999-999999999999"
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "promotion-prerequisite-digest-carries-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/bootstrapPrerequisiteDigest",
+        "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "promotion-ci-jti-carries-current-head",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/ciAttestationJti",
+        "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "expectedCode": "CURRENT_HEAD_BINDING"
+    },
+    {
+      "caseId": "trusted-current-head-vector-cannot-drift",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedCurrentHead/headVersion",
+        "value": 44
+      },
+      "expectedCode": "TRUSTED_HEAD_DRIFT"
+    },
+    {
+      "caseId": "predecessor-must-be-active-before-window-start",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedHeadActivatedAt",
+        "value": "2026-08-27T07:00:01Z"
+      },
+      "expectedCode": "EVIDENCE_ACTIVE_WINDOW"
+    },
+    {
+      "caseId": "stop-inside-evidence-window-breaks-continuity",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "add",
+        "path": "/committedTransitionsAfterTrustedHead/0",
+        "value": {
+          "operation": "STOP",
+          "committedAt": "2026-08-27T12:00:00Z",
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "headVersion": 43,
+          "resultingPhase": "STATIC"
+        }
+      },
+      "expectedCode": "EVIDENCE_ACTIVE_WINDOW"
+    },
+    {
+      "caseId": "expiry-inside-evidence-window-breaks-continuity",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "add",
+        "path": "/committedTransitionsAfterTrustedHead/0",
+        "value": {
+          "operation": "EXPIRE",
+          "committedAt": "2026-08-27T13:00:00Z",
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "headVersion": 43,
+          "resultingPhase": "STATIC"
+        }
+      },
+      "expectedCode": "EVIDENCE_ACTIVE_WINDOW"
+    },
+    {
+      "caseId": "reactivation-inside-evidence-window-breaks-continuity",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "add",
+        "path": "/committedTransitionsAfterTrustedHead/0",
+        "value": {
+          "operation": "ACTIVATE",
+          "committedAt": "2026-08-27T14:00:00Z",
+          "environment": "STAGING",
+          "rolloutRevision": 8,
+          "headVersion": 43,
+          "resultingPhase": "SHADOW"
+        }
+      },
+      "expectedCode": "EVIDENCE_ACTIVE_WINDOW"
+    },
+    {
+      "caseId": "latest-stop-before-approval-makes-head-static",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "add",
+        "path": "/committedTransitionsAfterTrustedHead/0",
+        "value": {
+          "operation": "STOP",
+          "committedAt": "2026-08-29T07:19:00Z",
+          "environment": "STAGING",
+          "rolloutRevision": 9,
+          "headVersion": 44,
+          "resultingPhase": "STATIC"
+        }
+      },
+      "expectedCode": "CURRENT_HEAD_NOT_ACTIVE"
+    },
+    {
+      "caseId": "latest-expiry-before-approval-makes-head-static",
+      "baseExampleId": "approve-promotion-shadow-to-shadow",
+      "mutation": {
+        "op": "add",
+        "path": "/committedTransitionsAfterTrustedHead/0",
+        "value": {
+          "operation": "EXPIRE",
+          "committedAt": "2026-08-29T07:19:30Z",
+          "environment": "STAGING",
+          "rolloutRevision": 9,
+          "headVersion": 44,
+          "resultingPhase": "STATIC"
+        }
+      },
+      "expectedCode": "CURRENT_HEAD_NOT_ACTIVE"
+    },
+    {
+      "caseId": "approval-cannot-be-created-revoked",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/state",
+        "value": "REVOKED"
+      },
+      "expectedCode": "APPROVAL_NOT_ACTIVE"
+    },
+    {
+      "caseId": "approval-cannot-be-created-expired",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/state",
+        "value": "EXPIRED"
+      },
+      "expectedCode": "APPROVAL_NOT_ACTIVE"
+    },
+    {
+      "caseId": "activation-lock-rejects-revoked-approval",
+      "baseExampleId": "activate-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/lockedApprovalState",
+        "value": "REVOKED"
+      },
+      "expectedCode": "ACTIVATION_APPROVAL_NOT_ACTIVE"
+    },
+    {
+      "caseId": "activation-lock-rejects-expired-approval",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/lockedApprovalState",
+        "value": "EXPIRED"
+      },
+      "expectedCode": "ACTIVATION_APPROVAL_NOT_ACTIVE"
+    },
+    {
+      "caseId": "compact-jws-shaped-string-is-not-a-verification-record",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/ciAttestation",
+        "value": "aaa.bbb.ccc"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "attestation-public-key-fingerprint-must-be-pinned",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedAttestationVerification/publicKeyFingerprint",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expectedCode": "ATTESTATION_KEY"
+    },
+    {
+      "caseId": "attestation-reference-cannot-point-to-another-assertion",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/ciAttestation/assertionSha256",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expectedCode": "ATTESTATION_REFERENCE"
+    },
+    {
+      "caseId": "arbitrary-ci-jti-cannot-be-propagated-through-a-trusted-row",
+      "baseExampleId": "approve-bootstrap",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/trustedAttestationVerification/jti",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/ciAttestationJti",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedCode": "ATTESTATION_RECORD_DRIFT"
+    },
+    {
+      "caseId": "arbitrary-evidence-jti-cannot-be-propagated-through-a-trusted-row",
+      "baseExampleId": "approve-promotion",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/trustedAttestationVerification/jti",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/evidenceAttestationJti",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedCode": "ATTESTATION_RECORD_DRIFT"
+    },
+    {
+      "caseId": "attestation-claims-must-bind-the-exact-request",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedAttestationVerification/bindings/requestDigest",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expectedCode": "ATTESTATION_CLAIMS"
+    },
+    {
+      "caseId": "missing-telemetry-bucket-fails-closed",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/window/missingSampleBuckets",
+        "value": 1
+      },
+      "expectedCode": "TELEMETRY_INCOMPLETE"
+    },
+    {
+      "caseId": "missing-queue-telemetry-fails-closed",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "remove",
+        "path": "/request/rolloutEvidence/queue"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "enqueue-attempt-denominator-must-be-positive",
+      "baseExampleId": "approve-promotion",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/enqueueAttemptCount",
+          "value": 0
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/rejectionCount",
+          "value": 0
+        }
+      ],
+      "expectedCode": "EVIDENCE_DENOMINATOR"
+    },
+    {
+      "caseId": "evaluation-denominator-must-be-positive",
+      "baseExampleId": "approve-promotion",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/evaluationCount",
+          "value": 0
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/evaluationErrorCount",
+          "value": 0
+        }
+      ],
+      "expectedCode": "EVIDENCE_DENOMINATOR"
+    },
+    {
+      "caseId": "outbox-attempt-denominator-must-be-positive",
+      "baseExampleId": "approve-promotion",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/outbox/deliveryAttemptCount",
+          "value": 0
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/outbox/deliveryErrorCount",
+          "value": 0
+        }
+      ],
+      "expectedCode": "EVIDENCE_DENOMINATOR"
+    },
+    {
+      "caseId": "rejection-count-cannot-exceed-enqueue-attempts",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/rejectionCount",
+        "value": 1000001
+      },
+      "expectedCode": "EVIDENCE_COUNT_RANGE"
+    },
+    {
+      "caseId": "evaluation-errors-cannot-exceed-evaluations",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/queue/evaluationErrorCount",
+        "value": 1000001
+      },
+      "expectedCode": "EVIDENCE_COUNT_RANGE"
+    },
+    {
+      "caseId": "delivery-errors-cannot-exceed-delivery-attempts",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/outbox/deliveryErrorCount",
+        "value": 1000001
+      },
+      "expectedCode": "EVIDENCE_COUNT_RANGE"
+    },
+    {
+      "caseId": "sample-total-must-exactly-equal-placement-counts",
+      "baseExampleId": "approve-promotion",
+      "mutation": {
+        "op": "replace",
+        "path": "/request/rolloutEvidence/samples/total",
+        "value": 100001
+      },
+      "expectedCode": "EVIDENCE_ROUNDING"
+    },
+    {
+      "caseId": "large-safe-integer-rate-must-use-bigint-ceil",
+      "baseExampleId": "approve-promotion",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/rejectionCount",
+          "value": 31525197391590
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/enqueueAttemptCount",
+          "value": 9007199254740000
+        },
+        {
+          "op": "replace",
+          "path": "/request/rolloutEvidence/queue/rejectionRateBps",
+          "value": 36
+        }
+      ],
+      "expectedCode": "EVIDENCE_ROUNDING"
+    }
+  ]
+}

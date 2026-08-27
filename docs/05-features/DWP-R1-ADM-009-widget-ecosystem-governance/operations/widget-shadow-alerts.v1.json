@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "alertSetKey": "widget-catalog-shadow-stop-gates",
+  "environment": "STAGING",
+  "evaluationCadenceSeconds": 60,
+  "ringValues": ["staging-bootstrap", "staging-shadow"],
+  "rules": [
+    {
+      "key": "unsafe-allow-immediate",
+      "severity": "PAGE",
+      "promql": "sum(increase(dwp_widget_shadow_unsafe_allow_total{ring=~\"staging-bootstrap|staging-shadow\"}[1m]))",
+      "comparator": ">",
+      "threshold": 0,
+      "unit": "count",
+      "forSeconds": 0,
+      "action": "STOP_AND_PAGE_SECURITY"
+    },
+    {
+      "key": "catalog-diff-immediate",
+      "severity": "PAGE",
+      "promql": "sum(increase(dwp_widget_shadow_diff_total{ring=~\"staging-bootstrap|staging-shadow\"}[1m]))",
+      "comparator": ">",
+      "threshold": 0,
+      "unit": "count",
+      "forSeconds": 0,
+      "action": "STOP_AND_PAGE_CONTROL_PLANE"
+    },
+    {
+      "key": "outbox-dlq-immediate",
+      "severity": "PAGE",
+      "promql": "sum(increase(dwp_widget_outbox_dead_letter_total{service=\"platform\"}[1m]))",
+      "comparator": ">",
+      "threshold": 0,
+      "unit": "count",
+      "forSeconds": 0,
+      "action": "STOP_AND_PAGE_DATA"
+    },
+    {
+      "key": "queue-rejection-rate-1m",
+      "severity": "PAGE",
+      "promql": "10000 * sum(rate(dwp_widget_shadow_queue_rejections_total{service=\"platform\",ring=~\"staging-bootstrap|staging-shadow\"}[1m])) / clamp_min(sum(rate(dwp_widget_shadow_evaluations_total{ring=~\"staging-bootstrap|staging-shadow\"}[1m])) + sum(rate(dwp_widget_shadow_queue_rejections_total{service=\"platform\",ring=~\"staging-bootstrap|staging-shadow\"}[1m])), 0.000000001)",
+      "comparator": ">",
+      "threshold": 100,
+      "unit": "basis_points",
+      "forSeconds": 60,
+      "action": "STOP_AND_PAGE_CONTROL_PLANE"
+    },
+    {
+      "key": "evaluation-error-rate-1m",
+      "severity": "PAGE",
+      "promql": "10000 * sum(rate(dwp_widget_shadow_evaluations_total{ring=~\"staging-bootstrap|staging-shadow\",outcome=~\"ERROR|TIMEOUT\"}[1m])) / clamp_min(sum(rate(dwp_widget_shadow_evaluations_total{ring=~\"staging-bootstrap|staging-shadow\"}[1m])), 0.000000001)",
+      "comparator": ">",
+      "threshold": 200,
+      "unit": "basis_points",
+      "forSeconds": 60,
+      "action": "STOP_AND_PAGE_CONTROL_PLANE"
+    },
+    {
+      "key": "evaluation-duration-p99-5m",
+      "severity": "PAGE",
+      "promql": "1000 * max(histogram_quantile(0.99, sum by (ring, le) (rate(dwp_widget_shadow_evaluation_duration_seconds_bucket{ring=~\"staging-bootstrap|staging-shadow\"}[1m]))))",
+      "comparator": ">",
+      "threshold": 250,
+      "unit": "milliseconds",
+      "forSeconds": 300,
+      "action": "STOP_AND_PAGE_CONTROL_PLANE"
+    },
+    {
+      "key": "queue-depth-5m",
+      "severity": "PAGE",
+      "promql": "max(dwp_widget_shadow_queue_depth{service=\"platform\"})",
+      "comparator": ">",
+      "threshold": 230,
+      "unit": "tasks",
+      "forSeconds": 300,
+      "action": "STOP_AND_PAGE_CONTROL_PLANE"
+    },
+    {
+      "key": "outbox-age-warning-5m",
+      "severity": "WARNING",
+      "promql": "max(dwp_widget_outbox_oldest_unpublished_age_seconds{service=\"platform\"})",
+      "comparator": ">",
+      "threshold": 30,
+      "unit": "seconds",
+      "forSeconds": 300,
+      "action": "WARN_DATA"
+    },
+    {
+      "key": "outbox-age-stop-2m",
+      "severity": "PAGE",
+      "promql": "max(dwp_widget_outbox_oldest_unpublished_age_seconds{service=\"platform\"})",
+      "comparator": ">",
+      "threshold": 60,
+      "unit": "seconds",
+      "forSeconds": 120,
+      "action": "STOP_AND_PAGE_DATA"
+    },
+    {
+      "key": "outbox-delivery-error-rate-5m",
+      "severity": "PAGE",
+      "promql": "10000 * sum(rate(dwp_widget_outbox_delivery_total{service=\"platform\",outcome=~\"ERROR|DEAD_LETTER\"}[1m])) / clamp_min(sum(rate(dwp_widget_outbox_delivery_total{service=\"platform\"}[1m])), 0.000000001)",
+      "comparator": ">",
+      "threshold": 100,
+      "unit": "basis_points",
+      "forSeconds": 300,
+      "action": "STOP_AND_PAGE_DATA"
+    }
+  ]
+}

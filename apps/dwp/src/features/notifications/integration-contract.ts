@@ -10,6 +10,8 @@ export const notificationQueryKeys = {
   root: ['notifications'] as const,
   capabilities: () => ['notifications', 'capabilities'] as const,
   summary: () => ['notifications', 'summary'] as const,
+  appSummaryRoot: () => ['notifications', 'app-summary'] as const,
+  appSummary: (scope: Record<string, unknown>) => ['notifications', 'app-summary', scope] as const,
   inboxRoot: () => ['notifications', 'inbox'] as const,
   inbox: (scope: Record<string, unknown>) => ['notifications', 'inbox', scope] as const,
   detail: (notificationId: string | null) => ['notifications', 'detail', notificationId] as const,

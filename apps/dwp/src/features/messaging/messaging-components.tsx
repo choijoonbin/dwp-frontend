@@ -1,48 +1,22 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  AtSign,
-  Bookmark,
-  Hash,
-  MessageSquareReply,
-  MessageSquareText,
-  Pencil,
-  Pin,
-  ShieldCheck,
-  SmilePlus,
-  Star,
-  Trash2,
-} from 'lucide-react';
+import { AtSign, Hash, MessageSquareText, Pin, ShieldCheck, Star } from 'lucide-react';
 import { formatRelativeTime, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { ActionIconButton } from '@dwp-frontend/design-system';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import { MessagingAttachmentList } from './messaging-attachment-list';
-
 import type {
   MessagingConversation,
   MessagingClassification,
   MessagingMember,
-  MessagingMessage,
   MessagingPerson,
 } from '@dwp-frontend/shared-utils';
 import type { ReactNode } from 'react';
-
-const QUICK_REACTIONS = [
-  { emoji: '👍', labelKey: 'like' },
-  { emoji: '✅', labelKey: 'done' },
-  { emoji: '👀', labelKey: 'seen' },
-  { emoji: '🙌', labelKey: 'thanks' },
-] as const;
 
 export function messagingInitials(value: string) {
   const normalized = value.trim();
@@ -146,15 +120,17 @@ export function MessagingConversationListItem({
   selected = false,
   onSelect,
   compact = false,
+  showPreview = true,
 }: {
   conversation: MessagingConversation;
   selected?: boolean;
   onSelect: () => void;
   compact?: boolean;
+  showPreview?: boolean;
 }) {
   const { t, i18n } = useTranslation('messaging');
   const Icon = conversationIcon(conversation);
-  const urgent = conversation.dataClassification === 'RESTRICTED';
+  const restricted = conversation.dataClassification === 'RESTRICTED';
   return (
     <Box
       component="button"
@@ -163,7 +139,7 @@ export function MessagingConversationListItem({
       aria-pressed={selected}
       sx={(theme) => ({
         width: 1,
-        minHeight: compact ? 82 : 98,
+        minHeight: compact || !showPreview ? 78 : 98,
         px: compact ? 1.5 : 1.85,
         py: 1.35,
         display: 'grid',
@@ -204,8 +180,8 @@ export function MessagingConversationListItem({
         sx={{
           width: compact ? 36 : 40,
           height: compact ? 36 : 40,
-          bgcolor: urgent ? '#8B2D3D' : 'var(--dwp-product-soft)',
-          color: urgent ? '#fff' : 'var(--dwp-product-accent)',
+          bgcolor: 'var(--dwp-product-soft)',
+          color: 'var(--dwp-product-accent)',
           borderRadius: 1,
         }}
       >
@@ -229,20 +205,27 @@ export function MessagingConversationListItem({
           {conversation.linkedSpaceName && (
             <Chip label={conversation.linkedSpaceName} size="small" sx={{ height: 20 }} />
           )}
+          {restricted ? (
+            <Tooltip title={t('classification.RESTRICTED')}>
+              <ShieldCheck size={14} color="var(--dwp-status-warning)" />
+            </Tooltip>
+          ) : null}
         </Stack>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{
-            mt: 0.35,
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: compact ? 1 : 2,
-            overflow: 'hidden',
-          }}
-        >
-          {conversation.lastMessage?.body || conversation.topic}
-        </Typography>
+        {showPreview ? (
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              mt: 0.35,
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: compact ? 1 : 2,
+              overflow: 'hidden',
+            }}
+          >
+            {conversation.lastMessage?.body || conversation.topic}
+          </Typography>
+        ) : null}
         {!compact && (
           <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mt: 0.8 }}>
             <Chip
@@ -337,254 +320,6 @@ export function MessagingPersonLine({
       </Box>
       {action}
     </Stack>
-  );
-}
-
-export function MessagingMessageRow({
-  message,
-  mine,
-  onReact,
-  onReply,
-  replyCount = 0,
-  onSave,
-  onEdit,
-  onDelete,
-  compact = false,
-}: {
-  message: MessagingMessage;
-  mine: boolean;
-  onReact: (emoji: string) => void;
-  onReply?: () => void;
-  replyCount?: number;
-  onSave?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  compact?: boolean;
-}) {
-  const { t, i18n } = useTranslation('messaging');
-  const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
-  const reactionMenuOpen = Boolean(reactionAnchor);
-  const unavailable = t('message.connectionRequired');
-
-  return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: mine ? 'minmax(0, 1fr) auto' : 'auto minmax(0, 1fr)',
-        gap: 1.15,
-        alignItems: 'start',
-        py: compact ? 0.85 : 1.1,
-        position: 'relative',
-        '& .dwp-message-actions': {
-          opacity: { xs: 1, md: 0 },
-          transform: { xs: 'none', md: 'translateY(-2px)' },
-          pointerEvents: { xs: 'auto', md: 'none' },
-          transition: 'opacity 140ms ease, transform 140ms ease',
-        },
-        '&:hover .dwp-message-actions, &:focus-within .dwp-message-actions': {
-          opacity: 1,
-          transform: 'none',
-          pointerEvents: 'auto',
-        },
-        '@media (prefers-reduced-motion: reduce)': {
-          '& .dwp-message-actions': { transition: 'none', transform: 'none' },
-        },
-      }}
-    >
-      {!mine && (
-        <Avatar sx={{ width: 34, height: 34, fontSize: 12, fontWeight: 800 }}>
-          {messagingInitials(message.senderName)}
-        </Avatar>
-      )}
-      <Box sx={{ minWidth: 0, justifySelf: mine ? 'end' : 'stretch', maxWidth: mine ? '78%' : 1 }}>
-        <Stack
-          direction="row"
-          spacing={0.8}
-          alignItems="baseline"
-          justifyContent={mine ? 'flex-end' : 'flex-start'}
-        >
-          <Typography variant="body2" fontWeight={760}>
-            {mine ? t('message.me') : message.senderName}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {messagingRelativeTime(message.createdAt, i18n.resolvedLanguage ?? i18n.language)}
-          </Typography>
-          {message.editedAt && !message.deletedAt && (
-            <Typography variant="caption" color="text.secondary">
-              {t('message.edited')}
-            </Typography>
-          )}
-        </Stack>
-        <Box
-          sx={(theme) => ({
-            mt: 0.45,
-            px: 1.4,
-            py: 1.1,
-            border: 1,
-            borderColor: mine ? alpha(theme.palette.primary.main, 0.25) : 'divider',
-            borderRadius: 1,
-            bgcolor: mine ? 'var(--dwp-product-selection)' : 'background.paper',
-            boxShadow: mine ? 'none' : '0 8px 24px rgba(17, 24, 39, 0.04)',
-            whiteSpace: 'pre-wrap',
-            overflowWrap: 'anywhere',
-          })}
-        >
-          <Typography variant="body2" lineHeight={1.68}>
-            {message.deletedAt ? t('message.deleted') : message.body}
-          </Typography>
-          {!message.deletedAt && (message.attachments?.length ?? 0) > 0 ? (
-            <MessagingAttachmentList
-              conversationId={message.conversationId}
-              attachments={message.attachments}
-            />
-          ) : null}
-        </Box>
-        <Stack
-          direction="row"
-          spacing={0.5}
-          flexWrap="wrap"
-          sx={{ mt: 0.65, justifyContent: mine ? 'flex-end' : 'flex-start' }}
-        >
-          {message.reactions.map((reaction) => (
-            <Tooltip
-              key={reaction.emoji}
-              title={t(reaction.mine ? 'message.removeReaction' : 'message.addReactionEmoji', {
-                emoji: reaction.emoji,
-              })}
-            >
-              <Chip
-                component="button"
-                type="button"
-                label={`${reaction.emoji} ${reaction.count}`}
-                size="small"
-                color={reaction.mine ? 'primary' : 'default'}
-                variant={reaction.mine ? 'filled' : 'outlined'}
-                onClick={() => onReact(reaction.emoji)}
-                sx={{ height: 23, cursor: 'pointer' }}
-              />
-            </Tooltip>
-          ))}
-          {replyCount > 0 && onReply && (
-            <Chip
-              component="button"
-              type="button"
-              label={
-                <Stack direction="row" spacing={0.4} alignItems="center">
-                  <MessageSquareReply size={13} />
-                  <Box component="span">{t('message.replyCount', { count: replyCount })}</Box>
-                </Stack>
-              }
-              size="small"
-              variant="outlined"
-              onClick={onReply}
-              sx={{ height: 23, cursor: 'pointer' }}
-            />
-          )}
-        </Stack>
-      </Box>
-      {!message.deletedAt && (
-        <Stack
-          className="dwp-message-actions"
-          direction="row"
-          spacing={0.15}
-          sx={{
-            position: 'absolute',
-            top: 2,
-            left: mine ? 0 : 'auto',
-            right: mine ? 'auto' : 0,
-            zIndex: 1,
-            p: 0.25,
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            bgcolor: 'background.paper',
-            boxShadow: '0 8px 22px rgba(15, 23, 42, 0.1)',
-          }}
-        >
-          <ActionIconButton
-            label={t('message.addReaction')}
-            onClick={(event) => setReactionAnchor(event.currentTarget)}
-            size="small"
-          >
-            <SmilePlus size={15} />
-          </ActionIconButton>
-          {onReply && (
-            <ActionIconButton label={t('message.reply')} onClick={onReply} size="small">
-              <MessageSquareReply size={15} />
-            </ActionIconButton>
-          )}
-          <ActionIconButton
-            label={t('message.save')}
-            tooltip={onSave ? t('message.save') : unavailable}
-            onClick={onSave}
-            disabled={!onSave}
-            size="small"
-          >
-            <Bookmark size={15} />
-          </ActionIconButton>
-          {mine && (
-            <>
-              <ActionIconButton
-                label={t('message.edit')}
-                tooltip={onEdit ? t('message.edit') : unavailable}
-                onClick={onEdit}
-                disabled={!onEdit}
-                size="small"
-              >
-                <Pencil size={15} />
-              </ActionIconButton>
-              <ActionIconButton
-                label={t('message.delete')}
-                tooltip={onDelete ? t('message.delete') : unavailable}
-                onClick={onDelete}
-                disabled={!onDelete}
-                size="small"
-                intent="danger"
-              >
-                <Trash2 size={15} />
-              </ActionIconButton>
-            </>
-          )}
-          <Menu
-            anchorEl={reactionAnchor}
-            open={reactionMenuOpen}
-            onClose={() => setReactionAnchor(null)}
-            slotProps={{
-              paper: {
-                sx: {
-                  mt: 0.5,
-                  borderRadius: 1,
-                  boxShadow: '0 18px 46px rgba(15, 23, 42, 0.16)',
-                },
-              },
-            }}
-          >
-            {QUICK_REACTIONS.map((reaction) => (
-              <MenuItem
-                key={reaction.emoji}
-                onClick={() => {
-                  onReact(reaction.emoji);
-                  setReactionAnchor(null);
-                }}
-                sx={{ gap: 1.2, minWidth: 154 }}
-              >
-                <Typography component="span" sx={{ fontSize: 18, lineHeight: 1 }}>
-                  {reaction.emoji}
-                </Typography>
-                <Typography variant="body2">
-                  {t(`message.reactions.${reaction.labelKey}`)}
-                </Typography>
-              </MenuItem>
-            ))}
-          </Menu>
-        </Stack>
-      )}
-      {mine && (
-        <Avatar sx={{ width: 34, height: 34, fontSize: 12, fontWeight: 800 }}>
-          {messagingInitials(message.senderName)}
-        </Avatar>
-      )}
-    </Box>
   );
 }
 

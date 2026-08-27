@@ -12,7 +12,15 @@ export const MAIL_WORK_NAVIGATION = projectProductSurfaceNavigation(MAIL_NAVIGAT
   inbox: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   sent: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   drafts: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  archive: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  spam: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  trash: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  folders: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   shared: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  organization: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+  },
   accounts: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },

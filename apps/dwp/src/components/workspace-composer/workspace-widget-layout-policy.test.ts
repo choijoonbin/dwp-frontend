@@ -28,7 +28,7 @@ describe('workspace widget layout policy', () => {
 
   it('uses semantic height constraints on an 8px baseline and releases them on phones', () => {
     expect(WORKSPACE_WIDGET_HEIGHT_POLICY).toEqual({
-      short: { blockSize: 168, contentRows: 2 },
+      short: { blockSize: 168, contentRows: 3 },
       standard: { blockSize: 232, contentRows: 3 },
       tall: { blockSize: 304, contentRows: 4 },
       expanded: { blockSize: 384, contentRows: 6 },

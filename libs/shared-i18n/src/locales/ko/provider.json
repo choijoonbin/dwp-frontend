@@ -26,6 +26,24 @@
       "govern": "통제"
     }
   },
+  "supportBar": {
+    "label": "활성 테넌트 진단 세션",
+    "title": "테넌트 진단 · {{tenant}}",
+    "expires": "승인 범위 만료 시각 {{value}}",
+    "remaining": "남은 시간 · {{value}}",
+    "tenantKey": "테넌트 · {{value}}",
+    "environment": "환경 · {{value}}",
+    "region": "리전 · {{value}}",
+    "sessionReference": "세션 · {{value}}",
+    "approvedDetails": "승인된 세션 상세",
+    "exited": "지원 세션을 종료했습니다.",
+    "exitFailed": "지원 세션을 종료하지 못했습니다. 다시 시도해 주세요."
+  },
+  "accessPending": {
+    "title": "프로바이더 접근 역할 할당 대기 중",
+    "description": "계정은 프로바이더 영역에 격리되어 있지만 운영 역할이 아직 할당되지 않았습니다. 할당 전에는 테넌트 접근 권한을 추론하지 않습니다.",
+    "accountAction": "계정 설정 열기"
+  },
   "page": {
     "breadcrumb": "프로바이더 제어 영역",
     "overview": {
@@ -372,7 +390,9 @@
     },
     "live": {
       "live": "자동 갱신 중",
-      "syncing": "최신 상태 동기화 중"
+      "syncing": "최신 상태 동기화 중",
+      "stale": "운영 스냅샷이 오래되었습니다",
+      "degraded": "신뢰성 스냅샷을 사용할 수 없습니다"
     },
     "pulse": {
       "HEALTHY": "활성 인시던트 없이 전체 고객 환경이 정상 범위에서 운영 중입니다.",
@@ -407,6 +427,7 @@
       "openIncidents": "인시던트 열기",
       "controlLoad": "변경 통제 대기",
       "controlLoadDetail": "지원 접근 {{support}} · 위험 SLO {{objectives}}",
+      "unavailable": "사용 불가",
       "openChanges": "변경 통제 열기"
     },
     "severity": {
@@ -461,7 +482,7 @@
       "title": "서비스 신뢰성 및 오류 예산",
       "description": "현재 SLO 달성률과 남은 오류 예산을 기준으로 위험을 선별합니다.",
       "open": "신뢰성 상세",
-      "unavailable": "신뢰성 세부 정보만 불러오지 못했습니다. 다른 운영 정보는 최신 상태입니다.",
+      "unavailable": "신뢰성 세부 정보만 불러오지 못했습니다. 다른 운영 정보는 계속 확인할 수 있습니다.",
       "healthy": "정상 SLO {{count}}",
       "risk": "위험 SLO {{count}}",
       "drift": "정책 드리프트 {{count}}",
@@ -505,7 +526,11 @@
       "description": "선택한 {{count}}개 환경의 배치, 계약과 서비스 상태를 비교합니다.",
       "selectMore": "비교하려면 테넌트를 하나 이상 더 선택하세요. 최대 3개까지 선택할 수 있습니다.",
       "clear": "비교 해제",
-      "limit": "테넌트 비교는 최대 3개까지 선택할 수 있습니다."
+      "limit": "테넌트 비교는 최대 3개까지 선택할 수 있습니다.",
+      "loading": "선택한 테넌트 정보를 불러오는 중입니다.",
+      "allUnavailable": "선택한 테넌트 정보를 모두 불러오지 못했습니다. 비교를 해제하거나 나중에 다시 시도하세요.",
+      "partial": "선택한 {{total}}개 중 {{available}}개 테넌트 정보를 확인할 수 있습니다. 확인 가능한 비교는 계속 표시합니다.",
+      "unavailable": "선택한 테넌트 중 일부를 사용할 수 없거나 권한 범위 밖입니다. 확인 가능한 비교는 계속 표시합니다."
     },
     "context": {
       "label": "고객 자산 범위",
@@ -519,7 +544,10 @@
     },
     "live": {
       "live": "고객 자산 연결됨",
-      "syncing": "최신 자산 동기화 중"
+      "loadedWithoutSourceTime": "최근 로드됨 · 원천 관측 시각 없음",
+      "syncing": "최신 자산 동기화 중",
+      "stale": "고객 자산 스냅샷이 오래되었습니다",
+      "degraded": "고객 자산을 부분적으로만 확인할 수 있습니다"
     },
     "pulse": {
       "title": {
@@ -571,6 +599,7 @@
       "state": "수명주기"
     },
     "actions": { "onboard": "회사 온보딩" },
+    "onboardingCatalogUnavailable": "고객 자산은 계속 확인할 수 있지만, 권한 및 리전 카탈로그가 복구될 때까지 온보딩은 비활성화됩니다.",
     "empty": {
       "firstUseTitle": "아직 관리 중인 테넌트가 없습니다",
       "firstUseDescription": "회사 정보, 실행 환경, 초기 관리자와 제품 권한을 단계별로 검토하여 첫 테넌트를 온보딩하세요.",
@@ -580,6 +609,10 @@
     }
   },
   "onboarding": {
+    "identityStaging": {
+      "title": "관리자 계정은 준비 상태로 유지됩니다",
+      "description": "계획은 브라우저 활성화 토큰이나 링크 없이 관리자 레코드만 생성합니다. 검증된 고객 소유 별도 전달 채널이 연결될 때까지 활성화할 수 없습니다."
+    },
     "title": "회사 및 테넌트 온보딩",
     "organization": "고객 회사",
     "tenantConfiguration": "실행 환경",
@@ -950,13 +983,21 @@
     "workflowDescription": "모든 고객 접근을 요청, 독립 검토, 활성화, 만료, 사후 검토 증거로 통제합니다.",
     "sessionsTitle": "활성 및 과거 세션",
     "sessionsDescription": "발급된 자격, 비상접근, 만료와 즉시 회수를 모니터링합니다.",
-    "createTitle": "시간 제한 지원 접근 요청",
+    "createTitle": "시간 제한 접근으로 테넌트 진단 시작",
     "elevationWarning": "표준 접근은 요청을 먼저 기록하며, 다른 권한 보유자가 승인해야 활성화할 수 있습니다.",
-    "breakGlassWarning": "비상접근은 승인을 생략하지만 L3로 기록되고 독립 사후 검토가 의무화됩니다.",
     "partialRequests": "요청 원장을 일시적으로 불러오지 못했습니다. 세션 모니터링은 가능하지만 요청 작업은 비활성화됩니다.",
-    "accessMode": "접근 방식",
+    "previewScopeUnavailable": "활성화된 프로바이더 진단 범위가 없습니다. 테넌트 제품 및 관리 경로는 계속 차단됩니다.",
+    "scopeRetired": "이 지원 범위는 폐기되어 승인, 활성화 또는 테넌트 접근에 사용할 수 없습니다.",
     "approvalReference": "고객 승인 참조",
     "approvalReferenceHelp": "티켓, 변경 요청 또는 고객 승인 기록의 식별자를 입력합니다.",
+    "reviewEvidence": "정확한 접근 승인 증거",
+    "notProvided": "제공되지 않음",
+    "tenantPicker": {
+      "help": "전체 테넌트 자산에서 회사, 테넌트 이름 또는 키로 검색합니다.",
+      "loading": "테넌트 검색 중…",
+      "empty": "일치하는 테넌트가 없습니다",
+      "error": "테넌트 검색을 일시적으로 사용할 수 없습니다"
+    },
     "modes": {
       "STANDARD": "승인된 표준 접근",
       "BREAK_GLASS": "비상접근"
@@ -972,7 +1013,8 @@
       "active": "활성 세션",
       "breakGlass": "활성 비상접근",
       "expiring": "15분 내 만료",
-      "pendingReview": "사후 검토 대기"
+      "pendingReview": "사후 검토 대기",
+      "unavailable": "{{metric}} 확인 불가"
     },
     "minutes": "{{count}}분",
     "activated": "승인된 테넌트 지원 모드를 시작했습니다.",
@@ -982,8 +1024,8 @@
     "revoked": "지원 세션을 회수했습니다.",
     "actions": {
       "create": "지원 접근 요청",
+      "startDiagnosis": "테넌트 진단 시작",
       "request": "검토 요청 제출",
-      "activateEmergency": "비상접근 활성화",
       "activate": "활성화",
       "audit": "감사 증거 보기",
       "revoke": "지원 세션 회수",
@@ -1017,9 +1059,40 @@
         "description": "세션 종료, 승인 목적과 실제 활동의 일치 여부, 후속 증거를 확인합니다."
       }
     },
+    "postReviewEvidence": {
+      "title": "실제 지원 사용 증거",
+      "description": "이 테넌트 세션에 서버에서 결합된 허용·거부 명령을 검토합니다. 수명주기 이벤트만으로는 완료할 수 없습니다.",
+      "period": "실제 세션 시간",
+      "grantedScopes": "부여된 범위",
+      "observedScopes": "실제 사용 범위",
+      "noObservedScope": "승인된 범위를 사용하지 않음",
+      "completeness": "증거 완전성",
+      "complete": "서버 전체 집계 완료",
+      "incomplete": "불완전 — 완료 차단",
+      "loading": "변경 불가 감사 증거를 불러오는 중…",
+      "error": "실제 사용 증거를 검증할 수 없어 사후 접근 검토를 차단합니다.",
+      "total": "전체 증거 · {{count}}",
+      "allowed": "승인 사용 · {{count}}",
+      "denied": "거부 시도 · {{count}}",
+      "incompleteBlocked": "이벤트 전체 집계, 세션 경계 또는 테넌트 결합이 불완전하여 사후 접근 검토를 차단합니다.",
+      "noUseConfirmed": "종료된 세션의 전체 감사 구간에 승인 사용이 없습니다. 명시적 미사용 정책을 충족합니다.",
+      "anomalies": "검토할 이상 징후: {{value}}",
+      "showing": "전체 {{total}}건 중 최신 {{shown}}건을 표시합니다. 준비 상태는 이 표시 목록이 아니라 서버 전체 집계로 판정합니다.",
+      "scope": "실제 범위 · {{value}}",
+      "reason": "거부 사유 · {{value}}",
+      "correlation": "정규 상관 ID · {{value}}",
+      "decision": { "ALLOW": "허용", "DENY": "거부" },
+      "anomaly": {
+        "DENIED_ATTEMPTS": "거부된 명령 시도",
+        "MALFORMED_EVIDENCE": "분류할 수 없거나 손상된 감사 증거",
+        "TENANT_BINDING_MISMATCH": "테넌트 결합 불일치",
+        "SESSION_BINDING_MISMATCH": "세션 결합 불일치",
+        "INVALID_CORRELATION_EVIDENCE": "비정규 상관 ID 증거"
+      }
+    },
     "empty": {
       "firstUseTitle": "지원 세션이 없습니다",
-      "firstUseDescription": "고객 승인, 최소 권한 범위와 만료 시간을 확인한 후 필요한 경우에만 지원 세션을 생성하세요.",
+      "firstUseDescription": "고객 승인, 최소 권한 범위와 만료 시간을 확인한 후 필요한 경우에만 시간 제한 접근을 요청하세요.",
       "noResultsTitle": "선택한 상태의 지원 세션이 없습니다",
       "noResultsDescription": "다른 상태를 선택하거나 전체 이력을 확인하세요.",
       "showAll": "전체 이력 보기",
@@ -1028,10 +1101,16 @@
     },
     "columns": {
       "tenant": "테넌트",
+      "tenantAndRequester": "테넌트 및 요청자",
+      "session": "세션",
       "operator": "운영자",
       "requester": "요청자",
       "purpose": "접근 목적",
       "scopes": "허용 범위",
+      "duration": "접근 시간",
+      "approvalReference": "고객 승인",
+      "exactGrant": "정확한 승인 범위",
+      "stateAndDue": "상태 및 결정 만료",
       "mode": "접근 방식",
       "risk": "위험",
       "expires": "만료 시각",
@@ -1040,10 +1119,31 @@
       "actions": "다음 작업"
     },
     "scopes": {
+      "TENANT_EXPERIENCE_PREVIEW": "마스킹된 테넌트 경험 설정 미리보기",
       "TENANT_CONFIGURATION_READ": "테넌트 설정 조회",
       "TENANT_CONFIGURATION_WRITE": "테넌트 설정 변경",
       "TENANT_DIAGNOSTICS_READ": "테넌트 진단 조회",
       "WORKFORCE_READ": "구성원 정보 조회"
+    }
+  },
+  "diagnosis": {
+    "contextUnavailable": "활성 진단 컨텍스트를 검증하지 못했습니다. 검증되기 전까지 테넌트 접근을 차단합니다.",
+    "active": {
+      "label": "활성 테넌트 진단 경계",
+      "title": "현재 대상 · {{tenant}}",
+      "expires": "접근 만료 {{value}}",
+      "remaining": "남은 시간 · {{value}}",
+      "tenantKey": "테넌트 · {{value}}",
+      "environment": "환경 · {{value}}",
+      "region": "리전 · {{value}}",
+      "sessionReference": "세션 · {{value}}",
+      "targetMismatch": "이 세션은 다른 테넌트를 대상으로 합니다. 해당 대상으로 돌아가거나 세션을 종료한 뒤 이 테넌트를 진단하세요.",
+      "customerBoundary": "프로바이더 진단은 고객 사용자 신원과 분리되며 임직원을 가장하지 않습니다.",
+      "singleSession": "한 번에 하나의 테넌트 진단만 활성화할 수 있습니다. 새 진단을 시작하려면 현재 세션을 먼저 종료하세요."
+    },
+    "actions": {
+      "preview": "설정 미리보기 열기",
+      "manage": "진단 세션 관리"
     }
   },
   "commercial": {
@@ -1212,6 +1312,82 @@
       "snapshot": "비식별화된 이벤트 스냅샷"
     },
     "outcomes": { "SUCCESS": "성공", "FAILED": "실패", "DENIED": "거부" }
+  },
+  "contractSurfaces": {
+    "label": "제품 계약 영역",
+    "widgets": "위젯 정의",
+    "codes": "코드 계약"
+  },
+  "widgetCatalog": {
+    "governance": {
+      "title": "현재 빌드에 포함된 정적 위젯 계약입니다",
+      "description": "개발 미리보기이며 Provider 인증 기록이 아닙니다. 정의 게시, 테넌트 정책 및 런타임 회수 기능과 아직 연결되지 않았습니다."
+    },
+    "search": {
+      "label": "위젯 정의 검색",
+      "placeholder": "키, 소유 제품, 앱 또는 데이터 원천 검색",
+      "results_one": "현재 빌드 등록 정의 {{count}}개",
+      "results_other": "현재 빌드 등록 정의 {{count}}개",
+      "empty": "검색 조건에 맞는 위젯 정의가 없습니다",
+      "emptyDescription": "정의 키, 소유 제품, 원천 앱 또는 데이터 원천으로 검색하세요."
+    },
+    "actions": {
+      "codeContract": "코드 계약 열기",
+      "rollouts": "제품 기능 롤아웃 보기"
+    },
+    "listLabel": "Provider 위젯 정의 카탈로그",
+    "states": {
+      "ACTIVE": "현재 빌드 포함",
+      "DEPRECATED": "지원 종료 예정",
+      "BLOCKED": "차단"
+    },
+    "certified": "정적 계약 등록",
+    "fields": {
+      "key": "정의 키",
+      "owner": "소유 제품",
+      "sourceApp": "원천 앱",
+      "dataSource": "데이터 원천",
+      "analytics": "분석 키",
+      "manifestVersion": "Manifest 버전"
+    },
+    "contract": {
+      "title": "선언된 런타임 및 데이터 값",
+      "freshness": "선언된 최신성 목표 · 최대 {{seconds}}초"
+    },
+    "runtime": {
+      "NATIVE": "네이티브 렌더러"
+    },
+    "privacy": {
+      "INTERNAL": "내부 데이터",
+      "CONFIDENTIAL": "기밀 데이터"
+    },
+    "policyClass": {
+      "PERSONAL": "개인 위젯",
+      "GOVERNED": "관리형 영역"
+    },
+    "certification": {
+      "title": "릴리스 검토 기준",
+      "manifest": {
+        "title": "Manifest 계약",
+        "description": "현재 빌드 소스에 선언되어 있으며 불변 Registry 버전이나 서명된 증거는 아직 연결되지 않았습니다."
+      },
+      "data": {
+        "title": "데이터 권한",
+        "description": "목표 계약은 실행 시 수신자와 원천 ACL을 다시 평가하는 것입니다. 현재 정적 카탈로그는 권한 증거가 아닙니다."
+      },
+      "accessibility": {
+        "title": "접근 가능한 호스트 렌더링",
+        "description": "키보드 순서, 텍스트 대안, 대비 및 모션 감소를 위한 검토 기준이며 인증 증거는 연결되지 않았습니다."
+      },
+      "performance": {
+        "title": "홈 성능 예산",
+        "description": "최신성, 요청 예산 및 단일 페이지 스크롤을 위한 검토 기준이며 런타임 강제는 예정입니다."
+      }
+    },
+    "revocation": {
+      "title": "목표 Fail-closed 회수 계약",
+      "description": "동적 회수는 아직 연결되지 않았습니다. 출시 증거가 되려면 서버 Registry가 테넌트나 사용자 설정과 무관하게 영향 인스턴스를 중지해야 합니다."
+    }
   },
   "codeContracts": {
     "scope": {
@@ -1598,7 +1774,15 @@
     },
     "live": {
       "live": "테넌트 상태 연결됨",
-      "syncing": "최신 테넌트 상태 동기화 중"
+      "loadedWithoutSourceTime": "최근 로드됨 · 원천 관측 시각 없음",
+      "syncing": "최신 테넌트 상태 동기화 중",
+      "stale": "테넌트 상태 스냅샷이 오래되었습니다",
+      "degraded": "테넌트 상세를 부분적으로만 확인할 수 있습니다"
+    },
+    "diagnosis": {
+      "boundaryTitle": "프로바이더 운영 상세 — 고객 화면 아님",
+      "boundaryDescription": "이 화면은 제어 영역, 계약 및 서비스 상태를 보여줍니다. 승인된 진단을 시작해야 허용된 테넌트 설정을 확인할 수 있습니다.",
+      "start": "테넌트 진단 시작"
     },
     "pulse": {
       "title": {
@@ -1611,7 +1795,8 @@
         "ATTENTION": "서비스 예외 {{services}}건, 미확인 도메인 {{domains}}건과 활성 관리자 상태를 검토하십시오.",
         "CRITICAL": "실패한 서비스부터 복구하고 고객 영향과 실행 증적을 확인하십시오."
       },
-      "support": "활성 지원 세션 {{count}}"
+      "support": "활성 지원 세션 {{count}}",
+      "supportUnavailable": "지원 세션 수를 확인할 수 없습니다"
     },
     "signals": {
       "label": "테넌트 준비도 신호",
@@ -1653,17 +1838,90 @@
     "administrators": {
       "title": "회사 관리자",
       "primary": "기본 관리자",
-      "invite": "활성화 링크 발급",
-      "invited": "관리자 활성화 링크를 발급했습니다.",
-      "invitationTitle": "관리자 계정 활성화",
-      "invitationOnce": "이 활성화 링크는 지금 한 번만 표시됩니다.",
-      "activationLink": "활성화 링크",
-      "expires": "만료: {{value}}"
+      "configured": "구성된 관리자",
+      "active": "활성 관리자",
+      "pendingDelivery": "고객 전달 대기",
+      "configuredState": "구성됨",
+      "notConfiguredState": "구성되지 않음",
+      "customerDeliveryRequired": "고객 소유의 별도 전달 채널이 연결되기 전에는 관리자 활성화를 사용할 수 없습니다. 프로바이더 운영자는 활성화 링크를 발급하거나 조회할 수 없습니다."
+    },
+    "entitlements": {
+      "catalogLoading": "통제된 제품 권한 카탈로그를 불러오고 있습니다. 테넌트 운영 상세는 계속 확인할 수 있습니다.",
+      "catalogUnavailable": "통제된 제품 권한 카탈로그를 사용할 수 없습니다. 기존 테넌트 상태는 표시하지만 권한 변경은 비활성화됩니다."
     },
     "support": {
       "title": "테넌트 지원 세션",
       "create": "지원 세션 생성",
+      "restricted": "권한 지원 이력은 전용 지원 원장 조회 권한이 있어야 확인할 수 있습니다.",
+      "loading": "권한 지원 원장을 불러오고 있습니다. 다른 테넌트 상세는 계속 확인할 수 있습니다.",
+      "unavailable": "권한 지원 원장을 사용할 수 없습니다. 다른 테넌트 상세는 계속 확인할 수 있습니다.",
       "empty": "이 테넌트의 지원 세션이 없습니다."
+    }
+  },
+  "tenantExperiencePreview": {
+    "title": "테넌트 경험 설정 미리보기",
+    "description": "고객 사용자 세션을 열지 않고 고정된 테넌트 브랜딩 및 홈 경험 설정을 확인합니다.",
+    "actions": {
+      "back": "테넌트 운영 상세로 돌아가기",
+      "startDiagnosis": "테넌트 진단 시작",
+      "manageSession": "진단 세션 관리"
+    },
+    "blocked": {
+      "no-session": {
+        "title": "승인된 진단 세션이 필요합니다",
+        "description": "이 테넌트에 대해 명시적인 TENANT_EXPERIENCE_PREVIEW 범위를 가진 시간 제한 세션을 시작하세요."
+      },
+      "wrong-tenant": {
+        "title": "활성 세션의 대상이 다른 테넌트입니다",
+        "description": "경로의 테넌트와 활성 지원 대상이 일치하지 않아 설정을 표시하지 않습니다."
+      },
+      "expired": {
+        "title": "진단 세션이 만료되었습니다",
+        "description": "만료와 함께 설정을 차단했습니다. 진단을 계속해야 하면 새 승인 세션을 시작하세요."
+      },
+      "scope-denied": {
+        "title": "설정 미리보기가 승인 범위 밖입니다",
+        "description": "활성 세션에 TENANT_EXPERIENCE_PREVIEW가 없습니다. 테넌트 미리보기 데이터를 요청하지 않았습니다."
+      },
+      "context-error": {
+        "title": "진단 경계를 검증하지 못했습니다",
+        "description": "활성 세션 컨텍스트를 확인할 수 없는 동안 테넌트 설정을 계속 차단합니다."
+      }
+    },
+    "partialFailure": {
+      "title": "전체 설정을 검증하지 못했습니다",
+      "description": "브랜딩과 홈 경험 설정을 모두 성공적으로 불러오지 못해 미리보기를 표시하지 않습니다."
+    },
+    "boundary": {
+      "title": "설정 전용 합성 미리보기",
+      "description": "이 고정 합성 화면은 테넌트 관리 브랜딩과 홈 경험 설정만 사용합니다. 개인 위젯, 업무 데이터, 임직원 신원 또는 가장된 세션을 포함하지 않습니다."
+    },
+    "canvas": {
+      "label": "합성 테넌트 경험 설정 캔버스",
+      "watermark": "설정 전용 · 자산 마스킹 · 고객 화면 아님",
+      "traceTarget": "테넌트 · {{tenantKey}} / {{environmentKey}}",
+      "traceVersions": "브랜딩 v{{brandingVersion}} · 홈 v{{homeVersion}}",
+      "traceGeneratedAt": "생성 시각 · {{value}}",
+      "logoRedacted": "로고 자산 마스킹",
+      "headlineFallback": "테넌트 홈 헤드라인이 설정되지 않았습니다",
+      "subheadlineFallback": "이 대체 문구는 프로바이더 설정 미리보기에서만 표시됩니다."
+    },
+    "configuration": {
+      "title": "게시된 설정 요약",
+      "description": "진단을 위해 고정 정책 값만 표시하며 사용자 권한 또는 개인화 레이아웃은 평가하지 않습니다.",
+      "variant": "경험 · {{value}}",
+      "mode": "모드 · {{value}}",
+      "personalization": "개인화 · {{value}}",
+      "enabled": "사용",
+      "disabled": "사용 안 함",
+      "version": "설정 v{{value}}",
+      "assets": "배경 자산 · {{value}}",
+      "redacted": "설정됨, 마스킹",
+      "notConfigured": "설정되지 않음",
+      "contract": "미리보기 계약 · {{value}}",
+      "apps": "설정된 앱 {{count}}개",
+      "empty": "게시된 설정에 활성 런치패드 그룹이 없습니다.",
+      "excluded": "계약상 제외: {{values}}"
     }
   }
 }

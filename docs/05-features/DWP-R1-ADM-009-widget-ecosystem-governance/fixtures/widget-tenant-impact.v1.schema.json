@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-tenant-impact.v1.schema.json",
+  "title": "DWP Tenant Widget Policy Impact V1 Fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixtureVersion", "preview", "publish"],
+  "properties": {
+    "fixtureVersion": { "const": 1 },
+    "preview": { "$ref": "#/$defs/previewFixture" },
+    "publish": { "$ref": "#/$defs/publishFixture" }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "internalTenantBinding": {
+      "type": "string",
+      "pattern": "^tib_[a-z0-9_-]{16,120}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "impactPreimage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "internalTenantBinding",
+        "definitionId",
+        "draftRevisionId",
+        "draftVersion",
+        "catalogRevision",
+        "bindingCatalogRevision",
+        "policyCatalogRevision",
+        "safetyRevision",
+        "authorityRevision",
+        "audienceSelectorHash",
+        "validUntil",
+        "eligibleCount",
+        "newlyAllowedCount",
+        "newlyDeniedCount",
+        "existingInstanceBlockedCount",
+        "unknownAuthorityCount"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "internalTenantBinding": { "$ref": "#/$defs/internalTenantBinding" },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "draftRevisionId": { "$ref": "#/$defs/uuid" },
+        "draftVersion": { "type": "integer", "minimum": 1 },
+        "catalogRevision": { "type": "integer", "minimum": 1 },
+        "bindingCatalogRevision": { "$ref": "#/$defs/sha256" },
+        "policyCatalogRevision": { "type": "integer", "minimum": 1 },
+        "safetyRevision": { "type": "integer", "minimum": 1 },
+        "authorityRevision": { "type": "integer", "minimum": 1 },
+        "audienceSelectorHash": { "$ref": "#/$defs/sha256" },
+        "validUntil": { "$ref": "#/$defs/instant" },
+        "eligibleCount": { "type": "integer", "minimum": 0 },
+        "newlyAllowedCount": { "type": "integer", "minimum": 0 },
+        "newlyDeniedCount": { "type": "integer", "minimum": 0 },
+        "existingInstanceBlockedCount": { "type": "integer", "minimum": 0 },
+        "unknownAuthorityCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "impactResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "definitionId",
+        "draftRevisionId",
+        "draftVersion",
+        "catalogRevision",
+        "bindingCatalogRevision",
+        "policyCatalogRevision",
+        "safetyRevision",
+        "authorityRevision",
+        "audienceSelectorHash",
+        "evaluatedAt",
+        "validUntil",
+        "eligibleCount",
+        "newlyAllowedCount",
+        "newlyDeniedCount",
+        "existingInstanceBlockedCount",
+        "unknownAuthorityCount",
+        "impactRevision"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "draftRevisionId": { "$ref": "#/$defs/uuid" },
+        "draftVersion": { "type": "integer", "minimum": 1 },
+        "catalogRevision": { "type": "integer", "minimum": 1 },
+        "bindingCatalogRevision": { "$ref": "#/$defs/sha256" },
+        "policyCatalogRevision": { "type": "integer", "minimum": 1 },
+        "safetyRevision": { "type": "integer", "minimum": 1 },
+        "authorityRevision": { "type": "integer", "minimum": 1 },
+        "audienceSelectorHash": { "$ref": "#/$defs/sha256" },
+        "evaluatedAt": { "$ref": "#/$defs/instant" },
+        "validUntil": { "$ref": "#/$defs/instant" },
+        "eligibleCount": { "type": "integer", "minimum": 0 },
+        "newlyAllowedCount": { "type": "integer", "minimum": 0 },
+        "newlyDeniedCount": { "type": "integer", "minimum": 0 },
+        "existingInstanceBlockedCount": { "type": "integer", "minimum": 0 },
+        "unknownAuthorityCount": { "type": "integer", "minimum": 0 },
+        "impactRevision": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "publishRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expectedVersion", "expectedImpactRevision", "reasonCode", "reasonText"],
+      "properties": {
+        "expectedVersion": { "type": "integer", "minimum": 1 },
+        "expectedImpactRevision": { "$ref": "#/$defs/sha256" },
+        "reasonCode": { "const": "TENANT_POLICY_APPROVED" },
+        "reasonText": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    },
+    "previewFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preimage", "response"],
+      "properties": {
+        "preimage": { "$ref": "#/$defs/impactPreimage" },
+        "response": { "$ref": "#/$defs/impactResponse" }
+      }
+    },
+    "transactionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "isolation",
+        "lockOrder",
+        "dbNow",
+        "currentPreimage",
+        "comparison",
+        "status",
+        "stateMutationCount",
+        "eventCount",
+        "outboxCount",
+        "auditCount"
+      ],
+      "properties": {
+        "isolation": { "const": "SERIALIZABLE" },
+        "lockOrder": {
+          "type": "array",
+          "items": [
+            { "const": "TENANT_BINDING" },
+            { "const": "POLICY_DRAFT" },
+            { "const": "REGISTRY_REVISION_HEAD" },
+            { "const": "TENANT_POLICY_CATALOG_HEAD" },
+            { "const": "SAFETY_REVISION_HEAD" },
+            { "const": "AUTHORITY_SNAPSHOT" }
+          ],
+          "additionalItems": false,
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "dbNow": { "$ref": "#/$defs/instant" },
+        "currentPreimage": { "$ref": "#/$defs/impactPreimage" },
+        "comparison": { "const": "EXPECTED_IMPACT_REVISION_EXACT" },
+        "status": { "const": "COMMITTED" },
+        "stateMutationCount": { "const": 1 },
+        "eventCount": { "const": 1 },
+        "outboxCount": { "const": 1 },
+        "auditCount": { "const": 1 }
+      }
+    },
+    "publishResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "headRevisionId", "state", "impactRevision"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "headRevisionId": { "$ref": "#/$defs/uuid" },
+        "state": { "const": "PUBLISHED" },
+        "impactRevision": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "impactEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "impactRevision"],
+      "properties": {
+        "type": { "enum": ["TENANT_POLICY_PUBLISHED_AUDIT", "TENANT_WIDGET_POLICY_PUBLISHED"] },
+        "impactRevision": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "publishFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request", "transaction", "response", "audit", "event"],
+      "properties": {
+        "request": { "$ref": "#/$defs/publishRequest" },
+        "transaction": { "$ref": "#/$defs/transactionEvidence" },
+        "response": { "$ref": "#/$defs/publishResponse" },
+        "audit": { "$ref": "#/$defs/impactEvidence" },
+        "event": { "$ref": "#/$defs/impactEvidence" }
+      }
+    }
+  }
+}

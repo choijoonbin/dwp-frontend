@@ -20,7 +20,21 @@
       "{workspaceRoot}/apps/dwp/src/observability/**/*",
       "{workspaceRoot}/apps/dwp/src/providers/**/*",
       "{workspaceRoot}/apps/dwp/src/routes/components/**/*",
+      "{workspaceRoot}/apps/dwp/src/routes/configured-product-surface-shell.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/draft-product-dynamic-page-routes.ts",
+      "{workspaceRoot}/apps/dwp/src/routes/draft-product-page-route-contract-source.ts",
+      "{workspaceRoot}/apps/dwp/src/routes/governed-route-access-guard.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/official-product-page-route-contracts.ts",
+      "{workspaceRoot}/apps/dwp/src/routes/product-canary-access-state.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/product-canary-first-allowed-index-runtime.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/product-canary-index-resolution.ts",
+      "{workspaceRoot}/apps/dwp/src/routes/product-canary-root-runtime.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/product-route-contract-source.ts",
+      "{workspaceRoot}/apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "{workspaceRoot}/apps/dwp/src/routes/product-surface-canary-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/product-surface-guard.tsx",
       "{workspaceRoot}/apps/dwp/src/routes/route-support.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/two-surface-product-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/features/auth/**/*",
       "{workspaceRoot}/apps/dwp/src/features/saved-views/**/*",
       "{workspaceRoot}/apps/dwp/src/features/search/**/*",
@@ -28,6 +42,8 @@
       "{workspaceRoot}/libs/**/*",
       "{workspaceRoot}/public/**/*",
       "{workspaceRoot}/architecture/frontend-apps.json",
+      "{workspaceRoot}/architecture/product-page-routes.v1.json",
+      "{workspaceRoot}/architecture/product-surface-authorization.v1.json",
       "{workspaceRoot}/scripts/build-product-app.mjs",
       "{workspaceRoot}/scripts/check-bundle-budget.mjs",
       "{workspaceRoot}/scripts/product-bundle-budgets.json",
@@ -37,9 +53,13 @@
     ],
     "workspaceProduct": [
       "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/activity-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/notification-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/work-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/routes/workspace-application-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/routes/workspace-routes.tsx",
-      "{workspaceRoot}/apps/dwp/src/pages/{home,work,activity,apps}.tsx",
-      "{workspaceRoot}/apps/dwp/src/features/{home,work-hub,work,activity}/**/*"
+      "{workspaceRoot}/apps/dwp/src/pages/{home,work,activity,apps,notifications}.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/{home,work-hub,work,activity,notifications}/**/*"
     ],
     "dwaionProduct": [
       "productRuntime",
@@ -56,6 +76,7 @@
     ],
     "approvalsProduct": [
       "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/approval-surface-shell.tsx",
       "{workspaceRoot}/apps/dwp/src/routes/approvals-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/approvals.tsx",
       "{workspaceRoot}/apps/dwp/src/features/approvals/**/*"
@@ -91,14 +112,23 @@
       "{workspaceRoot}/apps/dwp/src/layouts/messaging-layout.tsx",
       "{workspaceRoot}/apps/dwp/src/features/messaging/**/*"
     ],
+    "meetingsProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/meetings-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/meetings.tsx",
+      "{workspaceRoot}/apps/dwp/src/layouts/meetings-layout.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/meetings/**/*"
+    ],
     "communicationsProduct": [
       "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/communications-canary-surface-shell.tsx",
       "{workspaceRoot}/apps/dwp/src/routes/communications-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/communications.tsx",
       "{workspaceRoot}/apps/dwp/src/features/communications/**/*"
     ],
     "servicesProduct": [
       "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/services-canary-surface-shell.tsx",
       "{workspaceRoot}/apps/dwp/src/routes/services-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/services.tsx",
       "{workspaceRoot}/apps/dwp/src/features/services/**/*"

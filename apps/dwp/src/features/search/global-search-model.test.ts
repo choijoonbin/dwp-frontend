@@ -92,9 +92,10 @@ describe('global search model', () => {
     ]);
   });
 
-  it('builds an encoded Ask route for unmatched natural language', () => {
-    expect(createAskSearchItem('summarize my next meeting').route).toBe(
-      '/dwaion?q=summarize%20my%20next%20meeting'
-    );
+  it('keeps unmatched natural-language questions out of the Ask URL', () => {
+    const item = createAskSearchItem('summarize my next meeting');
+
+    expect(item.route).toBe('/dwaion/new');
+    expect(item.route).not.toContain('summarize');
   });
 });

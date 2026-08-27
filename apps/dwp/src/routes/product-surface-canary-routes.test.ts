@@ -107,6 +107,7 @@ describe('Canary authorization boundary', () => {
     expect(source).not.toContain('hasPermission(');
     expect(source).not.toContain('AppRouteGuard');
     expect(source).not.toContain('ProductRouteGuard');
+    expect(source.match(/boundaryKind="exact-route"/g)).toHaveLength(1);
   });
 });
 

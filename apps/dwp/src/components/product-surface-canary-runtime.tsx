@@ -82,8 +82,8 @@ export function isProductSurfaceEnforced(mode: ProductSurfaceRolloutMode): boole
 
 /**
  * Rollout 110 keeps product pages on the compatibility shell while projecting the exact current
- * plane and its single server-authorized management transition. Rollout 111 additionally enables
- * the native Surface shell and server-authorized app-catalog discovery.
+ * plane, its single server-authorized management transition, and governed catalog re-entry.
+ * Rollout 111 additionally enables the native Surface shell.
  */
 export function isProductSurfaceUiSeparated(mode: ProductSurfaceRolloutMode): mode is 'surface-ui' {
   return mode === 'surface-ui';

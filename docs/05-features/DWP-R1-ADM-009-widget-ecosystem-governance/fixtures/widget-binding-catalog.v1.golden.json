@@ -1,0 +1,148 @@
+{
+  "fixtureVersion": 1,
+  "canonicalization": {
+    "algorithm": "RFC8785-JCS",
+    "encoding": "UTF-8",
+    "hash": "SHA-256",
+    "hashScope": "catalog",
+    "componentHashScope": "component-array"
+  },
+  "expected": {
+    "catalogRevisionId": "4d5f2dc393e62275cf465b5bc347f3205222b163dff92ab9ae5ec563ab97f703",
+    "productAppRevision": "b59dce21b863448fdbe253086ac69d0c60da318bdc816e95990abce5ccbd7fa7",
+    "rendererRevision": "6a51005a5fa1ac0949c5f6a4c82a08a420f1b20b533111ad4b4a6f969c7dbe30",
+    "capabilityRevision": "9e8c345623f2dce1a1771cc76872bf4ed534a157f4b2f4a538697e0011c3c5ba"
+  },
+  "catalog": {
+    "schemaVersion": 1,
+    "productApps": [
+      {
+        "productKey": "core.activity",
+        "sourceAppResourceKey": "APP.ACTIVITY",
+        "state": "ACTIVE",
+        "authorities": ["APP.ACTIVITY:VIEW"]
+      },
+      {
+        "productKey": "core.calendar",
+        "sourceAppResourceKey": "APP.CALENDAR",
+        "state": "ACTIVE",
+        "authorities": ["APP.CALENDAR:VIEW"]
+      },
+      {
+        "productKey": "core.work",
+        "sourceAppResourceKey": "APP.WORK",
+        "state": "ACTIVE",
+        "authorities": ["APP.WORK:VIEW"]
+      },
+      {
+        "productKey": "core.workspace",
+        "sourceAppResourceKey": "APP.WORK",
+        "state": "ACTIVE",
+        "authorities": ["APP.WORK:VIEW"]
+      }
+    ],
+    "renderers": [
+      {
+        "rendererKey": "home.activity",
+        "kind": "NATIVE",
+        "ownerProductKey": "core.activity",
+        "sourceAppResourceKey": "APP.ACTIVITY",
+        "minimumHostApiVersion": 1,
+        "maximumHostApiVersion": 1,
+        "state": "ACTIVE"
+      },
+      {
+        "rendererKey": "home.command-rail",
+        "kind": "NATIVE",
+        "ownerProductKey": "core.workspace",
+        "sourceAppResourceKey": "APP.WORK",
+        "minimumHostApiVersion": 1,
+        "maximumHostApiVersion": 1,
+        "state": "ACTIVE"
+      },
+      {
+        "rendererKey": "home.daily-brief",
+        "kind": "NATIVE",
+        "ownerProductKey": "core.workspace",
+        "sourceAppResourceKey": "APP.WORK",
+        "minimumHostApiVersion": 1,
+        "maximumHostApiVersion": 1,
+        "state": "ACTIVE"
+      },
+      {
+        "rendererKey": "home.focus",
+        "kind": "NATIVE",
+        "ownerProductKey": "core.work",
+        "sourceAppResourceKey": "APP.WORK",
+        "minimumHostApiVersion": 1,
+        "maximumHostApiVersion": 1,
+        "state": "ACTIVE"
+      },
+      {
+        "rendererKey": "home.schedule",
+        "kind": "NATIVE",
+        "ownerProductKey": "core.calendar",
+        "sourceAppResourceKey": "APP.CALENDAR",
+        "minimumHostApiVersion": 1,
+        "maximumHostApiVersion": 1,
+        "state": "ACTIVE"
+      }
+    ],
+    "capabilities": [
+      {
+        "productKey": "core.activity",
+        "sourceAppResourceKey": "APP.ACTIVITY",
+        "capabilityType": "DATA",
+        "capabilityKey": "ACTIVITY.EVENTS.LIST"
+      },
+      {
+        "productKey": "core.activity",
+        "sourceAppResourceKey": "APP.ACTIVITY",
+        "capabilityType": "SOURCE",
+        "capabilityKey": "ACTIVITY"
+      },
+      {
+        "productKey": "core.calendar",
+        "sourceAppResourceKey": "APP.CALENDAR",
+        "capabilityType": "DATA",
+        "capabilityKey": "CALENDAR.EVENTS.LIST"
+      },
+      {
+        "productKey": "core.calendar",
+        "sourceAppResourceKey": "APP.CALENDAR",
+        "capabilityType": "SOURCE",
+        "capabilityKey": "CALENDAR"
+      },
+      {
+        "productKey": "core.work",
+        "sourceAppResourceKey": "APP.WORK",
+        "capabilityType": "DATA",
+        "capabilityKey": "WORK.ITEMS.LIST"
+      },
+      {
+        "productKey": "core.work",
+        "sourceAppResourceKey": "APP.WORK",
+        "capabilityType": "SOURCE",
+        "capabilityKey": "WORK"
+      },
+      {
+        "productKey": "core.workspace",
+        "sourceAppResourceKey": "APP.WORK",
+        "capabilityType": "DATA",
+        "capabilityKey": "HOME.OVERVIEW.READ"
+      },
+      {
+        "productKey": "core.workspace",
+        "sourceAppResourceKey": "APP.WORK",
+        "capabilityType": "DATA",
+        "capabilityKey": "HOME.RECOMMENDATIONS.READ"
+      },
+      {
+        "productKey": "core.workspace",
+        "sourceAppResourceKey": "APP.WORK",
+        "capabilityType": "SOURCE",
+        "capabilityKey": "RECOMMENDATION"
+      }
+    ]
+  }
+}

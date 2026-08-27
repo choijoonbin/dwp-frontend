@@ -350,8 +350,9 @@ Global Unique·Saved Retention이 필요한 `ntf_user_notifications`는 초기�
 
 ## 11. 제품 경험 원칙
 
-- Header Badge는 전체 알림 수가 아니라 **읽지 않은 Actionable 항목 수**를 우선 표시하고 `99+`로
-  제한한다.
+- Header Badge는 놓친 일반 메시지도 숨기지 않도록 **전체 읽지 않은 알림 수**를 표시하고 `99+`로
+  제한한다. Glance의 접근 가능한 이름과 요약에서는 그중 읽지 않은 Actionable 항목 수를 별도로
+  설명해 전체 주의 신호와 즉시 처리할 업무를 혼동하지 않게 한다.
 - Toast는 Urgent·High 중 즉시성이 입증된 경우에만 사용한다. 현재 화면의 관련 데이터가 이미
   갱신되면 Toast 대신 목록을 조용히 갱신한다.
 - 제목은 짧고, 수신 이유, Source App, 시각, Actor, 정확한 Deep Link와 유용한 Inline Action을

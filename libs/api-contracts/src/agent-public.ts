@@ -17,6 +17,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/livez": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Livez */
+        get: operations["livez_livez_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/readyz": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Readyz */
+        get: operations["readyz_readyz_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/actions": {
         parameters: {
             query?: never;
@@ -62,6 +96,23 @@ export interface paths {
         get: operations["list_action_policies_v1_admin_actions_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/actions/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bootstrap Action Policies */
+        post: operations["bootstrap_action_policies_v1_admin_actions_bootstrap_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -257,6 +308,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/gates/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bootstrap Operational Gates */
+        post: operations["bootstrap_operational_gates_v1_admin_gates_bootstrap_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/gates/{gate_key}": {
         parameters: {
             query?: never;
@@ -343,6 +411,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Proposal */
+        post: operations["create_proposal_v1_admin_proposals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/retention": {
         parameters: {
             query?: never;
@@ -359,6 +444,23 @@ export interface paths {
         head?: never;
         /** Update Retention Policy */
         patch: operations["update_retention_policy_v1_admin_retention_patch"];
+        trace?: never;
+    };
+    "/v1/admin/retention/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bootstrap Retention Policy */
+        post: operations["bootstrap_retention_policy_v1_admin_retention_bootstrap_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/v1/admin/safety": {
@@ -379,6 +481,23 @@ export interface paths {
         patch: operations["update_safety_policy_v1_admin_safety_patch"];
         trace?: never;
     };
+    "/v1/admin/safety/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bootstrap Safety Policy */
+        post: operations["bootstrap_safety_policy_v1_admin_safety_bootstrap_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/sources": {
         parameters: {
             query?: never;
@@ -390,6 +509,23 @@ export interface paths {
         get: operations["list_source_policies_v1_admin_sources_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/sources/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bootstrap Source Policies */
+        post: operations["bootstrap_source_policies_v1_admin_sources_bootstrap_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -500,6 +636,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Proposals */
+        get: operations["list_proposals_v1_proposals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/proposals/{proposal_id}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decide Proposal */
+        post: operations["decide_proposal_v1_proposals__proposal_id__decisions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/question-launches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Question Launch */
+        post: operations["create_question_launch_v1_question_launches_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/question-launches/consume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Consume Question Launch */
+        post: operations["consume_question_launch_v1_question_launches_consume_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List User Runs */
+        get: operations["list_user_runs_v1_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/runs/{run_id}/feedback": {
         parameters: {
             query?: never;
@@ -517,6 +738,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/voice/speech": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Synthesize Voice */
+        post: operations["synthesize_voice_v1_voice_speech_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/voice/transcriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Transcribe Voice */
+        post: operations["transcribe_voice_v1_voice_transcriptions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -526,6 +781,29 @@ export interface components {
          * @enum {string}
          */
         ActionExecutionPolicy: "USER_HANDOFF" | "APPROVAL_HANDOFF" | "BLOCKED";
+        /** ActionHandoffOrigin */
+        ActionHandoffOrigin: {
+            /**
+             * Appkey
+             * @constant
+             */
+            appKey: "APP.ASK";
+            /** Conversationid */
+            conversationId?: string | null;
+            /** Route */
+            route: string;
+            /** Sourcecorrelationid */
+            sourceCorrelationId: string;
+            /** Sourcerequestid */
+            sourceRequestId: string;
+            /** Sourcerunid */
+            sourceRunId: string;
+            /**
+             * Surface
+             * @constant
+             */
+            surface: "action-shelf";
+        };
         /** ActionPolicy */
         ActionPolicy: {
             /** Actionkey */
@@ -608,18 +886,100 @@ export interface components {
         };
         /** AdminCommandResolution */
         AdminCommandResolution: {
+            /**
+             * Authoritykind
+             * @enum {string}
+             */
+            authorityKind: "TENANT_PERMISSION" | "PROVIDER_ROLE" | "APP_GOVERNANCE_CAPABILITY";
+            /** Bodyparameters */
+            bodyParameters?: string[];
             /** Catalogrevision */
             catalogRevision: number;
             /** Commandkey */
             commandKey: string;
+            /** Contextparameters */
+            contextParameters?: string[];
             /** Endpointtemplate */
             endpointTemplate: string;
+            /** Finalauthorityservice */
+            finalAuthorityService: string;
+            /** Headerparameters */
+            headerParameters?: {
+                [key: string]: string;
+            };
             /** Httpmethod */
             httpMethod: string;
+            /**
+             * Identityplane
+             * @enum {string}
+             */
+            identityPlane: "TENANT" | "PROVIDER";
+            /** Queryparameters */
+            queryParameters?: string[];
+            /** Requiredauthorities */
+            requiredAuthorities?: string[];
             /** Requiredpermission */
-            requiredPermission: string;
+            requiredPermission?: string | null;
+            /** Requiredroles */
+            requiredRoles?: string[];
             /** Targetservice */
             targetService: string;
+        };
+        /** AgentProposal */
+        AgentProposal: {
+            /** Actionkey */
+            actionKey?: string | null;
+            /** Agentkey */
+            agentKey: string;
+            /**
+             * Availableat
+             * Format: date-time
+             */
+            availableAt: string;
+            content: components["schemas"]["ProposalContent"];
+            /** Decidedat */
+            decidedAt?: string | null;
+            /**
+             * Expiresat
+             * Format: date-time
+             */
+            expiresAt: string;
+            kind: components["schemas"]["ProposalKind"];
+            priority: components["schemas"]["ProposalPriority"];
+            /**
+             * Proposalid
+             * Format: uuid
+             */
+            proposalId: string;
+            /**
+             * Proposedat
+             * Format: date-time
+             */
+            proposedAt: string;
+            /** Revision */
+            revision: number;
+            /** Snoozeduntil */
+            snoozedUntil?: string | null;
+            state: components["schemas"]["ProposalState"];
+        };
+        /** AgentProposalEnvelope */
+        AgentProposalEnvelope: {
+            data: components["schemas"]["AgentProposal"];
+            /**
+             * Message
+             * @default Agent proposal loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
         };
         /** AgentRegistryResolution */
         AgentRegistryResolution: {
@@ -632,6 +992,11 @@ export interface components {
             revision: number;
             riskTier: components["schemas"]["RegistryRiskTier"];
         };
+        /**
+         * AgentRunState
+         * @enum {string}
+         */
+        AgentRunState: "RUNNING" | "COMPLETED" | "FAILED";
         /**
          * AnswerConfidence
          * @enum {string}
@@ -804,6 +1169,52 @@ export interface components {
          * @enum {string}
          */
         AskState: "COMPLETED" | "ABSTAINED" | "CONFIGURATION_REQUIRED";
+        /** BootstrapGovernancePoliciesRequest */
+        BootstrapGovernancePoliciesRequest: {
+            /** Changereason */
+            changeReason: string;
+            /** Expectedexistingcount */
+            expectedExistingCount: number;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+        };
+        /** BootstrapOperationalGatesRequest */
+        BootstrapOperationalGatesRequest: {
+            /** Changereason */
+            changeReason: string;
+            /** Expectedexistingcount */
+            expectedExistingCount: number;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+        };
+        /** BootstrapRetentionPolicyRequest */
+        BootstrapRetentionPolicyRequest: {
+            /** Changereason */
+            changeReason: string;
+            /** Expectedexistingcount */
+            expectedExistingCount: number;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+            /**
+             * Legalhold
+             * @default false
+             */
+            legalHold: boolean;
+            /**
+             * Retentiondays
+             * @default 90
+             */
+            retentionDays: number;
+        };
         /**
          * CitationSourceType
          * @enum {string}
@@ -829,6 +1240,14 @@ export interface components {
          * @enum {string}
          */
         ConnectionState: "CONNECTED" | "DEGRADED" | "NOT_CONFIGURED" | "BLOCKED";
+        /** ConsumeQuestionLaunchRequest */
+        ConsumeQuestionLaunchRequest: {
+            /**
+             * Launchid
+             * Format: uuid
+             */
+            launchId: string;
+        };
         /** ConversationDetail */
         ConversationDetail: {
             /** Messages */
@@ -930,6 +1349,34 @@ export interface components {
              */
             updatedAt: string;
         };
+        /** CreateAgentProposalRequest */
+        CreateAgentProposalRequest: {
+            /** Actionkey */
+            actionKey?: string | null;
+            /** Agentkey */
+            agentKey: string;
+            /** Availableat */
+            availableAt?: string | null;
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            content: components["schemas"]["ProposalContent"];
+            /**
+             * Expiresat
+             * Format: date-time
+             */
+            expiresAt: string;
+            kind: components["schemas"]["ProposalKind"];
+            priority: components["schemas"]["ProposalPriority"];
+            /** Sourceeventid */
+            sourceEventId: string;
+            /** Targetuserid */
+            targetUserId: string;
+        };
         /** CreateEvaluationCaseRequest */
         CreateEvaluationCaseRequest: {
             /** Expectedterms */
@@ -968,6 +1415,11 @@ export interface components {
             reference: string;
             /** Title */
             title: string;
+        };
+        /** CreateQuestionLaunchRequest */
+        CreateQuestionLaunchRequest: {
+            /** Question */
+            question: string;
         };
         /**
          * DataClassification
@@ -1036,6 +1488,21 @@ export interface components {
              * @default true
              */
             success: boolean;
+        };
+        /** DecideAgentProposalRequest */
+        DecideAgentProposalRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            decision: components["schemas"]["ProposalDecision"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Note */
+            note?: string | null;
+            /** Snoozeuntil */
+            snoozeUntil?: string | null;
         };
         /** DecideOperationalGateRequest */
         DecideOperationalGateRequest: {
@@ -1740,6 +2207,7 @@ export interface components {
              * @default REFERENCE_PLANNER
              */
             agentKey: string;
+            handoffOrigin?: components["schemas"]["ActionHandoffOrigin"] | null;
             /** Inputs */
             inputs?: {
                 [key: string]: components["schemas"]["JsonValue"];
@@ -1763,6 +2231,7 @@ export interface components {
             auditId: string;
             /** Correlationid */
             correlationId: string;
+            handoffOrigin?: components["schemas"]["ActionHandoffOrigin"] | null;
             /** Mutationallowed */
             mutationAllowed: boolean;
             /** Planhash */
@@ -1801,6 +2270,176 @@ export interface components {
          * @enum {string}
          */
         PolicyOutcome: "ALLOW" | "HANDOFF" | "DENY";
+        /** ProposalContent */
+        ProposalContent: {
+            /** Actioninputs */
+            actionInputs?: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Evidence */
+            evidence?: components["schemas"]["ProposalEvidence"][];
+            /** Rationale */
+            rationale: string;
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
+        };
+        /**
+         * ProposalDecision
+         * @enum {string}
+         */
+        ProposalDecision: "ACCEPT" | "SNOOZE" | "DISMISS";
+        /** ProposalDecisionEnvelope */
+        ProposalDecisionEnvelope: {
+            data: components["schemas"]["ProposalDecisionReceipt"];
+            /**
+             * Message
+             * @default Agent proposal decision recorded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ProposalDecisionReceipt */
+        ProposalDecisionReceipt: {
+            /** Actionreviewrequired */
+            actionReviewRequired: boolean;
+            proposal: components["schemas"]["AgentProposal"];
+        };
+        /** ProposalEvidence */
+        ProposalEvidence: {
+            /** Label */
+            label: string;
+            /** Occurredat */
+            occurredAt?: string | null;
+            /** Referenceid */
+            referenceId: string;
+            /** Sourcetype */
+            sourceType: string;
+        };
+        /** ProposalInboxEnvelope */
+        ProposalInboxEnvelope: {
+            data: components["schemas"]["ProposalInboxPage"];
+            /**
+             * Message
+             * @default Agent proposals loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ProposalInboxPage */
+        ProposalInboxPage: {
+            /** Items */
+            items: components["schemas"]["AgentProposal"][];
+            /** Nextcursor */
+            nextCursor?: string | null;
+            summary: components["schemas"]["ProposalInboxSummary"];
+        };
+        /** ProposalInboxSummary */
+        ProposalInboxSummary: {
+            /** Active */
+            active: number;
+            /** Handled */
+            handled: number;
+            /** Highpriority */
+            highPriority: number;
+            /** Snoozed */
+            snoozed: number;
+        };
+        /**
+         * ProposalInboxView
+         * @enum {string}
+         */
+        ProposalInboxView: "ACTIVE" | "SNOOZED" | "HANDLED" | "ALL";
+        /**
+         * ProposalKind
+         * @enum {string}
+         */
+        ProposalKind: "WORK_SIGNAL" | "RISK" | "SCHEDULE" | "APPROVAL" | "INSIGHT";
+        /**
+         * ProposalPriority
+         * @enum {string}
+         */
+        ProposalPriority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+        /**
+         * ProposalState
+         * @enum {string}
+         */
+        ProposalState: "PENDING" | "SNOOZED" | "ACCEPTED" | "DISMISSED" | "EXPIRED";
+        /** QuestionLaunchPayload */
+        QuestionLaunchPayload: {
+            /** Question */
+            question: string;
+        };
+        /** QuestionLaunchPayloadEnvelope */
+        QuestionLaunchPayloadEnvelope: {
+            data: components["schemas"]["QuestionLaunchPayload"];
+            /**
+             * Message
+             * @default Question launch consumed.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** QuestionLaunchReceipt */
+        QuestionLaunchReceipt: {
+            /**
+             * Expiresat
+             * Format: date-time
+             */
+            expiresAt: string;
+            /**
+             * Launchid
+             * Format: uuid
+             */
+            launchId: string;
+        };
+        /** QuestionLaunchReceiptEnvelope */
+        QuestionLaunchReceiptEnvelope: {
+            data: components["schemas"]["QuestionLaunchReceipt"];
+            /**
+             * Message
+             * @default Question launch prepared.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /**
          * RegistryResolutionStatus
          * @enum {string}
@@ -1964,6 +2603,57 @@ export interface components {
              */
             requireCitations: boolean;
         };
+        /** UserAgentRunListEnvelope */
+        UserAgentRunListEnvelope: {
+            /** Data */
+            data: components["schemas"]["UserAgentRunSummary"][];
+            /**
+             * Message
+             * @default Agent activity loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** UserAgentRunSummary */
+        UserAgentRunSummary: {
+            /** Agentkey */
+            agentKey: string;
+            /** Agentrevision */
+            agentRevision: number;
+            answerState?: components["schemas"]["AskState"] | null;
+            /** Completedat */
+            completedAt?: string | null;
+            /** Conversationid */
+            conversationId?: string | null;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /** Latencyms */
+            latencyMs: number;
+            policyOutcome: components["schemas"]["PolicyOutcome"];
+            riskTier: components["schemas"]["RiskTier"];
+            /**
+             * Runid
+             * Format: uuid
+             */
+            runId: string;
+            runState: components["schemas"]["AgentRunState"];
+            /** Sourcecount */
+            sourceCount: number;
+            /** Statuscode */
+            statusCode?: string | null;
+        };
         /** ValidateOperationalGateRequest */
         ValidateOperationalGateRequest: {
             /** Changereason */
@@ -1986,6 +2676,42 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** VoiceSpeechRequest */
+        VoiceSpeechRequest: {
+            /**
+             * Locale
+             * @default en
+             */
+            locale: string;
+            /** Text */
+            text: string;
+        };
+        /** VoiceTranscription */
+        VoiceTranscription: {
+            /** Language */
+            language: string;
+            /** Text */
+            text: string;
+        };
+        /** VoiceTranscriptionEnvelope */
+        VoiceTranscriptionEnvelope: {
+            data: components["schemas"]["VoiceTranscription"];
+            /**
+             * Message
+             * @default Voice transcription completed.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
         };
         /** WorkplaceAction */
         WorkplaceAction: {
@@ -2068,6 +2794,7 @@ export interface components {
             inputs?: {
                 [key: string]: components["schemas"]["JsonValue"];
             };
+            origin: components["schemas"]["ActionHandoffOrigin"];
             /** Requestid */
             requestId: string;
             /** Sourcereferences */
@@ -2083,6 +2810,52 @@ export interface components {
 export type $defs = Record<string, never>;
 export interface operations {
     health_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string | {
+                            [key: string]: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    livez_livez_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+    };
+    readyz_readyz_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -2193,6 +2966,44 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionPolicyListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    bootstrap_action_policies_v1_admin_actions_bootstrap_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BootstrapGovernancePoliciesRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -2741,6 +3552,82 @@ export interface operations {
             };
         };
     };
+    bootstrap_operational_gates_v1_admin_gates_bootstrap_post: {
+        parameters: {
+            query?: {
+                environment?: components["schemas"]["GateEnvironment"];
+            };
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BootstrapOperationalGatesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalGatePortfolioEnvelope"];
+                };
+            };
+            /** @description Insufficient gate permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalGateProblem"];
+                };
+            };
+            /** @description Gate not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalGateProblem"];
+                };
+            };
+            /** @description Gate workflow conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalGateProblem"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Gate store unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalGateProblem"];
+                };
+            };
+        };
+    };
     get_operational_gate_v1_admin_gates__gate_key__get: {
         parameters: {
             query?: {
@@ -3161,6 +4048,48 @@ export interface operations {
             };
         };
     };
+    create_proposal_v1_admin_proposals_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAgentProposalRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentProposalEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_retention_policy_v1_admin_retention_get: {
         parameters: {
             query?: never;
@@ -3208,6 +4137,44 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["UpdateRetentionPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RetentionPolicyEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    bootstrap_retention_policy_v1_admin_retention_bootstrap_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BootstrapRetentionPolicyRequest"];
             };
         };
         responses: {
@@ -3303,6 +4270,44 @@ export interface operations {
             };
         };
     };
+    bootstrap_safety_policy_v1_admin_safety_bootstrap_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BootstrapGovernancePoliciesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyPolicyEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_source_policies_v1_admin_sources_get: {
         parameters: {
             query?: never;
@@ -3316,6 +4321,44 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataSourcePolicyListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    bootstrap_source_policies_v1_admin_sources_bootstrap_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BootstrapGovernancePoliciesRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -3381,11 +4424,11 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                "X-DWP-Permissions"?: string | null;
                 "X-DWP-User-ID": string;
                 "X-DWP-Tenant-ID": string;
                 "X-Correlation-ID": string;
                 "X-DWP-Roles"?: string | null;
-                "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
             };
@@ -3422,11 +4465,11 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                "X-DWP-Permissions"?: string | null;
                 "X-DWP-User-ID": string;
                 "X-DWP-Tenant-ID": string;
                 "X-Correlation-ID": string;
                 "X-DWP-Roles"?: string | null;
-                "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
             };
@@ -3609,6 +4652,9 @@ export interface operations {
                 "X-DWP-Tenant-ID": string;
                 "X-Correlation-ID": string;
                 "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Resource-Roles"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3626,6 +4672,210 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanPreviewEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_proposals_v1_proposals_get: {
+        parameters: {
+            query?: {
+                view?: components["schemas"]["ProposalInboxView"];
+                limit?: number;
+                cursor?: string | null;
+            };
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalInboxEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_proposal_v1_proposals__proposal_id__decisions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideAgentProposalRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalDecisionEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_question_launch_v1_question_launches_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateQuestionLaunchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionLaunchReceiptEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    consume_question_launch_v1_question_launches_consume_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsumeQuestionLaunchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionLaunchPayloadEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_user_runs_v1_runs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                state?: components["schemas"]["AgentRunState"] | null;
+            };
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserAgentRunListEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -3665,6 +4915,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FeedbackEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    synthesize_voice_v1_voice_speech_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceSpeechRequest"];
+            };
+        };
+        responses: {
+            /** @description Synthesized speech. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "audio/mpeg": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transcribe_voice_v1_voice_transcriptions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Content-Type": string;
+                "X-DWP-Voice-Locale": string;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/octet-stream": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceTranscriptionEnvelope"];
                 };
             };
             /** @description Validation Error */

@@ -23,6 +23,7 @@ const MIN_HEIGHT: Record<StatePanelSize, number> = { compact: 120, standard: 200
 type StatePanelProps = {
   icon: React.ReactNode;
   title: string;
+  titleComponent?: 'h1' | 'h2';
   description?: string;
   action?: React.ReactNode;
   size?: StatePanelSize;
@@ -32,6 +33,7 @@ type StatePanelProps = {
 function StatePanel({
   icon,
   title,
+  titleComponent = 'h2',
   description,
   action,
   size = 'standard',
@@ -53,7 +55,7 @@ function StatePanel({
       >
         {icon}
       </Box>
-      <Typography component="h2" variant="subtitle1" color="text.primary">
+      <Typography component={titleComponent} variant="subtitle1" color="text.primary">
         {title}
       </Typography>
       {description && (
@@ -109,6 +111,8 @@ export type GuidedEmptyStateProps = {
   kind: GuidedEmptyStateKind;
   title: string;
   description: string;
+  /** Page-level empty states may opt into the document's primary heading. */
+  titleComponent?: 'h1' | 'h2';
   actionLabel?: string;
   onAction?: () => void;
   secondaryActionLabel?: string;
@@ -127,6 +131,7 @@ export function GuidedEmptyState({
   kind,
   title,
   description,
+  titleComponent,
   actionLabel,
   onAction,
   secondaryActionLabel,
@@ -153,6 +158,7 @@ export function GuidedEmptyState({
       role="status"
       icon={<Icon size={28} strokeWidth={1.7} />}
       title={title}
+      titleComponent={titleComponent}
       description={description}
       action={action}
       size={size}

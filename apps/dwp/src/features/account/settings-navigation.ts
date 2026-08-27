@@ -33,6 +33,26 @@ export type AccountNavigationGroup = {
   items: AccountNavigationItem[];
 };
 
+export type ProviderAccountRouteDecision = 'allow' | 'loading' | 'redirect-support';
+
+export function resolveProviderAccountRouteDecision({
+  providerAccount,
+  supportLoading,
+  supportError,
+  hasActiveSupport,
+}: {
+  providerAccount: boolean;
+  supportLoading: boolean;
+  supportError: boolean;
+  hasActiveSupport: boolean;
+}): ProviderAccountRouteDecision {
+  if (!providerAccount) return 'allow';
+  if (supportLoading) return 'loading';
+  return supportError || hasActiveSupport ? 'redirect-support' : 'allow';
+}
+
+const tenantOnlySettingsSections = new Set<SettingsSection>(['home', 'notifications', 'managed']);
+
 export const accountNavigationGroups: AccountNavigationGroup[] = [
   {
     key: 'account',
@@ -56,6 +76,26 @@ export const accountNavigationGroups: AccountNavigationGroup[] = [
     items: [{ key: 'managed', path: '/account/settings/managed', icon: Building2 }],
   },
 ];
+
+export function isAccountSettingsSectionAvailable(
+  section: SettingsSection,
+  providerAccount: boolean
+): boolean {
+  return !providerAccount || !tenantOnlySettingsSections.has(section);
+}
+
+export function getAccountNavigationGroups(providerAccount: boolean): AccountNavigationGroup[] {
+  if (!providerAccount) return accountNavigationGroups;
+  return accountNavigationGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        const section = item.path.split('/').pop();
+        return !isSettingsSection(section) || isAccountSettingsSectionAvailable(section, true);
+      }),
+    }))
+    .filter((group) => group.items.length > 0);
+}
 
 export function isSettingsSection(value: string | undefined): value is SettingsSection {
   return settingsSections.includes(value as SettingsSection);

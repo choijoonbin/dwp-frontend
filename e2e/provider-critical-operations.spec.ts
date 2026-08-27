@@ -104,25 +104,195 @@ test('privileged support separates request approval, sessions, and post-access r
   await expect(page.getByText('Awaiting approval').locator('../..')).toContainText('1');
   await expect(page.getByText('Post-reviews due').locator('../..')).toContainText('1');
   await expect(
-    page.getByText('Investigate the customer-approved workspace latency case.')
+    page.getByText('Preview the customer-approved tenant experience configuration.')
   ).toBeVisible();
 
   await page.getByRole('button', { name: 'Approve' }).click();
   const approval = page.getByRole('dialog', { name: 'Approve support access' });
   await expect(approval).toContainText('You cannot approve your own request');
+  const exactGrant = approval.getByRole('region', { name: 'Exact access evidence' });
+  await expect(exactGrant).toContainText('SKAX Production · skax-production');
+  await expect(exactGrant).toContainText('Provider Support Engineer');
+  await expect(exactGrant).toContainText('Preview redacted tenant experience configuration');
+  await expect(exactGrant).toContainText('30 minutes');
+  await expect(exactGrant).toContainText('SKAX-CASE-2408');
+  await expect(exactGrant).toContainText(
+    'Preview the customer-approved tenant experience configuration.'
+  );
   await approval.getByLabel('Justification').fill('Customer evidence and scope verified.');
 
   await approval.getByRole('button', { name: 'Cancel' }).click();
   await page.getByRole('button', { name: 'Complete review' }).click();
-  await expect(page.getByRole('dialog', { name: 'Complete post-access review' })).toContainText(
-    'Confirm the session ended'
+  const postReview = page.getByRole('dialog', { name: 'Complete post-access review' });
+  await expect(postReview).toContainText('Confirm the session ended');
+  const recordedEvidence = postReview.getByRole('region', {
+    name: 'Actual support-use evidence',
+  });
+  await expect(recordedEvidence).toContainText('support-session-history');
+  await expect(recordedEvidence).toContainText('All evidence · 12');
+  await expect(recordedEvidence).toContainText('Authorized uses · 10');
+  await expect(recordedEvidence).toContainText('Denied attempts · 2');
+  await expect(recordedEvidence).toContainText('Actual scope · TENANT_EXPERIENCE_PREVIEW');
+  await expect(recordedEvidence).toContainText('Denial reason · SCOPE_INSUFFICIENT');
+  await expect(recordedEvidence).toContainText('0123456789abcdef0123456789abcdef');
+  const longCorrelation = recordedEvidence.getByText(/sha256:0123456789abcdef/);
+  await expect(longCorrelation).toBeVisible();
+  expect(
+    await longCorrelation.evaluate((node) => ({
+      clientWidth: node.clientWidth,
+      scrollWidth: node.scrollWidth,
+    }))
+  ).toEqual(expect.objectContaining({ scrollWidth: expect.any(Number) }));
+  expect(await longCorrelation.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(
+    true
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Cancel' }).click();
+  await expect(recordedEvidence).toContainText('Showing the latest 2 of 12');
+  await expect(recordedEvidence).not.toContainText('support.postReviewEvidence');
+  await postReview
+    .getByLabel('Review evidence and conclusion')
+    .fill('Actual scope, denied commands, and complete aggregate reconciled.');
+  await expect(postReview.getByRole('button', { name: 'Complete review' })).toBeEnabled();
+  await postReview.getByRole('button', { name: 'Cancel' }).click();
 
   await expect(
     page.getByRole('heading', { name: 'Active and historical sessions', exact: true })
   ).toBeVisible();
-  await expect(page.getByText('Approved standard access')).toBeVisible();
+  await expect(
+    page
+      .getByRole('grid', { name: 'Support sessions' })
+      .getByText('Approved standard access')
+      .first()
+  ).toBeVisible();
+});
+
+test('privileged support offers only the customer-approved preview scope for new access', async ({
+  page,
+}) => {
+  await page.goto('/provider/support');
+
+  await page.getByRole('button', { name: 'Start tenant diagnosis' }).click();
+  const request = page.getByRole('dialog', {
+    name: 'Start tenant diagnosis with time-bound access',
+  });
+  await expect(
+    request.getByRole('checkbox', {
+      name: /Preview redacted tenant experience configuration/,
+    })
+  ).toBeChecked();
+  await expect(request.getByRole('checkbox', { name: /tenant diagnostics/i })).toHaveCount(0);
+  await expect(request.getByRole('checkbox', { name: /tenant configuration/i })).toHaveCount(0);
+
+  await request.getByRole('combobox', { name: 'Tenant' }).click();
+  await page.getByRole('option', { name: /SKAX Production/ }).click();
+  await request
+    .getByLabel('Justification')
+    .fill('Validate the redacted customer experience configuration for the approved case.');
+  await expect(request.getByRole('button', { name: 'Submit for review' })).toBeDisabled();
+  await request.getByLabel('Customer approval reference').fill('SKAX-CASE-2408');
+  await expect(request.getByRole('button', { name: 'Submit for review' })).toBeEnabled();
+});
+
+test('post-access review accepts only an explicit complete no-use decision', async ({ page }) => {
+  await page.route('**/support-request-review/post-review-evidence', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          supportAccessRequestId: 'support-request-review',
+          supportSessionId: 'support-session-history',
+          tenantId: 'tenant-skax',
+          sessionLifecycleState: 'REVOKED',
+          evidenceFrom: '2026-08-10T21:10:00Z',
+          evidenceThrough: '2026-08-10T21:25:00Z',
+          grantedScopes: ['TENANT_EXPERIENCE_PREVIEW'],
+          observedScopes: [],
+          totalEventCount: 0,
+          actualUseCount: 0,
+          deniedAttemptCount: 0,
+          evidenceComplete: true,
+          displayTruncated: false,
+          noUseConfirmed: true,
+          readiness: 'READY_NO_USE',
+          anomalies: [],
+          events: [],
+        },
+      }),
+    });
+  });
+  await page.goto('/provider/support');
+  await page.getByRole('button', { name: 'Complete review' }).click();
+  const review = page.getByRole('dialog', { name: 'Complete post-access review' });
+  await expect(review).toContainText('The explicit no-use policy is satisfied.');
+  await review
+    .getByLabel('Review evidence and conclusion')
+    .fill('Complete terminal no-use evidence independently reconciled.');
+  await expect(review.getByRole('button', { name: 'Complete review' })).toBeEnabled();
+});
+
+test('post-access review stays blocked when the evidence aggregate is incomplete', async ({
+  page,
+}) => {
+  await page.route('**/support-request-review/post-review-evidence', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          supportAccessRequestId: 'support-request-review',
+          supportSessionId: 'support-session-history',
+          tenantId: 'tenant-skax',
+          sessionLifecycleState: 'REVOKED',
+          evidenceFrom: '2026-08-10T21:10:00Z',
+          evidenceThrough: '2026-08-10T21:25:00Z',
+          grantedScopes: ['TENANT_EXPERIENCE_PREVIEW'],
+          observedScopes: ['TENANT_EXPERIENCE_PREVIEW'],
+          totalEventCount: 1,
+          actualUseCount: 1,
+          deniedAttemptCount: 0,
+          evidenceComplete: false,
+          displayTruncated: false,
+          noUseConfirmed: false,
+          readiness: 'INCOMPLETE',
+          anomalies: ['INVALID_CORRELATION_EVIDENCE'],
+          events: [],
+        },
+      }),
+    });
+  });
+  await page.goto('/provider/support');
+  await page.getByRole('button', { name: 'Complete review' }).click();
+  const review = page.getByRole('dialog', { name: 'Complete post-access review' });
+  await expect(review).toContainText('Post-access review remains blocked.');
+  await expect(review).toContainText('non-canonical correlation evidence');
+  await review
+    .getByLabel('Review evidence and conclusion')
+    .fill('This must not bypass incomplete evidence.');
+  await expect(review.getByRole('button', { name: 'Complete review' })).toBeDisabled();
+});
+
+test('privileged support finds tenant 150 with the server-backed picker', async ({ page }) => {
+  const tenantSearches: string[] = [];
+  page.on('request', (request) => {
+    const url = new URL(request.url());
+    if (url.pathname === '/api/provider/v1/admin/tenants' && url.searchParams.get('query')) {
+      tenantSearches.push(url.searchParams.get('query') ?? '');
+    }
+  });
+  await page.goto('/provider/support');
+  await page.getByRole('button', { name: 'Start tenant diagnosis' }).click();
+  const request = page.getByRole('dialog', {
+    name: 'Start tenant diagnosis with time-bound access',
+  });
+  const picker = request.getByRole('combobox', { name: 'Tenant' });
+
+  await picker.fill('Tenant 150');
+  await page.getByRole('option', { name: /Tenant 150 Production/ }).click();
+
+  await expect(picker).toHaveValue(/Tenant 150 Production/);
+  expect(tenantSearches).toContain('Tenant 150');
 });
 
 test('privileged support remains usable when the request ledger partially fails', async ({

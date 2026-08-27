@@ -7,18 +7,18 @@ import { FormField } from '@dwp-frontend/design-system/components/forms/form-fie
 import MenuItem from '@mui/material/MenuItem';
 
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
-import { normalizeProductPath } from '../components/product-manifest';
-import { GOVERNED_PRODUCT_MANIFESTS } from '../components/product-manifest-registry';
+import { normalizeProductPath, type ProductSurfaceManifest } from '../components/product-manifest';
+import { useProductApplicationRuntime } from '../components/product-application-runtime';
 import { useProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
 import { canContextAccessNavigation } from '../features/shell/product-surface-context';
 import { resolveProductSurfaceReturnTarget } from '../features/shell/product-surface-layout-model';
 import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
 import { productSurfaceTelemetryEvent } from '../observability/product-surface-telemetry';
-import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 
 import type { ProductSurfaceAccessStateActions } from '../components/product-surface-access-state';
 import type { ProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
 import type { EffectiveScope, SurfaceDecision } from '../features/shell/product-surface-context';
+import type { RegisteredProductRoute } from './product-route-contract-source';
 
 function isFutureInstant(value: string | undefined, serverNowMs: number): boolean {
   if (!value) return true;
@@ -31,11 +31,13 @@ export function resolveCanarySelectableScopes(
   decision: Exclude<SurfaceDecision, { state: 'allowed' }>,
   productId: string,
   surfaceId?: string,
-  routeContractKey?: string
+  routeContractKey?: string,
+  manifest?: ProductSurfaceManifest,
+  registeredRoutes: readonly RegisteredProductRoute[] = []
 ): readonly EffectiveScope[] {
   const envelope = authority.envelope;
-  const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
-  const surface = manifest?.surfaces.find((candidate) => candidate.id === surfaceId);
+  const productManifest = manifest?.id === productId ? manifest : undefined;
+  const surface = productManifest?.surfaces.find((candidate) => candidate.id === surfaceId);
   const serverNowMs = authority.serverNowMs ?? Date.now();
   if (
     !envelope?.decisionRevision.trim() ||
@@ -85,7 +87,7 @@ export function resolveCanarySelectableScopes(
       )
     );
   }
-  const routes = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter(
+  const routes = registeredRoutes.filter(
     (route) =>
       route.routeKind === 'PAGE' &&
       route.routeContractKey === routeContractKey &&
@@ -137,13 +139,15 @@ export function resolveCanaryAccessActionKinds(
 export function resolveCanarySafeReturnPath(
   authority: ReturnType<typeof useProductSurfaceCanaryAuthority>,
   productId: string,
-  surfaceId?: string
+  surfaceId?: string,
+  manifest?: ProductSurfaceManifest,
+  registeredRoutes: readonly RegisteredProductRoute[] = []
 ): string {
-  const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
-  const surface = manifest?.surfaces.find((candidate) => candidate.id === surfaceId);
-  if (!manifest || surface?.plane !== 'management') return '/apps';
+  const productManifest = manifest?.id === productId ? manifest : undefined;
+  const surface = productManifest?.surfaces.find((candidate) => candidate.id === surfaceId);
+  if (!productManifest || surface?.plane !== 'management') return '/apps';
   const allowedRouteIds = new Set(
-    REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.flatMap((route) =>
+    registeredRoutes.flatMap((route) =>
       authority.routeDecisions?.[route.routeContractKey]?.state === 'allowed' &&
       typeof route.routeId === 'string'
         ? [route.routeId]
@@ -152,8 +156,8 @@ export function resolveCanarySafeReturnPath(
   );
   const returnSurfaceId =
     surface.returnSurfaceId ??
-    manifest.surfaces.find((candidate) => candidate.plane === 'work')?.id;
-  const hasAllowedWorkRoute = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.some(
+    productManifest.surfaces.find((candidate) => candidate.plane === 'work')?.id;
+  const hasAllowedWorkRoute = registeredRoutes.some(
     (route) =>
       route.surfaceId === returnSurfaceId &&
       typeof route.routeId === 'string' &&
@@ -161,10 +165,10 @@ export function resolveCanarySafeReturnPath(
   );
   if (!hasAllowedWorkRoute) return '/apps';
   return resolveProductSurfaceReturnTarget(
-    manifest,
+    productManifest,
     surface.id,
     authority.envelope?.contexts ?? [],
-    REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+    registeredRoutes,
     authority.lastAllowedWorkRouteIds,
     allowedRouteIds,
     authority.serverNowMs
@@ -184,6 +188,7 @@ export function ProductCanaryAccessState({
 }) {
   const { t } = useTranslation('common');
   const authority = useProductSurfaceCanaryAuthority();
+  const applicationRuntime = useProductApplicationRuntime();
   const telemetry = useProductSurfaceTelemetry();
   const navigate = useNavigate();
   const location = useLocation();
@@ -191,10 +196,21 @@ export function ProductCanaryAccessState({
   const [selectedScope, setSelectedScope] = useState('');
   const capturedDenialRef = useRef<string | null>(null);
   const scopes = useMemo(
-    () => resolveCanarySelectableScopes(authority, decision, productId, surfaceId, routeId),
-    [authority, decision, productId, routeId, surfaceId]
+    () =>
+      resolveCanarySelectableScopes(
+        authority,
+        decision,
+        productId,
+        surfaceId,
+        routeId,
+        applicationRuntime.productManifests.find((candidate) => candidate.id === productId),
+        applicationRuntime.registeredRoutes
+      ),
+    [applicationRuntime, authority, decision, productId, routeId, surfaceId]
   );
-  const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
+  const manifest = applicationRuntime.productManifests.find(
+    (candidate) => candidate.id === productId
+  );
   const appResourceKey = manifest?.appKey;
   const managementSurface = manifest?.surfaces.some(
     (surface) => surface.id === surfaceId && surface.plane === 'management'
@@ -245,7 +261,13 @@ export function ProductCanaryAccessState({
     Boolean(appResourceKey),
     managementSurface
   );
-  const safeReturnPath = resolveCanarySafeReturnPath(authority, productId, surfaceId);
+  const safeReturnPath = resolveCanarySafeReturnPath(
+    authority,
+    productId,
+    surfaceId,
+    manifest,
+    applicationRuntime.registeredRoutes
+  );
   const actions: ProductSurfaceAccessStateActions = {
     ...(actionKinds.has('retry') ? { retry: () => void authority.revalidate?.() } : {}),
     ...(actionKinds.has('return')

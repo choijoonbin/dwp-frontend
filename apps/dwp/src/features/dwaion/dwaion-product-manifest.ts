@@ -10,6 +10,14 @@ const capability = (capabilityContractKey: string) => ({
 export const DWAION_WORK_NAVIGATION = projectProductSurfaceNavigation(DWAION_NAVIGATION, {
   home: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' } },
   new: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' } },
+  activity: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },
+  },
+  proposals: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },
+  },
   conversations: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },

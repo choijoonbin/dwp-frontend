@@ -69,7 +69,9 @@ Group 단위로 전송합니다.
 `release:evidence:check`는 `R2`·`R3`·외부 결정·승인 원장의 구조와 증거 경로를 검증합니다.
 실제 출시 승인에는 `corepack yarn release:gate`를 사용하며, 외부 성능·접근성·보안·운영
 증거가 완료되기 전에는 의도적으로 실패합니다. GitHub의 수동 `Release readiness`
-워크플로도 같은 Gate를 실행합니다.
+워크플로도 같은 Gate를 실행합니다. 이 워크플로는 공식 `dwp-backend`의 불변 Commit SHA와
+그 Commit에서 Checkout한 계약을 필수 입력으로 사용하므로 Frontend 단독 Snapshot만으로
+출시를 승인하지 않습니다.
 
 브라우저 인증은 JavaScript Token Storage가 아니라 Backend의 `HttpOnly` Session
 Cookie를 사용합니다. 상태 변경 API는 `/api/auth/csrf`에서 받은 Token을

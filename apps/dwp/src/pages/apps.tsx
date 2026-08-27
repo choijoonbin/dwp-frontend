@@ -558,6 +558,7 @@ export default function AppsPage() {
               value={filter}
               onChange={changeFilter}
               aria-label={t('appsPage.filterLabel')}
+              sx={{ maxWidth: '100%', flexWrap: 'wrap' }}
             >
               {APP_FILTERS.map((value) => (
                 <ToggleButton key={value} value={value}>

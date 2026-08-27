@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import {
@@ -9,15 +9,17 @@ import {
 } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
 import {
-  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
-  PRODUCT_LEGACY_ROUTE_SOURCE,
-} from '../../routes/product-page-route-contracts';
-import {
   isSegmentOwnedPath,
   normalizeProductPath,
   type ProductSurfaceManifest,
 } from '../../components/product-manifest';
-import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
+import type { ProductApplicationRuntime } from '../../components/product-application-runtime';
+import {
+  createDirectDecisionClockAnchor,
+  directDecisionServerNow,
+  readMonotonicNowMs,
+  scheduleDirectDecisionLease,
+} from '../../components/direct-decision-lease';
 import { productSurfaceOperationCoordinator } from '../../components/product-surface-operation-coordinator';
 import {
   isProductSurfaceEnforced,
@@ -52,23 +54,66 @@ import type {
   SurfaceDecision,
 } from './product-surface-context';
 import type { ProductSurfaceOperationTarget } from '../../components/product-surface-operation-coordinator';
+import type { ProductPageRouteContractSource } from '../../routes/product-route-contract-source';
 
-export const GOVERNED_SURFACE_PRODUCT_IDS = GOVERNED_PRODUCT_MANIFESTS.map(
-  (manifest) => manifest.id
-);
 const INVALID_FLAGS: ProductSurfaceRolloutFlags = {
   contextShadow: false,
   capabilityEnforcement: true,
   surfaceUi: false,
   surfaceUiEvaluation: 'unavailable',
 };
-export const GOVERNED_SURFACE_PAGE_ROUTES = ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE;
-const CANARY_MANIFESTS = GOVERNED_PRODUCT_MANIFESTS;
-
 type ProductSurfaceNavigationObservation = Readonly<{
   locationKey: string;
   target?: ProductSurfaceOperationTarget;
 }>;
+
+type ActivePageAllowedQueryIdentity = Readonly<{
+  routeContractKey: string;
+  tenantId: string;
+  actorId: string;
+  accessMode: string;
+  productId: string;
+  surfaceId: string;
+  contextScopeKey: string;
+  decisionRevision: string;
+}>;
+
+const DIRECT_EVALUATION_QUERY_PREFIXES = new Set([
+  'product-surface-direct-evaluation',
+  'governed-route-direct-evaluation',
+]);
+
+function revokesActivePageData(decision: SurfaceDecision | undefined): boolean {
+  return Boolean(
+    decision && decision.state !== 'allowed' && decision.state !== 'authority-unavailable'
+  );
+}
+
+function isRouteLocalDirectEvaluationDenial(error: unknown): boolean {
+  return error instanceof HttpError && (error.status === 403 || error.status === 404);
+}
+
+function matchesRevokedActivePageQuery(
+  candidate: {
+    queryKey: readonly unknown[];
+    meta?: Readonly<Record<string, unknown>>;
+  },
+  identity: ActivePageAllowedQueryIdentity
+): boolean {
+  const prefix = candidate.queryKey[0];
+  if (typeof prefix === 'string' && DIRECT_EVALUATION_QUERY_PREFIXES.has(prefix)) return false;
+  const meta = candidate.meta;
+  return Boolean(
+    meta?.accessSensitive === true &&
+    meta.tenantId === identity.tenantId &&
+    meta.actorId === identity.actorId &&
+    meta.accessMode === identity.accessMode &&
+    meta.productId === identity.productId &&
+    meta.surfaceId === identity.surfaceId &&
+    meta.contextScopeKey === identity.contextScopeKey &&
+    meta.decisionRevision === identity.decisionRevision
+  );
+}
 
 function sameOperationTarget(
   left: ProductSurfaceOperationTarget | undefined,
@@ -81,10 +126,7 @@ function sameOperationTarget(
 
 export function resolveGovernedSurfaceOperationTarget(
   surfaceId: string | undefined,
-  routes: readonly Pick<
-    (typeof GOVERNED_SURFACE_PAGE_ROUTES)[number],
-    'productId' | 'surfaceId'
-  >[] = GOVERNED_SURFACE_PAGE_ROUTES
+  routes: readonly Pick<ProductPageRouteContractSource, 'productId' | 'surfaceId'>[] = []
 ): ProductSurfaceOperationTarget | undefined {
   if (!surfaceId) return undefined;
   const owners = [
@@ -109,13 +151,13 @@ export function observeProductSurfaceLocationChange(
 
 export function resolveActiveGovernedSurfaceId(
   pathname: string,
-  routes: readonly (Pick<(typeof GOVERNED_SURFACE_PAGE_ROUTES)[number], 'pattern' | 'surfaceId'> &
-    Partial<Pick<(typeof GOVERNED_SURFACE_PAGE_ROUTES)[number], 'routeContractKey'>>)[],
+  routes: readonly (Pick<ProductPageRouteContractSource, 'pattern' | 'surfaceId'> &
+    Partial<Pick<ProductPageRouteContractSource, 'routeContractKey'>>)[],
   manifests: readonly ProductSurfaceManifest[] = [],
   legacyRedirects: readonly {
     sourcePath: `/${string}`;
     targetRouteContractKey: string;
-  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+  }[] = []
 ): string | undefined {
   const canonicalPathname = decodeGovernedPathname(pathname);
   const matches = matchingGovernedPageRoutes(canonicalPathname, routes);
@@ -164,15 +206,16 @@ export function resolveActiveGovernedSurfaceId(
 }
 
 export function resolveActiveGovernedPageRoute(
-  pathname: string
-): (typeof GOVERNED_SURFACE_PAGE_ROUTES)[number] | undefined;
+  pathname: string,
+  routes?: readonly ProductPageRouteContractSource[]
+): ProductPageRouteContractSource | undefined;
 export function resolveActiveGovernedPageRoute<T extends { pattern: string }>(
   pathname: string,
   routes: readonly T[]
 ): T | undefined;
 export function resolveActiveGovernedPageRoute(
   pathname: string,
-  routes: readonly { pattern: string }[] = GOVERNED_SURFACE_PAGE_ROUTES
+  routes: readonly { pattern: string }[] = []
 ) {
   return highestSpecificityPageRoute(
     matchingGovernedPageRoutes(decodeGovernedPathname(pathname), routes)
@@ -181,11 +224,11 @@ export function resolveActiveGovernedPageRoute(
 
 export function resolveActiveGovernedEvaluationRouteContractKey(
   pathname: string,
-  routes: readonly { pattern: string; routeContractKey: string }[] = GOVERNED_SURFACE_PAGE_ROUTES,
+  routes: readonly { pattern: string; routeContractKey: string }[] = [],
   legacyRedirects: readonly {
     sourcePath: `/${string}`;
     targetRouteContractKey: string;
-  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+  }[] = []
 ): string | undefined {
   const canonicalPathname = decodeGovernedPathname(pathname);
   const activePage = resolveActiveGovernedPageRoute(canonicalPathname, routes);
@@ -206,14 +249,14 @@ export function resolveActiveGovernedEvaluationRouteContractKey(
 export function resolveActiveGovernedProductId(
   pathname: string,
   routes: readonly Pick<
-    (typeof GOVERNED_SURFACE_PAGE_ROUTES)[number],
+    ProductPageRouteContractSource,
     'pattern' | 'productId' | 'routeContractKey'
-  >[] = GOVERNED_SURFACE_PAGE_ROUTES,
-  manifests: readonly Pick<ProductSurfaceManifest, 'id' | 'basePath'>[] = CANARY_MANIFESTS,
+  >[] = [],
+  manifests: readonly Pick<ProductSurfaceManifest, 'id' | 'basePath'>[] = [],
   legacyRedirects: readonly {
     sourcePath: `/${string}`;
     targetRouteContractKey: string;
-  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+  }[] = []
 ): string | undefined {
   const canonicalPathname = decodeGovernedPathname(pathname);
   const pageRoute = resolveActiveGovernedPageRoute(canonicalPathname, routes);
@@ -252,11 +295,11 @@ export function resolveGovernedPageEvaluationRoutes<
 >(
   pathname: string,
   routes: readonly T[],
-  manifests: readonly Pick<ProductSurfaceManifest, 'id' | 'basePath'>[] = CANARY_MANIFESTS,
+  manifests: readonly Pick<ProductSurfaceManifest, 'id' | 'basePath'>[] = [],
   legacyRedirects: readonly {
     sourcePath: `/${string}`;
     targetRouteContractKey: string;
-  }[] = PRODUCT_LEGACY_ROUTE_SOURCE
+  }[] = []
 ): readonly T[] {
   const productId = resolveActiveGovernedProductId(pathname, routes, manifests, legacyRedirects);
   return productId ? routes.filter((route) => route.productId === productId) : [];
@@ -439,6 +482,13 @@ function safeDirectDecision(
   }
 }
 
+function isAuthoritativeDirectEvaluationError(error: unknown): boolean {
+  return (
+    error instanceof HttpError &&
+    (error.status === 403 || error.status === 404 || error.status === 409 || error.status === 503)
+  );
+}
+
 function decisionFromError(error: unknown): SurfaceDecision {
   if (!(error instanceof HttpError)) return { state: 'authority-unavailable' };
   const details =
@@ -478,16 +528,42 @@ function surfaceDecision(
   );
 }
 
-export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNode }) {
+export function ProductSurfaceAuthorityBridge({
+  children,
+  runtime,
+}: {
+  children?: ReactNode;
+  runtime: ProductApplicationRuntime;
+}) {
   const authority = useProductSurfaceAuthority();
   const auth = useAuth();
+  const queryClient = useQueryClient();
   const location = useLocation();
+  const [directDecisionMonotonicFloorMs, setDirectDecisionMonotonicFloorMs] = useState(() =>
+    readMonotonicNowMs()
+  );
   const snapshot = authority.status === 'ready' ? authority.snapshot : undefined;
+  const directDecisionClockAnchorRef = useRef<
+    | {
+        snapshot: ProductSurfaceAuthoritySnapshot;
+        anchor: ReturnType<typeof createDirectDecisionClockAnchor>;
+      }
+    | undefined
+  >(undefined);
+  if (snapshot && directDecisionClockAnchorRef.current?.snapshot !== snapshot) {
+    directDecisionClockAnchorRef.current = {
+      snapshot,
+      anchor: createDirectDecisionClockAnchor(snapshot.clockOffsetMs),
+    };
+  } else if (!snapshot) {
+    directDecisionClockAnchorRef.current = undefined;
+  }
+  const directDecisionClockAnchor = directDecisionClockAnchorRef.current?.anchor;
   const envelope = useMemo(() => (snapshot ? effectiveEnvelope(snapshot) : undefined), [snapshot]);
   const productFlags = useMemo(
     () =>
       Object.fromEntries(
-        GOVERNED_SURFACE_PRODUCT_IDS.map((productKey) => {
+        runtime.productIds.map((productKey) => {
           const resolution = authority.rolloutForProduct(productKey);
           return [
             productKey,
@@ -500,7 +576,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
           ];
         })
       ) as Record<string, ProductSurfaceRolloutFlags>,
-    [authority]
+    [authority, runtime.productIds]
   );
   const requestedScope = useMemo(
     () => new URLSearchParams(location.search).get('scope') ?? undefined,
@@ -510,31 +586,38 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
     () =>
       resolveActiveGovernedSurfaceId(
         location.pathname,
-        GOVERNED_SURFACE_PAGE_ROUTES,
-        CANARY_MANIFESTS
+        runtime.pageRoutes,
+        runtime.productManifests,
+        runtime.legacyRoutes
       ),
-    [location.pathname]
+    [location.pathname, runtime.legacyRoutes, runtime.pageRoutes, runtime.productManifests]
   );
   const activePageRoute = useMemo(
-    () => resolveActiveGovernedPageRoute(location.pathname),
-    [location.pathname]
+    () => resolveActiveGovernedPageRoute(location.pathname, runtime.pageRoutes),
+    [location.pathname, runtime.pageRoutes]
   );
   const activeEvaluationRouteContractKey = useMemo(
-    () => resolveActiveGovernedEvaluationRouteContractKey(location.pathname),
-    [location.pathname]
+    () =>
+      resolveActiveGovernedEvaluationRouteContractKey(
+        location.pathname,
+        runtime.pageRoutes,
+        runtime.legacyRoutes
+      ),
+    [location.pathname, runtime.legacyRoutes, runtime.pageRoutes]
   );
   const evaluationRoutes = useMemo(
     () =>
       resolveGovernedPageEvaluationRoutes(
         location.pathname,
-        GOVERNED_SURFACE_PAGE_ROUTES,
-        CANARY_MANIFESTS
+        runtime.pageRoutes,
+        runtime.productBoundaries,
+        runtime.legacyRoutes
       ),
-    [location.pathname]
+    [location.pathname, runtime.legacyRoutes, runtime.pageRoutes, runtime.productBoundaries]
   );
   const activeOperationTarget = useMemo(
-    () => resolveGovernedSurfaceOperationTarget(activeSurfaceId),
-    [activeSurfaceId]
+    () => resolveGovernedSurfaceOperationTarget(activeSurfaceId, runtime.pageRoutes),
+    [activeSurfaceId, runtime.pageRoutes]
   );
   const navigationObservationRef = useRef<ProductSurfaceNavigationObservation>({
     locationKey: location.key,
@@ -589,6 +672,7 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
       queryFn: ({ signal }) => authority.evaluateProduct(request, { signal }),
       retry: false,
       staleTime: Number.POSITIVE_INFINITY,
+      gcTime: 0,
       meta: {
         accessSensitive: true,
         tenantId: String(auth.user?.tenantId ?? ''),
@@ -601,22 +685,119 @@ export function ProductSurfaceAuthorityBridge({ children }: { children: ReactNod
       },
     })),
   });
+  const directDecisionLeaseSignature = JSON.stringify(
+    evaluations.map((result) =>
+      result.data?.decision === 'ALLOWED' && typeof result.data.revalidateAt === 'string'
+        ? result.data.revalidateAt
+        : null
+    )
+  );
+  useEffect(() => {
+    if (!snapshot || !directDecisionClockAnchor || requests.length === 0) return undefined;
+    const deadlines = JSON.parse(directDecisionLeaseSignature) as (string | null)[];
+    const cancellations: (() => void)[] = [];
+    requests.forEach(({ request }, index) => {
+      const revalidateAt = deadlines[index];
+      if (!revalidateAt) return;
+      const serverDeadlineMs = Date.parse(revalidateAt);
+      if (!Number.isFinite(serverDeadlineMs)) return;
+      const queryKey = productSurfaceEvaluationQueryKey(snapshot, request, {
+        tenantId: String(auth.user?.tenantId ?? ''),
+        actorId: String(auth.user?.userId ?? ''),
+      });
+      const refetchExact = () => {
+        void queryClient.refetchQueries(
+          { queryKey, exact: true, type: 'active' },
+          { cancelRefetch: false }
+        );
+      };
+      cancellations.push(
+        scheduleDirectDecisionLease({
+          anchor: directDecisionClockAnchor,
+          serverDeadlineMs,
+          onRenew: refetchExact,
+          onExpire: () => {
+            setDirectDecisionMonotonicFloorMs(readMonotonicNowMs());
+            refetchExact();
+          },
+        })
+      );
+    });
+    return () => cancellations.forEach((cancel) => cancel());
+  }, [
+    auth.user?.tenantId,
+    auth.user?.userId,
+    directDecisionClockAnchor,
+    directDecisionLeaseSignature,
+    queryClient,
+    requests,
+    snapshot,
+  ]);
+  const directDecisionServerNowMs = directDecisionClockAnchor
+    ? directDecisionServerNow(directDecisionClockAnchor, directDecisionMonotonicFloorMs)
+    : undefined;
   const routeDecisions = useMemo(() => {
     const entries = requests.map(({ route }, index) => {
       const result = evaluations[index];
-      const decision = result?.data
-        ? safeDirectDecision(
-            result.data,
-            { productKey: route.productId, surfaceKey: route.surfaceId },
-            authority.serverNowMs
-          )
-        : result?.error
-          ? decisionFromError(result.error)
-          : ({ state: 'authority-unavailable' } as const);
+      const decision = isAuthoritativeDirectEvaluationError(result?.error)
+        ? decisionFromError(result?.error)
+        : result?.data
+          ? safeDirectDecision(
+              result.data,
+              { productKey: route.productId, surfaceKey: route.surfaceId },
+              directDecisionServerNowMs
+            )
+          : result?.error
+            ? decisionFromError(result.error)
+            : ({ state: 'authority-unavailable' } as const);
       return [route.routeContractKey, decision] as const;
     });
     return Object.fromEntries(entries);
-  }, [authority.serverNowMs, evaluations, requests]);
+  }, [directDecisionServerNowMs, evaluations, requests]);
+  const previousActivePageAllow = useRef<ActivePageAllowedQueryIdentity | null>(null);
+  const activePageDecision = activePageRoute
+    ? routeDecisions[activePageRoute.routeContractKey]
+    : undefined;
+  const activePageEvaluationIndex = activePageRoute
+    ? requests.findIndex(({ route }) => route.routeContractKey === activePageRoute.routeContractKey)
+    : -1;
+  const activePageEvaluationError =
+    activePageEvaluationIndex >= 0 ? evaluations[activePageEvaluationIndex]?.error : undefined;
+  const activePageAccessRevoked =
+    isRouteLocalDirectEvaluationDenial(activePageEvaluationError) ||
+    revokesActivePageData(activePageDecision);
+  useEffect(() => {
+    if (!activePageRoute || !auth.user) return;
+    if (activePageDecision?.state === 'allowed') {
+      previousActivePageAllow.current = {
+        routeContractKey: activePageRoute.routeContractKey,
+        tenantId: String(auth.user.tenantId),
+        actorId: String(auth.user.userId),
+        accessMode: activePageDecision.context.accessMode,
+        productId: activePageDecision.context.productKey,
+        surfaceId: activePageDecision.context.surfaceKey,
+        contextScopeKey: activePageDecision.scope.key,
+        decisionRevision: activePageDecision.decisionRevision,
+      };
+      return;
+    }
+    if (!activePageAccessRevoked) return;
+    const previous = previousActivePageAllow.current;
+    if (!previous || previous.routeContractKey !== activePageRoute.routeContractKey) return;
+    previousActivePageAllow.current = null;
+    const matches = (candidate: {
+      queryKey: readonly unknown[];
+      meta?: Readonly<Record<string, unknown>>;
+    }) => matchesRevokedActivePageQuery(candidate, previous);
+    let cancellation: Promise<void>;
+    try {
+      cancellation = queryClient.cancelQueries({ predicate: matches });
+    } catch {
+      cancellation = Promise.resolve();
+    }
+    queryClient.removeQueries({ predicate: matches });
+    void cancellation.catch(() => undefined);
+  }, [activePageAccessRevoked, activePageDecision, activePageRoute, auth.user, queryClient]);
   const pendingRoutes = useMemo(
     () =>
       Object.fromEntries(

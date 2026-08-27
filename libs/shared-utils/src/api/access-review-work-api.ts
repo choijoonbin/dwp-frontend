@@ -4,10 +4,7 @@ import type { ApiResponse } from '../types';
 
 export type AccessReviewWorkDecision = 'PENDING' | 'APPROVE' | 'REVOKE';
 export type AccessReviewWorkRemediationState =
-  | 'NOT_REQUIRED'
-  | 'PENDING'
-  | 'APPLIED'
-  | 'MANUAL_REQUIRED';
+  'NOT_REQUIRED' | 'PENDING' | 'APPLIED' | 'MANUAL_REQUIRED';
 
 export type AccessReviewWorkDetail = {
   workItemRef: string;

@@ -22,6 +22,7 @@ import {
   type PersonalPreferenceValues,
 } from '@dwp-frontend/shared-utils';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 
@@ -43,6 +44,9 @@ type PersonalPreferenceContextValue = {
 
 const PersonalPreferenceContext = createContext<PersonalPreferenceContextValue | null>(null);
 const SAVE_DEBOUNCE_MS = 250;
+const PROVIDER_PREFERENCE_STORAGE_PREFIX = 'dwp.provider-realm-preference.v2';
+const LEGACY_PROVIDER_PREFERENCE_STORAGE_PREFIX = 'dwp.provider-preference.v1';
+const PROVIDER_REALM_KEY = 'DWP_PROVIDER';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -118,6 +122,120 @@ function normalizePreference(
   };
 }
 
+function normalizeProviderValues(
+  values: Partial<PersonalPreferenceValues> | undefined,
+  defaults: UserAppearancePreference
+): PersonalPreferenceValues {
+  const normalized = normalizeValues(values, defaults);
+  // Provider-local storage is a strict personal-settings boundary. Never retain
+  // tenant-owned or future wire namespaces that may be present in copied data.
+  return {
+    appearance: normalized.appearance,
+    accessibility: normalized.accessibility,
+    regional: normalized.regional,
+  };
+}
+
+export function providerPreferenceStorageKey(identity: string): string {
+  return `${PROVIDER_PREFERENCE_STORAGE_PREFIX}:${identity}`;
+}
+
+export function providerRealmPreferenceIdentity(userId: number | string): string {
+  return `realm:${PROVIDER_REALM_KEY}:user:${userId}`;
+}
+
+export function legacyProviderPreferenceStorageKey(identity: string): string {
+  return `${LEGACY_PROVIDER_PREFERENCE_STORAGE_PREFIX}:${identity}`;
+}
+
+function createProviderLocalPreference(
+  values: Partial<PersonalPreferenceValues> | undefined,
+  defaults: UserAppearancePreference,
+  updatedAt: string | null = null
+): PersonalPreference {
+  return {
+    schemaVersion: 2,
+    customized: Boolean(values),
+    preferences: normalizeProviderValues(values, defaults),
+    // PersonalPreference's wire type currently requires a tenant managed-policy shape.
+    // Provider routes never expose the managed section; this empty value is local compatibility data.
+    managedPolicy: {
+      policyId: 'provider-local-preference',
+      scope: 'TENANT',
+      source: 'TENANT_EXPERIENCE_POLICY',
+      ownerType: 'ROLE',
+      ownerRef: 'PROVIDER_OPERATOR',
+      ownerDisplayName: 'Provider operator',
+      managedPaths: [],
+      rules: [],
+      version: 0,
+    },
+    version: 0,
+    updatedAt,
+  };
+}
+
+export function readProviderLocalPreference(
+  identity: string,
+  legacyIdentity: string,
+  defaults: UserAppearancePreference
+): PersonalPreference {
+  if (typeof window === 'undefined') return createProviderLocalPreference(undefined, defaults);
+  try {
+    const targetKey = providerPreferenceStorageKey(identity);
+    const legacyKey = legacyProviderPreferenceStorageKey(legacyIdentity);
+    const current = window.localStorage.getItem(targetKey);
+    const legacy = current === null ? window.localStorage.getItem(legacyKey) : null;
+    const stored = JSON.parse(current ?? legacy ?? 'null') as {
+      preferences?: Partial<PersonalPreferenceValues>;
+      updatedAt?: string | null;
+    } | null;
+    const preference = createProviderLocalPreference(
+      stored?.preferences,
+      defaults,
+      stored?.updatedAt ?? null
+    );
+    if (stored) writeProviderLocalPreference(identity, preference);
+    if (legacy !== null) window.localStorage.removeItem(legacyKey);
+    return preference;
+  } catch {
+    return createProviderLocalPreference(undefined, defaults);
+  }
+}
+
+function writeProviderLocalPreference(
+  identity: string,
+  preference: PersonalPreference,
+  storage?: Pick<Storage, 'setItem'>
+) {
+  const target = storage ?? (typeof window === 'undefined' ? null : window.localStorage);
+  if (!target) return;
+  target.setItem(
+    providerPreferenceStorageKey(identity),
+    JSON.stringify({
+      preferences: preference.preferences,
+      updatedAt: preference.updatedAt ?? null,
+    })
+  );
+}
+
+export function updateProviderLocalPreference(
+  identity: string,
+  current: PersonalPreference,
+  patch: PersonalPreferencePatch,
+  defaults: UserAppearancePreference,
+  updatedAt: string,
+  storage?: Pick<Storage, 'setItem'>
+): PersonalPreference {
+  const next = createProviderLocalPreference(
+    mergePatch(current.preferences, patch),
+    defaults,
+    updatedAt
+  );
+  writeProviderLocalPreference(identity, next, storage);
+  return next;
+}
+
 function toAppearance(
   values: PersonalPreferenceValues,
   defaults: UserAppearancePreference
@@ -130,8 +248,11 @@ function toAppearance(
   };
 }
 
-function applyDocumentPreferences(values: PersonalPreferenceValues) {
-  const regional = writeRegionalPreference(normalizeRegionalPreference(values.regional));
+function applyDocumentPreferences(values: PersonalPreferenceValues, persistRegional = true) {
+  const normalizedRegional = normalizeRegionalPreference(values.regional);
+  const regional = persistRegional
+    ? writeRegionalPreference(normalizedRegional)
+    : normalizedRegional;
   document.documentElement.dataset.underlineLinks = values.accessibility.underlineLinks
     ? 'always'
     : 'standard';
@@ -156,6 +277,7 @@ function optimisticPreference(
 
 export function PersonalPreferenceProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
+  const providerAccount = isProviderIdentity(auth.user);
   const appearance = useAppearance();
   const appearanceDefaults = appearance.policy.defaults;
   const replaceAppearancePreference = appearance.replacePreference;
@@ -170,7 +292,15 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   const mounted = useRef(true);
   const [saveState, setSaveState] = useState<PersonalPreferenceSaveState>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
-  const identity = auth.user ? `${auth.user.tenantId}:${auth.user.userId}` : null;
+  const [providerPreference, setProviderPreference] = useState<PersonalPreference | null>(null);
+  const identity = auth.user
+    ? providerAccount
+      ? providerRealmPreferenceIdentity(auth.user.userId)
+      : `tenant:${auth.user.tenantId}:${auth.user.userId}`
+    : null;
+  const legacyProviderIdentity = auth.user
+    ? `provider:${auth.user.tenantId}:${auth.user.userId}`
+    : null;
   const queryKey = useMemo(
     () => ['personal-preference', auth.user?.tenantId, auth.user?.userId] as const,
     [auth.user?.tenantId, auth.user?.userId]
@@ -178,7 +308,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   const preferenceQuery = useQuery({
     queryKey,
     queryFn: async () => normalizePreference(await getPersonalPreference(), appearanceDefaults),
-    enabled: Boolean(auth.user),
+    enabled: Boolean(auth.user) && !providerAccount,
     staleTime: 0,
     retry: 1,
     refetchOnMount: 'always',
@@ -258,6 +388,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       appliedIdentity.current = null;
       serverPreference.current = null;
       queuedPatch.current = null;
+      setProviderPreference(null);
       setSaveState('idle');
       return;
     }
@@ -265,6 +396,24 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       appliedIdentity.current = identity;
       serverPreference.current = null;
       queuedPatch.current = null;
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        saveTimer.current = null;
+      }
+      if (providerAccount) {
+        const localPreference = readProviderLocalPreference(
+          identity,
+          legacyProviderIdentity ?? '',
+          appearanceDefaults
+        );
+        setProviderPreference(localPreference);
+        replaceAppearancePreference(toAppearance(localPreference.preferences, appearanceDefaults));
+        applyDocumentPreferences(localPreference.preferences, false);
+        setLastSavedAt(localPreference.updatedAt ?? null);
+        setSaveState('idle');
+        return;
+      }
+      setProviderPreference(null);
       replaceAppearancePreference(appearanceDefaults);
       applyDocumentPreferences({
         appearance: { mode: appearanceDefaults.mode, density: appearanceDefaults.density },
@@ -277,6 +426,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
         regional: defaultRegionalPreference,
       });
     }
+    if (providerAccount) return;
     if (preferenceQuery.data && !inFlight.current && !queuedPatch.current) {
       serverPreference.current = preferenceQuery.data;
       replaceAppearancePreference(
@@ -285,10 +435,34 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       applyDocumentPreferences(preferenceQuery.data.preferences);
       setLastSavedAt(preferenceQuery.data.updatedAt ?? null);
     }
-  }, [appearanceDefaults, identity, preferenceQuery.data, replaceAppearancePreference]);
+  }, [
+    appearanceDefaults,
+    identity,
+    preferenceQuery.data,
+    providerAccount,
+    legacyProviderIdentity,
+    replaceAppearancePreference,
+  ]);
 
   const update = useCallback(
     (patch: PersonalPreferencePatch) => {
+      if (providerAccount) {
+        if (!identity || !providerPreference) return;
+        const updatedAt = new Date().toISOString();
+        const next = updateProviderLocalPreference(
+          identity,
+          providerPreference,
+          patch,
+          appearanceDefaults,
+          updatedAt
+        );
+        setProviderPreference(next);
+        replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
+        applyDocumentPreferences(next.preferences, false);
+        setLastSavedAt(updatedAt);
+        setSaveState('saved');
+        return;
+      }
       const current = queryClient.getQueryData<PersonalPreference>(queryKey);
       if (!current || preferenceQuery.isError) return;
       queuedPatch.current = mergeQueuedPatch(queuedPatch.current, patch);
@@ -299,14 +473,32 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     [
       appearanceDefaults,
       applyPreference,
+      identity,
       preferenceQuery.isError,
+      providerAccount,
+      providerPreference,
       queryClient,
       queryKey,
+      replaceAppearancePreference,
       scheduleSave,
     ]
   );
 
   const reset = useCallback(async () => {
+    if (providerAccount) {
+      if (!identity) return;
+      const next = createProviderLocalPreference(undefined, appearanceDefaults);
+      window.localStorage.removeItem(providerPreferenceStorageKey(identity));
+      if (legacyProviderIdentity) {
+        window.localStorage.removeItem(legacyProviderPreferenceStorageKey(legacyProviderIdentity));
+      }
+      setProviderPreference(next);
+      replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
+      applyDocumentPreferences(next.preferences, false);
+      setLastSavedAt(null);
+      setSaveState('idle');
+      return;
+    }
     if (!serverPreference.current || inFlight.current || queuedPatch.current) return;
     inFlight.current = true;
     setSaveState('saving');
@@ -332,18 +524,31 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
       inFlight.current = false;
       if (queuedPatch.current) scheduleSave();
     }
-  }, [appearanceDefaults, applyPreference, scheduleSave, t, toast]);
+  }, [
+    appearanceDefaults,
+    applyPreference,
+    identity,
+    legacyProviderIdentity,
+    providerAccount,
+    replaceAppearancePreference,
+    scheduleSave,
+    t,
+    toast,
+  ]);
 
   const retry = useCallback(() => {
+    if (providerAccount) return;
     void preferenceQuery.refetch();
-  }, [preferenceQuery]);
+  }, [preferenceQuery, providerAccount]);
 
   const value = useMemo<PersonalPreferenceContextValue>(
     () => ({
-      preference: preferenceQuery.data ?? null,
-      isLoading: preferenceQuery.isPending,
+      preference: providerAccount ? providerPreference : (preferenceQuery.data ?? null),
+      isLoading: providerAccount
+        ? Boolean(identity) && !providerPreference
+        : preferenceQuery.isPending,
       isSaving: saveState === 'saving',
-      loadFailed: preferenceQuery.isError,
+      loadFailed: providerAccount ? false : preferenceQuery.isError,
       saveState,
       lastSavedAt,
       update,
@@ -352,9 +557,12 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     }),
     [
       lastSavedAt,
+      identity,
       preferenceQuery.data,
       preferenceQuery.isError,
       preferenceQuery.isPending,
+      providerAccount,
+      providerPreference,
       reset,
       retry,
       saveState,

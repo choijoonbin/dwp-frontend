@@ -21,7 +21,7 @@ export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
   inventoryKey: 'product-surface-rollout-products.v1',
-  checksum: '841e2cd03d6eac70f0787160d77532d56c309af4c63214c2dc50e2101e303aa2',
+  checksum: '0385e6c66e1feac42198842bd4f20473405813be3a3f187d46cf7bba39fcd822',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_PRODUCTS = [
@@ -31,6 +31,7 @@ export const PRODUCT_SURFACE_ROLLOUT_PRODUCTS = [
   'dwaion',
   'hcm',
   'mail',
+  'meetings',
   'messaging',
   'notifications',
   'services',

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-tenant-policy-seeds.v1.schema.json",
+  "title": "DWP Tenant Widget Policy Seed Baseline V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "baselineGeneration", "actorPlane", "surfaceKey", "policies"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "baselineGeneration": { "const": 1 },
+    "actorPlane": { "const": "SYSTEM_MIGRATION" },
+    "surfaceKey": { "const": "workspace-home" },
+    "policies": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/policy" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "legacyWidgetKey",
+        "definitionKey",
+        "manifestHash",
+        "state",
+        "revision",
+        "predecessorRevision",
+        "enabled",
+        "selector",
+        "supportedSurfaceKeys",
+        "audienceSelector",
+        "required",
+        "lockedConfiguration",
+        "sharingPolicy",
+        "reasonCode"
+      ],
+      "properties": {
+        "legacyWidgetKey": {
+          "enum": ["activity", "command-rail", "daily-brief", "focus", "schedule"]
+        },
+        "definitionKey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*){2,5}$"
+        },
+        "manifestHash": { "$ref": "#/$defs/sha256" },
+        "state": { "const": "PUBLISHED" },
+        "revision": { "const": 1 },
+        "predecessorRevision": { "type": "null" },
+        "enabled": { "const": true },
+        "selector": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "channel", "versionId"],
+          "properties": {
+            "kind": { "const": "CHANNEL" },
+            "channel": { "const": "STABLE" },
+            "versionId": { "type": "null" }
+          }
+        },
+        "supportedSurfaceKeys": {
+          "type": "array",
+          "prefixItems": [{ "const": "workspace-home" }],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "audienceSelector": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schemaVersion", "mode", "roleCodes", "groupRefs"],
+          "properties": {
+            "schemaVersion": { "const": 1 },
+            "mode": { "const": "ALL_ENTITLED" },
+            "roleCodes": { "type": "array", "maxItems": 0 },
+            "groupRefs": { "type": "array", "maxItems": 0 }
+          }
+        },
+        "required": { "const": false },
+        "lockedConfiguration": { "type": "array", "maxItems": 0 },
+        "sharingPolicy": { "const": "PRIVATE_ONLY" },
+        "reasonCode": { "const": "LEGACY_BASELINE" }
+      }
+    }
+  }
+}

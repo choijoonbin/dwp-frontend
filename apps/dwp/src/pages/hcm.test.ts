@@ -41,7 +41,9 @@ function renderPage(path: string) {
 
 describe('HCM legacy page guard', () => {
   beforeEach(() => {
-    pageMocks.useAuth.mockReturnValue({ user: { roles: [] } });
+    pageMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'TENANT', roles: [], resourceRoles: [] },
+    });
     pageMocks.usePermissions.mockReturnValue({
       isLoaded: true,
       hasPermission: vi.fn(() => false),
@@ -59,7 +61,9 @@ describe('HCM legacy page guard', () => {
   });
 
   it('denies /hr/pay before mounting its page experience for WORKFORCE_READ support', () => {
-    pageMocks.useAuth.mockReturnValue({ user: { roles: ['PROVIDER_SUPPORT'] } });
+    pageMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'PROVIDER', roles: ['PROVIDER_SUPPORT'], resourceRoles: [] },
+    });
     pageMocks.usePermissions.mockReturnValue({
       isLoaded: true,
       hasPermission: vi.fn(() => true),

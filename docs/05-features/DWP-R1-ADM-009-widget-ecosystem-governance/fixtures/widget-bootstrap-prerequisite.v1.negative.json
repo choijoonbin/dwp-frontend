@@ -1,0 +1,80 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "caseId": "unknown-prerequisite-field",
+      "mutation": "ADD_UNKNOWN_ROOT",
+      "expectedCode": "SCHEMA_UNKNOWN_FIELD"
+    },
+    {
+      "caseId": "missing-non-injection-test",
+      "mutation": "REMOVE_NON_INJECTION",
+      "expectedCode": "SCHEMA_REQUIRED"
+    },
+    {
+      "caseId": "failed-contract-test",
+      "mutation": "FAILED_CONTRACT_TEST",
+      "expectedCode": "SCHEMA_CONST"
+    },
+    { "caseId": "symmetric-ci-jws", "mutation": "HS256_HEADER", "expectedCode": "SCHEMA_CONST" },
+    { "caseId": "wrong-ci-audience", "mutation": "WRONG_AUDIENCE", "expectedCode": "SCHEMA_CONST" },
+    { "caseId": "ci-ttl-too-long", "mutation": "TTL_TOO_LONG", "expectedCode": "CI_TTL_INVALID" },
+    {
+      "caseId": "prerequisite-digest-mismatch",
+      "mutation": "DIGEST_MISMATCH",
+      "expectedCode": "CI_PREREQUISITE_BINDING_MISMATCH"
+    },
+    {
+      "caseId": "artifact-digest-mismatch",
+      "mutation": "ARTIFACT_DIGEST_MISMATCH",
+      "expectedCode": "CI_ARTIFACT_BINDING_MISMATCH"
+    },
+    {
+      "caseId": "source-commit-mismatch",
+      "mutation": "SOURCE_COMMIT_MISMATCH",
+      "expectedCode": "CI_SOURCE_BINDING_MISMATCH"
+    },
+    {
+      "caseId": "runbook-path-swap",
+      "mutation": "SWAP_RUNBOOK_PATHS",
+      "expectedCode": "PREREQUISITE_RUNBOOK_PATH_MISMATCH"
+    },
+    { "caseId": "replayed-ci-jti", "mutation": "REPLAYED_JTI", "expectedCode": "CI_JTI_REPLAYED" },
+    {
+      "caseId": "invalid-migration-version",
+      "mutation": "INVALID_MIGRATION_VERSION",
+      "expectedCode": "SCHEMA_PATTERN"
+    },
+    {
+      "caseId": "forged-ci-signature",
+      "mutation": "FORGED_SIGNATURE",
+      "expectedCode": "CI_SIGNATURE_INVALID"
+    },
+    {
+      "caseId": "forged-then-valid-same-jti",
+      "mutation": "FORGED_THEN_VALID_SAME_JTI",
+      "expectedCode": "CI_SIGNATURE_INVALID"
+    },
+    { "caseId": "unknown-ci-kid", "mutation": "UNKNOWN_KID", "expectedCode": "CI_KID_UNPINNED" },
+    {
+      "caseId": "expired-ci-attestation",
+      "mutation": "EXPIRED_AT_VERIFICATION",
+      "expectedCode": "CI_ATTESTATION_EXPIRED"
+    },
+    {
+      "caseId": "not-yet-valid-ci-attestation",
+      "mutation": "NOT_YET_VALID_AT_VERIFICATION",
+      "expectedCode": "CI_ATTESTATION_NOT_YET_VALID"
+    },
+    {
+      "caseId": "missing-local-operational-artifact",
+      "mutation": "MISSING_LOCAL_ARTIFACT",
+      "expectedCode": "PREREQUISITE_ARTIFACT_MISSING"
+    },
+    {
+      "caseId": "local-operational-content-mismatch",
+      "mutation": "LOCAL_ARTIFACT_CONTENT_MISMATCH",
+      "expectedCode": "PREREQUISITE_LOCAL_ARTIFACT_MISMATCH"
+    }
+  ]
+}

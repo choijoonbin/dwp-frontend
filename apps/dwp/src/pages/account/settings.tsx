@@ -42,6 +42,8 @@ import {
   type ManagedPreferenceRule,
   type PreferenceExceptionRequest,
 } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
 import {
   ActionButton,
@@ -95,6 +97,8 @@ export default function SettingsPage() {
   const [businessImpact, setBusinessImpact] = useState('');
   const [exceptionBusy, setExceptionBusy] = useState(false);
   const appearance = useAppearance();
+  const auth = useAuth();
+  const providerAccount = isProviderIdentity(auth.user);
   const personalPreference = usePersonalPreference();
   const {
     language,
@@ -105,28 +109,38 @@ export default function SettingsPage() {
   } = usePreferredLanguage();
   const registeredColorModes = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.COLOR_MODE',
-    colorModeOptions
+    colorModeOptions,
+    !providerAccount
   );
-  const registeredDensities = useSystemCodeOptions('PLATFORM.PREFERENCE.DENSITY', densityOptions);
+  const registeredDensities = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.DENSITY',
+    densityOptions,
+    !providerAccount
+  );
   const registeredTimeZones = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.TIME_ZONE',
-    timeZoneOptions
+    timeZoneOptions,
+    !providerAccount
   );
   const registeredDateFormats = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.DATE_FORMAT',
-    dateFormatOptions
+    dateFormatOptions,
+    !providerAccount
   );
   const registeredTimeFormats = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.TIME_FORMAT',
-    timeFormatOptions
+    timeFormatOptions,
+    !providerAccount
   );
   const registeredFirstDays = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.FIRST_DAY_OF_WEEK',
-    firstDayOfWeekOptions
+    firstDayOfWeekOptions,
+    !providerAccount
   );
   const registeredNumberFormats = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.NUMBER_FORMAT',
-    numberFormatOptions
+    numberFormatOptions,
+    !providerAccount
   );
   const managedFontName = appearance.tenant.fontFamily ?? t('managed.systemFont');
   const preferenceValues = personalPreference.preference?.preferences;
@@ -136,7 +150,7 @@ export default function SettingsPage() {
   const managedExceptionsQuery = useQuery({
     queryKey: ['personal-preferences', 'managed-exceptions'],
     queryFn: listMyPreferenceExceptions,
-    enabled: section === 'managed',
+    enabled: section === 'managed' && !providerAccount,
   });
   const managedExceptions = managedExceptionsQuery.data ?? [];
   const pendingExceptionPaths = new Set(
@@ -246,7 +260,11 @@ export default function SettingsPage() {
         />
         <PreferenceGroup
           title={t('sections.appearance.groupTitle')}
-          description={t('sections.appearance.groupDescription')}
+          description={t(
+            providerAccount
+              ? 'sections.appearance.providerGroupDescription'
+              : 'sections.appearance.groupDescription'
+          )}
         >
           <PreferenceRow
             icon={SunMoon}

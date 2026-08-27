@@ -43,6 +43,17 @@ const communicationsApp: HomeAppDefinition = {
   notificationSourceKey: 'communications',
 };
 
+const notificationsApp: HomeAppDefinition = {
+  ...app,
+  id: 'notifications',
+  name: 'Notifications',
+  shortName: 'Notifications',
+  route: '/notifications/home',
+  iconKey: 'notifications',
+  resourceKey: 'APP.NOTIFICATIONS',
+  notificationSourceKey: 'notifications',
+};
+
 const permission: AppEntitlementPermission = {
   resourceType: 'APP',
   resourceKey: 'APP.APPROVALS',
@@ -125,6 +136,41 @@ describe('resolveHomeAppsWithBadges', () => {
 
     expect(result[0]).not.toHaveProperty('badge');
     expect(result[0]).not.toHaveProperty('badgeMetadata');
+  });
+
+  it('shows the notification center total across all source applications', () => {
+    const multiSourceSummary = {
+      ...summary,
+      apps: [
+        ...summary.apps,
+        {
+          appKey: 'messaging',
+          totalUnread: 4,
+          actionableUnread: 0,
+          urgentUnread: 0,
+          lastActivityAt: summary.generatedAt,
+        },
+      ],
+    } as AppNotificationSummary;
+    const result = resolveHomeAppsWithBadges({
+      apps: [notificationsApp, app],
+      roles: ['WORKSPACE_MEMBER'],
+      permissions: [permission, { ...permission, resourceKey: 'APP.NOTIFICATIONS' }],
+      notificationSummary: multiSourceSummary,
+      notificationSummaryAuthorized: true,
+      notificationSummaryHealthy: true,
+      notificationSummaryNow: new Date(summary.generatedAt),
+    });
+
+    expect(result.find((item) => item.id === 'notifications')).toMatchObject({
+      badge: '11',
+      badgeMetadata: {
+        totalUnread: 11,
+        actionableUnread: 3,
+        urgentUnread: 1,
+      },
+    });
+    expect(result.find((item) => item.id === 'approvals')?.badge).toBe('7');
   });
 
   it('shows only apps whose read route is actually authorized', () => {

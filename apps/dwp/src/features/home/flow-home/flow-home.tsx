@@ -7,12 +7,20 @@ import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { WorkspaceWidgetCanvas } from '../../../components/workspace-composer/workspace-widget-canvas';
-import { TenantWorkscape } from '../../../components/tenant-workscape';
+import { writeHomePresentationHint } from '../../../components/home-loading-layout-policy';
+import { defaultHomeContentAlignment } from '../../../components/tenant-workscape';
 import { FlowHomeContext } from './flow-home-context';
 import { HomePurposeWidget } from './home-purpose-widget';
 import { MyAppDock } from './my-app-dock';
 import { resolveFlowHomeHealth } from './flow-home-health';
-import { FLOW_HOME_SECTION_REGISTRY } from './flow-home-preference';
+import { FLOW_HOME_SECTION_REGISTRY, FLOW_HOME_STORAGE_ALIAS } from './flow-home-preference';
+import {
+  FLOW_HOME_MEDIUM_MIN_WIDTH,
+  FLOW_HOME_WIDE_COMPOSITION,
+  FLOW_HOME_WIDE_MIN_WIDTH,
+  resolveFlowHomeReadItemLimit,
+  resolveFlowHomeReadLayout,
+} from './flow-home-layout';
 import {
   FlowRequiredNotice,
   FlowUpdates,
@@ -21,6 +29,10 @@ import {
 } from './flow-updates';
 import { resolveFlowTrailingGovernedPlacement } from './flow-governed-placement';
 import { homePurposeAllRoute } from './home-purpose-route-policy';
+import { buildFlowSignals } from './flow-home-model';
+import { FlowHomeHeroSurface } from './flow-home-hero-surface';
+import { filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
+import { NextActionCue } from './next-actions';
 
 import type {
   HomeAudienceProfile,
@@ -38,6 +50,7 @@ import type {
 } from '../../../components/workspace-composer/app-launchpad-model';
 import type { HomeContributionModel } from '../contributions';
 import type { FlowHomeSectionKey, FlowHomeSectionPreference } from './flow-home-preference';
+import type { HomeContentAlignment } from '@dwp-frontend/shared-utils';
 
 type FlowHomeProps = {
   audience: HomeAudienceProfile;
@@ -49,6 +62,11 @@ type FlowHomeProps = {
   timeZone: string;
   backgroundUrl?: string;
   backgroundPosition?: HomeBackgroundPosition;
+  focalX?: number;
+  focalY?: number;
+  mobileFocalX?: number;
+  mobileFocalY?: number;
+  contentAlignment?: HomeContentAlignment;
   overlayOpacity?: number;
   apps: readonly HomeAppDefinition[];
   appGroups: readonly HomeAppGroup[];
@@ -129,6 +147,11 @@ export function FlowHome({
   timeZone,
   backgroundUrl,
   backgroundPosition = 'RIGHT',
+  focalX,
+  focalY,
+  mobileFocalX,
+  mobileFocalY,
+  contentAlignment,
   overlayOpacity = 18,
   apps,
   appGroups,
@@ -152,6 +175,7 @@ export function FlowHome({
   presentation,
   density,
   previewDevice,
+  feedbackBusy,
   onBrowseAllApps,
   onStartEditing,
   onOpenStudio,
@@ -161,13 +185,44 @@ export function FlowHome({
   onManageApp,
   onRetryOverview,
   onRetryContributions,
+  onRecommendationFeedback,
 }: FlowHomeProps) {
   const { t } = useTranslation('home');
   const narrowViewport = useMediaQuery('(max-width:599.95px)', { noSsr: true });
+  const mediumViewport = useMediaQuery(
+    `(min-width:${FLOW_HOME_MEDIUM_MIN_WIDTH}px) and (max-width:1199.95px)`,
+    { noSsr: true }
+  );
+  const wideViewport = useMediaQuery(`(min-width:${FLOW_HOME_WIDE_MIN_WIDTH}px)`, {
+    noSsr: true,
+  });
   const largeTextReflow = useLargeTextReflow();
   const compactPreview = previewDevice === 'mobile' && editing;
   const compactContent = compactPreview || narrowViewport || largeTextReflow;
   const compactDensity = density === 'compact';
+  const resolvedContentAlignment =
+    contentAlignment ?? defaultHomeContentAlignment(backgroundPosition);
+  const readLayout = resolveFlowHomeReadLayout({
+    sections,
+    audience,
+    presentation,
+    editing,
+    largeText: largeTextReflow,
+    mobilePreview: compactPreview,
+    mediumViewport,
+    wideViewport,
+  });
+  const adaptiveFirstWidgetSelector = `&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="${
+    readLayout.firstSectionKey ?? '__none__'
+  }"]`;
+  const adaptiveSupportWidgetSelector =
+    readLayout.supportSectionKeys
+      .map(
+        (sectionKey) =>
+          `&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="${sectionKey}"]`
+      )
+      .join(', ') ||
+    '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="__none__"]';
   const purposeStageRef = useRef<HTMLDivElement | null>(null);
   const communicationsForbidden = overview?.communications.status === 'FORBIDDEN';
   const requiredNoticeUnavailable =
@@ -205,30 +260,89 @@ export function FlowHome({
     timeline: contributionCount(contributionModel.buckets.timeline),
     response: contributionCount(contributionModel.buckets.response),
   };
-  const configuredLimit = (storageKey: string, fallback = 3) => {
-    const value = widgetConfigurations[storageKey]?.itemLimit;
-    return Math.min(3, Math.max(1, typeof value === 'number' ? value : fallback));
+  const roleSignals = buildFlowSignals(overview);
+  const rolePulseItems = filterRolePulseTextItems(contributionModel.buckets.pulse, roleSignals);
+  const sectionItemLimit = (sectionKey: FlowHomeSectionKey) => {
+    const storageKey = FLOW_HOME_STORAGE_ALIAS[sectionKey];
+    return resolveFlowHomeReadItemLimit({
+      template: readLayout.template,
+      sectionKey,
+      firstSectionKey: readLayout.firstSectionKey,
+      configuredItemLimit: widgetConfigurations[storageKey]?.itemLimit,
+    });
   };
+  const sectionUsesSupportStack = (sectionKey: FlowHomeSectionKey) =>
+    readLayout.template === 'adaptive-wide' && readLayout.supportSectionKeys.includes(sectionKey);
   const announcementsPlacement = resolveFlowTrailingGovernedPlacement(announcementsPolicy.size);
+
+  useEffect(() => {
+    if (editing || typeof window === 'undefined') return;
+    let storage: Storage | undefined;
+    try {
+      storage = window.sessionStorage;
+    } catch {
+      storage = undefined;
+    }
+    writeHomePresentationHint(storage, presentation);
+  }, [editing, presentation]);
 
   useEffect(() => {
     const stage = purposeStageRef.current;
     if (!stage) return;
+    let animationFrame = 0;
+    let observedLauncher: HTMLElement | null = null;
     const markLauncherEdgeWidgets = () => {
-      const stageRight = stage.getBoundingClientRect().right;
+      animationFrame = 0;
+      const stageRect = stage.getBoundingClientRect();
+      const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
+      const launcherRect = launcher?.getBoundingClientRect();
+      const launcherVisible = Boolean(
+        launcherRect && launcherRect.width > 0 && launcherRect.height > 0
+      );
       stage.querySelectorAll<HTMLElement>('[data-workspace-widget]').forEach((widget) => {
-        const atInlineEnd = widget.getBoundingClientRect().right >= stageRight - 24;
-        if (atInlineEnd) widget.setAttribute('data-flow-launcher-edge', 'true');
-        else widget.removeAttribute('data-flow-launcher-edge');
+        const widgetRect = widget.getBoundingClientRect();
+        const atInlineEnd = widgetRect.right >= stageRect.right - 24;
+        const crossesLauncherLane = Boolean(
+          launcherVisible &&
+          launcherRect &&
+          widgetRect.bottom >= launcherRect.top - 16 &&
+          widgetRect.top <= launcherRect.bottom + 16
+        );
+        if (atInlineEnd && crossesLauncherLane) {
+          widget.setAttribute('data-flow-launcher-edge', 'true');
+        } else widget.removeAttribute('data-flow-launcher-edge');
       });
     };
-    const resizeObserver = new ResizeObserver(markLauncherEdgeWidgets);
+    const queueLauncherEdgeCheck = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(markLauncherEdgeWidgets);
+    };
+    const resizeObserver = new ResizeObserver(queueLauncherEdgeCheck);
+    const syncLauncherObservation = () => {
+      const nextLauncher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
+      if (nextLauncher === observedLauncher) return;
+      if (observedLauncher) resizeObserver.unobserve(observedLauncher);
+      observedLauncher = nextLauncher;
+      if (observedLauncher) resizeObserver.observe(observedLauncher);
+      queueLauncherEdgeCheck();
+    };
+    const launcherObserver = new MutationObserver(syncLauncherObservation);
     resizeObserver.observe(stage);
     stage
       .querySelectorAll<HTMLElement>('[data-workspace-widget]')
       .forEach((widget) => resizeObserver.observe(widget));
+    launcherObserver.observe(document.body, { childList: true, subtree: true });
+    syncLauncherObservation();
+    window.addEventListener('scroll', queueLauncherEdgeCheck, { passive: true });
+    window.addEventListener('resize', queueLauncherEdgeCheck);
     markLauncherEdgeWidgets();
-    return () => resizeObserver.disconnect();
+    return () => {
+      resizeObserver.disconnect();
+      launcherObserver.disconnect();
+      window.removeEventListener('scroll', queueLauncherEdgeCheck);
+      window.removeEventListener('resize', queueLauncherEdgeCheck);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
   }, [editing, presentation, sections, showUpdates]);
 
   return (
@@ -287,40 +401,28 @@ export function FlowHome({
         },
       })}
     >
-      <TenantWorkscape
+      <FlowHomeHeroSurface
         backgroundUrl={backgroundUrl}
         backgroundPosition={backgroundPosition}
+        focalX={focalX}
+        focalY={focalY}
+        mobileFocalX={mobileFocalX}
+        mobileFocalY={mobileFocalY}
+        contentAlignment={resolvedContentAlignment}
         overlayOpacity={overlayOpacity}
         presentation={presentation}
         compact={compactPreview}
+        editing={editing}
+        wide={wideViewport}
         ariaLabel={t('flow.workscape.label')}
-      >
-        <Box
-          data-flow-launch-deck-frame
-          sx={{
-            width: 1,
-            maxWidth: { md: 1280, xl: 1520 },
-            mx: 'auto',
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            alignItems: editing
-              ? 'stretch'
-              : backgroundPosition === 'LEFT'
-                ? { xs: 'stretch', md: 'flex-end' }
-                : backgroundPosition === 'CENTER'
-                  ? { xs: 'stretch', md: 'center' }
-                  : { xs: 'stretch', md: 'flex-start' },
-          }}
-        >
+        context={
           <FlowHomeContext
             audience={audience}
             currentDate={currentDate}
             headline={headline}
             subheadline={subheadline}
             updatedAt={healthUpdatedAt}
-            backgroundPosition={backgroundPosition}
+            contentAlignment={resolvedContentAlignment}
             health={health}
             metrics={contextMetrics}
             editing={editing}
@@ -332,6 +434,8 @@ export function FlowHome({
             onOpenStudio={onOpenStudio}
             onRetry={onRetryOverview}
           />
+        }
+        dock={
           <MyAppDock
             apps={apps}
             groups={appGroups}
@@ -342,15 +446,15 @@ export function FlowHome({
             compact={compactPreview}
             priorityCompact={narrowViewport || compactPreview}
             presentation={presentation}
-            backgroundPosition={backgroundPosition}
+            contentAlignment={resolvedContentAlignment}
             onBrowseAll={onBrowseAllApps}
             onLaunch={onLaunchApp}
             onManage={onManageApp}
             onStartEditing={onStartEditing}
             onLayoutChange={onAppLayoutChange}
           />
-        </Box>
-      </TenantWorkscape>
+        }
+      />
 
       {requiredNoticeVisible && (
         <FlowRequiredNotice
@@ -366,31 +470,79 @@ export function FlowHome({
         ref={purposeStageRef}
         data-testid="flow-home-personal-sections"
         data-flow-layout-contract="purpose-widgets"
+        data-flow-read-template={readLayout.template}
+        data-flow-adaptive-eligible={readLayout.adaptiveEligible ? 'true' : 'false'}
+        data-flow-adaptive-applied={readLayout.adaptiveApplied ? 'true' : 'false'}
+        data-flow-adaptive-first-section={readLayout.firstSectionKey ?? undefined}
+        data-flow-wide-composition={
+          readLayout.template === 'adaptive-wide' ? FLOW_HOME_WIDE_COMPOSITION.label : undefined
+        }
         sx={{
           '& [data-workspace-presentation]': {
             gridAutoFlow: 'row',
-            alignItems: { xs: 'start', lg: 'stretch' },
+            alignItems: 'stretch',
           },
           '& [data-workspace-widget]': {
             scrollMarginTop: 88,
-            alignSelf: { xs: 'start', lg: 'stretch' },
+            alignSelf: 'stretch',
           },
           '& [data-workspace-widget-content]': {
-            height: { xs: editing ? '100%' : 'auto', lg: '100%' },
+            height: '100%',
           },
           '& [data-workspace-widget-content] > section': {
-            height: { xs: editing ? '100% !important' : 'auto !important', lg: '100% !important' },
+            height: '100% !important',
             minHeight: 0,
             bgcolor: 'var(--home-surface)',
             border: 1,
             borderColor: 'divider',
             borderRadius: 'var(--flow-surface-radius)',
+            boxShadow: '0 8px 24px rgba(15,23,42,0.045)',
+            transition: 'transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease',
           },
+          '&:not([data-flow-read-template="editing"]) [data-workspace-widget]:hover [data-workspace-widget-content] > section':
+            {
+              transform: 'translateY(-2px)',
+              borderColor: 'rgba(49,95,213,0.28)',
+              boxShadow: '0 14px 34px rgba(15,23,42,0.085)',
+            },
           '& [data-flow-launcher-edge="true"] [data-flow-section^="purpose-"]': {
-            '@media (min-width: 600px)': { pr: 9 },
+            '@media (min-width: 600px)': { pr: 11 },
           },
-          '@media (max-width: 1199.95px)': {
+          '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget="action-queue"]': {
+            gridColumn: '1 / -1',
+          },
+          '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget-policy="PERSONAL"]':
+            {
+              gridColumn: 'span 30',
+            },
+          '&[data-flow-read-template="adaptive-wide"] [data-workspace-presentation]': {
+            rowGap: compactDensity ? 1.5 : 2,
+          },
+          '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="action-queue"]': {
+            gridColumn: `span ${FLOW_HOME_WIDE_COMPOSITION.actionColumns}`,
+          },
+          [adaptiveFirstWidgetSelector]: {
+            gridColumn: `span ${FLOW_HOME_WIDE_COMPOSITION.firstColumns}`,
+          },
+          [adaptiveSupportWidgetSelector]: {
+            gridColumn: `span ${FLOW_HOME_WIDE_COMPOSITION.supportColumns}`,
+          },
+          '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
+            mx: '-7px',
+            rowGap: 2,
+          },
+          '&:not([data-flow-read-template="editing"]) [data-workspace-widget]': {
+            px: '7px !important',
+          },
+          '@media (max-width: 899.95px)': {
+            '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
+              mx: 0,
+              rowGap: 2,
+            },
             '& [data-workspace-widget]': { gridColumn: '1 / -1', alignSelf: 'start' },
+            '&:not([data-flow-read-template="editing"]) [data-workspace-widget]': {
+              px: '0 !important',
+            },
             '& [data-workspace-widget-content]': { height: editing ? '100%' : 'auto' },
             '& [data-workspace-widget-content] > section': {
               height: editing ? '100% !important' : 'auto !important',
@@ -398,6 +550,13 @@ export function FlowHome({
           },
           '@media (forced-colors: active)': {
             '& [data-workspace-widget-content] > section': { borderColor: 'CanvasText' },
+          },
+          '@media (prefers-reduced-motion: reduce)': {
+            '& [data-workspace-widget-content] > section, & [data-workspace-widget]:hover [data-workspace-widget-content] > section':
+              {
+                transition: 'none',
+                transform: 'none',
+              },
           },
         }}
       >
@@ -420,12 +579,25 @@ export function FlowHome({
                   loading={contributionLoading}
                   fetching={contributionFetching}
                   state={contributionModel.bucketStates.action}
-                  maxItems={3}
+                  maxItems={resolveFlowHomeReadItemLimit({
+                    template: readLayout.template,
+                    sectionKey: 'action',
+                    firstSectionKey: readLayout.firstSectionKey,
+                  })}
                   allRoute={homePurposeAllRoute('action', contributionModel.buckets.action)}
                   compact={compactContent}
                   footprintHeight="standard"
                   featuredFirst
-                  wideFeatured={presentation === 'expressive'}
+                  wideFeatured={readLayout.template === 'adaptive-wide'}
+                  headerAccessory={
+                    !editing ? (
+                      <NextActionCue
+                        overview={overview}
+                        feedbackBusy={feedbackBusy}
+                        onRecommendationFeedback={onRecommendationFeedback}
+                      />
+                    ) : undefined
+                  }
                   onRetry={onRetryContributions}
                 />
               ),
@@ -482,8 +654,9 @@ export function FlowHome({
                   icon={CalendarRange}
                   items={contributionModel.buckets.timeline}
                   state={contributionModel.bucketStates.timeline}
-                  maxItems={configuredLimit('schedule')}
+                  maxItems={sectionItemLimit('today')}
                   allRoute={homePurposeAllRoute('timeline', contributionModel.buckets.timeline)}
+                  supportStack={sectionUsesSupportStack('today')}
                   timeline
                 />
               );
@@ -496,8 +669,9 @@ export function FlowHome({
                   icon={Inbox}
                   items={contributionModel.buckets.response}
                   state={contributionModel.bucketStates.response}
-                  maxItems={configuredLimit('daily-brief')}
+                  maxItems={sectionItemLimit('response-hub')}
                   allRoute={homePurposeAllRoute('response', contributionModel.buckets.response)}
+                  supportStack={sectionUsesSupportStack('response-hub')}
                 />
               );
             }
@@ -509,8 +683,9 @@ export function FlowHome({
                   icon={ListTodo}
                   items={contributionModel.buckets.request}
                   state={contributionModel.bucketStates.request}
-                  maxItems={configuredLimit('focus')}
+                  maxItems={sectionItemLimit('request-tracker')}
                   allRoute={homePurposeAllRoute('request', contributionModel.buckets.request)}
+                  supportStack={sectionUsesSupportStack('request-tracker')}
                 />
               );
             }
@@ -519,10 +694,12 @@ export function FlowHome({
                 {...common}
                 sectionKey="pulse"
                 icon={Activity}
-                items={contributionModel.buckets.pulse}
+                items={rolePulseItems}
                 state={contributionModel.bucketStates.pulse}
-                maxItems={configuredLimit('activity')}
-                allRoute={homePurposeAllRoute('pulse', contributionModel.buckets.pulse)}
+                maxItems={sectionItemLimit('role-pulse')}
+                allRoute={homePurposeAllRoute('pulse', rolePulseItems)}
+                supportStack={sectionUsesSupportStack('role-pulse')}
+                roleSignals={roleSignals}
               />
             );
           }}

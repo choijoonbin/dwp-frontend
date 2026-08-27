@@ -154,7 +154,10 @@ export type WorkplaceBookingInput = {
   visibleToColleagues: boolean;
 };
 
-export type WorkplaceRelocateBookingInput = WorkplaceBookingInput & {
+export type WorkplaceRelocateBookingInput = Pick<
+  WorkplaceBookingInput,
+  'resourceId' | 'startsAt' | 'endsAt'
+> & {
   reason: string;
   version: number;
 };
@@ -304,7 +307,7 @@ export function createWorkplaceIdempotencyKey(scope = 'booking'): string {
 
 export async function createWorkplaceBooking(
   input: WorkplaceBookingInput,
-  idempotencyKey = createWorkplaceIdempotencyKey()
+  idempotencyKey: string
 ): Promise<WorkplaceBooking> {
   const response = await axiosInstance.post<ApiResponse<WorkplaceBooking>, WorkplaceBookingInput>(
     '/api/platform/v1/workplace/bookings',
@@ -363,7 +366,7 @@ export async function getWorkplaceAssignedResources(): Promise<WorkplaceAssigned
 
 export async function createWorkplaceReleaseWindow(
   input: WorkplaceReleaseWindowInput,
-  idempotencyKey = createWorkplaceIdempotencyKey('release-window')
+  idempotencyKey: string
 ): Promise<WorkplaceReleaseWindow> {
   const response = await axiosInstance.post<
     ApiResponse<WorkplaceReleaseWindow>,

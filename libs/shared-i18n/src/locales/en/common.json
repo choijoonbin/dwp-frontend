@@ -71,9 +71,15 @@
     "operationFailed": "The operation could not be completed."
   },
   "productSurface": {
+    "contextBar": {
+      "loadError": "The management context could not be loaded.",
+      "reloadPage": "Reload page"
+    },
     "notFound": {
       "title": "This product page could not be found",
-      "description": "Check the address or choose another task from the current product menu."
+      "description": "Check the address or choose another task from the current product menu.",
+      "productHome": "Go to product home",
+      "dwpHome": "Go to DWP home"
     },
     "scopeChooser": {
       "title": "Select an allowed scope",
@@ -81,17 +87,27 @@
     },
     "expiry": {
       "warning": "Management access will be revalidated within 5 minutes",
-      "revalidating": "Management access is being revalidated"
+      "warningCompact": "≤5 min",
+      "revalidating": "Management access is being revalidated",
+      "revalidatingCompact": "Checking"
     },
     "labels": {
       "work": "Work",
       "management": "Product management",
       "appManagement": "App management",
+      "appManagementForProduct": "App management: {{product}}",
       "returnToWork": "Return to work",
+      "returnToWorkForProduct": "Return to work: {{product}}",
+      "managementMode": "Management mode",
+      "managementModeCompact": "Manage",
+      "managementTitle": "{{product}} management",
       "scope": "Scope",
       "readOnly": "Read only",
       "revalidateAt": "Access revalidates {{time}}",
-      "surfaceNavigation": "Product work and management areas",
+      "revalidation": "Access revalidation",
+      "surfaceNavigation": "App area switcher",
+      "workAreas": "Work areas",
+      "managementAreas": "Management areas",
       "currentSurface": "Current area: {{surface}}",
       "unknownSurface": "Product area",
       "managementScope": "Management scope",

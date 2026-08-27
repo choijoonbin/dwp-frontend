@@ -21,6 +21,7 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useMessagingMeetingLabels } from './meeting';
+import { messagingMentionUserIds, type MessagingMentionDraft } from './messaging-composer-model';
 import {
   mergeMessagingMessages,
   messagingReplyCounts,
@@ -52,6 +53,11 @@ type MessagingHistoryScrollAnchor = {
   height: number;
 };
 
+type MessagingDraftSnapshot = {
+  body: string;
+  mentions: MessagingMentionDraft[];
+};
+
 export function useMessagingWorkspaceController(scope: MessagingScope) {
   const { t } = useTranslation('messaging');
   const auth = useAuth();
@@ -60,9 +66,12 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const [params, setParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [draft, setDraft] = useState('');
+  const [draft, setDraftState] = useState('');
+  const [draftMentions, setDraftMentionsState] = useState<MessagingMentionDraft[]>([]);
   const [threadRootId, setThreadRootId] = useState<string | null>(null);
-  const [threadDraft, setThreadDraft] = useState('');
+  const [threadDraft, setThreadDraftState] = useState('');
+  const [threadDraftMentions, setThreadDraftMentionsState] = useState<MessagingMentionDraft[]>([]);
+  const [newMessageCount, setNewMessageCount] = useState(0);
   const [meetingDialogOpen, setMeetingDialogOpen] = useState(false);
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -76,6 +85,31 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const readCursorRef = useRef<string | null>(null);
   const mainSendAttemptRef = useRef<MessagingSendMutationInput | null>(null);
   const threadSendAttemptRef = useRef<MessagingSendMutationInput | null>(null);
+  const draftRef = useRef('');
+  const draftMentionsRef = useRef<MessagingMentionDraft[]>([]);
+  const threadDraftRef = useRef('');
+  const threadDraftMentionsRef = useRef<MessagingMentionDraft[]>([]);
+  const conversationDraftsRef = useRef(new Map<string, MessagingDraftSnapshot>());
+  const previousConversationRef = useRef<string | null>(null);
+  const nearTimelineBottomRef = useRef(true);
+  const timelineConversationRef = useRef<string | null>(null);
+  const latestMessageRef = useRef<string | null>(null);
+  const setDraft = useCallback((value: string) => {
+    draftRef.current = value;
+    setDraftState(value);
+  }, []);
+  const setDraftMentions = useCallback((value: MessagingMentionDraft[]) => {
+    draftMentionsRef.current = value;
+    setDraftMentionsState(value);
+  }, []);
+  const setThreadDraft = useCallback((value: string) => {
+    threadDraftRef.current = value;
+    setThreadDraftState(value);
+  }, []);
+  const setThreadDraftMentions = useCallback((value: MessagingMentionDraft[]) => {
+    threadDraftMentionsRef.current = value;
+    setThreadDraftMentionsState(value);
+  }, []);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('conversation');
   const mainAttachmentQueue = useMessagingAttachmentQueue(selectedId);
@@ -133,9 +167,13 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
         body: input.body,
         idempotencyKey: input.idempotencyKey,
         attachmentIds: input.attachmentIds,
+        mentionedUserIds: input.mentionedUserIds,
       }),
-    onSuccess: async (message) => {
-      setDraft('');
+    onSuccess: async (message, input) => {
+      if (draftRef.current.trim() === input.body) {
+        setDraft('');
+        setDraftMentions([]);
+      }
       mainAttachmentQueue.clear();
       mainSendAttemptRef.current = null;
       queryClient.setQueryData<MessagingConversationDetail>(
@@ -168,9 +206,13 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
         replyToMessageId: input.replyToMessageId,
         idempotencyKey: input.idempotencyKey,
         attachmentIds: input.attachmentIds,
+        mentionedUserIds: input.mentionedUserIds,
       }),
-    onSuccess: async (message) => {
-      setThreadDraft('');
+    onSuccess: async (message, input) => {
+      if (threadDraftRef.current.trim() === input.body) {
+        setThreadDraft('');
+        setThreadDraftMentions([]);
+      }
       threadAttachmentQueue.clear();
       threadSendAttemptRef.current = null;
       queryClient.setQueryData<MessagingConversationDetail>(
@@ -358,13 +400,25 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   }, []);
 
   useEffect(() => {
+    const previousId = previousConversationRef.current;
+    if (previousId) {
+      conversationDraftsRef.current.set(previousId, {
+        body: draftRef.current,
+        mentions: draftMentionsRef.current,
+      });
+    }
+    const nextDraft = selectedId ? conversationDraftsRef.current.get(selectedId) : undefined;
+    setDraft(nextDraft?.body ?? '');
+    setDraftMentions(nextDraft?.mentions ?? []);
+    previousConversationRef.current = selectedId;
     setThreadRootId(null);
     setThreadDraft('');
+    setThreadDraftMentions([]);
     setEditingMessage(null);
     setDeletingMessage(null);
     setEditBody('');
     historyScrollAnchorRef.current = null;
-  }, [selectedId]);
+  }, [selectedId, setDraft, setDraftMentions, setThreadDraft, setThreadDraftMentions]);
 
   useEffect(() => {
     const anchor = historyScrollAnchorRef.current;
@@ -391,12 +445,28 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     setParams(next, { replace: true });
   }, [conversationsQuery.data?.items, desktopSplitView, params, selectedId, setParams]);
 
+  const latestMessage = detail?.messages.at(-1);
   useEffect(() => {
-    if (!detail?.messages.length) return;
-    requestAnimationFrame(() => {
-      detailScrollRef.current?.scrollTo({ top: detailScrollRef.current.scrollHeight });
-    });
-  }, [detail?.conversation.conversationId, detail?.messages.length]);
+    if (!selectedId || !latestMessage) return;
+    const conversationChanged = timelineConversationRef.current !== selectedId;
+    const messageChanged = latestMessageRef.current !== latestMessage.messageId;
+    if (!messageChanged && !conversationChanged) return;
+    timelineConversationRef.current = selectedId;
+    latestMessageRef.current = latestMessage.messageId;
+    if (
+      conversationChanged ||
+      nearTimelineBottomRef.current ||
+      latestMessage.senderUserId === auth.user?.userId
+    ) {
+      nearTimelineBottomRef.current = true;
+      setNewMessageCount(0);
+      requestAnimationFrame(() => {
+        detailScrollRef.current?.scrollTo({ top: detailScrollRef.current.scrollHeight });
+      });
+      return;
+    }
+    setNewMessageCount((current) => current + 1);
+  }, [auth.user?.userId, latestMessage, selectedId]);
 
   const lastMessageId = detail?.messages.at(-1)?.messageId;
   const markRead = markReadMutation.mutate;
@@ -418,6 +488,26 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     readCursorRef.current = readCursorKey;
     markRead({ conversationId: selectedId, messageId: lastMessageId });
   }, [lastMessageId, markRead, markReadPending, selectedId]);
+
+  const handleTimelineScroll = useCallback(() => {
+    const scroller = detailScrollRef.current;
+    if (scroller) {
+      nearTimelineBottomRef.current =
+        scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight <= 48;
+      if (nearTimelineBottomRef.current) setNewMessageCount(0);
+    }
+    markVisibleMessagesRead();
+  }, [markVisibleMessagesRead]);
+
+  const jumpToLatest = useCallback(() => {
+    nearTimelineBottomRef.current = true;
+    setNewMessageCount(0);
+    detailScrollRef.current?.scrollTo({
+      top: detailScrollRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
+    requestAnimationFrame(markVisibleMessagesRead);
+  }, [markVisibleMessagesRead]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(markVisibleMessagesRead);
@@ -441,11 +531,18 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   };
   const send = () => {
     const body = draft.trim();
-    if (!body || !selectedId || sendMutation.isPending || mainAttachmentQueue.busy) return;
+    if (
+      (!body && mainAttachmentQueue.readyIds.length === 0) ||
+      !selectedId ||
+      sendMutation.isPending ||
+      mainAttachmentQueue.busy
+    )
+      return;
     const input = {
       body,
       idempotencyKey: crypto.randomUUID(),
       attachmentIds: mainAttachmentQueue.readyIds,
+      mentionedUserIds: messagingMentionUserIds(draftMentions),
     } satisfies MessagingSendMutationInput;
     mainSendAttemptRef.current = input;
     sendMutation.mutate(input);
@@ -457,7 +554,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const sendThreadReply = () => {
     const body = threadDraft.trim();
     if (
-      !body ||
+      (!body && threadAttachmentQueue.readyIds.length === 0) ||
       !selectedId ||
       !thread?.root.messageId ||
       threadSendMutation.isPending ||
@@ -470,6 +567,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
       replyToMessageId: thread.root.messageId,
       idempotencyKey: crypto.randomUUID(),
       attachmentIds: threadAttachmentQueue.readyIds,
+      mentionedUserIds: messagingMentionUserIds(threadDraftMentions),
     } satisfies MessagingSendMutationInput;
     threadSendAttemptRef.current = input;
     threadSendMutation.mutate(input);
@@ -545,11 +643,16 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     meetingLabels,
     realtimeConnection,
     typingNames,
+    newMessageCount,
     draft,
     setDraft,
+    draftMentions,
+    setDraftMentions,
     mainAttachmentQueue,
     threadDraft,
     setThreadDraft,
+    threadDraftMentions,
+    setThreadDraftMentions,
     threadAttachmentQueue,
     meetingDialogOpen,
     setMeetingDialogOpen,
@@ -582,7 +685,8 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     submitEditMessage,
     confirmDeleteMessage,
     loadOlderMessages,
-    markVisibleMessagesRead,
+    handleTimelineScroll,
+    jumpToLatest,
     refresh,
     conversationCreated,
     setThreadRootId,

@@ -31,6 +31,11 @@ export function useMessagingMeetingLabels() {
       disconnected: t('conversation.meetingDialog.disconnected'),
       endForEveryone: t('conversation.meetingDialog.endForEveryone'),
       ending: t('conversation.meetingDialog.ending'),
+      historyTitle: t('conversation.meetingDialog.history.title'),
+      historyDescription: t('conversation.meetingDialog.history.description'),
+      historyEmpty: t('conversation.meetingDialog.history.empty'),
+      historyEndedBy: (name) => t('conversation.meetingDialog.history.endedBy', { name }),
+      historyMinutes: (count) => t('conversation.meetingDialog.history.minutes', { count }),
     }),
     [t]
   );

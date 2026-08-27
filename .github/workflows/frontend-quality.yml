@@ -37,6 +37,12 @@ jobs:
       - name: Validate release evidence registry
         run: corepack yarn release:evidence:check
 
+      - name: Test release evidence checker fail-closed semantics
+        run: corepack yarn release:evidence:test
+
+      - name: Test Provider artifact DLP scanner fail-closed semantics
+        run: corepack yarn provider:artifacts:scan:test
+
       - name: Install dependencies
         run: corepack yarn install --immutable
 
@@ -81,14 +87,53 @@ jobs:
       - name: Build isolated product artifacts
         run: corepack yarn build:products
 
+      - name: Smoke test isolated product artifact routing
+        run: corepack yarn test:product-artifacts
+
       - name: Run shell contract gates
         run: corepack yarn playwright test e2e/shell-contract.spec.ts --project=chromium
 
       - name: Run responsive and accessibility gates
         run: corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1
 
+      - name: Run Provider control-plane and tenant-boundary gates
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-provider
+          PLAYWRIGHT_OUTPUT_DIR: test-results/provider
+        run: corepack yarn test:e2e:provider
+
+      - name: Scan Provider acceptance artifacts for secrets and PII
+        if: ${{ !cancelled() }}
+        run: corepack yarn provider:artifacts:scan playwright-report-provider test-results/provider
+
+      - name: Upload Provider acceptance report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: provider-e2e-report
+          path: |
+            playwright-report-provider/
+            test-results/provider/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Run Flow Home interaction and responsive gates
+        run: corepack yarn playwright test e2e/flow-home.spec.ts --project=chromium --workers=1
+
+      - name: Run Widget Library feature-off rollback gate
+        run: corepack yarn test:e2e:widget-library-off
+
+      - name: Run Flow Home visual regression gates
+        run: corepack yarn playwright test e2e/flow-home-visual.spec.ts --project=chromium --project=mobile --workers=1
+
       - name: Run Workplace booking and administration gates
         run: corepack yarn playwright test e2e/rooms.spec.ts --project=chromium --workers=1
+
+      - name: Run Product Surface pilot gates on desktop and mobile
+        run: corepack yarn playwright test e2e/product-surface-approvals-pilot.spec.ts --project=chromium --project=mobile --workers=1
+
+      - name: Run Product Surface separation gates on desktop and mobile
+        run: corepack yarn playwright test e2e/product-surface-menu-separation.spec.ts --project=chromium --project=mobile --workers=1
 
       - name: Run runtime performance gate in isolation
         run: corepack yarn test:performance

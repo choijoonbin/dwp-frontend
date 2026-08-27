@@ -25,6 +25,7 @@ import {
   useIdpQuery,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
@@ -134,12 +135,13 @@ export default function SecurityPage() {
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const policyQuery = useAuthPolicyQuery();
+  const providerAccount = isProviderIdentity(auth.user);
+  const policyQuery = useAuthPolicyQuery(!providerAccount);
   const ssoConfigured = Boolean(
     policyQuery.data?.ssoLoginEnabled && policyQuery.data.allowedLoginTypes.includes('SSO')
   );
   const idpQuery = useIdpQuery({
-    enabled: ssoConfigured,
+    enabled: !providerAccount && ssoConfigured,
     providerKey: policyQuery.data?.ssoProviderKey,
   });
   const [sessions, setSessions] = useState<AuthSessionData[]>([]);
@@ -215,7 +217,9 @@ export default function SecurityPage() {
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
             {auth.user?.displayName || t('shell.accountFallback')} /{' '}
-            {auth.user?.tenantName || auth.user?.tenantCode || t('security.workspaceFallback')}
+            {providerAccount
+              ? t('security.provider.identityRealm')
+              : auth.user?.tenantName || auth.user?.tenantCode || t('security.workspaceFallback')}
           </Typography>
         </Box>
         <Button
@@ -235,13 +239,29 @@ export default function SecurityPage() {
           <Typography component="h2" variant="h6">
             {t('security.posture.title')}
           </Typography>
-          <Chip size="small" variant="outlined" label={t('security.posture.tenantManaged')} />
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t(
+              providerAccount
+                ? 'security.posture.providerManaged'
+                : 'security.posture.tenantManaged'
+            )}
+          />
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-          {t('security.posture.description')}
+          {t(
+            providerAccount
+              ? 'security.provider.postureDescription'
+              : 'security.posture.description'
+          )}
         </Typography>
 
-        {policyQuery.isError ? (
+        {providerAccount ? (
+          <Alert severity="info" sx={{ mt: 1.5 }}>
+            {t('security.provider.policyBoundary')}
+          </Alert>
+        ) : policyQuery.isError ? (
           <Alert severity="warning" sx={{ mt: 1.5 }}>
             {t('security.posture.policyUnavailable')}
           </Alert>
@@ -305,7 +325,7 @@ export default function SecurityPage() {
         ) : null}
       </Box>
 
-      <MyPrivilegedAccess />
+      {!providerAccount && <MyPrivilegedAccess />}
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 5 }}>
         <ShieldCheck size={20} strokeWidth={1.8} aria-hidden="true" />

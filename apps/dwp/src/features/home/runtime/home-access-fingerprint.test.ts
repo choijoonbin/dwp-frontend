@@ -104,6 +104,7 @@ describe('Home access fingerprint', () => {
         tenantId: 1,
         tenantCode: 'tenant',
         displayName: 'Member',
+        identityPlane: 'TENANT',
         roles: ['WORKSPACE_MEMBER'],
         legacyRoleFallbackAllowed: true,
         personPublicId: 'person-1',

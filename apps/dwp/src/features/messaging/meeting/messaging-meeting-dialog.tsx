@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PreJoin, type LocalUserChoices } from '@livekit/components-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, Video } from 'lucide-react';
@@ -6,6 +7,7 @@ import { ActionButton, ContentDialog } from '@dwp-frontend/design-system';
 import {
   endMessagingMeeting,
   getCurrentMessagingMeeting,
+  getMessagingMeetingHistory,
   getMessagingMeetingCapability,
   issueMessagingMeetingToken,
   startMessagingMeeting,
@@ -22,6 +24,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import type { Theme } from '@mui/material/styles';
 
 import { resolveMeetingLobbyState } from './meeting-state';
+import { MessagingMeetingHistory } from './messaging-meeting-history';
 
 import '@livekit/components-styles';
 
@@ -51,6 +54,11 @@ export type MessagingMeetingLabels = {
   disconnected: string;
   endForEveryone: string;
   ending: string;
+  historyTitle: string;
+  historyDescription: string;
+  historyEmpty: string;
+  historyEndedBy: (name: string) => string;
+  historyMinutes: (count: number) => string;
 };
 
 export type MessagingMeetingDialogProps = {
@@ -76,6 +84,7 @@ export function MessagingMeetingDialog({
   presentation = 'dialog',
   onClose,
 }: MessagingMeetingDialogProps) {
+  const { i18n } = useTranslation('messaging');
   const queryClient = useQueryClient();
   const compact = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const [preJoin, setPreJoin] = useState(false);
@@ -95,6 +104,13 @@ export function MessagingMeetingDialog({
     queryFn: () => getCurrentMessagingMeeting(conversationId),
     enabled: open && Boolean(conversationId),
     refetchInterval: credential ? false : 10_000,
+    retry: 1,
+  });
+  const historyQuery = useQuery({
+    queryKey: ['messaging', 'meeting', conversationId, 'history'],
+    queryFn: () => getMessagingMeetingHistory(conversationId, 5),
+    enabled: open && Boolean(conversationId),
+    staleTime: 30_000,
     retry: 1,
   });
   const startMutation = useMutation({
@@ -121,6 +137,9 @@ export function MessagingMeetingDialog({
       setChoices(null);
       setPreJoin(false);
       queryClient.setQueryData(['messaging', 'meeting', conversationId, 'current'], null);
+      void queryClient.invalidateQueries({
+        queryKey: ['messaging', 'meeting', conversationId, 'history'],
+      });
       onClose();
     },
     onError: () => setLocalError(true),
@@ -142,6 +161,7 @@ export function MessagingMeetingDialog({
   });
   const busy = startMutation.isPending || tokenMutation.isPending;
   const fullScreen = presentation === 'fullscreen' || compact;
+  const inMeeting = Boolean(credential && choices);
 
   const enterPreJoin = () => {
     if (lobbyState === 'START') {
@@ -166,8 +186,8 @@ export function MessagingMeetingDialog({
       onClose={onClose}
       busy={Boolean(credential) || busy}
       fullScreen={fullScreen}
-      hideHeader={Boolean(credential && choices)}
-      maxWidth="lg"
+      hideHeader={inMeeting}
+      maxWidth={inMeeting ? 'lg' : preJoin ? 'md' : 'sm'}
       titleStart={
         <Box
           sx={{
@@ -185,16 +205,28 @@ export function MessagingMeetingDialog({
       }
       contentDividers={!credential}
       contentSx={
-        credential && choices
+        inMeeting
           ? { p: 0, height: '100%', bgcolor: '#111315' }
-          : { display: 'grid', placeItems: 'center', minHeight: 0, overflow: 'auto' }
+          : {
+              display: 'grid',
+              placeItems: 'center',
+              minHeight: 0,
+              overflow: 'auto',
+              py: preJoin ? 2.5 : 4,
+            }
       }
       slotProps={{
         paper: {
           sx: {
             borderRadius: fullScreen ? 0 : 2,
             overflow: 'hidden',
-            height: fullScreen ? '100dvh' : 'min(84dvh, 880px)',
+            height: fullScreen
+              ? '100dvh'
+              : inMeeting
+                ? 'min(84dvh, 880px)'
+                : preJoin
+                  ? 'min(82dvh, 720px)'
+                  : 'auto',
           },
         },
       }}
@@ -278,34 +310,48 @@ export function MessagingMeetingDialog({
               />
             </Box>
           ) : (
-            <Stack spacing={2.5} alignItems="center" textAlign="center">
-              {lobbyState === 'LOADING' ? (
-                <>
-                  <CircularProgress size={32} />
-                  <Typography color="text.secondary">{labels.loading}</Typography>
-                </>
-              ) : lobbyState === 'UNAVAILABLE' ? (
-                <Alert severity="info" icon={<ShieldCheck size={20} />} sx={{ width: '100%' }}>
-                  {labels.unavailable}
-                </Alert>
-              ) : (
-                <>
-                  <Typography variant="h5" fontWeight={750}>
-                    {lobbyState === 'JOIN' ? labels.active : labels.ready}
-                  </Typography>
-                  <Typography color="text.secondary">{labels.description}</Typography>
-                  <ActionButton
-                    intent="primary"
-                    size="large"
-                    loading={busy}
-                    loadingLabel={labels.preparing}
-                    startIcon={<Video size={18} />}
-                    onClick={enterPreJoin}
-                  >
-                    {lobbyState === 'JOIN' ? labels.join : labels.start}
-                  </ActionButton>
-                </>
-              )}
+            <Stack spacing={3}>
+              <Stack spacing={2.5} alignItems="center" textAlign="center">
+                {lobbyState === 'LOADING' ? (
+                  <>
+                    <CircularProgress size={32} />
+                    <Typography color="text.secondary">{labels.loading}</Typography>
+                  </>
+                ) : lobbyState === 'UNAVAILABLE' ? (
+                  <Alert severity="info" icon={<ShieldCheck size={20} />} sx={{ width: '100%' }}>
+                    {labels.unavailable}
+                  </Alert>
+                ) : (
+                  <>
+                    <Typography variant="h5" fontWeight={750}>
+                      {lobbyState === 'JOIN' ? labels.active : labels.ready}
+                    </Typography>
+                    <Typography color="text.secondary">{labels.description}</Typography>
+                    <ActionButton
+                      intent="primary"
+                      size="large"
+                      loading={busy}
+                      loadingLabel={labels.preparing}
+                      startIcon={<Video size={18} />}
+                      onClick={enterPreJoin}
+                    >
+                      {lobbyState === 'JOIN' ? labels.join : labels.start}
+                    </ActionButton>
+                  </>
+                )}
+              </Stack>
+              <MessagingMeetingHistory
+                items={historyQuery.data ?? []}
+                loading={historyQuery.isLoading}
+                language={i18n.resolvedLanguage ?? i18n.language}
+                labels={{
+                  title: labels.historyTitle,
+                  description: labels.historyDescription,
+                  empty: labels.historyEmpty,
+                  endedBy: labels.historyEndedBy,
+                  minutes: labels.historyMinutes,
+                }}
+              />
             </Stack>
           )}
         </Stack>

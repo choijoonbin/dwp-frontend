@@ -1,6 +1,5 @@
-import { Ban } from 'lucide-react';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { ActionIconButton } from '@dwp-frontend/design-system';
+import { ActionButton } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -19,6 +18,17 @@ type RoleAssignmentColumnOptions = {
   busy: boolean;
   onRevoke: (assignment: GroupRoleAssignment) => void;
 };
+
+export type RoleAssignmentActionState = 'REVOKE' | 'REVOKED' | 'MANAGED_ELSEWHERE' | 'NONE';
+
+export function resolveRoleAssignmentActionState(
+  assignment: GroupRoleAssignment,
+  assignableRoleCodes: ReadonlySet<string>
+): RoleAssignmentActionState {
+  if (assignment.lifecycleState === 'REVOKED') return 'REVOKED';
+  if (assignment.lifecycleState !== 'ACTIVE') return 'NONE';
+  return assignableRoleCodes.has(assignment.roleCode) ? 'REVOKE' : 'MANAGED_ELSEWHERE';
+}
 
 export function createRoleAssignmentColumns({
   t,
@@ -50,7 +60,10 @@ export function createRoleAssignmentColumns({
       field: 'assignmentType',
       headerName: t('roleGovernance.columns.assignmentType'),
       width: 130,
-      valueFormatter: (value) => display('assignmentTypes', String(value)),
+      valueFormatter: (value) =>
+        value === 'ACTIVE'
+          ? t('roleGovernance.assignmentTypes.ACTIVE')
+          : t('roleGovernance.assignmentTypes.ELIGIBLE'),
     },
     {
       field: 'scopeType',
@@ -58,7 +71,7 @@ export function createRoleAssignmentColumns({
       minWidth: 170,
       flex: 0.7,
       valueGetter: (_value, row) => {
-        const scope = display('scopeTypes', row.scopeType);
+        const scope = t(`roleGovernance.scopes.${row.scopeType}`);
         return row.scopeRef ? `${scope} / ${row.scopeRef}` : scope;
       },
     },
@@ -86,22 +99,37 @@ export function createRoleAssignmentColumns({
     },
     {
       field: 'actions',
-      headerName: '',
-      width: 64,
+      headerName: t('roleGovernance.columns.actions'),
+      headerAlign: 'center',
+      align: 'center',
+      width: 112,
       sortable: false,
-      renderCell: ({ row }) => (
-        <ActionIconButton
-          size="small"
-          intent="danger"
-          label={t('roleGovernance.actions.revoke')}
-          disabled={
-            busy || row.lifecycleState !== 'ACTIVE' || !assignableRoleCodes.has(row.roleCode)
-          }
-          onClick={() => onRevoke(row)}
-        >
-          <Ban size={16} />
-        </ActionIconButton>
-      ),
+      renderCell: ({ row }) => {
+        const actionState = resolveRoleAssignmentActionState(row, assignableRoleCodes);
+        if (actionState !== 'REVOKE') {
+          return (
+            <Typography variant="caption" color="text.secondary">
+              {t(`roleGovernance.actions.assignmentStates.${actionState}`)}
+            </Typography>
+          );
+        }
+        const roleName = roleNamesByCode.get(row.roleCode) ?? row.roleCode;
+        return (
+          <ActionButton
+            size="small"
+            intent="quiet"
+            disabled={busy}
+            aria-label={t('roleGovernance.actions.revokeFor', {
+              group: row.groupName,
+              role: roleName,
+            })}
+            sx={{ color: 'error.main', fontWeight: 700 }}
+            onClick={() => onRevoke(row)}
+          >
+            {t('roleGovernance.actions.revokeShort')}
+          </ActionButton>
+        );
+      },
     },
   ];
 }

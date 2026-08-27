@@ -1,3 +1,5 @@
+import { workspaceWidgetCatalogDefinition } from '../../components/workspace-composer/workspace-widget-catalog';
+
 import type { HomeWidgetConfiguration } from '@dwp-frontend/shared-utils';
 
 export type HomeWidgetContentContract = {
@@ -6,31 +8,15 @@ export type HomeWidgetContentContract = {
   filterPresets: readonly string[];
 };
 
-const CONTRACTS: Readonly<Record<string, HomeWidgetContentContract>> = {
-  activity: {
-    sourceKey: 'ACTIVITY',
-    fieldKeys: ['eventType', 'title', 'occurredAt', 'actor'],
-    filterPresets: ['RECENT', 'MY_ACTIVITY'],
-  },
-  focus: {
-    sourceKey: 'WORK',
-    fieldKeys: ['title', 'status', 'priority', 'dueAt'],
-    filterPresets: ['ASSIGNED_TO_ME', 'DUE_SOON', 'HIGH_PRIORITY'],
-  },
-  schedule: {
-    sourceKey: 'CALENDAR',
-    fieldKeys: ['title', 'startAt', 'endAt', 'location'],
-    filterPresets: ['TODAY', 'NEXT_7_DAYS'],
-  },
-  'daily-brief': {
-    sourceKey: 'RECOMMENDATION',
-    fieldKeys: ['title', 'reason', 'action'],
-    filterPresets: ['RECOMMENDED', 'NEXT_ACTIONS'],
-  },
-};
-
 export function homeWidgetContentContract(widgetKey: string): HomeWidgetContentContract | null {
-  return CONTRACTS[widgetKey] ?? null;
+  const configuration = workspaceWidgetCatalogDefinition(widgetKey)?.configuration;
+  return configuration
+    ? {
+        sourceKey: configuration.sourceKey,
+        fieldKeys: configuration.fieldKeys,
+        filterPresets: configuration.filterPresets,
+      }
+    : null;
 }
 
 export function buildHomeWidgetConfiguration(

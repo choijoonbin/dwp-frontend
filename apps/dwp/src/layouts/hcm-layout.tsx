@@ -1,4 +1,5 @@
 import { visibleHcmNavigation } from '../features/hcm/hcm-navigation';
+import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { useHcmExperience } from '../features/hcm/use-hcm-experience';
 import { ProductAreaLayout } from './product-area-layout';
 
@@ -14,5 +15,12 @@ export function HcmLayout() {
     canManageTalent: experience.canManageTalent,
   });
 
-  return <ProductAreaLayout areaKey="hcm" navigation={navigation} translationNamespace="hcm" />;
+  return (
+    <ProductAreaLayout
+      areaKey="hcm"
+      manifest={HCM_PRODUCT_MANIFEST}
+      navigation={navigation}
+      translationNamespace="hcm"
+    />
+  );
 }

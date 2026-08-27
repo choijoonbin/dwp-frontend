@@ -6,8 +6,12 @@ coverage/
 .nx/
 storybook-static/
 playwright-report/
+playwright-report-*/
 test-results/
+test-results-*/
 blob-report/
 yarn.lock
 libs/api-contracts/openapi/gateway-public.json
 libs/api-contracts/src/gateway-public.ts
+libs/api-contracts/openapi/agent-public.json
+libs/api-contracts/src/agent-public.ts

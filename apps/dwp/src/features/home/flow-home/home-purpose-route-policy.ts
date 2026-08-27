@@ -24,9 +24,10 @@ export function homePurposeAllRoute(
   const appKey = appKeys[0];
   if (appKey === 'APP.APPROVALS') {
     if (purpose === 'action') return '/approvals/inbox';
-    if (purpose === 'response') return everyPath(items, '/approvals/requests/needs-info')
-      ? '/approvals/requests/needs-info'
-      : '/approvals/home';
+    if (purpose === 'response')
+      return everyPath(items, '/approvals/requests/needs-info')
+        ? '/approvals/requests/needs-info'
+        : '/approvals/home';
     if (purpose === 'request') {
       if (everyPath(items, '/approvals/requests/submitted')) {
         return '/approvals/requests/submitted';

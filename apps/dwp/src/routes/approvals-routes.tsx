@@ -4,7 +4,7 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
 import { ApprovalLayout } from '../layouts/approval-layout';
-import { productPageRelativePattern } from './product-page-route-contracts';
+import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
   AppRouteGuard,
   authenticationFallback,
@@ -70,7 +70,7 @@ function approvalPageRoute(
   basePath: '/approvals' | '/approvals/admin'
 ): RouteObject {
   return {
-    path: productPageRelativePattern(routeContractKey, basePath),
+    path: officialProductPageRelativePattern(routeContractKey, basePath),
     handle: { routeContractKey },
     element: (
       <ProductCanaryRouteBoundary

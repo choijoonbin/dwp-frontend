@@ -26,6 +26,24 @@
       "govern": "Govern"
     }
   },
+  "supportBar": {
+    "label": "Active tenant diagnosis session",
+    "title": "Tenant diagnosis · {{tenant}}",
+    "expires": "Approved scope expires {{value}}.",
+    "remaining": "Remaining · {{value}}",
+    "tenantKey": "Tenant · {{value}}",
+    "environment": "Environment · {{value}}",
+    "region": "Region · {{value}}",
+    "sessionReference": "Session · {{value}}",
+    "approvedDetails": "Approved session details",
+    "exited": "Support session ended.",
+    "exitFailed": "The support session could not be ended. Try again."
+  },
+  "accessPending": {
+    "title": "Provider access is awaiting assignment",
+    "description": "Your identity is isolated in the Provider realm, but no Provider operating role has been assigned. Tenant access is not inferred while assignment is pending.",
+    "accountAction": "Open account settings"
+  },
   "page": {
     "breadcrumb": "Provider Control Plane",
     "overview": {
@@ -368,7 +386,9 @@
     },
     "live": {
       "live": "Auto-refreshing",
-      "syncing": "Synchronizing latest state"
+      "syncing": "Synchronizing latest state",
+      "stale": "Operational snapshot is stale",
+      "degraded": "Reliability snapshot is unavailable"
     },
     "pulse": {
       "HEALTHY": "All customer environments are operating within normal ranges with no active incidents.",
@@ -403,6 +423,7 @@
       "openIncidents": "Open incidents",
       "controlLoad": "Changes awaiting control",
       "controlLoadDetail": "{{support}} support access · {{objectives}} at-risk SLOs",
+      "unavailable": "unavailable",
       "openChanges": "Open change control"
     },
     "severity": {
@@ -457,7 +478,7 @@
       "title": "Service reliability and error budget",
       "description": "Surface risk using current SLO achievement and remaining error budget.",
       "open": "Reliability details",
-      "unavailable": "Only reliability details are unavailable. Other operational information is current.",
+      "unavailable": "Only reliability details are unavailable. Other operational information remains available.",
       "healthy": "{{count}} healthy SLOs",
       "risk": "{{count}} at-risk SLOs",
       "drift": "{{count}} drift findings",
@@ -501,7 +522,11 @@
       "description": "Compare placement, contract, and service state across {{count}} selected environments.",
       "selectMore": "Select at least one more tenant to compare. You can select up to three.",
       "clear": "Clear comparison",
-      "limit": "You can compare up to three tenants."
+      "limit": "You can compare up to three tenants.",
+      "loading": "Loading the selected tenant records.",
+      "allUnavailable": "None of the selected tenant records are available. Clear the comparison or retry later.",
+      "partial": "{{available}} of {{total}} selected tenant records are available. The available comparison remains visible.",
+      "unavailable": "One or more selected tenants are unavailable or outside your permitted scope. Available comparisons remain visible."
     },
     "context": {
       "label": "Customer estate scope",
@@ -515,7 +540,10 @@
     },
     "live": {
       "live": "Customer estate connected",
-      "syncing": "Synchronizing latest estate"
+      "loadedWithoutSourceTime": "Recently loaded · source observation time unavailable",
+      "syncing": "Synchronizing latest estate",
+      "stale": "Customer estate snapshot is stale",
+      "degraded": "Customer estate is partially available"
     },
     "pulse": {
       "title": {
@@ -567,6 +595,7 @@
       "state": "Lifecycle"
     },
     "actions": { "onboard": "Onboard company" },
+    "onboardingCatalogUnavailable": "The customer estate remains available, but onboarding is disabled until the entitlement and region catalogs recover.",
     "empty": {
       "firstUseTitle": "There are no managed tenants yet",
       "firstUseDescription": "Onboard the first tenant by reviewing company details, runtime environment, initial administrator, and entitlements.",
@@ -576,6 +605,10 @@
     }
   },
   "onboarding": {
+    "identityStaging": {
+      "title": "Administrator identity will remain staged",
+      "description": "The plan creates the administrator record without a browser activation token or link. Activation stays unavailable until a verified customer-owned out-of-band delivery channel is connected."
+    },
     "title": "Company and tenant onboarding",
     "organization": "Customer company",
     "tenantConfiguration": "Runtime environment",
@@ -955,13 +988,21 @@
     "workflowDescription": "Request, independently review, activate, expire, and close every customer access path with evidence.",
     "sessionsTitle": "Active and historical sessions",
     "sessionsDescription": "Monitor issued credentials, emergency access, expiration, and immediate revocation.",
-    "createTitle": "Request time-bound support access",
+    "createTitle": "Start tenant diagnosis with time-bound access",
     "elevationWarning": "A standard request is recorded first. A different authorized operator must approve it before activation.",
-    "breakGlassWarning": "Emergency access skips approval, is recorded as L3, and requires an independent post-access review.",
     "partialRequests": "The request ledger is temporarily unavailable. Session monitoring remains available; request actions are disabled.",
-    "accessMode": "Access mode",
+    "previewScopeUnavailable": "No active provider diagnosis scope is available. Tenant product and administration routes remain closed.",
+    "scopeRetired": "This support scope is retired and cannot be approved, activated, or used for tenant access.",
     "approvalReference": "Customer approval reference",
     "approvalReferenceHelp": "Enter the ticket, change request, or customer approval record identifier.",
+    "reviewEvidence": "Exact access evidence",
+    "notProvided": "Not provided",
+    "tenantPicker": {
+      "help": "Search the complete tenant estate by company, tenant name, or key.",
+      "loading": "Searching tenants…",
+      "empty": "No matching tenant",
+      "error": "Tenant search is temporarily unavailable"
+    },
     "modes": {
       "STANDARD": "Approved standard access",
       "BREAK_GLASS": "Emergency access"
@@ -977,7 +1018,8 @@
       "active": "Active sessions",
       "breakGlass": "Active emergency access",
       "expiring": "Expiring within 15 min",
-      "pendingReview": "Post-reviews due"
+      "pendingReview": "Post-reviews due",
+      "unavailable": "{{metric}} unavailable"
     },
     "minutes": "{{count}} minutes",
     "activated": "Approved tenant support mode started.",
@@ -987,8 +1029,8 @@
     "revoked": "Support session revoked.",
     "actions": {
       "create": "Request support access",
+      "startDiagnosis": "Start tenant diagnosis",
       "request": "Submit for review",
-      "activateEmergency": "Activate emergency access",
       "activate": "Activate",
       "audit": "View audit evidence",
       "revoke": "Revoke support session",
@@ -1022,9 +1064,40 @@
         "description": "Confirm the session ended, activity matched the approved purpose, and any follow-up evidence is recorded."
       }
     },
+    "postReviewEvidence": {
+      "title": "Actual support-use evidence",
+      "description": "Review the server-bound allowed and denied commands for this exact tenant session. Lifecycle events alone never enable completion.",
+      "period": "Actual session window",
+      "grantedScopes": "Granted scopes",
+      "observedScopes": "Actually used scopes",
+      "noObservedScope": "No authorized scope was used",
+      "completeness": "Evidence coverage",
+      "complete": "Complete server-side aggregate",
+      "incomplete": "Incomplete — completion blocked",
+      "loading": "Loading immutable audit evidence…",
+      "error": "Actual-use evidence could not be verified. Post-access review remains blocked.",
+      "total": "All evidence · {{count}}",
+      "allowed": "Authorized uses · {{count}}",
+      "denied": "Denied attempts · {{count}}",
+      "incompleteBlocked": "The event aggregate, session boundary, or tenant binding is incomplete. Post-access review remains blocked.",
+      "noUseConfirmed": "The terminal session has complete audit coverage and no authorized use. The explicit no-use policy is satisfied.",
+      "anomalies": "Review anomalies: {{value}}",
+      "showing": "Showing the latest {{shown}} of {{total}} total evidence events. Readiness uses the complete server aggregate, not this display slice.",
+      "scope": "Actual scope · {{value}}",
+      "reason": "Denial reason · {{value}}",
+      "correlation": "Canonical correlation · {{value}}",
+      "decision": { "ALLOW": "Allowed", "DENY": "Denied" },
+      "anomaly": {
+        "DENIED_ATTEMPTS": "denied command attempts",
+        "MALFORMED_EVIDENCE": "malformed or unclassifiable audit evidence",
+        "TENANT_BINDING_MISMATCH": "tenant binding mismatch",
+        "SESSION_BINDING_MISMATCH": "session binding mismatch",
+        "INVALID_CORRELATION_EVIDENCE": "non-canonical correlation evidence"
+      }
+    },
     "empty": {
       "firstUseTitle": "There are no support sessions",
-      "firstUseDescription": "Create a session only after confirming customer approval, least-privilege scopes, and expiration.",
+      "firstUseDescription": "Request time-bound access only after confirming customer approval, least-privilege scopes, and expiration.",
       "noResultsTitle": "No support sessions match this state",
       "noResultsDescription": "Choose another state or review the full history.",
       "showAll": "View all history",
@@ -1033,10 +1106,16 @@
     },
     "columns": {
       "tenant": "Tenant",
+      "tenantAndRequester": "Tenant and requester",
+      "session": "Session",
       "operator": "Operator",
       "requester": "Requester",
       "purpose": "Purpose",
       "scopes": "Scopes",
+      "duration": "Duration",
+      "approvalReference": "Customer approval",
+      "exactGrant": "Exact grant",
+      "stateAndDue": "State and decision expiry",
       "mode": "Access mode",
       "risk": "Risk",
       "expires": "Expires",
@@ -1045,10 +1124,31 @@
       "actions": "Next action"
     },
     "scopes": {
+      "TENANT_EXPERIENCE_PREVIEW": "Preview redacted tenant experience configuration",
       "TENANT_CONFIGURATION_READ": "Read tenant configuration",
       "TENANT_CONFIGURATION_WRITE": "Change tenant configuration",
       "TENANT_DIAGNOSTICS_READ": "Read tenant diagnostics",
       "WORKFORCE_READ": "Read workforce data"
+    }
+  },
+  "diagnosis": {
+    "contextUnavailable": "The active diagnosis context could not be verified. Tenant access remains closed until it can be verified.",
+    "active": {
+      "label": "Active tenant diagnosis boundary",
+      "title": "Current target · {{tenant}}",
+      "expires": "Access expires {{value}}",
+      "remaining": "Remaining · {{value}}",
+      "tenantKey": "Tenant · {{value}}",
+      "environment": "Environment · {{value}}",
+      "region": "Region · {{value}}",
+      "sessionReference": "Session · {{value}}",
+      "targetMismatch": "This session targets another tenant. Return to the session target or end it before diagnosing this tenant.",
+      "customerBoundary": "Provider diagnosis is isolated from customer user identity and never impersonates an employee.",
+      "singleSession": "Only one tenant diagnosis can be active at a time. End the current session before starting another."
+    },
+    "actions": {
+      "preview": "Open configuration preview",
+      "manage": "Manage diagnosis session"
     }
   },
   "commercial": {
@@ -1217,6 +1317,82 @@
       "snapshot": "Redacted event snapshot"
     },
     "outcomes": { "SUCCESS": "Success", "FAILED": "Failed", "DENIED": "Denied" }
+  },
+  "contractSurfaces": {
+    "label": "Product contract areas",
+    "widgets": "Widget definitions",
+    "codes": "Code contracts"
+  },
+  "widgetCatalog": {
+    "governance": {
+      "title": "Static widget contracts packaged with this build",
+      "description": "Development preview only. These declarations are not Provider certification records and are not connected to definition publishing, Tenant policy, or runtime revocation yet."
+    },
+    "search": {
+      "label": "Search widget definitions",
+      "placeholder": "Search key, owner, app, or data source",
+      "results_one": "{{count}} registered build definition",
+      "results_other": "{{count}} registered build definitions",
+      "empty": "No widget definition matches this search",
+      "emptyDescription": "Try a definition key, owning product, source app, or data source."
+    },
+    "actions": {
+      "codeContract": "Open code contracts",
+      "rollouts": "Open product feature rollouts"
+    },
+    "listLabel": "Provider widget definition catalog",
+    "states": {
+      "ACTIVE": "Included in build",
+      "DEPRECATED": "Deprecated",
+      "BLOCKED": "Blocked"
+    },
+    "certified": "Static contract registered",
+    "fields": {
+      "key": "Definition key",
+      "owner": "Owning product",
+      "sourceApp": "Source app",
+      "dataSource": "Data source",
+      "analytics": "Analytics key",
+      "manifestVersion": "Manifest version"
+    },
+    "contract": {
+      "title": "Declared runtime and data values",
+      "freshness": "Declared freshness target up to {{seconds}} sec"
+    },
+    "runtime": {
+      "NATIVE": "Native renderer"
+    },
+    "privacy": {
+      "INTERNAL": "Internal data",
+      "CONFIDENTIAL": "Confidential data"
+    },
+    "policyClass": {
+      "PERSONAL": "Personal widget",
+      "GOVERNED": "Governed zone"
+    },
+    "certification": {
+      "title": "Release review criteria",
+      "manifest": {
+        "title": "Manifest contract",
+        "description": "Declared in source for this build; no immutable registry version or signed evidence is connected yet."
+      },
+      "data": {
+        "title": "Data authorization",
+        "description": "Target contract: re-evaluate recipient and source ACL at runtime. The current static catalog is not authorization evidence."
+      },
+      "accessibility": {
+        "title": "Accessible host rendering",
+        "description": "Review criterion for keyboard order, text alternatives, contrast, and reduced motion; certification evidence is not connected."
+      },
+      "performance": {
+        "title": "Home performance budget",
+        "description": "Review criterion for freshness, request budgets, and a single page scroll owner; runtime enforcement is planned."
+      }
+    },
+    "revocation": {
+      "title": "Target fail-closed revocation contract",
+      "description": "Dynamic revocation is not connected yet. The server registry must stop affected instances regardless of Tenant or user settings before this becomes release evidence."
+    }
   },
   "codeContracts": {
     "scope": {
@@ -1603,7 +1779,15 @@
     },
     "live": {
       "live": "Tenant state connected",
-      "syncing": "Synchronizing latest tenant state"
+      "loadedWithoutSourceTime": "Recently loaded · source observation time unavailable",
+      "syncing": "Synchronizing latest tenant state",
+      "stale": "Tenant state snapshot is stale",
+      "degraded": "Tenant detail is partially available"
+    },
+    "diagnosis": {
+      "boundaryTitle": "Provider operational detail — not customer UI",
+      "boundaryDescription": "This page shows control-plane, contract, and service state. Start an approved diagnosis to inspect a tenant's permitted configuration.",
+      "start": "Start tenant diagnosis"
     },
     "pulse": {
       "title": {
@@ -1616,7 +1800,8 @@
         "ATTENTION": "Review {{services}} service exceptions, {{domains}} unverified domains, and active administrator status.",
         "CRITICAL": "Recover failed services first, then verify customer impact and execution evidence."
       },
-      "support": "{{count}} active support sessions"
+      "support": "{{count}} active support sessions",
+      "supportUnavailable": "Support session count unavailable"
     },
     "signals": {
       "label": "Tenant readiness signals",
@@ -1655,17 +1840,90 @@
     "administrators": {
       "title": "Company administrators",
       "primary": "Primary administrator",
-      "invite": "Issue activation link",
-      "invited": "Administrator activation link issued.",
-      "invitationTitle": "Activate administrator account",
-      "invitationOnce": "This activation link is shown only once.",
-      "activationLink": "Activation link",
-      "expires": "Expires: {{value}}"
+      "configured": "Configured administrators",
+      "active": "Active administrators",
+      "pendingDelivery": "Pending customer delivery",
+      "configuredState": "Configured",
+      "notConfiguredState": "Not configured",
+      "customerDeliveryRequired": "Administrator activation is unavailable until a customer-owned out-of-band delivery channel is connected. Provider operators cannot issue or view activation links."
+    },
+    "entitlements": {
+      "catalogLoading": "Loading the governed entitlement catalog. Tenant operational detail remains available.",
+      "catalogUnavailable": "The governed entitlement catalog is unavailable. Existing tenant state remains visible, but entitlement changes are disabled."
     },
     "support": {
       "title": "Tenant support sessions",
       "create": "Create support session",
+      "restricted": "Privileged support history requires dedicated support-ledger access.",
+      "loading": "Loading the privileged support ledger. Other tenant detail remains available.",
+      "unavailable": "The privileged support ledger is unavailable. Other tenant detail remains available.",
       "empty": "No support sessions exist for this tenant."
+    }
+  },
+  "tenantExperiencePreview": {
+    "title": "Tenant experience configuration preview",
+    "description": "Inspect fixed tenant branding and home-experience configuration without opening a customer user session.",
+    "actions": {
+      "back": "Back to tenant operational detail",
+      "startDiagnosis": "Start tenant diagnosis",
+      "manageSession": "Manage diagnosis session"
+    },
+    "blocked": {
+      "no-session": {
+        "title": "An approved diagnosis session is required",
+        "description": "Start a time-bound session for this tenant with the explicit TENANT_EXPERIENCE_PREVIEW scope."
+      },
+      "wrong-tenant": {
+        "title": "The active session targets another tenant",
+        "description": "Configuration is withheld because the route tenant and active support target do not match."
+      },
+      "expired": {
+        "title": "The diagnosis session has expired",
+        "description": "Configuration was closed at expiry. Start a new approved session if diagnosis must continue."
+      },
+      "scope-denied": {
+        "title": "Configuration preview is outside the approved scope",
+        "description": "The active session does not include TENANT_EXPERIENCE_PREVIEW. No tenant preview data was requested."
+      },
+      "context-error": {
+        "title": "The diagnosis boundary could not be verified",
+        "description": "Tenant configuration remains closed while the active session context is unavailable."
+      }
+    },
+    "partialFailure": {
+      "title": "The complete configuration could not be verified",
+      "description": "The preview is withheld because branding and home-experience configuration were not both loaded successfully."
+    },
+    "boundary": {
+      "title": "Configuration-only synthetic preview",
+      "description": "This fixed synthesis uses tenant-managed branding and home-experience settings only. It contains no personal widgets, work data, employee identity, or impersonated session."
+    },
+    "canvas": {
+      "label": "Synthetic tenant experience configuration canvas",
+      "watermark": "CONFIG ONLY · ASSETS REDACTED · NOT CUSTOMER UI",
+      "traceTarget": "Tenant · {{tenantKey}} / {{environmentKey}}",
+      "traceVersions": "Branding v{{brandingVersion}} · Home v{{homeVersion}}",
+      "traceGeneratedAt": "Generated · {{value}}",
+      "logoRedacted": "Logo asset redacted",
+      "headlineFallback": "Tenant home headline is not configured",
+      "subheadlineFallback": "This fallback appears only in the provider configuration preview."
+    },
+    "configuration": {
+      "title": "Published configuration summary",
+      "description": "Static policy values are shown for diagnosis; no user entitlement or personalized layout is evaluated.",
+      "variant": "Experience · {{value}}",
+      "mode": "Mode · {{value}}",
+      "personalization": "Personalization · {{value}}",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "version": "Configuration v{{value}}",
+      "assets": "Background asset · {{value}}",
+      "redacted": "Configured, redacted",
+      "notConfigured": "Not configured",
+      "contract": "Preview contract · {{value}}",
+      "apps": "{{count}} configured apps",
+      "empty": "No enabled launchpad groups are present in the published configuration.",
+      "excluded": "Excluded by contract: {{values}}"
     }
   }
 }

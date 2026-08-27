@@ -2,6 +2,11 @@ name: Release readiness
 
 on:
   workflow_dispatch:
+    inputs:
+      backend-commit:
+        description: Official dwp-backend full commit SHA
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -16,6 +21,24 @@ jobs:
       - name: Check out source
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
+      - name: Validate immutable backend revision
+        env:
+          BACKEND_COMMIT: ${{ inputs.backend-commit }}
+        run: |
+          if [[ ! "$BACKEND_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "backend-commit must be a full lowercase commit SHA." >&2
+            exit 2
+          fi
+
+      - name: Check out official backend contracts
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: choijoonbin/dwp-backend
+          ref: ${{ inputs.backend-commit }}
+          path: .official-backend
+          token: ${{ secrets.DWP_BACKEND_READ_TOKEN || github.token }}
+          persist-credentials: false
+
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
@@ -27,5 +50,27 @@ jobs:
       - name: Validate evidence registry integrity
         run: corepack yarn release:evidence:check
 
+      - name: Test release evidence gate fail-closed binding
+        run: corepack yarn release:evidence:test
+
+      - name: Test Product Surface release gate fail-closed binding
+        run: corepack yarn product-surfaces:readiness:test
+
+      - name: Enforce Product Surface production readiness
+        run: corepack yarn product-surfaces:readiness:release
+
       - name: Enforce release authorization
+        env:
+          DWP_OFFICIAL_BACKEND_CONTRACTS_DIR: ${{ github.workspace }}/.official-backend/contracts
+          DWP_BACKEND_CHECKOUT: ${{ github.workspace }}/.official-backend
+          DWP_BACKEND_REVISION: ${{ inputs.backend-commit }}
         run: corepack yarn release:gate
+
+      - name: Preserve machine-readable release evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: release-evidence-manifests
+          path: docs/06-delivery/release-evidence/*.json
+          if-no-files-found: error
+          retention-days: 90

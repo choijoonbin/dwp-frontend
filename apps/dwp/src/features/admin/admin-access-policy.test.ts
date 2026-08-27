@@ -46,6 +46,8 @@ describe('control plane access policy', () => {
     expect(hasProviderControlPlaneRole(['PROVIDER_TENANT_PROVISIONER'])).toBe(true);
     expect(hasProviderControlPlaneRole(['PROVIDER_RELEASE_APPROVER'])).toBe(true);
     expect(hasProviderControlPlaneRole(['PROVIDER_DATA_APPROVER'])).toBe(true);
+    expect(hasProviderControlPlaneRole(['PROVIDER_FUTURE_OPERATIONS'])).toBe(true);
+    expect(hasProviderControlPlaneRole([' provider_future_auditor '])).toBe(true);
     expect(hasProviderControlPlaneRole(['TENANT_ADMIN'])).toBe(false);
   });
 
@@ -89,9 +91,51 @@ describe('control plane access policy', () => {
     ).toBe(false);
   });
 
-  it('admits a provider operator to tenant administration only with an active support session', () => {
+  it('never admits a provider operator to tenant administration through support scopes', () => {
     expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, false)).toBe(false);
-    expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, true)).toBe(true);
+    expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, true)).toBe(false);
+    expect(canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true, false)).toBe(false);
+    expect(canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true, true)).toBe(false);
+    expect(
+      canEnterCompanyAdministration(
+        ['ADMIN', 'PROVIDER_ADMIN'],
+        true,
+        true,
+        [],
+        ['TENANT_CONFIGURATION_READ']
+      )
+    ).toBe(false);
+    expect(
+      canEnterCompanyAdministration(
+        ['ADMIN', 'PROVIDER_ADMIN'],
+        true,
+        true,
+        [],
+        ['TENANT_EXPERIENCE_PREVIEW']
+      )
+    ).toBe(false);
+  });
+
+  it('gives provider scope precedence over mixed tenant roles in navigation', () => {
+    const access = {
+      roles: ['ADMIN', 'PROVIDER_ADMIN'],
+      permissionsLoaded: true,
+      hasPermission: vi.fn(() => true),
+    };
+
+    expect(canAccessAdminNavigationItem(item('branding'), access)).toBe(false);
+    expect(
+      canAccessAdminNavigationItem(item('branding'), {
+        ...access,
+        supportScopes: ['TENANT_CONFIGURATION_READ'],
+      })
+    ).toBe(false);
+    expect(
+      canAccessAdminNavigationItem(item('audit-events', 'ADMIN.AUDIT_VIEW'), {
+        ...access,
+        supportScopes: ['TENANT_CONFIGURATION_READ'],
+      })
+    ).toBe(false);
   });
 
   it('keeps product specialists in product workbenches rather than company administration', () => {
@@ -189,7 +233,7 @@ describe('control plane access policy', () => {
     expect(canAccessAdminNavigationItem(item('access'), access)).toBe(false);
   });
 
-  it('exposes home composition only through tenant configuration support scope', () => {
+  it('keeps retired tenant-configuration scopes out of home composition', () => {
     expect(
       canAccessAdminNavigationItem(item('home-composition'), {
         roles: ['PROVIDER_SUPPORT'],
@@ -197,7 +241,7 @@ describe('control plane access policy', () => {
         hasPermission: vi.fn(() => false),
         supportScopes: ['TENANT_CONFIGURATION_WRITE'],
       })
-    ).toBe(true);
+    ).toBe(false);
     expect(
       canAccessAdminNavigationItem(item('home-composition'), {
         roles: ['PROVIDER_SUPPORT'],

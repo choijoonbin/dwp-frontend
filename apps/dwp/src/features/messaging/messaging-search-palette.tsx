@@ -148,10 +148,12 @@ export function MessagingSearchPalette({
 function ResultSection({ label, children }: { label: string; children: ReactNode }) {
   return (
     <Box component="li" sx={{ listStyle: 'none' }}>
-      <ListSubheader disableSticky sx={{ lineHeight: '34px', fontWeight: 800 }}>
+      <ListSubheader component="div" disableSticky sx={{ lineHeight: '34px', fontWeight: 800 }}>
         {label}
       </ListSubheader>
-      {children}
+      <Box component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
+        {children}
+      </Box>
     </Box>
   );
 }
@@ -171,6 +173,7 @@ function ResultRow({
 }) {
   return (
     <ListItemButton
+      component="li"
       disabled={disabled}
       onClick={onClick}
       sx={{ minHeight: 54, mx: 0.75, borderRadius: 1 }}

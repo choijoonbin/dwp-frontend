@@ -59,8 +59,8 @@ const ProviderCommercial = lazy(() =>
   }))
 );
 const ProviderCodeContracts = lazy(() =>
-  import('../features/provider/provider-code-contracts').then((module) => ({
-    default: module.ProviderCodeContracts,
+  import('../features/provider/provider-contracts').then((module) => ({
+    default: module.ProviderContracts,
   }))
 );
 const ProviderDataGovernance = lazy(() =>
@@ -89,7 +89,7 @@ const views = {
     content: ProviderFeatureRollouts,
     permission: 'FEATURE_ROLLOUT_READ',
   },
-  support: { icon: LifeBuoy, content: ProviderSupport, permission: 'ESTATE_READ' },
+  support: { icon: LifeBuoy, content: ProviderSupport, permission: 'SUPPORT_ACCESS_READ' },
   commercial: {
     icon: BadgeDollarSign,
     content: ProviderCommercial,

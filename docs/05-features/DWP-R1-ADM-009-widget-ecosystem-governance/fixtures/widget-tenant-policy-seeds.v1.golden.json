@@ -1,0 +1,117 @@
+{
+  "fixtureVersion": 1,
+  "expectedBaselineDigest": "cd91459ee7ae40e1ec4082b5d66bc848b9cbe59d57bae7b3f7f3d3dcc5e8c92b",
+  "baseline": {
+    "schemaVersion": 1,
+    "baselineGeneration": 1,
+    "actorPlane": "SYSTEM_MIGRATION",
+    "surfaceKey": "workspace-home",
+    "policies": [
+      {
+        "legacyWidgetKey": "activity",
+        "definitionKey": "core.activity.activity",
+        "manifestHash": "fbab61015ec3b20c2faf9810b1758aebbd7517029baa64cb6b99190815836ca1",
+        "state": "PUBLISHED",
+        "revision": 1,
+        "predecessorRevision": null,
+        "enabled": true,
+        "selector": { "kind": "CHANNEL", "channel": "STABLE", "versionId": null },
+        "supportedSurfaceKeys": ["workspace-home"],
+        "audienceSelector": {
+          "schemaVersion": 1,
+          "mode": "ALL_ENTITLED",
+          "roleCodes": [],
+          "groupRefs": []
+        },
+        "required": false,
+        "lockedConfiguration": [],
+        "sharingPolicy": "PRIVATE_ONLY",
+        "reasonCode": "LEGACY_BASELINE"
+      },
+      {
+        "legacyWidgetKey": "command-rail",
+        "definitionKey": "core.workspace.command-rail",
+        "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+        "state": "PUBLISHED",
+        "revision": 1,
+        "predecessorRevision": null,
+        "enabled": true,
+        "selector": { "kind": "CHANNEL", "channel": "STABLE", "versionId": null },
+        "supportedSurfaceKeys": ["workspace-home"],
+        "audienceSelector": {
+          "schemaVersion": 1,
+          "mode": "ALL_ENTITLED",
+          "roleCodes": [],
+          "groupRefs": []
+        },
+        "required": false,
+        "lockedConfiguration": [],
+        "sharingPolicy": "PRIVATE_ONLY",
+        "reasonCode": "LEGACY_BASELINE"
+      },
+      {
+        "legacyWidgetKey": "daily-brief",
+        "definitionKey": "core.workspace.daily-brief",
+        "manifestHash": "9b7f48b7ea4ef429120db330a4972c3315ad682759fa86e49c212c42bdd02406",
+        "state": "PUBLISHED",
+        "revision": 1,
+        "predecessorRevision": null,
+        "enabled": true,
+        "selector": { "kind": "CHANNEL", "channel": "STABLE", "versionId": null },
+        "supportedSurfaceKeys": ["workspace-home"],
+        "audienceSelector": {
+          "schemaVersion": 1,
+          "mode": "ALL_ENTITLED",
+          "roleCodes": [],
+          "groupRefs": []
+        },
+        "required": false,
+        "lockedConfiguration": [],
+        "sharingPolicy": "PRIVATE_ONLY",
+        "reasonCode": "LEGACY_BASELINE"
+      },
+      {
+        "legacyWidgetKey": "focus",
+        "definitionKey": "core.work.focus",
+        "manifestHash": "36d1b02326e4725a235749e173dfdf50a0423ef30f42d7ccab97946ba826d893",
+        "state": "PUBLISHED",
+        "revision": 1,
+        "predecessorRevision": null,
+        "enabled": true,
+        "selector": { "kind": "CHANNEL", "channel": "STABLE", "versionId": null },
+        "supportedSurfaceKeys": ["workspace-home"],
+        "audienceSelector": {
+          "schemaVersion": 1,
+          "mode": "ALL_ENTITLED",
+          "roleCodes": [],
+          "groupRefs": []
+        },
+        "required": false,
+        "lockedConfiguration": [],
+        "sharingPolicy": "PRIVATE_ONLY",
+        "reasonCode": "LEGACY_BASELINE"
+      },
+      {
+        "legacyWidgetKey": "schedule",
+        "definitionKey": "core.calendar.schedule",
+        "manifestHash": "7f3e090997a213e9d3e6f8184e1458e57382c5f31db79f00fbf678d36f884f5d",
+        "state": "PUBLISHED",
+        "revision": 1,
+        "predecessorRevision": null,
+        "enabled": true,
+        "selector": { "kind": "CHANNEL", "channel": "STABLE", "versionId": null },
+        "supportedSurfaceKeys": ["workspace-home"],
+        "audienceSelector": {
+          "schemaVersion": 1,
+          "mode": "ALL_ENTITLED",
+          "roleCodes": [],
+          "groupRefs": []
+        },
+        "required": false,
+        "lockedConfiguration": [],
+        "sharingPolicy": "PRIVATE_ONLY",
+        "reasonCode": "LEGACY_BASELINE"
+      }
+    ]
+  }
+}

@@ -8,12 +8,14 @@ export type AuthPolicyResponse = {
   requireMfa: boolean;
 };
 
+export type LoginOptionsResponse = {
+  localLoginAvailable: boolean;
+  ssoLoginAvailable: boolean;
+  preferredLoginType: 'LOCAL' | 'SSO' | 'NONE';
+};
+
 export type IdentityProviderResponse = {
-  tenantId: number;
   enabled: boolean;
   providerType: 'OIDC' | 'SAML' | string;
   providerKey: string;
-  authUrl?: string | null;
-  metadataUrl?: string | null;
-  clientId?: string | null;
 };

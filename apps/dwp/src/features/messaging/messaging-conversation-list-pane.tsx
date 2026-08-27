@@ -1,5 +1,7 @@
 import { Search } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { FormField, GuidedEmptyState } from '@dwp-frontend/design-system';
+import { getMessagingDisplayPreference } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -7,6 +9,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Skeleton from '@mui/material/Skeleton';
 
 import { MessagingConversationListItem } from './messaging-components';
+import { MESSAGING_DISPLAY_QUERY_KEY } from './messaging-display-model';
 
 import type { MessagingConversation } from '@dwp-frontend/shared-utils';
 import type { ChangeEvent, RefObject } from 'react';
@@ -40,6 +43,11 @@ export function MessagingConversationListPane({
   onSearchChange,
   onSelect,
 }: MessagingConversationListPaneProps) {
+  const displayQuery = useQuery({
+    queryKey: MESSAGING_DISPLAY_QUERY_KEY,
+    queryFn: getMessagingDisplayPreference,
+    staleTime: 60_000,
+  });
   return (
     <Box
       component="nav"
@@ -83,6 +91,7 @@ export function MessagingConversationListPane({
               key={conversation.conversationId}
               conversation={conversation}
               selected={selectedId === conversation.conversationId}
+              showPreview={displayQuery.data?.messagePreview ?? true}
               onSelect={() => onSelect(conversation)}
             />
           ))

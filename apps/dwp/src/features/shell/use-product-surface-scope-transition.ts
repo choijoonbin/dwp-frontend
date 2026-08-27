@@ -4,7 +4,7 @@ import { matchPath, useLocation, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useProductSurfaceAuthority, useToast } from '@dwp-frontend/shared-utils';
 
-import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
+import { useProductApplicationRuntime } from '../../components/product-application-runtime';
 import { GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES } from './product-sensitive-query-prefixes';
 import { transitionProductSurfaceScope } from './product-surface-cache';
 import { useProductSurfaceTelemetry } from '../../observability/product-surface-telemetry-context';
@@ -37,9 +37,20 @@ export function isProductAccessSensitiveQuery(
   );
 }
 
-function activeRouteContract(pathname: string, productId: string, surfaceId: string) {
-  return PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.find(
+function activeRouteContract(
+  pathname: string,
+  productId: string,
+  surfaceId: string,
+  routes: readonly {
+    productId: string;
+    surfaceId: string;
+    pattern?: string;
+    routeContractKey: string;
+  }[]
+) {
+  return routes.find(
     (route) =>
+      typeof route.pattern === 'string' &&
       route.productId === productId &&
       route.surfaceId === surfaceId &&
       Boolean(matchPath({ path: route.pattern, end: true, caseSensitive: false }, pathname))
@@ -82,6 +93,7 @@ export function useProductSurfaceScopeTransition(decision: AllowedSurfaceDecisio
   const toast = useToast();
   const authority = useProductSurfaceAuthority();
   const telemetry = useProductSurfaceTelemetry();
+  const applicationRuntime = useProductApplicationRuntime();
   const queryClient = useQueryClient();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -105,7 +117,8 @@ export function useProductSurfaceScopeTransition(decision: AllowedSurfaceDecisio
       const activeRoute = activeRouteContract(
         location.pathname,
         decision.context.productKey,
-        decision.context.surfaceKey
+        decision.context.surfaceKey,
+        applicationRuntime.registeredRoutes
       );
       if (!scope || !activeRoute || scopeKey === decision.scope.key) return;
       const transition = productSurfaceOperationCoordinator.beginScopeTransition(
@@ -226,6 +239,7 @@ export function useProductSurfaceScopeTransition(decision: AllowedSurfaceDecisio
     },
     [
       authority,
+      applicationRuntime.registeredRoutes,
       decision,
       location.pathname,
       queryClient,

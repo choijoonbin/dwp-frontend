@@ -6,12 +6,7 @@ import type {
 } from '../../components/product-manifest';
 
 export type ServicesView =
-  | 'home'
-  | 'discover'
-  | 'my'
-  | 'drafts'
-  | 'admin-catalog'
-  | 'admin-operations';
+  'home' | 'discover' | 'my' | 'drafts' | 'admin-catalog' | 'admin-operations';
 
 export const SERVICES_WORK_NAVIGATION = [
   {

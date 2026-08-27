@@ -7,57 +7,75 @@ import { SkipNavigationLink } from './components/skip-navigation-link';
 import { UserLocaleSync } from './components/user-locale-sync';
 import { registerRouteIntentObserver, reportRouteCommit } from './observability/route-performance';
 import { ProductSurfaceAuthorityBridge } from './features/shell/product-surface-authority-bridge';
+import {
+  ProductApplicationRuntimeProvider,
+  type ProductApplicationRuntime,
+} from './components/product-application-runtime';
 
-const NotificationRuntimeHost = lazy(() =>
-  import('./components/notification-runtime-host').then((module) => ({
-    default: module.NotificationRuntimeHost,
-  }))
-);
-
-const DwaionGlobalHost = lazy(() =>
-  import('./components/dwaion-assistant/dwaion-global-host').then((module) => ({
-    default: module.DwaionGlobalHost,
-  }))
-);
+const notificationRuntimeBundled = import.meta.env.VITE_PRODUCT_NOTIFICATION_RUNTIME !== 'disabled';
+const dwaionRuntimeBundled = import.meta.env.VITE_PRODUCT_DWAION_RUNTIME !== 'disabled';
+const NotificationRuntimeHost = notificationRuntimeBundled
+  ? lazy(() =>
+      import('./components/notification-runtime-host').then((module) => ({
+        default: module.NotificationRuntimeHost,
+      }))
+    )
+  : undefined;
+const DwaionGlobalHost = dwaionRuntimeBundled
+  ? lazy(() =>
+      import('./components/dwaion-assistant/dwaion-global-host').then((module) => ({
+        default: module.DwaionGlobalHost,
+      }))
+    )
+  : undefined;
 
 type AppProps = {
   children: React.ReactNode;
+  runtime: ProductApplicationRuntime;
 };
 
 export function routeDocumentTitle(heading: string, surface?: string): string {
   return [heading.trim(), surface?.trim(), 'DWP'].filter(Boolean).join(' · ');
 }
 
-function commitRouteAccessibility(
-  focusHeading: boolean,
-  previousHeading?: HTMLHeadingElement
-): HTMLHeadingElement | undefined {
+export function commitRouteAccessibility(
+  focusTarget: boolean,
+  previousTarget?: HTMLElement
+): HTMLElement | undefined {
   const main = document.getElementById('dwp-main-content');
   const heading = main?.querySelector<HTMLHeadingElement>('h1');
-  if (!heading?.textContent?.trim()) return undefined;
-  const surface = document
-    .querySelector<HTMLElement>('[data-product-surface-label]')
-    ?.dataset.productSurfaceLabel?.trim();
-  document.title = routeDocumentTitle(heading.textContent, surface);
-  const headingChanged = previousHeading !== heading;
+  const headingLabel = heading?.textContent?.trim();
+  const target = headingLabel ? heading : main;
+  if (!target) return undefined;
+
+  if (headingLabel) {
+    const surface = document
+      .querySelector<HTMLElement>('[data-product-surface-label]')
+      ?.dataset.productSurfaceLabel?.trim();
+    document.title = routeDocumentTitle(headingLabel, surface);
+  }
+
+  const targetChanged = previousTarget !== target;
   const focusMayFollowRouteReplacement =
-    previousHeading === undefined ||
-    document.activeElement === previousHeading ||
+    previousTarget === undefined ||
+    document.activeElement === previousTarget ||
     document.activeElement === document.body ||
     document.activeElement === main;
-  if (focusHeading && headingChanged && focusMayFollowRouteReplacement) {
-    heading.tabIndex = -1;
-    heading.dataset.routeFocusTarget = 'true';
-    heading.focus({ preventScroll: true });
+  if (focusTarget && targetChanged && focusMayFollowRouteReplacement) {
+    target.tabIndex = -1;
+    target.dataset.routeFocusTarget = 'true';
+    target.focus({ preventScroll: true });
   }
-  return heading;
+  return target;
 }
 
-export default function App({ children }: AppProps) {
+export default function App({ children, runtime }: AppProps) {
   const { pathname } = useLocation();
   const navigationType = useNavigationType();
   const previousPath = useRef(pathname);
   const initialCommit = useRef(true);
+  const notificationsEnabled = runtime.globalRuntimeHosts.includes('notifications');
+  const dwaionEnabled = runtime.globalRuntimeHosts.includes('dwaion');
 
   useEffect(() => registerRouteIntentObserver(), []);
 
@@ -69,10 +87,9 @@ export default function App({ children }: AppProps) {
     const focusHeading = !first && pathChanged && navigationType !== 'POP';
     if (!first && navigationType !== 'POP') window.scrollTo(0, 0);
     const cancelPerformanceReport = first ? () => undefined : reportRouteCommit(pathname);
-    let committedHeading: HTMLHeadingElement | undefined;
+    let committedTarget: HTMLElement | undefined;
     const commit = () => {
-      committedHeading =
-        commitRouteAccessibility(focusHeading, committedHeading) ?? committedHeading;
+      committedTarget = commitRouteAccessibility(focusHeading, committedTarget) ?? committedTarget;
     };
     const observer = new MutationObserver(commit);
     const focusFrame = window.requestAnimationFrame(() => {
@@ -92,10 +109,12 @@ export default function App({ children }: AppProps) {
       <SkipNavigationLink />
       <AuthUnauthorizedHandler />
       <UserLocaleSync />
-      <ProductSurfaceAuthorityBridge>{children}</ProductSurfaceAuthorityBridge>
+      <ProductApplicationRuntimeProvider runtime={runtime}>
+        <ProductSurfaceAuthorityBridge runtime={runtime}>{children}</ProductSurfaceAuthorityBridge>
+      </ProductApplicationRuntimeProvider>
       <Suspense fallback={null}>
-        <NotificationRuntimeHost />
-        <DwaionGlobalHost />
+        {NotificationRuntimeHost && notificationsEnabled && <NotificationRuntimeHost />}
+        {DwaionGlobalHost && dwaionEnabled && <DwaionGlobalHost />}
       </Suspense>
       <ToastViewport />
     </>

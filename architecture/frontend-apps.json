@@ -12,7 +12,7 @@
     {
       "id": "workspace",
       "features": ["home", "home-personalization", "work-hub", "work", "activity"],
-      "routePrefixes": ["/", "/work", "/activity", "/apps"],
+      "routePrefixes": ["/", "/work", "/activity", "/apps", "/notifications"],
       "backendServices": ["platform"],
       "deployment": "independent"
     },
@@ -70,6 +70,13 @@
       "features": ["messaging"],
       "routePrefixes": ["/messages"],
       "backendServices": ["messaging", "space", "auth"],
+      "deployment": "independent"
+    },
+    {
+      "id": "meetings",
+      "features": ["meetings"],
+      "routePrefixes": ["/meetings"],
+      "backendServices": ["meeting", "auth", "platform"],
       "deployment": "independent"
     },
     {
@@ -158,6 +165,7 @@
     {
       "productId": "notifications",
       "platformFeature": "notifications",
+      "artifactApplicationId": "workspace",
       "routeModule": "notification-routes.tsx",
       "routePrefix": "/notifications",
       "workSurfaceIds": ["notifications.work"],
@@ -207,6 +215,15 @@
       "routePrefix": "/messages",
       "workSurfaceIds": ["messaging.work"],
       "managementSurfaceIds": ["messaging.management"],
+      "migrationWave": "W3",
+      "rolloutDefault": "000"
+    },
+    {
+      "productId": "meetings",
+      "applicationId": "meetings",
+      "routePrefix": "/meetings",
+      "workSurfaceIds": ["meetings.work"],
+      "managementSurfaceIds": ["meetings.management"],
       "migrationWave": "W3",
       "rolloutDefault": "000"
     }

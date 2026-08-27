@@ -15,9 +15,12 @@ import {
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
+import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import {
+  canEnterTenantControlPlane,
   hasProviderControlPlaneRole,
+  isProviderIdentity,
   resolvePrimaryAuthorityRole,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
@@ -31,10 +34,11 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import { isAppResourceEntitled } from '../components/workspace-composer/app-launchpad-model';
 import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
-import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
-import { canEnterCompanyAdministration } from '../features/admin/admin-access-policy';
+import {
+  isProviderSupportSessionActive,
+  useProviderSupportContext,
+} from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 
@@ -67,7 +71,13 @@ const authorityTranslationKeys: Record<string, string> = {
   WORKSPACE_MEMBER: 'member',
 };
 
-export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }) {
+export function AccountMenu({
+  showIdentity = false,
+  collapseIdentityEarly = false,
+}: {
+  showIdentity?: boolean;
+  collapseIdentityEarly?: boolean;
+}) {
   const { t } = useTranslation('shell');
   const auth = useAuth();
   const { effectiveReduceMotion } = useAppearance();
@@ -83,20 +93,35 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const providerDescriptionId = useId();
   const displayName = auth.user?.displayName || t('account.fallbackName');
   const roles = auth.user?.roles ?? [];
-  const providerRole = hasProviderControlPlaneRole(roles);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
+  const activeSupportContext =
+    !supportContext.isError && isProviderSupportSessionActive(supportContext.data)
+      ? supportContext.data
+      : null;
+  const providerControlPlaneRole = hasProviderControlPlaneRole(roles);
   const authorityRole = resolvePrimaryAuthorityRole(roles, auth.user?.resourceRoles);
-  const positionTitle = t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'member'}`);
+  const positionTitle = providerRole
+    ? providerControlPlaneRole
+      ? t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'providerPending'}`)
+      : t('account.roles.providerPending')
+    : t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'member'}`);
   const identitySubtitle = auth.user?.jobTitle?.trim() || positionTitle;
-  const isAdmin = canEnterCompanyAdministration(
-    roles,
-    isAppResourceEntitled('APP.ADMINISTRATION', permissions),
-    Boolean(supportContext.data),
-    auth.user?.resourceRoles
-  );
+  const isAdmin =
+    !providerControlPlaneRole &&
+    canEnterTenantControlPlane(
+      roles,
+      isAppResourceEntitled('APP.ADMINISTRATION', permissions),
+      Boolean(activeSupportContext),
+      auth.user?.resourceRoles
+    );
   const isProviderAdmin = providerRole;
   const workspaceName =
-    supportContext.data?.tenantName || auth.user?.tenantName || auth.user?.tenantCode;
+    activeSupportContext?.tenantName ||
+    (!providerRole ? auth.user?.tenantName || auth.user?.tenantCode : undefined);
+  const identityCollapseQuery = collapseIdentityEarly
+    ? '@container dwp-shell-header (max-width: 1250px)'
+    : '@container dwp-shell-header (max-width: 62.5rem)';
 
   const close = () => setAnchor(null);
   const dismiss = () => {
@@ -175,7 +200,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                 minWidth: 0,
                 maxWidth: 190,
                 display: { xs: 'none', md: 'block' },
-                '@container dwp-shell-header (max-width: 1000px)': { display: 'none' },
+                [identityCollapseQuery]: { display: 'none' },
               }}
             >
               <Typography component="span" variant="subtitle2" noWrap sx={{ display: 'block' }}>
@@ -323,7 +348,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
           aria-label={t('account.actionsLabel')}
           sx={{ pt: 0, pb: 1 }}
         >
-          {!supportContext.data && (
+          {!activeSupportContext && (
             <MenuItem
               aria-label={t('account.menu.settings')}
               aria-describedby={settingsDescriptionId}
@@ -368,7 +393,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
               onClick={() => goTo('/admin')}
               sx={{
                 mx: 1,
-                mt: supportContext.data ? 1 : 0,
+                mt: activeSupportContext ? 1 : 0,
                 px: 1,
                 py: 1,
                 gap: 1.25,
@@ -401,10 +426,10 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                   sx={{ display: 'block' }}
                 >
                   {t(
-                    supportContext.data
+                    activeSupportContext
                       ? 'account.menu.supportAdministrationDescription'
                       : 'account.menu.administrationDescription',
-                    { tenant: supportContext.data?.tenantName }
+                    { tenant: activeSupportContext?.tenantName }
                   )}
                 </Typography>
               </Box>

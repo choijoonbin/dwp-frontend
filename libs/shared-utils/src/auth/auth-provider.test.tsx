@@ -32,6 +32,7 @@ const member: MeResponse = {
   displayName: 'Workspace Member',
   tenantId: 1,
   tenantCode: 'default',
+  identityPlane: 'TENANT',
   roles: ['WORKSPACE_MEMBER'],
 };
 
@@ -40,6 +41,7 @@ const provider: MeResponse = {
   displayName: 'Provider Administrator',
   tenantId: 1,
   tenantCode: 'default',
+  identityPlane: 'PROVIDER',
   roles: ['PROVIDER_ADMIN'],
 };
 
@@ -141,6 +143,68 @@ describe('authenticated client lifecycle', () => {
     expect(usePermissionsStore.getState().isLoaded).toBe(true);
   });
 
+  it.each([
+    ['missing', { ...member, identityPlane: undefined }],
+    ['unknown', { ...member, identityPlane: 'UNKNOWN' }],
+    [
+      'provider-plane mismatch',
+      { ...member, identityPlane: 'PROVIDER', roles: ['WORKSPACE_MEMBER'] },
+    ],
+    ['tenant-plane mismatch', { ...member, identityPlane: 'TENANT', roles: ['PROVIDER_SUPPORT'] }],
+    [
+      'mixed roles',
+      {
+        ...member,
+        identityPlane: 'PROVIDER',
+        roles: ['PROVIDER_SUPPORT', 'TENANT_ADMIN'],
+      },
+    ],
+  ])(
+    'rejects a %s identity plane before permissions or tenant preparation run',
+    async (_, data) => {
+      const prepareAuthenticatedSession = vi.fn(async () => undefined);
+      authApi.getMe.mockResolvedValue({ data: data as MeResponse });
+
+      await renderAuthProvider(prepareAuthenticatedSession);
+      await vi.waitFor(() => expect(currentAuth?.isLoading).toBe(false));
+
+      expect(currentAuth?.isAuthenticated).toBe(false);
+      expect(currentAuth?.user).toBeNull();
+      expect(authApi.getPermissions).not.toHaveBeenCalled();
+      expect(prepareAuthenticatedSession).not.toHaveBeenCalled();
+      expect(usePermissionsStore.getState().isLoaded).toBe(false);
+    }
+  );
+
+  it('accepts a roleless provider from `/me` without inferring a tenant plane', async () => {
+    authApi.getMe.mockResolvedValue({ data: { ...provider, roles: [] } });
+    authApi.getPermissions.mockResolvedValue({ data: [] });
+
+    await mountAuthProvider();
+
+    expect(currentAuth?.user).toMatchObject({ identityPlane: 'PROVIDER', roles: [] });
+    expect(currentAuth?.isAuthenticated).toBe(true);
+  });
+
+  it('establishes the plane from verified `/me` after login bootstrap metadata', async () => {
+    authApi.getMe
+      .mockRejectedValueOnce(new HttpError('Authentication required.', 401))
+      .mockResolvedValueOnce({ data: { ...provider, roles: [] } });
+    authApi.login.mockResolvedValue({ data: { userId: '42', tenantId: '1' } });
+    authApi.getPermissions.mockResolvedValue({ data: [] });
+    await renderAuthProvider();
+    await vi.waitFor(() => expect(currentAuth?.isLoading).toBe(false));
+
+    await act(async () => {
+      await currentAuth?.login({ email: 'provider@dwp.local', password: 'not-a-fixture' });
+    });
+
+    expect(authApi.login).toHaveBeenCalledOnce();
+    expect(authApi.getMe).toHaveBeenCalledTimes(2);
+    expect(currentAuth?.user).toMatchObject({ identityPlane: 'PROVIDER', roles: [] });
+    expect(currentAuth?.isAuthenticated).toBe(true);
+  });
+
   it('clears the previous identity cache when a verified session changes user', async () => {
     await mountAuthProvider();
     queryClient.setQueryData(['workspace', 'activity'], { events: ['member-private'] });
@@ -221,7 +285,9 @@ describe('authenticated client lifecycle', () => {
 
     expect(currentAuth?.isAuthenticated).toBe(true);
     expect(currentAuth?.user?.userId).toBe(member.userId);
-    expect(queryClient.getQueryData(['home-contributions', 'private'])).toEqual({ value: 'cached' });
+    expect(queryClient.getQueryData(['home-contributions', 'private'])).toEqual({
+      value: 'cached',
+    });
     expect(usePermissionsStore.getState().isLoaded).toBe(true);
   });
 
@@ -258,6 +324,27 @@ describe('authenticated client lifecycle', () => {
     await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(false));
 
     expect(queryClient.getQueryData(['home-contributions', 'private'])).toBeUndefined();
+    expect(usePermissionsStore.getState().isLoaded).toBe(false);
+  });
+
+  it('invalidates the last verified session when a background `/me` loses its plane contract', async () => {
+    await mountAuthProvider();
+    queryClient.setQueryData(['workspace', 'private'], { value: 'tenant-data' });
+    authApi.getMe.mockResolvedValueOnce({
+      data: { ...member, identityPlane: 'UNKNOWN' } as unknown as MeResponse,
+    });
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      value: 'visible',
+    });
+
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(false));
+
+    expect(queryClient.getQueryData(['workspace', 'private'])).toBeUndefined();
+    expect(authApi.getPermissions).toHaveBeenCalledTimes(1);
     expect(usePermissionsStore.getState().isLoaded).toBe(false);
   });
 });

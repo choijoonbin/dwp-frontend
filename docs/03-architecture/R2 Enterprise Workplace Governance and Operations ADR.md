@@ -149,3 +149,10 @@ CSV Import는 `dry-run -> 오류 보고서 -> idempotent upsert -> 결과 내보
 검증된 고객 요구와 입력 데이터가 없는 BIM/3D Digital Twin, 자체 센서 플랫폼, 점유 추천 AI는
 도입하지 않는다. 확장 포트와 이벤트 계약까지만 제공하고 공급자 또는 실제 공간 데이터가 확정될
 때 Adapter로 연결한다. 이는 기능 누락이 아니라 운영 위험과 과잉 구축을 줄이기 위한 명시적 결정이다.
+
+## 12. 실행 및 수용 기준
+
+제품·UX, 보안 경계, 자동화 증거와 외부 출시 Gate는
+[`DWP-R2-WPL-001 Enterprise Workplace`](../05-features/DWP-R2-WPL-001-enterprise-workplace/README.md)에서
+추적한다. 내부 구현 완료와 Production Ready 판정을 분리하며 외부 부하·보안·접근성 증거가 없는
+항목은 완료로 승격하지 않는다.

@@ -10,6 +10,7 @@ import {
 } from '../features/mail/mail-admin';
 import { MailHome } from '../features/mail/mail-home';
 import { MailInbox } from '../features/mail/mail-inbox';
+import { MailOrganization } from '../features/mail/mail-organization';
 import { findMailNavigationItem } from '../features/mail/mail-navigation';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 
@@ -27,7 +28,12 @@ export default function MailPage() {
           inbox: <MailInbox mode="inbox" />,
           sent: <MailInbox mode="sent" />,
           drafts: <MailInbox mode="drafts" />,
+          archive: <MailInbox mode="archive" />,
+          spam: <MailInbox mode="spam" />,
+          trash: <MailInbox mode="trash" />,
+          folders: <MailInbox mode="custom" />,
           shared: <MailInbox mode="shared" />,
+          organization: <MailOrganization />,
           accounts: <MailAccounts />,
           'admin-overview': <MailAdminOverview />,
           'admin-connections': <MailAdminConnections />,

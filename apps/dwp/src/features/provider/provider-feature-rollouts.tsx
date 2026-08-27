@@ -717,13 +717,15 @@ export function ProviderFeatureRollouts() {
     queryKey: ['provider', 'feature-rollouts'],
     queryFn: () => listProviderFeatureRollouts(),
   });
-  const tenants = useQuery({
-    queryKey: ['provider', 'tenants', 'rollout-evaluation'],
-    queryFn: () => listProviderTenants({ page: 0, size: 100 }),
-  });
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
+  });
+  const canReadEstate = operator.data?.permissions.includes('ESTATE_READ') ?? false;
+  const tenants = useQuery({
+    queryKey: ['provider', 'tenants', 'rollout-evaluation'],
+    queryFn: () => listProviderTenants({ page: 0, size: 100 }),
+    enabled: canReadEstate,
   });
   const selected = (rollouts.data ?? []).find(
     (rollout) => rollout.rolloutRevisionId === selectedId

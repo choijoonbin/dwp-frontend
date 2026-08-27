@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 132,
+  "dependencyCount": 156,
   "licenseCounts": {
+    "(Apache-2.0 AND BSD-3-Clause)": 1,
     "0BSD": 1,
-    "Apache-2.0": 1,
-    "BSD-3-Clause": 4,
+    "Apache-2.0": 9,
+    "BSD-3-Clause": 5,
     "ISC": 11,
-    "MIT": 115
+    "MIT": 129
   },
   "packages": [
     {
@@ -81,6 +82,12 @@
       "version": "0.3.2",
       "license": "MIT",
       "repository": "git+https://github.com/mui/base-ui.git"
+    },
+    {
+      "name": "@bufbuild/protobuf",
+      "version": "1.10.1",
+      "license": "(Apache-2.0 AND BSD-3-Clause)",
+      "repository": "https://github.com/bufbuild/protobuf-es.git"
     },
     {
       "name": "@dagrejs/dagre",
@@ -168,7 +175,7 @@
     },
     {
       "name": "@emotion/styled",
-      "version": "11.14.0",
+      "version": "11.14.1",
       "license": "MIT",
       "repository": "https://github.com/emotion-js/emotion/tree/main/packages/styled"
     },
@@ -197,10 +204,40 @@
       "repository": "https://github.com/emotion-js/emotion/tree/main/packages/weak-memoize"
     },
     {
+      "name": "@floating-ui/core",
+      "version": "1.8.0",
+      "license": "MIT",
+      "repository": "https://github.com/floating-ui/floating-ui.git"
+    },
+    {
+      "name": "@floating-ui/dom",
+      "version": "1.7.6",
+      "license": "MIT",
+      "repository": "https://github.com/floating-ui/floating-ui.git"
+    },
+    {
       "name": "@floating-ui/utils",
       "version": "0.2.12",
       "license": "MIT",
       "repository": "https://github.com/floating-ui/floating-ui.git"
+    },
+    {
+      "name": "@full-ui/headless-calendar",
+      "version": "7.0.2",
+      "license": "MIT",
+      "repository": "https://github.com/fullcalendar/fullcalendar.git"
+    },
+    {
+      "name": "@fullcalendar/core",
+      "version": "7.0.2",
+      "license": "MIT",
+      "repository": "https://github.com/fullcalendar/fullcalendar.git"
+    },
+    {
+      "name": "@fullcalendar/react",
+      "version": "7.0.2",
+      "license": "MIT",
+      "repository": "https://github.com/fullcalendar/fullcalendar.git"
     },
     {
       "name": "@jridgewell/gen-mapping",
@@ -225,6 +262,36 @@
       "version": "0.3.31",
       "license": "MIT",
       "repository": "git+https://github.com/jridgewell/sourcemaps.git"
+    },
+    {
+      "name": "@livekit/components-core",
+      "version": "0.12.15",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/livekit/components-js.git"
+    },
+    {
+      "name": "@livekit/components-react",
+      "version": "2.9.24",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/livekit/components-js.git"
+    },
+    {
+      "name": "@livekit/components-styles",
+      "version": "1.2.0",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/livekit/components-js.git"
+    },
+    {
+      "name": "@livekit/mutex",
+      "version": "1.1.1",
+      "license": "Apache-2.0",
+      "repository": "git@github.com:livekit/ts-mutex.git"
+    },
+    {
+      "name": "@livekit/protocol",
+      "version": "1.50.4",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/livekit/protocol"
     },
     {
       "name": "@mui/core-downloads-tracker",
@@ -318,7 +385,7 @@
     },
     {
       "name": "@tanstack/react-query",
-      "version": "5.90.16",
+      "version": "5.101.4",
       "license": "MIT",
       "repository": "git+https://github.com/TanStack/query.git"
     },
@@ -492,7 +559,7 @@
     },
     {
       "name": "dayjs",
-      "version": "1.11.21",
+      "version": "1.11.23",
       "license": "MIT",
       "repository": "https://github.com/iamkun/dayjs.git"
     },
@@ -525,6 +592,12 @@
       "version": "4.0.0",
       "license": "MIT",
       "repository": "sindresorhus/escape-string-regexp"
+    },
+    {
+      "name": "events",
+      "version": "3.3.0",
+      "license": "MIT",
+      "repository": "git://github.com/Gozala/events.git"
     },
     {
       "name": "find-root",
@@ -587,6 +660,12 @@
       "repository": "git+https://github.com/inspect-js/is-core-module.git"
     },
     {
+      "name": "jose",
+      "version": "6.2.9",
+      "license": "MIT",
+      "repository": "panva/jose"
+    },
+    {
       "name": "js-tokens",
       "version": "4.0.0",
       "license": "MIT",
@@ -611,6 +690,24 @@
       "repository": "https://github.com/eventualbuddha/lines-and-columns.git"
     },
     {
+      "name": "livekit-client",
+      "version": "2.22.0",
+      "license": "Apache-2.0",
+      "repository": "git@github.com:livekit/client-sdk-js.git"
+    },
+    {
+      "name": "lodash.debounce",
+      "version": "4.0.8",
+      "license": "MIT",
+      "repository": "lodash/lodash"
+    },
+    {
+      "name": "loglevel",
+      "version": "1.9.1",
+      "license": "MIT",
+      "repository": "git://github.com/pimterry/loglevel.git"
+    },
+    {
       "name": "loose-envify",
       "version": "1.4.0",
       "license": "MIT",
@@ -618,7 +715,7 @@
     },
     {
       "name": "lucide-react",
-      "version": "1.30.0",
+      "version": "1.33.0",
       "license": "ISC",
       "repository": "https://github.com/lucide-icons/lucide.git"
     },
@@ -737,10 +834,28 @@
       "repository": "sindresorhus/resolve-from"
     },
     {
+      "name": "rxjs",
+      "version": "7.8.2",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/reactivex/rxjs.git"
+    },
+    {
       "name": "scheduler",
       "version": "0.27.0",
       "license": "MIT",
       "repository": "https://github.com/facebook/react.git"
+    },
+    {
+      "name": "sdp",
+      "version": "3.2.2",
+      "license": "MIT",
+      "repository": "git+https://github.com/fippo/sdp.git"
+    },
+    {
+      "name": "sdp-transform",
+      "version": "2.15.0",
+      "license": "MIT",
+      "repository": "clux/sdp-transform"
     },
     {
       "name": "set-cookie-parser",
@@ -767,10 +882,34 @@
       "repository": "git+https://github.com/inspect-js/node-supports-preserve-symlinks-flag.git"
     },
     {
+      "name": "temporal-polyfill",
+      "version": "1.0.4",
+      "license": "MIT",
+      "repository": "https://github.com/fullcalendar/temporal-polyfill.git"
+    },
+    {
+      "name": "temporal-spec",
+      "version": "1.0.1",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/fullcalendar/temporal-polyfill.git"
+    },
+    {
+      "name": "temporal-utils",
+      "version": "1.0.2",
+      "license": "MIT",
+      "repository": "https://github.com/fullcalendar/temporal-polyfill.git"
+    },
+    {
       "name": "tslib",
       "version": "2.8.1",
       "license": "0BSD",
       "repository": "https://github.com/Microsoft/tslib.git"
+    },
+    {
+      "name": "typed-emitter",
+      "version": "2.1.0",
+      "license": "MIT",
+      "repository": "github:andywer/typed-emitter"
     },
     {
       "name": "use-sync-external-store",
@@ -779,10 +918,22 @@
       "repository": "https://github.com/facebook/react.git"
     },
     {
+      "name": "usehooks-ts",
+      "version": "3.1.1",
+      "license": "MIT",
+      "repository": "https://github.com/juliencrn/usehooks-ts"
+    },
+    {
       "name": "web-vitals",
       "version": "6.1.0",
       "license": "Apache-2.0",
       "repository": "https://github.com/GoogleChrome/web-vitals.git"
+    },
+    {
+      "name": "webrtc-adapter",
+      "version": "9.0.6",
+      "license": "BSD-3-Clause",
+      "repository": "https://github.com/webrtchacks/adapter.git"
     },
     {
       "name": "yaml",
@@ -792,13 +943,7 @@
     },
     {
       "name": "zustand",
-      "version": "4.5.7",
-      "license": "MIT",
-      "repository": "git+https://github.com/pmndrs/zustand.git"
-    },
-    {
-      "name": "zustand",
-      "version": "5.0.9",
+      "version": "5.0.15",
       "license": "MIT",
       "repository": "git+https://github.com/pmndrs/zustand.git"
     }

@@ -7,13 +7,11 @@ const item = (appKey: string, deepLink: string) => ({ owner: { appKey }, deepLin
 describe('Home purpose all-route policy', () => {
   it('uses the consuming Calendar schedule and safe Calendar aggregate routes', () => {
     expect(
-      homePurposeAllRoute('timeline', [
-        item('APP.CALENDAR', '/calendar/schedule?event=event-1'),
-      ])
+      homePurposeAllRoute('timeline', [item('APP.CALENDAR', '/calendar/schedule?event=event-1')])
     ).toBe('/calendar/schedule');
-    expect(
-      homePurposeAllRoute('pulse', [item('APP.CALENDAR', '/calendar/insights')])
-    ).toBe('/calendar/home');
+    expect(homePurposeAllRoute('pulse', [item('APP.CALENDAR', '/calendar/insights')])).toBe(
+      '/calendar/home'
+    );
     expect(homePurposeAllRoute('pulse', [item('APP.CALENDAR', '/calendar/home')])).toBe(
       '/calendar/home'
     );

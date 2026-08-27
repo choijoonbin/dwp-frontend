@@ -1,0 +1,55 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "caseId": "unknown-root-field",
+      "mutation": "ADD_UNKNOWN_ROOT",
+      "expectedCode": "SCHEMA_UNKNOWN_FIELD"
+    },
+    {
+      "caseId": "non-canonical-definition",
+      "mutation": "UPPERCASE_DEFINITION",
+      "expectedCode": "SCHEMA_PATTERN"
+    },
+    {
+      "caseId": "unsupported-renderer-kind",
+      "mutation": "REMOTE_RENDERER",
+      "expectedCode": "SCHEMA_ENUM"
+    },
+    {
+      "caseId": "duplicate-authority",
+      "mutation": "DUPLICATE_AUTHORITY",
+      "expectedCode": "SCHEMA_UNIQUE"
+    },
+    {
+      "caseId": "default-size-not-allowed",
+      "mutation": "DEFAULT_SIZE_OUTSIDE_ALLOWED",
+      "expectedCode": "MANIFEST_DEFAULT_NOT_ALLOWED"
+    },
+    {
+      "caseId": "invalid-item-range",
+      "mutation": "ITEM_LIMIT_REVERSED",
+      "expectedCode": "MANIFEST_ITEM_LIMIT_INVALID"
+    },
+    {
+      "caseId": "governed-personal-context",
+      "mutation": "GOVERNED_WITH_FLOW_PERSONAL",
+      "expectedCode": "MANIFEST_POLICY_CONTEXT_INVALID"
+    },
+    {
+      "caseId": "retained-recipient-data",
+      "mutation": "RETENTION_NOT_NONE",
+      "expectedCode": "SCHEMA_CONST"
+    },
+    {
+      "caseId": "unsorted-authority-set",
+      "mutation": "UNSORTED_AUTHORITIES",
+      "expectedCode": "MANIFEST_SET_NOT_SORTED"
+    },
+    {
+      "caseId": "oversized-canonical-manifest",
+      "mutation": "OVERSIZED_MANIFEST",
+      "expectedCode": "MANIFEST_TOO_LARGE"
+    }
+  ]
+}

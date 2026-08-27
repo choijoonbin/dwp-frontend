@@ -29,6 +29,7 @@
 - `DWP-R1-ADM-006-governed-catalog`: 자산 관계·영향·Assurance Catalog
 - `DWP-R1-ADM-007-navigation-app-access-governance`: 메뉴·앱 접근 계약과 승인 수명주기
 - `DWP-R1-ADM-008-localization-studio`: 번역 Draft·독립 검토·게시·복원 Studio
+- `DWP-R1-ADM-009-widget-ecosystem-governance`: Provider·Tenant·User 위젯 공급·통제·개인화 생태계
 - `DWP-R1-CORE-003-account-preferences`: 개인 설정과 Tenant 관리 정책·예외
 - `DWP-R1-CORE-004-governed-sharing-export`: Team View 소유권과 통제형 Workforce 반출
 - `DWP-R1-CORE-005-notification-platform`: Event 기반 알림 센터·개인 설정·정책·Omnichannel 전달
@@ -40,4 +41,5 @@
 - `DWP-R1-HR-001-role-aware-hcm`: 개인·Manager·위임 HR 운영을 분리한 역할 인지 DWP HCM
 - `DWP-R1-CAL-001-enterprise-calendar`: 오늘 중심 일정·가용 시간·자원 예약·위임 운영
 - `DWP-R1-MAIL-001-enterprise-mail`: 행동 중심 메일·공유함 협업·사람 승인형 AI 제안
+- `DWP-R1-MTG-001-enterprise-video-meetings`: 독립 회의 수명주기·대기실·LiveKit 미디어·회의 기록·정책 운영
 - `DWP-R2-SPC-001-enterprise-spaces`: 목적별 사람·콘텐츠·앱·AI를 묶는 통제형 협업 Space

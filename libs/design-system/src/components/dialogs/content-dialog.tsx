@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
 
 import { ActionIconButton } from '../actions';
@@ -25,7 +26,10 @@ export type ContentDialogProps = {
   maxWidth?: DialogProps['maxWidth'];
   titleStart?: React.ReactNode;
   titleEnd?: React.ReactNode;
+  closeButtonSx?: SxProps<Theme>;
   headerContent?: React.ReactNode;
+  footerContent?: React.ReactNode;
+  footerSx?: SxProps<Theme>;
   contentDividers?: boolean;
   contentSx?: SxProps<Theme>;
   slotProps?: DialogProps['slotProps'];
@@ -44,7 +48,10 @@ export function ContentDialog({
   maxWidth = 'sm',
   titleStart,
   titleEnd,
+  closeButtonSx,
   headerContent,
+  footerContent,
+  footerSx,
   contentDividers = false,
   contentSx,
   slotProps,
@@ -83,6 +90,7 @@ export function ContentDialog({
             onClick={onClose}
             disabled={busy}
             tooltipPlacement="left"
+            sx={closeButtonSx}
           >
             <X size={19} />
           </ActionIconButton>
@@ -92,6 +100,7 @@ export function ContentDialog({
       <DialogContent dividers={contentDividers} sx={contentSx}>
         {children}
       </DialogContent>
+      {footerContent && <DialogActions sx={footerSx}>{footerContent}</DialogActions>}
     </Dialog>
   );
 }

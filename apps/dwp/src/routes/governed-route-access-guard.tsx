@@ -1,12 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import {
   governedRouteEvaluationQueryKey,
   useProductSurfaceAuthority,
 } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
+import {
+  createDirectDecisionClockAnchor,
+  directDecisionServerNow,
+  readMonotonicNowMs,
+  scheduleDirectDecisionLease,
+} from '../components/direct-decision-lease';
 
-import type { ReactNode } from 'react';
 import type {
   GovernedRouteEvaluationData,
   GovernedRouteEvaluationRequest,
@@ -85,42 +91,110 @@ function mapGovernedRouteError(error: unknown): GovernedRouteAccessDecision {
   return { state: 'authority-unavailable' };
 }
 
+function invalidatesRetainedGovernedDecision(error: unknown): boolean {
+  return (
+    error instanceof HttpError &&
+    (error.status === 403 || error.status === 404 || error.status === 409 || error.status === 503)
+  );
+}
+
 export function useGovernedRouteAccessDecision(
   request: GovernedRouteEvaluationRequest | null
 ): GovernedRouteAccessDecision {
   const auth = useAuth();
   const authority = useProductSurfaceAuthority();
+  const queryClient = useQueryClient();
+  const [directDecisionMonotonicFloorMs, setDirectDecisionMonotonicFloorMs] = useState(() =>
+    readMonotonicNowMs()
+  );
   const snapshot = authority.status === 'ready' ? authority.snapshot : undefined;
+  const directDecisionClockAnchorRef = useRef<
+    | {
+        snapshot: NonNullable<typeof snapshot>;
+        anchor: ReturnType<typeof createDirectDecisionClockAnchor>;
+      }
+    | undefined
+  >(undefined);
+  if (snapshot && directDecisionClockAnchorRef.current?.snapshot !== snapshot) {
+    directDecisionClockAnchorRef.current = {
+      snapshot,
+      anchor: createDirectDecisionClockAnchor(snapshot.clockOffsetMs),
+    };
+  } else if (!snapshot) {
+    directDecisionClockAnchorRef.current = undefined;
+  }
+  const directDecisionClockAnchor = directDecisionClockAnchorRef.current?.anchor;
   const identity = {
     tenantId: String(auth.user?.tenantId ?? ''),
     actorId: String(auth.user?.userId ?? ''),
     accessMode: snapshot?.envelope.activeAccessMode ?? '',
     decisionRevision: snapshot?.envelope.decisionRevision ?? '',
   };
+  const evaluationQueryKey = request
+    ? governedRouteEvaluationQueryKey(request, identity)
+    : (['governed-route-direct-evaluation', 'disabled'] as const);
+  const evaluationEnabled = Boolean(request && auth.isAuthenticated && snapshot);
   const query = useQuery({
-    queryKey: request
-      ? governedRouteEvaluationQueryKey(request, identity)
-      : ['governed-route-direct-evaluation', 'disabled'],
+    queryKey: evaluationQueryKey,
     queryFn: () => authority.evaluateGoverned(request!),
-    enabled: Boolean(request && auth.isAuthenticated && snapshot),
+    enabled: evaluationEnabled,
     retry: false,
     staleTime: Number.POSITIVE_INFINITY,
+    gcTime: 0,
     meta: {
       accessSensitive: true,
       ...identity,
     },
   });
+  const directDecisionRevalidateAt =
+    query.data?.decision === 'ALLOWED' ? query.data.context?.revalidateAt : undefined;
+  const evaluationQueryKeySignature = JSON.stringify(evaluationQueryKey);
+  useEffect(() => {
+    if (!directDecisionClockAnchor || !evaluationEnabled || !directDecisionRevalidateAt) {
+      return undefined;
+    }
+    const serverDeadlineMs = Date.parse(directDecisionRevalidateAt);
+    if (!Number.isFinite(serverDeadlineMs)) return undefined;
+    const exactQueryKey = JSON.parse(evaluationQueryKeySignature) as readonly unknown[];
+    const refetchExact = () => {
+      void queryClient.refetchQueries(
+        { queryKey: exactQueryKey, exact: true, type: 'active' },
+        { cancelRefetch: false }
+      );
+    };
+    return scheduleDirectDecisionLease({
+      anchor: directDecisionClockAnchor,
+      serverDeadlineMs,
+      onRenew: refetchExact,
+      onExpire: () => {
+        setDirectDecisionMonotonicFloorMs(readMonotonicNowMs());
+        refetchExact();
+      },
+    });
+  }, [
+    directDecisionClockAnchor,
+    directDecisionRevalidateAt,
+    evaluationEnabled,
+    evaluationQueryKeySignature,
+    queryClient,
+  ]);
   if (!request || authority.status === 'loading' || (snapshot && query.isPending)) {
     return { state: 'loading' };
   }
   if (!snapshot) return { state: 'authority-unavailable' };
-  if (query.error) return mapGovernedRouteError(query.error);
-  if (!query.data) return { state: 'authority-unavailable' };
+  if (query.error && invalidatesRetainedGovernedDecision(query.error)) {
+    return mapGovernedRouteError(query.error);
+  }
+  if (!query.data) {
+    return query.error ? mapGovernedRouteError(query.error) : { state: 'authority-unavailable' };
+  }
   return mapGovernedRouteEvaluation(
     query.data,
     request,
     snapshot.envelope.activeAccessMode,
-    Date.now() + snapshot.clockOffsetMs
+    directDecisionClockAnchor
+      ? directDecisionServerNow(directDecisionClockAnchor, directDecisionMonotonicFloorMs)
+      : undefined
   );
 }
 

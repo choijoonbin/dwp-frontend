@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
+import { useProductApplicationRuntime } from '../components/product-application-runtime';
 import type { ProductPlane, ProductSurfaceManifest } from '../components/product-manifest';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
@@ -12,7 +13,6 @@ import { useProductSurfaceScopeTransition } from '../features/shell/use-product-
 import { ProductManagementLayout } from '../layouts/product-management-layout';
 import { ProductWorkLayout } from '../layouts/product-work-layout';
 import { ProductAreaLayout, type ProductAreaLayoutProps } from '../layouts/product-area-layout';
-import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
 
 import type { ReactNode } from 'react';
@@ -54,6 +54,7 @@ export function ConfiguredProductSurfaceShell({
   legacy: ReactNode;
 }) {
   const decision = useAllowedProductSurface();
+  const applicationRuntime = useProductApplicationRuntime();
   const authority = useProductSurfaceCanaryAuthority();
   const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, manifest.id));
   const { t } = useTranslation(translationNamespace);
@@ -72,7 +73,7 @@ export function ConfiguredProductSurfaceShell({
       work: tCommon('productSurface.actions.returnToWork'),
       catalog: tCommon('productSurface.actions.returnToCatalog'),
     },
-    registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+    registeredRoutes: applicationRuntime.registeredRoutes,
     rolloutMode: mode,
     onScopeChange: (scopeKey) => void transitionScope(scopeKey),
   });
@@ -83,6 +84,7 @@ export function ConfiguredProductSurfaceShell({
   }
   const layoutProps = {
     areaKey,
+    manifest,
     navigation: surface.navigation,
     translationNamespace,
     surface: runtime,

@@ -210,8 +210,7 @@ export type DwaionOperationalGateApprovalEligibility =
 export type DwaionOperationalGateAuditEvent = AgentSchemas['OperationalGateAuditEvent'];
 export type DwaionOperationalGateDetail = AgentSchemas['OperationalGateDetail'];
 export type DwaionOperationalGateProblemCode =
-  | AgentSchemas['OperationalGateProblemCode']
-  | 'GATE_UNKNOWN';
+  AgentSchemas['OperationalGateProblemCode'] | 'GATE_UNKNOWN';
 export type DwaionOperationalGateProblem = {
   code: DwaionOperationalGateProblemCode;
   status: number;

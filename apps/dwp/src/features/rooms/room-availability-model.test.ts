@@ -146,6 +146,36 @@ describe('room availability model', () => {
     ).toBe(false);
   });
 
+  it('reserves the configured buffer on both sides of occupied room bookings', () => {
+    expect(
+      roomSlotAvailable({
+        start: new Date('2026-08-19T09:30:00+09:00'),
+        end: new Date('2026-08-19T10:00:00+09:00'),
+        occupancy,
+        active: true,
+        bufferMinutes: 15,
+      })
+    ).toBe(false);
+    expect(
+      roomSlotAvailable({
+        start: new Date('2026-08-19T09:15:00+09:00'),
+        end: new Date('2026-08-19T09:45:00+09:00'),
+        occupancy,
+        active: true,
+        bufferMinutes: 15,
+      })
+    ).toBe(true);
+    expect(
+      roomSlotAvailable({
+        start: new Date('2026-08-19T11:00:00+09:00'),
+        end: new Date('2026-08-19T11:30:00+09:00'),
+        occupancy,
+        active: true,
+        bufferMinutes: 15,
+      })
+    ).toBe(false);
+  });
+
   it('never offers slots for rooms outside active service', () => {
     expect(
       roomSlotAvailable({

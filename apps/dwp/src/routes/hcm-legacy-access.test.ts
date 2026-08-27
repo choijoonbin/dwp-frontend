@@ -35,10 +35,10 @@ describe('HCM legacy shell and PAGE access', () => {
         supportScopes: ['WORKFORCE_READ'],
         entitled: false,
       })
-    ).toBe('allowed');
+    ).toBe('denied');
   });
 
-  it('allows only HCM PAGE items that explicitly declare the trusted support scope', () => {
+  it('rejects retired workforce scopes for every HCM PAGE item', () => {
     const runtime = {
       permissionsLoaded: true,
       providerRole: true,
@@ -56,7 +56,7 @@ describe('HCM legacy shell and PAGE access', () => {
         runtime.supportContextLoading,
         runtime.supportScopes
       )
-    ).toBe('allowed');
+    ).toBe('support-scope-denied');
     expect(
       resolveProductAreaNavigationItemAccess(
         hcmItem('/hr/pay'),

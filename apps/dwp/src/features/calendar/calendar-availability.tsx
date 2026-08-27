@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, Search, ShieldCheck, Sparkles } from 'lucide-react';
+import { Building2, Clock3, Search, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getCalendarAvailability, listPeople, usePermissions } from '@dwp-frontend/shared-utils';
+import { Link } from 'react-router-dom';
+import { evaluateCalendarScheduling, listPeople, usePermissions } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   AutocompleteMultiField,
   DateRangePickerField,
   GuidedEmptyState,
-  PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
 
@@ -20,9 +20,15 @@ import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
 import { CalendarPageHeading, calendarDate, calendarTime } from './calendar-components';
+import { CalendarCanvas, CalendarSectionHeader } from './calendar-experience';
+import {
+  CALENDAR_AVAILABILITY_ATTENDEE_LIMIT,
+  calendarSchedulingEvaluationIsUsable,
+} from './calendar-scheduling-assistant-model';
 
 import type { CalendarAvailabilitySlot, PersonSummary } from '@dwp-frontend/shared-utils';
 import type { DateRangeValue } from '@dwp-frontend/design-system';
@@ -53,10 +59,17 @@ export function CalendarAvailability() {
   const { t, i18n } = useTranslation('calendar');
   const { hasPermission } = usePermissions();
   const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
+  const workplacePath = hasPermission('APP.ROOMS', 'VIEW')
+    ? '/workplace/rooms'
+    : hasPermission('APP.WORKPLACE', 'VIEW')
+      ? '/workplace/explore'
+      : null;
   const [people, setPeople] = useState<PersonSummary[]>([]);
+  const [searchedPeople, setSearchedPeople] = useState<PersonSummary[]>([]);
   const [duration, setDuration] = useState(30);
   const [range, setRange] = useState<DateRangeValue>(initialRange);
   const [selectedSlot, setSelectedSlot] = useState<CalendarAvailabilitySlot | null>(null);
+  const [, setFreshnessTick] = useState(0);
   const language = i18n.resolvedLanguage ?? i18n.language;
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
   const peopleQuery = useQuery({
@@ -69,96 +82,174 @@ export function CalendarAvailability() {
     mutationFn: async () => {
       const values = isoRange(range);
       if (!values) throw new Error(t('availability.rangeRequired'));
-      return getCalendarAvailability(
-        people.map((person) => person.personId),
-        values.from,
-        values.to,
-        duration,
-        timeZone
-      );
+      return evaluateCalendarScheduling({
+        personIds: people.map((person) => person.personId),
+        from: values.from,
+        to: values.to,
+        roomStartsAt: values.from,
+        roomEndsAt: new Date(Date.parse(values.from) + duration * 60_000).toISOString(),
+        durationMinutes: duration,
+        timeZone,
+      });
     },
   });
-  const participantById = useMemo(
-    () => new Map(people.map((person) => [person.personId, person])),
-    [people]
+  const evaluationUsable = calendarSchedulingEvaluationIsUsable(availability.data);
+  const result = evaluationUsable ? availability.data?.availability : undefined;
+  const participantLoadMax = Math.max(
+    1,
+    ...(result?.participants.map((participant) => participant.busyMinutes) ?? [])
   );
+  const participantById = useMemo(
+    () => new Map(searchedPeople.map((person) => [person.personId, person])),
+    [searchedPeople]
+  );
+  const resetResults = () => {
+    availability.reset();
+    setSearchedPeople([]);
+    setSelectedSlot(null);
+  };
+
+  useEffect(() => {
+    const validUntil = availability.data?.validUntil;
+    if (!validUntil) return;
+    const delay = Date.parse(validUntil) - Date.now();
+    if (!Number.isFinite(delay) || delay <= 0) return;
+    const timer = window.setTimeout(() => setFreshnessTick((current) => current + 1), delay + 25);
+    return () => window.clearTimeout(timer);
+  }, [availability.data?.validUntil]);
 
   return (
-    <PageCanvas>
+    <CalendarCanvas archetype="command">
       <CalendarPageHeading
+        icon={UsersRound}
         eyebrow={t('availability.eyebrow')}
         title={t('availability.title')}
         description={t('availability.description')}
+        actions={
+          workplacePath ? (
+            <ActionButton
+              component={Link}
+              to={workplacePath}
+              intent="secondary"
+              startIcon={<Building2 size={17} />}
+            >
+              {t('availability.openWorkplace')}
+            </ActionButton>
+          ) : undefined
+        }
       />
 
       <Box
         component="section"
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.6fr) 240px auto' },
-          gap: 2,
-          alignItems: 'start',
-          p: 2.5,
-          bgcolor: 'background.paper',
+        sx={(theme) => ({
+          p: { xs: 2, md: 2.5 },
+          bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.035),
           border: 1,
-          borderColor: 'divider',
+          borderColor: alpha(theme.palette.divider, 0.75),
           borderRadius: 1,
-        }}
+        })}
       >
-        <Stack spacing={2}>
-          <AutocompleteMultiField
-            multiple
-            options={(peopleQuery.data?.items ?? []).filter((person) => Boolean(person.workEmail))}
-            value={people}
-            onChange={(_, value) => setPeople(value)}
-            loading={peopleQuery.isLoading}
-            getOptionLabel={(person) =>
-              `${person.displayName} · ${person.businessTitle ?? person.workEmail}`
-            }
-            isOptionEqualToValue={(option, value) => option.personId === value.personId}
-            renderTags={(values, getTagProps) =>
-              values.map((person, index) => (
-                <Chip
-                  {...getTagProps({ index })}
-                  key={person.personId}
-                  avatar={<Avatar>{person.displayName.slice(0, 1)}</Avatar>}
-                  label={person.displayName}
-                />
-              ))
-            }
-            label={t('availability.peopleLabel')}
-            textFieldProps={{
-              placeholder: people.length ? undefined : t('availability.peoplePlaceholder'),
-            }}
-          />
-          <DateRangePickerField
-            value={range}
-            onValueChange={setRange}
-            startLabel={t('availability.fromLabel')}
-            endLabel={t('availability.toLabel')}
-            orderErrorMessage={t('availability.rangeError')}
-            minDate={dateOnly(new Date())}
-            required
-          />
-        </Stack>
-        <SelectField
-          label={t('availability.durationLabel')}
-          value={duration}
-          onValueChange={(value) => setDuration(Number(value))}
-          options={[15, 30, 45, 60, 90, 120].map((value) => ({
-            value,
-            label: t('units.minutes', { count: value }),
-          }))}
+        <CalendarSectionHeader
+          padded={false}
+          icon={Search}
+          title={t('availability.composerTitle')}
+          description={t('availability.composerDescription')}
         />
-        <ActionButton
-          intent="primary"
-          startIcon={<Search size={17} />}
-          loading={availability.isPending}
-          onClick={() => availability.mutate()}
-          sx={{ minHeight: 48, px: 2.5 }}
+        <Box
+          sx={{
+            mt: 2.25,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.6fr) 240px auto' },
+            gap: 2,
+            alignItems: 'start',
+          }}
         >
-          {t('availability.find')}
-        </ActionButton>
+          <Stack spacing={2}>
+            {peopleQuery.isError && (
+              <Alert
+                severity="error"
+                action={
+                  <ActionButton intent="quiet" size="small" onClick={() => peopleQuery.refetch()}>
+                    {t('actions.retry')}
+                  </ActionButton>
+                }
+              >
+                {t('availability.peopleLoadError')}
+              </Alert>
+            )}
+            <AutocompleteMultiField
+              multiple
+              options={(peopleQuery.data?.items ?? []).filter((person) =>
+                Boolean(person.workEmail)
+              )}
+              value={people}
+              onChange={(_, value) => {
+                resetResults();
+                setPeople(value.slice(0, CALENDAR_AVAILABILITY_ATTENDEE_LIMIT));
+              }}
+              loading={peopleQuery.isLoading}
+              getOptionDisabled={(option) =>
+                people.length >= CALENDAR_AVAILABILITY_ATTENDEE_LIMIT &&
+                !people.some((person) => person.personId === option.personId)
+              }
+              getOptionLabel={(person) =>
+                `${person.displayName} · ${person.businessTitle ?? person.workEmail}`
+              }
+              isOptionEqualToValue={(option, value) => option.personId === value.personId}
+              renderTags={(values, getTagProps) =>
+                values.map((person, index) => (
+                  <Chip
+                    {...getTagProps({ index })}
+                    key={person.personId}
+                    avatar={<Avatar>{person.displayName.slice(0, 1)}</Avatar>}
+                    label={person.displayName}
+                  />
+                ))
+              }
+              label={t('availability.peopleLabel')}
+              supportingText={t('availability.peopleLimit')}
+              textFieldProps={{
+                placeholder: people.length ? undefined : t('availability.peoplePlaceholder'),
+              }}
+            />
+            <DateRangePickerField
+              value={range}
+              onValueChange={(value) => {
+                resetResults();
+                setRange(value);
+              }}
+              startLabel={t('availability.fromLabel')}
+              endLabel={t('availability.toLabel')}
+              orderErrorMessage={t('availability.rangeError')}
+              minDate={dateOnly(new Date())}
+              required
+            />
+          </Stack>
+          <SelectField
+            label={t('availability.durationLabel')}
+            value={duration}
+            onValueChange={(value) => {
+              resetResults();
+              setDuration(Number(value));
+            }}
+            options={[15, 30, 45, 60, 90, 120].map((value) => ({
+              value,
+              label: t('units.minutes', { count: value }),
+            }))}
+          />
+          <ActionButton
+            intent="primary"
+            startIcon={<Search size={17} />}
+            loading={availability.isPending}
+            onClick={() => {
+              setSearchedPeople([...people]);
+              availability.mutate();
+            }}
+            sx={{ minHeight: 48, px: 2.5 }}
+          >
+            {t('availability.find')}
+          </ActionButton>
+        </Box>
       </Box>
 
       <Stack
@@ -172,15 +263,21 @@ export function CalendarAvailability() {
         <Typography variant="caption">{t('availability.privacy')}</Typography>
       </Stack>
 
-      {availability.isError && (
-        <Alert severity="error" sx={{ mt: 2 }}>
+      {availability.isError ? (
+        <Alert
+          severity="error"
+          sx={{ mt: 2 }}
+          action={
+            <ActionButton intent="quiet" size="small" onClick={() => availability.mutate()}>
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
           {availability.error instanceof Error
             ? availability.error.message
             : t('availability.loadError')}
         </Alert>
-      )}
-
-      {availability.isPending ? (
+      ) : availability.isPending ? (
         <Box
           sx={{
             mt: 3,
@@ -192,7 +289,20 @@ export function CalendarAvailability() {
           <Skeleton variant="rounded" height={300} />
           <Skeleton variant="rounded" height={420} />
         </Box>
-      ) : availability.data ? (
+      ) : availability.data && !evaluationUsable ? (
+        <Alert
+          severity="warning"
+          sx={{ mt: 2 }}
+          role="status"
+          action={
+            <ActionButton intent="quiet" size="small" onClick={() => availability.mutate()}>
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('schedulingAssistant.incompleteResults')}
+        </Alert>
+      ) : result ? (
         <Box
           sx={{
             mt: 3,
@@ -211,17 +321,21 @@ export function CalendarAvailability() {
               overflow: 'hidden',
             }}
           >
-            <Box sx={{ p: 2 }}>
-              <Typography component="h2" variant="h6" fontWeight={800}>
-                {t('availability.participants')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('availability.participantsDescription')}
-              </Typography>
-            </Box>
+            <CalendarSectionHeader
+              icon={UsersRound}
+              title={t('availability.participants')}
+              description={t('availability.participantsDescription')}
+              meta={
+                <Typography variant="caption" color="text.secondary" role="status">
+                  {t('schedulingAssistant.freshness', {
+                    time: calendarTime(result.generatedAt, language),
+                  })}
+                </Typography>
+              }
+            />
             <Divider />
             <Stack divider={<Divider flexItem />}>
-              {availability.data.participants.map((participant, index) => {
+              {result.participants.map((participant, index) => {
                 const person = participantById.get(participant.personPublicId);
                 return (
                   <Stack
@@ -243,12 +357,38 @@ export function CalendarAvailability() {
                       {person?.displayName.slice(0, 1) ?? t('availability.meShort')}
                     </Avatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={750} noWrap>
+                      <Typography variant="body2" fontWeight={600} noWrap>
                         {person?.displayName ?? t('availability.me')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {t('availability.busyMinutes', { count: participant.busyMinutes })}
                       </Typography>
+                      <Box
+                        role="meter"
+                        aria-valuemin={0}
+                        aria-valuemax={participantLoadMax}
+                        aria-valuenow={participant.busyMinutes}
+                        aria-label={t('availability.busyMinutes', {
+                          count: participant.busyMinutes,
+                        })}
+                        sx={(theme) => ({
+                          mt: 0.65,
+                          height: 5,
+                          borderRadius: 999,
+                          bgcolor: alpha(theme.palette.text.secondary, 0.1),
+                          overflow: 'hidden',
+                        })}
+                      >
+                        <Box
+                          aria-hidden="true"
+                          sx={{
+                            width: `${(participant.busyMinutes * 100) / participantLoadMax}%`,
+                            height: 1,
+                            borderRadius: 999,
+                            bgcolor: 'primary.main',
+                          }}
+                        />
+                      </Box>
                     </Box>
                   </Stack>
                 );
@@ -266,60 +406,86 @@ export function CalendarAvailability() {
               overflow: 'hidden',
             }}
           >
-            <Box sx={{ p: 2.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
-              <Sparkles size={19} color="#7C3AED" />
-              <Box>
-                <Typography component="h2" variant="h6" fontWeight={800}>
-                  {t('availability.suggestions')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t('availability.suggestionsDescription')}
-                </Typography>
-              </Box>
-            </Box>
+            <CalendarSectionHeader
+              icon={Sparkles}
+              title={t('availability.suggestions')}
+              description={t('availability.suggestionsDescription')}
+            />
             <Divider />
-            {availability.data.suggestions.length ? (
+            {result.suggestions.length ? (
               <Box
+                component="ol"
                 sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                  p: 0,
+                  m: 0,
+                  listStyle: 'none',
                 }}
               >
-                {availability.data.suggestions.map((slot) => (
+                {result.suggestions.map((slot, index) => (
                   <Box
-                    component={canCreate ? 'button' : 'div'}
-                    type={canCreate ? 'button' : undefined}
+                    component="li"
                     key={slot.startsAt}
-                    onClick={canCreate ? () => setSelectedSlot(slot) : undefined}
-                    sx={{
-                      minHeight: 132,
-                      p: 2,
-                      border: 0,
-                      borderRight: 1,
-                      borderBottom: 1,
-                      borderColor: 'divider',
-                      bgcolor: 'transparent',
-                      color: 'text.primary',
-                      textAlign: 'left',
-                      cursor: canCreate ? 'pointer' : 'default',
-                      '&:hover': canCreate ? { bgcolor: 'action.hover' } : undefined,
-                      '&:focus-visible': {
-                        outline: '2px solid',
-                        outlineColor: 'primary.main',
-                        outlineOffset: -2,
-                      },
-                    }}
+                    sx={{ borderBottom: 1, borderColor: 'divider' }}
                   >
-                    <Stack direction="row" justifyContent="space-between" gap={1}>
-                      <Box>
-                        <Typography fontWeight={800}>
+                    <Box
+                      component={canCreate ? 'button' : 'div'}
+                      type={canCreate ? 'button' : undefined}
+                      onClick={canCreate ? () => setSelectedSlot(slot) : undefined}
+                      sx={(theme) => ({
+                        width: 1,
+                        minHeight: 92,
+                        display: 'grid',
+                        gridTemplateColumns: '36px minmax(0, 1fr) auto',
+                        gap: 1.25,
+                        alignItems: 'center',
+                        px: { xs: 1.75, sm: 2.25 },
+                        py: 1.5,
+                        border: 0,
+                        bgcolor: 'transparent',
+                        color: 'text.primary',
+                        textAlign: 'left',
+                        cursor: canCreate ? 'pointer' : 'default',
+                        transition: theme.transitions.create('background-color'),
+                        '&:hover': canCreate
+                          ? {
+                              bgcolor: alpha(
+                                theme.palette.success.main,
+                                theme.palette.mode === 'dark' ? 0.12 : 0.045
+                              ),
+                            }
+                          : undefined,
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: -2,
+                        },
+                        '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                      })}
+                    >
+                      <Box
+                        aria-hidden="true"
+                        sx={(theme) => ({
+                          width: 32,
+                          height: 32,
+                          display: 'grid',
+                          placeItems: 'center',
+                          borderRadius: '50%',
+                          bgcolor: alpha(theme.palette.success.main, 0.12),
+                          color: 'success.dark',
+                          fontSize: 13,
+                          fontWeight: 700,
+                        })}
+                      >
+                        {index + 1}
+                      </Box>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography fontWeight={600}>
                           {calendarDate(slot.startsAt, language)}
                         </Typography>
                         <Stack
                           direction="row"
                           spacing={0.75}
                           alignItems="center"
-                          sx={{ mt: 0.5 }}
                           color="text.secondary"
                         >
                           <Clock3 size={15} />
@@ -328,6 +494,9 @@ export function CalendarAvailability() {
                             {calendarTime(slot.endsAt, language)}
                           </Typography>
                         </Stack>
+                        <Typography variant="caption" color="text.secondary">
+                          {slot.reason}
+                        </Typography>
                       </Box>
                       <Chip
                         size="small"
@@ -335,14 +504,7 @@ export function CalendarAvailability() {
                         variant="outlined"
                         label={`${slot.score}%`}
                       />
-                    </Stack>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: 'block', mt: 1.25 }}
-                    >
-                      {slot.reason}
-                    </Typography>
+                    </Box>
                   </Box>
                 ))}
               </Box>
@@ -378,10 +540,10 @@ export function CalendarAvailability() {
           open={Boolean(selectedSlot)}
           initialStart={selectedSlot?.startsAt}
           initialEnd={selectedSlot?.endsAt}
-          initialAttendees={people}
+          initialAttendees={searchedPeople}
           onClose={() => setSelectedSlot(null)}
         />
       )}
-    </PageCanvas>
+    </CalendarCanvas>
   );
 }

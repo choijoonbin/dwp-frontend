@@ -5,6 +5,10 @@ import {
   reconcileWorkspaceWidgets,
   setWorkspaceWidgetVisibility,
 } from '../../components/workspace-composer/workspace-composer-model';
+import {
+  WORKSPACE_WIDGET_CATALOG,
+  workspaceWidgetCatalogDefinition,
+} from '../../components/workspace-composer/workspace-widget-catalog';
 
 import type {
   HomeAudienceProfile,
@@ -12,107 +16,59 @@ import type {
   HomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
+import type { WorkspaceWidgetLifecycle } from '../../components/workspace-composer/workspace-widget-catalog';
 
 export const HOME_OVERVIEW_FRESHNESS_SECONDS = 30;
 
-export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidgetKey>[] = [
-  {
-    key: 'command-rail',
-    icon: ListChecks,
-    canHide: true,
-    defaultSize: 'large',
-    allowedSizes: ['large', 'full'],
-    defaultHeight: 'short',
-    allowedHeights: ['short', 'standard'],
-    surface: 'plain',
+const widgetIcons = {
+  'command-rail': ListChecks,
+  'daily-brief': Sparkles,
+  focus: CheckCircle2,
+  schedule: CalendarDays,
+  activity: Activity,
+} as const;
+
+export type HomeWidgetLifecyclePolicy = Readonly<{
+  renderExisting: boolean;
+  allowNewPlacement: boolean;
+  allowRestore: boolean;
+}>;
+
+export function homeWidgetLifecyclePolicy(
+  lifecycle: WorkspaceWidgetLifecycle
+): HomeWidgetLifecyclePolicy {
+  if (lifecycle === 'ACTIVE') {
+    return { renderExisting: true, allowNewPlacement: true, allowRestore: true };
+  }
+  if (lifecycle === 'DEPRECATED') {
+    return { renderExisting: true, allowNewPlacement: false, allowRestore: false };
+  }
+  return { renderExisting: false, allowNewPlacement: false, allowRestore: false };
+}
+
+export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidgetKey>[] =
+  WORKSPACE_WIDGET_CATALOG.filter(
+    (definition) => homeWidgetLifecyclePolicy(definition.lifecycle).renderExisting
+  ).map((definition) => ({
+    key: definition.key,
+    icon: widgetIcons[definition.key],
+    canHide: definition.canHide,
+    defaultSize: definition.defaultSize,
+    allowedSizes: definition.allowedSizes,
+    defaultHeight: definition.defaultHeight,
+    allowedHeights: definition.allowedHeights,
+    surface: definition.key === 'command-rail' ? 'plain' : undefined,
     audience: 'all',
     manifest: {
-      schemaVersion: 1,
-      owner: 'Digital Workplace Product',
-      dataSource: 'DWP_HOME_OVERVIEW',
-      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
-      privacyClass: 'CONFIDENTIAL',
-      retention: 'NONE',
-      analyticsKey: 'home.command-rail',
+      schemaVersion: definition.manifestVersion,
+      owner: definition.ownerProduct,
+      dataSource: definition.dataSource,
+      freshnessSeconds: definition.freshnessSeconds,
+      privacyClass: definition.privacyClass,
+      retention: definition.retention,
+      analyticsKey: definition.analyticsKey,
     },
-  },
-  {
-    key: 'daily-brief',
-    icon: Sparkles,
-    canHide: true,
-    defaultSize: 'full',
-    allowedSizes: ['compact', 'large', 'full'],
-    defaultHeight: 'standard',
-    allowedHeights: ['short', 'standard', 'tall'],
-    audience: 'all',
-    manifest: {
-      schemaVersion: 1,
-      owner: 'Digital Workplace Product',
-      dataSource: 'DWP_HOME_OVERVIEW',
-      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
-      privacyClass: 'INTERNAL',
-      retention: 'NONE',
-      analyticsKey: 'home.workday-insights',
-    },
-  },
-  {
-    key: 'focus',
-    icon: CheckCircle2,
-    canHide: true,
-    defaultSize: 'medium',
-    allowedSizes: ['quarter', 'compact', 'medium', 'large', 'full'],
-    defaultHeight: 'tall',
-    allowedHeights: ['short', 'standard', 'tall', 'expanded'],
-    audience: 'all',
-    manifest: {
-      schemaVersion: 1,
-      owner: 'Digital Workplace Product',
-      dataSource: 'DWP_WORKSPACE',
-      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
-      privacyClass: 'CONFIDENTIAL',
-      retention: 'NONE',
-      analyticsKey: 'home.focus',
-    },
-  },
-  {
-    key: 'schedule',
-    icon: CalendarDays,
-    canHide: true,
-    defaultSize: 'quarter',
-    allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
-    defaultHeight: 'standard',
-    allowedHeights: ['short', 'standard', 'tall'],
-    audience: 'all',
-    manifest: {
-      schemaVersion: 1,
-      owner: 'Calendar Product',
-      dataSource: 'DWP_CALENDAR',
-      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
-      privacyClass: 'CONFIDENTIAL',
-      retention: 'NONE',
-      analyticsKey: 'home.schedule',
-    },
-  },
-  {
-    key: 'activity',
-    icon: Activity,
-    canHide: true,
-    defaultSize: 'quarter',
-    allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
-    defaultHeight: 'tall',
-    allowedHeights: ['short', 'standard', 'tall'],
-    audience: 'all',
-    manifest: {
-      schemaVersion: 1,
-      owner: 'Digital Workplace Product',
-      dataSource: 'DWP_ACTIVITY',
-      freshnessSeconds: HOME_OVERVIEW_FRESHNESS_SECONDS,
-      privacyClass: 'INTERNAL',
-      retention: 'NONE',
-      analyticsKey: 'home.activity',
-    },
-  },
-];
+  }));
 
 export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.map(
   (widget) => widget.key
@@ -143,7 +99,14 @@ export function defaultHomeWidgets(
   registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS,
   profile: HomeAudienceProfile = 'MEMBER'
 ): HomeWidgetPreference[] {
-  return defaultWorkspaceWidgets(orderedRegistry(registeredOrder, profile));
+  return defaultWorkspaceWidgets(
+    orderedRegistry(registeredOrder, profile).filter((widget) => {
+      const definition = workspaceWidgetCatalogDefinition(widget.key);
+      return Boolean(
+        definition && homeWidgetLifecyclePolicy(definition.lifecycle).allowNewPlacement
+      );
+    })
+  );
 }
 
 export function reconcileHomeWidgets(
@@ -151,7 +114,21 @@ export function reconcileHomeWidgets(
   registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS,
   profile: HomeAudienceProfile = 'MEMBER'
 ): HomeWidgetPreference[] {
-  return reconcileWorkspaceWidgets(value, orderedRegistry(registeredOrder, profile));
+  const persistedKeys = new Set<HomeWidgetKey>();
+  if (Array.isArray(value)) {
+    value.forEach((candidate) => {
+      if (!candidate || typeof candidate !== 'object') return;
+      const widgetKey = (candidate as { widgetKey?: unknown }).widgetKey;
+      if (typeof widgetKey === 'string') persistedKeys.add(widgetKey as HomeWidgetKey);
+    });
+  }
+  const registry = orderedRegistry(registeredOrder, profile).filter((widget) => {
+    const definition = workspaceWidgetCatalogDefinition(widget.key);
+    if (!definition) return false;
+    const policy = homeWidgetLifecyclePolicy(definition.lifecycle);
+    return policy.allowNewPlacement || (policy.renderExisting && persistedKeys.has(widget.key));
+  });
+  return reconcileWorkspaceWidgets(value, registry);
 }
 
 export function setHomeWidgetVisibility(
@@ -159,5 +136,9 @@ export function setHomeWidgetVisibility(
   widgetKey: HomeWidgetKey,
   visible: boolean
 ): HomeWidgetPreference[] {
+  const definition = workspaceWidgetCatalogDefinition(widgetKey);
+  if (visible && (!definition || !homeWidgetLifecyclePolicy(definition.lifecycle).allowRestore)) {
+    return [...widgets];
+  }
   return setWorkspaceWidgetVisibility(widgets, HOME_WIDGET_REGISTRY, widgetKey, visible);
 }

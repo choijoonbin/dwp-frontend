@@ -58,7 +58,9 @@ Application Context를 Page 제목으로 대체하지 않는다. Header는 Route
 
 - Tenant Logo는 개인 Home의 공동 Brand 영역에서만 표시한다. 업무·관리 Sidebar에는 고객사
   Logo를 반복하지 않아 현재 Product와 Tenant Scope를 혼동시키지 않는다.
-- Sidebar의 Product Lockup 전체가 Home Link다. Icon과 Text의 클릭 범위가 다르지 않다.
+- Expanded Sidebar와 Collapse가 허용되지 않는 고정 Rail에서는 Product Lockup 전체가 Home
+  Link다. Collapse가 허용된 Compact Rail에서는 동일한 Product Mark Slot이 Expand Button으로
+  전환되며, Sidebar를 펼치면 전체 Product Lockup의 Home Link가 복원된다.
 - 단일 단계 업무·제품 Navigation은 248px를 사용한다. 여러 Group과 하위 메뉴가 있는
   Control Plane만 272px를 사용한다.
 - Sidebar 접기 시 Header와 Main은 같은 시간에 남은 폭을 회수한다. Mobile Drawer는
@@ -68,14 +70,16 @@ Application Context를 Page 제목으로 대체하지 않는다. Header는 Route
 
 Desktop은 다음 순서를 고정한다.
 
-1. Navigation Toggle
-2. Application Context
-3. Work Context(`내 작업` 또는 활성 Space) 또는 승인된 Support Context
-4. Flexible Space
-5. Global Search
-6. Full Screen
-7. Notification
-8. Account Identity와 Avatar
+1. Application Context
+2. Work Context(`내 작업` 또는 활성 Space) 또는 승인된 Support Context
+3. Flexible Space
+4. Global Search
+5. Full Screen
+6. Notification
+7. Account Identity와 Avatar
+
+Desktop Navigation Toggle은 Global Header 순서에 포함하지 않고 Sidebar Product Lockup 행이
+소유한다. Mobile은 기존과 같이 Header Menu가 Overlay Drawer를 연다.
 
 Mobile은 `Menu → Application Context → Flexible Space → Search → Notification → Account`를
 사용한다. Work Context와 Full Screen은 공간이 좁을 때 감추되 Account, Search,
@@ -92,6 +96,8 @@ Account Identity는 이름과 Avatar를 항상 유지하고, 두 번째 줄은 H
 
 - `ShellHeader`가 AppBar, Application Context, Work Context와 Global Utility 순서를 단독
   소유한다.
+- 공통 Desktop Navigation Header가 Product Lockup, Collapse·Expand Action, Compact Rail의
+  Product Mark Hover·Focus 전환을 단독 소유한다. Layout은 이 동작을 개별 재조립하지 않는다.
 - `shellRegistry`가 Route별 Scope, Brand Mode, Work Context 노출, Application Context,
   Navigation Width와
   Header Surface를 소유하며 Layout은 Registry 밖에서 이 값을 재정의하지 않는다.

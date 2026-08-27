@@ -12,6 +12,7 @@ import { COMMUNICATIONS_NAVIGATION } from '../features/communications/communicat
 import { DWAION_NAVIGATION } from '../features/dwaion/dwaion-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
+import { MEETINGS_NAVIGATION } from '../features/meetings/meetings-navigation';
 import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
 import { NOTIFICATION_NAVIGATION } from '../features/notifications/notification-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
@@ -40,6 +41,7 @@ const EXPECTED_SHELL_COUNTS = {
   calendar: navigationItemCount(CALENDAR_NAVIGATION),
   rooms: navigationItemCount(ROOMS_NAVIGATION),
   mail: navigationItemCount(MAIL_NAVIGATION),
+  meetings: navigationItemCount(MEETINGS_NAVIGATION),
   messaging: navigationItemCount(MESSAGING_NAVIGATION),
   notifications: navigationItemCount(NOTIFICATION_NAVIGATION),
   approvals: navigationItemCount(APPROVAL_NAVIGATION),
@@ -57,7 +59,7 @@ const expectedRouteCount = Object.values(EXPECTED_SHELL_COUNTS).reduce(
 
 describe('product menu manifest', () => {
   it('keeps every supported menu route unique and under visual governance', () => {
-    expect(PRODUCT_MENU_ROUTES).toHaveLength(169);
+    expect(PRODUCT_MENU_ROUTES).toHaveLength(186);
     expect(PRODUCT_MENU_ROUTES).toHaveLength(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.id)).size).toBe(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.path)).size).toBe(expectedRouteCount);
@@ -79,31 +81,31 @@ describe('product menu manifest', () => {
       }, {});
 
     expect(countBy('plane')).toEqual({
-      work: 70,
-      management: 57,
+      work: 84,
+      management: 60,
       'tenant-governance': 24,
       'provider-control': 10,
       account: 8,
     });
     expect(countBy('taskKind')).toEqual({
-      work: 75,
+      work: 89,
       team: 3,
-      operations: 45,
-      administration: 46,
+      operations: 47,
+      administration: 47,
     });
     expect(countBy('migrationWave')).toEqual({
       Keep: 48,
       'W0.5': 12,
       W1a: 15,
       W1b: 25,
-      W2: 33,
-      W3: 36,
+      W2: 35,
+      W3: 51,
     });
   });
 
-  it('binds each of the 121 business-app menus to exactly one matching surface item', () => {
+  it('binds each of the 138 business-app menus to exactly one matching surface item', () => {
     const productRoutes = PRODUCT_MENU_ROUTES.filter((route) => route.productSurfaceId);
-    expect(productRoutes).toHaveLength(121);
+    expect(productRoutes).toHaveLength(138);
     expect(
       productRoutes.every((route) => route.navigationContextId === route.productSurfaceId)
     ).toBe(true);
@@ -125,8 +127,8 @@ describe('product menu manifest', () => {
     }
   });
 
-  it('has zero Work-to-Management sidebar mixing in all 11 governed manifests', () => {
-    expect(GOVERNED_PRODUCT_MANIFESTS).toHaveLength(11);
+  it('has zero Work-to-Management sidebar mixing in all 12 governed manifests', () => {
+    expect(GOVERNED_PRODUCT_MANIFESTS).toHaveLength(12);
     for (const manifest of GOVERNED_PRODUCT_MANIFESTS) {
       const workPaths = new Set(
         manifest.surfaces
@@ -155,10 +157,13 @@ describe('product menu manifest', () => {
       ),
       'utf8'
     );
-    expect(document).toContain('정적 Menu Route **169개 전부**');
-    expect(document).toContain('11개 업무 앱 121개');
-    expect(document).toContain('`W2`   | DWAI·ON, Notifications, Spaces');
-    expect(document).toContain('`W3`   | Calendar, Workplace/Rooms, Mail, Messaging');
+    expect(document).toContain('정적 Menu Route **186개 전부**');
+    expect(document).toContain('12개 업무 앱 138개');
+    expect(document).toContain('| `W2`     |             35 | DWAI·ON, Notifications, Spaces');
+    expect(document).toContain(
+      '| `W3`     |             51 | Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
+    );
+    expect(document).toContain('| **합계** |        **186** |');
   });
 
   it('locks every governed menu identity, path, plane, task, surface, and wave to the ADR checksum', () => {
@@ -184,7 +189,7 @@ describe('product menu manifest', () => {
       })
     ).sort((left, right) => left.id.localeCompare(right.id));
     const checksum = createHash('sha256').update(JSON.stringify(canonicalLedger)).digest('hex');
-    expect(checksum).toBe('e139d91c9bad813199475d8809fe74e2afe23106e4b464ca3a35cfec8546122f');
+    expect(checksum).toBe('0d9c3ae9e412c4358a5a513cf68663f361cbf3d75381d4d896045af8bed8b257');
     const document = fs.readFileSync(
       new URL(
         '../../../../docs/03-architecture/R1 제품 Surface 전체 메뉴 분류표.md',

@@ -7,11 +7,7 @@ export type HomeContributionScope = 'ME' | 'TEAM' | 'OPERATIONS';
 export type HomeContributionBucketKey = 'action' | 'timeline' | 'response' | 'request' | 'pulse';
 
 export type HomeContributionBucketState =
-  | 'AVAILABLE'
-  | 'EMPTY'
-  | 'PARTIAL'
-  | 'RESTRICTED'
-  | 'UNAVAILABLE';
+  'AVAILABLE' | 'EMPTY' | 'PARTIAL' | 'RESTRICTED' | 'UNAVAILABLE';
 
 export type HomeContributionPriority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 

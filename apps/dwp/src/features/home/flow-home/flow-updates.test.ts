@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  flowRequiredNoticeDestination,
+  flowUpdatesLayoutMode,
   flowUpdatesResponsiveItemLimit,
   flowUpdatesVisibleStories,
   orderedFlowStories,
@@ -84,11 +86,11 @@ describe('Flow Home visible unread count', () => {
 
 describe('Flow Home responsive update budget', () => {
   it.each([
-    [419, 'short', 1],
-    [420, 'short', 2],
-    [719, 'short', 2],
+    [419, 'short', 3],
+    [420, 'short', 3],
+    [719, 'short', 3],
     [720, 'short', 3],
-    [419, 'standard', 2],
+    [419, 'standard', 3],
     [420, 'standard', 3],
     [719, 'standard', 3],
     [720, 'standard', 3],
@@ -101,6 +103,36 @@ describe('Flow Home responsive update budget', () => {
     expect(flowUpdatesResponsiveItemLimit(419, 'standard', 1)).toBe(1);
     expect(flowUpdatesResponsiveItemLimit(720, 'standard', 7)).toBe(7);
   });
+});
+
+describe('Flow Home responsive editorial layout', () => {
+  it.each([
+    [undefined, 3, 'stack'],
+    [719, 3, 'stack'],
+    [720, 3, 'feature-rail'],
+    [1199, 3, 'feature-rail'],
+    [1200, 2, 'feature-rail'],
+    [1200, 3, 'wide-6-3-3'],
+    [1920, 3, 'wide-6-3-3'],
+  ] as const)('uses %s px with %i visible stories as %s', (width, count, expected) => {
+    expect(flowUpdatesLayoutMode(width, count)).toBe(expected);
+  });
+});
+
+describe('Flow Home required notice destination', () => {
+  it.each([
+    [undefined, 1, false, '/communications/required'],
+    [undefined, 2, true, '/communications/for-you'],
+    [4101, 1, false, '/communications/required/4101'],
+    [4101, 2, false, '/communications/required'],
+    [4101, 1, true, '/communications/for-you/4101'],
+    [4101, 2, true, '/communications/for-you'],
+  ] as const)(
+    'routes story %s / count %i / critical-only %s to %s',
+    (storyId, count, criticalOnly, expected) => {
+      expect(flowRequiredNoticeDestination(storyId, count, criticalOnly)).toBe(expected);
+    }
+  );
 });
 
 describe('Flow Home rendered update selection', () => {

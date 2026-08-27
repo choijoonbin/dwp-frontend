@@ -1,3 +1,5 @@
+import type { AgentActionHandoffOrigin } from './api/agent-plan-api';
+
 export const DWAION_AGENT_KEY = 'DWP_ASSISTANT';
 export const DWAION_APPROVAL_EXPERT_AGENT_KEY = 'DWP_APPROVAL_EXPERT';
 export const DWAION_PRODUCT_PATH = '/dwaion';
@@ -15,14 +17,21 @@ export const DWAION_ACTION_KEYS = [
 export type DwaionAgentKey = typeof DWAION_AGENT_KEY | typeof DWAION_APPROVAL_EXPERT_AGENT_KEY;
 export type DwaionActionKey = (typeof DWAION_ACTION_KEYS)[number];
 export type DwaionHandoffInputValue = string | string[];
+export type DwaionQuestionLaunchState = {
+  dwaionQuestionLaunch: {
+    version: 2;
+    launchId: string;
+  };
+};
 
 export type DwaionHandoff = {
-  version: 1;
+  version: 2;
   handoffId: string;
   actionKey: DwaionActionKey;
   planHash: string;
   reviewedInputs: Record<string, DwaionHandoffInputValue>;
   sourceReferences: string[];
+  origin: AgentActionHandoffOrigin;
   createdAt: string;
   expiresAt: string;
 };
@@ -54,13 +63,12 @@ export function resolveDwaionAgentKey(value: string | null | undefined): DwaionA
 }
 
 export function dwaionWorkspaceRoute(
-  query?: string,
+  _query?: string,
   conversationId?: string,
   agentKey: DwaionAgentKey = DWAION_AGENT_KEY
 ): string {
   const params = new URLSearchParams();
   const normalizedConversationId = conversationId?.trim();
-  if (!normalizedConversationId && query?.trim()) params.set('q', query.trim());
   if (agentKey !== DWAION_AGENT_KEY) params.set('agent', agentKey);
   const search = params.toString();
   const path = normalizedConversationId
@@ -69,13 +77,43 @@ export function dwaionWorkspaceRoute(
   return search ? `${path}?${search}` : path;
 }
 
+export function createDwaionQuestionLaunchState(
+  launchId: string
+): DwaionQuestionLaunchState | null {
+  const normalized = launchId.trim();
+  return UUID_PATTERN.test(normalized)
+    ? { dwaionQuestionLaunch: { version: 2, launchId: normalized } }
+    : null;
+}
+
+export function parseDwaionQuestionLaunchState(state: unknown): string | null {
+  if (!isRecord(state)) return null;
+  const launch = state.dwaionQuestionLaunch;
+  if (
+    !isRecord(launch) ||
+    launch.version !== 2 ||
+    typeof launch.launchId !== 'string' ||
+    !UUID_PATTERN.test(launch.launchId)
+  ) {
+    return null;
+  }
+  return launch.launchId;
+}
+
+export function hasDwaionQuestionLaunchState(state: unknown): boolean {
+  return isRecord(state) && Object.hasOwn(state, 'dwaionQuestionLaunch');
+}
+
 export function createDwaionHandoff(
-  input: Pick<DwaionHandoff, 'actionKey' | 'planHash' | 'reviewedInputs' | 'sourceReferences'>,
+  input: Pick<
+    DwaionHandoff,
+    'actionKey' | 'planHash' | 'reviewedInputs' | 'sourceReferences' | 'origin'
+  >,
   now = new Date()
 ): DwaionHandoff {
   const createdAt = now.toISOString();
   return {
-    version: 1,
+    version: 2,
     handoffId: globalThis.crypto.randomUUID(),
     ...input,
     createdAt,
@@ -90,7 +128,7 @@ export function parseDwaionHandoff(
 ): DwaionHandoff | null {
   if (!isRecord(state)) return null;
   const value = state.dwaionHandoff;
-  if (!isRecord(value) || value.version !== 1) return null;
+  if (!isRecord(value) || value.version !== 2) return null;
   if (!isActionKey(value.actionKey) || (expectedAction && value.actionKey !== expectedAction)) {
     return null;
   }
@@ -115,18 +153,38 @@ export function parseDwaionHandoff(
     return null;
   }
   if (!isSourceReferences(value.sourceReferences)) return null;
+  if (!isOrigin(value.origin)) return null;
   const reviewedInputs = parseReviewedInputs(value.reviewedInputs, value.actionKey);
   if (!reviewedInputs) return null;
   return {
-    version: 1,
+    version: 2,
     handoffId: value.handoffId,
     actionKey: value.actionKey,
     planHash: value.planHash,
     reviewedInputs,
     sourceReferences: value.sourceReferences,
+    origin: value.origin,
     createdAt: value.createdAt,
     expiresAt: value.expiresAt,
   };
+}
+
+function isOrigin(value: unknown): value is AgentActionHandoffOrigin {
+  if (!isRecord(value)) return false;
+  return (
+    value.appKey === 'APP.ASK' &&
+    typeof value.route === 'string' &&
+    /^\/dwaion\/(?:new|conversations\/[0-9a-f-]{36})$/.test(value.route) &&
+    value.surface === 'action-shelf' &&
+    typeof value.sourceRunId === 'string' &&
+    UUID_PATTERN.test(value.sourceRunId) &&
+    typeof value.sourceRequestId === 'string' &&
+    value.sourceRequestId.length > 0 &&
+    typeof value.sourceCorrelationId === 'string' &&
+    value.sourceCorrelationId.length > 0 &&
+    (value.conversationId === null ||
+      (typeof value.conversationId === 'string' && UUID_PATTERN.test(value.conversationId)))
+  );
 }
 
 export function dwaionHandoffText(handoff: DwaionHandoff | null, field: string): string | null {

@@ -15,6 +15,7 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
+  Video,
 } from 'lucide-react';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
@@ -37,6 +38,7 @@ export type ShellKey =
   | 'hcm'
   | 'approvals'
   | 'spaces'
+  | 'meetings'
   | 'account'
   | 'admin'
   | 'provider';
@@ -240,6 +242,18 @@ export const shellRegistry = {
     headerSurface: 'solid',
     context: { icon: Layers3, labelKey: 'shell.spaces.name' },
   },
+  meetings: {
+    key: 'meetings',
+    routePrefixes: ['/meetings'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: Video, labelKey: 'shell.meetings.name' },
+  },
   account: {
     key: 'account',
     routePrefixes: ['/account'],
@@ -287,6 +301,7 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'dwaion',
   'approvals',
   'spaces',
+  'meetings',
   'calendar',
   'rooms',
   'mail',

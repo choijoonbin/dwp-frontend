@@ -13,18 +13,26 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { MessagingComposer } from './messaging-composer';
-import { MessagingMessageRow } from './messaging-components';
+import { MessagingMessageRow } from './messaging-message-row';
+import { useMessagingDisplayPreference } from './use-messaging-display-preference';
 
 import type { MessagingThread } from './messaging-model';
+import type { MessagingMentionDraft } from './messaging-composer-model';
 import type { MessagingAttachmentQueue } from './use-messaging-attachment-queue';
+import type { MessagingConversation, MessagingMember } from '@dwp-frontend/shared-utils';
 
 export function MessagingThreadPanel({
   open,
   desktop,
   thread,
   currentUserId,
+  conversation,
   draft,
+  draftMentions,
+  members,
+  allowMentionAll,
   onDraftChange,
+  onDraftMentionsChange,
   onSend,
   onRetry,
   isSending,
@@ -42,8 +50,13 @@ export function MessagingThreadPanel({
   desktop: boolean;
   thread: MessagingThread | null;
   currentUserId?: number;
+  conversation?: MessagingConversation;
   draft: string;
+  draftMentions: MessagingMentionDraft[];
+  members: MessagingMember[];
+  allowMentionAll: boolean;
   onDraftChange: (value: string) => void;
+  onDraftMentionsChange: (mentions: MessagingMentionDraft[]) => void;
   onSend: () => void;
   onRetry: () => void;
   isSending: boolean;
@@ -59,10 +72,13 @@ export function MessagingThreadPanel({
 }) {
   const { t } = useTranslation('messaging');
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const nearBottomRef = useRef(true);
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const { preference: displayPreference } = useMessagingDisplayPreference(conversation);
 
   useEffect(() => {
     if (!open || !thread) return;
+    if (!nearBottomRef.current) return;
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
     });
@@ -109,6 +125,11 @@ export function MessagingThreadPanel({
 
       <Box
         ref={scrollRef}
+        onScroll={(event) => {
+          const target = event.currentTarget;
+          nearBottomRef.current =
+            target.scrollHeight - target.scrollTop - target.clientHeight <= 48;
+        }}
         sx={{ minWidth: 0, minHeight: 0, overflowX: 'hidden', overflowY: 'auto', px: 1.5, py: 1 }}
       >
         <Typography variant="overline" color="text.secondary">
@@ -117,6 +138,7 @@ export function MessagingThreadPanel({
         <MessagingMessageRow
           message={thread.root}
           mine={thread.root.senderUserId === currentUserId}
+          display={{ ...displayPreference, effectiveLayoutMode: 'COLLABORATIVE' }}
           compact
           onReact={(emoji) =>
             onReact(
@@ -148,6 +170,7 @@ export function MessagingThreadPanel({
               key={reply.messageId}
               message={reply}
               mine={reply.senderUserId === currentUserId}
+              display={{ ...displayPreference, effectiveLayoutMode: 'COLLABORATIVE' }}
               compact
               onReact={(emoji) =>
                 onReact(
@@ -195,6 +218,11 @@ export function MessagingThreadPanel({
           onAttachFiles={attachmentQueue.addFiles}
           onRetryAttachment={attachmentQueue.retry}
           onRemoveAttachment={attachmentQueue.remove}
+          members={members}
+          currentUserId={currentUserId}
+          mentions={draftMentions}
+          onMentionsChange={onDraftMentionsChange}
+          allowMentionAll={allowMentionAll}
         />
       </Box>
     </Box>

@@ -1,0 +1,278 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "name": "state-change-event-outside-commit",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "mutationCases.0.eventCount",
+          "value": 0
+        }
+      ],
+      "expectedError": "STATE_EVENT_OUTBOX_SAME_COMMIT"
+    },
+    {
+      "name": "replay-bumps-head",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "mutationCases.3.nextRevision",
+          "value": "43"
+        }
+      ],
+      "expectedError": "NON_MUTATION_REVISION_BUMP"
+    },
+    {
+      "name": "no-op-emits-outbox",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "mutationCases.4.outboxCount",
+          "value": 1
+        }
+      ],
+      "expectedError": "NON_MUTATION_SIDE_EFFECT"
+    },
+    {
+      "name": "rollback-decrements-head",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "mutationCases.6.nextRevision",
+          "value": "11"
+        }
+      ],
+      "expectedError": "ROLLBACK_NOT_MONOTONIC"
+    },
+    {
+      "name": "overflow-wraps-to-zero",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "mutationCases.7.nextRevision",
+          "value": "0"
+        },
+        {
+          "operation": "SET",
+          "path": "mutationCases.7.readinessStatus",
+          "value": "READY"
+        }
+      ],
+      "expectedError": "BIGINT_OVERFLOW_FAIL_CLOSED"
+    },
+    {
+      "name": "stale-next-page-accepted",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "pagination.nextPageStaleHead.httpStatus",
+          "value": 200
+        }
+      ],
+      "expectedError": "READ_REVISION_FAIL_OPEN"
+    },
+    {
+      "name": "pagination-token-not-head-bound",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "pagination.firstPage.readRevision",
+          "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "READ_REVISION_DIGEST"
+    },
+    {
+      "name": "positive-cache-before-safety-head",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "effectiveRead.positiveCacheLookupOrder",
+          "value": [
+            "READ_REGISTRY_HEAD",
+            "READ_TENANT_POLICY_HEAD",
+            "POSITIVE_CACHE_LOOKUP",
+            "READ_SAFETY_HEAD",
+            "BUILD_CACHE_KEY_WITH_SAFETY"
+          ]
+        }
+      ],
+      "expectedError": "SAFETY_HEAD_BEFORE_POSITIVE_CACHE"
+    },
+    {
+      "name": "drift-fails-open-after-two-attempts",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "effectiveRead.drift.httpStatus",
+          "value": 200
+        }
+      ],
+      "expectedError": "EFFECTIVE_READ_DRIFT_FAIL_CLOSED"
+    },
+    {
+      "name": "rollout-snapshot-head-tuple-mismatch",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.headTuple.safetyRevision",
+          "value": "8"
+        }
+      ],
+      "expectedError": "ROLLOUT_HEAD_TUPLE_BINDING"
+    },
+    {
+      "name": "rollout-stop-inside-evidence-window",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.authoritativeTransitions",
+          "value": [
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:55:00Z"
+            },
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "STOP",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T04:30:00Z"
+            }
+          ]
+        }
+      ],
+      "expectedError": "ROLLOUT_CONTINUOUS_ACTIVE_WINDOW"
+    },
+    {
+      "name": "rollout-activation-after-window-start",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.predecessorActivationAt",
+          "value": "2026-08-27T04:05:00Z"
+        }
+      ],
+      "expectedError": "ROLLOUT_CONTINUOUS_ACTIVE_WINDOW"
+    },
+    {
+      "name": "rollout-stop-before-evidence-window",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.authoritativeTransitions",
+          "value": [
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:55:00Z"
+            },
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "STOP",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:58:00Z"
+            }
+          ]
+        }
+      ],
+      "expectedError": "ROLLOUT_CONTINUOUS_ACTIVE_WINDOW"
+    },
+    {
+      "name": "rollout-expire-before-evidence-window",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.authoritativeTransitions",
+          "value": [
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:55:00Z"
+            },
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "EXPIRE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:59:00Z"
+            }
+          ]
+        }
+      ],
+      "expectedError": "ROLLOUT_CONTINUOUS_ACTIVE_WINDOW"
+    },
+    {
+      "name": "other-rollout-activation-before-evidence-window",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.authoritativeTransitions",
+          "value": [
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:55:00Z"
+            },
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 8,
+              "occurredAt": "2026-08-27T03:58:00Z"
+            }
+          ]
+        }
+      ],
+      "expectedError": "ROLLOUT_CONTINUOUS_ACTIVE_WINDOW"
+    },
+    {
+      "name": "same-rollout-reactivation-before-evidence-window",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.authoritativeTransitions",
+          "value": [
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:55:00Z"
+            },
+            {
+              "environment": "STAGING",
+              "commitState": "COMMITTED",
+              "type": "ACTIVATE",
+              "rolloutRevision": 7,
+              "occurredAt": "2026-08-27T03:58:00Z"
+            }
+          ]
+        }
+      ],
+      "expectedError": "ROLLOUT_CONTINUOUS_ACTIVE_WINDOW"
+    },
+    {
+      "name": "rollout-transition-not-committed",
+      "mutations": [
+        {
+          "operation": "SET",
+          "path": "rolloutSnapshot.authoritativeTransitions.0.commitState",
+          "value": "PENDING"
+        }
+      ],
+      "expectedError": "ROLLOUT_TRANSITION_LEDGER"
+    }
+  ]
+}

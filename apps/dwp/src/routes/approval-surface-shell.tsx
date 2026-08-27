@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
+import { useProductApplicationRuntime } from '../components/product-application-runtime';
 import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
   resolveCanaryProductFlags,
@@ -9,7 +10,6 @@ import {
 } from '../features/shell/product-surface-canary-runtime';
 import { ApprovalLayout } from '../layouts/approval-layout';
 import { ApprovalManagementLayout, ApprovalWorkLayout } from '../layouts/approval-surface-layouts';
-import { REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG } from './product-page-route-contracts';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 
@@ -19,6 +19,7 @@ export function ApprovalSurfaceShell({
   surfaceId: 'approvals.work' | 'approvals.admin';
 }) {
   const decision = useAllowedProductSurface();
+  const applicationRuntime = useProductApplicationRuntime();
   const authority = useProductSurfaceCanaryAuthority();
   const mode = resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, 'approvals'));
   const { t } = useTranslation('approvals');
@@ -36,16 +37,16 @@ export function ApprovalSurfaceShell({
       work: tCommon('productSurface.actions.returnToWork'),
       catalog: tCommon('productSurface.actions.returnToCatalog'),
     },
-    registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
+    registeredRoutes: applicationRuntime.registeredRoutes,
     rolloutMode: mode,
     onScopeChange: (scopeKey) => void transitionScope(scopeKey),
   });
 
   if (mode === 'surface-ui') {
     return surface.plane === 'management' ? (
-      <ApprovalManagementLayout surface={runtime} />
+      <ApprovalManagementLayout manifest={APPROVAL_PRODUCT_MANIFEST} surface={runtime} />
     ) : (
-      <ApprovalWorkLayout surface={runtime} />
+      <ApprovalWorkLayout manifest={APPROVAL_PRODUCT_MANIFEST} surface={runtime} />
     );
   }
   return <ApprovalLayout surface={runtime} />;

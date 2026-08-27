@@ -58,6 +58,7 @@ export function RoomsPageHeading({
 }
 
 export function RoomIdentity({ room }: { room: CalendarResource }) {
+  const { t } = useTranslation('rooms');
   return (
     <Stack direction="row" gap={1.25} alignItems="flex-start" sx={{ minWidth: 0 }}>
       <Box
@@ -76,11 +77,17 @@ export function RoomIdentity({ room }: { room: CalendarResource }) {
         <Building2 size={19} />
       </Box>
       <Box sx={{ minWidth: 0 }}>
-        <Typography fontWeight={750} noWrap>
+        <Typography fontWeight={750} sx={{ overflowWrap: 'anywhere' }}>
           {room.name}
         </Typography>
-        <Typography variant="caption" color="text.secondary" noWrap>
-          {[room.site, room.floor, `${room.capacity}명`].filter(Boolean).join(' · ')}
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', overflowWrap: 'anywhere' }}
+        >
+          {[room.site, room.floor, t('workplace.explore.capacity', { count: room.capacity })]
+            .filter(Boolean)
+            .join(' · ')}
         </Typography>
       </Box>
     </Stack>

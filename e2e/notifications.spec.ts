@@ -57,6 +57,18 @@ function fulfillSuccess(route: Route, data: unknown) {
   });
 }
 
+async function openHeaderNotificationGlance(page: Page) {
+  const control = page.getByTestId('shell-notification-control');
+  const initialTrigger = control.getByRole('button');
+  await expect(initialTrigger).toBeVisible();
+  const initialTriggerHandle = await initialTrigger.elementHandle();
+  await initialTrigger.click();
+
+  const glance = page.getByRole('dialog', { name: '최근 알림' });
+  await expect(glance).toBeVisible();
+  return { control, glance, initialTriggerHandle };
+}
+
 async function mockNotificationCenter(
   page: Page,
   options: {
@@ -65,6 +77,7 @@ async function mockNotificationCenter(
     partial?: boolean;
     unavailableSources?: string[];
     bulkActions?: string[];
+    summaryQueries?: string[];
     inboxQueries?: string[];
     inboxItems?: () => unknown[];
     inboxPage?: (requestUrl: string) => {
@@ -84,8 +97,9 @@ async function mockNotificationCenter(
       body: ': connected\n\n',
     })
   );
-  await page.route('**/api/notifications/v1/summary**', (route) =>
-    fulfillSuccess(route, {
+  await page.route('**/api/notifications/v1/summary**', (route) => {
+    options.summaryQueries?.push(route.request().url());
+    return fulfillSuccess(route, {
       partial: options.partial ?? false,
       unavailableSources: options.unavailableSources ?? [],
       message: options.partial ? '일부 알림 소스가 지연되고 있습니다.' : null,
@@ -95,8 +109,8 @@ async function mockNotificationCenter(
       changeVersion: '1',
       counterVersion: '1',
       generatedAt: '2026-08-19T07:00:00Z',
-    })
-  );
+    });
+  });
   await page.route('**/api/notifications/v1/inbox**', (route) => {
     const requestUrl = route.request().url();
     const path = new URL(requestUrl).pathname;
@@ -247,7 +261,7 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
     )
   ).toBe(0);
 
-  for (const width of [1440, 1280, 768, 390, 320]) {
+  for (const width of [1440, 1280, 1024, 900, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/notifications/center');
     await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible();
@@ -257,15 +271,23 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
     }));
     expect(resizedGeometry.contentWidth).toBeLessThanOrEqual(resizedGeometry.viewportWidth);
 
-    const glanceTrigger = page.getByRole('button', { name: /조치 필요 알림/ });
-    const headerControls = [
-      page.locator('button[aria-label="DWP 검색"]:visible'),
-      glanceTrigger,
-      page.locator('button[aria-label^="계정:"]:visible'),
-    ];
-    const headerBounds = (
-      await Promise.all(headerControls.map((control) => control.boundingBox()))
-    ).filter((bounds) => bounds !== null);
+    const headerBounds = await page
+      .locator(
+        'button[aria-label="DWP 검색"]:visible, ' +
+          '[data-testid="shell-notification-control"] button:visible, ' +
+          'button[aria-label^="계정:"]:visible'
+      )
+      .evaluateAll((controls) =>
+        controls.map((control) => {
+          const bounds = control.getBoundingClientRect();
+          return {
+            x: bounds.x,
+            y: bounds.y,
+            width: bounds.width,
+            height: bounds.height,
+          };
+        })
+      );
     for (let left = 0; left < headerBounds.length; left += 1) {
       for (let right = left + 1; right < headerBounds.length; right += 1) {
         const first = headerBounds[left];
@@ -279,9 +301,7 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
         expect(overlap).toBe(false);
       }
     }
-    await glanceTrigger.click();
-    const glance = page.getByRole('dialog', { name: '최근 알림' });
-    await expect(glance).toBeVisible();
+    const { glance } = await openHeaderNotificationGlance(page);
     const glanceGeometry = await glance.boundingBox();
     expect(glanceGeometry).not.toBeNull();
     expect(glanceGeometry?.x ?? -1).toBeGreaterThanOrEqual(0);
@@ -314,6 +334,7 @@ test('알림 센터의 필터와 일괄 정리는 키보드만으로 수행할 �
   await mockNotificationCenter(page, { bulkActions, inboxQueries });
 
   await page.goto('/notifications/center');
+  await expect(page.getByText(notification.title)).toBeVisible();
   const search = page.getByRole('textbox', {
     name: '제목, 소스 또는 안전한 미리보기 검색',
   });
@@ -329,9 +350,11 @@ test('알림 센터의 필터와 일괄 정리는 키보드만으로 수행할 �
 
   const app = page.getByRole('combobox', { name: '앱 필터' });
   await app.focus();
-  await page.keyboard.press('ArrowDown');
-  await page.getByRole('option', { name: 'Approvals' }).press('Enter');
-  await expect(app).toHaveText(/Approvals/);
+  await page.keyboard.press('Enter');
+  const approvalsOption = page.getByRole('option', { name: '전자결재' });
+  await expect(approvalsOption).toBeVisible();
+  await approvalsOption.press('Enter');
+  await expect(app).toHaveText(/전자결재/);
 
   const readState = page.getByRole('combobox', { name: '읽음 상태 필터' });
   await readState.focus();
@@ -456,8 +479,7 @@ test('열린 알림 패널은 새 이벤트를 버퍼링하고 현재 포커스�
   await mockNotificationCenter(page, { inboxItems: () => inboxItems });
 
   await page.goto('/notifications/center');
-  await page.getByRole('button', { name: /조치 필요 알림/ }).click();
-  const glance = page.getByRole('dialog', { name: '최근 알림' });
+  const { glance } = await openHeaderNotificationGlance(page);
   const originalRow = glance.getByRole('button', { name: /보호된 업무 알림/ }).first();
   await originalRow.focus();
   await expect(originalRow).toBeFocused();
@@ -502,8 +524,7 @@ test('20건 알림 burst는 한 번의 집계 안내로 버퍼링하고 열린 �
   await mockNotificationCenter(page, { inboxItems: () => inboxItems });
 
   await page.goto('/notifications/center');
-  await page.getByRole('button', { name: /조치 필요 알림/ }).click();
-  const glance = page.getByRole('dialog', { name: '최근 알림' });
+  const { glance } = await openHeaderNotificationGlance(page);
   await glance.getByRole('tab', { name: /^전체/ }).click();
   const originalRow = glance.getByRole('button', { name: /보호된 업무 알림/ }).first();
   await originalRow.focus();
@@ -540,7 +561,7 @@ test('20건 알림 burst는 한 번의 집계 안내로 버퍼링하고 열린 �
 
   const aggregateStatus = glance.getByRole('status').filter({ hasText: '새 알림 20개 보기' });
   await expect(aggregateStatus).toHaveText('새 알림 20개 보기');
-  await expect(aggregateStatus.getByRole('button', { name: '새 알림 20개 보기' })).toBeVisible();
+  await expect(glance.getByRole('button', { name: '새 알림 20개 보기' })).toBeVisible();
   await expect(originalRow).toBeFocused();
   await expect(glance.getByRole('button', { name: /보호된 업무 알림/ })).toHaveCount(1);
 });
@@ -618,10 +639,10 @@ test('영어 세션은 제목과 CTA 및 상대·절대 시각을 지역화해 �
 
 for (const badge of [
   { actionable: 0, total: 0, visible: null },
-  { actionable: 1, total: 3, visible: '1' },
+  { actionable: 1, total: 3, visible: '3' },
   { actionable: 120, total: 140, visible: '99+' },
 ] as const) {
-  test(`헤더 알림 배지는 ${badge.actionable}건 상태를 명확히 표현한다`, async ({
+  test(`헤더 알림 배지는 최초 진입부터 전체 ${badge.total}건을 명확히 표현한다`, async ({
     page,
   }, testInfo) => {
     test.skip(testInfo.project.name !== 'chromium', 'Badge state matrix is covered once.');
@@ -635,7 +656,8 @@ for (const badge of [
     });
 
     await page.goto('/notifications/center');
-    const trigger = page.getByRole('button', {
+    const control = page.getByTestId('shell-notification-control');
+    const trigger = control.getByRole('button', {
       name: `조치 필요 알림 ${badge.actionable}건, 전체 새 알림 ${badge.total}건`,
     });
     await expect(trigger).toBeVisible();
@@ -646,8 +668,140 @@ for (const badge of [
       await expect(badgeElement).toHaveText(badge.visible);
       await expect(badgeElement).not.toHaveClass(/MuiBadge-invisible/);
     }
+
+    const initialTriggerHandle = await trigger.elementHandle();
+    await trigger.click();
+    await expect(page.getByRole('dialog', { name: '최근 알림' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(trigger).toBeFocused();
+    expect(
+      await initialTriggerHandle?.evaluate(
+        (element) => element.isConnected && element === document.activeElement
+      )
+    ).toBe(true);
   });
 }
+
+test('알림 조회 권한이 회수되면 이전 헤더 배지와 제어를 즉시 제거한다', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Authority revocation is covered once.');
+  const permissions = NOTIFICATION_PERMISSION.map((permission) => ({ ...permission }));
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions,
+  });
+  await mockNotificationCenter(page, { actionableUnread: 1, totalUnread: 3 });
+
+  await page.goto('/notifications/center');
+  const control = page.getByTestId('shell-notification-control');
+  await expect(
+    control.getByRole('button', { name: '조치 필요 알림 1건, 전체 새 알림 3건' })
+  ).toBeVisible();
+
+  permissions.splice(0, permissions.length);
+  const permissionRefresh = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === '/api/auth/permissions'
+  );
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await permissionRefresh;
+
+  await expect(control).toHaveCount(0);
+});
+
+test('실시간 커서 초기화는 활성 알림 캐시를 즉시 재동기화한다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Cursor reset recovery is covered once.');
+  const summaryQueries: string[] = [];
+  const inboxQueries: string[] = [];
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page, { summaryQueries, inboxQueries });
+
+  await page.goto('/notifications/center');
+  await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible();
+  await expect.poll(() => summaryQueries.length).toBeGreaterThan(0);
+  await expect.poll(() => inboxQueries.length).toBeGreaterThan(0);
+  const initialSummaryQueries = summaryQueries.length;
+  const initialInboxQueries = inboxQueries.length;
+
+  await page.evaluate(() => {
+    window.dispatchEvent(
+      new CustomEvent('dwp:notification-sync-reset-required', {
+        detail: { errorCode: 'NOTIFICATION_SYNC_RESET_REQUIRED' },
+      })
+    );
+  });
+
+  await expect.poll(() => summaryQueries.length).toBeGreaterThan(initialSummaryQueries);
+  await expect.poll(() => inboxQueries.length).toBeGreaterThan(initialInboxQueries);
+});
+
+test('헤더 알림 런타임 로드 실패는 안정 트리거에서 알리고 복구 동작을 제공한다', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Lazy-load failure is covered once.');
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page);
+  await page.route('**/src/features/notifications/notification-header-glance.tsx*', (route) =>
+    route.abort()
+  );
+
+  await page.goto('/notifications/center');
+  const control = page.getByTestId('shell-notification-control');
+  const trigger = control.getByRole('button');
+  const triggerHandle = await trigger.elementHandle();
+  await trigger.click();
+
+  const recovery = control.getByRole('button', {
+    name: '페이지를 새로고침하여 알림 다시 불러오기',
+  });
+  await expect(recovery).toBeVisible();
+  await expect(recovery).toBeFocused();
+  await expect(control.getByRole('alert')).toContainText(
+    '페이지를 새로고침하여 알림 다시 불러오기'
+  );
+  expect(await triggerHandle?.evaluate((element) => element.isConnected)).toBe(true);
+});
+
+test('헤더 알림 런타임 지연 중 상태와 취소 동작을 제공한다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Lazy loading feedback is covered once.');
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page);
+
+  let releaseModule: (() => void) | undefined;
+  const moduleReleased = new Promise<void>((resolve) => {
+    releaseModule = resolve;
+  });
+  await page.route(
+    '**/src/features/notifications/notification-header-glance.tsx*',
+    async (route) => {
+      await moduleReleased;
+      await route.continue();
+    }
+  );
+
+  await page.goto('/notifications/center');
+  const control = page.getByTestId('shell-notification-control');
+  const trigger = control.getByRole('button');
+  await trigger.click();
+
+  const loadingDialog = page.getByRole('dialog', { name: '알림을 불러오는 중입니다' });
+  await expect(loadingDialog).toBeVisible();
+  await expect(loadingDialog.getByRole('status')).toContainText('알림을 불러오는 중입니다');
+  await loadingDialog.getByRole('button', { name: '알림 닫기' }).click();
+  await expect(loadingDialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+
+  releaseModule?.();
+});
 
 test('부분 장애와 오프라인 및 삭제된 업무는 안전한 상태로 설명된다', async ({
   context,

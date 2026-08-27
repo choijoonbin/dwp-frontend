@@ -35,10 +35,7 @@ export type EffectivePolicyGrant = {
   grantKind: 'POLICY';
   accessPolicyKey: string;
   authorityMode:
-    | 'ENTITLEMENT'
-    | 'RELATIONSHIP'
-    | 'ENTITLEMENT_AND_RELATIONSHIP'
-    | 'SUPPORT_SESSION';
+    'ENTITLEMENT' | 'RELATIONSHIP' | 'ENTITLEMENT_AND_RELATIONSHIP' | 'SUPPORT_SESSION';
   policyDecisionRef: string;
   scopeKeys: readonly string[];
   requiresProductEntitlement: boolean;
@@ -103,8 +100,7 @@ export type AllowedSurfaceDecision = {
 };
 
 export type SurfaceDecision =
-  | AllowedSurfaceDecision
-  | { state: SurfaceDeniedState; detail?: SurfaceDecisionDetail };
+  AllowedSurfaceDecision | { state: SurfaceDeniedState; detail?: SurfaceDecisionDetail };
 
 export type ProductSurfaceDirectEvaluation = {
   decision: string;

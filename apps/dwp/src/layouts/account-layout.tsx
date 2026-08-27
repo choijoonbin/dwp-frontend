@@ -5,7 +5,6 @@ import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -14,30 +13,33 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
 
-import { BrandLockup } from '../components/brand-lockup';
+import { DesktopNavigationHeader } from '../components/desktop-navigation-header';
 import { ShellHeader } from '../components/shell-header';
-import { accountNavigationGroups } from '../features/account/settings-navigation';
-import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { getAccountNavigationGroups } from '../features/account/settings-navigation';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
+import { useDesktopNavigation } from '../features/shell/desktop-navigation';
 import {
-  DesktopNavigationToggle,
-  useDesktopNavigation,
-} from '../features/shell/desktop-navigation';
-
-import { useState } from 'react';
+  ShellMobileNavigationDrawer,
+  useShellMobileNavigation,
+} from '../features/shell/shell-mobile-navigation';
 
 type AccountNavigationProps = {
   compact?: boolean;
   onNavigate?: () => void;
 };
 
-function AccountNavigation({ compact = false, onNavigate }: AccountNavigationProps) {
+function AccountNavigation({
+  compact = false,
+  onNavigate,
+  providerAccount,
+}: AccountNavigationProps & { providerAccount: boolean }) {
   const { t } = useTranslation('account');
   const { pathname } = useLocation();
 
   return (
     <Box component="nav" aria-label={t('shell.navigationLabel')} sx={{ py: 1.25 }}>
-      {accountNavigationGroups.map((group, groupIndex) => (
+      {getAccountNavigationGroups(providerAccount).map((group, groupIndex) => (
         <Box key={group.key} sx={{ mt: groupIndex === 0 ? 0 : 2 }}>
           {!compact && (
             <Typography
@@ -84,6 +86,13 @@ function AccountNavigation({ compact = false, onNavigate }: AccountNavigationPro
                           content: '""',
                         },
                         '&.Mui-selected:hover': { bgcolor: 'action.selected' },
+                        '@media (forced-colors: active)': {
+                          '&.Mui-selected': {
+                            outline: '2px solid Highlight',
+                            outlineOffset: '-2px',
+                          },
+                          '&.Mui-selected::before': { bgcolor: 'Highlight' },
+                        },
                       }}
                     >
                       <ListItemIcon
@@ -117,7 +126,8 @@ export function AccountLayout() {
   const { t } = useTranslation('account');
   const shell = shellRegistry.account;
   const auth = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileNavigation = useShellMobileNavigation({ headerTestId: 'account-header' });
+  const mobileNavigationId = 'account-mobile-navigation';
   const {
     compact,
     collapsible,
@@ -126,32 +136,30 @@ export function AccountLayout() {
     toggle: toggleDesktopNavigation,
   } = useDesktopNavigation(shell);
   const accountName = auth.user?.displayName || t('shell.accountFallback');
-  const providerAccount = hasProviderControlPlaneRole(auth.user?.roles ?? []);
-  const returnDestination = providerAccount ? '/provider/overview' : '/';
-  const accountContext =
-    auth.user?.email ||
-    auth.user?.tenantName ||
-    auth.user?.tenantCode ||
-    t('shell.personalSettings');
+  const providerAccount = isProviderIdentity(auth.user);
+  const returnDestination = providerAccount ? '/provider' : '/';
+  const accountContext = providerAccount
+    ? auth.user?.email || t('profile.provider.realmValue')
+    : auth.user?.email ||
+      auth.user?.tenantName ||
+      auth.user?.tenantCode ||
+      t('shell.personalSettings');
 
-  const navigationContent = (compactNavigation: boolean, onNavigate?: () => void) => (
+  const navigationContent = (
+    compactNavigation: boolean,
+    onNavigate?: () => void,
+    onDismiss?: () => void
+  ) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box
-        sx={{
-          minHeight: shellHeaderHeight,
-          px: compactNavigation ? 0 : 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: compactNavigation ? 'center' : 'flex-start',
-        }}
-      >
-        <BrandLockup
-          variant={compactNavigation ? 'product-only' : 'product-full'}
-          label={t('shell.title')}
-          description={t('brand.productName', { ns: 'shell' })}
-          sx={{ flexShrink: 0 }}
-        />
-      </Box>
+      <DesktopNavigationHeader
+        compact={compactNavigation}
+        collapsible={collapsible}
+        controlsId="account-desktop-navigation"
+        label={t('shell.title')}
+        description={t('brand.productName', { ns: 'shell' })}
+        onDismiss={onDismiss}
+        onToggle={toggleDesktopNavigation}
+      />
 
       <Divider />
       <Box
@@ -164,7 +172,7 @@ export function AccountLayout() {
         }}
       >
         <Typography component="p" variant="overline" color="text.secondary">
-          {t('shell.personalSettings')}
+          {t(providerAccount ? 'shell.providerSettings' : 'shell.personalSettings')}
         </Typography>
         <Typography variant="body2" fontWeight={750} noWrap>
           {accountName}
@@ -175,7 +183,11 @@ export function AccountLayout() {
       </Box>
 
       <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-        <AccountNavigation compact={compactNavigation} onNavigate={onNavigate} />
+        <AccountNavigation
+          compact={compactNavigation}
+          onNavigate={onNavigate}
+          providerAccount={providerAccount}
+        />
       </Box>
 
       <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
@@ -245,41 +257,31 @@ export function AccountLayout() {
         {navigationContent(compact)}
       </Box>
 
-      <Drawer
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        slotProps={{
-          paper: {
-            'aria-label': t('shell.navigationLabel'),
-            sx: { width: shell.desktopNavigationWidth },
-          },
-        }}
+      <ShellMobileNavigationDrawer
+        controlsId={mobileNavigationId}
+        label={t('shell.navigationLabel')}
+        onDismiss={mobileNavigation.dismiss}
+        open={mobileNavigation.open}
+        testId="account-mobile-sidebar"
+        width={shell.desktopNavigationWidth}
       >
-        <Box data-testid="account-mobile-sidebar" sx={{ height: 1 }}>
-          {navigationContent(false, () => setMobileOpen(false))}
-        </Box>
-      </Drawer>
+        {navigationContent(false, mobileNavigation.navigate, mobileNavigation.dismiss)}
+      </ShellMobileNavigationDrawer>
 
       <ShellHeader
         testId="account-header"
         shellKey={shell.key}
-        scope={shell.scope}
+        scope={providerAccount ? 'provider' : shell.scope}
         desktopOffset={desktopOffset}
         context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
         navigation={{
+          controlsId: mobileNavigationId,
+          expanded: mobileNavigation.open,
           label: t('shell.openNavigation'),
-          onOpen: () => setMobileOpen(true),
+          testId: 'account-mobile-navigation-trigger',
+          onOpen: mobileNavigation.openFrom,
         }}
-        leading={
-          collapsible ? (
-            <DesktopNavigationToggle
-              compact={compact}
-              controlsId="account-desktop-navigation"
-              onToggle={toggleDesktopNavigation}
-            />
-          ) : undefined
-        }
-        showWorkspace={shell.showWorkspace}
+        showWorkspace={shell.showWorkspace && !providerAccount}
       />
 
       <Box

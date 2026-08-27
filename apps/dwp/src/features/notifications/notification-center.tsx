@@ -58,6 +58,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationQueryKeys } from './integration-contract';
+import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
 import { NotificationBulkUndoBanner } from './notification-bulk-undo-banner';
 import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import {
@@ -73,6 +74,7 @@ import {
   NotificationItemRow,
   NotificationPageHeading,
   NotificationSyncResetNotice,
+  useNotificationClock,
 } from './notification-ui';
 import {
   useNotificationLiveUpdates,
@@ -250,7 +252,7 @@ function NotificationDetailPane({
             <Chip
               size="small"
               variant="outlined"
-              label={t(`sources.${detail.item.source.appKey}`, {
+              label={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
                 defaultValue: detail.item.source.appName,
               })}
             />
@@ -399,7 +401,8 @@ export function NotificationCenter({
   const toast = useToast();
   const queryClient = useQueryClient();
   const online = useOnlineStatus();
-  const mobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const compactLayout = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'));
+  const notificationClock = useNotificationClock();
   const [view, setView] = useState<NotificationView>(initialView);
   const [filters, setFilters] = useState<CenterFilters>(EMPTY_FILTERS);
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -493,9 +496,9 @@ export function NotificationCenter({
   }, [loadedItems]);
 
   useEffect(() => {
-    if (mobile || selectedId || items.length === 0) return;
+    if (compactLayout || selectedId || items.length === 0) return;
     setSelectedId(items[0].notificationId);
-  }, [items, mobile, selectedId]);
+  }, [compactLayout, items, selectedId]);
 
   useEffect(() => {
     if (!scopeInitializedRef.current) {
@@ -507,10 +510,7 @@ export function NotificationCenter({
   }, [view, debouncedQuery, filters.appKey, filters.priority, filters.readState]);
 
   const refreshNotificationData = useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.summary() }),
-      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.inboxRoot() }),
-    ]);
+    await scheduleNotificationCacheInvalidation(queryClient);
   }, [queryClient]);
   const connectionState = useNotificationLiveUpdates(refreshNotificationData);
   const { resetRequired, clearResetRequired } = useNotificationSyncResetSignal();
@@ -595,6 +595,8 @@ export function NotificationCenter({
 
   const handleListKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target?.closest('[data-notification-focus-id]')) return;
     event.preventDefault();
     const currentIndex = items.findIndex((item) => item.notificationId === selectedId);
     const next = moveNotificationSelection(
@@ -616,7 +618,7 @@ export function NotificationCenter({
       ...(inboxQuery.data?.pages.flatMap((page) => page.unavailableSources) ?? []),
     ]),
   ];
-  const showDetailOnly = mobile && selectedItem;
+  const showDetailOnly = compactLayout && selectedItem;
 
   return (
     <PageCanvas mode="workspace">
@@ -654,9 +656,9 @@ export function NotificationCenter({
           display: 'grid',
           gridTemplateColumns: {
             xs: '1fr',
-            md: '156px minmax(320px, 0.9fr) minmax(360px, 1.1fr)',
+            lg: '156px minmax(320px, 0.9fr) minmax(360px, 1.1fr)',
           },
-          minHeight: { md: 620 },
+          minHeight: { lg: 620 },
           border: 1,
           borderColor: 'divider',
           borderRadius: 1,
@@ -669,7 +671,7 @@ export function NotificationCenter({
             component="nav"
             aria-label={t('center.viewsLabel')}
             sx={{
-              display: { xs: 'none', md: 'block' },
+              display: { xs: 'none', lg: 'block' },
               borderRight: 1,
               borderColor: 'divider',
               bgcolor: 'background.default',
@@ -706,7 +708,7 @@ export function NotificationCenter({
         )}
 
         {!showDetailOnly && (
-          <Box sx={{ minWidth: 0, borderRight: { md: 1 }, borderColor: 'divider' }}>
+          <Box sx={{ minWidth: 0, borderRight: { lg: 1 }, borderColor: 'divider' }}>
             <Box sx={{ p: 1.25, borderBottom: 1, borderColor: 'divider' }}>
               <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
                 <Select
@@ -714,7 +716,7 @@ export function NotificationCenter({
                   onChange={(event) => setView(event.target.value as NotificationView)}
                   size="small"
                   inputProps={{ 'aria-label': t('center.viewsLabel') }}
-                  sx={{ display: { md: 'none' }, minWidth: 160 }}
+                  sx={{ display: { lg: 'none' }, minWidth: 160 }}
                 >
                   {NOTIFICATION_VIEWS.map((candidate) => (
                     <MenuItem key={candidate} value={candidate}>
@@ -776,7 +778,7 @@ export function NotificationCenter({
                   <MenuItem value="">{t('filters.allApps')}</MenuItem>
                   {appOptions.map(([key, label]) => (
                     <MenuItem key={key} value={key}>
-                      {t(`sources.${key}`, { defaultValue: label })}
+                      {t(`sources.${key.toLocaleLowerCase('en-US')}`, { defaultValue: label })}
                     </MenuItem>
                   ))}
                 </Select>
@@ -862,7 +864,7 @@ export function NotificationCenter({
               />
             )}
 
-            <Box sx={{ maxHeight: { md: 680 }, overflowY: 'auto' }}>
+            <Box sx={{ maxHeight: { lg: 680 }, overflowY: 'auto' }}>
               {inboxQuery.isLoading ? (
                 <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
               ) : inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error) ? (
@@ -926,6 +928,7 @@ export function NotificationCenter({
                           </Box>
                           <NotificationItemRow
                             item={{ ...item, title: content.title, preview: content.preview }}
+                            now={notificationClock}
                             concealContext={concealContext}
                             selected={item.notificationId === selectedId}
                             tabIndex={
@@ -968,7 +971,7 @@ export function NotificationCenter({
         {selectedItem ? (
           <NotificationDetailPane
             item={selectedItem}
-            onBack={mobile ? () => setSelectedId(null) : undefined}
+            onBack={compactLayout ? () => setSelectedId(null) : undefined}
             onTriage={(action, snoozedUntil) =>
               triageMutation.mutate({ item: selectedItem, action, snoozedUntil })
             }
@@ -976,7 +979,7 @@ export function NotificationCenter({
             busy={triageMutation.isPending || !online}
           />
         ) : (
-          !mobile && (
+          !compactLayout && (
             <EmptyState
               icon={<Bell size={28} />}
               title={t('detail.emptyTitle')}

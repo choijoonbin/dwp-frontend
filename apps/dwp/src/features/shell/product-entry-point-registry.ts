@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 
-import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
+import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-point-catalog';
 import { buildProductAppCardEntryPoints } from './product-entry-point-model';
 import {
+  isProductSurfaceEnforced,
   isProductSurfaceUiSeparated,
   resolveProductSurfaceRolloutMode,
   useProductSurfaceCanaryAuthority,
 } from './product-surface-canary-runtime';
 
-import type { ProductSurfaceManifest } from '../../components/product-manifest';
+import type { ProductEntryManifest } from '../../components/product-entry-point-catalog';
 import type { ProductSurfaceEntryPoint } from './product-entry-point-model';
 import type { EffectiveProductSurfaceContextEnvelope } from './product-surface-context';
 import type { ProductSurfaceCanaryAuthority } from './product-surface-canary-runtime';
@@ -21,9 +22,8 @@ export type GovernedProductEntry = {
   management?: ProductSurfaceEntryPoint;
 };
 
-export const GOVERNED_ENTRY_MANIFESTS: readonly ProductSurfaceManifest[] = [
-  ...GOVERNED_PRODUCT_MANIFESTS,
-];
+export const GOVERNED_ENTRY_MANIFESTS: readonly ProductEntryManifest[] =
+  GOVERNED_PRODUCT_ENTRY_CATALOG;
 
 export function usesLegacyProductLaunchDiscovery(mode: ProductSurfaceRolloutMode): boolean {
   return mode !== 'invalid' && !isProductSurfaceUiSeparated(mode);
@@ -32,7 +32,7 @@ export function usesLegacyProductLaunchDiscovery(mode: ProductSurfaceRolloutMode
 export function buildGovernedProductEntryCatalog(
   authority: Pick<ProductSurfaceCanaryAuthority, 'productFlags'>,
   envelope: EffectiveProductSurfaceContextEnvelope | undefined,
-  manifests: readonly ProductSurfaceManifest[] = GOVERNED_ENTRY_MANIFESTS,
+  manifests: readonly ProductEntryManifest[] = GOVERNED_ENTRY_MANIFESTS,
   nowMs = Date.now()
 ): readonly GovernedProductEntry[] {
   if (!envelope) return [];
@@ -40,9 +40,9 @@ export function buildGovernedProductEntryCatalog(
     const flags = authority.productFlags?.[manifest.id];
     if (!flags) return [];
     const mode = resolveProductSurfaceRolloutMode(flags);
-    // 110 deliberately keeps the compatibility shell and its legacy app launch/discovery model.
-    // The new single management transition is disclosed only when the complete Surface UI is on.
-    if (!isProductSurfaceUiSeparated(mode)) return [];
+    // 110 keeps the compatibility shell, but server-authorized management-only actors still need
+    // an app-catalog re-entry. Discovery therefore follows exact enforcement, not native UI.
+    if (!isProductSurfaceEnforced(mode)) return [];
     const entry = buildProductAppCardEntryPoints(manifest, envelope.contexts, nowMs);
     const work = entry.primary?.plane === 'work' ? entry.primary : undefined;
     const management = [entry.primary, ...entry.managementActions].find(

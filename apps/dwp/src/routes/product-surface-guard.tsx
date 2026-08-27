@@ -7,6 +7,7 @@ import { useProductSurfaceTelemetry } from '../observability/product-surface-tel
 
 import type { ReactNode } from 'react';
 import type { ProductSurfaceAccessStateActions } from '../components/product-surface-access-state';
+import type { AllowedProductSurfaceBoundaryKind } from '../features/shell/allowed-product-surface-context';
 import type {
   AllowedSurfaceDecision,
   SurfaceDecision,
@@ -14,9 +15,11 @@ import type {
 
 function AllowedProductSurface({
   decision,
+  boundaryKind,
   children,
 }: {
   decision: AllowedSurfaceDecision;
+  boundaryKind: AllowedProductSurfaceBoundaryKind;
   children: ReactNode | ((allowed: AllowedSurfaceDecision) => ReactNode);
 }) {
   const telemetry = useProductSurfaceTelemetry();
@@ -28,7 +31,7 @@ function AllowedProductSurface({
     );
   }, [decision, telemetry]);
   return (
-    <AllowedProductSurfaceProvider decision={decision}>
+    <AllowedProductSurfaceProvider decision={decision} boundaryKind={boundaryKind}>
       {typeof children === 'function' ? children(decision) : children}
     </AllowedProductSurfaceProvider>
   );
@@ -36,11 +39,13 @@ function AllowedProductSurface({
 
 export function ProductSurfaceGuard({
   decision,
+  boundaryKind = 'surface',
   pending = false,
   actions,
   children,
 }: {
   decision?: SurfaceDecision;
+  boundaryKind?: AllowedProductSurfaceBoundaryKind;
   pending?: boolean;
   actions?: ProductSurfaceAccessStateActions;
   children: ReactNode | ((allowed: AllowedSurfaceDecision) => ReactNode);
@@ -50,5 +55,9 @@ export function ProductSurfaceGuard({
   if (effectiveDecision.state !== 'allowed') {
     return <ProductSurfaceAccessState decision={effectiveDecision} actions={actions} />;
   }
-  return <AllowedProductSurface decision={effectiveDecision}>{children}</AllowedProductSurface>;
+  return (
+    <AllowedProductSurface decision={effectiveDecision} boundaryKind={boundaryKind}>
+      {children}
+    </AllowedProductSurface>
+  );
 }

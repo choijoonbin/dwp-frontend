@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Sparkles,
   UsersRound,
+  Video,
   Workflow,
 } from 'lucide-react';
 import { GlyphSurface } from '@dwp-frontend/design-system';
@@ -39,6 +40,7 @@ export const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
   knowledge: BookOpen,
   legacy: MonitorCog,
   mail: Mail,
+  meetings: Video,
   messaging: MessageSquareText,
   notifications: BellRing,
   rooms: Building2,

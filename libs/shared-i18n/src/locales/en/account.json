@@ -2,6 +2,7 @@
   "shell": {
     "title": "Settings",
     "personalSettings": "Personal workspace",
+    "providerSettings": "Provider operator settings",
     "accountFallback": "Account",
     "navigationLabel": "Settings navigation",
     "openNavigation": "Open settings navigation",
@@ -28,7 +29,8 @@
       "title": "Appearance",
       "description": "Choose how Digital Workplace looks and fits your workflow.",
       "groupTitle": "Display and layout",
-      "groupDescription": "These preferences are saved to your account and follow you across devices."
+      "groupDescription": "These preferences are saved to your account and follow you across devices.",
+      "providerGroupDescription": "These provider operator preferences are stored only in this browser and never change a customer tenant's settings."
     },
     "accessibility": {
       "title": "Accessibility",
@@ -291,17 +293,27 @@
       "jobTitle": "Job title",
       "email": "Email",
       "tenant": "Organization",
+      "identityRealm": "Identity realm",
       "roles": "Roles"
     },
     "sources": {
       "workforce": "Workforce directory",
       "identity": "Identity directory",
       "tenant": "Tenant record",
+      "authIdentity": "Auth / identity directory",
+      "providerIdentity": "Provider identity service",
       "access": "Access policy"
     },
     "governance": {
       "title": "Profile data is governed by your organization",
       "description": "Name, title, email, organization, and role changes must be made in the authoritative workforce or identity system. Profile visibility follows tenant directory permissions and is audited by the owning service."
+    },
+    "provider": {
+      "description": "Review the provider identity and control-plane access context used for global operations.",
+      "identityDescription": "Provider identity fields are sourced from provider-operated identity systems and are not customer tenant profile data.",
+      "identityRealm": "DWP provider control plane",
+      "governanceTitle": "Provider identity data is centrally governed",
+      "governanceDescription": "Name, title, email, and provider role changes must be made in the provider identity service. No customer workforce or tenant profile is exposed here."
     }
   },
   "security": {
@@ -320,6 +332,7 @@
       "title": "Sign-in protection",
       "description": "Current tenant authentication policy and identity provider readiness. Enrollment details are not inferred when the identity provider does not expose them.",
       "tenantManaged": "Tenant managed",
+      "providerManaged": "Provider managed",
       "loading": "Loading sign-in protection",
       "policyUnavailable": "Sign-in policy is temporarily unavailable. Session management remains available below.",
       "signInMethods": "Sign-in methods",
@@ -343,6 +356,11 @@
         "managed": "Managed",
         "attention": "Review"
       }
+    },
+    "provider": {
+      "identityRealm": "DWP provider identity realm",
+      "postureDescription": "Provider sign-in controls and browser sessions are kept separate from customer tenant authentication policy.",
+      "policyBoundary": "Customer tenant SSO and MFA policy is intentionally not loaded for a provider identity. Provider authentication controls are managed in the provider identity realm."
     },
     "privileged": {
       "title": "My privileged access",

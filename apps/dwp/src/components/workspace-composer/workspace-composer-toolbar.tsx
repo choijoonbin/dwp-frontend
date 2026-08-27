@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Check,
@@ -29,6 +30,8 @@ type WorkspaceComposerToolbarProps = {
   busy?: boolean;
   onPresentationChange: (presentation: HomePresentation) => void;
   onAdd: () => void;
+  addLabel?: string;
+  addUnavailableReason?: string;
   onReset: () => void;
   onCancel: () => void;
   onDone: () => void;
@@ -66,6 +69,8 @@ export function WorkspaceComposerToolbar({
   busy = false,
   onPresentationChange,
   onAdd,
+  addLabel,
+  addUnavailableReason,
   onReset,
   onCancel,
   onDone,
@@ -82,6 +87,7 @@ export function WorkspaceComposerToolbar({
 }: WorkspaceComposerToolbarProps) {
   const { t } = useTranslation('composer');
   const floating = placement === 'floating';
+  const addUnavailableDescriptionId = useId();
 
   return (
     <Paper
@@ -134,26 +140,51 @@ export function WorkspaceComposerToolbar({
         },
       }}
     >
-      <ActionButton
-        intent="quiet"
-        size="small"
-        aria-label={t('addWidget')}
-        startIcon={<Plus size={17} />}
-        onClick={onAdd}
-        disabled={busy}
-        sx={{
-          width: { xs: 44, sm: 'auto' },
-          minWidth: { xs: 44, sm: 'auto' },
-          minHeight: 44,
-          px: { xs: 0, sm: 1.25 },
-          whiteSpace: 'nowrap',
-          '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 } },
-        }}
-      >
-        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-          {t('addWidget')}
+      <Tooltip title={addUnavailableReason ?? ''} describeChild>
+        <ActionButton
+          intent="quiet"
+          size="small"
+          aria-label={addLabel ?? t('addWidget')}
+          aria-describedby={addUnavailableReason ? addUnavailableDescriptionId : undefined}
+          aria-disabled={addUnavailableReason ? true : undefined}
+          startIcon={<Plus size={17} />}
+          onClick={addUnavailableReason ? undefined : onAdd}
+          disabled={busy}
+          sx={{
+            width: { xs: 44, sm: 'auto' },
+            minWidth: { xs: 44, sm: 'auto' },
+            minHeight: 44,
+            px: { xs: 0, sm: 1.25 },
+            whiteSpace: 'nowrap',
+            cursor: addUnavailableReason ? 'not-allowed' : undefined,
+            opacity: addUnavailableReason ? 0.56 : 1,
+            '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 } },
+          }}
+        >
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            {addLabel ?? t('addWidget')}
+          </Box>
+        </ActionButton>
+      </Tooltip>
+      {addUnavailableReason && (
+        <Box
+          component="span"
+          id={addUnavailableDescriptionId}
+          sx={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            p: 0,
+            m: -1,
+            overflow: 'hidden',
+            clip: 'rect(0 0 0 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          {addUnavailableReason}
         </Box>
-      </ActionButton>
+      )}
       <Box aria-hidden="true" sx={toolbarDividerSx} />
       <ToggleButtonGroup
         exclusive

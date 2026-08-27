@@ -135,12 +135,16 @@ function privacyClassification(value: string | null | undefined): HomePrivacyCla
     : 'RESTRICTED';
 }
 
-function isKorean(context: HomeContributionProviderContext): boolean {
-  return (context.locale ?? '').toLocaleLowerCase().startsWith('ko');
+function providerLanguage(context: HomeContributionProviderContext): 'ko' | 'en' {
+  try {
+    return new Intl.Locale(context.locale || 'en').language === 'ko' ? 'ko' : 'en';
+  } catch {
+    return 'en';
+  }
 }
 
 function copy(context: HomeContributionProviderContext, ko: string, en: string): string {
-  return isKorean(context) ? ko : en;
+  return { ko, en }[providerLanguage(context)];
 }
 
 function semanticKey(...values: (string | null | undefined)[]): string {
@@ -709,7 +713,8 @@ export const serviceContributionProvider = createHomeContributionProvider<
             : servicePriority(request.priority, request.slaDueAt, context.now),
         status: overdue(request.slaDueAt, context.now) ? 'OVERDUE' : request.status,
         title: request.summary,
-        description: isKorean(context) ? request.serviceNameKo : request.serviceNameEn,
+        description:
+          providerLanguage(context) === 'ko' ? request.serviceNameKo : request.serviceNameEn,
         dueAt: request.slaDueAt,
         deepLink: `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${encodeURIComponent(
           request.requestId

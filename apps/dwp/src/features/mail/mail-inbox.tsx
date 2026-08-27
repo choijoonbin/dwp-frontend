@@ -1,13 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ChevronRight, Command, MailCheck, MailPlus, Search } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Command,
+  FolderTree,
+  MailCheck,
+  MailPlus,
+  Search,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import {
   applyMailThreadAction,
+  applyMailLifecycle,
   dwaionHandoffStrings,
   dwaionHandoffText,
   getMailThreads,
+  getMailOrganization,
   parseDwaionHandoff,
   snoozeMailThread,
   useToast,
@@ -18,6 +28,7 @@ import {
   FormField,
   GuidedEmptyState,
   PageCanvas,
+  SelectField,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -39,7 +50,7 @@ import { MailThreadDetailPane } from './mail-thread-detail';
 
 import type { MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
 
-type MailboxMode = 'inbox' | 'sent' | 'drafts' | 'shared';
+type MailboxMode = 'inbox' | 'sent' | 'drafts' | 'archive' | 'spam' | 'trash' | 'custom' | 'shared';
 
 const LANES: readonly MailTriageLane[] = ['PRIORITY', 'NEEDS_REPLY', 'ASSIGNED', 'UPDATES'];
 const PAGE_SIZE = 30;
@@ -59,23 +70,69 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('thread');
   const composeOpen = params.get('compose') === 'open';
+  const requestedFolderId = params.get('folderId');
   const [dwaionHandoff, setDwaionHandoff] = useState(() =>
     parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE')
   );
-  const folder = mode === 'sent' ? 'SENT' : mode === 'drafts' ? 'DRAFTS' : 'INBOX';
+  const organizationQuery = useQuery({
+    queryKey: ['mail', 'organization'],
+    queryFn: getMailOrganization,
+    enabled: mode === 'custom',
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const customFolders = useMemo(
+    () => organizationQuery.data?.folders.filter((item) => item.folderType === 'CUSTOM') ?? [],
+    [organizationQuery.data?.folders]
+  );
+  const selectedCustomFolder = customFolders.find((item) => item.folderId === requestedFolderId);
+  const folder =
+    mode === 'sent'
+      ? 'SENT'
+      : mode === 'drafts'
+        ? 'DRAFTS'
+        : mode === 'archive'
+          ? 'ARCHIVE'
+          : mode === 'spam'
+            ? 'SPAM'
+            : mode === 'trash'
+              ? 'TRASH'
+              : mode === 'custom'
+                ? undefined
+                : 'INBOX';
+  const state =
+    mode === 'archive'
+      ? 'ARCHIVED'
+      : mode === 'spam'
+        ? 'SPAM'
+        : mode === 'trash'
+          ? 'TRASHED'
+          : undefined;
   const activeLane = mode === 'inbox' || mode === 'shared' ? lane : undefined;
   const query = useQuery({
-    queryKey: ['mail', 'threads', mode, activeLane, debouncedSearch, page],
+    queryKey: [
+      'mail',
+      'threads',
+      mode,
+      activeLane,
+      state,
+      requestedFolderId,
+      debouncedSearch,
+      page,
+    ],
     queryFn: () =>
       getMailThreads({
         lane: activeLane,
+        state,
         folder,
+        folderId: mode === 'custom' ? (requestedFolderId ?? undefined) : undefined,
         sharedOnly: mode === 'shared',
         query: debouncedSearch,
         page,
         pageSize: PAGE_SIZE,
       }),
     placeholderData: (previous) => previous,
+    enabled: mode !== 'custom' || Boolean(requestedFolderId),
     staleTime: 20_000,
     retry: 1,
   });
@@ -89,7 +146,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           thread.version
         );
       }
-      const action = command === 'archive' ? 'ARCHIVE' : command === 'star' ? 'STAR' : 'MARK_READ';
+      if (command === 'archive') {
+        return applyMailLifecycle(thread.threadId, 'ARCHIVE', thread.version);
+      }
+      const action = command === 'star' ? 'STAR' : 'MARK_READ';
       return applyMailThreadAction(thread.threadId, action, thread.version);
     },
     onSuccess: async () => {
@@ -115,6 +175,13 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     setPage(0);
     setLane(mode === 'shared' ? 'ASSIGNED' : 'PRIORITY');
   }, [mode]);
+
+  useEffect(() => {
+    if (mode !== 'custom' || requestedFolderId || !customFolders[0]) return;
+    const next = new URLSearchParams(params);
+    next.set('folderId', customFolders[0].folderId);
+    setParams(next, { replace: true });
+  }, [customFolders, mode, params, requestedFolderId, setParams]);
 
   useEffect(() => {
     if (!desktopSplitView || !query.data?.items.length) return;
@@ -191,7 +258,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     <PageCanvas topInset="compact">
       <MailPageHeading
         eyebrow={t(`mailbox.${mode}.eyebrow`)}
-        title={t(`mailbox.${mode}.title`)}
+        title={selectedCustomFolder?.displayName ?? t(`mailbox.${mode}.title`)}
         description={t(`mailbox.${mode}.description`)}
         actions={
           <Stack direction="row" spacing={1}>
@@ -230,6 +297,26 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           }}
         >
           <Box sx={{ px: 1.5, pt: 1.5, pb: 1, borderBottom: 1, borderColor: 'divider' }}>
+            {mode === 'custom' && (
+              <SelectField<string>
+                size="small"
+                label={t('mailbox.custom.folderLabel')}
+                value={requestedFolderId ?? ''}
+                placeholder={t('mailbox.custom.folderPlaceholder')}
+                options={customFolders.map((item) => ({
+                  value: item.folderId,
+                  label: `${item.displayName} · ${item.totalCount}`,
+                }))}
+                slotProps={{ input: { startAdornment: <FolderTree size={16} /> } }}
+                sx={{ mb: 1 }}
+                onValueChange={(folderId) => {
+                  const next = new URLSearchParams(params);
+                  next.set('folderId', folderId);
+                  next.delete('thread');
+                  setParams(next, { replace: true });
+                }}
+              />
+            )}
             <FormField
               fullWidth
               size="small"
@@ -349,6 +436,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
             threadId={selectedId}
             onBack={clearSelection}
             onUpdated={() => query.refetch()}
+            onDeleted={clearSelection}
           />
         </Box>
       </Box>

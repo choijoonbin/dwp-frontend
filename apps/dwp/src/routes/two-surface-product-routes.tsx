@@ -3,7 +3,8 @@ import type { RouteObject } from 'react-router-dom';
 import type { ProductSurfaceManifest } from '../components/product-manifest';
 import type { ProductAreaLayoutProps } from '../layouts/product-area-layout';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
-import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
+import { buildDraftProductPageRouteContractSource } from './draft-product-page-route-contract-source';
+import { OFFICIAL_PRODUCT_IDS } from './official-product-page-route-contracts';
 import {
   ProductCanaryRoot,
   ProductCanaryFirstAllowedIndex,
@@ -53,8 +54,9 @@ export function buildTwoSurfaceProductChildren({
   renderErrorElement,
   legacyUnknown,
 }: TwoSurfaceProductRouteOptions): RouteObject[] {
-  const productRoutes = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
-    (route) => route.productId === manifest.id
+  const productRoutes = buildDraftProductPageRouteContractSource(
+    [manifest],
+    new Set(OFFICIAL_PRODUCT_IDS)
   );
   const workRoutes = productRoutes.filter((route) => route.surfaceId === workSurfaceId);
   const managementRoutes = productRoutes.filter((route) => route.surfaceId === managementSurfaceId);

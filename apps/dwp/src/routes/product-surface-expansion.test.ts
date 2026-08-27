@@ -12,6 +12,7 @@ import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-r
 import { dwaionRoutes } from './dwaion-routes';
 import { hcmRoutes } from './hcm-routes';
 import { mailRoutes } from './mail-routes';
+import { meetingsRoutes } from './meetings-routes';
 import { messagingRoutes } from './messaging-routes';
 import { notificationRoutes } from './notification-routes';
 import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
@@ -25,11 +26,12 @@ import type { RouteObject } from 'react-router-dom';
 
 const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
   approvals: 15,
-  calendar: 6,
+  calendar: 10,
   communications: 6,
-  dwaion: 13,
+  dwaion: 15,
   hcm: 25,
-  mail: 10,
+  mail: 15,
+  meetings: 6,
   messaging: 8,
   notifications: 9,
   services: 6,
@@ -41,6 +43,7 @@ const DRAFT_PRODUCT_IDS = [
   'calendar',
   'dwaion',
   'mail',
+  'meetings',
   'messaging',
   'notifications',
   'spaces',
@@ -51,6 +54,7 @@ const ROUTE_TREES: readonly [string, RouteObject[], string][] = [
   ['calendar', calendarRoutes, 'admin'],
   ['dwaion', dwaionRoutes, 'admin'],
   ['mail', mailRoutes, 'admin'],
+  ['meetings', meetingsRoutes, 'admin'],
   ['messaging', messagingRoutes, 'admin'],
   ['notifications', notificationRoutes, 'admin'],
   ['spaces', spacesRoutes, 'admin'],
@@ -66,7 +70,7 @@ function routeContractKeys(routes: readonly RouteObject[]): string[] {
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 11 business apps and exactly the frozen 121 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 138 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -81,15 +85,67 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(121);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(138);
+  });
+
+  it('keeps the five active Mail work menus bound to APP.MAIL and DRAFT W3 authority', () => {
+    const mailManifest = GOVERNED_PRODUCT_MANIFESTS.find((manifest) => manifest.id === 'mail');
+    const workSurface = mailManifest?.surfaces.find((surface) => surface.id === 'mail.work');
+    const expected = [
+      ['archive', '/mail/archive'],
+      ['spam', '/mail/spam'],
+      ['trash', '/mail/trash'],
+      ['folders', '/mail/folders'],
+      ['organization', '/mail/organization'],
+    ] as const;
+
+    expect(mailManifest?.appKey).toBe('APP.MAIL');
+    expect(workSurface?.plane).toBe('work');
+    expect(workSurface?.entryAccess).toEqual({
+      type: 'policy',
+      accessPolicyKey: 'mail.work-access.v1',
+      requiresProductEntitlement: true,
+    });
+
+    const activeItems = workSurface?.navigation.flatMap((group) => group.items) ?? [];
+    for (const [view, path] of expected) {
+      expect(activeItems.find((item) => item.view === view)).toMatchObject({
+        view,
+        path,
+        taskKind: 'work',
+        access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+      });
+      expect(PRODUCT_MENU_ROUTES.find((route) => route.id === `mail.${view}`)).toMatchObject({
+        path,
+        shell: 'mail',
+        plane: 'work',
+        taskKind: 'work',
+        navigationContextId: 'mail.work',
+        productSurfaceId: 'mail.work',
+        migrationWave: 'W3',
+      });
+      expect(
+        DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+          (route) => route.routeContractKey === `route.mail.work.${view}.page`
+        )
+      ).toEqual([
+        {
+          routeId: `mail.work.${view}`,
+          pattern: path,
+          productId: 'mail',
+          surfaceId: 'mail.work',
+          routeContractKey: `route.mail.work.${view}.page`,
+        },
+      ]);
+    }
   });
 
   it('keeps W2/W3 page contracts explicitly DRAFT until matching backend authority exists', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(69);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(73);
+    expect(menuContracts).toHaveLength(86);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -213,13 +269,14 @@ describe('all-product surface expansion', () => {
     );
     expect(details.map((route) => route.pattern).sort()).toEqual([
       '/dwaion/conversations/:conversationId',
+      '/meetings/room/:meetingId',
       '/notifications/center/:notificationId',
       '/spaces/:spaceKey',
       '/spaces/:spaceKey/:tab',
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(121);
+    ).toHaveLength(138);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined

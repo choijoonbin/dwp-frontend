@@ -1,0 +1,103 @@
+{
+  "fixtureVersion": 1,
+  "preview": {
+    "preimage": {
+      "schemaVersion": 1,
+      "internalTenantBinding": "tib_acme8f4c2d1e9a77",
+      "definitionId": "30000000-0000-4000-8000-000000000001",
+      "draftRevisionId": "80000000-0000-4000-8000-000000000003",
+      "draftVersion": 7,
+      "catalogRevision": 42,
+      "bindingCatalogRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "policyCatalogRevision": 17,
+      "safetyRevision": 9,
+      "authorityRevision": 31,
+      "audienceSelectorHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "validUntil": "2026-08-27T05:15:00Z",
+      "eligibleCount": 1250,
+      "newlyAllowedCount": 120,
+      "newlyDeniedCount": 4,
+      "existingInstanceBlockedCount": 2,
+      "unknownAuthorityCount": 7
+    },
+    "response": {
+      "schemaVersion": 1,
+      "definitionId": "30000000-0000-4000-8000-000000000001",
+      "draftRevisionId": "80000000-0000-4000-8000-000000000003",
+      "draftVersion": 7,
+      "catalogRevision": 42,
+      "bindingCatalogRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "policyCatalogRevision": 17,
+      "safetyRevision": 9,
+      "authorityRevision": 31,
+      "audienceSelectorHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evaluatedAt": "2026-08-27T05:00:00Z",
+      "validUntil": "2026-08-27T05:15:00Z",
+      "eligibleCount": 1250,
+      "newlyAllowedCount": 120,
+      "newlyDeniedCount": 4,
+      "existingInstanceBlockedCount": 2,
+      "unknownAuthorityCount": 7,
+      "impactRevision": "ea98b99d7bb3a1fed88cc68f819f4eb9af5217210cf72555e274ae33544fe9e0"
+    }
+  },
+  "publish": {
+    "request": {
+      "expectedVersion": 7,
+      "expectedImpactRevision": "ea98b99d7bb3a1fed88cc68f819f4eb9af5217210cf72555e274ae33544fe9e0",
+      "reasonCode": "TENANT_POLICY_APPROVED",
+      "reasonText": "Publish the reviewed tenant widget policy impact."
+    },
+    "transaction": {
+      "isolation": "SERIALIZABLE",
+      "lockOrder": [
+        "TENANT_BINDING",
+        "POLICY_DRAFT",
+        "REGISTRY_REVISION_HEAD",
+        "TENANT_POLICY_CATALOG_HEAD",
+        "SAFETY_REVISION_HEAD",
+        "AUTHORITY_SNAPSHOT"
+      ],
+      "dbNow": "2026-08-27T05:05:00Z",
+      "currentPreimage": {
+        "schemaVersion": 1,
+        "internalTenantBinding": "tib_acme8f4c2d1e9a77",
+        "definitionId": "30000000-0000-4000-8000-000000000001",
+        "draftRevisionId": "80000000-0000-4000-8000-000000000003",
+        "draftVersion": 7,
+        "catalogRevision": 42,
+        "bindingCatalogRevision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "policyCatalogRevision": 17,
+        "safetyRevision": 9,
+        "authorityRevision": 31,
+        "audienceSelectorHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "validUntil": "2026-08-27T05:15:00Z",
+        "eligibleCount": 1250,
+        "newlyAllowedCount": 120,
+        "newlyDeniedCount": 4,
+        "existingInstanceBlockedCount": 2,
+        "unknownAuthorityCount": 7
+      },
+      "comparison": "EXPECTED_IMPACT_REVISION_EXACT",
+      "status": "COMMITTED",
+      "stateMutationCount": 1,
+      "eventCount": 1,
+      "outboxCount": 1,
+      "auditCount": 1
+    },
+    "response": {
+      "definitionId": "30000000-0000-4000-8000-000000000001",
+      "headRevisionId": "80000000-0000-4000-8000-000000000003",
+      "state": "PUBLISHED",
+      "impactRevision": "ea98b99d7bb3a1fed88cc68f819f4eb9af5217210cf72555e274ae33544fe9e0"
+    },
+    "audit": {
+      "type": "TENANT_POLICY_PUBLISHED_AUDIT",
+      "impactRevision": "ea98b99d7bb3a1fed88cc68f819f4eb9af5217210cf72555e274ae33544fe9e0"
+    },
+    "event": {
+      "type": "TENANT_WIDGET_POLICY_PUBLISHED",
+      "impactRevision": "ea98b99d7bb3a1fed88cc68f819f4eb9af5217210cf72555e274ae33544fe9e0"
+    }
+  }
+}

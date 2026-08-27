@@ -1,16 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, Clock3, Focus, ListTodo, UsersRound } from 'lucide-react';
+import {
+  Building2,
+  ChevronDown,
+  Clock3,
+  Focus,
+  ListTodo,
+  SlidersHorizontal,
+  UsersRound,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createCalendarEvent,
+  getCalendars,
   getCalendarResources,
   listPeople,
+  resolveIdempotentMutationIntent,
   updateCalendarEvent,
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
+  ActionButton,
   AutocompleteMultiField,
   DatePickerField,
   DateTimePickerField,
@@ -21,6 +32,9 @@ import {
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -32,10 +46,19 @@ import Typography from '@mui/material/Typography';
 import type {
   CalendarEvent,
   CalendarEventType,
-  CalendarRecurrence,
-  CalendarVisibility,
+  IdempotentMutationIntent,
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
+
+import {
+  calendarEditorAttendees,
+  calendarEventDraft,
+  calendarEventInput,
+  calendarSystemTimeZone,
+  type CalendarEditorAttendee,
+  type CalendarEventDraft,
+} from './calendar-event-editor-model';
+import { CalendarSchedulingAssistant } from './calendar-scheduling-assistant';
 
 type CalendarEventDialogProps = {
   open: boolean;
@@ -45,6 +68,7 @@ type CalendarEventDialogProps = {
   initialType?: CalendarEventType;
   initialTitle?: string | null;
   initialResourceId?: string | null;
+  initialCalendarId?: string | null;
   initialAttendees?: PersonSummary[];
   initialAttendeeEmails?: string[];
   fromDwaion?: boolean;
@@ -52,62 +76,16 @@ type CalendarEventDialogProps = {
   onSaved?: (event: CalendarEvent) => void;
 };
 
-type FormState = {
-  title: string;
-  description: string;
-  type: CalendarEventType;
-  startsAt: string;
-  endsAt: string;
-  location: string;
-  conferenceUrl: string;
-  visibility: CalendarVisibility;
-  recurrence: CalendarRecurrence;
-  recurrenceUntil: string;
-  responseRequired: boolean;
-  resourceId: string;
-};
-
-type AttendeeOption = Pick<PersonSummary, 'personId' | 'displayName' | 'workEmail'> & {
-  userId?: number | null;
-};
-
 const EMPTY_ATTENDEES: PersonSummary[] = [];
 const EMPTY_EMAILS: string[] = [];
-
-function roundToHalfHour(value = new Date()) {
-  const next = new Date(value);
-  next.setSeconds(0, 0);
-  const minutes = next.getMinutes();
-  next.setMinutes(minutes < 30 ? 30 : 60);
-  return next;
-}
-
-function initialState(
-  event?: CalendarEvent | null,
-  initialStart?: string | null,
-  initialEnd?: string | null,
-  initialType: CalendarEventType = 'MEETING',
-  initialTitle?: string | null
-): FormState {
-  const start = initialStart ? new Date(initialStart) : roundToHalfHour();
-  const end = initialEnd
-    ? new Date(initialEnd)
-    : new Date(start.getTime() + (initialType === 'FOCUS' ? 90 : 30) * 60_000);
-  return {
-    title: event?.title ?? initialTitle ?? '',
-    description: event?.description ?? '',
-    type: event?.type ?? initialType,
-    startsAt: event?.startsAt ?? start.toISOString(),
-    endsAt: event?.endsAt ?? end.toISOString(),
-    location: event?.location ?? '',
-    conferenceUrl: event?.conferenceUrl ?? '',
-    visibility: event?.visibility ?? 'DEFAULT',
-    recurrence: event?.recurrence ?? 'NONE',
-    recurrenceUntil: event?.recurrenceUntil ?? '',
-    responseRequired: event?.responseRequired ?? true,
-    resourceId: event?.resource?.resourceId ?? '',
-  };
-}
+const COMMON_TIME_ZONES = [
+  'Asia/Seoul',
+  'Asia/Tokyo',
+  'Asia/Singapore',
+  'Europe/London',
+  'America/New_York',
+  'UTC',
+] as const;
 
 function message(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
@@ -121,60 +99,64 @@ export function CalendarEventDialog({
   initialType = 'MEETING',
   initialTitle,
   initialResourceId,
+  initialCalendarId,
   initialAttendees = EMPTY_ATTENDEES,
   initialAttendeeEmails = EMPTY_EMAILS,
   fromDwaion = false,
   onClose,
   onSaved,
 }: CalendarEventDialogProps) {
-  const { t } = useTranslation('calendar');
+  const { t, i18n } = useTranslation('calendar');
+  const eventTypeLabelId = useId();
   const { hasPermission } = usePermissions();
   const canMutate = hasPermission('APP.CALENDAR', event ? 'UPDATE' : 'CREATE');
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState<FormState>(() =>
-    initialState(event, initialStart, initialEnd, initialType, initialTitle)
+  const [form, setForm] = useState<CalendarEventDraft>(() =>
+    calendarEventDraft(event, {
+      initialStart,
+      initialEnd,
+      initialType,
+      initialTitle,
+      initialResourceId,
+      initialCalendarId,
+    })
   );
-  const [attendees, setAttendees] = useState<AttendeeOption[]>([]);
+  const [attendees, setAttendees] = useState<CalendarEditorAttendee[]>([]);
   const [validationVisible, setValidationVisible] = useState(false);
+  const [additionalOptionsOpen, setAdditionalOptionsOpen] = useState(Boolean(event));
+  const createIntent = useRef<IdempotentMutationIntent | null>(null);
 
   useEffect(() => {
     if (open && !canMutate) onClose();
   }, [canMutate, onClose, open]);
 
   useEffect(() => {
+    if (!open || event) createIntent.current = null;
+  }, [event, open]);
+
+  useEffect(() => {
     if (!open) return;
-    setForm({
-      ...initialState(event, initialStart, initialEnd, initialType),
-      title: event?.title ?? initialTitle ?? '',
-      resourceId: event?.resource?.resourceId ?? initialResourceId ?? '',
-    });
-    setAttendees(
-      event
-        ? event.attendees.map((attendee) => ({
-            personId:
-              attendee.personPublicId ??
-              (attendee.userId ? `user:${attendee.userId}` : `email:${attendee.email}`),
-            displayName: attendee.name,
-            workEmail: attendee.email,
-            userId: attendee.userId,
-          }))
-        : [
-            ...initialAttendees,
-            ...initialAttendeeEmails.map((email) => ({
-              personId: `email:${email}`,
-              displayName: email,
-              workEmail: email,
-            })),
-          ]
+    setForm(
+      calendarEventDraft(event, {
+        initialStart,
+        initialEnd,
+        initialType,
+        initialTitle,
+        initialResourceId,
+        initialCalendarId,
+      })
     );
+    setAttendees(calendarEditorAttendees(event, initialAttendees, initialAttendeeEmails));
     setValidationVisible(false);
+    setAdditionalOptionsOpen(Boolean(event));
   }, [
     event,
     initialAttendeeEmails,
     initialAttendees,
     initialEnd,
     initialResourceId,
+    initialCalendarId,
     initialStart,
     initialTitle,
     initialType,
@@ -188,6 +170,25 @@ export function CalendarEventDialog({
     staleTime: 5 * 60_000,
     retry: 1,
   });
+  const calendarsQuery = useQuery({
+    queryKey: ['calendar', 'calendars'],
+    queryFn: getCalendars,
+    enabled: open && canMutate,
+    staleTime: 60_000,
+    retry: 1,
+  });
+  const writableCalendars = useMemo(
+    () =>
+      (calendarsQuery.data ?? []).filter(
+        (calendar) => calendar.capabilities?.canCreateEvents === true
+      ),
+    [calendarsQuery.data]
+  );
+
+  useEffect(() => {
+    if (!open || event || form.calendarId || !writableCalendars.length) return;
+    setForm((current) => ({ ...current, calendarId: writableCalendars[0]!.calendarId }));
+  }, [event, form.calendarId, open, writableCalendars]);
   const resourceRangeValid = Boolean(
     form.startsAt && form.endsAt && new Date(form.endsAt) > new Date(form.startsAt)
   );
@@ -209,70 +210,54 @@ export function CalendarEventDialog({
       ] as const,
     [t]
   );
+  const attendeeOptions = useMemo(
+    () =>
+      (peopleQuery.data?.items ?? [])
+        .filter((person) => Boolean(person.workEmail))
+        .map<CalendarEditorAttendee>((person) => ({
+          personId: person.personId,
+          displayName: person.displayName,
+          workEmail: person.workEmail,
+          type: 'REQUIRED',
+        })),
+    [peopleQuery.data?.items]
+  );
+  const replaceAttendees = (
+    type: CalendarEditorAttendee['type'],
+    values: readonly CalendarEditorAttendee[]
+  ) => {
+    const selectedIds = new Set(values.map((person) => person.personId));
+    setAttendees((current) => [
+      ...current.filter((person) => person.type !== type && !selectedIds.has(person.personId)),
+      ...values.map((person) => ({ ...person, type })),
+    ]);
+  };
   const start = new Date(form.startsAt);
   const end = new Date(form.endsAt);
   const rangeError = !form.startsAt || !form.endsAt || end <= start;
   const resourceRecurrenceError = Boolean(
     form.resourceId && form.recurrence !== 'NONE' && !form.recurrenceUntil
   );
-  const valid = Boolean(form.title.trim() && !rangeError && !resourceRecurrenceError);
-
-  const attendeeInput = attendees
-    .filter((person) => person.workEmail)
-    .map((person) => ({
-      userId: person.userId,
-      personPublicId:
-        person.personId.startsWith('user:') || person.personId.startsWith('email:')
-          ? null
-          : person.personId,
-      email: person.workEmail!,
-      name: person.displayName,
-      type: 'REQUIRED' as const,
-    }));
+  const valid = Boolean(
+    form.title.trim() && form.calendarId && !rangeError && !resourceRecurrenceError
+  );
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!canMutate) throw new Error('Calendar mutation permission is required.');
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+      const input = calendarEventInput(form, attendees);
       if (event) {
+        const { calendarId: _calendarId, ...updateInput } = input;
         return updateCalendarEvent(event.eventId, {
-          title: form.title.trim(),
-          description: form.description.trim() || null,
-          type: form.type,
-          startsAt: form.startsAt,
-          endsAt: form.endsAt,
-          timeZone,
-          allDay: false,
-          location: form.location.trim() || null,
-          conferenceUrl: form.conferenceUrl.trim() || null,
-          visibility: form.visibility,
-          recurrence: form.recurrence,
-          recurrenceInterval: 1,
-          recurrenceUntil: form.recurrence === 'NONE' ? null : form.recurrenceUntil || null,
-          responseRequired: form.responseRequired,
-          attendees: attendeeInput,
-          resourceId: form.resourceId || null,
+          ...updateInput,
           version: event.version,
         });
       }
+      const intent = resolveIdempotentMutationIntent(createIntent.current, input);
+      createIntent.current = intent;
       return createCalendarEvent({
-        title: form.title.trim(),
-        description: form.description.trim() || null,
-        type: form.type,
-        startsAt: form.startsAt,
-        endsAt: form.endsAt,
-        timeZone,
-        allDay: false,
-        location: form.location.trim() || null,
-        conferenceUrl: form.conferenceUrl.trim() || null,
-        visibility: form.visibility,
-        recurrence: form.recurrence,
-        recurrenceInterval: 1,
-        recurrenceUntil: form.recurrence === 'NONE' ? null : form.recurrenceUntil || null,
-        responseRequired: form.responseRequired,
-        attendees: attendeeInput,
-        resourceId: form.resourceId || null,
-        idempotencyKey: crypto.randomUUID(),
+        ...input,
+        idempotencyKey: intent.key,
       });
     },
     onSuccess: async (saved) => {
@@ -281,6 +266,7 @@ export function CalendarEventDialog({
         queryClient.invalidateQueries({ queryKey: ['workspace', 'apps'] }),
       ]);
       toast.success(t(event ? 'event.updated' : 'event.created'));
+      createIntent.current = null;
       onSaved?.(saved);
       onClose();
     },
@@ -306,200 +292,451 @@ export function CalendarEventDialog({
       onClose={onClose}
       onSubmit={submit}
       busy={mutation.isPending}
-      submitDisabled={!canMutate || !valid}
-      maxWidth="md"
+      submitDisabled={!canMutate}
+      maxWidth="lg"
+      mobileFullScreen
     >
       <Stack spacing={2.25}>
         {fromDwaion && <Alert severity="info">{t('event.dwaionDraftNotice')}</Alert>}
-        <Box>
-          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 0.75 }}>
-            {t('event.typeLabel')}
-          </Typography>
-          <ToggleButtonGroup
-            exclusive
-            fullWidth
-            value={form.type}
-            onChange={(_, value: CalendarEventType | null) => {
-              if (value) setForm((current) => ({ ...current, type: value }));
-            }}
-            size="small"
-          >
-            {typeOptions.map((option) => {
-              const Icon = option.icon;
-              return (
-                <ToggleButton
-                  key={option.value}
-                  value={option.value}
-                  sx={{ gap: 0.75, minHeight: 42 }}
-                >
-                  <Icon size={16} aria-hidden="true" />
-                  {option.label}
-                </ToggleButton>
-              );
-            })}
-          </ToggleButtonGroup>
-        </Box>
-        <FormField
-          autoFocus
-          required
-          label={t('event.titleLabel')}
-          value={form.title}
-          onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-          errorMessage={
-            validationVisible && !form.title.trim() ? t('event.titleRequired') : undefined
-          }
-          inputProps={{ maxLength: 240 }}
-        />
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          <DateTimePickerField
-            required
-            label={t('event.startLabel')}
-            value={form.startsAt}
-            onValueChange={(value) =>
-              value && setForm((current) => ({ ...current, startsAt: value }))
-            }
-          />
-          <DateTimePickerField
-            required
-            label={t('event.endLabel')}
-            value={form.endsAt}
-            onValueChange={(value) =>
-              value && setForm((current) => ({ ...current, endsAt: value }))
-            }
-            errorMessage={validationVisible && rangeError ? t('event.rangeError') : undefined}
-          />
-        </Box>
-        <FormField
-          multiline
-          minRows={3}
-          label={t(form.type === 'MEETING' ? 'event.agendaLabel' : 'event.descriptionLabel')}
-          value={form.description}
-          onChange={(event) =>
-            setForm((current) => ({ ...current, description: event.target.value }))
-          }
-          supportingText={form.type === 'MEETING' ? t('event.agendaHint') : undefined}
-          inputProps={{ maxLength: 4000 }}
-        />
-        <AutocompleteMultiField
-          multiple
-          options={(peopleQuery.data?.items ?? [])
-            .filter((person) => Boolean(person.workEmail))
-            .map<AttendeeOption>((person) => ({
-              personId: person.personId,
-              displayName: person.displayName,
-              workEmail: person.workEmail,
-            }))}
-          value={attendees}
-          onChange={(_, value) => setAttendees(value)}
-          loading={peopleQuery.isLoading}
-          getOptionLabel={(person) => `${person.displayName} · ${person.workEmail ?? ''}`}
-          isOptionEqualToValue={(option, value) => option.personId === value.personId}
-          renderTags={(values, getTagProps) =>
-            values.map((person, index) => (
-              <Chip
-                {...getTagProps({ index })}
-                key={person.personId}
-                size="small"
-                label={person.displayName}
-              />
-            ))
-          }
-          label={t('event.attendeesLabel')}
-          textFieldProps={{
-            placeholder: attendees.length ? undefined : t('event.attendeesPlaceholder'),
-          }}
-        />
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          <FormField
-            label={t('event.locationLabel')}
-            value={form.location}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, location: event.target.value }))
-            }
-            inputProps={{ maxLength: 240 }}
-          />
-          <SelectField
-            label={t('event.resourceLabel')}
-            value={form.resourceId}
-            options={[
-              { value: '', label: t('event.noResource') },
-              ...(resourcesQuery.data ?? []).map((resource) => ({
-                value: resource.resourceId,
-                label: `${resource.name} · ${resource.capacity}${t('resources.peopleUnit')}`,
-                disabled:
-                  resource.state !== 'AVAILABLE' ||
-                  (!resource.available && resource.resourceId !== event?.resource?.resourceId),
-              })),
-            ]}
-            onValueChange={(value) => {
-              const resource = resourcesQuery.data?.find((item) => item.resourceId === value);
-              setForm((current) => ({
-                ...current,
-                resourceId: String(value),
-                location: resource?.name ?? current.location,
-              }));
-            }}
-            InputProps={{ startAdornment: <Building2 size={17} /> }}
-          />
-        </Box>
-        <FormField
-          label={t('event.conferenceLabel')}
-          value={form.conferenceUrl}
-          onChange={(event) =>
-            setForm((current) => ({ ...current, conferenceUrl: event.target.value }))
-          }
-          placeholder={t('event.conferencePlaceholder')}
-          inputProps={{ maxLength: 1000 }}
-        />
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          <SelectField
-            label={t('event.recurrenceLabel')}
-            value={form.recurrence}
-            options={(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
-              value,
-              label: t(`event.recurrence.${value}`),
-            }))}
-            onValueChange={(value) =>
-              value && setForm((current) => ({ ...current, recurrence: value }))
-            }
-          />
-          <SelectField
-            label={t('event.visibilityLabel')}
-            value={form.visibility}
-            options={(['DEFAULT', 'PUBLIC', 'PRIVATE', 'CONFIDENTIAL'] as const).map((value) => ({
-              value,
-              label: t(`event.visibility.${value}`),
-            }))}
-            onValueChange={(value) =>
-              value && setForm((current) => ({ ...current, visibility: value }))
-            }
-          />
-        </Box>
-        {form.recurrence !== 'NONE' && (
-          <DatePickerField
-            label={t('event.recurrenceUntilLabel')}
-            value={form.recurrenceUntil}
-            onValueChange={(value) =>
-              setForm((current) => ({ ...current, recurrenceUntil: value ?? '' }))
-            }
-            errorMessage={
-              validationVisible && resourceRecurrenceError
-                ? t('event.resourceRecurrenceUntilRequired')
-                : undefined
-            }
-          />
+        {mutation.isError && (
+          <Alert severity="error">{message(mutation.error, t('event.saveError'))}</Alert>
         )}
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={form.responseRequired}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, responseRequired: event.target.checked }))
+        {calendarsQuery.isError && (
+          <Alert
+            severity="error"
+            action={
+              <ActionButton intent="quiet" size="small" onClick={() => calendarsQuery.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
+            {t('event.calendarsLoadError')}
+          </Alert>
+        )}
+        {peopleQuery.isError && (
+          <Alert
+            severity="warning"
+            action={
+              <ActionButton intent="quiet" size="small" onClick={() => peopleQuery.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
+            {t('event.peopleLoadError')}
+          </Alert>
+        )}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns:
+              form.type === 'MEETING'
+                ? { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1.3fr) minmax(360px, 0.9fr)' }
+                : 'minmax(0, 1fr)',
+            gap: { xs: 2.25, lg: 3 },
+            alignItems: 'start',
+          }}
+        >
+          <Stack spacing={2.25} sx={{ minWidth: 0 }}>
+            <SelectField
+              required
+              disabled={Boolean(event) || calendarsQuery.isError}
+              label={t('event.calendarLabel')}
+              value={form.calendarId}
+              placeholder={t('event.calendarPlaceholder')}
+              options={writableCalendars.map((calendar) => ({
+                value: calendar.calendarId,
+                label: `${calendar.name} · ${t(`sources.kinds.${calendar.sourceKind ?? 'OWNED'}`)}`,
+              }))}
+              onValueChange={(value) =>
+                setForm((current) => ({ ...current, calendarId: String(value) }))
               }
+              errorMessage={
+                validationVisible && !form.calendarId ? t('event.calendarRequired') : undefined
+              }
+              supportingText={event ? t('event.calendarLockedHint') : undefined}
             />
-          }
-          label={t('event.responseRequired')}
-        />
+            <Box>
+              <Typography
+                id={eventTypeLabelId}
+                variant="caption"
+                color="text.secondary"
+                fontWeight={700}
+                sx={{ mb: 0.75 }}
+              >
+                {t('event.typeLabel')}
+              </Typography>
+              <ToggleButtonGroup
+                exclusive
+                fullWidth
+                value={form.type}
+                onChange={(_, value: CalendarEventType | null) => {
+                  if (value) setForm((current) => ({ ...current, type: value }));
+                }}
+                aria-labelledby={eventTypeLabelId}
+                size="small"
+              >
+                {typeOptions.map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <ToggleButton
+                      key={option.value}
+                      value={option.value}
+                      sx={{ gap: 0.75, minHeight: 42 }}
+                    >
+                      <Icon size={16} aria-hidden="true" />
+                      {option.label}
+                    </ToggleButton>
+                  );
+                })}
+              </ToggleButtonGroup>
+            </Box>
+            <FormField
+              autoFocus
+              required
+              label={t('event.titleLabel')}
+              value={form.title}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, title: event.target.value }))
+              }
+              errorMessage={
+                validationVisible && !form.title.trim() ? t('event.titleRequired') : undefined
+              }
+              inputProps={{ maxLength: 240 }}
+            />
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                gap: 2,
+              }}
+            >
+              <DateTimePickerField
+                required
+                label={t('event.startLabel')}
+                value={form.startsAt}
+                onValueChange={(value) =>
+                  value && setForm((current) => ({ ...current, startsAt: value }))
+                }
+              />
+              <DateTimePickerField
+                required
+                label={t('event.endLabel')}
+                value={form.endsAt}
+                onValueChange={(value) =>
+                  value && setForm((current) => ({ ...current, endsAt: value }))
+                }
+                errorMessage={validationVisible && rangeError ? t('event.rangeError') : undefined}
+              />
+            </Box>
+            <Accordion
+              expanded={additionalOptionsOpen}
+              onChange={(_, expanded) => setAdditionalOptionsOpen(expanded)}
+              disableGutters
+              elevation={0}
+              sx={{
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: '8px !important',
+                overflow: 'hidden',
+                '&::before': { display: 'none' },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ChevronDown size={18} />}
+                sx={{
+                  minHeight: 64,
+                  px: 2,
+                  '& .MuiAccordionSummary-content': { my: 1.25 },
+                }}
+              >
+                <Stack direction="row" spacing={1.25} alignItems="center">
+                  <Box
+                    aria-hidden="true"
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      display: 'grid',
+                      placeItems: 'center',
+                      borderRadius: 0.75,
+                      bgcolor: 'action.hover',
+                      color: 'primary.main',
+                    }}
+                  >
+                    <SlidersHorizontal size={16} />
+                  </Box>
+                  <Box>
+                    <Typography fontWeight={600}>{t('event.additionalOptions')}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('event.additionalOptionsDescription')}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 2, pt: 0.75, pb: 2 }}>
+                <Stack spacing={2.25}>
+                  <FormField
+                    multiline
+                    minRows={3}
+                    label={t(
+                      form.type === 'MEETING' ? 'event.agendaLabel' : 'event.descriptionLabel'
+                    )}
+                    value={form.description}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, description: event.target.value }))
+                    }
+                    supportingText={form.type === 'MEETING' ? t('event.agendaHint') : undefined}
+                    inputProps={{ maxLength: 4000 }}
+                  />
+                  {(['REQUIRED', 'OPTIONAL'] as const).map((attendeeType) => {
+                    const selectedForType = attendees.filter(
+                      (person) => person.type === attendeeType
+                    );
+                    return (
+                      <AutocompleteMultiField
+                        key={attendeeType}
+                        multiple
+                        options={attendeeOptions.map((person) => ({
+                          ...person,
+                          type: attendeeType,
+                        }))}
+                        value={selectedForType}
+                        onChange={(_, value) => replaceAttendees(attendeeType, value)}
+                        loading={peopleQuery.isLoading}
+                        getOptionLabel={(person) =>
+                          `${person.displayName} · ${person.workEmail ?? ''}`
+                        }
+                        isOptionEqualToValue={(option, value) => option.personId === value.personId}
+                        renderTags={(values, getTagProps) =>
+                          values.map((person, index) => (
+                            <Chip
+                              {...getTagProps({ index })}
+                              key={person.personId}
+                              size="small"
+                              label={person.displayName}
+                            />
+                          ))
+                        }
+                        label={t(
+                          attendeeType === 'REQUIRED'
+                            ? 'event.requiredAttendeesLabel'
+                            : 'event.optionalAttendeesLabel'
+                        )}
+                        textFieldProps={{
+                          placeholder: selectedForType.length
+                            ? undefined
+                            : t(
+                                attendeeType === 'REQUIRED'
+                                  ? 'event.requiredAttendeesPlaceholder'
+                                  : 'event.optionalAttendeesPlaceholder'
+                              ),
+                        }}
+                      />
+                    );
+                  })}
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                      gap: 2,
+                    }}
+                  >
+                    <FormField
+                      label={t('event.locationLabel')}
+                      value={form.location}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, location: event.target.value }))
+                      }
+                      inputProps={{ maxLength: 240 }}
+                    />
+                    <SelectField
+                      label={t('event.resourceLabel')}
+                      value={form.resourceId}
+                      options={[
+                        { value: '', label: t('event.noResource') },
+                        ...(resourcesQuery.data ?? []).map((resource) => ({
+                          value: resource.resourceId,
+                          label: `${resource.name} · ${resource.capacity}${t('resources.peopleUnit')}`,
+                          disabled:
+                            resource.state !== 'AVAILABLE' ||
+                            (!resource.available &&
+                              resource.resourceId !== event?.resource?.resourceId),
+                        })),
+                      ]}
+                      onValueChange={(value) => {
+                        const resource = resourcesQuery.data?.find(
+                          (item) => item.resourceId === value
+                        );
+                        setForm((current) => ({
+                          ...current,
+                          resourceId: String(value),
+                          location: resource?.name ?? current.location,
+                        }));
+                      }}
+                      InputProps={{ startAdornment: <Building2 size={17} /> }}
+                    />
+                  </Box>
+                  <FormField
+                    label={t('event.conferenceLabel')}
+                    value={form.conferenceUrl}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, conferenceUrl: event.target.value }))
+                    }
+                    placeholder={t('event.conferencePlaceholder')}
+                    inputProps={{ maxLength: 1000 }}
+                  />
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                      gap: 2,
+                    }}
+                  >
+                    <SelectField
+                      label={t('event.recurrenceLabel')}
+                      value={form.recurrence}
+                      options={(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
+                        value,
+                        label: t(`event.recurrence.${value}`),
+                      }))}
+                      onValueChange={(value) =>
+                        value && setForm((current) => ({ ...current, recurrence: value }))
+                      }
+                    />
+                    <SelectField
+                      label={t('event.visibilityLabel')}
+                      value={form.visibility}
+                      options={(['DEFAULT', 'PUBLIC', 'PRIVATE', 'CONFIDENTIAL'] as const).map(
+                        (value) => ({
+                          value,
+                          label: t(`event.visibility.${value}`),
+                        })
+                      )}
+                      onValueChange={(value) =>
+                        value && setForm((current) => ({ ...current, visibility: value }))
+                      }
+                    />
+                    <SelectField
+                      label={t('event.importanceLabel')}
+                      value={form.importance}
+                      options={(['LOW', 'NORMAL', 'HIGH'] as const).map((value) => ({
+                        value,
+                        label: t(`event.importance.${value}`),
+                      }))}
+                      onValueChange={(value) =>
+                        value && setForm((current) => ({ ...current, importance: value }))
+                      }
+                    />
+                  </Box>
+                  <SelectField
+                    label={t('event.timeZoneLabel')}
+                    value={form.timeZone}
+                    options={Array.from(
+                      new Set([form.timeZone, calendarSystemTimeZone(), ...COMMON_TIME_ZONES])
+                    ).map((timeZone) => ({ value: timeZone, label: timeZone }))}
+                    onValueChange={(timeZone) =>
+                      timeZone && setForm((current) => ({ ...current, timeZone: String(timeZone) }))
+                    }
+                    supportingText={t('event.timeZoneHint')}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={form.allDay}
+                        onChange={(event) =>
+                          setForm((current) => ({ ...current, allDay: event.target.checked }))
+                        }
+                      />
+                    }
+                    label={t('event.allDay')}
+                  />
+                  {form.recurrence !== 'NONE' && (
+                    <SelectField<number>
+                      label={t('event.recurrenceIntervalLabel')}
+                      value={form.recurrenceInterval}
+                      options={[1, 2, 3, 4].map((value) => ({
+                        value,
+                        label: t(`event.recurrenceIntervals.${form.recurrence}`, { count: value }),
+                      }))}
+                      onValueChange={(value) =>
+                        value &&
+                        setForm((current) => ({ ...current, recurrenceInterval: Number(value) }))
+                      }
+                    />
+                  )}
+                  {form.recurrence !== 'NONE' && (
+                    <DatePickerField
+                      label={t('event.recurrenceUntilLabel')}
+                      value={form.recurrenceUntil}
+                      onValueChange={(value) =>
+                        setForm((current) => ({ ...current, recurrenceUntil: value ?? '' }))
+                      }
+                      errorMessage={
+                        validationVisible && resourceRecurrenceError
+                          ? t('event.resourceRecurrenceUntilRequired')
+                          : undefined
+                      }
+                    />
+                  )}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={form.responseRequired}
+                        onChange={(event) =>
+                          setForm((current) => ({
+                            ...current,
+                            responseRequired: event.target.checked,
+                          }))
+                        }
+                      />
+                    }
+                    label={t('event.responseRequired')}
+                  />
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          </Stack>
+          {form.type === 'MEETING' && (
+            <Box
+              component="aside"
+              sx={{
+                minWidth: 0,
+                alignSelf: 'stretch',
+                bgcolor: { lg: 'action.hover' },
+                borderRadius: { lg: 1 },
+                p: { lg: 1.5 },
+              }}
+            >
+              <Box sx={{ position: { lg: 'sticky' }, top: { lg: 0 } }}>
+                {form.recurrence === 'NONE' ? (
+                  <CalendarSchedulingAssistant
+                    open={open}
+                    startsAt={form.startsAt}
+                    endsAt={form.endsAt}
+                    attendees={attendees}
+                    resources={resourcesQuery.data ?? []}
+                    resourcesLoading={resourcesQuery.isLoading || resourcesQuery.isFetching}
+                    resourcesError={resourcesQuery.isError}
+                    selectedResourceId={form.resourceId}
+                    language={i18n.resolvedLanguage ?? i18n.language}
+                    timeZone={form.timeZone}
+                    onApplyTime={(startsAt, endsAt) =>
+                      setForm((current) => ({ ...current, startsAt, endsAt }))
+                    }
+                    onApplyRoom={(resource) =>
+                      setForm((current) => ({
+                        ...current,
+                        resourceId: resource.resourceId,
+                        location: resource.name,
+                      }))
+                    }
+                  />
+                ) : (
+                  <Alert severity="info">{t('schedulingAssistant.recurringSeriesNotice')}</Alert>
+                )}
+              </Box>
+            </Box>
+          )}
+        </Box>
       </Stack>
     </FormDialog>
   );

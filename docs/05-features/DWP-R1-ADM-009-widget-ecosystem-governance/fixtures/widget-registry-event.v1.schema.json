@@ -1,0 +1,1384 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-registry-event.v1.schema.json",
+  "title": "DWP Widget Registry Event V1",
+  "description": "Closed event envelope for command, evidence-expiry scheduler, and shadow-observer events.",
+  "oneOf": [
+    { "$ref": "#/$defs/commandEvent" },
+    { "$ref": "#/$defs/evidenceExpiryEvent" },
+    { "$ref": "#/$defs/shadowEvaluationEvent" }
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "projectionType": {
+      "type": "string",
+      "enum": [
+        "DefinitionState",
+        "VersionState",
+        "EvidenceDecision",
+        "ReleaseChannelHead",
+        "RuntimeControlHead",
+        "TenantPolicyHead",
+        "RolloutApproval",
+        "RolloutHead"
+      ]
+    },
+    "approvalState": {
+      "type": "string",
+      "enum": ["ACTIVE", "CONSUMED"]
+    },
+    "enableApprovalProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "controlRevision",
+        "state",
+        "expiresAt",
+        "consumedAt",
+        "consumedByCommandId"
+      ],
+      "properties": {
+        "approvalId": { "$ref": "#/$defs/uuid" },
+        "controlRevision": { "type": "integer", "minimum": 1 },
+        "state": { "$ref": "#/$defs/approvalState" },
+        "expiresAt": { "$ref": "#/$defs/occurredAt" },
+        "consumedAt": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/occurredAt" }]
+        },
+        "consumedByCommandId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "state": { "const": "ACTIVE" } } },
+          "then": {
+            "properties": {
+              "consumedAt": { "type": "null" },
+              "consumedByCommandId": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "state": { "const": "CONSUMED" } } },
+          "then": {
+            "properties": {
+              "consumedAt": { "$ref": "#/$defs/occurredAt" },
+              "consumedByCommandId": { "$ref": "#/$defs/uuid" }
+            }
+          }
+        }
+      ]
+    },
+    "clearanceApprovalProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "quarantineEventId",
+        "quarantineRevision",
+        "state",
+        "expiresAt",
+        "consumedAt",
+        "consumedByCommandId"
+      ],
+      "properties": {
+        "approvalId": { "$ref": "#/$defs/uuid" },
+        "quarantineEventId": { "$ref": "#/$defs/uuid" },
+        "quarantineRevision": { "type": "integer", "minimum": 1 },
+        "state": { "$ref": "#/$defs/approvalState" },
+        "expiresAt": { "$ref": "#/$defs/occurredAt" },
+        "consumedAt": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/occurredAt" }]
+        },
+        "consumedByCommandId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "state": { "const": "ACTIVE" } } },
+          "then": {
+            "properties": {
+              "consumedAt": { "type": "null" },
+              "consumedByCommandId": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "state": { "const": "CONSUMED" } } },
+          "then": {
+            "properties": {
+              "consumedAt": { "$ref": "#/$defs/occurredAt" },
+              "consumedByCommandId": { "$ref": "#/$defs/uuid" }
+            }
+          }
+        }
+      ]
+    },
+    "definitionStateProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "state", "rowVersion"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "state": { "enum": ["ACTIVE", "RETIRED"] },
+        "rowVersion": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "versionStateProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definitionId",
+        "versionId",
+        "workflowState",
+        "releaseState",
+        "safetyState",
+        "currentQuarantineEventId",
+        "currentQuarantineRevision",
+        "validationRunId",
+        "latestClearanceApproval",
+        "rowVersion"
+      ],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "workflowState": {
+          "enum": ["DRAFT", "SUBMITTED", "APPROVED", "REJECTED"]
+        },
+        "releaseState": {
+          "enum": ["UNPUBLISHED", "PUBLISHED", "DEPRECATED", "REVOKED"]
+        },
+        "safetyState": { "enum": ["CLEAR", "QUARANTINED"] },
+        "currentQuarantineEventId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        },
+        "currentQuarantineRevision": {
+          "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1 }]
+        },
+        "validationRunId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        },
+        "latestClearanceApproval": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/clearanceApprovalProjection" }]
+        },
+        "rowVersion": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "evidenceDecisionProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "versionId",
+        "evidenceType",
+        "status",
+        "evidenceRefHash",
+        "decisionRevision",
+        "rowVersion"
+      ],
+      "properties": {
+        "evidenceId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "evidenceType": {
+          "enum": ["SECURITY", "PERFORMANCE", "LOCALIZATION"]
+        },
+        "status": { "enum": ["PASS", "FAIL", "EXPIRED", "WAIVED"] },
+        "evidenceRefHash": { "$ref": "#/$defs/sha256" },
+        "decisionRevision": { "type": "integer", "minimum": 1 },
+        "rowVersion": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "releaseChannelHeadProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definitionId",
+        "channel",
+        "currentVersionId",
+        "previousVersionId",
+        "headRevision"
+      ],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "channel": { "enum": ["STABLE", "PREVIEW"] },
+        "currentVersionId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        },
+        "previousVersionId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        },
+        "headRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "runtimeControlHeadProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "controlId",
+        "targetType",
+        "targetId",
+        "state",
+        "controlRevision",
+        "latestEnableApproval"
+      ],
+      "properties": {
+        "controlId": { "$ref": "#/$defs/uuid" },
+        "targetType": { "enum": ["GLOBAL", "DEFINITION", "VERSION"] },
+        "targetId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        },
+        "state": { "enum": ["DISABLED", "ENABLED"] },
+        "controlRevision": { "type": "integer", "minimum": 1 },
+        "latestEnableApproval": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/enableApprovalProjection" }]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "targetType": { "const": "GLOBAL" } } },
+          "then": { "properties": { "targetId": { "type": "null" } } }
+        },
+        {
+          "if": {
+            "properties": {
+              "targetType": { "enum": ["DEFINITION", "VERSION"] }
+            }
+          },
+          "then": { "properties": { "targetId": { "$ref": "#/$defs/uuid" } } }
+        }
+      ]
+    },
+    "tenantPolicyHeadProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenantRef",
+        "definitionId",
+        "headRevisionId",
+        "revision",
+        "state",
+        "impactRevision",
+        "policyCatalogRevision"
+      ],
+      "properties": {
+        "tenantRef": { "$ref": "#/$defs/tenantRef" },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "headRevisionId": { "$ref": "#/$defs/uuid" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "state": { "enum": ["PUBLISHED", "REVOKED"] },
+        "impactRevision": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }]
+        },
+        "policyCatalogRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "rolloutApprovalProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "environment",
+        "approvalRevision",
+        "rolloutRevision",
+        "state",
+        "registryRevision",
+        "tenantPolicyRevision",
+        "safetyRevision"
+      ],
+      "properties": {
+        "approvalId": { "$ref": "#/$defs/uuid" },
+        "environment": { "const": "STAGING" },
+        "approvalRevision": { "type": "integer", "minimum": 1 },
+        "rolloutRevision": { "type": "integer", "minimum": 1 },
+        "state": { "enum": ["ACTIVE", "CONSUMED", "REVOKED", "EXPIRED"] },
+        "registryRevision": { "type": "integer", "minimum": 1 },
+        "tenantPolicyRevision": { "type": "integer", "minimum": 1 },
+        "safetyRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "rolloutHeadProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "rolloutRevision",
+        "state",
+        "approvalId",
+        "registryRevision",
+        "tenantPolicyRevision",
+        "safetyRevision"
+      ],
+      "properties": {
+        "environment": { "const": "STAGING" },
+        "rolloutRevision": { "type": "integer", "minimum": 1 },
+        "state": { "enum": ["STATIC", "ACTIVE", "STOPPED"] },
+        "approvalId": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/uuid" }]
+        },
+        "registryRevision": { "type": "integer", "minimum": 1 },
+        "tenantPolicyRevision": { "type": "integer", "minimum": 1 },
+        "safetyRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "projectionPayload": {
+      "oneOf": [
+        { "$ref": "#/$defs/definitionStateProjection" },
+        { "$ref": "#/$defs/versionStateProjection" },
+        { "$ref": "#/$defs/evidenceDecisionProjection" },
+        { "$ref": "#/$defs/releaseChannelHeadProjection" },
+        { "$ref": "#/$defs/runtimeControlHeadProjection" },
+        { "$ref": "#/$defs/tenantPolicyHeadProjection" },
+        { "$ref": "#/$defs/rolloutApprovalProjection" },
+        { "$ref": "#/$defs/rolloutHeadProjection" }
+      ]
+    },
+    "occurredAt": {
+      "type": "string",
+      "allOf": [
+        {
+          "pattern": "^(?:[0-9]{4}-(?:(?:01|03|05|07|08|10|12)-(?:0[1-9]|[12][0-9]|3[01])|(?:04|06|09|11)-(?:0[1-9]|[12][0-9]|30)|02-(?:0[1-9]|1[0-9]|2[0-8]))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:[02468][048]|[13579][26])00)-02-29)T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+        },
+        { "not": { "pattern": "^0000-" } }
+      ]
+    },
+    "reasonCode": {
+      "type": "string",
+      "enum": [
+        "CHANNEL_PROMOTION_APPROVED",
+        "CHANNEL_ROLLBACK_APPROVED",
+        "DEFINITION_CONTROL_DISABLED",
+        "DEFINITION_CONTROL_ENABLED",
+        "DEFINITION_CREATE_APPROVED",
+        "DEFINITION_RETIRE_APPROVED",
+        "EVIDENCE_REVIEW_COMPLETED",
+        "EVIDENCE_WAIVER_APPROVED",
+        "GLOBAL_KILL_ENABLED",
+        "GLOBAL_KILL_RELEASED",
+        "QUARANTINE_CLEAR_EXECUTED",
+        "QUARANTINE_CLEAR_REVIEWED",
+        "ROLLOUT_ACTIVATED",
+        "ROLLOUT_APPROVAL_EXPIRED",
+        "ROLLOUT_APPROVAL_RECORDED",
+        "ROLLOUT_SAFETY_STOP",
+        "RUNTIME_CONTROL_ENABLE_APPROVED",
+        "SECURITY_INCIDENT",
+        "SECURITY_REVOKE",
+        "SYSTEM_EVIDENCE_EXPIRY",
+        "TENANT_POLICY_APPROVED",
+        "TENANT_POLICY_REVOKED",
+        "TENANT_POLICY_ROLLED_BACK",
+        "VERSION_APPROVED",
+        "VERSION_CONTROL_DISABLED",
+        "VERSION_CONTROL_ENABLED",
+        "VERSION_CREATE_APPROVED",
+        "VERSION_DEPRECATED",
+        "VERSION_DRAFT_UPDATED",
+        "VERSION_PUBLISHED",
+        "VERSION_REJECTED",
+        "VERSION_REWORKED",
+        "VERSION_SUBMITTED",
+        "VERSION_VALIDATION_COMPLETED"
+      ]
+    },
+    "aggregateId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 192,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "tenantRef": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 124,
+      "pattern": "^tnr_[a-z0-9_-]{16,120}$"
+    },
+    "shadowAggregateRef": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 124,
+      "pattern": "^agg_[a-z0-9_-]{16,120}$"
+    },
+    "releaseChannelAggregateId": {
+      "type": "string",
+      "pattern": "^channel:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}:(?:STABLE|PREVIEW)$"
+    },
+    "tenantPolicyAggregateId": {
+      "type": "string",
+      "pattern": "^tenant-policy:tnr_[a-z0-9_-]{16,120}:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "providerActor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plane", "auditRefHash"],
+      "properties": {
+        "plane": { "const": "PROVIDER" },
+        "auditRefHash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "tenantActor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plane", "auditRefHash"],
+      "properties": {
+        "plane": { "const": "TENANT" },
+        "auditRefHash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "deploymentControllerActor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plane", "auditRefHash"],
+      "properties": {
+        "plane": { "const": "DEPLOYMENT_CONTROLLER" },
+        "auditRefHash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "definitionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "versionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "versionId"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "validationTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "versionId", "validationRunId"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "validationRunId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "evidenceTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "versionId", "evidenceId"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "evidenceId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "evidenceWaiverTarget": {
+      "type": "object",
+      "description": "The new waiver evidenceId MUST differ from waivedEvidenceId; the standalone verifier enforces this cross-field invariant.",
+      "additionalProperties": false,
+      "required": ["definitionId", "versionId", "evidenceId", "waivedEvidenceId"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "evidenceId": { "$ref": "#/$defs/uuid" },
+        "waivedEvidenceId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "clearanceTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "versionId", "clearanceApprovalId", "quarantineEventId"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "clearanceApprovalId": { "$ref": "#/$defs/uuid" },
+        "quarantineEventId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "releaseChannelTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definitionId", "versionId", "channel"],
+      "properties": {
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "channel": { "enum": ["STABLE", "PREVIEW"] }
+      }
+    },
+    "runtimeControlGlobalTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlId", "targetType", "resultingState"],
+      "properties": {
+        "controlId": { "$ref": "#/$defs/uuid" },
+        "targetType": { "const": "GLOBAL" },
+        "resultingState": { "enum": ["DISABLED", "ENABLED"] },
+        "enableApprovalId": { "$ref": "#/$defs/uuid" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "resultingState": { "const": "ENABLED" } } },
+          "then": { "required": ["enableApprovalId"] },
+          "else": { "not": { "required": ["enableApprovalId"] } }
+        }
+      ]
+    },
+    "runtimeControlDefinitionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlId", "targetType", "resultingState", "definitionId"],
+      "properties": {
+        "controlId": { "$ref": "#/$defs/uuid" },
+        "targetType": { "const": "DEFINITION" },
+        "resultingState": { "enum": ["DISABLED", "ENABLED"] },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "enableApprovalId": { "$ref": "#/$defs/uuid" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "resultingState": { "const": "ENABLED" } } },
+          "then": { "required": ["enableApprovalId"] },
+          "else": { "not": { "required": ["enableApprovalId"] } }
+        }
+      ]
+    },
+    "runtimeControlVersionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlId", "targetType", "resultingState", "definitionId", "versionId"],
+      "properties": {
+        "controlId": { "$ref": "#/$defs/uuid" },
+        "targetType": { "const": "VERSION" },
+        "resultingState": { "enum": ["DISABLED", "ENABLED"] },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "enableApprovalId": { "$ref": "#/$defs/uuid" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "resultingState": { "const": "ENABLED" } } },
+          "then": { "required": ["enableApprovalId"] },
+          "else": { "not": { "required": ["enableApprovalId"] } }
+        }
+      ]
+    },
+    "runtimeControlTarget": {
+      "oneOf": [
+        { "$ref": "#/$defs/runtimeControlGlobalTarget" },
+        { "$ref": "#/$defs/runtimeControlDefinitionTarget" },
+        { "$ref": "#/$defs/runtimeControlVersionTarget" }
+      ]
+    },
+    "runtimeControlEnableApprovalTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlId", "enableApprovalId"],
+      "properties": {
+        "controlId": { "$ref": "#/$defs/uuid" },
+        "enableApprovalId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "tenantPolicyTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenantRef", "definitionId", "policyRevisionId"],
+      "properties": {
+        "tenantRef": { "$ref": "#/$defs/tenantRef" },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "policyRevisionId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "rolloutApprovalTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "approvalId", "approvalRevision", "rolloutRevision"],
+      "properties": {
+        "environment": { "const": "STAGING" },
+        "approvalId": { "$ref": "#/$defs/uuid" },
+        "approvalRevision": { "type": "integer", "minimum": 1 },
+        "rolloutRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "rolloutActivationTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "approvalId", "approvalRevision", "rolloutRevision"],
+      "properties": {
+        "environment": { "const": "STAGING" },
+        "approvalId": { "$ref": "#/$defs/uuid" },
+        "approvalRevision": { "type": "integer", "minimum": 1 },
+        "rolloutRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "rolloutStopTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "rolloutRevision",
+        "approvalId",
+        "approvalExpiresAt",
+        "stopCause"
+      ],
+      "properties": {
+        "environment": { "const": "STAGING" },
+        "rolloutRevision": { "type": "integer", "minimum": 1 },
+        "approvalId": { "$ref": "#/$defs/uuid" },
+        "approvalExpiresAt": { "$ref": "#/$defs/occurredAt" },
+        "stopCause": { "enum": ["SAFETY_THRESHOLD", "APPROVAL_EXPIRED"] }
+      }
+    },
+    "shadowTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aggregateRef"],
+      "properties": {
+        "aggregateRef": { "$ref": "#/$defs/shadowAggregateRef" }
+      }
+    },
+    "rolloutContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ring", "surface", "placementContext", "rolloutRevision"],
+      "properties": {
+        "ring": { "enum": ["staging-bootstrap", "staging-shadow"] },
+        "surface": { "const": "workspace-home" },
+        "placementContext": {
+          "enum": ["CLASSIC_PERSONAL", "FLOW_PERSONAL", "FLOW_GOVERNED"]
+        },
+        "rolloutRevision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "commandEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "eventId",
+        "commandId",
+        "eventType",
+        "aggregateType",
+        "aggregateId",
+        "aggregateSequence",
+        "occurredAt",
+        "correlationId",
+        "actor",
+        "target",
+        "reasonCode",
+        "projectionSchemaVersion",
+        "projectionType",
+        "beforeHash",
+        "afterHash"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "eventId": { "$ref": "#/$defs/uuid" },
+        "commandId": { "$ref": "#/$defs/uuid" },
+        "eventType": {
+          "enum": [
+            "WIDGET_DEFINITION_CREATED",
+            "WIDGET_DEFINITION_RETIRED",
+            "WIDGET_VERSION_CREATED",
+            "WIDGET_VERSION_UPDATED",
+            "WIDGET_VERSION_VALIDATED",
+            "WIDGET_VERSION_SUBMITTED",
+            "WIDGET_VERSION_APPROVED",
+            "WIDGET_VERSION_REJECTED",
+            "WIDGET_VERSION_REWORKED",
+            "WIDGET_EVIDENCE_RECORDED",
+            "WIDGET_EVIDENCE_WAIVED",
+            "WIDGET_VERSION_PUBLISHED",
+            "WIDGET_VERSION_DEPRECATED",
+            "WIDGET_CHANNEL_PROMOTED",
+            "WIDGET_CHANNEL_ROLLED_BACK",
+            "WIDGET_VERSION_QUARANTINED",
+            "WIDGET_QUARANTINE_CLEAR_APPROVED",
+            "WIDGET_QUARANTINE_CLEARED",
+            "WIDGET_VERSION_REVOKED",
+            "WIDGET_RUNTIME_CONTROL_CHANGED",
+            "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED",
+            "TENANT_WIDGET_POLICY_PUBLISHED",
+            "TENANT_WIDGET_POLICY_REVOKED",
+            "TENANT_WIDGET_POLICY_ROLLED_BACK",
+            "WIDGET_ROLLOUT_APPROVED",
+            "WIDGET_ROLLOUT_ACTIVATED",
+            "WIDGET_ROLLOUT_STOPPED"
+          ]
+        },
+        "aggregateType": {
+          "enum": [
+            "WIDGET_DEFINITION",
+            "WIDGET_VERSION",
+            "WIDGET_EVIDENCE",
+            "WIDGET_RELEASE_CHANNEL",
+            "WIDGET_RUNTIME_CONTROL",
+            "TENANT_WIDGET_POLICY",
+            "WIDGET_CATALOG_ROLLOUT_APPROVAL",
+            "WIDGET_CATALOG_ROLLOUT"
+          ]
+        },
+        "aggregateId": { "$ref": "#/$defs/aggregateId" },
+        "aggregateSequence": { "type": "integer", "minimum": 1 },
+        "occurredAt": { "$ref": "#/$defs/occurredAt" },
+        "correlationId": { "$ref": "#/$defs/uuid" },
+        "actor": { "type": "object" },
+        "target": { "type": "object" },
+        "reasonCode": { "$ref": "#/$defs/reasonCode" },
+        "projectionSchemaVersion": { "const": 1 },
+        "projectionType": { "$ref": "#/$defs/projectionType" },
+        "beforeHash": { "$ref": "#/$defs/sha256" },
+        "afterHash": { "$ref": "#/$defs/sha256" }
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "title": "Provider definition command",
+              "properties": {
+                "eventType": {
+                  "enum": ["WIDGET_DEFINITION_CREATED", "WIDGET_DEFINITION_RETIRED"]
+                },
+                "aggregateType": { "const": "WIDGET_DEFINITION" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/definitionTarget" }
+              }
+            },
+            {
+              "title": "Provider version command",
+              "properties": {
+                "eventType": {
+                  "enum": [
+                    "WIDGET_VERSION_CREATED",
+                    "WIDGET_VERSION_UPDATED",
+                    "WIDGET_VERSION_SUBMITTED",
+                    "WIDGET_VERSION_APPROVED",
+                    "WIDGET_VERSION_REJECTED",
+                    "WIDGET_VERSION_REWORKED",
+                    "WIDGET_VERSION_PUBLISHED",
+                    "WIDGET_VERSION_DEPRECATED",
+                    "WIDGET_VERSION_QUARANTINED",
+                    "WIDGET_VERSION_REVOKED"
+                  ]
+                },
+                "aggregateType": { "const": "WIDGET_VERSION" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/versionTarget" }
+              }
+            },
+            {
+              "title": "Provider version validation command",
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_VALIDATED" },
+                "aggregateType": { "const": "WIDGET_VERSION" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/validationTarget" }
+              }
+            },
+            {
+              "title": "Provider evidence record command",
+              "properties": {
+                "eventType": { "const": "WIDGET_EVIDENCE_RECORDED" },
+                "aggregateType": { "const": "WIDGET_EVIDENCE" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/evidenceTarget" }
+              }
+            },
+            {
+              "title": "Provider evidence waiver command",
+              "properties": {
+                "eventType": { "const": "WIDGET_EVIDENCE_WAIVED" },
+                "aggregateType": { "const": "WIDGET_EVIDENCE" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/evidenceWaiverTarget" }
+              }
+            },
+            {
+              "title": "Provider quarantine clearance approval command",
+              "properties": {
+                "eventType": { "const": "WIDGET_QUARANTINE_CLEAR_APPROVED" },
+                "aggregateType": { "const": "WIDGET_VERSION" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/clearanceTarget" }
+              }
+            },
+            {
+              "title": "Provider quarantine clearance command",
+              "properties": {
+                "eventType": { "const": "WIDGET_QUARANTINE_CLEARED" },
+                "aggregateType": { "const": "WIDGET_VERSION" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/clearanceTarget" }
+              }
+            },
+            {
+              "title": "Provider release channel command",
+              "properties": {
+                "eventType": {
+                  "enum": ["WIDGET_CHANNEL_PROMOTED", "WIDGET_CHANNEL_ROLLED_BACK"]
+                },
+                "aggregateType": { "const": "WIDGET_RELEASE_CHANNEL" },
+                "aggregateId": { "$ref": "#/$defs/releaseChannelAggregateId" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/releaseChannelTarget" }
+              }
+            },
+            {
+              "title": "Provider runtime control command",
+              "properties": {
+                "eventType": { "const": "WIDGET_RUNTIME_CONTROL_CHANGED" },
+                "aggregateType": { "const": "WIDGET_RUNTIME_CONTROL" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/runtimeControlTarget" }
+              }
+            },
+            {
+              "title": "Provider runtime control enable approval command",
+              "properties": {
+                "eventType": { "const": "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED" },
+                "aggregateType": { "const": "WIDGET_RUNTIME_CONTROL" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/providerActor" },
+                "target": { "$ref": "#/$defs/runtimeControlEnableApprovalTarget" }
+              }
+            },
+            {
+              "title": "Tenant policy command",
+              "properties": {
+                "eventType": {
+                  "enum": [
+                    "TENANT_WIDGET_POLICY_PUBLISHED",
+                    "TENANT_WIDGET_POLICY_REVOKED",
+                    "TENANT_WIDGET_POLICY_ROLLED_BACK"
+                  ]
+                },
+                "aggregateType": { "const": "TENANT_WIDGET_POLICY" },
+                "aggregateId": { "$ref": "#/$defs/tenantPolicyAggregateId" },
+                "actor": { "$ref": "#/$defs/tenantActor" },
+                "target": { "$ref": "#/$defs/tenantPolicyTarget" }
+              }
+            },
+            {
+              "title": "Deployment rollout approval command",
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_APPROVED" },
+                "aggregateType": { "const": "WIDGET_CATALOG_ROLLOUT_APPROVAL" },
+                "aggregateId": { "$ref": "#/$defs/uuid" },
+                "actor": { "$ref": "#/$defs/deploymentControllerActor" },
+                "target": { "$ref": "#/$defs/rolloutApprovalTarget" }
+              }
+            },
+            {
+              "title": "Deployment rollout activation command",
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_ACTIVATED" },
+                "aggregateType": { "const": "WIDGET_CATALOG_ROLLOUT" },
+                "aggregateId": { "const": "rollout:STAGING" },
+                "actor": { "$ref": "#/$defs/deploymentControllerActor" },
+                "target": { "$ref": "#/$defs/rolloutActivationTarget" }
+              }
+            },
+            {
+              "title": "Deployment rollout stop command",
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_STOPPED" },
+                "aggregateType": { "const": "WIDGET_CATALOG_ROLLOUT" },
+                "aggregateId": { "const": "rollout:STAGING" },
+                "actor": { "$ref": "#/$defs/deploymentControllerActor" },
+                "target": { "$ref": "#/$defs/rolloutStopTarget" }
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "enum": [
+                  "WIDGET_DEFINITION_CREATED",
+                  "WIDGET_VERSION_CREATED",
+                  "WIDGET_EVIDENCE_RECORDED",
+                  "WIDGET_EVIDENCE_WAIVED",
+                  "WIDGET_ROLLOUT_APPROVED"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "aggregateSequence": { "const": 1 },
+              "beforeHash": {
+                "const": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+              }
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_DEFINITION_CREATED" },
+                "reasonCode": { "const": "DEFINITION_CREATE_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_DEFINITION_RETIRED" },
+                "reasonCode": { "const": "DEFINITION_RETIRE_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_CREATED" },
+                "reasonCode": { "const": "VERSION_CREATE_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_UPDATED" },
+                "reasonCode": { "const": "VERSION_DRAFT_UPDATED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_VALIDATED" },
+                "reasonCode": { "const": "VERSION_VALIDATION_COMPLETED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_SUBMITTED" },
+                "reasonCode": { "const": "VERSION_SUBMITTED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_APPROVED" },
+                "reasonCode": { "const": "VERSION_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_REJECTED" },
+                "reasonCode": { "const": "VERSION_REJECTED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_REWORKED" },
+                "reasonCode": { "const": "VERSION_REWORKED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_EVIDENCE_RECORDED" },
+                "reasonCode": { "const": "EVIDENCE_REVIEW_COMPLETED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_EVIDENCE_WAIVED" },
+                "reasonCode": { "const": "EVIDENCE_WAIVER_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_PUBLISHED" },
+                "reasonCode": { "const": "VERSION_PUBLISHED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_DEPRECATED" },
+                "reasonCode": { "const": "VERSION_DEPRECATED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_CHANNEL_PROMOTED" },
+                "reasonCode": { "const": "CHANNEL_PROMOTION_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_CHANNEL_ROLLED_BACK" },
+                "reasonCode": { "const": "CHANNEL_ROLLBACK_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_QUARANTINED" },
+                "reasonCode": { "const": "SECURITY_INCIDENT" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_QUARANTINE_CLEAR_APPROVED" },
+                "reasonCode": { "const": "QUARANTINE_CLEAR_REVIEWED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_QUARANTINE_CLEARED" },
+                "reasonCode": { "const": "QUARANTINE_CLEAR_EXECUTED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_VERSION_REVOKED" },
+                "reasonCode": { "const": "SECURITY_REVOKE" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_RUNTIME_CONTROL_CHANGED" },
+                "reasonCode": {
+                  "enum": [
+                    "GLOBAL_KILL_ENABLED",
+                    "GLOBAL_KILL_RELEASED",
+                    "DEFINITION_CONTROL_DISABLED",
+                    "DEFINITION_CONTROL_ENABLED",
+                    "VERSION_CONTROL_DISABLED",
+                    "VERSION_CONTROL_ENABLED"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED" },
+                "reasonCode": { "const": "RUNTIME_CONTROL_ENABLE_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "TENANT_WIDGET_POLICY_PUBLISHED" },
+                "reasonCode": { "const": "TENANT_POLICY_APPROVED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "TENANT_WIDGET_POLICY_REVOKED" },
+                "reasonCode": { "const": "TENANT_POLICY_REVOKED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "TENANT_WIDGET_POLICY_ROLLED_BACK" },
+                "reasonCode": { "const": "TENANT_POLICY_ROLLED_BACK" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_APPROVED" },
+                "reasonCode": { "const": "ROLLOUT_APPROVAL_RECORDED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_ACTIVATED" },
+                "reasonCode": { "const": "ROLLOUT_ACTIVATED" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_STOPPED" },
+                "reasonCode": {
+                  "enum": ["ROLLOUT_SAFETY_STOP", "ROLLOUT_APPROVAL_EXPIRED"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": { "const": "WIDGET_RUNTIME_CONTROL_CHANGED" }
+            }
+          },
+          "then": {
+            "oneOf": [
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "targetType": { "const": "GLOBAL" },
+                      "resultingState": { "const": "DISABLED" }
+                    }
+                  },
+                  "reasonCode": { "const": "GLOBAL_KILL_ENABLED" }
+                }
+              },
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "targetType": { "const": "GLOBAL" },
+                      "resultingState": { "const": "ENABLED" }
+                    }
+                  },
+                  "reasonCode": { "const": "GLOBAL_KILL_RELEASED" }
+                }
+              },
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "targetType": { "const": "DEFINITION" },
+                      "resultingState": { "const": "DISABLED" }
+                    }
+                  },
+                  "reasonCode": { "const": "DEFINITION_CONTROL_DISABLED" }
+                }
+              },
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "targetType": { "const": "DEFINITION" },
+                      "resultingState": { "const": "ENABLED" }
+                    }
+                  },
+                  "reasonCode": { "const": "DEFINITION_CONTROL_ENABLED" }
+                }
+              },
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "targetType": { "const": "VERSION" },
+                      "resultingState": { "const": "DISABLED" }
+                    }
+                  },
+                  "reasonCode": { "const": "VERSION_CONTROL_DISABLED" }
+                }
+              },
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "targetType": { "const": "VERSION" },
+                      "resultingState": { "const": "ENABLED" }
+                    }
+                  },
+                  "reasonCode": { "const": "VERSION_CONTROL_ENABLED" }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": { "const": "WIDGET_ROLLOUT_STOPPED" }
+            }
+          },
+          "then": {
+            "oneOf": [
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "stopCause": { "const": "SAFETY_THRESHOLD" }
+                    }
+                  },
+                  "reasonCode": { "const": "ROLLOUT_SAFETY_STOP" }
+                }
+              },
+              {
+                "properties": {
+                  "target": {
+                    "properties": {
+                      "stopCause": { "const": "APPROVAL_EXPIRED" }
+                    }
+                  },
+                  "reasonCode": { "const": "ROLLOUT_APPROVAL_EXPIRED" }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "eventType": {
+                  "enum": ["WIDGET_DEFINITION_CREATED", "WIDGET_DEFINITION_RETIRED"]
+                },
+                "projectionType": { "const": "DefinitionState" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": {
+                  "enum": [
+                    "WIDGET_VERSION_CREATED",
+                    "WIDGET_VERSION_UPDATED",
+                    "WIDGET_VERSION_VALIDATED",
+                    "WIDGET_VERSION_SUBMITTED",
+                    "WIDGET_VERSION_APPROVED",
+                    "WIDGET_VERSION_REJECTED",
+                    "WIDGET_VERSION_REWORKED",
+                    "WIDGET_VERSION_PUBLISHED",
+                    "WIDGET_VERSION_DEPRECATED",
+                    "WIDGET_VERSION_QUARANTINED",
+                    "WIDGET_QUARANTINE_CLEAR_APPROVED",
+                    "WIDGET_QUARANTINE_CLEARED",
+                    "WIDGET_VERSION_REVOKED"
+                  ]
+                },
+                "projectionType": { "const": "VersionState" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": {
+                  "enum": ["WIDGET_EVIDENCE_RECORDED", "WIDGET_EVIDENCE_WAIVED"]
+                },
+                "projectionType": { "const": "EvidenceDecision" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": {
+                  "enum": ["WIDGET_CHANNEL_PROMOTED", "WIDGET_CHANNEL_ROLLED_BACK"]
+                },
+                "projectionType": { "const": "ReleaseChannelHead" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": {
+                  "enum": [
+                    "WIDGET_RUNTIME_CONTROL_CHANGED",
+                    "WIDGET_RUNTIME_CONTROL_ENABLE_APPROVED"
+                  ]
+                },
+                "projectionType": { "const": "RuntimeControlHead" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": {
+                  "enum": [
+                    "TENANT_WIDGET_POLICY_PUBLISHED",
+                    "TENANT_WIDGET_POLICY_REVOKED",
+                    "TENANT_WIDGET_POLICY_ROLLED_BACK"
+                  ]
+                },
+                "projectionType": { "const": "TenantPolicyHead" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": { "const": "WIDGET_ROLLOUT_APPROVED" },
+                "projectionType": { "const": "RolloutApproval" }
+              }
+            },
+            {
+              "properties": {
+                "eventType": {
+                  "enum": ["WIDGET_ROLLOUT_ACTIVATED", "WIDGET_ROLLOUT_STOPPED"]
+                },
+                "projectionType": { "const": "RolloutHead" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "evidenceExpiryEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "eventId",
+        "eventType",
+        "aggregateType",
+        "aggregateId",
+        "aggregateSequence",
+        "occurredAt",
+        "causeDigest",
+        "target",
+        "reasonCode",
+        "projectionSchemaVersion",
+        "projectionType",
+        "beforeHash",
+        "afterHash"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "eventId": { "$ref": "#/$defs/uuid" },
+        "eventType": { "const": "WIDGET_EVIDENCE_EXPIRED" },
+        "aggregateType": { "const": "WIDGET_VERSION" },
+        "aggregateId": { "$ref": "#/$defs/uuid" },
+        "aggregateSequence": { "type": "integer", "minimum": 1 },
+        "occurredAt": { "$ref": "#/$defs/occurredAt" },
+        "causeDigest": { "$ref": "#/$defs/sha256" },
+        "target": { "$ref": "#/$defs/versionTarget" },
+        "reasonCode": { "const": "SYSTEM_EVIDENCE_EXPIRY" },
+        "projectionSchemaVersion": { "const": 1 },
+        "projectionType": { "const": "VersionState" },
+        "beforeHash": { "$ref": "#/$defs/sha256" },
+        "afterHash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "shadowEvaluationEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "eventId",
+        "eventType",
+        "aggregateType",
+        "aggregateId",
+        "aggregateSequence",
+        "occurredAt",
+        "evaluationId",
+        "target",
+        "rolloutContext",
+        "diffBucket"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "eventId": { "$ref": "#/$defs/uuid" },
+        "eventType": {
+          "enum": ["WIDGET_SHADOW_MISMATCH_DETECTED", "WIDGET_SHADOW_RECOVERED"]
+        },
+        "aggregateType": { "const": "WIDGET_SHADOW_EVALUATION" },
+        "aggregateId": { "$ref": "#/$defs/shadowAggregateRef" },
+        "aggregateSequence": { "type": "integer", "minimum": 1 },
+        "occurredAt": { "$ref": "#/$defs/occurredAt" },
+        "evaluationId": { "$ref": "#/$defs/uuid" },
+        "target": { "$ref": "#/$defs/shadowTarget" },
+        "rolloutContext": { "$ref": "#/$defs/rolloutContext" },
+        "diffBucket": {
+          "enum": [
+            "STATIC_ONLY",
+            "SHADOW_ONLY",
+            "STATE_MISMATCH",
+            "ADDABILITY_MISMATCH",
+            "VERSION_UNRESOLVED",
+            "BINDING_MISMATCH",
+            "SAFETY_MISMATCH"
+          ]
+        }
+      }
+    }
+  }
+}

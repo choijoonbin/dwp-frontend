@@ -28,10 +28,10 @@ describe('approval home preference API', () => {
     const fetchMock = vi.fn().mockResolvedValueOnce(jsonResponse({ data }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(getApprovalHomePreference()).resolves.toEqual(data);
+    await expect(getApprovalHomePreference('scope-self')).resolves.toEqual(data);
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      `/api/platform/v1/home-preferences/surfaces/${APPROVAL_HOME_SURFACE_KEY}`
+      `/api/platform/v1/home-preferences/surfaces/${APPROVAL_HOME_SURFACE_KEY}?contextScopeKey=scope-self`
     );
     const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
     expect(request).toMatchObject({ method: 'GET', body: undefined });

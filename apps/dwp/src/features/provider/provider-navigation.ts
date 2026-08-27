@@ -49,7 +49,12 @@ export const PROVIDER_NAVIGATION: readonly ProviderNavigationGroup[] = [
         icon: Flag,
         permission: 'FEATURE_ROLLOUT_READ',
       },
-      { key: 'support', path: '/provider/support', icon: LifeBuoy, permission: 'ESTATE_READ' },
+      {
+        key: 'support',
+        path: '/provider/support',
+        icon: LifeBuoy,
+        permission: 'SUPPORT_ACCESS_READ',
+      },
       {
         key: 'commercial',
         path: '/provider/commercial',
@@ -72,3 +77,19 @@ export const PROVIDER_NAVIGATION: readonly ProviderNavigationGroup[] = [
     ],
   },
 ];
+
+/**
+ * Resolve the first Provider control-plane destination the current operator can actually read.
+ *
+ * Provider roles are intentionally least-privilege. In particular, release and data approvers do
+ * not receive estate access merely to obtain a landing page, so `/provider` must never assume that
+ * the overview is available.
+ */
+export function resolveProviderLandingPath(permissions: readonly string[]): string | null {
+  const granted = new Set(permissions);
+  for (const group of PROVIDER_NAVIGATION) {
+    const destination = group.items.find((item) => granted.has(item.permission));
+    if (destination) return destination.path;
+  }
+  return null;
+}

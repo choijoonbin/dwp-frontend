@@ -32,7 +32,7 @@ import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { HomeAudienceProfile, HomeBackgroundPosition } from '@dwp-frontend/shared-utils';
+import type { HomeAudienceProfile, HomeContentAlignment } from '@dwp-frontend/shared-utils';
 import type { FlowHomeHealth, FlowHomeHealthDomain, FlowHomeHealthIssue } from './flow-home-health';
 
 type FlowHomeContextMetrics = Readonly<{
@@ -47,7 +47,7 @@ type FlowHomeContextProps = {
   headline: string;
   subheadline: string;
   updatedAt: string;
-  backgroundPosition: HomeBackgroundPosition;
+  contentAlignment: HomeContentAlignment;
   health: FlowHomeHealth;
   metrics: FlowHomeContextMetrics;
   editing: boolean;
@@ -104,7 +104,7 @@ export function FlowHomeContext({
   headline,
   subheadline,
   updatedAt,
-  backgroundPosition,
+  contentAlignment,
   health,
   metrics,
   editing,
@@ -119,13 +119,28 @@ export function FlowHomeContext({
   const { t } = useTranslation('home');
   const [editAnchor, setEditAnchor] = useState<HTMLElement | null>(null);
   const [healthAnchor, setHealthAnchor] = useState<HTMLElement | null>(null);
-  const copyOnRight = backgroundPosition === 'LEFT' && !compact;
+  const copyOnRight = contentAlignment === 'RIGHT' && !compact;
   const degraded =
     health.state === 'DELAYED' || health.state === 'PARTIAL' || health.state === 'UNAVAILABLE';
   const metricItems = [
-    { key: 'action', value: metrics.action, icon: ListTodo },
-    { key: 'timeline', value: metrics.timeline, icon: CalendarRange },
-    { key: 'response', value: metrics.response, icon: Inbox },
+    {
+      key: 'action',
+      value: metrics.action,
+      icon: ListTodo,
+      href: '#flow-purpose-action',
+    },
+    {
+      key: 'timeline',
+      value: metrics.timeline,
+      icon: CalendarRange,
+      href: '#flow-purpose-timeline',
+    },
+    {
+      key: 'response',
+      value: metrics.response,
+      icon: Inbox,
+      href: '#flow-purpose-response',
+    },
   ] as const;
   const canEditLayout = customizationEnabled && Boolean(onEdit);
   const hasEditHub = canEditLayout || Boolean(onOpenStudio);
@@ -243,56 +258,92 @@ export function FlowHomeContext({
           gridColumn: copyOnRight ? { xs: '1', md: '6 / 13' } : { xs: '1', md: '1 / 8' },
           gridRow: { md: '2' },
           display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', sm: 'repeat(3, minmax(0, 1fr))' },
-          gap: 0.75,
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
           maxWidth: 680,
           width: 1,
           justifySelf: copyOnRight ? { md: 'end' } : 'start',
-          '& > :last-child': { gridColumn: { xs: '1 / -1', sm: 'auto' } },
+          overflow: 'hidden',
+          border: '1px solid rgba(255,255,255,0.2)',
+          borderRadius: 2.5,
+          bgcolor: 'rgba(3,12,28,0.52)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          '& > li:not(:last-of-type)': {
+            borderInlineEnd: '1px solid rgba(255,255,255,0.16)',
+          },
+          '@media (prefers-reduced-transparency: reduce)': {
+            bgcolor: '#10284D',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+          },
+          '@media (forced-colors: active)': {
+            bgcolor: 'Canvas',
+            borderColor: 'CanvasText',
+            '& > li:not(:last-of-type)': { borderColor: 'CanvasText' },
+          },
         }}
       >
-        {metricItems.map(({ key, value, icon: Icon }) => (
-          <Box
-            component="li"
-            key={key}
-            data-flow-context-metric={key}
-            sx={{
-              minWidth: 0,
-              minHeight: 44,
-              px: 1,
-              py: 0.5,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.75,
-              border: '1px solid rgba(255,255,255,0.16)',
-              borderRadius: 2.5,
-              bgcolor: 'rgba(3,12,28,0.52)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              '@media (prefers-reduced-transparency: reduce)': {
-                bgcolor: '#10284D',
-                backdropFilter: 'none',
-                WebkitBackdropFilter: 'none',
-              },
-              '@media (forced-colors: active)': {
-                bgcolor: 'Canvas',
-                borderColor: 'CanvasText',
-              },
-            }}
-          >
-            <Icon size={16} aria-hidden="true" />
-            <Box sx={{ minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-              <Typography component="span" sx={{ fontSize: 17, fontWeight: 800, lineHeight: 1 }}>
-                {formatNumber(value)}
-              </Typography>
-              <Typography
-                component="span"
-                variant="caption"
-                sx={{ color: 'rgba(248,250,252,0.76)', whiteSpace: 'nowrap' }}
+        {metricItems.map(({ key, value, icon: Icon, href }) => (
+          <Box component="li" key={key} data-flow-context-metric={key} sx={{ minWidth: 0 }}>
+            <ButtonBase
+              component="a"
+              href={href}
+              aria-label={`${t(`flow.context.metrics.${key}`)} ${t('flow.purpose.count', {
+                count: value,
+              })}`}
+              sx={{
+                width: 1,
+                minWidth: 0,
+                minHeight: 44,
+                px: { xs: 0.75, sm: 1.25 },
+                py: 0.5,
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                gap: { xs: 0.5, sm: 0.75 },
+                color: 'inherit',
+                textAlign: 'left',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
+                '&:focus-visible': {
+                  outline: '3px solid var(--dwp-focus-ring, #93C5FD)',
+                  outlineOffset: -3,
+                },
+              }}
+            >
+              <Icon size={16} aria-hidden="true" style={{ flexShrink: 0 }} />
+              <Box
+                sx={{
+                  minWidth: 0,
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: 0.5,
+                  flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                }}
               >
-                {t(`flow.context.metrics.${key}`)}
-              </Typography>
-            </Box>
+                <Typography component="span" sx={{ fontSize: 17, fontWeight: 800, lineHeight: 1 }}>
+                  {formatNumber(value)}
+                </Typography>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{
+                    color: 'rgba(248,250,252,0.78)',
+                    lineHeight: 1.15,
+                    whiteSpace: { sm: 'nowrap' },
+                  }}
+                >
+                  <Box component="span" sx={{ '@media (max-width:359.95px)': { display: 'none' } }}>
+                    {t(`flow.context.metrics.${key}`)}
+                  </Box>
+                  <Box
+                    component="span"
+                    sx={{ display: 'none', '@media (max-width:359.95px)': { display: 'inline' } }}
+                  >
+                    {t(`flow.context.metricsShort.${key}`)}
+                  </Box>
+                </Typography>
+              </Box>
+            </ButtonBase>
           </Box>
         ))}
       </Box>
@@ -307,7 +358,7 @@ export function FlowHomeContext({
         sx={{
           minWidth: 0,
           gridColumn: copyOnRight ? { xs: '1', md: '1 / 6' } : { xs: '1', md: '8 / 13' },
-          gridRow: { md: '1 / span 2' },
+          gridRow: { md: '1' },
           justifySelf: { xs: 'stretch', md: copyOnRight ? 'start' : 'end' },
           alignSelf: { md: 'center' },
         }}
@@ -404,10 +455,13 @@ export function FlowHomeContext({
           aria-live="polite"
           sx={{
             minWidth: 0,
-            gridColumn: '1 / -1',
+            gridColumn: copyOnRight ? { xs: '1', md: '1 / 6' } : { xs: '1', md: '8 / 13' },
+            gridRow: { md: '2' },
+            justifySelf: { xs: 'stretch', md: copyOnRight ? 'start' : 'end' },
+            width: 1,
             minHeight: 44,
-            px: 0.75,
-            py: 0.5,
+            px: 0.5,
+            py: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

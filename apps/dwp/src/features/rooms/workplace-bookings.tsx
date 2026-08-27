@@ -1,6 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarCheck2, CheckCircle2, Clock3, LogOut, MapPin, XCircle } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import {
+  CalendarCheck2,
+  CheckCircle2,
+  Clock3,
+  LogOut,
+  MapPin,
+  PencilLine,
+  XCircle,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   cancelWorkplaceBooking,
@@ -24,6 +33,7 @@ import Typography from '@mui/material/Typography';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 import { WorkplaceReleaseWindows } from './workplace-release-windows';
+import { WorkplaceRelocateBookingDialog } from './workplace-relocate-booking-dialog';
 
 import type { WorkplaceBooking } from '@dwp-frontend/shared-utils';
 
@@ -40,13 +50,20 @@ function bookingRange(filter: BookingFilter) {
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
+function bookingTargetId(bookingId: string) {
+  return `workplace-booking-${bookingId.replace(/[^a-zA-Z0-9_-]/gu, '-')}`;
+}
+
 export function WorkplaceBookings() {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
+  const [searchParams] = useSearchParams();
+  const requestedBookingId = searchParams.get('booking');
   const [filter, setFilter] = useState<BookingFilter>('upcoming');
   const [confirming, setConfirming] = useState<BookingAction | null>(null);
+  const [relocating, setRelocating] = useState<WorkplaceBooking | null>(null);
   const range = useMemo(() => bookingRange(filter), [filter]);
   const query = useQuery({
     queryKey: ['workplace', 'bookings', range.from, range.to],
@@ -73,6 +90,18 @@ export function WorkplaceBookings() {
         ? Date.parse(left.startsAt) - Date.parse(right.startsAt)
         : Date.parse(right.startsAt) - Date.parse(left.startsAt)
     );
+  const requestedBookingVisible = bookings.some(
+    (booking) => booking.bookingId === requestedBookingId
+  );
+  useEffect(() => {
+    if (!requestedBookingId || !requestedBookingVisible) return;
+    const frame = window.requestAnimationFrame(() => {
+      const target = document.getElementById(bookingTargetId(requestedBookingId));
+      target?.scrollIntoView({ block: 'center' });
+      target?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [requestedBookingId, requestedBookingVisible]);
   const format = (value: string) =>
     formatDate(
       value,
@@ -130,17 +159,17 @@ export function WorkplaceBookings() {
         )}
         {query.isError && (
           <Alert
-            severity="error"
+            severity={query.data ? 'warning' : 'error'}
             action={
               <ActionButton intent="quiet" onClick={() => query.refetch()}>
                 {t('actions.retry')}
               </ActionButton>
             }
           >
-            {t('workplace.my.loadError')}
+            {t(query.data ? 'workplace.staleWarning' : 'workplace.my.loadError')}
           </Alert>
         )}
-        {!query.isLoading && !query.isError && bookings.length === 0 && (
+        {!query.isLoading && (!query.isError || query.data) && bookings.length === 0 && (
           <EmptyState
             icon={<CalendarCheck2 size={28} />}
             title={t(
@@ -150,10 +179,26 @@ export function WorkplaceBookings() {
           />
         )}
         {bookings.map((booking, index) => {
+          const selected = booking.bookingId === requestedBookingId;
           return (
             <Box
               key={booking.bookingId}
-              sx={{ p: { xs: 1.5, md: 2 }, borderTop: index ? 1 : 0, borderColor: 'divider' }}
+              id={bookingTargetId(booking.bookingId)}
+              data-testid={bookingTargetId(booking.bookingId)}
+              tabIndex={-1}
+              aria-current={selected ? 'true' : undefined}
+              sx={(theme) => ({
+                p: { xs: 1.5, md: 2 },
+                borderTop: index ? 1 : 0,
+                borderColor: 'divider',
+                bgcolor: selected ? 'var(--dwp-product-soft)' : 'transparent',
+                boxShadow: selected ? `inset 3px 0 ${theme.palette.primary.main}` : 'none',
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: -2,
+                },
+              })}
             >
               <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" gap={2}>
                 <Box sx={{ minWidth: 0 }}>
@@ -219,6 +264,15 @@ export function WorkplaceBookings() {
                     )}
                     {booking.canCancel && (
                       <ActionButton
+                        intent="secondary"
+                        startIcon={<PencilLine size={16} />}
+                        onClick={() => setRelocating(booking)}
+                      >
+                        {t('workplace.my.relocate.action')}
+                      </ActionButton>
+                    )}
+                    {booking.canCancel && (
+                      <ActionButton
                         intent="danger"
                         startIcon={<XCircle size={16} />}
                         onClick={() => setConfirming({ booking, action: 'cancel' })}
@@ -234,6 +288,11 @@ export function WorkplaceBookings() {
         })}
       </Box>
       <WorkplaceReleaseWindows />
+      <WorkplaceRelocateBookingDialog
+        booking={relocating}
+        open={Boolean(relocating)}
+        onClose={() => setRelocating(null)}
+      />
       <ConfirmDialog
         open={Boolean(confirming)}
         title={t(

@@ -1,0 +1,928 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/schemas/widget-registry-command.v1.schema.json",
+  "title": "DWP Widget Registry Internal Command V1",
+  "description": "Closed Provider-to-Platform Widget Registry command envelope. Required service scope and Provider permission are immutable branch annotations verified against signed claims, not caller-controlled request fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "commandId",
+    "operationId",
+    "commandType",
+    "target",
+    "payload",
+    "publicIdempotencyKey",
+    "publicRequestFingerprint",
+    "expectedVersion",
+    "correlationId",
+    "operatorRef",
+    "sessionRef",
+    "permissionSetHash",
+    "sodArtifactIds"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "commandId": { "$ref": "#/$defs/uuid" },
+    "operationId": {
+      "enum": [
+        "createWidgetDefinition",
+        "createWidgetDefinitionVersion",
+        "updateWidgetDefinitionVersion",
+        "validateWidgetDefinitionVersion",
+        "submitWidgetDefinitionVersion",
+        "decideWidgetDefinitionVersion",
+        "reworkWidgetDefinitionVersion",
+        "recordWidgetCertificationEvidence",
+        "waiveWidgetCertificationEvidence",
+        "publishWidgetDefinitionVersion",
+        "deprecateWidgetDefinitionVersion",
+        "quarantineWidgetDefinitionVersion",
+        "approveWidgetQuarantineClearance",
+        "clearWidgetVersionQuarantine",
+        "revokeWidgetDefinitionVersion",
+        "retireWidgetDefinition",
+        "promoteWidgetReleaseChannel",
+        "rollbackWidgetReleaseChannel",
+        "disableWidgetRuntimeControl",
+        "approveWidgetRuntimeControlEnable",
+        "enableWidgetRuntimeControl"
+      ]
+    },
+    "commandType": {
+      "enum": [
+        "CREATE_DEFINITION",
+        "CREATE_VERSION",
+        "UPDATE_VERSION",
+        "VALIDATE",
+        "SUBMIT",
+        "DECIDE",
+        "REWORK",
+        "RECORD_EVIDENCE",
+        "WAIVE_EVIDENCE",
+        "PUBLISH",
+        "DEPRECATE",
+        "QUARANTINE",
+        "APPROVE_QUARANTINE_CLEARANCE",
+        "CLEAR_QUARANTINE",
+        "REVOKE",
+        "RETIRE",
+        "PROMOTE",
+        "ROLLBACK",
+        "DISABLE_RUNTIME_CONTROL",
+        "APPROVE_RUNTIME_CONTROL_ENABLE",
+        "ENABLE_RUNTIME_CONTROL"
+      ]
+    },
+    "target": { "type": "object" },
+    "payload": { "type": "object" },
+    "publicIdempotencyKey": { "$ref": "#/$defs/uuid" },
+    "publicRequestFingerprint": { "$ref": "#/$defs/sha256" },
+    "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" },
+    "correlationId": { "$ref": "#/$defs/uuid" },
+    "operatorRef": { "$ref": "#/$defs/opaqueRef" },
+    "sessionRef": { "$ref": "#/$defs/opaqueRef" },
+    "permissionSetHash": { "$ref": "#/$defs/sha256" },
+    "sodArtifactIds": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/opaqueRef" }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/branchCreateDefinition",
+      "x-dwp-requiredServiceScope": "widget-registry.write",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_WRITE"
+    },
+    {
+      "$ref": "#/$defs/branchCreateVersion",
+      "x-dwp-requiredServiceScope": "widget-registry.write",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_WRITE"
+    },
+    {
+      "$ref": "#/$defs/branchUpdateVersion",
+      "x-dwp-requiredServiceScope": "widget-registry.write",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_WRITE"
+    },
+    {
+      "$ref": "#/$defs/branchValidate",
+      "x-dwp-requiredServiceScope": "widget-registry.write",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_WRITE"
+    },
+    {
+      "$ref": "#/$defs/branchSubmit",
+      "x-dwp-requiredServiceScope": "widget-registry.write",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_WRITE"
+    },
+    {
+      "$ref": "#/$defs/branchDecide",
+      "x-dwp-requiredServiceScope": "widget-registry.review",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVIEW"
+    },
+    {
+      "$ref": "#/$defs/branchRework",
+      "x-dwp-requiredServiceScope": "widget-registry.write",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_WRITE"
+    },
+    {
+      "$ref": "#/$defs/branchRecordEvidence",
+      "x-dwp-requiredServiceScope": "widget-registry.review",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVIEW"
+    },
+    {
+      "$ref": "#/$defs/branchWaiveEvidence",
+      "x-dwp-requiredServiceScope": "widget-registry.waive",
+      "x-dwp-requiredProviderPermission": "WIDGET_EVIDENCE_WAIVE"
+    },
+    {
+      "$ref": "#/$defs/branchPublish",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    },
+    {
+      "$ref": "#/$defs/branchDeprecate",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    },
+    {
+      "$ref": "#/$defs/branchQuarantine",
+      "x-dwp-requiredServiceScope": "widget-registry.safety",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVOKE"
+    },
+    {
+      "$ref": "#/$defs/branchApproveQuarantineClearance",
+      "x-dwp-requiredServiceScope": "widget-registry.review",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVIEW"
+    },
+    {
+      "$ref": "#/$defs/branchClearQuarantine",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    },
+    {
+      "$ref": "#/$defs/branchRevoke",
+      "x-dwp-requiredServiceScope": "widget-registry.safety",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVOKE"
+    },
+    {
+      "$ref": "#/$defs/branchRetire",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    },
+    {
+      "$ref": "#/$defs/branchPromote",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    },
+    {
+      "$ref": "#/$defs/branchRollback",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    },
+    {
+      "$ref": "#/$defs/branchDisableRuntimeControl",
+      "x-dwp-requiredServiceScope": "widget-registry.safety",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVOKE"
+    },
+    {
+      "$ref": "#/$defs/branchApproveRuntimeControlEnable",
+      "x-dwp-requiredServiceScope": "widget-registry.review",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_REVIEW"
+    },
+    {
+      "$ref": "#/$defs/branchEnableRuntimeControl",
+      "x-dwp-requiredServiceScope": "widget-registry.release",
+      "x-dwp-requiredProviderPermission": "WIDGET_DEFINITION_RELEASE"
+    }
+  ],
+  "x-dwp-canonicalHashContracts": {
+    "algorithm": "SHA-256",
+    "encoding": "UTF-8",
+    "canonicalization": "RFC8785-JCS",
+    "publicRequestFingerprintFields": [
+      "method",
+      "pathTemplate",
+      "body",
+      "expectedVersion",
+      "actorScope"
+    ],
+    "permissionSetHashFields": [
+      "schemaVersion",
+      "permissionCodes",
+      "ownerProductKeys",
+      "providerAuthorityRevision"
+    ],
+    "reasonDigestFields": ["reasonCode", "reasonText"]
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "nonNegativeInteger": { "type": "integer", "minimum": 0 },
+    "opaqueRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "lowerKey": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "upperCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "reasonText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "semanticVersion": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "uuidArray": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/uuid" }
+    },
+    "opaqueRefArray": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/opaqueRef" }
+    },
+    "targetDefinitionKeyHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId"],
+      "properties": {
+        "targetType": { "const": "DEFINITION_KEY_HASH" },
+        "targetId": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "targetDefinitionSemverHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId", "definitionId"],
+      "properties": {
+        "targetType": { "const": "DEFINITION_SEMVER_HASH" },
+        "targetId": { "$ref": "#/$defs/sha256" },
+        "definitionId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "targetVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId", "versionId"],
+      "properties": {
+        "targetType": { "const": "VERSION" },
+        "targetId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "targetEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId", "versionId", "evidenceId"],
+      "properties": {
+        "targetType": { "const": "EVIDENCE" },
+        "targetId": { "$ref": "#/$defs/uuid" },
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "evidenceId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "targetDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId", "definitionId"],
+      "properties": {
+        "targetType": { "const": "DEFINITION" },
+        "targetId": { "$ref": "#/$defs/uuid" },
+        "definitionId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "targetDefinitionChannelHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId", "definitionId", "channel"],
+      "properties": {
+        "targetType": { "const": "DEFINITION_CHANNEL_HASH" },
+        "targetId": { "$ref": "#/$defs/sha256" },
+        "definitionId": { "$ref": "#/$defs/uuid" },
+        "channel": { "enum": ["STABLE", "PREVIEW"] }
+      }
+    },
+    "targetRuntimeControlScopeHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetType",
+        "targetId",
+        "controlScope",
+        "runtimeTargetType",
+        "runtimeTargetId"
+      ],
+      "properties": {
+        "targetType": { "const": "RUNTIME_CONTROL_SCOPE_HASH" },
+        "targetId": { "$ref": "#/$defs/sha256" },
+        "controlScope": {
+          "enum": ["CATALOG_MUTATIONS", "CATALOG_DISCOVERY", "RUNTIME_RENDER", "RUNTIME_ACTION"]
+        },
+        "runtimeTargetType": { "enum": ["GLOBAL", "DEFINITION", "VERSION"] },
+        "runtimeTargetId": {
+          "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "runtimeTargetType": { "const": "GLOBAL" },
+            "runtimeTargetId": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "runtimeTargetType": { "enum": ["DEFINITION", "VERSION"] },
+            "runtimeTargetId": { "$ref": "#/$defs/uuid" }
+          }
+        }
+      ]
+    },
+    "targetRuntimeControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetType", "targetId", "controlId"],
+      "properties": {
+        "targetType": { "const": "RUNTIME_CONTROL" },
+        "targetId": { "$ref": "#/$defs/uuid" },
+        "controlId": { "$ref": "#/$defs/uuid" }
+      }
+    },
+    "payloadDefinitionCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definitionKey",
+        "ownerProductKey",
+        "ownerTeamKey",
+        "riskTier",
+        "dataClassification",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "definitionKey": { "$ref": "#/$defs/lowerKey" },
+        "ownerProductKey": { "$ref": "#/$defs/lowerKey" },
+        "ownerTeamKey": { "$ref": "#/$defs/lowerKey" },
+        "riskTier": { "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "dataClassification": {
+          "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]
+        },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "const": 0 }
+      }
+    },
+    "payloadVersionCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semanticVersion", "manifest", "reasonCode", "reasonText", "expectedVersion"],
+      "properties": {
+        "semanticVersion": { "$ref": "#/$defs/semanticVersion" },
+        "manifest": { "$ref": "https://dwp.example/schemas/widget-manifest.v1.schema.json" },
+        "predecessorVersionId": { "$ref": "#/$defs/uuid" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadVersionUpdate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest", "reasonCode", "reasonText", "expectedVersion"],
+      "properties": {
+        "manifest": { "$ref": "https://dwp.example/schemas/widget-manifest.v1.schema.json" },
+        "predecessorVersionId": { "$ref": "#/$defs/uuid" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadValidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifestHash", "reasonCode", "reasonText", "expectedVersion"],
+      "properties": {
+        "manifestHash": { "$ref": "#/$defs/sha256" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reasonCode", "reasonText", "expectedVersion"],
+      "properties": {
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "validationRunId",
+        "evidenceIds",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "decision": { "enum": ["APPROVE", "REJECT"] },
+        "validationRunId": { "$ref": "#/$defs/uuid" },
+        "evidenceIds": { "$ref": "#/$defs/uuidArray" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadRework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rejectedDecisionId", "reasonCode", "reasonText", "expectedVersion"],
+      "properties": {
+        "rejectedDecisionId": { "$ref": "#/$defs/uuid" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadEvidenceCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceType",
+        "decision",
+        "manifestHash",
+        "evidenceRef",
+        "evidenceSha256",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "evidenceType": {
+          "enum": ["MANIFEST", "SECURITY", "PRIVACY", "A11Y", "PERFORMANCE", "LOCALIZATION"]
+        },
+        "decision": { "enum": ["PASS", "FAIL"] },
+        "manifestHash": { "$ref": "#/$defs/sha256" },
+        "evidenceRef": { "$ref": "#/$defs/opaqueRef" },
+        "evidenceSha256": { "$ref": "#/$defs/sha256" },
+        "expiresAt": { "$ref": "#/$defs/timestamp" },
+        "reviewNote": { "$ref": "#/$defs/reasonText" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadEvidenceWaiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestHash",
+        "waiverExpiresAt",
+        "waiverReason",
+        "trackingTicketRef",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "manifestHash": { "$ref": "#/$defs/sha256" },
+        "waiverExpiresAt": { "$ref": "#/$defs/timestamp" },
+        "waiverReason": { "$ref": "#/$defs/reasonText" },
+        "trackingTicketRef": { "$ref": "#/$defs/opaqueRef" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadPublish": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "channel",
+        "validationRunId",
+        "evidenceIds",
+        "manifestHash",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "channel": { "enum": ["STABLE", "PREVIEW"] },
+        "validationRunId": { "$ref": "#/$defs/uuid" },
+        "evidenceIds": { "$ref": "#/$defs/uuidArray" },
+        "manifestHash": { "$ref": "#/$defs/sha256" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadDeprecate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "replacementVersionId",
+        "deprecationEndsAt",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "replacementVersionId": { "$ref": "#/$defs/uuid" },
+        "deprecationEndsAt": { "$ref": "#/$defs/timestamp" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadSafetyTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicReasonCode",
+        "internalIncidentRef",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "publicReasonCode": { "$ref": "#/$defs/upperCode" },
+        "internalIncidentRef": { "$ref": "#/$defs/opaqueRef" },
+        "replacementVersionId": { "$ref": "#/$defs/uuid" },
+        "expiresAt": { "$ref": "#/$defs/timestamp" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadClearanceApproval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quarantineEventId",
+        "reviewDecision",
+        "evidenceRefs",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "quarantineEventId": { "$ref": "#/$defs/uuid" },
+        "reviewDecision": { "const": "APPROVE" },
+        "evidenceRefs": { "$ref": "#/$defs/opaqueRefArray" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadClearanceExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clearanceApprovalId",
+        "quarantineEventId",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "clearanceApprovalId": { "$ref": "#/$defs/uuid" },
+        "quarantineEventId": { "$ref": "#/$defs/uuid" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadDefinitionRetire": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["impactRevision", "reasonCode", "reasonText", "expectedVersion"],
+      "properties": {
+        "replacementDefinitionId": {
+          "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }]
+        },
+        "impactRevision": { "$ref": "#/$defs/opaqueRef" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadChannelTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "validationRunId",
+        "manifestHash",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "versionId": { "$ref": "#/$defs/uuid" },
+        "validationRunId": { "$ref": "#/$defs/uuid" },
+        "manifestHash": { "$ref": "#/$defs/sha256" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadChannelRollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "restoreVersionId",
+        "expectedCurrentVersionId",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "restoreVersionId": { "$ref": "#/$defs/uuid" },
+        "expectedCurrentVersionId": { "$ref": "#/$defs/uuid" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadRuntimeDisable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "targetType",
+        "targetId",
+        "publicReasonCode",
+        "internalIncidentRef",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "scope": {
+          "enum": ["CATALOG_MUTATIONS", "CATALOG_DISCOVERY", "RUNTIME_RENDER", "RUNTIME_ACTION"]
+        },
+        "targetType": { "enum": ["GLOBAL", "DEFINITION", "VERSION"] },
+        "targetId": { "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+        "expiresAt": { "$ref": "#/$defs/timestamp" },
+        "publicReasonCode": { "$ref": "#/$defs/upperCode" },
+        "internalIncidentRef": { "$ref": "#/$defs/opaqueRef" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "targetType": { "const": "GLOBAL" },
+            "targetId": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "targetType": { "enum": ["DEFINITION", "VERSION"] },
+            "targetId": { "$ref": "#/$defs/uuid" }
+          }
+        }
+      ]
+    },
+    "payloadRuntimeEnableApproval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "controlRevision",
+        "evidenceRefs",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "controlRevision": { "$ref": "#/$defs/nonNegativeInteger" },
+        "evidenceRefs": { "$ref": "#/$defs/opaqueRefArray" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "payloadRuntimeEnable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enableApprovalId",
+        "controlRevision",
+        "reasonCode",
+        "reasonText",
+        "expectedVersion"
+      ],
+      "properties": {
+        "enableApprovalId": { "$ref": "#/$defs/uuid" },
+        "controlRevision": { "$ref": "#/$defs/nonNegativeInteger" },
+        "reasonCode": { "$ref": "#/$defs/upperCode" },
+        "reasonText": { "$ref": "#/$defs/reasonText" },
+        "expectedVersion": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "branchCreateDefinition": {
+      "properties": {
+        "operationId": { "const": "createWidgetDefinition" },
+        "commandType": { "const": "CREATE_DEFINITION" },
+        "target": { "$ref": "#/$defs/targetDefinitionKeyHash" },
+        "payload": { "$ref": "#/$defs/payloadDefinitionCreate" }
+      }
+    },
+    "branchCreateVersion": {
+      "properties": {
+        "operationId": { "const": "createWidgetDefinitionVersion" },
+        "commandType": { "const": "CREATE_VERSION" },
+        "target": { "$ref": "#/$defs/targetDefinitionSemverHash" },
+        "payload": { "$ref": "#/$defs/payloadVersionCreate" }
+      }
+    },
+    "branchUpdateVersion": {
+      "properties": {
+        "operationId": { "const": "updateWidgetDefinitionVersion" },
+        "commandType": { "const": "UPDATE_VERSION" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadVersionUpdate" }
+      }
+    },
+    "branchValidate": {
+      "properties": {
+        "operationId": { "const": "validateWidgetDefinitionVersion" },
+        "commandType": { "const": "VALIDATE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadValidate" }
+      }
+    },
+    "branchSubmit": {
+      "properties": {
+        "operationId": { "const": "submitWidgetDefinitionVersion" },
+        "commandType": { "const": "SUBMIT" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadTransition" }
+      }
+    },
+    "branchDecide": {
+      "properties": {
+        "operationId": { "const": "decideWidgetDefinitionVersion" },
+        "commandType": { "const": "DECIDE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadDecision" }
+      }
+    },
+    "branchRework": {
+      "properties": {
+        "operationId": { "const": "reworkWidgetDefinitionVersion" },
+        "commandType": { "const": "REWORK" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadRework" }
+      }
+    },
+    "branchRecordEvidence": {
+      "properties": {
+        "operationId": { "const": "recordWidgetCertificationEvidence" },
+        "commandType": { "const": "RECORD_EVIDENCE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadEvidenceCreate" }
+      }
+    },
+    "branchWaiveEvidence": {
+      "properties": {
+        "operationId": { "const": "waiveWidgetCertificationEvidence" },
+        "commandType": { "const": "WAIVE_EVIDENCE" },
+        "target": { "$ref": "#/$defs/targetEvidence" },
+        "payload": { "$ref": "#/$defs/payloadEvidenceWaiver" }
+      }
+    },
+    "branchPublish": {
+      "properties": {
+        "operationId": { "const": "publishWidgetDefinitionVersion" },
+        "commandType": { "const": "PUBLISH" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadPublish" }
+      }
+    },
+    "branchDeprecate": {
+      "properties": {
+        "operationId": { "const": "deprecateWidgetDefinitionVersion" },
+        "commandType": { "const": "DEPRECATE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadDeprecate" }
+      }
+    },
+    "branchQuarantine": {
+      "properties": {
+        "operationId": { "const": "quarantineWidgetDefinitionVersion" },
+        "commandType": { "const": "QUARANTINE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadSafetyTransition" }
+      }
+    },
+    "branchApproveQuarantineClearance": {
+      "properties": {
+        "operationId": { "const": "approveWidgetQuarantineClearance" },
+        "commandType": { "const": "APPROVE_QUARANTINE_CLEARANCE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadClearanceApproval" }
+      }
+    },
+    "branchClearQuarantine": {
+      "properties": {
+        "operationId": { "const": "clearWidgetVersionQuarantine" },
+        "commandType": { "const": "CLEAR_QUARANTINE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadClearanceExecution" }
+      }
+    },
+    "branchRevoke": {
+      "properties": {
+        "operationId": { "const": "revokeWidgetDefinitionVersion" },
+        "commandType": { "const": "REVOKE" },
+        "target": { "$ref": "#/$defs/targetVersion" },
+        "payload": { "$ref": "#/$defs/payloadSafetyTransition" }
+      }
+    },
+    "branchRetire": {
+      "properties": {
+        "operationId": { "const": "retireWidgetDefinition" },
+        "commandType": { "const": "RETIRE" },
+        "target": { "$ref": "#/$defs/targetDefinition" },
+        "payload": { "$ref": "#/$defs/payloadDefinitionRetire" }
+      }
+    },
+    "branchPromote": {
+      "properties": {
+        "operationId": { "const": "promoteWidgetReleaseChannel" },
+        "commandType": { "const": "PROMOTE" },
+        "target": { "$ref": "#/$defs/targetDefinitionChannelHash" },
+        "payload": { "$ref": "#/$defs/payloadChannelTransition" }
+      }
+    },
+    "branchRollback": {
+      "properties": {
+        "operationId": { "const": "rollbackWidgetReleaseChannel" },
+        "commandType": { "const": "ROLLBACK" },
+        "target": { "$ref": "#/$defs/targetDefinitionChannelHash" },
+        "payload": { "$ref": "#/$defs/payloadChannelRollback" }
+      }
+    },
+    "branchDisableRuntimeControl": {
+      "properties": {
+        "operationId": { "const": "disableWidgetRuntimeControl" },
+        "commandType": { "const": "DISABLE_RUNTIME_CONTROL" },
+        "target": { "$ref": "#/$defs/targetRuntimeControlScopeHash" },
+        "payload": { "$ref": "#/$defs/payloadRuntimeDisable" }
+      }
+    },
+    "branchApproveRuntimeControlEnable": {
+      "properties": {
+        "operationId": { "const": "approveWidgetRuntimeControlEnable" },
+        "commandType": { "const": "APPROVE_RUNTIME_CONTROL_ENABLE" },
+        "target": { "$ref": "#/$defs/targetRuntimeControl" },
+        "payload": { "$ref": "#/$defs/payloadRuntimeEnableApproval" }
+      }
+    },
+    "branchEnableRuntimeControl": {
+      "properties": {
+        "operationId": { "const": "enableWidgetRuntimeControl" },
+        "commandType": { "const": "ENABLE_RUNTIME_CONTROL" },
+        "target": { "$ref": "#/$defs/targetRuntimeControl" },
+        "payload": { "$ref": "#/$defs/payloadRuntimeEnable" }
+      }
+    }
+  }
+}

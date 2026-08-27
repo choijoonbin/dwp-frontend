@@ -6,7 +6,7 @@ import { COMMUNICATIONS_PRODUCT_MANIFEST } from '../features/communications/comm
 import { COMMUNICATIONS_WORK_NAVIGATION } from '../features/communications/communications-navigation';
 import { CommunicationsLayout } from '../layouts/communications-layout';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
-import { productPageRelativePattern } from './product-page-route-contracts';
+import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
   AppRouteGuard,
   authenticationFallback,
@@ -88,7 +88,7 @@ function communicationsWorkRoute(
     throw new Error(`Missing Communications work navigation item: ${navigationPath}`);
   }
   return {
-    path: productPageRelativePattern(routeContractKey, '/communications'),
+    path: officialProductPageRelativePattern(routeContractKey, '/communications'),
     handle: { routeContractKey },
     element: (
       <ProductCanaryRouteBoundary
@@ -152,7 +152,7 @@ export const communicationsRoutes: RouteObject[] = [
             ),
           },
           {
-            path: productPageRelativePattern(
+            path: officialProductPageRelativePattern(
               'route.communications.management.content.page',
               '/communications/admin'
             ),
@@ -230,6 +230,15 @@ export const communicationsRoutes: RouteObject[] = [
           },
           {
             path: ':view/:storyId',
+            element: (
+              <ProductCanaryUnknownRoute
+                productId="communications"
+                legacy={page(<CommunicationsPage />)}
+              />
+            ),
+          },
+          {
+            path: '*',
             element: (
               <ProductCanaryUnknownRoute
                 productId="communications"

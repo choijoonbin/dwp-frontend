@@ -18,8 +18,11 @@ import { getTenantId } from '@dwp-frontend/shared-utils/tenant-util';
 
 const NOTIFICATION_STREAM_URL = '/api/notifications/v1/stream';
 const LIVE_CHANNEL_PREFIX = 'dwp:notification-live:v2';
+const STREAM_CLIENT_KEY_SUFFIX = 'stream-client:v1';
 const BASE_RETRY_DELAY_MS = 1_000;
 const MAX_RETRY_DELAY_MS = 30_000;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+const fallbackClientIds = new Map<string, string>();
 
 type LiveChannelMessage =
   | { kind: 'notification.changed'; signal: NotificationLiveSignal }
@@ -67,10 +70,42 @@ export function isNotificationConnectionRequest(value: unknown): boolean {
   return record.kind === 'notification.connection-request' && Object.keys(record).length === 1;
 }
 
-export function notificationStreamUrl(cursor: string | null): string {
-  return cursor
-    ? `${NOTIFICATION_STREAM_URL}?after=${encodeURIComponent(cursor)}`
-    : NOTIFICATION_STREAM_URL;
+export function notificationStreamUrl(cursor: string | null, clientId?: string): string {
+  const parameters = new URLSearchParams();
+  if (clientId) parameters.set('clientId', clientId);
+  if (cursor) parameters.set('after', cursor);
+  const query = parameters.toString();
+  return query ? `${NOTIFICATION_STREAM_URL}?${query}` : NOTIFICATION_STREAM_URL;
+}
+
+export function resolveNotificationStreamClientId(
+  storageKey: string,
+  storage: Pick<Storage, 'getItem' | 'setItem'> | null,
+  createId: () => string = createNotificationStreamClientId
+): string {
+  if (!storageKey.trim()) throw new Error('Notification stream client storage key is required.');
+  try {
+    const stored = storage?.getItem(storageKey);
+    if (stored && UUID_PATTERN.test(stored)) {
+      fallbackClientIds.set(storageKey, stored);
+      return stored;
+    }
+  } catch {
+    // A stable in-memory identity still prevents reconnect storms in this runtime.
+  }
+  const fallback = fallbackClientIds.get(storageKey);
+  if (fallback) return fallback;
+  const created = createId();
+  if (!UUID_PATTERN.test(created)) {
+    throw new Error('Notification stream client ID must be a UUID.');
+  }
+  fallbackClientIds.set(storageKey, created);
+  try {
+    storage?.setItem(storageKey, created);
+  } catch {
+    // The in-memory identity remains authoritative when browser storage is blocked.
+  }
+  return created;
 }
 
 export function newestNotificationCursor(current: string | null, candidate: string): string {
@@ -96,6 +131,13 @@ export function NotificationLiveBridge() {
     const coordinated = Boolean(navigator.locks && channel);
     const lockName = `${channelName}:leader`;
     const cursorStorageKey = `${channelName}:cursor`;
+    const clientStorageKey = `${channelName}:${STREAM_CLIENT_KEY_SUFFIX}:${
+      coordinated ? 'profile' : 'tab'
+    }`;
+    const clientId = resolveNotificationStreamClientId(
+      clientStorageKey,
+      notificationClientStorage(coordinated)
+    );
     let reconnectCursor = readStoredCursor(cursorStorageKey);
     let connectionState: NotificationConnectionStateSignal['state'] = 'polling';
     let ownsStream = false;
@@ -174,10 +216,20 @@ export function NotificationLiveBridge() {
     }
 
     const consumeUntilDisconnected = async () => {
-      await getEventStream(notificationStreamUrl(reconnectCursor), {
+      await getEventStream(notificationStreamUrl(reconnectCursor, clientId), {
         signal: controller.signal,
         onOpen: () => updateConnectionState('live', coordinated),
         onMessage: (message) => {
+          if (message.event === 'notification.sync-reset') {
+            const resetSignal = parseNotificationSyncResetSignal(message.data);
+            if (!resetSignal) return;
+            dispatchSyncReset(resetSignal);
+            channel?.postMessage({
+              kind: 'notification.sync-reset',
+              signal: resetSignal,
+            } satisfies LiveChannelMessage);
+            return;
+          }
           if (!LIVE_EVENTS.has(message.event)) return;
           const signal = parseNotificationLiveSignal(message.data);
           if (!signal) return;
@@ -298,4 +350,27 @@ function removeStoredCursor(key: string): void {
   } catch {
     // The next reconnect still falls back to the in-memory reset cursor.
   }
+}
+
+function notificationClientStorage(coordinated: boolean): Storage | null {
+  try {
+    return coordinated ? window.localStorage : window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+function createNotificationStreamClientId(): string {
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  bytes[6] = ((bytes[6] ?? 0) & 0x0f) | 0x40;
+  bytes[8] = ((bytes[8] ?? 0) & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(
+    16,
+    20
+  )}-${hex.slice(20)}`;
 }

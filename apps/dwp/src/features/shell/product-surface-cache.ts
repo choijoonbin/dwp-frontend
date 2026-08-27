@@ -86,10 +86,10 @@ function isSensitiveQueryForRevisionIdentity(
   const meta = query.meta;
   return Boolean(
     query.queryKey[0] === SENSITIVE_QUERY_PREFIX &&
-      meta?.accessSensitive === true &&
-      meta.tenantId === identity.tenantId &&
-      meta.actorId === identity.actorId &&
-      meta.accessMode === identity.accessMode
+    meta?.accessSensitive === true &&
+    meta.tenantId === identity.tenantId &&
+    meta.actorId === identity.actorId &&
+    meta.accessMode === identity.accessMode
   );
 }
 

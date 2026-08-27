@@ -5,6 +5,7 @@ import process from 'node:process';
 const root = process.cwd();
 const featureRoot = path.join(root, 'apps/dwp/src/features');
 const manifestPath = path.join(root, 'architecture/frontend-apps.json');
+const routeCompositionPath = path.join(root, 'deploy/nginx/dwp-product-routes.conf');
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const failures = [];
 
@@ -15,6 +16,32 @@ if (manifest.composition !== 'same-origin-route') {
 if (manifest.gatewayPrefix !== '/api') failures.push('All browser APIs must use the /api Gateway.');
 if (manifest.assetBaseTemplate !== '/assets/dwp/{applicationId}/') {
   failures.push('Product assets must use an application-specific deployment namespace.');
+}
+
+if (!fs.existsSync(routeCompositionPath)) {
+  failures.push('The generated Nginx route composition is missing.');
+} else {
+  const routeComposition = fs.readFileSync(routeCompositionPath, 'utf8');
+  const secureAskRedirects = [
+    `location = /ask {
+  # Legacy question query strings are sensitive and must never enter edge logs.
+  access_log off;
+  return 308 /dwaion/new;
+}`,
+    `location ^~ /ask/ {
+  access_log off;
+  return 308 /dwaion/new;
+}`,
+  ];
+  if (secureAskRedirects.some((block) => !routeComposition.includes(block))) {
+    failures.push(
+      'Legacy /ask ingress must disable access logging and use a query-discarding return redirect.'
+    );
+  }
+  const askBlocks = routeComposition.match(/location (?:=|\^~) \/ask\/? \{[\s\S]*?\n\}/g) ?? [];
+  if (askBlocks.some((block) => /\$(?:args|request_uri)|\/dwaion\/new\?/.test(block))) {
+    failures.push('Legacy /ask redirects must not preserve or reconstruct query arguments.');
+  }
 }
 
 const productFeatures = new Map();
@@ -114,10 +141,21 @@ const governedProductIds = new Set();
 const governedSurfaceIds = new Set();
 const governedRoutePrefixes = new Set();
 const migrationWaves = new Set(['W0.5', 'W1a', 'W1b', 'W2', 'W3']);
+const requiredGovernedProductIds = new Set([
+  'approvals',
+  'calendar',
+  'communications',
+  'dwaion',
+  'hcm',
+  'mail',
+  'meetings',
+  'messaging',
+  'notifications',
+  'services',
+  'spaces',
+  'workplace',
+]);
 
-if (governedProducts.length !== 11) {
-  failures.push('Exactly 11 business products must declare governed Product Surfaces.');
-}
 for (const product of governedProducts) {
   if (!/^[a-z][a-z0-9-]*$/.test(product.productId ?? '')) {
     failures.push(`Invalid governed product id: ${product.productId}`);
@@ -158,6 +196,15 @@ for (const product of governedProducts) {
         `${product.productId} references unknown platform feature ${product.platformFeature}.`
       );
     }
+    if (!appIds.has(product.artifactApplicationId)) {
+      failures.push(
+        `${product.productId} must declare the application artifact that deploys its platform route.`
+      );
+    } else if (routePrefixes.get(product.routePrefix) !== product.artifactApplicationId) {
+      failures.push(
+        `${product.productId} route prefix is not owned by artifact ${product.artifactApplicationId}.`
+      );
+    }
     const routeModule = path.join(root, 'apps/dwp/src/routes', product.routeModule ?? '');
     if (!product.routeModule || !fs.existsSync(routeModule)) {
       failures.push(`${product.productId} logical product route module is missing.`);
@@ -174,6 +221,16 @@ for (const product of governedProducts) {
       failures.push(`${product.productId} has an invalid or duplicate Surface id: ${surfaceId}`);
     }
     governedSurfaceIds.add(surfaceId);
+  }
+}
+for (const productId of requiredGovernedProductIds) {
+  if (!governedProductIds.has(productId)) {
+    failures.push(`${productId} must declare governed Product Surfaces.`);
+  }
+}
+for (const productId of governedProductIds) {
+  if (!requiredGovernedProductIds.has(productId)) {
+    failures.push(`${productId} is not registered as a governed business product.`);
   }
 }
 const diskFeatures = fs

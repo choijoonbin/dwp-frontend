@@ -119,6 +119,7 @@ async function mockAdminSession(page: Page, options: AdminSessionOptions = {}) {
         email: 'admin@dwp.local',
         tenantId: 1,
         tenantCode: 'default',
+        identityPlane: 'TENANT',
         roles: options.roles ?? ['ADMIN'],
         resourceRoles: [],
       }),
@@ -201,6 +202,7 @@ test('tenant administrators govern fixed home zones without owning personal widg
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/admin/experience/home-composition');
+  await page.getByRole('tab', { name: 'Composition policy' }).click();
 
   await expect(
     page.getByRole('heading', { name: 'Home composition policy', level: 2 })
@@ -418,9 +420,16 @@ test('tenant administrators configure and reset the personal home presentation',
   let homeExperience = {
     headline: null as string | null,
     subheadline: null as string | null,
-    localizedContent: {} as Record<string, { headline: string | null; subheadline: string | null }>,
+    localizedContent: {
+      fr: { headline: 'Bienvenue', subheadline: 'Commencez votre journée' },
+    } as Record<string, { headline: string | null; subheadline: string | null }>,
     defaultLocale: 'ko',
     backgroundPosition: 'CENTER',
+    backgroundFocalX: 23,
+    backgroundFocalY: 37,
+    mobileBackgroundFocalX: 78,
+    mobileBackgroundFocalY: 64,
+    contentAlignment: 'LEFT',
     overlayOpacity: 18,
     backgroundUrl: null as string | null,
     backgroundOriginalName: null as string | null,
@@ -428,37 +437,91 @@ test('tenant administrators configure and reset the personal home presentation',
     backgroundSizeBytes: null as number | null,
     backgroundWidth: null as number | null,
     backgroundHeight: null as number | null,
+    launchpadConfiguration: { schemaVersion: 1, groups: [], placements: [] },
+    compositionPolicy: {
+      schemaVersion: 3,
+      experienceVariant: 'FLOW_V1',
+      personalCustomizationEnabled: true,
+      governedZones: [],
+    },
     version: 0,
   };
+  let publishCount = 0;
+  let releaseInitialHistoryRequest: (() => void) | undefined;
+  const initialHistoryRequest = new Promise<void>((resolve) => {
+    releaseInitialHistoryRequest = resolve;
+  });
 
   await page.route('**/api/platform/v1/admin/home-experience**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
     if (request.method() === 'GET' && path.endsWith('/revisions')) {
-      await route.fulfill({ contentType: 'application/json', body: envelope([]) });
+      await initialHistoryRequest;
+      await route.fulfill({
+        contentType: 'application/json',
+        body: envelope([
+          {
+            revisionId: 3,
+            sourceVersion: 0,
+            changeType: 'EXPERIENCE_PUBLISHED',
+            headline: 'Prior home',
+            backgroundOriginalName: null,
+            backgroundWidth: null,
+            backgroundHeight: null,
+            localeCount: 3,
+            affectedScopes: ['PRESENTATION', 'BACKGROUND_ASSET', 'LAUNCHPAD', 'COMPOSITION'],
+            current: false,
+            createdAt: '2026-08-27T00:00:00Z',
+          },
+        ]),
+      });
       return;
     }
     if (request.method() === 'GET') {
       await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
       return;
     }
-    if (request.method() === 'PUT') {
-      const body = request.postDataJSON() as typeof homeExperience;
-      homeExperience = { ...homeExperience, ...body, version: homeExperience.version + 1 };
-      await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
-      return;
-    }
-    if (path.endsWith('/background/reset')) {
-      homeExperience = {
-        ...homeExperience,
-        backgroundUrl: null,
-        backgroundOriginalName: null,
-        backgroundContentType: null,
-        backgroundSizeBytes: null,
-        backgroundWidth: null,
-        backgroundHeight: null,
-        version: homeExperience.version + 1,
-      };
+    if (request.method() === 'POST' && path.endsWith('/publish')) {
+      publishCount += 1;
+      expect(request.headers()['content-type']).toContain('multipart/form-data; boundary=');
+      if (publishCount === 1) {
+        homeExperience = {
+          ...homeExperience,
+          headline: 'One workspace, ready for action',
+          subheadline: 'Your governed apps and priorities in one place.',
+          localizedContent: {
+            ...homeExperience.localizedContent,
+            ko: {
+              headline: 'One workspace, ready for action',
+              subheadline: 'Your governed apps and priorities in one place.',
+            },
+          },
+          contentAlignment: 'RIGHT',
+          version: homeExperience.version + 1,
+        };
+      } else if (publishCount === 2) {
+        homeExperience = {
+          ...homeExperience,
+          backgroundUrl: `/api/platform/v1/home-experience/background?v=${homeExperience.version + 1}`,
+          backgroundOriginalName: 'agentic-workspace-hero-clean.png',
+          backgroundContentType: 'image/png',
+          backgroundSizeBytes: 1_492_965,
+          backgroundWidth: 2176,
+          backgroundHeight: 723,
+          version: homeExperience.version + 1,
+        };
+      } else {
+        homeExperience = {
+          ...homeExperience,
+          backgroundUrl: null,
+          backgroundOriginalName: null,
+          backgroundContentType: null,
+          backgroundSizeBytes: null,
+          backgroundWidth: null,
+          backgroundHeight: null,
+          version: homeExperience.version + 1,
+        };
+      }
       await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
       return;
     }
@@ -486,35 +549,164 @@ test('tenant administrators configure and reset the personal home presentation',
   );
 
   await page.goto('/admin/experience/home-experience');
-  await expect(page.getByRole('heading', { name: 'Home experience', level: 1 })).toBeVisible();
-  const workscapePreview = page.locator('[data-tenant-workscape-preview="desktop"]');
-  await expect(workscapePreview).toHaveAttribute('data-tenant-image-opacity', '1');
+  await expect(page.getByRole('heading', { name: 'Home page settings', level: 1 })).toBeVisible();
+  const workscapePreview = page.getByTestId('home-experience-preview');
+  const previewFrame = page.getByTestId('home-experience-preview-frame');
+  const expectPreviewGeometry = async (width: number, height: number, stageWidth: number) => {
+    await expect(workscapePreview).toHaveCSS('max-width', `${stageWidth}px`);
+    const geometry = await previewFrame.evaluate((frame) => {
+      const workscape = frame.querySelector<HTMLElement>('[data-tenant-workscape-preview]');
+      if (!workscape) throw new Error('Preview workscape is missing.');
+      const frameBounds = frame.getBoundingClientRect();
+      const workscapeBounds = workscape.getBoundingClientRect();
+      return {
+        frameWidth: frameBounds.width,
+        frameHeight: frameBounds.height,
+        workscapeWidth: workscapeBounds.width,
+        workscapeHeight: workscapeBounds.height,
+        contentWidth: workscape.clientWidth,
+        contentHeight: workscape.clientHeight,
+        scrollWidth: workscape.scrollWidth,
+        scrollHeight: workscape.scrollHeight,
+      };
+    });
+    expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(width / height, 2);
+    expect(geometry.frameWidth).toBeLessThanOrEqual(stageWidth);
+    expect(Math.abs(geometry.workscapeWidth - geometry.frameWidth)).toBeLessThanOrEqual(1);
+    expect(Math.abs(geometry.workscapeHeight - geometry.frameHeight)).toBeLessThanOrEqual(1);
+    expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.contentWidth + 1);
+    expect(geometry.scrollHeight).toBeLessThanOrEqual(geometry.contentHeight + 1);
+  };
+  await expect(workscapePreview).toHaveAttribute('data-preview-viewport', 'wide');
+  await expectPreviewGeometry(1920, 312, 1320);
+  await expect(workscapePreview.locator('[data-tenant-workscape-preview="wide"]')).toHaveAttribute(
+    'data-tenant-background-focal-x',
+    '23'
+  );
+  expect(
+    await workscapePreview
+      .locator('[data-tenant-workscape-preview="wide"]')
+      .evaluate((workscape) => getComputedStyle(workscape, '::before').backgroundPosition)
+  ).toBe('23% 37%');
+  await expect(page.getByRole('button', { name: 'FR' })).toHaveCount(2);
+  await page.getByRole('button', { name: 'History' }).click();
+  await expect(page.getByText('Loading home publication history…')).toBeVisible();
+  releaseInitialHistoryRequest?.();
+  await page.getByRole('button', { name: 'Restore' }).click();
+  await expect(
+    page.getByRole('dialog', { name: 'Restore this complete home revision?' })
+  ).toContainText('App dock');
+  await expect(page.getByRole('dialog')).toContainText('Home composition policy');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Close home publication history' }).click();
+  await page.getByRole('button', { name: 'Tablet 1024' }).click();
+  await expect(workscapePreview).toHaveAttribute('data-preview-viewport', 'tablet');
+  const tabletWorkscape = workscapePreview.locator('[data-tenant-workscape-preview="tablet"]');
+  await expect(tabletWorkscape).toBeVisible();
+  await expectPreviewGeometry(1024, 396, 820);
+  await page.getByRole('button', { name: 'Mobile 390' }).click();
+  await expect(workscapePreview).toHaveAttribute('data-preview-viewport', 'mobile');
+  await expectPreviewGeometry(390, 340, 390);
+  await expect(
+    workscapePreview.locator('[data-tenant-workscape-preview="mobile"]')
+  ).toHaveAttribute('data-tenant-background-focal-x', '78');
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.getByRole('button', { name: 'Wide 1920' }).click();
+  const narrowWideWorkscape = workscapePreview.locator('[data-tenant-workscape-preview="wide"]');
+  await expect(narrowWideWorkscape).toHaveAttribute('data-tenant-background-focal-x', '23');
+  expect(
+    await narrowWideWorkscape.evaluate(
+      (workscape) => getComputedStyle(workscape, '::before').backgroundPosition
+    )
+  ).toBe('23% 37%');
+  await page.getByRole('button', { name: 'Mobile 390' }).click();
+  const narrowMobileWorkscape = workscapePreview.locator(
+    '[data-tenant-workscape-preview="mobile"]'
+  );
+  await expect(narrowMobileWorkscape).toHaveAttribute('data-tenant-background-focal-x', '78');
+  expect(
+    await narrowMobileWorkscape.evaluate(
+      (workscape) => getComputedStyle(workscape, '::before').backgroundPosition
+    )
+  ).toBe('78% 64%');
+  for (const groupName of ['Preview viewport', 'Preview theme', 'Preview locale']) {
+    const targetSizes = await page
+      .getByRole('group', { name: groupName })
+      .getByRole('button')
+      .evaluateAll((buttons) =>
+        buttons.map((button) => {
+          const bounds = button.getBoundingClientRect();
+          return { width: bounds.width, height: bounds.height };
+        })
+      );
+    expect(targetSizes.every(({ width, height }) => width >= 44 && height >= 44)).toBe(true);
+  }
+  const mobilePreviewBounds = await workscapePreview.boundingBox();
+  expect(mobilePreviewBounds).not.toBeNull();
+  expect(mobilePreviewBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(mobilePreviewBounds!.x + mobilePreviewBounds!.width).toBeLessThanOrEqual(320);
+  const mobileOverflow = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    documentWidth: document.documentElement.scrollWidth,
+  }));
+  expect(mobileOverflow.documentWidth).toBeLessThanOrEqual(mobileOverflow.viewport);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.getByRole('button', { name: 'Desktop 1440' }).click();
+  await expect(workscapePreview.locator('[data-tenant-workscape-preview="desktop"]')).toBeVisible();
+  await expectPreviewGeometry(1440, 326, 1120);
   await expect(workscapePreview.getByText('My apps')).toBeVisible();
+  await expect(workscapePreview.getByText('The tenant-default app dock is empty.')).toBeVisible();
   await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
   await page.getByLabel('Headline').fill('One workspace, ready for action');
   await page
     .getByLabel('Supporting message')
     .fill('Your governed apps and priorities in one place.');
-  await page.getByRole('button', { name: 'Right' }).click();
-  await page.getByRole('button', { name: 'Publish presentation' }).click();
+  await expect(page.getByText('Unpublished changes', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Widget & layout settings' }).click();
+  await expect(
+    page.getByRole('alertdialog', { name: 'Keep your unpublished changes?' })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Keep editing' }).click();
+  await page
+    .getByRole('group', { name: 'Copy & app dock alignment' })
+    .getByRole('button', { name: 'Right' })
+    .click();
+  await page.getByRole('button', { name: 'Publish complete change set' }).click();
   await expect(page.getByText('Home presentation published.', { exact: true })).toBeVisible();
 
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'unsupported.gif',
+    mimeType: 'image/gif',
+    buffer: Buffer.from('not-an-image'),
+  });
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Choose a PNG or JPEG file.' })
+  ).toBeVisible();
   await page
     .locator('input[type="file"]')
     .setInputFiles('public/assets/home/default/agentic-workspace-hero-clean.png');
-  await page.getByRole('button', { name: 'Publish background' }).click();
-  await expect(page.getByText('Home background uploaded.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Publish complete change set' }).click();
+  await expect(page.getByText('Home presentation published.', { exact: true })).toBeVisible();
   await expect(page.getByText('2176 x 723 / 1.4 MB')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Restore default' }).click();
-  await expect(
-    page.getByText('The default home background was restored.', { exact: true })
-  ).toBeVisible();
+  await page.getByRole('button', { name: 'Use built-in background' }).click();
+  await page.getByRole('button', { name: 'Publish complete change set' }).click();
+  await expect(page.getByText('Home presentation published.', { exact: true })).toBeVisible();
   await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
 
+  await expect(page).toHaveURL(/\/admin\/experience\/home-experience$/);
+  await expect(page.getByRole('heading', { name: 'Home page settings', level: 1 })).toBeVisible();
   await expect(page.getByRole('alert')).toBeHidden({ timeout: 10_000 });
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
+
+  await page.getByLabel('Headline').fill('Draft that must not leak across navigation');
+  await page.getByRole('button', { name: 'App dock settings' }).click();
+  await expect(
+    page.getByRole('alertdialog', { name: 'Keep your unpublished changes?' })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Discard and leave' }).click();
+  await expect(page).toHaveURL(/\/admin\/experience\/home-apps$/);
 });
 
 test('brand and communications administrators manage co-branding and publish announcements', async ({

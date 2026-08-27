@@ -10,6 +10,8 @@ export type ActionIconButtonProps = Omit<IconButtonProps, 'aria-label' | 'color'
   label: string;
   tooltip?: string;
   tooltipPlacement?: TooltipProps['placement'];
+  tooltipDisablePortal?: boolean;
+  tooltipDisableInteractive?: boolean;
   intent?: IconActionIntent;
   loading?: boolean;
 };
@@ -24,13 +26,21 @@ export function ActionIconButton({
   label,
   tooltip = label,
   tooltipPlacement = 'top',
+  tooltipDisablePortal = false,
+  tooltipDisableInteractive = false,
   intent = 'default',
   loading = false,
   disabled,
   ...props
 }: ActionIconButtonProps) {
   return (
-    <Tooltip title={tooltip} placement={tooltipPlacement} describeChild>
+    <Tooltip
+      title={tooltip}
+      placement={tooltipPlacement}
+      describeChild
+      disableInteractive={tooltipDisableInteractive}
+      slotProps={tooltipDisablePortal ? { popper: { disablePortal: true } } : undefined}
+    >
       <span style={{ display: 'inline-flex' }}>
         <IconButton
           {...props}

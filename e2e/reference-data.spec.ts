@@ -22,6 +22,7 @@ async function mockTenantAdminSession(page: Page) {
         tenantId: 1,
         tenantCode: 'default',
         tenantName: 'SKAX',
+        identityPlane: 'TENANT',
         preferredLocale: 'en',
         tenantDefaultLocale: 'en',
         roles: ['TENANT_ADMIN'],

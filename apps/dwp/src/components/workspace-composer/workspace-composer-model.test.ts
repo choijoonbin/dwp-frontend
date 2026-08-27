@@ -85,6 +85,16 @@ describe('workspace composer model', () => {
     expect(moveWorkspaceWidget(defaults, 'attention', -1)).toEqual(defaults);
   });
 
+  it('adds a missing registered widget with its safe defaults without mutating the draft', () => {
+    const draft = [{ widgetKey: 'profile' as const, visible: true, size: 'compact' as const }];
+
+    expect(setWorkspaceWidgetVisibility(draft, registry, 'team', true)).toEqual([
+      { widgetKey: 'profile', visible: true, size: 'compact' },
+      { widgetKey: 'team', visible: true, size: 'full', height: 'standard' },
+    ]);
+    expect(draft).toEqual([{ widgetKey: 'profile', visible: true, size: 'compact' }]);
+  });
+
   it('filters the catalog by runtime audience without changing persisted data', () => {
     expect(
       visibleWorkspaceRegistry(registry, { isManager: false, canOperate: false })

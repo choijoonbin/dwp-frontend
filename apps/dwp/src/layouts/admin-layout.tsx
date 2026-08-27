@@ -1,14 +1,13 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Home, LifeBuoy } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
-import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
@@ -18,7 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
 
-import { BrandLockup } from '../components/brand-lockup';
+import { DesktopNavigationHeader } from '../components/desktop-navigation-header';
 import { ShellHeader } from '../components/shell-header';
 import {
   ADMIN_NAVIGATION,
@@ -28,12 +27,11 @@ import {
 import { canAccessAdminNavigationItem } from '../features/admin/admin-access-policy';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
+import { useDesktopNavigation } from '../features/shell/desktop-navigation';
 import {
-  DesktopNavigationToggle,
-  useDesktopNavigation,
-} from '../features/shell/desktop-navigation';
-
-const ProviderSupportBanner = lazy(() => import('../components/provider-support-banner'));
+  ShellMobileNavigationDrawer,
+  useShellMobileNavigation,
+} from '../features/shell/shell-mobile-navigation';
 
 type AdminNavigationProps = {
   compact?: boolean;
@@ -108,6 +106,12 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
                         color: selected ? 'primary.main' : 'text.secondary',
                         '&.Mui-selected': { bgcolor: 'action.selected' },
                         '&.Mui-selected:hover': { bgcolor: 'action.selected' },
+                        '@media (forced-colors: active)': {
+                          '&.Mui-selected': {
+                            outline: '2px solid Highlight',
+                            outlineOffset: '-2px',
+                          },
+                        },
                       }}
                     >
                       <ListItemIcon
@@ -201,6 +205,12 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
                             color: selected ? 'primary.main' : 'text.secondary',
                             '&.Mui-selected': { bgcolor: 'action.selected' },
                             '&.Mui-selected:hover': { bgcolor: 'action.selected' },
+                            '@media (forced-colors: active)': {
+                              '&.Mui-selected': {
+                                outline: '2px solid Highlight',
+                                outlineOffset: '-2px',
+                              },
+                            },
                           }}
                         >
                           <ListItemIcon sx={{ minWidth: 30, color: 'inherit' }}>
@@ -231,9 +241,10 @@ export function AdminLayout() {
   const { t } = useTranslation('admin');
   const shell = shellRegistry.admin;
   const auth = useAuth();
-  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileNavigation = useShellMobileNavigation({ headerTestId: 'admin-header' });
+  const mobileNavigationId = 'admin-mobile-navigation';
   const {
     compact,
     collapsible,
@@ -243,29 +254,24 @@ export function AdminLayout() {
   } = useDesktopNavigation(shell);
   const tenantName =
     supportContext.data?.tenantName ||
-    auth.user?.tenantName ||
-    auth.user?.tenantCode ||
+    (!providerRole && (auth.user?.tenantName || auth.user?.tenantCode)) ||
     t('shell.tenantFallback');
 
-  const navigationContent = (compactNavigation: boolean, onNavigate?: () => void) => (
+  const navigationContent = (
+    compactNavigation: boolean,
+    onNavigate?: () => void,
+    onDismiss?: () => void
+  ) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box
-        sx={{
-          minHeight: shellHeaderHeight,
-          px: compactNavigation ? 0 : 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: compactNavigation ? 0 : 1.25,
-          justifyContent: compactNavigation ? 'center' : 'flex-start',
-        }}
-      >
-        <BrandLockup
-          variant={compactNavigation ? 'product-only' : 'product-full'}
-          label={t('shell.controlCenter')}
-          description={t('shell.productName')}
-          sx={{ flexShrink: 0 }}
-        />
-      </Box>
+      <DesktopNavigationHeader
+        compact={compactNavigation}
+        collapsible={collapsible}
+        controlsId="admin-desktop-navigation"
+        label={t('shell.controlCenter')}
+        description={t('shell.productName')}
+        onDismiss={onDismiss}
+        onToggle={toggleDesktopNavigation}
+      />
 
       <Divider />
       <Box sx={{ px: 2.5, pt: 2.25, pb: 0.75, display: compactNavigation ? 'none' : 'block' }}>
@@ -352,15 +358,16 @@ export function AdminLayout() {
         {navigationContent(compact)}
       </Box>
 
-      <Drawer
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: shell.desktopNavigationWidth } } }}
+      <ShellMobileNavigationDrawer
+        controlsId={mobileNavigationId}
+        label={t('shell.navigationLabel')}
+        onDismiss={mobileNavigation.dismiss}
+        open={mobileNavigation.open}
+        testId="admin-mobile-sidebar"
+        width={shell.desktopNavigationWidth}
       >
-        <Box data-testid="admin-mobile-sidebar" sx={{ height: 1 }}>
-          {navigationContent(false, () => setMobileOpen(false))}
-        </Box>
-      </Drawer>
+        {navigationContent(false, mobileNavigation.navigate, mobileNavigation.dismiss)}
+      </ShellMobileNavigationDrawer>
 
       <ShellHeader
         testId="admin-header"
@@ -369,18 +376,12 @@ export function AdminLayout() {
         desktopOffset={desktopOffset}
         context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
         navigation={{
+          controlsId: mobileNavigationId,
+          expanded: mobileNavigation.open,
           label: t('shell.openNavigation'),
-          onOpen: () => setMobileOpen(true),
+          testId: 'admin-mobile-navigation-trigger',
+          onOpen: mobileNavigation.openFrom,
         }}
-        leading={
-          collapsible ? (
-            <DesktopNavigationToggle
-              compact={compact}
-              controlsId="admin-desktop-navigation"
-              onToggle={toggleDesktopNavigation}
-            />
-          ) : undefined
-        }
         showWorkspace={shell.showWorkspace && !supportContext.data}
       />
 
@@ -400,11 +401,6 @@ export function AdminLayout() {
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
-        {supportContext.data && (
-          <Suspense fallback={null}>
-            <ProviderSupportBanner context={supportContext.data} />
-          </Suspense>
-        )}
         <Outlet />
       </Box>
     </Box>

@@ -79,8 +79,8 @@ function flowExperience(
   };
 }
 
-function flowOverview() {
-  const overview = createHomeOverviewFixture(['WORKSPACE_MEMBER']);
+function flowOverview(roles: readonly string[] = ['WORKSPACE_MEMBER']) {
+  const overview = createHomeOverviewFixture(roles);
   const generatedAt = FLOW_VISUAL_NOW.toISOString();
   return {
     ...overview,
@@ -114,16 +114,18 @@ async function mockFlowHome(
   visualOptions: Readonly<{
     colorScheme?: 'light' | 'dark';
     forcedColors?: 'active' | 'none';
+    roles?: readonly string[];
   }> = {}
 ) {
   const colorScheme = visualOptions.colorScheme ?? 'light';
+  const roles = visualOptions.roles ?? ['WORKSPACE_MEMBER'];
   await page.emulateMedia({
     reducedMotion: 'reduce',
     colorScheme,
     forcedColors: visualOptions.forcedColors ?? 'none',
   });
   await page.clock.setFixedTime(FLOW_VISUAL_NOW);
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+  await mockShellSession(page, roles, {
     locale: 'ko',
     displayName: '김미나',
     jobTitle: '디지털 워크플레이스 담당자',
@@ -139,7 +141,7 @@ async function mockFlowHome(
     fulfillSuccess(route, flowExperience(experienceOverrides))
   );
   await page.route('**/api/platform/v1/home/overview**', (route) =>
-    fulfillSuccess(route, flowOverview())
+    fulfillSuccess(route, flowOverview(roles))
   );
   await page.route('**/api/platform/v1/home-preferences**', (route) => {
     const request = route.request();
@@ -160,7 +162,7 @@ async function mockFlowHome(
     });
   });
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
-  await page.route('**/api/approvals/v1/home', (route) =>
+  await page.route(/\/api\/approvals\/v1\/home(?:\?|$)/u, (route) =>
     fulfillSuccess(route, { ...APPROVAL_HOME_FIXTURE, generatedAt: FLOW_VISUAL_NOW.toISOString() })
   );
   await page.route('**/api/people/v1/hr/home', (route) =>
@@ -209,6 +211,12 @@ async function emulateReducedTransparency(page: Page, colorScheme: 'light' | 'da
 async function waitForVisualState(page: Page) {
   await page.waitForLoadState('networkidle');
   await page.evaluate(async () => {
+    // Vite's development-only checker is verified by the independent type and
+    // lint gates. It must not become part of the product visual contract when
+    // another local task is compiling in the shared workspace.
+    document.querySelectorAll('vite-plugin-checker-error-overlay').forEach((overlay) => {
+      overlay.remove();
+    });
     await document.fonts.ready;
     await Promise.all(
       Array.from(document.images).map(async (image) => {
@@ -245,17 +253,28 @@ async function waitForVisualState(page: Page) {
   expect(bounds).not.toBeNull();
   expect(viewport).not.toBeNull();
   if (!bounds || !viewport) return;
-  const compact = viewport.width < 600;
-  const expectedInset = compact ? 16 : 24;
-  const expectedSize = compact ? 48 : 56;
-  expect(bounds.width).toBeCloseTo(expectedSize, 0);
-  expect(bounds.height).toBeCloseTo(expectedSize, 0);
-  expect(viewport.width - bounds.x - bounds.width).toBeCloseTo(expectedInset, 0);
-  expect(viewport.height - bounds.y - bounds.height).toBeCloseTo(expectedInset, 0);
+  if (viewport.width < 900) {
+    expect(bounds.width).toBeCloseTo(44, 0);
+    expect(bounds.height).toBeCloseTo(44, 0);
+    await expect(launcher).toHaveCSS('position', 'relative');
+    await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
+    return;
+  }
+  expect(bounds.width).toBeCloseTo(56, 0);
+  expect(bounds.height).toBeCloseTo(56, 0);
+  expect(viewport.width - bounds.x - bounds.width).toBeCloseTo(24, 0);
+  expect(viewport.height - bounds.y - bounds.height).toBeCloseTo(24, 0);
   await expect(launcher).toHaveCSS('position', 'fixed');
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
 }
 
 async function expectDwaionClearOfHomeActions(page: Page) {
+  const launcher = page.getByTestId('dwaion-launcher');
+  const placement = await launcher.getAttribute('data-shell-auxiliary-placement');
+  // Compact launchers live inside the opaque shell header. Main content can
+  // geometrically pass behind that fixed layer while remaining neither visible
+  // nor interactive, so collision geometry only applies to the floating mode.
+  if (placement !== 'floating') return;
   const scrollRange = await page.evaluate(
     () => document.documentElement.scrollHeight - window.innerHeight
   );
@@ -331,7 +350,10 @@ async function expectNoHorizontalOverflow(page: Page) {
     .toBe(true);
 }
 
-async function expectDesktopPurposeComposition(flowHome: Locator) {
+async function expectDesktopPurposeComposition(
+  flowHome: Locator,
+  template: 'standard' | 'adaptive-wide' = 'standard'
+) {
   const stage = flowHome.getByTestId('flow-home-personal-sections');
   await expect(stage).toHaveAttribute('data-flow-layout-contract', 'purpose-widgets');
   await expect(stage.locator('[data-workspace-widget="action-queue"]')).toHaveAttribute(
@@ -365,6 +387,27 @@ async function expectDesktopPurposeComposition(flowHome: Locator) {
       pulse: rect('role-pulse'),
     };
   });
+  if (template === 'adaptive-wide') {
+    await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
+    await expect(stage).toHaveAttribute('data-flow-adaptive-applied', 'true');
+    await expect(stage).toHaveAttribute('data-flow-wide-composition', '7-5/4-4-4');
+    expect(Math.abs(geometry.action.top - geometry.today.top)).toBeLessThanOrEqual(2);
+    expect(Math.abs(geometry.action.bottom - geometry.today.bottom)).toBeLessThanOrEqual(2);
+    expect(geometry.action.width / geometry.today.width).toBeGreaterThan(1.36);
+    expect(geometry.action.width / geometry.today.width).toBeLessThan(1.44);
+    expect(geometry.response.width / geometry.today.width).toBeGreaterThan(0.77);
+    expect(geometry.response.width / geometry.today.width).toBeLessThan(0.83);
+    expect(geometry.response.top).toBeGreaterThanOrEqual(
+      Math.max(geometry.action.bottom, geometry.today.bottom)
+    );
+    expect(Math.abs(geometry.response.top - geometry.request.top)).toBeLessThanOrEqual(2);
+    expect(Math.abs(geometry.request.top - geometry.pulse.top)).toBeLessThanOrEqual(2);
+    expect(Math.abs(geometry.response.bottom - geometry.request.bottom)).toBeLessThanOrEqual(2);
+    expect(Math.abs(geometry.request.bottom - geometry.pulse.bottom)).toBeLessThanOrEqual(2);
+    expect(geometry.request.left).toBeGreaterThanOrEqual(geometry.response.right);
+    expect(geometry.pulse.left).toBeGreaterThanOrEqual(geometry.request.right);
+    return;
+  }
   expect(Math.abs(geometry.action.top - geometry.today.top)).toBeLessThanOrEqual(2);
   expect(Math.abs(geometry.action.bottom - geometry.today.bottom)).toBeLessThanOrEqual(2);
   expect(geometry.action.width / geometry.today.width).toBeGreaterThan(1.9);
@@ -414,6 +457,18 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
         await expect(workscape).toHaveAttribute(
           'data-tenant-background-position',
           backgroundPosition.toLowerCase()
+        );
+        await expect(workscape).toHaveAttribute(
+          'data-tenant-background-focal-x',
+          backgroundPosition === 'LEFT' ? '0' : backgroundPosition === 'CENTER' ? '50' : '100'
+        );
+        await expect(workscape).toHaveAttribute(
+          'data-tenant-content-alignment',
+          backgroundPosition === 'LEFT'
+            ? 'right'
+            : backgroundPosition === 'CENTER'
+              ? 'center'
+              : 'left'
         );
         await expect(workscape).toHaveAttribute('data-tenant-image-opacity', '1');
         await expect(workscape.locator('[data-flow-health-strip]')).toHaveCount(0);
@@ -677,6 +732,14 @@ for (const viewport of [WORKSCAPE_VIEWPORTS[2], WORKSCAPE_VIEWPORTS[3]]) {
       await expectNoHorizontalOverflow(page);
       await waitForVisualState(page);
       await expectDwaionClearOfHomeActions(page);
+      if (mode === 'forced-colors') {
+        const featured = flowHome.locator('[data-news-featured]');
+        await expect(featured.locator('[data-news-featured-media]')).toBeHidden();
+        const featuredColumns = await featured.evaluate((node) =>
+          window.getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean)
+        );
+        expect(featuredColumns).toHaveLength(1);
+      }
       await expect(page).toHaveScreenshot(
         `flow-home-purpose-${viewport.width}-${mode}-full-page.png`,
         {
@@ -712,6 +775,48 @@ test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page 
   await expectDwaionClearOfHomeActions(page);
 
   await expect(page).toHaveScreenshot('flow-home-purpose-balanced-ko-1440.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    scale: 'css',
+    maxDiffPixelRatio: 0.001,
+    timeout: 15_000,
+  });
+});
+
+test('Flow Home operator Korean desktop 1440 keeps the 8+4 role overview tier', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Desktop baseline uses the Chromium project.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockFlowHome(page, 'balanced', {}, { roles: ['TENANT_ADMIN'] });
+
+  await page.goto('/');
+  const flowHome = page.getByTestId('flow-home');
+  const stage = flowHome.getByTestId('flow-home-personal-sections');
+  await expect(stage).toHaveAttribute('data-flow-adaptive-first-section', 'role-pulse');
+  const roleInsight = stage.locator(
+    '[data-workspace-widget="role-pulse"] [data-home-role-insight]'
+  );
+  await expect(roleInsight.locator('[data-home-role-lens]')).toHaveCount(4);
+  const geometry = await stage.evaluate((root) => {
+    const rect = (key: string) => {
+      const bounds = root
+        .querySelector<HTMLElement>(`[data-workspace-widget="${key}"]`)!
+        .getBoundingClientRect();
+      return { top: bounds.top, bottom: bounds.bottom, width: bounds.width };
+    };
+    return { action: rect('action-queue'), role: rect('role-pulse') };
+  });
+  expect(geometry.action.width / geometry.role.width).toBeGreaterThan(1.9);
+  expect(geometry.action.width / geometry.role.width).toBeLessThan(2.1);
+  expect(Math.abs(geometry.action.top - geometry.role.top)).toBeLessThanOrEqual(2);
+  expect(Math.abs(geometry.action.bottom - geometry.role.bottom)).toBeLessThanOrEqual(2);
+  await expectNoHorizontalOverflow(page);
+  await waitForVisualState(page);
+  await expectDwaionClearOfHomeActions(page);
+
+  await expect(page).toHaveScreenshot('flow-home-purpose-operator-ko-1440.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,
@@ -789,16 +894,36 @@ test('Flow Home expressive Korean desktop 1920 visual baseline', async ({ page }
     'data-flow-dock-item-limit',
     '12'
   );
-  await expectDesktopPurposeComposition(flowHome);
+  await expectDesktopPurposeComposition(flowHome, 'adaptive-wide');
   const priorityLayout = flowHome.locator(
-    '[data-workspace-widget="action-queue"] [data-home-purpose-list="featured-queue"]'
+    '[data-workspace-widget="action-queue"] [data-home-purpose-list]'
   );
   await expect(priorityLayout).toBeVisible();
+  const priorityRows = await priorityLayout.evaluate((list) => {
+    const style = window.getComputedStyle(list);
+    return {
+      display: style.display,
+      direction: style.flexDirection,
+      rows: Array.from(list.querySelectorAll<HTMLElement>(':scope > [role="listitem"]')).map(
+        (row) => {
+          const bounds = row.getBoundingClientRect();
+          return { top: bounds.top, bottom: bounds.bottom, height: bounds.height };
+        }
+      ),
+    };
+  });
+  expect(priorityRows.display).toBe('flex');
+  expect(priorityRows.direction).toBe('column');
+  expect(priorityRows.rows.length).toBeGreaterThanOrEqual(2);
   expect(
-    await priorityLayout.evaluate(
-      (list) => window.getComputedStyle(list).gridTemplateColumns.split(' ').length
+    Math.max(...priorityRows.rows.map((row) => row.height)) -
+      Math.min(...priorityRows.rows.map((row) => row.height))
+  ).toBeLessThanOrEqual(2);
+  expect(
+    priorityRows.rows.every(
+      (row, index) => index === 0 || row.top >= (priorityRows.rows[index - 1]?.bottom ?? row.top)
     )
-  ).toBe(2);
+  ).toBe(true);
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
@@ -875,6 +1000,37 @@ test('Flow Home purpose-led Korean mobile 390 visual baseline', async ({ page },
   await expectDwaionClearOfHomeActions(page);
 
   await expect(page).toHaveScreenshot('flow-home-purpose-balanced-ko-390.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    scale: 'css',
+    maxDiffPixelRatio: 0.001,
+    timeout: 15_000,
+  });
+});
+
+test('Flow Home expressive Korean mobile 390 actual visual baseline', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'Mobile baseline uses the mobile project.');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockFlowHome(page, 'expressive');
+
+  await page.goto('/');
+  const flowHome = page.getByTestId('flow-home');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
+  await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
+  await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
+  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
+    'data-flow-read-template',
+    'standard'
+  );
+  await expectNoHorizontalOverflow(page);
+  await waitForVisualState(page);
+  await expectDwaionClearOfHomeActions(page);
+
+  await expect(page).toHaveScreenshot('flow-home-purpose-expressive-ko-390.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,

@@ -5,7 +5,7 @@
 - Roadmap: R1 Core Foundation
 - 사용자 제품명: `알림 센터`
 - 내부 도메인명: `notification`
-- 기준일: 2026-08-24
+- 기준일: 2026-08-27
 
 ## 산출물
 
@@ -19,6 +19,7 @@
 - [최종 아키텍처·UX 검토](08-최종 아키텍처 UX 검토.md)
 - [Notification Platform ADR](../../03-architecture/R1%20DWP%20Notification%20Platform%20및%20Omnichannel%20Delivery%20ADR.md)
 - [기존 Domain Event Delivery Ledger](../../../../dwp-backend/docs/architecture/domain-event-delivery-ledger.md)
+- [앱 Notification Producer 온보딩 계약](../../../../dwp-backend/docs/architecture/notification-producer-onboarding.md)
 
 ## 현재 판정
 
@@ -105,11 +106,27 @@ SSE·Version Sync + QoS Channel Adapter`다. PostgreSQL은 읽음·저장·완�
 - 열린 Glance는 새 Event를 즉시 끼워 넣지 않고 버퍼링해 기존 Focus를 유지한다. Badge `0·1·99+`,
   Offline·Partial·Deleted Target 상태도 브라우저에서 검증했으며, 이 과정에서 Badge 상한의 조기 절단과
   Summary·Inbox 장애 Source 중복 집계 결함을 수정했다.
+- Header Badge는 전체 미확인 수를 표시하고 접근 가능한 이름과 Glance Summary에서 조치 필요 수를
+  별도로 설명한다. Home의 합성 알림 앱은 원천 앱 Count를 대표하므로 `모든 앱` 숨은 Count에 다시
+  합산하지 않는다.
 - `전체` Glance는 20건 Burst의 중복 없는 Arrival ID를 한 번의 Polite Status로 집계하면서 열린 목록과
   Focus를 유지한다. `우선순위` Glance는 해당 View의 실제 조회 결과만 집계해 숨겨진 일반 알림을
   과대 계산하지 않는다. 한국어·공백 없는 장문 영어 제목의 320px 목록 생략과 상세 Reflow도 검증했다.
 - Keyset `더 불러오기` 점진 Rendering은 다음 Page를 붙여도 기존 항목 순서와 항목별 선택·Action을
   유지한다. Virtual List는 180일 용량·접근성 시험에서 현 방식을 초과하는 이익이 입증될 때만 활성화한다.
+
+### 2026-08-27 메신저·실시간 후속 검증
+
+- 메신저 실제 메시지는 Source Transaction, Transactional Outbox, Kafka, Notification Intent와
+  수신자 Inbox까지 정상 도달했지만 브라우저 SSE가 사용자별 연결 한도에 막힌 사례를 확인했다.
+- 같은 브라우저 프로필의 안정적 Client ID를 Stream에 포함하고 동일 ID 재연결이 낡은 Emitter를
+  원자적으로 대체하게 했다. 실제 다중 프로필·기기만 연결 수에 포함된다.
+- 연결 한도 초과는 SSE `Accept`와 충돌하는 JSON 오류 본문 대신 `429 + Retry-After`의 본문 없는
+  응답으로 반환한다.
+- 앱별 알림은 중앙 작업에서 임의로 추측하지 않는다. 앱 세션이 업무 Trigger·수신자·분류·Target을
+  구현하고 공통 알림 세션이 계약·정책·템플릿·전달·Conformance를 검증하는 온보딩 계약을 고정했다.
+- 메신저의 `DIRECT_MESSAGE`, `MENTION`, `THREAD_REPLY`, `CHANNEL_MESSAGE`, 삭제 Target 수명주기를
+  기준 구현으로 삼고, 초대·회의·부재중·보안 이벤트는 구현 완료로 오인하지 않도록 Backlog로 분리했다.
 
 ### 결정·환경 의존 잔여 작업
 

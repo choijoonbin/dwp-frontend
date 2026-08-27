@@ -1,0 +1,1209 @@
+{
+  "fixtureVersion": 1,
+  "cases": [
+    {
+      "caseId": "unknown-command-type",
+      "baseCaseId": "success-create-definition",
+      "mutations": [{ "op": "replace", "path": "/response/commandType", "value": "DELETE_ALL" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "operation-command-mismatch",
+      "baseCaseId": "success-create-definition",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/operationId",
+          "value": "retireWidgetDefinition"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "target-type-mismatch",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        { "op": "replace", "path": "/response/target/targetType", "value": "EVIDENCE" }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "target-extra-field",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/response/target/versionId",
+          "value": "22222222-2222-4222-8222-222222222222"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "hashed-target-uses-uuid",
+      "baseCaseId": "success-create-definition",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/target/targetId",
+          "value": "11111111-1111-4111-8111-111111111111"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "success-status-mismatch",
+      "baseCaseId": "success-create-definition",
+      "mutations": [{ "op": "replace", "path": "/response/responseStatus", "value": 200 }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "created-evidence-status-mismatch",
+      "baseCaseId": "success-record-evidence",
+      "mutations": [{ "op": "replace", "path": "/response/responseStatus", "value": 200 }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "success-body-open-field",
+      "baseCaseId": "success-create-definition",
+      "mutations": [
+        { "op": "add", "path": "/response/responseBody/rawActorRef", "value": "actor-1" }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "success-version-etag-null",
+      "baseCaseId": "success-publish",
+      "mutations": [{ "op": "replace", "path": "/response/responseEtag", "value": null }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "validation-etag-non-null",
+      "baseCaseId": "success-validate",
+      "mutations": [{ "op": "replace", "path": "/response/responseEtag", "value": "\"v42\"" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "evidence-etag-non-null",
+      "baseCaseId": "success-waive-evidence",
+      "mutations": [{ "op": "replace", "path": "/response/responseEtag", "value": "\"v42\"" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "approved-version-review-id-non-null",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentReviewDecisionId",
+          "value": "88888888-8888-4888-8888-888888888888"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "quarantined-version-event-null",
+      "baseCaseId": "success-quarantine",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentQuarantineEventId",
+          "value": null
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "runtime-global-resource-id-non-null",
+      "baseCaseId": "success-disable-runtime-control",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/targetId",
+          "value": "11111111-1111-4111-8111-111111111111"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "rejected-status-code-mismatch",
+      "baseCaseId": "rejected-response-too-large",
+      "mutations": [{ "op": "replace", "path": "/response/responseStatus", "value": 409 }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "rejected-etag-non-null",
+      "baseCaseId": "rejected-response-too-large",
+      "mutations": [{ "op": "replace", "path": "/response/responseEtag", "value": "\"v42\"" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "rejected-allows-503",
+      "baseCaseId": "rejected-response-too-large",
+      "mutations": [
+        { "op": "replace", "path": "/response/responseStatus", "value": 503 },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/code",
+          "value": "COMMAND_NOT_EXECUTED"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "not-executed-status-not-503",
+      "baseCaseId": "not-executed-publish",
+      "mutations": [{ "op": "replace", "path": "/response/responseStatus", "value": 500 }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "not-executed-code-mismatch",
+      "baseCaseId": "not-executed-publish",
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/code", "value": "NOT_FOUND" }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "not-executed-message-mismatch",
+      "baseCaseId": "not-executed-publish",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/message",
+          "value": "The target might have executed."
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "not-executed-etag-non-null",
+      "baseCaseId": "not-executed-publish",
+      "mutations": [{ "op": "replace", "path": "/response/responseEtag", "value": "\"v42\"" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "response-hash-tampered",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedError": "RESPONSE_HASH"
+    },
+    {
+      "caseId": "body-changed-with-stale-hash",
+      "baseCaseId": "rejected-response-too-large",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/message",
+          "value": "A different deterministic public error message."
+        }
+      ],
+      "expectedError": "RESPONSE_HASH"
+    },
+    {
+      "caseId": "outer-field-open",
+      "baseCaseId": "success-publish",
+      "mutations": [{ "op": "add", "path": "/response/internalLedgerId", "value": "ledger-1" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "response-hash-uppercase",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "completed-at-impossible-calendar-date",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        { "op": "replace", "path": "/response/completedAt", "value": "2026-02-30T10:00:00Z" }
+      ],
+      "expectedError": "TIMESTAMP"
+    },
+    {
+      "caseId": "rejected-pre-receipt-binding-invalid-ledger",
+      "baseCaseId": "rejected-response-too-large",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseStatus", "value": 400 },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/code",
+          "value": "COMMAND_BINDING_INVALID"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "32a820aa64e5795b6ac87e7ede9d16488ce80d67a88e2959d2ea56eb505b73c3"
+        }
+      ],
+      "expectedError": "LEDGER_INTEGRITY"
+    },
+    {
+      "caseId": "rejected-pre-receipt-authority-stale-ledger",
+      "baseCaseId": "rejected-response-too-large",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseStatus", "value": 403 },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/code",
+          "value": "COMMAND_AUTHORITY_STALE"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "d5cac689cfcf34ef9e5c717349a17dc9aedd9202f1474080e0e315072cb20148"
+        }
+      ],
+      "expectedError": "LEDGER_INTEGRITY"
+    },
+    {
+      "caseId": "create-definition-swapped-key-rehashed",
+      "baseCaseId": "success-create-definition",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/definitionKey",
+          "value": "core.workspace.other-widget"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "b9f0888c78f7575436626ad535feff6de11b409393e67c0d48364267c70492d6"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "create-version-swapped-semver-rehashed",
+      "baseCaseId": "success-create-version",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/semanticVersion",
+          "value": "2.0.0"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "dbc9783027995578c5b73fee98635e5ad1f815081879fe26fd15abb8fe6f8b4e"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "update-version-swapped-body-rehashed",
+      "baseCaseId": "success-update-version",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/versionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "66a1d7d95a489a2d9bf820db23d27487163fdf8e8c5561eb6054f196771f7f92"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "validation-swapped-version-rehashed",
+      "baseCaseId": "success-validate",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/versionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "a1dacf48c9e891cef1d3591dfbd00efa55e23778f6d5b24578dd1e7b9740845b"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "record-evidence-swapped-version-rehashed",
+      "baseCaseId": "success-record-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/versionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "46a4fdcc2ff32da30df7cd500d976fce1dda357aacadfee21ebb27be140b561c"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "waiver-swapped-original-evidence-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/waivedEvidenceId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "92e5e1ae2f23b43500ab6f979721f8e132651c93b9ec43539019d9a770387da1"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "waiver-reuses-original-evidence-id-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/evidenceId",
+          "value": "33333333-3333-4333-8333-333333333333"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "9603b8dafd5a7fb355a640ec4a13c7539be81e56a541f901d6f2203051669fd2"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "retire-swapped-definition-rehashed",
+      "baseCaseId": "success-retire",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/definitionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "0ddcfcc2f1cd5ab660c961cf1f393a5d0682c42a189ea860cf4920e8880ff375"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "promote-swapped-channel-rehashed",
+      "baseCaseId": "success-promote",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/channel", "value": "PREVIEW" },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "3c8b1a6df4f4a9d375c2f7c146682fa9a761668f7326c532213adc94b65a09cc"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "rollback-swapped-definition-rehashed",
+      "baseCaseId": "success-rollback",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/definitionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "ef2487ce9581d7d1d8a8bc3fd3952b0cab1d9851bee2205fc78703ee0fb7ec89"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-disable-swapped-scope-rehashed",
+      "baseCaseId": "success-disable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/scope",
+          "value": "RUNTIME_ACTION"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "88969c63cd79011da089bc95c2f4042d29f85751dc23a3ddf22f5728e069aaff"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-approval-swapped-control-rehashed",
+      "baseCaseId": "success-approve-runtime-control-enable",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/controlId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "1998009b429ee958b7084bff596d52c070e29f3775de00f32e144fb6b5e4ea3d"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-swapped-control-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/controlId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseHash",
+          "value": "19698b5d8649470e1f3a1d7b2c1e5f86678163d71d5a1e64a4ef90889ec41540"
+        }
+      ],
+      "expectedError": "TARGET_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "trusted-ledger-command-id-mismatch",
+      "baseCaseId": "success-publish",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/ledgerBinding/commandId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "LEDGER_BINDING"
+    },
+    {
+      "caseId": "not-executed-ledger-target-swap",
+      "baseCaseId": "not-executed-publish",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/target/targetId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "LEDGER_BINDING"
+    },
+    {
+      "caseId": "waiver-swapped-version-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/versionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "EVIDENCE_PROVENANCE_BINDING"
+    },
+    {
+      "caseId": "clearance-swapped-event-rehashed",
+      "baseCaseId": "success-approve-quarantine-clearance",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/quarantineEventId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "clearance-swapped-decision-rehashed",
+      "baseCaseId": "success-approve-quarantine-clearance",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/reviewDecision",
+          "value": "REJECT"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "promote-swapped-version-rehashed",
+      "baseCaseId": "success-promote",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentVersionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "rollback-swapped-current-version-rehashed",
+      "baseCaseId": "success-rollback",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentVersionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "rollback-swapped-previous-version-rehashed",
+      "baseCaseId": "success-rollback",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/previousVersionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-approval-swapped-revision-rehashed",
+      "baseCaseId": "success-approve-runtime-control-enable",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/controlRevision", "value": 41 }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-swapped-scope-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/scope",
+          "value": "RUNTIME_ACTION"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-swapped-revision-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/revision", "value": 44 },
+        { "op": "replace", "path": "/response/responseEtag", "value": "\"v44\"" }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-stale-current-head",
+      "baseCaseId": "success-enable-runtime-control",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/revision",
+          "value": 41
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "publish-deprecated-state-swap-rehashed",
+      "baseCaseId": "success-publish",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/releaseState",
+          "value": "DEPRECATED"
+        }
+      ],
+      "expectedError": "SUCCESS_STATE_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-state-swap-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/safetyState",
+          "value": "QUARANTINED"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentQuarantineEventId",
+          "value": "99999999-9999-4999-8999-999999999999"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "retire-active-state-swap-rehashed",
+      "baseCaseId": "success-retire",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/definitionState",
+          "value": "ACTIVE"
+        }
+      ],
+      "expectedError": "SUCCESS_STATE_BINDING"
+    },
+    {
+      "caseId": "runtime-disable-enabled-state-swap-rehashed",
+      "baseCaseId": "success-disable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/state", "value": "ENABLED" }
+      ],
+      "expectedError": "SUCCESS_STATE_BINDING"
+    },
+    {
+      "caseId": "version-manifest-internal-hash-mismatch-rehashed",
+      "baseCaseId": "success-update-version",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/manifest/renderer/rendererKey",
+          "value": "home.swapped-renderer"
+        }
+      ],
+      "expectedError": "BODY_INTERNAL_BINDING"
+    },
+    {
+      "caseId": "success-etag-not-derived-from-version-rehashed",
+      "baseCaseId": "success-publish",
+      "recomputeResponseHash": true,
+      "mutations": [{ "op": "replace", "path": "/response/responseEtag", "value": "\"v41\"" }],
+      "expectedError": "ETAG_BINDING"
+    },
+    {
+      "caseId": "waiver-missing-original-evidence-id-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [{ "op": "remove", "path": "/response/responseBody/waivedEvidenceId" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "waiver-missing-tracking-ticket-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [{ "op": "remove", "path": "/response/responseBody/trackingTicketRef" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "waiver-missing-expiry-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [{ "op": "remove", "path": "/response/responseBody/expiresAt" }],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "record-evidence-carries-waiver-fields-rehashed",
+      "baseCaseId": "success-record-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/response/responseBody/waivedEvidenceId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        },
+        {
+          "op": "add",
+          "path": "/response/responseBody/trackingTicketRef",
+          "value": "DWP-ADM009-INVALID-WAIVER"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "record-evidence-generates-expired-status-rehashed",
+      "baseCaseId": "success-record-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/status", "value": "EXPIRED" }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "record-evidence-generates-not-run-status-rehashed",
+      "baseCaseId": "success-record-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        { "op": "replace", "path": "/response/responseBody/status", "value": "NOT_RUN" }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "clearance-trusted-reject-pair-rehashed",
+      "baseCaseId": "success-approve-quarantine-clearance",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/reviewDecision",
+          "value": "REJECT"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/reviewDecision",
+          "value": "REJECT"
+        }
+      ],
+      "expectedError": "CLEARANCE_DECISION_BINDING"
+    },
+    {
+      "caseId": "clearance-arbitrary-evidence-hash-rehashed",
+      "baseCaseId": "success-approve-quarantine-clearance",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/evidenceRefHashes/0",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expectedError": "APPROVAL_EVIDENCE_BINDING"
+    },
+    {
+      "caseId": "runtime-approval-arbitrary-evidence-hash-rehashed",
+      "baseCaseId": "success-approve-runtime-control-enable",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/evidenceRefHashes/0",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expectedError": "APPROVAL_EVIDENCE_BINDING"
+    },
+    {
+      "caseId": "clearance-evidence-refs-unsorted",
+      "baseCaseId": "success-approve-quarantine-clearance",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/evidenceRefs",
+          "value": ["z_evidence_ref", "a_evidence_ref"]
+        }
+      ],
+      "expectedError": "APPROVAL_EVIDENCE_BINDING"
+    },
+    {
+      "caseId": "runtime-approval-evidence-refs-duplicated",
+      "baseCaseId": "success-approve-runtime-control-enable",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/evidenceRefs",
+          "value": ["evidence_incident_resolved_0044", "evidence_incident_resolved_0044"]
+        }
+      ],
+      "expectedError": "APPROVAL_EVIDENCE_BINDING"
+    },
+    {
+      "caseId": "clearance-evidence-projection-open-field",
+      "baseCaseId": "success-approve-quarantine-clearance",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/verificationContext/requestProjection/untrustedEvidenceDigest",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expectedError": "FIXTURE_SHAPE"
+    },
+    {
+      "caseId": "waiver-source-evidence-projection-swapped-rehashed",
+      "baseCaseId": "success-waive-evidence",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/evidenceType",
+          "value": "A11Y"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/evidenceRef",
+          "value": "unrelated_evidence_ref"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/evidenceSha256",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expectedError": "EVIDENCE_PROVENANCE_BINDING"
+    },
+    {
+      "caseId": "waiver-source-evidence-cross-target",
+      "baseCaseId": "success-waive-evidence",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/evidenceId",
+          "value": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
+        }
+      ],
+      "expectedError": "EVIDENCE_PROVENANCE_BINDING"
+    },
+    {
+      "caseId": "waiver-source-evidence-projection-open-field",
+      "baseCaseId": "success-waive-evidence",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/verificationContext/currentTargetProjection/rawSourcePayload",
+          "value": "forbidden"
+        }
+      ],
+      "expectedError": "FIXTURE_SHAPE"
+    },
+    {
+      "caseId": "clear-quarantine-missing-approval-id",
+      "baseCaseId": "success-clear-quarantine",
+      "mutations": [
+        {
+          "op": "remove",
+          "path": "/verificationContext/requestProjection/clearanceApprovalId"
+        }
+      ],
+      "expectedError": "FIXTURE_SHAPE"
+    },
+    {
+      "caseId": "clear-quarantine-swapped-request-approval-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/clearanceApprovalId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-swapped-request-incident-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/quarantineEventId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-stale-current-incident-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/currentQuarantineEventId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-child-approval-wrong-version-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestClearanceApproval/versionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-child-approval-already-consumed-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestClearanceApproval/state",
+          "value": "CONSUMED"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestClearanceApproval/consumedAt",
+          "value": "2026-08-27T09:59:59Z"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestClearanceApproval/consumedByCommandId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-child-approval-expired-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestClearanceApproval/expiresAt",
+          "value": "2026-08-27T09:59:59Z"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-missing-approval-id",
+      "baseCaseId": "success-enable-runtime-control",
+      "mutations": [
+        {
+          "op": "remove",
+          "path": "/verificationContext/requestProjection/enableApprovalId"
+        }
+      ],
+      "expectedError": "FIXTURE_SHAPE"
+    },
+    {
+      "caseId": "runtime-enable-swapped-request-approval-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/enableApprovalId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-child-approval-wrong-control-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/controlId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-child-approval-stale-revision-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/controlRevision",
+          "value": 41
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-child-approval-already-consumed-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/state",
+          "value": "CONSUMED"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/consumedAt",
+          "value": "2026-08-27T09:59:59Z"
+        },
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/consumedByCommandId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-child-approval-expired-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/expiresAt",
+          "value": "2026-08-27T09:59:59Z"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-consumed-approval-swapped-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/postMutationApprovalProjection/approvalId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-consumed-incident-swapped-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/postMutationApprovalProjection/quarantineEventId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-consumed-by-wrong-command-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/postMutationApprovalProjection/consumedByCommandId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-consumed-at-mismatch-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/postMutationApprovalProjection/consumedAt",
+          "value": "2026-08-27T10:00:01Z"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-consumed-approval-swapped-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/postMutationApprovalProjection/approvalId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-consumed-by-wrong-command-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/postMutationApprovalProjection/consumedByCommandId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "clear-quarantine-child-approval-stale-revision-rehashed",
+      "baseCaseId": "success-clear-quarantine",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestClearanceApproval/quarantineRevision",
+          "value": 41
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-child-approval-swapped-scope-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/latestEnableApproval/scope",
+          "value": "RUNTIME_ACTION"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "runtime-enable-current-head-already-enabled-rehashed",
+      "baseCaseId": "success-enable-runtime-control",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/state",
+          "value": "ENABLED"
+        }
+      ],
+      "expectedError": "CHILD_APPROVAL_BINDING"
+    }
+  ]
+}

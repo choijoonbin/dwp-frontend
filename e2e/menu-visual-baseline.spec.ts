@@ -42,6 +42,15 @@ for (const productRoute of PRODUCT_MENU_ROUTES) {
     await expect(productMain.locator('h1').first()).toBeVisible({ timeout: 15_000 });
     await page.waitForLoadState('networkidle');
     await expect(page.locator('.MuiSkeleton-root')).toHaveCount(0, { timeout: 15_000 });
+    if (
+      testInfo.project.name === 'mobile' &&
+      productRoute.shell === 'approvals' &&
+      productRoute.plane === 'management'
+    ) {
+      const compatibilityTenant = page.getByTestId('product-surface-compatibility-tenant');
+      await expect(compatibilityTenant).toBeVisible();
+      await expect(compatibilityTenant).toHaveText('SKAX');
+    }
     if (productRoute.id === 'provider.overview') {
       await expect(page.getByRole('status')).toContainText('자동 갱신 중', { timeout: 15_000 });
     }

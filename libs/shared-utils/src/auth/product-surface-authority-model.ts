@@ -335,14 +335,104 @@ export function productSurfaceServerNow(
   return clientNowMs + snapshot.clockOffsetMs;
 }
 
+export function productSurfaceExpiryDelay(
+  snapshot: ProductSurfaceAuthoritySnapshot,
+  clientNowMs = Date.now()
+): number | null {
+  if (snapshot.earliestRevalidateAtMs === null) return null;
+  return Math.max(
+    0,
+    snapshot.earliestRevalidateAtMs - productSurfaceServerNow(snapshot, clientNowMs)
+  );
+}
+
+export function productSurfaceSnapshotRemainsValid(
+  snapshot: ProductSurfaceAuthoritySnapshot,
+  clientNowMs = Date.now()
+): boolean {
+  const expiryDelay = productSurfaceExpiryDelay(snapshot, clientNowMs);
+  return expiryDelay === null || expiryDelay > 0;
+}
+
+function stableAuthorityValue(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableAuthorityValue).join(',')}]`;
+  if (!value || typeof value !== 'object') return JSON.stringify(value);
+  const entries = Object.entries(value as Record<string, unknown>)
+    .filter(
+      ([key, candidate]) =>
+        candidate !== undefined &&
+        key !== 'generatedAt' &&
+        key !== 'revalidateAt' &&
+        key !== 'validUntil'
+    )
+    .sort(([left], [right]) => left.localeCompare(right));
+  return `{${entries
+    .map(([key, candidate]) => `${JSON.stringify(key)}:${stableAuthorityValue(candidate)}`)
+    .join(',')}}`;
+}
+
+function productSurfaceAuthoritySemantics(snapshot: ProductSurfaceAuthoritySnapshot) {
+  const envelope = snapshot.envelope;
+  return {
+    contractVersion: envelope.contractVersion,
+    decisionRevision: envelope.decisionRevision,
+    sourceRevisions: envelope.sourceRevisions,
+    activeAccessMode: envelope.activeAccessMode,
+    contexts: envelope.contexts
+      .map(({ revalidateAt: _revalidateAt, ...context }) => context)
+      .sort((left, right) => left.contextKey.localeCompare(right.contextKey)),
+    rollouts: [...envelope.rollouts].sort((left, right) =>
+      left.productKey.localeCompare(right.productKey)
+    ),
+  };
+}
+
+export function productSurfaceAuthoritySemanticsMatch(
+  previous: ProductSurfaceAuthoritySnapshot,
+  next: ProductSurfaceAuthoritySnapshot
+): boolean {
+  return (
+    stableAuthorityValue(productSurfaceAuthoritySemantics(previous)) ===
+    stableAuthorityValue(productSurfaceAuthoritySemantics(next))
+  );
+}
+
+export function productSurfaceLeaseAdvanced(
+  previous: ProductSurfaceAuthoritySnapshot,
+  next: ProductSurfaceAuthoritySnapshot
+): boolean {
+  if (Date.parse(next.envelope.generatedAt) <= Date.parse(previous.envelope.generatedAt)) {
+    return false;
+  }
+  if (previous.earliestRevalidateAtMs === null || next.earliestRevalidateAtMs === null) {
+    return previous.earliestRevalidateAtMs === null && next.earliestRevalidateAtMs === null;
+  }
+  return next.earliestRevalidateAtMs > previous.earliestRevalidateAtMs;
+}
+
+export function productSurfaceBackgroundRefreshDelay(
+  snapshot: ProductSurfaceAuthoritySnapshot,
+  clientNowMs = Date.now(),
+  maximumDelayMs = 60_000,
+  refreshLeadMs = 10_000
+): number {
+  if (!Number.isFinite(maximumDelayMs) || maximumDelayMs <= 0) return 0;
+  const expiryDelay = productSurfaceExpiryDelay(snapshot, clientNowMs);
+  if (expiryDelay === null) return maximumDelayMs;
+  if (expiryDelay <= 0) return 0;
+  const safeLeadMs =
+    Number.isFinite(refreshLeadMs) && refreshLeadMs > 0
+      ? Math.min(refreshLeadMs, expiryDelay / 2)
+      : 0;
+  return Math.max(0, Math.min(maximumDelayMs, expiryDelay - safeLeadMs));
+}
+
 export function productSurfaceRefreshDelay(
   snapshot: ProductSurfaceAuthoritySnapshot,
   clientNowMs = Date.now(),
   maximumDelayMs = 60_000
 ): number {
   if (!Number.isFinite(maximumDelayMs) || maximumDelayMs <= 0) return 0;
-  if (snapshot.earliestRevalidateAtMs === null) return maximumDelayMs;
-  const remaining =
-    snapshot.earliestRevalidateAtMs - productSurfaceServerNow(snapshot, clientNowMs);
-  return Math.max(0, Math.min(maximumDelayMs, remaining));
+  const expiryDelay = productSurfaceExpiryDelay(snapshot, clientNowMs);
+  return expiryDelay === null ? maximumDelayMs : Math.min(maximumDelayMs, expiryDelay);
 }

@@ -8,6 +8,7 @@ import { COMMUNICATIONS_NAVIGATION } from '../features/communications/communicat
 import { DWAION_NAVIGATION } from '../features/dwaion/dwaion-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
+import { MEETINGS_NAVIGATION } from '../features/meetings/meetings-navigation';
 import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
 import { NOTIFICATION_NAVIGATION } from '../features/notifications/notification-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
@@ -33,6 +34,7 @@ export type ProductShell =
   | 'calendar'
   | 'rooms'
   | 'mail'
+  | 'meetings'
   | 'messaging'
   | 'notifications'
   | 'approvals'
@@ -66,6 +68,7 @@ const PRODUCT_WAVES: Readonly<Record<string, ProductMigrationWave>> = {
   dwaion: 'W2',
   hcm: 'W1b',
   mail: 'W3',
+  meetings: 'W3',
   messaging: 'W3',
   notifications: 'W2',
   services: 'W0.5',
@@ -173,6 +176,7 @@ export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
   ...productMenuRoutes('calendar', 'calendar', CALENDAR_NAVIGATION),
   ...productMenuRoutes('rooms', 'workplace', ROOMS_NAVIGATION),
   ...productMenuRoutes('mail', 'mail', MAIL_NAVIGATION),
+  ...productMenuRoutes('meetings', 'meetings', MEETINGS_NAVIGATION),
   ...productMenuRoutes('messaging', 'messaging', MESSAGING_NAVIGATION),
   ...productMenuRoutes('approvals', 'approvals', APPROVAL_NAVIGATION),
   ...productMenuRoutes('spaces', 'spaces', SPACE_NAVIGATION),

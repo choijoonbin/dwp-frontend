@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
-import { ErrorState, LoadingState } from '@dwp-frontend/design-system';
+import {
+  ErrorState,
+  LoadingState,
+} from '@dwp-frontend/design-system/components/states/state-panels';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

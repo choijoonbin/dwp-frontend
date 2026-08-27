@@ -56,15 +56,20 @@
 - 전체 화면의 우측 검증 패널은 검색 가능한 범위와 이번 실행에서 실제 사용된 출처를
   구분한다. 소스 선택은 서버 검색 계약에 반영되며 대화 맥락은 같은 Conversation 안에서만
   전달한다. 매 후속 질문은 현재 세션 권한과 원본 ACL을 다시 검증한다.
+- 질문 원문은 URL, Browser History, Navigation State, Web Storage와 일반 Telemetry에 넣지
+  않는다. 패널·전역 검색에서 전체 화면으로 이동할 때는 60초 이내 한 번만 소비되는 메모리
+  Handoff를 사용하며 새로고침·새 탭에서는 안전하게 소멸한다.
 
 ## 라우팅 계약
 
 - 정식 제품 홈은 `/dwaion/home`이다. `/dwaion/new`, `/dwaion/conversations`,
   `/dwaion/agents`, `/dwaion/admin/*`를 동일한 독립 제품 셸 아래 둔다.
-- `/dwaion`은 제품 홈으로 이동한다. `q`, `agent`, `conversation`이 있는 기존 주소는
-  각각 새 대화 또는 정식 대화 URL로 변환하며 쿼리 문자열을 보존한다.
-- `/ask`는 기존 북마크, 알림, 활동 이력의 호환을 위해 유지하며 쿼리 문자열을 보존한 채
-  `/dwaion/home` 또는 `/dwaion/new`로 리다이렉트한다.
+- `/dwaion`은 제품 홈으로 이동한다. `conversation`은 불투명 대화 URL로 변환하고,
+  `agent` 같은 비민감 Context만 허용한다. 기존 `q`는 새 대화 목적 판정에만 사용한 뒤
+  정식 URL에서 즉시 제거하며 자동 제출하지 않는다.
+- `/ask`는 기존 북마크, 알림, 활동 이력의 호환을 위해 유지하되 질문 원문 `q`는 정식
+  URL로 전달하지 않는다. 허용된 비민감 Context와 Hash만 `/dwaion/home` 또는
+  `/dwaion/new`로 전달한다.
 - 신규 내비게이션, 앱 카탈로그, 검색 결과, Space 앱 바인딩은 정식 `/dwaion/*` URL만 생성한다.
 - `/api/agent/v1/ask`, `APP.ASK`, `DWP_ASSISTANT`는 외부 URL이 아닌 내부 호환 계약이므로
   변경하지 않는다.

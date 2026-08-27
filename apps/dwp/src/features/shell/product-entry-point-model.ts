@@ -1,4 +1,5 @@
 import type { ProductPlane, ProductSurfaceManifest } from '../../components/product-manifest';
+import type { ProductEntryManifest } from '../../components/product-entry-point-catalog';
 
 import { resolveEffectiveScope } from './product-surface-context';
 
@@ -28,7 +29,7 @@ function scopedEntryPath(indexPath: string, contextScopeKey: string | undefined)
 }
 
 export function buildProductSurfaceEntryPoints(
-  manifest: ProductSurfaceManifest,
+  manifest: ProductEntryManifest | ProductSurfaceManifest,
   contexts: readonly EffectiveProductSurfaceContext[],
   nowMs = Date.now()
 ): readonly ProductSurfaceEntryPoint[] {
@@ -84,7 +85,7 @@ export function buildProductSurfaceEntryPoints(
 }
 
 function preferredManagementEntry(
-  manifest: ProductSurfaceManifest,
+  manifest: ProductEntryManifest | ProductSurfaceManifest,
   entries: readonly ProductSurfaceEntryPoint[]
 ): ProductSurfaceEntryPoint | undefined {
   const managementEntries = entries.filter((entry) => entry.plane === 'management');
@@ -106,7 +107,7 @@ function preferredManagementEntry(
  * its product-owned sub-surfaces may be selected without leaking them into the work header.
  */
 export function buildProductHeaderEntryPoints(
-  manifest: ProductSurfaceManifest,
+  manifest: ProductEntryManifest | ProductSurfaceManifest,
   currentSurfaceId: string,
   entries: readonly ProductSurfaceEntryPoint[]
 ): readonly ProductSurfaceEntryPoint[] {
@@ -132,7 +133,7 @@ export function buildProductHeaderEntryPoints(
 }
 
 export function buildProductAppCardEntryPoints(
-  manifest: ProductSurfaceManifest,
+  manifest: ProductEntryManifest | ProductSurfaceManifest,
   contexts: readonly EffectiveProductSurfaceContext[],
   nowMs = Date.now()
 ): ProductAppCardEntryPoints {
@@ -146,7 +147,7 @@ export function buildProductAppCardEntryPoints(
 }
 
 export function buildManageableProductList(
-  manifests: readonly ProductSurfaceManifest[],
+  manifests: readonly (ProductEntryManifest | ProductSurfaceManifest)[],
   contexts: readonly EffectiveProductSurfaceContext[],
   nowMs = Date.now()
 ): readonly { productId: string; entries: readonly ProductSurfaceEntryPoint[] }[] {

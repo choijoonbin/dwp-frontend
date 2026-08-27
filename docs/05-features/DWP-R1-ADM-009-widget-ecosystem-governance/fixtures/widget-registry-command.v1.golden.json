@@ -1,0 +1,1709 @@
+{
+  "fixtureVersion": 1,
+  "canonicalization": {
+    "algorithm": "RFC8785-JCS",
+    "encoding": "UTF-8",
+    "hash": "SHA-256",
+    "publicRequestFingerprintInput": [
+      "method",
+      "pathTemplate",
+      "body",
+      "expectedVersion",
+      "actorScope"
+    ],
+    "permissionSetHashInput": [
+      "schemaVersion",
+      "permissionCodes",
+      "ownerProductKeys",
+      "providerAuthorityRevision"
+    ],
+    "reasonDigestInput": ["reasonCode", "reasonText"]
+  },
+  "trustedContextDefaults": {
+    "actorScope": "provider:actor_ref_widget_admin:owner:core.workspace",
+    "signedActorRef": "actor_ref_widget_admin",
+    "signedSessionRef": "session_ref_widget_admin_20260827",
+    "signedSodArtifactIds": ["sod_approval_0001", "sod_case_0001"],
+    "signedOwnerProductKeys": ["core.workspace"],
+    "signedProviderAuthorityRevision": "provider_authority_revision_0042",
+    "currentProviderAuthorityRevision": "provider_authority_revision_0042"
+  },
+  "commands": [
+    {
+      "caseId": "create-definition",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000001",
+        "operationId": "createWidgetDefinition",
+        "commandType": "CREATE_DEFINITION",
+        "target": {
+          "targetType": "DEFINITION_KEY_HASH",
+          "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e"
+        },
+        "payload": {
+          "definitionKey": "core.workspace.command-rail",
+          "ownerProductKey": "core.workspace",
+          "ownerTeamKey": "core.workspace-platform",
+          "riskTier": "HIGH",
+          "dataClassification": "CONFIDENTIAL",
+          "reasonCode": "DEFINITION_CREATE_APPROVED",
+          "reasonText": "Create the governed command rail definition.",
+          "expectedVersion": 0
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000001",
+        "publicRequestFingerprint": "bfaacb92b693351f631848d1b592a12fcf78cacd1ff68a65bcb10b940d47ce3c",
+        "expectedVersion": 0,
+        "correlationId": "30000000-0000-4000-8000-000000000001",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "e247d97b778b6fe9b89d2642e1f2d712562400644ac98d7d95f03cbf2ca9a2ca",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.write",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_WRITE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000001",
+        "signedOperationId": "createWidgetDefinition",
+        "signedCommandType": "CREATE_DEFINITION",
+        "signedTarget": {
+          "targetType": "DEFINITION_KEY_HASH",
+          "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "DEFINITION_KEY_HASH",
+          "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "DEFINITION_KEY_HASH",
+          "targetId": "ade48b8b145ad48e418f91090f7cd696c0765dfadf2de68922cbd7e2f29cbb7e",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000001",
+        "signedPublicRequestFingerprint": "bfaacb92b693351f631848d1b592a12fcf78cacd1ff68a65bcb10b940d47ce3c",
+        "signedPayloadHash": "9e98f214a8adbc2dbe88577fcd88319e97a515aefca0069074dab6b0f005302d",
+        "signedReasonDigest": "f7579bff04350700bf8b6e9df5caf8a7274a79df0f675bdc35fc4246707775c5"
+      }
+    },
+    {
+      "caseId": "create-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000002",
+        "operationId": "createWidgetDefinitionVersion",
+        "commandType": "CREATE_VERSION",
+        "target": {
+          "targetType": "DEFINITION_SEMVER_HASH",
+          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "definitionId": "11111111-1111-4111-8111-111111111111"
+        },
+        "payload": {
+          "semanticVersion": "1.0.0",
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": { "presetEligible": false },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "reasonCode": "VERSION_CREATE_APPROVED",
+          "reasonText": "Create version 1.0.0 from the validated manifest.",
+          "expectedVersion": 1
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000002",
+        "publicRequestFingerprint": "3d6596b730e970614e14ff879eabe3f85178b25dadfe388c1b80e2c274bd25cc",
+        "expectedVersion": 1,
+        "correlationId": "30000000-0000-4000-8000-000000000002",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "e247d97b778b6fe9b89d2642e1f2d712562400644ac98d7d95f03cbf2ca9a2ca",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.write",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_WRITE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000002",
+        "signedOperationId": "createWidgetDefinitionVersion",
+        "signedCommandType": "CREATE_VERSION",
+        "signedTarget": {
+          "targetType": "DEFINITION_SEMVER_HASH",
+          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "definitionId": "11111111-1111-4111-8111-111111111111"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "DEFINITION_SEMVER_HASH",
+          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "DEFINITION_SEMVER_HASH",
+          "targetId": "204a84ac3984d3a14b52b14816749c701e9812aa34453bc821d7b47561bc186b",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000002",
+        "signedPublicRequestFingerprint": "3d6596b730e970614e14ff879eabe3f85178b25dadfe388c1b80e2c274bd25cc",
+        "signedPayloadHash": "5780375d6e718a436a6e15bca9a3f3055513258dd3cca2bc787e225fb23c3ff9",
+        "signedReasonDigest": "a0c9154d2ee1cd010fb02e4a5e2c92b9a3da5754e0e83f262eacf46506ca27f7"
+      }
+    },
+    {
+      "caseId": "update-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000003",
+        "operationId": "updateWidgetDefinitionVersion",
+        "commandType": "UPDATE_VERSION",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "manifest": {
+            "schemaVersion": 1,
+            "definitionKey": "core.workspace.command-rail",
+            "owner": {
+              "productKey": "core.workspace",
+              "sourceAppResourceKey": "APP.WORK"
+            },
+            "renderer": {
+              "kind": "NATIVE",
+              "rendererKey": "home.command-rail",
+              "minimumHostApiVersion": 1
+            },
+            "supportedSurfaces": ["workspace-home"],
+            "requiredAuthorities": ["APP.WORK:VIEW"],
+            "placement": {
+              "supportedContexts": ["CLASSIC_PERSONAL", "FLOW_GOVERNED"],
+              "policyClass": "GOVERNED",
+              "canHide": true,
+              "defaultSize": "large",
+              "allowedSizes": ["large", "full"],
+              "defaultHeight": "short",
+              "allowedHeights": ["short", "standard"]
+            },
+            "configurationContract": null,
+            "dataCapabilities": ["HOME.OVERVIEW.READ"],
+            "actionCapabilities": [],
+            "sharing": { "presetEligible": false },
+            "operations": {
+              "freshnessSeconds": 30,
+              "analyticsKey": "home.command-rail"
+            },
+            "privacy": {
+              "classification": "CONFIDENTIAL",
+              "retention": "NONE",
+              "recipientContextBinding": true
+            }
+          },
+          "reasonCode": "VERSION_DRAFT_UPDATED",
+          "reasonText": "Update the draft manifest before validation.",
+          "expectedVersion": 2
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000003",
+        "publicRequestFingerprint": "18cec6259203133c26cc3a750153e0c769a92db9853ccf95ab2e9f08056b0f30",
+        "expectedVersion": 2,
+        "correlationId": "30000000-0000-4000-8000-000000000003",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "e247d97b778b6fe9b89d2642e1f2d712562400644ac98d7d95f03cbf2ca9a2ca",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.write",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_WRITE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000003",
+        "signedOperationId": "updateWidgetDefinitionVersion",
+        "signedCommandType": "UPDATE_VERSION",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000003",
+        "signedPublicRequestFingerprint": "18cec6259203133c26cc3a750153e0c769a92db9853ccf95ab2e9f08056b0f30",
+        "signedPayloadHash": "e3a2ccf086110410c785dba03e910222918a2d8dc9d19ac547e638ed1968e7cf",
+        "signedReasonDigest": "4d3bda5c40fb974870207077ee3db9c01be775a941c8fda4f798e18c12b4ce6c"
+      }
+    },
+    {
+      "caseId": "validate-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000004",
+        "operationId": "validateWidgetDefinitionVersion",
+        "commandType": "VALIDATE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "reasonCode": "VERSION_VALIDATION_COMPLETED",
+          "reasonText": "Run every static validation gate.",
+          "expectedVersion": 3
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000004",
+        "publicRequestFingerprint": "05a6e5e0ce132660ecdd91edcade6652adf12853fc33366ed2573c97f826682e",
+        "expectedVersion": 3,
+        "correlationId": "30000000-0000-4000-8000-000000000004",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "e247d97b778b6fe9b89d2642e1f2d712562400644ac98d7d95f03cbf2ca9a2ca",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.write",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_WRITE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000004",
+        "signedOperationId": "validateWidgetDefinitionVersion",
+        "signedCommandType": "VALIDATE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000004",
+        "signedPublicRequestFingerprint": "05a6e5e0ce132660ecdd91edcade6652adf12853fc33366ed2573c97f826682e",
+        "signedPayloadHash": "11b2d6047b6c551164c8923668d74853cf2f72e2c5df7da344280574abf9f852",
+        "signedReasonDigest": "4e88701bb162d20b844eb02b48e22277a81496272f9c9467ef558c87019d158f"
+      }
+    },
+    {
+      "caseId": "submit-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000005",
+        "operationId": "submitWidgetDefinitionVersion",
+        "commandType": "SUBMIT",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "reasonCode": "VERSION_SUBMITTED",
+          "reasonText": "Submit the validated version for independent review.",
+          "expectedVersion": 4
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000005",
+        "publicRequestFingerprint": "7874734a820e5ad4984a8c3e2c866aec79079e9d5bc7774592805708f2616812",
+        "expectedVersion": 4,
+        "correlationId": "30000000-0000-4000-8000-000000000005",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "e247d97b778b6fe9b89d2642e1f2d712562400644ac98d7d95f03cbf2ca9a2ca",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.write",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_WRITE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000005",
+        "signedOperationId": "submitWidgetDefinitionVersion",
+        "signedCommandType": "SUBMIT",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000005",
+        "signedPublicRequestFingerprint": "7874734a820e5ad4984a8c3e2c866aec79079e9d5bc7774592805708f2616812",
+        "signedPayloadHash": "e7918e7aa3d70738de937d39a1d20e93726aa302ee4a46f6a2982e06b80de76c",
+        "signedReasonDigest": "7327ccef36d17685146fd180b82f808a1d8be730fc0f126af16f6ea7dd8ad6d8"
+      }
+    },
+    {
+      "caseId": "decide-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000006",
+        "operationId": "decideWidgetDefinitionVersion",
+        "commandType": "DECIDE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "decision": "APPROVE",
+          "validationRunId": "77777777-7777-4777-8777-777777777777",
+          "evidenceIds": ["33333333-3333-4333-8333-333333333333"],
+          "reasonCode": "VERSION_APPROVED",
+          "reasonText": "Approve the validated version with current evidence.",
+          "expectedVersion": 5
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000006",
+        "publicRequestFingerprint": "4623b4540e9343264d64d94a430a8304e3a5246bc4c36355c29312d05728f7ac",
+        "expectedVersion": 5,
+        "correlationId": "30000000-0000-4000-8000-000000000006",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "2fe1f669f50b41e664dbd33118e76d648ee555c03b13d25d71502c2b80b147ba",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.review",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVIEW"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000006",
+        "signedOperationId": "decideWidgetDefinitionVersion",
+        "signedCommandType": "DECIDE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "AUTHOR",
+              "actorRef": "actor_ref_version_author"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000006",
+        "signedPublicRequestFingerprint": "4623b4540e9343264d64d94a430a8304e3a5246bc4c36355c29312d05728f7ac",
+        "signedPayloadHash": "d5abe6e3d51d9c51355f9bbbb1d8e0f19eba62304ffc4740940e0f400a055930",
+        "signedReasonDigest": "6773832db4f52a9a596372105c60c8c00f47bdd310966b3dd0da2acb5b823e15"
+      }
+    },
+    {
+      "caseId": "rework-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000007",
+        "operationId": "reworkWidgetDefinitionVersion",
+        "commandType": "REWORK",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "rejectedDecisionId": "88888888-8888-4888-8888-888888888888",
+          "reasonCode": "VERSION_REWORKED",
+          "reasonText": "Reopen the rejected version for author rework.",
+          "expectedVersion": 6
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000007",
+        "publicRequestFingerprint": "baad590b4ddbfc0520faf48a88d3632a7d1087813bcbaa5aba6561f3cf8b0720",
+        "expectedVersion": 6,
+        "correlationId": "30000000-0000-4000-8000-000000000007",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "e247d97b778b6fe9b89d2642e1f2d712562400644ac98d7d95f03cbf2ca9a2ca",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.write",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_WRITE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000007",
+        "signedOperationId": "reworkWidgetDefinitionVersion",
+        "signedCommandType": "REWORK",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000007",
+        "signedPublicRequestFingerprint": "baad590b4ddbfc0520faf48a88d3632a7d1087813bcbaa5aba6561f3cf8b0720",
+        "signedPayloadHash": "2788f1c1a8eab08f38d82788dced802c6923446aa69e7fe7ed58c22a7e09b8bb",
+        "signedReasonDigest": "9be9ec9ee7d2cddd5950811f73aaae7d456af45a66d83e2186250b680117b684"
+      }
+    },
+    {
+      "caseId": "record-evidence",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000008",
+        "operationId": "recordWidgetCertificationEvidence",
+        "commandType": "RECORD_EVIDENCE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "evidenceType": "SECURITY",
+          "decision": "PASS",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "evidenceRef": "security_attestation_20260827",
+          "evidenceSha256": "4c5f0d6b25f4b3f2ce4d86663252844e7bb7c0d94a0b3a07aca2bccf14569f35",
+          "expiresAt": "2026-09-30T00:00:00Z",
+          "reviewNote": "Independent security assessment passed.",
+          "reasonCode": "EVIDENCE_REVIEW_COMPLETED",
+          "reasonText": "Record immutable security certification evidence.",
+          "expectedVersion": 7
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000008",
+        "publicRequestFingerprint": "57381b944cae01f870cad0461b1c5a0f576f7fedf71a1824baf599d64f42e8a7",
+        "expectedVersion": 7,
+        "correlationId": "30000000-0000-4000-8000-000000000008",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "2fe1f669f50b41e664dbd33118e76d648ee555c03b13d25d71502c2b80b147ba",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.review",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVIEW"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000008",
+        "signedOperationId": "recordWidgetCertificationEvidence",
+        "signedCommandType": "RECORD_EVIDENCE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000008",
+        "signedPublicRequestFingerprint": "57381b944cae01f870cad0461b1c5a0f576f7fedf71a1824baf599d64f42e8a7",
+        "signedPayloadHash": "c99c292b02e547575b5083cbe4596fcaeb4a6026045725f431434daf54901120",
+        "signedReasonDigest": "f9391e87642e1e33cc6ff64efa2b07d8a341dbff1a66ac9505c8bb9a5cafb018"
+      }
+    },
+    {
+      "caseId": "waive-evidence",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000009",
+        "operationId": "waiveWidgetCertificationEvidence",
+        "commandType": "WAIVE_EVIDENCE",
+        "target": {
+          "targetType": "EVIDENCE",
+          "targetId": "33333333-3333-4333-8333-333333333333",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "evidenceId": "33333333-3333-4333-8333-333333333333"
+        },
+        "payload": {
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "waiverExpiresAt": "2026-09-15T00:00:00Z",
+          "waiverReason": "Temporary localization exception with a committed remediation date.",
+          "trackingTicketRef": "DWP-ADM009-LOC-42",
+          "reasonCode": "EVIDENCE_WAIVER_APPROVED",
+          "reasonText": "Waive the eligible evidence until remediation completes.",
+          "expectedVersion": 8
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000009",
+        "publicRequestFingerprint": "a5a8929b46cd750bb4e5c1cd65a6c2cb578d932ae4e9f44a7eab45dcec3cef2f",
+        "expectedVersion": 8,
+        "correlationId": "30000000-0000-4000-8000-000000000009",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "c3a2069e9cbf703caaed4d8c4fa4e4d2fae7e93b6176674b08730c30681e9cdb",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.waive",
+        "signedPermissionCodes": ["WIDGET_EVIDENCE_WAIVE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000009",
+        "signedOperationId": "waiveWidgetCertificationEvidence",
+        "signedCommandType": "WAIVE_EVIDENCE",
+        "signedTarget": {
+          "targetType": "EVIDENCE",
+          "targetId": "33333333-3333-4333-8333-333333333333",
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "evidenceId": "33333333-3333-4333-8333-333333333333"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "EVIDENCE",
+          "targetId": "33333333-3333-4333-8333-333333333333",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "EVIDENCE",
+          "targetId": "33333333-3333-4333-8333-333333333333",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "AUTHOR",
+              "actorRef": "actor_ref_version_author"
+            },
+            {
+              "role": "EVIDENCE_REVIEWER",
+              "actorRef": "actor_ref_evidence_reviewer"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000009",
+        "signedPublicRequestFingerprint": "a5a8929b46cd750bb4e5c1cd65a6c2cb578d932ae4e9f44a7eab45dcec3cef2f",
+        "signedPayloadHash": "4cc6bdd56b6033cf9f46695ca377151d59fcb4fa1e0e2e3fa0b32d8b0659c7af",
+        "signedReasonDigest": "f1ccb19b92d7fa2c4926a99923324c075c2869966310fd4193999abfa640948f"
+      }
+    },
+    {
+      "caseId": "publish-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000010",
+        "operationId": "publishWidgetDefinitionVersion",
+        "commandType": "PUBLISH",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "channel": "STABLE",
+          "validationRunId": "77777777-7777-4777-8777-777777777777",
+          "evidenceIds": ["33333333-3333-4333-8333-333333333333"],
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "reasonCode": "VERSION_PUBLISHED",
+          "reasonText": "Publish the approved and certified version.",
+          "expectedVersion": 9
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000010",
+        "publicRequestFingerprint": "adb884fddbd0d782369439d70792386ed644c1ee117470946296a855e584c868",
+        "expectedVersion": 9,
+        "correlationId": "30000000-0000-4000-8000-000000000010",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000010",
+        "signedOperationId": "publishWidgetDefinitionVersion",
+        "signedCommandType": "PUBLISH",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "APPROVER",
+              "actorRef": "actor_ref_version_approver"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000010",
+        "signedPublicRequestFingerprint": "adb884fddbd0d782369439d70792386ed644c1ee117470946296a855e584c868",
+        "signedPayloadHash": "dca1e2fc326e059f25dbcf8681a1c3ddf98a255a2beb28c6d704da822044c1fe",
+        "signedReasonDigest": "4af353c49a22c86dd237d4754afa511307e57c79c4418a509dbb714a35ef550e"
+      }
+    },
+    {
+      "caseId": "deprecate-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000011",
+        "operationId": "deprecateWidgetDefinitionVersion",
+        "commandType": "DEPRECATE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "replacementVersionId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "deprecationEndsAt": "2027-08-01T00:00:00Z",
+          "reasonCode": "VERSION_DEPRECATED",
+          "reasonText": "Deprecate after a bounded replacement window.",
+          "expectedVersion": 10
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000011",
+        "publicRequestFingerprint": "27104dd726376e605a1b383201039eb4bfb1d37b3ec9d4c2527a4403451182ea",
+        "expectedVersion": 10,
+        "correlationId": "30000000-0000-4000-8000-000000000011",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000011",
+        "signedOperationId": "deprecateWidgetDefinitionVersion",
+        "signedCommandType": "DEPRECATE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000011",
+        "signedPublicRequestFingerprint": "27104dd726376e605a1b383201039eb4bfb1d37b3ec9d4c2527a4403451182ea",
+        "signedPayloadHash": "6bebc5532b832f3b2762558d0956af947c99d4d9d411ccc3933c367ff2dff86a",
+        "signedReasonDigest": "7c3fa19e69b85047245844a7ee170ebe35cd4c6ca8f8fc98c32d30761b654e37"
+      }
+    },
+    {
+      "caseId": "quarantine-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000012",
+        "operationId": "quarantineWidgetDefinitionVersion",
+        "commandType": "QUARANTINE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "publicReasonCode": "SECURITY_REVIEW_REQUIRED",
+          "internalIncidentRef": "INC-2026-0042",
+          "expiresAt": "2026-09-30T00:00:00Z",
+          "reasonCode": "SECURITY_INCIDENT",
+          "reasonText": "Quarantine immediately while the incident is investigated.",
+          "expectedVersion": 11
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000012",
+        "publicRequestFingerprint": "7a89bbef969c08fbc4baa6abd835fcaedca10fb11c74e30ba1758ed1e72253fd",
+        "expectedVersion": 11,
+        "correlationId": "30000000-0000-4000-8000-000000000012",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "54106f9d21e9bc6ed04d4ac797c9f7473c92aac474bfc2a11e76be1447d5d73c",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.safety",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVOKE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000012",
+        "signedOperationId": "quarantineWidgetDefinitionVersion",
+        "signedCommandType": "QUARANTINE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000012",
+        "signedPublicRequestFingerprint": "7a89bbef969c08fbc4baa6abd835fcaedca10fb11c74e30ba1758ed1e72253fd",
+        "signedPayloadHash": "285eda3db6c74231f396e786e1e6dfcaeac99f77287f3301a5b372e85a1cd009",
+        "signedReasonDigest": "560c3da5b8f377365361111875f635e350f4c40f77639fab3c7f0f5729de898a"
+      }
+    },
+    {
+      "caseId": "approve-quarantine-clearance",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000013",
+        "operationId": "approveWidgetQuarantineClearance",
+        "commandType": "APPROVE_QUARANTINE_CLEARANCE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "quarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "reviewDecision": "APPROVE",
+          "evidenceRefs": ["evidence_security_clearance_0042"],
+          "reasonCode": "QUARANTINE_CLEAR_REVIEWED",
+          "reasonText": "Approve clearance for the current quarantine event.",
+          "expectedVersion": 12
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000013",
+        "publicRequestFingerprint": "761178047fae3af8869ebf2586b812bce967ba5337a3489dd4d5063f897acf59",
+        "expectedVersion": 12,
+        "correlationId": "30000000-0000-4000-8000-000000000013",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "2fe1f669f50b41e664dbd33118e76d648ee555c03b13d25d71502c2b80b147ba",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.review",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVIEW"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000013",
+        "signedOperationId": "approveWidgetQuarantineClearance",
+        "signedCommandType": "APPROVE_QUARANTINE_CLEARANCE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "QUARANTINER",
+              "actorRef": "actor_ref_security_responder"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000013",
+        "signedPublicRequestFingerprint": "761178047fae3af8869ebf2586b812bce967ba5337a3489dd4d5063f897acf59",
+        "signedPayloadHash": "888ff57a407bf9a62f4cfc2f3c339683c658c1a4744b6eed3752907763250a2c",
+        "signedReasonDigest": "17c9b45b1c5f1be184f8053bcb14793e50fda4cf909834bf1c10a714dc373652"
+      }
+    },
+    {
+      "caseId": "clear-quarantine",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000014",
+        "operationId": "clearWidgetVersionQuarantine",
+        "commandType": "CLEAR_QUARANTINE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "clearanceApprovalId": "55555555-5555-4555-8555-555555555555",
+          "quarantineEventId": "99999999-9999-4999-8999-999999999999",
+          "reasonCode": "QUARANTINE_CLEAR_EXECUTED",
+          "reasonText": "Consume the active clearance approval for the current event.",
+          "expectedVersion": 13
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000014",
+        "publicRequestFingerprint": "7cdd448e4bfb46e589b73c74bf0172be3e49643e8e3bc6e803298a5346c21f76",
+        "expectedVersion": 13,
+        "correlationId": "30000000-0000-4000-8000-000000000014",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000014",
+        "signedOperationId": "clearWidgetVersionQuarantine",
+        "signedCommandType": "CLEAR_QUARANTINE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "CLEARANCE_APPROVER",
+              "actorRef": "actor_ref_clearance_approver"
+            },
+            {
+              "role": "QUARANTINER",
+              "actorRef": "actor_ref_security_responder"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000014",
+        "signedPublicRequestFingerprint": "7cdd448e4bfb46e589b73c74bf0172be3e49643e8e3bc6e803298a5346c21f76",
+        "signedPayloadHash": "bcc99ee4c15fd17ab1f2a53e6a2145ade6572fb75f5f6c9b5f36bbb124a087cb",
+        "signedReasonDigest": "aeeb26c2b4161e80fbd685ac0e6839b915c1d31b744157619b4eaa9c634166d5"
+      }
+    },
+    {
+      "caseId": "revoke-version",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000015",
+        "operationId": "revokeWidgetDefinitionVersion",
+        "commandType": "REVOKE",
+        "target": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "payload": {
+          "publicReasonCode": "SECURITY_REVOKED",
+          "internalIncidentRef": "INC-2026-0043",
+          "replacementVersionId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "reasonCode": "SECURITY_REVOKE",
+          "reasonText": "Revoke the compromised version irreversibly.",
+          "expectedVersion": 14
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000015",
+        "publicRequestFingerprint": "bad5c5d83f2a3627e1ce268064283e02d8c90112b9cffa4b33deb166d6b865eb",
+        "expectedVersion": 14,
+        "correlationId": "30000000-0000-4000-8000-000000000015",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "54106f9d21e9bc6ed04d4ac797c9f7473c92aac474bfc2a11e76be1447d5d73c",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.safety",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVOKE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000015",
+        "signedOperationId": "revokeWidgetDefinitionVersion",
+        "signedCommandType": "REVOKE",
+        "signedTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "versionId": "22222222-2222-4222-8222-222222222222"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "VERSION",
+          "targetId": "22222222-2222-4222-8222-222222222222",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000015",
+        "signedPublicRequestFingerprint": "bad5c5d83f2a3627e1ce268064283e02d8c90112b9cffa4b33deb166d6b865eb",
+        "signedPayloadHash": "e4c171b8a9eae0f1b8c79774b9e49073ec8ed829d8bf0231614d57d273eb471e",
+        "signedReasonDigest": "6d86126a8f1d5575b44e1d82eec6dc0a78c04136bdf8837616e7899d67989ff0"
+      }
+    },
+    {
+      "caseId": "retire-definition",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000016",
+        "operationId": "retireWidgetDefinition",
+        "commandType": "RETIRE",
+        "target": {
+          "targetType": "DEFINITION",
+          "targetId": "11111111-1111-4111-8111-111111111111",
+          "definitionId": "11111111-1111-4111-8111-111111111111"
+        },
+        "payload": {
+          "replacementDefinitionId": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          "impactRevision": "impact_revision_00000042",
+          "reasonCode": "DEFINITION_RETIRE_APPROVED",
+          "reasonText": "Retire after current aggregate impact is accepted.",
+          "expectedVersion": 15
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000016",
+        "publicRequestFingerprint": "5a08b2ced0252eb0ee870631c6598fb41d2880d9ec9c2f7cd4042e67675b1be2",
+        "expectedVersion": 15,
+        "correlationId": "30000000-0000-4000-8000-000000000016",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000016",
+        "signedOperationId": "retireWidgetDefinition",
+        "signedCommandType": "RETIRE",
+        "signedTarget": {
+          "targetType": "DEFINITION",
+          "targetId": "11111111-1111-4111-8111-111111111111",
+          "definitionId": "11111111-1111-4111-8111-111111111111"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "DEFINITION",
+          "targetId": "11111111-1111-4111-8111-111111111111",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "DEFINITION",
+          "targetId": "11111111-1111-4111-8111-111111111111",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000016",
+        "signedPublicRequestFingerprint": "5a08b2ced0252eb0ee870631c6598fb41d2880d9ec9c2f7cd4042e67675b1be2",
+        "signedPayloadHash": "759a73db44f02e838c9cacc735c315167a9256315b962996ee8e46dc0e580cc1",
+        "signedReasonDigest": "ae6622153539fe37913825c29af018b061810c87a7c63285256775a1baae27c9"
+      }
+    },
+    {
+      "caseId": "promote-channel",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000017",
+        "operationId": "promoteWidgetReleaseChannel",
+        "commandType": "PROMOTE",
+        "target": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "channel": "STABLE"
+        },
+        "payload": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "validationRunId": "77777777-7777-4777-8777-777777777777",
+          "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
+          "reasonCode": "CHANNEL_PROMOTION_APPROVED",
+          "reasonText": "Promote the current certified version to STABLE.",
+          "expectedVersion": 16
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000017",
+        "publicRequestFingerprint": "f5caa7f1f4fdae212c190f58f7a19f64698334b54f0765f251cf9408a8f01bbd",
+        "expectedVersion": 16,
+        "correlationId": "30000000-0000-4000-8000-000000000017",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000017",
+        "signedOperationId": "promoteWidgetReleaseChannel",
+        "signedCommandType": "PROMOTE",
+        "signedTarget": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "channel": "STABLE"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000017",
+        "signedPublicRequestFingerprint": "f5caa7f1f4fdae212c190f58f7a19f64698334b54f0765f251cf9408a8f01bbd",
+        "signedPayloadHash": "855c8670ec08cbdd70ab80f31d48d0320144f12da20098edd3ecb296a4ee4b82",
+        "signedReasonDigest": "530a4ed4a56a59c0fb40769b0cc534e6ea2949b1d8d6ff83259358b9c58b2905"
+      }
+    },
+    {
+      "caseId": "rollback-channel",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000018",
+        "operationId": "rollbackWidgetReleaseChannel",
+        "commandType": "ROLLBACK",
+        "target": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "channel": "STABLE"
+        },
+        "payload": {
+          "restoreVersionId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "expectedCurrentVersionId": "22222222-2222-4222-8222-222222222222",
+          "reasonCode": "CHANNEL_ROLLBACK_APPROVED",
+          "reasonText": "Rollback STABLE to the explicitly selected safe version.",
+          "expectedVersion": 17
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000018",
+        "publicRequestFingerprint": "a03cef12919120be54ecce7f0fa036fd9f8063516d8695d2ea46735ebb411ea2",
+        "expectedVersion": 17,
+        "correlationId": "30000000-0000-4000-8000-000000000018",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000018",
+        "signedOperationId": "rollbackWidgetReleaseChannel",
+        "signedCommandType": "ROLLBACK",
+        "signedTarget": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "definitionId": "11111111-1111-4111-8111-111111111111",
+          "channel": "STABLE"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "DEFINITION_CHANNEL_HASH",
+          "targetId": "ebdb0ac52ee5a3b0144b16aecf71122add592a168a935a81a2a6469a2362bdda",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000018",
+        "signedPublicRequestFingerprint": "a03cef12919120be54ecce7f0fa036fd9f8063516d8695d2ea46735ebb411ea2",
+        "signedPayloadHash": "41b941a5622050589275f659e8c2edb5e911c6cd521b30be7826ae4f07183ab9",
+        "signedReasonDigest": "443d15a7244dabc6a3421791b71b1c58c26374c9f1d00a0ae9332e5c35ac4c99"
+      }
+    },
+    {
+      "caseId": "disable-runtime-control",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000019",
+        "operationId": "disableWidgetRuntimeControl",
+        "commandType": "DISABLE_RUNTIME_CONTROL",
+        "target": {
+          "targetType": "RUNTIME_CONTROL_SCOPE_HASH",
+          "targetId": "866f3729173fc76cb9c8b68da9868e6dfee0b3e70844a335003ace93a9a24bb9",
+          "controlScope": "RUNTIME_RENDER",
+          "runtimeTargetType": "GLOBAL",
+          "runtimeTargetId": null
+        },
+        "payload": {
+          "scope": "RUNTIME_RENDER",
+          "targetType": "GLOBAL",
+          "targetId": null,
+          "expiresAt": "2026-09-30T00:00:00Z",
+          "publicReasonCode": "RUNTIME_SAFETY_STOP",
+          "internalIncidentRef": "INC-2026-0044",
+          "reasonCode": "GLOBAL_KILL_ENABLED",
+          "reasonText": "Disable runtime rendering globally during the incident.",
+          "expectedVersion": 18
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000019",
+        "publicRequestFingerprint": "668b0d9a1e481495f6c8bdb0078e95d17c7e0a57976c725e79a5777d0d4cdc6e",
+        "expectedVersion": 18,
+        "correlationId": "30000000-0000-4000-8000-000000000019",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "54106f9d21e9bc6ed04d4ac797c9f7473c92aac474bfc2a11e76be1447d5d73c",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.safety",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVOKE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000019",
+        "signedOperationId": "disableWidgetRuntimeControl",
+        "signedCommandType": "DISABLE_RUNTIME_CONTROL",
+        "signedTarget": {
+          "targetType": "RUNTIME_CONTROL_SCOPE_HASH",
+          "targetId": "866f3729173fc76cb9c8b68da9868e6dfee0b3e70844a335003ace93a9a24bb9",
+          "controlScope": "RUNTIME_RENDER",
+          "runtimeTargetType": "GLOBAL",
+          "runtimeTargetId": null
+        },
+        "trustedCurrentTarget": {
+          "targetType": "RUNTIME_CONTROL_SCOPE_HASH",
+          "targetId": "866f3729173fc76cb9c8b68da9868e6dfee0b3e70844a335003ace93a9a24bb9",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "RUNTIME_CONTROL_SCOPE_HASH",
+          "targetId": "866f3729173fc76cb9c8b68da9868e6dfee0b3e70844a335003ace93a9a24bb9",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": []
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000019",
+        "signedPublicRequestFingerprint": "668b0d9a1e481495f6c8bdb0078e95d17c7e0a57976c725e79a5777d0d4cdc6e",
+        "signedPayloadHash": "a6aa3201799bf497141b9089dec69f3ac21d0482b5eb2ab3ecb48566c483d8a7",
+        "signedReasonDigest": "29b0e829199c524a2ce4536af9a964d4fbdcf75e30e08ebd00d447f583d2ae2e"
+      }
+    },
+    {
+      "caseId": "approve-runtime-control-enable",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000020",
+        "operationId": "approveWidgetRuntimeControlEnable",
+        "commandType": "APPROVE_RUNTIME_CONTROL_ENABLE",
+        "target": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "controlId": "44444444-4444-4444-8444-444444444444"
+        },
+        "payload": {
+          "controlRevision": 42,
+          "evidenceRefs": ["evidence_incident_resolved_0044"],
+          "reasonCode": "RUNTIME_CONTROL_ENABLE_APPROVED",
+          "reasonText": "Approve enablement for the current disabled control head.",
+          "expectedVersion": 19
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000020",
+        "publicRequestFingerprint": "b379b61b68ef979cfb544bb5bf905294b3555ed7de3d582267efbc737720657d",
+        "expectedVersion": 19,
+        "correlationId": "30000000-0000-4000-8000-000000000020",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "2fe1f669f50b41e664dbd33118e76d648ee555c03b13d25d71502c2b80b147ba",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.review",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_REVIEW"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000020",
+        "signedOperationId": "approveWidgetRuntimeControlEnable",
+        "signedCommandType": "APPROVE_RUNTIME_CONTROL_ENABLE",
+        "signedTarget": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "controlId": "44444444-4444-4444-8444-444444444444"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "DISABLER",
+              "actorRef": "actor_ref_runtime_disabler"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000020",
+        "signedPublicRequestFingerprint": "b379b61b68ef979cfb544bb5bf905294b3555ed7de3d582267efbc737720657d",
+        "signedPayloadHash": "144dcf06200dd8915f551799639623b83888305b9a5e4be61c9d717d59e44df7",
+        "signedReasonDigest": "cfff8d290cc83dc0dd0c77d877f485c4fd1a80303e878f3c1dbe87254b8313eb"
+      }
+    },
+    {
+      "caseId": "enable-runtime-control",
+      "request": {
+        "schemaVersion": 1,
+        "commandId": "10000000-0000-4000-8000-000000000021",
+        "operationId": "enableWidgetRuntimeControl",
+        "commandType": "ENABLE_RUNTIME_CONTROL",
+        "target": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "controlId": "44444444-4444-4444-8444-444444444444"
+        },
+        "payload": {
+          "enableApprovalId": "66666666-6666-4666-8666-666666666666",
+          "controlRevision": 42,
+          "reasonCode": "GLOBAL_KILL_RELEASED",
+          "reasonText": "Consume the active approval and enable the exact control head.",
+          "expectedVersion": 20
+        },
+        "publicIdempotencyKey": "20000000-0000-4000-8000-000000000021",
+        "publicRequestFingerprint": "f740382fbea47eaabeb478c51e4fb933c0d4f1bb781c91eff92ebdc2d9bab81b",
+        "expectedVersion": 20,
+        "correlationId": "30000000-0000-4000-8000-000000000021",
+        "operatorRef": "actor_ref_widget_admin",
+        "sessionRef": "session_ref_widget_admin_20260827",
+        "permissionSetHash": "504a83aa15b1de844b260c40c8c6765abda14674c43344de1e4826503e33c293",
+        "sodArtifactIds": ["sod_approval_0001", "sod_case_0001"]
+      },
+      "verificationContext": {
+        "serviceScope": "widget-registry.release",
+        "signedPermissionCodes": ["WIDGET_DEFINITION_RELEASE"],
+        "signedCommandId": "10000000-0000-4000-8000-000000000021",
+        "signedOperationId": "enableWidgetRuntimeControl",
+        "signedCommandType": "ENABLE_RUNTIME_CONTROL",
+        "signedTarget": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "controlId": "44444444-4444-4444-8444-444444444444"
+        },
+        "trustedCurrentTarget": {
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "ownerProductKey": "core.workspace",
+          "riskTier": "HIGH",
+          "actorHistory": {
+            "AUTHOR": "actor_ref_version_author",
+            "APPROVER": "actor_ref_version_approver",
+            "EVIDENCE_REVIEWER": "actor_ref_evidence_reviewer",
+            "WAIVER_ACTOR": "actor_ref_evidence_officer",
+            "QUARANTINER": "actor_ref_security_responder",
+            "CLEARANCE_APPROVER": "actor_ref_clearance_approver",
+            "DISABLER": "actor_ref_runtime_disabler",
+            "ENABLE_APPROVER": "actor_ref_runtime_enable_approver"
+          }
+        },
+        "resolvedSodFacts": {
+          "artifactState": "ACTIVE",
+          "artifactIds": ["sod_approval_0001", "sod_case_0001"],
+          "authorityRevision": "sod_authority_revision_0042",
+          "currentAuthorityRevision": "sod_authority_revision_0042",
+          "verifiedAt": "2026-08-27T10:00:00Z",
+          "validUntil": "2026-08-27T10:05:00Z",
+          "targetType": "RUNTIME_CONTROL",
+          "targetId": "44444444-4444-4444-8444-444444444444",
+          "targetOwnerProductKey": "core.workspace",
+          "separationActors": [
+            {
+              "role": "DISABLER",
+              "actorRef": "actor_ref_runtime_disabler"
+            },
+            {
+              "role": "ENABLE_APPROVER",
+              "actorRef": "actor_ref_runtime_enable_approver"
+            }
+          ]
+        },
+        "signedPublicIdempotencyKey": "20000000-0000-4000-8000-000000000021",
+        "signedPublicRequestFingerprint": "f740382fbea47eaabeb478c51e4fb933c0d4f1bb781c91eff92ebdc2d9bab81b",
+        "signedPayloadHash": "094388f474962f88f24b16dd44e755aa87eb0fa6445061acfdde336cadee78aa",
+        "signedReasonDigest": "f7bedaa64136adf3866d82c89d4b2ce60ae0fa1a31f9d0431d53155993273982"
+      }
+    }
+  ]
+}

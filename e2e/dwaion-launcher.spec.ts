@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import type { Route } from '@playwright/test';
 
 import { ASK_RUNTIME_FIXTURE } from './support/runtime-access';
+import { mockQuestionLaunches } from './support/question-launch';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
 function fulfillAskStream(route: Route, response: unknown) {
@@ -25,6 +26,7 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
+  await mockQuestionLaunches(page);
   await page.route('**/api/agent/v1/ask/stream', (route) => {
     const request = route.request().postDataJSON() as { requestId: string };
     return fulfillAskStream(route, { ...ASK_RUNTIME_FIXTURE, requestId: request.requestId });
@@ -105,8 +107,10 @@ test('DWAI·ON runs a governed question and carries it into the evidence workspa
   await expect(panel.getByText('2 sources')).toBeVisible();
   await panel.getByRole('button', { name: 'Review evidence and sources' }).click();
   await expect(page).toHaveURL(
-    (url) => url.pathname === '/dwaion/new' && url.searchParams.get('q') === question
+    (url) => url.pathname === '/dwaion/new' && !url.searchParams.has('q')
   );
+  expect(page.url()).not.toContain(encodeURIComponent(question));
+  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
 });
 
 test('DWAI·ON exposes configuration truthfully and links status to the app catalog', async ({
@@ -200,10 +204,19 @@ test('DWAI·ON respects compact viewport and safe-area spacing', async ({ page }
   await page.goto('/');
 
   const launcher = page.getByTestId('dwaion-launcher');
+  const headerActions = page.getByTestId('shell-global-actions');
+  const main = page.locator('#dwp-main-content');
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
   const launcherBounds = await launcher.boundingBox();
-  expect(launcherBounds?.x ?? 0).toBeGreaterThanOrEqual(300);
-  expect((launcherBounds?.x ?? 0) + (launcherBounds?.width ?? 0)).toBeLessThanOrEqual(376);
-  expect((launcherBounds?.y ?? 0) + (launcherBounds?.height ?? 0)).toBeLessThanOrEqual(830);
+  const headerBounds = await headerActions.boundingBox();
+  const mainBounds = await main.boundingBox();
+  expect(launcherBounds?.x ?? 0).toBeGreaterThanOrEqual(headerBounds?.x ?? 0);
+  expect((launcherBounds?.x ?? 0) + (launcherBounds?.width ?? 0)).toBeLessThanOrEqual(
+    (headerBounds?.x ?? 0) + (headerBounds?.width ?? 0)
+  );
+  expect((launcherBounds?.y ?? 0) + (launcherBounds?.height ?? 0)).toBeLessThanOrEqual(
+    mainBounds?.y ?? 0
+  );
 
   await launcher.getByRole('button', { name: 'Open DWAI·ON' }).click();
   const panelBounds = await page.getByTestId('dwaion-panel').boundingBox();
@@ -214,4 +227,101 @@ test('DWAI·ON respects compact viewport and safe-area spacing', async ({ page }
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test('DWAI·ON reserves the shell edge without covering compact content or bottom actions', async ({
+  page,
+}) => {
+  const scenarios = [
+    { label: '320px Home', path: '/', width: 320, height: 720, textScale: 100 },
+    { label: '390px', path: '/', width: 390, height: 844, textScale: 100 },
+    { label: '768px', path: '/', width: 768, height: 1024, textScale: 100 },
+    { label: '390px at 200% text', path: '/', width: 390, height: 844, textScale: 200 },
+  ] as const;
+
+  for (const scenario of scenarios) {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height });
+    await page.goto(scenario.path);
+    if (scenario.textScale === 200) {
+      await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+    }
+
+    const main = page.locator('#dwp-main-content');
+    const launcher = page.getByTestId('dwaion-launcher');
+    await expect(main).toBeVisible();
+    await expect(launcher).toBeVisible();
+    await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
+    await page.evaluate(() => {
+      const mainElement = document.getElementById('dwp-main-content');
+      if (!mainElement) throw new Error('Shell main content is missing.');
+      const actions = [...mainElement.querySelectorAll<HTMLElement>('a[href], button')].filter(
+        (element) => {
+          const style = getComputedStyle(element);
+          const bounds = element.getBoundingClientRect();
+          return (
+            style.display !== 'none' &&
+            style.visibility !== 'hidden' &&
+            bounds.width > 0 &&
+            bounds.height > 0
+          );
+        }
+      );
+      const bottomAction = actions.at(-1);
+      if (!bottomAction) throw new Error('Shell bottom action is missing.');
+      bottomAction.dataset.dwaionBottomActionProbe = '';
+      bottomAction.scrollIntoView({ block: 'center' });
+    });
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    );
+
+    const geometry = await page.evaluate(() => {
+      const mainElement = document.getElementById('dwp-main-content');
+      const launcherElement = document.querySelector<HTMLElement>(
+        '[data-testid="dwaion-launcher"]'
+      );
+      const headerElement = launcherElement?.closest<HTMLElement>('header');
+      const bottomAction = mainElement?.querySelector<HTMLElement>(
+        '[data-dwaion-bottom-action-probe]'
+      );
+      if (!mainElement || !launcherElement || !bottomAction) {
+        throw new Error('Shell safety elements are missing.');
+      }
+
+      const launcherRect = launcherElement.getBoundingClientRect();
+      const headerRect = headerElement?.getBoundingClientRect();
+      const actionRect = bottomAction.getBoundingClientRect();
+      const overlapsHorizontally =
+        actionRect.left < launcherRect.right && launcherRect.left < actionRect.right;
+      const overlapsVertically =
+        actionRect.top < launcherRect.bottom && launcherRect.top < actionRect.bottom;
+
+      return {
+        bottomActionCovered: overlapsHorizontally && overlapsVertically,
+        fixedHeaderContentOffset:
+          !headerElement ||
+          !headerRect ||
+          getComputedStyle(headerElement).position !== 'fixed' ||
+          Number.parseFloat(getComputedStyle(mainElement).paddingTop) >= headerRect.height,
+        launcherContainedByHeader:
+          !headerRect ||
+          (launcherRect.left >= headerRect.left &&
+            launcherRect.right <= headerRect.right &&
+            launcherRect.top >= headerRect.top &&
+            launcherRect.bottom <= headerRect.bottom),
+        launcherInsideViewport:
+          launcherRect.left >= 0 && launcherRect.right <= document.documentElement.clientWidth,
+        pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+
+    expect(geometry.launcherContainedByHeader, `${scenario.label} shell header dock`).toBe(true);
+    expect(geometry.launcherInsideViewport, `${scenario.label} launcher viewport edge`).toBe(true);
+    expect(geometry.pageOverflow, `${scenario.label} page horizontal overflow`).toBeLessThanOrEqual(
+      1
+    );
+    expect(geometry.fixedHeaderContentOffset, `${scenario.label} fixed header offset`).toBe(true);
+    expect(geometry.bottomActionCovered, `${scenario.label} bottom action overlap`).toBe(false);
+  }
 });

@@ -34,12 +34,7 @@ export default function ApprovalsPage({ governed = false }: { governed?: boolean
       <ApprovalAdmin
         view={
           page.view as
-            | 'admin-overview'
-            | 'workflows'
-            | 'forms'
-            | 'policies'
-            | 'operations'
-            | 'signatures'
+            'admin-overview' | 'workflows' | 'forms' | 'policies' | 'operations' | 'signatures'
         }
       />
     );

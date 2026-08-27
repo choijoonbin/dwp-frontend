@@ -5,8 +5,17 @@ import ts from 'typescript';
 const root = process.cwd();
 const localeRoot = path.join(root, 'libs/shared-i18n/src/locales');
 const sourceRoot = path.join(root, 'apps/dwp/src');
+const sourceDebtBaselinePath = path.join(root, 'scripts/i18n-source-debt-baseline.json');
 const baseLocale = 'en';
 const issues = [];
+const sourceDebtCounts = {};
+const writeSourceDebtBaseline = process.argv.includes('--write-source-debt-baseline');
+
+function incrementSourceDebt(file, contract) {
+  const relativeFile = path.relative(root, file).split(path.sep).join('/');
+  sourceDebtCounts[relativeFile] ??= {};
+  sourceDebtCounts[relativeFile][contract] = (sourceDebtCounts[relativeFile][contract] ?? 0) + 1;
+}
 
 function registeredProductLocales() {
   const registryPath = path.join(root, 'libs/shared-i18n/src/lib/locales.ts');
@@ -259,6 +268,15 @@ function checkSourceFile(file) {
 
     if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)) {
       const method = node.expression.name.text;
+      const firstArgument = node.arguments[0];
+      if (
+        method === 'startsWith' &&
+        firstArgument &&
+        ts.isStringLiteral(firstArgument) &&
+        firstArgument.text.toLocaleLowerCase() === 'ko'
+      ) {
+        incrementSourceDebt(file, 'localeStartsWithKo');
+      }
       if (['toLocaleString', 'toLocaleDateString', 'toLocaleTimeString'].includes(method)) {
         report(
           node,
@@ -273,6 +291,32 @@ function checkSourceFile(file) {
           containsWords(firstArgument.text)
         ) {
           report(node, `literal feedback message: ${JSON.stringify(firstArgument.text)}`);
+        }
+      }
+    }
+
+    if (ts.isCallExpression(node)) {
+      const translationCall =
+        (ts.isIdentifier(node.expression) && node.expression.text === 't') ||
+        (ts.isPropertyAccessExpression(node.expression) && node.expression.name.text === 't');
+      if (translationCall) {
+        for (const argument of node.arguments.slice(1)) {
+          if (!ts.isObjectLiteralExpression(argument)) continue;
+          for (const property of argument.properties) {
+            if (!ts.isPropertyAssignment(property)) continue;
+            const name = property.name.getText(sourceFile).replaceAll(/['"]/g, '');
+            if (name !== 'defaultValue') continue;
+            const initializer = property.initializer;
+            const value =
+              ts.isStringLiteral(initializer) || ts.isNoSubstitutionTemplateLiteral(initializer)
+                ? initializer.text
+                : ts.isTemplateExpression(initializer)
+                  ? initializer.getText(sourceFile)
+                  : undefined;
+            if (value && /[\u3131-\uD79D]/.test(value)) {
+              incrementSourceDebt(file, 'koreanTranslationDefaultValue');
+            }
+          }
         }
       }
     }
@@ -308,6 +352,47 @@ function checkProductSource() {
 
 checkBundles();
 checkProductSource();
+
+const currentSourceDebt = {
+  version: 1,
+  files: Object.fromEntries(
+    Object.entries(sourceDebtCounts)
+      .filter(([, counts]) => Object.keys(counts).length > 0)
+      .sort(([left], [right]) => left.localeCompare(right))
+  ),
+};
+
+if (writeSourceDebtBaseline) {
+  fs.writeFileSync(sourceDebtBaselinePath, `${JSON.stringify(currentSourceDebt, null, 2)}\n`);
+  const total = Object.values(currentSourceDebt.files).reduce(
+    (sum, counts) => sum + Object.values(counts).reduce((fileSum, count) => fileSum + count, 0),
+    0
+  );
+  console.log(`i18n source-debt baseline updated (${total} grandfathered use(s)).`);
+  process.exit(0);
+}
+
+if (!fs.existsSync(sourceDebtBaselinePath)) {
+  issues.push(
+    'missing i18n source-debt baseline; run `yarn i18n:baseline` after reviewing the legacy inventory'
+  );
+} else {
+  const sourceDebtBaseline = JSON.parse(fs.readFileSync(sourceDebtBaselinePath, 'utf8'));
+  if (sourceDebtBaseline.version !== 1 || !sourceDebtBaseline.files) {
+    issues.push('unsupported i18n source-debt baseline format');
+  } else {
+    for (const [file, counts] of Object.entries(currentSourceDebt.files)) {
+      for (const [contract, count] of Object.entries(counts)) {
+        const allowed = sourceDebtBaseline.files[file]?.[contract] ?? 0;
+        if (count > allowed) {
+          issues.push(
+            `${file}: ${contract} increased from ${allowed} to ${count}; use locale data or a translation key instead`
+          );
+        }
+      }
+    }
+  }
+}
 
 if (issues.length) {
   console.error(`i18n validation failed with ${issues.length} issue(s):`);

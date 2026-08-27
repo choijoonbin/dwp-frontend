@@ -11,6 +11,30 @@ export type CalendarResponseStatus = 'NEEDS_ACTION' | 'ACCEPTED' | 'TENTATIVE' |
 export type CalendarAttendeeType = 'REQUIRED' | 'OPTIONAL' | 'RESOURCE';
 export type CalendarResourceType = 'ROOM' | 'DESK' | 'EQUIPMENT';
 export type CalendarResourceState = 'AVAILABLE' | 'MAINTENANCE' | 'RETIRED';
+export type CalendarSourceKind = 'OWNED' | 'COMPANY' | 'SHARED' | 'TEAM' | 'RESOURCE';
+export type CalendarAccessLevel =
+  'OWNER' | 'MANAGE' | 'EDIT' | 'VIEW_DETAILS' | 'VIEW_FREE_BUSY' | 'EVENT_ATTENDEE' | 'NONE';
+export type CalendarSubscriptionPolicy = 'REQUIRED' | 'DEFAULT_ON' | 'OPTIONAL';
+export type CalendarEventImportance = 'LOW' | 'NORMAL' | 'HIGH';
+export type CalendarEventDetailLevel = 'FULL' | 'FREE_BUSY';
+
+export type CalendarCapabilities = {
+  canViewDetails: boolean;
+  canCreateEvents: boolean;
+  canEditCalendar: boolean;
+  canManageSharing: boolean;
+  canDeleteCalendar: boolean;
+  canUnsubscribe: boolean;
+};
+
+export type CalendarEventCapabilities = {
+  canViewDetails: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
+  canRestore: boolean;
+  canRespond: boolean;
+  canStar: boolean;
+};
 
 export type CalendarSummary = {
   calendarId: string;
@@ -19,7 +43,56 @@ export type CalendarSummary = {
   color: string;
   type: CalendarType;
   visibility: string;
+  ownerPersonPublicId?: string | null;
+  ownerDisplayName?: string | null;
+  sourceKind?: CalendarSourceKind;
+  accessLevel?: CalendarAccessLevel;
+  subscriptionPolicy?: CalendarSubscriptionPolicy;
+  required?: boolean;
   selected: boolean;
+  favorite?: boolean;
+  displayOrder?: number;
+  version?: number;
+  subscriptionVersion?: number;
+  capabilities?: CalendarCapabilities;
+};
+
+export type CalendarShare = {
+  grantId: string;
+  principalType: string;
+  principalPersonPublicId?: string | null;
+  principalGroupRef?: string | null;
+  principalDisplayName: string;
+  accessLevel: CalendarAccessLevel;
+  canViewPrivate: boolean;
+  validUntil?: string | null;
+  lifecycleState: string;
+  version: number;
+};
+
+export type CalendarShareInput = {
+  principalPersonPublicId: string;
+  principalDisplayName: string;
+  accessLevel: Extract<CalendarAccessLevel, 'VIEW_FREE_BUSY' | 'VIEW_DETAILS' | 'EDIT' | 'MANAGE'>;
+  canViewPrivate: boolean;
+  validUntil?: string | null;
+  version: number;
+};
+
+export type CalendarSubscriptionInput = {
+  selected: boolean;
+  favorite: boolean;
+  displayOrder: number;
+  colorOverride?: string | null;
+  version: number;
+};
+
+export type CalendarSubscription = {
+  selected: boolean;
+  favorite: boolean;
+  displayOrder: number;
+  colorOverride?: string | null;
+  version: number;
 };
 
 export type CalendarAttendee = {
@@ -77,6 +150,85 @@ export type CalendarEvent = {
   attendees: CalendarAttendee[];
   resource?: CalendarResource | null;
   conflict: boolean;
+  importance?: CalendarEventImportance;
+  detailLevel?: CalendarEventDetailLevel;
+  redacted?: boolean;
+  starred?: boolean;
+  preferenceVersion?: number;
+  capabilities?: CalendarEventCapabilities;
+  restrictionReason?: string | null;
+  version: number;
+};
+
+export type CalendarEventPreferenceInput = {
+  starred: boolean;
+  hidden: boolean;
+  version: number;
+};
+
+export type CalendarEventPreference = CalendarEventPreferenceInput;
+
+export type CalendarTrashedEvent = {
+  eventId: string;
+  calendarId: string;
+  calendarName: string;
+  calendarColor: string;
+  title: string;
+  startsAt: string;
+  endsAt: string;
+  deletedAt: string;
+  purgeAfter?: string | null;
+  legalHold: boolean;
+  deletionReason?: string | null;
+  importance: CalendarEventImportance;
+  version: number;
+  capabilities: CalendarEventCapabilities;
+};
+
+export type CompanyCalendar = {
+  calendarId: string;
+  key: string;
+  name: string;
+  nameKo: string;
+  nameEn: string;
+  color: string;
+  upcomingEventCount: number;
+  trashedEventCount: number;
+  version: number;
+};
+
+export type CompanyCalendarInput = {
+  key: string;
+  nameKo: string;
+  nameEn: string;
+  color: string;
+  version: number;
+};
+
+export type CompanyCalendarEvent = {
+  eventId: string;
+  calendarId: string;
+  title: string;
+  description?: string | null;
+  type: CalendarEventType;
+  startsAt: string;
+  endsAt: string;
+  timeZone: string;
+  allDay: boolean;
+  location?: string | null;
+  conferenceUrl?: string | null;
+  status: CalendarEventStatus;
+  visibility: CalendarVisibility;
+  recurrence: CalendarRecurrence;
+  recurrenceInterval: number;
+  recurrenceUntil?: string | null;
+  responseRequired: boolean;
+  attendees: CalendarAttendee[];
+  importance: CalendarEventImportance;
+  deletedAt?: string | null;
+  purgeAfter?: string | null;
+  legalHold: boolean;
+  capabilities: CalendarEventCapabilities;
   version: number;
 };
 
@@ -155,6 +307,7 @@ export type CalendarAvailabilitySlot = {
   startsAt: string;
   endsAt: string;
   score: number;
+  reasonCode?: string | null;
   reason: string;
 };
 
@@ -162,6 +315,31 @@ export type CalendarAvailability = {
   participants: CalendarAvailabilityParticipant[];
   suggestions: CalendarAvailabilitySlot[];
   generatedAt: string;
+};
+
+export type CalendarSchedulingEvaluation = {
+  evaluationId: string;
+  criteriaHash: string;
+  completeness: 'COMPLETE' | 'PARTIAL';
+  sources: Array<{
+    sourceType: string;
+    status: 'HEALTHY' | 'DEGRADED' | 'UNAVAILABLE';
+    lastSuccessfulSyncAt?: string | null;
+  }>;
+  availability: CalendarAvailability;
+  rooms: CalendarResource[];
+  generatedAt: string;
+  validUntil: string;
+};
+
+export type CalendarSchedulingEvaluationInput = {
+  personIds: string[];
+  from: string;
+  to: string;
+  roomStartsAt: string;
+  roomEndsAt: string;
+  durationMinutes: number;
+  timeZone: string;
 };
 
 export type CalendarBooking = {
@@ -207,10 +385,15 @@ export type CreateCalendarEventInput = {
   responseRequired: boolean;
   attendees: CalendarAttendeeInput[];
   resourceId?: string | null;
+  calendarId?: string | null;
+  importance?: CalendarEventImportance;
   idempotencyKey: string;
 };
 
-export type UpdateCalendarEventInput = Omit<CreateCalendarEventInput, 'idempotencyKey'> & {
+export type UpdateCalendarEventInput = Omit<
+  CreateCalendarEventInput,
+  'idempotencyKey' | 'calendarId'
+> & {
   version: number;
 };
 
@@ -230,6 +413,45 @@ export async function getCalendars(): Promise<CalendarSummary[]> {
     '/api/platform/v1/calendar/calendars'
   );
   return response.data.data;
+}
+
+export async function updateCalendarSubscription(
+  calendarId: string,
+  input: CalendarSubscriptionInput
+): Promise<CalendarSubscription> {
+  const response = await axiosInstance.put<
+    ApiResponse<CalendarSubscription>,
+    CalendarSubscriptionInput
+  >(`/api/platform/v1/calendar/calendars/${encodeURIComponent(calendarId)}/subscription`, input);
+  return response.data.data;
+}
+
+export async function getCalendarShares(calendarId: string): Promise<CalendarShare[]> {
+  const response = await axiosInstance.get<ApiResponse<CalendarShare[]>>(
+    `/api/platform/v1/calendar/calendars/${encodeURIComponent(calendarId)}/shares`
+  );
+  return response.data.data;
+}
+
+export async function putCalendarShare(
+  calendarId: string,
+  input: CalendarShareInput
+): Promise<CalendarShare> {
+  const response = await axiosInstance.put<ApiResponse<CalendarShare>, CalendarShareInput>(
+    `/api/platform/v1/calendar/calendars/${encodeURIComponent(calendarId)}/shares/${encodeURIComponent(input.principalPersonPublicId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function deleteCalendarShare(
+  calendarId: string,
+  grantId: string,
+  version: number
+): Promise<void> {
+  await axiosInstance.delete<ApiResponse<void>>(
+    `/api/platform/v1/calendar/calendars/${encodeURIComponent(calendarId)}/shares/${encodeURIComponent(grantId)}?version=${encodeURIComponent(String(version))}`
+  );
 }
 
 export async function getCalendarEvents(from: string, to: string): Promise<CalendarEvent[]> {
@@ -255,6 +477,50 @@ export async function updateCalendarEvent(
     `/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}`,
     input
   );
+  return response.data.data;
+}
+
+export async function updateCalendarEventPreference(
+  eventId: string,
+  input: CalendarEventPreferenceInput
+): Promise<CalendarEventPreference> {
+  const response = await axiosInstance.put<
+    ApiResponse<CalendarEventPreference>,
+    CalendarEventPreferenceInput
+  >(`/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}/preference`, input);
+  return response.data.data;
+}
+
+export async function getCalendarTrash(): Promise<CalendarTrashedEvent[]> {
+  const response = await axiosInstance.get<ApiResponse<CalendarTrashedEvent[]>>(
+    '/api/platform/v1/calendar/trash'
+  );
+  return response.data.data;
+}
+
+export async function trashCalendarEvent(
+  eventId: string,
+  version: number,
+  reason?: string
+): Promise<CalendarEventCapabilities> {
+  const response = await axiosInstance.post<
+    ApiResponse<CalendarEventCapabilities>,
+    { version: number; reason?: string }
+  >(`/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}/trash`, {
+    version,
+    ...(reason ? { reason } : {}),
+  });
+  return response.data.data;
+}
+
+export async function restoreCalendarEvent(
+  eventId: string,
+  version: number
+): Promise<CalendarEventCapabilities> {
+  const response = await axiosInstance.post<
+    ApiResponse<CalendarEventCapabilities>,
+    { version: number }
+  >(`/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}/restore`, { version });
   return response.data.data;
 }
 
@@ -285,6 +551,13 @@ export async function getCalendarResources(from: string, to: string): Promise<Ca
   return response.data.data;
 }
 
+export async function getCalendarPolicy(): Promise<CalendarPolicy> {
+  const response = await axiosInstance.get<ApiResponse<CalendarPolicy>>(
+    '/api/platform/v1/calendar/policy'
+  );
+  return response.data.data;
+}
+
 export async function getCalendarAvailability(
   personIds: string[],
   from: string,
@@ -292,22 +565,127 @@ export async function getCalendarAvailability(
   durationMinutes: number,
   timeZone = 'Asia/Seoul'
 ): Promise<CalendarAvailability> {
-  const search = new URLSearchParams({
+  const roomEndsAt = new Date(Date.parse(from) + durationMinutes * 60_000).toISOString();
+  const evaluation = await evaluateCalendarScheduling({
+    personIds,
     from,
     to,
-    durationMinutes: String(durationMinutes),
+    roomStartsAt: from,
+    roomEndsAt,
+    durationMinutes,
     timeZone,
   });
-  personIds.forEach((personId) => search.append('personIds', personId));
-  const response = await axiosInstance.get<ApiResponse<CalendarAvailability>>(
-    `/api/platform/v1/calendar/availability?${search.toString()}`
-  );
+  return evaluation.availability;
+}
+
+export async function evaluateCalendarScheduling(
+  input: CalendarSchedulingEvaluationInput
+): Promise<CalendarSchedulingEvaluation> {
+  const response = await axiosInstance.post<
+    ApiResponse<CalendarSchedulingEvaluation>,
+    CalendarSchedulingEvaluationInput
+  >('/api/platform/v1/calendar/scheduling/evaluations', input);
   return response.data.data;
 }
 
 export async function getCalendarAdminOverview(): Promise<CalendarAdminOverview> {
   const response = await axiosInstance.get<ApiResponse<CalendarAdminOverview>>(
     '/api/platform/v1/admin/calendar/overview'
+  );
+  return response.data.data;
+}
+
+export async function getCompanyCalendars(): Promise<CompanyCalendar[]> {
+  const response = await axiosInstance.get<ApiResponse<CompanyCalendar[]>>(
+    '/api/platform/v1/admin/calendar/company-calendars'
+  );
+  return response.data.data;
+}
+
+export async function createCompanyCalendar(input: CompanyCalendarInput): Promise<CompanyCalendar> {
+  const response = await axiosInstance.post<ApiResponse<CompanyCalendar>, CompanyCalendarInput>(
+    '/api/platform/v1/admin/calendar/company-calendars',
+    input
+  );
+  return response.data.data;
+}
+
+export async function updateCompanyCalendar(
+  calendarId: string,
+  input: CompanyCalendarInput
+): Promise<CompanyCalendar> {
+  const response = await axiosInstance.put<ApiResponse<CompanyCalendar>, CompanyCalendarInput>(
+    `/api/platform/v1/admin/calendar/company-calendars/${encodeURIComponent(calendarId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function getCompanyCalendarEvents(
+  calendarId: string,
+  from: string,
+  to: string,
+  deleted = false
+): Promise<CompanyCalendarEvent[]> {
+  const response = await axiosInstance.get<ApiResponse<CompanyCalendarEvent[]>>(
+    `/api/platform/v1/admin/calendar/company-calendars/${encodeURIComponent(calendarId)}/events?${rangeQuery(from, to)}&deleted=${deleted}`
+  );
+  return response.data.data;
+}
+
+export async function createCompanyCalendarEvent(
+  calendarId: string,
+  input: CreateCalendarEventInput
+): Promise<CompanyCalendarEvent> {
+  const response = await axiosInstance.post<
+    ApiResponse<CompanyCalendarEvent>,
+    CreateCalendarEventInput
+  >(
+    `/api/platform/v1/admin/calendar/company-calendars/${encodeURIComponent(calendarId)}/events`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function updateCompanyCalendarEvent(
+  calendarId: string,
+  eventId: string,
+  input: UpdateCalendarEventInput
+): Promise<CompanyCalendarEvent> {
+  const response = await axiosInstance.put<
+    ApiResponse<CompanyCalendarEvent>,
+    UpdateCalendarEventInput
+  >(
+    `/api/platform/v1/admin/calendar/company-calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function trashCompanyCalendarEvent(
+  calendarId: string,
+  eventId: string,
+  version: number,
+  reason?: string
+): Promise<CompanyCalendarEvent> {
+  const response = await axiosInstance.post<
+    ApiResponse<CompanyCalendarEvent>,
+    { version: number; reason?: string }
+  >(
+    `/api/platform/v1/admin/calendar/company-calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}/trash`,
+    { version, ...(reason ? { reason } : {}) }
+  );
+  return response.data.data;
+}
+
+export async function restoreCompanyCalendarEvent(
+  calendarId: string,
+  eventId: string,
+  version: number
+): Promise<CompanyCalendarEvent> {
+  const response = await axiosInstance.post<ApiResponse<CompanyCalendarEvent>, { version: number }>(
+    `/api/platform/v1/admin/calendar/company-calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}/restore`,
+    { version }
   );
   return response.data.data;
 }

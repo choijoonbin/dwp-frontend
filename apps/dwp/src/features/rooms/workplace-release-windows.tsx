@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Armchair, CalendarRange, Plus, XCircle } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   cancelWorkplaceReleaseWindow,
   createWorkplaceReleaseWindow,
+  createWorkplaceIdempotencyKey,
   getWorkplaceAssignedResources,
   getWorkplaceReleaseWindows,
   useToast,
@@ -79,6 +80,7 @@ export function WorkplaceReleaseWindows() {
   const [endsAt, setEndsAt] = useState(defaultPeriod().endsAt);
   const [note, setNote] = useState('');
   const [cancelling, setCancelling] = useState<WorkplaceReleaseWindow | null>(null);
+  const commandRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const selectedResource =
     resources.find((resource) => resource.resourceId === resourceId) ?? resources[0] ?? null;
   const valid = Boolean(
@@ -96,16 +98,27 @@ export function WorkplaceReleaseWindows() {
   const createMutation = useMutation({
     mutationFn: () => {
       if (!selectedResource || !capabilities.canCreateWorkplaceBooking) {
-        throw new Error(t('workplace.my.releaseWindows.readOnly'));
+        throw new Error(t('workplace.my.releaseWindows.readOnly', {}));
       }
-      return createWorkplaceReleaseWindow({
+      const input = {
         resourceId: selectedResource.resourceId,
         startsAt,
         endsAt,
         note: note.trim(),
-      });
+      };
+      const fingerprint = JSON.stringify(input);
+      const command =
+        commandRef.current?.fingerprint === fingerprint
+          ? commandRef.current
+          : {
+              fingerprint,
+              key: createWorkplaceIdempotencyKey('release-window'),
+            };
+      commandRef.current = command;
+      return createWorkplaceReleaseWindow(input, command.key);
     },
     onSuccess: async () => {
+      commandRef.current = null;
       setDialogOpen(false);
       setNote('');
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
@@ -116,7 +129,7 @@ export function WorkplaceReleaseWindows() {
   const cancelMutation = useMutation({
     mutationFn: (window: WorkplaceReleaseWindow) => {
       if (!capabilities.canUpdateWorkplaceBooking) {
-        throw new Error(t('workplace.my.releaseWindows.readOnly'));
+        throw new Error(t('workplace.my.releaseWindows.readOnly', {}));
       }
       return cancelWorkplaceReleaseWindow(window.releaseWindowId, window.version);
     },
@@ -129,7 +142,7 @@ export function WorkplaceReleaseWindows() {
   });
 
   if (resourcesQuery.isLoading) return <Skeleton variant="rectangular" height={176} />;
-  if (resourcesQuery.isError) {
+  if (resourcesQuery.isError && !resourcesQuery.data) {
     return (
       <Alert
         severity="error"
@@ -151,6 +164,7 @@ export function WorkplaceReleaseWindows() {
     setStartsAt(period.startsAt);
     setEndsAt(period.endsAt);
     setNote('');
+    commandRef.current = null;
     setDialogOpen(true);
   };
 
@@ -192,6 +206,19 @@ export function WorkplaceReleaseWindows() {
         )}
       </Stack>
 
+      {resourcesQuery.isError && resourcesQuery.data && (
+        <Alert
+          severity="warning"
+          action={
+            <ActionButton intent="quiet" onClick={() => resourcesQuery.refetch()}>
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('workplace.staleWarning')}
+        </Alert>
+      )}
+
       {windowsQuery.isLoading && (
         <Stack spacing={1} p={2}>
           <Skeleton height={72} />
@@ -200,63 +227,69 @@ export function WorkplaceReleaseWindows() {
       )}
       {windowsQuery.isError && (
         <Alert
-          severity="error"
+          severity={windowsQuery.data ? 'warning' : 'error'}
           action={
             <ActionButton intent="quiet" onClick={() => windowsQuery.refetch()}>
               {t('actions.retry')}
             </ActionButton>
           }
         >
-          {t('workplace.my.releaseWindows.loadError')}
+          {t(
+            windowsQuery.data ? 'workplace.staleWarning' : 'workplace.my.releaseWindows.loadError'
+          )}
         </Alert>
       )}
-      {!windowsQuery.isLoading && !windowsQuery.isError && windows.length === 0 && (
-        <EmptyState
-          icon={<CalendarRange size={26} />}
-          title={t('workplace.my.releaseWindows.empty')}
-          description={t('workplace.my.releaseWindows.emptyDescription')}
-        />
-      )}
-      {!windowsQuery.isLoading && !windowsQuery.isError && windows.length > 0 && (
-        <Stack divider={<Divider flexItem />}>
-          {windows.map((window) => (
-            <Stack
-              key={window.releaseWindowId}
-              direction={{ xs: 'column', md: 'row' }}
-              justifyContent="space-between"
-              gap={1.5}
-              sx={{ p: { xs: 1.5, md: 2 } }}
-            >
-              <Box sx={{ minWidth: 0 }}>
-                <Stack direction="row" gap={0.8} alignItems="center" flexWrap="wrap">
-                  <Typography fontWeight={750}>{window.resourceName}</Typography>
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    label={t(`workplace.my.releaseWindows.status.${window.status}`)}
-                  />
-                </Stack>
-                <Typography variant="body2" sx={{ mt: 0.5 }}>
-                  {format(window.startsAt)} - {format(window.endsAt)}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {window.siteName} · {window.floorName}
-                  {window.note ? ` · ${window.note}` : ''}
-                </Typography>
-              </Box>
-              {window.canCancel && capabilities.canUpdateWorkplaceBooking && (
-                <ActionButton
-                  intent="danger"
-                  startIcon={<XCircle size={16} />}
-                  onClick={() => setCancelling(window)}
-                >
-                  {t('workplace.my.releaseWindows.cancel')}
-                </ActionButton>
-              )}
-            </Stack>
-          ))}
-        </Stack>
-      )}
+      {!windowsQuery.isLoading &&
+        (!windowsQuery.isError || windowsQuery.data) &&
+        windows.length === 0 && (
+          <EmptyState
+            icon={<CalendarRange size={26} />}
+            title={t('workplace.my.releaseWindows.empty')}
+            description={t('workplace.my.releaseWindows.emptyDescription')}
+          />
+        )}
+      {!windowsQuery.isLoading &&
+        (!windowsQuery.isError || windowsQuery.data) &&
+        windows.length > 0 && (
+          <Stack divider={<Divider flexItem />}>
+            {windows.map((window) => (
+              <Stack
+                key={window.releaseWindowId}
+                direction={{ xs: 'column', md: 'row' }}
+                justifyContent="space-between"
+                gap={1.5}
+                sx={{ p: { xs: 1.5, md: 2 } }}
+              >
+                <Box sx={{ minWidth: 0 }}>
+                  <Stack direction="row" gap={0.8} alignItems="center" flexWrap="wrap">
+                    <Typography fontWeight={750}>{window.resourceName}</Typography>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={t(`workplace.my.releaseWindows.status.${window.status}`)}
+                    />
+                  </Stack>
+                  <Typography variant="body2" sx={{ mt: 0.5 }}>
+                    {format(window.startsAt)} - {format(window.endsAt)}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {window.siteName} · {window.floorName}
+                    {window.note ? ` · ${window.note}` : ''}
+                  </Typography>
+                </Box>
+                {window.canCancel && capabilities.canUpdateWorkplaceBooking && (
+                  <ActionButton
+                    intent="danger"
+                    startIcon={<XCircle size={16} />}
+                    onClick={() => setCancelling(window)}
+                  >
+                    {t('workplace.my.releaseWindows.cancel')}
+                  </ActionButton>
+                )}
+              </Stack>
+            ))}
+          </Stack>
+        )}
 
       <FormDialog
         open={dialogOpen}

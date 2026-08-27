@@ -3,12 +3,31 @@ import { describe, expect, it } from 'vitest';
 import {
   HOME_WIDGET_REGISTRY,
   defaultHomeWidgets,
+  homeWidgetLifecyclePolicy,
   reconcileHomeWidgets,
   setHomeWidgetVisibility,
 } from './home-widget-registry';
 import { reorderWorkspaceWidgets } from '../../components/workspace-composer/workspace-composer-model';
 
 describe('home widget registry', () => {
+  it('fails closed for blocked lifecycle and preserves deprecated instances without new placement', () => {
+    expect(homeWidgetLifecyclePolicy('ACTIVE')).toEqual({
+      renderExisting: true,
+      allowNewPlacement: true,
+      allowRestore: true,
+    });
+    expect(homeWidgetLifecyclePolicy('DEPRECATED')).toEqual({
+      renderExisting: true,
+      allowNewPlacement: false,
+      allowRestore: false,
+    });
+    expect(homeWidgetLifecyclePolicy('BLOCKED')).toEqual({
+      renderExisting: false,
+      allowNewPlacement: false,
+      allowRestore: false,
+    });
+  });
+
   it('restores personal widgets and drops fixed-zone or unknown preferences', () => {
     const widgets = reconcileHomeWidgets([
       { widgetKey: 'activity', visible: false },
@@ -126,5 +145,16 @@ describe('home widget registry', () => {
       size: 'medium',
       height: 'tall',
     });
+  });
+
+  it('adds a registered widget that is not yet present in the current view', () => {
+    expect(setHomeWidgetVisibility([], 'schedule', true)).toEqual([
+      {
+        widgetKey: 'schedule',
+        visible: true,
+        size: 'quarter',
+        height: 'standard',
+      },
+    ]);
   });
 });

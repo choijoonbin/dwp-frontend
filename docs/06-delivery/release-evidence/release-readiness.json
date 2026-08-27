@@ -20,8 +20,18 @@
       "releaseRequired": true,
       "summary": "Failure injection, soak, queue, database, Redis, and adapter recovery",
       "evidence": [
-        "../dwp-backend/dwp-core/src/test/java/com/dwp/core/event",
-        "../dwp-backend/.github/workflows/backend-quality-gates.yml"
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-core/src/test/java/com/dwp/core/event",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": ".github/workflows/backend-quality-gates.yml",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
       ],
       "blockers": ["PRODUCTION_LIKE_TOPOLOGY", "APPROVED_RECOVERY_TIME"]
     },
@@ -61,8 +71,18 @@
       "releaseRequired": true,
       "summary": "Trusted proxy boundary, secure cookies, and key rotation",
       "evidence": [
-        "../dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/SessionCookieService.java",
-        "../dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java"
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/SessionCookieService.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
       ],
       "blockers": ["OPERATING_TOPOLOGY", "SECRET_MANAGER", "PENETRATION_TEST"]
     },
@@ -74,8 +94,18 @@
       "summary": "Audit workload identity, KMS or HSM, WORM, SIEM, RLS, and alerting",
       "evidence": [
         "docs/03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md",
-        "../dwp-backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRecorder.java",
-        "../dwp-backend/docs/architecture/cryptographic-key-and-secret-management-policy.md"
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRecorder.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
+        {
+          "repository": "dwp-backend",
+          "path": "docs/architecture/cryptographic-key-and-secret-management-policy.md",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
       ],
       "blockers": [
         "R3-02-KMS",
@@ -104,7 +134,12 @@
       "releaseRequired": true,
       "summary": "Provisioning adapter, release rings, rollback, and external SLI",
       "evidence": [
-        "../dwp-backend/dwp-provider-server/src/main/java/com/dwp/services/provider/ProviderControlPlaneService.java",
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-provider-server/src/main/java/com/dwp/services/provider/ProviderControlPlaneService.java",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        },
         "docs/06-delivery/People Provisioning Provider 구현 및 Gate.md"
       ],
       "blockers": ["D-13", "PROVISIONING_ADAPTER", "CUSTOMER_NOTIFICATION_CHANNEL"]
@@ -117,6 +152,19 @@
       "summary": "Customer-scale load, soak, recovery, and rollback gate",
       "evidence": ["docs/06-delivery/R2 R3 출시 증거 실행 가이드.md"],
       "blockers": ["APPROVED_SLO", "APPROVED_RTO_RPO", "PRODUCTION_LIKE_ENVIRONMENT"]
+    },
+    {
+      "id": "R3-06",
+      "owner": "Provider Security",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Provider identity phishing-resistant MFA, recent-auth, and managed vault assurance",
+      "evidence": ["docs/03-architecture/R0 Provider Control Plane 및 Tenant Estate ADR.md"],
+      "blockers": [
+        "PROVIDER_IDP_PHISHING_RESISTANT_MFA",
+        "PROVIDER_IDP_RECENT_AUTH_ATTESTATION",
+        "PROVIDER_SECRET_VAULT_ATTESTATION"
+      ]
     }
   ],
   "externalDecisions": [
@@ -186,7 +234,14 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "Production broker, partitions, retention, replay, and DLQ ownership",
-      "failClosedEvidence": ["../dwp-backend/dwp-core/src/main/java/com/dwp/core/event"],
+      "failClosedEvidence": [
+        {
+          "repository": "dwp-backend",
+          "path": "dwp-core/src/main/java/com/dwp/core/event",
+          "revisionSource": "DWP_BACKEND_REVISION",
+          "checkoutSource": "DWP_BACKEND_CHECKOUT"
+        }
+      ],
       "blockers": ["BROKER_TOPOLOGY", "REPLAY_OWNER", "DLQ_POLICY"]
     },
     {
@@ -348,6 +403,27 @@
       "summary": "Observed member, tenant admin, and provider operator usability approval",
       "evidence": ["docs/06-delivery/디자인 파트너 선정 및 Pilot Charter.md"],
       "blockers": ["PARTICIPANTS", "OBSERVED_SESSIONS", "REMEDIATION_SIGN_OFF"]
+    },
+    {
+      "id": "A-06",
+      "owner": "Customer Executive Sponsor",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Customer approval system-of-record for tenant ownership, policy, and release acceptance",
+      "evidence": ["docs/03-architecture/R0 Provider Control Plane 및 Tenant Estate ADR.md"],
+      "blockers": ["CUSTOMER_APPROVAL_SYSTEM_OF_RECORD"]
+    },
+    {
+      "id": "A-07",
+      "owner": "Provider Operations and Customer Administrators",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Two-tenant pilot provisioning, isolation, recovery, and rollback drills",
+      "evidence": [
+        "docs/03-architecture/R0 Provider Control Plane 및 Tenant Estate ADR.md",
+        "docs/06-delivery/R2 R3 출시 증거 실행 가이드.md"
+      ],
+      "blockers": ["TWO_TENANT_PILOT_DRILL_ATTESTATION"]
     }
   ]
 }

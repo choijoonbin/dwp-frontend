@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "issuer": "dwp-ci-attestation-authority",
+  "keys": [
+    {
+      "kty": "EC",
+      "x": "GKUTWM7KKHUDjMucN1HmZRJgGgy1x-hoCoo56gzChoM",
+      "y": "oC9ozT_w4OpahaSL231gC3pdlmi9EtJVv77CdCb09wM",
+      "crv": "P-256",
+      "use": "sig",
+      "alg": "ES256",
+      "kid": "ci-widget-bootstrap-2026-08"
+    }
+  ]
+}

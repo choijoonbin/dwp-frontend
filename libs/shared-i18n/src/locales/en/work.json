@@ -24,6 +24,8 @@
       "dwaion": {
         "start": "Start",
         "conversations": "Conversations",
+        "activity": "Runs",
+        "proactive": "Proposals",
         "discover": "Discover",
         "admin": "Operations"
       },
@@ -41,6 +43,8 @@
         "home": { "label": "DWAI·ON home" },
         "new": { "label": "New conversation" },
         "conversations": { "label": "My conversations" },
+        "activity": { "label": "AI run activity" },
+        "proposals": { "label": "AI proposals" },
         "agents": { "label": "Specialized agents" },
         "actions": { "label": "Work actions and connections" },
         "admin-overview": { "label": "Operations overview" },
@@ -62,12 +66,30 @@
       }
     }
   },
+  "dwaionVoice": {
+    "input": {
+      "idle": "Enter by voice",
+      "requesting": "Checking microphone access",
+      "listening": "Listening · press to stop",
+      "transcribing": "Transcribing",
+      "review": "Transcript ready · review before sending",
+      "error": "Try voice input again",
+      "unsupported": "Voice input is not supported in this browser"
+    },
+    "speech": {
+      "idle": "Listen to answer",
+      "loading": "Preparing speech · press to stop",
+      "playing": "Stop spoken answer",
+      "error": "Try spoken answer again"
+    }
+  },
   "dwaionHome": {
     "eyebrow": "My work intelligence",
     "title": "{{name}}, what can we solve together?",
     "member": "Team member",
     "description": "Get evidence-backed answers from the work and information you can access, with a review before any action.",
     "permissionBoundary": "Current permissions and source policies apply",
+    "launchUnavailable": "The secure question handoff could not be prepared. Your question is still here; try again.",
     "askTitle": "Ask from your work context",
     "askDescription": "Connect work, mail, calendar, and approval context to get grounded answers.",
     "signalSummary": "DWAI·ON work signal summary",
@@ -77,6 +99,8 @@
       "priorityWorkDetail": "From your current work queue",
       "conversations": "Conversations",
       "conversationsDetail": "Your securely stored history",
+      "proposals": "AI proposals to review",
+      "proposalsDetail": "{{count}} priority items",
       "agents": "Available agents",
       "agentsDetail": "Published and permission filtered",
       "actions": "Reviewable actions",
@@ -122,6 +146,148 @@
     "cancel": "Cancel",
     "confirmDelete": "Delete",
     "deleting": "Deleting"
+  },
+  "dwaionActivity": {
+    "eyebrow": "Accountable AI",
+    "title": "AI run activity",
+    "description": "Review how your requests were handled within policy and evidence boundaries, then return to the related conversation.",
+    "privacy": "Question and answer content is not shown in plaintext in this run list.",
+    "status": { "live": "Run ledger connected", "degraded": "Run ledger needs attention" },
+    "refresh": "Refresh AI run activity",
+    "loading": "Loading AI run activity.",
+    "errorTitle": "AI run activity could not be loaded",
+    "errorDescription": "Unverified run state was not displayed. Check the connection and try again.",
+    "summaryLabel": "AI run status summary",
+    "metrics": {
+      "total": "Recent runs",
+      "totalDetail": "Current filter scope",
+      "running": "In progress",
+      "runningDetail": "Requests awaiting completion",
+      "grounded": "Grounded",
+      "groundedDetail": "Verified responses",
+      "attention": "Needs attention",
+      "attentionDetail": "Failed or configuration required"
+    },
+    "listTitle": "My run timeline",
+    "listDescription": "Review policy outcome, risk level, evidence count, and processing time for each request.",
+    "filterLabel": "AI run state filter",
+    "filters": {
+      "ALL": "All",
+      "RUNNING": "In progress",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed"
+    },
+    "states": { "RUNNING": "In progress", "COMPLETED": "Completed", "FAILED": "Failed" },
+    "agents": {
+      "DWP_ASSISTANT": "DWAI·ON work agent",
+      "DWP_APPROVAL_EXPERT": "Approval expert agent"
+    },
+    "outcomes": {
+      "ALLOW": "Read policy allowed",
+      "HANDOFF": "Connected to owning workflow",
+      "DENY": "Blocked by policy"
+    },
+    "runMeta": "Risk {{risk}} · {{sources}} sources · {{latency}} ms",
+    "openConversation": "Open conversation",
+    "emptyTitle": "There is no AI run activity to show",
+    "emptyDescription": "Start a question to create a privacy-minimized execution record here.",
+    "start": "Start a new conversation"
+  },
+  "dwaionProposals": {
+    "eyebrow": "Proactive work support",
+    "title": "AI proposals",
+    "description": "Review next steps DWAI·ON proposes from work signals, then choose to accept, snooze, or dismiss each one.",
+    "policyBoundary": "Proposals stay within current permissions and source policies",
+    "status": {
+      "live": "Proposal ledger connected",
+      "degraded": "Proposal ledger needs attention"
+    },
+    "refresh": "Refresh AI proposals",
+    "loading": "Loading AI proposals.",
+    "loadingMore": "Loading more proposals",
+    "loadMore": "Load more",
+    "errorTitle": "AI proposals could not be loaded",
+    "errorDescription": "Unverified proposals were not displayed. Check the connection and try again.",
+    "summaryLabel": "AI proposal status summary",
+    "metrics": {
+      "active": "To review",
+      "activeDetail": "Items ready for your decision",
+      "highPriority": "Priority review",
+      "highPriorityDetail": "High or urgent proposals",
+      "snoozed": "Snoozed",
+      "snoozedDetail": "Returns at the scheduled time",
+      "handled": "Handled",
+      "handledDetail": "Accepted, dismissed, or expired"
+    },
+    "listTitle": "Proposals for you",
+    "listDescription": "Review the reason and evidence, then decide the next step yourself.",
+    "filterLabel": "AI proposal state filter",
+    "views": { "ACTIVE": "To review", "SNOOZED": "Snoozed", "HANDLED": "Handled" },
+    "kinds": {
+      "WORK_SIGNAL": "Work signal",
+      "RISK": "Risk",
+      "SCHEDULE": "Schedule",
+      "APPROVAL": "Approval",
+      "INSIGHT": "Insight"
+    },
+    "priorities": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High", "URGENT": "Urgent" },
+    "states": {
+      "PENDING": "Awaiting review",
+      "SNOOZED": "Snoozed",
+      "ACCEPTED": "Accepted",
+      "DISMISSED": "Dismissed",
+      "EXPIRED": "Expired"
+    },
+    "evidenceCount": "{{count}} sources",
+    "empty": {
+      "ACTIVE": {
+        "title": "There are no proposals to review",
+        "description": "New work signals will appear here with their supporting evidence."
+      },
+      "SNOOZED": {
+        "title": "There are no snoozed proposals",
+        "description": "Proposals scheduled for later review will appear here."
+      },
+      "HANDLED": {
+        "title": "There are no handled proposals",
+        "description": "Decision records for accepted or dismissed proposals will appear here."
+      }
+    },
+    "detail": {
+      "agentProposal": "DWAI·ON proposal",
+      "close": "Close proposal details",
+      "why": "Why this was proposed",
+      "evidence": "Decision evidence",
+      "noEvidence": "There is no evidence available to display.",
+      "timing": "Validity window",
+      "proposedAt": "Proposed",
+      "expiresAt": "Expires"
+    },
+    "actions": {
+      "accept": "Accept for review",
+      "snooze": "Review later",
+      "dismiss": "Dismiss proposal",
+      "saving": "Saving decision",
+      "openReview": "Continue to action review",
+      "reviewBoundary": "Accepting never executes automatically; the owning app requires final confirmation."
+    },
+    "snooze": {
+      "TWO_HOURS": "In 2 hours",
+      "TOMORROW": "Tomorrow at 9 AM",
+      "NEXT_WEEK": "Next Monday"
+    },
+    "dismiss": {
+      "title": "Dismiss this proposal?",
+      "description": "The decision remains available in Handled as an accountable record.",
+      "cancel": "Cancel",
+      "confirm": "Dismiss proposal"
+    },
+    "feedback": {
+      "ACCEPT": "Proposal accepted. The pre-execution review remains required.",
+      "SNOOZE": "Proposal snoozed until the selected time.",
+      "DISMISS": "Proposal dismissed.",
+      "error": "The proposal changed. Review the latest state and try again."
+    }
   },
   "dwaionAgents": {
     "title": "Specialized agents",
@@ -1086,6 +1252,7 @@
     "runtimeLoadingDescription": "Applying policy, collecting permission-scoped evidence, and validating citations.",
     "runtimeErrorTitle": "DWAI·ON could not evaluate this request",
     "runtimeErrorDescription": "No unverified answer was substituted. Check the service connection and try again.",
+    "questionLaunchUnavailable": "The secure question handoff expired or could not be recovered. Enter the question again to continue.",
     "retry": "Try again",
     "responseStatus": "DWAI·ON request status",
     "status": {

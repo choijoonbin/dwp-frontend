@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LifeBuoy, Settings2 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -8,7 +8,6 @@ import { getProviderOperatorProfile } from '@dwp-frontend/shared-utils/api/provi
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -16,21 +15,24 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
 
-import { BrandLockup } from '../components/brand-lockup';
+import { DesktopNavigationHeader } from '../components/desktop-navigation-header';
+import ProviderSupportBanner from '../components/provider-support-banner';
 import { ShellHeader } from '../components/shell-header';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
+import { useDesktopNavigation } from '../features/shell/desktop-navigation';
 import {
-  DesktopNavigationToggle,
-  useDesktopNavigation,
-} from '../features/shell/desktop-navigation';
+  ShellMobileNavigationDrawer,
+  useShellMobileNavigation,
+} from '../features/shell/shell-mobile-navigation';
 
 export function ProviderLayout() {
   const { t } = useTranslation('provider');
   const shell = shellRegistry.provider;
   const { pathname } = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileNavigation = useShellMobileNavigation({ headerTestId: 'provider-header' });
+  const mobileNavigationId = 'provider-mobile-navigation';
   const {
     compact,
     collapsible,
@@ -39,6 +41,11 @@ export function ProviderLayout() {
     toggle: toggleDesktopNavigation,
   } = useDesktopNavigation(shell);
   const supportContext = useCurrentProviderSupportContext();
+  const supportSession = supportContext.data;
+  const supportDestination = supportSession ? '/provider/support' : '/account/settings/appearance';
+  const supportDestinationLabel = supportSession
+    ? t('diagnosis.actions.manage')
+    : t('shell.accountSettings');
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
@@ -51,23 +58,21 @@ export function ProviderLayout() {
       .filter((item) => permissions.includes(item.permission))
       .map((item) => ({ ...item, label: t(`navigation.${item.key}`) })),
   }));
-  const navigation = (compactNavigation: boolean, onNavigate?: () => void) => (
+  const navigation = (
+    compactNavigation: boolean,
+    onNavigate?: () => void,
+    onDismiss?: () => void
+  ) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box
-        sx={{
-          minHeight: shellHeaderHeight,
-          px: compactNavigation ? 0 : 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: compactNavigation ? 'center' : 'flex-start',
-        }}
-      >
-        <BrandLockup
-          variant={compactNavigation ? 'product-only' : 'product-full'}
-          label={t('shell.title')}
-          description={t('shell.productName')}
-        />
-      </Box>
+      <DesktopNavigationHeader
+        compact={compactNavigation}
+        collapsible={collapsible}
+        controlsId="provider-desktop-navigation"
+        label={t('shell.title')}
+        description={t('shell.productName')}
+        onDismiss={onDismiss}
+        onToggle={toggleDesktopNavigation}
+      />
       <Divider />
       <Box sx={{ px: 2.5, pt: 2.25, pb: 0.75, display: compactNavigation ? 'none' : 'block' }}>
         <Typography variant="overline" color="text.secondary">
@@ -127,6 +132,7 @@ export function ProviderLayout() {
                       to={item.path}
                       selected={selected}
                       aria-label={compactNavigation ? item.label : undefined}
+                      aria-current={selected ? 'page' : undefined}
                       onClick={onNavigate}
                       sx={{
                         minHeight: 42,
@@ -135,6 +141,12 @@ export function ProviderLayout() {
                         borderRadius: 1,
                         color: selected ? 'primary.main' : 'text.secondary',
                         '&.Mui-selected': { bgcolor: 'action.selected' },
+                        '@media (forced-colors: active)': {
+                          '&.Mui-selected': {
+                            outline: '2px solid Highlight',
+                            outlineOffset: '-2px',
+                          },
+                        },
                       }}
                     >
                       <ListItemIcon
@@ -150,6 +162,7 @@ export function ProviderLayout() {
                         <ListItemText
                           primary={item.label}
                           primaryTypographyProps={{
+                            component: 'span',
                             variant: 'subtitle2',
                             fontWeight: selected ? 750 : 600,
                           }}
@@ -164,29 +177,14 @@ export function ProviderLayout() {
         )}
       </List>
       <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
-        <Tooltip
-          title={
-            compactNavigation
-              ? t(supportContext.data ? 'shell.backToTenantSupport' : 'shell.accountSettings', {
-                  tenant: supportContext.data?.tenantName,
-                })
-              : ''
-          }
-          placement="right"
-        >
+        <Tooltip title={compactNavigation ? supportDestinationLabel : ''} placement="right">
           <ActionButton
             component={NavLink}
-            to={supportContext.data ? '/admin' : '/account/settings/appearance'}
+            to={supportDestination}
             fullWidth
             intent="quiet"
-            aria-label={
-              compactNavigation
-                ? t(supportContext.data ? 'shell.backToTenantSupport' : 'shell.accountSettings', {
-                    tenant: supportContext.data?.tenantName,
-                  })
-                : undefined
-            }
-            startIcon={supportContext.data ? <LifeBuoy size={17} /> : <Settings2 size={17} />}
+            aria-label={compactNavigation ? supportDestinationLabel : undefined}
+            startIcon={supportSession ? <LifeBuoy size={17} /> : <Settings2 size={17} />}
             onClick={onNavigate}
             sx={{
               justifyContent: compactNavigation ? 'center' : 'flex-start',
@@ -195,10 +193,7 @@ export function ProviderLayout() {
               '& .MuiButton-startIcon': { m: compactNavigation ? 0 : undefined },
             }}
           >
-            {!compactNavigation &&
-              t(supportContext.data ? 'shell.backToTenantSupport' : 'shell.accountSettings', {
-                tenant: supportContext.data?.tenantName,
-              })}
+            {!compactNavigation && supportDestinationLabel}
           </ActionButton>
         </Tooltip>
       </Box>
@@ -213,6 +208,7 @@ export function ProviderLayout() {
       <Box
         component="aside"
         id="provider-desktop-navigation"
+        data-testid="provider-sidebar"
         sx={{
           position: 'fixed',
           inset: '0 auto 0 0',
@@ -227,15 +223,16 @@ export function ProviderLayout() {
       >
         {navigation(compact)}
       </Box>
-      <Drawer
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: shell.desktopNavigationWidth } } }}
+      <ShellMobileNavigationDrawer
+        controlsId={mobileNavigationId}
+        label={t('shell.navigationLabel')}
+        onDismiss={mobileNavigation.dismiss}
+        open={mobileNavigation.open}
+        testId="provider-mobile-sidebar"
+        width={shell.desktopNavigationWidth}
       >
-        <Box data-testid="provider-mobile-sidebar" sx={{ height: 1 }}>
-          {navigation(false, () => setMobileOpen(false))}
-        </Box>
-      </Drawer>
+        {navigation(false, mobileNavigation.navigate, mobileNavigation.dismiss)}
+      </ShellMobileNavigationDrawer>
       <ShellHeader
         testId="provider-header"
         shellKey={shell.key}
@@ -243,18 +240,12 @@ export function ProviderLayout() {
         desktopOffset={desktopOffset}
         context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
         navigation={{
+          controlsId: mobileNavigationId,
+          expanded: mobileNavigation.open,
           label: t('shell.openNavigation'),
-          onOpen: () => setMobileOpen(true),
+          testId: 'provider-mobile-navigation-trigger',
+          onOpen: mobileNavigation.openFrom,
         }}
-        leading={
-          collapsible ? (
-            <DesktopNavigationToggle
-              compact={compact}
-              controlsId="provider-desktop-navigation"
-              onToggle={toggleDesktopNavigation}
-            />
-          ) : undefined
-        }
       />
       <Box
         component="main"
@@ -268,9 +259,13 @@ export function ProviderLayout() {
           minHeight: '100dvh',
           overflowX: 'clip',
           outline: 'none',
+          '& :is(h1, h2, h3, h4, h5, h6)': {
+            scrollMarginTop: `calc(${shellHeaderHeight}px + var(--provider-support-banner-height, 0px) + 8px)`,
+          },
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
+        {supportSession && <ProviderSupportBanner context={supportSession} />}
         <Outlet />
       </Box>
     </Box>
