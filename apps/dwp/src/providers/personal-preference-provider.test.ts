@@ -10,8 +10,9 @@ import {
   updateProviderLocalPreference,
 } from './personal-preference-provider';
 
-import type { PersonalPreference, PersonalPreferencePatch } from '@dwp-frontend/shared-utils';
+import type { PersonalPreferencePatch } from '@dwp-frontend/shared-utils';
 import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
+import type { PersonalPreferenceView } from './provider-local-preference-model';
 
 const defaults: UserAppearancePreference = {
   mode: 'system',
@@ -20,7 +21,7 @@ const defaults: UserAppearancePreference = {
   reduceMotion: false,
 };
 
-const currentPreference: PersonalPreference = {
+const currentPreference: PersonalPreferenceView = {
   schemaVersion: 2,
   customized: false,
   preferences: {
@@ -39,17 +40,7 @@ const currentPreference: PersonalPreference = {
       numberFormat: 'locale',
     },
   },
-  managedPolicy: {
-    policyId: 'provider-local-preference',
-    scope: 'TENANT',
-    source: 'TENANT_EXPERIENCE_POLICY',
-    ownerType: 'ROLE',
-    ownerRef: 'PROVIDER_OPERATOR',
-    ownerDisplayName: 'Provider operator',
-    managedPaths: [],
-    rules: [],
-    version: 0,
-  },
+  managedPolicy: null,
   version: 0,
   updatedAt: null,
 };
@@ -87,8 +78,19 @@ describe('provider local preference storage boundary', () => {
     ]);
     expect(raw.preferences).not.toHaveProperty('home');
     expect(raw.preferences).not.toHaveProperty('notifications');
+    expect(raw).not.toHaveProperty('managedPolicy');
     expect(window.localStorage.getItem('dwp.regional.v2')).toBe(tenantRegional);
     expect(window.localStorage.getItem(otherProviderKey)).toBe('{"owner":"other-provider"}');
+  });
+
+  it('returns a Provider view without a tenant managed policy', () => {
+    const preference = readProviderLocalPreference(
+      providerRealmPreferenceIdentity(1),
+      'provider:42:1',
+      defaults
+    );
+
+    expect(preference.managedPolicy).toBeNull();
   });
 
   it('migrates only the matching legacy account into the immutable Provider realm key', () => {
@@ -121,6 +123,7 @@ describe('provider local preference storage boundary', () => {
     ]);
     expect(stored.preferences).not.toHaveProperty('tenantHome');
     expect(stored.preferences).not.toHaveProperty('supportSession');
+    expect(stored).not.toHaveProperty('managedPolicy');
     expect(window.localStorage.getItem(legacyKey)).toBeNull();
     expect(window.localStorage.getItem(unrelatedLegacyKey)).toBe('{"owner":"other-provider"}');
   });

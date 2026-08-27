@@ -21,17 +21,10 @@ type AdminItemAccess = {
 export function canEnterCompanyAdministration(
   roles: readonly string[],
   administrationAppEntitled: boolean,
-  hasActiveSupportSession = false,
-  resourceRoles: readonly ResourceRoleDTO[] = [],
-  _supportScopes: readonly string[] = []
+  resourceRoles: readonly ResourceRoleDTO[] = []
 ): boolean {
   if (hasProviderControlPlaneRole(roles)) return false;
-  return canEnterTenantControlPlane(
-    roles,
-    administrationAppEntitled,
-    hasActiveSupportSession,
-    resourceRoles
-  );
+  return canEnterTenantControlPlane(roles, administrationAppEntitled, false, resourceRoles);
 }
 
 export function canAccessAdminNavigationItem(

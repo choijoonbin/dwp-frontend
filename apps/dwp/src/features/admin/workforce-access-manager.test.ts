@@ -41,6 +41,13 @@ vi.mock('react-i18next', () => ({
         'workforceAccess.create': '접근 정책 만들기',
         'workforceAccess.actions.READ': '데이터 열람',
         'workforceAccess.actions.EXPORT': '데이터 반출',
+        'workforceAccess.fieldGroups.DIRECTORY': '기본 프로필',
+        'workforceAccess.fieldGroups.WORKER_IDENTIFIERS': '사번·배치 식별정보',
+        'workforceAccess.fieldGroups.EMPLOYMENT': '고용·배치 이력',
+        'workforceAccess.fieldGroups.JOB_GRADE': '직급·등급',
+        'workforceAccess.roles.ADMIN': '통합 관리자',
+        'workforceAccess.roleDescriptions.ADMIN': '기존 통합 관리자 정책',
+        'workforceAccess.subjectTypes.ROLE': '역할 기본',
         'workforceAccess.noExpiry': '만료일 없음',
         'workforceAccess.error.title': '인력 데이터 접근 정책을 불러오지 못했습니다',
         'workforceAccess.error.description':
@@ -254,8 +261,10 @@ describe('WorkforceAccessManager', () => {
     expect(container?.querySelector('[role="dialog"]')?.textContent).toBe('policy-dialog');
   });
 
-  it('replaces a raw 503 failure with a safe message and retry action', async () => {
-    workforceApi.listPolicies.mockRejectedValue(new Error('Request failed: 503'));
+  it('replaces a raw 503 failure with a safe message and recovers through retry', async () => {
+    workforceApi.listPolicies
+      .mockRejectedValueOnce(new Error('Request failed: 503'))
+      .mockResolvedValueOnce([policy()]);
     await mountManager();
     await vi.waitFor(() =>
       expect(container?.textContent).toContain('인력 데이터 접근 정책을 불러오지 못했습니다')
@@ -268,6 +277,13 @@ describe('WorkforceAccessManager', () => {
     expect(findButton('다시 시도')).toBeDefined();
     expect(workforceApi.listOrganizations).not.toHaveBeenCalled();
     expect(workforceApi.listUsers).not.toHaveBeenCalled();
+
+    await React.act(async () =>
+      findButton('다시 시도')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+    await vi.waitFor(() => expect(workforceApi.listPolicies).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(container?.textContent).toContain('데이터 열람'));
+    expect(container?.textContent).not.toContain('Request failed: 503');
   });
 
   it('explains read and export actions and labels an open-ended policy', async () => {
@@ -280,5 +296,30 @@ describe('WorkforceAccessManager', () => {
     expect(container?.textContent).toContain('데이터 열람');
     expect(container?.textContent).toContain('데이터 반출');
     expect(container?.textContent).toContain('만료일 없음');
+  });
+
+  it('shows all four permitted data groups without a hidden overflow count', async () => {
+    workforceApi.listPolicies.mockResolvedValue([
+      policy({
+        fieldGroups: ['DIRECTORY', 'WORKER_IDENTIFIERS', 'EMPLOYMENT', 'JOB_GRADE'],
+      }),
+    ]);
+    await mountManager();
+    await vi.waitFor(() => expect(container?.textContent).toContain('직급·등급'));
+
+    expect(container?.textContent).toContain('기본 프로필');
+    expect(container?.textContent).toContain('사번·배치 식별정보');
+    expect(container?.textContent).toContain('고용·배치 이력');
+    expect(container?.textContent).toContain('직급·등급');
+    expect(container?.textContent).not.toContain('+2');
+  });
+
+  it('renders the legacy ADMIN policy with a localized display-only explanation', async () => {
+    workforceApi.listPolicies.mockResolvedValue([policy({ subjectRef: 'ADMIN' })]);
+    await mountManager();
+    await vi.waitFor(() => expect(container?.textContent).toContain('통합 관리자'));
+
+    expect(container?.textContent).toContain('역할 기본 · 기존 통합 관리자 정책');
+    expect(container?.textContent).not.toContain('ADMIN');
   });
 });

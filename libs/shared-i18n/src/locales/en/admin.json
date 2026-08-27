@@ -2753,6 +2753,23 @@
     "direct": "Direct assignment",
     "tenantWide": "Tenant wide",
     "systemManaged": "Built-in system roles are governed centrally and cannot be changed here.",
+    "empty": {
+      "rolesTitle": "No roles have been defined yet",
+      "rolesDescription": "Create the first role to manage the resource permissions needed for a job.",
+      "effectiveTitle": "Select a user to inspect",
+      "effectiveDescription": "Choose a user to calculate roles received directly or through groups and their final resource permissions."
+    },
+    "errors": {
+      "rolesTitle": "Roles and resources could not be loaded",
+      "rolesDescription": "Role definitions or protected resources are unavailable. Check the connection and try again.",
+      "assignmentsTitle": "Group role assignments could not be loaded",
+      "assignmentsDescription": "Assignments, roles, or the canonical role catalog are unavailable. Retrying checks all lists together.",
+      "groupsDescription": "The group list could not be loaded. Your search text has been preserved.",
+      "usersTitle": "Users could not be loaded",
+      "usersDescription": "The user list required to inspect effective access is unavailable. Try again.",
+      "effectiveTitle": "Effective access could not be calculated",
+      "effectiveDescription": "The selected user has been preserved. Try again to calculate the latest roles and permissions."
+    },
     "guide": {
       "title": "Use this area to design access, apply it, and verify its actual impact.",
       "description": "Work from role definition → group assignment → privileged access control → user effective access."
@@ -2828,6 +2845,24 @@
       "ALLOW": "Allow",
       "DENY": "Deny"
     },
+    "permissionCodes": {
+      "VIEW": "View",
+      "CREATE": "Create",
+      "UPDATE": "Update",
+      "DELETE": "Delete",
+      "MANAGE": "Full management"
+    },
+    "resourceTypes": {
+      "APP": "Application",
+      "NAVIGATION": "Navigation",
+      "API": "API",
+      "ACTION": "Action",
+      "DATA": "Data"
+    },
+    "sources": {
+      "DIRECT": "Direct assignment",
+      "GROUP": "Inherited from group"
+    },
     "assignmentTypes": {
       "ACTIVE": "Applies immediately",
       "ELIGIBLE": "Activate after approval"
@@ -2855,7 +2890,12 @@
     },
     "actions": {
       "permissions": "Edit permissions",
+      "permissionsFor": "Edit permissions for {{role}}",
+      "editRoleFor": "Edit {{role}}",
+      "systemManagedAction": "{{action}} unavailable — built-in roles are managed by central policy.",
       "savePermissions": "Save permissions",
+      "retry": "Try again",
+      "retryGroups": "Reload groups",
       "newResource": "New resource",
       "newRole": "New role",
       "newAssignment": "Assign role to group",
@@ -2878,7 +2918,16 @@
     "permissionDialog": {
       "title": "Permissions for {{role}}",
       "description": "Choose an explicit allow or deny for each protected operation. Deny wins during effective-access evaluation.",
-      "grantLabel": "{{resource}} {{permission}} effect"
+      "grantLabel": "{{resource}} {{permission}} effect",
+      "summaryAdded": "{{count}} added",
+      "summaryRemoved": "{{count}} removed",
+      "summaryChanged": "{{count}} effect changes",
+      "confirmTitle": "Apply permission changes to {{role}}?",
+      "confirmDescription": "Removed permissions and deny effects can immediately restrict user work. Review the changes before applying them.",
+      "confirm": "Apply changes",
+      "confirming": "Applying changes",
+      "privilegedWarning": "This is a privileged role. Review every change, including added permissions, before applying it.",
+      "changeItem": "{{resource}} · {{permission}}: {{before}} → {{after}}"
     },
     "assignmentDialog": {
       "title": "Assign role to group",
@@ -3570,6 +3619,8 @@
       "ariaLabel": "Workforce data access policy sequence",
       "title": "What this area controls",
       "description": "In addition to permission to use a feature, these policies restrict the organizations, data, and actions that workforce APIs allow.",
+      "mobileSummaryTitle": "What this area controls",
+      "mobileSummaryDescription": "{{count}} currently in effect · Show details",
       "steps": {
         "subject": {
           "title": "Subject",
@@ -3633,8 +3684,14 @@
       "USER": "User override"
     },
     "roles": {
+      "ADMIN": "Unified administrator",
       "HR_ADMIN": "HR administrator",
       "PEOPLE_ADMIN": "People operations administrator"
+    },
+    "roleDescriptions": {
+      "ADMIN": "Existing unified administrator policy",
+      "HR_ADMIN": "Default workforce data scope for the HR operations role",
+      "PEOPLE_ADMIN": "Default workforce data scope for the people operations role"
     },
     "populations": {
       "TENANT": "All SKAX organizations",
@@ -3661,6 +3718,9 @@
       "subjectType": "Subject type",
       "subject": "Role or user",
       "selectSubject": "Select a subject",
+      "userSearch": "Search for a user",
+      "userSearchHelp": "Search all organization users by name or email.",
+      "noUsers": "No users match this search.",
       "population": "Organizations in scope",
       "organization": "Root organization",
       "selectOrganization": "Select an organization",
@@ -3690,13 +3750,27 @@
     "references": {
       "loading": "Loading user and organization choices.",
       "error": "User or organization choices could not be loaded, so a new policy cannot be created. Existing policy review is unaffected.",
-      "retry": "Reload choices"
+      "retry": "Reload choices",
+      "organizationsLoading": "Loading organization choices.",
+      "organizationsError": "Organization choices could not be loaded. Your other entries are preserved.",
+      "retryOrganizations": "Reload organizations",
+      "usersLoading": "Searching for users.",
+      "usersError": "User search results could not be loaded. Your other entries are preserved.",
+      "retryUsers": "Search users again"
     },
     "revoke": {
       "title": "Revoke this access policy?",
       "description": "The workforce data scope for {{subject}} will be blocked from the next request.",
       "action": "Revoke",
       "ariaLabel": "Revoke the workforce data access policy for {{subject}}",
+      "impactTitle": "Access that will be revoked",
+      "subject": "Subject",
+      "organization": "Organizations in scope",
+      "data": "Permitted data",
+      "actions": "Permitted actions",
+      "validFrom": "Start date and time",
+      "validTo": "End date and time",
+      "immediate": "Effective immediately",
       "cancel": "Cancel",
       "submit": "Revoke now",
       "submitting": "Revoking policy"

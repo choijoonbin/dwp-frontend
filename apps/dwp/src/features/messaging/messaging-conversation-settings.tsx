@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bell, Palette, Pin, Settings2, SlidersHorizontal, Star } from 'lucide-react';
+import { Bell, Palette, Pin, Settings2, SlidersHorizontal, Star, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionIconButton, SelectField } from '@dwp-frontend/design-system';
 import {
@@ -39,6 +39,7 @@ export function MessagingConversationSettings({
   const { t } = useTranslation('messaging');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const titleId = useId();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [section, setSection] = useState<'GENERAL' | 'DISPLAY'>('GENERAL');
   const preferencesAvailable = MESSAGING_API_CAPABILITIES.conversationPreferences;
@@ -90,6 +91,9 @@ export function MessagingConversationSettings({
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         slotProps={{
           paper: {
+            role: 'dialog',
+            'aria-modal': true,
+            'aria-labelledby': titleId,
             sx: {
               mt: 0.75,
               width: 'min(430px, calc(100vw - 24px))',
@@ -102,27 +106,45 @@ export function MessagingConversationSettings({
         }}
       >
         <Stack spacing={1.5} sx={{ p: 2 }}>
-          <Box>
-            <Typography variant="subtitle1" fontWeight={850}>
-              {t('conversation.settings.title')}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t('conversation.settings.description')}
-            </Typography>
-          </Box>
+          <Stack direction="row" spacing={1} alignItems="flex-start">
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography id={titleId} variant="subtitle1" fontWeight={850}>
+                {t('conversation.settings.title')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('conversation.settings.description')}
+              </Typography>
+            </Box>
+            <ActionIconButton
+              label={t('conversation.settings.close')}
+              onClick={() => setAnchor(null)}
+              sx={{ flexShrink: 0 }}
+            >
+              <X size={17} />
+            </ActionIconButton>
+          </Stack>
           <Tabs
             value={section}
             onChange={(_, value: 'GENERAL' | 'DISPLAY') => setSection(value)}
             variant="fullWidth"
             aria-label={t('conversation.settings.sectionsLabel')}
+            sx={{
+              '& .MuiTab-root.Mui-focusVisible': {
+                outline: '2px solid',
+                outlineColor: 'primary.main',
+                outlineOffset: '-2px',
+              },
+            }}
           >
             <Tab
+              disableRipple
               value="GENERAL"
               icon={<SlidersHorizontal size={16} />}
               iconPosition="start"
               label={t('conversation.settings.sections.general')}
             />
             <Tab
+              disableRipple
               value="DISPLAY"
               icon={<Palette size={16} />}
               iconPosition="start"

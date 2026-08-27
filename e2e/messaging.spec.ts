@@ -1086,28 +1086,93 @@ test('conversation owners can govern member roles from the conversation context'
 test('personal display settings persist per conversation and globally without affecting peers', async ({
   page,
 }, testInfo) => {
-  test.skip(testInfo.project.name !== 'chromium', 'Desktop display preference contract');
+  if (testInfo.project.name === 'mobile') {
+    await page.setViewportSize({ width: 320, height: 720 });
+  }
   const state = await mockMessaging(page);
   await openConversation(page);
 
   await page.getByRole('button', { name: 'Conversation settings' }).click();
-  await page.getByRole('tab', { name: 'Display' }).click();
+  const settingsDialog = page.getByRole('dialog', { name: 'Conversation settings' });
+  await expect(settingsDialog).toBeVisible();
+  await settingsDialog.getByRole('tab', { name: 'Display' }).click();
   await expect(
-    page.getByText('Only tenant-approved, low-saturation presets are applied to your view.')
+    settingsDialog.getByText(
+      'Only tenant-approved, low-saturation presets are applied to your view.'
+    )
   ).toBeVisible();
 
-  await page.getByRole('button', { name: 'Mist' }).click();
+  await settingsDialog.getByRole('button', { name: 'Mist' }).click();
   await expect
     .poll(() => state.conversationDisplayPreferences.get(CONVERSATION_ID)?.theme)
     .toBe('MIST');
 
-  await page.getByRole('button', { name: 'All conversations' }).click();
-  await page.getByRole('button', { name: 'Compact' }).click();
+  await settingsDialog.getByRole('button', { name: 'All conversations' }).click();
+  await settingsDialog.getByRole('button', { name: 'Compact' }).click();
   await expect.poll(() => state.displayPreference.density).toBe('COMPACT');
   await page.screenshot({
     path: testInfo.outputPath('messaging-display-preferences.png'),
     fullPage: true,
   });
+  await settingsDialog.getByRole('button', { name: 'Close conversation settings' }).click();
+  await expect(settingsDialog).toBeHidden();
+});
+
+test('conversation display policy disables only the setting governed by the tenant', async ({
+  page,
+}) => {
+  const state = await mockMessaging(page);
+  state.conversationDisplayPreferences.set(CONVERSATION_ID, {
+    ...conversationDisplayPreference(state, CONVERSATION_ID),
+    effectiveLayoutMode: 'COLLABORATIVE',
+    policyLocked: true,
+    policyReason: 'STRUCTURED_CONVERSATION',
+  });
+  await openConversation(page);
+
+  await page.getByRole('button', { name: 'Conversation settings' }).click();
+  const settingsDialog = page.getByRole('dialog', { name: 'Conversation settings' });
+  await settingsDialog.getByRole('tab', { name: 'Display' }).click();
+  await expect(
+    settingsDialog.getByText(
+      'Announcements, incidents, and meeting conversations use a collaborative structure to preserve their work meaning.'
+    )
+  ).toBeVisible();
+
+  const layout = settingsDialog.getByRole('group', { name: 'Message layout' });
+  await expect(layout.getByRole('button', { name: 'Collaborative' })).toBeDisabled();
+  const density = settingsDialog.getByRole('group', { name: 'Information density' });
+  await expect(density.getByRole('button', { name: 'Compact' })).toBeEnabled();
+  const theme = settingsDialog.getByRole('group', { name: 'Conversation background' });
+  await expect(theme.getByRole('button', { name: 'Mist' })).toBeEnabled();
+
+  await settingsDialog.getByRole('button', { name: 'Close conversation settings' }).click();
+  state.conversationDisplayPreferences.set(CONVERSATION_ID, {
+    ...conversationDisplayPreference(state, CONVERSATION_ID),
+    effectiveTheme: 'DEFAULT',
+    policyLocked: true,
+    policyReason: 'RESTRICTED_CONVERSATION',
+  });
+  await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Compose message' })).toBeVisible();
+  await page.getByRole('button', { name: 'Conversation settings' }).click();
+  const restrictedDialog = page.getByRole('dialog', { name: 'Conversation settings' });
+  await restrictedDialog.getByRole('tab', { name: 'Display' }).click();
+  await expect(
+    restrictedDialog.getByText(
+      'Restricted conversations use the approved default background to protect security indicators and contrast.'
+    )
+  ).toBeVisible();
+  const restrictedTheme = restrictedDialog.getByRole('group', {
+    name: 'Conversation background',
+  });
+  await expect(restrictedTheme.locator('button[value="DEFAULT"]')).toBeDisabled();
+  const restrictedLayout = restrictedDialog.getByRole('group', { name: 'Message layout' });
+  await expect(restrictedLayout.getByRole('button', { name: 'Default' })).toBeEnabled();
+  const restrictedDensity = restrictedDialog.getByRole('group', {
+    name: 'Information density',
+  });
+  await expect(restrictedDensity.getByRole('button', { name: 'Compact' })).toBeEnabled();
 });
 
 test('long conversations load earlier history without replacing the current timeline', async ({

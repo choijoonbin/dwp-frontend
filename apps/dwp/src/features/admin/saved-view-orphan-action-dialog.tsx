@@ -142,6 +142,18 @@ export function SavedViewOrphanActionDialog({
     return () => window.clearTimeout(timeout);
   }, [confirmOpen, executing, runtimeSharedNameConflict]);
 
+  useEffect(() => {
+    if (!nameConflictTarget || confirmOpen || executing) return;
+    const timeout = window.setTimeout(() => nameConflictRef.current?.focus(), 300);
+    return () => window.clearTimeout(timeout);
+  }, [confirmOpen, executing, nameConflictTarget]);
+
+  useEffect(() => {
+    if (!targetEligibilityFailure || confirmOpen || executing) return;
+    const timeout = window.setTimeout(() => targetInputRef.current?.focus(), 300);
+    return () => window.clearTimeout(timeout);
+  }, [confirmOpen, executing, targetEligibilityFailure]);
+
   const targetUsers = useQuery({
     queryKey: [
       'admin',
@@ -224,7 +236,6 @@ export function SavedViewOrphanActionDialog({
         setTargetOwner(null);
         setTargetSearch('');
         setNameConflictTarget(blockedTarget);
-        window.requestAnimationFrame(() => nameConflictRef.current?.focus());
       } else if (failure === 'SHARED_NAME_CONFLICT') {
         commandKeyRef.current = null;
         setConfirmOpen(false);
@@ -249,7 +260,6 @@ export function SavedViewOrphanActionDialog({
             targetName: blockedTarget,
           });
           await targetUsers.refetch();
-          window.requestAnimationFrame(() => targetInputRef.current?.focus());
         } else {
           toast.error(t('savedViewCustody.orphanActions.toasts.failed'));
         }

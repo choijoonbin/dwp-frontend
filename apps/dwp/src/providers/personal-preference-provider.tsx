@@ -26,12 +26,18 @@ import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plan
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 
+import {
+  asPersonalPreferenceView,
+  type PersonalPreferenceView,
+  type ProviderLocalPreferenceState,
+} from './provider-local-preference-model';
+
 import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
 
 export type PersonalPreferenceSaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 type PersonalPreferenceContextValue = {
-  preference: PersonalPreference | null;
+  preference: PersonalPreferenceView | null;
   isLoading: boolean;
   isSaving: boolean;
   loadFailed: boolean;
@@ -148,38 +154,33 @@ export function legacyProviderPreferenceStorageKey(identity: string): string {
   return `${LEGACY_PROVIDER_PREFERENCE_STORAGE_PREFIX}:${identity}`;
 }
 
-function createProviderLocalPreference(
+function createProviderLocalPreferenceState(
   values: Partial<PersonalPreferenceValues> | undefined,
   defaults: UserAppearancePreference,
   updatedAt: string | null = null
-): PersonalPreference {
+): ProviderLocalPreferenceState {
   return {
     schemaVersion: 2,
     customized: Boolean(values),
     preferences: normalizeProviderValues(values, defaults),
-    // PersonalPreference's wire type currently requires a tenant managed-policy shape.
-    // Provider routes never expose the managed section; this empty value is local compatibility data.
-    managedPolicy: {
-      policyId: 'provider-local-preference',
-      scope: 'TENANT',
-      source: 'TENANT_EXPERIENCE_POLICY',
-      ownerType: 'ROLE',
-      ownerRef: 'PROVIDER_OPERATOR',
-      ownerDisplayName: 'Provider operator',
-      managedPaths: [],
-      rules: [],
-      version: 0,
-    },
     version: 0,
     updatedAt,
   };
+}
+
+function createProviderLocalPreference(
+  values: Partial<PersonalPreferenceValues> | undefined,
+  defaults: UserAppearancePreference,
+  updatedAt: string | null = null
+): PersonalPreferenceView {
+  return asPersonalPreferenceView(createProviderLocalPreferenceState(values, defaults, updatedAt));
 }
 
 export function readProviderLocalPreference(
   identity: string,
   legacyIdentity: string,
   defaults: UserAppearancePreference
-): PersonalPreference {
+): PersonalPreferenceView {
   if (typeof window === 'undefined') return createProviderLocalPreference(undefined, defaults);
   try {
     const targetKey = providerPreferenceStorageKey(identity);
@@ -190,14 +191,14 @@ export function readProviderLocalPreference(
       preferences?: Partial<PersonalPreferenceValues>;
       updatedAt?: string | null;
     } | null;
-    const preference = createProviderLocalPreference(
+    const preference = createProviderLocalPreferenceState(
       stored?.preferences,
       defaults,
       stored?.updatedAt ?? null
     );
     if (stored) writeProviderLocalPreference(identity, preference);
     if (legacy !== null) window.localStorage.removeItem(legacyKey);
-    return preference;
+    return asPersonalPreferenceView(preference);
   } catch {
     return createProviderLocalPreference(undefined, defaults);
   }
@@ -205,7 +206,7 @@ export function readProviderLocalPreference(
 
 function writeProviderLocalPreference(
   identity: string,
-  preference: PersonalPreference,
+  preference: ProviderLocalPreferenceState,
   storage?: Pick<Storage, 'setItem'>
 ) {
   const target = storage ?? (typeof window === 'undefined' ? null : window.localStorage);
@@ -221,19 +222,19 @@ function writeProviderLocalPreference(
 
 export function updateProviderLocalPreference(
   identity: string,
-  current: PersonalPreference,
+  current: PersonalPreferenceView,
   patch: PersonalPreferencePatch,
   defaults: UserAppearancePreference,
   updatedAt: string,
   storage?: Pick<Storage, 'setItem'>
-): PersonalPreference {
-  const next = createProviderLocalPreference(
+): PersonalPreferenceView {
+  const next = createProviderLocalPreferenceState(
     mergePatch(current.preferences, patch),
     defaults,
     updatedAt
   );
   writeProviderLocalPreference(identity, next, storage);
-  return next;
+  return asPersonalPreferenceView(next);
 }
 
 function toAppearance(
@@ -292,7 +293,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   const mounted = useRef(true);
   const [saveState, setSaveState] = useState<PersonalPreferenceSaveState>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
-  const [providerPreference, setProviderPreference] = useState<PersonalPreference | null>(null);
+  const [providerPreference, setProviderPreference] = useState<PersonalPreferenceView | null>(null);
   const identity = auth.user
     ? providerAccount
       ? providerRealmPreferenceIdentity(auth.user.userId)

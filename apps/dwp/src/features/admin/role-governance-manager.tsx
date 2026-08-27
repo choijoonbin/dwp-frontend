@@ -27,10 +27,11 @@ import {
   updateGovernanceRole,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { EnterpriseDataGrid, ErrorState, GuidedEmptyState } from '@dwp-frontend/design-system';
 import { useDisplayDictionary, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -44,229 +45,31 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import {
-  ManagementPanelError,
-  ManagementPanelLoading,
-} from '../../components/management-panel-state';
+import { ManagementPanelLoading } from '../../components/management-panel-state';
 import { PrivilegedAccessManager } from './privileged-access-manager';
 import { createRoleAssignmentColumns } from './role-assignment-columns';
 import { RoleAssignmentSummary } from './role-assignment-summary';
 import { RoleAssignmentRevokeDialog } from './role-assignment-revoke-dialog';
+import {
+  assignmentSourceLabel,
+  localizedCodeLabel,
+  permissionEffectLabel,
+  resourceTypeLabel,
+} from './role-governance-display';
 import { RoleGovernanceLayout, type RoleGovernanceView } from './role-governance-layout';
+import { RoleGovernancePermissionDialog } from './role-governance-permission-dialog';
+import { RoleGovernanceResourceDialog } from './role-governance-resource-dialog';
 import { RoleGovernanceRoleDialog } from './role-governance-role-dialog';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
   EffectiveAccess,
-  GovernanceResource,
   GovernanceRole,
   GroupRoleAssignment,
-  PermissionEffect,
-  PermissionSelection,
 } from '@dwp-frontend/shared-utils';
-
-const PERMISSION_CODES = ['VIEW', 'CREATE', 'UPDATE', 'DELETE', 'MANAGE'] as const;
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
-}
-
-function PermissionDialog({
-  role,
-  resources,
-  busy,
-  onClose,
-  onSave,
-}: {
-  role: GovernanceRole | null;
-  resources: GovernanceResource[];
-  busy: boolean;
-  onClose: () => void;
-  onSave: (permissions: PermissionSelection[]) => Promise<void>;
-}) {
-  const { t } = useTranslation('admin');
-  const displayRole = useRoleDisplay();
-  const roleDisplay = role ? displayRole(role.code, role.name, role.description) : null;
-  const initial = useMemo(
-    () =>
-      new Map(
-        (role?.permissions ?? []).map((item) => [
-          `${item.resourceId}:${item.permissionCode}`,
-          item.effect,
-        ])
-      ),
-    [role]
-  );
-  const [selection, setSelection] = useState<Map<string, PermissionEffect>>(initial);
-
-  const setGrant = (resourceId: number, permissionCode: string, value: string) => {
-    setSelection((current) => {
-      const next = new Map(current);
-      const key = `${resourceId}:${permissionCode}`;
-      if (!value) next.delete(key);
-      else next.set(key, value as PermissionEffect);
-      return next;
-    });
-  };
-
-  return (
-    <Dialog open={Boolean(role)} onClose={busy ? undefined : onClose} fullWidth maxWidth="lg">
-      <DialogTitle>
-        {t('roleGovernance.permissionDialog.title', { role: roleDisplay?.name })}
-      </DialogTitle>
-      <DialogContent sx={{ pt: '8px !important' }}>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('roleGovernance.permissionDialog.description')}
-        </Typography>
-        <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <Box
-            component="table"
-            sx={{
-              width: 1,
-              minWidth: 760,
-              borderCollapse: 'collapse',
-              '& th, & td': {
-                px: 1.25,
-                py: 1,
-                borderBottom: 1,
-                borderColor: 'divider',
-                textAlign: 'left',
-              },
-            }}
-          >
-            <Box component="thead">
-              <Box component="tr">
-                <Box component="th">
-                  <Typography variant="caption">{t('roleGovernance.columns.resource')}</Typography>
-                </Box>
-                {PERMISSION_CODES.map((code) => (
-                  <Box component="th" key={code}>
-                    <Typography variant="caption">{code}</Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-            <Box component="tbody">
-              {resources.map((resource) => (
-                <Box component="tr" key={resource.resourceId}>
-                  <Box component="td">
-                    <Typography variant="body2" fontWeight={700}>
-                      {resource.name}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {resource.type} / {resource.key}
-                    </Typography>
-                  </Box>
-                  {PERMISSION_CODES.map((code) => (
-                    <Box component="td" key={code}>
-                      <TextField
-                        select
-                        size="small"
-                        value={selection.get(`${resource.resourceId}:${code}`) ?? ''}
-                        onChange={(event) =>
-                          setGrant(resource.resourceId, code, event.target.value)
-                        }
-                        inputProps={{
-                          'aria-label': t('roleGovernance.permissionDialog.grantLabel', {
-                            resource: resource.name,
-                            permission: code,
-                          }),
-                        }}
-                        sx={{ width: 92 }}
-                      >
-                        <MenuItem value="">{t('roleGovernance.effects.NONE')}</MenuItem>
-                        <MenuItem value="ALLOW">{t('roleGovernance.effects.ALLOW')}</MenuItem>
-                        <MenuItem value="DENY">{t('roleGovernance.effects.DENY')}</MenuItem>
-                      </TextField>
-                    </Box>
-                  ))}
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={busy}>
-          {t('common.actions.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          disabled={busy}
-          onClick={() =>
-            void onSave(
-              [...selection.entries()].map(([key, effect]) => {
-                const [resourceId, permissionCode] = key.split(':');
-                return { resourceId: Number(resourceId), permissionCode, effect };
-              })
-            )
-          }
-        >
-          {t('roleGovernance.actions.savePermissions')}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
-function ResourceDialog({
-  open,
-  busy,
-  onClose,
-  onSave,
-}: {
-  open: boolean;
-  busy: boolean;
-  onClose: () => void;
-  onSave: (request: { type: string; key: string; name: string }) => Promise<void>;
-}) {
-  const { t } = useTranslation('admin');
-  const [type, setType] = useState('APP');
-  const [key, setKey] = useState('');
-  const [name, setName] = useState('');
-  return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('roleGovernance.resourceDialog.title')}</DialogTitle>
-      <DialogContent sx={{ pt: '8px !important' }}>
-        <Stack gap={2}>
-          <TextField
-            select
-            label={t('roleGovernance.fields.resourceType')}
-            value={type}
-            onChange={(event) => setType(event.target.value)}
-          >
-            {['APP', 'NAVIGATION', 'API', 'ACTION', 'DATA'].map((value) => (
-              <MenuItem key={value} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            required
-            label={t('roleGovernance.fields.resourceKey')}
-            value={key}
-            onChange={(event) => setKey(event.target.value)}
-          />
-          <TextField
-            required
-            label={t('roleGovernance.fields.name')}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>{t('common.actions.cancel')}</Button>
-        <Button
-          variant="contained"
-          disabled={busy || !key.trim() || !name.trim()}
-          onClick={() => void onSave({ type, key: key.trim(), name: name.trim() })}
-        >
-          {t('common.actions.create')}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
 }
 
 function RolesPanel() {
@@ -366,35 +169,38 @@ function RolesPanel() {
       },
       {
         field: 'actions',
-        headerName: '',
+        headerName: t('roleGovernance.columns.actions'),
         width: 112,
         sortable: false,
         renderCell: ({ row }) => {
           const systemManaged = row.roleType === 'SYSTEM';
-          const tooltip = systemManaged
-            ? t('roleGovernance.systemManaged')
-            : t('roleGovernance.actions.permissions');
+          const roleName = displayRole(row.code, row.name, row.description).name;
+          const permissionLabel = t('roleGovernance.actions.permissionsFor', { role: roleName });
+          const editLabel = t('roleGovernance.actions.editRoleFor', { role: roleName });
+          const tooltipLabel = (action: string) =>
+            systemManaged
+              ? t('roleGovernance.actions.systemManagedAction', { action })
+              : action;
           return (
             <Stack direction="row">
-              <Tooltip title={tooltip}>
+              <Tooltip title={tooltipLabel(permissionLabel)}>
                 <span>
                   <IconButton
                     size="small"
                     disabled={systemManaged}
-                    aria-label={tooltip}
+                    aria-label={permissionLabel}
                     onClick={() => setPermissionRole(row)}
                   >
                     <KeyRound size={16} />
                   </IconButton>
                 </span>
               </Tooltip>
-              <Tooltip
-                title={systemManaged ? t('roleGovernance.systemManaged') : t('common.actions.edit')}
-              >
+              <Tooltip title={tooltipLabel(editLabel)}>
                 <span>
                   <IconButton
                     size="small"
                     disabled={systemManaged}
+                    aria-label={editLabel}
                     onClick={() => {
                       setEditingRole(row);
                       setDialogOpen(true);
@@ -416,8 +222,12 @@ function RolesPanel() {
     return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
   if (roles.isError || resources.isError)
     return (
-      <ManagementPanelError
-        message={errorMessage(roles.error ?? resources.error, t('common.operationError'))}
+      <ErrorState
+        title={t('roleGovernance.errors.rolesTitle')}
+        description={t('roleGovernance.errors.rolesDescription')}
+        retryLabel={t('roleGovernance.actions.retry')}
+        retrying={roles.isFetching || resources.isFetching}
+        onRetry={() => void Promise.all([roles.refetch(), resources.refetch()])}
       />
     );
   return (
@@ -438,7 +248,10 @@ function RolesPanel() {
         </Stack>
         <Stack direction="row" justifyContent="flex-end">
           <Tooltip title={t('common.actions.refresh')}>
-            <IconButton onClick={() => void Promise.all([roles.refetch(), resources.refetch()])}>
+            <IconButton
+              aria-label={t('common.actions.refresh')}
+              onClick={() => void Promise.all([roles.refetch(), resources.refetch()])}
+            >
               <RefreshCw size={18} />
             </IconButton>
           </Tooltip>
@@ -464,6 +277,21 @@ function RolesPanel() {
         hideFooter
         minVisibleRows={3}
         maxVisibleRows={9}
+        slots={{
+          noRowsOverlay: () => (
+            <GuidedEmptyState
+              kind="first-use"
+              title={t('roleGovernance.empty.rolesTitle')}
+              description={t('roleGovernance.empty.rolesDescription')}
+              actionLabel={t('roleGovernance.actions.newRole')}
+              onAction={() => {
+                setEditingRole(null);
+                setDialogOpen(true);
+              }}
+              size="compact"
+            />
+          ),
+        }}
         sx={{ border: 0, borderRadius: 0 }}
       />
       {dialogOpen && (
@@ -489,7 +317,7 @@ function RolesPanel() {
         />
       )}
       {permissionRole && (
-        <PermissionDialog
+        <RoleGovernancePermissionDialog
           role={permissionRole}
           resources={resources.data ?? []}
           busy={busy}
@@ -500,11 +328,12 @@ function RolesPanel() {
               t('roleGovernance.toasts.permissionsUpdated')
             );
             if (saved) setPermissionRole(null);
+            return saved;
           }}
         />
       )}
       {resourceOpen && (
-        <ResourceDialog
+        <RoleGovernanceResourceDialog
           open
           busy={busy}
           onClose={() => setResourceOpen(false)}
@@ -576,7 +405,6 @@ function AssignmentDialog({
             value={groupId}
             disabled={groups.isLoading || groups.isError}
             error={groups.isError}
-            helperText={groups.isError ? t('common.loadError') : undefined}
             onChange={(event) => setGroupId(event.target.value)}
           >
             {(groups.data?.content ?? []).map((group) => (
@@ -585,6 +413,23 @@ function AssignmentDialog({
               </MenuItem>
             ))}
           </TextField>
+          {groups.isError ? (
+            <Alert
+              severity="error"
+              action={
+                <Button
+                  color="inherit"
+                  size="small"
+                  disabled={groups.isFetching}
+                  onClick={() => void groups.refetch()}
+                >
+                  {t('roleGovernance.actions.retryGroups')}
+                </Button>
+              }
+            >
+              {t('roleGovernance.errors.groupsDescription')}
+            </Alert>
+          ) : null}
           <TextField
             select
             required
@@ -739,7 +584,17 @@ function AssignmentsPanel() {
   if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
     return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
   if (assignments.isError || roles.isError || assignableRoles.isError)
-    return <ManagementPanelError message={t('common.operationError')} />;
+    return (
+      <ErrorState
+        title={t('roleGovernance.errors.assignmentsTitle')}
+        description={t('roleGovernance.errors.assignmentsDescription')}
+        retryLabel={t('roleGovernance.actions.retry')}
+        retrying={assignments.isFetching || roles.isFetching || assignableRoles.isFetching}
+        onRetry={() =>
+          void Promise.all([assignments.refetch(), roles.refetch(), assignableRoles.refetch()])
+        }
+      />
+    );
   return (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
@@ -832,7 +687,21 @@ function EffectiveAccessPanel() {
   const roleColumns = useMemo<GridColDef<EffectiveAccess['roles'][number]>[]>(
     () => [
       { field: 'roleCode', headerName: t('roleGovernance.columns.role'), minWidth: 180, flex: 1 },
-      { field: 'source', headerName: t('roleGovernance.columns.source'), width: 140 },
+      {
+        field: 'source',
+        headerName: t('roleGovernance.columns.source'),
+        width: 160,
+        renderCell: ({ row }) => (
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="body2" noWrap>
+              {assignmentSourceLabel(row.source, t)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {row.source}
+            </Typography>
+          </Box>
+        ),
+      },
       {
         field: 'sourceGroupName',
         headerName: t('roleGovernance.columns.group'),
@@ -859,19 +728,48 @@ function EffectiveAccessPanel() {
         headerName: t('roleGovernance.columns.resource'),
         minWidth: 260,
         flex: 1,
+        renderCell: ({ row }) => (
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="body2" noWrap>
+              {row.resourceKey}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {localizedCodeLabel(resourceTypeLabel(row.resourceType, t), row.resourceType)}
+            </Typography>
+          </Box>
+        ),
       },
-      { field: 'permissionCode', headerName: t('roleGovernance.columns.permission'), width: 140 },
+      {
+        field: 'permissionCode',
+        headerName: t('roleGovernance.columns.permission'),
+        width: 150,
+        renderCell: ({ row }) => (
+          <Typography variant="body2">
+            {localizedCodeLabel(
+              t(`roleGovernance.permissionCodes.${row.permissionCode}`, {
+                defaultValue: row.permissionCode,
+              }),
+              row.permissionCode
+            )}
+          </Typography>
+        ),
+      },
       {
         field: 'effect',
         headerName: t('roleGovernance.columns.effect'),
-        width: 110,
+        width: 130,
         renderCell: ({ row }) => (
-          <Chip
-            size="small"
-            variant="outlined"
-            color={row.effect === 'ALLOW' ? 'success' : 'error'}
-            label={row.effect}
-          />
+          <Stack alignItems="flex-start" justifyContent="center" sx={{ height: 1 }}>
+            <Chip
+              size="small"
+              variant="outlined"
+              color={row.effect === 'ALLOW' ? 'success' : 'error'}
+              label={permissionEffectLabel(row.effect, t)}
+            />
+            <Typography variant="caption" color="text.secondary">
+              {row.effect}
+            </Typography>
+          </Stack>
         ),
       },
       {
@@ -886,7 +784,15 @@ function EffectiveAccessPanel() {
   );
   if (users.isLoading) return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
   if (users.isError)
-    return <ManagementPanelError message={errorMessage(users.error, t('common.loadError'))} />;
+    return (
+      <ErrorState
+        title={t('roleGovernance.errors.usersTitle')}
+        description={t('roleGovernance.errors.usersDescription')}
+        retryLabel={t('roleGovernance.actions.retry')}
+        retrying={users.isFetching}
+        onRetry={() => void users.refetch()}
+      />
+    );
   return (
     <Box>
       <Stack
@@ -926,9 +832,24 @@ function EffectiveAccessPanel() {
           </TextField>
         </Stack>
       </Stack>
+      {!userId ? (
+        <GuidedEmptyState
+          kind="first-use"
+          title={t('roleGovernance.empty.effectiveTitle')}
+          description={t('roleGovernance.empty.effectiveDescription')}
+          size="compact"
+        />
+      ) : null}
       {access.isLoading && <ManagementPanelLoading label={t('roleGovernance.effectiveLoading')} />}
       {access.isError && (
-        <ManagementPanelError message={errorMessage(access.error, t('common.operationError'))} />
+        <ErrorState
+          title={t('roleGovernance.errors.effectiveTitle')}
+          description={t('roleGovernance.errors.effectiveDescription')}
+          retryLabel={t('roleGovernance.actions.retry')}
+          retrying={access.isFetching}
+          onRetry={() => void access.refetch()}
+          size="compact"
+        />
       )}
       {access.data && (
         <>

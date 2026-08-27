@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
+  AutocompleteField,
   DateTimePickerField,
   FormDialog,
   FormField,
   SelectField,
 } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -36,16 +39,22 @@ export type WorkforceAccessReferenceUser = {
 export type WorkforceAccessPolicyDialogProps = {
   open: boolean;
   busy: boolean;
-  referencesLoading: boolean;
-  referencesError: boolean;
+  organizationsLoading: boolean;
+  organizationsError: boolean;
+  usersLoading: boolean;
+  usersError: boolean;
   users: WorkforceAccessReferenceUser[];
+  userQuery: string;
   organizations: WorkforceOrganizationOption[];
-  onRetryReferences: () => void;
+  onUserQueryChange: (value: string) => void;
+  onRetryOrganizations: () => void;
+  onRetryUsers: () => void;
   onClose: () => void;
   onSave: (request: CreateWorkforceAccessPolicyRequest) => Promise<void>;
 };
 export type WorkforceAccessRevokeDialogProps = {
   policy: WorkforceAccessPolicy;
+  subject: { displayName: string; email?: string | null };
   busy: boolean;
   onClose: () => void;
   onSubmit: (reason: string) => Promise<void>;
@@ -54,15 +63,6 @@ function populationLabel(value: PopulationType, t: TFunction<'admin'>) {
   if (value === 'ORG_UNIT') return t('workforceAccess.populations.ORG_UNIT');
   if (value === 'ORG_TREE') return t('workforceAccess.populations.ORG_TREE');
   return t('workforceAccess.populations.TENANT');
-}
-function policySubjectLabel(policy: WorkforceAccessPolicy, t: TFunction<'admin'>) {
-  if (policy.subjectType === 'USER') {
-    return t('workforceAccess.userSubject', { id: policy.subjectRef });
-  }
-  if (WORKFORCE_ROLES.includes(policy.subjectRef as (typeof WORKFORCE_ROLES)[number])) {
-    return t(`workforceAccess.roles.${policy.subjectRef as (typeof WORKFORCE_ROLES)[number]}`);
-  }
-  return policy.subjectRef;
 }
 function hasInvalidValidityRange(validFrom: string | null, validTo: string | null) {
   if (!validFrom || !validTo) return false;
@@ -78,17 +78,23 @@ function hasPastValidityEnd(validTo: string | null) {
 export function WorkforceAccessPolicyDialog({
   open,
   busy,
-  referencesLoading,
-  referencesError,
+  organizationsLoading,
+  organizationsError,
+  usersLoading,
+  usersError,
   users,
+  userQuery,
   organizations,
-  onRetryReferences,
+  onUserQueryChange,
+  onRetryOrganizations,
+  onRetryUsers,
   onClose,
   onSave,
 }: WorkforceAccessPolicyDialogProps) {
   const { t } = useTranslation('admin');
   const [subjectType, setSubjectType] = useState<SubjectType>('ROLE');
   const [subjectRef, setSubjectRef] = useState('HR_ADMIN');
+  const [selectedUser, setSelectedUser] = useState<WorkforceAccessReferenceUser | null>(null);
   const [populationType, setPopulationType] = useState<PopulationType>('ORG_TREE');
   const [organizationId, setOrganizationId] = useState('');
   const [fieldGroups, setFieldGroups] = useState<FieldGroup[]>(['DIRECTORY', 'EMPLOYMENT']);
@@ -97,11 +103,15 @@ export function WorkforceAccessPolicyDialog({
   const [validTo, setValidTo] = useState<string | null>(null);
   const [justification, setJustification] = useState('');
 
-  const referencesUnavailable = referencesLoading || referencesError;
+  const userReferenceUnavailable =
+    subjectType === 'USER' && (usersLoading || usersError || !selectedUser);
+  const organizationReferenceUnavailable =
+    populationType !== 'TENANT' && (organizationsLoading || organizationsError);
   const invalidValidityRange = hasInvalidValidityRange(validFrom, validTo);
   const pastValidityEnd = hasPastValidityEnd(validTo);
   const valid =
-    !referencesUnavailable &&
+    !userReferenceUnavailable &&
+    !organizationReferenceUnavailable &&
     Boolean(subjectRef) &&
     (populationType === 'TENANT' || Boolean(organizationId)) &&
     fieldGroups.includes('DIRECTORY') &&
@@ -109,6 +119,11 @@ export function WorkforceAccessPolicyDialog({
     !invalidValidityRange &&
     !pastValidityEnd &&
     justification.trim().length >= 10;
+
+  const userOptions =
+    selectedUser && !users.some((user) => user.userId === selectedUser.userId)
+      ? [selectedUser, ...users]
+      : users;
 
   const toggleField = (value: FieldGroup) => {
     if (value === 'DIRECTORY') return;
@@ -149,7 +164,7 @@ export function WorkforceAccessPolicyDialog({
       }
     >
       <Stack gap={2}>
-        {referencesError ? (
+        {organizationsError && populationType !== 'TENANT' ? (
           <Alert severity="error">
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
@@ -157,20 +172,20 @@ export function WorkforceAccessPolicyDialog({
               gap={1}
             >
               <Typography variant="body2" sx={{ flex: 1 }}>
-                {t('workforceAccess.references.error')}
+                {t('workforceAccess.references.organizationsError')}
               </Typography>
               <ActionButton
                 type="button"
                 size="small"
                 intent="secondary"
-                onClick={onRetryReferences}
+                onClick={onRetryOrganizations}
               >
-                {t('workforceAccess.references.retry')}
+                {t('workforceAccess.references.retryOrganizations')}
               </ActionButton>
             </Stack>
           </Alert>
-        ) : referencesLoading ? (
-          <Alert severity="info">{t('workforceAccess.references.loading')}</Alert>
+        ) : organizationsLoading && populationType !== 'TENANT' ? (
+          <Alert severity="info">{t('workforceAccess.references.organizationsLoading')}</Alert>
         ) : null}
         <SelectField
           label={t('workforceAccess.fields.subjectType')}
@@ -183,30 +198,93 @@ export function WorkforceAccessPolicyDialog({
             if (!value) return;
             setSubjectType(value);
             setSubjectRef(value === 'ROLE' ? 'HR_ADMIN' : '');
+            setSelectedUser(null);
+            onUserQueryChange('');
           }}
         />
         {subjectType === 'USER' && (
-          <Alert severity="warning">{t('workforceAccess.warnings.userOverride')}</Alert>
+          <>
+            <Alert severity="warning">{t('workforceAccess.warnings.userOverride')}</Alert>
+            {usersError ? (
+              <Alert severity="error">
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  alignItems={{ xs: 'flex-start', sm: 'center' }}
+                  gap={1}
+                >
+                  <Typography variant="body2" sx={{ flex: 1 }}>
+                    {t('workforceAccess.references.usersError')}
+                  </Typography>
+                  <ActionButton
+                    type="button"
+                    size="small"
+                    intent="secondary"
+                    onClick={onRetryUsers}
+                  >
+                    {t('workforceAccess.references.retryUsers')}
+                  </ActionButton>
+                </Stack>
+              </Alert>
+            ) : null}
+          </>
         )}
-        <SelectField
-          required
-          disabled={subjectType === 'USER' && referencesUnavailable}
-          label={t('workforceAccess.fields.subject')}
-          value={subjectRef}
-          placeholder={t('workforceAccess.fields.selectSubject')}
-          options={
-            subjectType === 'ROLE'
-              ? WORKFORCE_ROLES.map((role) => ({
-                  value: role,
-                  label: t(`workforceAccess.roles.${role}`),
-                }))
-              : users.map((user) => ({
-                  value: String(user.userId),
-                  label: user.email ? `${user.displayName} (${user.email})` : user.displayName,
-                }))
-          }
-          onValueChange={(value) => setSubjectRef(String(value))}
-        />
+        {subjectType === 'ROLE' ? (
+          <SelectField
+            required
+            label={t('workforceAccess.fields.subject')}
+            value={subjectRef}
+            placeholder={t('workforceAccess.fields.selectSubject')}
+            options={WORKFORCE_ROLES.map((role) => ({
+              value: role,
+              label: t(`workforceAccess.roles.${role}`),
+            }))}
+            onValueChange={(value) => setSubjectRef(String(value))}
+          />
+        ) : (
+          <AutocompleteField<WorkforceAccessReferenceUser>
+            required
+            disabled={usersError}
+            label={t('workforceAccess.fields.userSearch')}
+            supportingText={t('workforceAccess.fields.userSearchHelp')}
+            value={selectedUser}
+            inputValue={userQuery}
+            options={userOptions}
+            loading={usersLoading}
+            loadingText={t('workforceAccess.references.usersLoading')}
+            noOptionsText={t('workforceAccess.fields.noUsers')}
+            openOnFocus
+            filterOptions={(values) => values}
+            getOptionLabel={(user) =>
+              user.email ? `${user.displayName} (${user.email})` : user.displayName
+            }
+            isOptionEqualToValue={(option, selected) => option.userId === selected.userId}
+            renderOption={(props, user) => {
+              const { key, ...optionProps } = props;
+              return (
+                <Box component="li" key={key} {...optionProps}>
+                  <Stack sx={{ minWidth: 0 }}>
+                    <Typography variant="body2" fontWeight={650}>
+                      {user.displayName}
+                    </Typography>
+                    {user.email && (
+                      <Typography variant="caption" color="text.secondary">
+                        {user.email}
+                      </Typography>
+                    )}
+                  </Stack>
+                </Box>
+              );
+            }}
+            onInputChange={(_, value, reason) => {
+              if (reason === 'input' || reason === 'clear') onUserQueryChange(value);
+            }}
+            onChange={(_, user) => {
+              setSelectedUser(user);
+              setSubjectRef(user ? String(user.userId) : '');
+              if (user) onUserQueryChange(user.displayName);
+            }}
+          />
+        )}
         <SelectField
           label={t('workforceAccess.fields.population')}
           value={populationType}
@@ -223,7 +301,7 @@ export function WorkforceAccessPolicyDialog({
         {populationType !== 'TENANT' && (
           <SelectField
             required
-            disabled={referencesUnavailable}
+            disabled={organizationsLoading || organizationsError}
             label={t('workforceAccess.fields.organization')}
             value={organizationId}
             placeholder={t('workforceAccess.fields.selectOrganization')}
@@ -321,18 +399,25 @@ export function WorkforceAccessPolicyDialog({
 
 export function WorkforceAccessRevokeDialog({
   policy,
+  subject,
   busy,
   onClose,
   onSubmit,
 }: WorkforceAccessRevokeDialogProps) {
   const { t } = useTranslation('admin');
   const [reason, setReason] = useState('');
-  const subject = policySubjectLabel(policy, t);
+  const subjectLabel = subject.email
+    ? `${subject.displayName} · ${subject.email}`
+    : subject.displayName;
+  const organizationLabel = policy.organizationName
+    ? `${policy.organizationName} · ${populationLabel(policy.populationType, t)}`
+    : populationLabel(policy.populationType, t);
   return (
     <FormDialog
       open
+      maxWidth="md"
       title={t('workforceAccess.revoke.title')}
-      description={t('workforceAccess.revoke.description', { subject })}
+      description={t('workforceAccess.revoke.description', { subject: subjectLabel })}
       cancelLabel={t('workforceAccess.revoke.cancel')}
       submitLabel={t('workforceAccess.revoke.submit')}
       submittingLabel={t('workforceAccess.revoke.submitting')}
@@ -342,17 +427,90 @@ export function WorkforceAccessRevokeDialog({
       onClose={onClose}
       onSubmit={() => onSubmit(reason.trim())}
     >
-      <FormField
-        autoFocus
-        required
-        multiline
-        minRows={3}
-        label={t('workforceAccess.fields.reason')}
-        supportingText={t('workforceAccess.fields.reasonHelp')}
-        value={reason}
-        inputProps={{ maxLength: 1000 }}
-        onChange={(event) => setReason(event.target.value)}
-      />
+      <Stack gap={2}>
+        <Box
+          component="section"
+          aria-labelledby="workforce-access-revoke-impact-title"
+          sx={{ p: 1.5, border: 1, borderColor: 'divider', borderRadius: 2 }}
+        >
+          <Typography id="workforce-access-revoke-impact-title" component="h3" variant="subtitle2">
+            {t('workforceAccess.revoke.impactTitle')}
+          </Typography>
+          <Box
+            component="dl"
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'minmax(130px, 0.35fr) minmax(0, 1fr)' },
+              gap: 1,
+              m: 0,
+              mt: 1.5,
+              '& dt': { color: 'text.secondary' },
+              '& dd': { m: 0, minWidth: 0, overflowWrap: 'anywhere' },
+            }}
+          >
+            <Typography component="dt" variant="caption" fontWeight={700}>
+              {t('workforceAccess.revoke.subject')}
+            </Typography>
+            <Typography component="dd" variant="body2">
+              {subjectLabel}
+            </Typography>
+            <Typography component="dt" variant="caption" fontWeight={700}>
+              {t('workforceAccess.revoke.organization')}
+            </Typography>
+            <Typography component="dd" variant="body2">
+              {organizationLabel}
+            </Typography>
+            <Typography component="dt" variant="caption" fontWeight={700}>
+              {t('workforceAccess.revoke.data')}
+            </Typography>
+            <Stack component="dd" direction="row" flexWrap="wrap" gap={0.5}>
+              {policy.fieldGroups.map((field) => (
+                <Chip key={field} size="small" label={t(`workforceAccess.fieldGroups.${field}`)} />
+              ))}
+            </Stack>
+            <Typography component="dt" variant="caption" fontWeight={700}>
+              {t('workforceAccess.revoke.actions')}
+            </Typography>
+            <Stack component="dd" direction="row" flexWrap="wrap" gap={0.5}>
+              {policy.actionCodes.map((action) => (
+                <Chip
+                  key={action}
+                  size="small"
+                  variant="outlined"
+                  label={t(`workforceAccess.actions.${action}`)}
+                />
+              ))}
+            </Stack>
+            <Typography component="dt" variant="caption" fontWeight={700}>
+              {t('workforceAccess.revoke.validFrom')}
+            </Typography>
+            <Typography component="dd" variant="body2">
+              {policy.validFrom
+                ? formatDate(policy.validFrom, { dateStyle: 'medium', timeStyle: 'short' })
+                : t('workforceAccess.revoke.immediate')}
+            </Typography>
+            <Typography component="dt" variant="caption" fontWeight={700}>
+              {t('workforceAccess.revoke.validTo')}
+            </Typography>
+            <Typography component="dd" variant="body2">
+              {policy.validTo
+                ? formatDate(policy.validTo, { dateStyle: 'medium', timeStyle: 'short' })
+                : t('workforceAccess.noExpiry')}
+            </Typography>
+          </Box>
+        </Box>
+        <FormField
+          autoFocus
+          required
+          multiline
+          minRows={3}
+          label={t('workforceAccess.fields.reason')}
+          supportingText={t('workforceAccess.fields.reasonHelp')}
+          value={reason}
+          inputProps={{ maxLength: 1000 }}
+          onChange={(event) => setReason(event.target.value)}
+        />
+      </Stack>
     </FormDialog>
   );
 }

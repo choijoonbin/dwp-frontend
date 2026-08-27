@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -44,6 +44,7 @@ import type { TFunction } from 'i18next';
 
 const POLICY_QUERY_KEY = ['admin', 'workforce-access', 'policies'] as const;
 const WORKFORCE_ROLES = ['HR_ADMIN', 'PEOPLE_ADMIN'] as const;
+const DISPLAY_WORKFORCE_ROLES = ['ADMIN', ...WORKFORCE_ROLES] as const;
 
 type PolicyStateFilter = EffectiveWorkforceAccessState | 'ALL';
 type PolicyActionFilter = WorkforceAccessPolicy['actionCodes'][number] | 'ALL';
@@ -59,9 +60,37 @@ function populationLabel(value: string, t: TFunction<'admin'>) {
 }
 
 function roleLabel(subjectRef: string, t: TFunction<'admin'>) {
-  return WORKFORCE_ROLES.includes(subjectRef as (typeof WORKFORCE_ROLES)[number])
-    ? t(`workforceAccess.roles.${subjectRef as (typeof WORKFORCE_ROLES)[number]}`)
+  return DISPLAY_WORKFORCE_ROLES.includes(subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number])
+    ? t(`workforceAccess.roles.${subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number]}`)
     : subjectRef;
+}
+
+function roleDescription(subjectRef: string, t: TFunction<'admin'>) {
+  return DISPLAY_WORKFORCE_ROLES.includes(subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number])
+    ? t(
+        `workforceAccess.roleDescriptions.${subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number]}`
+      )
+    : null;
+}
+
+type WorkforcePolicySubject = { displayName: string; email?: string | null };
+type WorkforceUserDisplayCache = {
+  tenantId: number | null;
+  usersById: ReadonlyMap<string, WorkforcePolicySubject>;
+};
+const EMPTY_USER_DISPLAY_MAP: ReadonlyMap<string, WorkforcePolicySubject> = new Map();
+
+function policySubject(
+  policy: WorkforceAccessPolicy,
+  usersById: ReadonlyMap<string, WorkforcePolicySubject>,
+  t: TFunction<'admin'>
+): WorkforcePolicySubject {
+  if (policy.subjectType === 'ROLE') return { displayName: roleLabel(policy.subjectRef, t) };
+  return (
+    usersById.get(policy.subjectRef) ?? {
+      displayName: t('workforceAccess.userSubject', { id: policy.subjectRef }),
+    }
+  );
 }
 
 function policySubjectLabel(
@@ -69,11 +98,8 @@ function policySubjectLabel(
   usersById: ReadonlyMap<string, { displayName: string; email?: string | null }>,
   t: TFunction<'admin'>
 ) {
-  if (policy.subjectType === 'ROLE') return roleLabel(policy.subjectRef, t);
-  const user = usersById.get(policy.subjectRef);
-  return user?.email
-    ? `${user.displayName} · ${user.email}`
-    : (user?.displayName ?? t('workforceAccess.userSubject', { id: policy.subjectRef }));
+  const user = policySubject(policy, usersById, t);
+  return user?.email ? `${user.displayName} · ${user.email}` : user.displayName;
 }
 
 export function canRevokeWorkforceAccessPolicy(policy: WorkforceAccessPolicy): boolean {
@@ -84,6 +110,7 @@ export function canRevokeWorkforceAccessPolicy(policy: WorkforceAccessPolicy): b
 function WorkforceAccessManagerContent() {
   const { t } = useTranslation('admin');
   const auth = useAuth();
+  const tenantId = auth.user?.tenantId ?? null;
   const toast = useToast();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -92,34 +119,65 @@ function WorkforceAccessManagerContent() {
   const [search, setSearch] = useState('');
   const [stateFilter, setStateFilter] = useState<PolicyStateFilter>('ALL');
   const [actionFilter, setActionFilter] = useState<PolicyActionFilter>('ALL');
+  const [userQuery, setUserQuery] = useState('');
+  const [debouncedUserQuery, setDebouncedUserQuery] = useState('');
+  const [userDisplayCache, setUserDisplayCache] = useState<WorkforceUserDisplayCache>(() => ({
+    tenantId,
+    usersById: new Map(),
+  }));
+  const policyQueryKey = useMemo(() => [...POLICY_QUERY_KEY, tenantId] as const, [tenantId]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedUserQuery(userQuery.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [userQuery]);
 
   const policies = useQuery({
-    queryKey: POLICY_QUERY_KEY,
+    queryKey: policyQueryKey,
     queryFn: listWorkforceAccessPolicies,
+    retry: false,
   });
   const shouldLoadUsers =
     open || Boolean(policies.data?.some((policy) => policy.subjectType === 'USER'));
   const organizations = useQuery({
-    queryKey: ['admin', 'workforce-access', 'organizations'],
+    queryKey: ['admin', 'workforce-access', 'organizations', tenantId],
     queryFn: listWorkforcePolicyOrganizations,
     enabled: open,
+    retry: false,
   });
   const users = useQuery({
-    queryKey: ['admin', 'identity-users', 'workforce-access'],
-    queryFn: () => listIdentityUsers(''),
+    queryKey: ['admin', 'identity-users', 'workforce-access', tenantId, debouncedUserQuery],
+    queryFn: () => listIdentityUsers(debouncedUserQuery),
     enabled: shouldLoadUsers,
+    retry: false,
   });
-  const refresh = () => queryClient.invalidateQueries({ queryKey: POLICY_QUERY_KEY });
+  const refresh = () => queryClient.invalidateQueries({ queryKey: policyQueryKey });
 
   const allUsers = useMemo(() => users.data?.content ?? [], [users.data?.content]);
+  useEffect(() => {
+    setUserDisplayCache((current) => {
+      const usersById = current.tenantId === tenantId ? current.usersById : new Map();
+      if (allUsers.length === 0) {
+        return current.tenantId === tenantId ? current : { tenantId, usersById };
+      }
+      const next = new Map(usersById);
+      let changed = false;
+      allUsers.forEach((user) => {
+        const key = String(user.userId);
+        const known = usersById.get(key);
+        if (known?.displayName === user.displayName && known.email === user.email) return;
+        next.set(key, { displayName: user.displayName, email: user.email });
+        changed = true;
+      });
+      return changed || current.tenantId !== tenantId ? { tenantId, usersById: next } : current;
+    });
+  }, [allUsers, tenantId]);
   const selectableUsers = useMemo(
     () => allUsers.filter((user) => String(user.userId) !== String(auth.user?.userId ?? '')),
     [allUsers, auth.user?.userId]
   );
-  const usersById = useMemo(
-    () => new Map(allUsers.map((user) => [String(user.userId), user])),
-    [allUsers]
-  );
+  const usersById =
+    userDisplayCache.tenantId === tenantId ? userDisplayCache.usersById : EMPTY_USER_DISPLAY_MAP;
 
   const searchTermsByPolicy = useMemo(
     () =>
@@ -160,7 +218,12 @@ function WorkforceAccessManagerContent() {
               {policySubjectLabel(row, usersById, t)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {t(`workforceAccess.subjectTypes.${row.subjectType}`)}
+              {row.subjectType === 'ROLE' && roleDescription(row.subjectRef, t)
+                ? `${t(`workforceAccess.subjectTypes.${row.subjectType}`)} · ${roleDescription(
+                    row.subjectRef,
+                    t
+                  )}`
+                : t(`workforceAccess.subjectTypes.${row.subjectType}`)}
             </Typography>
           </Stack>
         ),
@@ -186,16 +249,13 @@ function WorkforceAccessManagerContent() {
       {
         field: 'fieldGroups',
         headerName: t('workforceAccess.columns.fields'),
-        minWidth: 280,
+        minWidth: 360,
         flex: 1.45,
         renderCell: ({ row }) => (
-          <Stack direction="row" alignItems="center" gap={0.5} sx={{ overflow: 'hidden' }}>
-            {row.fieldGroups.slice(0, 2).map((field) => (
+          <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.5} sx={{ py: 0.75 }}>
+            {row.fieldGroups.map((field) => (
               <Chip key={field} size="small" label={t(`workforceAccess.fieldGroups.${field}`)} />
             ))}
-            {row.fieldGroups.length > 2 && (
-              <Chip size="small" variant="outlined" label={`+${row.fieldGroups.length - 2}`} />
-            )}
           </Stack>
         ),
       },
@@ -253,25 +313,23 @@ function WorkforceAccessManagerContent() {
       },
       {
         field: 'rowActions',
-        type: 'actions',
         headerName: t('workforceAccess.columns.actions'),
         width: 110,
-        getActions: ({ row }) =>
-          canRevokeWorkforceAccessPolicy(row)
-            ? [
-                <ActionButton
-                  key="revoke"
-                  size="small"
-                  intent="danger"
-                  aria-label={t('workforceAccess.revoke.ariaLabel', {
-                    subject: policySubjectLabel(row, usersById, t),
-                  })}
-                  onClick={() => setRevoke(row)}
-                >
-                  {t('workforceAccess.revoke.action')}
-                </ActionButton>,
-              ]
-            : [],
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) =>
+          canRevokeWorkforceAccessPolicy(row) ? (
+            <ActionButton
+              size="small"
+              intent="danger"
+              aria-label={t('workforceAccess.revoke.ariaLabel', {
+                subject: policySubjectLabel(row, usersById, t),
+              })}
+              onClick={() => setRevoke(row)}
+            >
+              {t('workforceAccess.revoke.action')}
+            </ActionButton>
+          ) : null,
       },
     ],
     [t, usersById]
@@ -283,9 +341,6 @@ function WorkforceAccessManagerContent() {
     setStateFilter('ALL');
     setActionFilter('ALL');
   };
-  const referenceLoading = organizations.isFetching || users.isFetching;
-  const referenceError = organizations.isError || users.isError;
-
   return (
     <Stack gap={2.5}>
       <WorkforceAccessOverview policies={policies.data} />
@@ -390,6 +445,7 @@ function WorkforceAccessManagerContent() {
             rows={filteredPolicies}
             columns={columns}
             getRowId={(row) => row.policyId}
+            rowHeight={72}
             stickyColumns={{ right: ['rowActions'] }}
             minVisibleRows={5}
             maxVisibleRows={10}
@@ -424,20 +480,27 @@ function WorkforceAccessManagerContent() {
         <WorkforceAccessPolicyDialog
           open
           busy={busy}
-          referencesLoading={referenceLoading}
-          referencesError={referenceError}
+          organizationsLoading={organizations.isFetching}
+          organizationsError={organizations.isError}
+          usersLoading={users.isFetching}
+          usersError={users.isError}
           users={selectableUsers}
+          userQuery={userQuery}
           organizations={organizations.data ?? []}
-          onRetryReferences={() => {
-            void Promise.all([organizations.refetch(), users.refetch()]);
+          onUserQueryChange={setUserQuery}
+          onRetryOrganizations={() => void organizations.refetch()}
+          onRetryUsers={() => void users.refetch()}
+          onClose={() => {
+            setOpen(false);
+            setUserQuery('');
           }}
-          onClose={() => setOpen(false)}
           onSave={async (request) => {
             setBusy(true);
             try {
               await createWorkforceAccessPolicy(request);
               await refresh();
               setOpen(false);
+              setUserQuery('');
               toast.success(t('workforceAccess.toasts.created'));
             } catch {
               await refresh();
@@ -451,6 +514,7 @@ function WorkforceAccessManagerContent() {
       {revoke && (
         <WorkforceAccessRevokeDialog
           policy={revoke}
+          subject={policySubject(revoke, usersById, t)}
           busy={busy}
           onClose={() => setRevoke(null)}
           onSubmit={async (reason) => {

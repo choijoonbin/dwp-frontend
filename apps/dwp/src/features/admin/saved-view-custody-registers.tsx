@@ -198,7 +198,12 @@ export function OrphanedSavedViewRegister({
           />
           {filtered.length ? (
             mobile ? (
-              <Stack component="ul" gap={1.5} sx={{ p: 0, m: 0, listStyle: 'none' }}>
+              <Stack
+                component="ul"
+                gap={1.5}
+                aria-label={t('savedViewCustody.orphaned.gridLabel')}
+                sx={{ p: 0, m: 0, listStyle: 'none' }}
+              >
                 {filtered.map((view) => {
                   const remaining = daysUntil(view.retentionUntil);
                   return (
@@ -315,6 +320,7 @@ export function SavedViewOwnershipHistory({
   onRetry: () => void;
 }) {
   const { t } = useTranslation('admin');
+  const mobile = useMediaQuery<Theme>((theme) => theme.breakpoints.down('sm'));
   const [query, setQuery] = useState('');
   const ownerLabel = useCallback(
     (userId: number | null | undefined, displayName?: string | null) => {
@@ -434,15 +440,110 @@ export function SavedViewOwnershipHistory({
             }}
           />
           {filtered.length ? (
-            <EnterpriseDataGrid
-              ariaLabel={t('savedViewCustody.history.gridLabel')}
-              rows={filtered}
-              columns={columns}
-              getRowId={(row) => row.transferBatchId}
-              minVisibleRows={5}
-              maxVisibleRows={10}
-              sx={{ border: 0, borderRadius: 0 }}
-            />
+            mobile ? (
+              <Stack
+                component="ul"
+                gap={1.5}
+                aria-label={t('savedViewCustody.history.gridLabel')}
+                sx={{ p: 0, m: 0, listStyle: 'none' }}
+              >
+                {filtered.map((entry) => (
+                  <Box
+                    component="li"
+                    key={entry.transferBatchId}
+                    sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 2 }}
+                  >
+                    <Stack component="dl" gap={1.25} sx={{ m: 0 }}>
+                      <Box>
+                        <Typography component="dt" variant="caption" color="text.secondary">
+                          {t('savedViewCustody.columns.sourceOwner')}
+                        </Typography>
+                        <Typography component="dd" variant="subtitle2" sx={{ m: 0 }}>
+                          {ownerLabel(entry.sourceOwnerUserId, entry.sourceOwnerDisplayName)}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography component="dt" variant="caption" color="text.secondary">
+                          {t('savedViewCustody.columns.result')}
+                        </Typography>
+                        <Typography component="dd" variant="body2" fontWeight={650} sx={{ m: 0 }}>
+                          {dispositionLabel(entry.disposition, t)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {entry.disposition === 'TRANSFER'
+                            ? ownerLabel(entry.targetOwnerUserId, entry.targetOwnerDisplayName)
+                            : t('savedViewCustody.history.archiveOn', {
+                                value: displayDate(entry.retentionUntil),
+                              })}
+                        </Typography>
+                      </Box>
+                      <Stack direction="row" gap={2} flexWrap="wrap">
+                        <Box sx={{ minWidth: 96 }}>
+                          <Typography component="dt" variant="caption" color="text.secondary">
+                            {t('savedViewCustody.columns.affected')}
+                          </Typography>
+                          <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                            {entry.transferredCount}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ minWidth: 120 }}>
+                          <Typography component="dt" variant="caption" color="text.secondary">
+                            {t('savedViewCustody.columns.reasonCode')}
+                          </Typography>
+                          <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                            {t('savedViewCustody.reasons.' + entry.reasonCode)}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Box>
+                        <Typography component="dt" variant="caption" color="text.secondary">
+                          {t('savedViewCustody.columns.evidence')}
+                        </Typography>
+                        <Typography
+                          component="dd"
+                          variant="body2"
+                          fontWeight={650}
+                          sx={{ m: 0, overflowWrap: 'anywhere' }}
+                        >
+                          {entry.sourceReference}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {entry.reason}
+                        </Typography>
+                      </Box>
+                      <Stack direction="row" gap={2} flexWrap="wrap">
+                        <Box sx={{ minWidth: 120 }}>
+                          <Typography component="dt" variant="caption" color="text.secondary">
+                            {t('savedViewCustody.columns.actor')}
+                          </Typography>
+                          <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                            {ownerLabel(entry.createdBy)}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ minWidth: 150 }}>
+                          <Typography component="dt" variant="caption" color="text.secondary">
+                            {t('savedViewCustody.columns.executedAt')}
+                          </Typography>
+                          <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                            {displayDate(entry.createdAt)}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
+            ) : (
+              <EnterpriseDataGrid
+                ariaLabel={t('savedViewCustody.history.gridLabel')}
+                rows={filtered}
+                columns={columns}
+                getRowId={(row) => row.transferBatchId}
+                minVisibleRows={5}
+                maxVisibleRows={10}
+                sx={{ border: 0, borderRadius: 0 }}
+              />
+            )
           ) : (
             <GuidedEmptyState
               kind="no-results"

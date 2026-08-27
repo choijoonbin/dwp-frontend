@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Building2,
   CalendarClock,
+  ChevronDown,
   Database,
   Download,
   ListChecks,
@@ -87,55 +88,44 @@ function AccessTerm({ children, emphasized = false }: { children: string; emphas
   );
 }
 
-export function WorkforceAccessOverview({
-  policies,
+type OverviewMetric = {
+  key: 'active' | 'userOverrides' | 'exportEnabled' | 'expiringSoon';
+  icon: LucideIcon;
+  value: number;
+  color: string;
+};
+
+function WorkforceAccessOverviewContent({
+  titleId,
+  metrics,
+  hasPolicies,
+  compact = false,
 }: {
-  policies?: readonly WorkforceAccessPolicy[];
+  titleId: string;
+  metrics: readonly OverviewMetric[];
+  hasPolicies: boolean;
+  compact?: boolean;
 }) {
   const { t } = useTranslation('admin');
-  const summary = summarizeWorkforceAccess(policies ?? []);
-  const metrics = [
-    {
-      key: 'active',
-      icon: ShieldCheck,
-      value: summary.active,
-      color: 'success.main',
-    },
-    {
-      key: 'userOverrides',
-      icon: UserRoundCog,
-      value: summary.userOverrides,
-      color: 'info.main',
-    },
-    {
-      key: 'exportEnabled',
-      icon: Download,
-      value: summary.exportEnabled,
-      color: 'primary.main',
-    },
-    {
-      key: 'expiringSoon',
-      icon: CalendarClock,
-      value: summary.expiringSoon,
-      color: 'warning.dark',
-    },
-  ] as const;
-
   return (
     <Stack
-      component="section"
-      aria-labelledby="workforce-access-overview-title"
       gap={2}
-      sx={{ p: { xs: 2, md: 2.5 }, border: 1, borderColor: 'divider', borderRadius: 2 }}
+      sx={
+        compact
+          ? { px: 1.5, pb: 1.5 }
+          : { p: { sm: 2, md: 2.5 }, border: 1, borderColor: 'divider', borderRadius: 2 }
+      }
     >
-      <Box sx={{ maxWidth: 900 }}>
-        <Typography id="workforce-access-overview-title" variant="h6" fontWeight={750}>
-          {t('workforceAccess.overview.title')}
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-          {t('workforceAccess.overview.description')}
-        </Typography>
-      </Box>
+      {!compact && (
+        <Box sx={{ maxWidth: 900 }}>
+          <Typography id={titleId} variant="h6" fontWeight={750}>
+            {t('workforceAccess.overview.title')}
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+            {t('workforceAccess.overview.description')}
+          </Typography>
+        </Box>
+      )}
 
       <Box
         component="ol"
@@ -182,7 +172,7 @@ export function WorkforceAccessOverview({
           display: 'grid',
           gridTemplateColumns: {
             xs: '1fr',
-            lg: policies ? 'minmax(0, 1.45fr) minmax(420px, 0.8fr)' : '1fr',
+            lg: hasPolicies ? 'minmax(0, 1.45fr) minmax(420px, 0.8fr)' : '1fr',
           },
           gap: 1.5,
         }}
@@ -243,7 +233,7 @@ export function WorkforceAccessOverview({
           </Stack>
         </Stack>
 
-        {policies && (
+        {hasPolicies && (
           <Box
             component="section"
             aria-label={t('workforceAccess.metrics.ariaLabel')}
@@ -265,5 +255,110 @@ export function WorkforceAccessOverview({
         )}
       </Box>
     </Stack>
+  );
+}
+
+export function WorkforceAccessOverview({
+  policies,
+}: {
+  policies?: readonly WorkforceAccessPolicy[];
+}) {
+  const { t } = useTranslation('admin');
+  const summary = summarizeWorkforceAccess(policies ?? []);
+  const metrics: readonly OverviewMetric[] = [
+    {
+      key: 'active',
+      icon: ShieldCheck,
+      value: summary.active,
+      color: 'success.main',
+    },
+    {
+      key: 'userOverrides',
+      icon: UserRoundCog,
+      value: summary.userOverrides,
+      color: 'info.main',
+    },
+    {
+      key: 'exportEnabled',
+      icon: Download,
+      value: summary.exportEnabled,
+      color: 'primary.main',
+    },
+    {
+      key: 'expiringSoon',
+      icon: CalendarClock,
+      value: summary.expiringSoon,
+      color: 'warning.dark',
+    },
+  ];
+
+  return (
+    <>
+      <Box
+        component="section"
+        aria-labelledby="workforce-access-overview-mobile-title"
+        sx={{ display: { xs: 'block', sm: 'none' } }}
+      >
+        <Box
+          component="details"
+          sx={{
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            '&[open] [data-overview-chevron]': { transform: 'rotate(180deg)' },
+          }}
+        >
+          <Box
+            component="summary"
+            aria-controls="workforce-access-overview-mobile-content"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              minHeight: 56,
+              px: 1.5,
+              py: 1.25,
+              cursor: 'pointer',
+              listStyle: 'none',
+              '&::-webkit-details-marker': { display: 'none' },
+              '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.main' },
+            }}
+          >
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography id="workforce-access-overview-mobile-title" variant="subtitle2">
+                {t('workforceAccess.overview.mobileSummaryTitle')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('workforceAccess.overview.mobileSummaryDescription', {
+                  count: summary.active,
+                })}
+              </Typography>
+            </Box>
+            <ChevronDown data-overview-chevron size={18} aria-hidden="true" />
+          </Box>
+          <Box id="workforce-access-overview-mobile-content">
+            <WorkforceAccessOverviewContent
+              compact
+              titleId="workforce-access-overview-mobile-title"
+              metrics={metrics}
+              hasPolicies={Boolean(policies)}
+            />
+          </Box>
+        </Box>
+      </Box>
+
+      <Box
+        component="section"
+        aria-labelledby="workforce-access-overview-desktop-title"
+        sx={{ display: { xs: 'none', sm: 'block' } }}
+      >
+        <WorkforceAccessOverviewContent
+          titleId="workforce-access-overview-desktop-title"
+          metrics={metrics}
+          hasPolicies={Boolean(policies)}
+        />
+      </Box>
+    </>
   );
 }

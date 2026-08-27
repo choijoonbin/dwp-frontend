@@ -104,6 +104,10 @@ export function MessagingDisplayPreferencePanel({
   const global = globalQuery.data;
   const local = conversationQuery.data;
   const allowedThemes = global?.policy.allowedThemes ?? FALLBACK_THEMES;
+  const conversationLayoutLocked =
+    scope === 'CONVERSATION' && local?.policyReason === 'STRUCTURED_CONVERSATION';
+  const conversationThemeLocked =
+    scope === 'CONVERSATION' && local?.policyReason === 'RESTRICTED_CONVERSATION';
 
   const updateGlobal = (
     changes: Partial<{
@@ -167,13 +171,19 @@ export function MessagingDisplayPreferencePanel({
           <DisplayChoice
             label={t('conversation.display.layout')}
             description={t('conversation.display.layoutDescription')}
-            value={scope === 'GLOBAL' ? global.layoutMode : local.layoutMode}
+            value={
+              scope === 'GLOBAL'
+                ? global.layoutMode
+                : conversationLayoutLocked
+                  ? local.effectiveLayoutMode
+                  : local.layoutMode
+            }
             options={
               scope === 'GLOBAL'
                 ? (['AUTO', 'CONVERSATIONAL', 'COLLABORATIVE'] as const)
                 : (['INHERIT', 'AUTO', 'CONVERSATIONAL', 'COLLABORATIVE'] as const)
             }
-            disabled={busy}
+            disabled={busy || conversationLayoutLocked}
             onChange={(value) =>
               scope === 'GLOBAL'
                 ? updateGlobal({ layoutMode: value as MessagingDisplayLayout })
@@ -207,8 +217,14 @@ export function MessagingDisplayPreferencePanel({
               exclusive
               fullWidth
               size="small"
-              value={scope === 'GLOBAL' ? global.theme : local.theme}
-              disabled={busy}
+              value={
+                scope === 'GLOBAL'
+                  ? global.theme
+                  : conversationThemeLocked
+                    ? local.effectiveTheme
+                    : local.theme
+              }
+              disabled={busy || conversationThemeLocked}
               onChange={(_, value: MessagingConversationDisplayTheme | null) => {
                 if (!value) return;
                 if (scope === 'GLOBAL') updateGlobal({ theme: value as MessagingDisplayTheme });

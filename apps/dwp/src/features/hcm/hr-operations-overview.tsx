@@ -26,6 +26,7 @@ export function HrOperationsOverview() {
     enabled: requestScope.ready,
     meta: requestScope.queryMeta,
     staleTime: 20_000,
+    retry: 1,
   });
 
   return (
@@ -43,7 +44,9 @@ export function HrOperationsOverview() {
 
         <Stack direction={{ xs: 'column', md: 'row' }} gap={1.5} alignItems={{ md: 'center' }}>
           <Box flex={1} minWidth={0}>
-            <Typography variant="subtitle2">{t('domains.operations.fieldGroups')}</Typography>
+            <Typography component="p" variant="subtitle2">
+              {t('domains.operations.fieldGroups')}
+            </Typography>
             <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 0.75 }}>
               {(query.data?.fieldGroups ?? []).map((fieldGroup) => (
                 <Chip key={fieldGroup} size="small" variant="outlined" label={fieldGroup} />

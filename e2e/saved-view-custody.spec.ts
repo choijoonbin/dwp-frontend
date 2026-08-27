@@ -268,6 +268,31 @@ test('the successor picker explains plan-specific eligibility before review', as
   await expect(target).toHaveValue(/Casey Steward/);
 });
 
+test('the successor picker blocks candidates without every affected surface permission', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockCustodyWorkspace(page, {
+    candidateIneligibilityReason: 'MISSING_SURFACE_ACCESS',
+  });
+
+  await page.goto('/admin/identity/saved-view-custody');
+  await page.getByLabel('User to resolve').click();
+  await page.getByRole('option', { name: /Alex Former/ }).click();
+  const target = page.getByRole('combobox', { name: 'New steward' });
+  await target.click();
+
+  const ineligible = page.getByRole('option', {
+    name: /Jordan Owner.*does not have access to every product area/i,
+  });
+  await expect(ineligible).toHaveAttribute('aria-disabled', 'true');
+  await page.getByRole('option', { name: /Casey Steward/ }).click();
+  await expect(target).toHaveValue(/Casey Steward/);
+});
+
 test('administrators explicitly confirm the recoverable suspend and scheduled archive path', async ({
   page,
 }, testInfo) => {
@@ -780,7 +805,7 @@ test('workspace tabs expose linked panels and support keyboard activation', asyn
 
 test('history feeds remain independently usable when lifecycle history is unavailable', async ({
   page,
-}) => {
+}, testInfo) => {
   await mockShellSession(page, ['TENANT_ADMIN'], {
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,
@@ -796,6 +821,12 @@ test('history feeds remain independently usable when lifecycle history is unavai
   await expect(ownershipHistory.getByText('Alex Former')).toBeVisible();
   await expect(ownershipHistory.getByText('Jordan Owner')).toBeVisible();
   await expect(ownershipHistory.getByText('HR-SEED-TRANSFER')).toBeVisible();
+  if (testInfo.project.name === 'mobile') {
+    await expect(ownershipHistory.getByRole('list')).toBeVisible();
+    await expect(ownershipHistory.getByRole('grid')).toHaveCount(0);
+  } else {
+    await expect(ownershipHistory.getByRole('grid')).toBeVisible();
+  }
   await expect(
     page.getByText(
       'We could not load waiting-list follow-up history. Other action records remain available.'
@@ -854,7 +885,7 @@ test('the ownership workflow reflows at 320px and 200 percent text', async ({ pa
       reduceMotion: true,
     },
   });
-  await mockCustodyWorkspace(page);
+  await mockCustodyWorkspace(page, { seedOwnershipHistory: true });
 
   await page.goto('/admin/identity/saved-view-custody');
   await expect(page.getByRole('heading', { name: '퇴직·이동 사용자 저장 뷰 정리' })).toBeVisible();
@@ -866,11 +897,19 @@ test('the ownership workflow reflows at 320px and 200 percent text', async ({ pa
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
+  await page.getByRole('tab', { name: '처리 이력' }).click();
+  await expect(page.getByText('HR-SEED-TRANSFER')).toBeVisible();
+  horizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(horizontalOverflow).toBeLessThanOrEqual(1);
 
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.reload();
   await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
   await expect(page.getByRole('heading', { name: '퇴직·이동 사용자 저장 뷰 정리' })).toBeVisible();
+  await page.getByRole('tab', { name: '처리 이력' }).click();
+  await expect(page.getByText('HR-SEED-TRANSFER')).toBeVisible();
   horizontalOverflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );

@@ -2670,6 +2670,23 @@
     "direct": "직접 할당",
     "tenantWide": "테넌트 전체",
     "systemManaged": "시스템 내장 역할은 중앙 정책으로 관리되며 이 화면에서 변경할 수 없습니다.",
+    "empty": {
+      "rolesTitle": "아직 정의된 역할이 없습니다",
+      "rolesDescription": "첫 역할을 만들어 업무에 필요한 리소스 권한을 묶어 관리하세요.",
+      "effectiveTitle": "확인할 사용자를 선택하세요",
+      "effectiveDescription": "사용자를 선택하면 직접 또는 그룹을 통해 받은 역할과 최종 리소스 권한을 계산해 보여줍니다."
+    },
+    "errors": {
+      "rolesTitle": "역할과 리소스를 불러오지 못했습니다",
+      "rolesDescription": "역할 정의 또는 보호 리소스 목록을 가져오지 못했습니다. 연결을 확인한 뒤 다시 시도하세요.",
+      "assignmentsTitle": "그룹 역할 할당을 불러오지 못했습니다",
+      "assignmentsDescription": "할당, 역할 또는 정본 역할 목록 중 일부를 가져오지 못했습니다. 다시 시도하면 전체 목록을 함께 확인합니다.",
+      "groupsDescription": "그룹 목록을 불러오지 못했습니다. 입력한 검색어는 유지됩니다.",
+      "usersTitle": "사용자 목록을 불러오지 못했습니다",
+      "usersDescription": "최종 권한을 확인할 사용자 목록을 가져오지 못했습니다. 다시 시도하세요.",
+      "effectiveTitle": "최종 유효 권한을 계산하지 못했습니다",
+      "effectiveDescription": "선택한 사용자는 유지됩니다. 다시 시도해 최신 역할과 권한을 계산하세요."
+    },
     "guide": {
       "title": "이 메뉴에서는 권한을 설계하고, 적용하고, 실제 영향을 확인합니다.",
       "description": "역할 정의 → 그룹 할당 → 특권 접근 통제 → 사용자별 최종 권한 확인 순서로 살펴보세요."
@@ -2745,6 +2762,24 @@
       "ALLOW": "허용",
       "DENY": "거부"
     },
+    "permissionCodes": {
+      "VIEW": "조회",
+      "CREATE": "생성",
+      "UPDATE": "수정",
+      "DELETE": "삭제",
+      "MANAGE": "전체 관리"
+    },
+    "resourceTypes": {
+      "APP": "애플리케이션",
+      "NAVIGATION": "내비게이션",
+      "API": "API",
+      "ACTION": "작업",
+      "DATA": "데이터"
+    },
+    "sources": {
+      "DIRECT": "직접 할당",
+      "GROUP": "그룹 상속"
+    },
     "assignmentTypes": {
       "ACTIVE": "즉시 적용",
       "ELIGIBLE": "승인 후 활성화"
@@ -2772,7 +2807,12 @@
     },
     "actions": {
       "permissions": "권한 수정",
+      "permissionsFor": "{{role}} 권한 수정",
+      "editRoleFor": "{{role}} 편집",
+      "systemManagedAction": "{{action}} 불가 — 시스템 내장 역할은 중앙 정책에서 관리됩니다.",
       "savePermissions": "권한 저장",
+      "retry": "다시 시도",
+      "retryGroups": "그룹 다시 불러오기",
       "newResource": "새 리소스",
       "newRole": "새 역할",
       "newAssignment": "그룹에 역할 할당",
@@ -2795,7 +2835,16 @@
     "permissionDialog": {
       "title": "{{role}} 권한",
       "description": "각 보호 작업에 허용 또는 거부를 명시하세요. 최종 권한 계산에서는 거부가 우선합니다.",
-      "grantLabel": "{{resource}} {{permission}} 효과"
+      "grantLabel": "{{resource}} {{permission}} 효과",
+      "summaryAdded": "추가 {{count}}개",
+      "summaryRemoved": "제거 {{count}}개",
+      "summaryChanged": "효과 변경 {{count}}개",
+      "confirmTitle": "{{role}} 권한 변경을 적용할까요?",
+      "confirmDescription": "제거되거나 거부로 바뀐 권한은 사용자 업무를 즉시 제한할 수 있습니다. 변경 내용을 확인하세요.",
+      "confirm": "변경 적용",
+      "confirming": "적용하는 중",
+      "privilegedWarning": "특권 역할의 권한 변경입니다. 추가 권한을 포함한 모든 변경을 한 번 더 확인하세요.",
+      "changeItem": "{{resource}} · {{permission}}: {{before}} → {{after}}"
     },
     "assignmentDialog": {
       "title": "그룹에 역할 할당",
@@ -3487,6 +3536,8 @@
       "ariaLabel": "인력 데이터 접근 정책 적용 순서",
       "title": "이 메뉴에서 통제하는 것",
       "description": "화면을 사용할 수 있는 역할 권한과 별도로, 실제 인력 API가 허용할 조직·데이터·작업 범위를 최소 권한으로 제한합니다.",
+      "mobileSummaryTitle": "이 메뉴가 통제하는 범위",
+      "mobileSummaryDescription": "현재 적용 중 {{count}}건 · 자세히 보기",
       "steps": {
         "subject": {
           "title": "대상",
@@ -3550,8 +3601,14 @@
       "USER": "개인 예외"
     },
     "roles": {
+      "ADMIN": "통합 관리자",
       "HR_ADMIN": "HR 관리자",
       "PEOPLE_ADMIN": "인력 운영 관리자"
+    },
+    "roleDescriptions": {
+      "ADMIN": "기존 통합 관리자 정책",
+      "HR_ADMIN": "HR 운영 역할의 기본 데이터 범위",
+      "PEOPLE_ADMIN": "인력 운영 역할의 기본 데이터 범위"
     },
     "populations": {
       "TENANT": "SKAX 전체 조직",
@@ -3578,6 +3635,9 @@
       "subjectType": "대상 유형",
       "subject": "역할 또는 사용자",
       "selectSubject": "적용 대상을 선택하세요",
+      "userSearch": "사용자 검색",
+      "userSearchHelp": "이름 또는 이메일로 조직 전체 사용자를 검색합니다.",
+      "noUsers": "검색 조건에 맞는 사용자가 없습니다.",
       "population": "조회 대상 조직",
       "organization": "기준 조직",
       "selectOrganization": "조직을 선택하세요",
@@ -3607,13 +3667,27 @@
     "references": {
       "loading": "사용자와 조직 선택 항목을 불러오는 중입니다.",
       "error": "사용자 또는 조직 선택 항목을 불러오지 못해 새 정책을 만들 수 없습니다. 기존 정책 조회에는 영향이 없습니다.",
-      "retry": "다시 불러오기"
+      "retry": "다시 불러오기",
+      "organizationsLoading": "조직 선택 항목을 불러오는 중입니다.",
+      "organizationsError": "조직 선택 항목을 불러오지 못했습니다. 다른 입력은 유지됩니다.",
+      "retryOrganizations": "조직 다시 불러오기",
+      "usersLoading": "사용자를 검색하는 중입니다.",
+      "usersError": "사용자 검색 결과를 불러오지 못했습니다. 다른 입력은 유지됩니다.",
+      "retryUsers": "사용자 다시 검색"
     },
     "revoke": {
       "title": "접근 정책을 회수할까요?",
       "description": "{{subject}}의 해당 인력 데이터 범위는 다음 요청부터 즉시 차단됩니다.",
       "action": "회수",
       "ariaLabel": "{{subject}} 인력 데이터 접근 정책 회수",
+      "impactTitle": "회수되는 접근 범위",
+      "subject": "적용 대상",
+      "organization": "조회 대상 조직",
+      "data": "허용 데이터",
+      "actions": "허용 작업",
+      "validFrom": "시작 일시",
+      "validTo": "종료 일시",
+      "immediate": "즉시 적용",
       "cancel": "취소",
       "submit": "즉시 회수",
       "submitting": "정책 회수 중"

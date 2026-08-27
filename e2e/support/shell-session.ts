@@ -769,6 +769,29 @@ function workforceOverviewChartFixture(asOf: string) {
   };
 }
 
+function workforceOperationsOverviewFixture() {
+  return {
+    generatedAt: '2026-08-12T09:30:00Z',
+    dataBoundary: 'TENANT',
+    fieldGroups: ['DIRECTORY', 'EMPLOYMENT', 'JOB_GRADE'],
+    domains: [
+      {
+        domain: 'TIME',
+        pendingCount: 7,
+        metrics: [
+          { key: 'submitted', value: 18, severity: 'INFO' },
+          { key: 'openExceptions', value: 3, severity: 'ATTENTION' },
+        ],
+      },
+      {
+        domain: 'ABSENCE',
+        pendingCount: 2,
+        metrics: [{ key: 'submitted', value: 2, severity: 'CRITICAL' }],
+      },
+    ],
+  };
+}
+
 export function fulfillSuccess(route: Route, data: unknown) {
   return route.fulfill({
     contentType: 'application/json',
@@ -2120,6 +2143,9 @@ export async function mockShellSession(
         relationships: [],
         openPositions: [],
       });
+    }
+    if (path === '/api/people/v1/workforce/operations/overview') {
+      return fulfillSuccess(route, workforceOperationsOverviewFixture());
     }
     if (path === '/api/people/v1/workforce/organization/chart') {
       if (url.searchParams.get('depth') === '12') {

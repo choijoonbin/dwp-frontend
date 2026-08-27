@@ -26,7 +26,7 @@ describe('control plane access policy', () => {
   it('never opens company administration for an app configuration responsibility alone', () => {
     expect(canEnterCompanyAdministration(['APP_CONFIG_ADMIN'], true)).toBe(false);
     expect(
-      canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, false, [
+      canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, [
         {
           responsibilityCode: 'APP_CONFIG_ADMIN',
           resourceType: 'APP',
@@ -64,9 +64,7 @@ describe('control plane access policy', () => {
     expect(canEnterTenantControlPlane(['WORKSPACE_MEMBER'], false, false, resourceRoles)).toBe(
       true
     );
-    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, false, resourceRoles)).toBe(
-      true
-    );
+    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, resourceRoles)).toBe(true);
     expect(
       canAccessAdminNavigationItem(
         {
@@ -91,32 +89,24 @@ describe('control plane access policy', () => {
     ).toBe(false);
   });
 
-  it('never admits a provider operator to tenant administration through support scopes', () => {
+  it('never admits a provider operator to tenant administration', () => {
     expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, false)).toBe(false);
     expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, true)).toBe(false);
-    expect(canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true, false)).toBe(false);
-    expect(canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true, true)).toBe(false);
+    expect(canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true)).toBe(false);
     expect(
-      canEnterCompanyAdministration(
-        ['ADMIN', 'PROVIDER_ADMIN'],
-        true,
-        true,
-        [],
-        ['TENANT_CONFIGURATION_READ']
-      )
-    ).toBe(false);
-    expect(
-      canEnterCompanyAdministration(
-        ['ADMIN', 'PROVIDER_ADMIN'],
-        true,
-        true,
-        [],
-        ['TENANT_EXPERIENCE_PREVIEW']
-      )
+      canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true, [
+        {
+          responsibilityCode: 'APP_OWNER',
+          resourceType: 'APP',
+          resourceKey: 'APP.ADMINISTRATION',
+          resourceSetId: 'set-1',
+          resourceSetKey: 'APP_ADMINISTRATION',
+        },
+      ])
     ).toBe(false);
   });
 
-  it('gives provider scope precedence over mixed tenant roles in navigation', () => {
+  it('gives the provider identity family precedence over mixed tenant roles in navigation', () => {
     const access = {
       roles: ['ADMIN', 'PROVIDER_ADMIN'],
       permissionsLoaded: true,
@@ -125,15 +115,8 @@ describe('control plane access policy', () => {
 
     expect(canAccessAdminNavigationItem(item('branding'), access)).toBe(false);
     expect(
-      canAccessAdminNavigationItem(item('branding'), {
-        ...access,
-        supportScopes: ['TENANT_CONFIGURATION_READ'],
-      })
-    ).toBe(false);
-    expect(
       canAccessAdminNavigationItem(item('audit-events', 'ADMIN.AUDIT_VIEW'), {
         ...access,
-        supportScopes: ['TENANT_CONFIGURATION_READ'],
       })
     ).toBe(false);
   });
@@ -221,25 +204,23 @@ describe('control plane access policy', () => {
     ).toBe(true);
   });
 
-  it('does not expose workforce pages through tenant control-plane support scope', () => {
+  it('does not expose workforce pages to a Provider support role', () => {
     const access = {
       roles: ['PROVIDER_SUPPORT'],
       permissionsLoaded: true,
       hasPermission: vi.fn(() => false),
-      supportScopes: ['WORKFORCE_READ'],
     };
     expect(canAccessAdminNavigationItem(item('access'), access)).toBe(false);
     expect(canAccessAdminNavigationItem(item('branding'), access)).toBe(false);
     expect(canAccessAdminNavigationItem(item('access'), access)).toBe(false);
   });
 
-  it('keeps retired tenant-configuration scopes out of home composition', () => {
+  it('keeps Provider support identities out of home composition', () => {
     expect(
       canAccessAdminNavigationItem(item('home-composition'), {
         roles: ['PROVIDER_SUPPORT'],
         permissionsLoaded: true,
         hasPermission: vi.fn(() => false),
-        supportScopes: ['TENANT_CONFIGURATION_WRITE'],
       })
     ).toBe(false);
     expect(
@@ -247,7 +228,6 @@ describe('control plane access policy', () => {
         roles: ['PROVIDER_SUPPORT'],
         permissionsLoaded: true,
         hasPermission: vi.fn(() => false),
-        supportScopes: ['WORKFORCE_READ'],
       })
     ).toBe(false);
   });

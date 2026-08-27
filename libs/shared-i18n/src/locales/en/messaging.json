@@ -215,6 +215,7 @@
     },
     "settings": {
       "open": "Open conversation settings",
+      "close": "Close conversation settings",
       "title": "Conversation settings",
       "description": "Manage how this conversation is ordered and notified.",
       "connectionRequired": "Conversation settings are unavailable in this environment.",
@@ -270,7 +271,7 @@
         "ROSE": "Rose"
       },
       "policy": {
-        "RESTRICTED_CONVERSATION": "Restricted conversations use the approved default surface to protect security indicators and contrast.",
+        "RESTRICTED_CONVERSATION": "Restricted conversations use the approved default background to protect security indicators and contrast. Layout and density remain personal.",
         "STRUCTURED_CONVERSATION": "Announcements, incidents, and meeting conversations use a collaborative structure to preserve their work meaning. You can still personalize density and approved themes."
       }
     },
