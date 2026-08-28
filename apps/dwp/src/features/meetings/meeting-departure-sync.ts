@@ -34,6 +34,9 @@ export function createMeetingDepartureSynchronizer(
   };
 
   return {
+    reset(sessionId: string): void {
+      requests.delete(sessionId);
+    },
     synchronize(sessionId: string, options: MeetingDepartureSyncOptions): Promise<void> {
       const existing = requests.get(sessionId);
       if (existing) return existing;

@@ -347,7 +347,11 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
   );
   return (
     <Stack gap={2}>
-      <Alert severity="info" icon={<LockKeyhole size={19} />}>
+      <Alert
+        severity="info"
+        icon={<LockKeyhole size={19} />}
+        sx={{ '& .MuiAlert-message': { overflow: 'visible' } }}
+      >
         {t('history.recap.artifacts.governance')}
       </Alert>
       {processing && (
@@ -356,7 +360,9 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
         </Alert>
       )}
       {storedWithoutRetrieval && (
-        <Alert severity="warning">{t('history.recap.artifacts.retrievalUnavailable')}</Alert>
+        <Alert severity="warning" sx={{ '& .MuiAlert-message': { overflow: 'visible' } }}>
+          {t('history.recap.artifacts.retrievalUnavailable')}
+        </Alert>
       )}
       <Box
         sx={{

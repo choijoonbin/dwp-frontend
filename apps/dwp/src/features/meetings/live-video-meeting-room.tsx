@@ -27,6 +27,10 @@ import type {
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingConference } from './meeting-conference';
 import { MeetingContentControl } from './meeting-content-governance';
+import {
+  authorizeReceivedMeetingReaction,
+  type MeetingReactionInteraction,
+} from './meeting-reaction-policy';
 
 import '@livekit/components-styles';
 import './live-video-meeting-room.css';
@@ -38,47 +42,12 @@ const REACTIONS = [
   { emoji: '🎉', labelKey: 'celebrate' },
   { emoji: '❤️', labelKey: 'heart' },
 ] as const;
-const REACTION_VALUES = new Set<string>(REACTIONS.map((reaction) => reaction.emoji));
-
-type MeetingInteraction = {
-  type: 'REACTION';
-  id: string;
-  emoji: string;
-  senderName: string;
-  sentAt: number;
-};
 
 type InteractionOverlay = {
   id: string;
   content: string;
   senderName: string;
 };
-
-function parseInteraction(payload: Uint8Array): MeetingInteraction | null {
-  if (payload.byteLength > 1024) return null;
-  try {
-    const value = JSON.parse(new TextDecoder().decode(payload)) as Record<string, unknown>;
-    if (
-      typeof value.id !== 'string' ||
-      value.id.length > 80 ||
-      typeof value.senderName !== 'string' ||
-      value.senderName.length > 100 ||
-      typeof value.sentAt !== 'number'
-    ) {
-      return null;
-    }
-    if (
-      value.type === 'REACTION' &&
-      typeof value.emoji === 'string' &&
-      REACTION_VALUES.has(value.emoji)
-    ) {
-      return value as MeetingInteraction;
-    }
-  } catch {
-    return null;
-  }
-  return null;
-}
 
 export function LiveVideoMeetingRoom({
   meeting,
@@ -188,28 +157,40 @@ function MeetingRoomChrome({
   );
 
   const handleInteraction = useCallback(
-    (message: { payload: Uint8Array; from?: { name?: string } }) => {
-      if (!permissions.reactions) return;
-      const interaction = parseInteraction(message.payload);
+    (message: {
+      payload: Uint8Array;
+      from?: {
+        identity: string;
+        name?: string;
+        metadata?: string;
+        permissions?: { canPublishData?: boolean };
+      };
+    }) => {
+      const interaction = authorizeReceivedMeetingReaction({
+        payload: message.payload,
+        sender: message.from,
+        meetingId: meeting.meetingId,
+        receiverAllowsReactions: permissions.reactions,
+      });
       if (!interaction) return;
       showOverlay({
         id: interaction.id,
         content: interaction.emoji,
-        senderName: message.from?.name || interaction.senderName || '',
+        senderName: interaction.senderName,
       });
     },
-    [permissions.reactions, showOverlay]
+    [meeting.meetingId, permissions.reactions, showOverlay]
   );
   const { send, isSending } = useDataChannel(INTERACTION_TOPIC, handleInteraction);
 
-  const publish = async (interaction: MeetingInteraction, reliable: boolean) => {
+  const publish = async (interaction: MeetingReactionInteraction, reliable: boolean) => {
     const payload = new TextEncoder().encode(JSON.stringify(interaction));
     await send(payload, { reliable });
   };
   const senderName = localParticipant.name || localParticipant.identity;
   const sendReaction = (emoji: string) => {
     if (!permissions.reactions) return;
-    const interaction: MeetingInteraction = {
+    const interaction: MeetingReactionInteraction = {
       type: 'REACTION',
       id: crypto.randomUUID(),
       emoji,

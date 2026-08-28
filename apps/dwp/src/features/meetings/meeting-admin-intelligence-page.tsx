@@ -75,11 +75,7 @@ export function MeetingAdminIntelligencePage() {
   if (query.isLoading) {
     return (
       <PageCanvas>
-        <LoadingState
-          label={t('admin.intelligence.loading')}
-          variant="skeleton"
-          skeletonRows={8}
-        />
+        <LoadingState label={t('admin.intelligence.loading')} variant="skeleton" skeletonRows={8} />
       </PageCanvas>
     );
   }
@@ -135,15 +131,9 @@ function labels(t: (key: string, options?: Record<string, unknown>) => string) {
     reasons: Object.fromEntries(
       REASONS.map((reason) => [reason, t(`admin.intelligence.reasons.${reason}`)])
     ),
-    capabilities: Object.fromEntries(
-      CAPABILITIES.map((key) => [key, item('capabilities', key)])
-    ),
-    dependencies: Object.fromEntries(
-      DEPENDENCIES.map((key) => [key, item('dependencies', key)])
-    ),
-    governance: Object.fromEntries(
-      GOVERNANCE.map((key) => [key, item('governance', key)])
-    ),
+    capabilities: Object.fromEntries(CAPABILITIES.map((key) => [key, item('capabilities', key)])),
+    dependencies: Object.fromEntries(DEPENDENCIES.map((key) => [key, item('dependencies', key)])),
+    governance: Object.fromEntries(GOVERNANCE.map((key) => [key, item('governance', key)])),
     retention: Object.fromEntries(
       ['meeting', 'artifact', 'chat'].map((key) => [key, item('retention', key)])
     ),

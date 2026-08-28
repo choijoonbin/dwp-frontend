@@ -665,8 +665,8 @@
       "screenShare": "화면 공유",
       "chat": "회의 채팅",
       "captions": "실시간 자막",
-    "recording": "거버넌스 녹화",
-    "transcript": "거버넌스 전사",
+      "recording": "거버넌스 녹화",
+      "transcript": "거버넌스 전사",
       "aiNotes": "AI 회의 노트"
     },
     "operations": {
@@ -713,72 +713,126 @@
       "chatRetentionHint": "0이면 진행 중인 회의에서만 보관합니다. 0~365일이며 회의 기록 보존 기간({{meetingRetentionDays}}일)을 초과할 수 없습니다.",
       "chatRetentionRangeError": "0~365 사이의 정수로 입력하세요.",
       "chatRetentionMeetingError": "회의 채팅 보존 기간은 회의 기록 보존 기간을 초과할 수 없습니다.",
-    "artifactRetention": "회의 산출물 보존 기간(일)",
-    "artifactRetentionMeetingError": "회의 산출물 보존 기간은 회의 기록 보존 기간을 초과할 수 없습니다.",
+      "artifactRetention": "회의 산출물 보존 기간(일)",
+      "artifactRetentionMeetingError": "회의 산출물 보존 기간은 회의 기록 보존 기간을 초과할 수 없습니다.",
       "maximumParticipants": "최대 참가자 수",
       "unmuteRequestOnly": "호스트는 참가자의 마이크를 직접 켤 수 없으며 음소거 해제만 요청할 수 있습니다.",
       "saved": "회의 정책을 저장했습니다.",
-    "saveError": "회의 정책을 저장하지 못했습니다."
-  },
-  "intelligence": {
-    "loading": "AI 및 데이터 거버넌스를 불러오는 중",
-    "title": "AI 및 데이터 거버넌스",
-    "description": "실제 사용 가능한 회의 인텔리전스 기능과 운영상 배포 차단 조건을 구분해 확인합니다.",
-    "accessBoundary": "이 관리 화면은 정책 및 의존성 상태만 표시합니다. 녹화, 전사, 채팅 또는 AI 보고서 콘텐츠 열람 권한을 부여하지 않습니다.",
-    "capabilitiesTitle": "사용자 제공 기능",
-    "capabilitiesDescription": "테넌트 정책, 거버넌스 처리와 실행 의존성이 모두 일치할 때만 준비 완료로 판단합니다.",
-    "dependenciesTitle": "처리 의존성",
-    "dependenciesDescription": "운영 엔드포인트, 처리 지역, 암호화, 감사와 처리기를 각각 검증해야 합니다.",
-    "workflowTitle": "사용자 검토 및 게시",
-    "workflowDescription": "AI 결과는 권한 있는 검토자가 근거를 확인하고 명시적으로 게시하기 전까지 초안입니다.",
-    "lifecycleTitle": "보존 및 증거",
-    "lifecycleDescription": "콘텐츠 접근, 법적 보존, 만료, 파기 및 불변 증거를 각각 평가합니다.",
-    "retentionTitle": "설정된 보존 기간",
-    "retentionDescription": "산출물 및 채팅 보존 기간은 회의 기록 범위를 초과할 수 없습니다.",
-    "observedAt": "{{value}} 기준",
-    "days": "{{value}}일",
-    "states": {
-      "READY": "준비 완료",
-      "BLOCKED": "차단됨",
-      "CONNECTION_REQUIRED": "연결 필요",
-      "NOT_VERIFIED": "미검증"
+      "saveError": "회의 정책을 저장하지 못했습니다."
     },
-    "reasons": {
-      "POLICY_NEVER": "테넌트 정책에서 이 기능을 금지합니다.",
-      "CAPABILITY_NOT_CONFIGURED": "실행 환경에서 이 기능의 구성을 보고하지 않습니다.",
-      "REALTIME_PROVIDER_UNAVAILABLE": "실시간 미디어 공급자를 사용할 수 없습니다.",
-      "DEPENDENCY_STATUS_CONTRACT_MISSING": "공식 의존성 준비 상태 계약이 연결되지 않았습니다.",
-      "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "서버의 검토 및 게시 강제 처리가 검증되지 않았습니다.",
-      "LEGAL_HOLD_NOT_CONNECTED": "법적 보존 제어가 연결되지 않았습니다.",
-      "DELETION_EVIDENCE_NOT_CONNECTED": "파기 실행 및 증거가 연결되지 않았습니다."
-    },
-    "capabilities": {
-      "recording": { "label": "녹화", "description": "가시적 고지, 동의, 보존 및 파기 증거가 적용된 암호화 미디어 수집입니다." },
-      "transcript": { "label": "전사", "description": "승인된 음성-텍스트 경계에서 생성한 시점 포함 전사입니다." },
-      "aiNotes": { "label": "AI 회의 인텔리전스", "description": "개인 감정 점수 없이 근거가 연결된 회고와 회의 단위 대화 흐름을 제공합니다." }
-    },
-    "dependencies": {
-      "provider": { "label": "실시간 공급자", "description": "미디어 회의실 가용성과 테넌트 격리 상태입니다." },
-      "region": { "label": "처리 지역", "description": "모든 처리 구간에 승인된 데이터 위치를 적용합니다." },
-      "kms": { "label": "키 관리", "description": "봉투 암호화 및 암호학적 파기 준비 상태입니다." },
-      "audit": { "label": "감사 증거", "description": "명령, 접근, 검토, 게시 및 파기 불변 증거입니다." },
-      "egress": { "label": "녹화 Egress", "description": "승인되지 않은 우회 없이 적용되는 미디어 수집입니다." },
-      "storage": { "label": "산출물 저장소", "description": "테넌트 결속 암호화 저장 및 수명주기 적용 상태입니다." },
-      "stt": { "label": "음성-텍스트", "description": "제한된 보존이 적용된 승인 전사 처리기입니다." },
-      "llm": { "label": "언어 모델", "description": "학습 비활성 및 공급자 무보존 조건의 관리형 추론입니다." }
-    },
-    "governance": {
-      "humanReview": { "label": "사용자 검토", "description": "승인 전에 검토자가 인용 근거를 확인합니다." },
-      "explicitPublish": { "label": "명시적 게시", "description": "승인된 보고서만 참가자에게 공유할 수 있습니다." },
-      "adminContentAccess": { "label": "콘텐츠 최소 권한", "description": "관리 상태 권한은 회의 콘텐츠 열람 권한을 의미하지 않습니다." },
-      "legalHold": { "label": "법적 보존", "description": "인가된 보존은 콘텐츠 접근을 넓히지 않고 파기만 중지합니다." },
-      "deletionEvidence": { "label": "파기 증거", "description": "만료 시 tombstone과 불변 파기 증거를 생성합니다." }
-    },
-    "retention": {
-      "meeting": { "label": "회의 기록", "description": "수명주기 및 참석 기록 보존 범위입니다." },
-      "artifact": { "label": "산출물", "description": "녹화, 전사 및 AI 보고서 보존 범위입니다." },
-      "chat": { "label": "회의 채팅", "description": "회의 대화 메시지 보존 범위입니다." }
+    "intelligence": {
+      "loading": "AI 및 데이터 거버넌스를 불러오는 중",
+      "title": "AI 및 데이터 거버넌스",
+      "description": "실제 사용 가능한 회의 인텔리전스 기능과 운영상 배포 차단 조건을 구분해 확인합니다.",
+      "accessBoundary": "이 관리 화면은 정책 및 의존성 상태만 표시합니다. 녹화, 전사, 채팅 또는 AI 보고서 콘텐츠 열람 권한을 부여하지 않습니다.",
+      "capabilitiesTitle": "사용자 제공 기능",
+      "capabilitiesDescription": "테넌트 정책, 거버넌스 처리와 실행 의존성이 모두 일치할 때만 준비 완료로 판단합니다.",
+      "dependenciesTitle": "처리 의존성",
+      "dependenciesDescription": "운영 엔드포인트, 처리 지역, 암호화, 감사와 처리기를 각각 검증해야 합니다.",
+      "workflowTitle": "사용자 검토 및 게시",
+      "workflowDescription": "AI 결과는 권한 있는 검토자가 근거를 확인하고 명시적으로 게시하기 전까지 초안입니다.",
+      "lifecycleTitle": "보존 및 증거",
+      "lifecycleDescription": "콘텐츠 접근, 법적 보존, 만료, 파기 및 불변 증거를 각각 평가합니다.",
+      "retentionTitle": "설정된 보존 기간",
+      "retentionDescription": "산출물 및 채팅 보존 기간은 회의 기록 범위를 초과할 수 없습니다.",
+      "observedAt": "{{value}} 기준",
+      "days": "{{value}}일",
+      "states": {
+        "READY": "준비 완료",
+        "BLOCKED": "차단됨",
+        "CONNECTION_REQUIRED": "연결 필요",
+        "NOT_VERIFIED": "미검증"
+      },
+      "reasons": {
+        "POLICY_NEVER": "테넌트 정책에서 이 기능을 금지합니다.",
+        "CAPABILITY_NOT_CONFIGURED": "실행 환경에서 이 기능의 구성을 보고하지 않습니다.",
+        "REALTIME_PROVIDER_UNAVAILABLE": "실시간 미디어 공급자를 사용할 수 없습니다.",
+        "DEPENDENCY_STATUS_CONTRACT_MISSING": "공식 의존성 준비 상태 계약이 연결되지 않았습니다.",
+        "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "서버의 검토 및 게시 강제 처리가 검증되지 않았습니다.",
+        "LEGAL_HOLD_NOT_CONNECTED": "법적 보존 제어가 연결되지 않았습니다.",
+        "DELETION_EVIDENCE_NOT_CONNECTED": "파기 실행 및 증거가 연결되지 않았습니다."
+      },
+      "capabilities": {
+        "recording": {
+          "label": "녹화",
+          "description": "가시적 고지, 동의, 보존 및 파기 증거가 적용된 암호화 미디어 수집입니다."
+        },
+        "transcript": {
+          "label": "전사",
+          "description": "승인된 음성-텍스트 경계에서 생성한 시점 포함 전사입니다."
+        },
+        "aiNotes": {
+          "label": "AI 회의 인텔리전스",
+          "description": "개인 감정 점수 없이 근거가 연결된 회고와 회의 단위 대화 흐름을 제공합니다."
+        }
+      },
+      "dependencies": {
+        "provider": {
+          "label": "실시간 공급자",
+          "description": "미디어 회의실 가용성과 테넌트 격리 상태입니다."
+        },
+        "region": {
+          "label": "처리 지역",
+          "description": "모든 처리 구간에 승인된 데이터 위치를 적용합니다."
+        },
+        "kms": {
+          "label": "키 관리",
+          "description": "봉투 암호화 및 암호학적 파기 준비 상태입니다."
+        },
+        "audit": {
+          "label": "감사 증거",
+          "description": "명령, 접근, 검토, 게시 및 파기 불변 증거입니다."
+        },
+        "egress": {
+          "label": "녹화 Egress",
+          "description": "승인되지 않은 우회 없이 적용되는 미디어 수집입니다."
+        },
+        "storage": {
+          "label": "산출물 저장소",
+          "description": "테넌트 결속 암호화 저장 및 수명주기 적용 상태입니다."
+        },
+        "stt": {
+          "label": "음성-텍스트",
+          "description": "제한된 보존이 적용된 승인 전사 처리기입니다."
+        },
+        "llm": {
+          "label": "언어 모델",
+          "description": "학습 비활성 및 공급자 무보존 조건의 관리형 추론입니다."
+        }
+      },
+      "governance": {
+        "humanReview": {
+          "label": "사용자 검토",
+          "description": "승인 전에 검토자가 인용 근거를 확인합니다."
+        },
+        "explicitPublish": {
+          "label": "명시적 게시",
+          "description": "승인된 보고서만 참가자에게 공유할 수 있습니다."
+        },
+        "adminContentAccess": {
+          "label": "콘텐츠 최소 권한",
+          "description": "관리 상태 권한은 회의 콘텐츠 열람 권한을 의미하지 않습니다."
+        },
+        "legalHold": {
+          "label": "법적 보존",
+          "description": "인가된 보존은 콘텐츠 접근을 넓히지 않고 파기만 중지합니다."
+        },
+        "deletionEvidence": {
+          "label": "파기 증거",
+          "description": "만료 시 tombstone과 불변 파기 증거를 생성합니다."
+        }
+      },
+      "retention": {
+        "meeting": {
+          "label": "회의 기록",
+          "description": "수명주기 및 참석 기록 보존 범위입니다."
+        },
+        "artifact": {
+          "label": "산출물",
+          "description": "녹화, 전사 및 AI 보고서 보존 범위입니다."
+        },
+        "chat": { "label": "회의 채팅", "description": "회의 대화 메시지 보존 범위입니다." }
+      }
     }
   }
-}
 }

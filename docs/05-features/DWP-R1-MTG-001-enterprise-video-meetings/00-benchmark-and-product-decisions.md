@@ -56,16 +56,16 @@ The competitive target is the set of trusted enterprise jobs, not a count of Zoo
 menu items. DWP now separates the planes below so everyday participants do not inherit
 administrative complexity and administrators do not inherit meeting-content access.
 
-| Plane | Delivered navigation or surface | Responsibility |
-| --- | --- | --- |
-| User work | Meeting home | Start, schedule, join, capability-aware next action, and recent outcomes |
-| User work | My meetings | Lifecycle-correct prepare, join, recap, or unavailable action |
-| User work | Join with code | Resolve, request admission, explicit failure recovery, and pre-join |
-| User work | Live room | Media, screen share, participants, chat, speaking queue, reactions, content notice, and host recording readiness |
-| User work | Meeting history / recap | Governed artifacts, attendance, decisions, actions, and human-reviewed Agent intelligence |
-| Management | Operations | Live/scheduled/waiting/failure/quality evidence and runtime capabilities |
-| Management | Policy | Access, collaboration, retention, capacity, and version-aware save validation |
-| Management | AI & data governance | Recording/transcript/AI readiness, dependency gates, review/publish boundary, content ACL principle, retention, legal hold, and deletion evidence |
+| Plane      | Delivered navigation or surface | Responsibility                                                                                                                                    |
+| ---------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User work  | Meeting home                    | Start, schedule, join, capability-aware next action, and recent outcomes                                                                          |
+| User work  | My meetings                     | Lifecycle-correct prepare, join, recap, or unavailable action                                                                                     |
+| User work  | Join with code                  | Resolve, request admission, explicit failure recovery, and pre-join                                                                               |
+| User work  | Live room                       | Media, screen share, participants, chat, speaking queue, reactions, content notice, and host recording readiness                                  |
+| User work  | Meeting history / recap         | Governed artifacts, attendance, decisions, actions, and human-reviewed Agent intelligence                                                         |
+| Management | Operations                      | Live/scheduled/waiting/failure/quality evidence and runtime capabilities                                                                          |
+| Management | Policy                          | Access, collaboration, retention, capacity, and version-aware save validation                                                                     |
+| Management | AI & data governance            | Recording/transcript/AI readiness, dependency gates, review/publish boundary, content ACL principle, retention, legal hold, and deletion evidence |
 
 Zoom host controls, Teams intelligent recap, and Webex AI review patterns support
 the same core conclusions: host authority must be explicit; recording and transcription

@@ -16,7 +16,7 @@ const generatedPath = path.join(
 );
 const INDEX_FILE = 'product-surfaces-v1.index.json';
 const LATEST_ALIAS_FILE = 'product-surfaces-v1.json';
-const VERSIONS = [1, 2, 3];
+const VERSIONS = [1, 2, 3, 4];
 const LATEST_VERSION = VERSIONS.at(-1);
 const SNAPSHOT_FIELDS = [
   'bundles',
@@ -77,6 +77,13 @@ const EXPECTED_COUNTS = {
     entitlementExpressions: 8,
     predicatePolicies: 25,
     routes: 129,
+  },
+  4: {
+    capabilities: 71,
+    accessPolicies: 22,
+    entitlementExpressions: 16,
+    predicatePolicies: 33,
+    routes: 155,
   },
 };
 const EXPECTED_ROLLOUT_PRODUCTS = [
@@ -570,7 +577,7 @@ function readOfficialSnapshot(artifactDirectory) {
     )
     .sort();
   if (canonicalJson(packagedBundles) !== canonicalJson(expectedBundles)) {
-    fail('official artifact directory must contain exactly immutable bundle v1-v3 files');
+    fail('official artifact directory must contain exactly immutable bundle v1-v4 files');
   }
   const index = readOfficialJson(INDEX_FILE, 'registry index');
   const bundles = VERSIONS.map((version) =>

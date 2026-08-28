@@ -3,8 +3,8 @@ import type { RouteObject } from 'react-router-dom';
 import type { ProductSurfaceManifest } from '../components/product-manifest';
 import type { ProductAreaLayoutProps } from '../layouts/product-area-layout';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
-import { buildDraftProductPageRouteContractSource } from './draft-product-page-route-contract-source';
-import { OFFICIAL_PRODUCT_IDS } from './official-product-page-route-contracts';
+import { buildProductPageRouteContractSource } from './draft-product-page-route-contract-source';
+import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 import {
   ProductCanaryRoot,
   ProductCanaryFirstAllowedIndex,
@@ -24,6 +24,7 @@ type TwoSurfaceProductRouteOptions = {
   managementBasePath: `/${string}`;
   legacyPath: `/${string}`;
   legacyShell: ReactNode;
+  managementLegacyShell?: ReactNode;
   areaKey: ProductAreaLayoutProps['areaKey'];
   translationNamespace: NonNullable<ProductAreaLayoutProps['translationNamespace']>;
   renderPage: (route: ProductPageRouteContractSource) => ReactNode;
@@ -47,6 +48,7 @@ export function buildTwoSurfaceProductChildren({
   managementBasePath,
   legacyPath,
   legacyShell,
+  managementLegacyShell = legacyShell,
   areaKey,
   translationNamespace,
   renderPage,
@@ -54,40 +56,58 @@ export function buildTwoSurfaceProductChildren({
   renderErrorElement,
   legacyUnknown,
 }: TwoSurfaceProductRouteOptions): RouteObject[] {
-  const productRoutes = buildDraftProductPageRouteContractSource(
+  const productRoutes = buildProductPageRouteContractSource(
     [manifest],
-    new Set(OFFICIAL_PRODUCT_IDS)
+    OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+  );
+  const officialRouteContractKeys = new Set(
+    OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+      (route) => route.productId === manifest.id
+    ).map((route) => route.routeContractKey)
   );
   const workRoutes = productRoutes.filter((route) => route.surfaceId === workSurfaceId);
   const managementRoutes = productRoutes.filter((route) => route.surfaceId === managementSurfaceId);
+  const hasOfficialWorkPage = workRoutes.some((route) =>
+    officialRouteContractKeys.has(route.routeContractKey)
+  );
+  const hasOfficialManagementPage = managementRoutes.some((route) =>
+    officialRouteContractKeys.has(route.routeContractKey)
+  );
   const surfaceShell = (surfaceId: string) => (
     <ConfiguredProductSurfaceShell
       manifest={manifest}
       surfaceId={surfaceId}
       areaKey={areaKey}
       translationNamespace={translationNamespace}
-      legacy={legacyShell}
+      legacy={surfaceId === managementSurfaceId ? managementLegacyShell : legacyShell}
     />
   );
   const governedRoute = (
     surfaceId: string,
     parentPath: string,
     route: ProductPageRouteContractSource
-  ): RouteObject => ({
-    path: relativePattern(route.pattern, parentPath),
-    handle: { routeContractKey: route.routeContractKey },
-    element: (
-      <ProductCanaryRouteBoundary
-        productId={manifest.id}
-        surfaceId={surfaceId}
-        routeContractKey={route.routeContractKey}
-        legacy={renderLegacyPage(route)}
-      >
-        {renderPage(route)}
-      </ProductCanaryRouteBoundary>
-    ),
-    errorElement: renderErrorElement?.(route),
-  });
+  ): RouteObject => {
+    const legacyPage = renderLegacyPage(route);
+    const isOfficialPage = officialRouteContractKeys.has(route.routeContractKey);
+    return {
+      path: relativePattern(route.pattern, parentPath),
+      handle: {
+        routeContractKey: route.routeContractKey,
+        productPageLifecycle: isOfficialPage ? 'OFFICIAL' : 'DRAFT',
+      },
+      element: (
+        <ProductCanaryRouteBoundary
+          productId={manifest.id}
+          surfaceId={surfaceId}
+          routeContractKey={route.routeContractKey}
+          legacy={legacyPage}
+        >
+          {isOfficialPage ? renderPage(route) : legacyPage}
+        </ProductCanaryRouteBoundary>
+      ),
+      errorElement: renderErrorElement?.(route),
+    };
+  };
 
   return [
     {
@@ -96,12 +116,16 @@ export function buildTwoSurfaceProductChildren({
     },
     {
       path: relativePattern(managementBasePath, manifest.basePath),
+      handle: {
+        surfaceId: managementSurfaceId,
+        productSurfaceLifecycle: hasOfficialManagementPage ? 'OFFICIAL' : 'DRAFT',
+      },
       element: (
         <ProductCanaryIndexedSurfaceBoundary
           productId={manifest.id}
           surfaceId={managementSurfaceId}
           indexPath={managementBasePath}
-          legacy={legacyShell}
+          legacy={managementLegacyShell}
         >
           {surfaceShell(managementSurfaceId)}
         </ProductCanaryIndexedSurfaceBoundary>
@@ -131,6 +155,10 @@ export function buildTwoSurfaceProductChildren({
       ],
     },
     {
+      handle: {
+        surfaceId: workSurfaceId,
+        productSurfaceLifecycle: hasOfficialWorkPage ? 'OFFICIAL' : 'DRAFT',
+      },
       element: (
         <ProductCanarySurfaceBoundary
           productId={manifest.id}

@@ -11,26 +11,29 @@ import {
   Send,
 } from 'lucide-react';
 
+import {
+  SPACE_ADMIN_NAVIGATION_CONTRACTS,
+  type SpaceAdminView,
+} from '../../components/spaces/space-admin-navigation-contract';
 import type { ProductAreaNavigationItem } from '../../layouts/product-area-layout';
 
-export type SpaceView =
-  | 'home'
-  | 'my-spaces'
-  | 'discover'
-  | 'requests'
-  | 'admin-overview'
-  | 'admin-directory'
-  | 'admin-requests'
-  | 'admin-templates'
-  | 'admin-content-reviews'
-  | 'admin-lifecycle'
-  | 'admin-operations';
+export type SpaceView = 'home' | 'my-spaces' | 'discover' | 'requests' | SpaceAdminView;
 
 type SpaceNavigationItem = ProductAreaNavigationItem & { view: SpaceView };
 type SpaceNavigationGroup = {
   id: string;
   items: readonly SpaceNavigationItem[];
 };
+
+const SPACE_ADMIN_ICONS = {
+  'admin-overview': ChartNoAxesCombined,
+  'admin-directory': Layers3,
+  'admin-requests': Route,
+  'admin-templates': LayoutTemplate,
+  'admin-content-reviews': FileCheck2,
+  'admin-lifecycle': ClipboardCheck,
+  'admin-operations': RadioTower,
+} as const;
 
 export const SPACE_NAVIGATION: readonly SpaceNavigationGroup[] = [
   {
@@ -47,57 +50,10 @@ export const SPACE_NAVIGATION: readonly SpaceNavigationGroup[] = [
   },
   {
     id: 'administration',
-    items: [
-      {
-        view: 'admin-overview',
-        path: '/spaces/admin/overview',
-        icon: ChartNoAxesCombined,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-directory',
-        path: '/spaces/admin/directory',
-        icon: Layers3,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-requests',
-        path: '/spaces/admin/requests',
-        icon: Route,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-templates',
-        path: '/spaces/admin/templates',
-        icon: LayoutTemplate,
-        requiredResourceKey: 'ADMIN.SPACE_TEMPLATES',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-content-reviews',
-        path: '/spaces/admin/content-reviews',
-        icon: FileCheck2,
-        requiredResourceKey: 'ADMIN.SPACE_COMPLIANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-lifecycle',
-        path: '/spaces/admin/lifecycle',
-        icon: ClipboardCheck,
-        requiredResourceKey: 'ADMIN.SPACE_ACCESS_REVIEW',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-operations',
-        path: '/spaces/admin/operations',
-        icon: RadioTower,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-    ],
+    items: SPACE_ADMIN_NAVIGATION_CONTRACTS.map((item) => ({
+      ...item,
+      icon: SPACE_ADMIN_ICONS[item.view],
+    })),
   },
 ] as const;
 

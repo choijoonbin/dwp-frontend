@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 3,
-  checksum: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
-  indexChecksum: 'dbe810156eabb2e81d21a70d1d1746f2566a8ef2ed6b9331ce334a25d2f2617f',
+  version: 4,
+  checksum: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
+  indexChecksum: 'bd9184a0d57d3ddadac8459091f8a1b9b1a2ccd19c2de60e130bcfda30176398',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -729,6 +729,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.calendar.work.event-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'calendar.work',
+    subjectType: 'PRODUCT',
+    productId: 'calendar',
+    surfaceId: 'calendar.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/calendar/events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.calendar.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'calendar.work',
+    subjectType: 'PRODUCT',
+    productId: 'calendar',
+    surfaceId: 'calendar.work',
+    routeId: 'calendar.work.home',
+    pattern: '/calendar/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/calendar/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.calendar.work.schedule.data',
+    routeKind: 'DATA',
+    navigationContextId: 'calendar.work',
+    subjectType: 'PRODUCT',
+    productId: 'calendar',
+    surfaceId: 'calendar.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/calendar/events',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.communications.management.content-archive.action',
     routeKind: 'ACTION',
     navigationContextId: 'communications.management',
@@ -1017,6 +1065,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.communications.work.story-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'communications.work',
+    subjectType: 'PRODUCT',
+    productId: 'communications',
+    surfaceId: 'communications.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/communications/{communicationId}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.context.work__work.review-decision.action',
     routeKind: 'ACTION',
     navigationContextId: 'work.work',
@@ -1045,6 +1109,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/auth/work/access-review-items/{workItemRef}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.ask.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/ask',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.conversation.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/conversations/{conversationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: 'dwaion.work.home',
+    pattern: '/dwaion/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/conversations',
       },
     ],
   },
@@ -2009,6 +2121,198 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.mail.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'mail.work',
+    subjectType: 'PRODUCT',
+    productId: 'mail',
+    surfaceId: 'mail.work',
+    routeId: 'mail.work.home',
+    pattern: '/mail/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/mail/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.mail.work.message-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'mail.work',
+    subjectType: 'PRODUCT',
+    productId: 'mail',
+    surfaceId: 'mail.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/mail/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.mail.work.threads.data',
+    routeKind: 'DATA',
+    navigationContextId: 'mail.work',
+    subjectType: 'PRODUCT',
+    productId: 'mail',
+    surfaceId: 'mail.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/mail/threads',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.meetings.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'meetings.work',
+    subjectType: 'PRODUCT',
+    productId: 'meetings',
+    surfaceId: 'meetings.work',
+    routeId: 'meetings.work.home',
+    pattern: '/meetings/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/meetings/v1/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.meetings.work.meeting-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'meetings.work',
+    subjectType: 'PRODUCT',
+    productId: 'meetings',
+    surfaceId: 'meetings.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/meetings/v1/meetings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.meetings.work.meetings.data',
+    routeKind: 'DATA',
+    navigationContextId: 'meetings.work',
+    subjectType: 'PRODUCT',
+    productId: 'meetings',
+    surfaceId: 'meetings.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/meetings/v1/meetings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.messaging.work.conversation-messages.data',
+    routeKind: 'DATA',
+    navigationContextId: 'messaging.work',
+    subjectType: 'PRODUCT',
+    productId: 'messaging',
+    surfaceId: 'messaging.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/messaging/v1/conversations/{conversationId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.messaging.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'messaging.work',
+    subjectType: 'PRODUCT',
+    productId: 'messaging',
+    surfaceId: 'messaging.work',
+    routeId: 'messaging.work.home',
+    pattern: '/messages/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/messaging/v1/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.messaging.work.message-send.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'messaging.work',
+    subjectType: 'PRODUCT',
+    productId: 'messaging',
+    surfaceId: 'messaging.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/messaging/v1/conversations/{conversationId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.notifications.work.center.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'notifications.work',
+    subjectType: 'PRODUCT',
+    productId: 'notifications',
+    surfaceId: 'notifications.work',
+    routeId: 'notifications.work.center',
+    pattern: '/notifications/center',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/notifications/v1/inbox',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.notifications.work.read.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'notifications.work',
+    subjectType: 'PRODUCT',
+    productId: 'notifications',
+    surfaceId: 'notifications.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/notifications/v1/inbox/{notificationId}/read',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.notifications.work.summary.data',
+    routeKind: 'DATA',
+    navigationContextId: 'notifications.work',
+    subjectType: 'PRODUCT',
+    productId: 'notifications',
+    surfaceId: 'notifications.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/notifications/v1/summary/by-app',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.services.management.catalog-create.action',
     routeKind: 'ACTION',
     navigationContextId: 'services.management',
@@ -2257,6 +2561,118 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/platform/v1/services/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.services.work.request-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'services.work',
+    subjectType: 'PRODUCT',
+    productId: 'services',
+    surfaceId: 'services.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/services/requests/{requestId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.spaces.work.content.data',
+    routeKind: 'DATA',
+    navigationContextId: 'spaces.work',
+    subjectType: 'PRODUCT',
+    productId: 'spaces',
+    surfaceId: 'spaces.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/spaces/v1/spaces/{spaceKey}/content',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.spaces.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'spaces.work',
+    subjectType: 'PRODUCT',
+    productId: 'spaces',
+    surfaceId: 'spaces.work',
+    routeId: 'spaces.work.home',
+    pattern: '/spaces/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/spaces/v1/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.spaces.work.request-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'spaces.work',
+    subjectType: 'PRODUCT',
+    productId: 'spaces',
+    surfaceId: 'spaces.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/spaces/v1/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.explore.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.explore',
+    pattern: '/workplace/explore',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/explore',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.floor-background.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/floors/{floorId}/background',
       },
     ],
   },

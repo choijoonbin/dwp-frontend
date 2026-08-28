@@ -381,39 +381,34 @@ test('host configures a governed content plan before joining and sees authoritat
       });
     }
   );
-  await page.route(
-    `**/api/meetings/v1/meetings/${meetingSummary.meetingId}/token`,
-    (route) =>
-      fulfill(route, {
-        meetingId: meetingSummary.meetingId,
-        sessionId: '88000000-0000-0000-0000-000000000042',
-        provider: 'LIVEKIT',
-        serverUrl: 'wss://meet.example.com',
-        participantToken: 'e2e-participant-token',
-        participantRole: 'ORGANIZER',
-        expiresAt: '2026-08-28T03:15:00Z',
-        effectivePermissions: {
-          microphone: true,
-          camera: true,
-          screenShare: true,
-          participantList: true,
-          chat: true,
-          reactions: true,
-          handRaise: true,
-        },
-      })
+  await page.route(`**/api/meetings/v1/meetings/${meetingSummary.meetingId}/token`, (route) =>
+    fulfill(route, {
+      meetingId: meetingSummary.meetingId,
+      sessionId: '88000000-0000-0000-0000-000000000042',
+      provider: 'LIVEKIT',
+      serverUrl: 'wss://meet.example.com',
+      participantToken: 'e2e-participant-token',
+      participantRole: 'ORGANIZER',
+      expiresAt: '2026-08-28T03:15:00Z',
+      effectivePermissions: {
+        microphone: true,
+        camera: true,
+        screenShare: true,
+        participantList: true,
+        chat: true,
+        reactions: true,
+        handRaise: true,
+      },
+    })
   );
-  await page.route(
-    `**/api/meetings/v1/meetings/${meetingSummary.meetingId}/leave`,
-    (route) => {
-      departureRequests += 1;
-      return fulfill(route, {
-        ...joiningParticipant,
-        attendanceState: 'LEFT',
-        leftAt: '2026-08-28T03:12:00Z',
-      });
-    }
-  );
+  await page.route(`**/api/meetings/v1/meetings/${meetingSummary.meetingId}/leave`, (route) => {
+    departureRequests += 1;
+    return fulfill(route, {
+      ...joiningParticipant,
+      attendanceState: 'LEFT',
+      leftAt: '2026-08-28T03:12:00Z',
+    });
+  });
 
   await page.goto(`/meetings/room/${meetingSummary.meetingId}`);
   await page.getByRole('button', { name: 'Check camera and microphone' }).click();

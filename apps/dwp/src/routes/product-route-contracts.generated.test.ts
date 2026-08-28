@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
+
 import {
   ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
   PRODUCT_LEGACY_ROUTE_SOURCE,
@@ -7,6 +9,7 @@ import {
   REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
 } from './product-page-route-contracts';
 import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
+import { buildProductPageRouteContractSource } from './draft-product-page-route-contract-source';
 import {
   PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS,
   PRODUCT_AUTHORIZATION_REGISTRY_REVISION,
@@ -38,8 +41,8 @@ describe('generated product route authorization contracts', () => {
 
     expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION).toEqual(
       expect.objectContaining({
-        version: 3,
-        checksum: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
+        version: 4,
+        checksum: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
       })
     );
     expect(PRODUCT_SURFACE_ROLLOUT_PRODUCTS).toEqual([
@@ -56,7 +59,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(58);
+    expect(router).toHaveLength(66);
     expect(registry).toEqual(router);
   });
 
@@ -69,11 +72,11 @@ describe('generated product route authorization contracts', () => {
       {}
     );
 
-    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(129);
-    expect(countByKind).toEqual({ ACTION: 59, DATA: 12, PAGE: 58 });
-    expect(nonPages).toHaveLength(71);
+    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(155);
+    expect(countByKind).toEqual({ ACTION: 67, DATA: 22, PAGE: 66 });
+    expect(nonPages).toHaveLength(89);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(92);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(84);
     expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(150);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(150);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
@@ -97,6 +100,29 @@ describe('generated product route authorization contracts', () => {
         routeContractKey: 'route.dwaion.work.activity.page',
       },
     ]);
+  });
+
+  it('mounts a representative official PAGE without hiding the remaining product routes', () => {
+    const messagingRoutes = buildProductPageRouteContractSource(
+      [MESSAGING_PRODUCT_MANIFEST],
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+    );
+
+    expect(
+      messagingRoutes.filter((route) => route.routeContractKey === 'route.messaging.work.home.page')
+    ).toEqual([
+      {
+        routeContractKey: 'route.messaging.work.home.page',
+        routeId: 'messaging.work.home',
+        pattern: '/messages/home',
+        productId: 'messaging',
+        surfaceId: 'messaging.work',
+      },
+    ]);
+    expect(messagingRoutes.some((route) => route.pattern === '/messages/inbox')).toBe(true);
+    expect(messagingRoutes.some((route) => route.pattern === '/messages/admin/overview')).toBe(
+      true
+    );
   });
 
   it('keeps the five Mail organization routes as frontend-owned PAGE records only', () => {

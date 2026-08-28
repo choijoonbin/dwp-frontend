@@ -1,7 +1,7 @@
 import type { ProductApplicationDescriptor } from './product-application-descriptor';
 import type { ProductApplicationRuntime } from './product-application-runtime';
 import type { ProductSurfaceManifest } from './product-manifest';
-import { buildDraftProductPageRouteContractSource } from '../routes/draft-product-page-route-contract-source';
+import { buildProductPageRouteContractSource } from '../routes/draft-product-page-route-contract-source';
 import {
   defineProductLegacyRouteSource,
   defineProductRouteContractSource,
@@ -69,16 +69,10 @@ export function createProductApplicationRuntime(
   productManifests: readonly ProductSurfaceManifest[] = []
 ): ProductApplicationRuntime {
   assertExactManifestClosure(descriptor, productManifests);
-  const pageRoutes = defineProductRouteContractSource(
-    [
-      ...descriptor.pageRoutes,
-      ...buildDraftProductPageRouteContractSource(
-        productManifests,
-        new Set(descriptor.officialProductIds)
-      ),
-    ],
-    productManifests
-  );
+  const pageRoutes =
+    descriptor.routeProjectionMode === 'administration-legacy-targets'
+      ? defineProductRouteContractSource(descriptor.pageRoutes)
+      : buildProductPageRouteContractSource(productManifests, descriptor.pageRoutes);
   const targetKeys = new Set(pageRoutes.map((route) => route.routeContractKey));
   const legacyRoutes = defineProductLegacyRouteSource(
     descriptor.legacyRoutes.filter((redirect) => targetKeys.has(redirect.targetRouteContractKey)),

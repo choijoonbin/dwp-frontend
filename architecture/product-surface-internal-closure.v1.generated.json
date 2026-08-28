@@ -1,0 +1,491 @@
+{
+  "schemaVersion": 1,
+  "closureKey": "product-surface-internal-closure.v1",
+  "generatedFrom": {
+    "backend": {
+      "repository": "https://github.com/choijoonbin/dwp-backend",
+      "revision": "a94c9049381e9d4bdbbacf4e4248cdad2c8666e9"
+    },
+    "authorizationBundle": {
+      "artifact": "product-surfaces-v1.bundle-v4.json",
+      "version": 4,
+      "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137"
+    },
+    "negativeMatrix": {
+      "artifact": "authorization-negative-matrix.v1.json",
+      "matrixId": "product-authorization-negative-matrix.v1",
+      "artifactChecksum": "88922f309d7433d7d21d08508113f00626d8c23dc1edc990e56aee6cc9f31117",
+      "projectionChecksum": "88a291dd6d4b1e3adb1a30ee4b12b5c456f8b5aecb1f14a3c9305990f04ab3a7"
+    },
+    "rolloutInventory": {
+      "artifact": "product-surface-rollout-inventory.v1.generated.json",
+      "checksum": "0385e6c66e1feac42198842bd4f20473405813be3a3f187d46cf7bba39fcd822"
+    },
+    "agentEvidence": {
+      "artifact": "dwaion-agent-pep-attestation.v1.json",
+      "repository": "https://github.com/choijoonbin/aura_agent",
+      "revision": "12360c6223f3e628c5ead3d8f07ff8553224bf56",
+      "checksum": "20ce158f28f0ad6e6a7d5ad7055650d31fd80449bdd850543e85f036f6df3431",
+      "artifactChecksum": "5b8eb8a07ef7904b33fe7e946c083ec03daf3b3aadbcc38e59d072ad7c18961b",
+      "sourceCiRun": {
+        "provider": "GITHUB_ACTIONS",
+        "workflow": "Agent quality",
+        "runId": "33162256046",
+        "url": "https://github.com/choijoonbin/aura_agent/actions/runs/33162256046",
+        "headSha": "12360c6223f3e628c5ead3d8f07ff8553224bf56",
+        "conclusion": "success"
+      }
+    }
+  },
+  "attackVectors": [
+    "CROSS_TENANT",
+    "SCOPE_ESCAPE",
+    "STALE_AUTHORITY_REVISION",
+    "CONFUSED_DEPUTY",
+    "INTERNAL_HEADER_SPOOF"
+  ],
+  "products": [
+    {
+      "productId": "approvals",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-approval-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalProductSurfacePepEvidenceTest.java#rejectsCrossTenantOpaqueScopeAtOwnerServicePep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalProductSurfacePepEvidenceTest.java#rejectsCanonicalOpaqueScopeEscapeAtOwnerServicePep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalProductSurfacePepEvidenceTest.java#rejectsStaleAuthorityRevisionAtOwnerServicePep"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalProductSurfacePepEvidenceTest.java#rejectsNormalCapabilityInProviderSupportModeAtOwnerServicePep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalProductSurfacePepEvidenceTest.java#rejectsInternalAuthorityHeaderSpoofAtOwnerServicePep"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "calendar",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-platform-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/calendar/CalendarProductSurfacePepEvidenceTest.java#crossTenantScopeCannotReachCalendarPublicRoute"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/calendar/CalendarProductSurfacePepEvidenceTest.java#canonicalOpaqueScopeEscapeCannotReachCalendarPublicRoute"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/calendar/CalendarProductSurfacePepEvidenceTest.java#staleAuthorityRevisionFailsClosedBeforeCalendarMutation"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/calendar/CalendarProductSurfacePepEvidenceTest.java#normalAndSupportModesCannotBorrowEachOthersCalendarAuthority"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/calendar/CalendarProductSurfacePepEvidenceTest.java#spoofedInternalAuthorityHeadersCannotBypassPlatformServiceIdentity"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "communications",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-platform-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/communication/CommunicationProductSurfacePepEvidenceTest.java#rejectsCrossTenantOpaqueScopeAtCommunicationsOwnerServicePep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/communication/CommunicationProductSurfacePepEvidenceTest.java#rejectsCanonicalOpaqueScopeEscapeAtCommunicationsOwnerServicePep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/communication/CommunicationProductSurfacePepEvidenceTest.java#rejectsStaleAuthorityRevisionAtCommunicationsOwnerServicePep"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/communication/CommunicationProductSurfacePepEvidenceTest.java#rejectsNormalAndSupportConfusedDeputyAtCommunicationsOwnerServicePep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/communication/CommunicationProductSurfacePepEvidenceTest.java#rejectsInternalAuthorityHeaderSpoofAtCommunicationsOwnerServicePep"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "dwaion",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-agent-runtime",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "tests/test_product_surface_pep.py#test_rejects_cross_tenant_scope_at_agent_owner_pep"
+        ],
+        "SCOPE_ESCAPE": [
+          "tests/test_product_surface_pep.py#test_rejects_canonical_opaque_scope_escape_at_agent_owner_pep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "tests/test_product_surface_pep.py#test_rejects_stale_authority_revision_at_agent_owner_pep"
+        ],
+        "CONFUSED_DEPUTY": [
+          "tests/test_product_surface_pep.py#test_rejects_normal_support_confused_deputy_at_agent_owner_pep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "tests/test_product_surface_pep.py#test_rejects_internal_header_spoof_at_agent_owner_boundary"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "hcm",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-people-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#crossTenantOpaqueScopeNeverReachesThePublicHcmController"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#canonicalOpaqueScopeEscapeNeverReachesThePublicHcmController"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#staleAuthorityRevisionNeverReachesThePublicHcmAction"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#normalAndSupportAuthorityCannotBeMixedAcrossThePublicHcmBoundary"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#spoofedInternalHeadersCannotBypassPeopleIdentityOnAPublicHcmRoute"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "mail",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-platform-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/mail/MailProductSurfacePepEvidenceTest.java#crossTenantScopeCannotReachMailPublicRoute"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/mail/MailProductSurfacePepEvidenceTest.java#canonicalOpaqueScopeEscapeCannotReachMailPublicRoute"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/mail/MailProductSurfacePepEvidenceTest.java#staleAuthorityRevisionFailsClosedBeforeMailMutation"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/mail/MailProductSurfacePepEvidenceTest.java#normalAndSupportModesCannotBorrowEachOthersMailAuthority"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/mail/MailProductSurfacePepEvidenceTest.java#spoofedInternalAuthorityHeadersCannotBypassPlatformServiceIdentity"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "meetings",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-meeting-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingProductSurfacePepPostgresTest.java#crossTenantAttackCannotSubstituteActorTenantAtTheDataEndpoint"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingProductSurfacePepPostgresTest.java#scopeEscapeAttackRejectsCanonicalOpaqueScopeFromAnotherSurface"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingProductSurfacePepPostgresTest.java#staleAuthorityRevisionAttackNeverReachesMeetingCreateAction"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingProductSurfacePepPostgresTest.java#confusedDeputyAttackCannotReuseNormalAuthorityInSupportMode"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingProductSurfacePepPostgresTest.java#internalHeaderSpoofAttackCannotReachARealMeetingController"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "messaging",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-messaging-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java#crossTenantConversationScopeFailsClosedAtMessagingOwnerPep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java#canonicalOpaqueScopeEscapeFailsClosedAtMessagingOwnerPep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java#staleAuthorityRevisionFailsClosedBeforeMessagingAction"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java#normalAndProviderSupportModesCannotBecomeConfusedDeputiesAtMessagingOwnerPep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java#spoofedInternalHeadersCannotBypassMessagingGatewayServiceIdentity"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "notifications",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-notification-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/security/NotificationProductSurfacePepEvidenceTest.java#crossTenantScopeFailsClosedAtNotificationOwnerPep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/security/NotificationProductSurfacePepEvidenceTest.java#canonicalOpaqueScopeEscapeFailsClosedAtNotificationOwnerPep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/security/NotificationProductSurfacePepEvidenceTest.java#staleAuthorityRevisionFailsClosedBeforeNotificationAction"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/security/NotificationProductSurfacePepEvidenceTest.java#normalAndSupportModesCannotConfuseNotificationOwnerPep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/security/NotificationProductSurfacePepEvidenceTest.java#spoofedInternalAuthorityHeadersCannotBypassNotificationServiceIdentity"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "services",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-platform-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/servicecenter/ServicesProductSurfacePepEvidenceTest.java#rejectsCrossTenantOpaqueScopeAtServicesOwnerServicePep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/servicecenter/ServicesProductSurfacePepEvidenceTest.java#rejectsCanonicalOpaqueScopeEscapeAtServicesOwnerServicePep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/servicecenter/ServicesProductSurfacePepEvidenceTest.java#rejectsStaleAuthorityRevisionAtServicesOwnerServicePep"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/servicecenter/ServicesProductSurfacePepEvidenceTest.java#rejectsNormalAndSupportConfusedDeputyAtServicesOwnerServicePep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/servicecenter/ServicesProductSurfacePepEvidenceTest.java#rejectsInternalAuthorityHeaderSpoofAtServicesOwnerServicePep"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "spaces",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-space-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-space-server/src/test/java/com/dwp/services/space/security/SpaceProductSurfacePepContractTest.java#crossTenantOpaqueScopeFailsClosedAtSpacesOwnerPep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-space-server/src/test/java/com/dwp/services/space/security/SpaceProductSurfacePepContractTest.java#canonicalOpaqueScopeEscapeFailsClosedAtSpacesOwnerPep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-space-server/src/test/java/com/dwp/services/space/security/SpaceProductSurfacePepContractTest.java#staleAuthorityRevisionFailsClosedBeforeSpacesAction"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-space-server/src/test/java/com/dwp/services/space/security/SpaceProductSurfacePepContractTest.java#normalAndSupportModesCannotConfuseSpacesOwnerPep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-space-server/src/test/java/com/dwp/services/space/security/SpaceProductSurfacePepContractTest.java#spoofedInternalAuthorityHeadersCannotBypassSpaceServiceIdentity"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    },
+    {
+      "productId": "workplace",
+      "contractStatus": "EXACT",
+      "routeKinds": [
+        "PAGE",
+        "DATA",
+        "ACTION"
+      ],
+      "ownerService": "dwp-platform-server",
+      "attackEvidence": {
+        "CROSS_TENANT": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/security/WorkplaceProductSurfacePepContractTest.java#crossTenantOpaqueScopeFailsClosedAtWorkplaceOwnerPep"
+        ],
+        "SCOPE_ESCAPE": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/security/WorkplaceProductSurfacePepContractTest.java#canonicalOpaqueScopeEscapeFailsClosedAtWorkplaceOwnerPep"
+        ],
+        "STALE_AUTHORITY_REVISION": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/security/WorkplaceProductSurfacePepContractTest.java#staleAuthorityRevisionFailsClosedBeforeWorkplaceAction"
+        ],
+        "CONFUSED_DEPUTY": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/security/WorkplaceProductSurfacePepContractTest.java#normalAndSupportModesCannotConfuseWorkplaceOwnerPep"
+        ],
+        "INTERNAL_HEADER_SPOOF": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/security/WorkplaceProductSurfacePepContractTest.java#spoofedInternalAuthorityHeadersCannotBypassPlatformServiceIdentity"
+        ]
+      },
+      "qualifiedAttackIds": [
+        "CROSS_TENANT",
+        "SCOPE_ESCAPE",
+        "STALE_AUTHORITY_REVISION",
+        "CONFUSED_DEPUTY",
+        "INTERNAL_HEADER_SPOOF"
+      ],
+      "missingAttackIds": [],
+      "blocker": null
+    }
+  ],
+  "summary": {
+    "productCount": 12,
+    "exactProducts": 12,
+    "internallyClosedProducts": 12,
+    "totalAttackCells": 60,
+    "qualifiedAttackCells": 60,
+    "missingAttackCells": 0,
+    "productBlockers": 0,
+    "completionState": "COMPLETE"
+  }
+}

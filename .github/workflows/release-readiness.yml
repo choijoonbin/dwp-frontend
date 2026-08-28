@@ -7,8 +7,14 @@ on:
         description: Official dwp-backend full commit SHA
         required: true
         type: string
+      agent-commit:
+        description: Immutable aura_agent owner-PEP evidence commit SHA
+        required: true
+        type: string
 
 permissions:
+  actions: read
+  checks: read
   contents: read
 
 jobs:
@@ -16,6 +22,8 @@ jobs:
     name: Verify approved release evidence
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.DWP_BACKEND_READ_TOKEN || github.token }}
 
     steps:
       - name: Check out source
@@ -24,9 +32,14 @@ jobs:
       - name: Validate immutable backend revision
         env:
           BACKEND_COMMIT: ${{ inputs.backend-commit }}
+          AGENT_COMMIT: ${{ inputs.agent-commit }}
         run: |
           if [[ ! "$BACKEND_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
             echo "backend-commit must be a full lowercase commit SHA." >&2
+            exit 2
+          fi
+          if [[ ! "$AGENT_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "agent-commit must be a full lowercase commit SHA." >&2
             exit 2
           fi
 
@@ -39,6 +52,61 @@ jobs:
           token: ${{ secrets.DWP_BACKEND_READ_TOKEN || github.token }}
           persist-credentials: false
 
+      - name: Check out immutable Agent owner-PEP evidence
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: choijoonbin/aura_agent
+          ref: ${{ inputs.agent-commit }}
+          path: .official-agent
+          persist-credentials: false
+
+      - name: Verify protected source ancestry and required workflow success
+        env:
+          AGENT_COMMIT: ${{ inputs.agent-commit }}
+          BACKEND_COMMIT: ${{ inputs.backend-commit }}
+          FRONTEND_COMMIT: ${{ github.sha }}
+          FRONTEND_REF: ${{ github.ref }}
+        run: |
+          set -Eeuo pipefail
+
+          test "$FRONTEND_REF" = refs/heads/dwp-dev
+          gh api repos/choijoonbin/dwp-frontend/branches/dwp-dev \
+            --jq 'select(.protected == true and .commit.sha == env.FRONTEND_COMMIT) | .name' \
+            | grep -Fxq dwp-dev
+          gh api repos/choijoonbin/dwp-backend/branches/dwp-dev \
+            --jq 'select(.protected == true and .commit.sha == env.BACKEND_COMMIT) | .name' \
+            | grep -Fxq dwp-dev
+          gh api repos/choijoonbin/aura_agent/branches/dwp-dev \
+            --jq 'select(.protected == true and .commit.sha == env.AGENT_COMMIT) | .name' \
+            | grep -Fxq dwp-dev
+
+          test "$(jq -r '.generatedFrom.backend.revision' \
+            architecture/product-surface-internal-closure.v1.generated.json)" = "$BACKEND_COMMIT"
+          test "$(jq -r '.generatedFrom.agentEvidence.revision' \
+            architecture/product-surface-internal-closure.v1.generated.json)" = "$AGENT_COMMIT"
+
+          backend_run_id="$(gh api \
+            "repos/choijoonbin/dwp-backend/actions/runs?head_sha=$BACKEND_COMMIT&per_page=100" \
+            --jq '[.workflow_runs[] | select(.name == "Backend quality gates" and .path == ".github/workflows/backend-quality-gates.yml" and .event == "push" and .head_branch == "dwp-dev" and .head_sha == env.BACKEND_COMMIT and .status == "completed" and .conclusion == "success")][0].id // empty')"
+          if [[ ! "$backend_run_id" =~ ^[1-9][0-9]*$ ]]; then
+            echo "Backend quality gates has no successful run for the protected revision." >&2
+            exit 1
+          fi
+
+          frontend_run_id="$(gh api \
+            "repos/choijoonbin/dwp-frontend/actions/runs?head_sha=$FRONTEND_COMMIT&per_page=100" \
+            --jq '[.workflow_runs[] | select(.name == "Frontend quality" and .path == ".github/workflows/frontend-quality.yml" and .event == "push" and .head_branch == "dwp-dev" and .head_sha == env.FRONTEND_COMMIT and .status == "completed" and .conclusion == "success")][0].id // empty')"
+          if [[ ! "$frontend_run_id" =~ ^[1-9][0-9]*$ ]]; then
+            echo "Frontend quality has no successful run for the protected revision." >&2
+            exit 1
+          fi
+
+          agent_run_id="$(jq -r '.generatedFrom.agentEvidence.sourceCiRun.runId' \
+            architecture/product-surface-internal-closure.v1.generated.json)"
+          gh api "repos/choijoonbin/aura_agent/actions/runs/$agent_run_id" \
+            --jq 'select(.name == "Agent quality" and .path == ".github/workflows/agent-quality.yml" and .event == "push" and .head_branch == "dwp-dev" and .head_sha == env.AGENT_COMMIT and .status == "completed" and .conclusion == "success") | .id' \
+            | grep -Eq '^[1-9][0-9]*$'
+
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
@@ -46,6 +114,9 @@ jobs:
 
       - name: Enable Corepack
         run: corepack enable
+
+      - name: Install immutable dependencies
+        run: corepack yarn install --immutable
 
       - name: Validate evidence registry integrity
         run: corepack yarn release:evidence:check
@@ -56,7 +127,19 @@ jobs:
       - name: Test Product Surface release gate fail-closed binding
         run: corepack yarn product-surfaces:readiness:test
 
+      - name: Enforce official Backend contracts and internal closure
+        env:
+          DWP_OFFICIAL_BACKEND_CONTRACTS_DIR: ${{ github.workspace }}/.official-backend/contracts
+          DWP_BACKEND_CHECKOUT: ${{ github.workspace }}/.official-backend
+          DWP_BACKEND_REVISION: ${{ inputs.backend-commit }}
+          DWP_AGENT_EVIDENCE_ROOT: ${{ github.workspace }}/.official-agent
+        run: corepack yarn release:contracts:check
+
       - name: Enforce Product Surface production readiness
+        env:
+          DWP_BACKEND_CHECKOUT: ${{ github.workspace }}/.official-backend
+          DWP_BACKEND_REVISION: ${{ inputs.backend-commit }}
+          DWP_AGENT_EVIDENCE_ROOT: ${{ github.workspace }}/.official-agent
         run: corepack yarn product-surfaces:readiness:release
 
       - name: Enforce release authorization
@@ -64,6 +147,7 @@ jobs:
           DWP_OFFICIAL_BACKEND_CONTRACTS_DIR: ${{ github.workspace }}/.official-backend/contracts
           DWP_BACKEND_CHECKOUT: ${{ github.workspace }}/.official-backend
           DWP_BACKEND_REVISION: ${{ inputs.backend-commit }}
+          DWP_AGENT_EVIDENCE_ROOT: ${{ github.workspace }}/.official-agent
         run: corepack yarn release:gate
 
       - name: Preserve machine-readable release evidence
@@ -71,6 +155,20 @@ jobs:
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: release-evidence-manifests
-          path: docs/06-delivery/release-evidence/*.json
+          path: |
+            docs/06-delivery/release-evidence/*.json
+            docs/06-delivery/release-evidence/X-03-authorization-negative-matrix.md
+            architecture/product-surface-authorization.v1.json
+            architecture/product-surface-internal-closure.v1.generated.json
+            .official-backend/contracts/product-authorization/authorization-negative-matrix.v1.json
+            .official-backend/contracts/product-authorization/dwaion-agent-pep-attestation.v1.json
+            .official-backend/contracts/product-authorization/product-surfaces-v1.bundle-v4.json
+            .official-backend/contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json
+            .official-agent/contracts/product-authorization/dwaion-pep-v4.draft.json
+            .official-agent/pyproject.toml
+            .official-agent/uv.lock
+            .official-agent/src/dwp_agent/main.py
+            .official-agent/src/dwp_agent/product_surface_pep.py
+            .official-agent/tests/test_product_surface_pep.py
           if-no-files-found: error
           retention-days: 90

@@ -27,8 +27,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { formatMeetingDateTime, MeetingPageHeading, MeetingStatusChip } from './meeting-components';
+import { createMeetingConnectionSynchronizer } from './meeting-connection-sync';
 import { MeetingDepartureState, type MeetingDepartureKind } from './meeting-departure-state';
 import { createMeetingDepartureSynchronizer } from './meeting-departure-sync';
+import { createMeetingEndSynchronizer } from './meeting-end-sync';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingPreJoin } from './meeting-prejoin';
 
@@ -48,6 +50,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const [ended, setEnded] = useState(false);
   const [departure, setDeparture] = useState<MeetingDepartureKind | null>(null);
   const departureEffectGeneration = useRef({ value: 0 });
+  const lastDepartureRequest = useRef<Promise<void> | null>(null);
   const queryKey = ['meetings', meetingId, 'detail'] as const;
   const query = useQuery({
     queryKey,
@@ -56,6 +59,25 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     refetchInterval: credential ? 4_000 : 5_000,
     retry: 1,
   });
+  const connectionSynchronizer = useMemo(
+    () => createMeetingConnectionSynchronizer(() => confirmVideoMeetingConnected(meetingId)),
+    [meetingId]
+  );
+  const departureSynchronizer = useMemo(
+    () =>
+      createMeetingDepartureSynchronizer((keepalive) =>
+        leaveVideoMeeting(meetingId, { keepalive })
+      ),
+    [meetingId]
+  );
+  const endSynchronizer = useMemo(
+    () =>
+      createMeetingEndSynchronizer(
+        (sessionId) => connectionSynchronizer.settle(sessionId),
+        (expectedVersion) => endVideoMeeting(meetingId, expectedVersion)
+      ),
+    [connectionSynchronizer, meetingId]
+  );
   const admissionMutation = useMutation({
     mutationFn: () =>
       requestVideoMeetingJoin(meetingId, {
@@ -76,6 +98,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       meeting: VideoMeetingSummary;
       nextChoices: LocalUserChoices;
     }) => {
+      await lastDepartureRequest.current?.catch(() => undefined);
       let activeMeeting = meeting;
       if (meeting.canHost && meeting.lifecycleState !== 'LIVE') {
         activeMeeting = await startVideoMeeting(meeting.meetingId, meeting.version);
@@ -86,6 +109,9 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       return { meeting: activeMeeting, choices: nextChoices, credential: nextCredential };
     },
     onSuccess: ({ meeting, choices: nextChoices, credential: nextCredential }) => {
+      departureSynchronizer.reset(nextCredential.sessionId);
+      connectionSynchronizer.start(nextCredential.sessionId);
+      lastDepartureRequest.current = null;
       queryClient.setQueryData(queryKey, meeting);
       setChoices(nextChoices);
       setCredential(nextCredential);
@@ -94,23 +120,11 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     },
     onError: () => setLocalError(t('errors.operation')),
   });
-  const connectedMutation = useMutation({
-    mutationFn: () => confirmVideoMeetingConnected(meetingId),
-    retry: 2,
-    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 4_000),
-    onSuccess: () => setLocalError(null),
-    onError: () => setLocalError(t('errors.attendanceSync')),
-  });
-  const departureSynchronizer = useMemo(
-    () =>
-      createMeetingDepartureSynchronizer((keepalive) =>
-        leaveVideoMeeting(meetingId, { keepalive })
-      ),
-    [meetingId]
-  );
   const endMutation = useMutation({
-    mutationFn: () => endVideoMeeting(meetingId, query.data?.version ?? 0),
-    onSuccess: (meeting) => {
+    mutationFn: (input: { sessionId: string; expectedVersion: number }) =>
+      endSynchronizer.synchronize(input),
+    onSuccess: (meeting, input) => {
+      connectionSynchronizer.end(input.sessionId);
       queryClient.setQueryData(queryKey, meeting);
       setCredential(null);
       setChoices(null);
@@ -125,8 +139,10 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     const generation = ++generationTracker.value;
     if (!credential) return undefined;
     const synchronizeDeparture = () => {
-      void departureSynchronizer
-        .synchronize(credential.sessionId, { keepalive: true })
+      void connectionSynchronizer
+        .settle(credential.sessionId)
+        .catch(() => undefined)
+        .then(() => departureSynchronizer.synchronize(credential.sessionId, { keepalive: true }))
         .catch(() => undefined);
     };
     window.addEventListener('pagehide', synchronizeDeparture);
@@ -136,7 +152,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
         if (generationTracker.value === generation) synchronizeDeparture();
       });
     };
-  }, [credential, departureSynchronizer]);
+  }, [connectionSynchronizer, credential, departureSynchronizer]);
 
   if (query.isLoading) {
     return (
@@ -270,14 +286,20 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           ending={endMutation.isPending}
           operationError={localError ?? (query.isError ? t('errors.lifecycleSync') : null)}
           onConnected={() => {
-            if (!connectedMutation.isPending && !connectedMutation.isSuccess) {
-              connectedMutation.mutate();
-            }
+            void connectionSynchronizer
+              .synchronize(credential.sessionId)
+              .then(() => setLocalError(null))
+              .catch(() => setLocalError(t('errors.attendanceSync')));
           }}
           onLeave={(reason) => {
-            connectedMutation.reset();
-            void departureSynchronizer
-              .synchronize(credential.sessionId, { keepalive: false })
+            const sessionId = credential.sessionId;
+            const connectionRequest = connectionSynchronizer.settle(sessionId);
+            connectionSynchronizer.end(sessionId);
+            const departureRequest = connectionRequest
+              .catch(() => undefined)
+              .then(() => departureSynchronizer.synchronize(sessionId, { keepalive: false }));
+            lastDepartureRequest.current = departureRequest;
+            void departureRequest
               .then(() => queryClient.invalidateQueries({ queryKey }))
               .catch(() => setLocalError(t('errors.leaveSync')));
             setCredential(null);
@@ -290,7 +312,12 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
             }
             setDeparture(reason === DisconnectReason.CLIENT_INITIATED ? 'LEFT' : 'DISCONNECTED');
           }}
-          onEndForEveryone={() => endMutation.mutate()}
+          onEndForEveryone={() =>
+            endMutation.mutate({
+              sessionId: credential.sessionId,
+              expectedVersion: meeting.version,
+            })
+          }
         />
       </Suspense>
     );

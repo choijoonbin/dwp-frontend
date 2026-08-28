@@ -57,12 +57,23 @@ describe('meeting departure synchronization', () => {
     expect(wait).toHaveBeenNthCalledWith(1, 750);
     expect(wait).toHaveBeenNthCalledWith(2, 1_500);
 
-    await expect(
-      synchronizer.synchronize('session-4', { keepalive: true })
-    ).rejects.toThrow('pagehide-failed');
+    await expect(synchronizer.synchronize('session-4', { keepalive: true })).rejects.toThrow(
+      'pagehide-failed'
+    );
     await expect(
       synchronizer.synchronize('session-4', { keepalive: false })
     ).resolves.toBeUndefined();
     expect(transport).toHaveBeenCalledTimes(5);
+  });
+
+  it('starts a new departure lifecycle when a reused session reconnects', async () => {
+    const transport = vi.fn().mockResolvedValue(undefined);
+    const synchronizer = createMeetingDepartureSynchronizer(transport);
+
+    await synchronizer.synchronize('session-reused', { keepalive: false });
+    synchronizer.reset('session-reused');
+    await synchronizer.synchronize('session-reused', { keepalive: false });
+
+    expect(transport).toHaveBeenCalledTimes(2);
   });
 });

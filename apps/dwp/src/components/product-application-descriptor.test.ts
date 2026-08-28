@@ -137,6 +137,13 @@ describe('product application descriptor and runtime scope', () => {
     expect(new Set(runtime.legacyRoutes.map((route) => route.targetRouteContractKey))).toEqual(
       legacyTargetKeys
     );
+    expect(runtime.pageRoutes).toHaveLength(legacyTargetKeys.size);
+    expect(runtime.legacyRoutes).toHaveLength(routes.legacyRedirects.length);
+    for (const redirect of routes.legacyRedirects) {
+      expect(
+        runtime.legacyRoutes.filter((candidate) => candidate.sourcePath === redirect.sourcePath)
+      ).toHaveLength(1);
+    }
     expect(descriptor.manifestProductIds).toEqual([]);
     expect(descriptor.authorizationProductIds).toEqual([]);
     expect(descriptor.routeProjectionMode).toBe('administration-legacy-targets');

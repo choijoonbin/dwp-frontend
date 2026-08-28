@@ -343,7 +343,8 @@ export async function scanProviderArtifacts(inputPaths) {
     else scanBuffer(buffer, location, findings, { scanRawText: reportMode !== 'embedded-report' });
     filesScanned += 1;
     for (const [root, rootFiles] of filesByRoot) {
-      if (rootFiles.includes(path)) runtimeEvidenceByRoot.set(root, runtimeEvidenceByRoot.get(root) + 1);
+      if (rootFiles.includes(path))
+        runtimeEvidenceByRoot.set(root, runtimeEvidenceByRoot.get(root) + 1);
     }
   }
   for (const [root, count] of runtimeEvidenceByRoot) {

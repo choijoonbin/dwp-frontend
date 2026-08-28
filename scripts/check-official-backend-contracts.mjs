@@ -77,6 +77,9 @@ function parseArguments(argv) {
     authorizationDirectory: path.resolve(values.authorizationDirectory),
     fixtureArtifact: path.resolve(values.fixtureArtifact),
     gatewayOpenApi: path.resolve(values.gatewayOpenApi),
+    officialReleaseMode: Boolean(
+      process.env.DWP_OFFICIAL_BACKEND_CONTRACTS_DIR && !cli.backendContracts && !hasSpecificCli
+    ),
   };
 }
 
@@ -88,12 +91,19 @@ function requireArtifact(target, kind) {
 }
 
 function runCheck(script, ...arguments_) {
+  const environment = { ...process.env };
+  if (script === 'sync-product-surface-internal-closure.mjs' && arguments_.length === 0) {
+    delete environment.DWP_PRODUCT_AUTHORIZATION_DIR;
+    delete environment.DWP_BACKEND_CHECKOUT;
+    delete environment.DWP_BACKEND_REVISION;
+  }
   const result = spawnSync(
     process.execPath,
     [path.join(root, 'scripts', script), '--check', ...arguments_],
     {
       cwd: root,
       encoding: 'utf8',
+      env: environment,
     }
   );
   if (result.stdout) process.stdout.write(result.stdout);
@@ -102,12 +112,76 @@ function runCheck(script, ...arguments_) {
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
+function runOfficialBackendExecutableChecks(inputs) {
+  if (!inputs.officialReleaseMode) return;
+  const checkout = process.env.DWP_BACKEND_CHECKOUT;
+  const revision = process.env.DWP_BACKEND_REVISION;
+  const agentRoot = process.env.DWP_AGENT_EVIDENCE_ROOT;
+  if (!checkout || !revision || !agentRoot || !/^[a-f0-9]{40}$/u.test(revision)) {
+    fail(
+      'official release mode requires DWP_BACKEND_CHECKOUT, full DWP_BACKEND_REVISION and DWP_AGENT_EVIDENCE_ROOT',
+      1
+    );
+  }
+  requireArtifact(checkout, 'directory');
+  requireArtifact(agentRoot, 'directory');
+  const actualRevision = spawnSync('git', ['-C', checkout, 'rev-parse', 'HEAD'], {
+    encoding: 'utf8',
+  });
+  if (actualRevision.status !== 0 || actualRevision.stdout.trim() !== revision) {
+    fail('official backend checkout HEAD differs from DWP_BACKEND_REVISION', 1);
+  }
+  const origin = spawnSync('git', ['-C', checkout, 'remote', 'get-url', 'origin'], {
+    encoding: 'utf8',
+  });
+  if (
+    origin.status !== 0 ||
+    ![
+      'https://github.com/choijoonbin/dwp-backend',
+      'https://github.com/choijoonbin/dwp-backend.git',
+    ].includes(origin.stdout.trim())
+  ) {
+    fail('official backend checkout origin is not trusted', 1);
+  }
+  const expectedAuthorization = fs.realpathSync(
+    path.join(checkout, 'contracts/product-authorization')
+  );
+  if (fs.realpathSync(inputs.authorizationDirectory) !== expectedAuthorization) {
+    fail('official authorization directory is not owned by DWP_BACKEND_CHECKOUT', 1);
+  }
+  for (const [script, arguments_] of [
+    ['scripts/generate-product-authorization-contracts.py', ['--check']],
+    ['scripts/check-authorization-negative-matrix.py', []],
+  ]) {
+    const result = spawnSync('python3', [script, ...arguments_], {
+      cwd: checkout,
+      encoding: 'utf8',
+      env: { ...process.env, DWP_AGENT_EVIDENCE_ROOT: agentRoot },
+    });
+    if (result.stdout) process.stdout.write(result.stdout);
+    if (result.stderr) process.stderr.write(result.stderr);
+    if (result.error) fail(result.error.message, 1);
+    if (result.status !== 0) {
+      fail(`official backend executable validator failed: ${script}`, result.status ?? 1);
+    }
+  }
+  console.log(
+    'PASS official backend registry and source-bound negative matrix validators executed.'
+  );
+}
+
 const inputs = parseArguments(process.argv.slice(2));
 requireArtifact(inputs.authorizationDirectory, 'directory');
 requireArtifact(inputs.fixtureArtifact, 'file');
 requireArtifact(inputs.gatewayOpenApi, 'file');
+runOfficialBackendExecutableChecks(inputs);
 
 runCheck('sync-product-surface-authorization.mjs', inputs.authorizationDirectory);
+if (inputs.officialReleaseMode) {
+  runCheck('sync-product-surface-internal-closure.mjs', inputs.authorizationDirectory);
+} else {
+  runCheck('sync-product-surface-internal-closure.mjs');
+}
 runCheck(
   'sync-product-authorization-fixtures.mjs',
   inputs.fixtureArtifact,

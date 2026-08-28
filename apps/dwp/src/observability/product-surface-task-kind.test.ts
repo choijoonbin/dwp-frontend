@@ -6,8 +6,10 @@ import { resolveProductSurfaceTaskKind } from './product-surface-task-kind';
 const BACKEND_TASK_ALLOWLIST = {
   'approvals.admin': ['ADMINISTRATION', 'OPERATIONS'],
   'approvals.work': ['WORK'],
+  'calendar.work': ['WORK'],
   'communications.management': ['OPERATIONS'],
   'communications.work': ['WORK'],
+  'dwaion.work': ['WORK'],
   'hcm.management': [
     'ADMINISTRATION',
     'CONFIGURATION',
@@ -19,8 +21,14 @@ const BACKEND_TASK_ALLOWLIST = {
   'hcm.operations': ['OPERATIONS'],
   'hcm.personal': ['WORK'],
   'hcm.team': ['REVIEW', 'WORK'],
+  'mail.work': ['WORK'],
+  'meetings.work': ['WORK'],
+  'messaging.work': ['WORK'],
+  'notifications.work': ['WORK'],
   'services.management': ['ADMINISTRATION', 'OPERATIONS'],
   'services.work': ['WORK'],
+  'spaces.work': ['WORK'],
+  'workplace.work': ['WORK'],
 } as const;
 
 describe('governed mutation telemetry task classification', () => {

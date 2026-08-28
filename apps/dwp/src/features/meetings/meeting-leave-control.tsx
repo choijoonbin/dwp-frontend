@@ -3,11 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useRoomContext } from '@livekit/components-react';
 import { PhoneOff } from 'lucide-react';
 
-export function MeetingLeaveControl({
-  onError,
-}: {
-  onError: () => void;
-}) {
+export function MeetingLeaveControl({ onError }: { onError: () => void }) {
   const { t } = useTranslation('meetings');
   const room = useRoomContext();
   const [leaving, setLeaving] = useState(false);

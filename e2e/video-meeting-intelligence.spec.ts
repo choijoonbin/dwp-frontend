@@ -42,6 +42,14 @@ function fulfill(route: Route, data: unknown, status = 200) {
   return route.fulfill({ status, contentType: 'application/json', body: success(data) });
 }
 
+function createDeferredResponse() {
+  let release!: () => void;
+  const promise = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  return { promise, release };
+}
+
 async function mockMeetingHost(page: Page) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     userId: 42,
@@ -81,7 +89,7 @@ async function mockMeetingHost(page: Page) {
   );
 }
 
-test('host retries one intelligence intent, reviews evidence, and explicitly publishes it', async ({
+test('host retries one intelligence intent and stale review or publish cannot reopen revoked access', async ({
   page,
 }) => {
   await mockMeetingHost(page);
@@ -100,11 +108,36 @@ test('host retries one intelligence intent, reviews evidence, and explicitly pub
       text: 'The group aligned on a staged launch, with one dependency still open.',
       citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }],
     },
-    topics: [{ text: 'Staged launch', citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }] }],
-    decisions: [{ text: 'Launch the pilot on Monday.', citations: [{ segmentId: 'seg-18', startMillis: 221_000, endMillis: 238_000 }] }],
-    actionItems: [{ text: 'Mina will verify capacity.', citations: [{ segmentId: 'seg-21', startMillis: 281_000, endMillis: 302_000 }] }],
-    openQuestions: [{ text: 'Is the regional quota approved?', citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }] }],
-    risks: [{ text: 'Regional quota may delay expansion.', citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }] }],
+    topics: [
+      {
+        text: 'Staged launch',
+        citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }],
+      },
+    ],
+    decisions: [
+      {
+        text: 'Launch the pilot on Monday.',
+        citations: [{ segmentId: 'seg-18', startMillis: 221_000, endMillis: 238_000 }],
+      },
+    ],
+    actionItems: [
+      {
+        text: 'Mina will verify capacity.',
+        citations: [{ segmentId: 'seg-21', startMillis: 281_000, endMillis: 302_000 }],
+      },
+    ],
+    openQuestions: [
+      {
+        text: 'Is the regional quota approved?',
+        citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }],
+      },
+    ],
+    risks: [
+      {
+        text: 'Regional quota may delay expansion.',
+        citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }],
+      },
+    ],
     conversationClimate: {
       label: 'MIXED',
       signals: ['CONSTRUCTIVE_DISAGREEMENT'],
@@ -145,7 +178,12 @@ test('host retries one intelligence intent, reviews evidence, and explicitly pub
     reviews: [],
   };
   let latest: Record<string, unknown> | null = null;
+  let latestAccessRevoked = false;
   let createAttempts = 0;
+  let reviewRequested = false;
+  let publishRequested = false;
+  const reviewResponseGate = createDeferredResponse();
+  const publishResponseGate = createDeferredResponse();
   const idempotencyKeys: string[] = [];
 
   await page.route('**/api/meetings/v1/meetings?*', (route) =>
@@ -192,7 +230,12 @@ test('host retries one intelligence intent, reviews evidence, and explicitly pub
   );
   await page.route(
     `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/latest`,
-    (route) => (latest ? fulfill(route, latest) : fulfill(route, { code: 'NOT_FOUND' }, 404))
+    (route) =>
+      latestAccessRevoked
+        ? fulfill(route, { code: 'FORBIDDEN' }, 403)
+        : latest
+          ? fulfill(route, latest)
+          : fulfill(route, { code: 'NOT_FOUND' }, 404)
   );
   await page.route(`**/api/meetings/v1/meetings/${meetingId}/intelligence/runs`, (route) => {
     createAttempts += 1;
@@ -217,11 +260,13 @@ test('host retries one intelligence intent, reviews evidence, and explicitly pub
   await page.route(
     `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/${reportId}/review`,
     async (route) => {
+      reviewRequested = true;
       expect(route.request().postDataJSON()).toMatchObject({
         expectedVersion: 0,
         decision: 'APPROVE',
         reasonCode: 'EVIDENCE_VERIFIED',
       });
+      await reviewResponseGate.promise;
       latest = {
         ...draft,
         state: 'APPROVED',
@@ -235,7 +280,9 @@ test('host retries one intelligence intent, reviews evidence, and explicitly pub
   await page.route(
     `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/${reportId}/publish`,
     async (route) => {
+      publishRequested = true;
       expect(route.request().postDataJSON()).toEqual({ expectedVersion: 1 });
+      await publishResponseGate.promise;
       latest = {
         ...latest,
         state: 'PUBLISHED',
@@ -261,9 +308,65 @@ test('host retries one intelligence intent, reviews evidence, and explicitly pub
   expect(idempotencyKeys).toHaveLength(2);
   expect(idempotencyKeys[0]).toBe(idempotencyKeys[1]);
   await expect(page.getByText('Mixed discussion')).toBeVisible();
+
+  const reviewResponse = page.waitForResponse((response) =>
+    response.url().endsWith(`/reports/${reportId}/review`)
+  );
   await page.getByRole('button', { name: 'Approve draft' }).click();
+  await expect.poll(() => reviewRequested).toBe(true);
+  latestAccessRevoked = true;
+  await page
+    .getByRole('region', { name: 'AI meeting intelligence' })
+    .getByRole('button', { name: 'Refresh' })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'AI meeting intelligence is unavailable' })
+  ).toBeVisible();
+  reviewResponseGate.release();
+  await reviewResponse;
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+  await expect(
+    page.getByRole('heading', { name: 'AI meeting intelligence is unavailable' })
+  ).toBeVisible();
+  await expect(page.getByText('The group aligned on a staged launch')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Approve draft' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Publish to participants' })).toHaveCount(0);
+
+  latestAccessRevoked = false;
+  await page.getByRole('button', { name: 'Try again' }).click();
   await expect(page.getByRole('button', { name: 'Publish to participants' })).toBeVisible();
+
+  const publishResponse = page.waitForResponse((response) =>
+    response.url().endsWith(`/reports/${reportId}/publish`)
+  );
   await page.getByRole('button', { name: 'Publish to participants' }).click();
+  await expect.poll(() => publishRequested).toBe(true);
+  latestAccessRevoked = true;
+  await page
+    .getByRole('region', { name: 'AI meeting intelligence' })
+    .getByRole('button', { name: 'Refresh' })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'AI meeting intelligence is unavailable' })
+  ).toBeVisible();
+  publishResponseGate.release();
+  await publishResponse;
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+  await expect(
+    page.getByRole('heading', { name: 'AI meeting intelligence is unavailable' })
+  ).toBeVisible();
+  await expect(page.getByText('The group aligned on a staged launch')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Publish to participants' })).toHaveCount(0);
+
+  const revokedAccessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    revokedAccessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+
+  latestAccessRevoked = false;
+  await page.getByRole('button', { name: 'Try again' }).click();
   await expect(page.getByText('Published', { exact: true })).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });

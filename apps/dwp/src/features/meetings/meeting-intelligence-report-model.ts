@@ -5,6 +5,12 @@ import type {
   VideoMeetingIntelligenceRun,
 } from '@dwp-frontend/shared-utils/api/video-meeting-intelligence-api';
 
+export type MeetingIntelligenceInsightCollectionKey =
+  'topics' | 'decisions' | 'actionItems' | 'openQuestions' | 'risks';
+
+export type MeetingIntelligenceReportSectionKey =
+  'executiveSummary' | MeetingIntelligenceInsightCollectionKey | 'conversationClimate';
+
 export type MeetingIntelligenceSurfaceState =
   | 'UNAVAILABLE'
   | 'PROCESSING'
@@ -44,6 +50,13 @@ export function selectMeetingIntelligenceReportForViewer(
   if (!report || report.state === 'DELETED' || !report.analysis) return null;
   if (canHost) return report;
   return report.state === 'PUBLISHED' && report.audience === 'MEETING_PARTICIPANTS' ? report : null;
+}
+
+export function selectFreshlyAuthorizedMeetingIntelligenceReport(
+  report: VideoMeetingIntelligenceReport | null | undefined,
+  authorizationRevalidationFailed: boolean
+): VideoMeetingIntelligenceReport | null | undefined {
+  return authorizationRevalidationFailed ? undefined : report;
 }
 
 export function deriveMeetingIntelligenceActions(input: {

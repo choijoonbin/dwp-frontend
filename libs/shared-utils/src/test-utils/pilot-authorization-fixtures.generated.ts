@@ -30,7 +30,7 @@ export type PilotAuthorizationTestCase = Readonly<{
   expected: string;
   requiredRegistryRef: Readonly<{
     bundleKey: 'product-surfaces';
-    version: 1 | 2 | 3;
+    version: 1 | 2 | 3 | 4;
     sha256: string;
   }>;
   activeAccessMode?: 'NORMAL' | 'PROVIDER_SUPPORT';
@@ -70,10 +70,10 @@ export type PilotAuthorizationFixtureBundle = Readonly<{
     authority: 'INFORMATIONAL_ONLY';
     bundleKey: 'product-surfaces';
     indexSha256: string;
-    latestAliasVersion: 3;
+    latestAliasVersion: 4;
     versions: readonly Readonly<{
       bundleKey: 'product-surfaces';
-      version: 1 | 2 | 3;
+      version: 1 | 2 | 3 | 4;
       sha256: string;
     }>[];
   }>;
@@ -1576,7 +1576,7 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
   ],
   fixedClock: '2026-08-21T09:00:00Z',
   fixtureBundleKey: 'pilot-fixtures.v1',
-  fixtureChecksum: '0eb143ce3b2b2d3096666f0b473637424dc4e242ffd48aee3567a517ecd95c15',
+  fixtureChecksum: '9cc07dd3cb51384140d6d8f03652d21456dc3b2054427e73290d1bc0fc047c79',
   fixtureChecksumAlgorithm: 'SHA-256',
   negativeCases: [
     {
@@ -1814,8 +1814,8 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
   registryLineage: {
     authority: 'INFORMATIONAL_ONLY',
     bundleKey: 'product-surfaces',
-    indexSha256: 'dbe810156eabb2e81d21a70d1d1746f2566a8ef2ed6b9331ce334a25d2f2617f',
-    latestAliasVersion: 3,
+    indexSha256: 'bd9184a0d57d3ddadac8459091f8a1b9b1a2ccd19c2de60e130bcfda30176398',
+    latestAliasVersion: 4,
     versions: [
       {
         bundleKey: 'product-surfaces',
@@ -1831,6 +1831,11 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
         bundleKey: 'product-surfaces',
         sha256: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
         version: 3,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
+        version: 4,
       },
     ],
   },

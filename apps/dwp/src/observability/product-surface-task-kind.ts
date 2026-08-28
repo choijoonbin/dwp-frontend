@@ -29,6 +29,19 @@ export function resolveProductSurfaceTaskKind(
     }
   }
 
+  if (
+    (productKey === 'calendar' && surfaceKey === 'calendar.work') ||
+    (productKey === 'dwaion' && surfaceKey === 'dwaion.work') ||
+    (productKey === 'mail' && surfaceKey === 'mail.work') ||
+    (productKey === 'meetings' && surfaceKey === 'meetings.work') ||
+    (productKey === 'messaging' && surfaceKey === 'messaging.work') ||
+    (productKey === 'notifications' && surfaceKey === 'notifications.work') ||
+    (productKey === 'spaces' && surfaceKey === 'spaces.work') ||
+    (productKey === 'workplace' && surfaceKey === 'workplace.work')
+  ) {
+    return 'WORK';
+  }
+
   if (productKey === 'communications') {
     if (surfaceKey === 'communications.work') return 'WORK';
     if (surfaceKey === 'communications.management') return 'OPERATIONS';

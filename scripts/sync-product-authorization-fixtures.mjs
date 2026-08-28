@@ -25,7 +25,7 @@ const EXPECTED_RESERVED_CONTRACTS = new Set([
   'hcm.reference.publish',
   'hcm.integration.rotate-secret',
 ]);
-const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3];
+const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4];
 const EXPECTED_STEP_UP_CHALLENGES = { approval: 4, people: 5 };
 const STEP_UP_CONTEXT_KEYS = Object.freeze({
   STEPUP_HIGH_WORKFLOW_PUBLISH_1: 'approval-management',
@@ -59,6 +59,13 @@ const EXPECTED_AUTHORIZATION_COUNTS = {
     entitlementExpressions: 8,
     predicatePolicies: 25,
     routes: 129,
+  },
+  4: {
+    capabilities: 71,
+    accessPolicies: 22,
+    entitlementExpressions: 16,
+    predicatePolicies: 33,
+    routes: 155,
   },
 };
 const STEP_UP_HEADER_FIELDS = ['alg', 'kid', 'typ'];
@@ -297,16 +304,16 @@ function readAuthorizationRegistry(sourcePath) {
           .sort();
         if (JSON.stringify(packagedBundles) !== JSON.stringify(expectedBundles)) {
           fail(
-            'authorization registry directory must contain exactly immutable bundle v1-v3 files'
+            'authorization registry directory must contain exactly immutable bundle v1-v4 files'
           );
         }
         const aliasPath = path.join(sourcePath, 'product-surfaces-v1.json');
-        const latestPath = path.join(sourcePath, 'product-surfaces-v1.bundle-v3.json');
+        const latestPath = path.join(sourcePath, 'product-surfaces-v1.bundle-v4.json');
         if (
           !fs.statSync(aliasPath, { throwIfNoEntry: false })?.isFile() ||
           !fs.readFileSync(aliasPath).equals(fs.readFileSync(latestPath))
         ) {
-          fail('authorization registry latest alias must be byte-identical to bundle v3');
+          fail('authorization registry latest alias must be byte-identical to bundle v4');
         }
         return {
           index: readJson(
@@ -355,13 +362,13 @@ function readAuthorizationRegistry(sourcePath) {
     index.bundleKey !== 'product-surfaces' ||
     index.indexChecksumAlgorithm !== 'SHA-256' ||
     index.latestVersion !== EXPECTED_REGISTRY_VERSIONS.at(-1) ||
-    index.latestArtifact !== 'product-surfaces-v1.bundle-v3.json' ||
-    index.latestAuthSeedArtifact !== 'product-surfaces-v1.bundle-v3.generated.json' ||
+    index.latestArtifact !== 'product-surfaces-v1.bundle-v4.json' ||
+    index.latestAuthSeedArtifact !== 'product-surfaces-v1.bundle-v4.generated.json' ||
     bundles.length !== EXPECTED_REGISTRY_VERSIONS.length ||
     indexVersions.length !== EXPECTED_REGISTRY_VERSIONS.length ||
     !SHA_256.test(index.indexChecksum)
   ) {
-    fail('authorization registry must close over product-surfaces v1-v3 exactly');
+    fail('authorization registry must close over product-surfaces v1-v4 exactly');
   }
   const indexChecksumInput = structuredClone(index);
   delete indexChecksumInput.indexChecksum;
@@ -400,7 +407,7 @@ function readAuthorizationRegistry(sourcePath) {
     bundlesByVersion.set(version, bundle);
   }
   if (index.latestChecksum !== bundlesByVersion.get(index.latestVersion)?.checksum) {
-    fail('authorization registry latest checksum differs from bundle v3');
+    fail('authorization registry latest checksum differs from bundle v4');
   }
   const rolloutInventory = requireRecord(
     source.rolloutInventory,
@@ -562,7 +569,7 @@ function validateRegistryLineage(bundle, authorizationRegistry) {
   }
   const versions = requireArray(lineage.versions, 'registryLineage.versions');
   if (versions.length !== EXPECTED_REGISTRY_VERSIONS.length) {
-    fail('registryLineage must contain v1-v3 exactly');
+    fail('registryLineage must contain v1-v4 exactly');
   }
   const versionByNumber = new Map();
   for (const [index, expectedVersion] of EXPECTED_REGISTRY_VERSIONS.entries()) {
@@ -1130,6 +1137,8 @@ function validateFixtureBundle(value, authorizationRegistry) {
 
 async function generatedTypescript(bundle) {
   const literal = JSON.stringify(bundle, null, 2);
+  const registryVersionType = EXPECTED_REGISTRY_VERSIONS.join(' | ');
+  const latestRegistryVersion = EXPECTED_REGISTRY_VERSIONS.at(-1);
   const source = `/** @generated from architecture/pilot-fixtures.v1.generated.json. Do not edit manually. */
 
 export type PilotFixtureOpenRecord = Readonly<{ key: string } & Record<string, unknown>>;
@@ -1162,7 +1171,7 @@ export type PilotAuthorizationTestCase = Readonly<{
   expected: string;
   requiredRegistryRef: Readonly<{
     bundleKey: 'product-surfaces';
-    version: 1 | 2 | 3;
+    version: ${registryVersionType};
     sha256: string;
   }>;
   activeAccessMode?: 'NORMAL' | 'PROVIDER_SUPPORT';
@@ -1202,10 +1211,10 @@ export type PilotAuthorizationFixtureBundle = Readonly<{
     authority: 'INFORMATIONAL_ONLY';
     bundleKey: 'product-surfaces';
     indexSha256: string;
-    latestAliasVersion: 3;
+    latestAliasVersion: ${latestRegistryVersion};
     versions: readonly Readonly<{
       bundleKey: 'product-surfaces';
-      version: 1 | 2 | 3;
+      version: ${registryVersionType};
       sha256: string;
     }>[];
   }>;

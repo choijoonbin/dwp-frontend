@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "policyId": "product-surface-release-trust-policy.v1",
+  "repository": "choijoonbin/dwp-backend",
+  "status": "BLOCKED_EXTERNAL",
+  "asOf": "2026-08-28",
+  "automatedWorkflow": {
+    "name": "Backend quality gates",
+    "path": ".github/workflows/backend-quality-gates.yml",
+    "event": "push",
+    "branch": "dwp-dev",
+    "checksum": null
+  },
+  "assignments": [],
+  "deploymentEnvironments": []
+}

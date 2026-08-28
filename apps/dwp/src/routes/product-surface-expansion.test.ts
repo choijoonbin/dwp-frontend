@@ -1,3 +1,4 @@
+import { isValidElement } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { GOVERNED_PRODUCT_MANIFESTS } from '../components/product-manifest-registry';
@@ -16,8 +17,15 @@ import { meetingsRoutes } from './meetings-routes';
 import { messagingRoutes } from './messaging-routes';
 import { notificationRoutes } from './notification-routes';
 import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
-import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './product-page-route-contracts';
-import { resolveProductCanaryBoundaryStrategy } from './product-surface-canary-routes';
+import {
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+  PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+} from './product-page-route-contracts';
+import {
+  ProductCanaryIndexedSurfaceBoundary,
+  ProductCanaryRouteBoundary,
+  resolveProductCanaryBoundaryStrategy,
+} from './product-surface-canary-routes';
 import { roomsRoutes } from './rooms-routes';
 import { spacesRoutes } from './spaces-routes';
 
@@ -67,6 +75,32 @@ function routeContractKeys(routes: readonly RouteObject[]): string[] {
     const own = typeof handle?.routeContractKey === 'string' ? [handle.routeContractKey] : [];
     return [...own, ...routeContractKeys(route.children ?? [])];
   });
+}
+
+function routeByContractKey(
+  routes: readonly RouteObject[],
+  routeContractKey: string
+): RouteObject | undefined {
+  for (const route of routes) {
+    const handle = route.handle as { routeContractKey?: unknown } | undefined;
+    if (handle?.routeContractKey === routeContractKey) return route;
+    const child = routeByContractKey(route.children ?? [], routeContractKey);
+    if (child) return child;
+  }
+  return undefined;
+}
+
+function routeBySurfaceId(
+  routes: readonly RouteObject[],
+  surfaceId: string
+): RouteObject | undefined {
+  for (const route of routes) {
+    const handle = route.handle as { surfaceId?: unknown } | undefined;
+    if (handle?.surfaceId === surfaceId) return route;
+    const child = routeBySurfaceId(route.children ?? [], surfaceId);
+    if (child) return child;
+  }
+  return undefined;
 }
 
 describe('all-product surface expansion', () => {
@@ -140,12 +174,12 @@ describe('all-product surface expansion', () => {
     }
   });
 
-  it('keeps W2/W3 page contracts explicitly DRAFT until matching backend authority exists', () => {
+  it('keeps unmatched W2/W3 page contracts DRAFT after representative authority is published', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(87);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(92);
+    expect(menuContracts).toHaveLength(79);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(84);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -291,9 +325,9 @@ describe('all-product surface expansion', () => {
   });
 
   it.each(ROUTE_TREES)(
-    '%s binds every DRAFT PAGE contract into its Router tree',
+    '%s binds every official and DRAFT PAGE contract into its Router tree',
     (productId, routes) => {
-      const expected = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+      const expected = ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
         (route) => route.productId === productId
       )
         .map((route) => route.routeContractKey)
@@ -301,6 +335,49 @@ describe('all-product surface expansion', () => {
       expect(routeContractKeys(routes).sort()).toEqual(expected);
     }
   );
+
+  it('keeps official and DRAFT PAGE routes fail closed during partial promotion', () => {
+    const officialRoutes = [
+      [roomsRoutes, 'route.workplace.work.explore.page'],
+      [meetingsRoutes, 'route.meetings.work.home.page'],
+      [messagingRoutes, 'route.messaging.work.home.page'],
+    ] as const;
+
+    for (const [routes, routeContractKey] of officialRoutes) {
+      const route = routeByContractKey(routes, routeContractKey);
+      expect(route, routeContractKey).toBeDefined();
+      expect(route?.handle).toMatchObject({ productPageLifecycle: 'OFFICIAL' });
+      expect(isValidElement(route?.element), routeContractKey).toBe(true);
+      if (isValidElement(route?.element)) {
+        expect(route.element.type, routeContractKey).toBe(ProductCanaryRouteBoundary);
+      }
+    }
+
+    const workplaceDraftHome = routeByContractKey(roomsRoutes, 'route.workplace.work.home.page');
+    expect(workplaceDraftHome).toBeDefined();
+    expect(workplaceDraftHome?.handle).toMatchObject({ productPageLifecycle: 'DRAFT' });
+    expect(isValidElement(workplaceDraftHome?.element)).toBe(true);
+    if (isValidElement(workplaceDraftHome?.element)) {
+      expect(workplaceDraftHome.element.type).toBe(ProductCanaryRouteBoundary);
+    }
+
+    const spacesManagement = routeBySurfaceId(spacesRoutes, 'spaces.management');
+    expect(spacesManagement).toBeDefined();
+    expect(spacesManagement?.handle).toMatchObject({
+      surfaceId: 'spaces.management',
+      productSurfaceLifecycle: 'DRAFT',
+    });
+    expect(isValidElement(spacesManagement?.element)).toBe(true);
+    if (isValidElement(spacesManagement?.element)) {
+      expect(spacesManagement.element.type).toBe(ProductCanaryIndexedSurfaceBoundary);
+    }
+
+    const spacesWork = routeBySurfaceId(spacesRoutes, 'spaces.work');
+    expect(spacesWork?.handle).toMatchObject({
+      surfaceId: 'spaces.work',
+      productSurfaceLifecycle: 'OFFICIAL',
+    });
+  });
 
   it('binds HCM personal, team, operations, and management as sibling route surfaces', () => {
     const children = hcmRoutes[0]?.children ?? [];

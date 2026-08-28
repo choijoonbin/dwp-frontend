@@ -100,9 +100,7 @@ function intelligenceLabels(
     refresh: t(`${root}.refresh`),
     refreshing: t(`${root}.refreshing`),
     states: translatedRecord(STATES, (state) => t(`${root}.states.${state}`)),
-    stateDescriptions: translatedRecord(STATES, (state) =>
-      t(`${root}.stateDescriptions.${state}`)
-    ),
+    stateDescriptions: translatedRecord(STATES, (state) => t(`${root}.stateDescriptions.${state}`)),
     generate: t(`${root}.generate`),
     regenerate: t(`${root}.regenerate`),
     generating: t(`${root}.generating`),
@@ -122,12 +120,9 @@ function intelligenceLabels(
     sections: translatedRecord(SECTIONS, (section) => t(`${root}.sections.${section}`)),
     sectionEmpty: t(`${root}.sectionEmpty`),
     citationLabel: (value) => t(`${root}.citationLabel`, { value }),
-    citationDetail: (segmentId, value) =>
-      t(`${root}.citationDetail`, { segmentId, value }),
+    citationDetail: (segmentId, value) => t(`${root}.citationDetail`, { segmentId, value }),
     climateDescription: t(`${root}.climateDescription`),
-    climateLabels: translatedRecord(CLIMATE_LABELS, (label) =>
-      t(`${root}.climateLabels.${label}`)
-    ),
+    climateLabels: translatedRecord(CLIMATE_LABELS, (label) => t(`${root}.climateLabels.${label}`)),
     climateSignals: translatedRecord(CLIMATE_SIGNALS, (signal) =>
       t(`${root}.climateSignals.${signal}`)
     ),

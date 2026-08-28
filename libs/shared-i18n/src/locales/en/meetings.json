@@ -665,8 +665,8 @@
       "screenShare": "Screen sharing",
       "chat": "In-meeting chat",
       "captions": "Live captions",
-    "recording": "Governed recording",
-    "transcript": "Governed transcript",
+      "recording": "Governed recording",
+      "transcript": "Governed transcript",
       "aiNotes": "AI meeting notes"
     },
     "operations": {
@@ -713,72 +713,129 @@
       "chatRetentionHint": "Set 0 to retain messages only while the meeting is live. Enter 0–365 days without exceeding meeting record retention ({{meetingRetentionDays}} days).",
       "chatRetentionRangeError": "Enter a whole number from 0 to 365.",
       "chatRetentionMeetingError": "Meeting chat retention cannot exceed meeting record retention.",
-    "artifactRetention": "Meeting artifact retention (days)",
-    "artifactRetentionMeetingError": "Meeting artifact retention cannot exceed meeting record retention.",
+      "artifactRetention": "Meeting artifact retention (days)",
+      "artifactRetentionMeetingError": "Meeting artifact retention cannot exceed meeting record retention.",
       "maximumParticipants": "Maximum participants",
       "unmuteRequestOnly": "Hosts cannot unmute participants directly; they can only request that participants unmute themselves.",
       "saved": "Meeting policy saved.",
-    "saveError": "Meeting policy could not be saved."
-  },
-  "intelligence": {
-    "loading": "Loading AI and data governance",
-    "title": "AI and data governance",
-    "description": "Verify which meeting intelligence capabilities are actually ready and which operational controls still block release.",
-    "accessBoundary": "This administration view exposes policy and dependency status only. It never grants access to recordings, transcripts, chats, or AI report content.",
-    "capabilitiesTitle": "User-facing capabilities",
-    "capabilitiesDescription": "A capability is ready only when tenant policy, governed processing, and runtime dependencies agree.",
-    "dependenciesTitle": "Processing dependencies",
-    "dependenciesDescription": "Production endpoints, regional controls, encryption, audit, and processors must be independently verified.",
-    "workflowTitle": "Human review and publication",
-    "workflowDescription": "AI output remains a draft until an authorized reviewer verifies the evidence and explicitly publishes it.",
-    "lifecycleTitle": "Retention and evidence",
-    "lifecycleDescription": "Content access, legal hold, expiry, deletion, and immutable evidence are evaluated separately.",
-    "retentionTitle": "Configured retention",
-    "retentionDescription": "Artifact and chat retention must remain within the meeting record boundary.",
-    "observedAt": "Observed {{value}}",
-    "days": "{{value}} days",
-    "states": {
-      "READY": "Ready",
-      "BLOCKED": "Blocked",
-      "CONNECTION_REQUIRED": "Connection required",
-      "NOT_VERIFIED": "Not verified"
+      "saveError": "Meeting policy could not be saved."
     },
-    "reasons": {
-      "POLICY_NEVER": "Tenant policy prohibits this capability.",
-      "CAPABILITY_NOT_CONFIGURED": "The runtime does not report this capability as configured.",
-      "REALTIME_PROVIDER_UNAVAILABLE": "The realtime media provider is unavailable.",
-      "DEPENDENCY_STATUS_CONTRACT_MISSING": "No authoritative dependency readiness contract is connected.",
-      "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "Server-side review and publication enforcement is not verified.",
-      "LEGAL_HOLD_NOT_CONNECTED": "Legal-hold controls are not connected.",
-      "DELETION_EVIDENCE_NOT_CONNECTED": "Deletion execution and evidence are not connected."
-    },
-    "capabilities": {
-      "recording": { "label": "Recording", "description": "Encrypted media capture with visible notice, consent, retention, and deletion evidence." },
-      "transcript": { "label": "Transcript", "description": "Timestamped transcript produced by the approved speech-to-text boundary." },
-      "aiNotes": { "label": "AI meeting intelligence", "description": "Evidence-linked recap and aggregate conversation climate, without individual emotion scoring." }
-    },
-    "dependencies": {
-      "provider": { "label": "Realtime provider", "description": "Media-room availability and tenant isolation." },
-      "region": { "label": "Processing region", "description": "Approved data residency for every processing hop." },
-      "kms": { "label": "Key management", "description": "Envelope encryption and cryptographic deletion readiness." },
-      "audit": { "label": "Audit evidence", "description": "Immutable command, access, review, publication, and deletion evidence." },
-      "egress": { "label": "Recording Egress", "description": "Governed media capture with no unapproved fallback." },
-      "storage": { "label": "Artifact storage", "description": "Tenant-bound encrypted storage and lifecycle enforcement." },
-      "stt": { "label": "Speech to text", "description": "Approved transcript processor with bounded retention." },
-      "llm": { "label": "Language model", "description": "Managed inference with training disabled and zero provider retention." }
-    },
-    "governance": {
-      "humanReview": { "label": "Human review", "description": "A reviewer verifies citations before approval." },
-      "explicitPublish": { "label": "Explicit publication", "description": "Only approved reports may be shared with participants." },
-      "adminContentAccess": { "label": "Content least privilege", "description": "Administrative status access does not imply meeting-content access." },
-      "legalHold": { "label": "Legal hold", "description": "Authorized holds suspend deletion without widening content access." },
-      "deletionEvidence": { "label": "Deletion evidence", "description": "Expiry produces a tombstone and immutable purge evidence." }
-    },
-    "retention": {
-      "meeting": { "label": "Meeting record", "description": "Lifecycle and attendance record boundary." },
-      "artifact": { "label": "Artifacts", "description": "Recording, transcript, and AI report boundary." },
-      "chat": { "label": "Meeting chat", "description": "Conversation-message retention boundary." }
+    "intelligence": {
+      "loading": "Loading AI and data governance",
+      "title": "AI and data governance",
+      "description": "Verify which meeting intelligence capabilities are actually ready and which operational controls still block release.",
+      "accessBoundary": "This administration view exposes policy and dependency status only. It never grants access to recordings, transcripts, chats, or AI report content.",
+      "capabilitiesTitle": "User-facing capabilities",
+      "capabilitiesDescription": "A capability is ready only when tenant policy, governed processing, and runtime dependencies agree.",
+      "dependenciesTitle": "Processing dependencies",
+      "dependenciesDescription": "Production endpoints, regional controls, encryption, audit, and processors must be independently verified.",
+      "workflowTitle": "Human review and publication",
+      "workflowDescription": "AI output remains a draft until an authorized reviewer verifies the evidence and explicitly publishes it.",
+      "lifecycleTitle": "Retention and evidence",
+      "lifecycleDescription": "Content access, legal hold, expiry, deletion, and immutable evidence are evaluated separately.",
+      "retentionTitle": "Configured retention",
+      "retentionDescription": "Artifact and chat retention must remain within the meeting record boundary.",
+      "observedAt": "Observed {{value}}",
+      "days": "{{value}} days",
+      "states": {
+        "READY": "Ready",
+        "BLOCKED": "Blocked",
+        "CONNECTION_REQUIRED": "Connection required",
+        "NOT_VERIFIED": "Not verified"
+      },
+      "reasons": {
+        "POLICY_NEVER": "Tenant policy prohibits this capability.",
+        "CAPABILITY_NOT_CONFIGURED": "The runtime does not report this capability as configured.",
+        "REALTIME_PROVIDER_UNAVAILABLE": "The realtime media provider is unavailable.",
+        "DEPENDENCY_STATUS_CONTRACT_MISSING": "No authoritative dependency readiness contract is connected.",
+        "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "Server-side review and publication enforcement is not verified.",
+        "LEGAL_HOLD_NOT_CONNECTED": "Legal-hold controls are not connected.",
+        "DELETION_EVIDENCE_NOT_CONNECTED": "Deletion execution and evidence are not connected."
+      },
+      "capabilities": {
+        "recording": {
+          "label": "Recording",
+          "description": "Encrypted media capture with visible notice, consent, retention, and deletion evidence."
+        },
+        "transcript": {
+          "label": "Transcript",
+          "description": "Timestamped transcript produced by the approved speech-to-text boundary."
+        },
+        "aiNotes": {
+          "label": "AI meeting intelligence",
+          "description": "Evidence-linked recap and aggregate conversation climate, without individual emotion scoring."
+        }
+      },
+      "dependencies": {
+        "provider": {
+          "label": "Realtime provider",
+          "description": "Media-room availability and tenant isolation."
+        },
+        "region": {
+          "label": "Processing region",
+          "description": "Approved data residency for every processing hop."
+        },
+        "kms": {
+          "label": "Key management",
+          "description": "Envelope encryption and cryptographic deletion readiness."
+        },
+        "audit": {
+          "label": "Audit evidence",
+          "description": "Immutable command, access, review, publication, and deletion evidence."
+        },
+        "egress": {
+          "label": "Recording Egress",
+          "description": "Governed media capture with no unapproved fallback."
+        },
+        "storage": {
+          "label": "Artifact storage",
+          "description": "Tenant-bound encrypted storage and lifecycle enforcement."
+        },
+        "stt": {
+          "label": "Speech to text",
+          "description": "Approved transcript processor with bounded retention."
+        },
+        "llm": {
+          "label": "Language model",
+          "description": "Managed inference with training disabled and zero provider retention."
+        }
+      },
+      "governance": {
+        "humanReview": {
+          "label": "Human review",
+          "description": "A reviewer verifies citations before approval."
+        },
+        "explicitPublish": {
+          "label": "Explicit publication",
+          "description": "Only approved reports may be shared with participants."
+        },
+        "adminContentAccess": {
+          "label": "Content least privilege",
+          "description": "Administrative status access does not imply meeting-content access."
+        },
+        "legalHold": {
+          "label": "Legal hold",
+          "description": "Authorized holds suspend deletion without widening content access."
+        },
+        "deletionEvidence": {
+          "label": "Deletion evidence",
+          "description": "Expiry produces a tombstone and immutable purge evidence."
+        }
+      },
+      "retention": {
+        "meeting": {
+          "label": "Meeting record",
+          "description": "Lifecycle and attendance record boundary."
+        },
+        "artifact": {
+          "label": "Artifacts",
+          "description": "Recording, transcript, and AI report boundary."
+        },
+        "chat": {
+          "label": "Meeting chat",
+          "description": "Conversation-message retention boundary."
+        }
+      }
     }
   }
-}
 }

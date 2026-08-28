@@ -1,6 +1,6 @@
 import { GOVERNED_PRODUCT_MANIFESTS } from '../components/product-manifest-registry';
 import { buildDraftProductPageRouteContractSource } from './draft-product-page-route-contract-source';
-import { OFFICIAL_PRODUCT_IDS } from './official-product-page-route-contracts';
+import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 
 /**
  * Frontend-owned DRAFT routes for W2/W3. They remain fail-closed in 110/111 until the backend
@@ -8,5 +8,5 @@ import { OFFICIAL_PRODUCT_IDS } from './official-product-page-route-contracts';
  */
 export const DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE = buildDraftProductPageRouteContractSource(
   GOVERNED_PRODUCT_MANIFESTS,
-  new Set(OFFICIAL_PRODUCT_IDS)
+  OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
 );

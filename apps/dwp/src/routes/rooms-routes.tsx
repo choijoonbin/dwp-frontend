@@ -5,8 +5,8 @@ import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-do
 import { WORKPLACE_PRODUCT_MANIFEST } from '../features/rooms/workplace-product-manifest';
 import { normalizeProductPath } from '../components/product-manifest';
 import { RoomsLayout } from '../layouts/rooms-layout';
-import { buildDraftProductPageRouteContractSource } from './draft-product-page-route-contract-source';
-import { OFFICIAL_PRODUCT_IDS } from './official-product-page-route-contracts';
+import { buildProductPageRouteContractSource } from './draft-product-page-route-contract-source';
+import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 import {
   AppRouteGuard,
   authenticationFallback,
@@ -31,9 +31,9 @@ const legacyShell = (
 );
 
 const workplaceCanonicalPaths = new Map(
-  buildDraftProductPageRouteContractSource(
+  buildProductPageRouteContractSource(
     [WORKPLACE_PRODUCT_MANIFEST],
-    new Set(OFFICIAL_PRODUCT_IDS)
+    OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
   )
     .filter((route) => !route.pattern.includes(':'))
     .map((route) => [route.pattern.toLowerCase(), route.pattern] as const)

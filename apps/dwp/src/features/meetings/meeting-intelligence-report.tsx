@@ -51,12 +51,31 @@ import {
   deriveMeetingIntelligenceSurfaceState,
   formatMeetingIntelligenceCitation,
   meetingIntelligenceTimestampDuration,
+  selectFreshlyAuthorizedMeetingIntelligenceReport,
   selectMeetingIntelligenceReportForViewer,
   type MeetingIntelligenceGenerateBlocker,
+  type MeetingIntelligenceInsightCollectionKey,
+  type MeetingIntelligenceReportSectionKey,
   type MeetingIntelligenceSurfaceState,
 } from './meeting-intelligence-report-model';
-
-type InsightCollectionKey = 'topics' | 'decisions' | 'actionItems' | 'openQuestions' | 'risks';
+import {
+  createMeetingIntelligenceAuthorizationFence,
+  isMeetingIntelligenceAuthorizationError,
+  MeetingIntelligenceAuthorizationSupersededError,
+  selectMeetingIntelligenceAuthorizedWriteback,
+  type AuthorizedActiveRun,
+  type AuthorizedPublishCommand,
+  type AuthorizedReviewCommand,
+  type AuthorizedRunCommand,
+  type MeetingIntelligenceAuthorizationValidation,
+} from './meeting-intelligence-authorization-fence';
+import {
+  clearIntelligenceIntent,
+  createStoredIntelligenceIntent,
+  persistIntelligenceIntent,
+  readStoredIntelligenceIntent,
+  type StoredIntelligenceIntent,
+} from './meeting-intelligence-intent';
 
 export type MeetingIntelligenceReviewReason = {
   code: string;
@@ -88,7 +107,7 @@ export type MeetingIntelligenceReportLabels = {
   retentionUntil: (value: string) => string;
   legalHold: string;
   schemaVersion: (value: string) => string;
-  sections: Record<'executiveSummary' | InsightCollectionKey | 'conversationClimate', string>;
+  sections: Record<MeetingIntelligenceReportSectionKey, string>;
   sectionEmpty: string;
   citationLabel: (value: string) => string;
   citationDetail: (segmentId: string, value: string) => string;
@@ -119,7 +138,7 @@ export type MeetingIntelligenceReportProps = {
   labels: MeetingIntelligenceReportLabels;
 };
 
-const COLLECTION_ICONS: Record<InsightCollectionKey, LucideIcon> = {
+const COLLECTION_ICONS: Record<MeetingIntelligenceInsightCollectionKey, LucideIcon> = {
   topics: MessageSquareText,
   decisions: ListChecks,
   actionItems: Target,
@@ -138,63 +157,6 @@ const STATUS_COLORS: Record<MeetingIntelligenceSurfaceState, ChipProps['color']>
   DELETED: 'default',
 };
 
-const INTELLIGENCE_INTENT_TTL_MS = 15 * 60 * 1_000;
-
-type StoredIntelligenceIntent = {
-  fingerprint: string;
-  idempotencyKey: string;
-  baselineReportId: string | null;
-  expiresAt: number;
-};
-
-function intelligenceIntentStorageKey(meetingId: string): string {
-  return `dwp.meeting-intelligence.intent.v1:${meetingId}`;
-}
-
-function readStoredIntelligenceIntent(meetingId: string): StoredIntelligenceIntent | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const stored = window.localStorage.getItem(intelligenceIntentStorageKey(meetingId));
-    if (!stored) return null;
-    const parsed = JSON.parse(stored) as Partial<StoredIntelligenceIntent>;
-    if (
-      typeof parsed.fingerprint !== 'string' ||
-      typeof parsed.idempotencyKey !== 'string' ||
-      !/^[0-9a-f-]{36}$/u.test(parsed.idempotencyKey) ||
-      (parsed.baselineReportId !== null && typeof parsed.baselineReportId !== 'string') ||
-      typeof parsed.expiresAt !== 'number' ||
-      parsed.expiresAt <= Date.now()
-    ) {
-      window.localStorage.removeItem(intelligenceIntentStorageKey(meetingId));
-      return null;
-    }
-    return parsed as StoredIntelligenceIntent;
-  } catch {
-    return null;
-  }
-}
-
-function persistIntelligenceIntent(meetingId: string, intent: StoredIntelligenceIntent): void {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(intelligenceIntentStorageKey(meetingId), JSON.stringify(intent));
-  } catch {
-    // The in-memory ref still preserves same-page retries when browser storage is unavailable.
-  }
-}
-
-function clearIntelligenceIntent(meetingId: string, idempotencyKey: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const stored = readStoredIntelligenceIntent(meetingId);
-    if (stored?.idempotencyKey === idempotencyKey) {
-      window.localStorage.removeItem(intelligenceIntentStorageKey(meetingId));
-    }
-  } catch {
-    // A storage failure must not replace the authoritative server result.
-  }
-}
-
 export function MeetingIntelligenceReport({
   meetingId,
   canHost,
@@ -208,35 +170,97 @@ export function MeetingIntelligenceReport({
     () => ['meetings', meetingId, 'intelligence', 'reports', 'latest'] as const,
     [meetingId]
   );
-  const [activeRun, setActiveRun] = useState<VideoMeetingIntelligenceRun | null>(null);
+  const authorizationFenceRef = useRef<ReturnType<
+    typeof createMeetingIntelligenceAuthorizationFence
+  > | null>(null);
+  if (!authorizationFenceRef.current || authorizationFenceRef.current.scope !== meetingId) {
+    authorizationFenceRef.current = createMeetingIntelligenceAuthorizationFence(meetingId);
+  }
+  const authorizationFence = authorizationFenceRef.current;
+  const [authorizationFailureScope, setAuthorizationFailureScope] = useState<string | null>(null);
+  const [activeRunState, setActiveRunState] = useState<AuthorizedActiveRun | null>(null);
   const [reviewReason, setReviewReason] = useState(labels.reviewReasons[0]?.code ?? '');
   const generateIntentRef = useRef<StoredIntelligenceIntent | null>(null);
 
+  const denyAuthorization = (validation?: MeetingIntelligenceAuthorizationValidation) => {
+    const currentFence = authorizationFenceRef.current;
+    if (!currentFence || currentFence.scope !== meetingId) return;
+    const generation = validation ? currentFence.deny(validation) : currentFence.revoke();
+    if (generation === null) return;
+    queryClient.setQueryData<VideoMeetingIntelligenceReport | null>(queryKey, null);
+    setAuthorizationFailureScope(meetingId);
+  };
+
   const latestQuery = useQuery({
     queryKey,
-    queryFn: () => getLatestVisibleVideoMeetingIntelligenceReport(meetingId),
+    queryFn: async () => {
+      const validation = authorizationFenceRef.current?.beginValidation();
+      if (!validation) throw new MeetingIntelligenceAuthorizationSupersededError();
+      try {
+        const report = await getLatestVisibleVideoMeetingIntelligenceReport(meetingId);
+        const currentFence = authorizationFenceRef.current;
+        if (!currentFence || !currentFence.authorize(validation)) {
+          throw new MeetingIntelligenceAuthorizationSupersededError();
+        }
+        setAuthorizationFailureScope((scope) => (scope === meetingId ? null : scope));
+        return report;
+      } catch (error) {
+        if (!(error instanceof MeetingIntelligenceAuthorizationSupersededError)) {
+          denyAuthorization(validation);
+        }
+        throw error;
+      }
+    },
     staleTime: 30_000,
-    retry: 1,
+    retry: (failureCount, error) =>
+      !(error instanceof MeetingIntelligenceAuthorizationSupersededError) &&
+      !isMeetingIntelligenceAuthorizationError(error) &&
+      failureCount < 1,
   });
+  const latestAuthorizationFailed =
+    authorizationFailureScope === meetingId || latestQuery.isError || latestQuery.isRefetchError;
+  const latestReport = selectFreshlyAuthorizedMeetingIntelligenceReport(
+    latestQuery.data,
+    latestAuthorizationFailed
+  );
+
+  const authorizedActiveRun =
+    activeRunState && authorizationFence.canCommit(activeRunState.authorization)
+      ? activeRunState
+      : null;
 
   const runQuery = useQuery({
-    queryKey: ['meetings', meetingId, 'intelligence', 'runs', activeRun?.runId],
-    queryFn: () => getVideoMeetingIntelligenceRun(meetingId, activeRun?.runId ?? ''),
-    enabled: activeRun?.state === 'RUNNING',
+    queryKey: ['meetings', meetingId, 'intelligence', 'runs', authorizedActiveRun?.run.runId],
+    queryFn: async () => {
+      try {
+        return await getVideoMeetingIntelligenceRun(
+          meetingId,
+          authorizedActiveRun?.run.runId ?? ''
+        );
+      } catch (error) {
+        if (isMeetingIntelligenceAuthorizationError(error)) denyAuthorization();
+        throw error;
+      }
+    },
+    enabled: authorizedActiveRun?.run.state === 'RUNNING',
     refetchInterval: (query) => (query.state.data?.state === 'RUNNING' ? 2_000 : false),
-    retry: 1,
+    retry: (failureCount, error) =>
+      !isMeetingIntelligenceAuthorizationError(error) && failureCount < 1,
   });
 
   useEffect(() => {
     const run = runQuery.data;
-    if (!run) return;
-    setActiveRun(run);
-    if (run.state !== 'RUNNING' && generateIntentRef.current) {
-      clearIntelligenceIntent(meetingId, generateIntentRef.current.idempotencyKey);
-      generateIntentRef.current = null;
-    }
-    if (run.state === 'SUCCEEDED') void queryClient.refetchQueries({ queryKey });
-  }, [meetingId, queryClient, queryKey, runQuery.data]);
+    const authorization = authorizedActiveRun?.authorization;
+    if (!run || !authorization) return;
+    authorizationFenceRef.current?.commit(authorization, () => {
+      setActiveRunState({ run, authorization });
+      if (run.state !== 'RUNNING' && generateIntentRef.current) {
+        clearIntelligenceIntent(meetingId, generateIntentRef.current.idempotencyKey);
+        generateIntentRef.current = null;
+      }
+      if (run.state === 'SUCCEEDED') void queryClient.refetchQueries({ queryKey });
+    });
+  }, [authorizedActiveRun?.authorization, meetingId, queryClient, queryKey, runQuery.data]);
 
   useEffect(() => {
     if (labels.reviewReasons.some((reason) => reason.code === reviewReason)) return;
@@ -244,7 +268,7 @@ export function MeetingIntelligenceReport({
   }, [labels.reviewReasons, reviewReason]);
 
   const generateMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: (_command: AuthorizedRunCommand) => {
       const outputLanguage = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
       const fingerprint = [
         meetingId,
@@ -252,19 +276,14 @@ export function MeetingIntelligenceReport({
         contentPlanVersion ?? -1,
         outputLanguage,
       ].join(':');
-      const baselineReportId = latestQuery.data?.reportId ?? null;
+      const baselineReportId = latestReport?.reportId ?? null;
       const persisted = readStoredIntelligenceIntent(meetingId);
       const reusable = [generateIntentRef.current, persisted].find(
         (intent) =>
           intent?.fingerprint === fingerprint && intent.baselineReportId === baselineReportId
       );
       if (!reusable) {
-        generateIntentRef.current = {
-          fingerprint,
-          idempotencyKey: crypto.randomUUID(),
-          baselineReportId,
-          expiresAt: Date.now() + INTELLIGENCE_INTENT_TTL_MS,
-        };
+        generateIntentRef.current = createStoredIntelligenceIntent(fingerprint, baselineReportId);
         persistIntelligenceIntent(meetingId, generateIntentRef.current);
       } else {
         generateIntentRef.current = reusable;
@@ -276,41 +295,55 @@ export function MeetingIntelligenceReport({
         idempotencyKey: generateIntentRef.current.idempotencyKey,
       });
     },
-    onSuccess: async (run) => {
+    onSuccess: async (run, command) => {
+      if (!authorizationFenceRef.current?.canCommit(command.authorization)) return;
       if (run.state !== 'RUNNING' && generateIntentRef.current) {
         clearIntelligenceIntent(meetingId, generateIntentRef.current.idempotencyKey);
         generateIntentRef.current = null;
       }
-      setActiveRun(run);
+      setActiveRunState({ run, authorization: command.authorization });
       if (run.state === 'SUCCEEDED') await queryClient.refetchQueries({ queryKey });
     },
+    onError: (error) => isMeetingIntelligenceAuthorizationError(error) && denyAuthorization(),
   });
 
   const reviewMutation = useMutation({
-    mutationFn: (decision: VideoMeetingIntelligenceReviewDecision) => {
-      const report = latestQuery.data;
-      if (!report) throw new Error('A current intelligence report is required.');
-      return reviewVideoMeetingIntelligenceReport(meetingId, report.reportId, {
-        expectedVersion: report.version,
-        decision,
-        reasonCode: reviewReason,
+    mutationFn: (command: AuthorizedReviewCommand) =>
+      reviewVideoMeetingIntelligenceReport(meetingId, command.report.reportId, {
+        expectedVersion: command.report.version,
+        decision: command.decision,
+        reasonCode: command.reasonCode,
+      }),
+    onSuccess: (report, command) => {
+      authorizationFenceRef.current?.commit(command.authorization, () => {
+        queryClient.setQueryData<VideoMeetingIntelligenceReport | null>(queryKey, (cached) =>
+          selectMeetingIntelligenceAuthorizedWriteback(cached, report, command.report)
+        );
       });
     },
-    onSuccess: (report) => queryClient.setQueryData(queryKey, report),
+    onError: (error) => isMeetingIntelligenceAuthorizationError(error) && denyAuthorization(),
   });
 
   const publishMutation = useMutation({
-    mutationFn: () => {
-      const report = latestQuery.data;
-      if (!report) throw new Error('A current intelligence report is required.');
-      return publishVideoMeetingIntelligenceReport(meetingId, report.reportId, report.version);
+    mutationFn: (command: AuthorizedPublishCommand) =>
+      publishVideoMeetingIntelligenceReport(
+        meetingId,
+        command.report.reportId,
+        command.report.version
+      ),
+    onSuccess: (report, command) => {
+      authorizationFenceRef.current?.commit(command.authorization, () => {
+        queryClient.setQueryData<VideoMeetingIntelligenceReport | null>(queryKey, (cached) =>
+          selectMeetingIntelligenceAuthorizedWriteback(cached, report, command.report)
+        );
+      });
     },
-    onSuccess: (report) => queryClient.setQueryData(queryKey, report),
+    onError: (error) => isMeetingIntelligenceAuthorizationError(error) && denyAuthorization(),
   });
 
-  const currentRun = runQuery.data ?? activeRun;
-  const hostReport = canHost ? latestQuery.data : null;
-  const visibleReport = selectMeetingIntelligenceReportForViewer(latestQuery.data, canHost);
+  const currentRun = authorizedActiveRun ? (runQuery.data ?? authorizedActiveRun.run) : null;
+  const hostReport = canHost ? latestReport : null;
+  const visibleReport = selectMeetingIntelligenceReportForViewer(latestReport, canHost);
   const mutationPending =
     generateMutation.isPending || reviewMutation.isPending || publishMutation.isPending;
   const actions = deriveMeetingIntelligenceActions({
@@ -321,7 +354,7 @@ export function MeetingIntelligenceReport({
     run: currentRun,
     mutationPending,
   });
-  const stateReport = canHost ? latestQuery.data : visibleReport;
+  const stateReport = canHost ? latestReport : visibleReport;
   const state = generateMutation.isPending
     ? 'PROCESSING'
     : runQuery.isError
@@ -336,7 +369,7 @@ export function MeetingIntelligenceReport({
   if (latestQuery.isLoading) {
     return <LoadingState label={labels.loading} variant="skeleton" skeletonRows={7} />;
   }
-  if (latestQuery.isError && latestQuery.data === undefined) {
+  if (latestAuthorizationFailed) {
     return (
       <ErrorState
         title={labels.loadErrorTitle}
@@ -359,18 +392,34 @@ export function MeetingIntelligenceReport({
       reviewReason={reviewReason}
       isRefreshing={latestQuery.isFetching}
       isGenerating={generateMutation.isPending}
-      reviewDecision={reviewMutation.variables ?? null}
+      reviewDecision={reviewMutation.variables?.decision ?? null}
       isPublishing={publishMutation.isPending}
       actionError={actionError || latestQuery.isRefetchError}
       onReviewReasonChange={setReviewReason}
       onRefresh={() => latestQuery.refetch()}
-      onGenerate={() => actions.canGenerate && generateMutation.mutate()}
+      onGenerate={() =>
+        actions.canGenerate &&
+        generateMutation.mutate({ authorization: authorizationFenceRef.current!.capture() })
+      }
       onReview={(decision) =>
         reviewReason &&
         (decision === 'APPROVE' ? actions.canApprove : actions.canReject) &&
-        reviewMutation.mutate(decision)
+        latestReport &&
+        reviewMutation.mutate({
+          authorization: authorizationFenceRef.current!.capture(),
+          decision,
+          reasonCode: reviewReason,
+          report: latestReport,
+        })
       }
-      onPublish={() => actions.canPublish && publishMutation.mutate()}
+      onPublish={() =>
+        actions.canPublish &&
+        latestReport &&
+        publishMutation.mutate({
+          authorization: authorizationFenceRef.current!.capture(),
+          report: latestReport,
+        })
+      }
     />
   );
 }
@@ -479,7 +528,11 @@ export function MeetingIntelligenceReportView({
       )}
 
       <Stack gap={2} sx={{ mt: 2.5 }}>
-        <Alert severity="warning" icon={<ShieldCheck size={19} aria-hidden="true" />}>
+        <Alert
+          severity="warning"
+          icon={<ShieldCheck size={19} aria-hidden="true" />}
+          sx={{ '& .MuiAlert-message': { overflow: 'visible' } }}
+        >
           <Typography fontWeight={800}>{labels.disclaimerTitle}</Typography>
           <Typography variant="body2">{labels.disclaimerDescription}</Typography>
         </Alert>

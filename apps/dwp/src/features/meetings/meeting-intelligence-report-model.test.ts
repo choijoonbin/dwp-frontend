@@ -18,6 +18,7 @@ import {
   formatMeetingIntelligenceCitation,
   formatMeetingIntelligenceTimestamp,
   meetingIntelligenceTimestampDuration,
+  selectFreshlyAuthorizedMeetingIntelligenceReport,
   selectMeetingIntelligenceReportForViewer,
 } from './meeting-intelligence-report-model';
 
@@ -180,6 +181,11 @@ const labels: MeetingIntelligenceReportLabels = {
 };
 
 describe('meeting intelligence report state model', () => {
+  it('drops cached report data when the latest authorization revalidation fails', () => {
+    expect(selectFreshlyAuthorizedMeetingIntelligenceReport(report, false)).toBe(report);
+    expect(selectFreshlyAuthorizedMeetingIntelligenceReport(report, true)).toBeUndefined();
+  });
+
   it('represents processing and domain failure ahead of a previous report state', () => {
     expect(deriveMeetingIntelligenceSurfaceState(report, { ...run, state: 'RUNNING' })).toBe(
       'PROCESSING'

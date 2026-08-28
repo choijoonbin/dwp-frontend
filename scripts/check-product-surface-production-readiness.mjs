@@ -4,6 +4,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { inflateRawSync } from 'node:zlib';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const arguments_ = parseArguments(process.argv.slice(2));
@@ -16,11 +18,60 @@ const schemaPath = resolve(
   arguments_.schema ??
     resolve(root, 'architecture/product-surface-production-readiness.schema.json')
 );
+const internalClosurePath = resolve(
+  arguments_.closure ??
+    resolve(root, 'architecture/product-surface-internal-closure.v1.generated.json')
+);
+const releaseTrustPolicyPath = resolve(
+  arguments_.trustPolicy ??
+    resolve(root, 'architecture/product-surface-release-trust-policy.v1.json')
+);
+const authorizationSnapshotPath = resolve(
+  root,
+  'architecture/product-surface-authorization.v1.json'
+);
+const trustedEvidenceCheckout = resolve(
+  arguments_.evidenceCheckout ?? process.env.DWP_BACKEND_CHECKOUT ?? resolve(root, '../dwp-backend')
+);
+const trustedEvidenceRevision =
+  arguments_.evidenceRevision ?? process.env.DWP_BACKEND_REVISION ?? null;
+const TRUSTED_EVIDENCE_REPOSITORY = 'choijoonbin/dwp-backend';
+const TRUSTED_EVIDENCE_ISSUER = 'dwp-release-attestor';
+const TRUSTED_EVIDENCE_URL = new RegExp(
+  `^https://github\\.com/${TRUSTED_EVIDENCE_REPOSITORY}/blob/([a-f0-9]{40})/(.+)$`,
+  'u'
+);
+const TRUSTED_WORKFLOW_RUN_URL = new RegExp(
+  `^https://github\\.com/${TRUSTED_EVIDENCE_REPOSITORY}/actions/runs/([1-9][0-9]*)/attempts/([1-9][0-9]*)$`,
+  'u'
+);
+const TRUSTED_DEPLOYMENT_URL = new RegExp(
+  `^https://github\\.com/${TRUSTED_EVIDENCE_REPOSITORY}/deployments/[1-9][0-9]*$`,
+  'u'
+);
+const TRUSTED_REVIEW_URL = new RegExp(
+  `^https://github\\.com/${TRUSTED_EVIDENCE_REPOSITORY}/pull/[1-9][0-9]*$`,
+  'u'
+);
+const TRUSTED_AUTOMATED_WORKFLOW = Object.freeze({
+  name: 'Backend quality gates',
+  path: '.github/workflows/backend-quality-gates.yml',
+  event: 'push',
+  branch: 'dwp-dev',
+  command: './gradlew --no-daemon check',
+});
 
 const EXPECTED_GATE_IDS = range('G-', 2, 7);
 const EXPECTED_DECISION_IDS = range('PS-', 1, 11);
 const EXPECTED_EXIT_IDS = range('X-', 1, 8);
 const EXPECTED_NAVIGATION_IDS = range('NC-', 1, 5);
+const EXPECTED_ATTACK_VECTOR_IDS = [
+  'CROSS_TENANT',
+  'SCOPE_ESCAPE',
+  'STALE_AUTHORITY_REVISION',
+  'CONFUSED_DEPUTY',
+  'INTERNAL_HEADER_SPOOF',
+];
 const ALLOWED_STATES = new Set(['COMPLETE', 'PENDING_INTERNAL', 'BLOCKED_EXTERNAL']);
 const ALLOWED_EVIDENCE_TYPES = new Set([
   'OWNER_APPROVAL',
@@ -95,13 +146,6 @@ const PROVENANCE_KIND_BY_EVIDENCE_TYPE = new Map([
   ['USABILITY_STUDY', 'INDEPENDENT_REVIEW_ATTESTATION'],
   ['PENETRATION_TEST', 'INDEPENDENT_REVIEW_ATTESTATION'],
 ]);
-const REPOSITORY_ARTIFACT_EVIDENCE_TYPES = new Set([
-  'OPENAPI',
-  'CONTRACT_CHECKSUM',
-  'PAGE_CONTRACT',
-  'DATA_CONTRACT',
-  'ACTION_CONTRACT',
-]);
 const REQUIRED_EVIDENCE_BY_ID = new Map([
   ['G-02', ['OWNER_APPROVAL', 'OPENAPI', 'CONTRACT_CHECKSUM', 'AUTOMATED_TEST_RUN']],
   ['G-03', ['OWNER_APPROVAL', 'CONTRACT_CHECKSUM', 'AUTOMATED_TEST_RUN']],
@@ -169,11 +213,108 @@ const ITEM_FIELDS = [
   'failClosedEvidence',
 ];
 const PRODUCT_FIELDS = [...ITEM_FIELDS, 'productId', 'routeKinds', 'rolloutDefault'];
+const INTERNAL_CLOSURE_REFERENCE =
+  'architecture/product-surface-internal-closure.v1.generated.json';
+const RELEASE_TRUST_POLICY_STATES = new Set(['ACTIVE', 'BLOCKED_EXTERNAL']);
+const REVIEWER_ASSIGNMENT_FIELDS = [
+  'itemId',
+  'ownerRole',
+  'ownerApprovalReviewers',
+  'artifactReviewers',
+  'independentReviewers',
+];
+const PRODUCT_EXTERNAL_BLOCKERS = new Map(
+  [
+    'approvals',
+    'communications',
+    'services',
+    'hcm',
+    'dwaion',
+    'notifications',
+    'spaces',
+    'calendar',
+    'workplace',
+    'mail',
+    'messaging',
+    'meetings',
+  ].map((productId) => {
+    const token = productId.toUpperCase();
+    return [
+      productId,
+      [
+        `EXTERNAL_${token}_PRODUCT_SECURITY_OWNER_APPROVAL`,
+        `EXTERNAL_${token}_IMMUTABLE_RELEASE_ATTESTATION`,
+      ],
+    ];
+  })
+);
+const INTERNAL_HANDOFF_BLOCKERS = new Map([
+  [
+    'X-01',
+    [
+      'EXTERNAL_X01_SECURITY_AND_PRODUCT_OWNER_APPROVALS',
+      'EXTERNAL_X01_IMMUTABLE_AGGREGATE_RELEASE_ATTESTATION',
+    ],
+  ],
+  [
+    'X-03',
+    ['EXTERNAL_X03_SECURITY_OWNER_APPROVAL', 'EXTERNAL_X03_IMMUTABLE_AUTOMATED_RUN_ATTESTATION'],
+  ],
+]);
+const X04_EXTERNAL_BLOCKERS = [
+  'EXTERNAL_X04_OWNER_APPROVAL',
+  'EXTERNAL_APPROVED_PRODUCTION_REVOCATION_SLO',
+  'EXTERNAL_STAGING_REAL_BROWSER_CAPABILITY_ATTESTATION',
+];
+const X04_FAIL_CLOSED_EVIDENCE = [
+  'libs/shared-utils/src/auth/product-surface-context-provider.tsx',
+  'libs/shared-utils/src/auth/product-surface-context-provider.x04.mounted.test.tsx',
+  'scripts/x04-local-revocation-slo.config.json',
+  'scripts/check-x04-local-revocation-slo.mjs',
+  'docs/06-delivery/release-evidence/X-04-local-revocation-multitab.md',
+];
+const ATTESTATION_DETAIL_BY_KIND = new Map([
+  ['OWNER_APPROVAL_ATTESTATION', 'approval'],
+  ['REVIEWED_ARTIFACT_ATTESTATION', 'artifact'],
+  ['AUTOMATED_RUN_ATTESTATION', 'run'],
+  ['DEPLOYMENT_ATTESTATION', 'deployment'],
+  ['INDEPENDENT_REVIEW_ATTESTATION', 'review'],
+]);
+let resolvedTrustedEvidenceRevision;
+let resolvedTrustedEvidenceTree;
+let trustedEvidenceTreeAttempted = false;
+const remoteEvidenceClaims = [];
+const githubJsonCache = new Map();
+const githubBytesCache = new Map();
+let trustedReleasePolicy;
+let trustedReviewerAssignments = new Map();
 
 const errors = [];
+if (trustedEvidenceRevision !== null && !/^[a-f0-9]{40}$/.test(trustedEvidenceRevision)) {
+  errors.push('official Backend evidence revision must be a full lowercase commit SHA.');
+}
 const schema = readJson(schemaPath, 'Product Surface readiness schema', errors);
 const manifest = readJson(manifestPath, 'Product Surface readiness manifest', errors);
-if (schema && manifest) validateManifest(manifest, schema);
+const internalClosure = readJson(
+  internalClosurePath,
+  'Product Surface internal closure snapshot',
+  errors
+);
+const releaseTrustPolicy = readJson(
+  releaseTrustPolicyPath,
+  'Product Surface release trust policy',
+  errors
+);
+const authorizationSnapshot = readJson(
+  authorizationSnapshotPath,
+  'Product Surface authorization snapshot',
+  errors
+);
+if (schema && manifest && internalClosure && authorizationSnapshot && releaseTrustPolicy) {
+  validateReleaseTrustPolicy(releaseTrustPolicy, manifest);
+  validateManifest(manifest, schema, internalClosure, authorizationSnapshot);
+  validateOnlineReleaseEvidence(manifest);
+}
 
 if (errors.length > 0) {
   console.error('Product Surface production readiness evidence is invalid:\n');
@@ -188,7 +329,7 @@ const items = [
   ...manifest.exitCriteria,
 ];
 const incomplete = items.filter((item) => item.releaseRequired && item.state !== 'COMPLETE');
-printSummary(manifest, incomplete);
+printSummary(manifest, incomplete, internalClosure);
 if (arguments_.release && incomplete.length > 0) {
   console.error('\nProduct Surface production release is blocked by incomplete evidence:');
   incomplete.forEach((item) =>
@@ -198,7 +339,7 @@ if (arguments_.release && incomplete.length > 0) {
 }
 if (arguments_.release) console.log('\nProduct Surface production release gate passed.');
 
-function validateManifest(value, schemaValue) {
+function validateManifest(value, schemaValue, closureValue, authorizationValue) {
   validateSchemaIdentity(schemaValue);
   validateClosedFields(value, ROOT_FIELDS, 'manifest');
   if (value.$schema !== '../../../architecture/product-surface-production-readiness.schema.json') {
@@ -220,6 +361,8 @@ function validateManifest(value, schemaValue) {
   validateSection(value.decisions, EXPECTED_DECISION_IDS, 'decisions');
   validateProducts(value.products);
   validateSection(value.exitCriteria, EXPECTED_EXIT_IDS, 'exitCriteria');
+  validateInternalClosureHandoff(value, closureValue, authorizationValue);
+  validateX04Boundary(value);
 
   const allItems = [
     ...(value.productionGates ?? []),
@@ -228,7 +371,9 @@ function validateManifest(value, schemaValue) {
     ...(value.exitCriteria ?? []),
   ];
   validateEvidenceReferenceIsolation(
-    allItems.flatMap((item) => item?.evidence ?? []),
+    allItems.flatMap((item) =>
+      (item?.evidence ?? []).map((evidence) => ({ itemId: item.id, evidence }))
+    ),
     'manifest'
   );
   const blocked = allItems.some((item) => item?.releaseRequired && item.state !== 'COMPLETE');
@@ -400,6 +545,346 @@ function validateProducts(value) {
   }
 }
 
+function validateInternalClosureHandoff(manifestValue, closure, authorization) {
+  const closureFields = [
+    'schemaVersion',
+    'closureKey',
+    'generatedFrom',
+    'attackVectors',
+    'products',
+    'summary',
+  ];
+  const sourceFields = [
+    'backend',
+    'authorizationBundle',
+    'negativeMatrix',
+    'rolloutInventory',
+    'agentEvidence',
+  ];
+  const productFields = [
+    'productId',
+    'contractStatus',
+    'routeKinds',
+    'ownerService',
+    'attackEvidence',
+    'qualifiedAttackIds',
+    'missingAttackIds',
+    'blocker',
+  ];
+  const summaryFields = [
+    'productCount',
+    'exactProducts',
+    'internallyClosedProducts',
+    'totalAttackCells',
+    'qualifiedAttackCells',
+    'missingAttackCells',
+    'productBlockers',
+    'completionState',
+  ];
+  if (!isRecord(closure)) {
+    errors.push('internal closure snapshot must be an object.');
+    return;
+  }
+  validateClosedFields(closure, closureFields, 'internal closure snapshot');
+  if (closure.schemaVersion !== 1 || closure.closureKey !== 'product-surface-internal-closure.v1') {
+    errors.push('internal closure snapshot identity is invalid.');
+  }
+  validateClosedFields(closure.generatedFrom, sourceFields, 'internal closure generatedFrom');
+  validateClosedFields(
+    closure.generatedFrom?.backend,
+    ['repository', 'revision'],
+    'internal closure Backend source'
+  );
+  validateClosedFields(
+    closure.generatedFrom?.authorizationBundle,
+    ['artifact', 'version', 'checksum'],
+    'internal closure authorizationBundle'
+  );
+  validateClosedFields(
+    closure.generatedFrom?.negativeMatrix,
+    ['artifact', 'matrixId', 'artifactChecksum', 'projectionChecksum'],
+    'internal closure negativeMatrix'
+  );
+  validateClosedFields(
+    closure.generatedFrom?.rolloutInventory,
+    ['artifact', 'checksum'],
+    'internal closure rolloutInventory'
+  );
+  validateClosedFields(
+    closure.generatedFrom?.agentEvidence,
+    ['artifact', 'repository', 'revision', 'checksum', 'artifactChecksum', 'sourceCiRun'],
+    'internal closure Agent evidence'
+  );
+  validateClosedFields(
+    closure.generatedFrom?.agentEvidence?.sourceCiRun,
+    ['provider', 'workflow', 'runId', 'url', 'headSha', 'conclusion'],
+    'internal closure Agent source CI run'
+  );
+  if (
+    closure.generatedFrom?.backend?.repository !== 'https://github.com/choijoonbin/dwp-backend' ||
+    !/^[a-f0-9]{40}$/.test(closure.generatedFrom?.backend?.revision ?? '') ||
+    closure.generatedFrom?.authorizationBundle?.artifact !== 'product-surfaces-v1.bundle-v4.json' ||
+    closure.generatedFrom?.authorizationBundle?.version !== 4 ||
+    !/^[a-f0-9]{64}$/.test(closure.generatedFrom?.authorizationBundle?.checksum ?? '') ||
+    closure.generatedFrom?.negativeMatrix?.artifact !== 'authorization-negative-matrix.v1.json' ||
+    closure.generatedFrom?.negativeMatrix?.matrixId !==
+      'product-authorization-negative-matrix.v1' ||
+    !/^[a-f0-9]{64}$/.test(closure.generatedFrom?.negativeMatrix?.artifactChecksum ?? '') ||
+    !/^[a-f0-9]{64}$/.test(closure.generatedFrom?.negativeMatrix?.projectionChecksum ?? '') ||
+    closure.generatedFrom?.rolloutInventory?.artifact !==
+      'product-surface-rollout-inventory.v1.generated.json' ||
+    !/^[a-f0-9]{64}$/.test(closure.generatedFrom?.rolloutInventory?.checksum ?? '')
+  ) {
+    errors.push('internal closure source identity or checksum metadata is invalid.');
+  }
+  const agentEvidence = closure.generatedFrom?.agentEvidence;
+  const agentRun = agentEvidence?.sourceCiRun;
+  if (
+    agentEvidence?.artifact !== 'dwaion-agent-pep-attestation.v1.json' ||
+    agentEvidence?.repository !== 'https://github.com/choijoonbin/aura_agent' ||
+    !/^[a-f0-9]{40}$/.test(agentEvidence?.revision ?? '') ||
+    !/^[a-f0-9]{64}$/.test(agentEvidence?.checksum ?? '') ||
+    !/^[a-f0-9]{64}$/.test(agentEvidence?.artifactChecksum ?? '') ||
+    agentRun?.provider !== 'GITHUB_ACTIONS' ||
+    agentRun?.workflow !== 'Agent quality' ||
+    agentRun?.url !== `${agentEvidence?.repository}/actions/runs/${agentRun?.runId}` ||
+    agentRun?.headSha !== agentEvidence?.revision ||
+    agentRun?.conclusion !== 'success'
+  ) {
+    errors.push('internal closure Agent evidence provenance is invalid.');
+  }
+  if (!sameOrderedValues(closure.attackVectors, EXPECTED_ATTACK_VECTOR_IDS)) {
+    errors.push('internal closure attack vectors must match the fixed five-vector matrix.');
+  }
+  validateClosedFields(closure.summary, summaryFields, 'internal closure summary');
+
+  const inventoryProducts = authorization?.rolloutInventory?.products ?? [];
+  if (
+    authorization?.index?.latestVersion !== 4 ||
+    authorization?.latestAlias?.version !== 4 ||
+    closure.generatedFrom?.authorizationBundle?.checksum !== authorization?.latestAlias?.checksum ||
+    closure.generatedFrom?.rolloutInventory?.checksum !== authorization?.rolloutInventory?.checksum
+  ) {
+    errors.push('internal closure snapshot is not bound to the synced v4 authorization snapshot.');
+  }
+  validateExactIds(
+    closure.products,
+    inventoryProducts,
+    'internal closure products',
+    (item) => item?.productId
+  );
+
+  const routeKindsByProduct = new Map(inventoryProducts.map((productId) => [productId, new Set()]));
+  for (const route of authorization?.latestAlias?.routes ?? []) {
+    if (route?.subject?.type !== 'PRODUCT') continue;
+    if (!routeKindsByProduct.has(route.subject.productKey)) {
+      errors.push(
+        `authorization snapshot contains product outside rollout inventory: ${route.subject.productKey}.`
+      );
+      continue;
+    }
+    routeKindsByProduct.get(route.subject.productKey).add(route.routeKind);
+  }
+
+  const closureByProduct = new Map();
+  let exactProducts = 0;
+  let internallyClosedProducts = 0;
+  let qualifiedAttackCells = 0;
+  let productBlockers = 0;
+  for (const product of closure.products ?? []) {
+    const label = `internal closure ${product?.productId ?? 'product'}`;
+    if (!isRecord(product)) {
+      errors.push(`${label} must be an object.`);
+      continue;
+    }
+    validateClosedFields(product, productFields, label);
+    closureByProduct.set(product.productId, product);
+    const expectedRouteKinds = ['PAGE', 'DATA', 'ACTION'].filter((routeKind) =>
+      routeKindsByProduct.get(product.productId)?.has(routeKind)
+    );
+    const expectedContractStatus =
+      expectedRouteKinds.length === 0
+        ? 'MISSING'
+        : sameOrderedValues(expectedRouteKinds, ['PAGE', 'DATA', 'ACTION'])
+          ? 'EXACT'
+          : 'INCOMPLETE_KINDS';
+    if (
+      !sameOrderedValues(product.routeKinds, expectedRouteKinds) ||
+      product.contractStatus !== expectedContractStatus
+    ) {
+      errors.push(
+        `${label} route kinds or contract status differ from the v4 authorization bundle.`
+      );
+    }
+    if (expectedContractStatus === 'EXACT') exactProducts += 1;
+    if (!nonBlank(product.ownerService)) errors.push(`${label} requires ownerService.`);
+    if (!isRecord(product.attackEvidence)) {
+      errors.push(`${label} attackEvidence must be an object.`);
+      continue;
+    }
+    validateClosedFields(product.attackEvidence, EXPECTED_ATTACK_VECTOR_IDS, `${label} evidence`);
+    const calculatedQualified = [];
+    for (const attackId of EXPECTED_ATTACK_VECTOR_IDS) {
+      const references = product.attackEvidence[attackId];
+      if (!Array.isArray(references)) {
+        errors.push(`${label} ${attackId} evidence must be an array.`);
+        continue;
+      }
+      validateUnique(references, `${label} ${attackId} evidence`);
+      if (references.length > 0) calculatedQualified.push(attackId);
+    }
+    const calculatedMissing = EXPECTED_ATTACK_VECTOR_IDS.filter(
+      (attackId) => !calculatedQualified.includes(attackId)
+    );
+    if (
+      !sameOrderedValues(product.qualifiedAttackIds, calculatedQualified) ||
+      !sameOrderedValues(product.missingAttackIds, calculatedMissing)
+    ) {
+      errors.push(`${label} qualified and missing attack cells must be calculation-derived.`);
+    }
+    qualifiedAttackCells += calculatedQualified.length;
+    const internallyClosed =
+      expectedContractStatus === 'EXACT' &&
+      calculatedMissing.length === 0 &&
+      product.blocker === null;
+    if (!internallyClosed && !nonBlank(product.blocker)) {
+      errors.push(`${label} requires a blocker while its internal closure is incomplete.`);
+    }
+    if (internallyClosed) internallyClosedProducts += 1;
+    if (product.blocker !== null) productBlockers += 1;
+  }
+
+  const productCount = inventoryProducts.length;
+  const totalAttackCells = productCount * EXPECTED_ATTACK_VECTOR_IDS.length;
+  const completionState =
+    exactProducts === productCount &&
+    qualifiedAttackCells === totalAttackCells &&
+    productBlockers === 0
+      ? 'COMPLETE'
+      : 'PARTIAL';
+  const expectedSummary = {
+    productCount,
+    exactProducts,
+    internallyClosedProducts,
+    totalAttackCells,
+    qualifiedAttackCells,
+    missingAttackCells: totalAttackCells - qualifiedAttackCells,
+    productBlockers,
+    completionState,
+  };
+  if (canonicalJsonForChecksum(closure.summary) !== canonicalJsonForChecksum(expectedSummary)) {
+    errors.push('internal closure summary contains non-calculated values.');
+  }
+
+  const matrixProjection = {
+    schemaVersion: 1,
+    matrixId: closure.generatedFrom?.negativeMatrix?.matrixId,
+    completionState,
+    rolloutInventory: {
+      reference:
+        'contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json',
+      checksum: closure.generatedFrom?.rolloutInventory?.checksum,
+    },
+    exactContract: {
+      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      checksum: closure.generatedFrom?.authorizationBundle?.checksum,
+      products: inventoryProducts,
+    },
+    attackVectors: EXPECTED_ATTACK_VECTOR_IDS,
+    products: inventoryProducts.map((productId) => {
+      const product = closureByProduct.get(productId) ?? {};
+      return {
+        productId,
+        contractStatus: product.contractStatus,
+        ownerService: product.ownerService,
+        attackEvidence: product.attackEvidence,
+        missingAttackIds: product.missingAttackIds,
+        blocker: product.blocker,
+      };
+    }),
+  };
+  if (
+    closure.generatedFrom?.negativeMatrix?.projectionChecksum !== canonicalSha256(matrixProjection)
+  ) {
+    errors.push('internal closure matrix projection checksum does not match its evidence.');
+  }
+
+  const readinessByProduct = new Map(
+    (manifestValue.products ?? []).map((product) => [product.productId, product])
+  );
+  for (const productId of inventoryProducts) {
+    const readiness = readinessByProduct.get(productId);
+    const internal = closureByProduct.get(productId);
+    if (readiness?.state === 'BLOCKED_EXTERNAL' || readiness?.state === 'COMPLETE') {
+      if (
+        internal?.contractStatus !== 'EXACT' ||
+        internal?.missingAttackIds?.length !== 0 ||
+        internal?.blocker !== null
+      ) {
+        errors.push(`${readiness.id} cannot hand off externally before exact internal closure.`);
+      }
+      if (readiness?.state === 'BLOCKED_EXTERNAL') {
+        requireExactExternalHandoff(readiness, PRODUCT_EXTERNAL_BLOCKERS.get(productId));
+      }
+    }
+  }
+
+  const exitById = new Map((manifestValue.exitCriteria ?? []).map((item) => [item.id, item]));
+  const x01 = exitById.get('X-01');
+  const x03 = exitById.get('X-03');
+  if (completionState === 'COMPLETE') {
+    for (const product of manifestValue.products ?? []) {
+      if (product.state === 'PENDING_INTERNAL') {
+        errors.push(`${product.id} cannot remain PENDING_INTERNAL after 12/12 and 60/60 closure.`);
+      }
+    }
+    for (const item of [x01, x03]) {
+      if (item?.state === 'PENDING_INTERNAL') {
+        errors.push(`${item.id} cannot remain PENDING_INTERNAL after calculated internal closure.`);
+      }
+      if (item?.state === 'BLOCKED_EXTERNAL') {
+        requireExactExternalHandoff(item, INTERNAL_HANDOFF_BLOCKERS.get(item.id));
+      }
+    }
+  } else {
+    for (const product of manifestValue.products ?? []) {
+      if (product.state !== 'PENDING_INTERNAL') {
+        errors.push(`${product.id} must remain PENDING_INTERNAL until 12/12 and 60/60 closure.`);
+      }
+    }
+    if (x01?.state !== 'PENDING_INTERNAL') {
+      errors.push('X-01 must remain PENDING_INTERNAL while any product closure is incomplete.');
+    }
+    if (x03?.state !== 'PENDING_INTERNAL') {
+      errors.push('X-03 must remain PENDING_INTERNAL while the five-vector matrix is PARTIAL.');
+    }
+  }
+}
+
+function requireExactExternalHandoff(item, expectedBlockers) {
+  if (!sameSet(item?.blockers, expectedBlockers ?? [])) {
+    errors.push(`${item?.id ?? 'item'} external handoff blockers do not match the fixed contract.`);
+  }
+  if (!(item?.failClosedEvidence ?? []).includes(INTERNAL_CLOSURE_REFERENCE)) {
+    errors.push(
+      `${item?.id ?? 'item'} external handoff must retain the internal closure snapshot.`
+    );
+  }
+}
+
+function validateX04Boundary(manifestValue) {
+  const x04 = (manifestValue.exitCriteria ?? []).find((item) => item.id === 'X-04');
+  if (x04?.state === 'COMPLETE') return;
+  if (x04?.state !== 'BLOCKED_EXTERNAL' || !sameSet(x04?.blockers, X04_EXTERNAL_BLOCKERS)) {
+    errors.push('X-04 must remain BLOCKED_EXTERNAL on the approved production evidence boundary.');
+  }
+  if (
+    !X04_FAIL_CLOSED_EVIDENCE.every((reference) => x04?.failClosedEvidence?.includes(reference))
+  ) {
+    errors.push('X-04 must retain the deterministic local fail-closed evidence set.');
+  }
+}
+
 function validateItem(item, allowedFields) {
   if (!isRecord(item)) {
     errors.push('readiness section contains a non-object item.');
@@ -427,7 +912,7 @@ function validateItem(item, allowedFields) {
   }
   requireEvidenceTypes(item, REQUIRED_EVIDENCE_BY_ID.get(item.id));
   validateApproval(item);
-  for (const evidence of item.evidence ?? []) validateEvidence(evidence, label);
+  for (const evidence of item.evidence ?? []) validateEvidence(evidence, item);
   validateEvidenceReferenceIsolation(item.evidence ?? [], label);
   for (const reference of item.failClosedEvidence ?? []) {
     validateRepositoryPath(reference, `${label} failClosedEvidence`);
@@ -455,6 +940,146 @@ function validateItem(item, allowedFields) {
   }
 }
 
+function validateReleaseTrustPolicy(policy, manifestValue) {
+  const fields = [
+    'schemaVersion',
+    'policyId',
+    'repository',
+    'status',
+    'asOf',
+    'automatedWorkflow',
+    'assignments',
+    'deploymentEnvironments',
+  ];
+  validateClosedFields(policy, fields, 'release trust policy');
+  if (
+    policy.schemaVersion !== 1 ||
+    policy.policyId !== 'product-surface-release-trust-policy.v1' ||
+    policy.repository !== TRUSTED_EVIDENCE_REPOSITORY ||
+    !RELEASE_TRUST_POLICY_STATES.has(policy.status) ||
+    !/^\d{4}-\d{2}-\d{2}$/u.test(policy.asOf ?? '') ||
+    !Array.isArray(policy.assignments) ||
+    !Array.isArray(policy.deploymentEnvironments)
+  ) {
+    errors.push('release trust policy identity or lifecycle is invalid.');
+    return;
+  }
+  validateClosedFields(
+    policy.automatedWorkflow,
+    ['name', 'path', 'event', 'branch', 'checksum'],
+    'release trust automated workflow'
+  );
+  if (
+    policy.automatedWorkflow?.name !== TRUSTED_AUTOMATED_WORKFLOW.name ||
+    policy.automatedWorkflow?.path !== TRUSTED_AUTOMATED_WORKFLOW.path ||
+    policy.automatedWorkflow?.event !== TRUSTED_AUTOMATED_WORKFLOW.event ||
+    policy.automatedWorkflow?.branch !== TRUSTED_AUTOMATED_WORKFLOW.branch ||
+    !(
+      policy.automatedWorkflow?.checksum === null ||
+      /^sha256:[a-f0-9]{64}$/u.test(policy.automatedWorkflow?.checksum ?? '')
+    )
+  ) {
+    errors.push('release trust automated workflow identity or checksum is invalid.');
+  }
+  const items = [
+    ...(manifestValue.productionGates ?? []),
+    ...(manifestValue.decisions ?? []),
+    ...(manifestValue.products ?? []),
+    ...(manifestValue.exitCriteria ?? []),
+  ];
+  const itemsById = new Map(items.map((item) => [item.id, item]));
+  const assignments = new Map();
+  for (const assignment of policy.assignments) {
+    if (!isRecord(assignment)) {
+      errors.push('release reviewer assignment must be an object.');
+      continue;
+    }
+    validateClosedFields(assignment, REVIEWER_ASSIGNMENT_FIELDS, 'release reviewer assignment');
+    const item = itemsById.get(assignment.itemId);
+    if (!item || assignment.ownerRole !== item.owner) {
+      errors.push(`${assignment.itemId ?? 'unknown'} reviewer assignment owner is invalid.`);
+    }
+    if (assignments.has(assignment.itemId)) {
+      errors.push(`release reviewer policy contains duplicate ${assignment.itemId} assignments.`);
+    }
+    for (const field of ['ownerApprovalReviewers', 'artifactReviewers', 'independentReviewers']) {
+      const reviewers = assignment[field];
+      if (!Array.isArray(reviewers)) {
+        errors.push(`${assignment.itemId ?? 'unknown'} ${field} must be an array.`);
+        continue;
+      }
+      validateUnique(reviewers, `${assignment.itemId} ${field}`);
+      if (
+        reviewers.some((reviewer) => !/^[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?$/u.test(reviewer)) ||
+        !sameOrderedValues(reviewers, [...reviewers].sort())
+      ) {
+        errors.push(`${assignment.itemId} ${field} must contain sorted canonical GitHub logins.`);
+      }
+    }
+    assignments.set(assignment.itemId, assignment);
+  }
+  const deploymentEnvironments = new Map();
+  for (const binding of policy.deploymentEnvironments) {
+    validateClosedFields(
+      binding,
+      ['itemId', 'claim', 'environment'],
+      'release deployment environment binding'
+    );
+    const key = `${binding?.itemId}:${binding?.claim}`;
+    const item = itemsById.get(binding?.itemId);
+    if (
+      !item ||
+      !(item.requiredEvidenceTypes ?? []).includes(binding?.claim) ||
+      PROVENANCE_KIND_BY_EVIDENCE_TYPE.get(binding?.claim) !== 'DEPLOYMENT_ATTESTATION' ||
+      !/^[a-z][a-z0-9-]{1,62}$/u.test(binding?.environment ?? '') ||
+      deploymentEnvironments.has(key)
+    ) {
+      errors.push(`${key} release deployment environment binding is invalid.`);
+    }
+    deploymentEnvironments.set(key, binding?.environment);
+  }
+  if (policy.status === 'ACTIVE') {
+    validateExactIds(
+      policy.assignments,
+      items.map(({ id }) => id),
+      'release reviewer assignments',
+      (entry) => entry?.itemId
+    );
+    for (const item of items) {
+      const assignment = assignments.get(item.id);
+      if (
+        !assignment ||
+        (assignment.ownerApprovalReviewers?.length ?? 0) === 0 ||
+        (assignment.artifactReviewers?.length ?? 0) === 0 ||
+        ((item.requiredEvidenceTypes ?? []).some((type) =>
+          [
+            'PRIVACY_APPROVAL',
+            'ACCESSIBILITY_MANUAL_AT',
+            'TELEMETRY_RETENTION',
+            'USABILITY_STUDY',
+            'PENETRATION_TEST',
+          ].includes(type)
+        ) &&
+          (assignment.independentReviewers?.length ?? 0) === 0)
+      ) {
+        errors.push(`${item.id} active reviewer assignment is incomplete.`);
+      }
+      for (const type of (item.requiredEvidenceTypes ?? []).filter(
+        (candidate) => PROVENANCE_KIND_BY_EVIDENCE_TYPE.get(candidate) === 'DEPLOYMENT_ATTESTATION'
+      )) {
+        if (!deploymentEnvironments.has(`${item.id}:${type}`)) {
+          errors.push(`${item.id}:${type} active deployment environment binding is missing.`);
+        }
+      }
+    }
+    if (!/^sha256:[a-f0-9]{64}$/u.test(policy.automatedWorkflow?.checksum ?? '')) {
+      errors.push('active release trust policy requires an immutable workflow checksum.');
+    }
+  }
+  trustedReleasePolicy = { ...policy, deploymentEnvironments };
+  trustedReviewerAssignments = assignments;
+}
+
 function validateApproval(item) {
   const approval = item.approval;
   if (!isRecord(approval)) {
@@ -469,12 +1094,19 @@ function validateApproval(item) {
       errors.push(`${item.id} COMPLETE requires named approvers.`);
     }
     if (!isoDateTime(approval.approvedAt)) errors.push(`${item.id} COMPLETE requires approvedAt.`);
+    const assignment = trustedReviewerAssignments.get(item.id);
+    if (trustedReleasePolicy?.status !== 'ACTIVE' || !assignment) {
+      errors.push(`${item.id} COMPLETE requires an active immutable reviewer assignment.`);
+    } else if (!sameSet(approval.approvedBy, assignment.ownerApprovalReviewers)) {
+      errors.push(`${item.id} approvedBy does not match its immutable reviewer policy.`);
+    }
   } else if ((approval.approvedBy ?? []).length > 0 || approval.approvedAt !== null) {
     errors.push(`${item.id} incomplete approval must remain empty and undated.`);
   }
 }
 
-function validateEvidence(value, label) {
+function validateEvidence(value, item) {
+  const label = item.id;
   if (!isRecord(value)) {
     errors.push(`${label} evidence must be an object.`);
     return;
@@ -484,31 +1116,31 @@ function validateEvidence(value, label) {
     if (!(field in value)) errors.push(`${label} evidence requires ${field}.`);
   if (!ALLOWED_EVIDENCE_TYPES.has(value.type)) errors.push(`${label} evidence type is invalid.`);
   if (!nonBlank(value.owner)) errors.push(`${label} evidence requires owner.`);
+  if (value.owner !== item.owner) errors.push(`${label} evidence owner must equal its item owner.`);
   if (!isoDateTime(value.recordedAt)) errors.push(`${label} evidence requires an ISO date-time.`);
   if (!/^sha256:[a-f0-9]{64}$/.test(value.checksum ?? '')) {
     errors.push(`${label} evidence requires an immutable sha256 checksum.`);
   }
-  if (typeof value.reference !== 'string') {
-    errors.push(`${label} evidence requires reference.`);
-  } else if (!value.reference.startsWith('https://')) {
-    if (!REPOSITORY_ARTIFACT_EVIDENCE_TYPES.has(value.type)) {
-      errors.push(`${label} ${value.type} evidence requires an HTTPS evidence reference.`);
-    }
-    validateRepositoryPath(value.reference, `${label} evidence reference`);
-    const evidencePath = resolve(root, value.reference);
-    if (existsSync(evidencePath) && /^sha256:[a-f0-9]{64}$/.test(value.checksum ?? '')) {
-      const actualChecksum = `sha256:${createHash('sha256')
-        .update(readFileSync(evidencePath))
-        .digest('hex')}`;
-      if (value.checksum !== actualChecksum) {
-        errors.push(`${label} evidence checksum does not match ${value.reference}.`);
-      }
-    }
+  const evidenceReference = parseTrustedEvidenceReference(
+    value.reference,
+    value.provenance?.sourceRevision,
+    `${label} evidence reference`
+  );
+  const evidenceBytes = evidenceReference
+    ? readTrustedEvidenceFile(evidenceReference, `${label} evidence`)
+    : undefined;
+  if (
+    evidenceBytes &&
+    /^sha256:[a-f0-9]{64}$/.test(value.checksum ?? '') &&
+    value.checksum !== digestBytes(evidenceBytes)
+  ) {
+    errors.push(`${label} evidence checksum does not match its revision-bound file.`);
   }
-  validateEvidenceProvenance(value.provenance, value.type, label);
+  validateEvidenceProvenance(value.provenance, value.type, item, value, evidenceReference);
 }
 
-function validateEvidenceProvenance(value, evidenceType, label) {
+function validateEvidenceProvenance(value, evidenceType, item, evidence, evidenceReference) {
+  const label = item.id;
   if (!isRecord(value)) {
     errors.push(`${label} evidence provenance must be an object.`);
     return;
@@ -524,30 +1156,780 @@ function validateEvidenceProvenance(value, evidenceType, label) {
   if (value.claim !== evidenceType) {
     errors.push(`${label} evidence provenance claim must equal ${evidenceType}.`);
   }
-  if (!nonBlank(value.issuer)) errors.push(`${label} evidence provenance requires issuer.`);
+  if (value.issuer !== TRUSTED_EVIDENCE_ISSUER) {
+    errors.push(`${label} evidence provenance issuer is not trusted.`);
+  }
   if (!/^[a-f0-9]{40}$/.test(value.sourceRevision ?? '')) {
     errors.push(`${label} evidence provenance requires a full lowercase source revision.`);
-  }
-  if (!/^https:\/\/.+/.test(value.attestationReference ?? '')) {
-    errors.push(`${label} evidence provenance requires an HTTPS attestation reference.`);
   }
   if (!/^sha256:[a-f0-9]{64}$/.test(value.attestationChecksum ?? '')) {
     errors.push(`${label} evidence provenance requires an immutable attestation checksum.`);
   }
+  const attestationReference = parseTrustedEvidenceReference(
+    value.attestationReference,
+    value.sourceRevision,
+    `${label} evidence attestation`
+  );
+  const attestationBytes = attestationReference
+    ? readTrustedEvidenceFile(attestationReference, `${label} evidence attestation`)
+    : undefined;
+  if (!attestationBytes) return;
+  if (value.attestationChecksum !== digestBytes(attestationBytes)) {
+    errors.push(`${label} evidence attestation checksum does not match its revision-bound file.`);
+    return;
+  }
+  let attestation;
+  try {
+    attestation = JSON.parse(attestationBytes.toString('utf8'));
+  } catch (error) {
+    errors.push(`${label} evidence attestation is not valid JSON: ${error.message}.`);
+    return;
+  }
+  validateTrustedAttestation(
+    attestation,
+    value,
+    evidence,
+    item,
+    evidenceReference,
+    attestationReference
+  );
 }
 
-function validateEvidenceReferenceIsolation(evidence, label) {
+function parseTrustedEvidenceReference(value, expectedRevision, label) {
+  if (typeof value !== 'string') {
+    errors.push(`${label} must be an HTTPS permalink in the trusted evidence repository.`);
+    return undefined;
+  }
+  const match = TRUSTED_EVIDENCE_URL.exec(value);
+  if (!match) {
+    errors.push(`${label} is not in trusted repository ${TRUSTED_EVIDENCE_REPOSITORY}.`);
+    return undefined;
+  }
+  const [, revision, repositoryPath] = match;
+  if (revision !== expectedRevision) {
+    errors.push(`${label} revision differs from evidence provenance sourceRevision.`);
+  }
+  if (!safeRepositoryPath(repositoryPath)) {
+    errors.push(`${label} path escapes the trusted evidence repository.`);
+    return undefined;
+  }
+  return { revision, repositoryPath };
+}
+
+function safeRepositoryPath(value) {
+  if (!nonBlank(value) || value.includes('\\') || value.includes('?') || value.includes('#')) {
+    return false;
+  }
+  const parts = value.split('/');
+  return (
+    !value.startsWith('/') && parts.every((part) => part !== '' && part !== '.' && part !== '..')
+  );
+}
+
+function readTrustedEvidenceFile(reference, label) {
+  if (arguments_.release && !trustedEvidenceRevision) {
+    errors.push(
+      `${label} requires an explicit official Backend evidence revision in release mode.`
+    );
+    return undefined;
+  }
+  if (trustedEvidenceRevision && trustedEvidenceRevision !== reference.revision) {
+    errors.push(`${label} revision differs from the official Backend evidence revision.`);
+    return undefined;
+  }
+  if (!loadTrustedEvidenceTree(label)) return undefined;
+  if (resolvedTrustedEvidenceRevision !== reference.revision) {
+    errors.push(`${label} trusted Backend checkout is not the declared immutable revision.`);
+    return undefined;
+  }
+  const treeEntry = resolvedTrustedEvidenceTree.get(reference.repositoryPath);
+  if (!treeEntry || treeEntry.type !== 'blob' || !['100644', '100755'].includes(treeEntry.mode)) {
+    errors.push(`${label} revision-bound file does not exist: ${reference.repositoryPath}.`);
+    return undefined;
+  }
+  try {
+    const bytes = readFileSync(resolve(trustedEvidenceCheckout, reference.repositoryPath));
+    if (gitBlobId(bytes) !== treeEntry.objectId) {
+      errors.push(`${label} working file differs from its revision-bound Git object.`);
+      return undefined;
+    }
+    return bytes;
+  } catch {
+    errors.push(`${label} revision-bound file does not exist: ${reference.repositoryPath}.`);
+    return undefined;
+  }
+}
+
+function loadTrustedEvidenceTree(label) {
+  if (resolvedTrustedEvidenceTree) return true;
+  if (trustedEvidenceTreeAttempted) return false;
+  trustedEvidenceTreeAttempted = true;
+  try {
+    const origin = execFileSync(
+      'git',
+      ['-C', trustedEvidenceCheckout, 'remote', 'get-url', 'origin'],
+      { encoding: 'utf8' }
+    ).trim();
+    if (
+      ![
+        `https://github.com/${TRUSTED_EVIDENCE_REPOSITORY}`,
+        `https://github.com/${TRUSTED_EVIDENCE_REPOSITORY}.git`,
+        `git@github.com:${TRUSTED_EVIDENCE_REPOSITORY}.git`,
+      ].includes(origin)
+    ) {
+      errors.push(`${label} trusted Backend checkout origin is not approved.`);
+      return false;
+    }
+    resolvedTrustedEvidenceRevision = execFileSync(
+      'git',
+      ['-C', trustedEvidenceCheckout, 'rev-parse', 'HEAD'],
+      { encoding: 'utf8' }
+    ).trim();
+    const entries = execFileSync(
+      'git',
+      ['-C', trustedEvidenceCheckout, 'ls-tree', '-r', '-z', '--full-tree', 'HEAD'],
+      { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }
+    );
+    resolvedTrustedEvidenceTree = new Map(
+      entries
+        .split('\0')
+        .filter(Boolean)
+        .map((entry) => {
+          const [metadata, repositoryPath] = entry.split('\t');
+          const [mode, type, objectId] = metadata.split(' ');
+          return [repositoryPath, { mode, type, objectId }];
+        })
+    );
+    return true;
+  } catch (error) {
+    errors.push(`${label} trusted Backend checkout is unavailable: ${error.message}.`);
+    return false;
+  }
+}
+
+function gitBlobId(bytes) {
+  return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+}
+
+function digestBytes(value) {
+  return `sha256:${createHash('sha256').update(value).digest('hex')}`;
+}
+
+function validateTrustedAttestation(
+  attestation,
+  provenance,
+  evidence,
+  item,
+  evidenceReference,
+  attestationReference
+) {
+  const label = `${item.id} evidence attestation`;
+  const detailField = ATTESTATION_DETAIL_BY_KIND.get(provenance.kind);
+  const fields = [
+    'schemaVersion',
+    'attestationId',
+    'repository',
+    'kind',
+    'claim',
+    'issuer',
+    'recordedAt',
+    'subject',
+    'evidence',
+    detailField,
+  ];
+  if (!isRecord(attestation)) {
+    errors.push(`${label} must be an object.`);
+    return;
+  }
+  validateClosedFields(attestation, fields, label);
+  if (
+    attestation.schemaVersion !== 1 ||
+    attestation.attestationId !== `${item.id}.${evidence.type}.v1` ||
+    attestation.repository !== TRUSTED_EVIDENCE_REPOSITORY ||
+    attestation.kind !== provenance.kind ||
+    attestation.claim !== evidence.type ||
+    attestation.issuer !== provenance.issuer ||
+    attestation.recordedAt !== evidence.recordedAt
+  ) {
+    errors.push(`${label} identity or claim binding is invalid.`);
+  }
+  validateClosedFields(
+    attestation.subject,
+    ['readinessItemId', 'evidenceOwner'],
+    `${label} subject`
+  );
+  if (
+    attestation.subject?.readinessItemId !== item.id ||
+    attestation.subject?.evidenceOwner !== evidence.owner
+  ) {
+    errors.push(`${label} subject does not match the readiness item and evidence owner.`);
+  }
+  validateClosedFields(attestation.evidence, ['path', 'checksum'], `${label} evidence`);
+  if (
+    attestation.evidence?.path !== evidenceReference?.repositoryPath ||
+    attestation.evidence?.checksum !== evidence.checksum ||
+    attestationReference?.repositoryPath === evidenceReference?.repositoryPath
+  ) {
+    errors.push(`${label} does not bind a distinct evidence file and checksum.`);
+  }
+  validateAttestationKindDetail(attestation, provenance, item, label);
+  remoteEvidenceClaims.push({ attestation, evidence, item, provenance });
+}
+
+function validateAttestationKindDetail(attestation, provenance, item, label) {
+  const { kind } = provenance;
+  if (kind === 'OWNER_APPROVAL_ATTESTATION') {
+    validateClosedFields(
+      attestation.approval,
+      ['approvedBy', 'approvedAt', 'sourceReference', 'headRevision'],
+      `${label} approval`
+    );
+    if (
+      !sameOrderedValues(attestation.approval?.approvedBy, item.approval?.approvedBy) ||
+      attestation.approval?.approvedAt !== item.approval?.approvedAt ||
+      !TRUSTED_REVIEW_URL.test(attestation.approval?.sourceReference ?? '') ||
+      !/^[a-f0-9]{40}$/.test(attestation.approval?.headRevision ?? '')
+    ) {
+      errors.push(`${label} approval does not match the readiness approval.`);
+    }
+    return;
+  }
+  if (kind === 'REVIEWED_ARTIFACT_ATTESTATION') {
+    validateClosedFields(
+      attestation.artifact,
+      ['reviewDecision', 'reviewer', 'sourceReference', 'headRevision'],
+      `${label} artifact`
+    );
+    if (
+      attestation.artifact?.reviewDecision !== 'APPROVED' ||
+      !trustedReviewerAssignments
+        .get(item.id)
+        ?.artifactReviewers.includes(attestation.artifact?.reviewer) ||
+      !TRUSTED_REVIEW_URL.test(attestation.artifact?.sourceReference ?? '') ||
+      !/^[a-f0-9]{40}$/.test(attestation.artifact?.headRevision ?? '')
+    ) {
+      errors.push(`${label} artifact review must be APPROVED.`);
+    }
+    return;
+  }
+  if (kind === 'AUTOMATED_RUN_ATTESTATION') {
+    validateClosedFields(
+      attestation.run,
+      [
+        'command',
+        'result',
+        'passed',
+        'failed',
+        'workflowName',
+        'workflowReference',
+        'headRevision',
+        'artifactDigest',
+        'artifactName',
+        'artifactEntryPath',
+      ],
+      `${label} run`
+    );
+    if (
+      !nonBlank(attestation.run?.command) ||
+      attestation.run?.result !== 'PASS' ||
+      !Number.isInteger(attestation.run?.passed) ||
+      attestation.run.passed < 1 ||
+      attestation.run?.failed !== 0 ||
+      !nonBlank(attestation.run?.workflowName) ||
+      !TRUSTED_WORKFLOW_RUN_URL.test(attestation.run?.workflowReference ?? '') ||
+      !/^[a-f0-9]{40}$/.test(attestation.run?.headRevision ?? '') ||
+      !/^sha256:[a-f0-9]{64}$/.test(attestation.run?.artifactDigest ?? '') ||
+      attestation.run?.artifactName !== `${item.id}.${provenance.claim}.v1` ||
+      attestation.run?.artifactEntryPath !== attestation.evidence?.path
+    ) {
+      errors.push(`${label} automated run must record a passing immutable workflow result.`);
+    }
+    return;
+  }
+  if (kind === 'DEPLOYMENT_ATTESTATION') {
+    validateClosedFields(
+      attestation.deployment,
+      ['environment', 'result', 'sourceReference', 'headRevision'],
+      `${label} deployment`
+    );
+    if (
+      trustedReleasePolicy?.status !== 'ACTIVE' ||
+      attestation.deployment?.environment !==
+        trustedReleasePolicy?.deploymentEnvironments.get(`${item.id}:${provenance.claim}`) ||
+      attestation.deployment?.result !== 'PASS' ||
+      !TRUSTED_DEPLOYMENT_URL.test(attestation.deployment?.sourceReference ?? '') ||
+      !/^[a-f0-9]{40}$/.test(attestation.deployment?.headRevision ?? '')
+    ) {
+      errors.push(
+        `${label} deployment must match the immutable environment policy and passing external source.`
+      );
+    }
+    return;
+  }
+  if (kind === 'INDEPENDENT_REVIEW_ATTESTATION') {
+    validateClosedFields(
+      attestation.review,
+      ['reviewer', 'decision', 'sourceReference', 'headRevision'],
+      `${label} review`
+    );
+    if (
+      !trustedReviewerAssignments
+        .get(item.id)
+        ?.independentReviewers.includes(attestation.review?.reviewer) ||
+      attestation.review?.decision !== 'APPROVED' ||
+      !TRUSTED_REVIEW_URL.test(attestation.review?.sourceReference ?? '') ||
+      !/^[a-f0-9]{40}$/.test(attestation.review?.headRevision ?? '')
+    ) {
+      errors.push(`${label} independent review must record an approved external source.`);
+    }
+  }
+}
+
+function validateOnlineReleaseEvidence(manifestValue) {
+  if (!arguments_.release) return;
+  const completeIds = new Set(
+    [
+      ...(manifestValue.productionGates ?? []),
+      ...(manifestValue.decisions ?? []),
+      ...(manifestValue.products ?? []),
+      ...(manifestValue.exitCriteria ?? []),
+    ]
+      .filter((item) => item.state === 'COMPLETE')
+      .map((item) => item.id)
+  );
+  const claims = remoteEvidenceClaims.filter(({ item }) => completeIds.has(item.id));
+  if (claims.length === 0) return;
+  if (process.env.GITHUB_ACTIONS !== 'true' || !nonBlank(process.env.GH_TOKEN)) {
+    errors.push(
+      'COMPLETE release evidence requires online GitHub verification in the trusted release workflow.'
+    );
+    return;
+  }
+  const headRevisions = new Set(
+    claims.map(
+      ({ attestation, provenance }) => attestationDetail(attestation, provenance)?.headRevision
+    )
+  );
+  const sourceRevisions = new Set(claims.map(({ provenance }) => provenance.sourceRevision));
+  if (headRevisions.size !== 1 || sourceRevisions.size !== 1) {
+    errors.push(
+      'COMPLETE release evidence must share one attested release revision and one evidence-only successor revision.'
+    );
+  }
+  const allowedAttestationPaths = new Set(
+    claims
+      .map(
+        ({ provenance }) =>
+          parseTrustedEvidenceReference(
+            provenance.attestationReference,
+            provenance.sourceRevision,
+            'online evidence attestation reference'
+          )?.repositoryPath
+      )
+      .filter(Boolean)
+  );
+  for (const claim of claims) validateOnlineEvidenceClaim(claim, allowedAttestationPaths);
+}
+
+function attestationDetail(attestation, provenance) {
+  if (provenance.kind === 'OWNER_APPROVAL_ATTESTATION') return attestation.approval;
+  if (provenance.kind === 'REVIEWED_ARTIFACT_ATTESTATION') return attestation.artifact;
+  if (provenance.kind === 'AUTOMATED_RUN_ATTESTATION') return attestation.run;
+  if (provenance.kind === 'DEPLOYMENT_ATTESTATION') return attestation.deployment;
+  return attestation.review;
+}
+
+function githubFileAtRevision(repositoryPath, revision, label) {
+  const encodedPath = repositoryPath.split('/').map(encodeURIComponent).join('/');
+  const file = githubApi(
+    `repos/${TRUSTED_EVIDENCE_REPOSITORY}/contents/${encodedPath}?ref=${revision}`,
+    label
+  );
+  if (file?.type !== 'file' || file?.encoding !== 'base64' || typeof file?.content !== 'string') {
+    errors.push(`${label} is not a revision-bound GitHub file.`);
+    return undefined;
+  }
+  try {
+    return Buffer.from(file.content.replace(/\s/gu, ''), 'base64');
+  } catch {
+    errors.push(`${label} has invalid base64 content.`);
+    return undefined;
+  }
+}
+
+function validateOnlineClaimSource(
+  { attestation, evidence, provenance },
+  label,
+  allowedAttestationPaths
+) {
+  const detail = attestationDetail(attestation, provenance);
+  const headRevision = detail?.headRevision;
+  const sourceRevision = provenance.sourceRevision;
+  const attestationPath = parseTrustedEvidenceReference(
+    provenance.attestationReference,
+    sourceRevision,
+    `${label} attestation reference`
+  )?.repositoryPath;
+  if (!/^[a-f0-9]{40}$/u.test(headRevision ?? '')) return undefined;
+  if (headRevision === sourceRevision) {
+    errors.push(`${label} attestation must be recorded in a distinct evidence-only successor.`);
+  } else {
+    const comparison = githubApi(
+      `repos/${TRUSTED_EVIDENCE_REPOSITORY}/compare/${headRevision}...${sourceRevision}`,
+      `${label} source lineage`
+    );
+    const successorCommit = comparison?.commits?.[0];
+    const changedFiles = comparison?.files ?? [];
+    const changedPaths = changedFiles.map(({ filename }) => filename);
+    if (
+      comparison?.status !== 'ahead' ||
+      comparison?.merge_base_commit?.sha !== headRevision ||
+      comparison?.ahead_by !== 1 ||
+      comparison?.behind_by !== 0 ||
+      comparison?.total_commits !== 1 ||
+      comparison?.commits?.length !== 1 ||
+      successorCommit?.sha !== sourceRevision ||
+      !successorCommit?.parents?.some(({ sha }) => sha === headRevision) ||
+      changedPaths.length === 0 ||
+      changedFiles.some(
+        ({ status, previous_filename: previousFilename }) =>
+          !['added', 'modified'].includes(status) || previousFilename !== undefined
+      ) ||
+      changedPaths.some((path) => !allowedAttestationPaths.has(path)) ||
+      !changedPaths.includes(attestationPath)
+    ) {
+      errors.push(
+        `${label} evidence revision must be the direct, attestation-only successor of the attested revision.`
+      );
+    }
+  }
+  const evidenceBytes = githubFileAtRevision(
+    attestation.evidence?.path ?? '',
+    headRevision,
+    `${label} evidence at attested revision`
+  );
+  if (evidenceBytes && digestBytes(evidenceBytes) !== evidence.checksum) {
+    errors.push(`${label} evidence bytes differ from the attested source revision.`);
+  }
+  return { detail, headRevision };
+}
+
+function validateOnlineEvidenceClaim(
+  { attestation, evidence, provenance, item },
+  allowedAttestationPaths
+) {
+  const label = `${item.id} ${provenance.claim} online evidence`;
+  const source = validateOnlineClaimSource(
+    { attestation, evidence, provenance, item },
+    label,
+    allowedAttestationPaths
+  );
+  if (!source) return;
+  if (provenance.kind === 'AUTOMATED_RUN_ATTESTATION') {
+    const match = TRUSTED_WORKFLOW_RUN_URL.exec(attestation.run?.workflowReference ?? '');
+    const runId = match?.[1];
+    const runAttempt = Number(match?.[2]);
+    const run = githubApi(
+      `repos/${TRUSTED_EVIDENCE_REPOSITORY}/actions/runs/${runId}`,
+      `${label} workflow run`
+    );
+    if (
+      attestation.run?.workflowName !== TRUSTED_AUTOMATED_WORKFLOW.name ||
+      attestation.run?.command !== TRUSTED_AUTOMATED_WORKFLOW.command ||
+      run?.name !== TRUSTED_AUTOMATED_WORKFLOW.name ||
+      run?.path !== TRUSTED_AUTOMATED_WORKFLOW.path ||
+      run?.event !== TRUSTED_AUTOMATED_WORKFLOW.event ||
+      run?.head_branch !== TRUSTED_AUTOMATED_WORKFLOW.branch ||
+      run?.head_sha !== attestation.run?.headRevision ||
+      run?.run_attempt !== runAttempt ||
+      run?.status !== 'completed' ||
+      run?.conclusion !== 'success' ||
+      run?.html_url !== attestation.run?.workflowReference?.replace(/\/attempts\/[1-9][0-9]*$/u, '')
+    ) {
+      errors.push(`${label} workflow name, head SHA or successful conclusion is not verified.`);
+    }
+    const workflowBytes = githubFileAtRevision(
+      TRUSTED_AUTOMATED_WORKFLOW.path,
+      source.headRevision,
+      `${label} workflow definition`
+    );
+    const workflowSource = workflowBytes?.toString('utf8') ?? '';
+    if (
+      workflowBytes &&
+      digestBytes(workflowBytes) !== trustedReleasePolicy?.automatedWorkflow?.checksum
+    ) {
+      errors.push(`${label} workflow bytes differ from the immutable release trust policy.`);
+    }
+    if (
+      !workflowSource.includes(TRUSTED_AUTOMATED_WORKFLOW.command) ||
+      !workflowSource.includes(`name: ${attestation.run?.artifactName}`) ||
+      !workflowSource.includes(`path: ${attestation.run?.artifactEntryPath}`)
+    ) {
+      errors.push(`${label} workflow does not execute and upload the exact evidence claim.`);
+    }
+    const artifacts = githubApi(
+      `repos/${TRUSTED_EVIDENCE_REPOSITORY}/actions/runs/${runId}/artifacts?per_page=100`,
+      `${label} workflow artifacts`
+    );
+    const matchingArtifacts = (artifacts?.artifacts ?? []).filter(
+      (artifact) =>
+        artifact?.expired === false &&
+        Number.isInteger(artifact?.id) &&
+        artifact?.name === attestation.run?.artifactName &&
+        artifact?.digest === attestation.run?.artifactDigest
+    );
+    if (matchingArtifacts.length !== 1) {
+      errors.push(`${label} artifact digest is not present on the trusted workflow run.`);
+    } else {
+      const [artifact] = matchingArtifacts;
+      const archive = githubApiBytes(
+        `repos/${TRUSTED_EVIDENCE_REPOSITORY}/actions/artifacts/${artifact.id}/zip`,
+        `${label} workflow artifact`
+      );
+      if (archive && digestBytes(archive) !== attestation.run?.artifactDigest) {
+        errors.push(`${label} downloaded artifact archive differs from its GitHub digest.`);
+      }
+      const entry = archive
+        ? readZipEntry(
+            archive,
+            attestation.run?.artifactEntryPath ?? '',
+            `${label} workflow artifact`
+          )
+        : undefined;
+      if (entry && digestBytes(entry) !== evidence.checksum) {
+        errors.push(`${label} artifact entry bytes differ from the immutable evidence checksum.`);
+      }
+    }
+    return;
+  }
+  if (provenance.kind === 'DEPLOYMENT_ATTESTATION') {
+    const deploymentId = attestation.deployment?.sourceReference?.split('/deployments/')[1];
+    const deployment = githubApi(
+      `repos/${TRUSTED_EVIDENCE_REPOSITORY}/deployments/${deploymentId}`,
+      `${label} deployment`
+    );
+    const statuses = githubApi(
+      `repos/${TRUSTED_EVIDENCE_REPOSITORY}/deployments/${deploymentId}/statuses?per_page=100`,
+      `${label} deployment statuses`
+    );
+    if (
+      deployment?.sha !== attestation.deployment?.headRevision ||
+      deployment?.ref !== 'dwp-dev' ||
+      deployment?.environment !== attestation.deployment?.environment ||
+      statuses?.[0]?.state !== 'success'
+    ) {
+      errors.push(`${label} deployment revision, environment or success status is not verified.`);
+    }
+    return;
+  }
+  const detail = source.detail;
+  const pullId = detail?.sourceReference?.split('/pull/')[1];
+  const pull = githubApi(
+    `repos/${TRUSTED_EVIDENCE_REPOSITORY}/pulls/${pullId}`,
+    `${label} pull request`
+  );
+  const reviews = githubApiArray(
+    `repos/${TRUSTED_EVIDENCE_REPOSITORY}/pulls/${pullId}/reviews`,
+    `${label} reviews`
+  );
+  const expectedReviewers =
+    provenance.kind === 'OWNER_APPROVAL_ATTESTATION'
+      ? attestation.approval?.approvedBy
+      : [detail?.reviewer];
+  const latestReviewByLogin = new Map();
+  for (const review of reviews ?? []) {
+    const login = review?.user?.login;
+    if (
+      !nonBlank(login) ||
+      !['APPROVED', 'CHANGES_REQUESTED', 'DISMISSED'].includes(review?.state)
+    ) {
+      continue;
+    }
+    const current = latestReviewByLogin.get(login);
+    const currentTime = Date.parse(current?.submitted_at ?? '');
+    const candidateTime = Date.parse(review?.submitted_at ?? '');
+    if (
+      !Number.isNaN(candidateTime) &&
+      (!current ||
+        Number.isNaN(currentTime) ||
+        candidateTime > currentTime ||
+        (candidateTime === currentTime && Number(review?.id) > Number(current?.id)))
+    ) {
+      latestReviewByLogin.set(login, review);
+    }
+  }
+  const reviewersVerified = (expectedReviewers ?? []).every((reviewer) => {
+    const review = latestReviewByLogin.get(reviewer);
+    return (
+      review?.state === 'APPROVED' &&
+      review?.commit_id === pull?.head?.sha &&
+      Date.parse(review?.submitted_at ?? '') <= Date.parse(pull?.merged_at ?? '')
+    );
+  });
+  if (
+    pull?.merged_at == null ||
+    pull?.base?.ref !== 'dwp-dev' ||
+    pull?.base?.repo?.full_name !== TRUSTED_EVIDENCE_REPOSITORY ||
+    pull?.merge_commit_sha !== detail?.headRevision ||
+    !reviewersVerified
+  ) {
+    errors.push(`${label} merged revision or required approving reviewers are not verified.`);
+  }
+}
+
+function githubApiArray(endpoint, label) {
+  const values = [];
+  for (let page = 1; page <= 100; page += 1) {
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const result = githubApi(
+      `${endpoint}${separator}per_page=100&page=${page}`,
+      `${label} page ${page}`
+    );
+    if (!Array.isArray(result)) {
+      errors.push(`${label} did not return a paginated array.`);
+      return values;
+    }
+    values.push(...result);
+    if (result.length < 100) return values;
+  }
+  errors.push(`${label} exceeds the supported pagination limit.`);
+  return values;
+}
+
+function githubApiBytes(endpoint, label) {
+  if (githubBytesCache.has(endpoint)) return githubBytesCache.get(endpoint);
+  try {
+    const value = execFileSync('gh', ['api', '--method', 'GET', endpoint], {
+      encoding: null,
+      env: process.env,
+      maxBuffer: 50 * 1024 * 1024,
+    });
+    githubBytesCache.set(endpoint, value);
+    return value;
+  } catch (error) {
+    errors.push(`${label} could not be downloaded through GitHub API: ${error.message}.`);
+    return undefined;
+  }
+}
+
+function readZipEntry(archive, expectedPath, label) {
+  if (!Buffer.isBuffer(archive) || archive.length < 22 || !safeRepositoryPath(expectedPath)) {
+    errors.push(`${label} is not a valid bounded ZIP archive entry.`);
+    return undefined;
+  }
+  const minimumEocdOffset = Math.max(0, archive.length - 65_557);
+  let eocdOffset = -1;
+  for (let offset = archive.length - 22; offset >= minimumEocdOffset; offset -= 1) {
+    if (archive.readUInt32LE(offset) === 0x06054b50) {
+      eocdOffset = offset;
+      break;
+    }
+  }
+  if (eocdOffset < 0) {
+    errors.push(`${label} has no valid ZIP central directory.`);
+    return undefined;
+  }
+  const entryCount = archive.readUInt16LE(eocdOffset + 10);
+  const centralOffset = archive.readUInt32LE(eocdOffset + 16);
+  if (entryCount < 1 || entryCount > 10_000 || centralOffset >= eocdOffset) {
+    errors.push(`${label} has an invalid or oversized ZIP directory.`);
+    return undefined;
+  }
+  const matches = [];
+  let offset = centralOffset;
+  for (let index = 0; index < entryCount; index += 1) {
+    if (offset + 46 > archive.length || archive.readUInt32LE(offset) !== 0x02014b50) {
+      errors.push(`${label} has a malformed ZIP directory.`);
+      return undefined;
+    }
+    const flags = archive.readUInt16LE(offset + 8);
+    const method = archive.readUInt16LE(offset + 10);
+    const compressedSize = archive.readUInt32LE(offset + 20);
+    const uncompressedSize = archive.readUInt32LE(offset + 24);
+    const nameLength = archive.readUInt16LE(offset + 28);
+    const extraLength = archive.readUInt16LE(offset + 30);
+    const commentLength = archive.readUInt16LE(offset + 32);
+    const localOffset = archive.readUInt32LE(offset + 42);
+    const nextOffset = offset + 46 + nameLength + extraLength + commentLength;
+    if (nextOffset > archive.length) {
+      errors.push(`${label} has a truncated ZIP directory.`);
+      return undefined;
+    }
+    const name = archive.subarray(offset + 46, offset + 46 + nameLength).toString('utf8');
+    if (name === expectedPath) {
+      matches.push({ compressedSize, flags, localOffset, method, uncompressedSize });
+    }
+    offset = nextOffset;
+  }
+  if (matches.length !== 1) {
+    errors.push(`${label} must contain the exact evidence entry once.`);
+    return undefined;
+  }
+  const [entry] = matches;
+  if (
+    entry.flags & 0x1 ||
+    ![0, 8].includes(entry.method) ||
+    entry.uncompressedSize > 10 * 1024 * 1024 ||
+    entry.localOffset + 30 > archive.length ||
+    archive.readUInt32LE(entry.localOffset) !== 0x04034b50
+  ) {
+    errors.push(`${label} evidence entry uses an unsupported ZIP encoding.`);
+    return undefined;
+  }
+  const localNameLength = archive.readUInt16LE(entry.localOffset + 26);
+  const localExtraLength = archive.readUInt16LE(entry.localOffset + 28);
+  const dataOffset = entry.localOffset + 30 + localNameLength + localExtraLength;
+  const dataEnd = dataOffset + entry.compressedSize;
+  if (dataEnd > archive.length) {
+    errors.push(`${label} evidence entry is truncated.`);
+    return undefined;
+  }
+  try {
+    const compressed = archive.subarray(dataOffset, dataEnd);
+    const value = entry.method === 0 ? Buffer.from(compressed) : inflateRawSync(compressed);
+    if (value.length !== entry.uncompressedSize) {
+      errors.push(`${label} evidence entry length is invalid.`);
+      return undefined;
+    }
+    return value;
+  } catch (error) {
+    errors.push(`${label} evidence entry could not be decompressed: ${error.message}.`);
+    return undefined;
+  }
+}
+
+function githubApi(endpoint, label) {
+  if (githubJsonCache.has(endpoint)) return githubJsonCache.get(endpoint);
+  try {
+    const value = JSON.parse(
+      execFileSync('gh', ['api', '--method', 'GET', endpoint], {
+        encoding: 'utf8',
+        env: process.env,
+        maxBuffer: 10 * 1024 * 1024,
+      })
+    );
+    githubJsonCache.set(endpoint, value);
+    return value;
+  } catch (error) {
+    errors.push(`${label} could not be verified through GitHub API: ${error.message}.`);
+    return undefined;
+  }
+}
+
+function validateEvidenceReferenceIsolation(evidenceClaims, label) {
   const typesByReference = new Map();
   const typesByAttestationReference = new Map();
-  for (const item of evidence) {
+  for (const claim of evidenceClaims) {
+    const item = claim?.evidence ?? claim;
+    const claimIdentity = claim?.itemId ? `${claim.itemId}:${item?.type}` : item?.type;
     if (!nonBlank(item?.reference) || !nonBlank(item?.type)) continue;
     const types = typesByReference.get(item.reference) ?? new Set();
-    types.add(item.type);
+    types.add(claimIdentity);
     typesByReference.set(item.reference, types);
     if (nonBlank(item.provenance?.attestationReference)) {
       const attestationTypes =
         typesByAttestationReference.get(item.provenance.attestationReference) ?? new Set();
-      attestationTypes.add(item.type);
+      attestationTypes.add(claimIdentity);
       typesByAttestationReference.set(item.provenance.attestationReference, attestationTypes);
     }
   }
@@ -628,6 +2010,28 @@ function sameSet(actual, expected) {
   );
 }
 
+function sameOrderedValues(actual, expected) {
+  return Array.isArray(actual) && JSON.stringify(actual) === JSON.stringify(expected);
+}
+
+function canonicalizeForChecksum(value) {
+  if (Array.isArray(value)) return value.map(canonicalizeForChecksum);
+  if (!isRecord(value)) return value;
+  return Object.fromEntries(
+    Object.keys(value)
+      .sort()
+      .map((key) => [key, canonicalizeForChecksum(value[key])])
+  );
+}
+
+function canonicalJsonForChecksum(value) {
+  return JSON.stringify(canonicalizeForChecksum(value));
+}
+
+function canonicalSha256(value) {
+  return createHash('sha256').update(canonicalJsonForChecksum(value)).digest('hex');
+}
+
 function readJson(path, label, targetErrors) {
   try {
     return JSON.parse(readFileSync(path, 'utf8'));
@@ -645,7 +2049,15 @@ function parseArguments(argv) {
       parsed.release = true;
       continue;
     }
-    const key = { '--manifest': 'manifest', '--schema': 'schema', '--root': 'root' }[argument];
+    const key = {
+      '--manifest': 'manifest',
+      '--schema': 'schema',
+      '--closure': 'closure',
+      '--trust-policy': 'trustPolicy',
+      '--root': 'root',
+      '--evidence-checkout': 'evidenceCheckout',
+      '--evidence-revision': 'evidenceRevision',
+    }[argument];
     if (!key || !argv[index + 1] || argv[index + 1].startsWith('--')) usage();
     parsed[key] = argv[index + 1];
     index += 1;
@@ -656,12 +2068,15 @@ function parseArguments(argv) {
 function usage() {
   console.error(
     'usage: node scripts/check-product-surface-production-readiness.mjs ' +
-      '[--manifest <path>] [--schema <path>] [--root <repository-root>] [--release]'
+      '[--manifest <path>] [--schema <path>] [--closure <path>] ' +
+      '[--trust-policy <path>] ' +
+      '[--root <repository-root>] [--evidence-checkout <path>] ' +
+      '[--evidence-revision <40-hex-sha>] [--release]'
   );
   process.exit(2);
 }
 
-function printSummary(value, incomplete) {
+function printSummary(value, incomplete, closure) {
   const all = [
     ...value.productionGates,
     ...value.decisions,
@@ -673,7 +2088,19 @@ function printSummary(value, incomplete) {
   console.log(`- status: ${value.status}`);
   console.log(`- complete: ${all.length - incomplete.length}/${all.length}`);
   console.log(
-    `- exact product closure: ${value.products.filter((item) => item.state === 'COMPLETE').length}/12`
+    `- exact product contracts: ${closure.summary.exactProducts}/${closure.summary.productCount}`
+  );
+  console.log(
+    `- internally closed products: ${closure.summary.internallyClosedProducts}/${closure.summary.productCount}`
+  );
+  console.log(
+    `- owner-service PEP cells: ${closure.summary.qualifiedAttackCells}/${closure.summary.totalAttackCells}`
+  );
+  console.log(
+    `- release-approved product closure: ${value.products.filter((item) => item.state === 'COMPLETE').length}/12`
+  );
+  console.log(
+    `- internal evidence pending: ${all.filter((item) => item.state === 'PENDING_INTERNAL').length}`
   );
   console.log(`- incomplete release evidence: ${incomplete.length}`);
   console.log(

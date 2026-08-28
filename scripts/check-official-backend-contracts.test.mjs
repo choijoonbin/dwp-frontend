@@ -24,6 +24,9 @@ function cleanEnvironment() {
   delete environment.DWP_PRODUCT_AUTHORIZATION_DIR;
   delete environment.DWP_PRODUCT_AUTHORIZATION_FIXTURE;
   delete environment.DWP_GATEWAY_OPENAPI;
+  delete environment.DWP_BACKEND_CHECKOUT;
+  delete environment.DWP_BACKEND_REVISION;
+  delete environment.DWP_AGENT_EVIDENCE_ROOT;
   return environment;
 }
 
@@ -85,12 +88,49 @@ function createOfficialContracts() {
     `${JSON.stringify(snapshot.rolloutInventory, null, 2)}\n`
   );
   fs.copyFileSync(
-    path.join(authorizationDirectory, 'product-surfaces-v1.bundle-v3.json'),
+    path.join(authorizationDirectory, 'product-surfaces-v1.bundle-v4.json'),
     path.join(authorizationDirectory, 'product-surfaces-v1.json')
   );
   fs.copyFileSync(
     path.join(root, 'architecture/pilot-fixtures.v1.generated.json'),
     path.join(authorizationDirectory, 'pilot-fixtures.v1.generated.json')
+  );
+  const closure = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'architecture/product-surface-internal-closure.v1.generated.json'),
+      'utf8'
+    )
+  );
+  const matrix = {
+    schemaVersion: 1,
+    matrixId: closure.generatedFrom.negativeMatrix.matrixId,
+    completionState: closure.summary.completionState,
+    rolloutInventory: {
+      reference:
+        'contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json',
+      checksum: closure.generatedFrom.rolloutInventory.checksum,
+    },
+    exactContract: {
+      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      checksum: closure.generatedFrom.authorizationBundle.checksum,
+      products: closure.products.map(({ productId }) => productId),
+    },
+    attackVectors: closure.attackVectors.map((id) => ({ id, gatewayTestReferences: [] })),
+    products: closure.products.map((product) => ({
+      productId: product.productId,
+      contractStatus: product.contractStatus,
+      ownerService: product.ownerService,
+      rolloutCeiling: '111',
+      attackEvidence: Object.fromEntries(
+        Object.entries(product.attackEvidence).filter(([, references]) => references.length > 0)
+      ),
+      missingAttackIds: product.missingAttackIds,
+      blocker: product.blocker,
+    })),
+  };
+  fs.writeFileSync(
+    path.join(authorizationDirectory, 'authorization-negative-matrix.v1.json'),
+    `${JSON.stringify(matrix, null, 2)}\n`
   );
   fs.copyFileSync(
     path.join(root, 'libs/api-contracts/openapi/gateway-public.json'),
@@ -125,7 +165,7 @@ test('accepts all three explicit contract-specific environment inputs', () => {
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 });
 
-test('a package input takes precedence over stale contract-specific ambient inputs', () => {
+test('official package environment fails closed without pinned executable source checkouts', () => {
   const contracts = createOfficialContracts();
   const environment = cleanEnvironment();
   environment.DWP_OFFICIAL_BACKEND_CONTRACTS_DIR = contracts;
@@ -133,7 +173,8 @@ test('a package input takes precedence over stale contract-specific ambient inpu
   environment.DWP_PRODUCT_AUTHORIZATION_FIXTURE = '/ambient/not-authoritative/fixture.json';
   environment.DWP_GATEWAY_OPENAPI = '/ambient/not-authoritative/gateway.json';
   const result = run([], environment);
-  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /requires DWP_BACKEND_CHECKOUT/);
 });
 
 test('rejects mixing package and contract-specific CLI modes', () => {
@@ -196,7 +237,7 @@ test('rejects authorization content with a stale canonical checksum', () => {
   const contracts = createOfficialContracts();
   const bundlePath = path.join(
     contracts,
-    'product-authorization/product-surfaces-v1.bundle-v3.json'
+    'product-authorization/product-surfaces-v1.bundle-v4.json'
   );
   const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
   bundle.owner = `${bundle.owner}-drift`;
@@ -236,15 +277,15 @@ test('rejects a non-DRAFT bundle before external activation approval', () => {
   assert.match(result.stderr, /must remain DRAFT until external activation approval/);
 });
 
-test('rejects a stale future immutable bundle even when v1-v3 remain valid', () => {
+test('rejects a stale future immutable bundle even when v1-v4 remain valid', () => {
   const contracts = createOfficialContracts();
   fs.copyFileSync(
-    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v3.json'),
-    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v4.json')
+    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v4.json'),
+    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v5.json')
   );
   const result = run(['--backend-contracts', contracts]);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /exactly immutable bundle v1-v3/);
+  assert.match(result.stderr, /exactly immutable bundle v1-v4/);
 });
 
 test('rejects an active pointer field even when its index checksum is recomputed', () => {

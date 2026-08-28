@@ -17,6 +17,11 @@ import {
   canEnterCompanyAdministration,
 } from '../features/admin/admin-access-policy';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
+import {
+  SPACE_ADMIN_AUTHORITIES,
+  SPACE_ADMIN_NAVIGATION_CONTRACTS,
+} from '../components/spaces/space-admin-navigation-contract';
+import { canAccessProductAreaNavigationItem } from '../layouts/product-area-permissions';
 import { createGlobalProductApplicationRuntime } from '../components/create-global-product-application-runtime';
 import { resolveProductLegacyRoute } from './product-route-contract-source';
 import {
@@ -25,6 +30,7 @@ import {
 } from './product-surface-canary-routes';
 import {
   authenticationFallback,
+  ProductAnyRouteGuard,
   ProductRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
@@ -44,12 +50,13 @@ export function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   return <TenantAdminRouteGuard>{children}</TenantAdminRouteGuard>;
 }
 
-function TenantAdminRouteGuard({ children }: { children: React.ReactNode }) {
+export function TenantAdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  const { permissions } = usePermissions();
+  const { permissions, isLoaded } = usePermissions();
   const roles = auth.user?.roles ?? [];
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
   const resourceRoles = auth.user?.resourceRoles ?? [];
+  if (!isLoaded) return routeFallback;
   const regularAccess = canEnterCompanyAdministration(roles, appPermitted, resourceRoles);
   return regularAccess ? children : <Navigate to="/403" replace />;
 }
@@ -60,11 +67,12 @@ export function AdminLegacyRedirect() {
   return <TenantAdminLegacyRedirect />;
 }
 
-function TenantAdminLegacyRedirect() {
+export function TenantAdminLegacyRedirect() {
   const auth = useAuth();
   const { hasPermission, isLoaded } = usePermissions();
   const [searchParams] = useSearchParams();
   const roles = auth.user?.roles ?? [];
+  if (!isLoaded) return routeFallback;
   const items = ADMIN_NAVIGATION.flatMap((group) => group.items).filter((item) =>
     canAccessAdminNavigationItem(item, {
       roles,
@@ -94,11 +102,12 @@ export function AdminSectionRedirect() {
   return <TenantAdminSectionRedirect />;
 }
 
-function TenantAdminSectionRedirect() {
+export function TenantAdminSectionRedirect() {
   const auth = useAuth();
   const { section } = useParams();
   const { hasPermission, isLoaded } = usePermissions();
   const roles = auth.user?.roles ?? [];
+  if (!isLoaded) return routeFallback;
   const destination = ADMIN_NAVIGATION.find((group) => group.id === section)?.items.find((item) =>
     canAccessAdminNavigationItem(item, {
       roles,
@@ -106,6 +115,15 @@ function TenantAdminSectionRedirect() {
       hasPermission,
       resourceRoles: auth.user?.resourceRoles,
     })
+  )?.path;
+  return <Navigate to={destination ?? '/403'} replace />;
+}
+
+export function SpacesAdminLegacyIndexRedirect() {
+  const { hasPermission, isLoaded } = usePermissions();
+  if (!isLoaded) return routeFallback;
+  const destination = SPACE_ADMIN_NAVIGATION_CONTRACTS.find((item) =>
+    canAccessProductAreaNavigationItem(item, hasPermission)
   )?.path;
   return <Navigate to={destination ?? '/403'} replace />;
 }
@@ -141,25 +159,34 @@ function productAdminLegacyRedirect(
       {redirect}
     </ProductRouteGuard>
   );
+  const lifecycle = definition.targetLifecycle === 'DRAFT' ? 'DRAFT' : 'OFFICIAL';
+  const governedRedirect =
+    lifecycle === 'DRAFT' ? (
+      legacy
+    ) : (
+      <ProductCanarySurfaceBoundary
+        productId={target.productId}
+        surfaceId={target.surfaceId}
+        legacy={legacy}
+      >
+        <ProductCanaryRouteBoundary
+          productId={target.productId}
+          surfaceId={target.surfaceId}
+          routeContractKey={target.routeContractKey}
+        >
+          {redirect}
+        </ProductCanaryRouteBoundary>
+      </ProductCanarySurfaceBoundary>
+    );
   return {
     path,
+    handle: {
+      routeContractKey: target.routeContractKey,
+      productPageLifecycle: lifecycle,
+    },
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <WorkspaceRouteGuard>
-          <ProductCanarySurfaceBoundary
-            productId={target.productId}
-            surfaceId={target.surfaceId}
-            legacy={legacy}
-          >
-            <ProductCanaryRouteBoundary
-              productId={target.productId}
-              surfaceId={target.surfaceId}
-              routeContractKey={target.routeContractKey}
-            >
-              {redirect}
-            </ProductCanaryRouteBoundary>
-          </ProductCanarySurfaceBoundary>
-        </WorkspaceRouteGuard>
+        <WorkspaceRouteGuard>{governedRedirect}</WorkspaceRouteGuard>
       </AuthGuard>
     ),
   };
@@ -199,6 +226,23 @@ const productAdminLegacyRoutes: RouteObject[] = [
 
 export const administrationRoutes: RouteObject[] = [
   ...productAdminLegacyRoutes,
+  {
+    path: 'admin/spaces',
+    handle: {
+      productSurfaceId: 'spaces.management',
+      productPageLifecycle: 'DRAFT',
+      legacyProductIndex: true,
+    },
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <WorkspaceRouteGuard>
+          <ProductAnyRouteGuard authorities={SPACE_ADMIN_AUTHORITIES}>
+            <SpacesAdminLegacyIndexRedirect />
+          </ProductAnyRouteGuard>
+        </WorkspaceRouteGuard>
+      </AuthGuard>
+    ),
+  },
   {
     path: 'admin',
     element: (

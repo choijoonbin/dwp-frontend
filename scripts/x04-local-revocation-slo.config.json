@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "controlId": "X-04",
+  "automationId": "x04-local-revocation-multitab.v1",
+  "claimScope": "LOCAL_DETERMINISTIC_ONLY",
+  "clock": "VITEST_FAKE_TIMER_LOGICAL_MS",
+  "productionSlo": {
+    "approved": false,
+    "thresholds": null,
+    "attestationReference": null
+  },
+  "readinessDisposition": "BLOCKED_EXTERNAL",
+  "capabilityModes": [
+    {
+      "id": "BROADCAST_CHANNEL",
+      "deliveryDelayMs": 7,
+      "localGuardrailMs": {
+        "propagation": 20,
+        "cachePurge": 20,
+        "uiDenial": 20
+      }
+    },
+    {
+      "id": "STORAGE_FALLBACK",
+      "deliveryDelayMs": 11,
+      "localGuardrailMs": {
+        "propagation": 20,
+        "cachePurge": 20,
+        "uiDenial": 20
+      }
+    }
+  ],
+  "requiredAssertions": [
+    "REVISION_PROPAGATED",
+    "ACCESS_SENSITIVE_CACHE_PURGED",
+    "DENIAL_UI_COMMITTED",
+    "PUBLIC_CACHE_RETAINED",
+    "AUTHORITY_REFRESH_FAILURE_STAYS_DENIED",
+    "SOURCE_TAB_REMAINS_READY"
+  ],
+  "externalBlockers": [
+    "EXTERNAL_X04_OWNER_APPROVAL",
+    "EXTERNAL_APPROVED_PRODUCTION_REVOCATION_SLO",
+    "EXTERNAL_STAGING_REAL_BROWSER_CAPABILITY_ATTESTATION"
+  ],
+  "testFile": "libs/shared-utils/src/auth/product-surface-context-provider.x04.mounted.test.tsx",
+  "testName": "X-04 deterministic local revocation and multi-tab latency harness",
+  "evidenceOutput": "build/reports/product-surface/x04-local-revocation-multitab.json"
+}

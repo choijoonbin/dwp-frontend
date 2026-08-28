@@ -240,11 +240,11 @@ test('Space control-center routes preserve separation of duties', async ({ page 
   );
 
   await page.goto('/admin/spaces');
-  await expect(page).toHaveURL(/\/admin\/spaces\/templates$/);
-  await expect(
-    page.getByRole('heading', { name: 'Space template studio', level: 1 })
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/spaces\/admin\/templates$/);
+  await expect(page.getByRole('heading', { name: 'Space templates', level: 1 })).toBeVisible();
   await expect(page.getByRole('button', { name: 'New template' })).toBeVisible();
+  const openSpaceNavigation = page.getByRole('button', { name: 'Open Space navigation' });
+  if (await openSpaceNavigation.isVisible()) await openSpaceNavigation.click();
   await expect(page.getByRole('link', { name: 'Templates' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Content reviews' })).toHaveCount(0);
 
@@ -416,7 +416,7 @@ test('governance admins recover ownerless Spaces through an evidence-bound flow'
   await page.getByRole('button', { name: 'Inspect evidence' }).click();
   await page.getByRole('button', { name: 'Assign owner' }).click();
 
-  await expect(page).toHaveURL(/\/admin\/spaces\/operations$/);
+  await expect(page).toHaveURL(/\/spaces\/admin\/operations$/);
   await expect(page.getByRole('dialog', { name: 'Recover accountable ownership' })).toBeVisible();
   const submit = page.getByRole('button', { name: 'Recover ownership' });
   await expect(submit).toBeDisabled();

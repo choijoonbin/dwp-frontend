@@ -108,6 +108,13 @@
       "surfaceId": "approvals.work"
     },
     {
+      "routeContractKey": "route.calendar.work.home.page",
+      "routeId": "calendar.work.home",
+      "pattern": "/calendar/home",
+      "productId": "calendar",
+      "surfaceId": "calendar.work"
+    },
+    {
       "routeContractKey": "route.communications.management.content.page",
       "routeId": "communications.management.content",
       "pattern": "/communications/admin/content",
@@ -176,6 +183,13 @@
       "pattern": "/communications/saved",
       "productId": "communications",
       "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.dwaion.work.home.page",
+      "routeId": "dwaion.work.home",
+      "pattern": "/dwaion/home",
+      "productId": "dwaion",
+      "surfaceId": "dwaion.work"
     },
     {
       "routeContractKey": "route.hcm.management.controlled-export.page",
@@ -353,6 +367,34 @@
       "surfaceId": "hcm.team"
     },
     {
+      "routeContractKey": "route.mail.work.home.page",
+      "routeId": "mail.work.home",
+      "pattern": "/mail/home",
+      "productId": "mail",
+      "surfaceId": "mail.work"
+    },
+    {
+      "routeContractKey": "route.meetings.work.home.page",
+      "routeId": "meetings.work.home",
+      "pattern": "/meetings/home",
+      "productId": "meetings",
+      "surfaceId": "meetings.work"
+    },
+    {
+      "routeContractKey": "route.messaging.work.home.page",
+      "routeId": "messaging.work.home",
+      "pattern": "/messages/home",
+      "productId": "messaging",
+      "surfaceId": "messaging.work"
+    },
+    {
+      "routeContractKey": "route.notifications.work.center.page",
+      "routeId": "notifications.work.center",
+      "pattern": "/notifications/center",
+      "productId": "notifications",
+      "surfaceId": "notifications.work"
+    },
+    {
       "routeContractKey": "route.services.management.catalog.page",
       "routeId": "services.management.catalog",
       "pattern": "/services/admin/catalog",
@@ -407,6 +449,20 @@
       "pattern": "/services/my",
       "productId": "services",
       "surfaceId": "services.work"
+    },
+    {
+      "routeContractKey": "route.spaces.work.home.page",
+      "routeId": "spaces.work.home",
+      "pattern": "/spaces/home",
+      "productId": "spaces",
+      "surfaceId": "spaces.work"
+    },
+    {
+      "routeContractKey": "route.workplace.work.explore.page",
+      "routeId": "workplace.work.explore",
+      "pattern": "/workplace/explore",
+      "productId": "workplace",
+      "surfaceId": "workplace.work"
     }
   ],
   "legacyRedirects": [
