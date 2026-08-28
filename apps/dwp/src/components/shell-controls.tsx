@@ -309,6 +309,7 @@ function ShellLazyDialogLoadingState({
   closeLabel,
   reloadLabel,
   onClose,
+  onExited,
   onReload,
 }: {
   open: boolean;
@@ -317,6 +318,7 @@ function ShellLazyDialogLoadingState({
   closeLabel: string;
   reloadLabel: string;
   onClose: () => void;
+  onExited?: () => void;
   onReload: () => void;
 }) {
   const [timedOut, setTimedOut] = useState(false);
@@ -338,6 +340,7 @@ function ShellLazyDialogLoadingState({
       maxWidth="xs"
       onClose={onClose}
       contentSx={{ py: 3 }}
+      slotProps={{ transition: { onExited } }}
     >
       <Box sx={{ display: 'grid', justifyItems: 'start', gap: 1.5 }}>
         <Typography role="status" aria-live="polite" color="text.secondary">
@@ -562,13 +565,25 @@ export function NotificationMenu() {
   }, [notificationAuthorized, t]);
 
   useEffect(() => {
-    if (open || !restoreTriggerFocusRef.current) return undefined;
+    if (
+      open ||
+      !restoreTriggerFocusRef.current ||
+      (loadRequested && !runtimeReady && !loadFailed)
+    ) {
+      return undefined;
+    }
     const frame = window.requestAnimationFrame(() => {
       restoreTriggerFocusRef.current = false;
       triggerRef.current?.focus();
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [open]);
+  }, [loadFailed, loadRequested, open, runtimeReady]);
+
+  const restoreTriggerFocus = useCallback(() => {
+    if (!restoreTriggerFocusRef.current) return;
+    restoreTriggerFocusRef.current = false;
+    triggerRef.current?.focus();
+  }, []);
 
   const dismiss = useCallback(() => {
     restoreTriggerFocusRef.current = true;
@@ -641,6 +656,7 @@ export function NotificationMenu() {
                 closeLabel={t('notifications.close')}
                 reloadLabel={t('notifications.reloadPage')}
                 onClose={dismiss}
+                onExited={restoreTriggerFocus}
                 onReload={() => window.location.reload()}
               />
             }

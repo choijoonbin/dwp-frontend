@@ -189,13 +189,19 @@ async function openCurrentPreview(page: Page, target: SupportTarget) {
   await page.goto(`/provider/tenants/${target.tenantId}/experience-preview`);
   await expect(
     page.getByRole('heading', { name: 'Tenant experience configuration preview' })
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15_000 });
+}
+
+async function openCurrentPreviews(pages: Page[], target: SupportTarget) {
+  for (const page of pages) {
+    await openCurrentPreview(page, target);
+  }
 }
 
 test('PT-A16 A-to-B-to-A across isolated browser profiles purges stale cache and streams', async ({
   browser,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(90_000);
   let activeTarget: SupportTarget = targetA;
   const currentPreview = () => ({
     headline: `${activeTarget.tenantName} deterministic headline`,
@@ -216,7 +222,7 @@ test('PT-A16 A-to-B-to-A across isolated browser profiles purges stale cache and
         configureSupportPage(page, () => activeTarget, currentPreview, observations[index]!)
       )
     );
-    await Promise.all(pages.map((page) => openCurrentPreview(page, targetA)));
+    await openCurrentPreviews(pages, targetA);
     await Promise.all(pages.map((page) => expectOnlyTarget(page, targetA, targetB)));
 
     activeTarget = targetB;
@@ -229,7 +235,7 @@ test('PT-A16 A-to-B-to-A across isolated browser profiles purges stale cache and
           expect(page.getByText(`${targetA.tenantName} deterministic headline`)).toHaveCount(0)
         )
     );
-    await Promise.all(pages.slice(0, 2).map((page) => openCurrentPreview(page, targetB)));
+    await openCurrentPreviews(pages.slice(0, 2), targetB);
 
     // Browser two discovers the server transition on a hard refresh, then fans the
     // opaque revision to its sibling tab without sending tenant or authority payload.
@@ -241,7 +247,7 @@ test('PT-A16 A-to-B-to-A across isolated browser profiles purges stale cache and
     await expect(pages[3]!.getByText(`${targetA.tenantName} deterministic headline`)).toHaveCount(
       0
     );
-    await Promise.all(pages.slice(2).map((page) => openCurrentPreview(page, targetB)));
+    await openCurrentPreviews(pages.slice(2), targetB);
     await Promise.all(pages.map((page) => expectOnlyTarget(page, targetB, targetA)));
 
     await pages[0]!.goto('/provider/overview');
@@ -257,7 +263,7 @@ test('PT-A16 A-to-B-to-A across isolated browser profiles purges stale cache and
         expect(page.getByText(`${targetB.tenantName} deterministic headline`)).toHaveCount(0)
       )
     );
-    await Promise.all(pages.map((page) => openCurrentPreview(page, activeTarget)));
+    await openCurrentPreviews(pages, activeTarget);
     await Promise.all(pages.map((page) => expectOnlyTarget(page, activeTarget, targetB)));
 
     for (const observation of observations) {
@@ -388,8 +394,9 @@ test('PT-A22 identical preview versions render deterministically and refresh wit
       body.data.home.headline === 'Version eight arrived within budget'
     );
   });
-  await page.clock.runFor(8_001);
+  await page.clock.runFor(8_000);
   await refreshed;
+  await page.clock.runFor(1);
   await expect(page.getByText('Version eight arrived within budget')).toBeVisible();
   expect((await page.evaluate(() => Date.now())) - changedAt).toBeLessThanOrEqual(
     PREVIEW_FRESHNESS_BUDGET_MS

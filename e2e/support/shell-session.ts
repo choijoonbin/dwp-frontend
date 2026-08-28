@@ -456,7 +456,7 @@ const PROVIDER_TENANT_FIXTURE = {
     {
       domainId: 'domain-skax',
       domainName: 'sk.com',
-      domainType: 'CORPORATE',
+      domainType: 'LOGIN',
       verificationMethod: 'DNS_TXT',
       verificationState: 'VERIFIED',
       primaryDomain: true,
