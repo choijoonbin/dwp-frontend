@@ -308,6 +308,8 @@ export default function ProductSurfaceHeaderControls({
       )}
       {model.transitionEntry && (
         <Box
+          display="flex"
+          alignItems="center"
           sx={
             compact
               ? showAreaNavigation

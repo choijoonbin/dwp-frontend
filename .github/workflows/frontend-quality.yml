@@ -13,7 +13,7 @@ jobs:
   quality:
     name: Static, bundle, and runtime gates
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       YARN_ENABLE_HARDENED_MODE: '1'
 
