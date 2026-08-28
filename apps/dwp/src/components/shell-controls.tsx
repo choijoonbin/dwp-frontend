@@ -516,6 +516,7 @@ export function NotificationMenu() {
   const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
   const navigate = useNavigate();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const restoreTriggerFocusRef = useRef(false);
   const [loadRequested, setLoadRequested] = useState(false);
   const [runtimeReady, setRuntimeReady] = useState(false);
   const [open, setOpen] = useState(false);
@@ -560,15 +561,24 @@ export function NotificationMenu() {
     setBadgeContent(0);
   }, [notificationAuthorized, t]);
 
+  useEffect(() => {
+    if (open || !restoreTriggerFocusRef.current) return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      restoreTriggerFocusRef.current = false;
+      triggerRef.current?.focus();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [open]);
+
   const dismiss = useCallback(() => {
+    restoreTriggerFocusRef.current = true;
     setOpen(false);
-    window.requestAnimationFrame(() => triggerRef.current?.focus());
   }, []);
   const fail = useCallback(() => {
+    restoreTriggerFocusRef.current = true;
     setRuntimeReady(false);
     setLoadFailed(true);
     setOpen(false);
-    window.requestAnimationFrame(() => triggerRef.current?.focus());
   }, []);
   const updateTrigger = useCallback((label: string, totalUnread: number) => {
     setRuntimeReady(true);
