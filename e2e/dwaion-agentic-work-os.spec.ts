@@ -521,9 +521,9 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
   await expect(proposalDialog).toBeVisible();
   const proposalHeading = page.getByRole('heading', { name: 'Review project delivery risk' });
   await expect(proposalHeading).toBeVisible();
-  expect(
-    await proposalDialog.evaluate((dialog) => dialog.contains(document.activeElement))
-  ).toBe(true);
+  expect(await proposalDialog.evaluate((dialog) => dialog.contains(document.activeElement))).toBe(
+    true
+  );
   await expect(page.getByText('Customer migration plan')).toBeVisible();
   await expect(page.getByText('Why this was proposed')).toBeVisible();
   if (process.env.DWP_CAPTURE_VISUAL_EVIDENCE === 'true') {
