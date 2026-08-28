@@ -60,7 +60,7 @@
     "test:e2e": "playwright test",
     "test:e2e:widget-library-off": "playwright test --config playwright.widget-library-off.config.ts",
     "test:e2e:provider": "playwright test e2e/provider-access-boundary.spec.ts e2e/provider-acceptance-evidence.spec.ts e2e/provider-command-center.spec.ts e2e/provider-critical-operations.spec.ts e2e/provider-customer-estate.spec.ts --project=chromium --project=mobile --workers=1",
-    "test:performance": "playwright test e2e/performance-budget.spec.ts --project=chromium --workers=1",
+    "test:performance": "vite build && playwright test --config playwright.performance.config.ts",
     "test:visual": "playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/menu-visual-baseline.spec.ts e2e/flow-home-visual.spec.ts",
     "test:visual:update": "playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/menu-visual-baseline.spec.ts e2e/flow-home-visual.spec.ts --update-snapshots=all",
     "test:storybook": "playwright test --config playwright.storybook.config.ts",

@@ -137,15 +137,17 @@ const APPROVAL_FIXTURE_MATRIX = [
 async function approvalNavigation(page: Page): Promise<Locator> {
   const desktop = page.getByTestId('approvals-sidebar');
   const mobileTrigger = page.getByRole('button', { name: '전자결재 메뉴 열기' });
-  await expect
-    .poll(async () => (await desktop.isVisible()) || (await mobileTrigger.isVisible()))
-    .toBe(true);
-  if (await desktop.isVisible()) return desktop;
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (!mobile) {
+    await expect(desktop).toBeVisible();
+    return desktop;
+  }
 
+  await expect(mobileTrigger).toBeVisible();
   await mobileTrigger.click();
-  const mobile = page.getByTestId('approvals-mobile-sidebar');
-  await expect(mobile).toBeVisible();
-  return mobile;
+  const mobileNavigation = page.getByTestId('approvals-mobile-sidebar');
+  await expect(mobileNavigation).toBeVisible();
+  return mobileNavigation;
 }
 
 async function responsiveControlKind(
@@ -773,10 +775,16 @@ test('1280·1440px 관리 헤더는 권한 상태와 lazy 로딩 배치를 안�
   const header = page.getByTestId('approvals-header');
   const loading = header.locator('[data-testid="product-surface-context-bar-loading"]:visible');
   await expect(loading).toBeVisible();
+  const applicationContext = header.getByTestId('shell-application-context');
+  const globalActions = header.getByTestId('shell-global-actions');
+  await expect(applicationContext).toBeVisible();
+  await expect(globalActions).toBeVisible();
   const [applicationBefore, actionsBefore] = await Promise.all([
-    header.getByTestId('shell-application-context').boundingBox(),
-    header.getByTestId('shell-global-actions').boundingBox(),
+    applicationContext.boundingBox(),
+    globalActions.boundingBox(),
   ]);
+  expect(applicationBefore).not.toBeNull();
+  expect(actionsBefore).not.toBeNull();
 
   releaseChunk.resolve();
   await navigation;
@@ -789,11 +797,13 @@ test('1280·1440px 관리 헤더는 권한 상태와 lazy 로딩 배치를 안�
     '접근 재확인'
   );
   const [applicationAfter, actionsAfter] = await Promise.all([
-    header.getByTestId('shell-application-context').boundingBox(),
-    header.getByTestId('shell-global-actions').boundingBox(),
+    applicationContext.boundingBox(),
+    globalActions.boundingBox(),
   ]);
-  expect(Math.abs((applicationAfter?.x ?? 0) - (applicationBefore?.x ?? 0))).toBeLessThanOrEqual(1);
-  expect(Math.abs((actionsAfter?.x ?? 0) - (actionsBefore?.x ?? 0))).toBeLessThanOrEqual(1);
+  expect(applicationAfter).not.toBeNull();
+  expect(actionsAfter).not.toBeNull();
+  expect(Math.abs(applicationAfter!.x - applicationBefore!.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(actionsAfter!.x - actionsBefore!.x)).toBeLessThanOrEqual(1);
 
   for (const width of [1280, 1440]) {
     await page.setViewportSize({ width, height: 800 });

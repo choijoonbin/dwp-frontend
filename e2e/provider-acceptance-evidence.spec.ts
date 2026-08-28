@@ -595,8 +595,29 @@ test('PT-A30 tenant, scope, expiry, and revoke remain operable on mobile and at 
   expect(supportBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 2);
   expect(supportBox!.y).toBeLessThan(720);
   const commandCenter = page.getByRole('heading', { name: 'Operations command center' });
-  await commandCenter.scrollIntoViewIfNeeded();
-  await expect(commandCenter).toBeInViewport();
+  await expect(commandCenter).toBeVisible();
+  await expect
+    .poll(async () => {
+      await commandCenter.evaluate((element) => {
+        const supportBanner = document.querySelector('[data-testid="provider-support-banner"]');
+        if (!(supportBanner instanceof HTMLElement)) return;
+        const targetBox = element.getBoundingClientRect();
+        const visibleTop = supportBanner.getBoundingClientRect().bottom + 16;
+        window.scrollBy({ top: targetBox.top - visibleTop, behavior: 'auto' });
+      });
+      const [targetBox, bannerBox, viewportHeight] = await Promise.all([
+        commandCenter.boundingBox(),
+        supportBar.boundingBox(),
+        page.evaluate(() => window.innerHeight),
+      ]);
+      return Boolean(
+        targetBox &&
+        bannerBox &&
+        targetBox.y >= bannerBox.y + bannerBox.height &&
+        targetBox.y < viewportHeight
+      );
+    })
+    .toBe(true);
   const commandCenterBox = await commandCenter.boundingBox();
   const stickySupportBox = await supportBar.boundingBox();
   expect(commandCenterBox).not.toBeNull();
