@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 156,
+  "dependencyCount": 158,
   "licenseCounts": {
     "(Apache-2.0 AND BSD-3-Clause)": 1,
     "0BSD": 1,
     "Apache-2.0": 9,
     "BSD-3-Clause": 5,
     "ISC": 11,
-    "MIT": 129
+    "MIT": 131
   },
   "packages": [
     {
@@ -708,6 +708,12 @@
       "repository": "git://github.com/pimterry/loglevel.git"
     },
     {
+      "name": "loglevel",
+      "version": "1.9.2",
+      "license": "MIT",
+      "repository": "git://github.com/pimterry/loglevel.git"
+    },
+    {
       "name": "loose-envify",
       "version": "1.4.0",
       "license": "MIT",
@@ -940,6 +946,12 @@
       "version": "1.10.2",
       "license": "ISC",
       "repository": "github:eemeli/yaml"
+    },
+    {
+      "name": "zustand",
+      "version": "4.5.7",
+      "license": "MIT",
+      "repository": "git+https://github.com/pmndrs/zustand.git"
     },
     {
       "name": "zustand",
