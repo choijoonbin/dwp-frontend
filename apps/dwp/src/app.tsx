@@ -88,10 +88,21 @@ export default function App({ children, runtime }: AppProps) {
     if (!first && navigationType !== 'POP') window.scrollTo(0, 0);
     const cancelPerformanceReport = first ? () => undefined : reportRouteCommit(pathname);
     let committedTarget: HTMLElement | undefined;
+    let routeFocusCancelledByInteraction = false;
+    const cancelDelayedRouteFocus = () => {
+      routeFocusCancelledByInteraction = true;
+    };
     const commit = () => {
-      committedTarget = commitRouteAccessibility(focusHeading, committedTarget) ?? committedTarget;
+      committedTarget =
+        commitRouteAccessibility(
+          focusHeading && !routeFocusCancelledByInteraction,
+          committedTarget
+        ) ?? committedTarget;
     };
     const observer = new MutationObserver(commit);
+    document.addEventListener('pointerdown', cancelDelayedRouteFocus, true);
+    document.addEventListener('keydown', cancelDelayedRouteFocus, true);
+    document.addEventListener('click', cancelDelayedRouteFocus, true);
     const focusFrame = window.requestAnimationFrame(() => {
       const stableRoot = document.getElementById('root') ?? document.body;
       observer.observe(stableRoot, { childList: true, subtree: true });
@@ -100,6 +111,9 @@ export default function App({ children, runtime }: AppProps) {
     return () => {
       window.cancelAnimationFrame(focusFrame);
       observer.disconnect();
+      document.removeEventListener('pointerdown', cancelDelayedRouteFocus, true);
+      document.removeEventListener('keydown', cancelDelayedRouteFocus, true);
+      document.removeEventListener('click', cancelDelayedRouteFocus, true);
       cancelPerformanceReport();
     };
   }, [navigationType, pathname]);

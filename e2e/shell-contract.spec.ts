@@ -274,6 +274,14 @@ test('notification lazy runtime keeps an accessible loading dialog and restores 
       await route.continue();
     }
   );
+  let releaseWorkItems: (() => void) | undefined;
+  const workItemsReleased = new Promise<void>((resolve) => {
+    releaseWorkItems = resolve;
+  });
+  await page.route('**/api/platform/v1/workspace/work-items', async (route) => {
+    await workItemsReleased;
+    await route.fallback();
+  });
 
   await page.goto('/work');
   const trigger = page.getByRole('button', { name: 'Notifications' });
@@ -284,6 +292,8 @@ test('notification lazy runtime keeps an accessible loading dialog and restores 
   await expect(loadingDialog.getByRole('status')).toContainText('Loading notifications');
   await loadingDialog.getByRole('button', { name: 'Close notifications' }).click();
   await expect(loadingDialog).toBeHidden();
+  releaseWorkItems?.();
+  await expect(page.getByText('Approve software access request')).toBeVisible();
   await expect(trigger).toBeFocused();
 
   releaseModule?.();
