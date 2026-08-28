@@ -517,13 +517,19 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
     '1 permitted source was unavailable and was not inferred.'
   );
   await page.getByRole('button', { name: /Review project delivery risk/ }).click();
-  await expect(page.getByRole('heading', { name: 'Review project delivery risk' })).toBeVisible();
+  const proposalDialog = page.getByRole('dialog', { name: 'DWAI·ON proposal' });
+  await expect(proposalDialog).toBeVisible();
+  const proposalHeading = page.getByRole('heading', { name: 'Review project delivery risk' });
+  await expect(proposalHeading).toBeVisible();
+  expect(
+    await proposalDialog.evaluate((dialog) => dialog.contains(document.activeElement))
+  ).toBe(true);
   await expect(page.getByText('Customer migration plan')).toBeVisible();
   await expect(page.getByText('Why this was proposed')).toBeVisible();
   if (process.env.DWP_CAPTURE_VISUAL_EVIDENCE === 'true') {
     await page.screenshot({
       path: `/tmp/dwaion-proposals-${testInfo.project.name}.png`,
-      fullPage: true,
+      fullPage: false,
     });
   }
   await page.getByRole('button', { name: 'Accept for review' }).click();

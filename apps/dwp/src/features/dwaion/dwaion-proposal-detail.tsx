@@ -65,6 +65,9 @@ export function DwaionProposalDetail({
         onClose={busy ? undefined : onClose}
         slotProps={{
           paper: {
+            role: 'dialog',
+            'aria-modal': true,
+            'aria-label': t('dwaionProposals.detail.agentProposal'),
             sx: {
               width: { xs: '100%', sm: 460 },
               maxWidth: '100vw',
