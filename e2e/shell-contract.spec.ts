@@ -5,15 +5,27 @@ import {
   fulfillSuccess as success,
   mockShellSession as mockSession,
 } from './support/shell-session';
+import { DEFAULT_APP_PERMISSIONS } from './support/runtime-access';
 
 test.setTimeout(60_000);
+
+const SHELL_UTILITY_PERMISSIONS = [
+  ...DEFAULT_APP_PERMISSIONS,
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.NOTIFICATIONS',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+];
 
 async function expectHeaderContract(
   header: Locator,
   context: string,
   scope: 'tenant' | 'provider',
   mobile: boolean,
-  shellKey: 'workspace' | 'work' | 'hcm' | 'account' | 'admin' | 'provider'
+  shellKey: 'workspace' | 'work' | 'hcm' | 'account' | 'admin' | 'provider',
+  desktopWorkspaceVisible = true
 ) {
   await expect(header).toBeVisible();
   await expect(header).toHaveAttribute('data-dwp-shell', shellKey);
@@ -51,7 +63,7 @@ async function expectHeaderContract(
   await expect(header.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
   if (scope === 'provider') {
     await expect(workspace).toHaveCount(0);
-  } else if (mobile) {
+  } else if (mobile || !desktopWorkspaceVisible) {
     await expect(workspace).toBeHidden();
   } else {
     await expect(workspace).toBeVisible();
@@ -64,7 +76,7 @@ async function expectHeaderContract(
 test('tenant shells keep one application-context and global-utility contract', async ({
   page,
 }, testInfo) => {
-  await mockSession(page, ['TENANT_ADMIN']);
+  await mockSession(page, ['TENANT_ADMIN'], { permissions: SHELL_UTILITY_PERMISSIONS });
   const mobile = testInfo.project.name === 'mobile';
   const runtimeErrors: string[] = [];
   page.on('pageerror', (error) => runtimeErrors.push(error.message));
@@ -78,7 +90,7 @@ test('tenant shells keep one application-context and global-utility contract', a
 
   await page.goto('/hr/directory');
   const hcmHeader = page.getByTestId('hcm-header');
-  await expectHeaderContract(hcmHeader, 'HR', 'tenant', mobile, 'hcm');
+  await expectHeaderContract(hcmHeader, 'HR', 'tenant', mobile, 'hcm', false);
   await expect(hcmHeader.getByText('Tenant Admin', { exact: true })).toBeHidden();
   if (mobile) {
     await page.getByRole('button', { name: 'Open HR navigation' }).click();
@@ -246,7 +258,10 @@ test('notification lazy runtime keeps an accessible loading dialog and restores 
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Lazy loading feedback is covered once.');
-  await mockSession(page, ['TENANT_ADMIN'], { locale: 'en' });
+  await mockSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: SHELL_UTILITY_PERMISSIONS,
+  });
 
   let releaseModule: (() => void) | undefined;
   const moduleReleased = new Promise<void>((resolve) => {
