@@ -41,6 +41,9 @@ jobs:
       - name: Enforce Yarn workspace policy
         run: node scripts/check-package-manager-policy.mjs
 
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
       - name: Validate release evidence registry
         run: corepack yarn release:evidence:check
 
@@ -58,9 +61,6 @@ jobs:
 
       - name: Test Provider artifact DLP scanner fail-closed semantics
         run: corepack yarn provider:artifacts:scan:test
-
-      - name: Install dependencies
-        run: corepack yarn install --immutable
 
       - name: Audit high severity dependencies
         run: corepack yarn security:audit
@@ -113,17 +113,18 @@ jobs:
         run: corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1
 
       - name: Run Provider control-plane and tenant-boundary gates
+        id: provider_e2e
         env:
           PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-provider
           PLAYWRIGHT_OUTPUT_DIR: test-results/provider
         run: corepack yarn test:e2e:provider
 
       - name: Scan Provider acceptance artifacts for secrets and PII
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && (steps.provider_e2e.outcome == 'success' || steps.provider_e2e.outcome == 'failure') }}
         run: corepack yarn provider:artifacts:scan playwright-report-provider test-results/provider
 
       - name: Upload Provider acceptance report
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && (steps.provider_e2e.outcome == 'success' || steps.provider_e2e.outcome == 'failure') }}
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: provider-e2e-report
