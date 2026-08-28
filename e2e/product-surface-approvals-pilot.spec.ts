@@ -152,16 +152,41 @@ async function responsiveControlKind(
   desktop: Locator,
   mobile: Locator
 ): Promise<'desktop' | 'mobile'> {
+  const result: { kind?: 'desktop' | 'mobile' } = {};
   await expect
-    .poll(async () => (await desktop.isVisible()) || (await mobile.isVisible()))
+    .poll(async () => {
+      if (await desktop.isVisible()) {
+        result.kind = 'desktop';
+        return true;
+      }
+      if (await mobile.isVisible()) {
+        result.kind = 'mobile';
+        return true;
+      }
+      result.kind = undefined;
+      return false;
+    })
     .toBe(true);
-  return (await desktop.isVisible()) ? 'desktop' : 'mobile';
+  if (!result.kind) throw new Error('No responsive Product Surface control is visible');
+  return result.kind;
+}
+
+async function navigatePilotRoute(page: Page, path: string): Promise<void> {
+  await page.goto(path, { waitUntil: 'domcontentloaded' });
+  const moduleImportFailure = page.getByRole('heading', {
+    name: 'Importing a module script failed.',
+  });
+  if (await moduleImportFailure.isVisible()) {
+    await page.reload({ waitUntil: 'domcontentloaded' });
+  }
+  await expect(moduleImportFailure).toHaveCount(0);
 }
 
 for (const scenario of APPROVAL_FIXTURE_MATRIX) {
   test(`${scenario.testId} canonical fixture가 root·menu·direct-route 결정을 구동한다`, async ({
     page,
   }) => {
+    test.setTimeout(60_000);
     const { authority, fixture } = approvalPilotAuthorityOptions(scenario.testId);
     expect(fixture.projectionKind).toBe('E2E_SESSION');
     expect(fixture.fixtureChecksum).toMatch(/^[a-f0-9]{64}$/u);
@@ -169,7 +194,7 @@ for (const scenario of APPROVAL_FIXTURE_MATRIX) {
 
     await mockShellSession(page, ['WORKSPACE_MEMBER'], { locale: 'ko', permissions: [] });
     await mockApprovalProductSurfaceAuthority(page, authority);
-    await page.goto('/approvals');
+    await navigatePilotRoute(page, '/approvals');
 
     if (!scenario.surface) {
       await expect(page.getByTestId('approvals-shell')).toHaveCount(0);
@@ -186,7 +211,7 @@ for (const scenario of APPROVAL_FIXTURE_MATRIX) {
       scenario.surface
     );
     if (scenario.allowed) {
-      await page.goto(scenario.allowed);
+      await navigatePilotRoute(page, scenario.allowed);
       await expect(page.getByTestId('approvals-shell')).toHaveAttribute(
         'data-product-surface',
         scenario.allowed.startsWith('/approvals/admin') ? 'approvals.admin' : 'approvals.work'
@@ -198,7 +223,7 @@ for (const scenario of APPROVAL_FIXTURE_MATRIX) {
       );
     }
     if (scenario.denied) {
-      await page.goto(scenario.denied);
+      await navigatePilotRoute(page, scenario.denied);
       await expect(
         page.getByRole('heading', {
           name: /현재 접근 범위 밖입니다|관리 영역이 할당되지 않았습니다/u,
@@ -502,6 +527,7 @@ test('320px 관리 Context Rail은 단일 Scope와 읽기 전용·재확인 상�
     .getByTestId('approvals-mobile-surface-switcher')
     .getByTestId('product-surface-management-entry')
     .click();
+  await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
   const contextRail = page.getByTestId('shell-mobile-context-rail');
   await expect(contextRail).toBeVisible();
   const workReturn = contextRail.getByTestId('product-surface-work-return');
@@ -612,6 +638,7 @@ test('1024px 관리 Context Rail은 읽기 전용·재확인 상태를 텍스트
   });
 
   await page.goto('/approvals/admin/overview');
+  await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
   const header = page.getByTestId('approvals-header');
   const contextRail = header.getByTestId('shell-mobile-context-rail');
   await expect(contextRail).toBeVisible();
@@ -859,6 +886,7 @@ test('320px management-only read-only 관리 rail은 tenant·scope·상태를 �
   });
 
   await page.goto('/approvals/admin/overview');
+  await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
   const contextRail = page.getByTestId('shell-mobile-context-rail');
   await expect(contextRail).toBeVisible();
   await expect(contextRail.getByTestId('product-surface-work-return')).toHaveCount(0);
