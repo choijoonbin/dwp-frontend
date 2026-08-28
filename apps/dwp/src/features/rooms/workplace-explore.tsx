@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Accessibility, Building2, Layers3, MapPinned } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Temporal } from 'temporal-polyfill';
 import { getRoomsPolicy, getWorkplaceExplore, useAuth, useToast } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -78,6 +79,18 @@ function positiveNumber(value: string | null, fallback: number) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function initialSiteTimeZone(value: string | null) {
+  if (value) {
+    try {
+      Temporal.Now.instant().toZonedDateTimeISO(value);
+      return value;
+    } catch {
+      // The authoritative site response replaces malformed URL hints.
+    }
+  }
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
 export function WorkplaceExplore() {
   const { t } = useTranslation('rooms');
   const auth = useAuth();
@@ -93,10 +106,13 @@ export function WorkplaceExplore() {
     identityKey: string;
     data: WorkplaceExploreResponse;
   } | null>(null);
-  const [siteTimeZone, setSiteTimeZone] = useState(
-    () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  const [siteTimeZone, setSiteTimeZone] = useState(() =>
+    initialSiteTimeZone(searchParams.get('timeZone'))
   );
+  const explicitDateRef = useRef(searchParams.has('date'));
+  const explicitTimeRef = useRef(searchParams.has('time'));
   const defaultedTimeZoneRef = useRef<string | null>(null);
+  const pendingDefaultTimeRef = useRef<string | null>(null);
   const searchParamsRef = useRef(searchParams);
   searchParamsRef.current = searchParams;
 
@@ -190,17 +206,46 @@ export function WorkplaceExplore() {
   const mapAvailable = Boolean(selectedFloor?.backgroundAssetPath);
 
   useEffect(() => {
-    if (!data || !selectedFloor || !selectedSite || query.isPlaceholderData) return;
-    if (requestedFloorId === selectedFloor.floorId && requestedSiteId === selectedSite.siteId)
+    if (!data || !policy || !selectedFloor || !selectedSite || query.isPlaceholderData) return;
+    const shouldSyncLocation =
+      requestedFloorId !== selectedFloor.floorId || requestedSiteId !== selectedSite.siteId;
+    const shouldDefaultTimeZone = defaultedTimeZoneRef.current !== selectedSite.timeZone;
+    if (
+      !shouldDefaultTimeZone &&
+      pendingDefaultTimeRef.current &&
+      time !== pendingDefaultTimeRef.current
+    ) {
       return;
-    updateParams({ site: selectedSite.siteId, floor: selectedFloor.floorId });
+    }
+    if (!shouldSyncLocation && !shouldDefaultTimeZone) return;
+
+    const selection = workplaceDefaultSelection(selectedSite.timeZone, policy, data.generatedAt);
+    const hasExplicitDate = explicitDateRef.current;
+    const hasExplicitTime = explicitTimeRef.current;
+    const nextTime = hasExplicitTime ? time : selection.time;
+    if (shouldDefaultTimeZone) {
+      defaultedTimeZoneRef.current = selectedSite.timeZone;
+      if (!hasExplicitTime) pendingDefaultTimeRef.current = nextTime;
+      explicitDateRef.current = true;
+      explicitTimeRef.current = true;
+    }
+    updateParams({
+      site: selectedSite.siteId,
+      floor: selectedFloor.floorId,
+      timeZone: selectedSite.timeZone,
+      date: shouldDefaultTimeZone && !hasExplicitDate ? selection.date : date,
+      time: shouldDefaultTimeZone ? nextTime : time,
+    });
   }, [
     data,
+    date,
+    policy,
     query.isPlaceholderData,
     requestedFloorId,
     requestedSiteId,
     selectedFloor,
     selectedSite,
+    time,
     updateParams,
   ]);
 
@@ -244,18 +289,11 @@ export function WorkplaceExplore() {
     : { minDate: null, maxDate: null };
 
   useEffect(() => {
-    if (!policy || !selectedSite?.timeZone) return;
-    if (defaultedTimeZoneRef.current === selectedSite.timeZone) return;
-    defaultedTimeZoneRef.current = selectedSite.timeZone;
-    const selection = workplaceDefaultSelection(selectedSite.timeZone, policy, data?.generatedAt);
-    updateParams({
-      date: searchParams.has('date') ? date : selection.date,
-      time: searchParams.has('time') ? time : selection.time,
-    });
-  }, [data?.generatedAt, date, policy, searchParams, selectedSite?.timeZone, time, updateParams]);
-
-  useEffect(() => {
     if (!policy) return;
+    if (pendingDefaultTimeRef.current) {
+      if (time !== pendingDefaultTimeRef.current) return;
+      pendingDefaultTimeRef.current = null;
+    }
     const nextTime = selectableTimes.some((option) => option.value === time)
       ? time
       : selectableTimes[0]?.value;
@@ -401,11 +439,23 @@ export function WorkplaceExplore() {
     const nextFloor = data?.floors.find((floor) => floor.siteId === value);
     const nextSite = data?.sites.find((site) => site.siteId === value);
     if (nextSite?.timeZone) setSiteTimeZone(nextSite.timeZone);
-    updateParams({ site: value, floor: nextFloor?.floorId ?? null, resource: null });
+    updateParams({
+      site: value,
+      floor: nextFloor?.floorId ?? null,
+      timeZone: nextSite?.timeZone ?? null,
+      resource: null,
+    });
   };
   const chooseFloor = (value: string) => {
     const nextFloor = data?.floors.find((floor) => floor.floorId === value);
-    updateParams({ site: nextFloor?.siteId ?? siteId, floor: value, resource: null });
+    const nextSite = data?.sites.find((site) => site.siteId === nextFloor?.siteId);
+    if (nextSite?.timeZone) setSiteTimeZone(nextSite.timeZone);
+    updateParams({
+      site: nextFloor?.siteId ?? siteId,
+      floor: value,
+      timeZone: nextSite?.timeZone ?? siteTimeZone,
+      resource: null,
+    });
   };
   const inspectResource = (resource: WorkplaceResource) => {
     updateParams({ resource: resource.resourceId });
@@ -453,6 +503,7 @@ export function WorkplaceExplore() {
       duration: 60,
       site: firstSite?.siteId ?? null,
       floor: firstFloor?.floorId ?? null,
+      timeZone: firstSite?.timeZone ?? null,
       type: null,
       feature: null,
       neighborhood: null,

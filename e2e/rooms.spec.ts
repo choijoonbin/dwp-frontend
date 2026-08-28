@@ -465,6 +465,8 @@ async function clickWorkplaceNavigationLink(page: Page, name: string) {
   await link.click();
 }
 
+test.use({ timezoneId: 'UTC' });
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:00Z'));
   await mockShellSession(page, ['TENANT_ADMIN'], {
@@ -1037,7 +1039,7 @@ test('workplace home preserves its verified 60-minute scope when opening discove
   const link = page.getByTestId('workplace-day-brief').getByRole('link', { name: 'Find a space' });
   await expect(link).toHaveAttribute(
     'href',
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A01&duration=60&type=DESK`
+    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A01&duration=60&type=DESK`
   );
   const exploreRequest = page.waitForRequest((request) => {
     const url = new URL(request.url());

@@ -581,8 +581,11 @@ export function NotificationMenu() {
 
   const restoreTriggerFocus = useCallback(() => {
     if (!restoreTriggerFocusRef.current) return;
-    restoreTriggerFocusRef.current = false;
-    triggerRef.current?.focus();
+    window.requestAnimationFrame(() => {
+      if (!restoreTriggerFocusRef.current) return;
+      restoreTriggerFocusRef.current = false;
+      triggerRef.current?.focus({ preventScroll: true });
+    });
   }, []);
 
   const dismiss = useCallback(() => {

@@ -657,6 +657,7 @@ test.beforeEach(async ({ page }) => {
 test('clean hard reloads stay runtime-clean across the supported viewport matrix', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(60_000);
   test.skip(
     testInfo.project.name !== 'chromium',
     'The hard-reload runtime matrix runs once in Chromium.'

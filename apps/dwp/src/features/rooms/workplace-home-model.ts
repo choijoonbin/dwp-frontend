@@ -148,6 +148,7 @@ export function workplaceDiscoveryTarget({
   const site = explore?.sites.find((candidate) => candidate.siteId === floor?.siteId);
   if (site) params.set('site', site.siteId);
   if (floor) params.set('floor', floor.floorId);
+  if (site) params.set('timeZone', timeZone);
   if (rangeFrom) {
     const start = Temporal.Instant.from(rangeFrom).toZonedDateTimeISO(timeZone);
     params.set('date', start.toPlainDate().toString());

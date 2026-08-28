@@ -418,7 +418,7 @@ describe('workplace home model', () => {
         type: 'DESK',
       })
     ).toBe(
-      '/workplace/explore?site=site-1&floor=floor-1&date=2026-08-19&time=09%3A00&duration=60&type=DESK'
+      '/workplace/explore?site=site-1&floor=floor-1&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A00&duration=60&type=DESK'
     );
   });
 
@@ -435,7 +435,9 @@ describe('workplace home model', () => {
 
     expect(model.bookableCount).toBe(0);
     expect(model.nextAction.kind).toBe('BROWSE_SPACE');
-    expect(model.nextAction.path).toBe('/workplace/explore?site=site-1&floor=floor-1&type=DESK');
+    expect(model.nextAction.path).toBe(
+      '/workplace/explore?site=site-1&floor=floor-1&timeZone=Asia%2FSeoul&type=DESK'
+    );
   });
 
   it('closes check-in decisions immediately after the window ends', () => {
