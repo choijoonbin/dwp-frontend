@@ -378,10 +378,17 @@ test('PT-A22 identical preview versions render deterministically and refresh wit
   await pauseSupportClock(page);
   revision = { headline: 'Version eight arrived within budget', homeVersion: 8 };
   const changedAt = await page.evaluate(() => Date.now());
-  const refreshed = page.waitForResponse(
-    (response) => new URL(response.url()).pathname === PREVIEW_PATH && response.ok()
-  );
-  await page.clock.runFor(8_000);
+  const refreshed = page.waitForResponse(async (response) => {
+    if (new URL(response.url()).pathname !== PREVIEW_PATH || !response.ok()) return false;
+    const body = (await response.json()) as {
+      data?: { home?: { headline?: string; version?: number } };
+    };
+    return (
+      body.data?.home?.version === 8 &&
+      body.data.home.headline === 'Version eight arrived within budget'
+    );
+  });
+  await page.clock.runFor(8_001);
   await refreshed;
   await expect(page.getByText('Version eight arrived within budget')).toBeVisible();
   expect((await page.evaluate(() => Date.now())) - changedAt).toBeLessThanOrEqual(

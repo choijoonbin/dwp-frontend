@@ -30,8 +30,6 @@ test.beforeEach(async ({ page }, testInfo) => {
 
 test('exposes operational scope, freshness, signals, and priority filtering', async ({ page }) => {
   await page.goto('/provider/overview');
-  await pauseCommandCenterClock(page);
-
   await expect(page.getByRole('heading', { name: 'Operations command center' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Operations command scope' })).toContainText(
     'All customer environments'
@@ -49,7 +47,11 @@ test('exposes operational scope, freshness, signals, and priority filtering', as
   const providerNavigation = page.getByRole('navigation', { name: 'Provider navigation' });
   await expect(providerNavigation.getByRole('link', { name: 'Command center' })).toBeVisible();
   await expect(providerNavigation.getByRole('heading', { name: 'Command center' })).toHaveCount(0);
-  if (mobileNavigation) await page.keyboard.press('Escape');
+  if (mobileNavigation) {
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog', { name: 'Provider navigation' })).toBeHidden();
+  }
+  await pauseCommandCenterClock(page);
   await expect(page.getByRole('meter', { name: /tenants active/i })).toHaveAttribute(
     'aria-valuenow',
     '94'
@@ -67,8 +69,8 @@ test('exposes operational scope, freshness, signals, and priority filtering', as
 
 test('keeps the command center within the viewport', async ({ page }) => {
   await page.goto('/provider/overview');
-  await pauseCommandCenterClock(page);
   await expect(page.getByRole('region', { name: 'Global operating metrics' })).toBeVisible();
+  await pauseCommandCenterClock(page);
 
   const geometry = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,

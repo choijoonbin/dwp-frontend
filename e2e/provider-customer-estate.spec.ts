@@ -56,8 +56,8 @@ test('customer estate connects global posture, placement, and tenant 360', async
   await expect(page.getByRole('button', { name: 'Issue activation link' })).toHaveCount(0);
   await expect(page.getByText('Configured administrators').locator('../..')).toContainText('1');
   await expect(page.getByText('Active administrators').locator('../..')).toContainText('1');
-  await expect(page.getByText('Park Hyunwoo')).toHaveCount(0);
-  await expect(page.getByText('hyunwoo.park@sk.com')).toHaveCount(0);
+  await expect(page.getByText('Customer Administrator')).toHaveCount(0);
+  await expect(page.getByText('customer.admin@tenant.example')).toHaveCount(0);
 
   await page.getByRole('tab', { name: 'Product access' }).click();
   await expect(page).toHaveURL(/tab=entitlements/);

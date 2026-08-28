@@ -79,8 +79,8 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Install Chromium
-        run: corepack yarn playwright install --with-deps chromium
+      - name: Install Playwright browsers
+        run: corepack yarn playwright install --with-deps chromium webkit
 
       - name: Check formatting
         run: corepack yarn format:check
