@@ -424,6 +424,48 @@ test('an awaiting-archive view can be reassigned to an active tenant steward', a
   await expect(followUpHistory.getByText('Tenant Admin')).toBeVisible();
 });
 
+test('an orphan reassignment recovers target choices in place after a directory outage', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize(
+    testInfo.project.name === 'mobile' ? { width: 390, height: 844 } : { width: 1280, height: 900 }
+  );
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockShellSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  const store = await mockCustodyWorkspace(page, {
+    failOrphanTargetUsersUntilManualRetry: true,
+  });
+
+  await page.goto('/admin/identity/saved-view-custody');
+  const editor = await openOrphanAction(page);
+  const loadError = editor
+    .getByRole('alert')
+    .filter({ hasText: 'We could not load active users eligible for reassignment' });
+  await expect(loadError).toBeVisible();
+  const retry = loadError.getByRole('button', { name: 'Reload' });
+  await expect(retry).toBeVisible();
+  await retry.focus();
+  await expect(retry).toBeFocused();
+  await retry.press('Enter');
+
+  const target = editor.getByRole('combobox', { name: 'New steward' });
+  await expect(target).toBeFocused();
+  await target.press('ArrowDown');
+  await expect(page.getByRole('option', { name: /Jordan Owner/ })).toBeVisible();
+  expect(store.orphanTargetUserRequestCount).toBe(3);
+  expect(
+    await editor.evaluate((element) => element.scrollWidth - element.clientWidth)
+  ).toBeLessThanOrEqual(1);
+  const accessibility = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
+  const blocking = accessibility.violations.filter(
+    (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+  );
+  expect(blocking).toEqual([]);
+});
+
 test('an orphan reassignment name conflict keeps inputs and requires another steward', async ({
   page,
 }) => {

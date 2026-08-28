@@ -129,6 +129,10 @@ function ScheduleMiniBars({
           gap: '2px',
           borderBlockEnd: '1px solid',
           borderColor: 'divider',
+          '@media (max-width: 359.95px)': {
+            height: 8,
+            minWidth: 32,
+          },
         }}
       >
         {series.map((point) => (
@@ -228,7 +232,7 @@ function RolePulseLens({
             density === 'tall'
               ? '24px minmax(14px, auto) auto'
               : density === 'short'
-                ? '16px minmax(11px, auto)'
+                ? 'minmax(16px, auto) minmax(11px, auto)'
                 : '24px minmax(14px, auto)',
           columnGap: density === 'short' ? 0.4 : 0.75,
           alignItems: 'center',
@@ -254,6 +258,30 @@ function RolePulseLens({
           '@media (prefers-reduced-motion: reduce)': {
             transition: 'none',
             '&:hover': { transform: 'none' },
+          },
+          '@media (max-width: 359.95px)': {
+            minHeight: rolePulseLayoutPolicy.short.readRowHeight,
+            px: 0.5,
+            py: 0.25,
+            gridTemplateColumns: '18px minmax(0, 1fr) auto',
+            gridTemplateRows: 'minmax(16px, auto) minmax(11px, auto)',
+            columnGap: 0.4,
+          },
+          '@container home-role-pulse (max-width: 460px)': {
+            minHeight:
+              density === 'short'
+                ? rolePulseLayoutPolicy.short.readRowHeight
+                : density === 'tall'
+                  ? rolePulseLayoutPolicy.tall.readRowHeight
+                  : 64,
+            px: 0.5,
+            py: 0.35,
+            gridTemplateColumns: '18px minmax(0, 1fr) auto',
+            gridTemplateRows:
+              density === 'tall'
+                ? 'minmax(18px, auto) minmax(12px, auto) auto'
+                : 'minmax(18px, auto) minmax(12px, auto)',
+            columnGap: 0.4,
           },
           "[data-workspace-widget-content-state='editing-preview'] &": {
             minHeight: layout.editingRowHeight,
@@ -281,6 +309,8 @@ function RolePulseLens({
             color: accent,
             borderRadius: 1.25,
             bgcolor: alpha(accent, theme.palette.mode === 'dark' ? 0.16 : 0.09),
+            '@media (max-width: 359.95px)': { width: 18, height: 18 },
+            '@container home-role-pulse (max-width: 460px)': { width: 18, height: 18 },
             '@media (forced-colors: active)': {
               color: 'CanvasText',
               bgcolor: 'Canvas',
@@ -293,13 +323,34 @@ function RolePulseLens({
       </Box>
 
       <Typography
+        data-home-role-label
+        data-home-role-label-layout={density === 'short' ? 'wrapped' : 'responsive'}
         variant="caption"
         fontWeight={720}
-        noWrap
         sx={{
           minWidth: 0,
           fontSize: density === 'short' ? 10.5 : undefined,
           lineHeight: density === 'short' ? 1.1 : 1.2,
+          wordBreak: density === 'short' ? 'keep-all' : undefined,
+          whiteSpace: density === 'short' ? 'normal' : 'nowrap',
+          overflow: density === 'short' ? 'visible' : 'hidden',
+          textOverflow: density === 'short' ? 'clip' : 'ellipsis',
+          '@media (max-width: 359.95px)': {
+            fontSize: 10.5,
+            lineHeight: 1.1,
+            wordBreak: 'keep-all',
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
+          '@container home-role-pulse (max-width: 460px)': {
+            fontSize: 10.5,
+            lineHeight: 1.1,
+            wordBreak: 'keep-all',
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
         }}
       >
         {label}
@@ -308,12 +359,14 @@ function RolePulseLens({
         data-home-role-value
         sx={{
           alignSelf: 'baseline',
-          fontSize: density === 'short' ? 17 : 22,
+          fontSize: density === 'short' ? { xs: 15, sm: 17 } : 22,
           lineHeight: 1,
           fontWeight: 760,
           letterSpacing: '-0.03em',
           fontVariantNumeric: 'tabular-nums',
           whiteSpace: 'nowrap',
+          '@media (max-width: 359.95px)': { fontSize: 15 },
+          '@container home-role-pulse (max-width: 460px)': { fontSize: 17 },
         }}
       >
         {signal.value}
@@ -321,7 +374,13 @@ function RolePulseLens({
           component="span"
           variant="caption"
           color="text.secondary"
-          sx={{ ml: 0.35, letterSpacing: 0, fontSize: density === 'short' ? 9.5 : undefined }}
+          sx={{
+            ml: 0.35,
+            letterSpacing: 0,
+            fontSize: density === 'short' ? { xs: 8.5, sm: 9.5 } : undefined,
+            '@media (max-width: 359.95px)': { fontSize: 8.5 },
+            '@container home-role-pulse (max-width: 460px)': { fontSize: 9.5 },
+          }}
         >
           {unit}
         </Typography>
@@ -331,16 +390,40 @@ function RolePulseLens({
         data-home-role-comparison
         variant="caption"
         color="text.secondary"
-        noWrap
         sx={{
           minWidth: 0,
           fontSize: density === 'short' ? 9.5 : undefined,
           lineHeight: density === 'short' ? 1.1 : 1.2,
+          whiteSpace: density === 'short' ? 'normal' : 'nowrap',
+          overflow: density === 'short' ? 'visible' : 'hidden',
+          textOverflow: density === 'short' ? 'clip' : 'ellipsis',
+          '@media (max-width: 359.95px)': {
+            fontSize: 9.5,
+            lineHeight: 1.1,
+            whiteSpace: 'normal',
+            wordBreak: 'keep-all',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
+          '@container home-role-pulse (max-width: 460px)': {
+            fontSize: 9.5,
+            lineHeight: 1.1,
+            whiteSpace: 'normal',
+            wordBreak: 'keep-all',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
         }}
       >
         {comparison}
       </Typography>
-      <Box sx={{ minWidth: density === 'short' ? 32 : { xs: 44, sm: 50 } }}>
+      <Box
+        sx={{
+          minWidth: density === 'short' ? 32 : { xs: 44, sm: 50 },
+          '@media (max-width: 359.95px)': { minWidth: 32 },
+          '@container home-role-pulse (max-width: 460px)': { minWidth: 32 },
+        }}
+      >
         {progress !== undefined ? (
           <Box
             role="progressbar"
@@ -432,6 +515,8 @@ export function RolePulseInsight({
       sx={{
         width: 1,
         minWidth: 0,
+        containerName: 'home-role-pulse',
+        containerType: 'inline-size',
         display: 'grid',
         gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
         gridAutoRows: `minmax(${layout.readRowHeight}px, auto)`,

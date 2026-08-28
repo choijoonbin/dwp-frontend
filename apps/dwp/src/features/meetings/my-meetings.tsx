@@ -90,7 +90,16 @@ export function MyMeetings() {
                 <MeetingSummaryRow
                   key={meeting.meetingId}
                   meeting={meeting}
-                  onOpen={() => navigate(`/meetings/room/${encodeURIComponent(meeting.meetingId)}`)}
+                  onOpen={
+                    meeting.lifecycleState === 'CANCELLED'
+                      ? undefined
+                      : () =>
+                          navigate(
+                            meeting.lifecycleState === 'ENDED'
+                              ? `/meetings/history?meeting=${encodeURIComponent(meeting.meetingId)}`
+                              : `/meetings/room/${encodeURIComponent(meeting.meetingId)}`
+                          )
+                  }
                 />
               ))
             ) : (

@@ -3,6 +3,7 @@ import {
   CalendarClock,
   CalendarDays,
   Check,
+  ChevronRight,
   Clock3,
   Focus,
   ListTodo,
@@ -124,6 +125,11 @@ export function CalendarPageHeading({
             borderRadius: 1,
             color: 'primary.main',
             bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.09),
+            '@media (forced-colors: active)': {
+              border: '1px solid CanvasText',
+              backgroundColor: 'Canvas',
+              color: 'CanvasText',
+            },
           })}
         >
           <HeadingIcon size={21} strokeWidth={1.9} />
@@ -171,7 +177,11 @@ export function CalendarPageHeading({
           sx={{
             width: { xs: 1, md: 'auto' },
             flexWrap: 'wrap',
-            '& > *': { flex: { xs: '1 1 auto', sm: '0 0 auto' } },
+            '& > *': {
+              minWidth: 0,
+              maxWidth: '100%',
+              flex: { xs: '1 1 9rem', sm: '0 0 auto' },
+            },
           }}
         >
           {actions}
@@ -253,11 +263,18 @@ export function CalendarAgendaItem({
         bgcolor: (theme) =>
           selected ? alpha(tone.main, theme.palette.mode === 'dark' ? 0.22 : 0.1) : 'transparent',
         color: 'text.primary',
+        '@media (forced-colors: active)': {
+          backgroundColor: 'Canvas',
+          borderColor: 'CanvasText',
+          outline: selected ? '2px solid Highlight' : 'none',
+          outlineOffset: -2,
+        },
       }}
     >
       <Box
         component={onOpen ? 'button' : 'div'}
         type={onOpen ? 'button' : undefined}
+        aria-label={onOpen ? t('event.openDetailsFor', { title: event.title }) : undefined}
         onClick={onOpen}
         sx={{
           minWidth: 0,
@@ -278,6 +295,9 @@ export function CalendarAgendaItem({
             outlineColor: 'primary.main',
             outlineOffset: -2,
           },
+          '@media (forced-colors: active)': {
+            '&:focus-visible': { outlineColor: 'Highlight' },
+          },
         }}
       >
         <Box>
@@ -286,6 +306,7 @@ export function CalendarAgendaItem({
             fontWeight={600}
             sx={(theme) => ({
               color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.42) : tone.main,
+              '@media (forced-colors: active)': { color: 'CanvasText' },
             })}
           >
             {calendarTime(event.startsAt, language)}
@@ -302,6 +323,11 @@ export function CalendarAgendaItem({
                 height: 26,
                 bgcolor: alpha(tone.main, theme.palette.mode === 'dark' ? 0.25 : 0.12),
                 color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.48) : tone.main,
+                '@media (forced-colors: active)': {
+                  border: '1px solid CanvasText',
+                  backgroundColor: 'Canvas',
+                  color: 'CanvasText',
+                },
               })}
             >
               <Icon size={14} aria-hidden="true" />
@@ -335,7 +361,7 @@ export function CalendarAgendaItem({
       {event.myResponse === 'NEEDS_ACTION' && onRespond ? (
         <Stack direction="row" spacing={0.5} sx={{ pr: 1.5 }}>
           <ActionIconButton
-            label={t('event.accept')}
+            label={t('event.acceptFor', { title: event.title })}
             intent="primary"
             size="small"
             onClick={() => onRespond('ACCEPTED')}
@@ -343,7 +369,7 @@ export function CalendarAgendaItem({
             <Check size={16} />
           </ActionIconButton>
           <ActionIconButton
-            label={t('event.decline')}
+            label={t('event.declineFor', { title: event.title })}
             intent="default"
             size="small"
             onClick={() => onRespond('DECLINED')}
@@ -352,9 +378,9 @@ export function CalendarAgendaItem({
           </ActionIconButton>
         </Stack>
       ) : onOpen ? (
-        <ActionButton intent="quiet" size="small" onClick={onOpen} sx={{ minWidth: 0, mr: 1.5 }}>
-          {t('actions.details')}
-        </ActionButton>
+        <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', pr: 1.5 }}>
+          <ChevronRight size={17} />
+        </Box>
       ) : null}
     </Box>
   );
@@ -423,6 +449,10 @@ export function CalendarEventDrawer({
             bgcolor: alpha(tone.main, theme.palette.mode === 'dark' ? 0.2 : 0.1),
             borderBottom: 1,
             borderColor: 'divider',
+            '@media (forced-colors: active)': {
+              backgroundColor: 'Canvas',
+              borderColor: 'CanvasText',
+            },
           })}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -434,6 +464,11 @@ export function CalendarEventDrawer({
                   color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.42) : tone.main,
                   bgcolor: 'background.paper',
                   fontWeight: 600,
+                  '@media (forced-colors: active)': {
+                    border: '1px solid CanvasText',
+                    backgroundColor: 'Canvas',
+                    color: 'CanvasText',
+                  },
                 })}
               />
               {event.importance && event.importance !== 'NORMAL' && (

@@ -1,7 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import { applyMailLifecycle, createMailFolder, createMailRule, getMailThreads } from './mail-api';
+import {
+  applyMailLifecycle,
+  createMailFolder,
+  createMailRule,
+  getMailRuleBackfillPreview,
+  getMailThreads,
+  runMailRuleBackfill,
+} from './mail-api';
 
 function jsonResponse(data: unknown): Response {
   return {
@@ -87,5 +94,55 @@ describe('mail organization API boundary', () => {
       version: 7,
       targetFolderId: 'folder-2',
     });
+  });
+
+  it('previews and applies account rule backfill with an opaque idempotent command', async () => {
+    const accountId = 'account/personal-1';
+    const input = {
+      requestId: '4fbe6fef-343c-43eb-a739-17d8ed78b8f4',
+      previewFingerprint: 'a'.repeat(64),
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          accountId,
+          previewFingerprint: input.previewFingerprint,
+          enabledRuleCount: 2,
+          scannedCount: 6,
+          matchedThreadCount: 3,
+          plannedApplicationCount: 3,
+          truncated: false,
+          generatedAt: '2026-08-28T00:00:00Z',
+        })
+      )
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          executionId: '5eb905b4-7f6a-4ac8-91b0-7728ccdbd768',
+          accountId,
+          ...input,
+          status: 'SUCCEEDED',
+          replayed: false,
+          scannedCount: 6,
+          matchedThreadCount: 3,
+          applicationCount: 3,
+          changedCount: 3,
+          startedAt: '2026-08-28T00:00:00Z',
+          completedAt: '2026-08-28T00:00:01Z',
+        })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getMailRuleBackfillPreview(accountId);
+    await runMailRuleBackfill(accountId, input);
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/mail/organization/accounts/account%2Fpersonal-1/rules/backfill-preview'
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      '/api/platform/v1/mail/organization/accounts/account%2Fpersonal-1/rules/backfill'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual(input);
   });
 });

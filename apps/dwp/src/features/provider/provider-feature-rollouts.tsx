@@ -8,7 +8,6 @@ import {
   CirclePause,
   CirclePlay,
   Flag,
-  Gauge,
   GitPullRequestArrow,
   LockKeyhole,
   Plus,
@@ -25,7 +24,6 @@ import {
   createProviderFeatureFlag,
   createProviderFeatureRollout,
   decideProviderFeatureRollout,
-  evaluateProviderFeatureFlag,
   getProviderOperatorProfile,
   listProviderFeatureFlags,
   listProviderFeatureRollouts,
@@ -61,7 +59,6 @@ import type {
   ProviderFeatureFlag,
   ProviderFeatureRollout,
   ProviderFeatureValue,
-  ProviderTenant,
 } from '@dwp-frontend/shared-utils';
 
 import {
@@ -72,6 +69,8 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import { displayProviderFeatureValue } from './provider-feature-rollout-evaluation-model';
+import { ProviderFeatureRolloutEvaluationPreview } from './provider-feature-rollout-evaluation-preview';
 
 type RolloutAction =
   'submit' | 'approve' | 'reject' | 'activate' | 'pause' | 'resume' | 'advance' | 'rollback';
@@ -82,11 +81,6 @@ function parseJson(value: string, label: string): unknown {
   } catch {
     throw new Error(`${label} JSON is invalid.`);
   }
-}
-
-function displayValue(value: ProviderFeatureValue): string {
-  if (typeof value === 'string') return value;
-  return JSON.stringify(value, null, 2);
 }
 
 function FlagDialog({
@@ -240,7 +234,7 @@ function RolloutDialog({
   const selectedFlag = flags.find((flag) => flag.featureKey === featureKey);
   const [name, setName] = useState('');
   const [value, setValue] = useState(
-    selectedFlag ? displayValue(selectedFlag.defaultValue) : 'false'
+    selectedFlag ? displayProviderFeatureValue(selectedFlag.defaultValue) : 'false'
   );
   const [targeting, setTargeting] = useState('{}');
   const [strategy, setStrategy] = useState<ProviderFeatureRollout['strategy']>('RING');
@@ -255,7 +249,7 @@ function RolloutDialog({
   const changeFeature = (next: string) => {
     setFeatureKey(next);
     const flag = flags.find((item) => item.featureKey === next);
-    if (flag) setValue(displayValue(flag.defaultValue));
+    if (flag) setValue(displayProviderFeatureValue(flag.defaultValue));
   };
 
   const save = async () => {
@@ -630,79 +624,6 @@ function RolloutInspector({
   );
 }
 
-function EvaluationPreview({
-  flags,
-  tenants,
-}: {
-  flags: ProviderFeatureFlag[];
-  tenants: ProviderTenant[];
-}) {
-  const { t } = useTranslation('provider');
-  const [featureKey, setFeatureKey] = useState(flags[0]?.featureKey ?? '');
-  const [tenantId, setTenantId] = useState(tenants[0]?.tenantId ?? '');
-  const evaluation = useMutation({
-    mutationFn: () => evaluateProviderFeatureFlag(featureKey, tenantId),
-  });
-  return (
-    <Paper component="section" variant="outlined" sx={{ p: 2 }}>
-      <ProviderSectionHeading
-        title={t('featureRollouts.evaluation.title')}
-        description={t('featureRollouts.evaluation.description')}
-      />
-      <Stack gap={1.5} sx={{ mt: 2 }}>
-        <Stack direction={{ xs: 'column', md: 'row' }} gap={1.5}>
-          <SelectField
-            label={t('featureRollouts.fields.feature')}
-            value={featureKey}
-            options={flags.map((flag) => ({
-              value: flag.featureKey,
-              label: flag.displayName,
-            }))}
-            onValueChange={setFeatureKey}
-          />
-          <SelectField
-            label={t('featureRollouts.fields.tenant')}
-            value={tenantId}
-            options={tenants.map((tenant) => ({
-              value: tenant.tenantId,
-              label: `${tenant.displayName} · ${tenant.tenantKey}`,
-            }))}
-            onValueChange={setTenantId}
-          />
-          <ActionButton
-            intent="secondary"
-            startIcon={<Gauge size={16} />}
-            loading={evaluation.isPending}
-            disabled={!featureKey || !tenantId}
-            onClick={() => evaluation.mutate()}
-            sx={{ flexShrink: 0 }}
-          >
-            {t('featureRollouts.evaluation.action')}
-          </ActionButton>
-        </Stack>
-        {evaluation.isError && (
-          <Alert severity="error">{providerError(evaluation.error, t('errors.operation'))}</Alert>
-        )}
-        {evaluation.data && (
-          <Alert severity={evaluation.data.reasonCode === 'ROLLOUT_MATCH' ? 'success' : 'info'}>
-            <Typography variant="subtitle2">
-              {t(`featureRollouts.evaluation.reasons.${evaluation.data.reasonCode}`)}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>
-              {t('featureRollouts.evaluation.result', {
-                tenant: evaluation.data.tenantKey,
-                value: displayValue(evaluation.data.value),
-                bucket: evaluation.data.deterministicBucket,
-                exposure: evaluation.data.exposurePercentage,
-              })}
-            </Typography>
-          </Alert>
-        )}
-      </Stack>
-    </Paper>
-  );
-}
-
 export function ProviderFeatureRollouts() {
   const { t } = useTranslation('provider');
   const toast = useToast();
@@ -971,7 +892,10 @@ export function ProviderFeatureRollouts() {
           onAction={setDialog}
         />
       )}
-      <EvaluationPreview flags={flags.data ?? []} tenants={tenants.data?.content ?? []} />
+      <ProviderFeatureRolloutEvaluationPreview
+        flags={flags.data ?? []}
+        tenants={tenants.data?.content ?? []}
+      />
       {dialog === 'flag' && (
         <FlagDialog
           busy={mutation.isPending}

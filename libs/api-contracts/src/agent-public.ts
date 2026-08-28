@@ -653,6 +653,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/proposals/analyze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Analyze Proposals */
+        post: operations["analyze_proposals_v1_proposals_analyze_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/proposals/clear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Clear Proposal Inbox */
+        post: operations["clear_proposal_inbox_v1_proposals_clear_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/proposals/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Proposal Preferences */
+        get: operations["get_proposal_preferences_v1_proposals_preferences_get"];
+        /** Update Proposal Preferences */
+        put: operations["update_proposal_preferences_v1_proposals_preferences_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/proposals/{proposal_id}/decisions": {
         parameters: {
             query?: never;
@@ -997,6 +1049,14 @@ export interface components {
          * @enum {string}
          */
         AgentRunState: "RUNNING" | "COMPLETED" | "FAILED";
+        /** AnalyzeProposalsRequest */
+        AnalyzeProposalsRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+        };
         /**
          * AnswerConfidence
          * @enum {string}
@@ -1220,6 +1280,43 @@ export interface components {
          * @enum {string}
          */
         CitationSourceType: "WORK_ITEM" | "MAIL" | "CALENDAR" | "APPROVAL_TASK" | "APPROVAL_REQUEST" | "APPROVAL_FORM" | "APPROVAL_OPERATION";
+        /** ClearProposalInboxEnvelope */
+        ClearProposalInboxEnvelope: {
+            data: components["schemas"]["ClearProposalInboxReceipt"];
+            /**
+             * Message
+             * @default Proposal inbox cleared.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ClearProposalInboxReceipt */
+        ClearProposalInboxReceipt: {
+            /**
+             * Clearedat
+             * Format: date-time
+             */
+            clearedAt: string;
+            /** Hiddencount */
+            hiddenCount: number;
+        };
+        /** ClearProposalInboxRequest */
+        ClearProposalInboxRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+        };
         /** ConfigureOperationalGateRequest */
         ConfigureOperationalGateRequest: {
             /** Changereason */
@@ -2270,6 +2367,71 @@ export interface components {
          * @enum {string}
          */
         PolicyOutcome: "ALLOW" | "HANDOFF" | "DENY";
+        /** ProposalAnalysisEnvelope */
+        ProposalAnalysisEnvelope: {
+            data: components["schemas"]["ProposalAnalysisReceipt"];
+            /**
+             * Message
+             * @default Workspace signals analyzed.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ProposalAnalysisPreference */
+        ProposalAnalysisPreference: {
+            /** Proactiveanalysisenabled */
+            proactiveAnalysisEnabled: boolean;
+            /** Revision */
+            revision: number;
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /** ProposalAnalysisPreferenceEnvelope */
+        ProposalAnalysisPreferenceEnvelope: {
+            data: components["schemas"]["ProposalAnalysisPreference"];
+            /**
+             * Message
+             * @default Proposal analysis preference loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ProposalAnalysisReceipt */
+        ProposalAnalysisReceipt: {
+            /** Actionableproposals */
+            actionableProposals: number;
+            /**
+             * Analyzedat
+             * Format: date-time
+             */
+            analyzedAt: string;
+            /** Attemptedsources */
+            attemptedSources: string[];
+            /** Proposals */
+            proposals: components["schemas"]["AgentProposal"][];
+            /** Sourcesanalyzed */
+            sourcesAnalyzed: number;
+            /** Unavailablesources */
+            unavailableSources: string[];
+        };
         /** ProposalContent */
         ProposalContent: {
             /** Actioninputs */
@@ -2323,6 +2485,8 @@ export interface components {
             occurredAt?: string | null;
             /** Referenceid */
             referenceId: string;
+            /** Route */
+            route?: string | null;
             /** Sourcetype */
             sourceType: string;
         };
@@ -2573,6 +2737,18 @@ export interface components {
             /** Expectedversion */
             expectedVersion: number;
             lifecycleState: components["schemas"]["EvaluationLifecycle"];
+        };
+        /** UpdateProposalAnalysisPreferenceRequest */
+        UpdateProposalAnalysisPreferenceRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Proactiveanalysisenabled */
+            proactiveAnalysisEnabled: boolean;
         };
         /** UpdateRetentionPolicyRequest */
         UpdateRetentionPolicyRequest: {
@@ -4714,6 +4890,172 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProposalInboxEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analyze_proposals_v1_proposals_analyze_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "Accept-Language"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalyzeProposalsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalAnalysisEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clear_proposal_inbox_v1_proposals_clear_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClearProposalInboxRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClearProposalInboxEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_proposal_preferences_v1_proposals_preferences_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalAnalysisPreferenceEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_proposal_preferences_v1_proposals_preferences_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Identity-Plane"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProposalAnalysisPreferenceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalAnalysisPreferenceEnvelope"];
                 };
             };
             /** @description Validation Error */

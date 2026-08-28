@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Inbox, ShieldCheck } from 'lucide-react';
 import {
   ActionButton,
@@ -13,7 +13,15 @@ import {
   ResourcePageHeader,
 } from '@dwp-frontend/design-system';
 import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { decideDwaionProposal, getDwaionProposals, useToast } from '@dwp-frontend/shared-utils';
+import {
+  analyzeDwaionProposals,
+  clearDwaionProposalInbox,
+  decideDwaionProposal,
+  getDwaionProposalAnalysisPreference,
+  getDwaionProposals,
+  updateDwaionProposalAnalysisPreference,
+  useToast,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -23,14 +31,17 @@ import Typography from '@mui/material/Typography';
 
 import { DwaionProposalDetail } from './dwaion-proposal-detail';
 import { DwaionProposalList } from './dwaion-proposal-list';
+import { DwaionProposalControls } from './dwaion-proposal-controls';
 
 import type {
   DwaionProposal,
+  DwaionProposalAnalysisReceipt,
   DwaionProposalDecision,
   DwaionProposalInboxView,
 } from '@dwp-frontend/shared-utils';
 
 const PAGE_SIZE = 50;
+const ANALYSIS_PREFERENCE_QUERY_KEY = ['dwaion', 'proposal-analysis-preference'] as const;
 
 export function DwaionProposals() {
   const { t, i18n } = useTranslation('work');
@@ -39,6 +50,15 @@ export function DwaionProposals() {
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const [view, setView] = useState<DwaionProposalInboxView>('ACTIVE');
   const [selected, setSelected] = useState<DwaionProposal | null>(null);
+  const [analysisReceipt, setAnalysisReceipt] = useState<DwaionProposalAnalysisReceipt | null>(
+    null
+  );
+  const analysisPreference = useQuery({
+    queryKey: ANALYSIS_PREFERENCE_QUERY_KEY,
+    queryFn: getDwaionProposalAnalysisPreference,
+    staleTime: 15_000,
+    retry: 1,
+  });
   const inbox = useInfiniteQuery({
     queryKey: ['dwaion', 'proposals', view],
     initialPageParam: null as string | null,
@@ -77,6 +97,48 @@ export function DwaionProposals() {
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
       toast.error(t('dwaionProposals.feedback.error'));
     },
+  });
+  const analysis = useMutation({
+    mutationFn: analyzeDwaionProposals,
+    onSuccess: async (receipt) => {
+      setAnalysisReceipt(receipt);
+      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
+      toast.success(t('dwaionProposals.feedback.analyzed', { count: receipt.actionableProposals }));
+    },
+    onError: async () => {
+      await queryClient.invalidateQueries({ queryKey: ANALYSIS_PREFERENCE_QUERY_KEY });
+      toast.error(t('dwaionProposals.feedback.analysisError'));
+    },
+  });
+  const preferenceMutation = useMutation({
+    mutationFn: (enabled: boolean) => {
+      if (!analysisPreference.data) throw new Error('Proposal analysis preference is unavailable.');
+      return updateDwaionProposalAnalysisPreference(analysisPreference.data.revision, enabled);
+    },
+    onSuccess: (preference) => {
+      queryClient.setQueryData(ANALYSIS_PREFERENCE_QUERY_KEY, preference);
+      toast.success(
+        t(
+          preference.proactiveAnalysisEnabled
+            ? 'dwaionProposals.feedback.preferenceEnabled'
+            : 'dwaionProposals.feedback.preferenceDisabled'
+        )
+      );
+    },
+    onError: async () => {
+      await queryClient.invalidateQueries({ queryKey: ANALYSIS_PREFERENCE_QUERY_KEY });
+      toast.error(t('dwaionProposals.feedback.preferenceError'));
+    },
+  });
+  const clearInbox = useMutation({
+    mutationFn: clearDwaionProposalInbox,
+    onSuccess: async (receipt) => {
+      setSelected(null);
+      setAnalysisReceipt(null);
+      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'proposals'] });
+      toast.success(t('dwaionProposals.feedback.cleared', { count: receipt.hiddenCount }));
+    },
+    onError: () => toast.error(t('dwaionProposals.feedback.clearError')),
   });
 
   const header = (
@@ -132,6 +194,20 @@ export function DwaionProposals() {
   return (
     <PageCanvas>
       {header}
+      <DwaionProposalControls
+        preference={analysisPreference.data}
+        preferenceLoading={analysisPreference.isLoading}
+        preferenceError={analysisPreference.isError}
+        analysisReceipt={analysisReceipt}
+        analyzing={analysis.isPending}
+        updatingPreference={preferenceMutation.isPending}
+        clearing={clearInbox.isPending}
+        onAnalyze={() => analysis.mutate()}
+        onPreferenceChange={(enabled) => preferenceMutation.mutate(enabled)}
+        onClear={async () => {
+          await clearInbox.mutateAsync();
+        }}
+      />
       <Box sx={{ mt: 3 }}>
         <OperationalKpiStrip
           ariaLabel={t('dwaionProposals.summaryLabel')}

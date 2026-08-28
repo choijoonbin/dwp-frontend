@@ -127,6 +127,8 @@ export function MessagingAttentionOverview({
   const StateIcon = attentionIcons[state];
   const count = attentionCount(state, metrics);
   const stateKey = state.toLowerCase();
+  const primaryAction =
+    state === 'MENTIONS' ? onOpenMentions : state === 'SAVED' ? onOpenSaved : onOpenInbox;
   const signals: Signal[] = [
     {
       key: 'mentions',
@@ -210,10 +212,10 @@ export function MessagingAttentionOverview({
             intent={state === 'CLEAR' ? 'quiet' : 'secondary'}
             size="small"
             endIcon={<ArrowRight size={15} />}
-            onClick={onOpenInbox}
+            onClick={primaryAction}
             sx={{ mt: 1.5 }}
           >
-            {t('home.attention.openInbox')}
+            {t(`home.attention.actions.${stateKey}`)}
           </ActionButton>
         </Box>
       </Box>

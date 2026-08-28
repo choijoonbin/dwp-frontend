@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-import { mockShellSession } from './support/shell-session';
+import { fulfillSuccess, mockShellSession } from './support/shell-session';
+
+import type { Route } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -377,4 +379,218 @@ test('provider audit restores relationship query and tenant scope from the URL',
   );
   await expect(page.getByRole('combobox', { name: 'Tenant' })).toContainText('SKAX Production');
   await expect(page.getByText('Support session started')).toBeVisible();
+});
+
+test('feature rollout evaluation adopts delayed options and rejects superseded results', async ({
+  page,
+}) => {
+  const flags = [
+    {
+      featureFlagId: '59000000-0000-0000-0000-000000000001',
+      featureKey: 'WORKFORCE_EXPORT_V2',
+      displayName: 'Governed workforce export',
+      description: 'Controls the governed workforce export request experience.',
+      ownerService: 'dwp-people-server',
+      valueType: 'BOOLEAN',
+      defaultValue: false,
+      configurationSchema: { type: 'boolean' },
+      riskTier: 'L2',
+      lifecycleState: 'ACTIVE',
+      version: 1,
+    },
+    {
+      featureFlagId: '59000000-0000-0000-0000-000000000002',
+      featureKey: 'FLOW_HOME_V2',
+      displayName: 'Flow home v2',
+      description: 'Controls the staged Flow home experience.',
+      ownerService: 'dwp-platform-server',
+      valueType: 'BOOLEAN',
+      defaultValue: false,
+      configurationSchema: { type: 'boolean' },
+      riskTier: 'L2',
+      lifecycleState: 'ACTIVE',
+      version: 1,
+    },
+  ];
+  const tenants = {
+    content: [
+      {
+        tenantId: 'tenant-skax',
+        tenantKey: 'skax-production',
+        displayName: 'SKAX Production',
+      },
+      {
+        tenantId: 'tenant-acme',
+        tenantKey: 'acme-production',
+        displayName: 'Acme Production',
+      },
+    ],
+    page: 0,
+    size: 100,
+    totalElements: 2,
+    totalPages: 1,
+  };
+  const evaluationFixture = ({
+    featureKey,
+    tenantId,
+    tenantKey,
+    value,
+    bucket,
+    exposure,
+  }: {
+    featureKey: string;
+    tenantId: string;
+    tenantKey: string;
+    value: boolean;
+    bucket: number;
+    exposure: number;
+  }) => ({
+    featureKey,
+    providerTenantId: tenantId,
+    tenantKey,
+    value,
+    reasonCode: 'ROLLOUT_MATCH',
+    rolloutRevisionId: '5a000000-0000-0000-0000-000000000001',
+    revisionNumber: 3,
+    exposurePercentage: exposure,
+    deterministicBucket: bucket,
+    externalExecutionEnabled: false,
+    evaluatedAt: '2026-08-28T01:00:00Z',
+  });
+  const earlyResponses = new Set<string>();
+  let delayedFlagsRoute: Route | undefined;
+  let delayedTenantsRoute: Route | undefined;
+  const evaluationRequests: Array<{
+    route: Route;
+    featureKey: string;
+    query: [string, string][];
+  }> = [];
+  const expectEvaluationRequest = async (
+    index: number,
+    featureKey: string,
+    tenantId: string
+  ): Promise<Route> => {
+    await expect.poll(() => evaluationRequests.length).toBe(index + 1);
+    const request = evaluationRequests[index];
+    if (!request) throw new Error(`Expected evaluation request ${index + 1}.`);
+    expect(request.featureKey).toBe(featureKey);
+    expect(request.query).toEqual([['tenantId', tenantId]]);
+    return request.route;
+  };
+
+  page.on('response', (response) => {
+    const path = new URL(response.url()).pathname;
+    if (
+      path === '/api/provider/v1/admin/me' ||
+      path === '/api/provider/v1/admin/feature-rollouts'
+    ) {
+      earlyResponses.add(path);
+    }
+  });
+  await page.route('**/api/provider/v1/admin/feature-rollouts/flags', (route) => {
+    delayedFlagsRoute = route;
+  });
+  await page.route('**/api/provider/v1/admin/tenants?*', (route) => {
+    delayedTenantsRoute = route;
+  });
+  await page.route('**/api/provider/v1/admin/feature-rollouts/flags/*/evaluate?*', (route) => {
+    const url = new URL(route.request().url());
+    const prefix = '/api/provider/v1/admin/feature-rollouts/flags/';
+    const suffix = '/evaluate';
+    evaluationRequests.push({
+      route,
+      featureKey: decodeURIComponent(url.pathname.slice(prefix.length, -suffix.length)),
+      query: [...url.searchParams.entries()],
+    });
+  });
+
+  await page.goto('/provider/feature-rollouts');
+  await expect(page.getByRole('heading', { name: 'Feature rollout control' })).toBeVisible();
+  await expect
+    .poll(
+      () =>
+        earlyResponses.has('/api/provider/v1/admin/me') &&
+        earlyResponses.has('/api/provider/v1/admin/feature-rollouts') &&
+        Boolean(delayedFlagsRoute) &&
+        Boolean(delayedTenantsRoute)
+    )
+    .toBe(true);
+
+  const flagsRoute = delayedFlagsRoute;
+  const tenantsRoute = delayedTenantsRoute;
+  if (!flagsRoute || !tenantsRoute) throw new Error('Expected delayed evaluation option requests.');
+  await Promise.all([fulfillSuccess(flagsRoute, flags), fulfillSuccess(tenantsRoute, tenants)]);
+
+  const feature = page.getByRole('combobox', { name: 'Feature' });
+  const tenant = page.getByRole('combobox', { name: 'Evaluation tenant' });
+  const evaluate = page.getByRole('button', { name: 'Evaluate' });
+  await expect(feature).toContainText('Governed workforce export');
+  await expect(tenant).toContainText('SKAX Production');
+  await expect(evaluate).toBeEnabled();
+
+  await evaluate.click();
+  const initialEvaluationRoute = await expectEvaluationRequest(
+    0,
+    'WORKFORCE_EXPORT_V2',
+    'tenant-skax'
+  );
+  await fulfillSuccess(
+    initialEvaluationRoute,
+    evaluationFixture({
+      featureKey: 'WORKFORCE_EXPORT_V2',
+      tenantId: 'tenant-skax',
+      tenantKey: 'skax-production',
+      value: true,
+      bucket: 7,
+      exposure: 5,
+    })
+  );
+  const initialResult = 'skax-production receives true. Bucket 7, current exposure 5%.';
+  await expect(page.getByText(initialResult)).toBeVisible();
+
+  await feature.click();
+  await page.getByRole('option', { name: 'Flow home v2' }).click();
+  await expect(page.getByText(initialResult)).toHaveCount(0);
+
+  await evaluate.click();
+  const supersededEvaluationRoute = await expectEvaluationRequest(1, 'FLOW_HOME_V2', 'tenant-skax');
+  await tenant.click();
+  await page.getByRole('option', { name: /Acme Production/ }).click();
+  await fulfillSuccess(
+    supersededEvaluationRoute,
+    evaluationFixture({
+      featureKey: 'FLOW_HOME_V2',
+      tenantId: 'tenant-skax',
+      tenantKey: 'skax-production',
+      value: true,
+      bucket: 19,
+      exposure: 25,
+    })
+  );
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      )
+  );
+  await expect(
+    page.getByText('skax-production receives true. Bucket 19, current exposure 25%.')
+  ).toHaveCount(0);
+
+  await evaluate.click();
+  const currentEvaluationRoute = await expectEvaluationRequest(2, 'FLOW_HOME_V2', 'tenant-acme');
+  await fulfillSuccess(
+    currentEvaluationRoute,
+    evaluationFixture({
+      featureKey: 'FLOW_HOME_V2',
+      tenantId: 'tenant-acme',
+      tenantKey: 'acme-production',
+      value: false,
+      bucket: 73,
+      exposure: 25,
+    })
+  );
+  await expect(
+    page.getByText('acme-production receives false. Bucket 73, current exposure 25%.')
+  ).toBeVisible();
 });

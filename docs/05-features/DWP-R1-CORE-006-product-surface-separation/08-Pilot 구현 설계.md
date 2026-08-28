@@ -89,7 +89,7 @@ Page/API는 Every-request 인가를 다시 수행한다.
   `type: capability-expression` + `mode: ANY|ALL` + Non-empty `capabilityContractKeys`, 또는 Policy
   Key 중 하나다.
 - 기존 `adminMode`는 Ownership 호환값으로 읽되 Surface가 우선
-- 현재 186 Menu Golden Count와 `navigationContextId`, 업무 앱 138개의 단일 Product Surface,
+- 현재 187 Menu Golden Count와 `navigationContextId`, 업무 앱 139개의 단일 Product Surface,
   Route/Navigation 존재와 중복 정적 검사
 - 나머지 비제품 48개는 `productSurfaceId` 필드가 없어야 하며 Product Surface Projection 시 Build Fail
 - Legacy Redirect Definition은 Source Matcher, Static/Path-map/Registered-suffix Target,
@@ -1568,7 +1568,7 @@ Rollback Rehearsal을 Canary에서 통과한다.
 다음은 기술 구현 완료와 별개인 외부 승인 Gate다. 모두 체크되기 전에는 W1a 또는 W1b를
 Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bundle로 승격하지 않는다.
 
-- [ ] 사용자·Product·Security Owner가 ADR, 186개 분류표와 `PS-01`~`PS-11` 승인
+- [ ] 사용자·Product·Security Owner가 ADR, 187개 분류표와 `PS-01`~`PS-11` 승인
 - [ ] Bound Context·Direct Evaluation·Reason Code OpenAPI와 Support/NORMAL Exclusive Mode 승인
 - [ ] Capability Registry, Responsibility AND Capability, Permission-only 관리자 Backfill/Review 승인
 - [ ] 05 Descriptor + 10 Seed를 전사한 단일 Canonical YAML, `product-surfaces` v1→v2→v3
@@ -1593,7 +1593,7 @@ Production에서 활성화하지 않고 W2/W3의 DRAFT Route를 다음 승인 Bu
 
 기술 구현은 검증 가능한 DRAFT Migration과 default-off Runtime으로 완료했다. 불변 v1~v3
 Bundle의 바이트·Checksum은 보존하고, 12개 제품 Rollout 참여 목록은 별도 Checksummed Inventory로
-관리한다. W2/W3의 91개 Page 계약(정적 메뉴 86개 + 동적 5개)은 제품별 권한 Owner 검토 전 Frontend DRAFT로 유지하며 다음
+관리한다. W2/W3의 92개 Page 계약(정적 메뉴 87개 + 동적 5개)은 제품별 권한 Owner 검토 전 Frontend DRAFT로 유지하며 다음
 승인 Bundle에 포함되기 전에는 `110`과 `111` 모두에서 Gateway가 Fail Closed한다. `110`의
 Compatibility UI는 기존 Route를 유지하기 위한 것이며 DRAFT Route를 활성화하는 우회 수단이
 아니다. 승인 전에는 운영 Role Assignment, Active Pointer와 Production Flag를 변경하지 않는다.

@@ -5,6 +5,7 @@ import {
   rolePermissionSelectionMap,
   rolePermissionSelections,
 } from './role-governance-permission-model';
+import { ROLE_PERMISSION_CODES, rolePermissionCodes } from './role-governance-display';
 
 describe('role governance permission diff', () => {
   const initial = [
@@ -85,5 +86,23 @@ describe('role governance permission diff', () => {
         (value) => `${value.resourceId}:${value.permissionCode}`
       )
     ).toEqual(['1:UPDATE', '1:VIEW', '2:VIEW']);
+  });
+
+  it('exposes the complete Auth permission catalog and preserves future existing codes', () => {
+    expect(ROLE_PERMISSION_CODES).toEqual([
+      'VIEW',
+      'CREATE',
+      'UPDATE',
+      'DELETE',
+      'MANAGE',
+      'EXECUTE',
+      'APPROVE',
+      'EXPORT',
+      'PUBLISH',
+    ]);
+    expect(rolePermissionCodes([{ permissionCode: 'FUTURE_ACTION' }])).toEqual([
+      ...ROLE_PERMISSION_CODES,
+      'FUTURE_ACTION',
+    ]);
   });
 });

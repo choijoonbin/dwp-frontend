@@ -35,7 +35,12 @@ function createFixture() {
       state: 'COMPLETE',
       releaseRequired: true,
       summary: `Acceptance ${id}`,
-      automatedChecks: [{ repository: 'dwp-frontend', command: 'node --test' }],
+      automatedChecks: [
+        {
+          repository: 'dwp-frontend',
+          command: 'corepack yarn vitest run scripts/provider-release-evidence.test.ts',
+        },
+      ],
       evidence: ['evidence.txt'],
       blockers: [],
       failClosedEvidence: [],
@@ -141,6 +146,222 @@ test('requires a closed external repository evidence shape', () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /unknown fields: mutableBranch/);
   assert.match(result.stderr, /requires revisionSource/);
+});
+
+test('rejects untrusted repositories and shell-fallback automated checks', () => {
+  const fixture = createFixture();
+  fixture.manifest.items[0].automatedChecks = [
+    { repository: 'not-a-repository', command: 'false || true' },
+  ];
+  fixture.manifest.items[1].automatedChecks = [
+    { repository: 'dwp-frontend', command: 'corepack yarn test:e2e:provider || true' },
+  ];
+  fixture.manifest.items[2].automatedChecks = [
+    { repository: 'dwp-backend', command: './gradlew check; true' },
+  ];
+  fixture.manifest.items[3].automatedChecks = [
+    { repository: 'dwp-frontend', command: 'corepack yarn $UNBOUND_GATE' },
+  ];
+  fixture.manifest.items[4].automatedChecks = [
+    { repository: 'dwp-agent', command: 'uv run pytest-fake' },
+  ];
+  fixture.manifest.items[5].automatedChecks = [
+    { repository: 'dwp-frontend', command: 'corepack yarn exec true' },
+  ];
+  fixture.manifest.items[6].automatedChecks = [
+    { repository: 'dwp-backend', command: './gradlew help' },
+  ];
+  fixture.manifest.items[7].automatedChecks = [
+    { repository: 'dwp-frontend', command: 'corepack yarn vitest run --passWithNoTests' },
+  ];
+  fixture.manifest.items[8].automatedChecks = [
+    { repository: 'dwp-backend', command: './gradlew :dwp-provider-server:test --dry-run' },
+  ];
+  fixture.manifest.items[9].automatedChecks = [
+    { repository: 'dwp-agent', command: 'uv run pytest --collect-only' },
+  ];
+  fixture.manifest.items[10].automatedChecks = [
+    { repository: 'dwp-frontend', command: 'corepack yarn vitest run -h' },
+  ];
+  fixture.manifest.items[11].automatedChecks = [
+    { repository: 'dwp-backend', command: './gradlew :dwp-provider-server:test --help' },
+  ];
+  fixture.manifest.items[12].automatedChecks = [
+    { repository: 'dwp-agent', command: 'uv run pytest --fixtures' },
+  ];
+  fixture.manifest.items[13].automatedChecks = [
+    {
+      repository: 'dwp-frontend',
+      command: "corepack yarn vitest run definitely-not-a-test.ts '--passWithNoTests'",
+    },
+  ];
+  fixture.manifest.items[14].automatedChecks = [
+    { repository: 'dwp-backend', command: "./gradlew :dwp-provider-server:test '--dry-run'" },
+  ];
+  fixture.manifest.items[15].automatedChecks = [
+    { repository: 'dwp-agent', command: "uv run pytest '--collect-only'" },
+  ];
+  fixture.manifest.items[16].automatedChecks = [
+    {
+      repository: 'dwp-frontend',
+      command:
+        'corepack yarn vitest run definitely-not-a-test.ts {--passWithNoTests,--passWithNoTests}',
+    },
+  ];
+
+  const result = run(fixture);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /repository must be one of/);
+  assert.match(result.stderr, /without shell control syntax/);
+  assert.match(result.stderr, /not an approved dwp-agent test command/);
+  assert.match(result.stderr, /not an approved dwp-frontend test command/);
+  assert.match(result.stderr, /not an approved dwp-backend test command/);
+  assert.match(result.stderr, /without listing, skipping, or replacing the trusted build/);
+});
+
+test('allows a pipe only as quoted test-runner input', () => {
+  const fixture = createFixture();
+  fixture.manifest.items[0].automatedChecks = [
+    {
+      repository: 'dwp-frontend',
+      command:
+        "corepack yarn playwright test e2e/provider-critical-operations.spec.ts --project=chromium --workers=1 --grep 'privileged support separates|post-access review'",
+    },
+  ];
+
+  const result = run(fixture);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+});
+
+test('rejects quoted options that skip checks or replace the trusted build', () => {
+  const commands = [
+    {
+      repository: 'dwp-frontend',
+      command: "corepack yarn vitest run definitely-not-a-test.ts '--passWithNoTests'",
+    },
+    {
+      repository: 'dwp-frontend',
+      command: "corepack yarn vitest run '--config' '/tmp/noop.config.ts'",
+    },
+    {
+      repository: 'dwp-backend',
+      command: "./gradlew :dwp-provider-server:test '--dry-run'",
+    },
+    {
+      repository: 'dwp-backend',
+      command: "./gradlew :dwp-provider-server:test '--init-script' '/tmp/noop.gradle'",
+    },
+    { repository: 'dwp-agent', command: "uv run pytest '--collect-only'" },
+    { repository: 'dwp-agent', command: 'uv run pytest --setup-only' },
+    { repository: 'dwp-agent', command: "uv run pytest '--setup-plan'" },
+    {
+      repository: 'dwp-agent',
+      command: "uv run pytest '-o' 'addopts=--collect-only'",
+    },
+    {
+      repository: 'dwp-agent',
+      command: "uv run pytest '--override-ini=addopts=--collect-only'",
+    },
+    {
+      repository: 'dwp-agent',
+      command: "uv run pytest '-oaddopts=--collect-only'",
+    },
+    {
+      repository: 'dwp-frontend',
+      command: "corepack yarn vitest run '-c/tmp/noop.config.ts'",
+    },
+    {
+      repository: 'dwp-backend',
+      command: "./gradlew :dwp-provider-server:test '-I/tmp/noop.gradle'",
+    },
+  ];
+
+  for (const automatedCheck of commands) {
+    const fixture = createFixture();
+    fixture.manifest.items[0].automatedChecks = [automatedCheck];
+    const result = run(fixture);
+    assert.equal(result.status, 1, automatedCheck.command);
+    assert.match(
+      result.stderr,
+      /without listing, skipping, or replacing the trusted build/,
+      automatedCheck.command
+    );
+  }
+});
+
+test('accepts every automated check in the current closed release manifest', () => {
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        repositoryRoot,
+        'docs/06-delivery/release-evidence/provider-tenant-acceptance.json'
+      ),
+      'utf8'
+    )
+  );
+  const checks = new Map();
+  for (const item of manifest.items) {
+    for (const automatedCheck of item.automatedChecks) {
+      checks.set(`${automatedCheck.repository}\u0000${automatedCheck.command}`, automatedCheck);
+    }
+  }
+
+  for (const automatedCheck of checks.values()) {
+    const fixture = createFixture();
+    fixture.manifest.items[0].automatedChecks = [automatedCheck];
+    const result = run(fixture);
+    assert.equal(result.status, 0, `${automatedCheck.command}\n${result.stdout}\n${result.stderr}`);
+  }
+});
+
+test('rejects runner options and selectors that can reduce or bypass declared coverage', () => {
+  const commands = [
+    'uv run pytest --setup-only',
+    'uv run pytest --setup-plan',
+    'uv run pytest -k one_test',
+    'uv run pytest -kprovider.py',
+    'uv run pytest -cbypass.py',
+    'uv run pytest -m smoke',
+    'uv run pytest --lf --lfnf=none',
+    'uv run pytest --ignore tests',
+    'uv run pytest --ignore-glob=test_*.py',
+    'uv run pytest --deselect tests/test_provider.py::test_release',
+    'uv run pytest @bypass.py',
+    'corepack yarn vitest run --mergeReports',
+    'corepack yarn vitest run --listTags',
+    'corepack yarn vitest run --clearCache',
+    'corepack yarn vitest run -tprovider.test.ts',
+    'corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-entitlement-draft-model.test.ts -t one',
+    'corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-entitlement-draft-model.test.ts --testNamePattern=one',
+    'corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-entitlement-draft-model.test.ts --shard=1/2',
+    'corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-entitlement-draft-model.test.ts --changed',
+    'corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-entitlement-draft-model.test.ts --exclude=noop',
+    'corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-entitlement-draft-model.test.ts --project=noop',
+    'corepack yarn provider:artifacts:scan package.json',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --last-failed',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --only-changed',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --grep-invert=release',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --shard=1/2',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --test-list=tests.txt',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --test-list-invert=tests.txt',
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --no-deps',
+    "corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1 --grep 'one passing test'",
+    'corepack yarn playwright test e2e/provider-acceptance-evidence.spec.ts --project=chromium --workers=1',
+    'corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=mobile --workers=1',
+  ];
+
+  for (const command of commands) {
+    const fixture = createFixture();
+    const repository = command.startsWith('uv ') ? 'dwp-agent' : 'dwp-frontend';
+    fixture.manifest.items[0].automatedChecks = [{ repository, command }];
+    const result = run(fixture);
+    assert.equal(result.status, 1, command);
+    assert.match(
+      result.stderr,
+      /without (?:shell control syntax|listing, skipping, or replacing the trusted build)/,
+      command
+    );
+  }
 });
 
 test('release mode verifies the immutable external checkout and evidence path', () => {

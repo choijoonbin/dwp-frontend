@@ -21,6 +21,7 @@ import {
   type TrackReferenceOrPlaceholder,
 } from '@livekit/components-react';
 import { RoomEvent, Track } from 'livekit-client';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   ChevronUp,
   Hand,
@@ -44,6 +45,7 @@ type MeetingConferenceProps = {
   meetingId: string;
   permissions: VideoMeetingEffectivePermissions;
   canModerate: boolean;
+  meetingLive: boolean;
   onDeviceError: (error: Error) => void;
   onLeaveError: () => void;
 };
@@ -74,12 +76,17 @@ export function MeetingConference({
   meetingId,
   permissions,
   canModerate,
+  meetingLive,
   onDeviceError,
   onLeaveError,
 }: MeetingConferenceProps) {
   const { t } = useTranslation('meetings');
   const [sidePanel, setSidePanel] = useState<MeetingSidePanel>(null);
+  const overlayPanel = useMediaQuery('(max-width:899px)');
   const lastAutoFocusedScreenShare = useRef<string | null>(null);
+  const panelTriggerRefs = useRef<
+    Partial<Record<Exclude<MeetingSidePanel, null>, HTMLButtonElement>>
+  >({});
   const layoutContext = useCreateLayoutContext();
   const tracks = useTracks(
     [
@@ -118,6 +125,13 @@ export function MeetingConference({
   }, [layoutContext.pin, screenShareTracks, subscribedScreenShare]);
 
   const carouselTracks = tracks.filter((track) => !isSameTrack(track, focusTrack));
+  const closeSidePanel = () => {
+    const closingPanel = sidePanel;
+    setSidePanel(null);
+    if (closingPanel) {
+      window.requestAnimationFrame(() => panelTriggerRefs.current[closingPanel]?.focus());
+    }
+  };
 
   return (
     <div className="dwp-meeting-conference">
@@ -126,6 +140,8 @@ export function MeetingConference({
           <section
             className="dwp-meeting-conference__stage"
             aria-label={t('room.controls.stageLabel')}
+            aria-hidden={overlayPanel && sidePanel !== null ? true : undefined}
+            inert={overlayPanel && sidePanel !== null ? true : undefined}
           >
             {!focusTrack ? (
               <div className="lk-grid-layout-wrapper dwp-meeting-conference__layout">
@@ -144,9 +160,11 @@ export function MeetingConference({
               </div>
             )}
             <MeetingControlBar
-              meetingId={meetingId}
               permissions={permissions}
               sidePanel={sidePanel}
+              registerPanelTrigger={(panel, element) => {
+                panelTriggerRefs.current[panel] = element ?? undefined;
+              }}
               onPanelToggle={(panel) =>
                 setSidePanel((current) => (current === panel ? null : panel))
               }
@@ -157,15 +175,13 @@ export function MeetingConference({
           <MeetingCollaborationRuntime
             meetingId={meetingId}
             activeTab={sidePanel === 'chat' || sidePanel === 'floor' ? sidePanel : null}
-            meetingLive
+            meetingLive={meetingLive}
             canModerate={canModerate}
             permissions={permissions}
-            onClose={() => setSidePanel(null)}
+            onClose={closeSidePanel}
             onTabChange={setSidePanel}
           />
-          {sidePanel === 'participants' && (
-            <MeetingParticipantsPanel onClose={() => setSidePanel(null)} />
-          )}
+          {sidePanel === 'participants' && <MeetingParticipantsPanel onClose={closeSidePanel} />}
         </div>
       </LayoutContextProvider>
       <RoomAudioRenderer />
@@ -175,16 +191,19 @@ export function MeetingConference({
 }
 
 function MeetingControlBar({
-  meetingId,
   permissions: effectivePermissions,
   sidePanel,
+  registerPanelTrigger,
   onPanelToggle,
   onDeviceError,
   onLeaveError,
 }: {
-  meetingId: string;
   permissions: VideoMeetingEffectivePermissions;
   sidePanel: MeetingSidePanel;
+  registerPanelTrigger: (
+    panel: Exclude<MeetingSidePanel, null>,
+    element: HTMLButtonElement | null
+  ) => void;
   onPanelToggle: (panel: Exclude<MeetingSidePanel, null>) => void;
   onDeviceError: (error: Error) => void;
   onLeaveError: () => void;
@@ -318,12 +337,15 @@ function MeetingControlBar({
 
       {canChat && (
         <button
+          ref={(element) => registerPanelTrigger('chat', element)}
           type="button"
           className="dwp-meeting-control"
           aria-label={t(
             sidePanel === 'chat' ? 'room.controls.chatClose' : 'room.controls.chatOpen'
           )}
           aria-pressed={sidePanel === 'chat'}
+          aria-expanded={sidePanel === 'chat'}
+          aria-controls="meeting-collaboration-panel"
           title={t(sidePanel === 'chat' ? 'room.controls.chatClose' : 'room.controls.chatOpen')}
           onClick={() => onPanelToggle('chat')}
         >
@@ -334,12 +356,15 @@ function MeetingControlBar({
 
       {effectivePermissions.handRaise && (
         <button
+          ref={(element) => registerPanelTrigger('floor', element)}
           type="button"
           className="dwp-meeting-control"
           aria-label={t(
             sidePanel === 'floor' ? 'room.controls.floorClose' : 'room.controls.floorOpen'
           )}
           aria-pressed={sidePanel === 'floor'}
+          aria-expanded={sidePanel === 'floor'}
+          aria-controls="meeting-collaboration-panel"
           title={t(sidePanel === 'floor' ? 'room.controls.floorClose' : 'room.controls.floorOpen')}
           onClick={() => onPanelToggle('floor')}
         >
@@ -350,12 +375,22 @@ function MeetingControlBar({
 
       {effectivePermissions.participantList && (
         <button
+          ref={(element) => registerPanelTrigger('participants', element)}
           type="button"
           className="dwp-meeting-control"
-          aria-label={t('room.controls.participantsOpen')}
+          aria-label={t(
+            sidePanel === 'participants'
+              ? 'room.controls.participantsClose'
+              : 'room.controls.participantsOpen'
+          )}
           aria-pressed={sidePanel === 'participants'}
+          aria-expanded={sidePanel === 'participants'}
           aria-controls="meeting-participants-panel"
-          title={t('room.controls.participantsOpen')}
+          title={t(
+            sidePanel === 'participants'
+              ? 'room.controls.participantsClose'
+              : 'room.controls.participantsOpen'
+          )}
           onClick={() => onPanelToggle('participants')}
         >
           <UsersRound size={20} aria-hidden="true" />
@@ -363,7 +398,7 @@ function MeetingControlBar({
         </button>
       )}
 
-      <MeetingLeaveControl meetingId={meetingId} onError={onLeaveError} />
+      <MeetingLeaveControl onError={onLeaveError} />
 
       <StartMediaButton
         className="dwp-meeting-control dwp-meeting-control--playback"

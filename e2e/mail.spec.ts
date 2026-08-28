@@ -231,6 +231,18 @@ test('personal folders and sender rules can be created and run from one workspac
     if (request.method() === 'GET' && path.endsWith('/v1/mail/organization')) {
       return fulfill(route, state);
     }
+    if (request.method() === 'GET' && path.endsWith('/rules/backfill-preview')) {
+      return fulfill(route, {
+        accountId: state.accounts[0]!.accountId,
+        previewFingerprint: 'a'.repeat(64),
+        enabledRuleCount: state.rules.filter((rule) => rule.enabled).length,
+        scannedCount: 6,
+        matchedThreadCount: 0,
+        plannedApplicationCount: 0,
+        truncated: false,
+        generatedAt: '2026-08-27T08:00:00Z',
+      });
+    }
     if (request.method() === 'POST' && path.endsWith('/v1/mail/organization/folders')) {
       const input = await request.postDataJSON();
       createdFolderName = input.displayName;
@@ -313,6 +325,204 @@ test('personal folders and sender rules can be created and run from one workspac
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test('existing mail rule backfill previews impact and retries one idempotent request', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const state = mailOrganization();
+  state.rules.push({
+    ruleId: '12000000-0000-0000-0000-000000000001',
+    accountId: state.accounts[0]!.accountId,
+    displayName: 'Partner launch mail',
+    priority: 100,
+    matchMode: 'ALL',
+    conditions: [{ field: 'SENDER', operator: 'ENDS_WITH', value: '@partner.example' }],
+    actions: [{ type: 'MARK_READ' }],
+    stopProcessing: true,
+    enabled: true,
+    synchronizationState: 'LOCAL_ONLY',
+    lastRunAt: null,
+    lastMatchCount: 0,
+    version: 0,
+  });
+  const fingerprint = 'b'.repeat(64);
+  const commands: Array<{ requestId: string; previewFingerprint: string }> = [];
+  await page.route('**/api/platform/v1/mail/organization**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/organization')) {
+      return fulfill(route, state);
+    }
+    if (request.method() === 'GET' && path.endsWith('/rules/backfill-preview')) {
+      return fulfill(route, {
+        accountId: state.accounts[0]!.accountId,
+        previewFingerprint: fingerprint,
+        enabledRuleCount: 1,
+        scannedCount: 6,
+        matchedThreadCount: 2,
+        plannedApplicationCount: 2,
+        truncated: false,
+        generatedAt: '2026-08-28T01:00:00Z',
+      });
+    }
+    if (request.method() === 'POST' && path.endsWith('/rules/backfill')) {
+      const command = (await request.postDataJSON()) as {
+        requestId: string;
+        previewFingerprint: string;
+      };
+      commands.push(command);
+      if (commands.length === 1) {
+        return route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ERROR',
+            errorCode: 'MAIL_RULE_BACKFILL_FAILED',
+            message: 'Result unavailable',
+          }),
+        });
+      }
+      return fulfill(route, {
+        executionId: '13000000-0000-0000-0000-000000000001',
+        requestId: command.requestId,
+        accountId: state.accounts[0]!.accountId,
+        status: 'SUCCEEDED',
+        replayed: true,
+        scannedCount: 6,
+        matchedThreadCount: 2,
+        applicationCount: 2,
+        changedCount: 2,
+        startedAt: '2026-08-28T01:00:00Z',
+        completedAt: '2026-08-28T01:00:01Z',
+      });
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/organization');
+  await page.getByRole('tab', { name: 'Organization rules' }).click();
+  await expect(page.getByRole('heading', { name: 'Apply rules to existing mail' })).toBeVisible();
+  await expect(page.getByText('Planned changes')).toBeVisible();
+  await page.getByRole('button', { name: 'Apply to existing mail' }).click();
+  await expect(page.getByText(/command result is unknown/i)).toBeVisible();
+  await expect.poll(() => commands.length).toBe(1);
+  await page.getByRole('button', { name: 'Retry same request' }).click();
+  await expect(page.getByText(/previous request already completed/i)).toBeVisible();
+
+  expect(commands).toHaveLength(2);
+  expect(commands[0]?.requestId).toMatch(/^[0-9a-f-]{36}$/u);
+  expect(commands[1]).toEqual(commands[0]);
+  expect(commands[0]?.previewFingerprint).toBe(fingerprint);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test('stale mail backfill preview requires an explicit refresh and a new command', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const state = mailOrganization();
+  state.rules.push({
+    ruleId: '12000000-0000-0000-0000-000000000002',
+    accountId: state.accounts[0]!.accountId,
+    displayName: 'Launch review mail',
+    priority: 100,
+    matchMode: 'ALL',
+    conditions: [{ field: 'SUBJECT', operator: 'CONTAINS', value: 'launch' }],
+    actions: [{ type: 'STAR' }],
+    stopProcessing: false,
+    enabled: true,
+    synchronizationState: 'LOCAL_ONLY',
+    lastRunAt: null,
+    lastMatchCount: 0,
+    version: 0,
+  });
+  let previewRequests = 0;
+  const commands: Array<{ requestId: string; previewFingerprint: string }> = [];
+  await page.route('**/api/platform/v1/mail/organization**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/organization')) {
+      return fulfill(route, state);
+    }
+    if (request.method() === 'GET' && path.endsWith('/rules/backfill-preview')) {
+      previewRequests++;
+      return fulfill(route, {
+        accountId: state.accounts[0]!.accountId,
+        previewFingerprint: (previewRequests === 1 ? 'c' : 'd').repeat(64),
+        enabledRuleCount: 1,
+        scannedCount: 6,
+        matchedThreadCount: 1,
+        plannedApplicationCount: 1,
+        truncated: false,
+        generatedAt: '2026-08-28T01:10:00Z',
+      });
+    }
+    if (request.method() === 'POST' && path.endsWith('/rules/backfill')) {
+      const command = (await request.postDataJSON()) as {
+        requestId: string;
+        previewFingerprint: string;
+      };
+      commands.push(command);
+      if (commands.length === 1) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ERROR',
+            errorCode: 'RESOURCE_CONFLICT',
+            message: 'Preview changed',
+          }),
+        });
+      }
+      return fulfill(route, {
+        executionId: '13000000-0000-0000-0000-000000000002',
+        requestId: command.requestId,
+        accountId: state.accounts[0]!.accountId,
+        status: 'SUCCEEDED',
+        replayed: false,
+        scannedCount: 6,
+        matchedThreadCount: 1,
+        applicationCount: 1,
+        changedCount: 1,
+        startedAt: '2026-08-28T01:10:00Z',
+        completedAt: '2026-08-28T01:10:01Z',
+      });
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/organization');
+  await page.getByRole('tab', { name: 'Organization rules' }).click();
+  const apply = page.getByRole('button', { name: 'Apply to existing mail' });
+  await apply.click();
+  await expect(page.getByText(/preview is no longer current/i)).toBeVisible();
+  await expect(apply).toBeDisabled();
+  await page.waitForTimeout(250);
+  expect(commands).toHaveLength(1);
+
+  await page.getByRole('button', { name: 'Refresh preview' }).first().click();
+  await expect.poll(() => previewRequests).toBeGreaterThanOrEqual(2);
+  await expect(apply).toBeEnabled();
+  await apply.click();
+  await expect(page.getByText(/rules changed 1 existing conversation/i)).toBeVisible();
+
+  expect(commands).toHaveLength(2);
+  expect(commands[0]?.previewFingerprint).toBe('c'.repeat(64));
+  expect(commands[1]?.previewFingerprint).toBe('d'.repeat(64));
+  expect(commands[1]?.requestId).not.toBe(commands[0]?.requestId);
 });
 
 test('mailbox pagination, shared ownership, and failed delivery retry are complete', async ({

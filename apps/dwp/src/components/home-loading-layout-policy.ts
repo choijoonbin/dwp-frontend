@@ -33,11 +33,18 @@ export function normalizeHomePresentationHint(value: unknown): HomePresentationH
 export function readHomePresentationHint(
   storage: HomePresentationHintStorage | null | undefined
 ): HomePresentationHint {
-  if (!storage) return DEFAULT_PRESENTATION;
+  return readOptionalHomePresentationHint(storage) ?? DEFAULT_PRESENTATION;
+}
+
+export function readOptionalHomePresentationHint(
+  storage: HomePresentationHintStorage | null | undefined
+): HomePresentationHint | null {
+  if (!storage) return null;
   try {
-    return normalizeHomePresentationHint(storage.getItem(HOME_PRESENTATION_HINT_STORAGE_KEY));
+    const value = storage.getItem(HOME_PRESENTATION_HINT_STORAGE_KEY);
+    return value === 'focused' || value === 'expressive' || value === 'balanced' ? value : null;
   } catch {
-    return DEFAULT_PRESENTATION;
+    return null;
   }
 }
 

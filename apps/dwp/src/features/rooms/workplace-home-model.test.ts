@@ -488,6 +488,31 @@ describe('workplace home model', () => {
     expect(model.attention.some((item) => item.kind === 'RELEASE')).toBe(false);
   });
 
+  it('closes cached booking actions when the authoritative source is stale', () => {
+    const cachedCheckIn = booking({ canCheckIn: true });
+    const cachedRelease = booking({
+      bookingId: 'cached-release',
+      canCheckIn: false,
+      canRelease: true,
+      startsAt: '2026-08-18T23:30:00Z',
+    });
+    const model = buildWorkplaceHomeModel({
+      explore: explore([]),
+      bookings: [cachedCheckIn, cachedRelease],
+      roomBookings: [],
+      calendar: calendar([]),
+      bookability: bookability(),
+      now: NOW,
+      timeZone: 'Asia/Seoul',
+      bookingSourceState: 'STALE',
+      canUpdateWorkplaceBooking: true,
+    });
+
+    expect(model.nextAction.kind).not.toBe('CHECK_IN');
+    expect(model.attention.some((item) => item.kind === 'CHECK_IN')).toBe(false);
+    expect(model.attention.some((item) => item.kind === 'RELEASE')).toBe(false);
+  });
+
   it('does not request a room for online or hybrid meetings', () => {
     const online = calendarEvent({ eventId: 'online', conferenceUrl: 'https://meet.example/1' });
     const inPerson = calendarEvent({ eventId: 'in-person' });

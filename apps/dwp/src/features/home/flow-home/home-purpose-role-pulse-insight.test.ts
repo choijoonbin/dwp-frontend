@@ -35,10 +35,10 @@ const signals: readonly FlowSignal[] = [
   {
     key: 'schedule-load',
     label: 'scheduleLoad',
-    value: 0,
-    unit: 'items',
-    tone: 'success',
-    comparison: { kind: 'threshold', value: 0 },
+    value: 80,
+    unit: 'percent',
+    tone: 'risk',
+    comparison: { kind: 'threshold', value: 1 },
     source: 'calendar',
     generatedAt: '2026-08-27T08:00:00Z',
     route: '/calendar/insights',
@@ -155,6 +155,15 @@ describe('RolePulseInsight', () => {
     expect(markup.match(/role="progressbar"/g)).toHaveLength(1);
   });
 
+  it('announces schedule load as a percentage and keeps conflicts as supporting context', () => {
+    const markup = renderInsight(signals.filter((signal) => signal.key === 'schedule-load'));
+
+    expect(markup).toContain('flow.signals.scheduleLoad');
+    expect(markup).toContain('flow.signals.unit.percent');
+    expect(markup).toContain('flow.signals.conflictCount');
+    expect(markup).toContain('&quot;value&quot;:80');
+  });
+
   it('does not fabricate missing signal values', () => {
     const markup = renderInsight(signals.filter((signal) => signal.key === 'open-work'));
 
@@ -182,6 +191,19 @@ describe('RolePulseInsight', () => {
     expect(markup).toContain(`data-home-role-edit-row-height="${policy.editingRowHeight}"`);
     expect(markup).toContain('data-home-role-tall-detail="false"');
     expect(markup).not.toContain('data-home-role-detail');
+  });
+
+  it('keeps compact metric labels wrapped instead of reducing them to ellipses', () => {
+    const markup = renderInsight(signals, 'short');
+
+    expect(markup.match(/data-home-role-label="true"/g)).toHaveLength(4);
+    expect(markup.match(/data-home-role-label-layout="wrapped"/g)).toHaveLength(4);
+  });
+
+  it('marks standard metric labels for container-responsive wrapping', () => {
+    const markup = renderInsight(signals, 'standard');
+
+    expect(markup.match(/data-home-role-label-layout="responsive"/g)).toHaveLength(4);
   });
 
   it('adds source and generated-at evidence only at tall density', () => {

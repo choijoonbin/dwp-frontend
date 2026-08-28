@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 
 import type { GroupRoleAssignment } from '@dwp-frontend/shared-utils';
 
+import { resolveRoleAssignmentPresentationState } from './role-assignment-model';
+
 const EXPIRING_WINDOW_MS = 30 * 24 * 60 * 60 * 1_000;
 
 export type RoleAssignmentSummaryValue = {
@@ -23,14 +25,14 @@ export function summarizeRoleAssignments(
   return assignments.reduce<RoleAssignmentSummaryValue>(
     (summary, assignment) => {
       if (assignment.lifecycleState === 'REVOKED') summary.revoked += 1;
-      if (assignment.lifecycleState !== 'ACTIVE') return summary;
+      if (resolveRoleAssignmentPresentationState(assignment, now) !== 'ACTIVE') return summary;
       summary.active += 1;
       if (!assignment.validTo) {
         summary.noExpiry += 1;
         return summary;
       }
       const remaining = new Date(assignment.validTo).getTime() - now;
-      if (remaining >= 0 && remaining <= EXPIRING_WINDOW_MS) summary.expiringSoon += 1;
+      if (remaining > 0 && remaining <= EXPIRING_WINDOW_MS) summary.expiringSoon += 1;
       return summary;
     },
     { active: 0, expiringSoon: 0, noExpiry: 0, revoked: 0 }

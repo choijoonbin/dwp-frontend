@@ -11,6 +11,7 @@ import {
   ListChecks,
   LockKeyhole,
   Radio,
+  RefreshCw,
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
@@ -35,6 +36,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { formatMeetingDateTime } from './meeting-components';
+import { MeetingIntelligenceReportSection } from './meeting-intelligence-report-section';
 
 type RecapTab = 'overview' | 'artifacts' | 'attendance';
 
@@ -97,6 +99,10 @@ export function MeetingRecapDetail({
     queryKey: ['meetings', meetingId, 'recap'],
     queryFn: () => getVideoMeeting(meetingId),
     staleTime: 30_000,
+    refetchInterval: (currentQuery) =>
+      currentQuery.state.data?.artifacts.some((artifact) => artifact.artifactState === 'PROCESSING')
+        ? 5_000
+        : false,
     retry: 1,
   });
 
@@ -115,6 +121,19 @@ export function MeetingRecapDetail({
   }
 
   const meeting = query.data;
+  const actualDurationMinutes = (() => {
+    if (!meeting.startedAt || !meeting.endedAt) return meeting.durationMinutes;
+    const elapsed = Date.parse(meeting.endedAt) - Date.parse(meeting.startedAt);
+    return Number.isFinite(elapsed) && elapsed >= 0
+      ? Math.max(0, Math.ceil(elapsed / 60_000))
+      : meeting.durationMinutes;
+  })();
+  const actualParticipantCount = meeting.participants.filter(
+    (participant) =>
+      participant.joinedAt ||
+      participant.attendanceState === 'JOINED' ||
+      participant.attendanceState === 'LEFT'
+  ).length;
   return (
     <Box component="article" aria-labelledby="meeting-recap-title" sx={{ minWidth: 0 }}>
       <Stack
@@ -148,6 +167,16 @@ export function MeetingRecapDetail({
           </Typography>
         </Box>
         <Stack direction="row" gap={0.75} flexWrap="wrap">
+          <ActionButton
+            intent="quiet"
+            size="small"
+            startIcon={<RefreshCw size={15} aria-hidden="true" />}
+            loading={query.isFetching}
+            loadingLabel={t('history.recap.refreshing')}
+            onClick={() => query.refetch()}
+          >
+            {t('actions.refresh')}
+          </ActionButton>
           <Chip
             size="small"
             icon={<ShieldCheck size={14} />}
@@ -181,12 +210,12 @@ export function MeetingRecapDetail({
         <RecapMetric
           icon={CalendarClock}
           label={t('history.recap.metrics.duration')}
-          value={t('units.minutes', { count: meeting.durationMinutes })}
+          value={t('units.minutes', { count: actualDurationMinutes })}
         />
         <RecapMetric
           icon={UsersRound}
           label={t('history.recap.metrics.participants')}
-          value={t('units.participants', { count: meeting.participants.length })}
+          value={t('units.participants', { count: actualParticipantCount })}
         />
         <RecapMetric
           icon={ListChecks}
@@ -215,7 +244,17 @@ export function MeetingRecapDetail({
 
       <Box sx={{ pt: 2.5 }}>
         {tab === 'overview' && <MeetingOutcome meeting={meeting} />}
-        {tab === 'artifacts' && <ArtifactCustody artifacts={meeting.artifacts} />}
+        {tab === 'artifacts' && (
+          <Stack gap={3}>
+            <ArtifactCustody artifacts={meeting.artifacts} />
+            <Divider />
+            <MeetingIntelligenceReportSection
+              meetingId={meeting.meetingId}
+              canHost={meeting.canHost}
+              artifacts={meeting.artifacts}
+            />
+          </Stack>
+        )}
         {tab === 'attendance' && (
           <AttendanceEvidence
             participants={meeting.participants}
@@ -302,11 +341,23 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
     () => new Map(artifacts.map((artifact) => [artifact.artifactType, artifact])),
     [artifacts]
   );
+  const processing = artifacts.some((artifact) => artifact.artifactState === 'PROCESSING');
+  const storedWithoutRetrieval = artifacts.some(
+    (artifact) => artifact.artifactState === 'AVAILABLE'
+  );
   return (
     <Stack gap={2}>
       <Alert severity="info" icon={<LockKeyhole size={19} />}>
         {t('history.recap.artifacts.governance')}
       </Alert>
+      {processing && (
+        <Alert severity="info" role="status">
+          {t('history.recap.artifacts.processingRefresh')}
+        </Alert>
+      )}
+      {storedWithoutRetrieval && (
+        <Alert severity="warning">{t('history.recap.artifacts.retrievalUnavailable')}</Alert>
+      )}
       <Box
         sx={{
           border: 1,
@@ -360,7 +411,11 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
                   size="small"
                   color={ARTIFACT_STATUS_COLORS[state]}
                   variant={state === 'UNAVAILABLE' ? 'outlined' : 'filled'}
-                  label={t(`history.recap.artifacts.states.${state}`)}
+                  label={t(
+                    state === 'AVAILABLE'
+                      ? 'history.recap.artifacts.states.AVAILABLE_NO_RETRIEVAL'
+                      : `history.recap.artifacts.states.${state}`
+                  )}
                 />
               </Stack>
             </Box>

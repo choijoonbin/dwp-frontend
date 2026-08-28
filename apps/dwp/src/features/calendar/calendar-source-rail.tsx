@@ -89,7 +89,14 @@ function CalendarSourceRow({
             inputProps={{
               'aria-describedby': required ? `${calendar.calendarId}-policy` : undefined,
             }}
-            sx={{ color: calendar.color, '&.Mui-checked': { color: calendar.color } }}
+            sx={{
+              color: calendar.color,
+              '&.Mui-checked': { color: calendar.color },
+              '@media (forced-colors: active)': {
+                color: 'CanvasText',
+                '&.Mui-checked': { color: 'Highlight' },
+              },
+            }}
           />
         }
         label={

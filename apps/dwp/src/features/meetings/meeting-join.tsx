@@ -63,7 +63,13 @@ export function MeetingJoin() {
         displayName: displayName.trim(),
         idempotencyKey: crypto.randomUUID(),
       }),
-    onSuccess: setJoinRequest,
+    onSuccess: (result) => {
+      setJoinRequest(result);
+      if (!resolution?.requiresApproval && result.state === 'APPROVED') {
+        const query = new URLSearchParams({ joinRequest: result.requestId });
+        navigate(`/meetings/room/${encodeURIComponent(result.meetingId)}?${query.toString()}`);
+      }
+    },
   });
   const requestQuery = useQuery({
     queryKey: ['meetings', 'join-request', resolution?.meeting.meetingId, joinRequest?.requestId],
@@ -198,11 +204,38 @@ export function MeetingJoin() {
                     disabled={!displayName.trim()}
                     onClick={() => requestMutation.mutate()}
                   >
-                    {t('join.request')}
+                    {t(resolution.requiresApproval ? 'join.request' : 'join.continueDirect')}
                   </ActionButton>
                 </Stack>
               ) : (
-                <JoinRequestState request={joinRequest} onContinue={enterDeviceCheck} />
+                <Stack gap={1.25}>
+                  <JoinRequestState
+                    request={joinRequest}
+                    onContinue={enterDeviceCheck}
+                    onRestart={() => setJoinRequest(null)}
+                  />
+                  {joinRequest.state === 'WAITING' && requestQuery.isError && (
+                    <Alert severity="error">
+                      <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        alignItems={{ xs: 'stretch', sm: 'center' }}
+                        justifyContent="space-between"
+                        gap={1}
+                      >
+                        <Typography variant="body2">{t('join.statusError')}</Typography>
+                        <ActionButton
+                          intent="quiet"
+                          size="small"
+                          loading={requestQuery.isFetching}
+                          loadingLabel={t('join.checkingStatus')}
+                          onClick={() => requestQuery.refetch()}
+                        >
+                          {t('join.retryStatus')}
+                        </ActionButton>
+                      </Stack>
+                    </Alert>
+                  )}
+                </Stack>
               )}
             </Box>
           </>
@@ -215,9 +248,11 @@ export function MeetingJoin() {
 function JoinRequestState({
   request,
   onContinue,
+  onRestart,
 }: {
   request: VideoMeetingJoinRequest;
   onContinue: () => void;
+  onRestart: () => void;
 }) {
   const { t } = useTranslation('meetings');
   const state = {
@@ -263,6 +298,11 @@ function JoinRequestState({
       {request.state === 'APPROVED' && (
         <ActionButton intent="primary" onClick={onContinue}>
           {t('join.continue')}
+        </ActionButton>
+      )}
+      {(request.state === 'DENIED' || request.state === 'EXPIRED') && (
+        <ActionButton intent="quiet" onClick={onRestart}>
+          {t('join.startOver')}
         </ActionButton>
       )}
     </Stack>

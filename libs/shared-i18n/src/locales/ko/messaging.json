@@ -82,6 +82,12 @@
     "attention": {
       "eyebrow": "오늘의 집중",
       "openInbox": "받은 대화 열기",
+      "actions": {
+        "mentions": "멘션 확인",
+        "unread": "받은 대화 열기",
+        "saved": "나중에 볼 항목 열기",
+        "clear": "받은 대화 열기"
+      },
       "states": {
         "mentions": {
           "title": "나를 기다리는 멘션이 {{count}}개 있습니다",
@@ -482,6 +488,11 @@
     "CHANNELS": {
       "title": "채널",
       "description": "팀과 운영 채널을 탐색합니다."
+    },
+    "MENTIONS": {
+      "title": "멘션",
+      "description": "나를 직접 언급한 읽지 않은 대화입니다.",
+      "showAll": "받은 대화 전체 보기"
     }
   },
   "context": {
@@ -527,6 +538,8 @@
       "description": "DM, Space 대화, 편집/삭제, AI 보조와 보관 정책을 설정합니다.",
       "saved": "메시징 정책을 저장했습니다.",
       "saveError": "메시징 정책을 저장하지 못했습니다.",
+      "conflict": "다른 관리자가 먼저 정책을 변경했습니다. 최신 설정을 불러왔으니 검토 후 다시 저장하세요.",
+      "readOnly": "이 정책을 조회할 수 있지만 변경하려면 메시징 관리 권한이 필요합니다.",
       "noBypass": "관리 정책 변경은 감사 이벤트로 기록되며 Space 멤버십을 우회하지 않습니다.",
       "fields": {
         "directMessagesEnabled": {
@@ -550,10 +563,12 @@
           "description": "요약, 회신 초안, 긴급도 판단을 위한 확장 지점을 활성화합니다."
         },
         "retentionDays": {
-          "label": "보관 기간(일)"
+          "label": "보관 기간(일)",
+          "range": "{{min}}~{{max}} 사이의 정수를 입력하세요."
         },
         "maximumAttachmentMb": {
-          "label": "첨부 최대 용량(MB)"
+          "label": "첨부 최대 용량(MB)",
+          "range": "{{min}}~{{max}} 사이의 정수를 입력하세요."
         }
       }
     }

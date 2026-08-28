@@ -1,56 +1,97 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  resolveHomeBootstrapState,
+  canStartHomeEditing,
   resolveHomeDeviceClass,
+  resolveHomePageGateState,
   resolveHomePageCopy,
 } from './home-page-runtime-state';
 
 describe('Home page runtime state', () => {
   it('keeps the bootstrap visible until the experience and selected layout are ready', () => {
     expect(
-      resolveHomeBootstrapState({
+      resolveHomePageGateState({
         experiencePending: true,
         experienceReady: false,
+        experienceFailed: false,
         layoutPending: true,
+        layoutFailed: false,
         deviceLayoutPending: true,
       })
-    ).toBe('experience');
+    ).toEqual({ kind: 'loading', source: 'experience' });
     expect(
-      resolveHomeBootstrapState({
+      resolveHomePageGateState({
         experiencePending: false,
         experienceReady: true,
+        experienceFailed: false,
         layoutPending: true,
+        layoutFailed: false,
         deviceLayoutPending: false,
       })
-    ).toBe('layout');
+    ).toEqual({ kind: 'loading', source: 'layout' });
     expect(
-      resolveHomeBootstrapState({
+      resolveHomePageGateState({
         experiencePending: false,
         experienceReady: true,
+        experienceFailed: false,
         layoutPending: false,
+        layoutFailed: false,
         deviceLayoutPending: true,
       })
-    ).toBe('layout');
+    ).toEqual({ kind: 'loading', source: 'layout' });
   });
 
-  it('does not report a layout bootstrap before experience readiness or after completion', () => {
+  it('surfaces experience and active layout failures instead of silently rendering a fallback', () => {
     expect(
-      resolveHomeBootstrapState({
+      resolveHomePageGateState({
         experiencePending: false,
         experienceReady: false,
+        experienceFailed: true,
         layoutPending: true,
+        layoutFailed: false,
         deviceLayoutPending: true,
       })
-    ).toBeNull();
+    ).toEqual({ kind: 'error', source: 'experience' });
     expect(
-      resolveHomeBootstrapState({
+      resolveHomePageGateState({
         experiencePending: false,
         experienceReady: true,
+        experienceFailed: false,
         layoutPending: false,
+        layoutFailed: true,
         deviceLayoutPending: false,
       })
-    ).toBeNull();
+    ).toEqual({ kind: 'error', source: 'layout' });
+  });
+
+  it('reports ready only after required home sources settle successfully', () => {
+    expect(
+      resolveHomePageGateState({
+        experiencePending: false,
+        experienceReady: true,
+        experienceFailed: false,
+        layoutPending: false,
+        layoutFailed: false,
+        deviceLayoutPending: false,
+      })
+    ).toEqual({ kind: 'ready' });
+  });
+
+  it('does not expose a dead edit action while home sources are unavailable', () => {
+    expect(
+      canStartHomeEditing({
+        customizationEnabled: true,
+        editorOpen: false,
+        gateState: { kind: 'error', source: 'layout' },
+      })
+    ).toBe(false);
+    expect(
+      canStartHomeEditing({
+        customizationEnabled: true,
+        editorOpen: false,
+        gateState: { kind: 'ready' },
+      })
+    ).toBe(true);
   });
 
   it('uses the preview device only while an edit preview is active', () => {

@@ -3,13 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useRoomContext } from '@livekit/components-react';
 import { PhoneOff } from 'lucide-react';
 
-import { leaveVideoMeeting } from '@dwp-frontend/shared-utils/api/video-meeting-api';
-
 export function MeetingLeaveControl({
-  meetingId,
   onError,
 }: {
-  meetingId: string;
   onError: () => void;
 }) {
   const { t } = useTranslation('meetings');
@@ -20,11 +16,10 @@ export function MeetingLeaveControl({
     if (leaving) return;
     setLeaving(true);
     try {
-      await leaveVideoMeeting(meetingId);
-    } catch {
-      onError();
-    } finally {
       await room.disconnect();
+    } catch {
+      setLeaving(false);
+      onError();
     }
   };
 

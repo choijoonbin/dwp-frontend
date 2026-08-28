@@ -169,11 +169,32 @@ async function mockMessagingHome(page: Page, empty = false) {
     if (request.method() !== 'GET') return route.fallback();
     if (url.pathname === '/api/messaging/v1/home') return fulfill(route, data.home);
     if (url.pathname === '/api/messaging/v1/conversations') {
+      const conversations =
+        url.searchParams.get('scope') === 'MENTIONS'
+          ? data.conversations.filter((conversation) => conversation.conversationType === 'DIRECT')
+          : data.conversations;
       return fulfill(route, {
-        items: data.conversations,
-        total: data.conversations.length,
+        items: conversations,
+        total: conversations.length,
         page: 0,
         pageSize: 50,
+      });
+    }
+    if (url.pathname === '/api/messaging/v1/preferences/display') {
+      return fulfill(route, {
+        layoutMode: 'AUTO',
+        density: 'COMFORTABLE',
+        theme: 'DEFAULT',
+        showAvatars: true,
+        timestampMode: 'SMART',
+        messagePreview: true,
+        version: 1,
+        policy: {
+          allowedThemes: ['DEFAULT', 'MIST', 'SAGE', 'ROSE'],
+          allowPersonalBackgrounds: false,
+          allowThemeSharing: false,
+          version: 1,
+        },
       });
     }
     if (url.pathname === '/api/messaging/v1/saved-items') return fulfill(route, data.saved);
@@ -231,4 +252,40 @@ test('shows a calm completion state without fabricated recommendations', async (
   await expect(page.getByText('No new conversations need action')).toBeVisible();
   await expect(page.getByText('No saved messages')).toBeVisible();
   await expect(page.getByText('People to connect with')).toHaveCount(0);
+});
+
+test('opens a truthful unread mention scope and returns to the complete inbox', async ({
+  page,
+}) => {
+  await mockMessagingHome(page);
+  await page.goto('/messages/home');
+
+  const mentionRequest = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return (
+      url.pathname === '/api/messaging/v1/conversations' &&
+      url.searchParams.get('scope') === 'MENTIONS'
+    );
+  });
+  await page.getByRole('button', { name: 'Review mentions', exact: true }).click();
+  await mentionRequest;
+
+  await expect(page).toHaveURL(/\/messages\/inbox\?attention=mentions$/u);
+  await expect(page.getByRole('heading', { name: 'Mentions' })).toBeVisible();
+  await expect(page.getByText('Alex Park', { exact: true })).toBeVisible();
+  await expect(page.getByText('AI Governance Space', { exact: true })).toHaveCount(0);
+
+  const inboxRequest = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return (
+      url.pathname === '/api/messaging/v1/conversations' && url.searchParams.get('scope') === 'ALL'
+    );
+  });
+  await page.getByRole('button', { name: 'Show all inbox' }).click();
+  await inboxRequest;
+
+  await expect(page).toHaveURL(/\/messages\/inbox(?:\?.*)?$/u);
+  expect(new URL(page.url()).searchParams.has('attention')).toBe(false);
+  await expect(page.getByRole('heading', { name: 'Inbox' })).toBeVisible();
+  await expect(page.getByText('AI Governance Space', { exact: true })).toBeVisible();
 });

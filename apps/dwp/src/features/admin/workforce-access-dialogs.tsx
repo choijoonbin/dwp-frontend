@@ -103,8 +103,7 @@ export function WorkforceAccessPolicyDialog({
   const [validTo, setValidTo] = useState<string | null>(null);
   const [justification, setJustification] = useState('');
 
-  const userReferenceUnavailable =
-    subjectType === 'USER' && (usersLoading || usersError || !selectedUser);
+  const userReferenceUnavailable = subjectType === 'USER' && !selectedUser;
   const organizationReferenceUnavailable =
     populationType !== 'TENANT' && (organizationsLoading || organizationsError);
   const invalidValidityRange = hasInvalidValidityRange(validFrom, validTo);
@@ -276,7 +275,13 @@ export function WorkforceAccessPolicyDialog({
               );
             }}
             onInputChange={(_, value, reason) => {
-              if (reason === 'input' || reason === 'clear') onUserQueryChange(value);
+              if (reason === 'input' || reason === 'clear') {
+                onUserQueryChange(value);
+                if (selectedUser && value !== selectedUser.displayName) {
+                  setSelectedUser(null);
+                  setSubjectRef('');
+                }
+              }
             }}
             onChange={(_, user) => {
               setSelectedUser(user);

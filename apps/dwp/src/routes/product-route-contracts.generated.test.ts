@@ -73,9 +73,9 @@ describe('generated product route authorization contracts', () => {
     expect(countByKind).toEqual({ ACTION: 59, DATA: 12, PAGE: 58 });
     expect(nonPages).toHaveLength(71);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(149);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(149);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(92);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(150);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(150);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

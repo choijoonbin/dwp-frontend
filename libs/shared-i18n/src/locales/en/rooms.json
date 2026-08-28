@@ -246,6 +246,17 @@
         "stale": "Last verified information",
         "verifiedAt": "Verified {{time}}"
       },
+      "decisionStatus": {
+        "checkInEnded": "The reservation has ended. Check-in is closed and no action was sent.",
+        "checkInUnverified": "The current reservation state could not be verified. Check-in is closed and no action was sent.",
+        "checkInRecovered": "The current reservation state is verified again. Check-in is available.",
+        "cancelEnded": "The reservation has started. Cancellation is closed and no action was sent.",
+        "cancelUnverified": "The current reservation state could not be verified. Cancellation is closed and no action was sent.",
+        "cancelRecovered": "The current reservation state is verified again. Cancellation is available.",
+        "releaseEnded": "The reservation has ended. Release is closed and no action was sent.",
+        "releaseUnverified": "The current reservation state could not be verified. Release is closed and no action was sent.",
+        "releaseRecovered": "The current reservation state is verified again. Release is available."
+      },
       "findSpace": "Find a space",
       "openBookings": "View space bookings",
       "nextAction": {
@@ -525,6 +536,10 @@
         "saved": "The space reservation was changed.",
         "saveError": "The reservation could not be changed. Refresh availability and try again.",
         "loadError": "Available spaces could not be loaded.",
+        "deniedNotice": "You no longer have permission to view available spaces. The reservation change was closed and no update was sent.",
+        "refresh": "Refresh target options",
+        "staleNotice": "Available spaces could not be refreshed. The last verified options are read-only, and saving remains disabled until recovery.",
+        "freshnessRequired": "Refresh available spaces before saving this reservation change.",
         "resourceRequired": "Select an available space.",
         "empty": "No space of the same type is available for this period."
       },

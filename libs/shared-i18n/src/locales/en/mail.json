@@ -295,6 +295,26 @@
       "activeRules": "Active rules",
       "activeRulesDetail": "Available for incoming and manual runs"
     },
+    "backfill": {
+      "title": "Apply rules to existing mail",
+      "description": "Preview the current personal-account result before applying enabled rules in priority order.",
+      "account": "Personal mail account",
+      "noPersonalAccount": "No active personal mail account is available.",
+      "loadError": "The rule impact preview could not be loaded.",
+      "refresh": "Refresh preview",
+      "enabledRules": "Enabled rules",
+      "scanned": "Scanned",
+      "matched": "Matched",
+      "planned": "Planned changes",
+      "truncated": "This preview reached the bounded batch limit. Refresh after completion to review the next batch.",
+      "run": "Apply to existing mail",
+      "runError": "The command result is unknown. Retry uses the same request so it cannot apply twice.",
+      "runRejected": "The command was rejected. Refresh the account and rule state before trying again.",
+      "retryCommand": "Retry same request",
+      "refreshRequired": "The preview is no longer current. Refresh it before applying rules.",
+      "completed": "Rules changed {{count}} existing conversations.",
+      "replayed": "The previous request already completed with {{count}} changed conversations."
+    },
     "folder": {
       "new": "New folder",
       "createTitle": "Create a personal folder",

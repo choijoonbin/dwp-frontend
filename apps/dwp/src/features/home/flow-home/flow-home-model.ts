@@ -72,6 +72,19 @@ const flowlineSelectionOrder: Record<FlowlineItem['state'], number> = {
 const FLOWLINE_ACTION_BUDGET = 6;
 const FLOWLINE_COMPLETED_BUDGET = 1;
 
+function currentScheduleLoad(
+  date: string,
+  weekLoad: readonly CalendarDayLoad[]
+): CalendarDayLoad | undefined {
+  return weekLoad.find(
+    (point) => point.date === date && Number.isFinite(point.loadPercent) && point.loadPercent >= 0
+  );
+}
+
+function scheduleLoadTone(loadPercent: number, conflictCount: number): FlowTone {
+  return conflictCount > 0 || loadPercent > 100 ? 'risk' : 'success';
+}
+
 export function rankFlowNowItems(items: readonly WorkspaceWorkItem[] = []): WorkspaceWorkItem[] {
   return [...items]
     .filter((item) => item.status !== 'completed')
@@ -228,6 +241,7 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
   }
   if (overview?.calendar.status === 'AVAILABLE' && overview.calendar.data) {
     const calendar = overview.calendar.data;
+    const scheduleLoad = currentScheduleLoad(calendar.date, calendar.weekLoad);
     signals.push({
       key: 'focus-time',
       label: 'focusTime',
@@ -246,18 +260,20 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
       generatedAt: overview.calendar.generatedAt,
       route: '/calendar/insights',
     });
-    signals.push({
-      key: 'schedule-load',
-      label: 'scheduleLoad',
-      value: calendar.metrics.conflictCount,
-      unit: 'items',
-      tone: calendar.metrics.conflictCount > 0 ? 'risk' : 'success',
-      comparison: { kind: 'threshold', value: calendar.metrics.conflictCount },
-      source: overview.calendar.source,
-      generatedAt: overview.calendar.generatedAt,
-      route: '/calendar/insights',
-      series: calendar.weekLoad,
-    });
+    if (scheduleLoad) {
+      signals.push({
+        key: 'schedule-load',
+        label: 'scheduleLoad',
+        value: Math.round(scheduleLoad.loadPercent),
+        unit: 'percent',
+        tone: scheduleLoadTone(scheduleLoad.loadPercent, calendar.metrics.conflictCount),
+        comparison: { kind: 'threshold', value: calendar.metrics.conflictCount },
+        source: overview.calendar.source,
+        generatedAt: overview.calendar.generatedAt,
+        route: '/calendar/insights',
+        series: calendar.weekLoad,
+      });
+    }
   }
   if (overview?.activity.status === 'AVAILABLE' && overview.activity.data) {
     const needsAttention = overview.activity.data.events.filter(

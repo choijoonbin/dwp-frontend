@@ -129,7 +129,7 @@ export function MessagingHome() {
                 metrics={data.metrics}
                 state={view.attentionState}
                 onOpenInbox={() => navigate('/messages/inbox')}
-                onOpenMentions={() => navigate('/messages/inbox')}
+                onOpenMentions={() => navigate('/messages/inbox?attention=mentions')}
                 onOpenSaved={() => navigate('/messages/later')}
               />
 

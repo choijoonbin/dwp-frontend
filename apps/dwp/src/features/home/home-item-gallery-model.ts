@@ -83,7 +83,13 @@ export function resolveHomeWidgetGalleryItems(
   return HOME_WIDGET_REGISTRY.flatMap((widget) => {
     if (!registered.has(widget.key) || (flow && widget.key === 'command-rail')) return [];
     const definition = workspaceWidgetCatalogDefinition(widget.key);
-    if (!definition || !entitledAppResourceKeys.has(definition.sourceAppResourceKey)) return [];
+    if (!definition) return [];
+    const entitlementResourceKeys = flow
+      ? definition.contributorAppResourceKeys
+      : [definition.sourceAppResourceKey];
+    if (!entitlementResourceKeys.some((resourceKey) => entitledAppResourceKeys.has(resourceKey))) {
+      return [];
+    }
     const preference = preferenceByKey.get(widget.key);
     const state = resolveHomeWidgetLifecycleGalleryState(
       definition.lifecycle,

@@ -377,7 +377,7 @@ export async function getMessagingHome(): Promise<MessagingHome> {
 }
 
 export async function getMessagingConversations(input: {
-  scope?: 'ALL' | 'FAVORITES' | 'SPACES' | 'DIRECT' | 'CHANNELS';
+  scope?: 'ALL' | 'FAVORITES' | 'SPACES' | 'DIRECT' | 'CHANNELS' | 'MENTIONS';
   query?: string;
   page?: number;
   pageSize?: number;

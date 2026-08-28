@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw, Save, ShieldCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getMessagingAdminOverview,
+  HttpError,
   updateMessagingPolicy,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { ActionButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
@@ -18,10 +20,20 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import {
+  DEFAULT_MESSAGING_POLICY_FORM,
+  MESSAGING_ATTACHMENT_MB,
+  MESSAGING_RETENTION_DAYS,
+  messagingPolicyForm,
+  messagingPolicyFormChanged,
+  validateMessagingPolicyForm,
+} from './messaging-admin-model';
+import {
   MessagingConversationListItem,
   MessagingMetric,
   MessagingPageHeading,
 } from './messaging-components';
+
+import type { MessagingAdminOverview } from '@dwp-frontend/shared-utils';
 
 export function MessagingAdminOverview() {
   const { t } = useTranslation('messaging');
@@ -114,7 +126,6 @@ export function MessagingAdminOverview() {
               <MessagingConversationListItem
                 key={conversation.conversationId}
                 conversation={conversation}
-                onSelect={() => undefined}
               />
             ))}
           </Box>
@@ -127,6 +138,8 @@ export function MessagingAdminOverview() {
 export function MessagingAdminPolicy() {
   const { t } = useTranslation('messaging');
   const toast = useToast();
+  const { hasPermission } = usePermissions();
+  const canManage = hasPermission('ADMIN.MESSAGING', 'MANAGE');
   const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ['messaging', 'admin'],
@@ -134,29 +147,30 @@ export function MessagingAdminPolicy() {
     staleTime: 20_000,
     retry: 1,
   });
-  const [form, setForm] = useState({
-    directMessagesEnabled: true,
-    spaceMessagingEnabled: true,
-    allowMessageEdit: true,
-    allowMessageDelete: true,
-    aiAssistanceEnabled: true,
-    retentionDays: 1095,
-    maximumAttachmentMb: 100,
-    version: 0,
-  });
+  const [form, setForm] = useState(DEFAULT_MESSAGING_POLICY_FORM);
+  const validation = useMemo(() => validateMessagingPolicyForm(form), [form]);
+  const dirty = messagingPolicyFormChanged(form, query.data?.policy);
   const mutation = useMutation({
     mutationFn: updateMessagingPolicy,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['messaging', 'admin'] });
+    onSuccess: (policy) => {
+      queryClient.setQueryData<MessagingAdminOverview>(['messaging', 'admin'], (current) =>
+        current ? { ...current, policy } : current
+      );
       toast.success(t('admin.policy.saved'));
     },
-    onError: () => toast.error(t('admin.policy.saveError')),
+    onError: async (error) => {
+      if (error instanceof HttpError && error.status === 409) {
+        const refreshed = await query.refetch();
+        toast.error(refreshed.isError ? t('admin.policy.saveError') : t('admin.policy.conflict'));
+        return;
+      }
+      toast.error(t('admin.policy.saveError'));
+    },
   });
 
   useEffect(() => {
     if (!query.data?.policy) return;
-    const { aiAutoExecuteEnabled: _discarded, ...policy } = query.data.policy;
-    setForm(policy);
+    setForm(messagingPolicyForm(query.data.policy));
   }, [query.data?.policy]);
 
   const toggle = (key: keyof typeof form) =>
@@ -172,7 +186,9 @@ export function MessagingAdminPolicy() {
           <ActionButton
             intent="primary"
             startIcon={<Save size={17} />}
-            disabled={mutation.isPending || query.isLoading}
+            disabled={
+              !canManage || mutation.isPending || query.isLoading || !dirty || !validation.valid
+            }
             onClick={() => mutation.mutate(form)}
           >
             {mutation.isPending ? t('actions.saving') : t('actions.save')}
@@ -185,79 +201,121 @@ export function MessagingAdminPolicy() {
       ) : query.isError ? (
         <Alert severity="error">{t('admin.loadError')}</Alert>
       ) : (
-        <Box
-          sx={{
-            maxWidth: 920,
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Stack spacing={0} divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />}>
-            {(
-              [
-                'directMessagesEnabled',
-                'spaceMessagingEnabled',
-                'allowMessageEdit',
-                'allowMessageDelete',
-                'aiAssistanceEnabled',
-              ] as const
-            ).map((key) => (
-              <Box key={key} sx={{ px: 2.25, py: 1.35 }}>
-                <FormControlLabel
-                  control={<Checkbox checked={Boolean(form[key])} onChange={() => toggle(key)} />}
-                  label={
-                    <Box>
-                      <Typography fontWeight={800}>
-                        {t(`admin.policy.fields.${key}.label`)}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t(`admin.policy.fields.${key}.description`)}
-                      </Typography>
-                    </Box>
+        <Stack spacing={2} sx={{ maxWidth: 920 }}>
+          {!canManage ? <Alert severity="info">{t('admin.policy.readOnly')}</Alert> : null}
+          <Box
+            sx={{
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1,
+              bgcolor: 'background.paper',
+            }}
+          >
+            <Stack spacing={0} divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />}>
+              {(
+                [
+                  'directMessagesEnabled',
+                  'spaceMessagingEnabled',
+                  'allowMessageEdit',
+                  'allowMessageDelete',
+                  'aiAssistanceEnabled',
+                ] as const
+              ).map((key) => (
+                <Box key={key} sx={{ px: 2.25, py: 1.35 }}>
+                  <FormControlLabel
+                    disabled={!canManage}
+                    control={<Checkbox checked={Boolean(form[key])} onChange={() => toggle(key)} />}
+                    label={
+                      <Box>
+                        <Typography fontWeight={800}>
+                          {t(`admin.policy.fields.${key}.label`)}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {t(`admin.policy.fields.${key}.description`)}
+                        </Typography>
+                      </Box>
+                    }
+                  />
+                </Box>
+              ))}
+              <Box
+                sx={{
+                  p: 2.25,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 2,
+                }}
+              >
+                <FormField
+                  type="number"
+                  disabled={!canManage}
+                  label={t('admin.policy.fields.retentionDays.label')}
+                  value={form.retentionDays}
+                  inputProps={{
+                    min: MESSAGING_RETENTION_DAYS.min,
+                    max: MESSAGING_RETENTION_DAYS.max,
+                    step: 1,
+                  }}
+                  supportingText={t('admin.policy.fields.retentionDays.range', {
+                    min: MESSAGING_RETENTION_DAYS.min,
+                    max: MESSAGING_RETENTION_DAYS.max,
+                  })}
+                  errorMessage={
+                    validation.retentionDays
+                      ? undefined
+                      : t('admin.policy.fields.retentionDays.range', {
+                          min: MESSAGING_RETENTION_DAYS.min,
+                          max: MESSAGING_RETENTION_DAYS.max,
+                        })
+                  }
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      retentionDays: Number(event.target.value),
+                    }))
+                  }
+                />
+                <FormField
+                  type="number"
+                  disabled={!canManage}
+                  label={t('admin.policy.fields.maximumAttachmentMb.label')}
+                  value={form.maximumAttachmentMb}
+                  inputProps={{
+                    min: MESSAGING_ATTACHMENT_MB.min,
+                    max: MESSAGING_ATTACHMENT_MB.max,
+                    step: 1,
+                  }}
+                  supportingText={t('admin.policy.fields.maximumAttachmentMb.range', {
+                    min: MESSAGING_ATTACHMENT_MB.min,
+                    max: MESSAGING_ATTACHMENT_MB.max,
+                  })}
+                  errorMessage={
+                    validation.maximumAttachmentMb
+                      ? undefined
+                      : t('admin.policy.fields.maximumAttachmentMb.range', {
+                          min: MESSAGING_ATTACHMENT_MB.min,
+                          max: MESSAGING_ATTACHMENT_MB.max,
+                        })
+                  }
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      maximumAttachmentMb: Number(event.target.value),
+                    }))
                   }
                 />
               </Box>
-            ))}
-            <Box
-              sx={{
-                p: 2.25,
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                gap: 2,
-              }}
-            >
-              <FormField
-                type="number"
-                label={t('admin.policy.fields.retentionDays.label')}
-                value={form.retentionDays}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, retentionDays: Number(event.target.value) }))
-                }
-              />
-              <FormField
-                type="number"
-                label={t('admin.policy.fields.maximumAttachmentMb.label')}
-                value={form.maximumAttachmentMb}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    maximumAttachmentMb: Number(event.target.value),
-                  }))
-                }
-              />
-            </Box>
-            <Box sx={{ p: 2.25, bgcolor: 'var(--dwp-product-soft)' }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <ShieldCheck size={18} color="var(--dwp-product-accent)" />
-                <Typography variant="body2" fontWeight={760}>
-                  {t('admin.policy.noBypass')}
-                </Typography>
-              </Stack>
-            </Box>
-          </Stack>
-        </Box>
+              <Box sx={{ p: 2.25, bgcolor: 'var(--dwp-product-soft)' }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <ShieldCheck size={18} color="var(--dwp-product-accent)" />
+                  <Typography variant="body2" fontWeight={760}>
+                    {t('admin.policy.noBypass')}
+                  </Typography>
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
+        </Stack>
       )}
     </PageCanvas>
   );

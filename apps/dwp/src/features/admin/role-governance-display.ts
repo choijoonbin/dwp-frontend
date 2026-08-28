@@ -1,7 +1,25 @@
 import type { TFunction } from 'i18next';
 
-export const ROLE_PERMISSION_CODES = ['VIEW', 'CREATE', 'UPDATE', 'DELETE', 'MANAGE'] as const;
+export const ROLE_PERMISSION_CODES = [
+  'VIEW',
+  'CREATE',
+  'UPDATE',
+  'DELETE',
+  'MANAGE',
+  'EXECUTE',
+  'APPROVE',
+  'EXPORT',
+  'PUBLISH',
+] as const;
 export const ROLE_RESOURCE_TYPES = ['APP', 'NAVIGATION', 'API', 'ACTION', 'DATA'] as const;
+
+export function rolePermissionCodes(permissions: readonly { permissionCode: string }[]): string[] {
+  const canonical = new Set<string>(ROLE_PERMISSION_CODES);
+  const additional = [...new Set(permissions.map(({ permissionCode }) => permissionCode.trim()))]
+    .filter((code) => code && !canonical.has(code))
+    .sort();
+  return [...ROLE_PERMISSION_CODES, ...additional];
+}
 
 function translatedCode(
   t: TFunction<'admin'>,

@@ -130,6 +130,7 @@ export function MeetingActionPanel({
   onAction,
   emphasis = false,
   busy = false,
+  disabled = false,
 }: {
   icon: LucideIcon;
   title: string;
@@ -138,6 +139,7 @@ export function MeetingActionPanel({
   onAction: () => void;
   emphasis?: boolean;
   busy?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <Box
@@ -180,6 +182,7 @@ export function MeetingActionPanel({
       <ActionButton
         intent={emphasis ? 'primary' : 'secondary'}
         loading={busy}
+        disabled={disabled}
         endIcon={<ArrowRight size={16} aria-hidden="true" />}
         onClick={onAction}
       >
@@ -279,7 +282,11 @@ export function MeetingSummaryRow({
         </Box>
         {onOpen && (
           <ActionButton intent="quiet" endIcon={<ArrowRight size={15} />} onClick={onOpen}>
-            {meeting.lifecycleState === 'LIVE' ? t('actions.join') : t('home.focus.prepare')}
+            {history || meeting.lifecycleState === 'ENDED'
+              ? t('history.openRecap')
+              : meeting.lifecycleState === 'LIVE'
+                ? t('actions.join')
+                : t('home.focus.prepare')}
           </ActionButton>
         )}
       </Stack>

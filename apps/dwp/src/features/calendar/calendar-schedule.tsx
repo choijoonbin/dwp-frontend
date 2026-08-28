@@ -594,14 +594,13 @@ export function CalendarSchedule() {
         {(eventsQuery.isFetching || calendarsQuery.isFetching) && (
           <LinearProgress aria-label={t('schedule.loading')} />
         )}
-        {eventsQuery.isError || calendarsQuery.isError ? (
+        {calendarsQuery.isError ? (
           <Alert
             severity="error"
             action={
               <ActionButton
                 intent="quiet"
                 onClick={() => {
-                  void eventsQuery.refetch();
                   void calendarsQuery.refetch();
                 }}
               >
@@ -609,7 +608,7 @@ export function CalendarSchedule() {
               </ActionButton>
             }
           >
-            {calendarsQuery.isError ? t('sources.failClosedError') : t('schedule.loadError')}
+            {t('sources.failClosedError')}
           </Alert>
         ) : (
           <Box
@@ -646,38 +645,53 @@ export function CalendarSchedule() {
                 onRetry={() => void calendarsQuery.refetch()}
               />
             </Box>
-            <CalendarInteractiveGrid
-              events={events}
-              language={language}
-              compact={compact}
-              loading={eventsQuery.isLoading || calendarsQuery.isLoading}
-              view={view}
-              navigateDate={navigateDate}
-              weekStart={policyQuery.data?.weekStart ?? 1}
-              workingDayStart={policyQuery.data?.workingDayStart ?? '08:00'}
-              workingDayEnd={policyQuery.data?.workingDayEnd ?? '19:00'}
-              canCreate={canCreate}
-              canMove={canMove}
-              onRangeChange={(next) =>
-                setRange((current) =>
-                  current.from === next.from && current.to === next.to ? current : next
-                )
-              }
-              onCalendarStateChange={selectCalendarState}
-              onCreateRange={(start, end, _allDay) => {
-                if (!canCreate) return;
-                setCreateState({
-                  start: start.toISOString(),
-                  end: end.toISOString(),
-                  type: 'MEETING',
-                });
-              }}
-              onOpenEvent={setSelected}
-              onMoveEvent={(event, change, revert) => {
-                if (!canMove(event)) return revert();
-                moveMutation.mutate({ event, change, revert });
-              }}
-            />
+            {eventsQuery.isError ? (
+              <Box sx={{ minWidth: 0, p: { xs: 1.5, sm: 2 } }}>
+                <Alert
+                  severity="error"
+                  action={
+                    <ActionButton intent="quiet" onClick={() => void eventsQuery.refetch()}>
+                      {t('actions.retry')}
+                    </ActionButton>
+                  }
+                >
+                  {t('schedule.loadError')}
+                </Alert>
+              </Box>
+            ) : (
+              <CalendarInteractiveGrid
+                events={events}
+                language={language}
+                compact={compact}
+                loading={eventsQuery.isLoading || calendarsQuery.isLoading}
+                view={view}
+                navigateDate={navigateDate}
+                weekStart={policyQuery.data?.weekStart ?? 1}
+                workingDayStart={policyQuery.data?.workingDayStart ?? '08:00'}
+                workingDayEnd={policyQuery.data?.workingDayEnd ?? '19:00'}
+                canCreate={canCreate}
+                canMove={canMove}
+                onRangeChange={(next) =>
+                  setRange((current) =>
+                    current.from === next.from && current.to === next.to ? current : next
+                  )
+                }
+                onCalendarStateChange={selectCalendarState}
+                onCreateRange={(start, end, _allDay) => {
+                  if (!canCreate) return;
+                  setCreateState({
+                    start: start.toISOString(),
+                    end: end.toISOString(),
+                    type: 'MEETING',
+                  });
+                }}
+                onOpenEvent={setSelected}
+                onMoveEvent={(event, change, revert) => {
+                  if (!canMove(event)) return revert();
+                  moveMutation.mutate({ event, change, revert });
+                }}
+              />
+            )}
           </Box>
         )}
       </Box>

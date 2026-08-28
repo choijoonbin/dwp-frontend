@@ -636,15 +636,57 @@ test('workplace home includes earlier local-week reservations in its query scope
 test('workplace home executes check-in through the authoritative Workplace command', async ({
   page,
 }) => {
-  await page.goto('/workplace');
-  const requestPromise = page.waitForRequest(
-    (request) => request.url().endsWith('/check-in') && request.method() === 'POST'
-  );
-  await page.getByRole('button', { name: 'Check in now' }).click();
-  const request = await requestPromise;
+  const boundaryBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000029',
+    resourceName: 'Submitted check-in desk',
+    startsAt: '2026-08-18T23:45:00Z',
+    endsAt: '2026-08-19T00:00:30Z',
+    checkInOpensAt: '2026-08-18T23:30:00Z',
+    checkInClosesAt: '2026-08-19T00:10:00Z',
+    canCheckIn: true,
+    canRelease: false,
+  });
+  let checkInWrites = 0;
+  let checkInPayload: unknown;
+  let releaseCheckIn: (() => void) | undefined;
+  const checkInGate = new Promise<void>((resolve) => {
+    releaseCheckIn = resolve;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
+      return fulfillSuccess(route, [boundaryBooking]);
+    }
+    if (request.method() === 'POST' && path.endsWith(`/${boundaryBooking.bookingId}/check-in`)) {
+      checkInWrites += 1;
+      checkInPayload = request.postDataJSON();
+      await checkInGate;
+      return fulfillSuccess(route, {
+        ...boundaryBooking,
+        status: 'CHECKED_IN',
+        canCheckIn: false,
+        version: boundaryBooking.version + 1,
+      });
+    }
+    return route.fallback();
+  });
 
-  expect(request.postDataJSON()).toEqual({ version: 0 });
+  await page.goto('/workplace');
+  await page.getByRole('button', { name: 'Check in now' }).click();
+  await expect.poll(() => checkInWrites).toBe(1);
+
+  await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
+  await page.clock.fastForward(30_050);
+  await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
+  await expect(page.getByTestId('workplace-decision-status')).toHaveText('');
+  await expect(page.getByText(/no action was sent/u)).toHaveCount(0);
+  expect(checkInWrites).toBe(1);
+
+  expect(checkInPayload).toEqual({ version: 0 });
+  releaseCheckIn?.();
   await expect(page.getByText('You checked in to the space.')).toBeVisible();
+  expect(checkInWrites).toBe(1);
 });
 
 test('workplace home does not query Calendar without Calendar view permission', async ({
@@ -742,25 +784,192 @@ test('workplace home discards cached availability after an authoritative access 
 test('workplace home disables stale check-in commands until booking data is verified again', async ({
   page,
 }) => {
-  let unavailable = false;
-  await page.route('**/api/platform/v1/workplace/bookings**', (route) =>
-    unavailable
-      ? route.fulfill({
-          status: 502,
-          contentType: 'application/json',
-          body: JSON.stringify({ status: 'ERROR', message: 'Temporary failure' }),
-        })
-      : fulfillSuccess(route, [booking()])
-  );
+  let bookingCalls = 0;
+  let checkInWrites = 0;
+  let releaseRefresh: (() => void) | undefined;
+  const refreshGate = new Promise<void>((resolve) => {
+    releaseRefresh = resolve;
+  });
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/check-in')) checkInWrites += 1;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    bookingCalls += 1;
+    if (bookingCalls === 1) return fulfillSuccess(route, [booking()]);
+    await refreshGate;
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Temporary failure' }),
+    });
+  });
 
   await page.goto('/workplace');
-  await expect(page.getByRole('button', { name: 'Check in now' })).toBeVisible();
-  unavailable = true;
-  await page.getByRole('button', { name: 'Try again' }).first().click();
+  const checkIn = page.getByRole('button', { name: 'Check in now' });
+  await expect(checkIn).toBeVisible();
+  await checkIn.focus();
+  await expect(checkIn).toBeFocused();
 
-  await expect(page.getByRole('button', { name: 'Verify current data' }).first()).toBeVisible();
+  await page.clock.fastForward(60_010);
+  await expect.poll(() => bookingCalls).toBeGreaterThanOrEqual(2);
+  await expect(checkIn).toBeVisible();
+
+  const unavailable = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  releaseRefresh?.();
+  await unavailable;
+
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'View booking' })).toBeVisible();
+  const decisionStatus = page.getByTestId('workplace-decision-status');
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state could not be verified. Check-in is closed and no action was sent.'
+  );
+  await expect(decisionStatus).toBeFocused();
+  expect(checkInWrites).toBe(0);
+
+  const verifyData = page.getByRole('button', { name: 'Verify current data' }).first();
+  await verifyData.focus();
+  await expect(verifyData).toBeFocused();
+  await page.clock.fastForward(300);
+  await expect(verifyData).toBeFocused();
+
+  await page.clock.setFixedTime(new Date('2026-08-18T23:59:00Z'));
+  await page.clock.fastForward(60_000);
+  await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
+  expect(checkInWrites).toBe(0);
+});
+
+test('workplace home replaces an unverified check-in notice after authoritative recovery', async ({
+  page,
+}) => {
+  const recoverableBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000030',
+    resourceName: 'Recoverable check-in desk',
+    startsAt: '2026-08-19T00:30:00Z',
+    endsAt: '2026-08-19T02:00:00Z',
+    checkInOpensAt: '2026-08-18T23:30:00Z',
+    checkInClosesAt: '2026-08-19T01:00:00Z',
+    canCheckIn: true,
+    canRelease: false,
+  });
+  let source: 'READY' | 'UNAVAILABLE' | 'RECOVERING' = 'READY';
+  let checkInWrites = 0;
+  let releaseRecovery: (() => void) | undefined;
+  let markRecoveryStarted: (() => void) | undefined;
+  const recoveryGate = new Promise<void>((resolve) => {
+    releaseRecovery = resolve;
+  });
+  const recoveryStarted = new Promise<void>((resolve) => {
+    markRecoveryStarted = resolve;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST' && path.endsWith('/check-in')) {
+      checkInWrites += 1;
+      return route.fallback();
+    }
+    if (request.method() !== 'GET' || path !== '/api/platform/v1/workplace/bookings') {
+      return route.fallback();
+    }
+    if (source === 'UNAVAILABLE') {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+      });
+    }
+    if (source === 'RECOVERING') {
+      markRecoveryStarted?.();
+      await recoveryGate;
+    }
+    return fulfillSuccess(route, [recoverableBooking]);
+  });
+
+  await page.goto('/workplace');
+  const actionId = `check-in:${recoverableBooking.bookingId}`;
+  const checkIn = page
+    .getByRole('button', { name: 'Check in now' })
+    .and(page.locator(`[data-workplace-decision-action="${actionId}"]`));
+  await expect(checkIn).toBeVisible();
+  await checkIn.focus();
+
+  source = 'UNAVAILABLE';
+  const firstFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await firstFailure;
+  await page.clock.fastForward(1_100);
+
+  const decisionStatus = page.getByTestId('workplace-decision-status');
+  await expect(checkIn).toHaveCount(0);
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state could not be verified. Check-in is closed and no action was sent.'
+  );
+  await expect(decisionStatus).toBeFocused();
+
+  source = 'RECOVERING';
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'The latest data could not be refreshed' })
+    .getByRole('button', { name: 'Try again' })
+    .click();
+  await recoveryStarted;
+  const stableFocus = page
+    .getByTestId('workplace-day-brief')
+    .getByRole('link', { name: 'Find a space' });
+  await stableFocus.focus();
+  await expect(stableFocus).toBeFocused();
+  releaseRecovery?.();
+
+  await expect(checkIn).toBeVisible();
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state is verified again. Check-in is available.'
+  );
+  await expect(stableFocus).toBeFocused();
+  await expect(decisionStatus).not.toBeFocused();
+  expect(checkInWrites).toBe(0);
+
+  source = 'UNAVAILABLE';
+  const secondFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await secondFailure;
+  await page.clock.fastForward(1_100);
+
+  await expect(checkIn).toHaveCount(0);
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state could not be verified. Check-in is closed and no action was sent.'
+  );
+  await expect(stableFocus).toBeFocused();
+  await expect(decisionStatus).not.toBeFocused();
+  expect(checkInWrites).toBe(0);
+
+  source = 'READY';
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'The latest data could not be refreshed' })
+    .getByRole('button', { name: 'Try again' })
+    .click();
+  await expect(checkIn).toBeVisible();
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state is verified again. Check-in is available.'
+  );
+  await expect(decisionStatus).not.toBeFocused();
+
+  await checkIn.click();
+  await expect(page.getByText('You checked in to the space.')).toBeVisible();
+  await expect(decisionStatus).toHaveText('');
+  expect(checkInWrites).toBe(1);
 });
 
 test('workplace home uses an accurate read-only booking action', async ({ page }) => {
@@ -1052,7 +1261,7 @@ test('workplace home removes room-needed attention at the meeting start boundary
   await expect(page.getByText('Boundary planning still needs a room')).toHaveCount(0);
 });
 
-test('workplace home closes cached booking actions at the reservation end boundary', async ({
+test('workplace home transfers focused release attention at the reservation end boundary', async ({
   page,
 }) => {
   const checkInBooking = booking({
@@ -1074,6 +1283,9 @@ test('workplace home closes cached booking actions at the reservation end bounda
     canRelease: true,
   });
   let bookingCalls = 0;
+  let checkInWrites = 0;
+  let releaseWrites = 0;
+  let recoverBookings = false;
   let releaseRefresh: (() => void) | undefined;
   const refreshGate = new Promise<void>((resolve) => {
     releaseRefresh = resolve;
@@ -1083,12 +1295,17 @@ test('workplace home closes cached booking actions at the reservation end bounda
     if (bookingCalls === 1) {
       return fulfillSuccess(route, [checkInBooking, releaseBooking]);
     }
+    if (recoverBookings) return fulfillSuccess(route, [checkInBooking, releaseBooking]);
     await refreshGate;
     return route.fulfill({
       status: 503,
       contentType: 'application/json',
       body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
     });
+  });
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/check-in')) checkInWrites += 1;
+    if (request.method() === 'POST' && request.url().endsWith('/release')) releaseWrites += 1;
   });
   await page.route('**/api/platform/v1/rooms/bookings**', (route) => fulfillSuccess(route, []));
   await page.route('**/api/platform/v1/calendar/home**', (route) =>
@@ -1098,12 +1315,24 @@ test('workplace home closes cached booking actions at the reservation end bounda
   await page.goto('/workplace');
   await expect(page.getByRole('button', { name: 'Check in now' })).toBeVisible();
   await expect(page.getByText('You can release Boundary release desk')).toBeVisible();
+  const releaseAttention = page.locator(
+    `[data-workplace-decision-action="release:${releaseBooking.bookingId}"]`
+  );
+  await releaseAttention.focus();
+  await expect(releaseAttention).toBeFocused();
 
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
   await page.clock.fastForward(30_050);
   await expect.poll(() => bookingCalls).toBeGreaterThanOrEqual(2);
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   await expect(page.getByText('You can release Boundary release desk')).toHaveCount(0);
+  const decisionStatus = page.getByTestId('workplace-decision-status');
+  await expect(decisionStatus).toHaveText(
+    'The reservation has ended. Release is closed and no action was sent.'
+  );
+  await expect(decisionStatus).toBeFocused();
+  expect(checkInWrites).toBe(0);
+  expect(releaseWrites).toBe(0);
 
   const unavailable = page.waitForResponse(
     (response) =>
@@ -1115,6 +1344,23 @@ test('workplace home closes cached booking actions at the reservation end bounda
   await page.clock.fastForward(2_000);
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   await expect(page.getByText('You can release Boundary release desk')).toHaveCount(0);
+  await expect(decisionStatus).toBeFocused();
+  expect(checkInWrites).toBe(0);
+  expect(releaseWrites).toBe(0);
+
+  recoverBookings = true;
+  const recovered = page.waitForResponse(
+    (response) =>
+      response.status() === 200 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.setFixedTime(new Date('2026-08-18T23:59:00Z'));
+  await page.clock.fastForward(60_000);
+  await recovered;
+  await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
+  await expect(page.getByText('You can release Boundary release desk')).toHaveCount(0);
+  expect(checkInWrites).toBe(0);
+  expect(releaseWrites).toBe(0);
 });
 
 test('workplace home closes cached room-policy eligibility until recovery', async ({ page }) => {
@@ -1714,21 +1960,681 @@ test('background refresh failures keep the last successful Workplace data visibl
 });
 
 test('members receive server-authoritative booking actions', async ({ page }) => {
+  const releaseBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000041',
+    resourceName: 'My bookings release desk',
+    startsAt: '2026-08-18T23:30:00Z',
+    endsAt: '2026-08-19T00:00:30Z',
+    canCheckIn: false,
+    canCancel: false,
+    canRelease: true,
+  });
+  let bookingCalls = 0;
+  let releaseWrites = 0;
+  let releaseRefresh: (() => void) | undefined;
+  const refreshGate = new Promise<void>((resolve) => {
+    releaseRefresh = resolve;
+  });
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/release')) releaseWrites += 1;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    if (
+      request.method() !== 'GET' ||
+      new URL(request.url()).pathname !== '/api/platform/v1/workplace/bookings'
+    ) {
+      return route.fallback();
+    }
+    bookingCalls += 1;
+    if (bookingCalls === 1) return fulfillSuccess(route, [booking(), releaseBooking]);
+    await refreshGate;
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+    });
+  });
+
   await page.goto('/workplace/my-bookings');
   await expect(page.getByRole('heading', { name: 'My space bookings', level: 1 })).toBeVisible();
   await expect(page.getByText('Focus desk 12', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Check in' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Cancel booking' })).toBeVisible();
+  await page.getByRole('button', { name: 'Release' }).click();
+  const releaseDialog = page.getByRole('dialog', { name: 'Release this space?' });
+  await expect(releaseDialog).toBeVisible();
+
+  await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
+  await page.clock.fastForward(30_050);
+  await expect.poll(() => bookingCalls).toBeGreaterThanOrEqual(2);
+  await expect(page.getByRole('dialog', { name: 'Release this space?' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Release' })).toHaveCount(0);
+  const decisionStatus = page.getByTestId('workplace-booking-decision-status');
+  await expect(decisionStatus).toHaveText(
+    'The reservation has ended. Release is closed and no action was sent.'
+  );
+  await expect(decisionStatus).toBeFocused();
+  expect(releaseWrites).toBe(0);
+
+  const unavailable = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  releaseRefresh?.();
+  await unavailable;
+  await page.clock.setFixedTime(new Date('2026-08-18T23:59:00Z'));
+  await page.clock.fastForward(60_000);
+  await expect(page.getByRole('button', { name: 'Release' })).toHaveCount(0);
+  expect(releaseWrites).toBe(0);
+});
+
+test('my bookings replaces an unverified release notice after authoritative recovery', async ({
+  page,
+}) => {
+  const recoverableBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000042',
+    resourceName: 'Recoverable release desk',
+    startsAt: '2026-08-18T23:30:00Z',
+    endsAt: '2026-08-19T01:30:00Z',
+    canCheckIn: false,
+    canCancel: false,
+    canRelease: true,
+  });
+  let source: 'READY' | 'UNAVAILABLE' | 'RECOVERING' = 'READY';
+  let releaseWrites = 0;
+  let releaseRecovery: (() => void) | undefined;
+  let markRecoveryStarted: (() => void) | undefined;
+  const recoveryGate = new Promise<void>((resolve) => {
+    releaseRecovery = resolve;
+  });
+  const recoveryStarted = new Promise<void>((resolve) => {
+    markRecoveryStarted = resolve;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST' && path.endsWith('/release')) {
+      releaseWrites += 1;
+      return route.fallback();
+    }
+    if (request.method() !== 'GET' || path !== '/api/platform/v1/workplace/bookings') {
+      return route.fallback();
+    }
+    if (source === 'UNAVAILABLE') {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+      });
+    }
+    if (source === 'RECOVERING') {
+      markRecoveryStarted?.();
+      await recoveryGate;
+    }
+    return fulfillSuccess(route, [recoverableBooking]);
+  });
+
+  await page.goto('/workplace/my-bookings');
+  const actionId = `release:${recoverableBooking.bookingId}`;
+  const release = page.locator(`[data-workplace-decision-action="${actionId}"]`);
+  await expect(release).toBeVisible();
+  await release.focus();
+
+  source = 'UNAVAILABLE';
+  const firstFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await firstFailure;
+  await page.clock.fastForward(1_100);
+
+  const decisionStatus = page.getByTestId('workplace-booking-decision-status');
+  await expect(release).toHaveCount(0);
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state could not be verified. Release is closed and no action was sent.'
+  );
+  await expect(decisionStatus).toBeFocused();
+
+  source = 'RECOVERING';
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'The latest data could not be refreshed' })
+    .getByRole('button', { name: 'Try again' })
+    .click();
+  await recoveryStarted;
+  const stableFocus = page.getByRole('tab', { name: 'Upcoming' });
+  await stableFocus.focus();
+  await expect(stableFocus).toBeFocused();
+  releaseRecovery?.();
+
+  await expect(release).toBeVisible();
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state is verified again. Release is available.'
+  );
+  await expect(stableFocus).toBeFocused();
+  await expect(decisionStatus).not.toBeFocused();
+  expect(releaseWrites).toBe(0);
+
+  source = 'UNAVAILABLE';
+  const secondFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await secondFailure;
+  await page.clock.fastForward(1_100);
+
+  await expect(release).toHaveCount(0);
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state could not be verified. Release is closed and no action was sent.'
+  );
+  await expect(stableFocus).toBeFocused();
+  await expect(decisionStatus).not.toBeFocused();
+  expect(releaseWrites).toBe(0);
+
+  source = 'READY';
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'The latest data could not be refreshed' })
+    .getByRole('button', { name: 'Try again' })
+    .click();
+  await expect(release).toBeVisible();
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state is verified again. Release is available.'
+  );
+  await expect(decisionStatus).not.toBeFocused();
+
+  await release.click();
+  const releaseDialog = page.getByRole('dialog', { name: 'Release this space?' });
+  await releaseDialog.getByRole('button', { name: 'Release' }).click();
+  await expect(page.getByText('The space was released.')).toBeVisible();
+  await expect(decisionStatus).toHaveText('');
+  expect(releaseWrites).toBe(1);
+});
+
+test('a recovered release notice becomes terminal at the reservation boundary without stealing focus', async ({
+  browser,
+}, testInfo) => {
+  const context = await browser.newContext({ baseURL: String(testInfo.project.use.baseURL) });
+  const page = await context.newPage();
+  await page.clock.install({ time: new Date('2026-08-19T00:00:00Z') });
+  await mockShellSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockWorkplace(page);
+  const recoverableBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000043',
+    resourceName: 'Boundary recovery desk',
+    startsAt: '2026-08-18T23:30:00Z',
+    endsAt: '2026-08-19T00:01:10Z',
+    canCheckIn: false,
+    canCancel: false,
+    canRelease: true,
+  });
+  let source: 'READY' | 'UNAVAILABLE' = 'READY';
+  let releaseWrites = 0;
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST' && path.endsWith('/release')) {
+      releaseWrites += 1;
+      return route.fallback();
+    }
+    if (request.method() !== 'GET' || path !== '/api/platform/v1/workplace/bookings') {
+      return route.fallback();
+    }
+    return source === 'READY'
+      ? fulfillSuccess(route, [recoverableBooking])
+      : route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+        });
+  });
+
+  await page.goto('/workplace/my-bookings');
+  const actionId = `release:${recoverableBooking.bookingId}`;
+  const release = page.locator(`[data-workplace-decision-action="${actionId}"]`);
+  await release.focus();
+
+  source = 'UNAVAILABLE';
+  const failure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await failure;
+  await page.clock.fastForward(2_000);
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'The latest data could not be refreshed' })
+  ).toBeVisible();
+
+  source = 'READY';
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'The latest data could not be refreshed' })
+    .getByRole('button', { name: 'Try again' })
+    .click();
+  const decisionStatus = page.getByTestId('workplace-booking-decision-status');
+  await expect(decisionStatus).toHaveText(
+    'The current reservation state is verified again. Release is available.'
+  );
+  const stableFocus = page.getByRole('tab', { name: 'Upcoming' });
+  await stableFocus.focus();
+
+  await page.waitForTimeout(100);
+  await page.clock.runFor(15_000);
+  await expect(release).toHaveCount(0);
+  await expect(decisionStatus).toHaveText(
+    'The reservation has ended. Release is closed and no action was sent.'
+  );
+  await expect(stableFocus).toBeFocused();
+  await expect(decisionStatus).not.toBeFocused();
+  expect(releaseWrites).toBe(0);
+  await context.close();
+});
+
+test('submitted release and cancel commands keep truthful state and preserve version contracts', async ({
+  page,
+}) => {
+  const checkInBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000050',
+    resourceName: 'Single-flight check-in desk',
+    canCancel: false,
+    version: 3,
+  });
+  const releaseBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000051',
+    resourceName: 'Submitted release desk',
+    startsAt: '2026-08-18T23:30:00Z',
+    endsAt: '2026-08-19T00:00:30Z',
+    canCheckIn: false,
+    canCancel: false,
+    canRelease: true,
+    version: 7,
+  });
+  const cancelBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000052',
+    resourceName: 'Cancelable future desk',
+    startsAt: '2026-08-19T00:30:00Z',
+    endsAt: '2026-08-19T01:30:00Z',
+    canCheckIn: false,
+    canCancel: true,
+    canRelease: false,
+    version: 11,
+  });
+  let activeBookings = [checkInBooking, releaseBooking, cancelBooking];
+  let checkInWrites = 0;
+  let releaseWrites = 0;
+  let cancelWrites = 0;
+  let checkInPayload: unknown;
+  let releasePayload: unknown;
+  let cancelPayload: unknown;
+  let releaseCheckIn: (() => void) | undefined;
+  const checkInGate = new Promise<void>((resolve) => {
+    releaseCheckIn = resolve;
+  });
+  let releaseSubmitted: (() => void) | undefined;
+  const releaseGate = new Promise<void>((resolve) => {
+    releaseSubmitted = resolve;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
+      return fulfillSuccess(route, activeBookings);
+    }
+    if (request.method() === 'POST' && path.endsWith(`/${checkInBooking.bookingId}/check-in`)) {
+      checkInWrites += 1;
+      checkInPayload = request.postDataJSON();
+      await checkInGate;
+      activeBookings = activeBookings.filter(
+        (candidate) => candidate.bookingId !== checkInBooking.bookingId
+      );
+      return fulfillSuccess(route, {
+        ...checkInBooking,
+        status: 'CHECKED_IN',
+        canCheckIn: false,
+        version: checkInBooking.version + 1,
+      });
+    }
+    if (request.method() === 'POST' && path.endsWith(`/${releaseBooking.bookingId}/release`)) {
+      releaseWrites += 1;
+      releasePayload = request.postDataJSON();
+      await releaseGate;
+      activeBookings = activeBookings.filter(
+        (candidate) => candidate.bookingId !== releaseBooking.bookingId
+      );
+      return fulfillSuccess(route, {
+        ...releaseBooking,
+        status: 'RELEASED',
+        canRelease: false,
+        version: releaseBooking.version + 1,
+      });
+    }
+    if (request.method() === 'POST' && path.endsWith(`/${cancelBooking.bookingId}/cancel`)) {
+      cancelWrites += 1;
+      cancelPayload = request.postDataJSON();
+      activeBookings = activeBookings.filter(
+        (candidate) => candidate.bookingId !== cancelBooking.bookingId
+      );
+      return fulfillSuccess(route, {
+        ...cancelBooking,
+        status: 'CANCELLED',
+        canCancel: false,
+        version: cancelBooking.version + 1,
+      });
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/workplace/my-bookings');
+  const checkIn = page.getByRole('button', { name: 'Check in' });
+  await checkIn.dblclick();
+  await expect.poll(() => checkInWrites).toBe(1);
+  await expect(checkIn).toBeDisabled();
+  expect(checkInPayload).toEqual({ version: 3 });
+  releaseCheckIn?.();
+  await expect(page.getByText('You checked in to the space.')).toBeVisible();
+  expect(checkInWrites).toBe(1);
+
+  await page.getByRole('button', { name: 'Release' }).click();
+  const releaseDialog = page.getByRole('dialog', { name: 'Release this space?' });
+  await releaseDialog.getByRole('button', { name: 'Release' }).click();
+  await expect.poll(() => releaseWrites).toBe(1);
+
+  await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
+  await page.clock.fastForward(30_050);
+  await expect(releaseDialog).toBeVisible();
+  await expect(page.getByTestId('workplace-booking-decision-status')).toHaveText('');
+  await expect(page.getByText(/no action was sent/u)).toHaveCount(0);
+  expect(releasePayload).toEqual({ version: 7 });
+  expect(releaseWrites).toBe(1);
+
+  releaseSubmitted?.();
+  await expect(page.getByText('The space was released.')).toBeVisible();
+  await expect(releaseDialog).toHaveCount(0);
+  expect(releaseWrites).toBe(1);
+
+  await page.getByRole('button', { name: 'Cancel booking' }).click();
+  const cancelDialog = page.getByRole('alertdialog', { name: 'Cancel this space booking?' });
+  await cancelDialog.getByRole('button', { name: 'Cancel booking' }).click();
+  await expect(page.getByText('The space booking was cancelled.')).toBeVisible();
+  expect(cancelPayload).toEqual({ version: 11 });
+  expect(cancelWrites).toBe(1);
+});
+
+test('identity changes clear prior decision state and block cross-account booking commands', async ({
+  page,
+}) => {
+  const identityBookings = new Map([
+    [
+      1,
+      booking({
+        bookingId: '40000000-0000-0000-0000-000000000061',
+        resourceName: 'Identity A desk',
+        startsAt: '2026-08-18T23:30:00Z',
+        endsAt: '2026-08-19T01:30:00Z',
+        canCheckIn: false,
+        canCancel: false,
+        canRelease: true,
+      }),
+    ],
+    [
+      2,
+      booking({
+        bookingId: '40000000-0000-0000-0000-000000000062',
+        resourceName: 'Identity B desk',
+        startsAt: '2026-08-17T23:30:00Z',
+        endsAt: '2026-08-18T01:30:00Z',
+        canCheckIn: false,
+        canCancel: false,
+        canRelease: true,
+      }),
+    ],
+    [
+      3,
+      booking({
+        bookingId: '40000000-0000-0000-0000-000000000063',
+        resourceName: 'Identity C desk',
+        startsAt: '2026-08-17T23:30:00Z',
+        endsAt: '2026-08-18T01:30:00Z',
+        canCheckIn: false,
+        canCancel: false,
+        canRelease: true,
+      }),
+    ],
+  ]);
+  let activeUserId = 1;
+  let meCalls = 0;
+  let bookingUnavailable = false;
+  let actionWrites = 0;
+  await page.route('**/api/auth/me', (route) => {
+    meCalls += 1;
+    return fulfillSuccess(route, {
+      userId: activeUserId,
+      personPublicId: `person-${activeUserId}`,
+      displayName: `Identity ${activeUserId}`,
+      jobTitle: 'Tenant administrator',
+      email: `identity.${activeUserId}@dwp.local`,
+      tenantId: 1,
+      tenantCode: 'default',
+      tenantName: 'SKAX',
+      identityPlane: 'TENANT',
+      preferredLocale: 'en',
+      tenantDefaultLocale: 'en',
+      roles: ['TENANT_ADMIN'],
+      groups: [],
+      resourceRoles: [],
+    });
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST') {
+      actionWrites += 1;
+      return route.fallback();
+    }
+    if (request.method() !== 'GET' || path !== '/api/platform/v1/workplace/bookings') {
+      return route.fallback();
+    }
+    if (bookingUnavailable) {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+      });
+    }
+    const currentBooking = identityBookings.get(activeUserId);
+    return fulfillSuccess(route, currentBooking ? [currentBooking] : []);
+  });
+
+  await page.goto('/workplace/my-bookings');
+  await expect(page.getByText('Identity A desk')).toBeVisible();
+  await page.getByRole('button', { name: 'Release' }).click();
+  const staleVersionDialog = page.getByRole('dialog', { name: 'Release this space?' });
+  await expect(staleVersionDialog).toBeVisible();
+  identityBookings.set(1, { ...identityBookings.get(1)!, version: 1 });
+  const refreshedVersion = page.waitForResponse(
+    (response) =>
+      response.status() === 200 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await refreshedVersion;
+  await expect(staleVersionDialog).toHaveCount(0);
+  expect(actionWrites).toBe(0);
+
+  const identityARelease = page.getByRole('button', { name: 'Release' });
+  await identityARelease.focus();
+  bookingUnavailable = true;
+  await page.clock.fastForward(60_010);
+  const priorDecisionStatus = page.getByTestId('workplace-booking-decision-status');
+  await expect(priorDecisionStatus).toHaveText(
+    'The current reservation state could not be verified. Release is closed and no action was sent.'
+  );
+
+  bookingUnavailable = false;
+  activeUserId = 2;
+  await page.clock.setFixedTime(new Date('2026-08-18T00:00:00Z'));
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect.poll(() => meCalls).toBeGreaterThanOrEqual(2);
+  await expect(page.getByText('Identity B desk')).toBeVisible();
+  await expect(priorDecisionStatus).toHaveText('');
+
+  await page.getByRole('button', { name: 'Release' }).click();
+  await expect(page.getByRole('dialog', { name: 'Release this space?' })).toBeVisible();
+  activeUserId = 3;
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect.poll(() => meCalls).toBeGreaterThanOrEqual(3);
+  await expect(page.getByRole('dialog', { name: 'Release this space?' })).toHaveCount(0);
+  await expect(page.getByText('Identity B desk')).toHaveCount(0);
+  await expect(page.getByText('Identity C desk')).toBeVisible();
+  expect(actionWrites).toBe(0);
+});
+
+test('relocation is bound to the current identity and booking snapshot', async ({ page }) => {
+  const identityBookings = new Map(
+    [1, 2, 3].map((userId) => [
+      userId,
+      booking({
+        bookingId: `40000000-0000-0000-0000-${String(70 + userId).padStart(12, '0')}`,
+        resourceName: `Relocate identity ${userId} desk`,
+        version: userId === 2 ? 5 : 0,
+      }),
+    ])
+  );
+  const bookingGets = new Map<number, number>();
+  let activeUserId = 1;
+  let meCalls = 0;
+  let relocateWrites = 0;
+  let relocatePayload: unknown;
+  let releaseRelocate: (() => void) | undefined;
+  const relocateGate = new Promise<void>((resolve) => {
+    releaseRelocate = resolve;
+  });
+  await page.route('**/api/auth/me', (route) => {
+    meCalls += 1;
+    return fulfillSuccess(route, {
+      userId: activeUserId,
+      personPublicId: `relocate-person-${activeUserId}`,
+      displayName: `Relocate identity ${activeUserId}`,
+      jobTitle: 'Tenant administrator',
+      email: `relocate.${activeUserId}@dwp.local`,
+      tenantId: 1,
+      tenantCode: 'default',
+      tenantName: 'SKAX',
+      identityPlane: 'TENANT',
+      preferredLocale: 'en',
+      tenantDefaultLocale: 'en',
+      roles: ['TENANT_ADMIN'],
+      groups: [],
+      resourceRoles: [],
+    });
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
+      bookingGets.set(activeUserId, (bookingGets.get(activeUserId) ?? 0) + 1);
+      const currentBooking = identityBookings.get(activeUserId);
+      return fulfillSuccess(route, currentBooking ? [currentBooking] : []);
+    }
+    if (request.method() === 'POST' && path.endsWith('/relocate')) {
+      relocateWrites += 1;
+      relocatePayload = request.postDataJSON();
+      await relocateGate;
+      return fulfillSuccess(route, {
+        ...identityBookings.get(2)!,
+        ...request.postDataJSON(),
+        version: 6,
+      });
+    }
+    return route.fallback();
+  });
+
+  const switchIdentity = async (userId: number) => {
+    const expectedCalls = meCalls + 1;
+    activeUserId = userId;
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+    await expect.poll(() => meCalls).toBeGreaterThanOrEqual(expectedCalls);
+    await expect(page.getByText(`Relocate identity ${userId} desk`)).toBeVisible();
+  };
+
+  await page.goto('/workplace/my-bookings');
+  await page.getByRole('button', { name: 'Change reservation' }).click();
+  const relocateDialog = page.getByRole('dialog', { name: 'Change space or time' });
+  await expect(relocateDialog).toBeVisible();
+  await switchIdentity(2);
+  await expect(relocateDialog).toHaveCount(0);
+  expect(relocateWrites).toBe(0);
+
+  await page.getByRole('button', { name: 'Change reservation' }).click();
+  await relocateDialog.getByLabel('Available space').click();
+  await page.getByRole('option', { name: /Focus desk 13/u }).click();
+  await relocateDialog.getByLabel('Reason for change').fill('Move under the active identity');
+  await relocateDialog.getByRole('button', { name: 'Save reservation change' }).click();
+  await expect.poll(() => relocateWrites).toBe(1);
+  expect(relocatePayload).toMatchObject({ version: 5 });
+
+  await switchIdentity(3);
+  await expect(relocateDialog).toHaveCount(0);
+  await page.waitForTimeout(300);
+  const identityThreeGets = bookingGets.get(3) ?? 0;
+  const relocateResponse = page.waitForResponse(
+    (response) =>
+      response.status() === 200 && new URL(response.url()).pathname.endsWith('/relocate')
+  );
+  releaseRelocate?.();
+  await relocateResponse;
+  await page.waitForTimeout(300);
+  await expect(page.getByText('The space reservation was changed.')).toHaveCount(0);
+  expect(bookingGets.get(3) ?? 0).toBe(identityThreeGets);
+  expect(relocateWrites).toBe(1);
 });
 
 test('members can move a future reservation to an available space of the same type', async ({
   page,
 }) => {
+  let currentBooking = booking();
+  let bookingGets = 0;
+  let relocationWrites = 0;
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/relocate')) {
+      relocationWrites += 1;
+    }
+  });
+  await page.route('**/api/platform/v1/workplace/bookings**', (route) => {
+    const request = route.request();
+    if (
+      request.method() === 'GET' &&
+      new URL(request.url()).pathname === '/api/platform/v1/workplace/bookings'
+    ) {
+      bookingGets += 1;
+      return fulfillSuccess(route, [currentBooking]);
+    }
+    return route.fallback();
+  });
+
   await page.goto('/workplace/my-bookings');
   await page.getByRole('button', { name: 'Change reservation' }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Change space or time' });
+  await expect(dialog).toBeVisible();
+  currentBooking = booking({ version: 1 });
+  await page.clock.fastForward(60_010);
+  await expect.poll(() => bookingGets).toBeGreaterThanOrEqual(2);
+  await expect(dialog).toHaveCount(0);
+  expect(relocationWrites).toBe(0);
+
+  await page.getByRole('button', { name: 'Change reservation' }).click();
   await expect(dialog).toBeVisible();
   await dialog.getByLabel('Available space').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
@@ -1742,8 +2648,215 @@ test('members can move a future reservation to an available space of the same ty
   expect(request.postDataJSON()).toMatchObject({
     resourceId: unplacedResource.resourceId,
     reason: 'Move closer to the project team',
+    version: 1,
   });
+  expect(relocationWrites).toBe(1);
   await expect(dialog).toBeHidden();
+});
+
+test('relocation requires a fresh authoritative target snapshot before saving', async ({
+  page,
+}) => {
+  type HeldExploreFailure = {
+    gate: Promise<void>;
+    release: () => void;
+    started: Promise<void>;
+    status: 403 | 503;
+  };
+  let heldFailure: HeldExploreFailure | null = null;
+  let freshSequence = 0;
+  let exploreCalls = 0;
+  let relocationWrites = 0;
+  let holdFreshRecovery = false;
+  let releaseFreshRecovery: (() => void) | undefined;
+  let markFreshRecoveryStarted: (() => void) | undefined;
+  const freshRecoveryGate = new Promise<void>((resolve) => {
+    releaseFreshRecovery = resolve;
+  });
+  const freshRecoveryStarted = new Promise<void>((resolve) => {
+    markFreshRecoveryStarted = resolve;
+  });
+
+  const holdExploreFailure = (status: 403 | 503) => {
+    let release: (() => void) | undefined;
+    let markStarted: (() => void) | undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const started = new Promise<void>((resolve) => {
+      markStarted = resolve;
+    });
+    heldFailure = {
+      gate,
+      release: () => release?.(),
+      started,
+      status,
+    };
+    return { markStarted: () => markStarted?.(), value: heldFailure };
+  };
+
+  let markHeldRequestStarted: (() => void) | undefined;
+  await page.route('**/api/platform/v1/workplace/explore**', async (route) => {
+    exploreCalls += 1;
+    if (heldFailure) {
+      markHeldRequestStarted?.();
+      await heldFailure.gate;
+      return route.fulfill({
+        status: heldFailure.status,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', message: 'Target lookup unavailable.' }),
+      });
+    }
+    if (holdFreshRecovery) {
+      markFreshRecoveryStarted?.();
+      await freshRecoveryGate;
+    }
+    freshSequence += 1;
+    return fulfillSuccess(route, {
+      ...workplaceExploreFixture,
+      resources: [resource, { ...unplacedResource, version: freshSequence + 1 }],
+      generatedAt: `2026-08-19T00:00:${String(freshSequence).padStart(2, '0')}Z`,
+    });
+  });
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/relocate')) {
+      relocationWrites += 1;
+    }
+  });
+
+  await page.goto('/workplace/my-bookings');
+  const relocateTrigger = page.getByRole('button', { name: 'Change reservation', exact: true });
+  await relocateTrigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Change space or time' });
+  const save = dialog.getByRole('button', { name: 'Save reservation change' });
+  await dialog.getByLabel('Available space').click();
+  await page.getByRole('option', { name: /Focus desk 13/u }).click();
+  await dialog.getByLabel('Reason for change').fill('Use a verified target');
+  await expect(save).toBeEnabled();
+
+  const staleFailure = holdExploreFailure(503);
+  markHeldRequestStarted = staleFailure.markStarted;
+  await dialog.getByRole('button', { name: 'Refresh target options' }).click();
+  await staleFailure.value.started;
+  await save.focus();
+  await expect(save).toBeFocused();
+  staleFailure.value.release();
+  await page.clock.fastForward(1_100);
+
+  await expect(
+    dialog.getByText(
+      'Available spaces could not be refreshed. The last verified options are read-only, and saving remains disabled until recovery.'
+    )
+  ).toBeVisible();
+  await expect(save).toBeDisabled();
+  expect(relocationWrites).toBe(0);
+
+  heldFailure = null;
+  const callsBeforeRecovery = exploreCalls;
+  await dialog.getByRole('button', { name: 'Try again' }).click();
+  await expect.poll(() => exploreCalls).toBeGreaterThan(callsBeforeRecovery);
+  await expect(save).toBeEnabled();
+  await expect(dialog.getByText(/last verified options are read-only/u)).toHaveCount(0);
+
+  const deniedFailure = holdExploreFailure(403);
+  markHeldRequestStarted = deniedFailure.markStarted;
+  await dialog.getByRole('button', { name: 'Refresh target options' }).click();
+  await deniedFailure.value.started;
+  await save.focus();
+  await expect(save).toBeFocused();
+  deniedFailure.value.release();
+
+  await expect(dialog).toHaveCount(0);
+  const deniedNotice = page.getByTestId('workplace-relocate-denied-alert');
+  await expect(deniedNotice).toHaveText(
+    'You no longer have permission to view available spaces. The reservation change was closed and no update was sent.'
+  );
+  await expect(deniedNotice).toHaveAttribute('role', 'alert');
+  await expect(deniedNotice).toHaveAttribute('aria-live', 'assertive');
+  await expect(deniedNotice).toHaveAttribute('aria-atomic', 'true');
+  await expect(relocateTrigger).toBeFocused();
+  expect(relocationWrites).toBe(0);
+
+  heldFailure = null;
+  holdFreshRecovery = true;
+  await relocateTrigger.click();
+  await freshRecoveryStarted;
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel('Available space')).toHaveCount(0);
+  await expect(save).toBeDisabled();
+  await expect(deniedNotice).toHaveCount(0);
+  releaseFreshRecovery?.();
+  await dialog.getByLabel('Available space').click();
+  await page.getByRole('option', { name: /Focus desk 13/u }).click();
+  await dialog.getByLabel('Reason for change').fill('Use a newly authorized target');
+  await expect(save).toBeEnabled();
+  expect(relocationWrites).toBe(0);
+});
+
+test('Korean relocation denial persists outside the dialog and restores its trigger', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['TENANT_ADMIN'], {
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockWorkplace(page);
+  let denyTargets = false;
+  let relocationWrites = 0;
+  let releaseDenied: (() => void) | undefined;
+  let markDeniedStarted: (() => void) | undefined;
+  const deniedGate = new Promise<void>((resolve) => {
+    releaseDenied = resolve;
+  });
+  const deniedStarted = new Promise<void>((resolve) => {
+    markDeniedStarted = resolve;
+  });
+  await page.route('**/api/platform/v1/workplace/explore**', async (route) => {
+    if (!denyTargets) return fulfillSuccess(route, workplaceExploreFixture);
+    markDeniedStarted?.();
+    await deniedGate;
+    return route.fulfill({
+      status: 403,
+      contentType: 'application/json',
+      body: JSON.stringify({ errorCode: 'FORBIDDEN', message: 'Access denied.' }),
+    });
+  });
+  page.on('request', (request) => {
+    if (
+      request.method() === 'POST' &&
+      /\/workplace\/bookings\/[^/]+\/relocate$/u.test(new URL(request.url()).pathname)
+    ) {
+      relocationWrites += 1;
+    }
+  });
+
+  await page.goto('/workplace/my-bookings');
+  const relocateTrigger = page.getByRole('button', { name: '예약 변경', exact: true });
+  await relocateTrigger.click();
+  const dialog = page.getByRole('dialog', { name: '공간 또는 시간 변경', exact: true });
+  const save = dialog.getByRole('button', { name: '예약 변경 저장', exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByLabel('예약 가능한 공간').click();
+  await page.getByRole('option', { name: /(?:집중 좌석 13|Focus desk 13)/u }).click();
+  await dialog.getByLabel('변경 사유').fill('권한 거부 시 안전한 복귀 확인');
+  await expect(save).toBeEnabled();
+
+  denyTargets = true;
+  await dialog.getByRole('button', { name: '이동 대상 새로고침', exact: true }).click();
+  await deniedStarted;
+  await save.focus();
+  await expect(save).toBeFocused();
+  releaseDenied?.();
+
+  await expect(dialog).toHaveCount(0);
+  const deniedNotice = page.getByTestId('workplace-relocate-denied-alert');
+  await expect(deniedNotice).toHaveText(
+    '예약 가능한 공간을 볼 권한이 없습니다. 예약 변경 창을 닫았으며 변경 요청은 전송되지 않았습니다.'
+  );
+  await expect(deniedNotice).toHaveAttribute('role', 'alert');
+  await expect(deniedNotice).toHaveAttribute('aria-live', 'assertive');
+  await expect(relocateTrigger).toBeFocused();
+  expect(relocationWrites).toBe(0);
 });
 
 test('room booking fails closed when the tenant meeting policy is unavailable', async ({

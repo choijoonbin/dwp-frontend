@@ -12,6 +12,9 @@ export type DwaionProposalDecision = AgentSchemas['ProposalDecision'];
 export type DwaionProposalInboxPage = AgentSchemas['ProposalInboxPage'];
 export type DwaionProposalInboxView = AgentSchemas['ProposalInboxView'];
 export type DwaionProposalDecisionReceipt = AgentSchemas['ProposalDecisionReceipt'];
+export type DwaionProposalAnalysisReceipt = AgentSchemas['ProposalAnalysisReceipt'];
+export type DwaionProposalAnalysisPreference = AgentSchemas['ProposalAnalysisPreference'];
+export type DwaionProposalClearReceipt = AgentSchemas['ClearProposalInboxReceipt'];
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const VIEWS = new Set<DwaionProposalInboxView>(['ACTIVE', 'SNOOZED', 'HANDLED', 'ALL']);
@@ -69,6 +72,66 @@ export async function decideDwaionProposal(
   return response.data.data;
 }
 
+export async function analyzeDwaionProposals(): Promise<DwaionProposalAnalysisReceipt> {
+  const body: AgentSchemas['AnalyzeProposalsRequest'] = {
+    commandId: globalThis.crypto.randomUUID(),
+  };
+  const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
+    '/api/agent/v1/proposals/analyze',
+    body
+  );
+  if (!isProposalAnalysisReceipt(response.data.data)) {
+    throw new HttpError('Agent proposal analysis response is invalid.', 502, response.data);
+  }
+  return response.data.data;
+}
+
+export async function getDwaionProposalAnalysisPreference(): Promise<DwaionProposalAnalysisPreference> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
+    '/api/agent/v1/proposals/preferences'
+  );
+  if (!isProposalAnalysisPreference(response.data.data)) {
+    throw new HttpError('Agent proposal preference response is invalid.', 502, response.data);
+  }
+  return response.data.data;
+}
+
+export async function updateDwaionProposalAnalysisPreference(
+  expectedRevision: number,
+  proactiveAnalysisEnabled: boolean
+): Promise<DwaionProposalAnalysisPreference> {
+  if (!Number.isInteger(expectedRevision) || expectedRevision < 0) {
+    throw new TypeError('Agent proposal preference revision is invalid.');
+  }
+  const body: AgentSchemas['UpdateProposalAnalysisPreferenceRequest'] = {
+    commandId: globalThis.crypto.randomUUID(),
+    expectedRevision,
+    proactiveAnalysisEnabled,
+  };
+  const response = await axiosInstance.put<ApiResponse<unknown>, typeof body>(
+    '/api/agent/v1/proposals/preferences',
+    body
+  );
+  if (!isProposalAnalysisPreference(response.data.data)) {
+    throw new HttpError('Agent proposal preference response is invalid.', 502, response.data);
+  }
+  return response.data.data;
+}
+
+export async function clearDwaionProposalInbox(): Promise<DwaionProposalClearReceipt> {
+  const body: AgentSchemas['ClearProposalInboxRequest'] = {
+    commandId: globalThis.crypto.randomUUID(),
+  };
+  const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
+    '/api/agent/v1/proposals/clear',
+    body
+  );
+  if (!isProposalClearReceipt(response.data.data)) {
+    throw new HttpError('Agent proposal clear response is invalid.', 502, response.data);
+  }
+  return response.data.data;
+}
+
 function isProposalInboxPage(value: unknown): value is DwaionProposalInboxPage {
   if (!isRecord(value) || !Array.isArray(value.items) || !isRecord(value.summary)) return false;
   return (
@@ -85,6 +148,34 @@ function isProposalDecisionReceipt(value: unknown): value is DwaionProposalDecis
   return (
     isRecord(value) && isProposal(value.proposal) && typeof value.actionReviewRequired === 'boolean'
   );
+}
+
+function isProposalAnalysisReceipt(value: unknown): value is DwaionProposalAnalysisReceipt {
+  return (
+    isRecord(value) &&
+    isDate(value.analyzedAt) &&
+    isCount(value.sourcesAnalyzed) &&
+    isCount(value.actionableProposals) &&
+    Array.isArray(value.attemptedSources) &&
+    value.attemptedSources.every((item) => typeof item === 'string') &&
+    Array.isArray(value.unavailableSources) &&
+    value.unavailableSources.every((item) => typeof item === 'string') &&
+    Array.isArray(value.proposals) &&
+    value.proposals.every(isProposal)
+  );
+}
+
+function isProposalAnalysisPreference(value: unknown): value is DwaionProposalAnalysisPreference {
+  return (
+    isRecord(value) &&
+    typeof value.proactiveAnalysisEnabled === 'boolean' &&
+    isCount(value.revision) &&
+    (value.updatedAt === undefined || value.updatedAt === null || isDate(value.updatedAt))
+  );
+}
+
+function isProposalClearReceipt(value: unknown): value is DwaionProposalClearReceipt {
+  return isRecord(value) && isCount(value.hiddenCount) && isDate(value.clearedAt);
 }
 
 function isProposal(value: unknown): value is DwaionProposal {

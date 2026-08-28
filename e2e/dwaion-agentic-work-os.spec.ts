@@ -352,7 +352,12 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
     testInfo.project.name === 'mobile' ? { width: 390, height: 844 } : { width: 1440, height: 900 }
   );
   let accepted = false;
+  let cleared = false;
+  let preferenceEnabled = false;
+  let preferenceRevision = 0;
   let decisionRequests = 0;
+  let analysisRequests = 0;
+  let clearRequests = 0;
   let actionPreviewRequests = 0;
   const proposal = {
     proposalId: '019d8cb0-27a6-7b11-82d1-9eb8a26c1201',
@@ -390,7 +395,69 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
     return route.abort();
   });
   await page.route('**/api/agent/v1/proposals**', async (route) => {
-    if (route.request().method() === 'POST') {
+    const requestUrl = new URL(route.request().url());
+    const method = route.request().method();
+    if (requestUrl.pathname.endsWith('/proposals/preferences')) {
+      if (method === 'PUT') {
+        const request = route.request().postDataJSON() as {
+          commandId: string;
+          expectedRevision: number;
+          proactiveAnalysisEnabled: boolean;
+        };
+        expect(request.commandId).toMatch(/^[0-9a-f-]{36}$/u);
+        expect(request.expectedRevision).toBe(preferenceRevision);
+        preferenceEnabled = request.proactiveAnalysisEnabled;
+        preferenceRevision += 1;
+      }
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: {
+            proactiveAnalysisEnabled: preferenceEnabled,
+            revision: preferenceRevision,
+            updatedAt: preferenceRevision ? '2026-08-27T08:01:00Z' : null,
+          },
+        }),
+      });
+    }
+    if (requestUrl.pathname.endsWith('/proposals/analyze')) {
+      analysisRequests += 1;
+      expect(method).toBe('POST');
+      expect(route.request().postDataJSON()).toMatchObject({
+        commandId: expect.stringMatching(/^[0-9a-f-]{36}$/u),
+      });
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: {
+            analyzedAt: '2026-08-27T08:02:00Z',
+            sourcesAnalyzed: 2,
+            actionableProposals: 1,
+            attemptedSources: ['WORK_ITEM', 'CALENDAR'],
+            unavailableSources: ['MAIL'],
+            proposals: [proposal],
+          },
+        }),
+      });
+    }
+    if (requestUrl.pathname.endsWith('/proposals/clear')) {
+      clearRequests += 1;
+      expect(method).toBe('POST');
+      cleared = true;
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: { hiddenCount: 1, clearedAt: '2026-08-27T08:06:00Z' },
+        }),
+      });
+    }
+    if (method === 'POST') {
       decisionRequests += 1;
       const request = route.request().postDataJSON() as {
         decision: string;
@@ -415,8 +482,7 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
         }),
       });
     }
-    const active =
-      !accepted && new URL(route.request().url()).searchParams.get('view') === 'ACTIVE';
+    const active = !accepted && !cleared && requestUrl.searchParams.get('view') === 'ACTIVE';
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -438,6 +504,18 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
 
   await page.goto('/dwaion/proposals');
   await expect(page.getByRole('heading', { name: 'AI proposals', exact: true })).toBeVisible();
+  const analysisControls = page.getByRole('region', { name: 'Workspace analysis' });
+  const analyzeButton = analysisControls.getByRole('button', { name: 'Analyze now' });
+  await expect(analyzeButton).toBeDisabled();
+  await analysisControls.getByRole('switch', { name: 'Allow analysis for my account' }).click();
+  await expect(analyzeButton).toBeEnabled();
+  await analyzeButton.click();
+  await expect(analysisControls.getByRole('status')).toContainText(
+    '2 sources analyzed · 1 actionable proposal'
+  );
+  await expect(analysisControls.getByRole('status')).toContainText(
+    '1 permitted source was unavailable and was not inferred.'
+  );
   await page.getByRole('button', { name: /Review project delivery risk/ }).click();
   await expect(page.getByRole('heading', { name: 'Review project delivery risk' })).toBeVisible();
   await expect(page.getByText('Customer migration plan')).toBeVisible();
@@ -452,7 +530,16 @@ test('agent inbox keeps proactive proposals evidence-led and under explicit user
 
   await expect(page.getByRole('button', { name: 'Continue to action review' })).toBeVisible();
   expect(decisionRequests).toBe(1);
+  expect(analysisRequests).toBe(1);
   expect(actionPreviewRequests).toBe(0);
+  await page.getByRole('button', { name: 'Close proposal details' }).click();
+  await page.getByRole('button', { name: 'Clear proposal data' }).click();
+  const clearDialog = page.getByRole('dialog', { name: 'Clear proposal data?' });
+  await expect(clearDialog).toContainText('Source records in their owning apps are not changed.');
+  await clearDialog.getByRole('button', { name: 'Clear proposal data' }).click();
+  await expect(clearDialog).toHaveCount(0);
+  await expect(page.getByText('There are no proposals to review')).toBeVisible();
+  expect(clearRequests).toBe(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true
   );

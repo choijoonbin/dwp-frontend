@@ -64,6 +64,8 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [params, setParams] = useSearchParams();
+  const activeScope: MessagingScope =
+    scope === 'ALL' && params.get('attention')?.toLowerCase() === 'mentions' ? 'MENTIONS' : scope;
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [draft, setDraftState] = useState('');
@@ -116,10 +118,10 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const threadAttachmentQueue = useMessagingAttachmentQueue(selectedId);
 
   const conversationsQuery = useQuery({
-    queryKey: ['messaging', 'conversations', scope, debouncedSearch],
+    queryKey: ['messaging', 'conversations', activeScope, debouncedSearch],
     queryFn: () =>
       getMessagingConversations({
-        scope,
+        scope: activeScope,
         query: debouncedSearch,
         page: 0,
         pageSize: 60,
@@ -529,6 +531,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     next.delete('conversation');
     setParams(next, { replace: true });
   };
+  const clearMentionFilter = () => {
+    const next = new URLSearchParams(params);
+    next.delete('attention');
+    setParams(next, { replace: true });
+  };
   const send = () => {
     const body = draft.trim();
     if (
@@ -622,8 +629,9 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   return {
     t,
     auth,
-    title: t(`workspace.${scope}.title`),
-    description: t(`workspace.${scope}.description`),
+    title: t(`workspace.${activeScope}.title`),
+    description: t(`workspace.${activeScope}.description`),
+    mentionFilterActive: activeScope === 'MENTIONS',
     desktopSplitView,
     selectedId,
     selectedConversation,
@@ -674,6 +682,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     deleteMutation,
     selectConversation,
     clearSelection,
+    clearMentionFilter,
     openConversation,
     send,
     retrySend,

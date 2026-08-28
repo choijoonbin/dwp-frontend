@@ -45,6 +45,7 @@ import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
 import { colorValue, MailFolderDialog, MailRuleDialog } from './mail-organization-dialogs';
+import { MailRuleBackfillPanel } from './mail-rule-backfill-panel';
 
 import type {
   MailFolder,
@@ -283,30 +284,33 @@ export function MailOrganization() {
                 onArchive={(item) => setPendingArchive({ kind: 'folder', item })}
               />
             ) : (
-              <RuleList
-                rules={data.rules}
-                folders={data.folders}
-                runningRuleId={runMutation.variables}
-                busy={ruleMutation.isPending || runMutation.isPending}
-                onEdit={setRuleEditor}
-                onRun={(rule) => runMutation.mutate(rule.ruleId)}
-                onToggle={(rule, enabled) =>
-                  ruleMutation.mutate({
-                    rule,
-                    form: {
-                      accountId: rule.accountId,
-                      displayName: rule.displayName,
-                      priority: rule.priority,
-                      matchMode: rule.matchMode,
-                      conditions: rule.conditions,
-                      actions: rule.actions,
-                      stopProcessing: rule.stopProcessing,
-                      enabled,
-                    },
-                  })
-                }
-                onArchive={(item) => setPendingArchive({ kind: 'rule', item })}
-              />
+              <Box sx={{ pt: 2 }}>
+                <MailRuleBackfillPanel accounts={data.accounts} onCompleted={refresh} />
+                <RuleList
+                  rules={data.rules}
+                  folders={data.folders}
+                  runningRuleId={runMutation.variables}
+                  busy={ruleMutation.isPending || runMutation.isPending}
+                  onEdit={setRuleEditor}
+                  onRun={(rule) => runMutation.mutate(rule.ruleId)}
+                  onToggle={(rule, enabled) =>
+                    ruleMutation.mutate({
+                      rule,
+                      form: {
+                        accountId: rule.accountId,
+                        displayName: rule.displayName,
+                        priority: rule.priority,
+                        matchMode: rule.matchMode,
+                        conditions: rule.conditions,
+                        actions: rule.actions,
+                        stopProcessing: rule.stopProcessing,
+                        enabled,
+                      },
+                    })
+                  }
+                  onArchive={(item) => setPendingArchive({ kind: 'rule', item })}
+                />
+              </Box>
             )}
           </Box>
         </Stack>

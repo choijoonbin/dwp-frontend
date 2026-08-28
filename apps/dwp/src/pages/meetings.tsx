@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 
 import { ProductSurfaceLocalNotFound } from '../components/product-surface-local-not-found';
 import { MeetingAdminOperations, MeetingAdminPolicies } from '../features/meetings/meeting-admin';
+import { MeetingAdminIntelligencePage } from '../features/meetings/meeting-admin-intelligence-page';
 import { MeetingHistory } from '../features/meetings/meeting-history';
 import { MeetingHome } from '../features/meetings/meeting-home';
 import { MeetingJoin } from '../features/meetings/meeting-join';
@@ -40,6 +41,7 @@ export default function MeetingsPage() {
     join: <MeetingJoin />,
     'admin-operations': <MeetingAdminOperations />,
     'admin-policies': <MeetingAdminPolicies />,
+    'admin-intelligence': <MeetingAdminIntelligencePage />,
   }[page.view];
 
   return (

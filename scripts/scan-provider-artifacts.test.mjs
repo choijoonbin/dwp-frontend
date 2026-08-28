@@ -213,7 +213,29 @@ test('fails closed when no requested artifact root exists', async () => {
   await withTemporaryDirectory(async (directory) => {
     await assert.rejects(
       scanProviderArtifacts([join(directory, 'missing')]),
-      /none of the requested artifact roots exist/u
+      /requested artifact root does not exist/u
     );
+  });
+});
+
+test('requires every requested root to be a non-empty runtime-evidence directory', async () => {
+  await withTemporaryDirectory(async (directory) => {
+    const report = join(directory, 'playwright-report-provider');
+    const results = join(directory, 'test-results', 'provider');
+    await mkdir(report, { recursive: true });
+    await writeFile(join(report, 'index.html'), '<html><body>Provider acceptance</body></html>');
+
+    await assert.rejects(
+      scanProviderArtifacts([report, results]),
+      /requested artifact root does not exist/u
+    );
+
+    await mkdir(join(directory, 'test-results'), { recursive: true });
+    await writeFile(results, '{"status":"passed"}\n');
+    await assert.rejects(scanProviderArtifacts([report, results]), /is not a directory/u);
+
+    await rm(results, { force: true });
+    await mkdir(results, { recursive: true });
+    await assert.rejects(scanProviderArtifacts([report, results]), /contains no files/u);
   });
 });

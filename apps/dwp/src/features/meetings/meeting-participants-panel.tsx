@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConnectionQualityIndicator, useParticipants } from '@livekit/components-react';
 import { Mic, MicOff, MonitorUp, Video, VideoOff, X } from 'lucide-react';
@@ -39,6 +39,7 @@ function initials(name: string): string {
 export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation('meetings');
   const participants = useParticipants();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const orderedParticipants = useMemo(
     () =>
       [...participants].sort((left, right) => {
@@ -49,11 +50,18 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
     [participants]
   );
 
+  useEffect(() => closeButtonRef.current?.focus(), []);
+
   return (
     <aside
       id="meeting-participants-panel"
       className="dwp-meeting-side-panel dwp-meeting-participants"
       aria-labelledby="meeting-participants-title"
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        onClose();
+      }}
     >
       <header className="dwp-meeting-side-panel__header">
         <div>
@@ -61,6 +69,7 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
           <small>{t('room.controls.participantsCount', { count: participants.length })}</small>
         </div>
         <button
+          ref={closeButtonRef}
           type="button"
           className="dwp-meeting-side-panel__close"
           aria-label={t('room.controls.participantsClose')}
@@ -75,6 +84,21 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
         {orderedParticipants.map((participant) => {
           const name = participant.name || participant.identity;
           const role = participantRole(participant.metadata);
+          const mediaState = [
+            participant.isScreenShareEnabled ? t('room.controls.screenSharing') : null,
+            t(
+              participant.isMicrophoneEnabled
+                ? 'room.controls.microphoneEnabled'
+                : 'room.controls.microphoneDisabled'
+            ),
+            t(
+              participant.isCameraEnabled
+                ? 'room.controls.cameraEnabled'
+                : 'room.controls.cameraDisabled'
+            ),
+          ]
+            .filter(Boolean)
+            .join(', ');
           return (
             <li
               key={participant.sid || participant.identity}
@@ -93,20 +117,18 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
               </span>
               <span
                 className="dwp-meeting-participant__media"
-                aria-label={t('room.controls.participantMediaState', { name })}
+                aria-label={`${t('room.controls.participantMediaState', { name })}: ${mediaState}`}
               >
-                {participant.isScreenShareEnabled && (
-                  <MonitorUp size={15} aria-label={t('room.controls.screenSharing')} />
-                )}
+                {participant.isScreenShareEnabled && <MonitorUp size={15} aria-hidden="true" />}
                 {participant.isMicrophoneEnabled ? (
-                  <Mic size={15} aria-label={t('room.controls.microphoneEnabled')} />
+                  <Mic size={15} aria-hidden="true" />
                 ) : (
-                  <MicOff size={15} aria-label={t('room.controls.microphoneDisabled')} />
+                  <MicOff size={15} aria-hidden="true" />
                 )}
                 {participant.isCameraEnabled ? (
-                  <Video size={15} aria-label={t('room.controls.cameraEnabled')} />
+                  <Video size={15} aria-hidden="true" />
                 ) : (
-                  <VideoOff size={15} aria-label={t('room.controls.cameraDisabled')} />
+                  <VideoOff size={15} aria-hidden="true" />
                 )}
                 <ConnectionQualityIndicator participant={participant} />
               </span>

@@ -91,6 +91,42 @@ retry or compensate provider operations and reconciliation must repair drift.
 Calling the provider inline is suitable for the local pilot, but it is not sufficient
 evidence that an enterprise room cannot be orphaned or falsely remain live.
 
+## ADR-010: Meeting intelligence is a governed draft lifecycle
+
+**Decision:** A transcript-backed intelligence run produces an encrypted `DRAFT` report.
+The provider cannot publish it. A host or explicitly granted reviewer verifies the
+citations, approves a specific report version, and performs a separate publish action
+before admitted participants can read it.
+
+**Reason:** Model output can be incomplete or wrong. Source hash, notice revision,
+consent snapshot, model, prompt, schema, region, payload hash, review, and publication
+evidence must remain attached to the same immutable execution chain.
+
+## ADR-011: The Agent receives normalized transcript evidence, not media custody
+
+**Decision:** The meeting service keeps recording and transcript custody. It sends only
+bounded, normalized transcript segments to the internal Agent endpoint over a dedicated
+service identity. The request contains no object key or user identifier and requests
+provider-side storage to be disabled. Both the Agent and meeting service validate the
+strict output schema and every cited segment/time range.
+
+**Reason:** This minimizes data movement, prevents the model provider from becoming the
+system of record, and treats transcript text as untrusted data rather than instructions.
+Missing credentials, approved region, no-training attestation, zero-retention attestation,
+KMS, transcript source, or consent evidence makes the run unavailable.
+
+## ADR-012: “Meeting atmosphere” excludes individual emotion inference
+
+**Decision:** The report may describe only meeting-level conversation signals such as
+alignment, constructive disagreement, unresolved disagreement, or insufficient evidence,
+with transcript citations. The contract has no person-level emotion, sentiment,
+personality, health, biometric, or productivity-scoring field.
+
+**Reason:** A transcript can support a reviewable description of discussion dynamics but
+cannot justify surveillance claims about people. This boundary also avoids workplace
+emotion-recognition patterns that create significant legal, privacy, and employee-trust
+risk.
+
 ## Runtime target
 
 ```text
@@ -103,9 +139,11 @@ meeting API -> PostgreSQL
             -> Kafka outbox/inbox
             -> LiveKit Server API
             -> signed webhook receiver
+            -> internal Agent meeting-intelligence API
 
 Egress pool -> KMS-encrypted S3-compatible storage
 STT workers -> transcript object + searchable ACL metadata
+Agent runtime -> approved zero-retention model route -> strict cited JSON
 ```
 
 Redis is mandatory for redundant LiveKit deployments. Nodes drain active rooms

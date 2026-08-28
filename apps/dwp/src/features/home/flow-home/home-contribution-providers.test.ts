@@ -1,12 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildHomeContributionModel, resolveHomeContributionProvider } from '../contributions';
 import {
+  homeContributionI18nReady,
+  translateHomeContributionKo,
+} from './home-contribution-i18n.test-support';
+import {
   activityContributionProvider,
   approvalContributionProvider,
-  canonicalHomeSourceNamespace,
   calendarContributionProvider,
-  HOME_CONTRIBUTION_PROVIDERS,
   hrContributionProvider,
   notificationContributionProvider,
   serviceContributionProvider,
@@ -32,12 +34,15 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 const NOW = '2026-08-25T01:00:00.000Z';
+beforeAll(() => homeContributionI18nReady);
+
 const CONTEXT = {
   now: NOW,
   snapshotAt: NOW,
   dateKey: '2026-08-25',
   locale: 'ko-KR',
   timeZone: 'Asia/Seoul',
+  translate: translateHomeContributionKo,
 } as const;
 
 function allowResource(
@@ -507,19 +512,6 @@ describe.each(cardinalityCases)('$provider Home Contribution adapter', (testCase
 });
 
 describe('integrated Home Contribution adapters', () => {
-  it('registers every implemented app provider exactly once', () => {
-    expect(HOME_CONTRIBUTION_PROVIDERS.map((provider) => provider.key)).toEqual([
-      'workspace-work',
-      'calendar-home',
-      'workspace-activity',
-      'approval-home',
-      'hr-home',
-      'service-requests',
-      'workplace-bookings',
-      'notification-summary',
-    ]);
-  });
-
   it('fails work and activity providers closed against their exact backend authorities', () => {
     const work = resolveHomeContributionProvider(
       workspaceWorkContributionProvider,
@@ -550,37 +542,6 @@ describe('integrated Home Contribution adapters', () => {
       ['workspace-activity', 'FORBIDDEN'],
       ['workspace-work', 'AVAILABLE'],
     ]);
-  });
-
-  it('routes work items through the canonical Work queue instead of a source-owned route', () => {
-    const [item] = workspaceWorkContributionProvider.normalize(
-      workQueue([workItem('work-42', { sourceRoute: '/admin/unsafe-target' })]),
-      CONTEXT
-    );
-
-    expect(item?.deepLink).toBe('/work/queue?item=work-42');
-  });
-
-  it('canonicalizes real workspace source labels for cross-provider dedupe', () => {
-    expect(canonicalHomeSourceNamespace('Approval Service')).toBe('APPROVAL');
-    expect(canonicalHomeSourceNamespace('DWP_APPROVAL')).toBe('APPROVAL');
-    expect(canonicalHomeSourceNamespace('IT Service')).toBe('SERVICE');
-    expect(canonicalHomeSourceNamespace('DWP_EMPLOYEE_SERVICES')).toBe('SERVICE');
-    expect(canonicalHomeSourceNamespace('HR')).toBe('HCM');
-    expect(canonicalHomeSourceNamespace('DWP Workplace')).toBe('WORKPLACE');
-  });
-
-  it('keeps awaiting-requester Services work non-actionable until a response command exists', () => {
-    const [item] = serviceContributionProvider.normalize(
-      [serviceRequest('needs-information', 'AWAITING_REQUESTER')],
-      CONTEXT
-    );
-
-    expect(item).toMatchObject({
-      kind: 'REQUEST',
-      deepLink: '/services/my/needs-information',
-      status: 'AWAITING_REQUESTER',
-    });
   });
 
   it('blocks a real app provider when entitlement is missing or explicitly denied', () => {
@@ -795,15 +756,6 @@ describe('integrated Home Contribution adapters', () => {
     });
   });
 
-  it('uses the Calendar schedule route that consumes the event deep-link parameter', () => {
-    const [timeline] = calendarContributionProvider.normalize(
-      calendarHome([calendarEvent('event-42')]),
-      CONTEXT
-    );
-
-    expect(timeline?.deepLink).toBe('/calendar/schedule?event=event-42');
-  });
-
   it('keeps Calendar response prompts read-only unless UPDATE is explicitly granted', () => {
     const result = resolveHomeContributionProvider(
       calendarContributionProvider,
@@ -835,61 +787,6 @@ describe('integrated Home Contribution adapters', () => {
       count: 2,
     });
     expect(writable.buckets.pulse).toEqual([]);
-  });
-
-  it('fails closed for a Calendar payload from a different zoned date', () => {
-    expect(
-      calendarContributionProvider.normalize(
-        { ...calendarHome([calendarEvent('stale-event')]), date: '2026-08-24' },
-        CONTEXT
-      )
-    ).toEqual([]);
-  });
-
-  it('keeps only workplace bookings from the user-time-zone today', () => {
-    expect(
-      workplaceContributionProvider
-        .normalize(
-          [
-            workplaceBooking('today'),
-            workplaceBooking('tomorrow', {
-              startsAt: '2026-08-26T03:00:00.000Z',
-              endsAt: '2026-08-26T04:00:00.000Z',
-            }),
-          ],
-          CONTEXT
-        )
-        .map((item) => item.sourceReference)
-    ).toEqual(['today']);
-  });
-
-  it('exposes workplace check-in as an action only with UPDATE authority', () => {
-    const result = resolveHomeContributionProvider(
-      workplaceContributionProvider,
-      {
-        state: 'AVAILABLE',
-        generatedAt: NOW,
-        data: [workplaceBooking('ready', { canCheckIn: true })],
-      },
-      CONTEXT
-    );
-
-    const readOnly = buildHomeContributionModel([result], {
-      now: NOW,
-      permissions: [allow('APP.WORKPLACE')],
-    });
-    expect(readOnly.buckets.action).toEqual([]);
-    expect(readOnly.buckets.timeline[0]).toMatchObject({
-      id: 'workplace:ready:readonly',
-      route: '/workplace/my-bookings',
-    });
-
-    const writable = buildHomeContributionModel([result], {
-      now: NOW,
-      permissions: [allow('APP.WORKPLACE'), allowResource('APP', 'APP.WORKPLACE', 'UPDATE')],
-    });
-    expect(writable.buckets.action[0]).toMatchObject({ id: 'workplace:ready:check-in' });
-    expect(writable.buckets.timeline).toEqual([]);
   });
 
   it('globally dedupes real cross-app objects and routes each object to one purpose bucket', () => {

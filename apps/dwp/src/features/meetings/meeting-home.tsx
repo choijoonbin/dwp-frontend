@@ -139,6 +139,7 @@ export function MeetingHome() {
           action={t('home.instant.action')}
           emphasis
           busy={instantMutation.isPending}
+          disabled={!data.capabilities.available}
           onAction={() => instantMutation.mutate()}
         />
         <MeetingActionPanel
@@ -146,6 +147,7 @@ export function MeetingHome() {
           title={t('home.schedule.title')}
           description={t('home.schedule.description')}
           action={t('home.schedule.action')}
+          disabled={!data.capabilities.available}
           onAction={() => setScheduleOpen(true)}
         />
         <MeetingActionPanel
@@ -153,6 +155,7 @@ export function MeetingHome() {
           title={t('home.join.title')}
           description={t('home.join.description')}
           action={t('home.join.action')}
+          disabled={!data.capabilities.available}
           onAction={() => navigate('/meetings/join')}
         />
       </Box>
@@ -321,7 +324,14 @@ export function MeetingHome() {
               data.recent
                 .slice(0, 4)
                 .map((meeting) => (
-                  <MeetingSummaryRow key={meeting.meetingId} meeting={meeting} history={meeting} />
+                  <MeetingSummaryRow
+                    key={meeting.meetingId}
+                    meeting={meeting}
+                    history={meeting}
+                    onOpen={() =>
+                      navigate(`/meetings/history?meeting=${encodeURIComponent(meeting.meetingId)}`)
+                    }
+                  />
                 ))
             ) : (
               <GuidedEmptyState

@@ -13,6 +13,7 @@ import {
   HR_HOME_FIXTURE,
   HR_SERVICE_REQUESTS_FIXTURE,
 } from './support/product-area-fixtures';
+import { mockShellNotificationRuntime } from './support/runtime-access';
 
 const FLOW_FIXTURE_NOW = new Date('2026-08-11T00:30:00.000Z');
 const MINIMUM_ACTION_TARGET_PX = 44;
@@ -621,6 +622,7 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     permissions: FLOW_PERMISSIONS,
   });
+  await mockShellNotificationRuntime(page);
   await routeFlowExperience(page);
   await routeDefaultPreference(page);
   await routeEmptyExternalContributions(page);
@@ -650,6 +652,45 @@ test.beforeEach(async ({ page }) => {
       generatedAt: FLOW_FIXTURE_NOW.toISOString(),
     })
   );
+});
+
+test('clean hard reloads stay runtime-clean across the supported viewport matrix', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'The hard-reload runtime matrix runs once in Chromium.'
+  );
+
+  const runtimeProblems: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error' || message.type() === 'warning') {
+      const location = message.location().url;
+      runtimeProblems.push(
+        `console:${message.type()}:${message.text()}${location ? `:${location}` : ''}`
+      );
+    }
+  });
+  page.on('pageerror', (error) => runtimeProblems.push(`pageerror:${error.message}`));
+
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1280, height: 800 },
+    { width: 390, height: 844 },
+    { width: 320, height: 720 },
+  ] as const) {
+    await page.setViewportSize(viewport);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('flow-home')).toBeVisible();
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const flowHome = page.getByTestId('flow-home');
+    await expect(flowHome).toBeVisible();
+    await expectNoHorizontalDocumentOverflow(page, flowHome);
+    await expectNoInternalVerticalScroll(flowHome);
+  }
+
+  expect(runtimeProblems).toEqual([]);
 });
 
 test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll traps', async ({
@@ -1144,6 +1185,67 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   expect(observedStates.at(0)).toBe('expressive:adaptive-wide');
 });
 
+test('A true cold session stays presentation-neutral until the saved Wide preference resolves', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Initial-frame behavior runs once in Chromium.');
+
+  let releasePreference!: () => void;
+  const preferenceRelease = new Promise<void>((resolve) => {
+    releasePreference = resolve;
+  });
+  let markPreferenceStarted!: () => void;
+  const preferenceStarted = new Promise<void>((resolve) => {
+    markPreferenceStarted = resolve;
+  });
+
+  await page.addInitScript(() => {
+    window.sessionStorage.removeItem('dwp.home.presentation-hint.v1');
+  });
+  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+      return route.fallback();
+    }
+    markPreferenceStarted();
+    await preferenceRelease;
+    return fulfillSuccess(route, {
+      ...DEFAULT_HOME_PREFERENCE,
+      layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
+    });
+  });
+
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto('/');
+  await preferenceStarted;
+
+  const skeleton = page.getByTestId('home-loading-skeleton');
+  await expect(skeleton).toHaveAttribute('data-home-loading-state', 'neutral');
+  await expect(skeleton).toHaveAttribute('data-home-loading-presentation', 'unresolved');
+  await expect(skeleton).toHaveAttribute('data-home-loading-read-template', 'neutral');
+  await expect(page.locator('[data-home-loading-widgets]')).toHaveAttribute(
+    'data-home-loading-grid-contract',
+    'neutral'
+  );
+  await expect(page.locator('[data-home-loading-dock-item]')).toHaveCount(0);
+  await expect(page.locator('[data-home-loading-neutral-canvas]')).toBeVisible();
+  await expect(page.getByTestId('flow-home')).toHaveCount(0);
+
+  releasePreference();
+  const flowHome = page.getByTestId('flow-home');
+  await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
+  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
+    'data-flow-read-template',
+    'adaptive-wide'
+  );
+  await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
+    'data-flow-dock-item-limit',
+    '12'
+  );
+  await expect(skeleton).toHaveCount(0);
+});
+
 test('Cold reload keeps the loading and resolved Home single-column at 200% text', async ({
   page,
 }, testInfo) => {
@@ -1173,7 +1275,7 @@ test('Cold reload keeps the loading and resolved Home single-column at 200% text
       layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
     });
   });
-  await page.route(/^http:\/\/localhost:\d+\/$/, async (route) => {
+  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/$/, async (route) => {
     const response = await route.fetch();
     const body = await response.text();
     await route.fulfill({
@@ -2200,6 +2302,67 @@ test('a requested Flow policy fails closed without the server-resolved variant',
 
   await expect(page.getByTestId('flow-home')).toHaveCount(0);
   await expect(page.getByTestId('home-hero')).toBeVisible();
+});
+
+test('an active Home Experience failure is explicit, retryable, and never exposes a dead edit action', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Home bootstrap recovery runs once on desktop.');
+  let serviceAvailable = false;
+  await page.route('**/api/platform/v1/home-experience', (route) => {
+    if (serviceAvailable) return fulfillSuccess(route, flowExperience());
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Home Experience unavailable' }),
+    });
+  });
+
+  await page.goto('/');
+
+  const error = page.getByTestId('home-experience-error');
+  await expect(error).toHaveAttribute('data-home-error-source', 'experience');
+  await expect(error).toBeVisible();
+  await expect(page.getByTestId('flow-home')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Edit home' })).toHaveCount(0);
+
+  serviceAvailable = true;
+  await error.getByRole('button', { name: 'Retry' }).click();
+  await expect(page.getByTestId('flow-home')).toBeVisible();
+  await expect(error).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
+});
+
+test('an active Home layout failure blocks rendering until its retry succeeds', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Home bootstrap recovery runs once on desktop.');
+  let serviceAvailable = false;
+  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+      return route.fallback();
+    }
+    if (serviceAvailable) return fulfillSuccess(route, DEFAULT_HOME_PREFERENCE);
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Home layout unavailable' }),
+    });
+  });
+
+  await page.goto('/');
+
+  const error = page.getByTestId('home-experience-error');
+  await expect(error).toHaveAttribute('data-home-error-source', 'layout');
+  await expect(error).toBeVisible();
+  await expect(page.getByTestId('flow-home')).toHaveCount(0);
+
+  serviceAvailable = true;
+  await error.getByRole('button', { name: 'Retry' }).click();
+  await expect(page.getByTestId('flow-home')).toBeVisible();
+  await expect(error).toHaveCount(0);
 });
 
 test('notification badges fail closed when a successful summary becomes stale', async ({

@@ -125,6 +125,7 @@ export function MeetingCollaborationPanel({
 }: MeetingCollaborationPanelProps) {
   const generatedId = useId();
   const tabRefs = useRef(new Map<MeetingCollaborationTab, HTMLButtonElement>());
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const floorCount = countActionableFloorRequests(floor.requests);
   const tabs: readonly MeetingCollaborationTab[] = ['chat', 'floor'];
   const markChatRead = actions.onMarkChatRead;
@@ -142,6 +143,10 @@ export function MeetingCollaborationPanel({
     lastMarkedUnreadCount.current = 0;
   }, [activeTab, chat.unreadCount, markChatRead, permissions.canReadChat]);
 
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
+
   const selectAdjacentTab = (event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
@@ -156,13 +161,22 @@ export function MeetingCollaborationPanel({
   };
 
   return (
-    <aside className="dwp-meeting-collaboration" aria-label={labels.panelTitle}>
+    <aside
+      className="dwp-meeting-collaboration"
+      aria-label={labels.panelTitle}
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        actions.onClose();
+      }}
+    >
       <header className="dwp-meeting-collaboration__header">
         <div>
           <strong>{labels.panelTitle}</strong>
           <small>{activeTab === 'chat' ? labels.chatDescription : labels.floorDescription}</small>
         </div>
         <button
+          ref={closeButtonRef}
           type="button"
           className="dwp-meeting-collaboration__icon-button"
           aria-label={labels.close}

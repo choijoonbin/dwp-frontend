@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -16,6 +16,7 @@ import {
   checkInWorkplaceBooking,
   getWorkplaceBookings,
   releaseWorkplaceBooking,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { ActionButton, ConfirmDialog, EmptyState, PageCanvas } from '@dwp-frontend/design-system';
@@ -32,15 +33,34 @@ import Typography from '@mui/material/Typography';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
+import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
+import { useWorkplaceDecisionClock } from './workplace-decision-clock';
+import {
+  workplaceDecisionActionProps,
+  useWorkplaceDecisionStatus,
+} from './workplace-decision-status';
+import { workplaceHomeDecisionDeadline } from './workplace-home-decision-clock';
+import { workplaceHomeSourceState } from './workplace-home-source-state';
 import { WorkplaceReleaseWindows } from './workplace-release-windows';
 import { WorkplaceRelocateBookingDialog } from './workplace-relocate-booking-dialog';
 
 import type { WorkplaceBooking } from '@dwp-frontend/shared-utils';
 
 type BookingFilter = 'upcoming' | 'past';
-type BookingAction = { booking: WorkplaceBooking; action: 'cancel' | 'release' };
+type BookingAction = {
+  identityKey: string;
+  booking: WorkplaceBooking;
+  action: 'cancel' | 'release';
+};
+type BookingMutationAction =
+  BookingAction | (Omit<BookingAction, 'action'> & { action: 'check-in' });
+type RelocatingBooking = { identityKey: string; booking: WorkplaceBooking };
+type SubmittedDecisionAction = { identityKey: string; actionId: string };
+type RelocateDeniedNotice = { identityKey: string; bookingId: string };
 
 const TERMINAL_BOOKING_STATUSES = ['COMPLETED', 'NO_SHOW', 'CANCELLED', 'RELEASED'] as const;
+const REFRESH_INTERVAL = 60_000;
+const DECISION_BOUNDARY_SETTLE_MS = 10;
 
 function bookingRange(filter: BookingFilter) {
   const from = new Date();
@@ -59,37 +79,356 @@ export function WorkplaceBookings() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
+  const auth = useAuth();
+  const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
+  const activeIdentityRef = useRef(identityKey);
+  const changeMutationInFlightRef = useRef(false);
+  const completeDecisionActionRef = useRef<(identityKey: string, actionId: string) => void>(
+    () => undefined
+  );
+  const relocateTriggerRef = useRef<HTMLElement | null>(null);
+  const [submittedDecisionAction, setSubmittedDecisionAction] =
+    useState<SubmittedDecisionAction | null>(null);
+  activeIdentityRef.current = identityKey;
   const [searchParams] = useSearchParams();
   const requestedBookingId = searchParams.get('booking');
   const [filter, setFilter] = useState<BookingFilter>('upcoming');
   const [confirming, setConfirming] = useState<BookingAction | null>(null);
-  const [relocating, setRelocating] = useState<WorkplaceBooking | null>(null);
+  const [relocating, setRelocating] = useState<RelocatingBooking | null>(null);
+  const [relocateDeniedNotice, setRelocateDeniedNotice] = useState<RelocateDeniedNotice | null>(
+    null
+  );
+  const activeConfirming = confirming?.identityKey === identityKey ? confirming : null;
+  const activeRelocatingDraft = relocating?.identityKey === identityKey ? relocating : null;
+  const activeRelocateDeniedNotice =
+    relocateDeniedNotice?.identityKey === identityKey ? relocateDeniedNotice : null;
   const range = useMemo(() => bookingRange(filter), [filter]);
   const query = useQuery({
-    queryKey: ['workplace', 'bookings', range.from, range.to],
+    queryKey: ['workplace', 'bookings', identityKey, range.from, range.to],
     queryFn: () => getWorkplaceBookings(range.from, range.to),
     staleTime: 20_000,
     refetchInterval: 60_000,
     retry: 1,
   });
-  const now = Date.now();
-  const bookings = (query.data ?? [])
-    .filter((booking) =>
-      filter === 'upcoming'
-        ? Date.parse(booking.endsAt) >= now &&
-          !TERMINAL_BOOKING_STATUSES.includes(
-            booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
-          )
-        : Date.parse(booking.endsAt) < now ||
-          TERMINAL_BOOKING_STATUSES.includes(
-            booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
-          )
-    )
-    .sort((left, right) =>
-      filter === 'upcoming'
-        ? Date.parse(left.startsAt) - Date.parse(right.startsAt)
-        : Date.parse(right.startsAt) - Date.parse(left.startsAt)
+  const bookingSourceState = workplaceHomeSourceState({
+    data: query.data,
+    error: query.error,
+    isError: query.isError,
+    isPending: query.isPending,
+    required: true,
+  });
+  const {
+    advance: advanceDecisionClock,
+    nowInstant: decisionNowInstant,
+    readNow: readDecisionNow,
+  } = useWorkplaceDecisionClock(identityKey);
+  const bookings = useMemo(
+    () =>
+      (query.data ?? [])
+        .filter((booking) =>
+          filter === 'upcoming'
+            ? Date.parse(booking.endsAt) > decisionNowInstant &&
+              !TERMINAL_BOOKING_STATUSES.includes(
+                booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
+              )
+            : Date.parse(booking.endsAt) <= decisionNowInstant ||
+              TERMINAL_BOOKING_STATUSES.includes(
+                booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
+              )
+        )
+        .sort((left, right) =>
+          filter === 'upcoming'
+            ? Date.parse(left.startsAt) - Date.parse(right.startsAt)
+            : Date.parse(right.startsAt) - Date.parse(left.startsAt)
+        ),
+    [decisionNowInstant, filter, query.data]
+  );
+  const bookingPolicies = useMemo(
+    () =>
+      new Map(
+        bookings.map((booking) => [
+          booking.bookingId,
+          workplaceBookingActionPolicy({
+            booking,
+            sourceState: bookingSourceState,
+            canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+            nowInstant: decisionNowInstant,
+          }),
+        ])
+      ),
+    [bookingSourceState, bookings, capabilities.canUpdateWorkplaceBooking, decisionNowInstant]
+  );
+  const activeRelocating = activeRelocatingDraft
+    ? (query.data?.find(
+        (candidate) =>
+          candidate.bookingId === activeRelocatingDraft.booking.bookingId &&
+          candidate.version === activeRelocatingDraft.booking.version
+      ) ?? null)
+    : null;
+  const changeMutation = useMutation({
+    mutationFn: ({ booking, action, identityKey: actionIdentityKey }: BookingMutationAction) => {
+      const currentBooking = query.data?.find(
+        (candidate) =>
+          candidate.bookingId === booking.bookingId && candidate.version === booking.version
+      );
+      if (actionIdentityKey !== activeIdentityRef.current || !currentBooking) {
+        throw new Error(t('permissions.workplaceUpdateReadOnly'));
+      }
+      const policy = workplaceBookingActionPolicy({
+        booking: currentBooking,
+        sourceState: bookingSourceState,
+        canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+        nowInstant: readDecisionNow(),
+      });
+      const allowed =
+        action === 'check-in'
+          ? policy.canCheckIn
+          : action === 'release'
+            ? policy.canRelease
+            : policy.canCancel;
+      if (!allowed) throw new Error(t('permissions.workplaceUpdateReadOnly'));
+      setSubmittedDecisionAction({
+        identityKey: actionIdentityKey,
+        actionId: `${action}:${currentBooking.bookingId}`,
+      });
+      if (action === 'check-in') {
+        return checkInWorkplaceBooking(currentBooking.bookingId, currentBooking.version);
+      }
+      if (action === 'release') {
+        return releaseWorkplaceBooking(currentBooking.bookingId, currentBooking.version);
+      }
+      return cancelWorkplaceBooking(currentBooking.bookingId, currentBooking.version);
+    },
+    onSuccess: async (_, variables) => {
+      if (variables.identityKey !== activeIdentityRef.current) return;
+      completeDecisionActionRef.current(
+        variables.identityKey,
+        `${variables.action}:${variables.booking.bookingId}`
+      );
+      setConfirming((current) =>
+        current?.identityKey === variables.identityKey &&
+        current.booking.bookingId === variables.booking.bookingId
+          ? null
+          : current
+      );
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      if (variables.identityKey === activeIdentityRef.current) {
+        toast.success(t(`workplace.my.${variables.action}Saved`));
+      }
+    },
+    onError: (_, variables) => {
+      if (variables.identityKey !== activeIdentityRef.current) return;
+      setConfirming((current) =>
+        current?.identityKey === variables.identityKey &&
+        current.booking.bookingId === variables.booking.bookingId
+          ? null
+          : current
+      );
+      if (variables.identityKey === activeIdentityRef.current) {
+        toast.error(t('workplace.my.actionError'));
+      }
+    },
+    onSettled: (_, __, variables) => {
+      changeMutationInFlightRef.current = false;
+      setSubmittedDecisionAction((current) =>
+        current?.identityKey === variables.identityKey &&
+        current.actionId === `${variables.action}:${variables.booking.bookingId}`
+          ? null
+          : current
+      );
+    },
+  });
+  const submittedDecisionActionId =
+    submittedDecisionAction?.identityKey === identityKey ? submittedDecisionAction.actionId : null;
+  const activeMutationPending =
+    changeMutation.isPending && changeMutation.variables?.identityKey === identityKey;
+  const anyMutationPending = changeMutation.isPending || changeMutationInFlightRef.current;
+  const submitBookingAction = (action: BookingMutationAction) => {
+    if (changeMutationInFlightRef.current) return;
+    changeMutationInFlightRef.current = true;
+    try {
+      changeMutation.mutate(action);
+    } catch (error) {
+      changeMutationInFlightRef.current = false;
+      throw error;
+    }
+  };
+  const decisionActions = useMemo(
+    () =>
+      bookings.flatMap((booking) => {
+        const policy = bookingPolicies.get(booking.bookingId);
+        return [
+          ...(policy?.canCheckIn
+            ? [
+                {
+                  id: `check-in:${booking.bookingId}`,
+                  kind: 'CHECK_IN' as const,
+                  endsAt: booking.endsAt,
+                },
+              ]
+            : []),
+          ...(policy?.canRelease
+            ? [
+                {
+                  id: `release:${booking.bookingId}`,
+                  kind: 'RELEASE' as const,
+                  endsAt: booking.endsAt,
+                },
+              ]
+            : []),
+          ...(policy?.canCancel
+            ? [
+                {
+                  id: `cancel:${booking.bookingId}`,
+                  kind: 'CANCEL' as const,
+                  endsAt: booking.startsAt,
+                },
+              ]
+            : []),
+        ];
+      }),
+    [bookingPolicies, bookings]
+  );
+  const {
+    announceClosure,
+    completeAction: completeDecisionAction,
+    notice: decisionNotice,
+    statusRef: decisionStatusRef,
+  } = useWorkplaceDecisionStatus(decisionActions, decisionNowInstant, {
+    identityKey,
+    sourceReady: bookingSourceState === 'READY',
+    submittedActionIds: submittedDecisionActionId ? [submittedDecisionActionId] : [],
+  });
+  completeDecisionActionRef.current = completeDecisionAction;
+  const decisionDeadline = workplaceHomeDecisionDeadline({
+    now: new Date(decisionNowInstant).toISOString(),
+    bookings: query.data ?? [],
+  });
+  const { refetch: refetchBookings } = query;
+  useEffect(() => {
+    const delayToBoundary =
+      decisionDeadline === null
+        ? Number.POSITIVE_INFINITY
+        : decisionDeadline - Math.max(decisionNowInstant, Date.now()) + DECISION_BOUNDARY_SETTLE_MS;
+    const delay = Math.max(
+      DECISION_BOUNDARY_SETTLE_MS,
+      Math.min(REFRESH_INTERVAL, delayToBoundary)
     );
+    const reachesDecisionBoundary =
+      decisionDeadline !== null && delayToBoundary <= REFRESH_INTERVAL;
+    const timer = window.setTimeout(() => {
+      advanceDecisionClock();
+      if (reachesDecisionBoundary) void refetchBookings();
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [advanceDecisionClock, decisionDeadline, decisionNowInstant, refetchBookings]);
+
+  useEffect(() => {
+    if (!activeConfirming) return;
+    if (
+      submittedDecisionActionId ===
+      `${activeConfirming.action}:${activeConfirming.booking.bookingId}`
+    ) {
+      return;
+    }
+    const currentBooking = query.data?.find(
+      (candidate) =>
+        candidate.bookingId === activeConfirming.booking.bookingId &&
+        candidate.version === activeConfirming.booking.version
+    );
+    if (!currentBooking) {
+      setConfirming(null);
+      announceClosure({
+        actionId: `${activeConfirming.action}:${activeConfirming.booking.bookingId}`,
+        kind: activeConfirming.action === 'release' ? 'RELEASE' : 'CANCEL',
+        endsAt:
+          activeConfirming.action === 'release'
+            ? activeConfirming.booking.endsAt
+            : activeConfirming.booking.startsAt,
+        reason: 'UNVERIFIED',
+      });
+      return;
+    }
+    const policy = workplaceBookingActionPolicy({
+      booking: currentBooking,
+      sourceState: bookingSourceState,
+      canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+      nowInstant: decisionNowInstant,
+    });
+    const allowed = activeConfirming.action === 'release' ? policy.canRelease : policy.canCancel;
+    if (allowed) return;
+
+    const boundary = Date.parse(
+      activeConfirming.action === 'release'
+        ? activeConfirming.booking.endsAt
+        : activeConfirming.booking.startsAt
+    );
+    setConfirming(null);
+    announceClosure({
+      actionId: `${activeConfirming.action}:${activeConfirming.booking.bookingId}`,
+      kind: activeConfirming.action === 'release' ? 'RELEASE' : 'CANCEL',
+      endsAt:
+        activeConfirming.action === 'release'
+          ? activeConfirming.booking.endsAt
+          : activeConfirming.booking.startsAt,
+      reason: Number.isFinite(boundary) && decisionNowInstant >= boundary ? 'ENDED' : 'UNVERIFIED',
+    });
+  }, [
+    announceClosure,
+    bookingSourceState,
+    capabilities.canUpdateWorkplaceBooking,
+    activeConfirming,
+    decisionNowInstant,
+    query.data,
+    submittedDecisionActionId,
+  ]);
+
+  useEffect(() => {
+    if (!activeRelocatingDraft) return;
+    if (!activeRelocating) {
+      setRelocating(null);
+      return;
+    }
+    const policy = workplaceBookingActionPolicy({
+      booking: activeRelocating,
+      sourceState: bookingSourceState,
+      canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+      nowInstant: decisionNowInstant,
+    });
+    if (!policy.canCancel) setRelocating(null);
+  }, [
+    activeRelocating,
+    activeRelocatingDraft,
+    bookingSourceState,
+    capabilities.canUpdateWorkplaceBooking,
+    decisionNowInstant,
+  ]);
+  useEffect(() => {
+    setConfirming((current) => (current?.identityKey === identityKey ? current : null));
+    setRelocating((current) => (current?.identityKey === identityKey ? current : null));
+    setRelocateDeniedNotice((current) => (current?.identityKey === identityKey ? current : null));
+    relocateTriggerRef.current = null;
+    setSubmittedDecisionAction((current) =>
+      current?.identityKey === identityKey ? current : null
+    );
+  }, [identityKey]);
+  useEffect(() => {
+    if (!activeRelocateDeniedNotice) return;
+    const frame = window.requestAnimationFrame(() => {
+      const trigger = relocateTriggerRef.current;
+      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeRelocateDeniedNotice]);
+  const isCurrentRelocateBooking = (
+    actionIdentityKey: string,
+    bookingId: string,
+    version: number
+  ) =>
+    actionIdentityKey === activeIdentityRef.current &&
+    query.data?.some(
+      (candidate) => candidate.bookingId === bookingId && candidate.version === version
+    ) === true;
   const requestedBookingVisible = bookings.some(
     (booking) => booking.bookingId === requestedBookingId
   );
@@ -109,26 +448,6 @@ export function WorkplaceBookings() {
       resolveSupportedLocale(i18n.resolvedLanguage)
     );
 
-  const changeMutation = useMutation({
-    mutationFn: ({
-      booking,
-      action,
-    }: BookingAction | { booking: WorkplaceBooking; action: 'check-in' }) => {
-      if (!capabilities.canUpdateWorkplaceBooking) {
-        throw new Error(t('permissions.workplaceUpdateReadOnly'));
-      }
-      if (action === 'check-in') return checkInWorkplaceBooking(booking.bookingId, booking.version);
-      if (action === 'release') return releaseWorkplaceBooking(booking.bookingId, booking.version);
-      return cancelWorkplaceBooking(booking.bookingId, booking.version);
-    },
-    onSuccess: async (_, variables) => {
-      setConfirming(null);
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
-      toast.success(t(`workplace.my.${variables.action}Saved`));
-    },
-    onError: () => toast.error(t('workplace.my.actionError')),
-  });
-
   return (
     <PageCanvas>
       <RoomsPageHeading
@@ -139,6 +458,53 @@ export function WorkplaceBookings() {
       {capabilities.isLoaded && !capabilities.canUpdateWorkplaceBooking && (
         <RoomsPermissionNotice>{t('permissions.workplaceUpdateReadOnly')}</RoomsPermissionNotice>
       )}
+      {activeRelocateDeniedNotice && (
+        <Alert
+          severity="error"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          data-testid="workplace-relocate-denied-alert"
+        >
+          {t('workplace.my.relocate.deniedNotice')}
+        </Alert>
+      )}
+      <Box
+        ref={decisionStatusRef}
+        tabIndex={-1}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="workplace-booking-decision-status"
+        sx={{
+          display: decisionNotice ? 'block' : 'none',
+          mb: 2,
+          px: 2,
+          py: 1.5,
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: 1,
+          bgcolor: 'background.paper',
+          color: 'text.secondary',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: 2,
+          },
+        }}
+      >
+        {decisionNotice
+          ? t(
+              `workplace.home.decisionStatus.${
+                decisionNotice.kind === 'CHECK_IN'
+                  ? 'checkIn'
+                  : decisionNotice.kind === 'RELEASE'
+                    ? 'release'
+                    : 'cancel'
+              }${decisionNotice.reason === 'ENDED' ? 'Ended' : decisionNotice.reason === 'RECOVERED' ? 'Recovered' : 'Unverified'}`
+            )
+          : null}
+      </Box>
       <Box
         sx={{ border: 1, borderColor: 'divider', bgcolor: 'background.paper', overflow: 'hidden' }}
       >
@@ -180,6 +546,7 @@ export function WorkplaceBookings() {
         )}
         {bookings.map((booking, index) => {
           const selected = booking.bookingId === requestedBookingId;
+          const actionPolicy = bookingPolicies.get(booking.bookingId);
           return (
             <Box
               key={booking.bookingId}
@@ -244,38 +611,56 @@ export function WorkplaceBookings() {
                 </Box>
                 {filter === 'upcoming' && capabilities.canUpdateWorkplaceBooking && (
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    {booking.canCheckIn && (
+                    {actionPolicy?.canCheckIn && (
                       <ActionButton
                         intent="primary"
                         startIcon={<CheckCircle2 size={16} />}
-                        onClick={() => changeMutation.mutate({ booking, action: 'check-in' })}
+                        disabled={anyMutationPending}
+                        loading={
+                          activeMutationPending &&
+                          changeMutation.variables?.action === 'check-in' &&
+                          changeMutation.variables.booking.bookingId === booking.bookingId
+                        }
+                        onClick={() =>
+                          submitBookingAction({ identityKey, booking, action: 'check-in' })
+                        }
+                        {...workplaceDecisionActionProps(`check-in:${booking.bookingId}`)}
                       >
                         {t('workplace.my.checkIn')}
                       </ActionButton>
                     )}
-                    {booking.canRelease && (
+                    {actionPolicy?.canRelease && (
                       <ActionButton
                         intent="secondary"
                         startIcon={<LogOut size={16} />}
-                        onClick={() => setConfirming({ booking, action: 'release' })}
+                        disabled={anyMutationPending}
+                        onClick={() => setConfirming({ identityKey, booking, action: 'release' })}
+                        {...workplaceDecisionActionProps(`release:${booking.bookingId}`)}
                       >
                         {t('workplace.my.release')}
                       </ActionButton>
                     )}
-                    {booking.canCancel && (
+                    {actionPolicy?.canCancel && (
                       <ActionButton
                         intent="secondary"
                         startIcon={<PencilLine size={16} />}
-                        onClick={() => setRelocating(booking)}
+                        disabled={anyMutationPending}
+                        onClick={(event) => {
+                          relocateTriggerRef.current = event.currentTarget;
+                          setRelocateDeniedNotice(null);
+                          setRelocating({ identityKey, booking });
+                        }}
                       >
                         {t('workplace.my.relocate.action')}
                       </ActionButton>
                     )}
-                    {booking.canCancel && (
+                    {actionPolicy?.canCancel && (
                       <ActionButton
                         intent="danger"
                         startIcon={<XCircle size={16} />}
-                        onClick={() => setConfirming({ booking, action: 'cancel' })}
+                        disabled={anyMutationPending}
+                        onClick={() => setConfirming({ identityKey, booking, action: 'cancel' })}
+                        {...workplaceDecisionActionProps(`cancel:${booking.bookingId}`)}
                       >
                         {t('actions.cancelBooking')}
                       </ActionButton>
@@ -289,32 +674,41 @@ export function WorkplaceBookings() {
       </Box>
       <WorkplaceReleaseWindows />
       <WorkplaceRelocateBookingDialog
-        booking={relocating}
-        open={Boolean(relocating)}
+        booking={activeRelocating}
+        identityKey={identityKey}
+        isBookingCurrent={isCurrentRelocateBooking}
+        open={Boolean(activeRelocating)}
         onClose={() => setRelocating(null)}
+        onDenied={({ identityKey: deniedIdentityKey, bookingId }) => {
+          if (deniedIdentityKey !== activeIdentityRef.current) return;
+          setRelocating(null);
+          setRelocateDeniedNotice({ identityKey: deniedIdentityKey, bookingId });
+        }}
       />
       <ConfirmDialog
-        open={Boolean(confirming)}
+        open={Boolean(activeConfirming)}
         title={t(
-          confirming?.action === 'release'
+          activeConfirming?.action === 'release'
             ? 'workplace.my.releaseTitle'
             : 'workplace.my.cancelTitle'
         )}
         description={t(
-          confirming?.action === 'release'
+          activeConfirming?.action === 'release'
             ? 'workplace.my.releaseDescription'
             : 'workplace.my.cancelDescription'
         )}
         cancelLabel={t('actions.keep')}
         confirmLabel={t(
-          confirming?.action === 'release' ? 'workplace.my.release' : 'actions.cancelBooking'
+          activeConfirming?.action === 'release' ? 'workplace.my.release' : 'actions.cancelBooking'
         )}
         confirmingLabel={t('actions.saving')}
-        intent={confirming?.action === 'release' ? 'primary' : 'danger'}
-        busy={changeMutation.isPending}
-        onClose={() => setConfirming(null)}
+        intent={activeConfirming?.action === 'release' ? 'primary' : 'danger'}
+        busy={activeMutationPending}
+        onClose={() => {
+          if (!activeMutationPending) setConfirming(null);
+        }}
         onConfirm={() => {
-          if (confirming) changeMutation.mutate(confirming);
+          if (activeConfirming) submitBookingAction(activeConfirming);
         }}
       />
     </PageCanvas>

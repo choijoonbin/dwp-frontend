@@ -124,7 +124,7 @@ export function MessagingConversationListItem({
 }: {
   conversation: MessagingConversation;
   selected?: boolean;
-  onSelect: () => void;
+  onSelect?: () => void;
   compact?: boolean;
   showPreview?: boolean;
 }) {
@@ -133,10 +133,10 @@ export function MessagingConversationListItem({
   const restricted = conversation.dataClassification === 'RESTRICTED';
   return (
     <Box
-      component="button"
-      type="button"
+      component={onSelect ? 'button' : 'div'}
+      type={onSelect ? 'button' : undefined}
       onClick={onSelect}
-      aria-pressed={selected}
+      aria-pressed={onSelect ? selected : undefined}
       sx={(theme) => ({
         width: 1,
         minHeight: compact || !showPreview ? 78 : 98,
@@ -156,7 +156,7 @@ export function MessagingConversationListItem({
             : alpha(theme.palette.background.paper, 0.72),
         color: 'text.primary',
         textAlign: 'left',
-        cursor: 'pointer',
+        cursor: onSelect ? 'pointer' : 'default',
         position: 'relative',
         '&::before': selected
           ? {
@@ -168,11 +168,13 @@ export function MessagingConversationListItem({
               borderRadius: '0 3px 3px 0',
             }
           : undefined,
-        '&:hover': { bgcolor: 'action.hover' },
-        '&:focus-visible': {
-          outline: `2px solid ${theme.palette.primary.main}`,
-          outlineOffset: -2,
-        },
+        '&:hover': onSelect ? { bgcolor: 'action.hover' } : undefined,
+        '&:focus-visible': onSelect
+          ? {
+              outline: `2px solid ${theme.palette.primary.main}`,
+              outlineOffset: -2,
+            }
+          : undefined,
       })}
     >
       <Avatar

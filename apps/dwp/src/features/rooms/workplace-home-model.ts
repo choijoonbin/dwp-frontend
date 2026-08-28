@@ -1,6 +1,8 @@
 import { Temporal } from 'temporal-polyfill';
+import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
 import { workplaceBookingBlockCode } from './workplace-discovery-model';
 
+import type { WorkplaceHomeSourceState } from './workplace-home-source-state';
 import type { WorkplaceBookabilityContext } from './workplace-discovery-model';
 import type {
   CalendarEvent,
@@ -350,49 +352,30 @@ export function workplaceWeek({
   });
 }
 
-function canCheckInAt(booking: WorkplaceBooking, nowInstant: number) {
-  const checkInOpensAt = Date.parse(booking.checkInOpensAt);
-  const checkInClosesAt = Date.parse(booking.checkInClosesAt);
-  const endsAt = Date.parse(booking.endsAt);
-  return (
-    booking.canCheckIn &&
-    Number.isFinite(nowInstant) &&
-    Number.isFinite(checkInOpensAt) &&
-    Number.isFinite(checkInClosesAt) &&
-    Number.isFinite(endsAt) &&
-    checkInOpensAt <= nowInstant &&
-    nowInstant <= checkInClosesAt &&
-    nowInstant < endsAt
-  );
-}
-
-function canReleaseAt(booking: WorkplaceBooking, nowInstant: number) {
-  const startsAt = Date.parse(booking.startsAt);
-  const endsAt = Date.parse(booking.endsAt);
-  return (
-    booking.canRelease &&
-    Number.isFinite(nowInstant) &&
-    Number.isFinite(startsAt) &&
-    Number.isFinite(endsAt) &&
-    startsAt <= nowInstant &&
-    nowInstant < endsAt
-  );
-}
-
 export function workplaceAttention({
   bookings = [],
   calendar,
   now,
+  bookingSourceState = 'READY',
+  canUpdateWorkplaceBooking = true,
 }: {
   bookings?: readonly WorkplaceBooking[];
   calendar?: CalendarHome;
   now: string;
+  bookingSourceState?: WorkplaceHomeSourceState;
+  canUpdateWorkplaceBooking?: boolean;
 }): WorkplaceHomeAttention[] {
   const items: WorkplaceHomeAttention[] = [];
   const nowInstant = Date.parse(now);
-  for (const booking of bookings.filter((item) => ACTIVE_BOOKING_STATES.has(item.status))) {
+  for (const booking of bookings) {
     const path = `/workplace/my-bookings?booking=${encodeURIComponent(booking.bookingId)}`;
-    if (canCheckInAt(booking, nowInstant)) {
+    const actionPolicy = workplaceBookingActionPolicy({
+      booking,
+      sourceState: bookingSourceState,
+      canUpdateWorkplaceBooking,
+      nowInstant,
+    });
+    if (actionPolicy.canCheckIn) {
       items.push({
         key: `check-in:${booking.bookingId}`,
         kind: 'CHECK_IN',
@@ -401,7 +384,7 @@ export function workplaceAttention({
         sortAt: booking.checkInClosesAt ?? booking.startsAt,
         booking,
       });
-    } else if (canReleaseAt(booking, nowInstant)) {
+    } else if (actionPolicy.canRelease) {
       items.push({
         key: `release:${booking.bookingId}`,
         kind: 'RELEASE',
@@ -478,6 +461,8 @@ export function buildWorkplaceHomeModel({
   bookability,
   now,
   timeZone,
+  bookingSourceState = 'READY',
+  canUpdateWorkplaceBooking = true,
 }: {
   explore?: WorkplaceExploreResponse;
   bookings?: readonly WorkplaceBooking[];
@@ -486,6 +471,8 @@ export function buildWorkplaceHomeModel({
   bookability: WorkplaceBookabilityContext;
   now: string;
   timeZone: string;
+  bookingSourceState?: WorkplaceHomeSourceState;
+  canUpdateWorkplaceBooking?: boolean;
 }): WorkplaceHomeModel {
   const selectedFloor = explore?.selectedFloor ?? null;
   const selectedSite = explore?.sites.find((site) => site.siteId === selectedFloor?.siteId) ?? null;
@@ -510,10 +497,24 @@ export function buildWorkplaceHomeModel({
     ])
   ) as Partial<Record<WorkplaceResourceType, string>>;
   const agenda = workplaceAgenda({ bookings, roomBookings, calendar, now, timeZone });
-  const attention = workplaceAttention({ bookings, calendar, now });
+  const attention = workplaceAttention({
+    bookings,
+    calendar,
+    now,
+    bookingSourceState,
+    canUpdateWorkplaceBooking,
+  });
   const nowInstant = Date.parse(now);
   const checkIn = (bookings ?? [])
-    .filter((booking) => canCheckInAt(booking, nowInstant))
+    .filter(
+      (booking) =>
+        workplaceBookingActionPolicy({
+          booking,
+          sourceState: bookingSourceState,
+          canUpdateWorkplaceBooking,
+          nowInstant,
+        }).canCheckIn
+    )
     .sort((left, right) => left.startsAt.localeCompare(right.startsAt))[0];
   const nextAgenda = agenda.find((item) => Date.parse(item.endsAt) > nowInstant);
   const availableCount = availability.reduce((sum, item) => sum + item.available, 0);

@@ -128,6 +128,11 @@ export function CalendarSignal({
               borderRadius: 0.75,
               color,
               bgcolor: alpha(color, theme.palette.mode === 'dark' ? 0.2 : 0.1),
+              '@media (forced-colors: active)': {
+                border: '1px solid CanvasText',
+                backgroundColor: 'Canvas',
+                color: 'CanvasText',
+              },
             };
           }}
         >
@@ -163,6 +168,10 @@ export function CalendarSignal({
               overflow: 'hidden',
               borderRadius: 999,
               bgcolor: alpha(toneColor(theme, tone), theme.palette.mode === 'dark' ? 0.2 : 0.12),
+              '@media (forced-colors: active)': {
+                border: '1px solid CanvasText',
+                backgroundColor: 'Canvas',
+              },
             })}
           >
             <Box
@@ -175,6 +184,7 @@ export function CalendarSignal({
                   duration: theme.transitions.duration.shorter,
                 }),
                 '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (forced-colors: active)': { backgroundColor: 'Highlight' },
               })}
             />
           </Box>
@@ -203,6 +213,12 @@ export function CalendarSignal({
         duration: theme.transitions.duration.shorter,
       }),
       '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+      '@media (forced-colors: active)': {
+        borderColor: 'CanvasText',
+        backgroundColor: 'Canvas',
+        outline: isSelected ? '2px solid Highlight' : 'none',
+        outlineOffset: -2,
+      },
     };
   };
 
@@ -288,13 +304,29 @@ export function CalendarWeekBalanceRail({
                   bgcolor: alpha(theme.palette.text.secondary, 0.1),
                   outline: day.loadPercent > 100 ? `1px solid ${theme.palette.error.main}` : 'none',
                   outlineOffset: 2,
+                  '@media (forced-colors: active)': {
+                    border: '1px solid CanvasText',
+                    backgroundColor: 'Canvas',
+                    outlineColor: day.loadPercent > 100 ? 'Highlight' : 'CanvasText',
+                  },
                 })}
               >
                 <Box
                   aria-hidden="true"
-                  sx={{ width: `${meetingWidth}%`, bgcolor: 'primary.main' }}
+                  sx={{
+                    width: `${meetingWidth}%`,
+                    bgcolor: 'primary.main',
+                    '@media (forced-colors: active)': { backgroundColor: 'Highlight' },
+                  }}
                 />
-                <Box aria-hidden="true" sx={{ width: `${focusWidth}%`, bgcolor: 'success.main' }} />
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    width: `${focusWidth}%`,
+                    bgcolor: 'success.main',
+                    '@media (forced-colors: active)': { backgroundColor: 'CanvasText' },
+                  }}
+                />
               </Box>
               <Typography
                 variant="caption"
@@ -346,7 +378,7 @@ export function CalendarSectionHeader({
   padded?: boolean;
 }) {
   const headerMeta = action ? (
-    <Stack direction="row" alignItems="center" spacing={1}>
+    <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" useFlexGap>
       {meta}
       {action}
     </Stack>

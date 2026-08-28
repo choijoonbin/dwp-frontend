@@ -2756,6 +2756,10 @@
     "empty": {
       "rolesTitle": "No roles have been defined yet",
       "rolesDescription": "Create the first role to manage the resource permissions needed for a job.",
+      "assignmentsTitle": "No group role assignments yet",
+      "assignmentsDescription": "Assign a role to a group, then set its scope and expiry to govern member access.",
+      "groupsDescription": "No active groups match this search. Change the query or activate an available group in the directory.",
+      "assignableRolesDescription": "No active roles can be assigned to groups. First prepare a group-assignable role under ‘Define roles & access’.",
       "effectiveTitle": "Select a user to inspect",
       "effectiveDescription": "Choose a user to calculate roles received directly or through groups and their final resource permissions."
     },
@@ -2850,7 +2854,11 @@
       "CREATE": "Create",
       "UPDATE": "Update",
       "DELETE": "Delete",
-      "MANAGE": "Full management"
+      "MANAGE": "Full management",
+      "EXECUTE": "Execute",
+      "APPROVE": "Approve",
+      "EXPORT": "Export",
+      "PUBLISH": "Publish"
     },
     "resourceTypes": {
       "APP": "Application",
@@ -2904,6 +2912,7 @@
       "revokeFor": "Revoke the {{role}} role assignment from {{group}}",
       "assignmentStates": {
         "REVOKED": "Revoked",
+        "EXPIRED": "Expired",
         "MANAGED_ELSEWHERE": "Outside scope",
         "NONE": "No action"
       }
@@ -2931,7 +2940,13 @@
     },
     "assignmentDialog": {
       "title": "Assign role to group",
-      "justificationHelp": "Enter 10 to 500 characters for the audit trail. Every current member is checked against separation-of-duties policy before assignment."
+      "justificationHelp": "Enter 10 to 500 characters for the audit trail. Every current member is checked against separation-of-duties policy before assignment.",
+      "validToHelp": "Optional. If set, access automatically stops being effective after this time.",
+      "validToFuture": "Expiry must be later than the current time.",
+      "scopeRefHelp": {
+        "ORG_UNIT": "Enter the canonical organization ID exactly (up to 160 characters).",
+        "RESOURCE": "Enter the canonical resource key exactly (up to 160 characters)."
+      }
     },
     "revokeDialog": {
       "title": "Revoke this role assignment?",
@@ -2989,6 +3004,7 @@
       "selectPrincipal": "Select a principal",
       "selectRole": "Select a privileged role",
       "reviewDueAt": "Next emergency-account review",
+      "futureDateTimeError": "Choose a date and time later than the current time.",
       "action": "Permitted action"
     },
     "activationModes": {
@@ -3621,6 +3637,7 @@
       "description": "In addition to permission to use a feature, these policies restrict the organizations, data, and actions that workforce APIs allow.",
       "mobileSummaryTitle": "What this area controls",
       "mobileSummaryDescription": "{{count}} currently in effect · Show details",
+      "mobileSummaryUnavailable": "Summary unavailable · Show details",
       "steps": {
         "subject": {
           "title": "Subject",
@@ -3756,7 +3773,11 @@
       "retryOrganizations": "Reload organizations",
       "usersLoading": "Searching for users.",
       "usersError": "User search results could not be loaded. Your other entries are preserved.",
-      "retryUsers": "Search users again"
+      "retryUsers": "Search users again",
+      "policyUsersTitle": "Some policy users could not be identified",
+      "policyUsersError": "Directory lookup failed. Policy enforcement is unchanged, but names and email addresses are temporarily unavailable.",
+      "policyUsersUnresolved": "User policy references outside the loaded directory page: {{count}}. They are shown by ID until the directory can resolve them.",
+      "retryPolicyUsers": "Reload user identities"
     },
     "revoke": {
       "title": "Revoke this access policy?",

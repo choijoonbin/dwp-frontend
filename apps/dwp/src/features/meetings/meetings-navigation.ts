@@ -1,10 +1,16 @@
-import { CalendarClock, Gauge, History, House, LogIn, Settings2, Video } from 'lucide-react';
+import { Bot, CalendarClock, Gauge, History, House, LogIn, Settings2, Video } from 'lucide-react';
 
 import type { ProductNavigationItem } from '../../components/product-manifest';
 
 export type MeetingsSection = 'start' | 'meetings' | 'admin';
 export type MeetingsView =
-  'home' | 'mine' | 'history' | 'join' | 'admin-operations' | 'admin-policies';
+  | 'home'
+  | 'mine'
+  | 'history'
+  | 'join'
+  | 'admin-operations'
+  | 'admin-policies'
+  | 'admin-intelligence';
 
 export type MeetingsNavigationItem = ProductNavigationItem & {
   section: MeetingsSection;
@@ -47,6 +53,14 @@ export const MEETINGS_NAVIGATION: readonly MeetingsNavigationGroup[] = [
         view: 'admin-policies',
         path: '/meetings/admin/policies',
         icon: Settings2,
+        requiredResourceKey: 'ADMIN.MEETINGS',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'admin',
+        view: 'admin-intelligence',
+        path: '/meetings/admin/intelligence',
+        icon: Bot,
         requiredResourceKey: 'ADMIN.MEETINGS',
         requiredPermissionCode: 'VIEW',
       },

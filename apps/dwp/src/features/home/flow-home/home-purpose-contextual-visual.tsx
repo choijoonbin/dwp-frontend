@@ -126,18 +126,24 @@ function ResponseDistribution({ items }: { items: readonly NormalizedHomeContrib
       color: 'info.main',
     },
   ].filter((segment) => segment.count > 0);
+  const segmentSummary = segments.map((segment) => `${segment.label} ${segment.count}`).join(', ');
+  const totalLabel = t('flow.purpose.response.distributionTotal', { count: total });
 
   return (
     <Box
       data-home-response-distribution
+      data-home-response-total={total}
       role="img"
-      aria-label={segments.map((segment) => `${segment.label} ${segment.count}`).join(', ')}
+      aria-label={t('flow.purpose.response.distributionLabel', {
+        segments: segmentSummary,
+        count: total,
+      })}
     >
       <Box
         aria-hidden="true"
         sx={{
           display: 'flex',
-          width: { xs: 1, sm: 'min(100%, 320px)' },
+          width: 1,
           height: 5,
           overflow: 'hidden',
           borderRadius: 99,
@@ -157,7 +163,7 @@ function ResponseDistribution({ items }: { items: readonly NormalizedHomeContrib
           />
         ))}
       </Box>
-      <Stack direction="row" gap={1.25} flexWrap="wrap" sx={{ mt: 0.65 }}>
+      <Stack direction="row" alignItems="center" gap={1.25} flexWrap="wrap" sx={{ mt: 0.65 }}>
         {segments.map((segment) => (
           <Stack key={segment.key} direction="row" alignItems="center" gap={0.45}>
             <Box
@@ -175,6 +181,15 @@ function ResponseDistribution({ items }: { items: readonly NormalizedHomeContrib
             </Typography>
           </Stack>
         ))}
+        <Typography
+          data-home-response-total-label
+          variant="caption"
+          color="text.secondary"
+          fontWeight={700}
+          sx={{ ml: 'auto', fontSize: 10.5 }}
+        >
+          {totalLabel}
+        </Typography>
       </Stack>
     </Box>
   );

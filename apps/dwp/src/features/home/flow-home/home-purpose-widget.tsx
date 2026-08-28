@@ -1,12 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Clock3,
-  MoreHorizontal,
-  RefreshCw,
-  ShieldAlert,
-} from 'lucide-react';
+import { ArrowRight, Clock3, MoreHorizontal, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ActionButton, ContentDialog } from '@dwp-frontend/design-system';
@@ -28,6 +21,7 @@ import type { FlowSignal } from './flow-home-model';
 
 import { RolePulseInsight } from './home-purpose-role-pulse-insight';
 import { HomePurposeContextualVisual } from './home-purpose-contextual-visual';
+import { HomePurposeStatus } from './home-purpose-status';
 
 type HomePurposeWidgetProps = Readonly<{
   sectionKey: 'action' | 'timeline' | 'response' | 'request' | 'pulse';
@@ -586,7 +580,6 @@ export function HomePurposeWidget({
   const presentationPolicy = homePurposeContentPolicy(footprintHeight, supportStack);
   const resolvedState = state ?? (items.length > 0 ? 'AVAILABLE' : 'EMPTY');
   const degraded = resolvedState === 'PARTIAL' || resolvedState === 'UNAVAILABLE';
-  const restricted = resolvedState === 'RESTRICTED';
   const visibleLimit = homePurposeVisibleLimit(maxItems, footprintHeight, supportStack);
   const resolvedVisibleLimit =
     sectionKey === 'pulse' && roleSignals.length > 0 ? Math.min(1, visibleLimit) : visibleLimit;
@@ -876,87 +869,32 @@ export function HomePurposeWidget({
               ))}
             </Box>
           ) : (
-            <Box
-              data-home-purpose-status
-              sx={(theme) => ({
-                minHeight: supportStack ? 44 : 88,
-                width: 1,
-                p: supportStack ? 0.75 : 1.25,
-                flex: '1 1 auto',
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: 'auto minmax(0, 1fr)',
-                  sm: 'auto minmax(0, 1fr) auto',
-                },
-                alignItems: 'center',
-                columnGap: 1.25,
-                rowGap: 0.75,
-                color: 'text.secondary',
-                bgcolor: alpha(
-                  degraded || restricted ? theme.palette.warning.main : theme.palette.success.main,
-                  theme.palette.mode === 'dark' ? 0.1 : 0.045
-                ),
-                border: '1px solid',
-                borderColor: alpha(
-                  degraded || restricted ? theme.palette.warning.main : theme.palette.success.main,
-                  0.18
-                ),
-                borderRadius: 'var(--home-radius-item)',
-                '@media (forced-colors: active)': {
-                  bgcolor: 'Canvas',
-                  borderColor: 'CanvasText',
-                },
-              })}
-            >
-              {degraded || restricted ? (
-                <ShieldAlert size={22} color="var(--mui-palette-warning-main)" aria-hidden="true" />
-              ) : (
-                <CheckCircle2
-                  size={22}
-                  color="var(--mui-palette-success-main)"
-                  aria-hidden="true"
-                />
+            <HomePurposeStatus
+              state={resolvedState === 'AVAILABLE' ? 'EMPTY' : resolvedState}
+              title={t(
+                resolvedState === 'RESTRICTED'
+                  ? 'flow.purpose.restrictedEmpty'
+                  : degraded
+                    ? 'flow.purpose.partialEmpty'
+                    : `flow.purpose.${sectionKey}.empty`
               )}
-              <Box>
-                <Typography variant="subtitle2" color="text.primary" fontWeight={700}>
-                  {t(
-                    restricted
-                      ? 'flow.purpose.restrictedEmpty'
-                      : degraded
-                        ? 'flow.purpose.partialEmpty'
-                        : `flow.purpose.${sectionKey}.empty`
-                  )}
-                </Typography>
-                <Typography variant="body2">
-                  {t(
-                    restricted
-                      ? 'flow.purpose.restrictedEmptyDescription'
-                      : degraded
-                        ? 'flow.purpose.partialEmptyDescription'
-                        : `flow.purpose.${sectionKey}.emptyDescription`
-                  )}
-                </Typography>
-                {sectionKey === 'request' && !degraded && !restricted && <RequestEmptyJourney />}
-              </Box>
-              {degraded && onRetry && (
-                <ActionButton
-                  data-home-purpose-retry
-                  intent="quiet"
-                  size="small"
-                  startIcon={<RefreshCw size={14} aria-hidden="true" />}
-                  onClick={onRetry}
-                  loading={fetching}
-                  sx={{
-                    minHeight: 44,
-                    whiteSpace: 'nowrap',
-                    justifySelf: 'end',
-                    gridColumn: { xs: '2', sm: 'auto' },
-                  }}
-                >
-                  {t('page.retry')}
-                </ActionButton>
+              description={t(
+                resolvedState === 'RESTRICTED'
+                  ? 'flow.purpose.restrictedEmptyDescription'
+                  : degraded
+                    ? 'flow.purpose.partialEmptyDescription'
+                    : `flow.purpose.${sectionKey}.emptyDescription`
               )}
-            </Box>
+              supportStack={supportStack}
+              fetching={fetching}
+              retryLabel={t('page.retry')}
+              supplement={
+                sectionKey === 'request' && !degraded && resolvedState !== 'RESTRICTED' ? (
+                  <RequestEmptyJourney />
+                ) : undefined
+              }
+              onRetry={onRetry}
+            />
           )}
         </Box>
       )}

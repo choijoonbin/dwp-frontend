@@ -49,3 +49,28 @@ is reached after selection rather than consuming most of the initial viewport.
 - [Butter agenda, run, and recap model](https://www.butter.us/)
 - [Figma and Google Meet integration](https://help.figma.com/hc/en-us/articles/16921722048151-Figma-and-Google-Meet)
 - [LiveKit React components](https://docs.livekit.io/reference/components/react/)
+
+## Second-pass product boundary (2026-08-28)
+
+The competitive target is the set of trusted enterprise jobs, not a count of Zoom
+menu items. DWP now separates the planes below so everyday participants do not inherit
+administrative complexity and administrators do not inherit meeting-content access.
+
+| Plane | Delivered navigation or surface | Responsibility |
+| --- | --- | --- |
+| User work | Meeting home | Start, schedule, join, capability-aware next action, and recent outcomes |
+| User work | My meetings | Lifecycle-correct prepare, join, recap, or unavailable action |
+| User work | Join with code | Resolve, request admission, explicit failure recovery, and pre-join |
+| User work | Live room | Media, screen share, participants, chat, speaking queue, reactions, content notice, and host recording readiness |
+| User work | Meeting history / recap | Governed artifacts, attendance, decisions, actions, and human-reviewed Agent intelligence |
+| Management | Operations | Live/scheduled/waiting/failure/quality evidence and runtime capabilities |
+| Management | Policy | Access, collaboration, retention, capacity, and version-aware save validation |
+| Management | AI & data governance | Recording/transcript/AI readiness, dependency gates, review/publish boundary, content ACL principle, retention, legal hold, and deletion evidence |
+
+Zoom host controls, Teams intelligent recap, and Webex AI review patterns support
+the same core conclusions: host authority must be explicit; recording and transcription
+must be visible; AI recap requires transcription, review, and controlled sharing; and
+administrative policy is distinct from meeting content. Breakout rooms, polls, Q&A,
+whiteboards, advanced host moderation, PSTN/SIP, webinars, and live captions remain
+separate delivery epics because their server/provider enforcement is not yet present.
+No placeholder menu is presented as a completed capability.

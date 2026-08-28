@@ -44,10 +44,11 @@ import {
 import { HomeEditorSafeArea } from '../features/home/home-editor-safe-area';
 import { homeUserAccessFingerprint } from '../features/home/runtime/home-access-fingerprint';
 import {
-  resolveHomeBootstrapState,
   resolveHomeDeviceClass,
   resolveHomePageCopy,
 } from '../features/home/runtime/home-page-runtime-state';
+import { HomePageStatePanel } from '../features/home/runtime/home-page-state-panel';
+import { useHomePageGate } from '../features/home/runtime/use-home-page-gate';
 import { resolveHomeOverviewQueryFailureState } from '../features/home/runtime/home-overview-query-state';
 import {
   homeAuthorizedQueryData,
@@ -55,7 +56,6 @@ import {
   isHomeAuthorizationFailure,
 } from '../features/home/flow-home/home-contribution-runtime-policy';
 import { HomeFooter } from '../features/home/home-footer';
-import { HomeLoadingSkeleton } from '../components/home-loading-skeleton';
 import {
   HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
   useHomeAppsWithBadges,
@@ -400,16 +400,17 @@ export default function HomePage() {
   const persistedSourceLoading = activeStoreUsesViews
     ? homeViewsQuery.isLoading
     : homePreferenceQuery.isLoading;
-  const homeBootstrapState = resolveHomeBootstrapState({
-    experiencePending: homeExperienceQuery.isPending,
-    experienceReady: homeExperienceQuery.isSuccess,
-    layoutPending: activeStoreUsesViews ? homeViewsQuery.isPending : homePreferenceQuery.isPending,
-    deviceLayoutPending:
-      activeStoreUsesViews && Boolean(sourceHomeView) && homeDeviceLayoutsQuery.isPending,
-  });
   const persistedSourceFailed = activeStoreUsesViews
     ? homeViewsQuery.isError
     : homePreferenceQuery.isError;
+  const homePageGate = useHomePageGate({
+    experienceQuery: homeExperienceQuery,
+    layoutQuery: activeStoreUsesViews ? homeViewsQuery : homePreferenceQuery,
+    deviceLayoutPending:
+      activeStoreUsesViews && Boolean(sourceHomeView) && homeDeviceLayoutsQuery.isPending,
+    customizationEnabled: personalCustomizationEnabled,
+    editorOpen,
+  });
   const currentEditSession = useMemo<HomeEditSession>(
     () => ({
       experienceVariant: flowHomeEnabled ? 'FLOW_V1' : 'CLASSIC',
@@ -801,17 +802,12 @@ export default function HomePage() {
         '& > footer': { mt: 'auto' },
       }}
     >
-      {homeBootstrapState ? (
-        <Box
-          data-testid="home-experience-bootstrap"
-          data-home-bootstrap-state={homeBootstrapState}
-          aria-busy="true"
-          aria-label={t('page.loadingHome')}
-          aria-live="polite"
-          role="status"
-        >
-          <HomeLoadingSkeleton />
-        </Box>
+      {homePageGate.state.kind !== 'ready' ? (
+        <HomePageStatePanel
+          state={homePageGate.state}
+          retrying={homePageGate.retrying}
+          onRetry={homePageGate.retry}
+        />
       ) : editorFlowHomeEnabled ? (
         <FlowHome
           audience={audienceProfile}
@@ -853,7 +849,7 @@ export default function HomePage() {
           previewDevice={previewDevice}
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
-          onStartEditing={personalCustomizationEnabled && !editorOpen ? beginEditing : undefined}
+          onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
           onOpenStudio={homeStudioEnabled && !editorOpen ? () => setStudioOpen(true) : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onSectionsChange={updateFlowSections}
@@ -891,7 +887,7 @@ export default function HomePage() {
           presentation={activePresentation}
           feedbackBusy={recommendationFeedback.busy}
           onBrowseAllApps={() => navigate('/apps')}
-          onStartEditing={personalCustomizationEnabled && !editorOpen ? beginEditing : undefined}
+          onStartEditing={homePageGate.editActionAvailable ? beginEditing : undefined}
           onAppLayoutChange={setDraftAppLayout}
           onWidgetsChange={setDraftWidgets}
           onLaunchApp={launchApp}

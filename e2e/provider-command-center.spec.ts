@@ -2,7 +2,17 @@ import { expect, test } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
 
+import type { Page } from '@playwright/test';
+
+const COMMAND_CENTER_GENERATED_AT = new Date('2026-08-11T00:00:00Z');
+
+async function pauseCommandCenterClock(page: Page) {
+  const currentTime = await page.evaluate(() => Date.now());
+  await page.clock.pauseAt(currentTime + 100);
+}
+
 test.beforeEach(async ({ page }, testInfo) => {
+  await page.clock.install({ time: COMMAND_CENTER_GENERATED_AT });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize(
     testInfo.project.name === 'mobile' ? { width: 320, height: 720 } : { width: 1280, height: 800 }
@@ -20,6 +30,7 @@ test.beforeEach(async ({ page }, testInfo) => {
 
 test('exposes operational scope, freshness, signals, and priority filtering', async ({ page }) => {
   await page.goto('/provider/overview');
+  await pauseCommandCenterClock(page);
 
   await expect(page.getByRole('heading', { name: 'Operations command center' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Operations command scope' })).toContainText(
@@ -56,6 +67,7 @@ test('exposes operational scope, freshness, signals, and priority filtering', as
 
 test('keeps the command center within the viewport', async ({ page }) => {
   await page.goto('/provider/overview');
+  await pauseCommandCenterClock(page);
   await expect(page.getByRole('region', { name: 'Global operating metrics' })).toBeVisible();
 
   const geometry = await page.evaluate(() => ({

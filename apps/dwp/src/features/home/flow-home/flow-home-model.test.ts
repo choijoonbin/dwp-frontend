@@ -74,7 +74,16 @@ const overview = {
         awaitingResponseCount: 0,
         availableRoomCount: 1,
       },
-      weekLoad: [],
+      weekLoad: [
+        {
+          date: '2026-08-21',
+          meetingMinutes: 60,
+          focusMinutes: 30,
+          eventCount: 1,
+          conflictCount: 0,
+          loadPercent: 72,
+        },
+      ],
       attention: [],
       generatedAt: '2026-08-21T00:00:00Z',
     },
@@ -101,7 +110,7 @@ const overview = {
 } as unknown as HomeOverview;
 
 describe('Flow Home model', () => {
-  it('keeps the schedule conflict status in sync with the displayed value', () => {
+  it('uses the current sourced schedule load as the KPI and keeps conflicts as context', () => {
     const conflictOverview = {
       ...overview,
       calendar: {
@@ -119,10 +128,33 @@ describe('Flow Home model', () => {
     expect(
       buildFlowSignals(conflictOverview).find((signal) => signal.key === 'schedule-load')
     ).toMatchObject({
-      value: 2,
+      value: 72,
+      unit: 'percent',
       tone: 'risk',
       comparison: { kind: 'threshold', value: 2 },
     });
+  });
+
+  it('does not fabricate a schedule load KPI without a load point for the calendar date', () => {
+    const missingCurrentLoad = {
+      ...overview,
+      calendar: {
+        ...overview.calendar,
+        data: {
+          ...overview.calendar.data,
+          weekLoad: [
+            {
+              ...overview.calendar.data!.weekLoad[0],
+              date: '2026-08-20',
+            },
+          ],
+        },
+      },
+    } as unknown as HomeOverview;
+
+    expect(
+      buildFlowSignals(missingCurrentLoad).some((signal) => signal.key === 'schedule-load')
+    ).toBe(false);
   });
 
   it('ranks due, high-priority work first and excludes completed work', () => {

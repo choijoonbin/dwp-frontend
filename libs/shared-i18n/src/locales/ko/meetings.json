@@ -24,7 +24,8 @@
         "history": { "label": "회의 기록" },
         "join": { "label": "코드로 참여" },
         "admin-operations": { "label": "회의 운영" },
-        "admin-policies": { "label": "회의 정책" }
+        "admin-policies": { "label": "회의 정책" },
+        "admin-intelligence": { "label": "AI 및 데이터 거버넌스" }
       }
     }
   },
@@ -70,6 +71,7 @@
     "mediaPermission": "카메라 또는 마이크 권한을 사용할 수 없습니다. 브라우저 설정을 확인하세요.",
     "connection": "실시간 회의 연결이 끊어졌습니다.",
     "attendanceSync": "회의 연결은 완료됐지만 참석 상태를 동기화하지 못했습니다.",
+    "lifecycleSync": "회의 연결은 유지되지만 최신 수명주기와 권한을 확인하지 못했습니다.",
     "leaveSync": "회의에서는 나가지만 퇴장 상태 동기화가 지연되고 있습니다."
   },
   "home": {
@@ -183,6 +185,7 @@
     "openRecap": "회의 회고 열기",
     "recap": {
       "loading": "회의 회고와 산출물을 불러오는 중",
+      "refreshing": "회의 회고 새로고침 중",
       "back": "회의 기록으로 돌아가기",
       "ended": "{{time}} 종료",
       "evidenceCount": "사용 가능한 산출물 {{count}}개",
@@ -213,8 +216,104 @@
         "unavailableTitle": "AI 회의록이 생성되지 않았습니다",
         "unavailableDescription": "녹화 없이 STT만 사용하는 모드와 녹화·전사 기반 모드는 정책 승인과 처리 인프라가 구성된 경우에만 실행됩니다."
       },
+      "intelligence": {
+        "title": "AI 회의 인텔리전스",
+        "description": "거버넌스가 적용된 전사를 기반으로 근거가 연결된 회의록을 만들고 검토한 뒤 참가자에게 명시적으로 게시합니다.",
+        "loading": "AI 회의 인텔리전스를 불러오는 중",
+        "loadErrorTitle": "AI 회의 인텔리전스를 사용할 수 없습니다",
+        "loadErrorDescription": "권한이 있는 최신 보고서를 확인하지 못해 어떤 보고서 콘텐츠도 표시하지 않습니다.",
+        "retry": "다시 시도",
+        "refresh": "새로고침",
+        "refreshing": "AI 보고서 새로고침 중",
+        "states": {
+          "UNAVAILABLE": "생성되지 않음",
+          "PROCESSING": "처리 중",
+          "FAILURE": "처리 실패",
+          "DRAFT": "초안 · 검토 필요",
+          "APPROVED": "승인됨 · 미게시",
+          "PUBLISHED": "게시됨",
+          "REJECTED": "반려됨",
+          "DELETED": "파기됨"
+        },
+        "stateDescriptions": {
+          "UNAVAILABLE": "이 회의에서 열람 권한이 있는 AI 보고서가 없습니다.",
+          "PROCESSING": "거버넌스 전사를 분석하고 있습니다. Agent 런타임에는 전사 원문을 저장하지 않습니다.",
+          "FAILURE": "콘텐츠를 게시하지 않고 실행이 중지되었습니다. 호스트는 거버넌스 의존성을 확인한 뒤 재시도할 수 있습니다.",
+          "DRAFT": "인가된 검토자만 이 초안을 볼 수 있습니다. 결정하기 전에 모든 인용 시점을 확인하세요.",
+          "APPROVED": "검토자가 이 버전을 승인했지만 명시적으로 게시하기 전에는 참가자에게 보이지 않습니다.",
+          "PUBLISHED": "검토된 이 버전을 권한 있는 회의 참가자가 볼 수 있습니다.",
+          "REJECTED": "초안이 반려되어 게시할 수 없습니다.",
+          "DELETED": "보고서 콘텐츠가 파기되었고 거버넌스 파기 증거만 남았습니다."
+        },
+        "generate": "초안 생성",
+        "regenerate": "새 초안 생성",
+        "generating": "거버넌스 분석 시작 중",
+        "generateBlockers": {
+          "NOT_HOST": "주최자 또는 공동 호스트만 AI 초안을 요청할 수 있습니다.",
+          "PROCESSING": "현재 분석 실행이 끝날 때까지 기다려 주세요.",
+          "TRANSCRIPT_NOT_AVAILABLE": "분석 전에 거버넌스가 적용된 전사 산출물이 준비되어야 합니다.",
+          "CONTENT_PLAN_NOT_AVAILABLE": "현재 콘텐츠 계획 버전을 확인하지 못해 생성을 차단합니다."
+        },
+        "actionError": "작업을 완료하지 못했습니다. 마지막으로 서버가 확인한 보고서는 변경되지 않았습니다.",
+        "processing": "분석은 fenced lease 아래 데이터베이스 트랜잭션 밖에서 실행됩니다. 실행 중에는 이 화면을 자동으로 갱신합니다.",
+        "failureCode": "안정화된 실패 코드: {{value}}",
+        "disclaimerTitle": "AI 결과는 반드시 사용자가 검증해야 합니다",
+        "disclaimerDescription": "검토 및 게시 전에는 공식 기록이 아닙니다. 개인의 감정, 의도, 성격, 건강 또는 생산성을 추론하지 않습니다.",
+        "evidenceTitle": "보고서 보관 및 근거",
+        "evidenceDescription": "모든 결과는 원본 전사 구간에 결속되며 회의 접근, 보존, 법적 보존 및 파기 제어를 상속합니다.",
+        "retentionUntil": "{{value}}까지 보존",
+        "legalHold": "법적 보존",
+        "schemaVersion": "스키마 {{value}}",
+        "sections": {
+          "executiveSummary": "핵심 요약",
+          "topics": "주요 주제",
+          "decisions": "결정 사항",
+          "actionItems": "후속 작업",
+          "openQuestions": "열린 질문",
+          "risks": "위험 및 의존성",
+          "conversationClimate": "대화 흐름"
+        },
+        "sectionEmpty": "전사 근거가 충분한 항목을 찾지 못했습니다.",
+        "citationLabel": "전사 {{value}}",
+        "citationDetail": "전사 구간 {{segmentId}}, {{value}}",
+        "climateDescription": "전사 근거에 기반한 회의 단위의 상호작용 패턴입니다. 감정, 정서, 성격 또는 직원 성과 점수가 아닙니다.",
+        "climateLabels": {
+          "ALIGNED": "대체로 합의됨",
+          "MIXED": "의견이 혼재함",
+          "CONTESTED": "이견이 명확함",
+          "INSUFFICIENT_EVIDENCE": "근거 부족"
+        },
+        "climateSignals": {
+          "BALANCED_TURN_TAKING": "균형 있는 발언 교대",
+          "CONSTRUCTIVE_DISAGREEMENT": "건설적인 이견",
+          "UNRESOLVED_DISAGREEMENT": "해결되지 않은 이견",
+          "DOMINANT_MONOLOGUE_PATTERN": "긴 단독 발언 패턴",
+          "LOW_TRANSCRIPT_EVIDENCE": "전사 근거 제한"
+        },
+        "reviewTitle": "사용자 검토",
+        "reviewDescription": "이 버전을 승인하거나 반려하기 전에 모든 인용 전사 구간과 초안을 비교하세요.",
+        "reviewSeparationNote": "승인 시 검토자와 버전을 기록합니다. 게시는 별도 작업이므로 초안이 실수로 공유되지 않습니다.",
+        "reviewReasonLabel": "검토 근거",
+        "reviewReasonPlaceholder": "검토 근거 선택",
+        "reviewReasons": {
+          "EVIDENCE_VERIFIED": "근거와 문구 확인 완료",
+          "CORRECTED_AND_VERIFIED": "수정 및 확인 완료",
+          "INSUFFICIENT_EVIDENCE": "원본 근거 부족",
+          "SENSITIVE_CONTENT": "민감 콘텐츠 수정 필요"
+        },
+        "approve": "초안 승인",
+        "approving": "초안 승인 중",
+        "reject": "초안 반려",
+        "rejecting": "초안 반려 중",
+        "publishTitle": "승인된 보고서 게시",
+        "publishDescription": "게시하면 검토된 현재 버전이 권한 있는 회의 참가자에게 표시됩니다.",
+        "publish": "참가자에게 게시",
+        "publishing": "보고서 게시 중"
+      },
       "artifacts": {
         "governance": "녹화, 전사, 요약, 채팅과 참석 근거는 각각 독립된 접근 권한·보존 기간·삭제 증거를 가집니다.",
+        "processingRefresh": "산출물을 처리하고 있습니다. 처리가 끝날 때까지 이 회고를 자동으로 새로고침합니다.",
+        "retrievalUnavailable": "서비스에는 보관된 근거가 있지만 이 클라이언트에는 아직 인가된 조회 경로가 없습니다. 이 화면에서 열거나 다운로드할 수 없습니다.",
         "retention": "{{time}}까지 보존",
         "noRetention": "보존 정책이 적용된 산출물 없음",
         "types": {
@@ -228,6 +327,7 @@
           "NONE": "요청 없음",
           "PROCESSING": "처리 중",
           "AVAILABLE": "사용 가능",
+          "AVAILABLE_NO_RETRIEVAL": "보관됨 · 조회 불가",
           "UNAVAILABLE": "미구성",
           "FAILED": "처리 실패",
           "DELETED": "파기됨"
@@ -255,6 +355,7 @@
     "resolving": "회의 찾는 중",
     "displayName": "표시 이름",
     "request": "입장 요청",
+    "continueDirect": "계속",
     "requesting": "요청 중",
     "waitingTitle": "호스트 승인 대기 중",
     "waitingDescription": "이 페이지를 열어두세요. 입장이 승인되면 장치 점검으로 이동합니다.",
@@ -267,7 +368,11 @@
     "expiredDescription": "새 입장 요청을 제출하세요.",
     "notAllowed": "입장할 수 없습니다: {{reason}}",
     "resolveError": "회의 코드를 확인하지 못했습니다.",
-    "requestError": "입장 요청을 제출하지 못했습니다."
+    "requestError": "입장 요청을 제출하지 못했습니다.",
+    "statusError": "호스트 응답을 확인하지 못했습니다. 입장 요청은 유지됩니다. 연결을 확인하고 상태를 다시 조회하세요.",
+    "checkingStatus": "입장 상태 확인 중",
+    "retryStatus": "입장 상태 다시 확인",
+    "startOver": "처음부터 다시"
   },
   "room": {
     "loading": "회의 준비 중",
@@ -334,6 +439,9 @@
     "endedDescription": "참석 및 품질 기록을 마무리하고 있습니다.",
     "viewHistory": "회의 기록 열기",
     "returnHome": "회의 홈으로 돌아가기",
+    "cancelledTitle": "취소된 회의입니다",
+    "cancelledDescription": "회의실이 닫혀 실시간 접속 자격 증명을 발급하지 않습니다.",
+    "returnToMeetings": "내 회의로 돌아가기",
     "leftTitle": "회의에서 나왔습니다",
     "leftDescription": "필요하면 같은 장치 설정으로 다시 참여할 수 있습니다.",
     "disconnectedTitle": "연결이 중단되었습니다",
@@ -356,11 +464,89 @@
     "reaction": "{{reaction}} 반응 보내기",
     "reactionsLabel": "반응",
     "reactionAnnouncement": "{{name}}님이 {{reaction}} 반응을 보냈습니다.",
+    "reactionSendError": "반응을 전달하지 못했습니다. 연결을 확인하고 다시 시도하세요.",
     "raiseHand": "손들기",
     "lowerHand": "손 내리기",
     "handRaised": "손을 들었습니다",
     "quality": "연결 품질",
     "recordingUnavailable": "Egress가 구성되지 않아 녹화를 사용할 수 없습니다.",
+    "content": {
+      "title": "녹화·전사·AI 고지",
+      "description": "테넌트 정책이 적용된 회의 콘텐츠 계획의 현재 상태이며 회의 중 자동으로 갱신됩니다.",
+      "open": "녹화 및 콘텐츠 상태 열기",
+      "loading": "현재 녹화 및 처리 계획을 확인하는 중",
+      "loadError": "현재 녹화 및 처리 계획을 확인하지 못했습니다. 확인될 때까지 회의 참여와 녹화 제어를 차단합니다.",
+      "refreshErrorLastKnown": "최신 콘텐츠 상태를 갱신하지 못했습니다. 아래 값은 마지막 서버 확인 상태이며 녹화 제어는 계속 차단됩니다.",
+      "statusVerifying": "녹화 상태 확인 중",
+      "statusUnavailable": "상태 확인 불가",
+      "disabled": "실시간 수집 요청 없음",
+      "blockedTitle": "콘텐츠 처리를 시작할 수 없습니다",
+      "plan": {
+        "title": "호스트 콘텐츠 계획",
+        "description": "이 회의에서 수집·처리할 항목을 선택하세요. 실제 시작 전 서버가 테넌트 정책, 동의 및 인프라 준비 상태를 검증합니다.",
+        "recordingLabel": "회의 미디어 녹화",
+        "recordingDescription": "테넌트 보존 정책에 따라 암호화된 녹화물을 생성합니다.",
+        "transcriptionLabel": "전사 생성",
+        "transcriptionDescription": "승인된 회의 오디오를 구성된 음성-텍스트 서비스로 전송합니다.",
+        "aiSummaryLabel": "AI 요약 생성",
+        "aiSummaryDescription": "보안 정책이 적용된 전사에서 AI 회의 요약을 생성합니다. 활성화하면 전사도 함께 활성화됩니다.",
+        "e2eeLabel": "미디어 종단 간 암호화",
+        "e2eeDescription": "서버 측 수집 및 처리 서비스가 미디어에 접근할 수 없도록 보호합니다.",
+        "e2eeConflict": "종단 간 암호화는 서버 녹화·전사·AI 요약과 함께 사용할 수 없습니다. 이 조합을 저장하면 계획을 변경할 때까지 처리는 차단 상태로 유지됩니다.",
+        "activeLocked": "활성 녹화 요청을 중지한 뒤 콘텐츠 계획을 변경하세요.",
+        "save": "콘텐츠 계획 저장",
+        "saving": "콘텐츠 계획 저장 중",
+        "saveSuccess": "서버가 계획을 저장하고 고지 및 준비 상태를 다시 평가했습니다. 이 패널의 현재 상태와 고지를 확인하세요.",
+        "saveError": "콘텐츠 계획을 저장하지 못했습니다. 최신 서버 버전을 갱신 중이므로 확인한 뒤 다시 시도하세요."
+      },
+      "noticeRequiredTitle": "회의 고지를 확인하고 동의해 주세요",
+      "noticeAcknowledgedTitle": "현재 회의 고지를 확인했습니다",
+      "noticeDescription": "고지 개정 {{revision}}에 위에 표시된 녹화·전사·AI 처리가 포함됩니다.",
+      "noticeUnavailable": "처리가 요청됐지만 서버의 공식 고지를 확인할 수 없습니다. 회의 참여와 녹화를 계속 차단합니다.",
+      "acknowledge": "고지 확인",
+      "acknowledging": "고지 확인 중",
+      "acknowledgeError": "고지를 확인 처리하지 못했습니다. 최신 개정을 새로고침한 뒤 다시 시도하세요.",
+      "consentProgress": "필수 참가자 고지 확인: {{required}}명 중 {{received}}명.",
+      "startRecording": "녹화 시작",
+      "stopRecording": "녹화 중지",
+      "startBlocked": "계획 준비 완료, 모든 필수 고지 확인, 회의 진행 중 조건을 모두 충족해야 녹화를 시작할 수 있습니다.",
+      "commandError": "녹화 명령이 승인되지 않았습니다. 현재 차단 사유를 확인한 뒤 다시 시도하세요.",
+      "startConfirmTitle": "보안 정책이 적용된 녹화를 시작할까요?",
+      "startConfirmDescription": "고지된 콘텐츠 계획 범위에서만 녹화합니다. 모든 참가자에게 서버 기준 녹화 상태가 계속 표시됩니다.",
+      "stopConfirmTitle": "녹화를 중지할까요?",
+      "stopConfirmDescription": "설정된 접근 및 보존 정책에 따라 녹화 산출물을 마무리합니다.",
+      "applying": "녹화 명령 적용 중",
+      "features": {
+        "recording": "녹화",
+        "transcription": "전사",
+        "aiSummary": "AI 요약"
+      },
+      "recordingStates": {
+        "INACTIVE": "녹화 안 함",
+        "REQUESTED": "녹화 요청됨",
+        "STARTING": "녹화 시작 중",
+        "RECORDING": "녹화 중",
+        "STOP_REQUESTED": "녹화 중지 중",
+        "STOPPED": "녹화 중지됨",
+        "FAILED": "녹화 실패"
+      },
+      "blockers": {
+        "MEETINGS_DISABLED": "테넌트 정책에서 화상회의를 비활성화했습니다.",
+        "PLAN_RECORDING_DISABLED": "이 회의 콘텐츠 계획에서 녹화를 요청하지 않았습니다.",
+        "MEETING_NOT_LIVE": "회의가 진행 중이어야 녹화를 시작할 수 있습니다.",
+        "POLICY_NEVER": "테넌트 정책에서 녹화를 금지합니다.",
+        "E2EE": "종단 간 암호화로 서버 녹화 및 처리를 사용할 수 없습니다.",
+        "CONSENT": "필수 참가자의 고지 확인이 완료되지 않았습니다.",
+        "RECORDING_NOT_ACTIVE": "중지할 활성 녹화가 없습니다.",
+        "MEDIA_PROVIDER": "실시간 미디어 공급자를 사용할 수 없습니다.",
+        "EGRESS": "녹화 Egress 서비스를 사용할 수 없습니다.",
+        "STORAGE": "보안 정책이 적용된 산출물 저장소를 사용할 수 없습니다.",
+        "KMS": "암호화 키 관리 서비스를 사용할 수 없습니다.",
+        "AUDIT": "필수 감사 근거를 기록할 수 없습니다.",
+        "STT": "음성-텍스트 처리를 사용할 수 없습니다.",
+        "LLM": "승인된 언어 모델 공급자를 사용할 수 없습니다."
+      }
+    },
     "endConfirmTitle": "모든 참가자에게 회의를 종료할까요?",
     "endConfirmDescription": "모든 참가자의 연결이 종료되고 참석 기록을 마무리합니다.",
     "reactions": {
@@ -479,7 +665,8 @@
       "screenShare": "화면 공유",
       "chat": "회의 채팅",
       "captions": "실시간 자막",
-      "recording": "거버넌스 녹화",
+    "recording": "거버넌스 녹화",
+    "transcript": "거버넌스 전사",
       "aiNotes": "AI 회의 노트"
     },
     "operations": {
@@ -526,11 +713,72 @@
       "chatRetentionHint": "0이면 진행 중인 회의에서만 보관합니다. 0~365일이며 회의 기록 보존 기간({{meetingRetentionDays}}일)을 초과할 수 없습니다.",
       "chatRetentionRangeError": "0~365 사이의 정수로 입력하세요.",
       "chatRetentionMeetingError": "회의 채팅 보존 기간은 회의 기록 보존 기간을 초과할 수 없습니다.",
-      "artifactRetention": "회의 산출물 보존 기간(일)",
+    "artifactRetention": "회의 산출물 보존 기간(일)",
+    "artifactRetentionMeetingError": "회의 산출물 보존 기간은 회의 기록 보존 기간을 초과할 수 없습니다.",
       "maximumParticipants": "최대 참가자 수",
       "unmuteRequestOnly": "호스트는 참가자의 마이크를 직접 켤 수 없으며 음소거 해제만 요청할 수 있습니다.",
       "saved": "회의 정책을 저장했습니다.",
-      "saveError": "회의 정책을 저장하지 못했습니다."
+    "saveError": "회의 정책을 저장하지 못했습니다."
+  },
+  "intelligence": {
+    "loading": "AI 및 데이터 거버넌스를 불러오는 중",
+    "title": "AI 및 데이터 거버넌스",
+    "description": "실제 사용 가능한 회의 인텔리전스 기능과 운영상 배포 차단 조건을 구분해 확인합니다.",
+    "accessBoundary": "이 관리 화면은 정책 및 의존성 상태만 표시합니다. 녹화, 전사, 채팅 또는 AI 보고서 콘텐츠 열람 권한을 부여하지 않습니다.",
+    "capabilitiesTitle": "사용자 제공 기능",
+    "capabilitiesDescription": "테넌트 정책, 거버넌스 처리와 실행 의존성이 모두 일치할 때만 준비 완료로 판단합니다.",
+    "dependenciesTitle": "처리 의존성",
+    "dependenciesDescription": "운영 엔드포인트, 처리 지역, 암호화, 감사와 처리기를 각각 검증해야 합니다.",
+    "workflowTitle": "사용자 검토 및 게시",
+    "workflowDescription": "AI 결과는 권한 있는 검토자가 근거를 확인하고 명시적으로 게시하기 전까지 초안입니다.",
+    "lifecycleTitle": "보존 및 증거",
+    "lifecycleDescription": "콘텐츠 접근, 법적 보존, 만료, 파기 및 불변 증거를 각각 평가합니다.",
+    "retentionTitle": "설정된 보존 기간",
+    "retentionDescription": "산출물 및 채팅 보존 기간은 회의 기록 범위를 초과할 수 없습니다.",
+    "observedAt": "{{value}} 기준",
+    "days": "{{value}}일",
+    "states": {
+      "READY": "준비 완료",
+      "BLOCKED": "차단됨",
+      "CONNECTION_REQUIRED": "연결 필요",
+      "NOT_VERIFIED": "미검증"
+    },
+    "reasons": {
+      "POLICY_NEVER": "테넌트 정책에서 이 기능을 금지합니다.",
+      "CAPABILITY_NOT_CONFIGURED": "실행 환경에서 이 기능의 구성을 보고하지 않습니다.",
+      "REALTIME_PROVIDER_UNAVAILABLE": "실시간 미디어 공급자를 사용할 수 없습니다.",
+      "DEPENDENCY_STATUS_CONTRACT_MISSING": "공식 의존성 준비 상태 계약이 연결되지 않았습니다.",
+      "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "서버의 검토 및 게시 강제 처리가 검증되지 않았습니다.",
+      "LEGAL_HOLD_NOT_CONNECTED": "법적 보존 제어가 연결되지 않았습니다.",
+      "DELETION_EVIDENCE_NOT_CONNECTED": "파기 실행 및 증거가 연결되지 않았습니다."
+    },
+    "capabilities": {
+      "recording": { "label": "녹화", "description": "가시적 고지, 동의, 보존 및 파기 증거가 적용된 암호화 미디어 수집입니다." },
+      "transcript": { "label": "전사", "description": "승인된 음성-텍스트 경계에서 생성한 시점 포함 전사입니다." },
+      "aiNotes": { "label": "AI 회의 인텔리전스", "description": "개인 감정 점수 없이 근거가 연결된 회고와 회의 단위 대화 흐름을 제공합니다." }
+    },
+    "dependencies": {
+      "provider": { "label": "실시간 공급자", "description": "미디어 회의실 가용성과 테넌트 격리 상태입니다." },
+      "region": { "label": "처리 지역", "description": "모든 처리 구간에 승인된 데이터 위치를 적용합니다." },
+      "kms": { "label": "키 관리", "description": "봉투 암호화 및 암호학적 파기 준비 상태입니다." },
+      "audit": { "label": "감사 증거", "description": "명령, 접근, 검토, 게시 및 파기 불변 증거입니다." },
+      "egress": { "label": "녹화 Egress", "description": "승인되지 않은 우회 없이 적용되는 미디어 수집입니다." },
+      "storage": { "label": "산출물 저장소", "description": "테넌트 결속 암호화 저장 및 수명주기 적용 상태입니다." },
+      "stt": { "label": "음성-텍스트", "description": "제한된 보존이 적용된 승인 전사 처리기입니다." },
+      "llm": { "label": "언어 모델", "description": "학습 비활성 및 공급자 무보존 조건의 관리형 추론입니다." }
+    },
+    "governance": {
+      "humanReview": { "label": "사용자 검토", "description": "승인 전에 검토자가 인용 근거를 확인합니다." },
+      "explicitPublish": { "label": "명시적 게시", "description": "승인된 보고서만 참가자에게 공유할 수 있습니다." },
+      "adminContentAccess": { "label": "콘텐츠 최소 권한", "description": "관리 상태 권한은 회의 콘텐츠 열람 권한을 의미하지 않습니다." },
+      "legalHold": { "label": "법적 보존", "description": "인가된 보존은 콘텐츠 접근을 넓히지 않고 파기만 중지합니다." },
+      "deletionEvidence": { "label": "파기 증거", "description": "만료 시 tombstone과 불변 파기 증거를 생성합니다." }
+    },
+    "retention": {
+      "meeting": { "label": "회의 기록", "description": "수명주기 및 참석 기록 보존 범위입니다." },
+      "artifact": { "label": "산출물", "description": "녹화, 전사 및 AI 보고서 보존 범위입니다." },
+      "chat": { "label": "회의 채팅", "description": "회의 대화 메시지 보존 범위입니다." }
     }
   }
+}
 }

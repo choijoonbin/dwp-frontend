@@ -38,6 +38,36 @@ const providerItemFields = [
 ];
 const externalEvidenceFields = ['repository', 'path', 'revisionSource', 'checkoutSource'];
 const automatedCheckFields = ['repository', 'command', 'artifact'];
+const automatedCheckCommandPatterns = new Map([
+  [
+    'dwp-frontend',
+    [
+      /^corepack yarn test:e2e:provider(?:\s|$)/u,
+      /^corepack yarn vitest run(?:\s|$)/u,
+      /^corepack yarn playwright test(?:\s|$)/u,
+      /^corepack yarn provider:artifacts:scan(?::test)?(?:\s|$)/u,
+    ],
+  ],
+  ['dwp-backend', [/^\.\/gradlew :[A-Za-z0-9_-]+:(?:test|check)(?:\s|$)/u]],
+  ['dwp-agent', [/^uv run pytest(?:\s|$)/u]],
+]);
+
+const approvedPlaywrightInvocations = new Set([
+  [
+    'e2e/provider-acceptance-evidence.spec.ts',
+    '--project=chromium',
+    '--project=mobile',
+    '--workers=1',
+  ].join('\u0000'),
+  [
+    'e2e/provider-critical-operations.spec.ts',
+    '--project=chromium',
+    '--workers=1',
+    '--grep',
+    'privileged support separates|post-access review',
+  ].join('\u0000'),
+  ['e2e/responsive-accessibility.spec.ts', '--project=chromium', '--workers=1'].join('\u0000'),
+]);
 
 export function readJsonFile(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
@@ -288,6 +318,8 @@ function validateAutomatedChecks(item, errors) {
     validateClosedFields(check, automatedCheckFields, label, errors, true);
     if (!nonBlank(check.repository) || !nonBlank(check.command)) {
       errors.push(`${label} requires repository and command.`);
+    } else {
+      validateAutomatedCheckCommand(check, label, errors);
     }
     if (check.artifact !== undefined && !nonBlank(check.artifact)) {
       errors.push(`${label} artifact must be non-empty when present.`);
@@ -296,6 +328,192 @@ function validateAutomatedChecks(item, errors) {
     if (seen.has(fingerprint)) errors.push(`${item.id} automatedChecks contains duplicates.`);
     seen.add(fingerprint);
   });
+}
+
+function validateAutomatedCheckCommand(check, label, errors) {
+  const patterns = automatedCheckCommandPatterns.get(check.repository);
+  if (!patterns) {
+    errors.push(
+      `${label} repository must be one of ${[...automatedCheckCommandPatterns.keys()].join(', ')}.`
+    );
+    return;
+  }
+  if (check.command !== check.command.trim()) {
+    errors.push(`${label} command must not have leading or trailing whitespace.`);
+  }
+  if (!patterns.some((pattern) => pattern.test(check.command))) {
+    errors.push(`${label} command is not an approved ${check.repository} test command.`);
+  }
+  const argv = parseFailClosedShellWords(check.command);
+  if (argv === null) {
+    errors.push(
+      `${label} command must be one fail-closed invocation without shell control syntax.`
+    );
+  } else if (!matchesClosedAutomatedCheckArgv(check.repository, argv)) {
+    errors.push(
+      `${label} command must execute its declared checks without listing, skipping, or replacing the trusted build.`
+    );
+  }
+}
+
+function parseFailClosedShellWords(command) {
+  if (/\r|\n|`|\$\(|\\\r?\n/u.test(command)) return null;
+  const words = [];
+  let word = '';
+  let wordStarted = false;
+  let quote = null;
+  let escaped = false;
+  for (const character of command) {
+    if (escaped) {
+      word += character;
+      wordStarted = true;
+      escaped = false;
+      continue;
+    }
+    if (quote === "'") {
+      if (character === "'") quote = null;
+      else word += character;
+      continue;
+    }
+    if (character === '\\') {
+      escaped = true;
+      wordStarted = true;
+      continue;
+    }
+    if (character === '"') {
+      quote = quote === '"' ? null : (quote ?? '"');
+      wordStarted = true;
+      continue;
+    }
+    if (character === "'") {
+      if (quote === null) {
+        quote = "'";
+        wordStarted = true;
+      } else {
+        word += character;
+      }
+      continue;
+    }
+    if (character === '$' && quote !== "'") return null;
+    if (
+      quote === null &&
+      ['&', '|', ';', '<', '>', '#', '(', ')', '{', '}', '*', '?', '[', ']', '~', '!'].includes(
+        character
+      )
+    )
+      return null;
+    if (quote === null && /\s/u.test(character)) {
+      if (wordStarted) words.push(word);
+      word = '';
+      wordStarted = false;
+      continue;
+    }
+    word += character;
+    wordStarted = true;
+  }
+  if (quote !== null || escaped) return null;
+  if (wordStarted) words.push(word);
+  return words;
+}
+
+function matchesClosedAutomatedCheckArgv(repository, argv) {
+  if (repository === 'dwp-frontend') return matchesFrontendCheckArgv(argv);
+  if (repository === 'dwp-backend') return matchesBackendCheckArgv(argv);
+  if (repository === 'dwp-agent') return matchesAgentCheckArgv(argv);
+  return false;
+}
+
+function matchesFrontendCheckArgv(argv) {
+  if (argv[0] !== 'corepack' || argv[1] !== 'yarn') return false;
+  if (argv[2] === 'test:e2e:provider') return argv.length === 3;
+  if (argv[2] === 'provider:artifacts:scan:test') return argv.length === 3;
+  if (argv[2] === 'provider:artifacts:scan') {
+    return (
+      argv.length === 5 &&
+      argv[3] === 'playwright-report-provider' &&
+      argv[4] === 'test-results/provider'
+    );
+  }
+  if (argv[2] === 'vitest' && argv[3] === 'run') {
+    return argv.length > 4 && argv.slice(4).every(isSafeFrontendTestPath);
+  }
+  if (argv[2] !== 'playwright' || argv[3] !== 'test') return false;
+  return matchesPlaywrightTestArgv(argv.slice(4));
+}
+
+function matchesPlaywrightTestArgv(arguments_) {
+  return approvedPlaywrightInvocations.has(arguments_.join('\u0000'));
+}
+
+function matchesBackendCheckArgv(argv) {
+  if (argv[0] !== './gradlew') return false;
+  const tasks = new Set();
+  const selectors = new Set();
+  const operationalOptions = new Set();
+  for (let index = 1; index < argv.length; index += 1) {
+    const argument = argv[index];
+    if (/^:[A-Za-z0-9_-]+:(?:test|check)$/u.test(argument)) {
+      if (tasks.has(argument)) return false;
+      tasks.add(argument);
+      continue;
+    }
+    if (argument === '--tests') {
+      const selector = argv[index + 1];
+      if (!isExactJavaTestSelector(selector) || selectors.has(selector)) return false;
+      selectors.add(selector);
+      index += 1;
+      continue;
+    }
+    if (['--rerun-tasks', '--no-daemon', '--max-workers=1'].includes(argument)) {
+      if (operationalOptions.has(argument)) return false;
+      operationalOptions.add(argument);
+      continue;
+    }
+    return false;
+  }
+  if (tasks.size === 0) return false;
+  return ![...tasks].some((task) => task.endsWith(':test')) || selectors.size > 0;
+}
+
+function matchesAgentCheckArgv(argv) {
+  return (
+    argv[0] === 'uv' &&
+    argv[1] === 'run' &&
+    argv[2] === 'pytest' &&
+    argv.length > 3 &&
+    argv.slice(3).every(isSafePythonTestSelector)
+  );
+}
+
+function isSafeRepositoryPath(value) {
+  return (
+    typeof value === 'string' &&
+    /^[A-Za-z0-9_./-]+$/u.test(value) &&
+    !value.startsWith('-') &&
+    !value.startsWith('/') &&
+    !value.split('/').includes('..')
+  );
+}
+
+function isSafeFrontendTestPath(value) {
+  return isSafeRepositoryPath(value) && /\.(?:test|spec)\.[cm]?[jt]sx?$/u.test(value);
+}
+
+function isExactJavaTestSelector(value) {
+  return (
+    typeof value === 'string' &&
+    /^[A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)+$/u.test(value)
+  );
+}
+
+function isSafePythonTestSelector(value) {
+  return (
+    typeof value === 'string' &&
+    /^[A-Za-z0-9_./-]+\.py(?:::[A-Za-z_][A-Za-z0-9_]*)*$/u.test(value) &&
+    !value.startsWith('-') &&
+    !value.startsWith('/') &&
+    !value.split('::', 1)[0].split('/').includes('..')
+  );
 }
 
 function requireBlockedEvidence(item, label, errors) {

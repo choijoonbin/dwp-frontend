@@ -35,7 +35,12 @@ test('a 503 recovers explicitly and the compact mobile overview keeps work withi
 }) => {
   await page.setViewportSize({ width: 320, height: 720 });
   await mockWorkforceAdminSession(page);
-  const store = await mockWorkforceAccess(page, { failFirstPolicyList: true });
+  const store = await mockWorkforceAccess(page, {
+    failFirstPolicyList: true,
+    failFirstBlankUserLookup: true,
+    blankUserRetryDelayMs: 150,
+    includeUnresolvedUserPolicy: true,
+  });
 
   await page.goto('/admin/identity/workforce-access');
   await expect(
@@ -46,10 +51,27 @@ test('a 503 recovers explicitly and the compact mobile overview keeps work withi
   });
   await expect(error).toBeVisible();
   await expect(error).not.toContainText('503');
+  const summary = page.locator('summary').filter({ hasText: 'What this area controls' });
+  await expect(summary).toContainText('Summary unavailable');
   await error.getByRole('button', { name: 'Try again' }).click();
 
   await expect(page.getByText('Unified administrator').first()).toBeVisible();
+  await expect(summary).toContainText('2 currently in effect');
   expect(store.policyListAttempts).toBe(2);
+  const identityAlert = page.getByRole('alert').filter({
+    hasText: 'Some policy users could not be identified',
+  });
+  await expect(identityAlert).toContainText('Directory lookup failed');
+  await expect(page.getByText('User 777').first()).toBeVisible();
+  const identityRetry = identityAlert.getByRole('button', { name: 'Reload user identities' });
+  await identityRetry.focus();
+  await expect(identityRetry).toBeFocused();
+  await identityRetry.press('Enter');
+  await expect(identityRetry).toHaveAttribute('aria-disabled', 'true');
+  await expect(identityRetry).toBeFocused();
+  await expect(identityAlert).toContainText('outside the loaded directory page: 1');
+  await expect(identityRetry).toBeFocused();
+  expect(store.blankUserAttempts).toBe(2);
   await expect(page.getByText('Existing unified administrator policy').first()).toBeVisible();
   for (const label of [
     'Directory basics',
@@ -60,7 +82,6 @@ test('a 503 recovers explicitly and the compact mobile overview keeps work withi
     await expect(page.getByText(label).first()).toBeVisible();
   }
 
-  const summary = page.locator('summary').filter({ hasText: 'What this area controls' });
   await expect(summary).toBeVisible();
   const details = summary.locator('..');
   await expect(details).not.toHaveAttribute('open', '');
@@ -101,7 +122,10 @@ test('an administrator searches the full directory, creates scheduled access, an
   page,
 }) => {
   await mockWorkforceAdminSession(page);
-  const store = await mockWorkforceAccess(page, { failFirstOrganizations: true });
+  const store = await mockWorkforceAccess(page, {
+    failFirstOrganizations: true,
+    failSelectedUserRefresh: true,
+  });
   await page.goto('/admin/identity/workforce-access');
   await page.getByRole('button', { name: 'Create access policy' }).click();
 
@@ -117,6 +141,8 @@ test('an administrator searches the full directory, creates scheduled access, an
   await page.getByRole('option', { name: /Mina Search Result/ }).click();
   await expect(userSearch).toHaveValue('Mina Search Result');
   expect(store.userQueries).toContain('mina');
+  await expect(dialog.getByText('User search results could not be loaded')).toBeVisible();
+  expect(store.selectedUserRefreshFailures).toBe(1);
 
   await dialog.getByRole('button', { name: 'Reload organizations' }).click();
   await expect(dialog.getByText('Organization choices could not be loaded')).toHaveCount(0);
@@ -140,7 +166,18 @@ test('an administrator searches the full directory, creates scheduled access, an
   await dialog
     .getByLabel('Business justification')
     .fill('Temporary least-privilege support for the approved workforce migration.');
-  await dialog.getByRole('button', { name: 'Apply policy' }).click();
+  const applyPolicy = dialog.getByRole('button', { name: 'Apply policy' });
+  await expect(applyPolicy).toBeEnabled();
+
+  await dialog.getByRole('button', { name: 'Search users again' }).click();
+  await expect(dialog.getByText('User search results could not be loaded')).toHaveCount(0);
+  await userSearch.fill('different person');
+  await expect(applyPolicy).toBeDisabled();
+  await userSearch.fill('mina');
+  await expect(page.getByRole('option', { name: /Mina Search Result/ })).toBeVisible();
+  await page.getByRole('option', { name: /Mina Search Result/ }).click();
+  await expect(applyPolicy).toBeEnabled();
+  await applyPolicy.click();
 
   await expect(dialog).toHaveCount(0);
   await expect(page.getByText('Scheduled').first()).toBeVisible();

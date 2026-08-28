@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -25,7 +25,6 @@ import {
   getProviderTenant,
   listProviderEntitlements,
   listProviderSupportSessions,
-  replaceProviderTenantEntitlements,
   updateProviderTenantLifecycle,
   useToast,
   verifyProviderTenantDomain,
@@ -43,7 +42,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -68,7 +66,9 @@ import {
   providerError,
 } from './provider-ui';
 import { ProviderTenantDiagnosisBoundary } from './provider-tenant-diagnosis-boundary';
+import { ProviderTenantEntitlementsEditor } from './provider-tenant-entitlements-editor';
 import { providerOperationalSnapshotState } from './provider-operational-freshness';
+import { useProviderTenantEntitlementDraft } from './use-provider-tenant-entitlement-draft';
 
 function DetailField({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -293,8 +293,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
   const [lifecycleOpen, setLifecycleOpen] = useState(false);
   const [domainOpen, setDomainOpen] = useState(false);
   const [challenge, setChallenge] = useState<ProviderDomainChallenge | null>(null);
-  const [selectedEntitlements, setSelectedEntitlements] = useState<Set<string>>(new Set());
-  const [entitlementReason, setEntitlementReason] = useState('');
   const tenant = useQuery({
     queryKey: ['provider', 'tenant', tenantId],
     queryFn: () => getProviderTenant(tenantId),
@@ -316,13 +314,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     enabled: canReadSupportLedger,
     refetchInterval: canReadSupportLedger ? 60_000 : false,
   });
-  useEffect(() => {
-    if (tenant.data) {
-      setSelectedEntitlements(
-        new Set(tenant.data.entitlements.map((entitlement) => entitlement.entitlementKey))
-      );
-    }
-  }, [tenant.data]);
 
   const canWrite = permissions.includes('TENANT_WRITE');
   const canWriteEntitlements = permissions.includes('ENTITLEMENT_WRITE');
@@ -330,6 +321,13 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ['provider'] });
   };
+  const entitlements = useProviderTenantEntitlementDraft({
+    tenantId,
+    tenant: tenant.data,
+    busy,
+    setBusy,
+    invalidate,
+  });
   const run = async (operation: () => Promise<unknown>, success: string) => {
     setBusy(true);
     try {
@@ -392,22 +390,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     )
       setChallenge(null);
   };
-  const saveEntitlements = async () => {
-    if (!tenant.data) return;
-    if (
-      await run(
-        () =>
-          replaceProviderTenantEntitlements(
-            tenant.data,
-            [...selectedEntitlements],
-            entitlementReason.trim()
-          ),
-        t('entitlements.saved')
-      )
-    )
-      setEntitlementReason('');
-  };
-
   const serviceHealth = useMemo(
     () => tenant.data?.services.filter((service) => service.lifecycleState === 'READY').length ?? 0,
     [tenant.data]
@@ -884,90 +866,24 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
       )}
 
       {tab === 3 && (
-        <Box component="section">
-          <ProviderSectionHeading title={t('entitlements.title', { tenant: value.displayName })} />
-          {catalog.isLoading && (
-            <Alert severity="info" sx={{ mt: 1.25 }}>
-              {t('tenantDetail.entitlements.catalogLoading')}
-            </Alert>
-          )}
-          {catalog.isError && (
-            <Alert
-              severity="warning"
-              sx={{ mt: 1.25 }}
-              action={
-                <Button size="small" color="inherit" onClick={() => void catalog.refetch()}>
-                  {t('actions.retryLoad')}
-                </Button>
-              }
-            >
-              {t('tenantDetail.entitlements.catalogUnavailable')}
-            </Alert>
-          )}
-          {catalog.isSuccess && (
-            <FormGroup
-              sx={{
-                mt: 1.25,
-                py: 1,
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
-                borderBlock: 1,
-                borderColor: 'divider',
-              }}
-            >
-              {(catalog.data ?? []).map((entitlement) => (
-                <FormControlLabel
-                  key={entitlement.entitlementId}
-                  control={
-                    <Checkbox
-                      disabled={!canWriteEntitlements}
-                      checked={selectedEntitlements.has(entitlement.entitlementKey)}
-                      onChange={() =>
-                        setSelectedEntitlements((current) => {
-                          const next = new Set(current);
-                          if (next.has(entitlement.entitlementKey))
-                            next.delete(entitlement.entitlementKey);
-                          else next.add(entitlement.entitlementKey);
-                          return next;
-                        })
-                      }
-                    />
-                  }
-                  label={
-                    <Box>
-                      <Typography variant="body2" fontWeight={700}>
-                        {entitlement.name}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {entitlement.entitlementKey} / {entitlement.entitlementType}
-                      </Typography>
-                    </Box>
-                  }
-                  sx={{ m: 0, px: 0.5, alignItems: 'flex-start' }}
-                />
-              ))}
-            </FormGroup>
-          )}
-          {canWriteEntitlements && catalog.isSuccess && (
-            <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} sx={{ mt: 2 }}>
-              <TextField
-                fullWidth
-                required
-                label={t('fields.justification')}
-                value={entitlementReason}
-                onChange={(event) => setEntitlementReason(event.target.value)}
-              />
-              <Button
-                variant="contained"
-                disabled={busy || selectedEntitlements.size === 0 || !entitlementReason.trim()}
-                onClick={() => void saveEntitlements()}
-                sx={{ minWidth: 120 }}
-              >
-                {t('actions.save')}
-              </Button>
-            </Stack>
-          )}
-        </Box>
+        <ProviderTenantEntitlementsEditor
+          tenantName={value.displayName}
+          catalog={catalog.data ?? []}
+          catalogLoading={catalog.isLoading}
+          catalogError={catalog.isError}
+          catalogReady={catalog.isSuccess}
+          canWrite={canWriteEntitlements}
+          busy={busy}
+          draft={entitlements.draft}
+          reason={entitlements.reason}
+          onRetryCatalog={() => {
+            if (!busy) void catalog.refetch();
+          }}
+          onAcceptLatest={entitlements.acceptLatest}
+          onToggle={entitlements.toggle}
+          onReasonChange={entitlements.changeReason}
+          onSave={() => void entitlements.save()}
+        />
       )}
 
       {tab === 4 && (

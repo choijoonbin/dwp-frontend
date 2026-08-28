@@ -395,6 +395,20 @@ export function FlowHome({
           {
             gridColumn: '1 / -1',
           },
+        '&[data-flow-large-text="true"] [data-flow-context-description]': {
+          display: 'block',
+          overflow: 'visible',
+          WebkitLineClamp: 'unset',
+        },
+        '&[data-flow-large-text="true"] [data-flow-dock-group-label]': {
+          minHeight: '2.4em',
+          lineHeight: 1.2,
+          whiteSpace: 'normal',
+          wordBreak: 'keep-all',
+          overflowWrap: 'anywhere',
+          overflow: 'visible',
+          textOverflow: 'clip',
+        },
         '@media (forced-colors: active)': {
           '--home-surface': 'Canvas',
           '--home-surface-subtle': 'Canvas',

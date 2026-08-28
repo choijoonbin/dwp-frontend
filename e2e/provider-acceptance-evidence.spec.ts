@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { DEFAULT_APP_PERMISSIONS } from './support/runtime-access';
 import { mockShellSession } from './support/shell-session';
 
-import type { Page } from '@playwright/test';
+import type { BrowserContext, Page, Route } from '@playwright/test';
 
 const SUPPORT_REVISION_CHANNEL = 'dwp:provider-support-context:revision:v1';
 const PREVIEW_PATH = '/api/platform/v1/admin/tenant-experience-preview';
@@ -12,6 +12,7 @@ const SUPPORT_CONTEXT_PATH = '/api/provider/v1/admin/support-session-context';
 const PREVIEW_FRESHNESS_BUDGET_MS = 10_000;
 const SUPPORT_EVIDENCE_NOW = new Date('2026-08-27T01:45:00.000Z');
 const SUPPORT_EVIDENCE_EXPIRES_AT = '2026-08-27T02:00:00.000Z';
+const supportClockInstallations = new WeakMap<BrowserContext, Promise<void>>();
 
 type SupportTarget = {
   supportSessionId: string;
@@ -115,7 +116,13 @@ async function configureSupportPage(
   currentPreview: () => PreviewRevision,
   observations: { previewRequests: string[]; streamAttempts: string[] }
 ) {
-  await page.clock.setFixedTime(SUPPORT_EVIDENCE_NOW);
+  const context = page.context();
+  let clockInstallation = supportClockInstallations.get(context);
+  if (!clockInstallation) {
+    clockInstallation = page.clock.install({ time: SUPPORT_EVIDENCE_NOW });
+    supportClockInstallations.set(context, clockInstallation);
+  }
+  await clockInstallation;
   await mockShellSession(page, ['PROVIDER_SUPPORT'], {
     identityPlane: 'PROVIDER',
     displayName: 'Provider Operator',
@@ -164,6 +171,11 @@ async function publishSupportRevision(page: Page) {
     });
     channel.close();
   }, SUPPORT_REVISION_CHANNEL);
+}
+
+async function pauseSupportClock(page: Page) {
+  const currentTime = await page.evaluate(() => Date.now());
+  await page.clock.pauseAt(currentTime + 100);
 }
 
 async function expectOnlyTarget(page: Page, target: SupportTarget, forbidden: SupportTarget) {
@@ -363,15 +375,103 @@ test('PT-A22 identical preview versions render deterministically and refresh wit
   expect(observations.previewRequests.length).toBeGreaterThanOrEqual(initialRequestCount);
   expect(new Set(observations.previewRequests)).toEqual(new Set([PREVIEW_PATH]));
 
+  await pauseSupportClock(page);
   revision = { headline: 'Version eight arrived within budget', homeVersion: 8 };
-  const changedAt = Date.now();
-  await expect(page.getByText('Version eight arrived within budget')).toBeVisible({
-    timeout: PREVIEW_FRESHNESS_BUDGET_MS,
-  });
-  expect(Date.now() - changedAt).toBeLessThanOrEqual(PREVIEW_FRESHNESS_BUDGET_MS);
+  const changedAt = await page.evaluate(() => Date.now());
+  const refreshed = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === PREVIEW_PATH && response.ok()
+  );
+  await page.clock.runFor(8_000);
+  await refreshed;
+  await expect(page.getByText('Version eight arrived within budget')).toBeVisible();
+  expect((await page.evaluate(() => Date.now())) - changedAt).toBeLessThanOrEqual(
+    PREVIEW_FRESHNESS_BUDGET_MS
+  );
   expect(observations.previewRequests.length).toBeGreaterThanOrEqual(2);
   await expect(canvas).toContainText('Home v8');
   await expect(canvas).not.toContainText('Stable version seven headline');
+});
+
+test('PT-A22 withholds a cached preview when the refresh cannot finish within ten seconds', async ({
+  page,
+}) => {
+  const activeTarget = targetA;
+  const observations = { previewRequests: [] as string[], streamAttempts: [] as string[] };
+  const revision: PreviewRevision = {
+    headline: 'Fresh preview before transport stall',
+    homeVersion: 22,
+  };
+  let holdRefresh = false;
+  let heldRefreshStarted = 0;
+  let heldRefreshRoute: Route | undefined;
+  await configureSupportPage(
+    page,
+    () => activeTarget,
+    () => revision,
+    observations
+  );
+  await page.route(`**${PREVIEW_PATH}`, (route) => {
+    if (holdRefresh) {
+      heldRefreshStarted += 1;
+      heldRefreshRoute = route;
+      return;
+    }
+    return route.fallback();
+  });
+  await openCurrentPreview(page, activeTarget);
+  const canvas = page.getByRole('region', {
+    name: 'Synthetic tenant experience configuration canvas',
+  });
+  await expect(canvas).toContainText(revision.headline);
+
+  await pauseSupportClock(page);
+  holdRefresh = true;
+  try {
+    await page.clock.runFor(8_000);
+    await expect.poll(() => heldRefreshStarted).toBe(1);
+    holdRefresh = false;
+    if (!heldRefreshRoute) throw new Error('Expected a held preview baseline refresh route.');
+    const baselineRefreshed = page.waitForResponse(
+      (response) => new URL(response.url()).pathname === PREVIEW_PATH && response.ok()
+    );
+    await heldRefreshRoute.fallback();
+    heldRefreshRoute = undefined;
+    await baselineRefreshed;
+    await expect(canvas).toContainText(revision.headline);
+    const baselineAt = await page.evaluate(() => Date.now());
+
+    holdRefresh = true;
+    await page.clock.runFor(8_000);
+    await expect.poll(() => heldRefreshStarted).toBe(2);
+    await page.clock.runFor(1_999);
+    expect((await page.evaluate(() => Date.now())) - baselineAt).toBe(9_999);
+    await expect(canvas).toBeVisible();
+    await page.clock.runFor(1);
+    expect((await page.evaluate(() => Date.now())) - baselineAt).toBe(PREVIEW_FRESHNESS_BUDGET_MS);
+    await expect(canvas).toHaveCount(0);
+    await expect(page.getByText('The complete configuration could not be verified')).toBeVisible();
+
+    holdRefresh = false;
+    if (!heldRefreshRoute) throw new Error('Expected a stalled preview refresh route.');
+    const stalledRequestUrl = heldRefreshRoute.request().url();
+    const stalledRequestAborted = page.waitForEvent(
+      'requestfailed',
+      (request) => request.url() === stalledRequestUrl
+    );
+    await heldRefreshRoute.abort('aborted');
+    await stalledRequestAborted;
+    heldRefreshRoute = undefined;
+    const recovered = page.waitForResponse(
+      (response) => new URL(response.url()).pathname === PREVIEW_PATH && response.ok()
+    );
+    await page.getByRole('button', { name: 'Retry failed steps' }).click();
+    await recovered;
+    await page.clock.runFor(1);
+    await expect(canvas).toContainText(revision.headline);
+  } finally {
+    holdRefresh = false;
+    if (heldRefreshRoute) await heldRefreshRoute.abort('aborted').catch(() => undefined);
+  }
 });
 
 test('PT-A30 tenant, scope, expiry, and revoke remain operable on mobile and at 200 percent zoom', async ({

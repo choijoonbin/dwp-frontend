@@ -118,6 +118,10 @@
     "peopleLoadError": "Company people could not be loaded. You can continue without attendees or retry.",
     "responseSaved": "Attendance response saved.",
     "responseError": "The attendance response could not be saved.",
+    "openDetailsFor": "View details for {{title}}",
+    "acceptFor": "Accept {{title}}",
+    "tentativeFor": "Mark {{title}} as tentative",
+    "declineFor": "Decline {{title}}",
     "responseTitle": "Your response",
     "responseDescription": "You can update your choice and the organizer will see the latest response.",
     "cancelEvent": "Cancel event",
@@ -150,7 +154,8 @@
     "userDeletionReason": "User moved the event to trash",
     "restrictionFallback": "Some event details are hidden by the calendar owner's sharing policy.",
     "restrictions": {
-      "FREE_BUSY_ONLY": "This calendar is shared as free/busy only. The title, organizer, attendees, and notes remain private."
+      "FREE_BUSY_ONLY": "This calendar is shared as free/busy only. The title, organizer, attendees, and notes remain private.",
+      "RECURRING_EVENT_SERIES": "This event belongs to a recurring series. Some changes must be made to the series."
     },
     "typeLabel": "Event type",
     "additionalOptions": "People, place, and more options",
@@ -458,10 +463,10 @@
   },
   "sources": {
     "title": "Calendars",
-    "openPicker": "Calendars",
-    "pickerTitle": "Choose calendars",
+    "openPicker": "Select calendars",
+    "pickerTitle": "Select calendars",
     "pickerDescription": "Control what appears in your schedule and keep important calendars close.",
-    "closePicker": "Close calendar picker",
+    "closePicker": "Close calendar selection",
     "required": "Required",
     "manageSharingFor": "Manage sharing for {{name}}",
     "addFavoriteFor": "Add {{name}} to favorites",

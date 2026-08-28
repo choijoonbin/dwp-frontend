@@ -1,6 +1,6 @@
 # Calendar company sharing and personalization v1.3
 
-- 상태: P0 설계 승인, 구현·검증 진행
+- 상태: P0 사용자 경험 구현·검증 완료, 운영 감사/outbox·GROUP 관리 API는 후속 보안 Gate
 - 기준일: 2026-08-27
 - 검토: Product Design, Calendar Architecture/Security, Quality/Privacy expert review
 
@@ -99,3 +99,14 @@ Calendar의 상위 사용자 메뉴는 늘리지 않는다. 회사·내 캘린�
 - 회사/개인/공유 캘린더 source 선택과 이벤트 drawer가 1440/1280/390/320에서 동작.
 - keyboard, focus return, live status, forced-colors, Axe serious/critical 0건.
 - 기존 Calendar public API와 transaction 경계, recurrence/DST/resource conflict 회귀 없음.
+
+## 7. 2026-08-28 사용자 경험 마감
+
+- 기술 용어인 source picker를 사용자 화면에서는 `캘린더 선택`으로 통일한다.
+- 일정 피드 실패는 캘린더 접근 검증 실패와 분리한다. 접근이 검증된 source rail은 유지하고
+  시간 격자만 재시도 가능한 오류 상태로 전환한다.
+- 일정 상세·참석·미정·불참 행동은 일정 제목을 포함한 고유 접근 이름을 사용한다.
+- 회사 캘린더 제목은 게시/휴지통 tablist와 현재 tabpanel의 접근 이름에 함께 연결한다.
+- 페이지 상단 행동은 320 CSS px와 200% 텍스트 확대에서 한 열로 재배치한다.
+- Dark와 forced-colors에서 장식 색이 사라져도 경계, 선택, 진행 상태를 CanvasText·Highlight로
+  구분하며 핵심 화면의 시각 baseline과 Axe 검증을 함께 유지한다.

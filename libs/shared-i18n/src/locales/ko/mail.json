@@ -295,6 +295,26 @@
       "activeRules": "활성 규칙",
       "activeRulesDetail": "수신·수동 실행 가능"
     },
+    "backfill": {
+      "title": "기존 메일에 규칙 적용",
+      "description": "활성 규칙을 우선순위대로 적용하기 전에 개인 계정의 현재 영향을 미리 확인합니다.",
+      "account": "개인 메일 계정",
+      "noPersonalAccount": "사용 가능한 활성 개인 메일 계정이 없습니다.",
+      "loadError": "규칙 영향 미리보기를 불러오지 못했습니다.",
+      "refresh": "미리보기 새로고침",
+      "enabledRules": "활성 규칙",
+      "scanned": "확인한 대화",
+      "matched": "일치한 대화",
+      "planned": "예정 변경",
+      "truncated": "이번 미리보기가 처리 한도에 도달했습니다. 완료 후 새로고침해 다음 대상을 확인하세요.",
+      "run": "기존 메일에 적용",
+      "runError": "명령 결과를 확인하지 못했습니다. 같은 요청으로 재시도하므로 중복 적용되지 않습니다.",
+      "runRejected": "명령이 거부되었습니다. 계정과 규칙 상태를 새로고침한 뒤 다시 시도하세요.",
+      "retryCommand": "같은 요청 재시도",
+      "refreshRequired": "미리보기가 최신 상태가 아닙니다. 규칙 적용 전에 새로고침하세요.",
+      "completed": "기존 대화 {{count}}건에 규칙을 적용했습니다.",
+      "replayed": "이전 요청이 이미 완료되어 대화 {{count}}건을 변경했습니다."
+    },
     "folder": {
       "new": "새 폴더",
       "createTitle": "새 폴더 만들기",

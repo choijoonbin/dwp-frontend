@@ -330,9 +330,11 @@ export function WorkforceAccessOverview({
                 {t('workforceAccess.overview.mobileSummaryTitle')}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {t('workforceAccess.overview.mobileSummaryDescription', {
-                  count: summary.active,
-                })}
+                {policies
+                  ? t('workforceAccess.overview.mobileSummaryDescription', {
+                      count: summary.active,
+                    })
+                  : t('workforceAccess.overview.mobileSummaryUnavailable')}
               </Typography>
             </Box>
             <ChevronDown data-overview-chevron size={18} aria-hidden="true" />

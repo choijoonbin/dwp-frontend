@@ -17,6 +17,14 @@ describe('workspace widget catalog', () => {
     expect(WORKSPACE_WIDGET_CATALOG.every((definition) => definition.recipientContextBinding)).toBe(
       true
     );
+    expect(
+      WORKSPACE_WIDGET_CATALOG.every(
+        (definition) =>
+          definition.contributorAppResourceKeys.length > 0 &&
+          new Set(definition.contributorAppResourceKeys).size ===
+            definition.contributorAppResourceKeys.length
+      )
+    ).toBe(true);
   });
 
   it('allows presets only for bounded configurable definitions', () => {

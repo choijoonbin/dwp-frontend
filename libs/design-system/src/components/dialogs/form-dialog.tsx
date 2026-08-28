@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef } from 'react';
 
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -56,9 +56,64 @@ export function FormDialog({
   const descriptionId = useId();
   const compact = useMediaQuery('(max-width:599.95px)', { noSsr: true });
   const fullScreen = mobileFullScreen && compact;
+  const dialogRootRef = useRef<HTMLDivElement | null>(null);
+  const lastExternalFocusRef = useRef<HTMLElement | null>(null);
+  const previousOpenRef = useRef(open);
+
+  useEffect(() => {
+    if (open) return undefined;
+    const rememberExternalFocus = (event: FocusEvent) => {
+      const target = event.target;
+      if (
+        !(target instanceof HTMLElement) ||
+        target === document.body ||
+        target === document.documentElement ||
+        dialogRootRef.current?.contains(target)
+      ) {
+        return;
+      }
+      lastExternalFocusRef.current = target;
+    };
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) {
+      if (
+        activeElement !== document.body &&
+        activeElement !== document.documentElement &&
+        !dialogRootRef.current?.contains(activeElement)
+      ) {
+        lastExternalFocusRef.current = activeElement;
+      }
+    }
+    document.addEventListener('focusin', rememberExternalFocus, true);
+    return () => document.removeEventListener('focusin', rememberExternalFocus, true);
+  }, [open]);
+
+  useEffect(() => {
+    const wasOpen = previousOpenRef.current;
+    previousOpenRef.current = open;
+    if (!wasOpen || open) return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      const target = lastExternalFocusRef.current;
+      const activeElement = document.activeElement;
+      const focusNeedsRestoring =
+        activeElement === null ||
+        activeElement === document.body ||
+        activeElement === document.documentElement ||
+        (activeElement instanceof HTMLElement && dialogRootRef.current?.contains(activeElement));
+      if (
+        focusNeedsRestoring &&
+        target?.isConnected &&
+        !target.matches(':disabled, [aria-disabled="true"]')
+      ) {
+        target.focus({ preventScroll: true });
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [open]);
 
   return (
     <Dialog
+      ref={dialogRootRef}
       open={open}
       fullWidth
       fullScreen={fullScreen}
@@ -81,7 +136,7 @@ export function FormDialog({
         }}
       >
         <DialogTitle id={titleId}>{title}</DialogTitle>
-        <DialogContent sx={{ minHeight: 0, overflowY: 'auto', pt: '8px !important' }}>
+        <DialogContent tabIndex={0} sx={{ minHeight: 0, overflowY: 'auto', pt: '8px !important' }}>
           {description && (
             <Typography id={descriptionId} variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {description}

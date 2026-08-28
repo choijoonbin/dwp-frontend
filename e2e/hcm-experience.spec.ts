@@ -33,12 +33,17 @@ async function hcmNavigation(page: Page) {
 }
 
 async function followHcmSurfaceEntry(page: Page, path: string) {
-  if ((page.viewportSize()?.width ?? 1280) >= 1200) {
-    await page.getByTestId('hcm-desktop-surface-switcher').locator(`a[href="${path}"]`).click();
-    return;
-  }
-  await page.getByTestId('hcm-mobile-surface-switcher').getByRole('button').click();
-  await page.getByTestId('product-surface-mobile-disclosure').locator(`a[href="${path}"]`).click();
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  await page
+    .getByTestId(mobile ? 'hcm-mobile-surface-switcher' : 'hcm-desktop-surface-switcher')
+    .getByRole('button')
+    .click();
+  await page
+    .getByTestId(
+      mobile ? 'product-surface-mobile-disclosure' : 'product-surface-desktop-disclosure'
+    )
+    .locator(`a[href="${path}"]`)
+    .click();
 }
 
 test('employees enter one HR home without manager or operator navigation', async ({ page }) => {

@@ -10,6 +10,8 @@ import type { GridColDef } from '@mui/x-data-grid';
 import type { DisplayDomain } from '@dwp-frontend/shared-i18n';
 import type { GroupRoleAssignment } from '@dwp-frontend/shared-utils';
 
+import { resolveRoleAssignmentPresentationState } from './role-assignment-model';
+
 type RoleAssignmentColumnOptions = {
   t: TFunction<'admin'>;
   display: (domain: DisplayDomain, code?: string | null) => string;
@@ -19,14 +21,18 @@ type RoleAssignmentColumnOptions = {
   onRevoke: (assignment: GroupRoleAssignment) => void;
 };
 
-export type RoleAssignmentActionState = 'REVOKE' | 'REVOKED' | 'MANAGED_ELSEWHERE' | 'NONE';
+export type RoleAssignmentActionState =
+  'REVOKE' | 'REVOKED' | 'EXPIRED' | 'MANAGED_ELSEWHERE' | 'NONE';
 
 export function resolveRoleAssignmentActionState(
   assignment: GroupRoleAssignment,
-  assignableRoleCodes: ReadonlySet<string>
+  assignableRoleCodes: ReadonlySet<string>,
+  now = Date.now()
 ): RoleAssignmentActionState {
   if (assignment.lifecycleState === 'REVOKED') return 'REVOKED';
-  if (assignment.lifecycleState !== 'ACTIVE') return 'NONE';
+  const presentationState = resolveRoleAssignmentPresentationState(assignment, now);
+  if (presentationState === 'EXPIRED') return 'EXPIRED';
+  if (presentationState !== 'ACTIVE' && presentationState !== 'SCHEDULED') return 'NONE';
   return assignableRoleCodes.has(assignment.roleCode) ? 'REVOKE' : 'MANAGED_ELSEWHERE';
 }
 
@@ -88,14 +94,17 @@ export function createRoleAssignmentColumns({
       field: 'lifecycleState',
       headerName: t('roleGovernance.columns.status'),
       width: 120,
-      renderCell: ({ row }) => (
-        <Chip
-          size="small"
-          variant="outlined"
-          color={row.lifecycleState === 'ACTIVE' ? 'success' : 'default'}
-          label={display('states', row.lifecycleState)}
-        />
-      ),
+      renderCell: ({ row }) => {
+        const state = resolveRoleAssignmentPresentationState(row);
+        return (
+          <Chip
+            size="small"
+            variant="outlined"
+            color={state === 'ACTIVE' ? 'success' : state === 'SCHEDULED' ? 'info' : 'default'}
+            label={display('states', state)}
+          />
+        );
+      },
     },
     {
       field: 'actions',

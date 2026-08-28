@@ -38,7 +38,12 @@ import {
   isEligibleSavedViewCustodyTarget,
   isValidOrphanRetentionExtension,
 } from './saved-view-custody-model';
-import { displayDate, surfaceLabel, userIdentityLabel } from './saved-view-custody-ui';
+import {
+  displayDate,
+  SectionLoadError,
+  surfaceLabel,
+  userIdentityLabel,
+} from './saved-view-custody-ui';
 import {
   SavedViewCustodyTargetField,
   SavedViewTargetEligibilityNotice,
@@ -87,6 +92,7 @@ export function SavedViewOrphanActionDialog({
   const [executing, setExecuting] = useState(false);
   const [nameConflictTarget, setNameConflictTarget] = useState<string | null>(null);
   const [runtimeSharedNameConflict, setRuntimeSharedNameConflict] = useState(false);
+  const [targetRetryFocusPending, setTargetRetryFocusPending] = useState(false);
   const [targetEligibilityFailure, setTargetEligibilityFailure] = useState<{
     reason: Exclude<SavedViewTargetEligibilityFailure, 'UNKNOWN'>;
     targetName: string;
@@ -120,6 +126,7 @@ export function SavedViewOrphanActionDialog({
     setNameConflictTarget(null);
     setRuntimeSharedNameConflict(false);
     setTargetEligibilityFailure(null);
+    setTargetRetryFocusPending(false);
     commandKeyRef.current = null;
   }, [view]);
 
@@ -169,6 +176,23 @@ export function SavedViewOrphanActionDialog({
     staleTime: 20_000,
     retry: 1,
   });
+
+  useEffect(() => {
+    if (
+      !targetRetryFocusPending ||
+      !view ||
+      action !== 'REASSIGN' ||
+      targetUsers.isFetching ||
+      !targetUsers.isSuccess
+    ) {
+      return;
+    }
+    const frame = window.requestAnimationFrame(() => {
+      targetInputRef.current?.focus();
+      setTargetRetryFocusPending(false);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [action, targetRetryFocusPending, targetUsers.isFetching, targetUsers.isSuccess, view]);
   const targetOptions = useMemo(
     () =>
       (targetUsers.data ?? [])
@@ -411,9 +435,15 @@ export function SavedViewOrphanActionDialog({
                 />
               ) : null}
               {targetUsers.isError && (
-                <Alert severity="error">
-                  {t('savedViewCustody.orphanActions.targetLoadError')}
-                </Alert>
+                <SectionLoadError
+                  message={t('savedViewCustody.orphanActions.targetLoadError')}
+                  retryLabel={t('savedViewCustody.actions.retry')}
+                  retrying={targetUsers.isFetching}
+                  onRetry={() => {
+                    setTargetRetryFocusPending(true);
+                    void targetUsers.refetch();
+                  }}
+                />
               )}
               <SavedViewCustodyTargetField
                 disabled={executing}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -26,10 +26,10 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
-import {
-  latestWorkplaceDecisionInstant,
-  workplaceHomeDecisionDeadline,
-} from './workplace-home-decision-clock';
+import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
+import { useWorkplaceDecisionClock } from './workplace-decision-clock';
+import { workplaceHomeDecisionDeadline } from './workplace-home-decision-clock';
+import { useWorkplaceDecisionStatus } from './workplace-decision-status';
 import { buildWorkplaceHomeModel, workplaceHomeQueryRange } from './workplace-home-model';
 import {
   workplaceHomeSourceComplete,
@@ -54,6 +54,16 @@ type WorkplaceHomeExploreSnapshot = {
   range: ReturnType<typeof workplaceHomeQueryRange>;
 };
 
+type WorkplaceHomeCheckInAction = {
+  identityKey: string;
+  booking: WorkplaceBooking;
+};
+
+type SubmittedCheckInAction = {
+  identityKey: string;
+  actionId: string;
+};
+
 export function WorkplaceHome() {
   const { t, i18n } = useTranslation('rooms');
   const auth = useAuth();
@@ -61,8 +71,14 @@ export function WorkplaceHome() {
   const permissions = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [clock, setClock] = useState(Date.now);
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
+  const activeIdentityRef = useRef(identityKey);
+  const completeDecisionActionRef = useRef<(identityKey: string, actionId: string) => void>(
+    () => undefined
+  );
+  const [submittedCheckInAction, setSubmittedCheckInAction] =
+    useState<SubmittedCheckInAction | null>(null);
+  activeIdentityRef.current = identityKey;
   const browserTimeZone = useMemo(
     () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul',
     []
@@ -167,12 +183,13 @@ export function WorkplaceHome() {
     required: canViewCalendar,
   });
   const calendar = workplaceHomeSourceData(calendarState, calendarQuery.data);
-  const activeRange = exploreSnapshot?.range ?? workplaceHomeQueryRange(new Date(clock), timeZone);
-  const workplaceDecisionInstant = latestWorkplaceDecisionInstant(clock, explore?.generatedAt);
-  const homeDecisionInstant = latestWorkplaceDecisionInstant(
-    workplaceDecisionInstant,
-    calendar?.generatedAt
-  );
+  const {
+    advance: advanceDecisionClock,
+    nowInstant: homeDecisionInstant,
+    readNow: readDecisionNow,
+  } = useWorkplaceDecisionClock(identityKey, [explore?.generatedAt, calendar?.generatedAt]);
+  const activeRange =
+    exploreSnapshot?.range ?? workplaceHomeQueryRange(new Date(homeDecisionInstant), timeZone);
   const homeDecisionNow = new Date(homeDecisionInstant).toISOString();
   const bookability = useMemo(
     () => ({
@@ -183,7 +200,7 @@ export function WorkplaceHome() {
       rangeTo: activeRange.availabilityTo,
       roomPolicy: roomPolicyQuery.data ?? null,
       roomPolicyReady: roomPolicyState === 'READY',
-      serverNow: new Date(workplaceDecisionInstant).toISOString(),
+      serverNow: homeDecisionNow,
       timeZone,
       verified: exploreState === 'READY',
       workplacePolicy: explore?.policy ?? null,
@@ -199,7 +216,7 @@ export function WorkplaceHome() {
       roomPolicyQuery.data,
       roomPolicyState,
       timeZone,
-      workplaceDecisionInstant,
+      homeDecisionNow,
     ]
   );
 
@@ -213,20 +230,67 @@ export function WorkplaceHome() {
         bookability,
         now: homeDecisionNow,
         timeZone,
+        bookingSourceState: bookingsState,
+        canUpdateWorkplaceBooking: true,
       }),
-    [bookability, bookings, calendar, explore, homeDecisionNow, roomBookings, timeZone]
+    [
+      bookability,
+      bookings,
+      bookingsState,
+      calendar,
+      explore,
+      homeDecisionNow,
+      roomBookings,
+      timeZone,
+    ]
   );
 
   const checkInMutation = useMutation({
-    mutationFn: (booking: WorkplaceBooking) => {
-      if (!capabilities.canUpdateWorkplaceBooking) throw new Error('workplace-update-denied');
-      return checkInWorkplaceBooking(booking.bookingId, booking.version);
+    mutationFn: ({ booking, identityKey: actionIdentityKey }: WorkplaceHomeCheckInAction) => {
+      const currentBooking = bookings?.find(
+        (candidate) =>
+          candidate.bookingId === booking.bookingId && candidate.version === booking.version
+      );
+      if (actionIdentityKey !== activeIdentityRef.current || !currentBooking) {
+        throw new Error('workplace-update-denied');
+      }
+      const actionPolicy = workplaceBookingActionPolicy({
+        booking: currentBooking,
+        sourceState: bookingsState,
+        canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+        nowInstant: readDecisionNow(),
+      });
+      if (!actionPolicy.canCheckIn) throw new Error('workplace-update-denied');
+      setSubmittedCheckInAction({
+        identityKey: actionIdentityKey,
+        actionId: `check-in:${currentBooking.bookingId}`,
+      });
+      return checkInWorkplaceBooking(currentBooking.bookingId, currentBooking.version);
     },
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
+      if (variables.identityKey !== activeIdentityRef.current) return;
+      completeDecisionActionRef.current(
+        variables.identityKey,
+        `check-in:${variables.booking.bookingId}`
+      );
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
-      toast.success(t('workplace.my.check-inSaved'));
+      if (variables.identityKey === activeIdentityRef.current) {
+        toast.success(t('workplace.my.check-inSaved'));
+      }
     },
-    onError: () => toast.error(t('workplace.my.actionError')),
+    onError: (_, variables) => {
+      if (variables.identityKey === activeIdentityRef.current) {
+        toast.error(t('workplace.my.actionError'));
+      }
+    },
+    onSettled: (_, __, variables) => {
+      setSubmittedCheckInAction((current) =>
+        current?.identityKey === variables.identityKey &&
+        current.actionId === `check-in:${variables.booking.bookingId}`
+          ? null
+          : current
+      );
+    },
   });
 
   const hasExploreData = explore !== undefined;
@@ -277,6 +341,40 @@ export function WorkplaceHome() {
     : bookingsState === 'READY'
       ? 'AVAILABLE'
       : 'UNVERIFIED';
+  const decisionActions = useMemo(() => {
+    const actions = new Map<string, { id: string; kind: 'CHECK_IN' | 'RELEASE'; endsAt: string }>();
+    if (model.nextAction.kind === 'CHECK_IN' && checkInState === 'AVAILABLE') {
+      actions.set(`check-in:${model.nextAction.booking.bookingId}`, {
+        id: `check-in:${model.nextAction.booking.bookingId}`,
+        kind: 'CHECK_IN',
+        endsAt: model.nextAction.booking.endsAt,
+      });
+    }
+    model.attention.forEach((item) => {
+      if (item.kind !== 'CHECK_IN' && item.kind !== 'RELEASE') return;
+      actions.set(item.key, {
+        id: item.key,
+        kind: item.kind,
+        endsAt: item.booking.endsAt,
+      });
+    });
+    return [...actions.values()];
+  }, [checkInState, model.attention, model.nextAction]);
+  const submittedCheckInActionId =
+    submittedCheckInAction?.identityKey === identityKey ? submittedCheckInAction.actionId : null;
+  const {
+    completeAction: completeDecisionAction,
+    notice: decisionNotice,
+    statusRef: decisionStatusRef,
+  } = useWorkplaceDecisionStatus(decisionActions, homeDecisionInstant, {
+    identityKey,
+    sourceReady: bookingsState === 'READY',
+    submittedActionIds: submittedCheckInActionId ? [submittedCheckInActionId] : [],
+  });
+  completeDecisionActionRef.current = completeDecisionAction;
+  useEffect(() => {
+    setSubmittedCheckInAction((current) => (current?.identityKey === identityKey ? current : null));
+  }, [identityKey]);
 
   const { refetch: refetchExplore } = exploreQuery;
   const { refetch: refetchBookings } = bookingsQuery;
@@ -311,7 +409,9 @@ export function WorkplaceHome() {
     const delayToBoundary =
       decisionDeadline === null
         ? Number.POSITIVE_INFINITY
-        : decisionDeadline - Date.now() + DECISION_BOUNDARY_SETTLE_MS;
+        : decisionDeadline -
+          Math.max(homeDecisionInstant, Date.now()) +
+          DECISION_BOUNDARY_SETTLE_MS;
     const delay = Math.max(
       DECISION_BOUNDARY_SETTLE_MS,
       Math.min(REFRESH_INTERVAL, delayToBoundary)
@@ -319,11 +419,11 @@ export function WorkplaceHome() {
     const reachesDecisionBoundary =
       decisionDeadline !== null && delayToBoundary <= REFRESH_INTERVAL;
     const timer = window.setTimeout(() => {
-      setClock(Date.now());
+      advanceDecisionClock();
       if (reachesDecisionBoundary) refreshHome();
     }, delay);
     return () => window.clearTimeout(timer);
-  }, [decisionDeadline, refreshHome]);
+  }, [advanceDecisionClock, decisionDeadline, homeDecisionInstant, refreshHome]);
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   const statusState = initialLoading
     ? 'syncing'
@@ -403,17 +503,52 @@ export function WorkplaceHome() {
           {t(hasUnavailableData ? 'workplace.partialWarning' : 'workplace.staleWarning')}
         </Alert>
       )}
+      <Box
+        ref={decisionStatusRef}
+        tabIndex={-1}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="workplace-decision-status"
+        sx={{
+          display: decisionNotice ? 'block' : 'none',
+          mt: 2,
+          px: 2,
+          py: 1.5,
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: 1,
+          bgcolor: 'background.paper',
+          color: 'text.secondary',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: 2,
+          },
+        }}
+      >
+        {decisionNotice
+          ? t(
+              `workplace.home.decisionStatus.${decisionNotice.kind === 'CHECK_IN' ? 'checkIn' : 'release'}${decisionNotice.reason === 'ENDED' ? 'Ended' : decisionNotice.reason === 'RECOVERED' ? 'Recovered' : 'Unverified'}`
+            )
+          : null}
+      </Box>
       <WorkplaceDayBrief
         model={model}
         availabilityState={availabilityState}
         checkInState={checkInState}
         decisionComplete={nextActionComplete}
         canManage={capabilities.canManageWorkplaceAdmin}
-        checkInBusy={checkInMutation.isPending}
+        checkInBusy={Boolean(submittedCheckInActionId)}
+        decisionActionId={
+          model.nextAction.kind === 'CHECK_IN' && checkInState === 'AVAILABLE'
+            ? `check-in:${model.nextAction.booking.bookingId}`
+            : null
+        }
         onRefresh={refreshHome}
         onCheckIn={() => {
           if (model.nextAction.kind === 'CHECK_IN') {
-            checkInMutation.mutate(model.nextAction.booking);
+            checkInMutation.mutate({ identityKey, booking: model.nextAction.booking });
           }
         }}
       />

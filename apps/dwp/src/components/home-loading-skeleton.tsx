@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import { shellHeaderHeight } from '../features/shell/shell-registry';
 import {
-  readHomePresentationHint,
+  readOptionalHomePresentationHint,
   resolveHomeLoadingLayout,
   type HomeLoadingLayout,
 } from './home-loading-layout-policy';
@@ -14,6 +14,8 @@ import {
 type HomeLoadingSkeletonProps = {
   reserveHeader?: boolean;
 };
+
+type BrowserHomeLoadingLayout = HomeLoadingLayout & Readonly<{ presentationResolved: boolean }>;
 
 const skeletonLine = {
   bgcolor: 'rgba(226,232,240,0.22)',
@@ -27,13 +29,16 @@ const canvasSkeleton = {
   borderRadius: '16px',
 } as const;
 
-function browserHomeLoadingLayout(): HomeLoadingLayout {
+function browserHomeLoadingLayout(): BrowserHomeLoadingLayout {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return resolveHomeLoadingLayout({
-      presentation: 'balanced',
-      viewportWidth: 1440,
-      rootFontSize: 16,
-    });
+    return {
+      ...resolveHomeLoadingLayout({
+        presentation: 'balanced',
+        viewportWidth: 1440,
+        rootFontSize: 16,
+      }),
+      presentationResolved: false,
+    };
   }
   let storage: Storage | undefined;
   try {
@@ -44,14 +49,18 @@ function browserHomeLoadingLayout(): HomeLoadingLayout {
   const rootFontSize = Number.parseFloat(
     window.getComputedStyle(document.documentElement).fontSize
   );
-  return resolveHomeLoadingLayout({
-    presentation: readHomePresentationHint(storage),
-    viewportWidth: document.documentElement.clientWidth || window.innerWidth,
-    rootFontSize,
-  });
+  const presentation = readOptionalHomePresentationHint(storage);
+  return {
+    ...resolveHomeLoadingLayout({
+      presentation: presentation ?? 'balanced',
+      viewportWidth: document.documentElement.clientWidth || window.innerWidth,
+      rootFontSize,
+    }),
+    presentationResolved: presentation !== null,
+  };
 }
 
-function useHomeLoadingLayout(): HomeLoadingLayout {
+function useHomeLoadingLayout(): BrowserHomeLoadingLayout {
   const [layout, setLayout] = useState(browserHomeLoadingLayout);
   useEffect(() => {
     const sync = () => setLayout(browserHomeLoadingLayout());
@@ -71,6 +80,43 @@ function useHomeLoadingLayout(): HomeLoadingLayout {
     };
   }, []);
   return layout;
+}
+
+function NeutralDockSkeleton() {
+  return (
+    <Box
+      data-home-loading-dock
+      data-home-loading-dock-state="neutral"
+      sx={{
+        width: 'min(100%, clamp(720px, 58vw, 1120px))',
+        minHeight: { xs: 138, sm: 132 },
+        mt: { xs: 3, md: 2 },
+        p: { xs: 1.5, md: 2 },
+        border: '1px solid rgba(255,255,255,0.20)',
+        borderRadius: '16px',
+        bgcolor: 'rgba(4,18,43,0.72)',
+        display: 'grid',
+        alignContent: 'center',
+        gap: 2,
+      }}
+    >
+      <Box sx={{ ...skeletonLine, width: 42, height: 12 }} />
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+          gap: 2,
+        }}
+      >
+        {[46, 64, 38].map((width) => (
+          <Box key={width} sx={{ display: 'grid', gap: 1 }}>
+            <Box sx={{ ...skeletonLine, width: `${width}%`, height: 9 }} />
+            <Box sx={{ ...skeletonLine, width: '100%', height: 32, opacity: 0.62 }} />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
 }
 
 function DockSkeleton({ layout }: { layout: HomeLoadingLayout }) {
@@ -157,8 +203,11 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
       aria-hidden="true"
       data-testid="home-loading-skeleton"
       data-home-loading-contract="flow-geometry"
-      data-home-loading-presentation={layout.presentation}
-      data-home-loading-read-template={layout.template}
+      data-home-loading-state={layout.presentationResolved ? 'resolved-hint' : 'neutral'}
+      data-home-loading-presentation={
+        layout.presentationResolved ? layout.presentation : 'unresolved'
+      }
+      data-home-loading-read-template={layout.presentationResolved ? layout.template : 'neutral'}
       sx={{
         width: 1,
         maxWidth: 2560,
@@ -217,18 +266,20 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
             />
           ))}
         </Box>
-        <DockSkeleton layout={layout} />
+        {layout.presentationResolved ? <DockSkeleton layout={layout} /> : <NeutralDockSkeleton />}
       </Box>
 
       <Box sx={{ ...canvasSkeleton, height: 56, bgcolor: 'action.hover' }} />
       <Box
         data-home-loading-widgets
         data-home-loading-grid-contract={
-          layout.template === 'adaptive-wide'
-            ? '7-5/4-4-4'
-            : layout.template === 'single-column'
-              ? 'single-column'
-              : '8-4/4-4-4'
+          !layout.presentationResolved
+            ? 'neutral'
+            : layout.template === 'adaptive-wide'
+              ? '7-5/4-4-4'
+              : layout.template === 'single-column'
+                ? 'single-column'
+                : '8-4/4-4-4'
         }
         sx={{
           display: 'grid',
@@ -236,17 +287,40 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
           gap: 2,
         }}
       >
-        {loadingWidgets.map((widget, index) => (
+        {layout.presentationResolved ? (
+          <>
+            {loadingWidgets.map((widget, index) => (
+              <Box
+                key={widget.key}
+                data-home-loading-widget={widget.key}
+                sx={{ ...canvasSkeleton, height: widget.height, gridColumn: widgetColumn(index) }}
+              />
+            ))}
+            <Box
+              data-home-loading-widget="announcements"
+              sx={{ ...canvasSkeleton, height: 224, gridColumn: { md: '1 / -1' } }}
+            />
+          </>
+        ) : (
           <Box
-            key={widget.key}
-            data-home-loading-widget={widget.key}
-            sx={{ ...canvasSkeleton, height: widget.height, gridColumn: widgetColumn(index) }}
+            data-home-loading-neutral-canvas
+            sx={(theme) => ({
+              ...canvasSkeleton,
+              gridColumn: '1 / -1',
+              minHeight: { xs: 360, md: 420 },
+              background: `linear-gradient(110deg, ${theme.palette.background.paper} 0%, ${theme.palette.action.hover} 46%, ${theme.palette.background.paper} 72%)`,
+              backgroundSize: '220% 100%',
+              animation: 'homeNeutralLoading 1.8s ease-in-out infinite',
+              '@keyframes homeNeutralLoading': {
+                from: { backgroundPosition: '100% 0' },
+                to: { backgroundPosition: '-120% 0' },
+              },
+              '@media (prefers-reduced-motion: reduce)': {
+                animation: 'none',
+              },
+            })}
           />
-        ))}
-        <Box
-          data-home-loading-widget="announcements"
-          sx={{ ...canvasSkeleton, height: 224, gridColumn: { md: '1 / -1' } }}
-        />
+        )}
       </Box>
     </Box>
   );

@@ -48,8 +48,14 @@ import DialogContent from '@mui/material/DialogContent';
 import { ManagementPanelLoading } from '../../components/management-panel-state';
 import { PrivilegedAccessManager } from './privileged-access-manager';
 import { createRoleAssignmentColumns } from './role-assignment-columns';
+import {
+  isRoleAssignmentScopeRefValid,
+  isRoleAssignmentValidToValid,
+  normalizedRoleAssignmentScopeRef,
+} from './role-assignment-model';
 import { RoleAssignmentSummary } from './role-assignment-summary';
 import { RoleAssignmentRevokeDialog } from './role-assignment-revoke-dialog';
+import { effectivePermissionRowId, effectiveRoleRowId } from './role-governance-effective-model';
 import {
   assignmentSourceLabel,
   localizedCodeLabel,
@@ -178,9 +184,7 @@ function RolesPanel() {
           const permissionLabel = t('roleGovernance.actions.permissionsFor', { role: roleName });
           const editLabel = t('roleGovernance.actions.editRoleFor', { role: roleName });
           const tooltipLabel = (action: string) =>
-            systemManaged
-              ? t('roleGovernance.actions.systemManagedAction', { action })
-              : action;
+            systemManaged ? t('roleGovernance.actions.systemManagedAction', { action }) : action;
           return (
             <Stack direction="row">
               <Tooltip title={tooltipLabel(permissionLabel)}>
@@ -274,6 +278,7 @@ function RolesPanel() {
         rows={roles.data ?? []}
         columns={columns}
         getRowId={(row) => row.roleId}
+        stickyColumns={{ right: ['actions'] }}
         hideFooter
         minVisibleRows={3}
         maxVisibleRows={9}
@@ -385,6 +390,12 @@ function AssignmentDialog({
   const [scopeRef, setScopeRef] = useState('');
   const [validTo, setValidTo] = useState('');
   const [justification, setJustification] = useState('');
+  const groupOptions = groups.data?.content ?? [];
+  const assignableRoles = roles.filter(
+    (role) => role.assignableToGroups && role.status === 'ACTIVE'
+  );
+  const validToInvalid = !isRoleAssignmentValidToValid(validTo);
+  const scopeRefInvalid = !isRoleAssignmentScopeRefValid(scopeType, scopeRef);
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle>{t('roleGovernance.assignmentDialog.title')}</DialogTitle>
@@ -430,21 +441,26 @@ function AssignmentDialog({
               {t('roleGovernance.errors.groupsDescription')}
             </Alert>
           ) : null}
+          {groups.isSuccess && groupOptions.length === 0 ? (
+            <Alert severity="info">{t('roleGovernance.empty.groupsDescription')}</Alert>
+          ) : null}
           <TextField
             select
             required
             label={t('roleGovernance.fields.role')}
             value={roleId}
+            disabled={assignableRoles.length === 0}
             onChange={(event) => setRoleId(event.target.value)}
           >
-            {roles
-              .filter((role) => role.assignableToGroups && role.status === 'ACTIVE')
-              .map((role) => (
-                <MenuItem key={role.roleId} value={role.roleId}>
-                  {displayRole(role.code, role.name, role.description).name} ({role.code})
-                </MenuItem>
-              ))}
+            {assignableRoles.map((role) => (
+              <MenuItem key={role.roleId} value={role.roleId}>
+                {displayRole(role.code, role.name, role.description).name} ({role.code})
+              </MenuItem>
+            ))}
           </TextField>
+          {assignableRoles.length === 0 ? (
+            <Alert severity="info">{t('roleGovernance.empty.assignableRolesDescription')}</Alert>
+          ) : null}
           <TextField
             select
             fullWidth
@@ -464,6 +480,9 @@ function AssignmentDialog({
               label={t('roleGovernance.fields.scopeRef')}
               value={scopeRef}
               onChange={(event) => setScopeRef(event.target.value)}
+              error={scopeRef.length > 160}
+              helperText={t(`roleGovernance.assignmentDialog.scopeRefHelp.${scopeType}`)}
+              slotProps={{ htmlInput: { maxLength: 160 } }}
             />
           )}
           <TextField
@@ -472,6 +491,12 @@ function AssignmentDialog({
             value={validTo}
             onChange={(event) => setValidTo(event.target.value)}
             InputLabelProps={{ shrink: true }}
+            error={validToInvalid}
+            helperText={
+              validToInvalid
+                ? t('roleGovernance.assignmentDialog.validToFuture')
+                : t('roleGovernance.assignmentDialog.validToHelp')
+            }
           />
           <TextField
             required
@@ -495,8 +520,10 @@ function AssignmentDialog({
             groups.isError ||
             !groupId ||
             !roleId ||
+            assignableRoles.length === 0 ||
             justification.trim().length < 10 ||
-            (scopeType !== 'TENANT' && !scopeRef.trim())
+            scopeRefInvalid ||
+            validToInvalid
           }
           onClick={() =>
             void onSave({
@@ -504,7 +531,7 @@ function AssignmentDialog({
               roleId: Number(roleId),
               assignmentType: 'ACTIVE',
               scopeType,
-              scopeRef: scopeRef || undefined,
+              scopeRef: normalizedRoleAssignmentScopeRef(scopeType, scopeRef),
               validTo: validTo ? new Date(validTo).toISOString() : undefined,
               justification: justification.trim(),
             })
@@ -630,6 +657,18 @@ function AssignmentsPanel() {
           onRefresh: () => void assignments.refetch(),
           refreshLabel: t('roleGovernance.assignmentToolbar.refresh'),
           refreshing: assignments.isFetching,
+        }}
+        slots={{
+          noRowsOverlay: () => (
+            <GuidedEmptyState
+              kind="first-use"
+              title={t('roleGovernance.empty.assignmentsTitle')}
+              description={t('roleGovernance.empty.assignmentsDescription')}
+              actionLabel={t('roleGovernance.actions.newAssignment')}
+              onAction={() => setDialogOpen(true)}
+              size="compact"
+            />
+          ),
         }}
         sx={{ border: 0, borderRadius: 0 }}
       />
@@ -865,7 +904,7 @@ function EffectiveAccessPanel() {
             ariaLabel={t('roleGovernance.effectiveRoles')}
             rows={access.data.roles}
             columns={roleColumns}
-            getRowId={(row) => `${row.roleId}:${row.source}:${row.sourceGroupId ?? 'direct'}`}
+            getRowId={effectiveRoleRowId}
             hideFooter
             minVisibleRows={2}
             maxVisibleRows={5}
@@ -875,7 +914,7 @@ function EffectiveAccessPanel() {
             ariaLabel={t('roleGovernance.effectivePermissions')}
             rows={access.data.permissions}
             columns={permissionColumns}
-            getRowId={(row) => `${row.resourceKey}:${row.permissionCode}`}
+            getRowId={effectivePermissionRowId}
             hideFooter
             minVisibleRows={2}
             maxVisibleRows={7}

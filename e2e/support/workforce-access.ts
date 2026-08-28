@@ -12,6 +12,8 @@ export type WorkforceAccessMockStore = {
   policies: WorkforceAccessPolicy[];
   policyListAttempts: number;
   organizationAttempts: number;
+  blankUserAttempts: number;
+  selectedUserRefreshFailures: number;
   userQueries: string[];
   createPayloads: CreateWorkforceAccessPolicyRequest[];
   revokePayloads: RevokePayload[];
@@ -19,7 +21,14 @@ export type WorkforceAccessMockStore = {
 
 export async function mockWorkforceAccess(
   page: Page,
-  options: { failFirstPolicyList?: boolean; failFirstOrganizations?: boolean } = {}
+  options: {
+    failFirstPolicyList?: boolean;
+    failFirstOrganizations?: boolean;
+    failFirstBlankUserLookup?: boolean;
+    blankUserRetryDelayMs?: number;
+    failSelectedUserRefresh?: boolean;
+    includeUnresolvedUserPolicy?: boolean;
+  } = {}
 ): Promise<WorkforceAccessMockStore> {
   const store: WorkforceAccessMockStore = {
     policies: [
@@ -41,6 +50,8 @@ export async function mockWorkforceAccess(
     ],
     policyListAttempts: 0,
     organizationAttempts: 0,
+    blankUserAttempts: 0,
+    selectedUserRefreshFailures: 0,
     userQueries: [],
     createPayloads: [],
     revokePayloads: [],
@@ -73,10 +84,53 @@ export async function mockWorkforceAccess(
     version: 4,
   };
 
-  await page.route('**/api/auth/admin/identity/users**', (route) => {
+  if (options.includeUnresolvedUserPolicy) {
+    store.policies.push({
+      policyId: 'policy-unresolved-user',
+      subjectType: 'USER',
+      subjectRef: '777',
+      populationType: 'ORG_TREE',
+      organizationId: 'org-workplace',
+      organizationName: 'Digital Workplace',
+      fieldGroups: ['DIRECTORY'],
+      actionCodes: ['READ'],
+      validFrom: null,
+      validTo: null,
+      lifecycleState: 'ACTIVE',
+      justification: 'Existing user policy outside the first directory page.',
+      version: 1,
+    });
+  }
+
+  await page.route('**/api/auth/admin/identity/users**', async (route) => {
     const url = new URL(route.request().url());
     const query = url.searchParams.get('query')?.trim() ?? '';
     store.userQueries.push(query);
+    if (query === '') {
+      store.blankUserAttempts += 1;
+      if (options.failFirstBlankUserLookup && store.blankUserAttempts === 1) {
+        return route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', message: 'Directory unavailable' }),
+        });
+      }
+      if (options.blankUserRetryDelayMs && store.blankUserAttempts > 1) {
+        await new Promise((resolve) => setTimeout(resolve, options.blankUserRetryDelayMs));
+      }
+    }
+    if (
+      options.failSelectedUserRefresh &&
+      query === searchedUser.displayName &&
+      store.selectedUserRefreshFailures === 0
+    ) {
+      store.selectedUserRefreshFailures += 1;
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', message: 'Search refresh unavailable' }),
+      });
+    }
     const content = query.toLocaleLowerCase().includes('mina') ? [searchedUser] : [];
     return fulfillSuccess(route, {
       content,

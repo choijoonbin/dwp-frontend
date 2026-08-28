@@ -147,6 +147,8 @@
         "title": "답변·확인 요청",
         "description": "초대, 알림, 요청처럼 내 답변을 기다리는 항목입니다.",
         "listLabel": "내 응답을 기다리는 항목",
+        "distributionLabel": "응답 상태 분포: {{segments}}. 전체 {{count}}건",
+        "distributionTotal": "전체 {{count}}건",
         "empty": "기다리는 응답이 없습니다",
         "emptyDescription": "현재 응답 지연으로 멈춘 업무가 없습니다."
       },
@@ -173,6 +175,66 @@
         "scheduleHealthy": "최근 7일 일정 충돌이 없습니다",
         "empty": "확인할 예외가 없습니다",
         "emptyDescription": "현재 내 역할 범위의 업무 상태가 정상입니다."
+      }
+    },
+    "contributions": {
+      "workspace": {
+        "openWorkTitle": "열린 업무",
+        "dueSoonDescription": "확인이 필요한 업무 {{count}}건",
+        "dueSoonDescription_other": "확인이 필요한 업무 {{count}}건",
+        "onTrackDescription": "현재 업무 흐름이 안정적입니다."
+      },
+      "calendar": {
+        "privateEventTitle": "비공개 일정",
+        "protectedEventTitle": "보호된 일정",
+        "awaitingResponseTitle": "응답하지 않은 일정 초대",
+        "awaitingResponseTitle_other": "응답하지 않은 일정 초대",
+        "awaitingResponseDescription": "{{count}}건의 일정 응답이 필요합니다.",
+        "awaitingResponseDescription_other": "{{count}}건의 일정 응답이 필요합니다.",
+        "awaitingAttentionTitle": "응답이 필요한 일정 초대",
+        "awaitingAttentionTitle_other": "응답이 필요한 일정 초대",
+        "awaitingAttentionDescription": "{{count}}건의 일정 초대를 확인하세요.",
+        "awaitingAttentionDescription_other": "{{count}}건의 일정 초대를 확인하세요.",
+        "focusTitle": "오늘 집중 시간",
+        "focusProgressDescription": "{{minutes}}분 / 목표 {{target}}분",
+        "focusProtectedDescription": "{{minutes}}분 확보"
+      },
+      "activity": {
+        "attentionTitle": "확인이 필요한 활동",
+        "attentionDescription": "{{count}}건의 활동이 입력 또는 정책 확인을 기다립니다.",
+        "attentionDescription_other": "{{count}}건의 활동이 입력 또는 정책 확인을 기다립니다."
+      },
+      "approval": {
+        "integrationFailuresTitle": "결재 연동 실패",
+        "overdueWorkTitle": "연체된 결재 업무"
+      },
+      "hr": {
+        "timeCardTitle": "근무 기록을 확인하세요",
+        "exceptionDescription": "확인이 필요한 예외가 {{count}}건 있습니다.",
+        "exceptionDescription_other": "확인이 필요한 예외가 {{count}}건 있습니다.",
+        "timeCardIncompleteDescription": "현재 기간의 근무 기록이 완료되지 않았습니다.",
+        "requiredLearningTitle": "필수 학습",
+        "openBenefitWindowTitle": "진행 중인 복리후생 신청",
+        "teamPendingTitle": "팀 인사 승인 대기"
+      },
+      "notification": {
+        "apps": {
+          "approvals": "전자결재",
+          "communications": "소식",
+          "hcm": "인사",
+          "messaging": "메시지",
+          "space": "Space",
+          "mail": "메일",
+          "fallback": "업무 앱"
+        },
+        "actionableTitle": "{{app}} 알림 확인",
+        "actionableTitle_other": "{{app}} 알림 확인",
+        "urgentTitle": "{{app}} 긴급 알림",
+        "urgentTitle_other": "{{app}} 긴급 알림",
+        "actionableDescription": "조치 가능한 알림 {{count}}건",
+        "actionableDescription_other": "조치 가능한 알림 {{count}}건",
+        "urgentDescription": "긴급 알림 {{count}}건",
+        "urgentDescription_other": "긴급 알림 {{count}}건"
       }
     },
     "apps": {
@@ -318,7 +380,7 @@
       "empty": "지금 비교할 수 있는 업무 신호가 없습니다.",
       "openWork": "열린 업무",
       "focusTime": "집중 시간",
-      "scheduleLoad": "일정 충돌",
+      "scheduleLoad": "일정 부하",
       "activityAttention": "확인할 활동",
       "unit": {
         "items": "건",

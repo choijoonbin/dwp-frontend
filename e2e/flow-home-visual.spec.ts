@@ -107,6 +107,108 @@ function flowOverview(roles: readonly string[] = ['WORKSPACE_MEMBER']) {
   };
 }
 
+function longKoreanFlowOverview(roles: readonly string[] = ['WORKSPACE_MEMBER']) {
+  const overview = flowOverview(roles);
+  const workTitles = [
+    '해외 고객 데이터 이전을 위한 보안 예외 승인 요청을 오늘 안에 검토해 주세요',
+    '신규 입사자 프로젝트 접근 권한과 필수 라이선스 범위를 최종 확인해 주세요',
+    '분기 운영 리스크 브리핑 자료의 미확정 질문과 담당자를 점검해 주세요',
+  ];
+  const communicationTitles = [
+    '생성형 AI를 활용한 협업 방식 전환과 안전한 업무 자동화 운영 원칙 안내',
+    '지역 사회와 함께하는 친환경 캠퍼스 주간 프로그램 참여 방법을 확인하세요',
+    '분산 근무 환경에서 고객 정보와 회사 자산을 보호하는 보안 점검 안내',
+  ];
+  const recommendations = overview.recommendations.map((recommendation) => ({
+    ...recommendation,
+    title: '마감이 임박한 핵심 업무와 선행 의사결정 항목을 먼저 검토해 주세요',
+    description:
+      '여러 업무 앱에서 수집된 우선순위와 마감 정보를 기준으로 지금 처리할 항목을 정리했습니다.',
+  }));
+  const today = overview.calendar.data.today.map((event, index) => ({
+    ...event,
+    title:
+      index === 0
+        ? '디지털 워크플레이스 운영 안정화와 다음 분기 우선순위 정렬 회의'
+        : '집중 업무 시간을 보호하기 위한 고객 제안서 최종 검토',
+    description: '관련 부서의 결정 사항과 후속 실행 책임자를 함께 확인합니다.',
+  }));
+
+  return {
+    ...overview,
+    work: {
+      ...overview.work,
+      data: {
+        ...overview.work.data,
+        items: overview.work.data.items.map((item, index) => ({
+          ...item,
+          title: workTitles[index] ?? item.title,
+          summary:
+            index < workTitles.length
+              ? '업무 영향 범위와 남은 의사결정 사항을 확인하고 담당자에게 결과를 공유해 주세요.'
+              : item.summary,
+        })),
+      },
+    },
+    calendar: {
+      ...overview.calendar,
+      data: {
+        ...overview.calendar.data,
+        nextEvent: today[0] ?? overview.calendar.data.nextEvent,
+        today,
+        attention: overview.calendar.data.attention.map((item) => ({
+          ...item,
+          title: '회의실 확정 전에 참석 여부를 회신해야 하는 일정이 있습니다',
+          description: '주최자가 최종 참석자와 장소를 확정할 수 있도록 응답해 주세요.',
+        })),
+      },
+    },
+    communications: {
+      ...overview.communications,
+      data: {
+        ...overview.communications.data,
+        featured: {
+          ...overview.communications.data.featured,
+          title: '전사 리더십 대화에서 공유된 주요 질문과 후속 실행 계획을 확인하세요',
+          summary:
+            '구성원이 가장 많이 질문한 주제와 경영진 답변, 다음 분기 실행 방향을 한눈에 정리했습니다.',
+          publisherName: '대표이사실',
+        },
+        items: overview.communications.data.items.map((item, index) => ({
+          ...item,
+          title: communicationTitles[index] ?? item.title,
+          summary:
+            '업무에 바로 적용할 수 있는 핵심 내용과 필요한 후속 행동을 간결하게 확인해 보세요.',
+          publisherName: index === 0 ? '디지털 워크플레이스팀' : '기업문화팀',
+        })),
+      },
+    },
+    recommendations,
+    recommendationSection: {
+      ...overview.recommendationSection,
+      data: recommendations,
+    },
+  };
+}
+
+function longKoreanApprovalHome() {
+  return {
+    ...APPROVAL_HOME_FIXTURE,
+    focusQueue: APPROVAL_HOME_FIXTURE.focusQueue.map((task) => ({
+      ...task,
+      title: '고객 데이터 분석 환경의 한시적 접근 권한과 보안 예외 승인 요청',
+      summary: '운영 장애 분석을 위한 최소 권한 범위와 종료 시점을 검토해 주세요.',
+      stepName: '정보보호 검토 및 최종 승인',
+    })),
+    recentRequests: APPROVAL_HOME_FIXTURE.recentRequests.map((request) => ({
+      ...request,
+      title: '글로벌 협업 프로젝트 외부 참여자 초대 및 자료 공유 승인 요청',
+      summary: '외부 참여 범위와 자료 분류 기준을 확인한 뒤 후속 조치를 결정해 주세요.',
+      currentStepName: '업무 책임자 검토 단계',
+    })),
+  };
+}
+
 async function mockFlowHome(
   page: Page,
   presentation: 'focused' | 'balanced' | 'expressive',
@@ -115,6 +217,8 @@ async function mockFlowHome(
     colorScheme?: 'light' | 'dark';
     forcedColors?: 'active' | 'none';
     roles?: readonly string[];
+    longKoreanContent?: boolean;
+    preferenceGate?: Promise<void>;
   }> = {}
 ) {
   const colorScheme = visualOptions.colorScheme ?? 'light';
@@ -141,14 +245,18 @@ async function mockFlowHome(
     fulfillSuccess(route, flowExperience(experienceOverrides))
   );
   await page.route('**/api/platform/v1/home/overview**', (route) =>
-    fulfillSuccess(route, flowOverview(roles))
+    fulfillSuccess(
+      route,
+      visualOptions.longKoreanContent ? longKoreanFlowOverview(roles) : flowOverview(roles)
+    )
   );
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
     if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
       return route.fallback();
     }
+    await visualOptions.preferenceGate;
     return fulfillSuccess(route, {
       schemaVersion: 5,
       surfaceKey: 'workspace-home',
@@ -163,7 +271,10 @@ async function mockFlowHome(
   });
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
   await page.route(/\/api\/approvals\/v1\/home(?:\?|$)/u, (route) =>
-    fulfillSuccess(route, { ...APPROVAL_HOME_FIXTURE, generatedAt: FLOW_VISUAL_NOW.toISOString() })
+    fulfillSuccess(route, {
+      ...(visualOptions.longKoreanContent ? longKoreanApprovalHome() : APPROVAL_HOME_FIXTURE),
+      generatedAt: FLOW_VISUAL_NOW.toISOString(),
+    })
   );
   await page.route('**/api/people/v1/hr/home', (route) =>
     fulfillSuccess(route, { ...HR_HOME_FIXTURE, generatedAt: FLOW_VISUAL_NOW.toISOString() })
@@ -348,6 +459,29 @@ async function expectNoHorizontalOverflow(page: Page) {
       )
     )
     .toBe(true);
+}
+
+async function expectRoleMetricLabelsReadable(flowHome: Locator) {
+  const roleLabels = await flowHome
+    .locator('[data-home-role-label], [data-home-role-comparison]')
+    .evaluateAll((labels) =>
+      labels.map((label) => {
+        const element = label as HTMLElement;
+        return {
+          text: element.textContent?.trim() ?? '',
+          whiteSpace: window.getComputedStyle(element).whiteSpace,
+          clippedHorizontally: element.scrollWidth > element.clientWidth + 1,
+          clippedVertically: element.scrollHeight > element.clientHeight + 1,
+        };
+      })
+    );
+  expect(roleLabels).toHaveLength(8);
+  expect(
+    roleLabels.every(
+      (label) => label.text.length > 1 && !label.clippedHorizontally && !label.clippedVertically
+    ),
+    JSON.stringify(roleLabels)
+  ).toBe(true);
 }
 
 async function expectDesktopPurposeComposition(
@@ -835,6 +969,7 @@ test('Flow Home focused Korean desktop 1440 visual baseline', async ({ page }, t
   const flowHome = page.getByTestId('flow-home');
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'focused');
   await expectDesktopPurposeComposition(flowHome);
+  await expectRoleMetricLabelsReadable(flowHome);
   const frame = await flowHome.boundingBox();
   expect(frame?.width ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(1281);
   expect(frame?.x ?? 0).toBeGreaterThanOrEqual(79);
@@ -995,6 +1130,7 @@ test('Flow Home purpose-led Korean mobile 390 visual baseline', async ({ page },
     .locator('[data-workspace-presentation]')
     .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
   expect(columns).toBe(1);
+  await expectRoleMetricLabelsReadable(flowHome);
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
@@ -1038,4 +1174,176 @@ test('Flow Home expressive Korean mobile 390 actual visual baseline', async ({
     maxDiffPixelRatio: 0.001,
     timeout: 15_000,
   });
+});
+
+test('Flow Home Korean mobile 320 full-page visual baseline', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'The 320px baseline uses the mobile project.');
+  await page.setViewportSize({ width: 320, height: 760 });
+  await mockFlowHome(page, 'balanced');
+
+  await page.goto('/');
+  const flowHome = page.getByTestId('flow-home');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
+  await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
+  await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+  const columns = await flowHome
+    .locator('[data-workspace-presentation]')
+    .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
+  expect(columns).toBe(1);
+  await expectRoleMetricLabelsReadable(flowHome);
+  await expectNoHorizontalOverflow(page);
+  await waitForVisualState(page);
+
+  await expect(page).toHaveScreenshot('flow-home-purpose-balanced-ko-320.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    scale: 'css',
+    maxDiffPixelRatio: 0.001,
+    timeout: 15_000,
+  });
+});
+
+test('Flow Home Korean desktop 1280 at 200 percent text keeps a dark visual baseline', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Large-text dark baseline uses Chromium.');
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await mockFlowHome(page, 'balanced', {}, { colorScheme: 'dark' });
+
+  await page.goto('/');
+  await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+  const flowHome = page.getByTestId('flow-home');
+  await expect
+    .poll(() => page.evaluate(() => window.getComputedStyle(document.documentElement).fontSize))
+    .toBe('32px');
+  await expect(flowHome).toHaveAttribute('data-flow-large-text', 'true');
+  const largeTextMeaning = await flowHome.evaluate((root) => {
+    const measure = (element: HTMLElement) => ({
+      text: element.textContent?.trim() ?? '',
+      clippedHorizontally: element.scrollWidth > element.clientWidth + 1,
+      clippedVertically: element.scrollHeight > element.clientHeight + 1,
+    });
+    const description = root.querySelector<HTMLElement>('[data-flow-context-description]');
+    const groupLabels = Array.from(
+      root.querySelectorAll<HTMLElement>('[data-flow-dock-group-label]')
+    ).filter((label) => window.getComputedStyle(label).display !== 'none');
+    return {
+      description: description ? measure(description) : null,
+      groupLabels: groupLabels.map(measure),
+    };
+  });
+  expect(largeTextMeaning.description).not.toBeNull();
+  expect(largeTextMeaning.description?.text.length ?? 0).toBeGreaterThan(1);
+  expect(largeTextMeaning.description?.clippedHorizontally).toBe(false);
+  expect(largeTextMeaning.description?.clippedVertically).toBe(false);
+  expect(largeTextMeaning.groupLabels.length).toBeGreaterThan(1);
+  expect(
+    largeTextMeaning.groupLabels.every(
+      (label) => label.text.length > 1 && !label.clippedHorizontally && !label.clippedVertically
+    ),
+    JSON.stringify(largeTextMeaning.groupLabels)
+  ).toBe(true);
+  const columns = await flowHome
+    .locator('[data-workspace-presentation]')
+    .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
+  expect(columns).toBe(1);
+  await expectNoHorizontalOverflow(page);
+  await waitForVisualState(page);
+  await expectDwaionClearOfHomeActions(page);
+
+  await expect(page).toHaveScreenshot('flow-home-purpose-balanced-ko-1280-text-200-dark.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    scale: 'css',
+    maxDiffPixelRatio: 0.001,
+    timeout: 15_000,
+  });
+});
+
+test('Flow Home Korean long-content desktop visual baseline', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Long-content baseline uses Chromium.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockFlowHome(page, 'balanced', {}, { longKoreanContent: true });
+
+  await page.goto('/');
+  const flowHome = page.getByTestId('flow-home');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
+  await expect(
+    flowHome.getByText('고객 데이터 분석 환경의 한시적 접근 권한과 보안 예외 승인 요청', {
+      exact: true,
+    })
+  ).toBeVisible();
+  await expect(
+    flowHome.getByText('생성형 AI를 활용한 협업 방식 전환과 안전한 업무 자동화 운영 원칙 안내', {
+      exact: true,
+    })
+  ).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+  await waitForVisualState(page);
+  await expectDwaionClearOfHomeActions(page);
+
+  await expect(page).toHaveScreenshot('flow-home-purpose-long-ko-1440.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    scale: 'css',
+    maxDiffPixelRatio: 0.001,
+    timeout: 15_000,
+  });
+});
+
+test('Flow Home loading transition stays within the layout-shift contract', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Layout shift is measured once in Chromium.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => {
+    const state = { supported: false, value: 0, entries: 0 };
+    Object.assign(window, { __flowHomeLayoutShift: state });
+    if (!PerformanceObserver.supportedEntryTypes.includes('layout-shift')) return;
+    state.supported = true;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        const shift = entry as PerformanceEntry & { value: number; hadRecentInput: boolean };
+        if (shift.hadRecentInput) continue;
+        state.value += shift.value;
+        state.entries += 1;
+      }
+    }).observe({ type: 'layout-shift', buffered: true });
+  });
+  let releasePreference = () => undefined;
+  const preferenceGate = new Promise<void>((resolve) => {
+    releasePreference = resolve;
+  });
+  await mockFlowHome(page, 'balanced', {}, { preferenceGate });
+
+  await page.goto('/');
+  await expect(page.getByTestId('home-loading-skeleton')).toBeVisible();
+  await page.waitForTimeout(100);
+  await page.evaluate(() => {
+    const state = (
+      window as typeof window & {
+        __flowHomeLayoutShift: { supported: boolean; value: number; entries: number };
+      }
+    ).__flowHomeLayoutShift;
+    state.value = 0;
+    state.entries = 0;
+  });
+  releasePreference();
+
+  await expect(page.getByTestId('flow-home')).toBeVisible();
+  await waitForVisualState(page);
+  await page.waitForTimeout(250);
+  const shift = await page.evaluate(
+    () =>
+      (
+        window as typeof window & {
+          __flowHomeLayoutShift: { supported: boolean; value: number; entries: number };
+        }
+      ).__flowHomeLayoutShift
+  );
+  expect(shift.supported).toBe(true);
+  expect(shift.value).toBeLessThanOrEqual(0.02);
 });

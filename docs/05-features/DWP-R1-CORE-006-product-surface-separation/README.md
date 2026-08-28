@@ -72,8 +72,8 @@ HCM은 owner-service PEP, Target Population, 실 Team·Operations API, SoD와 1�
 3단계 `요청 → 승인 → 활성화`를 분리한다. 본 문서와 Surface ADR은 실제
 Product·Security·Privacy의 Production 승인을 의미하지 않으며 Readiness Manifest가 유일한 출시 판정이다.
 
-W1a 운영 활성화 전에는 ADR·186개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
-Owner가 승인한다. W2/W3의 91개 Frontend DRAFT Page 계약(정적 메뉴 86개 + 동적 5개)도 제품별 Exact Capability가 다음
+W1a 운영 활성화 전에는 ADR·187개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
+Owner가 승인한다. W2/W3의 92개 Frontend DRAFT Page 계약(정적 메뉴 87개 + 동적 5개)도 제품별 Exact Capability가 다음
 불변 Bundle에 승인되기 전에는 활성화하지 않는다. 핵심 승인 Package는 다음과 같다.
 
 1. Bound `EffectiveProductSurfaceContext`·Direct Evaluation·Capability Registry

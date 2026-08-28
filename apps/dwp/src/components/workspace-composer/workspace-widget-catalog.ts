@@ -17,6 +17,8 @@ export type WorkspaceWidgetCatalogDefinition = Readonly<{
   manifestVersion: 1;
   ownerProduct: string;
   sourceAppResourceKey: string;
+  /** Apps whose authorized data can independently populate the Flow purpose surface. */
+  contributorAppResourceKeys: readonly string[];
   dataSource: string;
   freshnessSeconds: number;
   privacyClass: WorkspaceWidgetPrivacyClass;
@@ -46,6 +48,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     manifestVersion: 1,
     ownerProduct: 'core.workspace',
     sourceAppResourceKey: 'APP.WORK',
+    contributorAppResourceKeys: ['APP.WORK', 'APP.APPROVALS', 'APP.HCM', 'APP.WORKPLACE'],
     dataSource: 'DWP_HOME_OVERVIEW',
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
@@ -68,6 +71,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     manifestVersion: 1,
     ownerProduct: 'core.workspace',
     sourceAppResourceKey: 'APP.WORK',
+    contributorAppResourceKeys: ['APP.CALENDAR', 'APP.APPROVALS', 'APP.NOTIFICATIONS'],
     dataSource: 'DWP_HOME_OVERVIEW',
     freshnessSeconds: 30,
     privacyClass: 'INTERNAL',
@@ -95,6 +99,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     manifestVersion: 1,
     ownerProduct: 'core.work',
     sourceAppResourceKey: 'APP.WORK',
+    contributorAppResourceKeys: ['APP.APPROVALS', 'APP.EMPLOYEE_SERVICES'],
     dataSource: 'DWP_WORKSPACE',
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
@@ -122,6 +127,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     manifestVersion: 1,
     ownerProduct: 'core.calendar',
     sourceAppResourceKey: 'APP.CALENDAR',
+    contributorAppResourceKeys: ['APP.CALENDAR', 'APP.WORKPLACE'],
     dataSource: 'DWP_CALENDAR',
     freshnessSeconds: 30,
     privacyClass: 'CONFIDENTIAL',
@@ -149,6 +155,14 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     manifestVersion: 1,
     ownerProduct: 'core.activity',
     sourceAppResourceKey: 'APP.ACTIVITY',
+    contributorAppResourceKeys: [
+      'APP.WORK',
+      'APP.CALENDAR',
+      'APP.ACTIVITY',
+      'APP.APPROVALS',
+      'APP.HCM',
+      'APP.NOTIFICATIONS',
+    ],
     dataSource: 'DWP_ACTIVITY',
     freshnessSeconds: 30,
     privacyClass: 'INTERNAL',

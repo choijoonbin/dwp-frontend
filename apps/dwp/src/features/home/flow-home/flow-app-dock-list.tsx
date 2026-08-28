@@ -152,6 +152,7 @@ export function FlowAppDockList({
         >
           <Typography
             id={`flow-dock-group-${group.id}`}
+            data-flow-dock-group-label
             title={group.name}
             variant="caption"
             fontWeight={750}

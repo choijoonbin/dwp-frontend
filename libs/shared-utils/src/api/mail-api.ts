@@ -286,6 +286,31 @@ export type MailRuleRun = {
   completedAt?: string | null;
 };
 
+export type MailRuleBackfillPreview = {
+  accountId: string;
+  previewFingerprint: string;
+  enabledRuleCount: number;
+  scannedCount: number;
+  matchedThreadCount: number;
+  plannedApplicationCount: number;
+  truncated: boolean;
+  generatedAt: string;
+};
+
+export type MailRuleBackfillResult = {
+  executionId: string;
+  requestId: string;
+  accountId: string;
+  status: 'SUCCEEDED';
+  replayed: boolean;
+  scannedCount: number;
+  matchedThreadCount: number;
+  applicationCount: number;
+  changedCount: number;
+  startedAt: string;
+  completedAt: string;
+};
+
 export type MailOrganization = {
   accounts: MailAccount[];
   folders: MailFolder[];
@@ -600,6 +625,26 @@ export async function runMailRule(ruleId: string): Promise<MailRuleRun> {
   const response = await axiosInstance.post<ApiResponse<MailRuleRun>>(
     `/api/platform/v1/mail/organization/rules/${encodeURIComponent(ruleId)}/run`,
     {}
+  );
+  return response.data.data;
+}
+
+export async function getMailRuleBackfillPreview(
+  accountId: string
+): Promise<MailRuleBackfillPreview> {
+  const response = await axiosInstance.get<ApiResponse<MailRuleBackfillPreview>>(
+    `/api/platform/v1/mail/organization/accounts/${encodeURIComponent(accountId)}/rules/backfill-preview`
+  );
+  return response.data.data;
+}
+
+export async function runMailRuleBackfill(
+  accountId: string,
+  input: { requestId: string; previewFingerprint: string }
+): Promise<MailRuleBackfillResult> {
+  const response = await axiosInstance.post<ApiResponse<MailRuleBackfillResult>, typeof input>(
+    `/api/platform/v1/mail/organization/accounts/${encodeURIComponent(accountId)}/rules/backfill`,
+    input
   );
   return response.data.data;
 }

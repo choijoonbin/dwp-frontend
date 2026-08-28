@@ -1,7 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import { decideDwaionProposal, getDwaionProposals } from './agent-proposal-api';
+import {
+  analyzeDwaionProposals,
+  clearDwaionProposalInbox,
+  decideDwaionProposal,
+  getDwaionProposalAnalysisPreference,
+  getDwaionProposals,
+  updateDwaionProposalAnalysisPreference,
+} from './agent-proposal-api';
 
 const PROPOSAL_ID = '00000000-0000-4000-8000-000000000201';
 
@@ -106,5 +113,79 @@ describe('Agent proposal API', () => {
       )
     );
     await expect(getDwaionProposals()).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('runs an explicit analysis with an idempotency command and validates the receipt', async () => {
+    const receipt = {
+      analyzedAt: '2026-08-28T02:00:00Z',
+      sourcesAnalyzed: 3,
+      actionableProposals: 1,
+      attemptedSources: ['WORK_ITEM', 'MAIL', 'CALENDAR'],
+      unavailableSources: [],
+      proposals: [proposal()],
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(response({ success: true, data: receipt }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(analyzeDwaionProposals()).resolves.toEqual(receipt);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/agent/v1/proposals/analyze',
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.stringMatching(/"commandId":"[0-9a-f-]{36}"/u),
+      })
+    );
+  });
+
+  it('loads and updates the user-controlled analysis preference', async () => {
+    const current = { proactiveAnalysisEnabled: true, revision: 2, updatedAt: null };
+    const updated = {
+      proactiveAnalysisEnabled: false,
+      revision: 3,
+      updatedAt: '2026-08-28T02:01:00Z',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ success: true, data: current }))
+      .mockResolvedValueOnce(
+        response({ data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(response({ success: true, data: updated }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getDwaionProposalAnalysisPreference()).resolves.toEqual(current);
+    await expect(updateDwaionProposalAnalysisPreference(2, false)).resolves.toEqual(updated);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      '/api/agent/v1/proposals/preferences',
+      expect.objectContaining({
+        method: 'PUT',
+        body: expect.stringContaining('"expectedRevision":2'),
+      })
+    );
+  });
+
+  it('clears the inbox through an explicit privacy command', async () => {
+    const receipt = { hiddenCount: 4, clearedAt: '2026-08-28T02:02:00Z' };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(response({ success: true, data: receipt }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(clearDwaionProposalInbox()).resolves.toEqual(receipt);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/agent/v1/proposals/clear',
+      expect.objectContaining({ method: 'POST' })
+    );
   });
 });

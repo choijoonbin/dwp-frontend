@@ -163,6 +163,7 @@
     "FAILED": "Export processing failed",
     "PUBLISH": "Publish",
     "REVOKE": "Revoked",
+    "CHECK_IN": "Resource checked in",
     "RELEASE": "Resource released",
     "REASSIGN": "Reassigned",
     "EXTEND_RETENTION": "Archive deadline extended",

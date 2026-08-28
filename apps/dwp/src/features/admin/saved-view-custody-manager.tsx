@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, ArrowRightLeft, CheckCircle2, LibraryBig, UserRoundCog } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   listOrphanedSavedViews,
   listOrphanLifecycleActions,
-  listSavedViewCustodyUsers,
   listSavedViewOwnershipTransfers,
   previewSavedViewOwnership,
   transferSavedViewOwnership,
@@ -49,11 +48,12 @@ import {
   isEligibleSavedViewCustodyTarget,
   isValidSavedViewRetentionDate,
   SAVED_VIEW_OWNERSHIP_REASONS,
-  sortCustodySourceUsers,
   type SavedViewCustodyWorkspaceTab,
   type SavedViewTargetEligibilityFailure,
 } from './saved-view-custody-model';
 import { SavedViewCustodyConfirmDialog } from './saved-view-custody-confirm-dialog';
+import { useSavedViewCustodyDirectory } from './saved-view-custody-directory';
+import { useFocusWhenReady } from './saved-view-custody-focus';
 import {
   SavedViewCustodyTargetField,
   SavedViewTargetEligibilityNotice,
@@ -90,8 +90,6 @@ export function SavedViewCustodyManager() {
   const [targetOwner, setTargetOwner] = useState<SavedViewCustodyUser | null>(null);
   const [sourceSearch, setSourceSearch] = useState('');
   const [targetSearch, setTargetSearch] = useState('');
-  const [debouncedSourceSearch, setDebouncedSourceSearch] = useState('');
-  const [debouncedTargetSearch, setDebouncedTargetSearch] = useState('');
   const [disposition, setDisposition] = useState<SavedViewOwnershipDisposition>('TRANSFER');
   const [reasonCode, setReasonCode] = useState<SavedViewOwnershipReason>('OFFBOARDING');
   const [sourceReference, setSourceReference] = useState('');
@@ -116,42 +114,23 @@ export function SavedViewCustodyManager() {
   const nameConflictNoticeRef = useRef<HTMLDivElement | null>(null);
   const targetInputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedSourceSearch(sourceSearch.trim()), 220);
-    return () => window.clearTimeout(timeout);
-  }, [sourceSearch]);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedTargetSearch(targetSearch.trim()), 220);
-    return () => window.clearTimeout(timeout);
-  }, [targetSearch]);
-
-  useEffect(() => {
     setNameConflictTarget(null);
     setTargetEligibilityFailure(null);
     if (disposition === 'TRANSFER') setRetentionUntil(null);
     else setTargetOwner(null);
   }, [disposition]);
 
-  const sourceUsers = useQuery({
-    queryKey: ['admin', 'identity-users', 'saved-view-custody', 'source', debouncedSourceSearch],
-    queryFn: () => listSavedViewCustodyUsers(debouncedSourceSearch, false, 30),
-    staleTime: 20_000,
-    retry: 1,
-  });
-  const targetUsers = useQuery({
-    queryKey: [
-      'admin',
-      'identity-users',
-      'saved-view-custody',
-      'target',
-      sourceOwner?.userId,
-      debouncedTargetSearch,
-    ],
-    queryFn: () => listSavedViewCustodyUsers(debouncedTargetSearch, true, 30, sourceOwner?.userId),
-    enabled: disposition === 'TRANSFER' && Boolean(sourceOwner),
-    staleTime: 20_000,
-    retry: 1,
-  });
+  const { sourceUsers, targetUsers, sourceOptions, targetOptions, knownUsers } =
+    useSavedViewCustodyDirectory({
+      actorUserId: auth.user?.userId,
+      disposition,
+      sourceOwner,
+      sourceSearch,
+      targetOwner,
+      targetSearch,
+    });
+  const focusReady = !confirmOpen && !executing && targetUsers.isSuccess && !targetUsers.isFetching;
+  useFocusWhenReady(targetInputRef, Boolean(targetEligibilityFailure), focusReady);
   const orphaned = useQuery({
     queryKey: ['admin', 'saved-view-custody', 'orphaned'],
     queryFn: listOrphanedSavedViews,
@@ -167,34 +146,6 @@ export function SavedViewCustodyManager() {
     queryFn: () => listOrphanLifecycleActions(50),
     retry: 1,
   });
-
-  const sourceOptions = useMemo(
-    () => sortCustodySourceUsers(sourceUsers.data ?? []),
-    [sourceUsers.data]
-  );
-  const targetOptions = useMemo(
-    () =>
-      (targetUsers.data ?? [])
-        .filter(
-          (user) =>
-            user.status === 'ACTIVE' &&
-            user.identityPlane !== 'PROVIDER' &&
-            ![auth.user?.userId, sourceOwner?.userId].some(
-              (userId) => userId != null && user.userId === userId
-            )
-        )
-        .sort((left, right) => left.displayName.localeCompare(right.displayName)),
-    [auth.user?.userId, sourceOwner, targetUsers.data]
-  );
-  const knownUsers = useMemo(() => {
-    const values = [
-      ...(sourceUsers.data ?? []),
-      ...(targetUsers.data ?? []),
-      ...(sourceOwner ? [sourceOwner] : []),
-      ...(targetOwner ? [targetOwner] : []),
-    ];
-    return new Map(values.map((user) => [user.userId, user]));
-  }, [sourceOwner, sourceUsers.data, targetOwner, targetUsers.data]);
 
   const sourceValid = Boolean(sourceOwner);
   const targetValid =
@@ -329,7 +280,6 @@ export function SavedViewCustodyManager() {
           setTargetOwner(null);
           setTargetSearch('');
           await targetUsers.refetch();
-          window.requestAnimationFrame(() => targetInputRef.current?.focus());
         } else {
           await refresh();
           toast.error(t('savedViewCustody.toasts.executeFailed'));

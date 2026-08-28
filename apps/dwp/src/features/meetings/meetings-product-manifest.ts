@@ -30,6 +30,10 @@ export const MEETINGS_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(ME
     taskKind: 'administration',
     access: { type: 'capability', capabilityContractKey: 'meetings.policy.read' },
   },
+  'admin-intelligence': {
+    taskKind: 'administration',
+    access: { type: 'capability', capabilityContractKey: 'meetings.policy.read' },
+  },
 });
 
 export const MEETINGS_PRODUCT_MANIFEST = defineProductManifest({

@@ -82,6 +82,12 @@
     "attention": {
       "eyebrow": "Today's focus",
       "openInbox": "Open inbox",
+      "actions": {
+        "mentions": "Review mentions",
+        "unread": "Open inbox",
+        "saved": "Open saved items",
+        "clear": "Open inbox"
+      },
       "states": {
         "mentions": {
           "title": "{{count}} mentions are waiting for you",
@@ -482,6 +488,11 @@
     "CHANNELS": {
       "title": "Channels",
       "description": "Browse team and operations channels."
+    },
+    "MENTIONS": {
+      "title": "Mentions",
+      "description": "Unread conversations where someone mentioned you.",
+      "showAll": "Show all inbox"
     }
   },
   "context": {
@@ -527,6 +538,8 @@
       "description": "Configure DMs, Space conversations, edit/delete rules, AI assistance, and retention.",
       "saved": "Messaging policy saved.",
       "saveError": "Messaging policy could not be saved.",
+      "conflict": "Another administrator changed this policy. The latest settings were loaded; review and save again.",
+      "readOnly": "You can review this policy, but changing it requires Messaging management permission.",
       "noBypass": "Policy changes are audited and cannot bypass Space membership.",
       "fields": {
         "directMessagesEnabled": {
@@ -550,10 +563,12 @@
           "description": "Enable extension points for summary, reply draft, and urgency detection."
         },
         "retentionDays": {
-          "label": "Retention days"
+          "label": "Retention days",
+          "range": "Enter a whole number from {{min}} to {{max}}."
         },
         "maximumAttachmentMb": {
-          "label": "Maximum attachment size (MB)"
+          "label": "Maximum attachment size (MB)",
+          "range": "Enter a whole number from {{min}} to {{max}}."
         }
       }
     }

@@ -315,13 +315,22 @@ async function collectFiles(path, files) {
 export async function scanProviderArtifacts(inputPaths) {
   const roots = inputPaths.map((path) => resolve(path));
   const files = [];
-  let foundRoot = false;
-  for (const root of roots) foundRoot = (await collectFiles(root, files)) || foundRoot;
-  if (!foundRoot) fail(`none of the requested artifact roots exist: ${roots.join(', ')}`);
-  if (files.length === 0) fail('the requested artifact roots contain no files');
+  const filesByRoot = new Map();
+  for (const root of roots) {
+    const metadata = await lstat(root).catch(() => null);
+    if (!metadata) fail(`requested artifact root does not exist: ${root}`);
+    if (metadata.isSymbolicLink()) fail(`${root} is a symbolic link`);
+    if (!metadata.isDirectory()) fail(`${root} is not a directory`);
+    const rootFiles = [];
+    await collectFiles(root, rootFiles);
+    if (rootFiles.length === 0) fail(`${root} contains no files`);
+    filesByRoot.set(root, rootFiles);
+    files.push(...rootFiles);
+  }
 
   const findings = [];
   let filesScanned = 0;
+  const runtimeEvidenceByRoot = new Map(roots.map((root) => [root, 0]));
   for (const path of files) {
     const reportMode = playwrightReportFileMode(path, roots);
     if (reportMode === 'viewer-asset') continue;
@@ -333,8 +342,13 @@ export async function scanProviderArtifacts(inputPaths) {
     if (path.toLowerCase().endsWith('.zip')) scanZip(buffer, location, findings);
     else scanBuffer(buffer, location, findings, { scanRawText: reportMode !== 'embedded-report' });
     filesScanned += 1;
+    for (const [root, rootFiles] of filesByRoot) {
+      if (rootFiles.includes(path)) runtimeEvidenceByRoot.set(root, runtimeEvidenceByRoot.get(root) + 1);
+    }
   }
-  if (filesScanned === 0) fail('the requested artifact roots contain no runtime evidence');
+  for (const [root, count] of runtimeEvidenceByRoot) {
+    if (count === 0) fail(`${root} contains no runtime evidence`);
+  }
   return { filesScanned, findings };
 }
 

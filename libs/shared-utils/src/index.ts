@@ -35,6 +35,7 @@ export * from './api/workplace-api';
 export * from './api/workplace-governance-api';
 export * from './api/mail-api';
 export * from './api/video-meeting-api';
+export * from './api/video-meeting-content-api';
 export * from './api/messaging-api';
 export * from './api/notification-api';
 export * from './api/notification-app-summary-api';

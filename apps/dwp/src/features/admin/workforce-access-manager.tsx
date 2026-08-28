@@ -21,6 +21,7 @@ import {
   SelectField,
 } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -204,6 +205,13 @@ function WorkforceAccessManagerContent() {
       ),
     [actionFilter, policies.data, search, searchTermsByPolicy, stateFilter]
   );
+  const unresolvedUserPolicies = useMemo(
+    () =>
+      (policies.data ?? []).filter(
+        (policy) => policy.subjectType === 'USER' && !usersById.has(policy.subjectRef)
+      ),
+    [policies.data, usersById]
+  );
 
   const columns = useMemo<GridColDef<WorkforceAccessPolicy>[]>(
     () => [
@@ -380,6 +388,40 @@ function WorkforceAccessManagerContent() {
         />
       ) : (
         <>
+          {unresolvedUserPolicies.length > 0 && users.isFetched && (
+            <Alert severity={users.isError ? 'error' : 'warning'}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                alignItems={{ xs: 'flex-start', sm: 'center' }}
+                gap={1}
+              >
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Typography variant="subtitle2">
+                    {t('workforceAccess.references.policyUsersTitle')}
+                  </Typography>
+                  <Typography variant="body2">
+                    {users.isError
+                      ? t('workforceAccess.references.policyUsersError')
+                      : t('workforceAccess.references.policyUsersUnresolved', {
+                          count: unresolvedUserPolicies.length,
+                        })}
+                  </Typography>
+                </Box>
+                <ActionButton
+                  type="button"
+                  size="small"
+                  intent="secondary"
+                  aria-disabled={users.isFetching || undefined}
+                  sx={{ opacity: users.isFetching ? 0.64 : 1 }}
+                  onClick={() => {
+                    if (!users.isFetching) void users.refetch();
+                  }}
+                >
+                  {t('workforceAccess.references.retryPolicyUsers')}
+                </ActionButton>
+              </Stack>
+            </Alert>
+          )}
           <FilterBar
             ariaLabel={t('workforceAccess.filters.ariaLabel')}
             searchLabel={t('workforceAccess.filters.searchLabel')}

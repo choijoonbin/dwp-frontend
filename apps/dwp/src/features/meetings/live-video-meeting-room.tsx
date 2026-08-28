@@ -26,6 +26,7 @@ import type {
 
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingConference } from './meeting-conference';
+import { MeetingContentControl } from './meeting-content-governance';
 
 import '@livekit/components-styles';
 import './live-video-meeting-room.css';
@@ -136,6 +137,7 @@ export function LiveVideoMeetingRoom({
             meetingId={meeting.meetingId}
             permissions={credential.effectivePermissions}
             canModerate={meeting.canModerate}
+            meetingLive={meeting.lifecycleState === 'LIVE'}
             onDeviceError={() => setPermissionError(t('errors.mediaPermission'))}
             onLeaveError={() => setConnectionError(t('errors.leaveSync'))}
           />
@@ -164,6 +166,7 @@ function MeetingRoomChrome({
   const [lobbyOpen, setLobbyOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
   const [overlays, setOverlays] = useState<InteractionOverlay[]>([]);
+  const [reactionError, setReactionError] = useState<string | null>(null);
   const timers = useRef(new Map<string, number>());
   const { localParticipant } = useLocalParticipant();
 
@@ -186,6 +189,7 @@ function MeetingRoomChrome({
 
   const handleInteraction = useCallback(
     (message: { payload: Uint8Array; from?: { name?: string } }) => {
+      if (!permissions.reactions) return;
       const interaction = parseInteraction(message.payload);
       if (!interaction) return;
       showOverlay({
@@ -194,7 +198,7 @@ function MeetingRoomChrome({
         senderName: message.from?.name || interaction.senderName || '',
       });
     },
-    [showOverlay]
+    [permissions.reactions, showOverlay]
   );
   const { send, isSending } = useDataChannel(INTERACTION_TOPIC, handleInteraction);
 
@@ -204,6 +208,7 @@ function MeetingRoomChrome({
   };
   const senderName = localParticipant.name || localParticipant.identity;
   const sendReaction = (emoji: string) => {
+    if (!permissions.reactions) return;
     const interaction: MeetingInteraction = {
       type: 'REACTION',
       id: crypto.randomUUID(),
@@ -212,7 +217,11 @@ function MeetingRoomChrome({
       sentAt: Date.now(),
     };
     showOverlay({ id: interaction.id, content: emoji, senderName });
-    void publish(interaction, false);
+    setReactionError(null);
+    void publish(interaction, false).catch(() => {
+      setOverlays((current) => current.filter((overlay) => overlay.id !== interaction.id));
+      setReactionError(t('room.reactionSendError'));
+    });
   };
   return (
     <>
@@ -239,6 +248,11 @@ function MeetingRoomChrome({
           </Stack>
         </Stack>
         <Stack direction="row" gap={0.75} alignItems="center">
+          <MeetingContentControl
+            meetingId={meeting.meetingId}
+            canHost={meeting.canHost}
+            meetingLive={meeting.lifecycleState === 'LIVE'}
+          />
           {meeting.canModerate && (
             <ActionButton
               intent="quiet"
@@ -308,9 +322,9 @@ function MeetingRoomChrome({
         ))}
       </div>
 
-      {operationError && (
+      {(operationError || reactionError) && (
         <Box className="dwp-video-meeting-room__status">
-          <Alert severity="warning">{operationError}</Alert>
+          <Alert severity="warning">{operationError || reactionError}</Alert>
         </Box>
       )}
 

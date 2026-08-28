@@ -336,7 +336,7 @@ export function MeetingCollaborationRuntime({
     };
     return {
       panelTitle: t('room.collaboration.title'),
-      close: t('room.controls.chatClose'),
+      close: t(activeTab === 'floor' ? 'room.controls.floorClose' : 'room.controls.chatClose'),
       chatTab: t('room.collaboration.chatTab'),
       floorTab: t('room.collaboration.floorTab'),
       unreadMessages: (count) => t('room.collaboration.unreadMessages', { count }),
@@ -389,7 +389,7 @@ export function MeetingCollaborationRuntime({
       requestedAt: (value) => t('room.collaboration.requestedAt', { time: formatTime(value) }),
       participantInitials: initials,
     };
-  }, [i18n.language, t]);
+  }, [activeTab, i18n.language, t]);
 
   if (!activeTab) return null;
 
@@ -405,7 +405,10 @@ export function MeetingCollaborationRuntime({
     : t('room.collaboration.floorDisabled');
 
   return (
-    <div className="dwp-meeting-side-panel dwp-meeting-side-panel--collaboration">
+    <div
+      id="meeting-collaboration-panel"
+      className="dwp-meeting-side-panel dwp-meeting-side-panel--collaboration"
+    >
       <MeetingCollaborationPanel
         activeTab={activeTab}
         maxMessageLength={MAX_CHAT_MESSAGE_LENGTH}

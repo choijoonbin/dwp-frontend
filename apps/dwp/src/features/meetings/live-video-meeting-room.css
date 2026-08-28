@@ -2,7 +2,7 @@
   position: relative;
   width: 100vw;
   height: 100dvh;
-  min-height: 480px;
+  min-height: 0;
   overflow: hidden;
   background: #101419;
   color: #fff;
@@ -447,7 +447,7 @@
   }
 }
 
-@media (max-width: 599px) {
+@media (max-width: 899px) {
   .dwp-meeting-conference__workspace[data-panel-open='true'] {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -495,7 +495,9 @@
   .dwp-video-meeting-room__header button .MuiButton-startIcon {
     margin: 0;
   }
+}
 
+@media (max-width: 599px) {
   .dwp-video-meeting-room__interactions {
     bottom: 72px;
   }
@@ -503,6 +505,39 @@
   .dwp-video-meeting-room__reaction-layer {
     right: 12px;
     bottom: 132px;
+  }
+}
+
+@media (max-height: 479px) {
+  .dwp-meeting-conference {
+    padding-top: 50px;
+  }
+
+  .dwp-video-meeting-room__header {
+    min-height: 50px;
+    padding-block: 5px;
+  }
+
+  .dwp-meeting-control-bar {
+    min-height: 58px;
+    padding-block: 5px;
+  }
+
+  .dwp-meeting-control,
+  .dwp-meeting-device-menu {
+    height: 42px;
+  }
+
+  .dwp-meeting-control > span {
+    display: none;
+  }
+
+  .dwp-video-meeting-room__interactions {
+    bottom: 60px;
+  }
+
+  .dwp-video-meeting-room__reaction-layer {
+    bottom: 108px;
   }
 }
 

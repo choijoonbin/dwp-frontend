@@ -52,14 +52,14 @@ Navigation Group을 하나의 배열과 Sidebar에 합쳐 표시한다. 제품 �
 | Workspace·Work·Activity·Account 등 |   14 | 업무·개인 설정 Surface 유지                                   |
 | 전체                               |  169 | ID와 Path 중복은 없음                                         |
 
-위 169개는 의사결정 당시의 변경 전 역사 기준이며 삭제하거나 현재 수치로 덮어쓰지 않는다. 2026-08-27
+위 169개는 의사결정 당시의 변경 전 역사 기준이며 삭제하거나 현재 수치로 덮어쓰지 않는다. 2026-08-28
 현재 계약은 Meetings 메뉴, Calendar의 휴지통·회사 캘린더 관리, DWAI·ON AI 실행 이력과 Mail의
-보관함·스팸·휴지통·내 폴더·폴더 및 규칙 메뉴와 DWAI·ON AI 제안함이 추가된 **전체 186개,
-12개 업무 앱, 업무 앱 메뉴 138개**다. 나머지
+보관함·스팸·휴지통·내 폴더·폴더 및 규칙 메뉴, DWAI·ON AI 제안함과 Meetings AI 및 데이터
+거버넌스가 추가된 **전체 187개, 12개 업무 앱, 업무 앱 메뉴 139개**다. 나머지
 48개는 비제품 문맥에 속한다. 승인 Authorization Bundle v3는 4개 제품의 Exact PAGE Route 58개를
 닫으며, Meetings는 DRAFT 제품이므로 해당 활성 Bundle에는 포함되지 않는다.
 현재 Canonical Menu Ledger SHA-256은
-`0d9c3ae9e412c4358a5a513cf68663f361cbf3d75381d4d896045af8bed8b257`다. DWAI·ON의
+`c77a266fc9e1320ba4a75d639e4dd8903b7d031610854f793e904174057b85ec`다. DWAI·ON의
 `/dwaion/activity`와 `/dwaion/proposals`는 `work/work`, `dwaion.work`, `W2`에 속하며 Backend
 승인 Bundle에 추가하지 않고 DRAFT PAGE로 유지한다.
 

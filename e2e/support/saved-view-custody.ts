@@ -44,6 +44,7 @@ export type CustodyWorkspaceOptions = {
   sharedOrphanNameConflict?: boolean;
   candidateIneligibilityReason?: string;
   orphanCandidateIneligibilityReason?: string;
+  failOrphanTargetUsersUntilManualRetry?: boolean;
   orphanEligibilityFailureOnFirstExecution?: string;
 };
 
@@ -160,6 +161,7 @@ export async function mockCustodyWorkspace(page: Page, options?: CustodyWorkspac
   let executionPayload: Record<string, unknown> | null = null;
   const executionPayloads: Record<string, unknown>[] = [];
   const orphanExecutionPayloads: Record<string, unknown>[] = [];
+  let orphanTargetUserRequestCount = 0;
   let orphanedViews: OrphanedViewRow[] = [
     {
       savedViewId: '92000000-0000-0000-0000-000000000001',
@@ -182,6 +184,17 @@ export async function mockCustodyWorkspace(page: Page, options?: CustodyWorkspac
     if (path.endsWith('/users') && request.method() === 'GET') {
       const evaluated =
         url.searchParams.has('sourceOwnerUserId') || url.searchParams.has('savedViewId');
+      const orphanTargetEvaluation = url.searchParams.has('savedViewId');
+      if (orphanTargetEvaluation) {
+        orphanTargetUserRequestCount += 1;
+        if (options?.failOrphanTargetUsersUntilManualRetry && orphanTargetUserRequestCount <= 2) {
+          return route.fulfill({
+            status: 503,
+            contentType: 'application/json',
+            body: JSON.stringify({ status: 'ERROR', message: 'Target directory unavailable' }),
+          });
+        }
+      }
       return fulfillSuccess(
         route,
         custodyUsers.map((user) => {
@@ -449,6 +462,9 @@ export async function mockCustodyWorkspace(page: Page, options?: CustodyWorkspac
     },
     get orphanExecutionPayloads() {
       return orphanExecutionPayloads;
+    },
+    get orphanTargetUserRequestCount() {
+      return orphanTargetUserRequestCount;
     },
   };
 }

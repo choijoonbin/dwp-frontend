@@ -1,4 +1,4 @@
-export type MessagingScope = 'ALL' | 'FAVORITES' | 'SPACES' | 'DIRECT' | 'CHANNELS';
+export type MessagingScope = 'ALL' | 'FAVORITES' | 'SPACES' | 'DIRECT' | 'CHANNELS' | 'MENTIONS';
 
 export type MessagingReactionMutationInput = {
   messageId: string;

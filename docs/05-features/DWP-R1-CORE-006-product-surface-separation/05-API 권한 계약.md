@@ -300,7 +300,7 @@ Versioned Registry에 고정한다.
 | 필드                                       | 계약                                                                                      |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
 | `routeContractKey`                         | 위 Product/비제품 Namespace의 영구 ID; `route-path`는 하나 이상의 lower-kebab 점 구간     |
-| `navigationContextId`                      | 현재 186 메뉴 분류표의 Governed Context 결속                                              |
+| `navigationContextId`                      | 현재 187 메뉴 분류표의 Governed Context 결속                                              |
 | `subject`                                  | `PRODUCT(productKey,surfaceKey)` 또는 `GOVERNED_CONTEXT`; Context ID는 Top-level에만 존재 |
 | `routeKind`, `uiRouteId`, `uiRoutePattern` | PAGE/DATA/ACTION; PAGE만 Router ID·Pattern 필수                                           |
 | `sideEffectFree`                           | POST DATA만 true 필수; Business State·Workflow Outbox 변경 금지                           |
@@ -504,7 +504,7 @@ Surface Entry·Route 외의 Consumer를 추론하지 않는다.
     `route.context.work__work.review-decision.action`
 
 Named Reviewer Route는 `navigationContextId=work.work`, Product/Surface 없음인 Governed Route다.
-Product Surface Registry나 현재 138개 업무 앱 Menu 소유권으로 투영하지 않는다.
+Product Surface Registry나 현재 139개 업무 앱 Menu 소유권으로 투영하지 않는다.
 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간만 허용하며 비제품 Key의
 `navigation-context-token=work__work`는 점↔`__` 총함수로 `work.work`에 유일하게 역해석되어야
 한다. Subject에 Context ID를 중복 저장하거나 Key Token과 Top-level Context가 다르면 Bundle

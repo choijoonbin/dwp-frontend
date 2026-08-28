@@ -147,6 +147,8 @@
         "title": "Replies & confirmations",
         "description": "Invitations, notices, and requests waiting for your reply.",
         "listLabel": "Items waiting for a response",
+        "distributionLabel": "Response status distribution: {{segments}}. {{count}} total",
+        "distributionTotal": "{{count}} total",
         "empty": "No responses are waiting",
         "emptyDescription": "No work is currently blocked on your response."
       },
@@ -173,6 +175,66 @@
         "scheduleHealthy": "No schedule conflicts in the last 7 days",
         "empty": "No exceptions need review",
         "emptyDescription": "Work in your role scope is currently healthy."
+      }
+    },
+    "contributions": {
+      "workspace": {
+        "openWorkTitle": "Open work",
+        "dueSoonDescription": "{{count}} item needs attention.",
+        "dueSoonDescription_other": "{{count}} items need attention.",
+        "onTrackDescription": "Your current workflow is on track."
+      },
+      "calendar": {
+        "privateEventTitle": "Private event",
+        "protectedEventTitle": "Protected event",
+        "awaitingResponseTitle": "A calendar invitation needs a response",
+        "awaitingResponseTitle_other": "Calendar invitations need a response",
+        "awaitingResponseDescription": "{{count}} calendar invitation needs a response.",
+        "awaitingResponseDescription_other": "{{count}} calendar invitations need a response.",
+        "awaitingAttentionTitle": "A calendar invitation needs attention",
+        "awaitingAttentionTitle_other": "Calendar invitations need attention",
+        "awaitingAttentionDescription": "Review {{count}} calendar invitation.",
+        "awaitingAttentionDescription_other": "Review {{count}} calendar invitations.",
+        "focusTitle": "Focus time today",
+        "focusProgressDescription": "{{minutes}} min / {{target}} min target",
+        "focusProtectedDescription": "{{minutes}} min protected"
+      },
+      "activity": {
+        "attentionTitle": "Activity needs attention",
+        "attentionDescription": "{{count}} activity item is waiting for input or policy review.",
+        "attentionDescription_other": "{{count}} activity items are waiting for input or policy review."
+      },
+      "approval": {
+        "integrationFailuresTitle": "Approval integration failures",
+        "overdueWorkTitle": "Overdue approval work"
+      },
+      "hr": {
+        "timeCardTitle": "Review your time card",
+        "exceptionDescription": "{{count}} exception needs attention.",
+        "exceptionDescription_other": "{{count}} exceptions need attention.",
+        "timeCardIncompleteDescription": "Your current time card is not complete.",
+        "requiredLearningTitle": "Required learning",
+        "openBenefitWindowTitle": "Open benefit enrollment",
+        "teamPendingTitle": "Team HR approvals pending"
+      },
+      "notification": {
+        "apps": {
+          "approvals": "Approvals",
+          "communications": "News",
+          "hcm": "HR",
+          "messaging": "Messages",
+          "space": "Space",
+          "mail": "Mail",
+          "fallback": "Work app"
+        },
+        "actionableTitle": "Review {{app}} notification",
+        "actionableTitle_other": "Review {{app}} notifications",
+        "urgentTitle": "Urgent {{app}} notification",
+        "urgentTitle_other": "Urgent {{app}} notifications",
+        "actionableDescription": "{{count}} actionable notification",
+        "actionableDescription_other": "{{count}} actionable notifications",
+        "urgentDescription": "{{count}} urgent notification",
+        "urgentDescription_other": "{{count}} urgent notifications"
       }
     },
     "apps": {
@@ -318,7 +380,7 @@
       "empty": "There are no comparable work signals right now.",
       "openWork": "Open work",
       "focusTime": "Focus time",
-      "scheduleLoad": "Conflicts",
+      "scheduleLoad": "Schedule load",
       "activityAttention": "Activity alerts",
       "unit": {
         "items": "items",

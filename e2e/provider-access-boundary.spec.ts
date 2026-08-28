@@ -203,7 +203,7 @@ for (const persona of [
 ] as const) {
   test(`${persona.role} enters and returns to its first readable Provider surface`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await mockProvider(page, [persona.role]);
     await mockProviderOperator(page, persona.role, [...persona.permissions]);
     const estateRequests: string[] = [];
@@ -218,9 +218,23 @@ for (const persona of [
     await expect(page.getByRole('heading', { name: persona.heading, level: 1 })).toBeVisible();
 
     await page.goto('/account/settings/appearance');
-    const backToProvider = page.getByRole('link', { name: 'Back to Provider Control Plane' });
+    const mobile = testInfo.project.name === 'mobile';
+    const accountNavigation = page.getByTestId(
+      mobile ? 'account-mobile-sidebar' : 'account-sidebar'
+    );
+    if (mobile) {
+      const openSettingsNavigation = page.getByTestId('account-mobile-navigation-trigger');
+      await openSettingsNavigation.focus();
+      await openSettingsNavigation.press('Enter');
+      await expect(accountNavigation).toBeVisible();
+    }
+    const backToProvider = accountNavigation.getByRole('link', {
+      name: 'Back to Provider Control Plane',
+    });
+    await expect(backToProvider).toBeVisible();
     await expect(backToProvider).toHaveAttribute('href', '/provider');
-    await backToProvider.click();
+    await backToProvider.focus();
+    await backToProvider.press('Enter');
     await expect(page).toHaveURL(new RegExp(`${persona.destination}$`));
     expect(estateRequests).toEqual([]);
   });

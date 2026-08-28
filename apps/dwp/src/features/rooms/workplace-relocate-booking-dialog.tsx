@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  ActionButton,
   DateTimePickerField,
   DwpDateTimeProvider,
   FormDialog,
@@ -20,9 +21,39 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
+import { isAuthoritativeWorkplaceReadFailure } from './workplace-authority-failure';
+import { workplaceHomeSourceState } from './workplace-home-source-state';
 import { validateWorkplaceBookingRange } from './workplace-time-policy';
 
 import type { WorkplaceBooking, WorkplaceResource } from '@dwp-frontend/shared-utils';
+
+type WorkplaceRelocateSubmission = {
+  identityKey: string;
+  bookingId: string;
+  version: number;
+  target: {
+    generatedAt: string;
+    queryScope: string;
+    resourceId: string;
+    resourceVersion: number;
+  };
+  input: {
+    resourceId: string;
+    startsAt: string;
+    endsAt: string;
+    reason: string;
+    version: number;
+  };
+};
+
+type WorkplaceRelocateTargetSnapshot = {
+  identityKey: string;
+  bookingId: string | null;
+  generatedAt: string | null;
+  queryScope: string;
+  sourceReady: boolean;
+  resourceVersions: ReadonlyMap<string, number>;
+};
 
 function message(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
@@ -30,17 +61,35 @@ function message(error: unknown, fallback: string) {
 
 export function WorkplaceRelocateBookingDialog({
   booking,
+  identityKey,
+  isBookingCurrent,
   open,
   onClose,
+  onDenied,
 }: {
   booking: WorkplaceBooking | null;
+  identityKey: string;
+  isBookingCurrent: (identityKey: string, bookingId: string, version: number) => boolean;
   open: boolean;
   onClose: () => void;
+  onDenied: (event: { identityKey: string; bookingId: string }) => void;
 }) {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
+  const activeIdentityRef = useRef(identityKey);
+  const componentActiveRef = useRef(true);
+  const isBookingCurrentRef = useRef(isBookingCurrent);
+  const targetSnapshotRef = useRef<WorkplaceRelocateTargetSnapshot | null>(null);
+  activeIdentityRef.current = identityKey;
+  isBookingCurrentRef.current = isBookingCurrent;
+  useEffect(() => {
+    componentActiveRef.current = true;
+    return () => {
+      componentActiveRef.current = false;
+    };
+  }, []);
   const [startsAt, setStartsAt] = useState('');
   const [endsAt, setEndsAt] = useState('');
   const [siteId, setSiteId] = useState('');
@@ -59,15 +108,34 @@ export function WorkplaceRelocateBookingDialog({
   }, [booking, open]);
 
   const query = useQuery({
-    queryKey: ['workplace', 'relocate', booking?.bookingId, floorId, startsAt, endsAt],
+    queryKey: ['workplace', 'relocate', identityKey, booking?.bookingId, floorId, startsAt, endsAt],
     queryFn: () => getWorkplaceExplore(startsAt, endsAt, floorId),
     enabled: Boolean(open && booking && startsAt && endsAt),
     staleTime: 15_000,
-    retry: 1,
+    retry: (failureCount, error) => !isAuthoritativeWorkplaceReadFailure(error) && failureCount < 1,
   });
-  const data = query.data;
+  const targetSourceState = workplaceHomeSourceState({
+    data: query.data,
+    error: query.error,
+    isError: query.isError,
+    isPending: query.isPending,
+    required: Boolean(open && booking && startsAt && endsAt),
+  });
+  const data = targetSourceState === 'DENIED' ? undefined : query.data;
   const selectedFloor = data?.selectedFloor ?? null;
   const selectedSite = data?.sites.find((site) => site.siteId === selectedFloor?.siteId) ?? null;
+
+  useEffect(() => {
+    if (!open || !booking || targetSourceState !== 'DENIED') return;
+    targetSnapshotRef.current = null;
+    setSiteId('');
+    setFloorId(null);
+    setResourceId('');
+    queryClient.removeQueries({
+      queryKey: ['workplace', 'relocate', identityKey, booking.bookingId],
+    });
+    onDenied({ identityKey, bookingId: booking.bookingId });
+  }, [booking, identityKey, onDenied, open, queryClient, targetSourceState]);
 
   useEffect(() => {
     if (!booking || !data || floorId) return;
@@ -104,6 +172,17 @@ export function WorkplaceRelocateBookingDialog({
   );
   const selectedResource =
     candidates.find((resource) => resource.resourceId === resourceId) ?? null;
+  const targetQueryScope = `${floorId ?? ''}|${startsAt}|${endsAt}`;
+  targetSnapshotRef.current = {
+    identityKey,
+    bookingId: booking?.bookingId ?? null,
+    generatedAt: data?.generatedAt ?? null,
+    queryScope: targetQueryScope,
+    sourceReady: targetSourceState === 'READY',
+    resourceVersions: new Map(
+      candidates.map((candidate) => [candidate.resourceId, candidate.version])
+    ),
+  };
 
   useEffect(() => {
     if (!data) return;
@@ -128,32 +207,88 @@ export function WorkplaceRelocateBookingDialog({
     !rangeError &&
     !unchanged &&
     reason.trim() &&
-    capabilities.canUpdateWorkplaceBooking
+    targetSourceState === 'READY' &&
+    capabilities.canUpdateWorkplaceBooking &&
+    isBookingCurrent(identityKey, booking.bookingId, booking.version)
   );
 
   const mutation = useMutation({
-    mutationFn: () => {
-      if (!booking || !selectedResource) {
-        throw new Error(t('workplace.my.relocate.resourceRequired'));
+    mutationFn: (submission: WorkplaceRelocateSubmission) => {
+      const targetSnapshot = targetSnapshotRef.current;
+      if (
+        !componentActiveRef.current ||
+        submission.identityKey !== activeIdentityRef.current ||
+        !isBookingCurrentRef.current(
+          submission.identityKey,
+          submission.bookingId,
+          submission.version
+        )
+      ) {
+        throw new Error(t('workplace.my.relocate.saveError'));
       }
       if (!capabilities.canUpdateWorkplaceBooking) {
         throw new Error(t('permissions.workplaceUpdateReadOnly'));
       }
-      return relocateWorkplaceBooking(booking.bookingId, {
+      if (
+        !targetSnapshot?.sourceReady ||
+        targetSnapshot.identityKey !== submission.identityKey ||
+        targetSnapshot.bookingId !== submission.bookingId ||
+        targetSnapshot.generatedAt !== submission.target.generatedAt ||
+        targetSnapshot.queryScope !== submission.target.queryScope ||
+        targetSnapshot.resourceVersions.get(submission.target.resourceId) !==
+          submission.target.resourceVersion ||
+        submission.input.resourceId !== submission.target.resourceId
+      ) {
+        throw new Error(t('workplace.my.relocate.freshnessRequired'));
+      }
+      return relocateWorkplaceBooking(submission.bookingId, submission.input);
+    },
+    onSuccess: async (_, submission) => {
+      if (!componentActiveRef.current || submission.identityKey !== activeIdentityRef.current) {
+        return;
+      }
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
+      if (!componentActiveRef.current || submission.identityKey !== activeIdentityRef.current) {
+        return;
+      }
+      toast.success(t('workplace.my.relocate.saved'));
+      onClose();
+    },
+    onError: (error, submission) => {
+      if (componentActiveRef.current && submission.identityKey === activeIdentityRef.current) {
+        toast.error(message(error, t('workplace.my.relocate.saveError')));
+      }
+    },
+  });
+
+  const submit = () => {
+    if (targetSourceState !== 'READY') {
+      toast.error(t('workplace.my.relocate.freshnessRequired'));
+      return;
+    }
+    if (!booking || !selectedResource) {
+      toast.error(t('workplace.my.relocate.resourceRequired'));
+      return;
+    }
+    mutation.mutate({
+      identityKey,
+      bookingId: booking.bookingId,
+      version: booking.version,
+      target: {
+        generatedAt: data?.generatedAt ?? '',
+        queryScope: targetQueryScope,
+        resourceId: selectedResource.resourceId,
+        resourceVersion: selectedResource.version,
+      },
+      input: {
         resourceId: selectedResource.resourceId,
         startsAt,
         endsAt,
         reason: reason.trim(),
         version: booking.version,
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
-      toast.success(t('workplace.my.relocate.saved'));
-      onClose();
-    },
-    onError: (error) => toast.error(message(error, t('workplace.my.relocate.saveError'))),
-  });
+      },
+    });
+  };
 
   const chooseSite = (value: string) => {
     setSiteId(value);
@@ -172,18 +307,42 @@ export function WorkplaceRelocateBookingDialog({
       submitDisabled={!valid}
       busy={mutation.isPending}
       onClose={onClose}
-      onSubmit={() => mutation.mutate()}
+      onSubmit={submit}
       maxWidth="md"
     >
       <Stack spacing={2}>
         {query.isLoading && <Skeleton variant="rectangular" height={220} />}
         {query.isError && (
-          <Alert severity={data ? 'warning' : 'error'}>
-            {t(data ? 'workplace.staleWarning' : 'workplace.my.relocate.loadError')}
+          <Alert
+            severity={data ? 'warning' : 'error'}
+            action={
+              targetSourceState === 'STALE' ? (
+                <ActionButton intent="quiet" onClick={() => void query.refetch()}>
+                  {t('actions.retry')}
+                </ActionButton>
+              ) : undefined
+            }
+          >
+            {t(
+              targetSourceState === 'STALE'
+                ? 'workplace.my.relocate.staleNotice'
+                : 'workplace.my.relocate.loadError'
+            )}
           </Alert>
         )}
         {data && (
           <>
+            {targetSourceState === 'READY' && (
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <ActionButton
+                  intent="quiet"
+                  loading={query.isFetching}
+                  onClick={() => void query.refetch()}
+                >
+                  {t('workplace.my.relocate.refresh')}
+                </ActionButton>
+              </Box>
+            )}
             <Box
               sx={{
                 display: 'grid',
@@ -192,18 +351,21 @@ export function WorkplaceRelocateBookingDialog({
               }}
             >
               <SelectField
+                disabled={targetSourceState !== 'READY'}
                 label={t('workplace.explore.site')}
                 value={siteId}
                 options={data.sites.map((site) => ({ value: site.siteId, label: site.name }))}
                 onValueChange={(value) => chooseSite(String(value))}
               />
               <SelectField
+                disabled={targetSourceState !== 'READY'}
                 label={t('workplace.explore.floor')}
                 value={selectedFloor?.floorId ?? ''}
                 options={floors.map((floor) => ({ value: floor.floorId, label: floor.name }))}
                 onValueChange={(value) => setFloorId(String(value))}
               />
               <SelectField
+                disabled={targetSourceState !== 'READY'}
                 label={t('workplace.my.relocate.resource')}
                 value={selectedResource?.resourceId ?? ''}
                 options={candidates.map((resource: WorkplaceResource) => ({
@@ -222,6 +384,7 @@ export function WorkplaceRelocateBookingDialog({
                 }}
               >
                 <DateTimePickerField
+                  disabled={targetSourceState !== 'READY'}
                   required
                   label={t('workplace.booking.start')}
                   value={startsAt}
@@ -229,6 +392,7 @@ export function WorkplaceRelocateBookingDialog({
                   onValueChange={(value) => value && setStartsAt(value)}
                 />
                 <DateTimePickerField
+                  disabled={targetSourceState !== 'READY'}
                   required
                   label={t('workplace.booking.end')}
                   value={endsAt}
@@ -240,6 +404,7 @@ export function WorkplaceRelocateBookingDialog({
               </Box>
             </DwpDateTimeProvider>
             <FormField
+              disabled={targetSourceState !== 'READY'}
               required
               label={t('workplace.my.relocate.reason')}
               value={reason}

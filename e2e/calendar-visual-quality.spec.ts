@@ -16,6 +16,12 @@ const CALENDAR_SURFACES = [
   { id: 'admin-policies', path: '/calendar/admin/policies' },
 ] as const;
 
+const CALENDAR_FORCED_COLOR_SURFACES = [
+  { id: 'home', path: '/calendar/home' },
+  { id: 'schedule', path: '/calendar/schedule' },
+  { id: 'admin-company-calendars', path: '/calendar/admin/company-calendars' },
+] as const;
+
 async function prepareCalendarSurface(page: Page, path: string, appearance: 'dark' | 'light') {
   await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
   await page.emulateMedia({
@@ -72,13 +78,9 @@ for (const surface of CALENDAR_SURFACES) {
 }
 
 test('calendar critical surfaces remain usable in forced colors', async ({ context }) => {
-  for (const path of [
-    '/calendar/home',
-    '/calendar/schedule',
-    '/calendar/admin/company-calendars',
-  ]) {
+  for (const surface of CALENDAR_FORCED_COLOR_SURFACES) {
     const page = await context.newPage();
-    await prepareCalendarSurface(page, path, 'light');
+    const main = await prepareCalendarSurface(page, surface.path, 'light');
     await page.emulateMedia({
       colorScheme: 'light',
       forcedColors: 'active',
@@ -88,13 +90,19 @@ test('calendar critical surfaces remain usable in forced colors', async ({ conte
     const horizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     );
-    expect(horizontalOverflow, `${path} has horizontal overflow`).toBeLessThanOrEqual(1);
+    expect(horizontalOverflow, `${surface.path} has horizontal overflow`).toBeLessThanOrEqual(1);
     const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
     expect(
       accessibility.violations.filter(
         (violation) => violation.impact === 'critical' || violation.impact === 'serious'
       )
     ).toEqual([]);
+    await expect(main).toHaveScreenshot(`calendar-${surface.id}-forced-colors.png`, {
+      animations: 'disabled',
+      caret: 'hide',
+      maxDiffPixelRatio: 0.002,
+      timeout: 15_000,
+    });
     await page.close();
   }
 });

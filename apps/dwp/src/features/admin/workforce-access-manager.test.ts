@@ -48,6 +48,11 @@ vi.mock('react-i18next', () => ({
         'workforceAccess.roles.ADMIN': '통합 관리자',
         'workforceAccess.roleDescriptions.ADMIN': '기존 통합 관리자 정책',
         'workforceAccess.subjectTypes.ROLE': '역할 기본',
+        'workforceAccess.references.policyUsersTitle':
+          '일부 정책 사용자의 신원을 확인하지 못했습니다',
+        'workforceAccess.references.policyUsersError': '디렉터리 조회에 실패했습니다',
+        'workforceAccess.references.policyUsersUnresolved': '사용자 정책 1건은 ID로 표시됩니다',
+        'workforceAccess.references.retryPolicyUsers': '사용자 신원 다시 불러오기',
         'workforceAccess.noExpiry': '만료일 없음',
         'workforceAccess.error.title': '인력 데이터 접근 정책을 불러오지 못했습니다',
         'workforceAccess.error.description':
@@ -321,5 +326,29 @@ describe('WorkforceAccessManager', () => {
 
     expect(container?.textContent).toContain('역할 기본 · 기존 통합 관리자 정책');
     expect(container?.textContent).not.toContain('ADMIN');
+  });
+
+  it('surfaces unresolved policy users and retries the list identity lookup', async () => {
+    workforceApi.listPolicies.mockResolvedValue([
+      policy({ subjectType: 'USER', subjectRef: '777' }),
+    ]);
+    workforceApi.listUsers
+      .mockRejectedValueOnce(new Error('Request failed: 503'))
+      .mockResolvedValueOnce({ content: [] });
+    await mountManager();
+    await vi.waitFor(() =>
+      expect(container?.textContent).toContain('일부 정책 사용자의 신원을 확인하지 못했습니다')
+    );
+    expect(container?.textContent).toContain('디렉터리 조회에 실패했습니다');
+
+    await React.act(async () =>
+      findButton('사용자 신원 다시 불러오기')?.dispatchEvent(
+        new MouseEvent('click', { bubbles: true })
+      )
+    );
+    await vi.waitFor(() => expect(workforceApi.listUsers).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() =>
+      expect(container?.textContent).toContain('사용자 정책 1건은 ID로 표시됩니다')
+    );
   });
 });

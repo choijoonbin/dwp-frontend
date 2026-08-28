@@ -19,10 +19,16 @@ import Typography from '@mui/material/Typography';
 
 import { ProviderLoading } from './provider-ui';
 import { resolveTenantExperiencePreviewAccess } from './provider-diagnosis-policy';
+import {
+  isTenantExperiencePreviewFreshAtRender,
+  TENANT_EXPERIENCE_PREVIEW_MAX_STALE_MS,
+  tenantExperiencePreviewDeadline,
+} from './provider-tenant-experience-preview-model';
 
 import type { HomeCompositionPolicyPayload } from '@dwp-frontend/shared-utils';
 
-export const TENANT_EXPERIENCE_PREVIEW_MAX_STALE_MS = 10_000;
+export { TENANT_EXPERIENCE_PREVIEW_MAX_STALE_MS } from './provider-tenant-experience-preview-model';
+
 const TENANT_EXPERIENCE_PREVIEW_REFRESH_MS = 8_000;
 
 function configuredExperienceVariant(policy: HomeCompositionPolicyPayload): string {
@@ -66,6 +72,7 @@ export function ProviderTenantExperiencePreview({ tenantId }: { tenantId: string
   const navigate = useNavigate();
   const supportContext = useCurrentProviderSupportContext();
   const [now, setNow] = useState(() => Date.now());
+  const [previewFreshnessNow, setPreviewFreshnessNow] = useState(() => Date.now());
   const access = resolveTenantExperiencePreviewAccess(
     supportContext.isError ? null : supportContext.rawData,
     tenantId,
@@ -105,6 +112,25 @@ export function ProviderTenantExperiencePreview({ tenantId }: { tenantId: string
     return () => window.clearTimeout(timer);
   }, [now, supportContext.rawData]);
 
+  useEffect(() => {
+    if (preview.dataUpdatedAt <= 0) return;
+    const deadline = tenantExperiencePreviewDeadline(preview.dataUpdatedAt);
+    const updateClock = () => setPreviewFreshnessNow((current) => Math.max(current, Date.now()));
+    const expire = () =>
+      setPreviewFreshnessNow((current) => Math.max(current, deadline, Date.now()));
+    const timer = window.setTimeout(expire, Math.max(0, deadline - Date.now()));
+    const updateVisibleClock = () => {
+      if (document.visibilityState === 'visible') updateClock();
+    };
+    window.addEventListener('focus', updateClock);
+    document.addEventListener('visibilitychange', updateVisibleClock);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('focus', updateClock);
+      document.removeEventListener('visibilitychange', updateVisibleClock);
+    };
+  }, [preview.dataUpdatedAt]);
+
   const locale = (i18n.resolvedLanguage ?? i18n.language ?? 'en').split('-')[0] ?? 'en';
   const content = preview.data?.home.localizedContent?.[locale];
   const launchpadGroups = useMemo(
@@ -113,6 +139,10 @@ export function ProviderTenantExperiencePreview({ tenantId }: { tenantId: string
         .filter((group) => group.enabled)
         .sort((left, right) => left.sortOrder - right.sortOrder),
     [preview.data?.home.launchpadConfiguration?.groups]
+  );
+  const previewIsFresh = isTenantExperiencePreviewFreshAtRender(
+    preview.dataUpdatedAt,
+    previewFreshnessNow
   );
 
   return (
@@ -162,7 +192,7 @@ export function ProviderTenantExperiencePreview({ tenantId }: { tenantId: string
         <PreviewBlockedState state={access.state} tenantId={tenantId} />
       ) : preview.isLoading ? (
         <ProviderLoading />
-      ) : preview.isError || !preview.data ? (
+      ) : preview.isError || !preview.data || !previewIsFresh ? (
         <Alert
           severity="error"
           action={

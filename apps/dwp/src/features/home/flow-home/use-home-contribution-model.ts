@@ -16,6 +16,7 @@ import {
   type HomeContributionModel,
   type HomeContributionProviderResult,
   type HomeContributionProviderState,
+  type HomeContributionTranslator,
 } from '../contributions';
 import {
   activityContributionProvider,
@@ -120,6 +121,10 @@ export function useHomeContributionModel({
   notification,
 }: UseHomeContributionModelInput): HomeContributionRuntime {
   const { t } = useTranslation('home');
+  const translateContribution = useMemo<HomeContributionTranslator>(
+    () => (key, values) => t(key, values),
+    [t]
+  );
   const identityReady = Boolean(tenantId && userId);
   const contributionPermissions = useMemo(
     () => resolveHomeContributionPermissions(permissions, roles, legacyRoleFallbackAllowed),
@@ -202,6 +207,7 @@ export function useHomeContributionModel({
       locale,
       timeZone,
       dateKey: dateKey ?? undefined,
+      translate: translateContribution,
     };
     const sectionState = (
       section:
@@ -394,6 +400,7 @@ export function useHomeContributionModel({
     services.isRefetchError,
     servicesEnabled,
     timeZone,
+    translateContribution,
     workplace.data,
     workplace.dataUpdatedAt,
     workplace.isError,

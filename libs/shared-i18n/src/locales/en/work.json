@@ -208,6 +208,28 @@
     "loadMore": "Load more",
     "errorTitle": "AI proposals could not be loaded",
     "errorDescription": "Unverified proposals were not displayed. Check the connection and try again.",
+    "controls": {
+      "title": "Workspace analysis",
+      "description": "Analyze current governed work signals only when you request it. Nothing is executed automatically.",
+      "preference": "Allow analysis for my account",
+      "preferenceHelp": "This setting controls whether Analyze now can read permitted work signals.",
+      "preferenceError": "Analysis permission could not be verified. Analysis is unavailable until it reconnects.",
+      "analyze": "Analyze now",
+      "analyzing": "Analyzing workspace signals",
+      "clear": "Clear proposal data",
+      "analysisResult_one": "{{sources}} sources analyzed · {{count}} actionable proposal",
+      "analysisResult_other": "{{sources}} sources analyzed · {{count}} actionable proposals",
+      "unavailableSources_one": "{{count}} permitted source was unavailable and was not inferred.",
+      "unavailableSources_other": "{{count}} permitted sources were unavailable and were not inferred.",
+      "clearDialog": {
+        "title": "Clear proposal data?",
+        "description": "Current proposals and your analysis command receipts will be removed from this inbox.",
+        "boundary": "This cannot be undone. Source records in their owning apps are not changed.",
+        "cancel": "Keep proposal data",
+        "confirm": "Clear proposal data",
+        "clearing": "Clearing proposal data"
+      }
+    },
     "summaryLabel": "AI proposal status summary",
     "metrics": {
       "active": "To review",
@@ -286,7 +308,16 @@
       "ACCEPT": "Proposal accepted. The pre-execution review remains required.",
       "SNOOZE": "Proposal snoozed until the selected time.",
       "DISMISS": "Proposal dismissed.",
-      "error": "The proposal changed. Review the latest state and try again."
+      "error": "The proposal changed. Review the latest state and try again.",
+      "analyzed_one": "Analysis finished with {{count}} actionable proposal.",
+      "analyzed_other": "Analysis finished with {{count}} actionable proposals.",
+      "analysisError": "Workspace analysis could not be completed. No unverified proposal was added.",
+      "preferenceEnabled": "Workspace analysis is available when you request it.",
+      "preferenceDisabled": "Workspace analysis is off for your account.",
+      "preferenceError": "The analysis setting changed or is unavailable. The latest setting was restored.",
+      "cleared_one": "{{count}} proposal was removed from your inbox.",
+      "cleared_other": "{{count}} proposals were removed from your inbox.",
+      "clearError": "Proposal data could not be cleared. Nothing was reported as removed."
     }
   },
   "dwaionAgents": {

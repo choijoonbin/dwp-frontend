@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   HOME_PRESENTATION_HINT_STORAGE_KEY,
   normalizeHomePresentationHint,
+  readOptionalHomePresentationHint,
   readHomePresentationHint,
   resolveHomeLoadingLayout,
   writeHomePresentationHint,
@@ -18,6 +19,22 @@ describe('Home loading layout policy', () => {
       })
     ).toBe('balanced');
     expect(normalizeHomePresentationHint(null)).toBe('balanced');
+  });
+
+  it('keeps an absent or invalid hint unresolved for the presentation-neutral first paint', () => {
+    expect(readOptionalHomePresentationHint(undefined)).toBeNull();
+    expect(
+      readOptionalHomePresentationHint({
+        getItem: () => 'unknown',
+        setItem: vi.fn(),
+      })
+    ).toBeNull();
+    expect(
+      readOptionalHomePresentationHint({
+        getItem: () => 'expressive',
+        setItem: vi.fn(),
+      })
+    ).toBe('expressive');
   });
 
   it('stores only the approved presentation value', () => {
@@ -41,6 +58,7 @@ describe('Home loading layout policy', () => {
     };
 
     expect(readHomePresentationHint(storage)).toBe('balanced');
+    expect(readOptionalHomePresentationHint(storage)).toBeNull();
     expect(() => writeHomePresentationHint(storage, 'focused')).not.toThrow();
   });
 

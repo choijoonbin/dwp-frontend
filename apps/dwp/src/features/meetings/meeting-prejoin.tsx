@@ -1,15 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreJoin, type LocalUserChoices } from '@livekit/components-react';
-import {
-  Bot,
-  CalendarClock,
-  DoorOpen,
-  FileVideo2,
-  LockKeyhole,
-  RefreshCw,
-  ShieldCheck,
-} from 'lucide-react';
+import { CalendarClock, DoorOpen, LockKeyhole, RefreshCw, ShieldCheck } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -20,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import type { VideoMeetingSummary } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 
 import { formatMeetingDateTime, MeetingPageHeading } from './meeting-components';
+import { MeetingContentPreJoin } from './meeting-content-governance';
 
 import '@livekit/components-styles';
 import './meeting-prejoin.css';
@@ -45,15 +38,13 @@ export function MeetingPreJoin({
   const [mediaError, setMediaError] = useState<Error | null>(null);
   const [submissionError, setSubmissionError] = useState(false);
   const [previewAttempt, setPreviewAttempt] = useState(0);
+  const [contentGuarded, setContentGuarded] = useState(true);
   const liveKitRootRef = useRef<HTMLDivElement>(null);
   const displayNameInputId = useId();
   const privacyDescriptionId = useId();
-  // Past artifacts cannot prove that the current live session is being recorded.
-  // Stay fail-closed until a server-authoritative content plan is available.
-  const recordingDisclosure = 'inactive';
   const validateChoices = useCallback(
-    (choices: LocalUserChoices) => !busy && choices.username.trim().length > 0,
-    [busy]
+    (choices: LocalUserChoices) => !busy && !contentGuarded && choices.username.trim().length > 0,
+    [busy, contentGuarded]
   );
 
   useEffect(() => {
@@ -255,23 +246,12 @@ export function MeetingPreJoin({
                   <p>{t(`room.preJoin.accessDetails.${meeting.accessScope}`)}</p>
                 </div>
               </li>
-              <li>
-                <FileVideo2 size={18} aria-hidden="true" />
-                <div>
-                  <span>{t('room.preJoin.recording')}</span>
-                  <strong>{t(`room.preJoin.recordingStates.${recordingDisclosure}`)}</strong>
-                  <p>{t(`room.preJoin.recordingDetails.${recordingDisclosure}`)}</p>
-                </div>
-              </li>
-              <li>
-                <Bot size={18} aria-hidden="true" />
-                <div>
-                  <span>{t('room.preJoin.aiNotes')}</span>
-                  <strong>{t('room.preJoin.aiNotesUnavailable')}</strong>
-                  <p>{t('room.preJoin.aiNotesUnavailableDetail')}</p>
-                </div>
-              </li>
             </ul>
+            <MeetingContentPreJoin
+              meetingId={meeting.meetingId}
+              canHost={meeting.canHost}
+              onGuardChange={setContentGuarded}
+            />
           </aside>
         </div>
       </Box>

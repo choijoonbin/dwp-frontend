@@ -1,22 +1,22 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.5
-- 기준일: 2026-08-27
-- 기준 Frontend Commit: `228bdf56a99e53fb0f2aa606b64acda3a82ca05a`
+- 상태: Governed ledger v1.6
+- 기준일: 2026-08-28
+- 기준 Frontend Commit: `9bc909a` + 본 통합 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `0d9c3ae9e412c4358a5a513cf68663f361cbf3d75381d4d896045af8bed8b257`
+- Ledger SHA-256: `c77a266fc9e1320ba4a75d639e4dd8903b7d031610854f793e904174057b85ec`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **186개 전부**를 분류한다. Detail Route, Query View,
+이 표는 현재 Runtime의 정적 Menu Route **187개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 186개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
-Surface`는 12개 업무 앱 138개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
+전체 187개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+Surface`는 12개 업무 앱 139개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
 48개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
@@ -26,13 +26,13 @@ Route Key가 필요할 때는 점을 `__`로 치환한 가역 Token만 사용하
 | 목표 Plane          |    수량 | 의미                                    |
 | ------------------- | ------: | --------------------------------------- |
 | `work`              |      84 | 개인·참여 업무 81 + 관계 기반 팀 업무 3 |
-| `management`        |      60 | 제품 운영 33 + 제품 설정 27             |
+| `management`        |      61 | 제품 운영 33 + 제품 설정 28             |
 | `tenant-governance` |      24 | 회사 공통 운영 8 + 회사 공통 설정 16    |
 | `provider-control`  |      10 | Provider 운영 6 + Provider 설정·통제 4  |
 | `account`           |       8 | 개인 계정·선호                          |
-| **합계**            | **186** |                                         |
+| **합계**            | **187** |                                         |
 
-Task 기준 합계는 `work 89`, `team 3`, `operations 47`, `administration 47`이다. Account의
+Task 기준 합계는 `work 89`, `team 3`, `operations 47`, `administration 48`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -55,9 +55,9 @@ Task 기준 합계는 `work 89`, `team 3`, `operations 47`, `administration 47`�
 | `W1a`    |             15 | Approvals 대표 Pilot                                     |
 | `W1b`    |             25 | HCM 대표 Pilot                                           |
 | `W2`     |             35 | DWAI·ON, Notifications, Spaces                           |
-| `W3`     |             51 | Calendar, Workplace/Rooms, Mail, Messaging, Meetings     |
+| `W3`     |             52 | Calendar, Workplace/Rooms, Mail, Messaging, Meetings     |
 | `Keep`   |             48 | 이미 독립된 Workspace, Tenant, Provider, Account Plane   |
-| **합계** |        **186** |                                                          |
+| **합계** |        **187** |                                                          |
 
 ## 2. Workspace, Work와 Activity — 6
 
@@ -217,19 +217,20 @@ Parent는 `APP.MESSAGING`이다.
 | `messaging.admin-overview` | 관리 › 운영 현황   | `/messages/admin/overview` | M/O        | `messaging.management` | I: `ADMIN.MESSAGING:VIEW+` | Management Nav; Guard 정합화 |
 | `messaging.admin-policy`   | 관리 › 대화 정책   | `/messages/admin/policy`   | M/A        | `messaging.management` | I: `ADMIN.MESSAGING:VIEW+` | Management Nav; Guard 정합화 |
 
-## 11. Video Meetings — 6 (`W3`)
+## 11. Video Meetings — 7 (`W3`)
 
 Parent는 `APP.MEETINGS`이며 운영 정책은 `ADMIN.MEETINGS`로 분리한다. 회의 참가와 호스트 권한은
 테넌트 관리자 권한이 아니라 회의별 참가자 역할로 판정한다.
 
-| Menu ID                     | 현재 그룹 › 메뉴   | Path                         | Plane/Task | 목표 Surface          | Item 조건                 | 결정                         |
-| --------------------------- | ------------------ | ---------------------------- | ---------- | --------------------- | ------------------------- | ---------------------------- |
-| `meetings.home`             | 시작 › 화상회의 홈 | `/meetings/home`             | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.join`             | 시작 › 코드로 참가 | `/meetings/join`             | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.mine`             | 회의 › 내 회의     | `/meetings/mine`             | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.history`          | 회의 › 회의 기록   | `/meetings/history`          | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.admin-operations` | 관리 › 운영 현황   | `/meetings/admin/operations` | M/O        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; Guard 정합화 |
-| `meetings.admin-policies`   | 관리 › 회의 정책   | `/meetings/admin/policies`   | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; Guard 정합화 |
+| Menu ID                       | 현재 그룹 › 메뉴             | Path                           | Plane/Task | 목표 Surface          | Item 조건                 | 결정                         |
+| ----------------------------- | ---------------------------- | ------------------------------ | ---------- | --------------------- | ------------------------- | ---------------------------- |
+| `meetings.home`               | 시작 › 화상회의 홈           | `/meetings/home`               | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
+| `meetings.join`               | 시작 › 코드로 참가           | `/meetings/join`               | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
+| `meetings.mine`               | 회의 › 내 회의               | `/meetings/mine`               | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
+| `meetings.history`            | 회의 › 회의 기록             | `/meetings/history`            | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
+| `meetings.admin-operations`   | 관리 › 운영 현황             | `/meetings/admin/operations`   | M/O        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; Guard 정합화 |
+| `meetings.admin-policies`     | 관리 › 회의 정책             | `/meetings/admin/policies`     | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; Guard 정합화 |
+| `meetings.admin-intelligence` | 관리 › AI 및 데이터 거버넌스 | `/meetings/admin/intelligence` | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; DRAFT PAGE   |
 
 ## 12. Approvals — 15 (`W1a` Pilot)
 
@@ -414,12 +415,12 @@ Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Su
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 186개이고 중복이 없다.
-2. Plane 합계는 `84 + 60 + 24 + 10 + 8 = 186`다.
-3. Task 합계는 `89 + 3 + 47 + 47 = 186`다.
-4. `management` 60개가 Work Sidebar에 나타나지 않는다.
+1. 정적 Menu ID와 Path는 각각 187개이고 중복이 없다.
+2. Plane 합계는 `84 + 61 + 24 + 10 + 8 = 187`다.
+3. Task 합계는 `89 + 3 + 47 + 48 = 187`다.
+4. `management` 61개가 Work Sidebar에 나타나지 않는다.
 5. 12개 주요 업무 앱의 Work·Team 77개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 186개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 138개는 정확히 한
+6. 전체 187개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 139개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

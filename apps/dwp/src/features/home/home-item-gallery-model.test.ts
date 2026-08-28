@@ -52,6 +52,31 @@ const APPS: readonly HomeAppDefinition[] = [
   },
 ];
 
+const RESPONSE_CONTRIBUTOR_APPS: readonly HomeAppDefinition[] = [
+  {
+    id: 'approvals',
+    name: 'Approvals',
+    shortName: 'Approvals',
+    description: 'Decisions',
+    groupId: 'work',
+    route: '/approvals',
+    iconKey: 'approvals',
+    tone: '#000',
+    resourceKey: 'APP.APPROVALS',
+  },
+  {
+    id: 'notifications',
+    name: 'Notifications',
+    shortName: 'Notifications',
+    description: 'Responses',
+    groupId: 'connect',
+    route: '/notifications',
+    iconKey: 'notifications',
+    tone: '#000',
+    resourceKey: 'APP.NOTIFICATIONS',
+  },
+];
+
 const LAYOUT: LaunchpadLayout = {
   version: 1,
   groups: { work: ['work'], connect: [] },
@@ -83,7 +108,12 @@ describe('home item gallery model', () => {
     const preferences = defaultHomeWidgets(HOME_WIDGET_KEYS).map((preference) =>
       preference.widgetKey === 'schedule' ? { ...preference, visible: false } : preference
     );
-    const items = resolveHomeWidgetGalleryItems(HOME_WIDGET_KEYS, preferences, APPS, true);
+    const items = resolveHomeWidgetGalleryItems(
+      HOME_WIDGET_KEYS,
+      preferences,
+      [...APPS, ...RESPONSE_CONTRIBUTOR_APPS],
+      true
+    );
 
     expect(items.map(({ widget, state }) => [widget.key, state])).toEqual([
       ['daily-brief', 'ADDED'],
@@ -102,6 +132,35 @@ describe('home item gallery model', () => {
     );
 
     expect(items.map((item) => item.widget.key)).not.toContain('schedule');
+  });
+
+  it.each(RESPONSE_CONTRIBUTOR_APPS)(
+    'restores a Flow purpose widget when contributor $resourceKey is entitled',
+    (contributorApp) => {
+      const hiddenResponse = defaultHomeWidgets(HOME_WIDGET_KEYS).map((preference) =>
+        preference.widgetKey === 'daily-brief' ? { ...preference, visible: false } : preference
+      );
+      const items = resolveHomeWidgetGalleryItems(
+        ['daily-brief'],
+        hiddenResponse,
+        [contributorApp],
+        true
+      );
+
+      expect(items.map(({ widget, state }) => [widget.key, state])).toEqual([
+        ['daily-brief', 'RESTORE'],
+      ]);
+    }
+  );
+
+  it('keeps a Flow purpose widget hidden from users without any contributor entitlement', () => {
+    const hiddenResponse = defaultHomeWidgets(HOME_WIDGET_KEYS).map((preference) =>
+      preference.widgetKey === 'daily-brief' ? { ...preference, visible: false } : preference
+    );
+
+    const items = resolveHomeWidgetGalleryItems(['daily-brief'], hiddenResponse, [], true);
+
+    expect(items).toEqual([]);
   });
 
   it('marks a registered definition without a placement as addable', () => {

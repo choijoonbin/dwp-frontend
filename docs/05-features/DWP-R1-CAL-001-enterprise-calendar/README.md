@@ -1,6 +1,6 @@
 # DWP-R1-CAL-001 Enterprise Calendar
 
-- 상태: Implemented · Scheduling hardening v1.2
+- 상태: Implemented · Scheduling hardening v1.2 · Sharing UX P0 verified
 - 사용자 진입점: `/calendar/home`
 - 관리자 진입점: `/calendar/admin/overview`
 - 리소스: `APP.CALENDAR`, `ADMIN.CALENDAR`
@@ -123,6 +123,11 @@
 17. 추천 시간 적용 후 People과 Room을 새 기준으로 함께 재평가하며 만료된 snapshot은 적용하지
     않는다.
 18. 일정 보기 변경 후 브라우저 back/forward가 URL, 캘린더 보기와 선택 source를 함께 복원한다.
+19. 일정 피드 조회가 실패해도 검증 완료된 캘린더 source 목록·선택·공유 관리는 유지되고,
+    일정 격자만 독립 오류 상태로 전환된다.
+20. 일정·초대별 상세/응답 행동은 이벤트 제목을 포함한 고유 접근 이름을 제공한다.
+21. 회사 캘린더의 선택 문맥이 게시/휴지통 tab과 panel의 접근 이름에 연결되며,
+    320px·200% 텍스트 확대에서도 상단 행동이 겹치거나 가로로 넘치지 않는다.
 
 상세 설계와 단계별 출시 게이트는
 [`08-scheduling-hub-v1.2-v1.4-design.md`](./08-scheduling-hub-v1.2-v1.4-design.md)를 따른다.
@@ -134,6 +139,7 @@
 - 두 번째 일정이 첫 일정의 미래 반복 회차와 겹칠 때 HTTP `409` 확인
 - 비관련 `CALENDAR_ADMIN`이 공유 캘린더의 `CONFIDENTIAL` 일정 상세를 받지 않음
 - 취소 시 Event와 Booking이 함께 `CANCELLED`, 생성·수정·취소 감사 이벤트 3건 확인
+- Dark와 forced-colors에서 핵심 사용자/회사 관리 화면의 텍스트·경계·선택 상태 시각 회귀 확인
 - Seed 반복 occurrence를 90일 펼친 자원 중복 예약 0건 확인
 - Auth 구성원 ID와 Platform 개인 캘린더 소유자 집합 178건 일치 확인
 - 구성원별 활성 소유 일정 최소 6개, 참석자 identity 불일치 및 활성 예약 겹침 0건 확인

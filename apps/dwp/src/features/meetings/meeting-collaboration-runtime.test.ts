@@ -225,6 +225,7 @@ describe('meeting collaboration runtime', () => {
         canRequestFloor: true,
         canModerateFloor: true,
       },
+      labels: { close: 'room.controls.floorClose' },
     });
     expect(container?.querySelector('.dwp-meeting-side-panel--collaboration')).not.toBeNull();
   });

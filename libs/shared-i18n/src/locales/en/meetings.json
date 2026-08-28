@@ -24,7 +24,8 @@
         "history": { "label": "Meeting history" },
         "join": { "label": "Join with code" },
         "admin-operations": { "label": "Meeting operations" },
-        "admin-policies": { "label": "Meeting policy" }
+        "admin-policies": { "label": "Meeting policy" },
+        "admin-intelligence": { "label": "AI and data governance" }
       }
     }
   },
@@ -70,6 +71,7 @@
     "mediaPermission": "Camera or microphone permission is unavailable. Check your browser settings.",
     "connection": "The realtime meeting connection was interrupted.",
     "attendanceSync": "The room connected, but the attendance state could not be synchronized.",
+    "lifecycleSync": "The meeting is still connected, but its latest lifecycle and permissions could not be verified.",
     "leaveSync": "You are leaving the room, but attendance synchronization is delayed."
   },
   "home": {
@@ -183,6 +185,7 @@
     "openRecap": "Open meeting recap",
     "recap": {
       "loading": "Loading the meeting recap and artifacts",
+      "refreshing": "Refreshing the meeting recap",
       "back": "Back to meeting records",
       "ended": "Ended {{time}}",
       "evidenceCount": "{{count}} artifacts available",
@@ -213,8 +216,104 @@
         "unavailableTitle": "No AI meeting notes were generated",
         "unavailableDescription": "Audio-only STT and recording-based recap modes run only when approved policy and processing infrastructure are configured."
       },
+      "intelligence": {
+        "title": "AI meeting intelligence",
+        "description": "Create and review an evidence-linked recap from the governed transcript, then explicitly publish it to participants.",
+        "loading": "Loading AI meeting intelligence",
+        "loadErrorTitle": "AI meeting intelligence is unavailable",
+        "loadErrorDescription": "The latest authorized report could not be verified. No report content is shown.",
+        "retry": "Try again",
+        "refresh": "Refresh",
+        "refreshing": "Refreshing AI report",
+        "states": {
+          "UNAVAILABLE": "Not generated",
+          "PROCESSING": "Processing",
+          "FAILURE": "Processing failed",
+          "DRAFT": "Draft · review required",
+          "APPROVED": "Approved · not published",
+          "PUBLISHED": "Published",
+          "REJECTED": "Rejected",
+          "DELETED": "Deleted"
+        },
+        "stateDescriptions": {
+          "UNAVAILABLE": "No authorized AI report is available for this meeting.",
+          "PROCESSING": "The governed transcript is being analyzed. Raw transcript content is not stored in the AI runtime.",
+          "FAILURE": "The run stopped without publishing content. A host can retry after checking the governed dependencies.",
+          "DRAFT": "Only authorized reviewers can see this draft. Verify every cited timestamp before deciding.",
+          "APPROVED": "A reviewer approved this version, but participants cannot see it until explicit publication.",
+          "PUBLISHED": "This reviewed version is visible to authorized meeting participants.",
+          "REJECTED": "The draft was rejected and cannot be published.",
+          "DELETED": "The report content has been purged; only governed deletion evidence remains."
+        },
+        "generate": "Generate draft",
+        "regenerate": "Generate new draft",
+        "generating": "Starting governed analysis",
+        "generateBlockers": {
+          "NOT_HOST": "Only the organizer or co-host can request an AI draft.",
+          "PROCESSING": "Wait for the current analysis run to finish.",
+          "TRANSCRIPT_NOT_AVAILABLE": "A governed transcript artifact must be available before analysis.",
+          "CONTENT_PLAN_NOT_AVAILABLE": "The current content-plan version could not be verified; generation remains blocked."
+        },
+        "actionError": "The action was not completed. The last server-confirmed report remains unchanged.",
+        "processing": "Analysis is running outside the database transaction under a fenced lease. This view refreshes while the run is active.",
+        "failureCode": "Stable failure code: {{value}}",
+        "disclaimerTitle": "AI output requires human verification",
+        "disclaimerDescription": "This report is not an official record until reviewed and published. It never infers an individual's emotion, intent, personality, health, or productivity.",
+        "evidenceTitle": "Report custody and evidence",
+        "evidenceDescription": "Every finding is tied to source transcript segments and inherits meeting access, retention, legal-hold, and deletion controls.",
+        "retentionUntil": "Retained until {{value}}",
+        "legalHold": "Legal hold",
+        "schemaVersion": "Schema {{value}}",
+        "sections": {
+          "executiveSummary": "Executive summary",
+          "topics": "Topics",
+          "decisions": "Decisions",
+          "actionItems": "Action items",
+          "openQuestions": "Open questions",
+          "risks": "Risks and dependencies",
+          "conversationClimate": "Conversation climate"
+        },
+        "sectionEmpty": "No evidence-supported item was identified.",
+        "citationLabel": "Transcript {{value}}",
+        "citationDetail": "Transcript segment {{segmentId}}, {{value}}",
+        "climateDescription": "A meeting-level, transcript-grounded interaction pattern. It is not an emotion, sentiment, personality, or employee-performance score.",
+        "climateLabels": {
+          "ALIGNED": "Broadly aligned",
+          "MIXED": "Mixed discussion",
+          "CONTESTED": "Open disagreement",
+          "INSUFFICIENT_EVIDENCE": "Insufficient evidence"
+        },
+        "climateSignals": {
+          "BALANCED_TURN_TAKING": "Balanced turn-taking",
+          "CONSTRUCTIVE_DISAGREEMENT": "Constructive disagreement",
+          "UNRESOLVED_DISAGREEMENT": "Unresolved disagreement",
+          "DOMINANT_MONOLOGUE_PATTERN": "Extended monologue pattern",
+          "LOW_TRANSCRIPT_EVIDENCE": "Limited transcript evidence"
+        },
+        "reviewTitle": "Human review",
+        "reviewDescription": "Compare the draft with every cited transcript segment before approving or rejecting this version.",
+        "reviewSeparationNote": "Approval records the reviewer and version. Publication is a separate action so a draft is never shared by accident.",
+        "reviewReasonLabel": "Review basis",
+        "reviewReasonPlaceholder": "Select a review basis",
+        "reviewReasons": {
+          "EVIDENCE_VERIFIED": "Evidence and wording verified",
+          "CORRECTED_AND_VERIFIED": "Corrections completed and verified",
+          "INSUFFICIENT_EVIDENCE": "Insufficient source evidence",
+          "SENSITIVE_CONTENT": "Sensitive content requires revision"
+        },
+        "approve": "Approve draft",
+        "approving": "Approving draft",
+        "reject": "Reject draft",
+        "rejecting": "Rejecting draft",
+        "publishTitle": "Publish the approved report",
+        "publishDescription": "Publishing makes this exact reviewed version visible to authorized meeting participants.",
+        "publish": "Publish to participants",
+        "publishing": "Publishing report"
+      },
       "artifacts": {
         "governance": "Recording, transcript, summary, chat, and attendance evidence each have independent access, retention, and deletion evidence.",
+        "processingRefresh": "An artifact is still processing. This recap refreshes automatically while processing continues.",
+        "retrievalUnavailable": "The service reports stored evidence, but this client has no authorized retrieval endpoint yet. Nothing can be opened or downloaded from this screen.",
         "retention": "Retained until {{time}}",
         "noRetention": "No governed artifact retention applied",
         "types": {
@@ -228,6 +327,7 @@
           "NONE": "Not requested",
           "PROCESSING": "Processing",
           "AVAILABLE": "Available",
+          "AVAILABLE_NO_RETRIEVAL": "Stored · viewing unavailable",
           "UNAVAILABLE": "Not configured",
           "FAILED": "Processing failed",
           "DELETED": "Deleted"
@@ -255,6 +355,7 @@
     "resolving": "Finding meeting",
     "displayName": "Display name",
     "request": "Request to join",
+    "continueDirect": "Continue",
     "requesting": "Requesting",
     "waitingTitle": "Waiting for the host",
     "waitingDescription": "Keep this page open. You will move to device check when admitted.",
@@ -267,7 +368,11 @@
     "expiredDescription": "Submit a new request to join.",
     "notAllowed": "Entry is not available: {{reason}}",
     "resolveError": "The meeting code could not be resolved.",
-    "requestError": "The entry request could not be submitted."
+    "requestError": "The entry request could not be submitted.",
+    "statusError": "The host response could not be checked. Your request is preserved; reconnect and try the status check again.",
+    "checkingStatus": "Checking status",
+    "retryStatus": "Check status again",
+    "startOver": "Start over"
   },
   "room": {
     "loading": "Preparing the meeting",
@@ -334,6 +439,9 @@
     "endedDescription": "Attendance and quality records are being finalized.",
     "viewHistory": "Open meeting history",
     "returnHome": "Return to meeting home",
+    "cancelledTitle": "This meeting was cancelled",
+    "cancelledDescription": "The room is closed and realtime credentials will not be issued.",
+    "returnToMeetings": "Return to my meetings",
     "leftTitle": "You left the meeting",
     "leftDescription": "You can rejoin with the same device settings when needed.",
     "disconnectedTitle": "Your connection was interrupted",
@@ -356,11 +464,89 @@
     "reaction": "Send {{reaction}} reaction",
     "reactionsLabel": "Reactions",
     "reactionAnnouncement": "{{name}} sent a {{reaction}} reaction.",
+    "reactionSendError": "The reaction could not be delivered. Check the connection and try again.",
     "raiseHand": "Raise hand",
     "lowerHand": "Lower hand",
     "handRaised": "Hand raised",
     "quality": "Connection quality",
     "recordingUnavailable": "Recording is unavailable because Egress is not configured.",
+    "content": {
+      "title": "Recording, transcript, and AI notice",
+      "description": "This status comes from the governed meeting content plan and refreshes while the meeting is live.",
+      "open": "Open recording and content status",
+      "loading": "Verifying the current recording and processing plan",
+      "loadError": "The current recording and processing plan could not be verified. Joining and recording controls remain blocked until it is available.",
+      "refreshErrorLastKnown": "The latest content status could not be refreshed. The state below is the last server-confirmed value; recording controls remain blocked.",
+      "statusVerifying": "Verifying recording",
+      "statusUnavailable": "Status unavailable",
+      "disabled": "Live capture is not requested",
+      "blockedTitle": "Content processing is not ready",
+      "plan": {
+        "title": "Host content plan",
+        "description": "Choose what this meeting may capture and process. The server applies tenant policy, consent, and infrastructure checks before anything starts.",
+        "recordingLabel": "Record meeting media",
+        "recordingDescription": "Create an encrypted recording under the tenant retention policy.",
+        "transcriptionLabel": "Create transcript",
+        "transcriptionDescription": "Send approved meeting audio to the configured speech-to-text service.",
+        "aiSummaryLabel": "Generate AI summary",
+        "aiSummaryDescription": "Create an AI-assisted recap from the governed transcript. Enabling this also enables transcription.",
+        "e2eeLabel": "End-to-end encrypt media",
+        "e2eeDescription": "Keep media inaccessible to server-side capture and processing services.",
+        "e2eeConflict": "End-to-end encryption is incompatible with server recording, transcription, and AI summary. Saving this combination keeps processing blocked until the plan is changed.",
+        "activeLocked": "Stop the active recording request before changing this content plan.",
+        "save": "Save content plan",
+        "saving": "Saving content plan",
+        "saveSuccess": "The server saved the plan and re-evaluated its notice and readiness. Review the current state and notice on this panel.",
+        "saveError": "The content plan was not saved. The latest server version is being refreshed; review it before trying again."
+      },
+      "noticeRequiredTitle": "Review and acknowledge this meeting notice",
+      "noticeAcknowledgedTitle": "You acknowledged the current meeting notice",
+      "noticeDescription": "Notice revision {{revision}} covers the enabled recording, transcript, and AI processing shown above.",
+      "noticeUnavailable": "Processing was requested, but the authoritative disclosure notice is unavailable. Joining and recording stay blocked.",
+      "acknowledge": "Acknowledge notice",
+      "acknowledging": "Acknowledging notice",
+      "acknowledgeError": "The notice could not be acknowledged. Refresh the current revision and try again.",
+      "consentProgress": "Notice acknowledgements: {{received}} of {{required}} required participants.",
+      "startRecording": "Start recording",
+      "stopRecording": "Stop recording",
+      "startBlocked": "Recording starts only when the plan is ready, every required acknowledgement is present, and the meeting is live.",
+      "commandError": "The recording command was not accepted. Review the current blockers before trying again.",
+      "startConfirmTitle": "Start governed recording?",
+      "startConfirmDescription": "Recording starts only for the disclosed content plan. All participants will continue to see the server-authoritative recording state.",
+      "stopConfirmTitle": "Stop the recording?",
+      "stopConfirmDescription": "The service will finalize the recording under the configured retention and access policy.",
+      "applying": "Applying recording command",
+      "features": {
+        "recording": "Recording",
+        "transcription": "Transcript",
+        "aiSummary": "AI summary"
+      },
+      "recordingStates": {
+        "INACTIVE": "Not recording",
+        "REQUESTED": "Recording requested",
+        "STARTING": "Recording starting",
+        "RECORDING": "Recording active",
+        "STOP_REQUESTED": "Recording stopping",
+        "STOPPED": "Recording stopped",
+        "FAILED": "Recording failed"
+      },
+      "blockers": {
+        "MEETINGS_DISABLED": "Video meetings are disabled by tenant policy.",
+        "PLAN_RECORDING_DISABLED": "Recording is not enabled in this meeting content plan.",
+        "MEETING_NOT_LIVE": "The meeting must be live before recording can start.",
+        "POLICY_NEVER": "Tenant policy prohibits recording.",
+        "E2EE": "End-to-end encryption prevents server-side recording and processing.",
+        "CONSENT": "Required participant acknowledgements are incomplete.",
+        "RECORDING_NOT_ACTIVE": "There is no active recording to stop.",
+        "MEDIA_PROVIDER": "The realtime media provider is unavailable.",
+        "EGRESS": "The recording egress service is unavailable.",
+        "STORAGE": "Governed artifact storage is unavailable.",
+        "KMS": "Encryption key management is unavailable.",
+        "AUDIT": "Required audit evidence cannot be written.",
+        "STT": "Speech-to-text processing is unavailable.",
+        "LLM": "The approved language-model provider is unavailable."
+      }
+    },
     "endConfirmTitle": "End this meeting for everyone?",
     "endConfirmDescription": "All participants will be disconnected and the attendance record will be finalized.",
     "reactions": {
@@ -479,7 +665,8 @@
       "screenShare": "Screen sharing",
       "chat": "In-meeting chat",
       "captions": "Live captions",
-      "recording": "Governed recording",
+    "recording": "Governed recording",
+    "transcript": "Governed transcript",
       "aiNotes": "AI meeting notes"
     },
     "operations": {
@@ -526,11 +713,72 @@
       "chatRetentionHint": "Set 0 to retain messages only while the meeting is live. Enter 0–365 days without exceeding meeting record retention ({{meetingRetentionDays}} days).",
       "chatRetentionRangeError": "Enter a whole number from 0 to 365.",
       "chatRetentionMeetingError": "Meeting chat retention cannot exceed meeting record retention.",
-      "artifactRetention": "Meeting artifact retention (days)",
+    "artifactRetention": "Meeting artifact retention (days)",
+    "artifactRetentionMeetingError": "Meeting artifact retention cannot exceed meeting record retention.",
       "maximumParticipants": "Maximum participants",
       "unmuteRequestOnly": "Hosts cannot unmute participants directly; they can only request that participants unmute themselves.",
       "saved": "Meeting policy saved.",
-      "saveError": "Meeting policy could not be saved."
+    "saveError": "Meeting policy could not be saved."
+  },
+  "intelligence": {
+    "loading": "Loading AI and data governance",
+    "title": "AI and data governance",
+    "description": "Verify which meeting intelligence capabilities are actually ready and which operational controls still block release.",
+    "accessBoundary": "This administration view exposes policy and dependency status only. It never grants access to recordings, transcripts, chats, or AI report content.",
+    "capabilitiesTitle": "User-facing capabilities",
+    "capabilitiesDescription": "A capability is ready only when tenant policy, governed processing, and runtime dependencies agree.",
+    "dependenciesTitle": "Processing dependencies",
+    "dependenciesDescription": "Production endpoints, regional controls, encryption, audit, and processors must be independently verified.",
+    "workflowTitle": "Human review and publication",
+    "workflowDescription": "AI output remains a draft until an authorized reviewer verifies the evidence and explicitly publishes it.",
+    "lifecycleTitle": "Retention and evidence",
+    "lifecycleDescription": "Content access, legal hold, expiry, deletion, and immutable evidence are evaluated separately.",
+    "retentionTitle": "Configured retention",
+    "retentionDescription": "Artifact and chat retention must remain within the meeting record boundary.",
+    "observedAt": "Observed {{value}}",
+    "days": "{{value}} days",
+    "states": {
+      "READY": "Ready",
+      "BLOCKED": "Blocked",
+      "CONNECTION_REQUIRED": "Connection required",
+      "NOT_VERIFIED": "Not verified"
+    },
+    "reasons": {
+      "POLICY_NEVER": "Tenant policy prohibits this capability.",
+      "CAPABILITY_NOT_CONFIGURED": "The runtime does not report this capability as configured.",
+      "REALTIME_PROVIDER_UNAVAILABLE": "The realtime media provider is unavailable.",
+      "DEPENDENCY_STATUS_CONTRACT_MISSING": "No authoritative dependency readiness contract is connected.",
+      "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "Server-side review and publication enforcement is not verified.",
+      "LEGAL_HOLD_NOT_CONNECTED": "Legal-hold controls are not connected.",
+      "DELETION_EVIDENCE_NOT_CONNECTED": "Deletion execution and evidence are not connected."
+    },
+    "capabilities": {
+      "recording": { "label": "Recording", "description": "Encrypted media capture with visible notice, consent, retention, and deletion evidence." },
+      "transcript": { "label": "Transcript", "description": "Timestamped transcript produced by the approved speech-to-text boundary." },
+      "aiNotes": { "label": "AI meeting intelligence", "description": "Evidence-linked recap and aggregate conversation climate, without individual emotion scoring." }
+    },
+    "dependencies": {
+      "provider": { "label": "Realtime provider", "description": "Media-room availability and tenant isolation." },
+      "region": { "label": "Processing region", "description": "Approved data residency for every processing hop." },
+      "kms": { "label": "Key management", "description": "Envelope encryption and cryptographic deletion readiness." },
+      "audit": { "label": "Audit evidence", "description": "Immutable command, access, review, publication, and deletion evidence." },
+      "egress": { "label": "Recording Egress", "description": "Governed media capture with no unapproved fallback." },
+      "storage": { "label": "Artifact storage", "description": "Tenant-bound encrypted storage and lifecycle enforcement." },
+      "stt": { "label": "Speech to text", "description": "Approved transcript processor with bounded retention." },
+      "llm": { "label": "Language model", "description": "Managed inference with training disabled and zero provider retention." }
+    },
+    "governance": {
+      "humanReview": { "label": "Human review", "description": "A reviewer verifies citations before approval." },
+      "explicitPublish": { "label": "Explicit publication", "description": "Only approved reports may be shared with participants." },
+      "adminContentAccess": { "label": "Content least privilege", "description": "Administrative status access does not imply meeting-content access." },
+      "legalHold": { "label": "Legal hold", "description": "Authorized holds suspend deletion without widening content access." },
+      "deletionEvidence": { "label": "Deletion evidence", "description": "Expiry produces a tombstone and immutable purge evidence." }
+    },
+    "retention": {
+      "meeting": { "label": "Meeting record", "description": "Lifecycle and attendance record boundary." },
+      "artifact": { "label": "Artifacts", "description": "Recording, transcript, and AI report boundary." },
+      "chat": { "label": "Meeting chat", "description": "Conversation-message retention boundary." }
     }
   }
+}
 }

@@ -7,6 +7,10 @@
 - An uninvited user cannot resolve an `INVITED_ONLY` meeting into sensitive detail.
 - A waiting user receives no LiveKit token until admitted.
 - A meeting administrator cannot read recording or transcript content by role alone.
+- Internal scope alone never grants meeting detail or recap access.
+- Denied participants cannot recover meeting detail by guessing an identifier.
+- Non-host participant projections omit other users' email, organization, job title,
+  and exact admission or attendance timestamps.
 
 ## Lifecycle
 
@@ -18,6 +22,8 @@
 - Ending twice is safe and records one final lifecycle transition.
 - Provider failure does not leave a meeting falsely marked live.
 - Token issuance alone does not mark attendance as connected.
+- When recording, transcription, or AI is requested, token issuance and connected
+  acknowledgement both require the current notice revision to be acknowledged.
 - Signed provider events and reconciliation converge missing disconnects before
   production attendance is treated as authoritative.
 
@@ -34,6 +40,10 @@
 - Desktop keeps a central stage and one secondary panel; mobile uses a full-height
   overlay without horizontal overflow.
 - Loading, empty, forbidden, waiting, disconnected, and retry states are explicit.
+- The live room continues to synchronize authoritative lifecycle state after media
+  credentials are issued and disables collaboration when the meeting ends remotely.
+- Ended meetings route directly to their recap; cancelled meetings never present a
+  misleading prepare or join action.
 - Reduced motion and forced colors preserve meaning and focus visibility.
 
 ## Administration
@@ -46,6 +56,26 @@
   until role revocation and provider-side removal/mute/lobby actions are enforced.
 - Retention limits are validated and policy changes create audit evidence.
 - Operations report provider readiness without exposing credentials or meeting content.
+- The management plane separates operations, policy, and AI/data governance. Missing
+  Egress, storage, KMS, audit, STT, LLM, region, legal-hold, or deletion-evidence
+  contracts are displayed as blocked or connection-required rather than ready.
+
+## Meeting intelligence
+
+- A run is idempotently bound to tenant, meeting, source transcript hash, current notice,
+  consent snapshot, processing region, model, prompt version, and schema version.
+- A missing or expired transcript, stale notice or consent snapshot, E2EE conflict,
+  unavailable KMS/transcript source/Agent provider, region mismatch, provider training,
+  or provider retention causes a fail-closed response and creates no report.
+- Provider output is always `DRAFT`; only a human review of the current version can
+  approve it, and only a separate action can publish it to meeting participants.
+- Every summary, topic, decision, action, question, risk, and non-insufficient climate
+  signal contains an in-range citation to a supplied transcript segment.
+- A provider citation outside the transcript, unknown field, individual emotion field,
+  or unstructured response is rejected without persisting the response body.
+- Raw transcript and report payloads never enter audit events, API history, error text,
+  or application logs. Stored report content is envelope-encrypted with tenant/report
+  context and becomes unreadable after governed deletion.
 
 ## Release gates
 

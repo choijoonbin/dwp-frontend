@@ -163,6 +163,7 @@
     "FAILED": "반출 처리 실패",
     "PUBLISH": "발행",
     "REVOKE": "회수",
+    "CHECK_IN": "자원 체크인",
     "RELEASE": "자원 조기 해제",
     "REASSIGN": "새 담당자에게 재지정",
     "EXTEND_RETENTION": "자동 보관 기한 연장",

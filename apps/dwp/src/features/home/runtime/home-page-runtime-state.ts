@@ -5,22 +5,45 @@ type HomeCopyExperience = Pick<
   'defaultLocale' | 'headline' | 'localizedContent' | 'subheadline'
 >;
 
-export type HomeBootstrapState = 'experience' | 'layout' | null;
+export type HomePageGateState =
+  | Readonly<{ kind: 'loading'; source: 'experience' | 'layout' }>
+  | Readonly<{ kind: 'error'; source: 'experience' | 'layout' }>
+  | Readonly<{ kind: 'ready' }>;
 
-export function resolveHomeBootstrapState({
+export function resolveHomePageGateState({
   experiencePending,
   experienceReady,
+  experienceFailed,
   layoutPending,
+  layoutFailed,
   deviceLayoutPending,
 }: Readonly<{
   experiencePending: boolean;
   experienceReady: boolean;
+  experienceFailed: boolean;
   layoutPending: boolean;
+  layoutFailed: boolean;
   deviceLayoutPending: boolean;
-}>): HomeBootstrapState {
-  if (experiencePending) return 'experience';
-  if (experienceReady && (layoutPending || deviceLayoutPending)) return 'layout';
-  return null;
+}>): HomePageGateState {
+  if (experiencePending) return { kind: 'loading', source: 'experience' };
+  if (experienceFailed) return { kind: 'error', source: 'experience' };
+  if (experienceReady && layoutFailed) return { kind: 'error', source: 'layout' };
+  if (experienceReady && (layoutPending || deviceLayoutPending)) {
+    return { kind: 'loading', source: 'layout' };
+  }
+  return { kind: 'ready' };
+}
+
+export function canStartHomeEditing({
+  customizationEnabled,
+  editorOpen,
+  gateState,
+}: Readonly<{
+  customizationEnabled: boolean;
+  editorOpen: boolean;
+  gateState: HomePageGateState;
+}>): boolean {
+  return customizationEnabled && !editorOpen && gateState.kind === 'ready';
 }
 
 export function resolveHomeDeviceClass({

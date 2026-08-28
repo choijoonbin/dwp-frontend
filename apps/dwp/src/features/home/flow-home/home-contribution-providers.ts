@@ -3,6 +3,7 @@ import {
   type HomeContributionInput,
   type HomeContributionPriority,
   type HomeContributionProviderContext,
+  type HomeContributionTranslationValues,
   type HomePrivacyClassification,
 } from '../contributions';
 import { resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
@@ -135,16 +136,23 @@ function privacyClassification(value: string | null | undefined): HomePrivacyCla
     : 'RESTRICTED';
 }
 
-function providerLanguage(context: HomeContributionProviderContext): 'ko' | 'en' {
+function isKoreanLocale(locale: string | undefined): boolean {
   try {
-    return new Intl.Locale(context.locale || 'en').language === 'ko' ? 'ko' : 'en';
+    return new Intl.Locale(locale || 'en').language === 'ko';
   } catch {
-    return 'en';
+    return false;
   }
 }
 
-function copy(context: HomeContributionProviderContext, ko: string, en: string): string {
-  return { ko, en }[providerLanguage(context)];
+function translateContribution(
+  context: HomeContributionProviderContext,
+  key: string,
+  values?: HomeContributionTranslationValues
+): string {
+  if (!context.translate) {
+    throw new Error('Home contribution translator is required for presentation copy.');
+  }
+  return context.translate(key, values);
 }
 
 function semanticKey(...values: (string | null | undefined)[]): string {
@@ -256,16 +264,18 @@ export const workspaceWorkContributionProvider = createHomeContributionProvider<
                 scope: 'ME',
                 priority: data.summary.dueSoon > 0 ? 'HIGH' : 'LOW',
                 status: data.summary.dueSoon > 0 ? 'ATTENTION' : 'ON_TRACK',
-                title: copy(context, '열린 업무', 'Open work'),
-                description: copy(
-                  context,
+                title: translateContribution(context, 'flow.contributions.workspace.openWorkTitle'),
+                description:
                   data.summary.dueSoon > 0
-                    ? `확인이 필요한 업무 ${data.summary.dueSoon}건`
-                    : '현재 업무 흐름이 안정적입니다.',
-                  data.summary.dueSoon > 0
-                    ? `${data.summary.dueSoon} item(s) need attention.`
-                    : 'Your current work flow is on track.'
-                ),
+                    ? translateContribution(
+                        context,
+                        'flow.contributions.workspace.dueSoonDescription',
+                        { count: data.summary.dueSoon }
+                      )
+                    : translateContribution(
+                        context,
+                        'flow.contributions.workspace.onTrackDescription'
+                      ),
                 count: openCount,
                 deepLink: '/work/queue',
                 dedupeKey: `WORK-PULSE:${data.generatedAt.slice(0, 10)}`,
@@ -298,7 +308,7 @@ export const calendarContributionProvider = createHomeContributionProvider<Calen
         status: event.conflict ? 'CONFLICT' : event.status,
         title:
           event.visibility === 'PRIVATE'
-            ? copy(context, '비공개 일정', 'Private event')
+            ? translateContribution(context, 'flow.contributions.calendar.privateEventTitle')
             : event.title,
         description: event.location ?? event.calendarName,
         dueAt: event.startsAt,
@@ -309,7 +319,10 @@ export const calendarContributionProvider = createHomeContributionProvider<Calen
         privacy: {
           classification: event.visibility === 'PUBLIC' ? 'INTERNAL' : 'CONFIDENTIAL',
           sensitive: event.visibility === 'PRIVATE' || event.visibility === 'CONFIDENTIAL',
-          redactedTitle: copy(context, '보호된 일정', 'Protected event'),
+          redactedTitle: translateContribution(
+            context,
+            'flow.contributions.calendar.protectedEventTitle'
+          ),
         },
       }));
     const response =
@@ -321,15 +334,15 @@ export const calendarContributionProvider = createHomeContributionProvider<Calen
               scope: 'ME' as const,
               priority: 'HIGH' as const,
               status: 'NEEDS_RESPONSE',
-              title: copy(
+              title: translateContribution(
                 context,
-                '응답하지 않은 일정 초대',
-                'Calendar invitations need a response'
+                'flow.contributions.calendar.awaitingResponseTitle',
+                { count: data.metrics.awaitingResponseCount }
               ),
-              description: copy(
+              description: translateContribution(
                 context,
-                `${data.metrics.awaitingResponseCount}건의 일정 응답이 필요합니다.`,
-                `${data.metrics.awaitingResponseCount} calendar invitation(s) need a response.`
+                'flow.contributions.calendar.awaitingResponseDescription',
+                { count: data.metrics.awaitingResponseCount }
               ),
               authority: calendarResponseAuthority,
               count: data.metrics.awaitingResponseCount,
@@ -345,15 +358,15 @@ export const calendarContributionProvider = createHomeContributionProvider<Calen
               scope: 'ME' as const,
               priority: 'HIGH' as const,
               status: 'NEEDS_RESPONSE',
-              title: copy(
+              title: translateContribution(
                 context,
-                '응답이 필요한 일정 초대',
-                'Calendar invitations need attention'
+                'flow.contributions.calendar.awaitingAttentionTitle',
+                { count: data.metrics.awaitingResponseCount }
               ),
-              description: copy(
+              description: translateContribution(
                 context,
-                `${data.metrics.awaitingResponseCount}건의 일정 초대를 확인하세요.`,
-                `Review ${data.metrics.awaitingResponseCount} calendar invitation(s).`
+                'flow.contributions.calendar.awaitingAttentionDescription',
+                { count: data.metrics.awaitingResponseCount }
               ),
               count: data.metrics.awaitingResponseCount,
               deepLink: '/calendar/home',
@@ -381,16 +394,22 @@ export const calendarContributionProvider = createHomeContributionProvider<Calen
                 data.metrics.focusMinutes < data.metrics.focusTargetMinutes
                   ? 'BELOW_TARGET'
                   : 'ON_TRACK',
-              title: copy(context, '오늘 집중 시간', 'Focus time today'),
-              description: copy(
-                context,
+              title: translateContribution(context, 'flow.contributions.calendar.focusTitle'),
+              description:
                 data.metrics.focusTargetMinutes > 0
-                  ? `${data.metrics.focusMinutes}분 / 목표 ${data.metrics.focusTargetMinutes}분`
-                  : `${data.metrics.focusMinutes}분 확보`,
-                data.metrics.focusTargetMinutes > 0
-                  ? `${data.metrics.focusMinutes} min / ${data.metrics.focusTargetMinutes} min target`
-                  : `${data.metrics.focusMinutes} min protected`
-              ),
+                  ? translateContribution(
+                      context,
+                      'flow.contributions.calendar.focusProgressDescription',
+                      {
+                        minutes: data.metrics.focusMinutes,
+                        target: data.metrics.focusTargetMinutes,
+                      }
+                    )
+                  : translateContribution(
+                      context,
+                      'flow.contributions.calendar.focusProtectedDescription',
+                      { minutes: data.metrics.focusMinutes }
+                    ),
               deepLink: '/calendar/insights',
               dedupeKey: `CALENDAR-FOCUS:${data.date}`,
               sourceReference: `focus:${data.date}`,
@@ -421,11 +440,11 @@ export const activityContributionProvider = createHomeContributionProvider<Works
         scope: 'ME',
         priority: data.events.some((event) => event.state === 'policy-blocked') ? 'HIGH' : 'MEDIUM',
         status: 'ATTENTION',
-        title: copy(context, '확인이 필요한 활동', 'Activity needs attention'),
-        description: copy(
+        title: translateContribution(context, 'flow.contributions.activity.attentionTitle'),
+        description: translateContribution(
           context,
-          `${attentionCount}건의 활동이 입력 또는 정책 확인을 기다립니다.`,
-          `${attentionCount} activity item(s) are waiting for input or policy review.`
+          'flow.contributions.activity.attentionDescription',
+          { count: attentionCount }
         ),
         count: attentionCount,
         deepLink: '/activity',
@@ -555,7 +574,10 @@ export const approvalContributionProvider =
                       scope: 'OPERATIONS' as const,
                       priority: 'CRITICAL' as const,
                       status: 'FAILED',
-                      title: copy(context, '결재 연동 실패', 'Approval integration failures'),
+                      title: translateContribution(
+                        context,
+                        'flow.contributions.approval.integrationFailuresTitle'
+                      ),
                       authority: approvalOperationsReadAuthority,
                       count: home.adminPulse.failedIntegrations,
                       deepLink: '/approvals/admin/operations',
@@ -574,7 +596,10 @@ export const approvalContributionProvider =
                       scope: 'OPERATIONS' as const,
                       priority: 'HIGH' as const,
                       status: 'OVERDUE',
-                      title: copy(context, '연체된 결재 업무', 'Overdue approval work'),
+                      title: translateContribution(
+                        context,
+                        'flow.contributions.approval.overdueWorkTitle'
+                      ),
                       authority: approvalOperationsReadAuthority,
                       count: home.adminPulse.overdueTasks,
                       deepLink: '/approvals/admin/operations',
@@ -612,19 +637,13 @@ export const hrContributionProvider = createHomeContributionProvider<HrContribut
         scope: 'ME',
         priority: home.time.exceptionCount > 0 ? 'HIGH' : 'MEDIUM',
         status: home.time.exceptionCount > 0 ? 'ATTENTION' : home.time.status,
-        title: copy(context, '근무 기록을 확인하세요', 'Review your time card'),
+        title: translateContribution(context, 'flow.contributions.hr.timeCardTitle'),
         description:
           home.time.exceptionCount > 0
-            ? copy(
-                context,
-                `확인이 필요한 예외가 ${home.time.exceptionCount}건 있습니다.`,
-                `${home.time.exceptionCount} exception(s) need attention.`
-              )
-            : copy(
-                context,
-                '현재 기간의 근무 기록이 완료되지 않았습니다.',
-                'Your current time card is not complete.'
-              ),
+            ? translateContribution(context, 'flow.contributions.hr.exceptionDescription', {
+                count: home.time.exceptionCount,
+              })
+            : translateContribution(context, 'flow.contributions.hr.timeCardIncompleteDescription'),
         count: Math.max(1, home.time.exceptionCount),
         dueAt: home.time.periodEnd,
         deepLink: '/hr/time',
@@ -641,7 +660,7 @@ export const hrContributionProvider = createHomeContributionProvider<HrContribut
         scope: 'ME',
         priority: 'MEDIUM',
         status: 'REQUIRED',
-        title: copy(context, '필수 학습', 'Required learning'),
+        title: translateContribution(context, 'flow.contributions.hr.requiredLearningTitle'),
         count: home.requiredLearningCount,
         deepLink: '/hr/talent',
         dedupeKey: 'hr:required-learning',
@@ -657,7 +676,7 @@ export const hrContributionProvider = createHomeContributionProvider<HrContribut
         scope: 'ME',
         priority: 'MEDIUM',
         status: 'OPEN',
-        title: copy(context, '진행 중인 복리후생 신청', 'Open benefit enrollment'),
+        title: translateContribution(context, 'flow.contributions.hr.openBenefitWindowTitle'),
         count: home.openBenefitWindowCount,
         deepLink: '/hr/benefits',
         dedupeKey: 'hr:benefit-window',
@@ -673,7 +692,7 @@ export const hrContributionProvider = createHomeContributionProvider<HrContribut
         scope: 'TEAM',
         priority: 'HIGH',
         status: 'PENDING',
-        title: copy(context, '팀 인사 승인 대기', 'Team HR approvals pending'),
+        title: translateContribution(context, 'flow.contributions.hr.teamPendingTitle'),
         count: home.teamPendingCount,
         deepLink: '/hr/team',
         dedupeKey: 'hr:team-pending',
@@ -713,8 +732,7 @@ export const serviceContributionProvider = createHomeContributionProvider<
             : servicePriority(request.priority, request.slaDueAt, context.now),
         status: overdue(request.slaDueAt, context.now) ? 'OVERDUE' : request.status,
         title: request.summary,
-        description:
-          providerLanguage(context) === 'ko' ? request.serviceNameKo : request.serviceNameEn,
+        description: isKoreanLocale(context.locale) ? request.serviceNameKo : request.serviceNameEn,
         dueAt: request.slaDueAt,
         deepLink: `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${encodeURIComponent(
           request.requestId
@@ -792,13 +810,13 @@ export const workplaceContributionProvider = createHomeContributionProvider<
   },
 });
 
-const notificationName: Readonly<Record<string, Readonly<{ ko: string; en: string }>>> = {
-  approvals: { ko: '전자결재', en: 'Approvals' },
-  communications: { ko: '소식', en: 'News' },
-  hcm: { ko: '인사', en: 'HR' },
-  messaging: { ko: '메시지', en: 'Messages' },
-  space: { ko: 'Space', en: 'Space' },
-  mail: { ko: '메일', en: 'Mail' },
+const notificationAppTranslationKey: Readonly<Record<string, string>> = {
+  approvals: 'flow.contributions.notification.apps.approvals',
+  communications: 'flow.contributions.notification.apps.communications',
+  hcm: 'flow.contributions.notification.apps.hcm',
+  messaging: 'flow.contributions.notification.apps.messaging',
+  space: 'flow.contributions.notification.apps.space',
+  mail: 'flow.contributions.notification.apps.mail',
 };
 
 export const notificationContributionProvider =
@@ -817,10 +835,10 @@ export const notificationContributionProvider =
         .filter((app) => app.actionableUnread > 0 || app.urgentUnread > 0)
         .map<HomeContributionInput>((app) => {
           const appKey = String(app.appKey);
-          const appName = notificationName[appKey];
-          const label = appName
-            ? copy(context, appName.ko, appName.en)
-            : copy(context, '업무 앱', 'Work app');
+          const label = translateContribution(
+            context,
+            notificationAppTranslationKey[appKey] ?? 'flow.contributions.notification.apps.fallback'
+          );
           const actionable = app.actionableUnread > 0;
           const count = actionable ? app.actionableUnread : app.urgentUnread;
           return {
@@ -829,13 +847,19 @@ export const notificationContributionProvider =
             scope: 'ME',
             priority: app.urgentUnread > 0 ? 'CRITICAL' : 'HIGH',
             status: app.urgentUnread > 0 ? 'URGENT' : 'ACTIONABLE',
-            title: actionable
-              ? copy(context, `${label} 알림 확인`, `Review ${label} notifications`)
-              : copy(context, `${label} 긴급 알림`, `Urgent ${label} notifications`),
-            description: copy(
+            title: translateContribution(
               context,
-              actionable ? `조치 가능한 알림 ${count}건` : `긴급 알림 ${count}건`,
-              actionable ? `${count} actionable notification(s)` : `${count} urgent notification(s)`
+              actionable
+                ? 'flow.contributions.notification.actionableTitle'
+                : 'flow.contributions.notification.urgentTitle',
+              { app: label, count }
+            ),
+            description: translateContribution(
+              context,
+              actionable
+                ? 'flow.contributions.notification.actionableDescription'
+                : 'flow.contributions.notification.urgentDescription',
+              { count }
             ),
             count,
             deepLink: '/notifications/home',

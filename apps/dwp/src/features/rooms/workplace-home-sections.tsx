@@ -36,6 +36,7 @@ import {
   WorkplaceHomeSectionHeader as SectionHeader,
   WorkplaceHomeSectionShell as SectionShell,
 } from './workplace-home-section-frame';
+import { workplaceDecisionActionProps } from './workplace-decision-status';
 import { WorkplaceHomeWorkloadBar } from './workplace-home-workload-bar';
 
 import type {
@@ -200,6 +201,7 @@ export function WorkplaceDayBrief({
   decisionComplete,
   canManage,
   checkInBusy,
+  decisionActionId,
   onRefresh,
   onCheckIn,
 }: {
@@ -209,6 +211,7 @@ export function WorkplaceDayBrief({
   decisionComplete: boolean;
   canManage: boolean;
   checkInBusy: boolean;
+  decisionActionId: string | null;
   onRefresh: () => void;
   onCheckIn: () => void;
 }) {
@@ -303,6 +306,7 @@ export function WorkplaceDayBrief({
               startIcon={<LogIn size={17} />}
               loading={checkInBusy}
               onClick={onCheckIn}
+              {...(decisionActionId ? workplaceDecisionActionProps(decisionActionId) : {})}
             >
               {t('workplace.home.nextAction.checkIn')}
             </ActionButton>
@@ -916,6 +920,9 @@ export function WorkplaceAttentionSection({
                 <ButtonBase
                   component={Link}
                   to={item.path}
+                  {...(['CHECK_IN', 'RELEASE'].includes(item.kind)
+                    ? workplaceDecisionActionProps(item.key)
+                    : {})}
                   sx={{
                     width: 1,
                     display: 'grid',

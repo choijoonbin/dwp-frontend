@@ -644,7 +644,7 @@
       "owner": "Frontend Platform",
       "state": "COMPLETE",
       "releaseRequired": true,
-      "summary": "Identical preview versions render deterministically within the stale-time budget",
+      "summary": "Identical preview versions render deterministically and cached output is withheld at the ten-second freshness deadline",
       "automatedChecks": [
         {
           "repository": "dwp-frontend",
@@ -653,12 +653,13 @@
         },
         {
           "repository": "dwp-frontend",
-          "command": "corepack yarn vitest run libs/shared-utils/src/api/tenant-experience-preview-api.test.ts"
+          "command": "corepack yarn vitest run apps/dwp/src/features/provider/provider-tenant-experience-preview-model.test.ts libs/shared-utils/src/api/tenant-experience-preview-api.test.ts"
         }
       ],
       "evidence": [
         "e2e/provider-acceptance-evidence.spec.ts",
         "apps/dwp/src/features/provider/provider-tenant-experience-preview.tsx",
+        "apps/dwp/src/features/provider/provider-tenant-experience-preview-model.test.ts",
         "libs/shared-utils/src/api/tenant-experience-preview-api.test.ts"
       ],
       "blockers": [],

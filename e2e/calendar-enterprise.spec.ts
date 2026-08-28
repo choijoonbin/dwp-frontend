@@ -196,7 +196,9 @@ test('calendar exposes planning and invitation workbenches', async ({ page }) =>
   ).toBeVisible();
   await page.getByRole('button', { name: 'Accepted 1', exact: true }).click();
   await expect(page.getByText('Digital workplace operating review', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'View details', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'View details for Digital workplace operating review' })
+    .click();
   const responseDialog = page.getByRole('dialog', {
     name: 'Digital workplace operating review',
   });
@@ -400,8 +402,8 @@ test('calendar governance screens remain overflow-safe on compact screens', asyn
   await page.setViewportSize({ width: 390, height: 844 });
 
   await page.goto('/calendar/schedule');
-  await page.getByRole('button', { name: 'Calendars', exact: true }).click();
-  const sourcePicker = page.getByRole('dialog', { name: 'Choose calendars' });
+  await page.getByRole('button', { name: 'Select calendars', exact: true }).click();
+  const sourcePicker = page.getByRole('dialog', { name: 'Select calendars' });
   await expect(sourcePicker).toBeVisible();
   const sourcePickerAccessibility = await new AxeBuilder({ page })
     .include('[role="dialog"]')
@@ -428,6 +430,77 @@ test('calendar governance screens remain overflow-safe on compact screens', asyn
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
     )
   ).toBe(true);
+});
+
+test('calendar isolates schedule feed failures from calendar source controls', async ({ page }) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.route('**/api/platform/v1/calendar/events?*', async (route) => {
+    await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/calendar/schedule');
+
+  await expect(page.getByText('The schedule could not be loaded.', { exact: true })).toBeVisible({
+    timeout: 10_000,
+  });
+  await expect(page.getByRole('region', { name: 'Company', exact: true })).toBeVisible();
+  await expect(page.getByText('Company calendar', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('interactive-calendar')).toHaveCount(0);
+
+  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+});
+
+test('calendar company actions reflow at 320px and tabs retain calendar context at 200% text', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto('/calendar/admin/company-calendars');
+  await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+
+  const createCalendar = page.getByRole('button', { name: 'New company calendar', exact: true });
+  const publishEvent = page.getByRole('button', { name: 'Publish event', exact: true });
+  await expect(createCalendar).toBeVisible();
+  await expect(publishEvent).toBeVisible();
+  const createBounds = await createCalendar.boundingBox();
+  const publishBounds = await publishEvent.boundingBox();
+  expect(createBounds).not.toBeNull();
+  expect(publishBounds).not.toBeNull();
+  expect(createBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(createBounds!.x + createBounds!.width).toBeLessThanOrEqual(320);
+  expect(publishBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(publishBounds!.x + publishBounds!.width).toBeLessThanOrEqual(320);
+  expect(createBounds!.y + createBounds!.height).toBeLessThanOrEqual(publishBounds!.y + 1);
+
+  await expect(page.getByRole('tablist', { name: 'Company calendar', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('tabpanel', { name: 'Company calendar Published events', exact: true })
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+    )
+  ).toBe(true);
+
+  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
 });
 
 test('calendar remains read-only when Home deep-links a viewer without mutation grants', async ({

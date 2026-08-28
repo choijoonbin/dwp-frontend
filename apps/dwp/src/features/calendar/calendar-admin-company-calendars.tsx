@@ -169,7 +169,7 @@ export function CalendarAdminCompanyCalendars() {
         title={t('company.title')}
         description={t('company.description')}
         actions={
-          <Stack direction="row" spacing={1}>
+          <>
             {canCreate && (
               <ActionButton
                 intent="secondary"
@@ -188,7 +188,7 @@ export function CalendarAdminCompanyCalendars() {
                 {t('company.publishEvent')}
               </ActionButton>
             )}
-          </Stack>
+          </>
         }
       />
 
@@ -287,11 +287,29 @@ export function CalendarAdminCompanyCalendars() {
                       outlineColor: 'primary.main',
                       outlineOffset: 1,
                     },
+                    '@media (forced-colors: active)': {
+                      borderLeftColor:
+                        selectedId === calendar.calendarId ? 'Highlight' : 'CanvasText',
+                      backgroundColor: 'Canvas',
+                      color: 'CanvasText',
+                    },
                   }}
                 >
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Box
-                      sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: calendar.color }}
+                      aria-hidden="true"
+                      sx={{
+                        width: 10,
+                        height: 10,
+                        border: 1,
+                        borderColor: 'divider',
+                        borderRadius: '50%',
+                        bgcolor: calendar.color,
+                        '@media (forced-colors: active)': {
+                          backgroundColor: 'Canvas',
+                          borderColor: 'CanvasText',
+                        },
+                      }}
                     />
                     <Typography fontWeight={600} noWrap title={calendar.name} sx={{ flex: 1 }}>
                       {calendar.name}
@@ -349,9 +367,26 @@ export function CalendarAdminCompanyCalendars() {
                 <Box>
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Box
-                      sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: selected.color }}
+                      aria-hidden="true"
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        border: 1,
+                        borderColor: 'divider',
+                        borderRadius: '50%',
+                        bgcolor: selected.color,
+                        '@media (forced-colors: active)': {
+                          backgroundColor: 'Canvas',
+                          borderColor: 'CanvasText',
+                        },
+                      }}
                     />
-                    <Typography component="h2" variant="h6" fontWeight={600}>
+                    <Typography
+                      id={`${eventTabsId}-calendar-title`}
+                      component="h2"
+                      variant="h6"
+                      fontWeight={600}
+                    >
                       {selected.name}
                     </Typography>
                     <Chip size="small" label={t('company.requiredForAll')} variant="outlined" />
@@ -373,7 +408,7 @@ export function CalendarAdminCompanyCalendars() {
               <Tabs
                 value={tab}
                 onChange={(_, value: 'active' | 'trash') => setTab(value)}
-                aria-label={t('company.eventsTabsLabel')}
+                aria-labelledby={`${eventTabsId}-calendar-title`}
                 sx={{ px: { xs: 1, sm: 2 }, mt: 1 }}
               >
                 <Tab
@@ -393,7 +428,7 @@ export function CalendarAdminCompanyCalendars() {
               <Box
                 role="tabpanel"
                 id={`${eventTabsId}-${tab}-panel`}
-                aria-labelledby={`${eventTabsId}-${tab}-tab`}
+                aria-labelledby={`${eventTabsId}-calendar-title ${eventTabsId}-${tab}-tab`}
                 tabIndex={0}
                 sx={{ p: { xs: 1.5, sm: 2.5 } }}
               >

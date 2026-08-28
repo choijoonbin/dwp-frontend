@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildHomeContributionModel, resolveHomeContributionProvider } from '../contributions';
+import {
+  homeContributionI18nReady,
+  translateHomeContributionKo,
+} from './home-contribution-i18n.test-support';
 import {
   approvalContributionProvider,
   calendarContributionProvider,
@@ -24,12 +28,15 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 const NOW = '2026-08-25T01:00:00.000Z';
+beforeAll(() => homeContributionI18nReady);
+
 const CONTEXT = {
   now: NOW,
   snapshotAt: NOW,
   dateKey: '2026-08-25',
   locale: 'ko-KR',
   timeZone: 'Asia/Seoul',
+  translate: translateHomeContributionKo,
 } as const;
 
 function allowResource(

@@ -1,8 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
+import { VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
 
-export const VIDEO_MEETING_API_BASE = '/api/meetings/v1';
+export { leaveVideoMeeting, VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
 
 export type VideoMeetingLifecycleState =
   'DRAFT' | 'SCHEDULED' | 'LOBBY' | 'LIVE' | 'ENDED' | 'CANCELLED';
@@ -911,14 +912,6 @@ export async function confirmVideoMeetingConnected(
 ): Promise<VideoMeetingParticipant> {
   const response = await axiosInstance.post<ApiResponse<VideoMeetingParticipant>, undefined>(
     meetingPath(meetingId, 'connected'),
-    undefined
-  );
-  return response.data.data;
-}
-
-export async function leaveVideoMeeting(meetingId: string): Promise<VideoMeetingParticipant> {
-  const response = await axiosInstance.post<ApiResponse<VideoMeetingParticipant>, undefined>(
-    meetingPath(meetingId, 'leave'),
     undefined
   );
   return response.data.data;

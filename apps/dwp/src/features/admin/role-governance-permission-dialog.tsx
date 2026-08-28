@@ -14,7 +14,7 @@ import {
   permissionCodeLabel,
   permissionEffectLabel,
   resourceTypeLabel,
-  ROLE_PERMISSION_CODES,
+  rolePermissionCodes,
 } from './role-governance-display';
 import {
   calculateRolePermissionDiff,
@@ -84,6 +84,7 @@ export function RoleGovernancePermissionDialog({
   const displayRole = useRoleDisplay();
   const roleDisplay = displayRole(role.code, role.name, role.description);
   const initial = useMemo(() => rolePermissionSelectionMap(role.permissions), [role.permissions]);
+  const permissionCodes = useMemo(() => rolePermissionCodes(role.permissions), [role.permissions]);
   const [selection, setSelection] = useState<Map<string, PermissionEffect>>(() => new Map(initial));
   const [confirmOpen, setConfirmOpen] = useState(false);
   const selections = useMemo(() => rolePermissionSelections(selection), [selection]);
@@ -151,7 +152,7 @@ export function RoleGovernancePermissionDialog({
                 <Box component="th">
                   <Typography variant="caption">{t('roleGovernance.columns.resource')}</Typography>
                 </Box>
-                {ROLE_PERMISSION_CODES.map((code) => (
+                {permissionCodes.map((code) => (
                   <Box component="th" key={code}>
                     <Typography variant="caption" display="block">
                       {permissionCodeLabel(code, t)}
@@ -175,7 +176,7 @@ export function RoleGovernancePermissionDialog({
                       {resource.key}
                     </Typography>
                   </Box>
-                  {ROLE_PERMISSION_CODES.map((code) => (
+                  {permissionCodes.map((code) => (
                     <Box component="td" key={code}>
                       <SelectField
                         size="small"

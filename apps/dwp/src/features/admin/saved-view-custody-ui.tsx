@@ -179,17 +179,19 @@ function StatusMetric({
 export function SectionLoadError({
   message,
   retryLabel,
+  retrying = false,
   onRetry,
 }: {
   message: string;
   retryLabel: string;
+  retrying?: boolean;
   onRetry: () => void;
 }) {
   return (
     <Alert
       severity="error"
       action={
-        <ActionButton intent="quiet" size="small" onClick={onRetry}>
+        <ActionButton intent="quiet" size="small" loading={retrying} onClick={onRetry}>
           {retryLabel}
         </ActionButton>
       }

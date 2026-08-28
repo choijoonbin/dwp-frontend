@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bot,
   Captions,
   CheckCircle2,
+  FileText,
   MessageSquareText,
   MonitorUp,
   Radio,
   ShieldCheck,
   Video,
   XCircle,
+  type LucideIcon,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -30,12 +32,29 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { MeetingMetric, MeetingPageHeading, MeetingSectionHeading } from './meeting-components';
+import {
+  MEETING_ADMIN_OPERATION_CAPABILITIES,
+  formatMeetingAdminQualityScore,
+  hasMeetingAdminPolicyErrors,
+  isMeetingAdminCapabilityAvailable,
+  validateMeetingAdminPolicy,
+  type MeetingAdminOperationCapabilityKey,
+} from './meeting-admin-model';
+
+const CAPABILITY_ICONS: Record<MeetingAdminOperationCapabilityKey, LucideIcon> = {
+  video: Video,
+  screenShare: MonitorUp,
+  chat: MessageSquareText,
+  captions: Captions,
+  recording: Radio,
+  transcript: FileText,
+  aiNotes: Bot,
+};
 
 export function MeetingAdminOperations() {
   const { t } = useTranslation('meetings');
@@ -114,8 +133,12 @@ export function MeetingAdminOperations() {
             />
             <MeetingMetric
               label={t('admin.operations.quality')}
-              value="—"
-              detail={t('admin.operations.qualityUnavailable')}
+              value={formatMeetingAdminQualityScore(query.data.averageQualityScore)}
+              detail={
+                query.data.averageQualityScore == null
+                  ? t('admin.operations.qualityUnavailable')
+                  : undefined
+              }
               tone="#8A5A14"
             />
           </Box>
@@ -134,32 +157,18 @@ export function MeetingAdminOperations() {
                 overflow: 'hidden',
               }}
             >
-              {[
-                { key: 'video', icon: Video, available: query.data.capabilities.video },
-                {
-                  key: 'screenShare',
-                  icon: MonitorUp,
-                  available: query.data.capabilities.screenShare,
-                },
-                { key: 'chat', icon: MessageSquareText, available: query.data.capabilities.chat },
-                { key: 'captions', icon: Captions, available: query.data.capabilities.captions },
-                {
-                  key: 'recording',
-                  icon: Radio,
-                  available: query.data.capabilities.recordingConfigured,
-                },
-                { key: 'aiNotes', icon: Bot, available: query.data.capabilities.aiNotesConfigured },
-              ].map((item, index) => {
-                const Icon = item.icon;
+              {MEETING_ADMIN_OPERATION_CAPABILITIES.map((key, index) => {
+                const Icon = CAPABILITY_ICONS[key];
+                const available = isMeetingAdminCapabilityAvailable(query.data.capabilities, key);
                 return (
-                  <Box key={item.key}>
+                  <Box key={key}>
                     {index > 0 && <Divider />}
                     <Stack direction="row" alignItems="center" gap={1.25} sx={{ px: 2, py: 1.5 }}>
                       <Icon size={18} aria-hidden="true" />
                       <Typography variant="body2" sx={{ flex: 1 }}>
-                        {t(`admin.capabilities.${item.key}`)}
+                        {t(`admin.capabilities.${key}`)}
                       </Typography>
-                      {item.available ? (
+                      {available ? (
                         <CheckCircle2
                           size={18}
                           color="#17805F"
@@ -204,14 +213,15 @@ export function MeetingAdminPolicies() {
   useEffect(() => {
     if (query.data) setForm(query.data);
   }, [query.data]);
-  const chatRetentionError = form
-    ? !Number.isInteger(form.chatRetentionDays) ||
-      form.chatRetentionDays < 0 ||
-      form.chatRetentionDays > 365
+  const validation = form ? validateMeetingAdminPolicy(form) : null;
+  const chatRetentionError =
+    validation?.chatRetention === 'RANGE'
       ? t('admin.policy.chatRetentionRangeError')
-      : form.chatRetentionDays > form.retentionDays
+      : validation?.chatRetention === 'EXCEEDS_MEETING_RETENTION'
         ? t('admin.policy.chatRetentionMeetingError')
-        : undefined
+        : undefined;
+  const artifactRetentionError = validation?.artifactRetention
+    ? t('admin.policy.artifactRetentionMeetingError')
     : undefined;
   const mutation = useMutation({
     mutationFn: (policy: VideoMeetingAdminPolicy) => updateVideoMeetingAdminPolicy(policy),
@@ -235,7 +245,9 @@ export function MeetingAdminPolicies() {
             intent="primary"
             loading={mutation.isPending}
             loadingLabel={t('actions.saving')}
-            disabled={!canManage || !form || Boolean(chatRetentionError)}
+            disabled={
+              !canManage || !form || Boolean(validation && hasMeetingAdminPolicyErrors(validation))
+            }
             onClick={() => form && mutation.mutate(form)}
           >
             {t('actions.save')}
@@ -362,6 +374,7 @@ export function MeetingAdminPolicies() {
                 label={t('admin.policy.artifactRetention')}
                 value={form.artifactRetentionDays}
                 disabled={!canManage}
+                errorMessage={artifactRetentionError}
                 slotProps={{ htmlInput: { min: 1, max: 3650 } }}
                 onChange={(event) =>
                   setForm({
@@ -435,33 +448,29 @@ function PolicySwitch({
   disabled: boolean;
   onChange: (checked: boolean) => void;
 }) {
+  const labelId = useId();
+  const hintId = useId();
   return (
     <Stack
-      direction="row"
+      direction={{ xs: 'column', sm: 'row' }}
       justifyContent="space-between"
-      alignItems="center"
+      alignItems={{ xs: 'flex-start', sm: 'center' }}
       gap={2}
       sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
     >
-      <Box>
-        <Typography variant="body2" fontWeight={700}>
+      <Box sx={{ minWidth: 0 }}>
+        <Typography id={labelId} variant="body2" fontWeight={700}>
           {label}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography id={hintId} variant="caption" color="text.secondary">
           {hint}
         </Typography>
       </Box>
-      <FormControlLabel
-        control={
-          <Switch
-            checked={checked}
-            disabled={disabled}
-            slotProps={{ input: { 'aria-label': label } }}
-            onChange={(_, value) => onChange(value)}
-          />
-        }
-        label=""
-        sx={{ m: 0 }}
+      <Switch
+        checked={checked}
+        disabled={disabled}
+        slotProps={{ input: { 'aria-labelledby': labelId, 'aria-describedby': hintId } }}
+        onChange={(_, value) => onChange(value)}
       />
     </Stack>
   );

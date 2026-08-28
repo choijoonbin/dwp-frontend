@@ -155,6 +155,7 @@ function InvitationRow({
               size="small"
               intent="primary"
               disabled={busy}
+              aria-label={t('event.acceptFor', { title: event.title })}
               startIcon={<Check size={15} />}
               onClick={() => onRespond('ACCEPTED')}
             >
@@ -164,6 +165,7 @@ function InvitationRow({
               size="small"
               intent="secondary"
               disabled={busy}
+              aria-label={t('event.tentativeFor', { title: event.title })}
               onClick={() => onRespond('TENTATIVE')}
             >
               {t('event.tentative')}
@@ -172,6 +174,7 @@ function InvitationRow({
               size="small"
               intent="quiet"
               disabled={busy}
+              aria-label={t('event.declineFor', { title: event.title })}
               startIcon={<X size={15} />}
               onClick={() => onRespond('DECLINED')}
             >
@@ -179,7 +182,12 @@ function InvitationRow({
             </ActionButton>
           </>
         ) : null}
-        <ActionButton size="small" intent="quiet" onClick={onOpen}>
+        <ActionButton
+          size="small"
+          intent="quiet"
+          aria-label={t('event.openDetailsFor', { title: event.title })}
+          onClick={onOpen}
+        >
           {t('actions.details')}
         </ActionButton>
       </Stack>

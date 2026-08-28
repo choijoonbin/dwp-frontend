@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-import { mockShellSession } from './support/shell-session';
+import { fulfillSuccess, mockShellSession } from './support/shell-session';
+
+import type { ProviderEntitlement, ProviderTenant } from '@dwp-frontend/shared-utils';
+import type { Route } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -139,4 +142,235 @@ test('customer estate and tenant 360 stay within the viewport', async ({ page })
     content: document.documentElement.scrollWidth,
   }));
   expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
+});
+
+test('tenant entitlement draft survives refresh and fails closed on server drift', async ({
+  page,
+}) => {
+  const premiumAudit: ProviderEntitlement = {
+    entitlementId: 2,
+    entitlementKey: 'premium-audit',
+    name: 'Premium audit',
+    entitlementType: 'APPLICATION',
+    lifecycleState: 'ACTIVE',
+    configuration: '{}',
+    version: 1,
+  };
+  const dataGovernance: ProviderEntitlement = {
+    entitlementId: 3,
+    entitlementKey: 'data-governance',
+    name: 'Data governance',
+    entitlementType: 'APPLICATION',
+    lifecycleState: 'ACTIVE',
+    configuration: '{}',
+    version: 1,
+  };
+  const entitlementCatalog: ProviderEntitlement[] = [
+    {
+      entitlementId: 1,
+      entitlementKey: 'workforce-management',
+      name: 'Workforce management',
+      entitlementType: 'APPLICATION',
+      lifecycleState: 'ACTIVE',
+      configuration: '{}',
+      version: 1,
+    },
+    premiumAudit,
+    dataGovernance,
+  ];
+  let initialTenant: ProviderTenant | undefined;
+  let servedTenant: ProviderTenant | undefined;
+  let serveTenantOverride = false;
+  let overrideResponses = 0;
+
+  await page.clock.setFixedTime(new Date('2026-08-28T00:00:00Z'));
+  await page.route('**/api/provider/v1/admin/me', (route) =>
+    fulfillSuccess(route, {
+      operatorId: 1,
+      authUserId: 1,
+      displayName: 'Provider Admin',
+      roles: ['PROVIDER_ADMIN'],
+      permissions: ['ESTATE_READ', 'TENANT_WRITE', 'ENTITLEMENT_WRITE'],
+    })
+  );
+  await page.route('**/api/provider/v1/admin/entitlements', (route) =>
+    fulfillSuccess(route, entitlementCatalog)
+  );
+  await page.route('**/api/provider/v1/admin/tenants/tenant-skax', async (route) => {
+    if (!serveTenantOverride || !servedTenant) return route.fallback();
+    await fulfillSuccess(route, servedTenant);
+    overrideResponses += 1;
+  });
+  page.on('response', (response) => {
+    if (
+      initialTenant ||
+      new URL(response.url()).pathname !== '/api/provider/v1/admin/tenants/tenant-skax' ||
+      !response.ok()
+    ) {
+      return;
+    }
+    void response
+      .json()
+      .then((payload: { data?: ProviderTenant }) => {
+        initialTenant = payload.data;
+      })
+      .catch(() => undefined);
+  });
+
+  await page.goto('/provider/tenants/tenant-skax?tab=entitlements');
+  await expect(page.getByText('Product access for SKAX Production')).toBeVisible();
+  await expect.poll(() => Boolean(initialTenant)).toBe(true);
+
+  const premiumAuditCheckbox = page.getByRole('checkbox', { name: /Premium audit/ });
+  const dataGovernanceCheckbox = page.getByRole('checkbox', { name: /Data governance/ });
+  const save = page.getByRole('button', { name: 'Save' });
+  const justification = page.getByLabel('Justification');
+  await expect(premiumAuditCheckbox).not.toBeChecked();
+  await premiumAuditCheckbox.check();
+  await justification.fill('Add premium audit after the customer contract review.');
+  await expect(save).toBeEnabled();
+
+  const baseline = initialTenant;
+  if (!baseline) throw new Error('Expected the initial tenant fixture.');
+  servedTenant = {
+    ...baseline,
+    updatedAt: '2026-08-28T00:01:00Z',
+    entitlements: baseline.entitlements.map((entitlement) => ({ ...entitlement })),
+    services: baseline.services.map((service) => ({
+      ...service,
+      lastReconciledAt: '2026-08-28T00:01:00Z',
+    })),
+  };
+  serveTenantOverride = true;
+  await page.clock.fastForward(60_500);
+  await expect.poll(() => overrideResponses).toBeGreaterThanOrEqual(1);
+  await expect(premiumAuditCheckbox).toBeChecked();
+  await expect(save).toBeEnabled();
+
+  const workforceManagement = baseline.entitlements[0];
+  if (!workforceManagement) throw new Error('Expected the workforce entitlement fixture.');
+  servedTenant = {
+    ...baseline,
+    version: baseline.version + 1,
+    updatedAt: '2026-08-28T00:02:00Z',
+    entitlements: [{ ...workforceManagement }, dataGovernance],
+    services: baseline.services.map((service) => ({
+      ...service,
+      lastReconciledAt: '2026-08-28T00:02:00Z',
+    })),
+  };
+  const sameEntitlementResponseCount = overrideResponses;
+  await page.clock.fastForward(60_500);
+  await expect.poll(() => overrideResponses).toBeGreaterThan(sameEntitlementResponseCount);
+
+  const conflict = page.getByRole('alert').filter({ hasText: 'Tenant state snapshot is stale' });
+  await expect(conflict).toBeVisible();
+  await expect(premiumAuditCheckbox).toBeChecked();
+  await expect(dataGovernanceCheckbox).not.toBeChecked();
+  await expect(save).toBeDisabled();
+
+  await conflict.getByRole('button', { name: 'Refresh' }).click();
+  await expect(conflict).toHaveCount(0);
+  await expect(premiumAuditCheckbox).not.toBeChecked();
+  await expect(dataGovernanceCheckbox).toBeChecked();
+  await expect(justification).toHaveValue('');
+  await expect(save).toBeDisabled();
+});
+
+test('tenant entitlement save rejects mismatched and late responses without rebasing', async ({
+  page,
+}) => {
+  const workforceManagement: ProviderEntitlement = {
+    entitlementId: 1,
+    entitlementKey: 'workforce-management',
+    name: 'Workforce management',
+    entitlementType: 'APPLICATION',
+    lifecycleState: 'ACTIVE',
+    configuration: '{}',
+    version: 1,
+  };
+  const premiumAudit: ProviderEntitlement = {
+    entitlementId: 2,
+    entitlementKey: 'premium-audit',
+    name: 'Premium audit',
+    entitlementType: 'APPLICATION',
+    lifecycleState: 'ACTIVE',
+    configuration: '{}',
+    version: 1,
+  };
+  let pendingSaveRoute: Route | undefined;
+
+  await page.route('**/api/provider/v1/admin/me', (route) =>
+    fulfillSuccess(route, {
+      operatorId: 1,
+      authUserId: 1,
+      displayName: 'Provider Admin',
+      roles: ['PROVIDER_ADMIN'],
+      permissions: ['ESTATE_READ', 'TENANT_WRITE', 'ENTITLEMENT_WRITE'],
+    })
+  );
+  await page.route('**/api/provider/v1/admin/entitlements', (route) =>
+    fulfillSuccess(route, [workforceManagement, premiumAudit])
+  );
+  await page.route('**/api/provider/v1/admin/tenants/tenant-skax/entitlements', (route) => {
+    pendingSaveRoute = route;
+  });
+
+  await page.goto('/provider/tenants/tenant-skax?tab=entitlements');
+  await expect(page.getByText('Product access for SKAX Production')).toBeVisible();
+  const premiumAuditCheckbox = page.getByRole('checkbox', { name: /Premium audit/ });
+  const justification = page.getByLabel('Justification');
+  const save = page.getByRole('button', { name: 'Save' });
+  await premiumAuditCheckbox.check();
+  await justification.fill('Apply the reviewed premium audit entitlement.');
+
+  try {
+    await save.click();
+    await expect.poll(() => Boolean(pendingSaveRoute)).toBe(true);
+    await expect(premiumAuditCheckbox).toBeDisabled();
+    await expect(justification).toBeDisabled();
+    await expect(save).toBeDisabled();
+
+    const mismatchedSaveRoute = pendingSaveRoute;
+    if (!mismatchedSaveRoute) throw new Error('Expected the delayed entitlement save.');
+    await fulfillSuccess(mismatchedSaveRoute, {
+      tenantId: 'tenant-skax',
+      version: 5,
+      entitlements: [workforceManagement],
+    });
+    pendingSaveRoute = undefined;
+    await expect(premiumAuditCheckbox).toBeEnabled();
+    await expect(premiumAuditCheckbox).toBeChecked();
+    await expect(justification).toHaveValue('Apply the reviewed premium audit entitlement.');
+    await expect(save).toBeEnabled();
+    await expect(page.getByText('Tenant product access synchronized.')).toHaveCount(0);
+
+    await save.click();
+    await expect.poll(() => Boolean(pendingSaveRoute)).toBe(true);
+
+    await page.evaluate(() => {
+      window.history.pushState({}, '', '/provider/tenants/tenant-acme?tab=entitlements');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await expect(page.getByText('Product access for Acme Production')).toBeVisible();
+    await expect(page.getByRole('checkbox', { name: /Premium audit/ })).not.toBeChecked();
+    await expect(page.getByLabel('Justification')).toHaveValue('');
+
+    const saveRoute = pendingSaveRoute;
+    if (!saveRoute) throw new Error('Expected the delayed tenant A entitlement save.');
+    await fulfillSuccess(saveRoute, {
+      tenantId: 'tenant-skax',
+      version: 5,
+      entitlements: [workforceManagement, premiumAudit],
+    });
+    pendingSaveRoute = undefined;
+
+    await expect(page.getByRole('checkbox', { name: /Premium audit/ })).toBeEnabled();
+    await expect(page.getByRole('checkbox', { name: /Premium audit/ })).not.toBeChecked();
+    await expect(page.getByRole('checkbox', { name: /Workforce management/ })).toBeChecked();
+    await expect(page.getByLabel('Justification')).toHaveValue('');
+    await expect(page.getByText('Tenant product access synchronized.')).toHaveCount(0);
+  } finally {
+    if (pendingSaveRoute) await pendingSaveRoute.abort('aborted').catch(() => undefined);
+  }
 });

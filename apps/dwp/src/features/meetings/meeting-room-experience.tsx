@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LocalUserChoices } from '@livekit/components-react';
 import { DisconnectReason } from 'livekit-client';
@@ -12,6 +12,7 @@ import {
   endVideoMeeting,
   getVideoMeeting,
   issueVideoMeetingToken,
+  leaveVideoMeeting,
   requestVideoMeetingJoin,
   startVideoMeeting,
   type VideoMeetingJoinCredential,
@@ -27,6 +28,7 @@ import Typography from '@mui/material/Typography';
 
 import { formatMeetingDateTime, MeetingPageHeading, MeetingStatusChip } from './meeting-components';
 import { MeetingDepartureState, type MeetingDepartureKind } from './meeting-departure-state';
+import { createMeetingDepartureSynchronizer } from './meeting-departure-sync';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingPreJoin } from './meeting-prejoin';
 
@@ -45,12 +47,13 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const [localError, setLocalError] = useState<string | null>(null);
   const [ended, setEnded] = useState(false);
   const [departure, setDeparture] = useState<MeetingDepartureKind | null>(null);
+  const departureEffectGeneration = useRef({ value: 0 });
   const queryKey = ['meetings', meetingId, 'detail'] as const;
   const query = useQuery({
     queryKey,
     queryFn: () => getVideoMeeting(meetingId),
     staleTime: 15_000,
-    refetchInterval: credential ? false : 5_000,
+    refetchInterval: credential ? 4_000 : 5_000,
     retry: 1,
   });
   const admissionMutation = useMutation({
@@ -93,8 +96,18 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   });
   const connectedMutation = useMutation({
     mutationFn: () => confirmVideoMeetingConnected(meetingId),
+    retry: 2,
+    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 4_000),
+    onSuccess: () => setLocalError(null),
     onError: () => setLocalError(t('errors.attendanceSync')),
   });
+  const departureSynchronizer = useMemo(
+    () =>
+      createMeetingDepartureSynchronizer((keepalive) =>
+        leaveVideoMeeting(meetingId, { keepalive })
+      ),
+    [meetingId]
+  );
   const endMutation = useMutation({
     mutationFn: () => endVideoMeeting(meetingId, query.data?.version ?? 0),
     onSuccess: (meeting) => {
@@ -107,6 +120,24 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     onError: () => setLocalError(t('errors.operation')),
   });
 
+  useEffect(() => {
+    const generationTracker = departureEffectGeneration.current;
+    const generation = ++generationTracker.value;
+    if (!credential) return undefined;
+    const synchronizeDeparture = () => {
+      void departureSynchronizer
+        .synchronize(credential.sessionId, { keepalive: true })
+        .catch(() => undefined);
+    };
+    window.addEventListener('pagehide', synchronizeDeparture);
+    return () => {
+      window.removeEventListener('pagehide', synchronizeDeparture);
+      globalThis.queueMicrotask(() => {
+        if (generationTracker.value === generation) synchronizeDeparture();
+      });
+    };
+  }, [credential, departureSynchronizer]);
+
   if (query.isLoading) {
     return (
       <PageCanvas mode="focus">
@@ -114,7 +145,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       </PageCanvas>
     );
   }
-  if (query.isError || !query.data) {
+  if (!query.data) {
     return (
       <PageCanvas mode="focus">
         <ErrorState
@@ -168,13 +199,39 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
             </Typography>
             <Typography color="text.secondary">{t('room.endedDescription')}</Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-              <ActionButton intent="primary" onClick={() => navigate('/meetings/history')}>
-                {t('room.viewHistory')}
+              <ActionButton
+                intent="primary"
+                onClick={() =>
+                  navigate(`/meetings/history?meeting=${encodeURIComponent(meeting.meetingId)}`)
+                }
+              >
+                {t('history.openRecap')}
               </ActionButton>
               <ActionButton intent="secondary" onClick={() => navigate('/meetings/home')}>
                 {t('room.returnHome')}
               </ActionButton>
             </Stack>
+          </Stack>
+        </Box>
+      </PageCanvas>
+    );
+  }
+
+  if (meeting.lifecycleState === 'CANCELLED') {
+    return (
+      <PageCanvas mode="focus">
+        <Box
+          role="status"
+          sx={{ minHeight: 420, display: 'grid', placeItems: 'center', textAlign: 'center' }}
+        >
+          <Stack alignItems="center" gap={2} sx={{ maxWidth: 520 }}>
+            <Typography component="h1" variant="h4" fontWeight={800}>
+              {t('room.cancelledTitle')}
+            </Typography>
+            <Typography color="text.secondary">{t('room.cancelledDescription')}</Typography>
+            <ActionButton intent="primary" onClick={() => navigate('/meetings/mine')}>
+              {t('room.returnToMeetings')}
+            </ActionButton>
           </Stack>
         </Box>
       </PageCanvas>
@@ -211,11 +268,18 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           credential={credential}
           choices={choices}
           ending={endMutation.isPending}
-          operationError={localError}
+          operationError={localError ?? (query.isError ? t('errors.lifecycleSync') : null)}
           onConnected={() => {
-            if (!connectedMutation.isPending) connectedMutation.mutate();
+            if (!connectedMutation.isPending && !connectedMutation.isSuccess) {
+              connectedMutation.mutate();
+            }
           }}
           onLeave={(reason) => {
+            connectedMutation.reset();
+            void departureSynchronizer
+              .synchronize(credential.sessionId, { keepalive: false })
+              .then(() => queryClient.invalidateQueries({ queryKey }))
+              .catch(() => setLocalError(t('errors.leaveSync')));
             setCredential(null);
             if (
               reason === DisconnectReason.ROOM_DELETED ||

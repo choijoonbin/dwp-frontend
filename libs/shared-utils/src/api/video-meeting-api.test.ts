@@ -416,6 +416,19 @@ describe('video meeting API boundary', () => {
     expect(fetchMock.mock.calls[3]?.[0]).toBe('/api/meetings/v1/meetings/meeting-1/leave');
   });
 
+  it('uses browser keepalive for page lifecycle departure synchronization', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ ...participant, attendanceState: 'LEFT' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await leaveVideoMeeting('meeting-1', { keepalive: true });
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/meetings/v1/meetings/meeting-1/leave');
+    expect(requestAt(fetchMock, 1)).toMatchObject({ method: 'POST', keepalive: true });
+  });
+
   it('persists only supported policy fields with optimistic locking', async () => {
     const fetchMock = vi
       .fn()

@@ -118,6 +118,10 @@
     "peopleLoadError": "회사 구성원을 불러오지 못했습니다. 참석자 없이 계속하거나 다시 시도할 수 있습니다.",
     "responseSaved": "참석 응답을 저장했습니다.",
     "responseError": "참석 응답을 저장하지 못했습니다.",
+    "openDetailsFor": "{{title}} 상세 보기",
+    "acceptFor": "{{title}} 참석",
+    "tentativeFor": "{{title}} 미정으로 응답",
+    "declineFor": "{{title}} 불참",
     "responseTitle": "내 응답",
     "responseDescription": "선택을 변경하면 주최자에게 최신 응답이 전달됩니다.",
     "cancelEvent": "일정 취소",
@@ -150,7 +154,8 @@
     "userDeletionReason": "사용자가 일정을 휴지통으로 이동함",
     "restrictionFallback": "캘린더 소유자의 공유 정책에 따라 일부 일정 정보가 숨겨져 있습니다.",
     "restrictions": {
-      "FREE_BUSY_ONLY": "이 캘린더는 바쁨 여부만 공유됩니다. 제목, 주최자, 참석자와 메모는 비공개로 유지됩니다."
+      "FREE_BUSY_ONLY": "이 캘린더는 바쁨 여부만 공유됩니다. 제목, 주최자, 참석자와 메모는 비공개로 유지됩니다.",
+      "RECURRING_EVENT_SERIES": "이 일정은 반복 일정에 속합니다. 일부 변경은 반복 일정 시리즈에서 해야 합니다."
     },
     "typeLabel": "일정 유형",
     "additionalOptions": "참석자, 공간 및 추가 옵션",
@@ -458,10 +463,10 @@
   },
   "sources": {
     "title": "캘린더",
-    "openPicker": "캘린더",
+    "openPicker": "캘린더 선택",
     "pickerTitle": "표시할 캘린더 선택",
     "pickerDescription": "일정에 표시할 캘린더를 정하고 중요한 캘린더를 즐겨찾기에 모아두세요.",
-    "closePicker": "캘린더 선택 닫기",
+    "closePicker": "캘린더 선택 창 닫기",
     "required": "필수",
     "manageSharingFor": "{{name}} 공유 관리",
     "addFavoriteFor": "{{name}} 즐겨찾기 추가",

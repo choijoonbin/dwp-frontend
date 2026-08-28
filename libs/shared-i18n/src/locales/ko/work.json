@@ -200,6 +200,28 @@
     "loadMore": "더 보기",
     "errorTitle": "AI 제안함을 불러오지 못했습니다",
     "errorDescription": "확인되지 않은 제안은 표시하지 않았습니다. 연결 상태를 확인한 뒤 다시 시도하세요.",
+    "controls": {
+      "title": "업무 신호 분석",
+      "description": "사용자가 요청할 때만 현재 권한 안의 업무 신호를 분석합니다. 어떤 업무도 자동 실행하지 않습니다.",
+      "preference": "내 계정의 업무 신호 분석 허용",
+      "preferenceHelp": "이 설정을 켜야 ‘지금 분석’이 허용된 업무 신호를 읽을 수 있습니다.",
+      "preferenceError": "분석 허용 상태를 확인하지 못했습니다. 다시 연결될 때까지 분석을 실행할 수 없습니다.",
+      "analyze": "지금 분석",
+      "analyzing": "업무 신호 분석 중",
+      "clear": "제안 데이터 비우기",
+      "analysisResult_one": "업무 신호 {{sources}}개 분석 · 실행 검토 제안 {{count}}개",
+      "analysisResult_other": "업무 신호 {{sources}}개 분석 · 실행 검토 제안 {{count}}개",
+      "unavailableSources_one": "허용된 원본 {{count}}개를 사용할 수 없어 추정하지 않았습니다.",
+      "unavailableSources_other": "허용된 원본 {{count}}개를 사용할 수 없어 추정하지 않았습니다.",
+      "clearDialog": {
+        "title": "제안 데이터를 비울까요?",
+        "description": "현재 제안과 사용자의 분석 명령 영수증을 이 제안함에서 제거합니다.",
+        "boundary": "되돌릴 수 없습니다. 원본 앱의 업무 기록은 변경하지 않습니다.",
+        "cancel": "제안 데이터 유지",
+        "confirm": "제안 데이터 비우기",
+        "clearing": "제안 데이터 비우는 중"
+      }
+    },
     "summaryLabel": "AI 제안 상태 요약",
     "metrics": {
       "active": "검토할 제안",
@@ -278,7 +300,16 @@
       "ACCEPT": "제안을 수락했습니다. 실행 전 검토 단계는 그대로 유지됩니다.",
       "SNOOZE": "선택한 시점까지 제안을 미뤘습니다.",
       "DISMISS": "제안을 해제했습니다.",
-      "error": "제안 상태가 변경되었습니다. 최신 내용을 확인하고 다시 시도하세요."
+      "error": "제안 상태가 변경되었습니다. 최신 내용을 확인하고 다시 시도하세요.",
+      "analyzed_one": "분석을 마쳤습니다. 실행 검토 제안 {{count}}개를 확인하세요.",
+      "analyzed_other": "분석을 마쳤습니다. 실행 검토 제안 {{count}}개를 확인하세요.",
+      "analysisError": "업무 신호 분석을 완료하지 못했습니다. 확인되지 않은 제안은 추가하지 않았습니다.",
+      "preferenceEnabled": "요청할 때 업무 신호를 분석할 수 있습니다.",
+      "preferenceDisabled": "내 계정의 업무 신호 분석을 껐습니다.",
+      "preferenceError": "분석 설정이 변경되었거나 현재 사용할 수 없습니다. 최신 설정을 복원했습니다.",
+      "cleared_one": "제안 {{count}}개를 제안함에서 제거했습니다.",
+      "cleared_other": "제안 {{count}}개를 제안함에서 제거했습니다.",
+      "clearError": "제안 데이터를 비우지 못했습니다. 제거된 것으로 표시하지 않았습니다."
     }
   },
   "dwaionAgents": {

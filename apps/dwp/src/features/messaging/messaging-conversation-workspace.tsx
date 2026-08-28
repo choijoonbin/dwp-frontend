@@ -1,4 +1,4 @@
-import { Command, MessageSquarePlus, RefreshCw } from 'lucide-react';
+import { Command, Inbox, MessageSquarePlus, RefreshCw } from 'lucide-react';
 import {
   ActionButton,
   ActionIconButton,
@@ -37,6 +37,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     auth,
     title,
     description,
+    mentionFilterActive,
     desktopSplitView,
     selectedId,
     selectedConversation,
@@ -87,6 +88,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     deleteMutation,
     selectConversation,
     clearSelection,
+    clearMentionFilter,
     openConversation,
     send,
     retrySend,
@@ -116,6 +118,15 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
         description={description}
         actions={
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            {mentionFilterActive ? (
+              <ActionButton
+                intent="quiet"
+                startIcon={<Inbox size={17} />}
+                onClick={clearMentionFilter}
+              >
+                {t('workspace.MENTIONS.showAll')}
+              </ActionButton>
+            ) : null}
             <ActionButton
               intent="primary"
               startIcon={<MessageSquarePlus size={17} />}

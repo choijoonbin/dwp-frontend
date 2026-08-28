@@ -53,6 +53,11 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { localizedRoleNameColumn, localizedRoleOptions } from './localized-role-column';
+import { PrivilegedBoundaryQueryState } from './privileged-boundary-query-state';
+import {
+  isFuturePrivilegedAccessDateTime,
+  isOptionalFuturePrivilegedAccessDateTime,
+} from './privileged-access-validation';
 import {
   activationModeLabel,
   assuranceLabel,
@@ -309,10 +314,12 @@ function EligibilityDialog({
   const [validTo, setValidTo] = useState<string | null>(null);
   const [justification, setJustification] = useState('');
   const principals = principalType === 'USER' ? users : groups;
+  const validToInvalid = !isOptionalFuturePrivilegedAccessDateTime(validTo);
   const valid =
     Boolean(principalId) &&
     Boolean(roleId) &&
     (scopeType === 'TENANT' || Boolean(scopeRef.trim())) &&
+    !validToInvalid &&
     justification.trim().length >= 10;
 
   return (
@@ -394,6 +401,9 @@ function EligibilityDialog({
         <DateTimePickerField
           label={t('roleGovernance.fields.validTo')}
           value={validTo}
+          errorMessage={
+            validToInvalid ? t('privilegedAccess.fields.futureDateTimeError') : undefined
+          }
           onValueChange={setValidTo}
         />
         <FormField
@@ -430,12 +440,11 @@ function BoundaryDialog({
   const [actionCode, setActionCode] = useState('ACCESS.ASSIGNMENT.MANAGE');
   const [reviewDueAt, setReviewDueAt] = useState<string | null>(null);
   const [justification, setJustification] = useState('');
+  const reviewDueAtValid = isFuturePrivilegedAccessDateTime(reviewDueAt);
   const valid =
     Boolean(userId) &&
     justification.trim().length >= 10 &&
-    (kind === 'emergency'
-      ? Boolean(reviewDueAt)
-      : scopeType === 'TENANT' || Boolean(scopeRef.trim()));
+    (kind === 'emergency' ? reviewDueAtValid : scopeType === 'TENANT' || Boolean(scopeRef.trim()));
   return (
     <FormDialog
       open={Boolean(kind)}
@@ -478,6 +487,11 @@ function BoundaryDialog({
             required
             label={t('privilegedAccess.fields.reviewDueAt')}
             value={reviewDueAt}
+            errorMessage={
+              reviewDueAt && !reviewDueAtValid
+                ? t('privilegedAccess.fields.futureDateTimeError')
+                : undefined
+            }
             onValueChange={setReviewDueAt}
           />
         ) : (
@@ -575,14 +589,16 @@ export function PrivilegedAccessManager() {
   });
 
   const run = useCallback(
-    async (action: () => Promise<unknown>, success: string) => {
+    async (action: () => Promise<unknown>, success: string): Promise<boolean> => {
       setBusy(true);
       try {
         await action();
         await queryClient.invalidateQueries({ queryKey: ['admin', 'privileged-access'] });
         toast.success(success);
+        return true;
       } catch (error) {
         toast.error(message(error, t('common.operationError')));
+        return false;
       } finally {
         setBusy(false);
       }
@@ -889,6 +905,7 @@ export function PrivilegedAccessManager() {
           rows={requestRows}
           columns={requestColumns}
           getRowId={(row) => row.requestId}
+          stickyColumns={{ right: ['actions'] }}
           minVisibleRows={5}
           maxVisibleRows={10}
           sx={{ border: 0, borderRadius: 0 }}
@@ -927,65 +944,72 @@ export function PrivilegedAccessManager() {
                 {t('privilegedAccess.boundaries.delegatedDescription')}
               </Typography>
             </Box>
-            <EnterpriseDataGrid<DelegatedAdminScope>
-              ariaLabel={t('privilegedAccess.boundaries.delegatedTitle')}
-              rows={delegated.data ?? []}
-              columns={[
-                {
-                  field: 'administratorDisplayName',
-                  headerName: t('privilegedAccess.columns.principal'),
-                  minWidth: 180,
-                  flex: 1,
-                },
-                {
-                  field: 'actionCode',
-                  headerName: t('privilegedAccess.fields.action'),
-                  minWidth: 240,
-                  flex: 1,
-                  valueFormatter: (value) => delegatedActionLabel(String(value), t),
-                },
-                {
-                  field: 'scopeType',
-                  headerName: t('roleGovernance.columns.scope'),
-                  width: 140,
-                  valueFormatter: (value) => scopeLabel(String(value), t),
-                },
-                {
-                  field: 'validTo',
-                  headerName: t('roleGovernance.columns.validTo'),
-                  width: 190,
-                  valueFormatter: (value) => displayDate(value),
-                },
-                {
-                  field: 'actions',
-                  type: 'actions',
-                  width: 110,
-                  getActions: ({ row }) =>
-                    row.lifecycleState === 'ACTIVE'
-                      ? [
-                          <ActionButton
-                            key="revoke"
-                            size="small"
-                            intent="quiet"
-                            onClick={() =>
-                              void run(
-                                () => revokeDelegatedAdminScope(row),
-                                t('privilegedAccess.toasts.delegationRevoked')
-                              )
-                            }
-                          >
-                            {t('privilegedAccess.actions.revoke')}
-                          </ActionButton>,
-                        ]
-                      : [],
-                },
-              ]}
-              getRowId={(row) => row.scopeId}
-              hideFooter
-              minVisibleRows={2}
-              maxVisibleRows={5}
-              sx={{ border: 0, borderRadius: 0 }}
-            />
+            <PrivilegedBoundaryQueryState
+              query={delegated}
+              title={t('privilegedAccess.boundaries.delegatedTitle')}
+              description={message(delegated.error, t('common.operationError'))}
+              retryLabel={t('roleGovernance.actions.retry')}
+            >
+              <EnterpriseDataGrid<DelegatedAdminScope>
+                ariaLabel={t('privilegedAccess.boundaries.delegatedTitle')}
+                rows={delegated.data ?? []}
+                columns={[
+                  {
+                    field: 'administratorDisplayName',
+                    headerName: t('privilegedAccess.columns.principal'),
+                    minWidth: 180,
+                    flex: 1,
+                  },
+                  {
+                    field: 'actionCode',
+                    headerName: t('privilegedAccess.fields.action'),
+                    minWidth: 240,
+                    flex: 1,
+                    valueFormatter: (value) => delegatedActionLabel(String(value), t),
+                  },
+                  {
+                    field: 'scopeType',
+                    headerName: t('roleGovernance.columns.scope'),
+                    width: 140,
+                    valueFormatter: (value) => scopeLabel(String(value), t),
+                  },
+                  {
+                    field: 'validTo',
+                    headerName: t('roleGovernance.columns.validTo'),
+                    width: 190,
+                    valueFormatter: (value) => displayDate(value),
+                  },
+                  {
+                    field: 'actions',
+                    type: 'actions',
+                    width: 110,
+                    getActions: ({ row }) =>
+                      row.lifecycleState === 'ACTIVE'
+                        ? [
+                            <ActionButton
+                              key="revoke"
+                              size="small"
+                              intent="quiet"
+                              onClick={() =>
+                                void run(
+                                  () => revokeDelegatedAdminScope(row),
+                                  t('privilegedAccess.toasts.delegationRevoked')
+                                )
+                              }
+                            >
+                              {t('privilegedAccess.actions.revoke')}
+                            </ActionButton>,
+                          ]
+                        : [],
+                  },
+                ]}
+                getRowId={(row) => row.scopeId}
+                hideFooter
+                minVisibleRows={2}
+                maxVisibleRows={5}
+                sx={{ border: 0, borderRadius: 0 }}
+              />
+            </PrivilegedBoundaryQueryState>
           </Box>
           <Box>
             <Box sx={{ px: 2, pt: 2 }}>
@@ -996,68 +1020,75 @@ export function PrivilegedAccessManager() {
                 {t('privilegedAccess.boundaries.emergencyDescription')}
               </Typography>
             </Box>
-            <EnterpriseDataGrid<EmergencyAccessPrincipal>
-              ariaLabel={t('privilegedAccess.boundaries.emergencyTitle')}
-              rows={emergency.data ?? []}
-              columns={[
-                {
-                  field: 'displayName',
-                  headerName: t('privilegedAccess.columns.principal'),
-                  minWidth: 180,
-                  flex: 1,
-                },
-                {
-                  field: 'justification',
-                  headerName: t('roleGovernance.fields.justification'),
-                  minWidth: 260,
-                  flex: 2,
-                },
-                {
-                  field: 'reviewDueAt',
-                  headerName: t('privilegedAccess.fields.reviewDueAt'),
-                  width: 190,
-                  valueFormatter: (value) => displayDate(value),
-                },
-                {
-                  field: 'lifecycleState',
-                  headerName: t('roleGovernance.columns.status'),
-                  width: 120,
-                  renderCell: ({ row }) => (
-                    <Chip
-                      size="small"
-                      color={statusColor(row.lifecycleState)}
-                      variant="outlined"
-                      label={t(`privilegedAccess.states.${row.lifecycleState}`)}
-                    />
-                  ),
-                },
-              ]}
-              getRowId={(row) => row.emergencyPrincipalId}
-              hideFooter
-              minVisibleRows={2}
-              maxVisibleRows={5}
-              sx={{ border: 0, borderRadius: 0 }}
-            />
+            <PrivilegedBoundaryQueryState
+              query={emergency}
+              title={t('privilegedAccess.boundaries.emergencyTitle')}
+              description={message(emergency.error, t('common.operationError'))}
+              retryLabel={t('roleGovernance.actions.retry')}
+            >
+              <EnterpriseDataGrid<EmergencyAccessPrincipal>
+                ariaLabel={t('privilegedAccess.boundaries.emergencyTitle')}
+                rows={emergency.data ?? []}
+                columns={[
+                  {
+                    field: 'displayName',
+                    headerName: t('privilegedAccess.columns.principal'),
+                    minWidth: 180,
+                    flex: 1,
+                  },
+                  {
+                    field: 'justification',
+                    headerName: t('roleGovernance.fields.justification'),
+                    minWidth: 260,
+                    flex: 2,
+                  },
+                  {
+                    field: 'reviewDueAt',
+                    headerName: t('privilegedAccess.fields.reviewDueAt'),
+                    width: 190,
+                    valueFormatter: (value) => displayDate(value),
+                  },
+                  {
+                    field: 'lifecycleState',
+                    headerName: t('roleGovernance.columns.status'),
+                    width: 120,
+                    renderCell: ({ row }) => (
+                      <Chip
+                        size="small"
+                        color={statusColor(row.lifecycleState)}
+                        variant="outlined"
+                        label={t(`privilegedAccess.states.${row.lifecycleState}`)}
+                      />
+                    ),
+                  },
+                ]}
+                getRowId={(row) => row.emergencyPrincipalId}
+                hideFooter
+                minVisibleRows={2}
+                maxVisibleRows={5}
+                sx={{ border: 0, borderRadius: 0 }}
+              />
+            </PrivilegedBoundaryQueryState>
           </Box>
         </Stack>
       )}
 
       <PolicyDialog
-        key={policy?.policyId ?? 'closed'}
+        key={`policy-${policy?.policyId ?? 'closed'}`}
         policy={policy}
         busy={busy}
         onClose={() => setPolicy(null)}
         onSave={async (changes) => {
           if (!policy) return;
-          await run(
+          const saved = await run(
             () => updatePrivilegedAccessPolicy(policy, changes),
             t('privilegedAccess.toasts.policyUpdated')
           );
-          setPolicy(null);
+          if (saved) setPolicy(null);
         }}
       />
       <EligibilityDialog
-        key={eligibilityOpen ? 'open' : 'closed'}
+        key={`eligibility-${eligibilityOpen ? 'open' : 'closed'}`}
         open={eligibilityOpen}
         busy={busy}
         policies={policyRows}
@@ -1065,39 +1096,40 @@ export function PrivilegedAccessManager() {
         groups={groups.data?.content ?? []}
         onClose={() => setEligibilityOpen(false)}
         onCreate={async (request) => {
-          await run(
+          const saved = await run(
             () => createPrivilegedRoleEligibility(request),
             t('privilegedAccess.toasts.eligibilityCreated')
           );
-          setEligibilityOpen(false);
+          if (saved) setEligibilityOpen(false);
         }}
       />
       <DecisionDialog
-        key={decision ? `${decision.request.requestId}:${decision.decision}` : 'closed'}
+        key={`decision-${decision ? `${decision.request.requestId}:${decision.decision}` : 'closed'}`}
         operation={decision}
         busy={busy}
         onClose={() => setDecision(null)}
         onSubmit={async (reason) => {
           if (!decision) return;
-          await run(
+          const saved = await run(
             () =>
               decision.decision === 'REVOKE'
                 ? revokePrivilegedAccessRequest(decision.request, reason)
                 : decidePrivilegedAccessRequest(decision.request, decision.decision, reason),
             t(`privilegedAccess.toasts.${decision.decision.toLowerCase()}`)
           );
-          setDecision(null);
+          if (saved) setDecision(null);
         }}
       />
       <BoundaryDialog
-        key={boundaryDialog ?? 'closed'}
+        key={`boundary-${boundaryDialog ?? 'closed'}`}
         kind={boundaryDialog}
         busy={busy}
         users={users.data?.content ?? []}
         onClose={() => setBoundaryDialog(null)}
         onSubmit={async (request) => {
+          let saved: boolean;
           if (boundaryDialog === 'emergency') {
-            await run(
+            saved = await run(
               () =>
                 registerEmergencyAccessPrincipal(
                   request as { userId: number; justification: string; reviewDueAt: string }
@@ -1105,7 +1137,7 @@ export function PrivilegedAccessManager() {
               t('privilegedAccess.toasts.emergencyRegistered')
             );
           } else {
-            await run(
+            saved = await run(
               () =>
                 createDelegatedAdminScope(
                   request as {
@@ -1119,7 +1151,7 @@ export function PrivilegedAccessManager() {
               t('privilegedAccess.toasts.delegationCreated')
             );
           }
-          setBoundaryDialog(null);
+          if (saved) setBoundaryDialog(null);
         }}
       />
     </Box>

@@ -56,6 +56,20 @@ export type HomeContributionPrivacy = Readonly<{
   redactedTitle?: string;
 }>;
 
+export type HomeContributionTranslationValues = Readonly<
+  Record<string, string | number | boolean | undefined>
+>;
+
+/**
+ * Presentation copy stays outside source adapters. Providers that emit shell
+ * copy receive this explicit translator from the Home runtime instead of
+ * reading global i18n state.
+ */
+export type HomeContributionTranslator = (
+  key: string,
+  values?: HomeContributionTranslationValues
+) => string;
+
 /** Provider-normalized, UI-agnostic contribution. */
 export type HomeContributionInput = Readonly<{
   id: string;
@@ -89,6 +103,7 @@ export type HomeContributionProviderContext = Readonly<{
   dateKey?: string;
   locale?: string;
   timeZone?: string;
+  translate?: HomeContributionTranslator;
 }>;
 
 /**
