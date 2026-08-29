@@ -605,14 +605,26 @@ test('HCM 관리 헤더는 1280·1440·200% text에서 현재 영역과 복귀 �
       ).toBe(true);
     }
 
-    const controlBoxes = await Promise.all([
-      managementMode.boundingBox(),
-      areaTrigger.boundingBox(),
-      workReturn.boundingBox(),
-    ]);
-    expect(controlBoxes.every(Boolean)).toBe(true);
-    const controlCenters = controlBoxes.map((box) => (box ? box.y + box.height / 2 : 0));
-    expect(Math.max(...controlCenters) - Math.min(...controlCenters)).toBeLessThanOrEqual(1);
+    await expect
+      .poll(
+        async () => {
+          const controlBoxes = await Promise.all([
+            managementMode.boundingBox(),
+            areaTrigger.boundingBox(),
+            workReturn.boundingBox(),
+          ]);
+          const visibleBoxes = controlBoxes.filter(
+            (box): box is NonNullable<typeof box> => box !== null
+          );
+          if (visibleBoxes.length !== 3) {
+            return Number.POSITIVE_INFINITY;
+          }
+          const controlCenters = visibleBoxes.map((box) => box.y + box.height / 2);
+          return Math.max(...controlCenters) - Math.min(...controlCenters);
+        },
+        { message: 'HCM header controls should remain visible and vertically aligned' }
+      )
+      .toBeLessThanOrEqual(1);
 
     await areaTrigger.click();
     const managementMenu = page.getByTestId('product-surface-desktop-disclosure');
