@@ -101,6 +101,7 @@ export function RoomBookingDialog({
   const [attendeeQuery, setAttendeeQuery] = useState('');
   const [showValidation, setShowValidation] = useState(false);
   const createIntent = useRef<IdempotentMutationIntent | null>(null);
+  const initializedFormContextRef = useRef<string | null>(null);
   const upstreamSourceSnapshotRef = useRef<WorkplaceBookingSourceSnapshot | null | undefined>(
     sourceSnapshot
   );
@@ -112,13 +113,27 @@ export function RoomBookingDialog({
   const deferredAttendeeQuery = useDeferredValue(attendeeQuery.trim());
   const deferredStartsAt = useDeferredValue(startsAt);
   const deferredEndsAt = useDeferredValue(endsAt);
+  const formContextKey = JSON.stringify([
+    identityKey,
+    room?.resourceId ?? null,
+    room?.version ?? null,
+    event?.eventId ?? null,
+    event?.version ?? null,
+    initialStart ?? null,
+    initialEnd ?? null,
+  ]);
 
   useEffect(() => {
     if (!open || event) createIntent.current = null;
   }, [event, open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      initializedFormContextRef.current = null;
+      return;
+    }
+    if (initializedFormContextRef.current === formContextKey) return;
+    initializedFormContextRef.current = formContextKey;
     const fallback = room
       ? roomDefaultRange(room.timeZone, effectivePolicy)
       : roomDefaultRange('UTC', effectivePolicy);
@@ -138,7 +153,7 @@ export function RoomBookingDialog({
     );
     setAttendeeQuery('');
     setShowValidation(false);
-  }, [effectivePolicy, event, initialEnd, initialStart, open, room]);
+  }, [effectivePolicy, event, formContextKey, initialEnd, initialStart, open, room]);
 
   const peopleQuery = useQuery({
     queryKey: ['rooms', 'people-options', identityKey, deferredAttendeeQuery],

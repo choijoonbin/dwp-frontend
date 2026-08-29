@@ -2081,16 +2081,35 @@ test('room finder keeps a stale draft read-only and discards it after authority 
   });
 
   await page.goto('/workplace/rooms');
-  const ownerAvailability = page.waitForResponse(
-    (response) =>
+  const ownerAvailability = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return (
       response.status() === 200 &&
-      new URL(response.url()).pathname === '/api/platform/v1/rooms/availability'
-  );
+      url.pathname === '/api/platform/v1/rooms/availability' &&
+      Date.parse(url.searchParams.get('from') ?? '') === Date.parse('2026-08-19T00:30:00Z') &&
+      Date.parse(url.searchParams.get('to') ?? '') === Date.parse('2026-08-19T01:00:00Z')
+    );
+  });
   await page.getByRole('button', { name: /Book Focus 08 at 09:30 AM/u }).click();
   await ownerAvailability;
   const dialog = page.getByRole('dialog', { name: 'Book a room' });
   await dialog.getByLabel('Meeting subject').fill('Keep this finder draft');
   const submit = dialog.getByRole('button', { name: 'Book', exact: true });
+  await expect(submit).toBeEnabled();
+
+  const finderRefresh = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return (
+      response.status() === 200 &&
+      url.pathname === '/api/platform/v1/rooms/availability' &&
+      Date.parse(url.searchParams.get('to') ?? '') -
+        Date.parse(url.searchParams.get('from') ?? '') >
+        24 * 60 * 60_000
+    );
+  });
+  await page.clock.fastForward(60_010);
+  await finderRefresh;
+  await expect(dialog.getByLabel('Meeting subject')).toHaveValue('Keep this finder draft');
   await expect(submit).toBeEnabled();
 
   eligibilityReason = 'RESOURCE_CONFLICT';
