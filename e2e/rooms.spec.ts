@@ -2081,7 +2081,13 @@ test('room finder keeps a stale draft read-only and discards it after authority 
   });
 
   await page.goto('/workplace/rooms');
+  const ownerAvailability = page.waitForResponse(
+    (response) =>
+      response.status() === 200 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/availability'
+  );
   await page.getByRole('button', { name: /Book Focus 08 at 09:30 AM/u }).click();
+  await ownerAvailability;
   const dialog = page.getByRole('dialog', { name: 'Book a room' });
   await dialog.getByLabel('Meeting subject').fill('Keep this finder draft');
   const submit = dialog.getByRole('button', { name: 'Book', exact: true });
