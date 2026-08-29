@@ -284,10 +284,8 @@
           "INSUFFICIENT_EVIDENCE": "근거 부족"
         },
         "climateSignals": {
-          "BALANCED_TURN_TAKING": "균형 있는 발언 교대",
           "CONSTRUCTIVE_DISAGREEMENT": "건설적인 이견",
           "UNRESOLVED_DISAGREEMENT": "해결되지 않은 이견",
-          "DOMINANT_MONOLOGUE_PATTERN": "긴 단독 발언 패턴",
           "LOW_TRANSCRIPT_EVIDENCE": "전사 근거 제한"
         },
         "reviewTitle": "사용자 검토",
@@ -297,7 +295,6 @@
         "reviewReasonPlaceholder": "검토 근거 선택",
         "reviewReasons": {
           "EVIDENCE_VERIFIED": "근거와 문구 확인 완료",
-          "CORRECTED_AND_VERIFIED": "수정 및 확인 완료",
           "INSUFFICIENT_EVIDENCE": "원본 근거 부족",
           "SENSITIVE_CONTENT": "민감 콘텐츠 수정 필요"
         },
@@ -621,6 +618,7 @@
     "controls": {
       "label": "회의 제어",
       "stageLabel": "화상회의 참가자 화면",
+      "focusToggle": "주요 참가자 화면 변경",
       "microphone": "마이크",
       "microphoneEnable": "마이크 켜기",
       "microphoneDisable": "마이크 끄기",
@@ -706,6 +704,10 @@
       "screenShareHint": "발표자가 회의 중 화면을 공유할 수 있습니다.",
       "recording": "녹화 허용",
       "recordingUnavailable": "LiveKit Egress가 구성되지 않아 녹화를 활성화할 수 없습니다.",
+      "recordingHostOptInHint": "참가자 고지와 동의 후 호스트가 거버넌스 녹화를 요청할 수 있도록 허용합니다.",
+      "recordingHostOptInWarning": "호스트 선택 정책은 거버넌스 녹화 요청만 허용합니다. 준비 상태 화면에서 Egress, 암호화 저장소, 키 관리, 감사와 보존 실행을 모두 검증하기 전에는 실제 녹화를 사용할 수 없습니다.",
+      "recordingAdminRequiredHint": "테넌트 관리자가 대상 회의의 거버넌스 녹화를 필수로 지정했습니다. 명시적으로 변경하기 전까지 이 상속 정책을 보존합니다.",
+      "recordingAdminRequiredWarning": "관리자 필수 녹화에도 가시적 고지, 동의 및 모든 실행 준비 제어가 적용됩니다. 다른 정책 필드를 저장해도 이 상속 정책은 변경되지 않습니다.",
       "aiNotes": "AI 회의 노트 허용",
       "aiNotesUnavailable": "거버넌스가 적용된 AI 노트 공급자가 구성되지 않았습니다.",
       "retention": "회의 기록 보존 기간(일)",
@@ -725,6 +727,24 @@
       "title": "AI 및 데이터 거버넌스",
       "description": "실제 사용 가능한 회의 인텔리전스 기능과 운영상 배포 차단 조건을 구분해 확인합니다.",
       "accessBoundary": "이 관리 화면은 정책 및 의존성 상태만 표시합니다. 녹화, 전사, 채팅 또는 AI 보고서 콘텐츠 열람 권한을 부여하지 않습니다.",
+      "runtimeEvidenceTitle": "정본 실행 환경 증거",
+      "runtimeEvidence": {
+        "version": "준비 상태 계약",
+        "recordingPolicy": "녹화 정책",
+        "provider": "관리형 공급자",
+        "model": "승인 모델",
+        "region": "처리 지역"
+      },
+      "recordingPolicies": {
+        "NEVER": "테넌트 정책으로 비활성",
+        "HOST_OPT_IN": "거버넌스 동의를 전제로 호스트 선택",
+        "ADMIN_REQUIRED": "테넌트 관리자 필수"
+      },
+      "unavailable": "보고되지 않음",
+      "sourceErrors": {
+        "readiness": "정본 인텔리전스 준비 상태를 검증하지 못했습니다. 모든 실행 제어는 차단 상태를 유지합니다.",
+        "policy": "테넌트 정책을 갱신하지 못했습니다. 실행 준비 상태는 독립적으로 표시됩니다."
+      },
       "capabilitiesTitle": "사용자 제공 기능",
       "capabilitiesDescription": "테넌트 정책, 거버넌스 처리와 실행 의존성이 모두 일치할 때만 준비 완료로 판단합니다.",
       "dependenciesTitle": "처리 의존성",
@@ -746,11 +766,33 @@
       "reasons": {
         "POLICY_NEVER": "테넌트 정책에서 이 기능을 금지합니다.",
         "CAPABILITY_NOT_CONFIGURED": "실행 환경에서 이 기능의 구성을 보고하지 않습니다.",
+        "CAPABILITY_NOT_READY": "하나 이상의 거버넌스 실행 요건이 준비되지 않았습니다.",
+        "MEETINGS_DISABLED_BY_POLICY": "테넌트 정책에서 화상회의를 비활성화했습니다.",
+        "MEETING_PROVIDER_UNAVAILABLE": "회의 미디어 공급자를 사용할 수 없습니다.",
         "REALTIME_PROVIDER_UNAVAILABLE": "실시간 미디어 공급자를 사용할 수 없습니다.",
+        "PROCESSING_REGION_NOT_VERIFIED": "관리형 처리 지역이 검증되지 않았습니다.",
+        "KMS_NOT_READY": "키 관리가 준비되지 않았습니다.",
+        "AUDIT_NOT_READY": "불변 감사 전송이 준비되지 않았습니다.",
+        "EGRESS_NOT_READY": "거버넌스 녹화 Egress가 준비되지 않았습니다.",
+        "STORAGE_NOT_READY": "암호화 산출물 저장소가 준비되지 않았습니다.",
+        "STT_NOT_READY": "승인된 음성-텍스트 처리기가 준비되지 않았습니다.",
+        "LLM_NOT_READY": "승인된 관리형 언어 모델이 준비되지 않았습니다.",
+        "LLM_OPERATIONAL_EVIDENCE_NOT_READY": "최근 24시간 안에 이 테넌트·공급자·모델·지역 조합을 검증한 성공 실행 증거가 없습니다.",
+        "RETENTION_WORKER_NOT_READY": "보존 실행 및 파기 증거가 준비되지 않았습니다.",
+        "INTELLIGENCE_REPORT_RETENTION_NOT_READY": "AI 보고서 파기 실행 및 데이터베이스 증거가 준비되지 않았습니다.",
+        "MEETING_RECORD_RETENTION_WORKER_NOT_CONFIGURED": "회의 기록 파기 실행이 구현 또는 검증되지 않았습니다.",
+        "ARTIFACT_RETENTION_WORKER_NOT_CONFIGURED": "녹화 및 전사 파기 실행이 구현 또는 검증되지 않았습니다.",
+        "CHAT_RETENTION_WORKER_NOT_CONFIGURED": "회의 채팅 파기 실행이 구현 또는 검증되지 않았습니다.",
+        "COMPLETE_DELETION_EVIDENCE_NOT_VERIFIED": "회의 기록, 산출물, 채팅 및 AI 보고서 전체의 파기 증거가 완전하지 않습니다.",
         "DEPENDENCY_STATUS_CONTRACT_MISSING": "공식 의존성 준비 상태 계약이 연결되지 않았습니다.",
         "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "서버의 검토 및 게시 강제 처리가 검증되지 않았습니다.",
+        "LEGAL_HOLD_ADMIN_WORKFLOW_NOT_CONFIGURED": "인가된 법적 보존 관리 절차가 구성되지 않았습니다.",
         "LEGAL_HOLD_NOT_CONNECTED": "법적 보존 제어가 연결되지 않았습니다.",
-        "DELETION_EVIDENCE_NOT_CONNECTED": "파기 실행 및 증거가 연결되지 않았습니다."
+        "DELETION_EVIDENCE_NOT_READY": "파기 실행 및 불변 증거가 준비되지 않았습니다.",
+        "DELETION_EVIDENCE_NOT_CONNECTED": "파기 실행 및 증거가 연결되지 않았습니다.",
+        "RUNTIME_SIGNAL_MISSING": "준비 상태 응답에서 필수 실행 신호가 누락되었습니다.",
+        "READINESS_ENDPOINT_UNAVAILABLE": "정본 실행 준비 상태를 검증하지 못했습니다.",
+        "UNKNOWN": "실행 환경 사유: {{value}}"
       },
       "capabilities": {
         "recording": {
@@ -831,7 +873,15 @@
           "label": "산출물",
           "description": "녹화, 전사 및 AI 보고서 보존 범위입니다."
         },
-        "chat": { "label": "회의 채팅", "description": "회의 대화 메시지 보존 범위입니다." }
+        "chat": { "label": "회의 채팅", "description": "회의 대화 메시지 보존 범위입니다." },
+        "intelligence": {
+          "label": "AI 인텔리전스 보고서",
+          "description": "산출물 보존 기간이 적용되는 근거 연결 보고서입니다."
+        },
+        "worker": {
+          "label": "보존 실행 워커",
+          "description": "최근 파기 성공 증거가 설정된 준비 상태 시간 범위 안에 있어야 합니다."
+        }
       }
     }
   }

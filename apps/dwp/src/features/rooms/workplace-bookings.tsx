@@ -33,6 +33,7 @@ import Typography from '@mui/material/Typography';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
 import { useWorkplaceDecisionClock } from './workplace-decision-clock';
 import {
@@ -40,7 +41,7 @@ import {
   useWorkplaceDecisionStatus,
 } from './workplace-decision-status';
 import { workplaceHomeDecisionDeadline } from './workplace-home-decision-clock';
-import { workplaceHomeSourceState } from './workplace-home-source-state';
+import { workplaceHomeSourceData, workplaceHomeSourceState } from './workplace-home-source-state';
 import { WorkplaceReleaseWindows } from './workplace-release-windows';
 import { WorkplaceRelocateBookingDialog } from './workplace-relocate-booking-dialog';
 
@@ -108,15 +109,20 @@ export function WorkplaceBookings() {
     queryFn: () => getWorkplaceBookings(range.from, range.to),
     staleTime: 20_000,
     refetchInterval: 60_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const bookingSourceState = workplaceHomeSourceState({
     data: query.data,
     error: query.error,
+    failureCount: query.failureCount,
+    failureReason: query.failureReason,
     isError: query.isError,
     isPending: query.isPending,
     required: true,
   });
+  const bookingSourceStateRef = useRef(bookingSourceState);
+  bookingSourceStateRef.current = bookingSourceState;
+  const verifiedBookings = workplaceHomeSourceData(bookingSourceState, query.data);
   const {
     advance: advanceDecisionClock,
     nowInstant: decisionNowInstant,
@@ -124,7 +130,7 @@ export function WorkplaceBookings() {
   } = useWorkplaceDecisionClock(identityKey);
   const bookings = useMemo(
     () =>
-      (query.data ?? [])
+      (verifiedBookings ?? [])
         .filter((booking) =>
           filter === 'upcoming'
             ? Date.parse(booking.endsAt) > decisionNowInstant &&
@@ -141,7 +147,7 @@ export function WorkplaceBookings() {
             ? Date.parse(left.startsAt) - Date.parse(right.startsAt)
             : Date.parse(right.startsAt) - Date.parse(left.startsAt)
         ),
-    [decisionNowInstant, filter, query.data]
+    [decisionNowInstant, filter, verifiedBookings]
   );
   const bookingPolicies = useMemo(
     () =>
@@ -176,7 +182,7 @@ export function WorkplaceBookings() {
       }
       const policy = workplaceBookingActionPolicy({
         booking: currentBooking,
-        sourceState: bookingSourceState,
+        sourceState: bookingSourceStateRef.current,
         canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
         nowInstant: readDecisionNow(),
       });
@@ -523,19 +529,23 @@ export function WorkplaceBookings() {
             ))}
           </Stack>
         )}
-        {query.isError && (
+        {(bookingSourceState === 'STALE' ||
+          bookingSourceState === 'DENIED' ||
+          bookingSourceState === 'UNAVAILABLE') && (
           <Alert
-            severity={query.data ? 'warning' : 'error'}
+            severity={bookingSourceState === 'STALE' ? 'warning' : 'error'}
             action={
               <ActionButton intent="quiet" onClick={() => query.refetch()}>
                 {t('actions.retry')}
               </ActionButton>
             }
           >
-            {t(query.data ? 'workplace.staleWarning' : 'workplace.my.loadError')}
+            {t(
+              bookingSourceState === 'STALE' ? 'workplace.staleWarning' : 'workplace.my.loadError'
+            )}
           </Alert>
         )}
-        {!query.isLoading && (!query.isError || query.data) && bookings.length === 0 && (
+        {bookingSourceState === 'READY' && bookings.length === 0 && (
           <EmptyState
             icon={<CalendarCheck2 size={28} />}
             title={t(

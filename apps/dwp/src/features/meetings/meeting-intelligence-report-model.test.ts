@@ -155,10 +155,8 @@ const labels: MeetingIntelligenceReportLabels = {
     INSUFFICIENT_EVIDENCE: 'Insufficient evidence',
   },
   climateSignals: {
-    BALANCED_TURN_TAKING: 'Balanced turn taking',
     CONSTRUCTIVE_DISAGREEMENT: 'Constructive disagreement',
     UNRESOLVED_DISAGREEMENT: 'Unresolved disagreement',
-    DOMINANT_MONOLOGUE_PATTERN: 'Dominant monologue pattern',
     LOW_TRANSCRIPT_EVIDENCE: 'Low transcript evidence',
   },
   reviewTitle: 'Independent review',
@@ -197,8 +195,11 @@ describe('meeting intelligence report state model', () => {
     expect(deriveMeetingIntelligenceSurfaceState(null, null)).toBe('UNAVAILABLE');
   });
 
-  it('never exposes a private or deleted report to a participant', () => {
-    expect(selectMeetingIntelligenceReportForViewer(report, false)).toBeNull();
+  it('exposes a draft only when the backend grants the current viewer review authority', () => {
+    expect(selectMeetingIntelligenceReportForViewer(report, false)).toBe(report);
+    expect(
+      selectMeetingIntelligenceReportForViewer({ ...report, canCurrentViewerReview: false }, false)
+    ).toBeNull();
     expect(selectMeetingIntelligenceReportForViewer(report, true)).toBe(report);
     expect(
       selectMeetingIntelligenceReportForViewer(
@@ -235,10 +236,18 @@ describe('meeting intelligence report state model', () => {
     ).toBe('NOT_HOST');
   });
 
-  it('allows only draft review and approved publication for a host', () => {
+  it('allows delegated draft review but keeps publication host-only', () => {
     expect(
       deriveMeetingIntelligenceActions({
         canHost: true,
+        transcriptArtifact: transcript,
+        contentPlanVersion: 2,
+        report,
+      })
+    ).toMatchObject({ canApprove: true, canReject: true, canPublish: false });
+    expect(
+      deriveMeetingIntelligenceActions({
+        canHost: false,
         transcriptArtifact: transcript,
         contentPlanVersion: 2,
         report,
@@ -332,9 +341,9 @@ describe('meeting intelligence report view', () => {
     expect(markup).not.toContain('Publish recap');
   });
 
-  it('renders review controls only for a host-owned draft surface', () => {
+  it('renders review controls for a delegated reviewer without host-only actions', () => {
     const actions = deriveMeetingIntelligenceActions({
-      canHost: true,
+      canHost: false,
       transcriptArtifact: transcript,
       contentPlanVersion: 2,
       report,
@@ -344,7 +353,7 @@ describe('meeting intelligence report view', () => {
         state: 'DRAFT',
         report,
         run,
-        canHost: true,
+        canHost: false,
         actions,
         labels,
         locale: 'en',
@@ -362,7 +371,7 @@ describe('meeting intelligence report view', () => {
       })
     );
 
-    expect(markup).toContain('Generate new recap');
+    expect(markup).not.toContain('Generate new recap');
     expect(markup).toContain('Independent review');
     expect(markup).toContain('Approve draft');
     expect(markup).toContain('Reject draft');

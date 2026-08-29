@@ -16,3 +16,7 @@ export function isAuthoritativeWorkplaceReadFailure(error: unknown) {
     (error.status === 503 && reason === 'AUTHORITY_RESOLUTION_UNAVAILABLE')
   );
 }
+
+export function retryRecoverableWorkplaceRead(failureCount: number, error: unknown) {
+  return !isAuthoritativeWorkplaceReadFailure(error) && failureCount < 1;
+}

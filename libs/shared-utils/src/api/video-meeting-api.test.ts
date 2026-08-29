@@ -275,10 +275,14 @@ describe('video meeting API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     expect(normalizeVideoMeetingCode(' abcd-efgh lkmn ')).toBe('ABCDEFGHLKMN');
-    await resolveVideoMeetingCode(' abcd-efgh lkmn ');
+    await expect(resolveVideoMeetingCode(' abcd-efgh lkmn ')).resolves.toMatchObject({
+      requiresApproval: true,
+    });
     await expect(getVideoMeetingJoinRequest('meeting/a', 'participant-1')).resolves.toMatchObject({
       requestId: 'participant-1',
+      meetingId: 'meeting/a',
       state: 'WAITING',
+      expiresAt: '2026-08-27T01:08:00.000Z',
     });
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/meetings/v1/join-codes/ABCDEFGHLKMN');
@@ -429,14 +433,20 @@ describe('video meeting API boundary', () => {
     expect(requestAt(fetchMock, 1)).toMatchObject({ method: 'POST', keepalive: true });
   });
 
-  it('persists only supported policy fields with optimistic locking', async () => {
+  it('preserves an inherited administrator-required recording policy with optimistic locking', async () => {
+    const administratorRequiredPolicy: VideoMeetingAdminPolicy = {
+      ...policy,
+      recordingPolicy: 'ADMIN_REQUIRED',
+    };
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf', headerName: 'X-XSRF-TOKEN' }))
-      .mockResolvedValueOnce(jsonResponse({ ...policy, version: 5 }));
+      .mockResolvedValueOnce(jsonResponse({ ...administratorRequiredPolicy, version: 5 }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(updateVideoMeetingAdminPolicy(policy)).resolves.toMatchObject({ version: 5 });
+    await expect(updateVideoMeetingAdminPolicy(administratorRequiredPolicy)).resolves.toMatchObject(
+      { version: 5, recordingPolicy: 'ADMIN_REQUIRED' }
+    );
 
     const request = requestAt(fetchMock, 1);
     expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/meetings/v1/admin/policy');
@@ -449,7 +459,7 @@ describe('video meeting API boundary', () => {
       participantChatAllowed: true,
       reactionsAllowed: true,
       screenShareAllowed: true,
-      recordingPolicy: 'NEVER',
+      recordingPolicy: 'ADMIN_REQUIRED',
       allowJoinBeforeHost: false,
       requireAuthenticatedInternalUsers: true,
       maximumParticipants: 100,

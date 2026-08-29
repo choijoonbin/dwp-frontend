@@ -459,6 +459,55 @@ test('calendar isolates schedule feed failures from calendar source controls', a
   ).toEqual([]);
 });
 
+test('calendar expands the planning canvas and turns insight recommendations into actions', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/calendar/schedule');
+
+  const calendar = page.getByTestId('interactive-calendar');
+  const sourcePanel = page.getByTestId('calendar-source-panel');
+  await expect(calendar).toBeVisible();
+  await expect(sourcePanel).toBeVisible();
+  const widthWithSources = (await calendar.boundingBox())?.width ?? 0;
+
+  const hidePanel = page.getByRole('button', { name: 'Hide calendar panel', exact: true });
+  await expect(hidePanel).toHaveAttribute('aria-expanded', 'true');
+  await hidePanel.click();
+  await expect(sourcePanel).toBeHidden();
+  const widthWithoutSources = (await calendar.boundingBox())?.width ?? 0;
+  expect(widthWithoutSources).toBeGreaterThan(widthWithSources + 200);
+
+  const showPanel = page.getByRole('button', { name: 'Show calendar panel', exact: true });
+  await expect(showPanel).toHaveAttribute('aria-expanded', 'false');
+  await showPanel.click();
+  await expect(sourcePanel).toBeVisible();
+
+  await page.goto('/calendar/insights');
+  const balanceRecommendation = page.getByRole('button', {
+    name: /Balance.*Open schedule/u,
+  });
+  await expect(balanceRecommendation).toBeVisible();
+  await balanceRecommendation.click();
+  await expect(page).toHaveURL(/\/calendar\/schedule\?view=week&date=2026-08-14/u);
+
+  await page.goto('/calendar/insights');
+  await page.getByRole('button', { name: /Focus.*Protect focus time/u }).click();
+  await expect(page.getByRole('dialog', { name: 'Create a new event' })).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+});
+
 test('calendar company actions reflow at 320px and tabs retain calendar context at 200% text', async ({
   page,
 }) => {

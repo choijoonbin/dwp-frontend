@@ -86,26 +86,38 @@
 - Production promotion additionally requires TURN-only, node-drain, webhook replay,
   Egress failure, recovery, load, mobile, and WCAG 2.2 AA evidence.
 
-## Revalidated local evidence (2026-08-27)
+## Revalidated local evidence (2026-08-29)
 
-- Meeting, core production-readiness, and Gateway production-readiness test suites
-  passed. Meeting repository and service files remain below the 700-line budget
-  after query and creation responsibilities were extracted.
-- The shared meeting API suite passed 9 assertions; focused ESLint, typecheck,
-  architecture, source-size, and i18n gates passed. The Playwright meeting suite
-  passed the four home, scheduling, admission, and governed-policy scenarios on
-  both Chromium desktop and mobile projects, for 8 passing checks.
-- The meeting OpenAPI export and frontend generated Gateway contract match the
-  current 682-path backend contract.
-- The meeting service restarted cleanly against the applied V17 migration and its
-  health and runtime OpenAPI endpoints are up. PostgreSQL, Redis, Kafka, and local
-  LiveKit are healthy.
-- The independent `dwp-meetings` production bundle passed its entry, initial graph,
-  request-count, and asynchronous chunk budgets.
+- `:dwp-meeting-server:check` passed with 43 suites and 273 tests, with zero failures,
+  errors, or skips. PostgreSQL tests cover idempotent intelligence execution, lease
+  reclaim, stale-worker fencing, atomic report/audit completion, retention worker
+  fencing, authoritative webhook replay/order, lifecycle recovery, and legacy-room
+  migration.
+- A fresh Meeting service applied V22, started successfully, returned health `UP`, and
+  exposed 43 service OpenAPI paths. The internal LiveKit webhook is absent from the
+  public schema. The approved backend and generated frontend Gateway snapshots match
+  718 public paths, including the latest-published recap and administrator readiness APIs.
+- The Agent suite passed 248 tests with 25 environment-dependent PostgreSQL tests
+  skipped. Meeting intelligence tests cover workload assertion replay, provider-policy
+  attestation, strict cited output, unsupported climate rejection, and raw-content
+  non-persistence. Agent compile and public OpenAPI checks passed.
+- Meeting frontend unit and API-contract suites passed 19 files and 96 tests. Node
+  24.19/Yarn 4 typecheck, lint, formatting, i18n, design-system adoption, architecture,
+  source-size, OpenAPI, production build, and bundle budgets passed.
+- The canonical Yarn web server ran 26 Playwright checks across Chromium desktop and
+  mobile. They cover home, scheduling, governed content planning, waiting/admission,
+  stale join responses, pre-join, recap evidence, AI authorization fencing, and all
+  recording-policy states. A separate fresh-browser visual pass covered 320 px and
+  390 px layouts, 200% zoom-equivalent flow, dark mode, forced colors, reduced motion,
+  overlay focus containment, Escape focus return, and serious/critical axe violations
+  (`0`).
+- An unauthenticated real browser request to `/meetings/home` redirected to the sign-in
+  boundary with the return URL intact. Authenticated media behavior was exercised with
+  deterministic route contracts; real-device camera/microphone, TURN-only, packet-loss,
+  100+ participant load, node-drain, regional failover, and WCAG certification remain
+  production promotion gates and are not claimed by this local evidence.
 
-The Node 24/Yarn 4 shared-workspace frontend typecheck is green. A fresh browser
-navigation resolves the login policy and renders the company-email login form without
-the earlier policy error. Authenticated meeting-room behavior is covered by the desktop
-and mobile Playwright flows; a real-device camera, microphone, network-degradation, and
-accessibility certification pass remains a production promotion gate and is not claimed
-by this local evidence.
+The final mobile polish pass makes all three recap tabs fully visible at the tested
+mobile widths while retaining the scrollable, keyboard-accessible tab contract. The
+desktop and mobile recap E2E now reads a published AI report through the dedicated
+projection and verifies its summary and cited decision before opening artifact custody.

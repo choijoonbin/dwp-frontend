@@ -5,6 +5,8 @@ import { Mic, MicOff, MonitorUp, Video, VideoOff, X } from 'lucide-react';
 
 import type { VideoMeetingRole } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 
+import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
+
 const MEETING_ROLES = new Set<VideoMeetingRole>([
   'ORGANIZER',
   'CO_HOST',
@@ -40,6 +42,7 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation('meetings');
   const participants = useParticipants();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const orderedParticipants = useMemo(
     () =>
       [...participants].sort((left, right) => {
@@ -54,9 +57,11 @@ export function MeetingParticipantsPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <aside
+      ref={panelRef}
       id="meeting-participants-panel"
       className="dwp-meeting-side-panel dwp-meeting-participants"
       aria-labelledby="meeting-participants-title"
+      onKeyDownCapture={(event) => containMeetingOverlayTab(event, panelRef.current)}
       onKeyDown={(event) => {
         if (event.key !== 'Escape') return;
         event.preventDefault();

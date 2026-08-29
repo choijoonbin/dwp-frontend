@@ -20,9 +20,25 @@ export type RoomOccupancy = {
   bookingStatus: 'PENDING' | 'CONFIRMED';
 };
 
+export type RoomBookingEligibilityReason =
+  'ELIGIBLE' | 'RESOURCE_UNAVAILABLE' | 'POLICY_BLOCKED' | 'RESOURCE_CONFLICT';
+
+export type RoomBookingEligibility = {
+  resourceId: string;
+  eligible: boolean;
+  reasonCode: RoomBookingEligibilityReason;
+  evaluatedFrom: string;
+  evaluatedTo: string;
+  excludedEventId: string | null;
+  evaluatedAt: string;
+  resourceVersion: number;
+  policyVersion: number;
+};
+
 export type RoomAvailability = {
   rooms: CalendarResource[];
   occupancy: RoomOccupancy[];
+  bookingEligibility: RoomBookingEligibility[];
   generatedAt: string;
 };
 
@@ -30,9 +46,14 @@ function rangeQuery(from: string, to: string) {
   return `from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
 }
 
-export async function getRoomAvailability(from: string, to: string): Promise<RoomAvailability> {
+export async function getRoomAvailability(
+  from: string,
+  to: string,
+  excludeEventId?: string | null
+): Promise<RoomAvailability> {
+  const exclusion = excludeEventId ? `&excludeEventId=${encodeURIComponent(excludeEventId)}` : '';
   const response = await axiosInstance.get<ApiResponse<RoomAvailability>>(
-    `/api/platform/v1/rooms/availability?${rangeQuery(from, to)}`
+    `/api/platform/v1/rooms/availability?${rangeQuery(from, to)}${exclusion}`
   );
   return response.data.data;
 }

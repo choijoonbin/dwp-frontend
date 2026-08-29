@@ -284,10 +284,8 @@
           "INSUFFICIENT_EVIDENCE": "Insufficient evidence"
         },
         "climateSignals": {
-          "BALANCED_TURN_TAKING": "Balanced turn-taking",
           "CONSTRUCTIVE_DISAGREEMENT": "Constructive disagreement",
           "UNRESOLVED_DISAGREEMENT": "Unresolved disagreement",
-          "DOMINANT_MONOLOGUE_PATTERN": "Extended monologue pattern",
           "LOW_TRANSCRIPT_EVIDENCE": "Limited transcript evidence"
         },
         "reviewTitle": "Human review",
@@ -297,7 +295,6 @@
         "reviewReasonPlaceholder": "Select a review basis",
         "reviewReasons": {
           "EVIDENCE_VERIFIED": "Evidence and wording verified",
-          "CORRECTED_AND_VERIFIED": "Corrections completed and verified",
           "INSUFFICIENT_EVIDENCE": "Insufficient source evidence",
           "SENSITIVE_CONTENT": "Sensitive content requires revision"
         },
@@ -621,6 +618,7 @@
     "controls": {
       "label": "Meeting controls",
       "stageLabel": "Video meeting participant stage",
+      "focusToggle": "Change focused participant",
       "microphone": "Microphone",
       "microphoneEnable": "Turn on microphone",
       "microphoneDisable": "Turn off microphone",
@@ -706,6 +704,10 @@
       "screenShareHint": "Allow presenters to share a screen during meetings.",
       "recording": "Allow recording",
       "recordingUnavailable": "LiveKit Egress is not configured. Recording cannot be enabled.",
+      "recordingHostOptInHint": "Allow hosts to request governed recording after participant notice and consent.",
+      "recordingHostOptInWarning": "Host opt-in permits only a governed recording request. Recording still remains unavailable unless the readiness view verifies Egress, encrypted storage, key management, audit, and retention execution.",
+      "recordingAdminRequiredHint": "Tenant administrators require governed recording for eligible meetings. This inherited policy is preserved until explicitly changed.",
+      "recordingAdminRequiredWarning": "Administrator-required recording remains subject to visible notice, consent, and every runtime readiness control. Saving unrelated policy fields does not change this inherited policy.",
       "aiNotes": "Allow AI meeting notes",
       "aiNotesUnavailable": "The governed AI notes provider is not configured.",
       "retention": "Meeting record retention (days)",
@@ -725,6 +727,24 @@
       "title": "AI and data governance",
       "description": "Verify which meeting intelligence capabilities are actually ready and which operational controls still block release.",
       "accessBoundary": "This administration view exposes policy and dependency status only. It never grants access to recordings, transcripts, chats, or AI report content.",
+      "runtimeEvidenceTitle": "Authoritative runtime evidence",
+      "runtimeEvidence": {
+        "version": "Readiness contract",
+        "recordingPolicy": "Recording policy",
+        "provider": "Managed provider",
+        "model": "Approved model",
+        "region": "Processing region"
+      },
+      "recordingPolicies": {
+        "NEVER": "Disabled by tenant policy",
+        "HOST_OPT_IN": "Host opt-in with governed consent",
+        "ADMIN_REQUIRED": "Required by tenant administrators"
+      },
+      "unavailable": "Not reported",
+      "sourceErrors": {
+        "readiness": "Authoritative intelligence readiness could not be verified. All runtime controls remain fail-closed.",
+        "policy": "Tenant policy could not be refreshed. Runtime readiness remains independently visible."
+      },
       "capabilitiesTitle": "User-facing capabilities",
       "capabilitiesDescription": "A capability is ready only when tenant policy, governed processing, and runtime dependencies agree.",
       "dependenciesTitle": "Processing dependencies",
@@ -746,11 +766,33 @@
       "reasons": {
         "POLICY_NEVER": "Tenant policy prohibits this capability.",
         "CAPABILITY_NOT_CONFIGURED": "The runtime does not report this capability as configured.",
+        "CAPABILITY_NOT_READY": "One or more governed runtime requirements are not ready.",
+        "MEETINGS_DISABLED_BY_POLICY": "Video meetings are disabled by tenant policy.",
+        "MEETING_PROVIDER_UNAVAILABLE": "The meeting media provider is unavailable.",
         "REALTIME_PROVIDER_UNAVAILABLE": "The realtime media provider is unavailable.",
+        "PROCESSING_REGION_NOT_VERIFIED": "The managed processing region is not verified.",
+        "KMS_NOT_READY": "Key management is not ready.",
+        "AUDIT_NOT_READY": "Immutable audit delivery is not ready.",
+        "EGRESS_NOT_READY": "Governed recording Egress is not ready.",
+        "STORAGE_NOT_READY": "Encrypted artifact storage is not ready.",
+        "STT_NOT_READY": "The approved speech-to-text processor is not ready.",
+        "LLM_NOT_READY": "The approved managed language model is not ready.",
+        "LLM_OPERATIONAL_EVIDENCE_NOT_READY": "No successful tenant-bound run verifies this provider, model, and region within the last 24 hours.",
+        "RETENTION_WORKER_NOT_READY": "Retention execution and deletion evidence are not ready.",
+        "INTELLIGENCE_REPORT_RETENTION_NOT_READY": "AI report purge execution and database evidence are not ready.",
+        "MEETING_RECORD_RETENTION_WORKER_NOT_CONFIGURED": "Meeting-record purge execution is not implemented or verified.",
+        "ARTIFACT_RETENTION_WORKER_NOT_CONFIGURED": "Recording and transcript purge execution is not implemented or verified.",
+        "CHAT_RETENTION_WORKER_NOT_CONFIGURED": "Meeting-chat purge execution is not implemented or verified.",
+        "COMPLETE_DELETION_EVIDENCE_NOT_VERIFIED": "Deletion evidence is incomplete across meeting records, artifacts, chats, and AI reports.",
         "DEPENDENCY_STATUS_CONTRACT_MISSING": "No authoritative dependency readiness contract is connected.",
         "WORKFLOW_ENFORCEMENT_NOT_VERIFIED": "Server-side review and publication enforcement is not verified.",
+        "LEGAL_HOLD_ADMIN_WORKFLOW_NOT_CONFIGURED": "The authorized legal-hold administration workflow is not configured.",
         "LEGAL_HOLD_NOT_CONNECTED": "Legal-hold controls are not connected.",
-        "DELETION_EVIDENCE_NOT_CONNECTED": "Deletion execution and evidence are not connected."
+        "DELETION_EVIDENCE_NOT_READY": "Deletion execution and immutable evidence are not ready.",
+        "DELETION_EVIDENCE_NOT_CONNECTED": "Deletion execution and evidence are not connected.",
+        "RUNTIME_SIGNAL_MISSING": "The readiness response omitted this required runtime signal.",
+        "READINESS_ENDPOINT_UNAVAILABLE": "Authoritative runtime readiness could not be verified.",
+        "UNKNOWN": "Runtime reason: {{value}}"
       },
       "capabilities": {
         "recording": {
@@ -834,6 +876,14 @@
         "chat": {
           "label": "Meeting chat",
           "description": "Conversation-message retention boundary."
+        },
+        "intelligence": {
+          "label": "AI intelligence reports",
+          "description": "Evidence-linked reports governed by the artifact retention window."
+        },
+        "worker": {
+          "label": "Retention execution worker",
+          "description": "Recent successful purge evidence must remain within the configured readiness window."
         }
       }
     }

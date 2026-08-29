@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { HttpError } from '@dwp-frontend/shared-utils';
 
-import { isAuthoritativeWorkplaceReadFailure } from './workplace-authority-failure';
+import {
+  isAuthoritativeWorkplaceReadFailure,
+  retryRecoverableWorkplaceRead,
+} from './workplace-authority-failure';
 import { workplaceHomeSourceData, workplaceHomeSourceState } from './workplace-home-source-state';
 
 describe('workplace home source state', () => {
@@ -31,6 +34,43 @@ describe('workplace home source state', () => {
 
     expect(state).toBe('STALE');
     expect(workplaceHomeSourceData(state, data)).toBe(data);
+  });
+
+  it('closes cached authority data on the first failed refetch before query retry settles', () => {
+    const data = { confidential: 'cached value' };
+    const failure = new HttpError('denied', 403);
+    const state = workplaceHomeSourceState({
+      data,
+      error: null,
+      failureCount: 1,
+      failureReason: failure,
+      isError: false,
+      isPending: false,
+      required: true,
+    });
+
+    expect(state).toBe('DENIED');
+    expect(workplaceHomeSourceData(state, data)).toBeUndefined();
+    expect(retryRecoverableWorkplaceRead(0, failure)).toBe(false);
+  });
+
+  it('makes cached data read-only during the first recoverable retry', () => {
+    const data = { verified: true };
+    const failure = new HttpError('temporary failure', 502);
+    const state = workplaceHomeSourceState({
+      data,
+      error: null,
+      failureCount: 1,
+      failureReason: failure,
+      isError: false,
+      isPending: false,
+      required: true,
+    });
+
+    expect(state).toBe('STALE');
+    expect(workplaceHomeSourceData(state, data)).toBe(data);
+    expect(retryRecoverableWorkplaceRead(0, failure)).toBe(true);
+    expect(retryRecoverableWorkplaceRead(1, failure)).toBe(false);
   });
 
   it('treats expired scope and unavailable authority as fail-closed', () => {

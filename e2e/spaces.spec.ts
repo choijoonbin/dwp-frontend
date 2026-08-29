@@ -206,6 +206,8 @@ test('members receive an accessible responsive Space command center', async ({ p
 });
 
 test('Space control-center routes preserve separation of duties', async ({ page }) => {
+  let templateWrites = 0;
+  let templatePayload: Record<string, unknown> | null = null;
   await mockSpaceSession(page, {
     roles: ['SPACE_TEMPLATE_ADMIN'],
     permissions: [
@@ -230,26 +232,119 @@ test('Space control-center routes preserve separation of duties', async ({ page 
       {
         resourceType: 'ADMIN',
         resourceKey: 'ADMIN.SPACE_TEMPLATES',
-        permissionCode: 'MANAGE',
+        permissionCode: 'CREATE',
         effect: 'ALLOW',
       },
     ],
   });
-  await page.route('**/api/spaces/v1/admin/templates', (route) =>
-    route.fulfill({ contentType: 'application/json', body: envelope([SPACE_TEMPLATE]) })
-  );
+  await page.route('**/api/spaces/v1/admin/templates', (route) => {
+    if (route.request().method() === 'POST') {
+      templateWrites += 1;
+      templatePayload = route.request().postDataJSON() as Record<string, unknown>;
+      return route.fulfill({
+        contentType: 'application/json',
+        body: envelope({ ...SPACE_TEMPLATE, ...templatePayload }),
+      });
+    }
+    return route.fulfill({ contentType: 'application/json', body: envelope([SPACE_TEMPLATE]) });
+  });
 
   await page.goto('/admin/spaces');
   await expect(page).toHaveURL(/\/spaces\/admin\/templates$/);
   await expect(page.getByRole('heading', { name: 'Space templates', level: 1 })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'New template' })).toBeVisible();
+  await page.getByRole('button', { name: 'New template' }).click();
+  const templateDialog = page.getByRole('dialog', { name: 'Create Space template' });
+  await templateDialog.getByLabel('Template key').fill('delivery-community');
+  await templateDialog.getByLabel('Korean name').fill('딜리버리 커뮤니티');
+  await templateDialog.getByLabel('English name').fill('Delivery community');
+  await templateDialog.getByLabel('Korean description').fill('배포 경험과 운영 지식을 공유합니다.');
+  await templateDialog
+    .getByLabel('English description')
+    .fill('Share delivery practices and operational knowledge.');
+  await templateDialog.getByRole('button', { name: 'Save' }).click();
+  await expect.poll(() => templateWrites).toBe(1);
+  expect(templatePayload).toMatchObject({
+    templateKey: 'delivery-community',
+    nameEn: 'Delivery community',
+  });
+  await expect(templateDialog).toBeHidden();
+
   const openSpaceNavigation = page.getByRole('button', { name: 'Open Space navigation' });
-  if (await openSpaceNavigation.isVisible()) await openSpaceNavigation.click();
+  if (await openSpaceNavigation.isVisible()) {
+    await openSpaceNavigation.click();
+  }
   await expect(page.getByRole('link', { name: 'Templates' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Content reviews' })).toHaveCount(0);
 
   await page.goto('/admin/spaces/content-reviews');
   await expect(page).toHaveURL(/\/403$/);
+});
+
+test('Space lifecycle approvers can record decisions without broad manage authority', async ({
+  page,
+}) => {
+  const review = {
+    lifecycleReviewId: 'b2000000-0000-0000-0000-000000000001',
+    spaceId: SPACE_SUMMARY.spaceId,
+    spaceKey: SPACE_SUMMARY.spaceKey,
+    spaceNameKo: SPACE_SUMMARY.nameKo,
+    spaceNameEn: SPACE_SUMMARY.nameEn,
+    reviewType: 'ACCESS',
+    dueAt: '2026-08-31T00:00:00Z',
+    status: 'OPEN',
+    recommendation: null,
+    evidence: { activeMemberships: 2 },
+  };
+  let decisionWrites = 0;
+  let decisionPayload: Record<string, unknown> | null = null;
+  await mockSpaceSession(page, {
+    roles: ['SPACE_ACCESS_REVIEWER'],
+    permissions: [
+      {
+        resourceType: 'APP',
+        resourceKey: 'APP.ADMINISTRATION',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.SPACE_ACCESS_REVIEW',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.SPACE_ACCESS_REVIEW',
+        permissionCode: 'APPROVE',
+        effect: 'ALLOW',
+      },
+    ],
+  });
+  await page.route('**/api/spaces/v1/admin/lifecycle**', (route) => {
+    if (route.request().method() === 'POST') {
+      decisionWrites += 1;
+      decisionPayload = route.request().postDataJSON() as Record<string, unknown>;
+      return route.fulfill({ contentType: 'application/json', body: envelope(null) });
+    }
+    return route.fulfill({ contentType: 'application/json', body: envelope([review]) });
+  });
+
+  await page.goto('/spaces/admin/lifecycle');
+  await expect(page.getByRole('heading', { name: 'Lifecycle reviews', level: 1 })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Lifecycle and access certification', level: 2 })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Review' }).click();
+  const decisionDialog = page.getByRole('dialog', { name: 'Record lifecycle decision' });
+  await decisionDialog
+    .getByLabel('Decision rationale')
+    .fill('Access evidence supports retaining this governed Space.');
+  await decisionDialog.getByRole('button', { name: 'Record decision' }).click();
+  await expect.poll(() => decisionWrites).toBe(1);
+  expect(decisionPayload).toEqual({
+    recommendation: 'KEEP',
+    note: 'Access evidence supports retaining this governed Space.',
+  });
 });
 
 test('Space moderators can inspect membership without receiving owner controls', async ({

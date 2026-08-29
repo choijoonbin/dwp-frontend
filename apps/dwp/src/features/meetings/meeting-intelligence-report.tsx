@@ -342,7 +342,6 @@ export function MeetingIntelligenceReport({
   });
 
   const currentRun = authorizedActiveRun ? (runQuery.data ?? authorizedActiveRun.run) : null;
-  const hostReport = canHost ? latestReport : null;
   const visibleReport = selectMeetingIntelligenceReportForViewer(latestReport, canHost);
   const mutationPending =
     generateMutation.isPending || reviewMutation.isPending || publishMutation.isPending;
@@ -350,16 +349,15 @@ export function MeetingIntelligenceReport({
     canHost,
     transcriptArtifact,
     contentPlanVersion,
-    report: hostReport,
+    report: visibleReport,
     run: currentRun,
     mutationPending,
   });
-  const stateReport = canHost ? latestReport : visibleReport;
   const state = generateMutation.isPending
     ? 'PROCESSING'
     : runQuery.isError
       ? 'FAILURE'
-      : deriveMeetingIntelligenceSurfaceState(stateReport, currentRun);
+      : deriveMeetingIntelligenceSurfaceState(visibleReport, currentRun);
   const actionError =
     generateMutation.isError ||
     reviewMutation.isError ||
@@ -573,7 +571,7 @@ export function MeetingIntelligenceReportView({
           </>
         )}
 
-        {canHost && report?.state === 'DRAFT' && (
+        {report?.state === 'DRAFT' && report.canCurrentViewerReview && (
           <ReviewPanel
             labels={labels}
             reviewReason={reviewReason}

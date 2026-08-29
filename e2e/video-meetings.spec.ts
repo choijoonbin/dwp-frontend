@@ -159,6 +159,55 @@ function fulfill(route: Route, data: unknown, status = 200) {
   return route.fulfill({ status, contentType: 'application/json', body: success(data) });
 }
 
+function createDeferredResponse() {
+  let release!: () => void;
+  const promise = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  return { promise, release };
+}
+
+async function keepMeetingTransportPending(page: Page) {
+  await page.addInitScript(() => {
+    class DormantMeetingWebSocket extends EventTarget {
+      static readonly CONNECTING = 0;
+      static readonly OPEN = 1;
+      static readonly CLOSING = 2;
+      static readonly CLOSED = 3;
+      readonly CONNECTING = 0;
+      readonly OPEN = 1;
+      readonly CLOSING = 2;
+      readonly CLOSED = 3;
+      readonly extensions = '';
+      readonly protocol = '';
+      readonly url: string;
+      binaryType: BinaryType = 'blob';
+      bufferedAmount = 0;
+      readyState = DormantMeetingWebSocket.CONNECTING;
+      onclose: ((event: CloseEvent) => void) | null = null;
+      onerror: ((event: Event) => void) | null = null;
+      onmessage: ((event: MessageEvent) => void) | null = null;
+      onopen: ((event: Event) => void) | null = null;
+
+      constructor(url: string | URL) {
+        super();
+        this.url = String(url);
+      }
+
+      close() {
+        this.readyState = DormantMeetingWebSocket.CLOSED;
+      }
+
+      send(_data: string | ArrayBufferLike | Blob | ArrayBufferView) {}
+    }
+
+    Object.defineProperty(window, 'WebSocket', {
+      configurable: true,
+      value: DormantMeetingWebSocket,
+    });
+  });
+}
+
 async function mockMeetingMember(page: Page, admin = false) {
   await mockShellSession(
     page,
@@ -313,6 +362,7 @@ test('host configures a governed content plan before joining and sees authoritat
   page,
 }) => {
   await mockMeetingMember(page);
+  await keepMeetingTransportPending(page);
   const hostMeeting = {
     ...meetingDetail,
     lifecycleState: 'LIVE',
@@ -409,6 +459,14 @@ test('host configures a governed content plan before joining and sees authoritat
       leftAt: '2026-08-28T03:12:00Z',
     });
   });
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingSummary.meetingId}/chat/messages?*`,
+    (route) => fulfill(route, { items: [], nextSequence: 0, hasMore: false })
+  );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingSummary.meetingId}/hand-requests?*`,
+    (route) => fulfill(route, { items: [], nextSequence: 0, hasMore: false })
+  );
 
   await page.goto(`/meetings/room/${meetingSummary.meetingId}`);
   await page.getByRole('button', { name: 'Check camera and microphone' }).click();
@@ -468,6 +526,75 @@ test('host configures a governed content plan before joining and sees authoritat
   await tokenIssued;
   await expect(page.getByRole('button', { name: 'Join meeting' })).toBeHidden();
   expect(departureRequests).toBe(0);
+
+  await page.setViewportSize({ width: 640, height: 640 });
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce', forcedColors: 'active' });
+  const chatTrigger = page.getByRole('button', { name: 'Open meeting chat' });
+  await expect(chatTrigger).toBeVisible();
+  await expect
+    .poll(() =>
+      chatTrigger.evaluate(
+        (element) => Number.parseFloat(getComputedStyle(element).transitionDuration) || 0
+      )
+    )
+    .toBeLessThanOrEqual(0.001);
+  await chatTrigger.click();
+  const collaborationClose = page.locator('.dwp-meeting-collaboration__icon-button');
+  await expect(collaborationClose).toBeFocused();
+  await expect(page.locator('.dwp-meeting-conference__stage')).toHaveAttribute('inert', '');
+  await expect(page.locator('.dwp-video-meeting-room__header')).toHaveAttribute('inert', '');
+  await expect(page.locator('.dwp-video-meeting-room__header')).toHaveAttribute(
+    'aria-hidden',
+    'true'
+  );
+  await expect(page.locator('.dwp-video-meeting-room__interactions')).toHaveAttribute(
+    'aria-hidden',
+    'true'
+  );
+  await expect(page.locator('.dwp-video-meeting-room__interactions')).toHaveAttribute('inert', '');
+  await expect
+    .poll(() =>
+      page.locator('.dwp-video-meeting-room').evaluate((element) => {
+        const room = element as HTMLElement;
+        return room.scrollWidth - room.clientWidth;
+      })
+    )
+    .toBeLessThanOrEqual(1);
+  await collaborationClose.press('Shift+Tab');
+  await expect(page.getByRole('textbox', { name: 'Type a message' })).toBeFocused();
+  await page.getByRole('textbox', { name: 'Type a message' }).press('Tab');
+  await expect(collaborationClose).toBeFocused();
+  await collaborationClose.press('Escape');
+  await expect(chatTrigger).toBeFocused();
+  await expect(page.locator('.dwp-video-meeting-room__interactions')).not.toHaveAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.getByRole('button', { name: 'Open floor requests' }).click();
+  await expect(page.locator('.dwp-meeting-collaboration__icon-button')).toBeFocused();
+  await page.locator('.dwp-meeting-collaboration__icon-button').press('Escape');
+  await expect(page.getByRole('button', { name: 'Open floor requests' })).toBeFocused();
+  await page.getByRole('button', { name: 'Open participant list' }).click();
+  await expect(page.locator('.dwp-meeting-side-panel__close')).toBeFocused();
+  await page.locator('.dwp-meeting-side-panel__close').press('Escape');
+  await expect(page.getByRole('button', { name: 'Open participant list' })).toBeFocused();
+  expect(
+    await page.locator('.dwp-video-meeting-room').evaluate((element) => {
+      const room = element as HTMLElement;
+      return room.scrollWidth - room.clientWidth;
+    })
+  ).toBeLessThanOrEqual(1);
+  const roomAccessibility = await new AxeBuilder({ page })
+    .include('.dwp-video-meeting-room')
+    .analyze();
+  expect(
+    roomAccessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+
   await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide')));
   await expect.poll(() => departureRequests).toBe(1);
   await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide')));
@@ -692,6 +819,127 @@ test('a meeting without approval moves directly to the room preparation step', a
   await expect(page.getByRole('heading', { name: 'Check the room before entering' })).toBeVisible();
 });
 
+test('a late code-resolution error cannot contaminate a newer meeting-code result', async ({
+  page,
+}) => {
+  await mockMeetingMember(page);
+  const meetingB = {
+    ...meetingSummary,
+    meetingId: '81000000-0000-0000-0000-000000000098',
+    meetingCode: 'NPQR-STUV-WX23',
+    title: 'Current incident review',
+  };
+  const firstResponse = createDeferredResponse();
+  let firstResolutionStarted = false;
+
+  await page.route('**/api/meetings/v1/join-codes/ABCDEFGHJKMN', async (route) => {
+    firstResolutionStarted = true;
+    await firstResponse.promise;
+    return fulfill(route, { message: 'stale resolution failed' }, 503);
+  });
+  await page.route('**/api/meetings/v1/join-codes/NPQRSTUVWX23', (route) =>
+    fulfill(route, {
+      meeting: meetingB,
+      joinAllowed: true,
+      denialReason: null,
+      waitingRoomRequired: true,
+    })
+  );
+
+  await page.goto('/meetings/join?code=ABCDEFGHJKMN');
+  await page.getByRole('button', { name: 'Find meeting' }).click();
+  await expect.poll(() => firstResolutionStarted).toBe(true);
+
+  const codeInput = page.locator('input[autocomplete="one-time-code"]');
+  await codeInput.fill('NPQR-STUV-WX23');
+  await page.getByRole('button', { name: 'Find meeting' }).click();
+  await expect(page.getByRole('heading', { name: meetingB.title })).toBeVisible();
+
+  firstResponse.release();
+  await page.waitForTimeout(250);
+  await expect(page.getByRole('heading', { name: meetingB.title })).toBeVisible();
+  await expect(page.getByText('The meeting code could not be resolved.')).toHaveCount(0);
+});
+
+test('a late direct-join response cannot replace a newer meeting-code intent', async ({ page }) => {
+  await mockMeetingMember(page);
+  const meetingB = {
+    ...meetingSummary,
+    meetingId: '81000000-0000-0000-0000-000000000099',
+    meetingCode: 'NPQR-STUV-WX23',
+    title: 'Current architecture review',
+    waitingRoomEnabled: false,
+  };
+  const firstResponse = createDeferredResponse();
+  let firstRequestStarted = false;
+
+  await page.route('**/api/meetings/v1/join-codes/ABCDEFGHJKMN', (route) =>
+    fulfill(route, {
+      meeting: { ...meetingSummary, waitingRoomEnabled: false },
+      joinAllowed: true,
+      denialReason: null,
+      waitingRoomRequired: false,
+    })
+  );
+  await page.route('**/api/meetings/v1/join-codes/NPQRSTUVWX23', (route) =>
+    fulfill(route, {
+      meeting: meetingB,
+      joinAllowed: true,
+      denialReason: null,
+      waitingRoomRequired: false,
+    })
+  );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingSummary.meetingId}/join-requests`,
+    async (route) => {
+      firstRequestStarted = true;
+      await firstResponse.promise;
+      return fulfill(route, {
+        requestId: '82000000-0000-0000-0000-000000000091',
+        state: 'APPROVED',
+        displayName: 'Mina Kim',
+        requestedAt: joiningParticipant.joinRequestedAt,
+        version: 2,
+      });
+    }
+  );
+  await page.route(`**/api/meetings/v1/meetings/${meetingB.meetingId}/join-requests`, (route) =>
+    fulfill(route, {
+      requestId: '82000000-0000-0000-0000-000000000099',
+      state: 'APPROVED',
+      displayName: 'Mina Kim',
+      requestedAt: joiningParticipant.joinRequestedAt,
+      version: 2,
+    })
+  );
+  await page.route(`**/api/meetings/v1/meetings/${meetingB.meetingId}`, (route) =>
+    fulfill(route, {
+      ...meetingDetail,
+      ...meetingB,
+      lifecycleState: 'LIVE',
+      participants: [{ ...joiningParticipant, attendanceState: 'ADMITTED', version: 2 }],
+    })
+  );
+
+  await page.goto('/meetings/join?code=ABCDEFGHJKMN');
+  await page.getByRole('button', { name: 'Find meeting' }).click();
+  await expect(page.getByRole('heading', { name: 'Platform launch review' })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect.poll(() => firstRequestStarted).toBe(true);
+
+  const codeInput = page.locator('input[autocomplete="one-time-code"]');
+  await codeInput.fill('NPQR-STUV-WX23');
+  await page.getByRole('button', { name: 'Find meeting' }).click();
+  await expect(page.getByRole('heading', { name: meetingB.title })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/meetings/room/${meetingB.meetingId}`));
+
+  firstResponse.release();
+  await page.waitForTimeout(250);
+  await expect(page).toHaveURL(new RegExp(`/meetings/room/${meetingB.meetingId}`));
+  await expect(page).not.toHaveURL(new RegExp(`/meetings/room/${meetingSummary.meetingId}`));
+});
+
 test('ended meetings open the selected recap with actual evidence and honest artifact state', async ({
   page,
 }) => {
@@ -747,8 +995,49 @@ test('ended meetings open the selected recap with actual evidence and honest art
     });
   });
   await page.route(
-    `**/api/meetings/v1/meetings/${endedMeeting.meetingId}/intelligence/reports/latest`,
-    (route) => fulfill(route, { code: 'NOT_FOUND' }, 404)
+    `**/api/meetings/v1/meetings/${endedMeeting.meetingId}/intelligence/reports/latest-published`,
+    (route) =>
+      fulfill(route, {
+        reportId: '88000000-0000-0000-0000-000000000001',
+        meetingId: endedMeeting.meetingId,
+        runId: '87000000-0000-0000-0000-000000000001',
+        state: 'PUBLISHED',
+        audience: 'MEETING_PARTICIPANTS',
+        schemaVersion: 'meeting-intelligence-v1',
+        retentionUntil: '2026-09-27T01:50:00Z',
+        legalHold: false,
+        approvedAt: '2026-08-27T02:00:00Z',
+        publishedAt: '2026-08-27T02:02:00Z',
+        version: 2,
+        canCurrentViewerReview: false,
+        analysis: {
+          executiveSummary: {
+            text: 'The team approved a staged launch with one regional dependency open.',
+            citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }],
+          },
+          topics: [],
+          decisions: [
+            {
+              text: 'Launch the pilot on Monday.',
+              citations: [{ segmentId: 'seg-18', startMillis: 221_000, endMillis: 238_000 }],
+            },
+          ],
+          actionItems: [
+            {
+              text: 'Verify regional capacity before expansion.',
+              citations: [{ segmentId: 'seg-21', startMillis: 281_000, endMillis: 302_000 }],
+            },
+          ],
+          openQuestions: [],
+          risks: [],
+          conversationClimate: {
+            label: 'ALIGNED',
+            signals: [],
+            citations: [{ segmentId: 'seg-18', startMillis: 221_000, endMillis: 238_000 }],
+          },
+        },
+        reviews: [],
+      })
   );
 
   await page.goto('/meetings/mine');
@@ -762,6 +1051,13 @@ test('ended meetings open the selected recap with actual evidence and honest art
   await expect(page.getByRole('heading', { name: 'Completed launch review' })).toBeVisible();
   await expect(page.getByText('42 minutes')).toBeVisible();
   await expect(page.getByText('1 participant')).toBeVisible();
+  await expect(
+    page.getByText('The team approved a staged launch with one regional dependency open.')
+  ).toBeVisible();
+  await expect(page.getByText('Launch the pilot on Monday.')).toBeVisible();
+  for (const tabName of ['Overview', 'Recording, transcript, and AI', 'Attendance']) {
+    await expect(page.getByRole('tab', { name: tabName })).toBeInViewport({ ratio: 1 });
+  }
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
   await expect(page.getByText('Processing', { exact: true })).toBeVisible();
   await expect(page.getByText('Stored · viewing unavailable')).toBeVisible({ timeout: 8_000 });
@@ -849,10 +1145,75 @@ test('administrators see unsupported recording and persist supported governed po
   });
   expect(saved).not.toHaveProperty('unmuteControl');
 
+  await page.route('**/api/meetings/v1/admin/intelligence/readiness', (route) =>
+    fulfill(route, {
+      readinessVersion: 'meeting-intelligence-readiness-v1',
+      observedAt: '2026-08-29T06:00:00Z',
+      recordingPolicy: 'NEVER',
+      providerCode: 'managed-provider',
+      providerModel: 'enterprise-model',
+      processingRegion: 'kr-central-1',
+      capabilities: {
+        recording: { state: 'BLOCKED', reason: 'POLICY_NEVER' },
+        transcript: { state: 'BLOCKED', reason: 'STT_NOT_READY' },
+        aiNotes: { state: 'BLOCKED', reason: 'LLM_NOT_READY' },
+      },
+      dependencies: {
+        provider: { state: 'READY' },
+        region: { state: 'READY' },
+        kms: { state: 'READY' },
+        audit: { state: 'READY' },
+        egress: { state: 'BLOCKED', reason: 'EGRESS_NOT_READY' },
+        storage: { state: 'READY' },
+        stt: { state: 'BLOCKED', reason: 'STT_NOT_READY' },
+        llm: { state: 'BLOCKED', reason: 'LLM_NOT_READY' },
+        retention: { state: 'READY' },
+      },
+      governance: {
+        humanReview: { state: 'READY' },
+        explicitPublish: { state: 'READY' },
+        adminContentAccess: { state: 'READY' },
+        legalHold: {
+          state: 'NOT_VERIFIED',
+          reason: 'LEGAL_HOLD_ADMIN_WORKFLOW_NOT_CONFIGURED',
+        },
+        deletionEvidence: {
+          state: 'NOT_VERIFIED',
+          reason: 'COMPLETE_DELETION_EVIDENCE_NOT_VERIFIED',
+        },
+      },
+      retention: {
+        meetingDays: 90,
+        artifactDays: 30,
+        chatDays: 60,
+        intelligenceWorkerReady: true,
+        signals: {
+          intelligenceReports: { state: 'READY' },
+          meetingRecords: {
+            state: 'NOT_VERIFIED',
+            reason: 'MEETING_RECORD_RETENTION_WORKER_NOT_CONFIGURED',
+          },
+          artifacts: {
+            state: 'NOT_VERIFIED',
+            reason: 'ARTIFACT_RETENTION_WORKER_NOT_CONFIGURED',
+          },
+          chat: {
+            state: 'NOT_VERIFIED',
+            reason: 'CHAT_RETENTION_WORKER_NOT_CONFIGURED',
+          },
+        },
+      },
+    })
+  );
   await page.goto('/meetings/admin/intelligence');
   await expect(page.getByRole('heading', { name: 'AI and data governance' })).toBeVisible();
   await expect(page.getByText('never grants access to recordings')).toBeVisible();
-  await expect(page.getByText('Language model')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Language model' })).toBeVisible();
+  await expect(page.getByText('managed-provider')).toBeVisible();
+  await expect(page.getByText('enterprise-model')).toBeVisible();
+  await expect(
+    page.getByText('Meeting-record purge execution is not implemented or verified.')
+  ).toBeVisible();
 
   await page.setViewportSize({ width: 320, height: 760 });
   const overflow = await page.evaluate(
@@ -865,4 +1226,91 @@ test('administrators see unsupported recording and persist supported governed po
       (violation) => violation.impact === 'critical' || violation.impact === 'serious'
     )
   ).toEqual([]);
+});
+
+test('configured administrators can select host opt-in without claiming runtime readiness', async ({
+  page,
+}) => {
+  await mockMeetingMember(page, true);
+  const policy = {
+    meetingsEnabled: true,
+    waitingRoomRequired: true,
+    guestsAllowed: false,
+    participantChatAllowed: true,
+    reactionsAllowed: true,
+    screenShareAllowed: true,
+    unmuteControl: 'REQUEST_ONLY',
+    recordingPolicy: 'NEVER',
+    retentionDays: 90,
+    artifactRetentionDays: 30,
+    chatRetentionDays: 60,
+    allowJoinBeforeHost: false,
+    requireAuthenticatedInternalUsers: true,
+    maximumParticipants: 100,
+    recordingConfigured: true,
+    aiNotesConfigured: false,
+    version: 4,
+  };
+  let saved: Record<string, unknown> | null = null;
+  await page.route('**/api/meetings/v1/admin/policy', async (route) => {
+    if (route.request().method() === 'GET') return fulfill(route, policy);
+    saved = route.request().postDataJSON() as Record<string, unknown>;
+    return fulfill(route, { ...policy, ...saved, version: 5 });
+  });
+
+  await page.goto('/meetings/admin/policies');
+  const recording = page.getByRole('switch', { name: 'Allow recording' });
+  await expect(recording).toBeEnabled();
+  await recording.check();
+  await expect(
+    page.getByText('Host opt-in permits only a governed recording request.')
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Save policy' }).click();
+
+  await expect.poll(() => saved).not.toBeNull();
+  expect(saved).toMatchObject({ recordingPolicy: 'HOST_OPT_IN', expectedVersion: 4 });
+});
+
+test('administrator-required recording survives unrelated policy edits', async ({ page }) => {
+  await mockMeetingMember(page, true);
+  const policy = {
+    meetingsEnabled: true,
+    waitingRoomRequired: true,
+    guestsAllowed: false,
+    participantChatAllowed: true,
+    reactionsAllowed: true,
+    screenShareAllowed: true,
+    unmuteControl: 'REQUEST_ONLY',
+    recordingPolicy: 'ADMIN_REQUIRED',
+    retentionDays: 90,
+    artifactRetentionDays: 30,
+    chatRetentionDays: 60,
+    allowJoinBeforeHost: false,
+    requireAuthenticatedInternalUsers: true,
+    maximumParticipants: 100,
+    recordingConfigured: true,
+    aiNotesConfigured: false,
+    version: 7,
+  };
+  let saved: Record<string, unknown> | null = null;
+  await page.route('**/api/meetings/v1/admin/policy', async (route) => {
+    if (route.request().method() === 'GET') return fulfill(route, policy);
+    saved = route.request().postDataJSON() as Record<string, unknown>;
+    return fulfill(route, { ...policy, ...saved, version: 8 });
+  });
+
+  await page.goto('/meetings/admin/policies');
+  await expect(page.getByRole('switch', { name: 'Allow recording' })).toBeChecked();
+  await expect(
+    page.getByText('This inherited policy is preserved until explicitly changed.')
+  ).toBeVisible();
+  await page.getByRole('switch', { name: 'Allow participant chat' }).uncheck();
+  await page.getByRole('button', { name: 'Save policy' }).click();
+
+  await expect.poll(() => saved).not.toBeNull();
+  expect(saved).toMatchObject({
+    participantChatAllowed: false,
+    recordingPolicy: 'ADMIN_REQUIRED',
+    expectedVersion: 7,
+  });
 });

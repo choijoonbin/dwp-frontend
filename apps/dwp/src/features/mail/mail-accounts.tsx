@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, MailCheck, RefreshCw, ShieldCheck } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  CirclePause,
+  LoaderCircle,
+  MailCheck,
+  RefreshCw,
+  ShieldCheck,
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getMailHome } from '@dwp-frontend/shared-utils';
 import { ActionButton, GuidedEmptyState, PageCanvas } from '@dwp-frontend/design-system';
@@ -13,6 +21,71 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
+
+import type {
+  MailAccount,
+  MailAccountConnectionState,
+  MailAccountSynchronizationState,
+} from '@dwp-frontend/shared-utils';
+
+type AccountStatusPresentation = {
+  color: 'success' | 'info' | 'warning' | 'error';
+  icon: typeof CheckCircle2;
+  labelKey: string;
+  guidanceKey: string;
+};
+
+function accountStatusPresentation(account: MailAccount): AccountStatusPresentation {
+  const connection: Record<MailAccountConnectionState, AccountStatusPresentation> = {
+    ACTIVE: {
+      color: 'success',
+      icon: CheckCircle2,
+      labelKey: 'accounts.status.ready',
+      guidanceKey: 'accounts.guidance.ready',
+    },
+    REAUTHENTICATION_REQUIRED: {
+      color: 'warning',
+      icon: AlertTriangle,
+      labelKey: 'accounts.status.reauthenticationRequired',
+      guidanceKey: 'accounts.guidance.reauthenticationRequired',
+    },
+    SUSPENDED: {
+      color: 'error',
+      icon: CirclePause,
+      labelKey: 'accounts.status.suspended',
+      guidanceKey: 'accounts.guidance.suspended',
+    },
+    DISCONNECTED: {
+      color: 'error',
+      icon: AlertTriangle,
+      labelKey: 'accounts.status.disconnected',
+      guidanceKey: 'accounts.guidance.disconnected',
+    },
+  };
+  if (account.connectionState !== 'ACTIVE') return connection[account.connectionState];
+  const synchronization: Record<MailAccountSynchronizationState, AccountStatusPresentation> = {
+    READY: connection.ACTIVE,
+    SYNCING: {
+      color: 'info',
+      icon: LoaderCircle,
+      labelKey: 'accounts.status.syncing',
+      guidanceKey: 'accounts.guidance.syncing',
+    },
+    DEGRADED: {
+      color: 'warning',
+      icon: AlertTriangle,
+      labelKey: 'accounts.status.degraded',
+      guidanceKey: 'accounts.guidance.degraded',
+    },
+    PAUSED: {
+      color: 'warning',
+      icon: CirclePause,
+      labelKey: 'accounts.status.paused',
+      guidanceKey: 'accounts.guidance.paused',
+    },
+  };
+  return synchronization[account.synchronizationState];
+}
 
 export function MailAccounts() {
   const { t } = useTranslation('mail');
@@ -54,61 +127,78 @@ export function MailAccounts() {
             sx={{ border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }}
           >
             {query.data.accounts.length ? (
-              query.data.accounts.map((account, index) => (
-                <Box key={account.accountId}>
-                  {index > 0 && <Divider />}
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={2}
-                    alignItems={{ xs: 'flex-start', sm: 'center' }}
-                    sx={{ p: 2.25 }}
-                  >
-                    <Box
-                      sx={{
-                        width: 42,
-                        height: 42,
-                        borderRadius: 1,
-                        display: 'grid',
-                        placeItems: 'center',
-                        bgcolor: 'var(--dwp-product-soft)',
-                        color: 'var(--dwp-product-accent)',
-                      }}
+              query.data.accounts.map((account, index) => {
+                const status = accountStatusPresentation(account);
+                const StatusIcon = status.icon;
+                return (
+                  <Box key={account.accountId}>
+                    {index > 0 && <Divider />}
+                    <Stack
+                      direction={{ xs: 'column', sm: 'row' }}
+                      spacing={2}
+                      alignItems={{ xs: 'flex-start', sm: 'center' }}
+                      sx={{ p: 2.25 }}
                     >
-                      <MailCheck size={20} />
-                    </Box>
-                    <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
-                        <Typography fontWeight={800}>{account.displayName}</Typography>
-                        {account.defaultAccount && (
-                          <Chip
-                            size="small"
-                            label={t('accounts.default')}
-                            color="success"
-                            variant="outlined"
-                          />
-                        )}
-                        {account.accountKind === 'SHARED' && (
-                          <Chip size="small" label={t('accounts.shared')} variant="outlined" />
-                        )}
-                      </Stack>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                        {account.emailAddress}
-                      </Typography>
-                    </Box>
-                    <Stack alignItems={{ xs: 'flex-start', sm: 'flex-end' }} spacing={0.5}>
-                      <Stack direction="row" spacing={0.6} alignItems="center" color="success.main">
-                        <CheckCircle2 size={15} />
-                        <Typography variant="body2" fontWeight={700}>
-                          {t('accounts.ready')}
+                      <Box
+                        sx={{
+                          width: 42,
+                          height: 42,
+                          borderRadius: 1,
+                          display: 'grid',
+                          placeItems: 'center',
+                          bgcolor: 'var(--dwp-product-soft)',
+                          color: 'var(--dwp-product-accent)',
+                        }}
+                      >
+                        <MailCheck size={20} />
+                      </Box>
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
+                          <Typography fontWeight={800}>{account.displayName}</Typography>
+                          {account.defaultAccount && (
+                            <Chip
+                              size="small"
+                              label={t('accounts.default')}
+                              color="success"
+                              variant="outlined"
+                            />
+                          )}
+                          {account.accountKind === 'SHARED' && (
+                            <Chip size="small" label={t('accounts.shared')} variant="outlined" />
+                          )}
+                        </Stack>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                          {account.emailAddress}
+                        </Typography>
+                      </Box>
+                      <Stack alignItems={{ xs: 'flex-start', sm: 'flex-end' }} spacing={0.5}>
+                        <Stack
+                          direction="row"
+                          spacing={0.6}
+                          alignItems="center"
+                          color={`${status.color}.main`}
+                        >
+                          <StatusIcon size={15} aria-hidden />
+                          <Typography variant="body2" fontWeight={700}>
+                            {t(status.labelKey)}
+                          </Typography>
+                        </Stack>
+                        <Typography variant="caption" color="text.secondary">
+                          {t(`provider.${account.providerType}`)} ·{' '}
+                          {t(`accounts.sync.${account.synchronizationState}`)}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ maxWidth: 280, textAlign: { sm: 'right' } }}
+                        >
+                          {t(status.guidanceKey)}
                         </Typography>
                       </Stack>
-                      <Typography variant="caption" color="text.secondary">
-                        {t(`provider.${account.providerType}`)} · {account.synchronizationState}
-                      </Typography>
                     </Stack>
-                  </Stack>
-                </Box>
-              ))
+                  </Box>
+                );
+              })
             ) : (
               <GuidedEmptyState
                 kind="first-use"

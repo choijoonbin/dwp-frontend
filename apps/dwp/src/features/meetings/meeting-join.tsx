@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Clock3, KeyRound, ShieldX } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -22,6 +22,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { formatMeetingDateTime, MeetingPageHeading, MeetingStatusChip } from './meeting-components';
+import {
+  createMeetingJoinAttemptFence,
+  type MeetingJoinRequestIntent,
+  type MeetingJoinResolutionIntent,
+} from './meeting-join-attempt-fence';
 
 const MIN_JOIN_CODE_LENGTH = 10;
 const MAX_JOIN_CODE_LENGTH = 16;
@@ -49,26 +54,54 @@ export function MeetingJoin() {
   const [displayName, setDisplayName] = useState(auth.user?.displayName ?? '');
   const [resolution, setResolution] = useState<VideoMeetingCodeResolution | null>(null);
   const [joinRequest, setJoinRequest] = useState<VideoMeetingJoinRequest | null>(null);
+  const [resolveError, setResolveError] = useState(false);
+  const [requestError, setRequestError] = useState(false);
+  const [pendingResolutionGeneration, setPendingResolutionGeneration] = useState<number | null>(
+    null
+  );
+  const [pendingRequestGeneration, setPendingRequestGeneration] = useState<number | null>(null);
+  const attemptFenceRef = useRef<ReturnType<typeof createMeetingJoinAttemptFence> | null>(null);
+  if (!attemptFenceRef.current) {
+    attemptFenceRef.current = createMeetingJoinAttemptFence(code);
+  }
+  const attemptFence = attemptFenceRef.current;
 
   const resolveMutation = useMutation({
-    mutationFn: () => resolveVideoMeetingCode(normalizeVideoMeetingCode(code)),
-    onSuccess: (result) => {
+    mutationFn: (intent: MeetingJoinResolutionIntent) => resolveVideoMeetingCode(intent.code),
+    onSuccess: (result, intent) => {
+      if (!attemptFence.acceptResolution(intent, result.meeting.meetingId)) return;
+      setPendingResolutionGeneration(null);
       setResolution(result);
       setJoinRequest(null);
+      setResolveError(false);
+      setRequestError(false);
+    },
+    onError: (_error, intent) => {
+      if (!attemptFence.canCommitResolution(intent)) return;
+      setPendingResolutionGeneration(null);
+      setResolveError(true);
     },
   });
   const requestMutation = useMutation({
-    mutationFn: () =>
-      requestVideoMeetingJoin(resolution?.meeting.meetingId ?? '', {
-        displayName: displayName.trim(),
+    mutationFn: (intent: MeetingJoinRequestIntent) =>
+      requestVideoMeetingJoin(intent.meetingId, {
+        displayName: intent.displayName,
         idempotencyKey: crypto.randomUUID(),
       }),
-    onSuccess: (result) => {
+    onSuccess: (result, intent) => {
+      if (!attemptFence.canCommitRequest(intent) || result.meetingId !== intent.meetingId) return;
+      setPendingRequestGeneration(null);
+      setRequestError(false);
       setJoinRequest(result);
-      if (!resolution?.requiresApproval && result.state === 'APPROVED') {
+      if (!intent.requiresApproval && result.state === 'APPROVED') {
         const query = new URLSearchParams({ joinRequest: result.requestId });
         navigate(`/meetings/room/${encodeURIComponent(result.meetingId)}?${query.toString()}`);
       }
+    },
+    onError: (_error, intent) => {
+      if (!attemptFence.canCommitRequest(intent)) return;
+      setPendingRequestGeneration(null);
+      setRequestError(true);
     },
   });
   const requestQuery = useQuery({
@@ -83,8 +116,10 @@ export function MeetingJoin() {
   });
 
   useEffect(() => {
-    if (requestQuery.data) setJoinRequest(requestQuery.data);
-  }, [requestQuery.data]);
+    if (requestQuery.data && attemptFence.ownsMeeting(requestQuery.data.meetingId)) {
+      setJoinRequest(requestQuery.data);
+    }
+  }, [attemptFence, requestQuery.data]);
 
   const enterDeviceCheck = () => {
     if (!resolution || !joinRequest) return;
@@ -116,7 +151,16 @@ export function MeetingJoin() {
           sx={{ p: { xs: 2, sm: 3 } }}
           onSubmit={(event) => {
             event.preventDefault();
-            if (hasValidJoinCodeLength(code)) resolveMutation.mutate();
+            if (!hasValidJoinCodeLength(code)) return;
+            const normalizedCode = normalizeVideoMeetingCode(code);
+            const intent = attemptFence.beginResolution(normalizedCode);
+            setPendingResolutionGeneration(intent.generation);
+            setResolution(null);
+            setJoinRequest(null);
+            setResolveError(false);
+            setRequestError(false);
+            setPendingRequestGeneration(null);
+            resolveMutation.mutate(intent);
           }}
         >
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} alignItems="flex-start">
@@ -126,7 +170,6 @@ export function MeetingJoin() {
               label={t('join.code')}
               placeholder={t('join.codePlaceholder')}
               value={formatJoinCode(code)}
-              disabled={resolveMutation.isPending}
               supportingText={t('join.codeHint')}
               slotProps={{
                 htmlInput: {
@@ -139,16 +182,22 @@ export function MeetingJoin() {
                 },
               }}
               onChange={(event) => {
-                setCode(normalizeVideoMeetingCode(event.target.value));
+                const nextCode = normalizeVideoMeetingCode(event.target.value);
+                attemptFence.replaceCode(nextCode);
+                setCode(nextCode);
                 setResolution(null);
                 setJoinRequest(null);
+                setResolveError(false);
+                setRequestError(false);
+                setPendingResolutionGeneration(null);
+                setPendingRequestGeneration(null);
               }}
             />
             <ActionButton
               type="submit"
               intent="primary"
               disabled={!hasValidJoinCodeLength(code)}
-              loading={resolveMutation.isPending}
+              loading={pendingResolutionGeneration !== null}
               loadingLabel={t('join.resolving')}
               startIcon={<KeyRound size={17} />}
               sx={{ mt: { sm: 1 }, minWidth: 144, height: 40 }}
@@ -156,7 +205,7 @@ export function MeetingJoin() {
               {t('join.resolve')}
             </ActionButton>
           </Stack>
-          {resolveMutation.isError && (
+          {resolveError && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {t('join.resolveError')}
             </Alert>
@@ -194,15 +243,23 @@ export function MeetingJoin() {
                     value={displayName}
                     onChange={(event) => setDisplayName(event.target.value.slice(0, 100))}
                   />
-                  {requestMutation.isError && (
-                    <Alert severity="error">{t('join.requestError')}</Alert>
-                  )}
+                  {requestError && <Alert severity="error">{t('join.requestError')}</Alert>}
                   <ActionButton
                     intent="primary"
-                    loading={requestMutation.isPending}
+                    loading={pendingRequestGeneration !== null}
                     loadingLabel={t('join.requesting')}
                     disabled={!displayName.trim()}
-                    onClick={() => requestMutation.mutate()}
+                    onClick={() => {
+                      const intent = attemptFence.beginRequest({
+                        meetingId: resolution.meeting.meetingId,
+                        displayName: displayName.trim(),
+                        requiresApproval: resolution.requiresApproval,
+                      });
+                      if (!intent) return;
+                      setPendingRequestGeneration(intent.generation);
+                      setRequestError(false);
+                      requestMutation.mutate(intent);
+                    }}
                   >
                     {t(resolution.requiresApproval ? 'join.request' : 'join.continueDirect')}
                   </ActionButton>

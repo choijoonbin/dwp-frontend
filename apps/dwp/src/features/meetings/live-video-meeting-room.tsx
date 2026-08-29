@@ -72,6 +72,7 @@ export function LiveVideoMeetingRoom({
   const [connected, setConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [permissionError, setPermissionError] = useState<string | null>(null);
+  const [overlayPanelOpen, setOverlayPanelOpen] = useState(false);
 
   return (
     <Modal open hideBackdrop disableEscapeKeyDown aria-label={t('room.liveRegion')}>
@@ -100,6 +101,7 @@ export function LiveVideoMeetingRoom({
             ending={ending}
             operationError={operationError ?? permissionError ?? connectionError}
             permissions={credential.effectivePermissions}
+            overlayPanelOpen={overlayPanelOpen}
             onEndForEveryone={onEndForEveryone}
           />
           <MeetingConference
@@ -109,6 +111,7 @@ export function LiveVideoMeetingRoom({
             meetingLive={meeting.lifecycleState === 'LIVE'}
             onDeviceError={() => setPermissionError(t('errors.mediaPermission'))}
             onLeaveError={() => setConnectionError(t('errors.leaveSync'))}
+            onOverlayPanelChange={setOverlayPanelOpen}
           />
         </LiveKitRoom>
       </Box>
@@ -122,6 +125,7 @@ function MeetingRoomChrome({
   ending,
   operationError,
   permissions,
+  overlayPanelOpen,
   onEndForEveryone,
 }: {
   meeting: VideoMeetingSummary;
@@ -129,6 +133,7 @@ function MeetingRoomChrome({
   ending: boolean;
   operationError?: string | null;
   permissions: VideoMeetingJoinCredential['effectivePermissions'];
+  overlayPanelOpen: boolean;
   onEndForEveryone: () => void;
 }) {
   const { t } = useTranslation('meetings');
@@ -206,7 +211,11 @@ function MeetingRoomChrome({
   };
   return (
     <>
-      <header className="dwp-video-meeting-room__header">
+      <header
+        className="dwp-video-meeting-room__header"
+        aria-hidden={overlayPanelOpen || undefined}
+        inert={overlayPanelOpen || undefined}
+      >
         <Stack direction="row" spacing={1} alignItems="center" minWidth={0}>
           <Chip
             icon={<Radio size={14} />}
@@ -222,6 +231,7 @@ function MeetingRoomChrome({
             direction="row"
             alignItems="center"
             gap={0.5}
+            role="status"
             aria-label={t('room.quality')}
             sx={{ color: 'common.white' }}
           >
@@ -268,6 +278,8 @@ function MeetingRoomChrome({
           role="toolbar"
           aria-orientation="horizontal"
           aria-label={t('room.reactionsLabel')}
+          aria-hidden={overlayPanelOpen || undefined}
+          inert={overlayPanelOpen || undefined}
         >
           {REACTIONS.map((reaction) => (
             <ActionIconButton
@@ -288,6 +300,7 @@ function MeetingRoomChrome({
         className="dwp-video-meeting-room__reaction-layer"
         aria-live="polite"
         aria-atomic="false"
+        aria-hidden={overlayPanelOpen || undefined}
       >
         {overlays.map((overlay) => (
           <div key={overlay.id} className="dwp-video-meeting-room__reaction">
@@ -304,7 +317,11 @@ function MeetingRoomChrome({
       </div>
 
       {(operationError || reactionError) && (
-        <Box className="dwp-video-meeting-room__status">
+        <Box
+          className="dwp-video-meeting-room__status"
+          aria-hidden={overlayPanelOpen || undefined}
+          inert={overlayPanelOpen || undefined}
+        >
           <Alert severity="warning">{operationError || reactionError}</Alert>
         </Box>
       )}

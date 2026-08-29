@@ -19,6 +19,8 @@ const CALENDAR_SURFACES = [
 const CALENDAR_FORCED_COLOR_SURFACES = [
   { id: 'home', path: '/calendar/home' },
   { id: 'schedule', path: '/calendar/schedule' },
+  { id: 'insights', path: '/calendar/insights' },
+  { id: 'admin-overview', path: '/calendar/admin/overview' },
   { id: 'admin-company-calendars', path: '/calendar/admin/company-calendars' },
 ] as const;
 

@@ -48,6 +48,7 @@ type MeetingConferenceProps = {
   meetingLive: boolean;
   onDeviceError: (error: Error) => void;
   onLeaveError: () => void;
+  onOverlayPanelChange: (open: boolean) => void;
 };
 
 type MeetingSidePanel = 'chat' | 'floor' | 'participants' | null;
@@ -79,10 +80,12 @@ export function MeetingConference({
   meetingLive,
   onDeviceError,
   onLeaveError,
+  onOverlayPanelChange,
 }: MeetingConferenceProps) {
   const { t } = useTranslation('meetings');
   const [sidePanel, setSidePanel] = useState<MeetingSidePanel>(null);
   const overlayPanel = useMediaQuery('(max-width:899px)');
+  const liveKitRootRef = useRef<HTMLDivElement>(null);
   const lastAutoFocusedScreenShare = useRef<string | null>(null);
   const panelTriggerRefs = useRef<
     Partial<Record<Exclude<MeetingSidePanel, null>, HTMLButtonElement>>
@@ -104,6 +107,32 @@ export function MeetingConference({
     [tracks]
   );
   const subscribedScreenShare = screenShareTracks.find((track) => track.publication.isSubscribed);
+
+  useEffect(() => {
+    onOverlayPanelChange(overlayPanel && sidePanel !== null);
+  }, [onOverlayPanelChange, overlayPanel, sidePanel]);
+
+  useEffect(() => () => onOverlayPanelChange(false), [onOverlayPanelChange]);
+
+  useEffect(() => {
+    const liveKitRoot = liveKitRootRef.current;
+    if (!liveKitRoot) return;
+
+    const applyAccessibleMetadata = () => {
+      const label = t('room.controls.focusToggle');
+      liveKitRoot
+        .querySelectorAll<HTMLButtonElement>('button.lk-focus-toggle-button')
+        .forEach((button) => {
+          button.setAttribute('aria-label', label);
+          button.title = label;
+        });
+    };
+
+    applyAccessibleMetadata();
+    const observer = new MutationObserver(applyAccessibleMetadata);
+    observer.observe(liveKitRoot, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [t]);
 
   useEffect(() => {
     if (subscribedScreenShare && lastAutoFocusedScreenShare.current === null) {
@@ -134,7 +163,7 @@ export function MeetingConference({
   };
 
   return (
-    <div className="dwp-meeting-conference">
+    <div ref={liveKitRootRef} className="dwp-meeting-conference">
       <LayoutContextProvider value={layoutContext}>
         <div className="dwp-meeting-conference__workspace" data-panel-open={sidePanel !== null}>
           <section

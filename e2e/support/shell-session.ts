@@ -1854,8 +1854,13 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/platform/v1/rooms/availability') {
+      const from = url.searchParams.get('from') ?? '2026-08-19T01:00:00Z';
+      const to = url.searchParams.get('to') ?? '2026-08-19T02:00:00Z';
+      const excludedEventId = url.searchParams.get('excludeEventId');
+      const generatedAt = '2026-08-19T00:20:00Z';
+      const rooms = CALENDAR_RESOURCES_FIXTURE.filter((resource) => resource.type === 'ROOM');
       return fulfillSuccess(route, {
-        rooms: CALENDAR_RESOURCES_FIXTURE.filter((resource) => resource.type === 'ROOM'),
+        rooms,
         occupancy: [
           {
             resourceId: CALENDAR_RESOURCES_FIXTURE[0].resourceId,
@@ -1864,7 +1869,18 @@ export async function mockShellSession(
             bookingStatus: 'CONFIRMED',
           },
         ],
-        generatedAt: '2026-08-19T00:20:00Z',
+        bookingEligibility: rooms.map((room) => ({
+          resourceId: room.resourceId,
+          eligible: true,
+          reasonCode: 'ELIGIBLE',
+          evaluatedFrom: from,
+          evaluatedTo: to,
+          excludedEventId,
+          evaluatedAt: generatedAt,
+          resourceVersion: room.version,
+          policyVersion: CALENDAR_ADMIN_FIXTURE.policy.version,
+        })),
+        generatedAt,
       });
     }
     if (path === '/api/platform/v1/rooms/policy') {

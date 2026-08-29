@@ -26,7 +26,7 @@ import { RoomBookingDialog } from './room-booking-dialog';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 import { WorkplaceBookingDialog } from './workplace-booking-dialog';
-import { isAuthoritativeWorkplaceReadFailure } from './workplace-authority-failure';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import {
   WorkplaceDiscoveryControls,
   type WorkplaceDiscoveryView,
@@ -37,6 +37,7 @@ import {
   workplaceDiscoverySort,
   workplaceDiscoveryType,
 } from './workplace-discovery-model';
+import { workplaceHomeSourceState } from './workplace-home-source-state';
 import {
   WorkplaceFloorPlan,
   WorkplaceMapLegend,
@@ -164,7 +165,7 @@ export function WorkplaceExplore() {
       previousQuery?.queryKey[2] === identityKey ? previous : undefined,
     staleTime: 15_000,
     refetchInterval: 60_000,
-    retry: (failureCount, error) => !isAuthoritativeWorkplaceReadFailure(error) && failureCount < 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const roomPolicyQuery = useQuery({
     queryKey: ['rooms', 'policy', identityKey],
@@ -172,27 +173,49 @@ export function WorkplaceExplore() {
     enabled: capabilities.isLoaded && capabilities.canViewRooms,
     staleTime: 30_000,
     refetchInterval: 60_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
 
-  const discardRetainedData = query.isError && isAuthoritativeWorkplaceReadFailure(query.error);
+  const exploreSourceState = workplaceHomeSourceState({
+    data: query.data,
+    error: query.error,
+    failureCount: query.failureCount,
+    failureReason: query.failureReason,
+    isError: query.isError,
+    isPending: query.isPending,
+    required: true,
+  });
+  const roomPolicySourceState = workplaceHomeSourceState({
+    data: roomPolicyQuery.data,
+    error: roomPolicyQuery.error,
+    failureCount: roomPolicyQuery.failureCount,
+    failureReason: roomPolicyQuery.failureReason,
+    isError: roomPolicyQuery.isError,
+    isPending: roomPolicyQuery.isPending,
+    required: capabilities.isLoaded && capabilities.canViewRooms,
+  });
+  const discardRetainedData = exploreSourceState === 'DENIED';
+  const discardRoomPolicy = roomPolicySourceState === 'DENIED';
   useEffect(() => {
     if (discardRetainedData) {
       setLastVerifiedSnapshot(null);
       setBookingResource(null);
       setRoom(null);
       if (searchParamsRef.current.has('resource')) updateParams({ resource: null });
-    } else if (query.data && !query.isPlaceholderData && !query.isError) {
+    } else if (query.data && !query.isPlaceholderData && exploreSourceState === 'READY') {
       setLastVerifiedSnapshot({ identityKey, data: query.data });
     }
   }, [
     discardRetainedData,
     identityKey,
     query.data,
-    query.isError,
+    exploreSourceState,
     query.isPlaceholderData,
     updateParams,
   ]);
+  useEffect(() => {
+    if (discardRoomPolicy) setRoom(null);
+  }, [discardRoomPolicy]);
   const retainedData =
     lastVerifiedSnapshot?.identityKey === identityKey ? lastVerifiedSnapshot.data : null;
   const data = discardRetainedData ? null : (query.data ?? retainedData);
@@ -342,12 +365,12 @@ export function WorkplaceExplore() {
       rangeFrom: selectedRange?.from ?? null,
       rangeTo: selectedRange?.to ?? null,
       roomPolicy,
-      roomPolicyReady: Boolean(roomPolicy) && !roomPolicyQuery.isError,
+      roomPolicyReady: Boolean(roomPolicy) && roomPolicySourceState === 'READY',
       serverNow: data?.generatedAt ?? new Date().toISOString(),
       timeZone: selectedSite?.timeZone ?? null,
       verified:
         !query.isPlaceholderData &&
-        !query.isError &&
+        exploreSourceState === 'READY' &&
         Boolean(selectedSite?.timeZone && selectedSite.timeZone === siteTimeZone),
       workplacePolicy: policy ?? null,
     }),
@@ -356,10 +379,10 @@ export function WorkplaceExplore() {
       capabilities.canCreateWorkplaceBooking,
       data?.generatedAt,
       data?.occupancy,
-      query.isError,
+      exploreSourceState,
       query.isPlaceholderData,
       roomPolicy,
-      roomPolicyQuery.isError,
+      roomPolicySourceState,
       selectedRange?.from,
       selectedRange?.to,
       selectedSite?.timeZone,
@@ -409,7 +432,7 @@ export function WorkplaceExplore() {
     const code = workplaceBookingBlockCode(resource, bookability);
     if (code === 'UNVERIFIED') {
       return t(
-        query.isError
+        exploreSourceState === 'STALE'
           ? 'workplace.explore.availabilityStale'
           : 'workplace.explore.availabilityRefreshing'
       );
@@ -434,6 +457,54 @@ export function WorkplaceExplore() {
   };
   const bookingEligibility = (resource: WorkplaceResource) =>
     workplaceBookingBlockCode(resource, bookability) === null;
+  const currentWorkplaceBookingResource = bookingResource
+    ? (data?.resources.find(
+        (candidate) =>
+          candidate.resourceId === bookingResource.resourceId &&
+          candidate.version === bookingResource.version
+      ) ?? null)
+    : null;
+  const currentWorkplaceRoom = room
+    ? (data?.resources.find(
+        (candidate) =>
+          candidate.calendarResourceId === room.resourceId && candidate.version === room.version
+      ) ?? null)
+    : null;
+  const workplaceBookingSourceSnapshot =
+    currentWorkplaceBookingResource &&
+    selectedRange &&
+    data &&
+    policy &&
+    exploreSourceState === 'READY' &&
+    workplaceBookingBlockCode(currentWorkplaceBookingResource, bookability) === null
+      ? {
+          identityKey,
+          resourceId: currentWorkplaceBookingResource.resourceId,
+          resourceVersion: currentWorkplaceBookingResource.version,
+          rangeFrom: selectedRange.from,
+          rangeTo: selectedRange.to,
+          generatedAt: data.generatedAt,
+          policyVersion: policy.version,
+        }
+      : null;
+  const roomBookingSourceSnapshot =
+    currentWorkplaceRoom &&
+    selectedRange &&
+    data &&
+    roomPolicy &&
+    exploreSourceState === 'READY' &&
+    roomPolicySourceState === 'READY' &&
+    workplaceBookingBlockCode(currentWorkplaceRoom, bookability) === null
+      ? {
+          identityKey,
+          resourceId: currentWorkplaceRoom.calendarResourceId!,
+          resourceVersion: currentWorkplaceRoom.version,
+          rangeFrom: selectedRange.from,
+          rangeTo: selectedRange.to,
+          generatedAt: data.generatedAt,
+          policyVersion: roomPolicy.version,
+        }
+      : null;
 
   const chooseSite = (value: string) => {
     const nextFloor = data?.floors.find((floor) => floor.siteId === value);
@@ -550,9 +621,11 @@ export function WorkplaceExplore() {
         !capabilities.canCreateRoomBooking && (
           <RoomsPermissionNotice>{t('permissions.workplaceBookingReadOnly')}</RoomsPermissionNotice>
         )}
-      {roomPolicyQuery.isError && (
+      {(roomPolicySourceState === 'STALE' ||
+        roomPolicySourceState === 'DENIED' ||
+        roomPolicySourceState === 'UNAVAILABLE') && (
         <Alert
-          severity={roomPolicy ? 'warning' : 'error'}
+          severity={roomPolicySourceState === 'STALE' ? 'warning' : 'error'}
           action={
             <ActionButton intent="quiet" onClick={() => roomPolicyQuery.refetch()}>
               {t('actions.retry')}
@@ -560,7 +633,11 @@ export function WorkplaceExplore() {
           }
           sx={{ mb: 2 }}
         >
-          {t(roomPolicy ? 'find.policyStale' : 'workplace.explore.roomPolicyUnavailable')}
+          {t(
+            roomPolicySourceState === 'STALE'
+              ? 'find.policyStale'
+              : 'workplace.explore.roomPolicyUnavailable'
+          )}
         </Alert>
       )}
 
@@ -656,17 +733,23 @@ export function WorkplaceExplore() {
         </Stack>
 
         {query.isLoading && !data && <Skeleton variant="rectangular" height={460} />}
-        {query.isError && (
+        {(exploreSourceState === 'STALE' ||
+          exploreSourceState === 'DENIED' ||
+          exploreSourceState === 'UNAVAILABLE') && (
           <Alert
-            severity={data ? 'warning' : 'error'}
+            severity={exploreSourceState === 'STALE' ? 'warning' : 'error'}
             action={
               <ActionButton intent="secondary" onClick={() => query.refetch()}>
                 {t('actions.retry')}
               </ActionButton>
             }
-            sx={{ mb: data ? 2 : 0 }}
+            sx={{ mb: exploreSourceState === 'STALE' ? 2 : 0 }}
           >
-            {t(data ? 'workplace.staleWarning' : 'workplace.explore.loadError')}
+            {t(
+              exploreSourceState === 'STALE'
+                ? 'workplace.staleWarning'
+                : 'workplace.explore.loadError'
+            )}
           </Alert>
         )}
         {hasUsableData && !hasSites && (
@@ -819,6 +902,7 @@ export function WorkplaceExplore() {
         siteTimeZone={siteTimeZone}
         serverNow={data?.generatedAt ?? new Date().toISOString()}
         policy={policy ?? null}
+        sourceSnapshot={workplaceBookingSourceSnapshot}
         onClose={() => setBookingResource(null)}
       />
       <RoomBookingDialog
@@ -827,6 +911,7 @@ export function WorkplaceExplore() {
         initialStart={selectedRange?.from ?? ''}
         initialEnd={selectedRange?.to ?? ''}
         policy={roomPolicy}
+        sourceSnapshot={roomBookingSourceSnapshot}
         onClose={() => setRoom(null)}
       />
     </PageCanvas>

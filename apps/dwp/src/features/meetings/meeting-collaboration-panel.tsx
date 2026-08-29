@@ -36,6 +36,7 @@ import {
   type MeetingFloorPanelState,
   type MeetingFloorRequest,
 } from './meeting-collaboration-model';
+import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
 
 import './meeting-collaboration-panel.css';
 
@@ -126,6 +127,7 @@ export function MeetingCollaborationPanel({
   const generatedId = useId();
   const tabRefs = useRef(new Map<MeetingCollaborationTab, HTMLButtonElement>());
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const floorCount = countActionableFloorRequests(floor.requests);
   const tabs: readonly MeetingCollaborationTab[] = ['chat', 'floor'];
   const markChatRead = actions.onMarkChatRead;
@@ -162,8 +164,10 @@ export function MeetingCollaborationPanel({
 
   return (
     <aside
+      ref={panelRef}
       className="dwp-meeting-collaboration"
       aria-label={labels.panelTitle}
+      onKeyDownCapture={(event) => containMeetingOverlayTab(event, panelRef.current)}
       onKeyDown={(event) => {
         if (event.key !== 'Escape') return;
         event.preventDefault();

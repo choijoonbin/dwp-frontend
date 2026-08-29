@@ -51,7 +51,7 @@ export function MailDailyFlow({
       key: 'snoozed',
       value: metrics.snoozed,
       icon: Clock3,
-      path: '/mail/inbox',
+      path: '/mail/inbox?state=SNOOZED',
     },
     {
       key: 'assistant',

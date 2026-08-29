@@ -467,6 +467,8 @@
     "pickerTitle": "표시할 캘린더 선택",
     "pickerDescription": "일정에 표시할 캘린더를 정하고 중요한 캘린더를 즐겨찾기에 모아두세요.",
     "closePicker": "캘린더 선택 창 닫기",
+    "hidePanel": "캘린더 패널 숨기기",
+    "showPanel": "캘린더 패널 표시",
     "required": "필수",
     "manageSharingFor": "{{name}} 공유 관리",
     "addFavoriteFor": "{{name}} 즐겨찾기 추가",

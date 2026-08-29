@@ -152,6 +152,7 @@
     "TENANT_LIFECYCLE": "테넌트 수명주기"
   },
   "auditActions": {
+    "ARCHIVE": "메일 보관",
     "ARCHIVE_NOW": "즉시 보관",
     "APPLY": "적용",
     "APPROVE": "승인",
@@ -169,6 +170,8 @@
     "EXTEND_RETENTION": "자동 보관 기한 연장",
     "RETRY_SCHEDULED": "반출 재시도 예약",
     "SNOOZE": "알림 다시 보기 예약",
+    "SPAM": "메일을 스팸으로 이동",
+    "TRASH": "메일을 휴지통으로 이동",
     "UNSAVE": "알림 저장 해제",
     "ACCESS_REVIEW_CAMPAIGN_ACTIVATED": "접근 검토 캠페인 활성화",
     "ACCESS_REVIEW_CAMPAIGN_COMPLETED": "접근 검토 캠페인 완료",

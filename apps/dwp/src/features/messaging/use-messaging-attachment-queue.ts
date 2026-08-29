@@ -60,18 +60,30 @@ function contentType(file: File) {
 }
 
 export function useMessagingAttachmentQueue(
-  conversationId: string | null
+  conversationId: string | null,
+  queueContextKey: string | null = conversationId
 ): MessagingAttachmentQueue {
   const { t } = useTranslation('messaging');
   const toast = useToast();
   const [items, setItems] = useState<MessagingAttachmentDraft[]>([]);
   const itemsRef = useRef(items);
   const generationRef = useRef(0);
+  const cancelledLocalIdsRef = useRef(new Set<string>());
+  const discardedAttachmentIdsRef = useRef(new Set<string>());
   const conversationRef = useRef(conversationId);
+  const queueContextRef = useRef(queueContextKey);
 
   const replaceItems = useCallback((next: MessagingAttachmentDraft[]) => {
     itemsRef.current = next;
     setItems(next);
+  }, []);
+
+  const discard = useCallback((ownerConversationId: string, attachmentId: string) => {
+    if (discardedAttachmentIdsRef.current.has(attachmentId)) return;
+    discardedAttachmentIdsRef.current.add(attachmentId);
+    void discardMessagingAttachment(ownerConversationId, attachmentId).catch(() => {
+      discardedAttachmentIdsRef.current.delete(attachmentId);
+    });
   }, []);
 
   const updateItem = useCallback(
@@ -86,6 +98,7 @@ export function useMessagingAttachmentQueue(
   const upload = useCallback(
     async (draft: MessagingAttachmentDraft, generation: number) => {
       if (!conversationId) return;
+      let stagedAttachmentId: string | null = null;
       try {
         const session = await createMessagingAttachmentUpload({
           conversationId,
@@ -94,24 +107,47 @@ export function useMessagingAttachmentQueue(
           sizeBytes: draft.file.size,
           idempotencyKey: crypto.randomUUID(),
         });
-        if (generationRef.current !== generation) return;
+        stagedAttachmentId = session.attachment.attachmentId;
+        if (
+          generationRef.current !== generation ||
+          cancelledLocalIdsRef.current.has(draft.localId)
+        ) {
+          discard(conversationId, stagedAttachmentId);
+          return;
+        }
         updateItem(draft.localId, (current) => ({ ...current, attachment: session.attachment }));
         if (!session.uploadUrl) {
           throw new Error('The attachment upload session is not writable.');
         }
         const attachment = await uploadMessagingAttachmentContent(session.uploadUrl, draft.file);
-        if (generationRef.current !== generation) return;
+        if (
+          generationRef.current !== generation ||
+          cancelledLocalIdsRef.current.has(draft.localId)
+        ) {
+          discard(conversationId, attachment.attachmentId);
+          return;
+        }
         updateItem(draft.localId, (current) => ({
           ...current,
           attachment,
           state: attachment.status === 'CLEAN' ? 'READY' : 'REJECTED',
         }));
       } catch {
-        if (generationRef.current !== generation) return;
+        if (
+          generationRef.current !== generation ||
+          cancelledLocalIdsRef.current.has(draft.localId)
+        ) {
+          if (stagedAttachmentId) {
+            discard(conversationId, stagedAttachmentId);
+          }
+          return;
+        }
         updateItem(draft.localId, (current) => ({ ...current, state: 'ERROR' }));
+      } finally {
+        cancelledLocalIdsRef.current.delete(draft.localId);
       }
     },
-    [conversationId, updateItem]
+    [conversationId, discard, updateItem]
   );
 
   const addFiles = useCallback(
@@ -143,42 +179,62 @@ export function useMessagingAttachmentQueue(
       const current = itemsRef.current.find((item) => item.localId === localId);
       if (!current || current.state === 'UPLOADING') return;
       if (conversationId && current.attachment) {
-        void discardMessagingAttachment(conversationId, current.attachment.attachmentId);
+        discard(conversationId, current.attachment.attachmentId);
       }
+      cancelledLocalIdsRef.current.delete(localId);
       const next = { ...current, state: 'UPLOADING' as const, attachment: undefined };
       updateItem(localId, () => next);
       void upload(next, generationRef.current);
     },
-    [conversationId, updateItem, upload]
+    [conversationId, discard, updateItem, upload]
   );
 
   const remove = useCallback(
     (localId: string) => {
       const removed = itemsRef.current.find((item) => item.localId === localId);
+      if (!removed) return;
+      cancelledLocalIdsRef.current.add(localId);
       replaceItems(itemsRef.current.filter((item) => item.localId !== localId));
       if (conversationId && removed?.attachment) {
-        void discardMessagingAttachment(conversationId, removed.attachment.attachmentId);
+        discard(conversationId, removed.attachment.attachmentId);
       }
     },
-    [conversationId, replaceItems]
+    [conversationId, discard, replaceItems]
   );
 
   const clear = useCallback(() => replaceItems([]), [replaceItems]);
 
   useEffect(() => {
     const previousConversationId = conversationRef.current;
-    const abandoned = itemsRef.current.filter(
-      (item) => item.state !== 'UPLOADING' && item.attachment
-    );
+    const previousQueueContextKey = queueContextRef.current;
+    if (previousConversationId === conversationId && previousQueueContextKey === queueContextKey) {
+      return;
+    }
+    const abandoned = itemsRef.current.filter((item) => item.attachment);
     generationRef.current += 1;
     replaceItems([]);
     if (previousConversationId) {
       abandoned.forEach((item) => {
-        void discardMessagingAttachment(previousConversationId, item.attachment!.attachmentId);
+        discard(previousConversationId, item.attachment!.attachmentId);
       });
     }
     conversationRef.current = conversationId;
-  }, [conversationId, replaceItems]);
+    queueContextRef.current = queueContextKey;
+  }, [conversationId, discard, queueContextKey, replaceItems]);
+
+  useEffect(
+    () => () => {
+      generationRef.current += 1;
+      const abandoned = itemsRef.current.filter((item) => item.attachment);
+      itemsRef.current = [];
+      if (conversationRef.current) {
+        abandoned.forEach((item) => {
+          discard(conversationRef.current!, item.attachment!.attachmentId);
+        });
+      }
+    },
+    [discard]
+  );
 
   return useMemo(
     () => ({

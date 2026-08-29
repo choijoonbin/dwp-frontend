@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Archive, CheckCheck, Clock3, Inbox, MailOpen, MailPlus, Search, Star } from 'lucide-react';
 import { CommandPaletteDialog } from '@dwp-frontend/design-system';
@@ -53,6 +53,8 @@ export function MailCommandPalette({
 }) {
   const { t } = useTranslation('mail');
   const [query, setQuery] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const listboxId = useId();
   const commands = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return COMMANDS.filter((command) => {
@@ -63,8 +65,70 @@ export function MailCommandPalette({
   }, [hasSelectedThread, query, t]);
 
   useEffect(() => {
-    if (open) setQuery('');
+    if (!open) return;
+    setQuery('');
+    setActiveIndex(0);
   }, [open]);
+
+  useEffect(() => {
+    setActiveIndex((current) => Math.min(current, Math.max(0, commands.length - 1)));
+  }, [commands.length]);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    let input: HTMLInputElement | null = null;
+    const syncInputContract = () => {
+      input =
+        Array.from(document.querySelectorAll('input')).find(
+          (item) => item.getAttribute('aria-label') === t('command.placeholder')
+        ) ?? null;
+      if (!input) return;
+      input.setAttribute('role', 'combobox');
+      input.setAttribute('aria-autocomplete', 'list');
+      input.setAttribute('aria-expanded', 'true');
+      input.setAttribute('aria-controls', listboxId);
+      input.setAttribute(
+        'aria-activedescendant',
+        commands[activeIndex] ? `${listboxId}-${commands[activeIndex]!.id}` : ''
+      );
+    };
+    const observer = new MutationObserver(syncInputContract);
+    observer.observe(document.body, { childList: true, subtree: true });
+    syncInputContract();
+    return () => {
+      observer.disconnect();
+      input?.removeAttribute('role');
+      input?.removeAttribute('aria-autocomplete');
+      input?.removeAttribute('aria-expanded');
+      input?.removeAttribute('aria-controls');
+      input?.removeAttribute('aria-activedescendant');
+    };
+  }, [activeIndex, commands, listboxId, open, t]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setActiveIndex((current) => (commands.length ? (current + 1) % commands.length : 0));
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setActiveIndex((current) =>
+          commands.length ? (current - 1 + commands.length) % commands.length : 0
+        );
+      } else if (event.key === 'Enter' && commands[activeIndex]) {
+        event.preventDefault();
+        onCommand(commands[activeIndex]!.id);
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [activeIndex, commands, onClose, onCommand, open]);
 
   return (
     <CommandPaletteDialog
@@ -75,12 +139,23 @@ export function MailCommandPalette({
       onQueryChange={setQuery}
       onClose={onClose}
     >
-      <List disablePadding sx={{ py: 0.75, maxHeight: 420, overflowY: 'auto' }}>
-        {commands.map((command) => {
+      <List
+        id={listboxId}
+        role="listbox"
+        aria-label={t('command.results')}
+        disablePadding
+        sx={{ py: 0.75, maxHeight: 420, overflowY: 'auto' }}
+      >
+        {commands.map((command, index) => {
           const Icon = command.icon;
           return (
             <ListItemButton
               key={command.id}
+              id={`${listboxId}-${command.id}`}
+              role="option"
+              aria-selected={index === activeIndex}
+              selected={index === activeIndex}
+              onMouseMove={() => setActiveIndex(index)}
               onClick={() => {
                 onCommand(command.id);
                 onClose();

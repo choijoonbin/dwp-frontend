@@ -724,6 +724,12 @@ test('authenticated users enter a personal home before the business shell', asyn
         data: [
           ...DEFAULT_APP_PERMISSIONS,
           {
+            resourceType: 'APP',
+            resourceKey: 'APP.NOTIFICATIONS',
+            permissionCode: 'VIEW',
+            effect: 'ALLOW',
+          },
+          {
             resourceType: 'ADMIN',
             resourceKey: 'ADMIN.IDENTITY_DIRECTORY',
             permissionCode: 'VIEW',
@@ -844,7 +850,11 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(businessSidebar.getByRole('link', { name: 'Back to personal home' })).toBeVisible();
   await expect(businessSidebar.getByRole('link', { name: 'DWAI·ON', exact: true })).toHaveCount(0);
   await expect(businessSidebar.locator('img')).toHaveCount(0);
-  await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
+  } else {
+    await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
+  }
   await page.evaluate(() => {
     (window as typeof window & { __dwpSpaNavigationMarker?: string }).__dwpSpaNavigationMarker =
       'preserved';
@@ -2079,6 +2089,23 @@ test('users can review and revoke another browser session', async ({ page }) => 
         status: 'SUCCESS',
         message: 'OK',
         data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+      }),
+    })
+  );
+  await page.route('**/api/auth/me/policy', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          tenantId: 1,
+          defaultLoginType: 'LOCAL',
+          allowedLoginTypes: ['LOCAL'],
+          localLoginEnabled: true,
+          ssoLoginEnabled: false,
+          requireMfa: true,
+        },
       }),
     })
   );

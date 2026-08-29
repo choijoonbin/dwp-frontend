@@ -39,10 +39,13 @@ Gateway /api/meetings/**
 dwp-meeting-server ---- PostgreSQL dwp_meetings
         |                     |
         |                     +-- meeting, membership, policy, audit, artifact metadata
+        |                     +-- durable media commands, webhook inbox, intelligence lifecycle
         v
-LiveKit provider port ---- LiveKit SFU / TURN
-                              |
-                              +-- Egress -> encrypted object storage (future controlled rollout)
+LiveKit provider port ---- LiveKit SFU / TURN ---- signed webhook
+        |
+        +-- governed transcript source ---- internal Agent ---- attested managed model
+        |
+        +-- Egress -> KMS-encrypted object storage (production enablement gate)
 ```
 
 Media bytes do not belong in PostgreSQL. The database stores control-plane
@@ -65,8 +68,24 @@ admission.
   media sources. The API returns effective permissions after tenant policy is applied.
 - Directory-backed participant search, live participant/media-state panel, connected
   acknowledgement, and graceful leave/rejoin states.
+- Durable room start/end commands with lease reclaim, fenced completion, bounded retry,
+  and rolling migration from legacy room names to incarnation-bound rooms.
+- Bounded, signature-verified LiveKit webhook ingestion with replay protection,
+  tenant/meeting/participant/incarnation binding, and provider-authoritative attendance.
+- Governed transcript-to-intelligence runs with workload assertions, provider-policy
+  attestations, cited summaries, topics, decisions, action candidates, open questions,
+  risks, and meeting-level conversation climate. Raw transcript and provider payloads
+  are not persisted or logged.
+- Human review and explicit publication. A delegated reviewer may review a draft, while
+  generation and publication remain host-only; recap reads only the latest authorized
+  published report.
+- An administrator-only AI and data-governance readiness surface. It reports policy,
+  provider liveness, processing region, KMS, audit, Egress, storage, STT, recent model
+  execution, retention, and deletion evidence without granting meeting-content access.
 - Tenant policy and operations surfaces.
-- Responsive and keyboard-accessible Korean and English UI.
+- Responsive and keyboard-accessible Korean and English UI, including 320 px layouts,
+  mobile overlay focus containment, 200% zoom-equivalent layouts, dark mode, forced
+  colors, and reduced motion.
 
 External guest and join-before-host controls are deliberately unavailable. Their
 schema defaults are fail-closed until verified guest identity, one-time invitation,
@@ -80,11 +99,10 @@ governance gates pass:
 - TLS/WSS, TURN/TLS, Redis HA, multi-node routing, and regional capacity tests.
 - Private service networking plus rotatable workload identity or short-lived signed
   request context; the local static service token is not the production trust model.
-- Durable provider-operation receipts and reconciliation for room create/end so
-  LiveKit and PostgreSQL cannot remain divergent after a partial failure.
-- Signed LiveKit webhook inbox, retry/DLQ, and periodic provider reconciliation.
-  Client `connected`/`leave` acknowledgement is useful UX telemetry, but is not the
-  authoritative attendance record without provider events and reconciliation.
+- Deployment registration and monitoring of the signed LiveKit webhook endpoint,
+  provider-event lag and replay alarms, operational reconciliation, and proof that all
+  `vm_meeting_media_upgrades` rows reached `SUCCEEDED`. Client `connected`/`leave`
+  acknowledgement remains UX telemetry and never replaces provider evidence.
 - Egress workers, encrypted object storage, consent, retention, legal hold, and deletion evidence.
 - WCAG-conformant live captions, streaming STT, editable transcript, and
   human-reviewed AI summary.
@@ -95,6 +113,11 @@ governance gates pass:
   return-to-lobby, and bulk admission controls with provider-side enforcement.
 - Breakout rooms, polling, whiteboard, SIP/PSTN, webinar, and live streaming.
 - 100+ participant load, degraded-network, browser, mobile, and accessibility certification.
+
+Code-level readiness is intentionally not the same as production readiness. With the
+default disabled providers, recording, transcription, and AI remain blocked. The
+management surface must continue to show `CONNECTION_REQUIRED` or `NOT_VERIFIED` until
+the deployment supplies current operational evidence.
 
 ## Evidence
 

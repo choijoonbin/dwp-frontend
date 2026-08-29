@@ -279,6 +279,7 @@ export function MessagingComposer({
       </Box>
       <MessagingAttachmentDrafts
         items={attachments}
+        removalDisabled={isSending}
         labels={{
           uploading: t('conversation.attachments.uploading'),
           ready: t('conversation.attachments.ready'),

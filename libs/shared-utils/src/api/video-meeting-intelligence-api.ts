@@ -14,11 +14,7 @@ export type VideoMeetingIntelligencePermission = 'VIEW' | 'REVIEW' | 'MANAGE';
 export type VideoMeetingIntelligenceClimateLabel =
   'ALIGNED' | 'MIXED' | 'CONTESTED' | 'INSUFFICIENT_EVIDENCE';
 export type VideoMeetingIntelligenceClimateSignal =
-  | 'BALANCED_TURN_TAKING'
-  | 'CONSTRUCTIVE_DISAGREEMENT'
-  | 'UNRESOLVED_DISAGREEMENT'
-  | 'DOMINANT_MONOLOGUE_PATTERN'
-  | 'LOW_TRANSCRIPT_EVIDENCE';
+  'CONSTRUCTIVE_DISAGREEMENT' | 'UNRESOLVED_DISAGREEMENT' | 'LOW_TRANSCRIPT_EVIDENCE';
 
 export type VideoMeetingIntelligenceCitation = {
   segmentId: string;
@@ -186,6 +182,20 @@ export async function getLatestVisibleVideoMeetingIntelligenceReport(
   try {
     const response = await axiosInstance.get<ApiResponse<VideoMeetingIntelligenceReport>>(
       intelligencePath(meetingId, 'reports/latest')
+    );
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) return null;
+    throw error;
+  }
+}
+
+export async function getLatestPublishedVideoMeetingIntelligenceReport(
+  meetingId: string
+): Promise<VideoMeetingIntelligenceReport | null> {
+  try {
+    const response = await axiosInstance.get<ApiResponse<VideoMeetingIntelligenceReport>>(
+      intelligencePath(meetingId, 'reports/latest-published')
     );
     return response.data.data;
   } catch (error) {

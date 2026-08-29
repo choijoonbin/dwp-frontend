@@ -4,9 +4,11 @@ import { BellRing, Building2, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createRoomBooking,
+  getRoomAvailability,
   listPeople,
   resolveIdempotentMutationIntent,
   updateRoomBooking,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -31,6 +33,13 @@ import {
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { RoomsPermissionNotice } from './rooms-ui';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
+import {
+  workplaceBookingInstantMatches,
+  workplaceBookingSourceVerified,
+  type WorkplaceBookingSourceSnapshot,
+} from './workplace-booking-source-snapshot';
+import { workplaceHomeSourceState } from './workplace-home-source-state';
 
 import type {
   CalendarEvent,
@@ -51,6 +60,8 @@ type RoomBookingDialogProps = {
   initialEnd?: string | null;
   event?: CalendarEvent | null;
   policy?: CalendarPolicy | null;
+  commandSourceReady?: boolean;
+  sourceSnapshot?: WorkplaceBookingSourceSnapshot | null;
   onClose: () => void;
   onSaved?: (event: CalendarEvent) => void;
 };
@@ -66,6 +77,8 @@ export function RoomBookingDialog({
   initialEnd,
   event,
   policy,
+  commandSourceReady = true,
+  sourceSnapshot,
   onClose,
   onSaved,
 }: RoomBookingDialogProps) {
@@ -73,6 +86,8 @@ export function RoomBookingDialog({
   const toast = useToast();
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
+  const auth = useAuth();
+  const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
   const effectivePolicy = policy ?? DEFAULT_ROOM_POLICY;
   const policyAvailable = Boolean(policy);
   const canSave = event
@@ -86,7 +101,17 @@ export function RoomBookingDialog({
   const [attendeeQuery, setAttendeeQuery] = useState('');
   const [showValidation, setShowValidation] = useState(false);
   const createIntent = useRef<IdempotentMutationIntent | null>(null);
+  const upstreamSourceSnapshotRef = useRef<WorkplaceBookingSourceSnapshot | null | undefined>(
+    sourceSnapshot
+  );
+  const ownerSourceSnapshotRef = useRef<WorkplaceBookingSourceSnapshot | null>(null);
+  const upstreamResourceVersionRef = useRef<number | null>(null);
+  const ownerResourceVersionRef = useRef<number | null>(null);
+  const commandSourceReadyRef = useRef(commandSourceReady);
+  commandSourceReadyRef.current = commandSourceReady;
   const deferredAttendeeQuery = useDeferredValue(attendeeQuery.trim());
+  const deferredStartsAt = useDeferredValue(startsAt);
+  const deferredEndsAt = useDeferredValue(endsAt);
 
   useEffect(() => {
     if (!open || event) createIntent.current = null;
@@ -116,7 +141,7 @@ export function RoomBookingDialog({
   }, [effectivePolicy, event, initialEnd, initialStart, open, room]);
 
   const peopleQuery = useQuery({
-    queryKey: ['rooms', 'people-options', deferredAttendeeQuery],
+    queryKey: ['rooms', 'people-options', identityKey, deferredAttendeeQuery],
     queryFn: () =>
       listPeople({
         query: deferredAttendeeQuery || undefined,
@@ -143,15 +168,156 @@ export function RoomBookingDialog({
         values.findIndex((candidate) => candidate.personId === person.personId) === index
     );
   }, [attendees, peopleQuery.data?.items]);
+  const ownerRangeReady = Boolean(
+    open &&
+    room &&
+    policy &&
+    Number.isFinite(Date.parse(deferredStartsAt)) &&
+    Number.isFinite(Date.parse(deferredEndsAt)) &&
+    Date.parse(deferredEndsAt) > Date.parse(deferredStartsAt)
+  );
+  const ownerAvailabilityQuery = useQuery({
+    queryKey: [
+      'rooms',
+      'booking-dialog-availability',
+      identityKey,
+      room?.resourceId ?? null,
+      deferredStartsAt,
+      deferredEndsAt,
+      event?.eventId ?? null,
+    ],
+    queryFn: () => getRoomAvailability(deferredStartsAt, deferredEndsAt, event?.eventId ?? null),
+    enabled: ownerRangeReady,
+    staleTime: 15_000,
+    refetchInterval: 60_000,
+    retry: retryRecoverableWorkplaceRead,
+  });
+  const ownerAvailabilityState = workplaceHomeSourceState({
+    data: ownerAvailabilityQuery.data,
+    error: ownerAvailabilityQuery.error,
+    failureCount: ownerAvailabilityQuery.failureCount,
+    failureReason: ownerAvailabilityQuery.failureReason,
+    isError: ownerAvailabilityQuery.isError,
+    isPending: ownerAvailabilityQuery.isPending,
+    required: open,
+  });
+  const verifiedOwnerRoom =
+    ownerAvailabilityQuery.data?.rooms.find(
+      (candidate) => candidate.resourceId === room?.resourceId
+    ) ?? null;
+  const ownerEligibilityDecision = ownerAvailabilityQuery.data?.bookingEligibility?.find(
+    (candidate) =>
+      candidate.resourceId === verifiedOwnerRoom?.resourceId &&
+      candidate.resourceVersion === verifiedOwnerRoom?.version &&
+      workplaceBookingInstantMatches(candidate.evaluatedFrom, startsAt) &&
+      workplaceBookingInstantMatches(candidate.evaluatedTo, endsAt) &&
+      candidate.excludedEventId === (event?.eventId ?? null) &&
+      candidate.policyVersion === policy?.version &&
+      workplaceBookingInstantMatches(
+        candidate.evaluatedAt,
+        ownerAvailabilityQuery.data?.generatedAt
+      )
+  );
+  const verifiedOwnerEligibility =
+    ownerEligibilityDecision?.eligible && ownerEligibilityDecision.reasonCode === 'ELIGIBLE'
+      ? ownerEligibilityDecision
+      : null;
+  const ownerSourceSnapshot =
+    verifiedOwnerRoom &&
+    verifiedOwnerEligibility &&
+    policy &&
+    ownerAvailabilityState === 'READY' &&
+    deferredStartsAt === startsAt &&
+    deferredEndsAt === endsAt
+      ? {
+          identityKey,
+          resourceId: verifiedOwnerRoom.resourceId,
+          resourceVersion: verifiedOwnerRoom.version,
+          rangeFrom: startsAt,
+          rangeTo: endsAt,
+          generatedAt: verifiedOwnerEligibility.evaluatedAt,
+          policyVersion: policy.version,
+          bookingEligibility: {
+            evaluatedAt: verifiedOwnerEligibility.evaluatedAt,
+            excludedEventId: verifiedOwnerEligibility.excludedEventId,
+          },
+        }
+      : null;
+  upstreamSourceSnapshotRef.current = sourceSnapshot;
+  ownerSourceSnapshotRef.current = ownerSourceSnapshot;
+  upstreamResourceVersionRef.current = sourceSnapshot?.resourceVersion ?? room?.version ?? null;
+  ownerResourceVersionRef.current = verifiedOwnerRoom?.version ?? null;
+  const validationGeneratedAt = ownerSourceSnapshot?.generatedAt ?? sourceSnapshot?.generatedAt;
   const rangeError =
     room && startsAt && endsAt
-      ? validateRoomBookingRange(startsAt, endsAt, room.timeZone, effectivePolicy)
+      ? validateRoomBookingRange(
+          startsAt,
+          endsAt,
+          room.timeZone,
+          effectivePolicy,
+          validationGeneratedAt
+        )
       : 'invalid';
   const valid = Boolean(room && title.trim() && !rangeError);
+  const sourceRangeChanged = Boolean(
+    sourceSnapshot && (sourceSnapshot.rangeFrom !== startsAt || sourceSnapshot.rangeTo !== endsAt)
+  );
+  const sourceVerifying = Boolean(
+    deferredStartsAt !== startsAt ||
+    deferredEndsAt !== endsAt ||
+    ownerAvailabilityState === 'LOADING' ||
+    ownerAvailabilityQuery.isFetching
+  );
+  const eligibilityMessageKey =
+    ownerAvailabilityState === 'READY' && ownerEligibilityDecision && !verifiedOwnerEligibility
+      ? ownerEligibilityDecision.reasonCode === 'RESOURCE_CONFLICT'
+        ? 'find.eligibilityConflict'
+        : ownerEligibilityDecision.reasonCode === 'POLICY_BLOCKED'
+          ? 'find.eligibilityPolicyBlocked'
+          : 'find.eligibilityResourceUnavailable'
+      : null;
+  const upstreamSourceVerified = workplaceBookingSourceVerified(sourceSnapshot, {
+    resourceId: room?.resourceId,
+    resourceVersion: sourceSnapshot?.resourceVersion ?? room?.version,
+    rangeFrom: startsAt,
+    rangeTo: endsAt,
+    policyVersion: policy?.version,
+  });
+  const ownerSourceVerified = workplaceBookingSourceVerified(ownerSourceSnapshot, {
+    resourceId: room?.resourceId,
+    resourceVersion: verifiedOwnerRoom?.version,
+    rangeFrom: startsAt,
+    rangeTo: endsAt,
+    policyVersion: policy?.version,
+    requireBookingEligibility: true,
+    excludedEventId: event?.eventId ?? null,
+  });
+  const sourceVerified = commandSourceReady && upstreamSourceVerified && ownerSourceVerified;
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!room) throw new Error(t('booking.roomRequired'));
+      if (
+        !commandSourceReadyRef.current ||
+        !workplaceBookingSourceVerified(upstreamSourceSnapshotRef.current, {
+          resourceId: room.resourceId,
+          resourceVersion: upstreamResourceVersionRef.current,
+          rangeFrom: startsAt,
+          rangeTo: endsAt,
+          policyVersion: policy?.version,
+        }) ||
+        !workplaceBookingSourceVerified(ownerSourceSnapshotRef.current, {
+          resourceId: room.resourceId,
+          resourceVersion: ownerResourceVersionRef.current,
+          rangeFrom: startsAt,
+          rangeTo: endsAt,
+          policyVersion: policy?.version,
+          requireBookingEligibility: true,
+          excludedEventId: event?.eventId ?? null,
+        })
+      ) {
+        throw new Error(t('find.availabilityStale'));
+      }
       if (!policyAvailable) throw new Error(t('booking.policyUnavailable'));
       if (!canSave) throw new Error(t('permissions.roomBookingReadOnly'));
       const attendeeInput = attendees
@@ -202,6 +368,10 @@ export function RoomBookingDialog({
     onError: (error) => toast.error(errorMessage(error, t('booking.saveError'))),
   });
 
+  useEffect(() => {
+    if (ownerAvailabilityState === 'DENIED') onClose();
+  }, [onClose, ownerAvailabilityState]);
+
   return (
     <FormDialog
       open={open}
@@ -211,7 +381,7 @@ export function RoomBookingDialog({
       submitLabel={t(event ? 'actions.save' : 'actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!valid || !canSave || !policyAvailable}
+      submitDisabled={!valid || !canSave || !policyAvailable || !sourceVerified}
       onClose={onClose}
       onSubmit={() => {
         if (!valid) {
@@ -227,6 +397,16 @@ export function RoomBookingDialog({
           <RoomsPermissionNotice>
             {t(event ? 'permissions.roomUpdateReadOnly' : 'permissions.roomBookingReadOnly')}
           </RoomsPermissionNotice>
+        )}
+        {!sourceVerified && (
+          <Alert severity={sourceVerifying ? 'info' : 'warning'}>
+            {t(
+              sourceVerifying
+                ? 'find.availabilityVerifying'
+                : (eligibilityMessageKey ??
+                    (sourceRangeChanged ? 'find.rangeChanged' : 'find.availabilityStale'))
+            )}
+          </Alert>
         )}
         {!policyAvailable && <Alert severity="error">{t('booking.policyUnavailable')}</Alert>}
         {room && (

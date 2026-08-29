@@ -316,10 +316,18 @@ export function MeetingAdminPolicies() {
             />
             <PolicySwitch
               label={t('admin.policy.recording')}
-              hint={t('admin.policy.recordingUnavailable')}
-              checked={false}
-              disabled
-              onChange={() => undefined}
+              hint={
+                form.recordingPolicy === 'ADMIN_REQUIRED'
+                  ? t('admin.policy.recordingAdminRequiredHint')
+                  : form.recordingConfigured
+                    ? t('admin.policy.recordingHostOptInHint')
+                    : t('admin.policy.recordingUnavailable')
+              }
+              checked={form.recordingPolicy !== 'NEVER'}
+              disabled={!canManage || !form.recordingConfigured}
+              onChange={(checked) =>
+                setForm({ ...form, recordingPolicy: checked ? 'HOST_OPT_IN' : 'NEVER' })
+              }
             />
             <PolicySwitch
               label={t('admin.policy.aiNotes')}
@@ -329,6 +337,16 @@ export function MeetingAdminPolicies() {
               onChange={() => undefined}
             />
           </PolicySection>
+
+          {form.recordingPolicy !== 'NEVER' && (
+            <Alert severity="warning" icon={<ShieldCheck size={19} />}>
+              {t(
+                form.recordingPolicy === 'ADMIN_REQUIRED'
+                  ? 'admin.policy.recordingAdminRequiredWarning'
+                  : 'admin.policy.recordingHostOptInWarning'
+              )}
+            </Alert>
+          )}
 
           <PolicySection title={t('admin.policy.retentionTitle')}>
             <Box

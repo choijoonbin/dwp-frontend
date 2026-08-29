@@ -43,9 +43,17 @@ Experience Preview는 wide `1920×312`·desktop `1440×326`·tablet `1024×396`�
 Receiver-first trust fence는 generic provisioning token·browser authority header·경로 정규화 우회와
 비단사 JSON hash, 다중 Trust adapter, command/seal claim-body 불일치를 downstream 전에 차단한다. 다만 이는
 수신 측 선행 경계만 구현한 것이다. Gateway exact 404 외부 차단은 완료됐다. 그러나 Production
-ES256/JWKS·durable replay·Registry ledger·TLS/mTLS와 21개 payload branch의 exact `oneOf`·domain ownership
+ES256/JWKS·durable replay·Registry ledger·TLS/mTLS와 authoritative domain ownership·current-state·SoD
 validator가 연결되기 전까지 실제 Internal 요청은 의도적으로 `503 TRUST_UNAVAILABLE`이며 Package의
 `미승인·미출시` 판단은 유지한다.
+
+21개 command payload branch의 closed-field shape validator는 receiver에 연결돼 있다. 이는 실제 Handler,
+권한 원장, 원자 Receipt/Gate/Ledger 또는 운영 활성화가 구현됐다는 뜻이 아니다.
+
+명시적 `dwp.platform.widget-registry-enabled` interlock은 기본값과 누락 설정을 모두 거부하며, 현재
+Milestone에서는 `true`도 Platform 초기화 실패로 처리한다. Filter는 항상 등록되고 production permit 경로는
+아직 없다. 이는 임의 Trust adapter bean이 추가됐다는 이유만으로 Receiver가 조용히 활성화되는 것을 막는
+deny-only 안전장치이며, 아래 운영 Release Gate를 충족했다는 의미가 아니다.
 
 현재 Source의 Catalog는 기존 5개 Native Widget 계약을 한곳에 모은 정적 Seed다. 동적 Provider
 Registry, 다중 Instance, Tenant Allow/Disable, Preset 생성·공유가 구현됐다는 의미가 아니다.

@@ -49,6 +49,7 @@ export function selectMeetingIntelligenceReportForViewer(
 ): VideoMeetingIntelligenceReport | null {
   if (!report || report.state === 'DELETED' || !report.analysis) return null;
   if (canHost) return report;
+  if (report.state === 'DRAFT' && report.canCurrentViewerReview) return report;
   return report.state === 'PUBLISHED' && report.audience === 'MEETING_PARTICIPANTS' ? report : null;
 }
 
@@ -85,7 +86,6 @@ export function deriveMeetingIntelligenceActions(input: {
           ? 'CONTENT_PLAN_NOT_AVAILABLE'
           : null;
   const reviewable =
-    input.canHost &&
     !processing &&
     input.report?.state === 'DRAFT' &&
     input.report.canCurrentViewerReview &&

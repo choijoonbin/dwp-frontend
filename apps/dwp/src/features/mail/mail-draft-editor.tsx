@@ -3,12 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FilePenLine, Save, Send } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateMailDraft, useToast } from '@dwp-frontend/shared-utils';
-import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  ConfirmDialog,
+  FormField,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+import { MailDraftSaveStatus } from './mail-draft-save-status';
+import { useMailDraftAutosave } from './use-mail-draft-autosave';
 
 import type { MailThread, MailThreadDetail } from '@dwp-frontend/shared-utils';
 
@@ -24,38 +33,83 @@ export function MailDraftEditor({
   const { t } = useTranslation('mail');
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [toEmail, setToEmail] = useState('');
-  const [subject, setSubject] = useState('');
-  const [body, setBody] = useState('');
-  const [mode, setMode] = useState<'SEND' | 'DRAFT'>('DRAFT');
   const thread = detail.thread;
-
-  useEffect(() => {
-    setToEmail(thread.participants[0]?.email ?? '');
-    setSubject(thread.subject);
-    setBody(detail.messages.find((message) => message.direction === 'DRAFT')?.body ?? '');
-  }, [detail.messages, thread.participants, thread.subject, thread.threadId]);
-
-  const mutation = useMutation({
-    mutationFn: (deliveryMode: 'SEND' | 'DRAFT') =>
-      updateMailDraft(thread.threadId, {
-        toEmail: toEmail.trim(),
-        subject: subject.trim(),
-        body: body.trim(),
-        deliveryMode,
-        idempotencyKey: crypto.randomUUID(),
-        version: thread.version,
-      }),
-    onSuccess: async (updated, deliveryMode) => {
+  const [toEmail, setToEmail] = useState(thread.participants[0]?.email ?? '');
+  const [subject, setSubject] = useState(thread.subject);
+  const [body, setBody] = useState(
+    detail.messages.find((message) => message.direction === 'DRAFT')?.body ?? ''
+  );
+  const [sending, setSending] = useState(false);
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const [closeWhenSaved, setCloseWhenSaved] = useState(false);
+  const fields = { toEmail, subject, body };
+  const autosave = useMailDraftAutosave({
+    enabled: !sending,
+    fields,
+    initialThreadId: thread.threadId,
+    initialVersion: thread.version,
+    initiallySaved: true,
+    onSaved: async (updated) => {
       queryClient.setQueryData(['mail', 'thread', thread.threadId], updated);
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
       onUpdated?.(updated.thread);
-      toast.success(deliveryMode === 'SEND' ? t('draft.sent') : t('draft.saved'));
-      if (deliveryMode === 'SEND') onBack?.();
     },
-    onError: () => toast.error(t('draft.error')),
   });
-  const valid = Boolean(/^\S+@\S+\.\S+$/u.test(toEmail.trim()) && subject.trim() && body.trim());
+  const sendMutation = useMutation({
+    mutationFn: () => {
+      const draft = autosave.identity;
+      if (!draft) throw new Error('Draft identity is unavailable.');
+      return updateMailDraft(draft.threadId, {
+        toEmail: toEmail.trim(),
+        subject: subject.trim(),
+        body: body.trim(),
+        deliveryMode: 'SEND',
+        idempotencyKey: crypto.randomUUID(),
+        version: draft.version,
+      });
+    },
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(['mail', 'thread', thread.threadId], updated);
+      await queryClient.invalidateQueries({ queryKey: ['mail'] });
+      onUpdated?.(updated.thread);
+      toast.success(t('draft.sent'));
+      onBack?.();
+    },
+    onError: () => {
+      setSending(false);
+      toast.error(t('draft.error'));
+    },
+  });
+
+  const requestBack = () => {
+    autosave.cancelScheduledSave();
+    if (autosave.status === 'SAVING') {
+      setCloseWhenSaved(true);
+      return;
+    }
+    if (
+      autosave.hasUnsavedChanges ||
+      autosave.status === 'ERROR' ||
+      autosave.status === 'CONFLICT'
+    ) {
+      setDiscardOpen(true);
+      return;
+    }
+    onBack?.();
+  };
+
+  useEffect(() => {
+    if (!closeWhenSaved) return;
+    if (autosave.status === 'SAVED') {
+      setCloseWhenSaved(false);
+      onBack?.();
+      return;
+    }
+    if (autosave.status === 'ERROR' || autosave.status === 'CONFLICT') {
+      setCloseWhenSaved(false);
+      setDiscardOpen(true);
+    }
+  }, [autosave.status, closeWhenSaved, onBack]);
 
   return (
     <Box sx={{ height: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
@@ -67,7 +121,7 @@ export function MailDraftEditor({
       >
         <Stack direction="row" spacing={1} alignItems="center">
           {onBack && (
-            <ActionIconButton label={t('actions.back')} onClick={onBack}>
+            <ActionIconButton label={t('actions.back')} onClick={requestBack}>
               <ArrowLeft size={18} />
             </ActionIconButton>
           )}
@@ -88,28 +142,30 @@ export function MailDraftEditor({
             {t('draft.description')}
           </Typography>
           <Stack spacing={2}>
+            {closeWhenSaved && <Alert severity="info">{t('draft.autosave.closing')}</Alert>}
+            <MailDraftSaveStatus status={autosave.status} onRetry={() => void autosave.saveNow()} />
             <FormField
-              required
               type="email"
               label={t('compose.to')}
               value={toEmail}
               autoComplete="off"
+              disabled={closeWhenSaved}
               onChange={(event) => setToEmail(event.target.value)}
             />
             <FormField
-              required
               label={t('compose.subject')}
               value={subject}
+              disabled={closeWhenSaved}
               inputProps={{ maxLength: 500 }}
               onChange={(event) => setSubject(event.target.value)}
             />
             <FormField
-              required
               multiline
               minRows={12}
               maxRows={24}
               label={t('compose.body')}
               value={body}
+              disabled={closeWhenSaved}
               inputProps={{ maxLength: 100_000 }}
               onChange={(event) => setBody(event.target.value)}
             />
@@ -123,23 +179,21 @@ export function MailDraftEditor({
             <ActionButton
               intent="secondary"
               startIcon={<Save size={16} />}
-              disabled={!valid || mutation.isPending}
-              loading={mutation.isPending && mode === 'DRAFT'}
-              onClick={() => {
-                setMode('DRAFT');
-                mutation.mutate('DRAFT');
-              }}
+              disabled={!autosave.canSave || closeWhenSaved}
+              loading={autosave.status === 'SAVING'}
+              onClick={() => void autosave.saveNow()}
             >
               {t('compose.saveDraft')}
             </ActionButton>
             <ActionButton
               intent="primary"
               startIcon={<Send size={16} />}
-              disabled={!valid || mutation.isPending}
-              loading={mutation.isPending && mode === 'SEND'}
+              disabled={!autosave.canSend || sending || closeWhenSaved}
+              loading={sending || sendMutation.isPending}
               onClick={() => {
-                setMode('SEND');
-                mutation.mutate('SEND');
+                autosave.cancelScheduledSave();
+                setSending(true);
+                sendMutation.mutate();
               }}
             >
               {t('compose.send')}
@@ -147,6 +201,19 @@ export function MailDraftEditor({
           </Stack>
         </Box>
       </Box>
+      <ConfirmDialog
+        open={discardOpen}
+        title={t('draft.discard.title')}
+        description={t('draft.discard.description')}
+        cancelLabel={t('draft.discard.keepEditing')}
+        confirmLabel={t('draft.discard.confirm')}
+        intent="danger"
+        onClose={() => setDiscardOpen(false)}
+        onConfirm={() => {
+          setDiscardOpen(false);
+          onBack?.();
+        }}
+      />
     </Box>
   );
 }

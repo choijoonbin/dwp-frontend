@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { CalendarCheck2, CalendarX2, Clock3, MapPin, Pencil, UsersRound } from 'lucide-react';
@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   cancelRoomBooking,
   getRoomBookings,
+  getRoomsPolicy,
   respondToRoomBooking,
   useAuth,
   useToast,
@@ -27,6 +28,8 @@ import { RoomBookingDialog } from './room-booking-dialog';
 import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
+import { workplaceHomeSourceData, workplaceHomeSourceState } from './workplace-home-source-state';
 
 import type { CalendarEvent } from '@dwp-frontend/shared-utils';
 
@@ -51,6 +54,9 @@ function roomBookingTargetId(eventId: string) {
 export function RoomBookings() {
   const { t, i18n } = useTranslation('rooms');
   const auth = useAuth();
+  const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
+  const activeIdentityRef = useRef(identityKey);
+  activeIdentityRef.current = identityKey;
   const capabilities = useRoomsCapabilities();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -61,13 +67,44 @@ export function RoomBookings() {
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const range = useMemo(() => queryRange(filter), [filter]);
   const eventsQuery = useQuery({
-    queryKey: ['rooms', 'my-bookings', range.from, range.to],
+    queryKey: ['rooms', 'my-bookings', identityKey, range.from, range.to],
     queryFn: () => getRoomBookings(range.from, range.to),
     staleTime: 20_000,
-    retry: 1,
+    refetchInterval: 60_000,
+    retry: retryRecoverableWorkplaceRead,
   });
+  const policyQuery = useQuery({
+    queryKey: ['rooms', 'policy', identityKey],
+    queryFn: getRoomsPolicy,
+    enabled: capabilities.isLoaded && capabilities.canViewRooms,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: retryRecoverableWorkplaceRead,
+  });
+  const eventsSourceState = workplaceHomeSourceState({
+    data: eventsQuery.data,
+    error: eventsQuery.error,
+    failureCount: eventsQuery.failureCount,
+    failureReason: eventsQuery.failureReason,
+    isError: eventsQuery.isError,
+    isPending: eventsQuery.isPending,
+    required: true,
+  });
+  const policySourceState = workplaceHomeSourceState({
+    data: policyQuery.data,
+    error: policyQuery.error,
+    failureCount: policyQuery.failureCount,
+    failureReason: policyQuery.failureReason,
+    isError: policyQuery.isError,
+    isPending: policyQuery.isPending,
+    required: capabilities.isLoaded && capabilities.canViewRooms,
+  });
+  const eventsSourceStateRef = useRef(eventsSourceState);
+  eventsSourceStateRef.current = eventsSourceState;
+  const verifiedEvents = workplaceHomeSourceData(eventsSourceState, eventsQuery.data);
+  const verifiedPolicy = workplaceHomeSourceData(policySourceState, policyQuery.data);
   const now = Date.now();
-  const roomEvents = (eventsQuery.data ?? [])
+  const roomEvents = (verifiedEvents ?? [])
     .filter((event) => event.resource?.type === 'ROOM')
     .filter((event) =>
       filter === 'upcoming'
@@ -79,6 +116,32 @@ export function RoomBookings() {
         ? Date.parse(left.startsAt) - Date.parse(right.startsAt)
         : Date.parse(right.startsAt) - Date.parse(left.startsAt)
     );
+  const currentEditing = editing
+    ? (eventsQuery.data?.find(
+        (event) => event.eventId === editing.eventId && event.version === editing.version
+      ) ?? null)
+    : null;
+  const currentCancelling = cancelling
+    ? (eventsQuery.data?.find(
+        (event) => event.eventId === cancelling.eventId && event.version === cancelling.version
+      ) ?? null)
+    : null;
+  useEffect(() => {
+    setEditing(null);
+    setCancelling(null);
+  }, [identityKey]);
+  useEffect(() => {
+    if (eventsSourceState !== 'READY') {
+      setCancelling(null);
+      if (eventsSourceState === 'DENIED') setEditing(null);
+      return;
+    }
+    if (editing && !currentEditing) setEditing(null);
+    if (cancelling && !currentCancelling) setCancelling(null);
+  }, [cancelling, currentCancelling, currentEditing, editing, eventsSourceState]);
+  useEffect(() => {
+    if (policySourceState === 'DENIED') setEditing(null);
+  }, [policySourceState]);
   const requestedEventVisible = roomEvents.some((event) => event.eventId === requestedEventId);
   useEffect(() => {
     if (!requestedEventId || !requestedEventVisible) return;
@@ -101,8 +164,28 @@ export function RoomBookings() {
     );
 
   const cancelMutation = useMutation({
-    mutationFn: (event: CalendarEvent) => cancelRoomBooking(event.eventId, event.version),
-    onSuccess: async () => {
+    mutationFn: ({
+      event,
+      identityKey: commandIdentityKey,
+    }: {
+      event: CalendarEvent;
+      identityKey: string;
+    }) => {
+      const current = eventsQuery.data?.find(
+        (candidate) => candidate.eventId === event.eventId && candidate.version === event.version
+      );
+      if (
+        commandIdentityKey !== activeIdentityRef.current ||
+        eventsSourceStateRef.current !== 'READY' ||
+        !current ||
+        !roomBookingActionPolicy(current, capabilities.canUpdateRoomBooking).canCancel
+      ) {
+        throw new Error(t('permissions.roomUpdateReadOnly'));
+      }
+      return cancelRoomBooking(current.eventId, current.version);
+    },
+    onSuccess: async (_, variables) => {
+      if (variables.identityKey !== activeIdentityRef.current) return;
       setCancelling(null);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['rooms'] }),
@@ -110,21 +193,41 @@ export function RoomBookings() {
       ]);
       toast.success(t('my.cancelled'));
     },
-    onError: () => toast.error(t('my.cancelError')),
+    onError: (_, variables) => {
+      if (variables.identityKey === activeIdentityRef.current) toast.error(t('my.cancelError'));
+    },
   });
   const responseMutation = useMutation({
     mutationFn: ({
       event,
       response,
+      identityKey: commandIdentityKey,
     }: {
       event: CalendarEvent;
       response: 'ACCEPTED' | 'DECLINED';
-    }) => respondToRoomBooking(event.eventId, response),
-    onSuccess: async () => {
+      identityKey: string;
+    }) => {
+      const current = eventsQuery.data?.find(
+        (candidate) => candidate.eventId === event.eventId && candidate.version === event.version
+      );
+      if (
+        commandIdentityKey !== activeIdentityRef.current ||
+        eventsSourceStateRef.current !== 'READY' ||
+        !current ||
+        !roomBookingActionPolicy(current, capabilities.canUpdateRoomBooking).canRespond
+      ) {
+        throw new Error(t('permissions.roomUpdateReadOnly'));
+      }
+      return respondToRoomBooking(current.eventId, response);
+    },
+    onSuccess: async (_, variables) => {
+      if (variables.identityKey !== activeIdentityRef.current) return;
       await queryClient.invalidateQueries({ queryKey: ['rooms', 'my-bookings'] });
       toast.success(t('my.responseSaved'));
     },
-    onError: () => toast.error(t('my.responseError')),
+    onError: (_, variables) => {
+      if (variables.identityKey === activeIdentityRef.current) toast.error(t('my.responseError'));
+    },
   });
 
   return (
@@ -137,6 +240,21 @@ export function RoomBookings() {
       {capabilities.isLoaded && !capabilities.canUpdateRoomBooking && (
         <RoomsPermissionNotice>{t('permissions.roomUpdateReadOnly')}</RoomsPermissionNotice>
       )}
+      {policySourceState !== 'READY' &&
+        policySourceState !== 'LOADING' &&
+        policySourceState !== 'SKIPPED' && (
+          <Alert
+            severity={policySourceState === 'STALE' ? 'warning' : 'error'}
+            action={
+              <ActionButton intent="quiet" onClick={() => policyQuery.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {t(policySourceState === 'STALE' ? 'find.policyStale' : 'find.policyUnavailable')}
+          </Alert>
+        )}
       <Box
         sx={{
           bgcolor: 'background.paper',
@@ -154,7 +272,7 @@ export function RoomBookings() {
           <Tab value="upcoming" label={t('my.upcoming')} />
           <Tab value="past" label={t('my.past')} />
         </Tabs>
-        {eventsQuery.isError && eventsQuery.data && (
+        {eventsSourceState === 'STALE' && (
           <Alert
             severity="warning"
             action={
@@ -166,13 +284,13 @@ export function RoomBookings() {
             {t('workplace.staleWarning')}
           </Alert>
         )}
-        {eventsQuery.isLoading ? (
+        {eventsSourceState === 'LOADING' ? (
           <Stack spacing={1} p={2}>
             {Array.from({ length: 4 }, (_, index) => (
               <Skeleton key={index} variant="rounded" height={118} />
             ))}
           </Stack>
-        ) : eventsQuery.isError && !eventsQuery.data ? (
+        ) : eventsSourceState === 'DENIED' || eventsSourceState === 'UNAVAILABLE' ? (
           <Alert
             severity="error"
             action={
@@ -192,7 +310,15 @@ export function RoomBookings() {
         ) : (
           roomEvents.map((event, index) => {
             const organizer = isOrganizer(event);
-            const actions = roomBookingActionPolicy(event, capabilities.canUpdateRoomBooking);
+            const baseActions = roomBookingActionPolicy(event, capabilities.canUpdateRoomBooking);
+            const actions = {
+              canRespond: eventsSourceState === 'READY' && baseActions.canRespond,
+              canEdit:
+                eventsSourceState === 'READY' &&
+                policySourceState === 'READY' &&
+                baseActions.canEdit,
+              canCancel: eventsSourceState === 'READY' && baseActions.canCancel,
+            };
             const selected = event.eventId === requestedEventId;
             return (
               <Box
@@ -284,13 +410,17 @@ export function RoomBookings() {
                       <>
                         <ActionButton
                           intent="secondary"
-                          onClick={() => responseMutation.mutate({ event, response: 'DECLINED' })}
+                          onClick={() =>
+                            responseMutation.mutate({ event, response: 'DECLINED', identityKey })
+                          }
                         >
                           {t('my.decline')}
                         </ActionButton>
                         <ActionButton
                           intent="primary"
-                          onClick={() => responseMutation.mutate({ event, response: 'ACCEPTED' })}
+                          onClick={() =>
+                            responseMutation.mutate({ event, response: 'ACCEPTED', identityKey })
+                          }
                         >
                           {t('my.accept')}
                         </ActionButton>
@@ -327,14 +457,19 @@ export function RoomBookings() {
         open={Boolean(
           editing && roomBookingActionPolicy(editing, capabilities.canUpdateRoomBooking).canEdit
         )}
-        room={editing?.resource ?? null}
-        event={editing}
+        room={(currentEditing ?? editing)?.resource ?? null}
+        event={currentEditing ?? editing}
+        policy={verifiedPolicy ?? null}
+        commandSourceReady={Boolean(
+          currentEditing && eventsSourceState === 'READY' && policySourceState === 'READY'
+        )}
         onClose={() => setEditing(null)}
       />
       <ConfirmDialog
         open={Boolean(
-          cancelling &&
-          roomBookingActionPolicy(cancelling, capabilities.canUpdateRoomBooking).canCancel
+          currentCancelling &&
+          eventsSourceState === 'READY' &&
+          roomBookingActionPolicy(currentCancelling, capabilities.canUpdateRoomBooking).canCancel
         )}
         title={t('my.cancelTitle')}
         description={t('my.cancelDescription')}
@@ -346,10 +481,11 @@ export function RoomBookings() {
         onClose={() => setCancelling(null)}
         onConfirm={() => {
           if (
-            cancelling &&
-            roomBookingActionPolicy(cancelling, capabilities.canUpdateRoomBooking).canCancel
+            currentCancelling &&
+            eventsSourceState === 'READY' &&
+            roomBookingActionPolicy(currentCancelling, capabilities.canUpdateRoomBooking).canCancel
           ) {
-            cancelMutation.mutate(cancelling);
+            cancelMutation.mutate({ event: currentCancelling, identityKey });
           }
         }}
       />

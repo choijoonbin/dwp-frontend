@@ -6,7 +6,6 @@ import {
   FolderPlus,
   ListFilter,
   Pencil,
-  Play,
   Plus,
   RefreshCw,
   Sparkles,
@@ -20,7 +19,6 @@ import {
   createMailFolder,
   createMailRule,
   getMailOrganization,
-  runMailRule,
   updateMailFolder,
   updateMailRule,
   useToast,
@@ -117,14 +115,6 @@ export function MailOrganization() {
     },
     onError: () => toast.error(t('organization.rule.saveError')),
   });
-  const runMutation = useMutation({
-    mutationFn: runMailRule,
-    onSuccess: async (run) => {
-      await refresh();
-      toast.success(t('organization.rule.runCompleted', { count: run.changedCount }));
-    },
-    onError: () => toast.error(t('organization.rule.runError')),
-  });
   const archiveMutation = useMutation({
     mutationFn: async (target: PendingArchive) => {
       if (target.kind === 'folder') {
@@ -147,11 +137,20 @@ export function MailOrganization() {
   );
   const enabledRules = data?.rules.filter((item) => item.enabled).length ?? 0;
   const organizedMessages = customFolders.reduce((sum, item) => sum + item.totalCount, 0);
-  const localRules =
-    data?.rules.filter((item) => item.synchronizationState === 'LOCAL_ONLY').length ?? 0;
-  const syncIssues = [...(data?.folders ?? []), ...(data?.rules ?? [])].filter(
-    (item) => item.synchronizationState === 'ERROR'
-  ).length;
+  const ruleReadiness = {
+    local:
+      data?.rules.filter((item) => item.enabled && item.synchronizationState === 'LOCAL_ONLY')
+        .length ?? 0,
+    pending:
+      data?.rules.filter((item) => item.enabled && item.synchronizationState === 'PENDING')
+        .length ?? 0,
+    synced:
+      data?.rules.filter((item) => item.enabled && item.synchronizationState === 'SYNCED').length ??
+      0,
+    error:
+      data?.rules.filter((item) => item.enabled && item.synchronizationState === 'ERROR').length ??
+      0,
+  };
   const folderRows = useMemo(() => folderHierarchy(customFolders), [customFolders]);
 
   return (
@@ -238,17 +237,24 @@ export function MailOrganization() {
                 <Chip
                   size="small"
                   variant="outlined"
-                  label={t('organization.pulse.localRules', { count: localRules })}
+                  label={t('organization.pulse.localRules', { count: ruleReadiness.local })}
                 />
                 <Chip
                   size="small"
                   variant="outlined"
-                  color={syncIssues ? 'warning' : 'success'}
-                  label={
-                    syncIssues
-                      ? t('organization.pulse.syncIssues', { count: syncIssues })
-                      : t('organization.pulse.syncHealthy')
-                  }
+                  label={t('organization.pulse.pendingRules', { count: ruleReadiness.pending })}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  label={t('organization.pulse.syncedRules', { count: ruleReadiness.synced })}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={ruleReadiness.error ? 'warning' : 'default'}
+                  label={t('organization.pulse.errorRules', { count: ruleReadiness.error })}
                 />
               </Stack>
             </Box>
@@ -289,10 +295,8 @@ export function MailOrganization() {
                 <RuleList
                   rules={data.rules}
                   folders={data.folders}
-                  runningRuleId={runMutation.variables}
-                  busy={ruleMutation.isPending || runMutation.isPending}
+                  busy={ruleMutation.isPending}
                   onEdit={setRuleEditor}
-                  onRun={(rule) => runMutation.mutate(rule.ruleId)}
                   onToggle={(rule, enabled) =>
                     ruleMutation.mutate({
                       rule,
@@ -470,19 +474,15 @@ function FolderList({
 function RuleList({
   rules,
   folders,
-  runningRuleId,
   busy,
   onEdit,
-  onRun,
   onToggle,
   onArchive,
 }: {
   rules: MailRule[];
   folders: MailFolder[];
-  runningRuleId?: string;
   busy: boolean;
   onEdit: (rule: MailRule) => void;
-  onRun: (rule: MailRule) => void;
   onToggle: (rule: MailRule, enabled: boolean) => void;
   onArchive: (rule: MailRule) => void;
 }) {
@@ -565,14 +565,6 @@ function RuleList({
               }}
               onChange={(_event, enabled) => onToggle(rule, enabled)}
             />
-            <ActionIconButton
-              label={t('organization.rule.run')}
-              loading={runningRuleId === rule.ruleId}
-              disabled={!rule.enabled}
-              onClick={() => onRun(rule)}
-            >
-              <Play size={16} />
-            </ActionIconButton>
             <ActionIconButton label={t('organization.edit')} onClick={() => onEdit(rule)}>
               <Pencil size={16} />
             </ActionIconButton>

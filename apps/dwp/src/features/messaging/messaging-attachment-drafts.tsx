@@ -17,6 +17,7 @@ function fileSize(size: number) {
 export function MessagingAttachmentDrafts({
   items,
   labels,
+  removalDisabled = false,
   onRetry,
   onRemove,
 }: {
@@ -29,6 +30,7 @@ export function MessagingAttachmentDrafts({
     retry: string;
     remove: string;
   };
+  removalDisabled?: boolean;
   onRetry: (localId: string) => void;
   onRemove: (localId: string) => void;
 }) {
@@ -93,7 +95,7 @@ export function MessagingAttachmentDrafts({
             <ActionIconButton
               label={`${labels.remove}: ${item.file.name}`}
               size="small"
-              disabled={item.state === 'UPLOADING'}
+              disabled={removalDisabled}
               onClick={() => onRemove(item.localId)}
             >
               <X size={14} />

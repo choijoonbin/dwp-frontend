@@ -1,4 +1,4 @@
-import { useToastStore } from '@dwp-frontend/shared-utils';
+import { useToastStore } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';

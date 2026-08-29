@@ -1,4 +1,4 @@
-import { canonicalizeLocale } from '@dwp-frontend/shared-utils';
+import { canonicalizeLocale } from '@dwp-frontend/shared-utils/locale-preference';
 
 export const PRODUCT_DEFAULT_LOCALE = 'en';
 

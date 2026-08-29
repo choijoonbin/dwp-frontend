@@ -26,6 +26,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
 import { useWorkplaceDecisionClock } from './workplace-decision-clock';
 import { workplaceHomeDecisionDeadline } from './workplace-home-decision-clock';
@@ -92,7 +93,7 @@ export function WorkplaceHome() {
     },
     staleTime: 30_000,
     refetchInterval: REFRESH_INTERVAL,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const queriedFloor = exploreQuery.data?.explore.selectedFloor ?? null;
   const queriedSite =
@@ -107,7 +108,7 @@ export function WorkplaceHome() {
     enabled: exploreQuery.isFetched,
     staleTime: 30_000,
     refetchInterval: REFRESH_INTERVAL,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const roomBookingsQuery = useQuery({
     queryKey: ['workplace', 'home', identityKey, 'room-bookings', timeZone],
@@ -118,13 +119,15 @@ export function WorkplaceHome() {
     enabled: capabilities.isLoaded && capabilities.canViewRooms && exploreQuery.isFetched,
     staleTime: 30_000,
     refetchInterval: REFRESH_INTERVAL,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
 
   const roomSourceRequired = capabilities.isLoaded && capabilities.canViewRooms;
   const exploreState = workplaceHomeSourceState({
     data: exploreQuery.data,
     error: exploreQuery.error,
+    failureCount: exploreQuery.failureCount,
+    failureReason: exploreQuery.failureReason,
     isError: exploreQuery.isError,
     isPending: exploreQuery.isPending,
     required: true,
@@ -132,6 +135,8 @@ export function WorkplaceHome() {
   const bookingsState = workplaceHomeSourceState({
     data: bookingsQuery.data,
     error: bookingsQuery.error,
+    failureCount: bookingsQuery.failureCount,
+    failureReason: bookingsQuery.failureReason,
     isError: bookingsQuery.isError,
     isPending: bookingsQuery.isPending,
     required: true,
@@ -139,6 +144,8 @@ export function WorkplaceHome() {
   const roomBookingsState = workplaceHomeSourceState({
     data: roomBookingsQuery.data,
     error: roomBookingsQuery.error,
+    failureCount: roomBookingsQuery.failureCount,
+    failureReason: roomBookingsQuery.failureReason,
     isError: roomBookingsQuery.isError,
     isPending: roomBookingsQuery.isPending,
     required: roomSourceRequired,
@@ -157,11 +164,13 @@ export function WorkplaceHome() {
     enabled: roomPolicyRequired,
     staleTime: 30_000,
     refetchInterval: REFRESH_INTERVAL,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const roomPolicyState = workplaceHomeSourceState({
     data: roomPolicyQuery.data,
     error: roomPolicyQuery.error,
+    failureCount: roomPolicyQuery.failureCount,
+    failureReason: roomPolicyQuery.failureReason,
     isError: roomPolicyQuery.isError,
     isPending: roomPolicyQuery.isPending,
     required: roomPolicyRequired,
@@ -173,15 +182,19 @@ export function WorkplaceHome() {
     enabled: canViewCalendar && exploreState !== 'LOADING',
     staleTime: 30_000,
     refetchInterval: REFRESH_INTERVAL,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const calendarState = workplaceHomeSourceState({
     data: calendarQuery.data,
     error: calendarQuery.error,
+    failureCount: calendarQuery.failureCount,
+    failureReason: calendarQuery.failureReason,
     isError: calendarQuery.isError,
     isPending: calendarQuery.isPending,
     required: canViewCalendar,
   });
+  const bookingsStateRef = useRef(bookingsState);
+  bookingsStateRef.current = bookingsState;
   const calendar = workplaceHomeSourceData(calendarState, calendarQuery.data);
   const {
     advance: advanceDecisionClock,
@@ -256,7 +269,7 @@ export function WorkplaceHome() {
       }
       const actionPolicy = workplaceBookingActionPolicy({
         booking: currentBooking,
-        sourceState: bookingsState,
+        sourceState: bookingsStateRef.current,
         canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
         nowInstant: readDecisionNow(),
       });

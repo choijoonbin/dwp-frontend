@@ -2,6 +2,7 @@ import type {
   VideoMeetingAdminCapabilities,
   VideoMeetingAdminPolicy,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type { VideoMeetingAdminIntelligenceReadiness as RuntimeMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
 
 export type MeetingAdminPolicyValidationCode = 'RANGE' | 'EXCEEDS_MEETING_RETENTION';
 
@@ -64,18 +65,9 @@ export function formatMeetingAdminQualityScore(value?: number | null): string {
 export type MeetingAdminReadinessState =
   'READY' | 'BLOCKED' | 'CONNECTION_REQUIRED' | 'NOT_VERIFIED';
 
-export type MeetingAdminReadinessReason =
-  | 'POLICY_NEVER'
-  | 'CAPABILITY_NOT_CONFIGURED'
-  | 'REALTIME_PROVIDER_UNAVAILABLE'
-  | 'DEPENDENCY_STATUS_CONTRACT_MISSING'
-  | 'WORKFLOW_ENFORCEMENT_NOT_VERIFIED'
-  | 'LEGAL_HOLD_NOT_CONNECTED'
-  | 'DELETION_EVIDENCE_NOT_CONNECTED';
-
 export type MeetingAdminReadinessSignal = {
   state: MeetingAdminReadinessState;
-  reason?: MeetingAdminReadinessReason;
+  reason?: string;
 };
 
 export type MeetingAdminIntelligenceCapabilityKey = 'recording' | 'transcript' | 'aiNotes';
@@ -83,6 +75,8 @@ export type MeetingAdminIntelligenceDependencyKey =
   'provider' | 'region' | 'kms' | 'audit' | 'egress' | 'storage' | 'stt' | 'llm';
 export type MeetingAdminIntelligenceGovernanceKey =
   'humanReview' | 'explicitPublish' | 'adminContentAccess' | 'legalHold' | 'deletionEvidence';
+export type MeetingAdminRetentionSignalKey =
+  'intelligenceReports' | 'meetingRecords' | 'artifacts' | 'chat';
 
 export const MEETING_ADMIN_INTELLIGENCE_CAPABILITIES: readonly MeetingAdminIntelligenceCapabilityKey[] =
   ['recording', 'transcript', 'aiNotes'];
@@ -96,82 +90,126 @@ export const MEETING_ADMIN_INTELLIGENCE_WORKFLOW_CONTROLS: readonly MeetingAdmin
 export const MEETING_ADMIN_INTELLIGENCE_EVIDENCE_CONTROLS: readonly MeetingAdminIntelligenceGovernanceKey[] =
   ['legalHold', 'deletionEvidence'];
 
+export const MEETING_ADMIN_RETENTION_SIGNALS: readonly MeetingAdminRetentionSignalKey[] = [
+  'intelligenceReports',
+  'meetingRecords',
+  'artifacts',
+  'chat',
+];
+
 export type MeetingAdminIntelligenceReadiness = {
+  readinessVersion?: string | null;
+  recordingPolicy?: VideoMeetingAdminPolicy['recordingPolicy'] | null;
+  providerCode?: string | null;
+  providerModel?: string | null;
+  processingRegion?: string | null;
   capabilities: Record<MeetingAdminIntelligenceCapabilityKey, MeetingAdminReadinessSignal>;
   dependencies: Record<MeetingAdminIntelligenceDependencyKey, MeetingAdminReadinessSignal>;
   governance: Record<MeetingAdminIntelligenceGovernanceKey, MeetingAdminReadinessSignal>;
   retention: {
-    meetingDays: number;
-    artifactDays: number;
-    chatDays: number;
+    meetingDays: number | null;
+    artifactDays: number | null;
+    chatDays: number | null;
+    intelligenceWorkerReady: boolean | null;
+    signals: Record<MeetingAdminRetentionSignalKey, MeetingAdminReadinessSignal>;
   };
   observedAt?: string | null;
 };
 
-const missingDependencySignal = (): MeetingAdminReadinessSignal => ({
-  state: 'CONNECTION_REQUIRED',
-  reason: 'DEPENDENCY_STATUS_CONTRACT_MISSING',
+const READINESS_STATES = new Set<MeetingAdminReadinessState>([
+  'READY',
+  'BLOCKED',
+  'CONNECTION_REQUIRED',
+  'NOT_VERIFIED',
+]);
+
+const unavailableSignal = (): MeetingAdminReadinessSignal => ({
+  state: 'NOT_VERIFIED',
+  reason: 'READINESS_ENDPOINT_UNAVAILABLE',
 });
 
-export function deriveMeetingAdminIntelligenceReadiness(
-  policy: VideoMeetingAdminPolicy,
-  capabilities: VideoMeetingAdminCapabilities,
-  observedAt?: string | null
-): MeetingAdminIntelligenceReadiness {
-  const recording: MeetingAdminReadinessSignal =
-    policy.recordingPolicy === 'NEVER'
-      ? { state: 'BLOCKED', reason: 'POLICY_NEVER' }
-      : capabilities.recordingConfigured
-        ? { state: 'READY' }
-        : { state: 'CONNECTION_REQUIRED', reason: 'CAPABILITY_NOT_CONFIGURED' };
-  const transcript: MeetingAdminReadinessSignal = capabilities.transcriptConfigured
-    ? { state: 'READY' }
-    : { state: 'CONNECTION_REQUIRED', reason: 'CAPABILITY_NOT_CONFIGURED' };
-  const aiNotes: MeetingAdminReadinessSignal = capabilities.aiNotesConfigured
-    ? { state: 'READY' }
-    : { state: 'CONNECTION_REQUIRED', reason: 'CAPABILITY_NOT_CONFIGURED' };
-
+function projectSignal(
+  signals: Record<string, { state: string; reason?: string | null }>,
+  key: string
+): MeetingAdminReadinessSignal {
+  const signal = signals[key];
+  if (!signal || !READINESS_STATES.has(signal.state as MeetingAdminReadinessState)) {
+    return { state: 'NOT_VERIFIED', reason: 'RUNTIME_SIGNAL_MISSING' };
+  }
   return {
-    capabilities: { recording, transcript, aiNotes },
-    dependencies: {
-      provider: capabilities.video
-        ? { state: 'READY' }
-        : { state: 'BLOCKED', reason: 'REALTIME_PROVIDER_UNAVAILABLE' },
-      region: missingDependencySignal(),
-      kms: missingDependencySignal(),
-      audit: missingDependencySignal(),
-      egress: missingDependencySignal(),
-      storage: missingDependencySignal(),
-      stt: missingDependencySignal(),
-      llm: missingDependencySignal(),
-    },
-    governance: {
-      humanReview: {
-        state: 'NOT_VERIFIED',
-        reason: 'WORKFLOW_ENFORCEMENT_NOT_VERIFIED',
-      },
-      explicitPublish: {
-        state: 'NOT_VERIFIED',
-        reason: 'WORKFLOW_ENFORCEMENT_NOT_VERIFIED',
-      },
-      adminContentAccess: {
-        state: 'NOT_VERIFIED',
-        reason: 'WORKFLOW_ENFORCEMENT_NOT_VERIFIED',
-      },
-      legalHold: {
-        state: 'CONNECTION_REQUIRED',
-        reason: 'LEGAL_HOLD_NOT_CONNECTED',
-      },
-      deletionEvidence: {
-        state: 'CONNECTION_REQUIRED',
-        reason: 'DELETION_EVIDENCE_NOT_CONNECTED',
-      },
-    },
+    state: signal.state as MeetingAdminReadinessState,
+    ...(signal.reason ? { reason: signal.reason } : {}),
+  };
+}
+
+export function projectMeetingAdminIntelligenceReadiness(
+  readiness: RuntimeMeetingAdminIntelligenceReadiness
+): MeetingAdminIntelligenceReadiness {
+  return {
+    readinessVersion: readiness.readinessVersion,
+    observedAt: readiness.observedAt,
+    recordingPolicy: readiness.recordingPolicy,
+    providerCode: readiness.providerCode,
+    providerModel: readiness.providerModel,
+    processingRegion: readiness.processingRegion,
+    capabilities: Object.fromEntries(
+      MEETING_ADMIN_INTELLIGENCE_CAPABILITIES.map((key) => [
+        key,
+        projectSignal(readiness.capabilities, key),
+      ])
+    ) as MeetingAdminIntelligenceReadiness['capabilities'],
+    dependencies: Object.fromEntries(
+      MEETING_ADMIN_INTELLIGENCE_DEPENDENCIES.map((key) => [
+        key,
+        projectSignal(readiness.dependencies, key),
+      ])
+    ) as MeetingAdminIntelligenceReadiness['dependencies'],
+    governance: Object.fromEntries(
+      [
+        ...MEETING_ADMIN_INTELLIGENCE_WORKFLOW_CONTROLS,
+        ...MEETING_ADMIN_INTELLIGENCE_EVIDENCE_CONTROLS,
+      ].map((key) => [key, projectSignal(readiness.governance, key)])
+    ) as MeetingAdminIntelligenceReadiness['governance'],
     retention: {
-      meetingDays: policy.retentionDays,
-      artifactDays: policy.artifactRetentionDays,
-      chatDays: policy.chatRetentionDays,
+      meetingDays: readiness.retention.meetingDays,
+      artifactDays: readiness.retention.artifactDays,
+      chatDays: readiness.retention.chatDays,
+      intelligenceWorkerReady: readiness.retention.intelligenceWorkerReady,
+      signals: Object.fromEntries(
+        MEETING_ADMIN_RETENTION_SIGNALS.map((key) => [
+          key,
+          projectSignal(readiness.retention.signals ?? {}, key),
+        ])
+      ) as MeetingAdminIntelligenceReadiness['retention']['signals'],
     },
-    observedAt,
+  };
+}
+
+export function createUnavailableMeetingAdminIntelligenceReadiness(
+  policy?: VideoMeetingAdminPolicy
+): MeetingAdminIntelligenceReadiness {
+  return {
+    recordingPolicy: policy?.recordingPolicy ?? null,
+    capabilities: Object.fromEntries(
+      MEETING_ADMIN_INTELLIGENCE_CAPABILITIES.map((key) => [key, unavailableSignal()])
+    ) as MeetingAdminIntelligenceReadiness['capabilities'],
+    dependencies: Object.fromEntries(
+      MEETING_ADMIN_INTELLIGENCE_DEPENDENCIES.map((key) => [key, unavailableSignal()])
+    ) as MeetingAdminIntelligenceReadiness['dependencies'],
+    governance: Object.fromEntries(
+      [
+        ...MEETING_ADMIN_INTELLIGENCE_WORKFLOW_CONTROLS,
+        ...MEETING_ADMIN_INTELLIGENCE_EVIDENCE_CONTROLS,
+      ].map((key) => [key, unavailableSignal()])
+    ) as MeetingAdminIntelligenceReadiness['governance'],
+    retention: {
+      meetingDays: policy?.retentionDays ?? null,
+      artifactDays: policy?.artifactRetentionDays ?? null,
+      chatDays: policy?.chatRetentionDays ?? null,
+      intelligenceWorkerReady: null,
+      signals: Object.fromEntries(
+        MEETING_ADMIN_RETENTION_SIGNALS.map((key) => [key, unavailableSignal()])
+      ) as MeetingAdminIntelligenceReadiness['retention']['signals'],
+    },
   };
 }

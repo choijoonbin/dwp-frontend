@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarDays, CalendarPlus, Focus, Layers3 } from 'lucide-react';
+import {
+  CalendarDays,
+  CalendarPlus,
+  Focus,
+  Layers3,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -139,6 +146,7 @@ export function CalendarSchedule() {
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
   const [createState, setCreateState] = useState<CreateState | null>(null);
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
+  const [sourcesCollapsed, setSourcesCollapsed] = useState(false);
   const [sharingCalendar, setSharingCalendar] = useState<CalendarSummary | null>(null);
   const requestedEventId = routeSearchParams.get('event');
   const hasExplicitScheduleState =
@@ -548,7 +556,19 @@ export function CalendarSchedule() {
         justifyContent="flex-end"
         sx={{ mb: 1.5 }}
       >
-        {!desktopSources && (
+        {desktopSources ? (
+          <ActionButton
+            intent="quiet"
+            startIcon={
+              sourcesCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />
+            }
+            aria-controls="calendar-source-panel"
+            aria-expanded={!sourcesCollapsed}
+            onClick={() => setSourcesCollapsed((current) => !current)}
+          >
+            {t(sourcesCollapsed ? 'sources.showPanel' : 'sources.hidePanel')}
+          </ActionButton>
+        ) : (
           <ActionButton
             intent="secondary"
             startIcon={<Layers3 size={17} />}
@@ -614,13 +634,18 @@ export function CalendarSchedule() {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: '264px minmax(0, 1fr)' },
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr)',
+                lg: sourcesCollapsed ? 'minmax(0, 1fr)' : '264px minmax(0, 1fr)',
+              },
             }}
           >
             <Box
+              id="calendar-source-panel"
+              data-testid="calendar-source-panel"
               component="aside"
               sx={{
-                display: { xs: 'none', lg: 'block' },
+                display: { xs: 'none', lg: sourcesCollapsed ? 'none' : 'block' },
                 borderRight: 1,
                 borderColor: 'divider',
                 minHeight: 0,

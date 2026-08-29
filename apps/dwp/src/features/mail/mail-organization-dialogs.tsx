@@ -165,15 +165,25 @@ export function MailFolderDialog({
           <Typography variant="caption" color="text.secondary" fontWeight={700}>
             {t('organization.folder.color')}
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+          <Box
+            role="group"
+            aria-label={t('organization.folder.color')}
+            sx={{
+              mt: 1,
+              display: 'grid',
+              gridTemplateColumns: { xs: 'repeat(4, minmax(0, 1fr))', sm: 'repeat(7, 1fr)' },
+              gap: 1,
+            }}
+          >
             {COLORS.map((color) => (
               <ActionButton
                 key={color}
                 size="small"
                 intent={form.color === color ? 'primary' : 'quiet'}
                 aria-label={t(`organization.colors.${color}`)}
+                aria-pressed={form.color === color}
                 onClick={() => setForm((current) => ({ ...current, color }))}
-                sx={{ minWidth: 38, px: 1 }}
+                sx={{ minWidth: 0, width: 1, px: 1 }}
               >
                 <Box
                   aria-hidden
@@ -181,7 +191,7 @@ export function MailFolderDialog({
                 />
               </ActionButton>
             ))}
-          </Stack>
+          </Box>
         </Box>
       </Stack>
     </FormDialog>

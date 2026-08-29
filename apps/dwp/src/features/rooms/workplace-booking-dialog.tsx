@@ -25,6 +25,10 @@ import Typography from '@mui/material/Typography';
 import { validateWorkplaceBookingRange } from './workplace-time-policy';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPermissionNotice } from './rooms-ui';
+import {
+  workplaceBookingSourceVerified,
+  type WorkplaceBookingSourceSnapshot,
+} from './workplace-booking-source-snapshot';
 
 import type {
   WorkplaceBooking,
@@ -46,6 +50,7 @@ export function WorkplaceBookingDialog({
   policy,
   initialStart,
   initialEnd,
+  sourceSnapshot,
   onClose,
   onSaved,
 }: {
@@ -58,6 +63,7 @@ export function WorkplaceBookingDialog({
   policy: WorkplacePolicy | null;
   initialStart: string;
   initialEnd: string;
+  sourceSnapshot?: WorkplaceBookingSourceSnapshot | null;
   onClose: () => void;
   onSaved?: (booking: WorkplaceBooking) => void;
 }) {
@@ -70,6 +76,8 @@ export function WorkplaceBookingDialog({
   const [purpose, setPurpose] = useState('');
   const [visible, setVisible] = useState(true);
   const commandRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const sourceSnapshotRef = useRef(sourceSnapshot);
+  sourceSnapshotRef.current = sourceSnapshot;
 
   useEffect(() => {
     if (!open) return;
@@ -84,9 +92,30 @@ export function WorkplaceBookingDialog({
     !startsAt || !endsAt || !policy
       ? 'invalid'
       : validateWorkplaceBookingRange(startsAt, endsAt, siteTimeZone, policy, serverNow);
+  const sourceRangeChanged = Boolean(
+    sourceSnapshot && (sourceSnapshot.rangeFrom !== startsAt || sourceSnapshot.rangeTo !== endsAt)
+  );
+  const sourceVerified = workplaceBookingSourceVerified(sourceSnapshot, {
+    resourceId: resource?.resourceId,
+    resourceVersion: resource?.version,
+    rangeFrom: startsAt,
+    rangeTo: endsAt,
+    policyVersion: policy?.version,
+  });
   const mutation = useMutation({
     mutationFn: () => {
       if (!resource) throw new Error(t('workplace.booking.resourceRequired'));
+      if (
+        !workplaceBookingSourceVerified(sourceSnapshotRef.current, {
+          resourceId: resource.resourceId,
+          resourceVersion: resource.version,
+          rangeFrom: startsAt,
+          rangeTo: endsAt,
+          policyVersion: policy?.version,
+        })
+      ) {
+        throw new Error(t('workplace.explore.availabilityStale'));
+      }
       if (!canCreateWorkplaceBooking) {
         throw new Error(t('permissions.workplaceBookingReadOnly'));
       }
@@ -131,7 +160,9 @@ export function WorkplaceBookingDialog({
       submitLabel={t('actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!resource || Boolean(rangeError) || !canCreateWorkplaceBooking}
+      submitDisabled={
+        !resource || Boolean(rangeError) || !canCreateWorkplaceBooking || !sourceVerified
+      }
       onClose={closeDialog}
       onSubmit={() => mutation.mutate()}
       maxWidth="sm"
@@ -144,6 +175,15 @@ export function WorkplaceBookingDialog({
         )}
         {!canCreateWorkplaceBooking && (
           <RoomsPermissionNotice>{t('permissions.workplaceBookingReadOnly')}</RoomsPermissionNotice>
+        )}
+        {!sourceVerified && (
+          <Alert severity="warning">
+            {t(
+              sourceRangeChanged
+                ? 'workplace.explore.rangeChanged'
+                : 'workplace.explore.availabilityStale'
+            )}
+          </Alert>
         )}
         {resource && (
           <Box

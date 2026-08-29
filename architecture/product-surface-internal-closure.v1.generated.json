@@ -4,7 +4,7 @@
   "generatedFrom": {
     "backend": {
       "repository": "https://github.com/choijoonbin/dwp-backend",
-      "revision": "a94c9049381e9d4bdbbacf4e4248cdad2c8666e9"
+      "revision": "cf0038088af414484a03647ec8080060191fb43c"
     },
     "authorizationBundle": {
       "artifact": "product-surfaces-v1.bundle-v4.json",
@@ -24,15 +24,15 @@
     "agentEvidence": {
       "artifact": "dwaion-agent-pep-attestation.v1.json",
       "repository": "https://github.com/choijoonbin/aura_agent",
-      "revision": "12360c6223f3e628c5ead3d8f07ff8553224bf56",
-      "checksum": "20ce158f28f0ad6e6a7d5ad7055650d31fd80449bdd850543e85f036f6df3431",
-      "artifactChecksum": "5b8eb8a07ef7904b33fe7e946c083ec03daf3b3aadbcc38e59d072ad7c18961b",
+      "revision": "50864f6bfc29c747fb5f30b551d3299fcc27a525",
+      "checksum": "f79d541286c7f76cec1ec17bab5ca7d69c54c10b2c8b195230a18218825a5385",
+      "artifactChecksum": "fa8d7b5344b14efb871fdb287416972df3ed183b9ce6deb58008e23c09a9683a",
       "sourceCiRun": {
         "provider": "GITHUB_ACTIONS",
         "workflow": "Agent quality",
-        "runId": "33162256046",
-        "url": "https://github.com/choijoonbin/aura_agent/actions/runs/33162256046",
-        "headSha": "12360c6223f3e628c5ead3d8f07ff8553224bf56",
+        "runId": "33235219522",
+        "url": "https://github.com/choijoonbin/aura_agent/actions/runs/33235219522",
+        "headSha": "50864f6bfc29c747fb5f30b551d3299fcc27a525",
         "conclusion": "success"
       }
     }

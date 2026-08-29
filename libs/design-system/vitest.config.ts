@@ -9,11 +9,24 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 export default defineConfig({
   root: projectRoot,
   resolve: {
-    alias: {
-      '@dwp-frontend/design-system': path.join(projectRoot, 'src/index.ts'),
-      '@dwp-frontend/design-system/*': path.join(projectRoot, 'src'),
-      '@dwp-frontend/shared-utils': path.join(workspaceRoot, 'libs/shared-utils/src/index.ts'),
-    },
+    alias: [
+      {
+        find: /^@dwp-frontend\/design-system\/(.+)$/,
+        replacement: path.join(projectRoot, 'src/$1'),
+      },
+      {
+        find: '@dwp-frontend/design-system',
+        replacement: path.join(projectRoot, 'src/index.ts'),
+      },
+      {
+        find: /^@dwp-frontend\/shared-utils\/(.+)$/,
+        replacement: path.join(workspaceRoot, 'libs/shared-utils/src/$1'),
+      },
+      {
+        find: '@dwp-frontend/shared-utils',
+        replacement: path.join(workspaceRoot, 'libs/shared-utils/src/index.ts'),
+      },
+    ],
   },
   test: {
     name: 'design-system',

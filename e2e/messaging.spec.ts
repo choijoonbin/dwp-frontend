@@ -15,6 +15,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 const CONVERSATION_ID = '71000000-0000-0000-0000-000000000001';
+const SECOND_CONVERSATION_ID = '71000000-0000-0000-0000-000000000002';
 const OWNER_MESSAGE_ID = '72000000-0000-0000-0000-000000000001';
 const COLLEAGUE_MESSAGE_ID = '72000000-0000-0000-0000-000000000002';
 
@@ -81,6 +82,7 @@ type MessagingFixtureState = {
   managedMemberRole: MessagingMemberRole;
   attachments: Map<string, MessagingAttachment>;
   uploadedAttachmentIds: string[];
+  discardedAttachmentIds: string[];
   displayPreference: MessagingDisplayPreference;
   conversationDisplayPreferences: Map<string, MessagingConversationDisplayPreference>;
   nextMessage: number;
@@ -177,6 +179,7 @@ function createFixtureState(): MessagingFixtureState {
     managedMemberRole: 'MEMBER',
     attachments: new Map(),
     uploadedAttachmentIds: [],
+    discardedAttachmentIds: [],
     displayPreference: {
       layoutMode: 'AUTO',
       density: 'COMFORTABLE',
@@ -197,6 +200,27 @@ function createFixtureState(): MessagingFixtureState {
     nextAttachment: 1,
     nextConversation: 2,
   };
+}
+
+function addIncidentConversation(state: MessagingFixtureState) {
+  const incidentMessage = message({
+    messageId: '72000000-0000-0000-0000-000000000020',
+    conversationId: SECOND_CONVERSATION_ID,
+    body: 'Incident room is ready.',
+    sequence: 1,
+    createdAt: '2026-08-19T08:45:00Z',
+  });
+  state.conversations.push({
+    ...state.conversations[0]!,
+    conversationId: SECOND_CONVERSATION_ID,
+    conversationKey: 'incident-response',
+    name: 'Incident response',
+    topic: 'Operational incident coordination',
+    unreadCount: 0,
+    lastMessage: incidentMessage,
+    lastMessageAt: incidentMessage.createdAt,
+  });
+  state.messages.set(SECOND_CONVERSATION_ID, [incidentMessage]);
 }
 
 function detailFor(
@@ -638,6 +662,16 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
       });
     }
 
+    const discardAttachment = path.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/attachments\/([^/]+)$/u
+    );
+    if (discardAttachment && method === 'DELETE') {
+      const attachmentId = decodeURIComponent(discardAttachment[2]!);
+      state.discardedAttachmentIds.push(attachmentId);
+      state.attachments.delete(attachmentId);
+      return fulfill(route, null);
+    }
+
     const attachmentDownload = path.match(
       /^\/api\/messaging\/v1\/conversations\/([^/]+)\/attachments\/([^/]+)\/download-grants$/u
     );
@@ -881,6 +915,54 @@ test('composer sends with Enter, preserves Shift+Enter, and ignores Enter during
   await expect.poll(() => state.sentRequests.at(-1)?.body).toBe('Korean composition complete');
 });
 
+test('a failed send remains isolated from the next conversation', async ({ page }) => {
+  const state = await mockMessaging(page);
+  addIncidentConversation(state);
+
+  const attempts: Array<{ conversationId: string; body: string }> = [];
+  let failNextSend = true;
+  await page.route('**/api/messaging/v1/conversations/*/messages', async (route) => {
+    const request = route.request();
+    if (request.method() !== 'POST') return route.fallback();
+    const match = new URL(request.url()).pathname.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/messages$/u
+    );
+    if (!match) return route.fallback();
+    attempts.push({
+      conversationId: decodeURIComponent(match[1]!),
+      body: (request.postDataJSON() as SendRequest).body,
+    });
+    if (!failNextSend) return route.fallback();
+    failNextSend = false;
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Temporary delivery failure' }),
+    });
+  });
+
+  await openConversation(page);
+  const composer = page.getByRole('textbox', { name: 'Compose message' });
+  await composer.fill('Launch room only');
+  await composer.press('Enter');
+  await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
+
+  const backButton = page.getByRole('button', { name: 'Back' });
+  if (await backButton.isVisible()) await backButton.click();
+  await page.getByRole('button', { name: /Incident response/u }).click();
+  await expect(page).toHaveURL(new RegExp(`conversation=${SECOND_CONVERSATION_ID}`, 'u'));
+  await expect(page.getByRole('heading', { name: 'Incident response' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Retry' })).toHaveCount(0);
+  await expect(composer).toHaveValue('');
+
+  await composer.fill('Incident room update');
+  await composer.press('Enter');
+  await expect
+    .poll(() => attempts.at(-1))
+    .toEqual({ conversationId: SECOND_CONVERSATION_ID, body: 'Incident room update' });
+  expect(attempts.filter((attempt) => attempt.body === 'Launch room only')).toHaveLength(1);
+});
+
 test('composer offers searchable expressions, structured mentions, and conversation meeting history', async ({
   page,
 }) => {
@@ -945,6 +1027,77 @@ test('security-scanned attachment-only messages are delivered and downloaded thr
   await downloadButton.click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('launch-notes.txt');
+});
+
+test('switching conversations discards an attachment session that finishes late', async ({
+  page,
+}) => {
+  const state = await mockMessaging(page);
+  addIncidentConversation(state);
+  let releaseUploadSession: (() => void) | undefined;
+  await page.route('**/api/messaging/v1/conversations/*/attachments/uploads', async (route) => {
+    await new Promise<void>((resolve) => {
+      releaseUploadSession = resolve;
+    });
+    await route.fallback();
+  });
+  await openConversation(page);
+
+  await page.getByRole('button', { name: 'Attach file' }).click();
+  await page
+    .locator('input[type="file"]')
+    .first()
+    .setInputFiles({
+      name: 'staged-notes.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('discard after conversation switch'),
+    });
+  await expect(page.getByText('staged-notes.txt', { exact: true })).toBeVisible();
+  await expect.poll(() => Boolean(releaseUploadSession)).toBe(true);
+
+  const backButton = page.getByRole('button', { name: 'Back' });
+  if (await backButton.isVisible()) await backButton.click();
+  await page.getByRole('button', { name: /Incident response/u }).click();
+  await expect(page.getByRole('heading', { name: 'Incident response' })).toBeVisible();
+  releaseUploadSession?.();
+
+  await expect.poll(() => state.discardedAttachmentIds).toHaveLength(1);
+  expect(state.attachments.has(state.discardedAttachmentIds[0]!)).toBe(false);
+  await expect(page.getByText('staged-notes.txt', { exact: true })).toHaveCount(0);
+});
+
+test('cancelling an upload discards the attachment session even when it finishes late', async ({
+  page,
+}) => {
+  const state = await mockMessaging(page);
+  let releaseUploadSession: (() => void) | undefined;
+  await page.route('**/api/messaging/v1/conversations/*/attachments/uploads', async (route) => {
+    await new Promise<void>((resolve) => {
+      releaseUploadSession = resolve;
+    });
+    await route.fallback();
+  });
+  await openConversation(page);
+
+  await page.getByRole('button', { name: 'Attach file' }).click();
+  await page
+    .locator('input[type="file"]')
+    .first()
+    .setInputFiles({
+      name: 'cancelled-notes.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('cancel before the upload session is ready'),
+    });
+  await expect(page.getByText('cancelled-notes.txt', { exact: true })).toBeVisible();
+  await expect.poll(() => Boolean(releaseUploadSession)).toBe(true);
+
+  await page.getByRole('button', { name: 'Remove attachment: cancelled-notes.txt' }).click();
+  await expect(page.getByText('cancelled-notes.txt', { exact: true })).toHaveCount(0);
+  releaseUploadSession?.();
+
+  await expect.poll(() => state.discardedAttachmentIds).toHaveLength(1);
+  expect(state.uploadedAttachmentIds).toHaveLength(0);
+  expect(state.attachments.has(state.discardedAttachmentIds[0]!)).toBe(false);
 });
 
 test('message actions expose labelled reactions, thread replies, save, edit, delete, and meeting entry', async ({
@@ -1089,25 +1242,35 @@ test('personal display settings persist per conversation and globally without af
   if (testInfo.project.name === 'mobile') {
     await page.setViewportSize({ width: 320, height: 720 });
   }
+  const overlayLayoutErrors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error' && message.text().includes('popover component is too tall')) {
+      overlayLayoutErrors.push(message.text());
+    }
+  });
   const state = await mockMessaging(page);
   await openConversation(page);
 
   await page.getByRole('button', { name: 'Conversation settings' }).click();
   const settingsDialog = page.getByRole('dialog', { name: 'Conversation settings' });
   await expect(settingsDialog).toBeVisible();
+  expect(overlayLayoutErrors).toEqual([]);
   await settingsDialog.getByRole('tab', { name: 'Display' }).click();
   await expect(
     settingsDialog.getByText(
       'Only tenant-approved, low-saturation presets are applied to your view.'
     )
   ).toBeVisible();
+  expect(overlayLayoutErrors).toEqual([]);
 
   await settingsDialog.getByRole('button', { name: 'Mist' }).click();
   await expect
     .poll(() => state.conversationDisplayPreferences.get(CONVERSATION_ID)?.theme)
     .toBe('MIST');
+  expect(overlayLayoutErrors).toEqual([]);
 
   await settingsDialog.getByRole('button', { name: 'All conversations' }).click();
+  expect(overlayLayoutErrors).toEqual([]);
   await settingsDialog.getByRole('button', { name: 'Compact' }).click();
   await expect.poll(() => state.displayPreference.density).toBe('COMPACT');
   await page.screenshot({
@@ -1116,6 +1279,7 @@ test('personal display settings persist per conversation and globally without af
   });
   await settingsDialog.getByRole('button', { name: 'Close conversation settings' }).click();
   await expect(settingsDialog).toBeHidden();
+  expect(overlayLayoutErrors).toEqual([]);
 });
 
 test('conversation display policy disables only the setting governed by the tenant', async ({

@@ -95,16 +95,17 @@
     "shared": {
       "title": "공유 메일함 흐름",
       "description": "담당자가 함께 처리하는 메일의 응답 상태를 확인합니다.",
+      "openInbox": "공유 메일함 열기",
       "open": "처리 중 {{count}}건",
       "overdue": "기한 초과 {{count}}건"
     },
     "automation": {
       "title": "자동 정리 리듬",
-      "description": "내 폴더와 규칙이 반복적인 분류를 얼마나 덜어주는지 확인합니다.",
+      "description": "규칙 상태와 사용자가 직접 승인한 기존 메일 정리 이력을 확인합니다. 새 메일 자동 실행은 현재 비활성입니다.",
       "loadError": "폴더와 규칙의 최신 상태를 불러오지 못했습니다.",
       "manage": "폴더 및 규칙 관리",
       "activeRules": "활성 규칙",
-      "activeRulesDetail": "새 메일에 적용할 준비됨",
+      "activeRulesDetail": "수동 미리보기·적용 가능",
       "personalFolders": "개인 폴더",
       "personalFoldersDetail": "내 업무 맥락으로 구성",
       "latestRun": "최근 자동 정리",
@@ -117,6 +118,7 @@
     "loadError": "메일 목록을 불러오지 못했습니다.",
     "total": "메일 {{count}}건",
     "syncReady": "동기화 준비됨",
+    "updating": "메일 목록 업데이트 중",
     "page": "{{current}} / {{total}} 페이지",
     "previousPage": "이전 페이지",
     "nextPage": "다음 페이지",
@@ -126,6 +128,13 @@
       "description": "중요도와 필요한 행동을 기준으로 나눈 메일을 빠르게 처리합니다.",
       "emptyTitle": "이 구역에 메일이 없습니다",
       "emptyDescription": "분류 조건에 맞는 새 메일이 도착하면 여기에 표시됩니다."
+    },
+    "later": {
+      "eyebrow": "다시 볼 시간",
+      "title": "나중에 볼 메일",
+      "description": "지정한 시간이 될 때까지 잠시 미룬 메일을 확인합니다.",
+      "emptyTitle": "미뤄 둔 메일이 없습니다",
+      "emptyDescription": "나중에 다시 알림을 설정한 메일이 여기에 표시됩니다."
     },
     "sent": {
       "eyebrow": "발신 기록",
@@ -158,7 +167,7 @@
     "trash": {
       "eyebrow": "삭제 전 확인",
       "title": "휴지통",
-      "description": "삭제한 대화를 복원하거나 권한에 따라 영구 삭제합니다.",
+      "description": "삭제한 대화를 복원합니다. 영구 삭제는 보존·법적 보존 정책이 준비될 때까지 사용할 수 없습니다.",
       "emptyTitle": "휴지통이 비어 있습니다",
       "emptyDescription": "삭제한 메일이 여기에 표시됩니다."
     },
@@ -222,6 +231,22 @@
     "replyError": "회신을 보내지 못했습니다.",
     "actionError": "메일 상태를 변경하지 못했습니다. 새로고침 후 다시 시도해 주세요."
   },
+  "snoozeDialog": {
+    "title": "다시 볼 시간 선택",
+    "description": "선택한 시간이 되면 메일이 받은 메일의 처리 흐름으로 돌아옵니다.",
+    "presetsLabel": "빠른 시간 선택",
+    "presets": {
+      "LATER_TODAY": "오늘 늦게",
+      "TOMORROW": "내일 오전",
+      "NEXT_WEEK": "다음 주"
+    },
+    "custom": "직접 날짜와 시간 선택",
+    "customHelp": "현재보다 이후 시간을 선택하세요.",
+    "futureRequired": "현재보다 이후 시간을 선택해야 합니다.",
+    "summary": "{{value}}에 다시 표시합니다.",
+    "submit": "이 시간까지 미루기",
+    "submitting": "설정 중"
+  },
   "delivery": {
     "state": {
       "RECEIVED": "수신됨",
@@ -254,9 +279,12 @@
     "spam": "스팸으로 이동",
     "trash": "휴지통으로 이동",
     "deleteForever": "영구 삭제",
+    "deleteUnavailable": "영구 삭제는 보존·법적 보존 정책 준비 후 사용할 수 있습니다",
     "deleteTitle": "메일을 영구 삭제할까요?",
     "deleteDescription": "이 작업은 되돌릴 수 없으며 공유 메일함에서는 관리자 권한이 필요합니다.",
     "deleting": "삭제 중",
+    "undo": "실행 취소",
+    "undoError": "이전 위치로 복원하지 못했습니다. 새로고침 후 다시 시도해 주세요.",
     "error": "메일 위치를 변경하지 못했습니다. 새로고침 후 다시 시도해 주세요.",
     "success": {
       "MOVE": "메일을 선택한 폴더로 이동했습니다.",
@@ -270,7 +298,7 @@
   "organization": {
     "eyebrow": "개인 메일 정리",
     "title": "폴더 및 규칙",
-    "description": "업무 맥락에 맞는 폴더를 만들고 반복되는 메일 정리를 안전한 규칙으로 자동화합니다.",
+    "description": "업무 맥락에 맞는 폴더와 규칙을 만들고, 미리보기 후 기존 메일에 안전하게 적용합니다.",
     "loadError": "폴더와 규칙을 불러오지 못했습니다.",
     "tabsLabel": "메일 정리 방식",
     "tabs": { "folders": "내 폴더", "rules": "정리 규칙" },
@@ -286,14 +314,15 @@
     "validation": { "required": "필수 입력입니다." },
     "pulse": {
       "title": "내 메일 정리 상태",
-      "description": "로컬 규칙과 공급자 동기화 상태를 구분해 실제 적용 범위를 투명하게 보여줍니다.",
+      "description": "규칙의 저장·공급자 동기화 상태를 구분합니다. 새 메일 자동 실행은 현재 비활성이고 기존 메일 적용은 사용자가 직접 승인합니다.",
       "localRules": "DWP 전용 규칙 {{count}}개",
-      "syncIssues": "동기화 확인 필요 {{count}}개",
-      "syncHealthy": "동기화 이상 없음",
+      "pendingRules": "공급자 반영 대기 {{count}}개",
+      "syncedRules": "공급자 동기화 {{count}}개",
+      "errorRules": "동기화 오류 {{count}}개",
       "organized": "폴더에 정리된 메일",
       "organizedDetail": "개인 폴더 기준",
       "activeRules": "활성 규칙",
-      "activeRulesDetail": "수신·수동 실행 가능"
+      "activeRulesDetail": "수동 미리보기·적용 대상"
     },
     "backfill": {
       "title": "기존 메일에 규칙 적용",
@@ -306,8 +335,12 @@
       "scanned": "확인한 대화",
       "matched": "일치한 대화",
       "planned": "예정 변경",
-      "truncated": "이번 미리보기가 처리 한도에 도달했습니다. 완료 후 새로고침해 다음 대상을 확인하세요.",
+      "truncated": "이번 미리보기가 처리 한도에 도달해 실행을 차단했습니다. 범위를 줄이거나 관리자에게 처리 한도 조정을 요청하세요.",
       "run": "기존 메일에 적용",
+      "confirmTitle": "미리보기 결과를 적용할까요?",
+      "confirmDescription": "{{account}}의 기존 대화 {{count}}건을 현재 규칙과 우선순위로 정리합니다.",
+      "confirm": "확인하고 적용",
+      "running": "적용 중",
       "runError": "명령 결과를 확인하지 못했습니다. 같은 요청으로 재시도하므로 중복 적용되지 않습니다.",
       "runRejected": "명령이 거부되었습니다. 계정과 규칙 상태를 새로고침한 뒤 다시 시도하세요.",
       "retryCommand": "같은 요청 재시도",
@@ -357,9 +390,6 @@
       "stopProcessing": "일치하면 다음 규칙 중지",
       "saved": "규칙을 저장했습니다.",
       "saveError": "규칙을 저장하지 못했습니다. 조건과 동작을 확인해 주세요.",
-      "run": "지금 실행",
-      "runCompleted": "규칙으로 {{count}}건을 정리했습니다.",
-      "runError": "규칙을 실행하지 못했습니다.",
       "lastRun": "최근 실행 · {{count}}건 일치",
       "neverRun": "아직 실행하지 않음",
       "moveSummary": "{{folder}} 폴더로 이동",
@@ -429,7 +459,7 @@
   },
   "compose": {
     "title": "새 메일",
-    "description": "업무 맥락이 분명하도록 받는 사람, 제목과 내용을 확인합니다.",
+    "description": "어느 항목부터 입력해도 초안이 자동 저장됩니다. 발송할 때만 올바른 받는 사람, 제목과 내용이 모두 필요합니다.",
     "dwaionDraftNotice": "DWAI·ON에서 전달한 검토용 메일 초안입니다. 받는 사람과 내용을 확인해야 하며, 발송은 사용자가 직접 결정합니다.",
     "to": "받는 사람 이메일",
     "subject": "제목",
@@ -445,14 +475,31 @@
     "title": "임시 보관함",
     "status": "작성 중",
     "heading": "메일 이어 쓰기",
-    "description": "받는 사람과 내용을 확인한 뒤 다시 저장하거나 바로 발송합니다.",
+    "description": "변경 사항은 자동 저장됩니다. 발송할 때만 올바른 받는 사람, 제목과 내용이 모두 필요합니다.",
     "saved": "초안을 업데이트했습니다.",
     "sent": "초안을 안전한 발송 대기열에 등록했습니다.",
-    "error": "초안을 업데이트하지 못했습니다. 새로고침 후 다시 시도해 주세요."
+    "error": "초안을 업데이트하지 못했습니다. 새로고침 후 다시 시도해 주세요.",
+    "autosave": {
+      "empty": "받는 사람, 제목 또는 내용을 입력하면 초안 저장을 시작합니다.",
+      "dirty": "저장을 기다리는 변경 사항이 있습니다",
+      "saving": "초안 저장 중",
+      "closing": "초안 저장을 마친 뒤 화면을 닫습니다.",
+      "saved": "모든 변경 사항을 저장했습니다",
+      "error": "초안을 저장하지 못했습니다. 작성한 내용은 이 화면에 그대로 남아 있습니다.",
+      "conflict": "다른 곳에서 이 초안이 변경되었습니다. 작성한 내용은 유지되지만 최신 작업을 덮어쓰지 않도록 저장과 발송을 중지했습니다.",
+      "retry": "저장 다시 시도"
+    },
+    "discard": {
+      "title": "저장하지 않은 변경 사항을 버릴까요?",
+      "description": "최근 변경 사항이 아직 저장되지 않았습니다. 지금 닫으면 이 기기에서 작성한 내용이 사라집니다.",
+      "keepEditing": "계속 작성",
+      "confirm": "변경 사항 버리기"
+    }
   },
   "command": {
     "open": "메일 명령 열기",
     "placeholder": "메일 명령 검색",
+    "results": "메일 명령 검색 결과",
     "noResults": "일치하는 메일 명령이 없습니다.",
     "items": {
       "compose": "새 메일 작성",
@@ -472,6 +519,30 @@
     "default": "기본 계정",
     "shared": "공유 계정",
     "ready": "사용 가능",
+    "status": {
+      "ready": "사용 가능",
+      "reauthenticationRequired": "다시 인증 필요",
+      "syncing": "동기화 중",
+      "degraded": "점검 필요",
+      "paused": "동기화 일시 중지",
+      "suspended": "사용 중지",
+      "disconnected": "연결 끊김"
+    },
+    "sync": {
+      "READY": "동기화 준비됨",
+      "SYNCING": "동기화 중",
+      "DEGRADED": "동기화 점검 필요",
+      "PAUSED": "동기화 일시 중지"
+    },
+    "guidance": {
+      "ready": "현재 계정으로 메일을 조회하고 처리할 수 있습니다.",
+      "reauthenticationRequired": "계정 소유자가 공급자 인증을 다시 완료해야 합니다.",
+      "syncing": "연결된 공급자에서 최신 메일을 가져오고 있습니다.",
+      "degraded": "일부 동기화가 실패했습니다. 상태를 새로고침하거나 관리자에게 문의하세요.",
+      "paused": "메일 동기화가 일시 중지되어 최신 메일이 늦게 표시될 수 있습니다.",
+      "suspended": "조직 정책에 따라 이 계정을 현재 사용할 수 없습니다.",
+      "disconnected": "공급자 연결이 끊어져 메일을 조회하거나 보낼 수 없습니다. 관리자에게 문의하세요."
+    },
     "governed": "자격증명과 테넌트 연결은 메일 관리자가 보안 저장소와 조직 정책을 통해 관리합니다.",
     "loadError": "연결된 메일 계정을 불러오지 못했습니다.",
     "emptyTitle": "연결된 메일 계정이 없습니다",

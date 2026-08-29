@@ -3,11 +3,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import {
   applyMailLifecycle,
+  createMailDraft,
   createMailFolder,
   createMailRule,
   getMailRuleBackfillPreview,
   getMailThreads,
   runMailRuleBackfill,
+  saveMailDraft,
 } from './mail-api';
 
 function jsonResponse(data: unknown): Response {
@@ -144,5 +146,37 @@ describe('mail organization API boundary', () => {
       '/api/platform/v1/mail/organization/accounts/account%2Fpersonal-1/rules/backfill'
     );
     expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual(input);
+  });
+
+  it('uses the additive partial-draft endpoints without weakening the send contract', async () => {
+    const createInput = {
+      subject: 'Subject-only draft',
+      idempotencyKey: '4fbe6fef-343c-43eb-a739-17d8ed78b8f4',
+    };
+    const saveInput = {
+      body: 'Body added later',
+      idempotencyKey: '5eb905b4-7f6a-4ac8-91b0-7728ccdbd768',
+      version: 3,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ thread: { threadId: 'draft-1', version: 3 } }))
+      .mockResolvedValueOnce(jsonResponse({ thread: { threadId: 'draft-1', version: 4 } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await createMailDraft(createInput);
+    await saveMailDraft('draft/1', saveInput);
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/platform/v1/mail/drafts');
+    expect((fetchMock.mock.calls[1]?.[1] as RequestInit).method).toBe('POST');
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(
+      createInput
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/platform/v1/mail/drafts/draft%2F1');
+    expect((fetchMock.mock.calls[2]?.[1] as RequestInit).method).toBe('PUT');
+    expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual(
+      saveInput
+    );
   });
 });

@@ -35,6 +35,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
+import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -46,14 +47,23 @@ import type { Theme } from '@mui/material/styles';
 import { MailCommandPalette, type MailCommand } from './mail-command-palette';
 import { MailComposeDialog } from './mail-compose-dialog';
 import { MailPageHeading, MailThreadListItem } from './mail-components';
+import { isMailShortcutTargetInteractive } from './mail-keyboard';
+import { MailLifecycleUndo, type MailLifecycleUndoState } from './mail-lifecycle-undo';
+import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadDetailPane } from './mail-thread-detail';
 
 import type { MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
 
 type MailboxMode = 'inbox' | 'sent' | 'drafts' | 'archive' | 'spam' | 'trash' | 'custom' | 'shared';
+type MailQuickCommand = Extract<MailCommand, 'mark-read' | 'star' | 'archive'>;
 
 const LANES: readonly MailTriageLane[] = ['PRIORITY', 'NEEDS_REPLY', 'ASSIGNED', 'UPDATES'];
 const PAGE_SIZE = 30;
+
+function resolveLane(value: string | null, mode: MailboxMode): MailTriageLane {
+  if (value && LANES.includes(value as MailTriageLane)) return value as MailTriageLane;
+  return mode === 'shared' ? 'ASSIGNED' : 'PRIORITY';
+}
 
 export function MailInbox({ mode }: { mode: MailboxMode }) {
   const { t } = useTranslation('mail');
@@ -61,11 +71,13 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const queryClient = useQueryClient();
   const location = useLocation();
   const [params, setParams] = useSearchParams();
-  const [lane, setLane] = useState<MailTriageLane>(mode === 'shared' ? 'ASSIGNED' : 'PRIORITY');
+  const lane = resolveLane(params.get('lane'), mode);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [page, setPage] = useState(0);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [snoozeTarget, setSnoozeTarget] = useState<MailThread | null>(null);
+  const [undoState, setUndoState] = useState<MailLifecycleUndoState | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('thread');
@@ -100,15 +112,18 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
               : mode === 'custom'
                 ? undefined
                 : 'INBOX';
-  const state =
-    mode === 'archive'
+  const snoozedView = mode === 'inbox' && params.get('state') === 'SNOOZED';
+  const state = snoozedView
+    ? 'SNOOZED'
+    : mode === 'archive'
       ? 'ARCHIVED'
       : mode === 'spam'
         ? 'SPAM'
         : mode === 'trash'
           ? 'TRASHED'
           : undefined;
-  const activeLane = mode === 'inbox' || mode === 'shared' ? lane : undefined;
+  const activeLane = (mode === 'inbox' || mode === 'shared') && !snoozedView ? lane : undefined;
+  const mailboxCopyKey = snoozedView ? 'later' : mode;
   const query = useQuery({
     queryKey: [
       'mail',
@@ -137,23 +152,41 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     retry: 1,
   });
   const selectedThread = query.data?.items.find((item) => item.threadId === selectedId);
+  const contextKey = [mode, activeLane, state, requestedFolderId, debouncedSearch, page].join('|');
+  const previousContextRef = useRef(contextKey);
   const quickMutation = useMutation({
-    mutationFn: async ({ command, thread }: { command: MailCommand; thread: MailThread }) => {
-      if (command === 'snooze') {
-        return snoozeMailThread(
-          thread.threadId,
-          new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-          thread.version
-        );
-      }
+    mutationFn: async ({ command, thread }: { command: MailQuickCommand; thread: MailThread }) => {
       if (command === 'archive') {
-        return applyMailLifecycle(thread.threadId, 'ARCHIVE', thread.version);
+        return {
+          command,
+          result: await applyMailLifecycle(thread.threadId, 'ARCHIVE', thread.version),
+        } as const;
       }
       const action = command === 'star' ? 'STAR' : 'MARK_READ';
-      return applyMailThreadAction(thread.threadId, action, thread.version);
+      return {
+        command,
+        result: await applyMailThreadAction(thread.threadId, action, thread.version),
+      } as const;
+    },
+    onSuccess: async ({ command, result }) => {
+      if (command === 'archive' && 'deleted' in result && result.thread) {
+        setUndoState({ action: 'ARCHIVE', thread: result.thread });
+        clearSelection();
+      }
+      await queryClient.invalidateQueries({ queryKey: ['mail'] });
+    },
+    onError: () => toast.error(t('thread.actionError')),
+  });
+  const snoozeMutation = useMutation({
+    mutationFn: (until: string) => {
+      if (!snoozeTarget) throw new Error('Mail snooze target is required.');
+      return snoozeMailThread(snoozeTarget.threadId, until, snoozeTarget.version);
     },
     onSuccess: async () => {
+      setSnoozeTarget(null);
+      clearSelection();
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
+      toast.success(t('thread.snoozed'));
     },
     onError: () => toast.error(t('thread.actionError')),
   });
@@ -173,8 +206,16 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
 
   useEffect(() => {
     setPage(0);
-    setLane(mode === 'shared' ? 'ASSIGNED' : 'PRIORITY');
   }, [mode]);
+
+  useEffect(() => {
+    if (previousContextRef.current === contextKey) return;
+    previousContextRef.current = contextKey;
+    if (!selectedId) return;
+    const next = new URLSearchParams(params);
+    next.delete('thread');
+    setParams(next, { replace: true });
+  }, [contextKey, params, selectedId, setParams]);
 
   useEffect(() => {
     if (mode !== 'custom' || requestedFolderId || !customFolders[0]) return;
@@ -184,24 +225,29 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   }, [customFolders, mode, params, requestedFolderId, setParams]);
 
   useEffect(() => {
-    if (!desktopSplitView || !query.data?.items.length) return;
+    if (!desktopSplitView || query.isFetching || !query.data?.items.length) return;
     if (selectedId && query.data.items.some((item) => item.threadId === selectedId)) return;
     const next = new URLSearchParams(params);
     next.set('thread', query.data.items[0]!.threadId);
     setParams(next, { replace: true });
-  }, [desktopSplitView, params, query.data?.items, selectedId, setParams]);
+  }, [desktopSplitView, params, query.data?.items, query.isFetching, selectedId, setParams]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      const typing = target?.matches('input, textarea, [contenteditable="true"]');
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         event.stopImmediatePropagation();
         setCommandOpen(true);
         return;
       }
-      if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (
+        isMailShortcutTargetInteractive(event.target) ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey
+      ) {
+        return;
+      }
       if (event.key === '/') {
         event.preventDefault();
         searchRef.current?.focus();
@@ -238,28 +284,40 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     next.delete('thread');
     setParams(next, { replace: true });
   };
+  const selectLane = (nextLane: MailTriageLane) => {
+    const next = new URLSearchParams(params);
+    next.set('lane', nextLane);
+    next.delete('state');
+    next.delete('thread');
+    setPage(0);
+    setParams(next, { replace: true });
+  };
   const runCommand = (command: MailCommand) => {
     if (command === 'compose') return openCompose();
     if (command === 'focus-search') return searchRef.current?.focus();
-    if (command === 'show-priority') return setLane('PRIORITY');
-    if (command === 'show-needs-reply') return setLane('NEEDS_REPLY');
+    if (command === 'show-priority') return selectLane('PRIORITY');
+    if (command === 'show-needs-reply') return selectLane('NEEDS_REPLY');
+    if (command === 'snooze') {
+      if (selectedThread) setSnoozeTarget(selectedThread);
+      return;
+    }
     if (selectedThread) quickMutation.mutate({ command, thread: selectedThread });
   };
   const empty = useMemo(
     () => ({
-      title: t(`mailbox.${mode}.emptyTitle`),
-      description: t(`mailbox.${mode}.emptyDescription`),
+      title: t(`mailbox.${mailboxCopyKey}.emptyTitle`),
+      description: t(`mailbox.${mailboxCopyKey}.emptyDescription`),
     }),
-    [mode, t]
+    [mailboxCopyKey, t]
   );
   const pageCount = Math.max(1, Math.ceil((query.data?.total ?? 0) / PAGE_SIZE));
 
   return (
     <PageCanvas topInset="compact">
       <MailPageHeading
-        eyebrow={t(`mailbox.${mode}.eyebrow`)}
-        title={selectedCustomFolder?.displayName ?? t(`mailbox.${mode}.title`)}
-        description={t(`mailbox.${mode}.description`)}
+        eyebrow={t(`mailbox.${mailboxCopyKey}.eyebrow`)}
+        title={selectedCustomFolder?.displayName ?? t(`mailbox.${mailboxCopyKey}.title`)}
+        description={t(`mailbox.${mailboxCopyKey}.description`)}
         actions={
           <Stack direction="row" spacing={1}>
             <ActionIconButton label={t('command.open')} onClick={() => setCommandOpen(true)}>
@@ -334,13 +392,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                 },
               }}
             />
-            {(mode === 'inbox' || mode === 'shared') && (
+            {(mode === 'inbox' || mode === 'shared') && !snoozedView && (
               <Tabs
                 value={lane}
-                onChange={(_event, value: MailTriageLane) => {
-                  setLane(value);
-                  setPage(0);
-                }}
+                onChange={(_event, value: MailTriageLane) => selectLane(value)}
                 variant="scrollable"
                 scrollButtons={false}
                 sx={{ mt: 1, minHeight: 34, '& .MuiTab-root': { minHeight: 34, px: 1.25 } }}
@@ -351,8 +406,23 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
               </Tabs>
             )}
           </Box>
+          {query.isFetching && !query.isLoading && (
+            <LinearProgress aria-label={t('mailbox.updating')} sx={{ height: 2 }} />
+          )}
           <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-            {query.isLoading ? (
+            {mode === 'custom' && organizationQuery.isError ? (
+              <Alert
+                severity="error"
+                action={
+                  <ActionButton intent="quiet" onClick={() => organizationQuery.refetch()}>
+                    {t('actions.retry')}
+                  </ActionButton>
+                }
+                sx={{ m: 1.5 }}
+              >
+                {t('organization.loadError')}
+              </Alert>
+            ) : query.isLoading ? (
               <Box sx={{ minHeight: 280, display: 'grid', placeItems: 'center' }}>
                 <CircularProgress size={25} />
               </Box>
@@ -374,6 +444,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                   key={thread.threadId}
                   thread={thread}
                   selected={selectedId === thread.threadId}
+                  disabled={query.isFetching}
                   onSelect={() => selectThread(thread.threadId)}
                 />
               ))
@@ -398,7 +469,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                   <ActionIconButton
                     size="small"
                     label={t('mailbox.previousPage')}
-                    disabled={page === 0}
+                    disabled={page === 0 || query.isFetching}
                     onClick={() => setPage((current) => Math.max(0, current - 1))}
                   >
                     <ChevronLeft size={16} />
@@ -409,7 +480,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                   <ActionIconButton
                     size="small"
                     label={t('mailbox.nextPage')}
-                    disabled={page + 1 >= pageCount}
+                    disabled={page + 1 >= pageCount || query.isFetching}
                     onClick={() => setPage((current) => Math.min(pageCount - 1, current + 1))}
                   >
                     <ChevronRight size={16} />
@@ -418,7 +489,9 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
               ) : (
                 <Stack direction="row" spacing={0.5} alignItems="center" color="text.secondary">
                   <MailCheck size={14} />
-                  <Typography variant="caption">{t('mailbox.syncReady')}</Typography>
+                  <Typography variant="caption">
+                    {t(query.isFetching ? 'mailbox.updating' : 'mailbox.syncReady')}
+                  </Typography>
                 </Stack>
               )}
             </Stack>
@@ -462,6 +535,20 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
         hasSelectedThread={Boolean(selectedThread)}
         onClose={() => setCommandOpen(false)}
         onCommand={runCommand}
+      />
+      <MailSnoozeDialog
+        open={Boolean(snoozeTarget)}
+        busy={snoozeMutation.isPending}
+        onClose={() => setSnoozeTarget(null)}
+        onSubmit={(until) => snoozeMutation.mutate(until)}
+      />
+      <MailLifecycleUndo
+        state={undoState}
+        onClose={() => setUndoState(null)}
+        onRestored={async (thread) => {
+          await query.refetch();
+          selectThread(thread.threadId);
+        }}
       />
     </PageCanvas>
   );

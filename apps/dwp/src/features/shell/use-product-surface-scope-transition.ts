@@ -2,7 +2,8 @@ import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchPath, useLocation, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { useProductSurfaceAuthority, useToast } from '@dwp-frontend/shared-utils';
+import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
+import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 import { useProductApplicationRuntime } from '../../components/product-application-runtime';
 import { GOVERNED_PRODUCT_LEGACY_QUERY_PREFIXES } from './product-sensitive-query-prefixes';

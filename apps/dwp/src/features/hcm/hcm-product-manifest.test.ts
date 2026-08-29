@@ -30,6 +30,12 @@ type RegistryRoute = {
   }[];
 };
 
+type RegistryBundle = {
+  bundleKey: string;
+  version: number;
+  routes: readonly RegistryRoute[];
+};
+
 const HCM_DATA_ROUTE_KEYS = [
   'route.hcm.management.controlled-export-preview.data',
   'route.hcm.management.integration-code-sets.data',
@@ -66,15 +72,13 @@ const HCM_ACTION_ROUTE_KEYS = [
 
 function registryRoutes(): readonly RegistryRoute[] {
   const source = authorizationSource as unknown as {
-    bundles: readonly {
-      bundleKey: string;
-      version: number;
-      routes: readonly RegistryRoute[];
-    }[];
+    bundles: readonly RegistryBundle[];
   };
-  return source.bundles.find(
-    (bundle) => bundle.bundleKey === 'product-surfaces' && bundle.version === 3
-  )!.routes;
+  const latestBundle = source.bundles
+    .filter((bundle) => bundle.bundleKey === 'product-surfaces')
+    .sort((left, right) => right.version - left.version)[0];
+  if (!latestBundle) throw new Error('Missing Product Surface authorization bundle.');
+  return latestBundle.routes;
 }
 
 function publicRouteBindings(
@@ -147,7 +151,7 @@ describe('HCM W1b product manifest', () => {
     ]);
   });
 
-  it('binds all 25 menu items to official PAGE records and exact v3 access profiles', () => {
+  it('binds all 25 menu items to official PAGE records and exact latest access profiles', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );

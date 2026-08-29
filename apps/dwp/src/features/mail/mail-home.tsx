@@ -223,12 +223,30 @@ export function MailHome() {
 
           {data.sharedInboxes.length > 0 && (
             <Box component="section" aria-labelledby="mail-shared-title">
-              <Typography id="mail-shared-title" component="h2" variant="h6" fontWeight={800}>
-                {t('home.shared.title')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35, mb: 1.25 }}>
-                {t('home.shared.description')}
-              </Typography>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                spacing={1}
+                sx={{ mb: 1.25 }}
+              >
+                <Box>
+                  <Typography id="mail-shared-title" component="h2" variant="h6" fontWeight={800}>
+                    {t('home.shared.title')}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                    {t('home.shared.description')}
+                  </Typography>
+                </Box>
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  endIcon={<ArrowRight size={15} />}
+                  onClick={() => navigate('/mail/shared')}
+                >
+                  {t('home.shared.openInbox')}
+                </ActionButton>
+              </Stack>
               <Box
                 sx={{
                   display: 'grid',

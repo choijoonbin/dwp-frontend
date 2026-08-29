@@ -24,6 +24,7 @@ import {
   type VideoMeetingArtifactType,
   type VideoMeetingParticipant,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { getLatestPublishedVideoMeetingIntelligenceReport } from '@dwp-frontend/shared-utils/api/video-meeting-intelligence-api';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -37,6 +38,10 @@ import { alpha } from '@mui/material/styles';
 
 import { formatMeetingDateTime } from './meeting-components';
 import { MeetingIntelligenceReportSection } from './meeting-intelligence-report-section';
+import {
+  derivePublishedMeetingRecap,
+  type PublishedMeetingRecap,
+} from './meeting-recap-intelligence-model';
 
 type RecapTab = 'overview' | 'artifacts' | 'attendance';
 
@@ -105,6 +110,12 @@ export function MeetingRecapDetail({
         : false,
     retry: 1,
   });
+  const publishedRecapQuery = useQuery({
+    queryKey: ['meetings', meetingId, 'intelligence', 'reports', 'latest-published'],
+    queryFn: () => getLatestPublishedVideoMeetingIntelligenceReport(meetingId),
+    staleTime: 30_000,
+    retry: 1,
+  });
 
   if (query.isLoading) {
     return <LoadingState label={t('history.recap.loading')} variant="skeleton" skeletonRows={8} />;
@@ -121,6 +132,12 @@ export function MeetingRecapDetail({
   }
 
   const meeting = query.data;
+  const publishedRecap = derivePublishedMeetingRecap(
+    publishedRecapQuery.data,
+    publishedRecapQuery.isError || publishedRecapQuery.isRefetchError
+  );
+  const outcomeCount = (items: string[]) =>
+    publishedRecapQuery.isLoading || publishedRecap.state === 'FAILED' ? '—' : String(items.length);
   const actualDurationMinutes = (() => {
     if (!meeting.startedAt || !meeting.endedAt) return meeting.durationMinutes;
     const elapsed = Date.parse(meeting.endedAt) - Date.parse(meeting.startedAt);
@@ -171,9 +188,11 @@ export function MeetingRecapDetail({
             intent="quiet"
             size="small"
             startIcon={<RefreshCw size={15} aria-hidden="true" />}
-            loading={query.isFetching}
+            loading={query.isFetching || publishedRecapQuery.isFetching}
             loadingLabel={t('history.recap.refreshing')}
-            onClick={() => query.refetch()}
+            onClick={() => {
+              void Promise.all([query.refetch(), publishedRecapQuery.refetch()]);
+            }}
           >
             {t('actions.refresh')}
           </ActionButton>
@@ -220,12 +239,12 @@ export function MeetingRecapDetail({
         <RecapMetric
           icon={ListChecks}
           label={t('history.recap.metrics.decisions')}
-          value={String(meeting.decisions.length)}
+          value={outcomeCount(publishedRecap.decisions)}
         />
         <RecapMetric
           icon={CheckCircle2}
           label={t('history.recap.metrics.actions')}
-          value={String(meeting.followUpActions.length)}
+          value={outcomeCount(publishedRecap.actionItems)}
         />
       </Box>
 
@@ -234,7 +253,18 @@ export function MeetingRecapDetail({
         variant="scrollable"
         allowScrollButtonsMobile
         aria-label={t('history.recap.tabs.label')}
-        sx={{ mt: 2.5, borderBottom: 1, borderColor: 'divider' }}
+        sx={{
+          mt: 2.5,
+          borderBottom: 1,
+          borderColor: 'divider',
+          '& .MuiTabs-flexContainer': { width: { xs: '100%', sm: 'auto' } },
+          '& .MuiTab-root': {
+            minWidth: { xs: 0, sm: 90 },
+            flex: { xs: '1 1 0', sm: '0 0 auto' },
+            px: { xs: 1, sm: 2 },
+            whiteSpace: 'nowrap',
+          },
+        }}
         onChange={(_, value: RecapTab) => setTab(value)}
       >
         <Tab value="overview" label={t('history.recap.tabs.overview')} />
@@ -243,7 +273,16 @@ export function MeetingRecapDetail({
       </Tabs>
 
       <Box sx={{ pt: 2.5 }}>
-        {tab === 'overview' && <MeetingOutcome meeting={meeting} />}
+        {tab === 'overview' && (
+          <MeetingOutcome
+            meeting={meeting}
+            recap={publishedRecap}
+            loading={publishedRecapQuery.isLoading}
+            onRetry={() => {
+              void publishedRecapQuery.refetch();
+            }}
+          />
+        )}
         {tab === 'artifacts' && (
           <Stack gap={3}>
             <ArtifactCustody artifacts={meeting.artifacts} />
@@ -266,26 +305,58 @@ export function MeetingRecapDetail({
   );
 }
 
-function MeetingOutcome({ meeting }: { meeting: Awaited<ReturnType<typeof getVideoMeeting>> }) {
+function MeetingOutcome({
+  meeting,
+  recap,
+  loading,
+  onRetry,
+}: {
+  meeting: Awaited<ReturnType<typeof getVideoMeeting>>;
+  recap: PublishedMeetingRecap;
+  loading: boolean;
+  onRetry: () => void;
+}) {
   const { t } = useTranslation('meetings');
+  if (loading) {
+    return (
+      <LoadingState
+        label={t('history.recap.intelligence.loading')}
+        variant="skeleton"
+        skeletonRows={5}
+      />
+    );
+  }
+  if (recap.state === 'FAILED') {
+    return (
+      <ErrorState
+        title={t('history.recap.intelligence.loadErrorTitle')}
+        description={t('history.recap.intelligence.loadErrorDescription')}
+        retryLabel={t('history.recap.intelligence.retry')}
+        onRetry={onRetry}
+      />
+    );
+  }
+  const available = recap.state === 'READY';
   return (
     <Stack gap={2.5}>
-      <Alert severity={meeting.aiNotesAvailable ? 'success' : 'info'} icon={<Bot size={19} />}>
+      <Alert severity={available ? 'success' : 'info'} icon={<Bot size={19} />}>
         <Typography fontWeight={800}>
-          {t(
-            meeting.aiNotesAvailable
-              ? 'history.recap.ai.readyTitle'
-              : 'history.recap.ai.unavailableTitle'
-          )}
+          {t(available ? 'history.recap.ai.readyTitle' : 'history.recap.ai.unavailableTitle')}
         </Typography>
         <Typography variant="body2">
           {t(
-            meeting.aiNotesAvailable
+            available
               ? 'history.recap.ai.readyDescription'
               : 'history.recap.ai.unavailableDescription'
           )}
         </Typography>
       </Alert>
+
+      {available && (
+        <RecapSection title={t('history.recap.intelligence.sections.executiveSummary')}>
+          <Typography sx={{ whiteSpace: 'pre-wrap' }}>{recap.summary}</Typography>
+        </RecapSection>
+      )}
 
       <RecapSection title={t('history.recap.agendaTitle')}>
         <Typography color={meeting.agenda ? 'text.primary' : 'text.secondary'}>
@@ -295,14 +366,11 @@ function MeetingOutcome({ meeting }: { meeting: Awaited<ReturnType<typeof getVid
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', xl: '1fr 1fr' }, gap: 2 }}>
         <RecapSection title={t('history.recap.decisionsTitle')}>
-          {meeting.decisions.length ? (
+          {recap.decisions.length ? (
             <Stack component="ol" gap={1.25} sx={{ m: 0, pl: 2.5 }}>
-              {meeting.decisions.map((decision, index) => (
-                <Box component="li" key={`${decision.decision}-${index}`}>
-                  <Typography fontWeight={750}>{decision.decision}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {decision.status || t('history.recap.reviewRequired')}
-                  </Typography>
+              {recap.decisions.map((decision, index) => (
+                <Box component="li" key={`${decision}-${index}`}>
+                  <Typography fontWeight={750}>{decision}</Typography>
                 </Box>
               ))}
             </Stack>
@@ -312,17 +380,11 @@ function MeetingOutcome({ meeting }: { meeting: Awaited<ReturnType<typeof getVid
         </RecapSection>
 
         <RecapSection title={t('history.recap.actionsTitle')}>
-          {meeting.followUpActions.length ? (
+          {recap.actionItems.length ? (
             <Stack component="ol" gap={1.25} sx={{ m: 0, pl: 2.5 }}>
-              {meeting.followUpActions.map((action, index) => (
-                <Box component="li" key={`${action.action}-${index}`}>
-                  <Typography fontWeight={750}>{action.action}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {action.status || t('history.recap.reviewRequired')}
-                    {action.dueInDays != null
-                      ? ` · ${t('history.recap.dueInDays', { count: action.dueInDays })}`
-                      : ''}
-                  </Typography>
+              {recap.actionItems.map((action, index) => (
+                <Box component="li" key={`${action}-${index}`}>
+                  <Typography fontWeight={750}>{action}</Typography>
                 </Box>
               ))}
             </Stack>

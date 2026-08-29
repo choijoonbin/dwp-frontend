@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Archive, FolderInput, RotateCcw, ShieldAlert, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { applyMailLifecycle, getMailOrganization, useToast } from '@dwp-frontend/shared-utils';
-import { ActionIconButton, ConfirmDialog } from '@dwp-frontend/design-system';
+import { ActionIconButton } from '@dwp-frontend/design-system';
 
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+
+import { MailLifecycleUndo, type MailLifecycleUndoState } from './mail-lifecycle-undo';
 
 import type { MailLifecycleAction, MailThread } from '@dwp-frontend/shared-utils';
 
@@ -25,7 +27,7 @@ export function MailThreadLifecycleActions({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [undoState, setUndoState] = useState<MailLifecycleUndoState | null>(null);
   const organization = useQuery({
     queryKey: ['mail', 'organization'],
     queryFn: getMailOrganization,
@@ -42,14 +44,22 @@ export function MailThreadLifecycleActions({
     }) => applyMailLifecycle(thread.threadId, action, thread.version, targetFolderId),
     onSuccess: async (result, variables) => {
       setAnchor(null);
-      setDeleteOpen(false);
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
       if (result.deleted) {
         onDeleted();
       } else if (result.thread) {
         onUpdated(result.thread);
       }
-      toast.success(t(`lifecycle.success.${variables.action}`));
+      if (
+        result.thread &&
+        (variables.action === 'ARCHIVE' ||
+          variables.action === 'SPAM' ||
+          variables.action === 'TRASH')
+      ) {
+        setUndoState({ action: variables.action, thread: result.thread });
+      } else {
+        toast.success(t(`lifecycle.success.${variables.action}`));
+      }
     },
     onError: () => toast.error(t('lifecycle.error')),
   });
@@ -118,25 +128,14 @@ export function MailThreadLifecycleActions({
         </MenuItem>
       </Menu>
       {inTrash && (
-        <ActionIconButton
-          label={t('lifecycle.deleteForever')}
-          intent="danger"
-          onClick={() => setDeleteOpen(true)}
-        >
+        <ActionIconButton label={t('lifecycle.deleteUnavailable')} intent="danger" disabled>
           <Trash2 size={18} />
         </ActionIconButton>
       )}
-      <ConfirmDialog
-        open={deleteOpen}
-        title={t('lifecycle.deleteTitle')}
-        description={t('lifecycle.deleteDescription')}
-        cancelLabel={t('actions.cancel')}
-        confirmLabel={t('lifecycle.deleteForever')}
-        confirmingLabel={t('lifecycle.deleting')}
-        intent="danger"
-        busy={mutation.isPending}
-        onClose={() => setDeleteOpen(false)}
-        onConfirm={() => mutation.mutate({ action: 'DELETE_FOREVER' })}
+      <MailLifecycleUndo
+        state={undoState}
+        onClose={() => setUndoState(null)}
+        onRestored={onUpdated}
       />
     </>
   );

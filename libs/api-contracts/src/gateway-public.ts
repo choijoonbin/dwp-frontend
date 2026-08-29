@@ -1877,6 +1877,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/admin/intelligence/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_readiness"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/admin/overview": {
         parameters: {
             query?: never;
@@ -2221,6 +2237,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["meeting_latestReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/intelligence/reports/latest-published": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_latestPublishedReport"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6078,7 +6110,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_createDraft_1"];
+        post: operations["platform_createDraft_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6109,7 +6141,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["platform_revision"];
-        put: operations["platform_saveDraft_1"];
+        put: operations["platform_saveDraft_2"];
         post?: never;
         delete?: never;
         options?: never;
@@ -6334,7 +6366,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_createDraft"];
+        post: operations["platform_createDraft_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6349,7 +6381,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_saveDraft"];
+        put: operations["platform_saveDraft_1"];
         post?: never;
         delete?: never;
         options?: never;
@@ -8687,6 +8719,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_recordFeedback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/drafts/{threadId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_saveDraft"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -15174,6 +15238,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseReadinessResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ReadinessResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseRecordingCommandResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_RecordingCommandResponse"];
@@ -15350,7 +15424,7 @@ export interface components {
             citations?: components["schemas"]["meeting_Citation"][];
             /** @enum {string} */
             label?: "ALIGNED" | "MIXED" | "CONTESTED" | "INSUFFICIENT_EVIDENCE";
-            signals?: ("BALANCED_TURN_TAKING" | "CONSTRUCTIVE_DISAGREEMENT" | "UNRESOLVED_DISAGREEMENT" | "DOMINANT_MONOLOGUE_PATTERN" | "LOW_TRANSCRIPT_EVIDENCE")[];
+            signals?: ("CONSTRUCTIVE_DISAGREEMENT" | "UNRESOLVED_DISAGREEMENT" | "LOW_TRANSCRIPT_EVIDENCE")[];
         };
         meeting_CreateRunCommand: {
             /** Format: int64 */
@@ -15698,6 +15772,29 @@ export interface components {
             version?: number;
             waitingRoomRequired?: boolean;
         };
+        meeting_ReadinessResponse: {
+            capabilities?: {
+                [key: string]: components["schemas"]["meeting_ReadinessSignal"];
+            };
+            dependencies?: {
+                [key: string]: components["schemas"]["meeting_ReadinessSignal"];
+            };
+            governance?: {
+                [key: string]: components["schemas"]["meeting_ReadinessSignal"];
+            };
+            /** Format: date-time */
+            observedAt?: string;
+            processingRegion?: string;
+            providerCode?: string;
+            providerModel?: string;
+            readinessVersion?: string;
+            recordingPolicy?: string;
+            retention?: components["schemas"]["meeting_RetentionReadiness"];
+        };
+        meeting_ReadinessSignal: {
+            reason?: string;
+            state?: string;
+        };
         meeting_RecordingCommandResponse: {
             accepted?: boolean;
             blockers?: components["schemas"]["meeting_BlockerResponse"][];
@@ -15752,6 +15849,18 @@ export interface components {
         meeting_RequestRecordingCommand: {
             /** Format: int64 */
             expectedPlanVersion?: number;
+        };
+        meeting_RetentionReadiness: {
+            /** Format: int32 */
+            artifactDays?: number;
+            /** Format: int32 */
+            chatDays?: number;
+            intelligenceWorkerReady?: boolean;
+            /** Format: int32 */
+            meetingDays?: number;
+            signals?: {
+                [key: string]: components["schemas"]["meeting_ReadinessSignal"];
+            };
         };
         meeting_ReviewCommand: {
             decision: string;
@@ -22669,6 +22778,17 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_DraftSaveRequest: {
+            body?: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            subject?: string;
+            /** Format: email */
+            toEmail?: string;
+            toName?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_DraftUpdateRequest: {
             body: string;
             /** @enum {string} */
@@ -24544,10 +24664,30 @@ export interface components {
             version: number;
         };
         platform_RoomAvailabilityResponse: {
+            bookingEligibility?: components["schemas"]["platform_RoomBookingEligibility"][];
             /** Format: date-time */
             generatedAt?: string;
             occupancy?: components["schemas"]["platform_ResourceOccupancy"][];
             rooms?: components["schemas"]["platform_ResourceSummary"][];
+        };
+        platform_RoomBookingEligibility: {
+            eligible?: boolean;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** Format: date-time */
+            evaluatedFrom?: string;
+            /** Format: date-time */
+            evaluatedTo?: string;
+            /** Format: uuid */
+            excludedEventId?: string;
+            /** Format: int64 */
+            policyVersion?: number;
+            /** @enum {string} */
+            reasonCode?: "ELIGIBLE" | "RESOURCE_UNAVAILABLE" | "POLICY_BLOCKED" | "RESOURCE_CONFLICT";
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: int64 */
+            resourceVersion?: number;
         };
         platform_RuleAction: {
             /** Format: uuid */
@@ -32255,6 +32395,26 @@ export interface operations {
             };
         };
     };
+    meeting_readiness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseReadinessResponse"];
+                };
+            };
+        };
+    };
     meeting_adminOverview: {
         parameters: {
             query?: {
@@ -32878,6 +33038,28 @@ export interface operations {
         };
     };
     meeting_latestReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseReportResponse"];
+                };
+            };
+        };
+    };
+    meeting_latestPublishedReport: {
         parameters: {
             query?: never;
             header?: never;
@@ -39980,7 +40162,7 @@ export interface operations {
             };
         };
     };
-    platform_createDraft_1: {
+    platform_createDraft_2: {
         parameters: {
             query?: never;
             header?: {
@@ -40052,7 +40234,7 @@ export interface operations {
             };
         };
     };
-    platform_saveDraft_1: {
+    platform_saveDraft_2: {
         parameters: {
             query?: never;
             header?: {
@@ -40430,7 +40612,7 @@ export interface operations {
             };
         };
     };
-    platform_createDraft: {
+    platform_createDraft_1: {
         parameters: {
             query?: never;
             header?: {
@@ -40456,7 +40638,7 @@ export interface operations {
             };
         };
     };
-    platform_saveDraft: {
+    platform_saveDraft_1: {
         parameters: {
             query?: never;
             header?: {
@@ -46003,6 +46185,60 @@ export interface operations {
             };
         };
     };
+    platform_createDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DraftSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_saveDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DraftSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
     platform_home: {
         parameters: {
             query?: never;
@@ -46882,6 +47118,7 @@ export interface operations {
             query: {
                 from: string;
                 to: string;
+                excludeEventId?: string;
             };
             header?: {
                 "Accept-Language"?: string;

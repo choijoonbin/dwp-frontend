@@ -60,12 +60,12 @@ effective permission contract to the client.
 Explicit grants keep disabled capabilities unavailable even when a client is
 modified or stale.
 
-## ADR-007: Provider events will be the attendance authority
+## ADR-007: Provider events are the attendance authority
 
-**Decision:** Token issuance does not mark a participant connected. The current
-client sends connected and leave acknowledgements for immediate UX state, while
-the production attendance record must converge from signed LiveKit webhooks and
-periodic provider reconciliation.
+**Decision:** Token issuance and client acknowledgements do not author attendance.
+The service accepts bounded, signature-verified LiveKit events into a replay-safe
+inbox and applies them only when tenant, meeting, participant, provider room, and
+room incarnation match. Client connected and leave calls acknowledge UX state only.
 
 **Reason:** A browser can crash, lose connectivity, or omit a leave request.
 Provider-originated events plus reconciliation are required for reliable attendance,
@@ -83,13 +83,15 @@ that the backend cannot enforce.
 
 ## ADR-009: Provider lifecycle needs a durable operation boundary
 
-**Decision:** Production room create and end operations require a durable command
-receipt and explicit preparing, running, ending, and failed states. A worker must
-retry or compensate provider operations and reconciliation must repair drift.
+**Decision:** Room create and end operations use a durable command receipt, lease
+reclaim, provider I/O outside the database transaction, and fenced completion. V22
+also migrates legacy live rooms through `MIGRATING`, token drain, target revalidation,
+legacy cleanup, and `ACTIVE`; stale workers cannot finalize a reclaimed operation.
 
 **Reason:** A LiveKit API call and a PostgreSQL transaction cannot commit atomically.
-Calling the provider inline is suitable for the local pilot, but it is not sufficient
-evidence that an enterprise room cannot be orphaned or falsely remain live.
+Durable receipts make partial failure recoverable and observable without holding a
+database lock across provider I/O. Deployment reconciliation and migration completion
+evidence remain operational release gates.
 
 ## ADR-010: Meeting intelligence is a governed draft lifecycle
 
@@ -115,12 +117,20 @@ system of record, and treats transcript text as untrusted data rather than instr
 Missing credentials, approved region, no-training attestation, zero-retention attestation,
 KMS, transcript source, or consent evidence makes the run unavailable.
 
+The Meeting-to-Agent request uses a short-lived signed workload assertion bound to
+method, path, body digest, tenant, meeting, run, issue/expiry time, and replay-unique
+identifier. The Agent additionally requires a short-lived Ed25519 provider-policy
+attestation containing provider, model, region, no-training, zero-retention, policy
+digest, key identifier, and validity window. Neither a static token nor provider
+self-report is sufficient for readiness.
+
 ## ADR-012: “Meeting atmosphere” excludes individual emotion inference
 
-**Decision:** The report may describe only meeting-level conversation signals such as
-alignment, constructive disagreement, unresolved disagreement, or insufficient evidence,
-with transcript citations. The contract has no person-level emotion, sentiment,
-personality, health, biometric, or productivity-scoring field.
+**Decision:** The report may describe only meeting-level alignment (`ALIGNED`, `MIXED`,
+`CONTESTED`, or `INSUFFICIENT_EVIDENCE`) and cited constructive or unresolved
+disagreement. It cannot claim balanced participation or a dominant monologue without
+speaker/turn evidence. The contract has no person-level emotion, sentiment, personality,
+health, biometric, or productivity-scoring field.
 
 **Reason:** A transcript can support a reviewable description of discussion dynamics but
 cannot justify surveillance claims about people. This boundary also avoids workplace

@@ -9,12 +9,24 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 export default defineConfig({
   root: projectRoot,
   resolve: {
-    alias: {
-      '@dwp-frontend/shared-i18n': path.join(projectRoot, 'src/index.ts'),
-      '@dwp-frontend/shared-i18n/*': path.join(projectRoot, 'src'),
-      '@dwp-frontend/shared-utils': path.join(workspaceRoot, 'libs/shared-utils/src/index.ts'),
-      '@dwp-frontend/shared-utils/*': path.join(workspaceRoot, 'libs/shared-utils/src'),
-    },
+    alias: [
+      {
+        find: /^@dwp-frontend\/shared-i18n\/(.+)$/,
+        replacement: path.join(projectRoot, 'src/$1'),
+      },
+      {
+        find: '@dwp-frontend/shared-i18n',
+        replacement: path.join(projectRoot, 'src/index.ts'),
+      },
+      {
+        find: /^@dwp-frontend\/shared-utils\/(.+)$/,
+        replacement: path.join(workspaceRoot, 'libs/shared-utils/src/$1'),
+      },
+      {
+        find: '@dwp-frontend/shared-utils',
+        replacement: path.join(workspaceRoot, 'libs/shared-utils/src/index.ts'),
+      },
+    ],
   },
   test: {
     name: 'shared-i18n',

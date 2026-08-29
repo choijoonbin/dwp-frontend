@@ -95,16 +95,17 @@
     "shared": {
       "title": "Shared inbox flow",
       "description": "Monitor response health for mail handled by a team.",
+      "openInbox": "Open shared inboxes",
       "open": "{{count}} open",
       "overdue": "{{count}} overdue"
     },
     "automation": {
       "title": "Automatic organization rhythm",
-      "description": "See how personal folders and rules reduce repetitive sorting.",
+      "description": "Review rule readiness and existing-mail organization you explicitly approved. Incoming automatic execution is currently disabled.",
       "loadError": "The latest folder and rule state could not be loaded.",
       "manage": "Manage folders and rules",
       "activeRules": "Active rules",
-      "activeRulesDetail": "Ready for incoming and manual runs",
+      "activeRulesDetail": "Ready for manual preview and apply",
       "personalFolders": "Personal folders",
       "personalFoldersDetail": "Organized around your work context",
       "latestRun": "Latest automatic organization",
@@ -117,6 +118,7 @@
     "loadError": "The mail list could not be loaded.",
     "total": "{{count}} messages",
     "syncReady": "Sync ready",
+    "updating": "Updating mail list",
     "page": "Page {{current}} of {{total}}",
     "previousPage": "Previous page",
     "nextPage": "Next page",
@@ -126,6 +128,13 @@
       "description": "Move quickly through mail grouped by importance and required action.",
       "emptyTitle": "No messages in this section",
       "emptyDescription": "New mail matching this classification will appear here."
+    },
+    "later": {
+      "eyebrow": "Return at the right time",
+      "title": "Later",
+      "description": "Review messages held until the time you chose.",
+      "emptyTitle": "No snoozed messages",
+      "emptyDescription": "Messages you ask to revisit later will appear here."
     },
     "sent": {
       "eyebrow": "Outbound history",
@@ -158,7 +167,7 @@
     "trash": {
       "eyebrow": "Review before removal",
       "title": "Trash",
-      "description": "Restore deleted conversations or permanently remove them when your access permits.",
+      "description": "Restore deleted conversations. Permanent deletion stays unavailable until retention and legal-hold policy is ready.",
       "emptyTitle": "Trash is empty",
       "emptyDescription": "Deleted conversations will appear here."
     },
@@ -222,6 +231,22 @@
     "replyError": "The reply could not be sent.",
     "actionError": "The message state could not be changed. Refresh and try again."
   },
+  "snoozeDialog": {
+    "title": "Choose when to return",
+    "description": "The message returns to your inbox workflow at the time you choose.",
+    "presetsLabel": "Quick time choices",
+    "presets": {
+      "LATER_TODAY": "Later today",
+      "TOMORROW": "Tomorrow morning",
+      "NEXT_WEEK": "Next week"
+    },
+    "custom": "Choose a date and time",
+    "customHelp": "Choose a time later than now.",
+    "futureRequired": "Choose a time later than now.",
+    "summary": "This message will return at {{value}}.",
+    "submit": "Snooze until then",
+    "submitting": "Setting reminder"
+  },
   "delivery": {
     "state": {
       "RECEIVED": "Received",
@@ -254,9 +279,12 @@
     "spam": "Move to spam",
     "trash": "Move to trash",
     "deleteForever": "Delete permanently",
+    "deleteUnavailable": "Permanent deletion is unavailable until retention and legal-hold policy is ready",
     "deleteTitle": "Permanently delete this conversation?",
     "deleteDescription": "This cannot be undone. Shared inbox deletion requires manager access.",
     "deleting": "Deleting",
+    "undo": "Undo",
+    "undoError": "The previous location could not be restored. Refresh and try again.",
     "error": "The conversation could not be moved. Refresh and try again.",
     "success": {
       "MOVE": "The conversation was moved to the selected folder.",
@@ -270,7 +298,7 @@
   "organization": {
     "eyebrow": "Personal Mail Organization",
     "title": "Folders and rules",
-    "description": "Create folders around your work and automate repetitive mail organization with clear, reversible rules.",
+    "description": "Create folders and rules around your work, then preview and safely apply them to existing mail.",
     "loadError": "Folders and rules could not be loaded.",
     "tabsLabel": "Mail organization mode",
     "tabs": { "folders": "My folders", "rules": "Organization rules" },
@@ -286,14 +314,15 @@
     "validation": { "required": "This field is required." },
     "pulse": {
       "title": "Your mail organization posture",
-      "description": "Local rules and provider synchronization are shown separately so the real application scope stays clear.",
+      "description": "Rule storage and provider synchronization are shown separately. Incoming automatic execution is disabled; applying rules to existing mail requires explicit approval.",
       "localRules": "{{count}} DWP-only rules",
-      "syncIssues": "{{count}} sync items need attention",
-      "syncHealthy": "No synchronization issues",
+      "pendingRules": "{{count}} pending provider sync",
+      "syncedRules": "{{count}} provider-synchronized",
+      "errorRules": "{{count}} synchronization errors",
       "organized": "Mail in personal folders",
       "organizedDetail": "Across your custom folders",
       "activeRules": "Active rules",
-      "activeRulesDetail": "Available for incoming and manual runs"
+      "activeRulesDetail": "Eligible for manual preview and apply"
     },
     "backfill": {
       "title": "Apply rules to existing mail",
@@ -306,8 +335,12 @@
       "scanned": "Scanned",
       "matched": "Matched",
       "planned": "Planned changes",
-      "truncated": "This preview reached the bounded batch limit. Refresh after completion to review the next batch.",
+      "truncated": "This preview reached the bounded batch limit, so execution is blocked. Narrow the scope or ask an administrator to review the limit.",
       "run": "Apply to existing mail",
+      "confirmTitle": "Apply the previewed changes?",
+      "confirmDescription": "Organize {{count}} existing conversations in {{account}} using the current rules and priority order.",
+      "confirm": "Confirm and apply",
+      "running": "Applying",
       "runError": "The command result is unknown. Retry uses the same request so it cannot apply twice.",
       "runRejected": "The command was rejected. Refresh the account and rule state before trying again.",
       "retryCommand": "Retry same request",
@@ -357,9 +390,6 @@
       "stopProcessing": "Stop after this rule matches",
       "saved": "The rule was saved.",
       "saveError": "The rule could not be saved. Check its conditions and actions.",
-      "run": "Run now",
-      "runCompleted": "The rule organized {{count}} conversations.",
-      "runError": "The rule could not be run.",
       "lastRun": "Last run · {{count}} matched",
       "neverRun": "Not run yet",
       "moveSummary": "Move to {{folder}}",
@@ -429,7 +459,7 @@
   },
   "compose": {
     "title": "New message",
-    "description": "Confirm the recipient, subject, and message so the business context is clear.",
+    "description": "Start with any field and the draft saves automatically. A valid recipient, subject, and message are required to send.",
     "dwaionDraftNotice": "This is a review email draft handed off by DWAI·ON. Check the recipients and content; only you can decide to send it.",
     "to": "Recipient email",
     "subject": "Subject",
@@ -445,14 +475,31 @@
     "title": "Drafts",
     "status": "In progress",
     "heading": "Continue writing",
-    "description": "Review the recipient and message, then save it again or send it now.",
+    "description": "Changes save automatically. A valid recipient, subject, and message are required only when you send.",
     "saved": "The draft was updated.",
     "sent": "The draft was added to the governed delivery queue.",
-    "error": "The draft could not be updated. Refresh and try again."
+    "error": "The draft could not be updated. Refresh and try again.",
+    "autosave": {
+      "empty": "Start with a recipient, subject, or message to create a draft.",
+      "dirty": "Changes waiting to be saved",
+      "saving": "Saving draft",
+      "closing": "Finishing the draft save before closing.",
+      "saved": "All changes saved",
+      "error": "The draft could not be saved. Your text remains in this window.",
+      "conflict": "This draft changed elsewhere. Your text is still here, but sending and saving are paused to prevent overwriting newer work.",
+      "retry": "Retry save"
+    },
+    "discard": {
+      "title": "Discard unsaved changes?",
+      "description": "The latest changes have not been saved. Closing now will discard them from this device.",
+      "keepEditing": "Keep editing",
+      "confirm": "Discard changes"
+    }
   },
   "command": {
     "open": "Open mail commands",
     "placeholder": "Search mail commands",
+    "results": "Mail command results",
     "noResults": "No matching mail commands.",
     "items": {
       "compose": "Compose a new message",
@@ -472,6 +519,30 @@
     "default": "Default account",
     "shared": "Shared account",
     "ready": "Available",
+    "status": {
+      "ready": "Available",
+      "reauthenticationRequired": "Reauthentication required",
+      "syncing": "Syncing",
+      "degraded": "Needs attention",
+      "paused": "Sync paused",
+      "suspended": "Suspended",
+      "disconnected": "Disconnected"
+    },
+    "sync": {
+      "READY": "Ready",
+      "SYNCING": "Syncing",
+      "DEGRADED": "Sync needs attention",
+      "PAUSED": "Sync paused"
+    },
+    "guidance": {
+      "ready": "This account can currently retrieve and process mail.",
+      "reauthenticationRequired": "The account owner must authenticate with the provider again.",
+      "syncing": "The latest mail is being retrieved from the connected provider.",
+      "degraded": "Some synchronization failed. Refresh the status or contact an administrator.",
+      "paused": "Synchronization is paused, so new mail may appear late.",
+      "suspended": "Organization policy currently prevents this account from being used.",
+      "disconnected": "The provider connection is unavailable, so mail cannot be retrieved or sent. Contact an administrator."
+    },
     "governed": "Credentials and tenant connections are governed by mail administrators through a secret store and organization policy.",
     "loadError": "Connected mail accounts could not be loaded.",
     "emptyTitle": "No mail accounts connected",

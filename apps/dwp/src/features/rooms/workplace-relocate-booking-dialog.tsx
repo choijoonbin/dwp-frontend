@@ -21,7 +21,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
-import { isAuthoritativeWorkplaceReadFailure } from './workplace-authority-failure';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
+import { workplaceRelocationCandidates } from './workplace-discovery-model';
 import { workplaceHomeSourceState } from './workplace-home-source-state';
 import { validateWorkplaceBookingRange } from './workplace-time-policy';
 
@@ -112,11 +113,13 @@ export function WorkplaceRelocateBookingDialog({
     queryFn: () => getWorkplaceExplore(startsAt, endsAt, floorId),
     enabled: Boolean(open && booking && startsAt && endsAt),
     staleTime: 15_000,
-    retry: (failureCount, error) => !isAuthoritativeWorkplaceReadFailure(error) && failureCount < 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const targetSourceState = workplaceHomeSourceState({
     data: query.data,
     error: query.error,
+    failureCount: query.failureCount,
+    failureReason: query.failureReason,
     isError: query.isError,
     isPending: query.isPending,
     required: Boolean(open && booking && startsAt && endsAt),
@@ -150,25 +153,41 @@ export function WorkplaceRelocateBookingDialog({
     setSiteId(selectedFloor.siteId);
   }, [selectedFloor]);
 
-  const occupiedIds = useMemo(
-    () =>
-      new Set(
-        (data?.occupancy ?? [])
-          .filter((occupancy) => occupancy.bookingId !== booking?.bookingId)
-          .map((occupancy) => occupancy.resourceId)
-      ),
+  const relocationOccupancy = useMemo(
+    () => (data?.occupancy ?? []).filter((occupancy) => occupancy.bookingId !== booking?.bookingId),
     [booking?.bookingId, data?.occupancy]
+  );
+  const relocationBookability = useMemo(
+    () => ({
+      canCreateRoomBooking: false,
+      canCreateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+      occupancy: relocationOccupancy,
+      rangeFrom: startsAt || null,
+      rangeTo: endsAt || null,
+      roomPolicy: null,
+      roomPolicyReady: false,
+      serverNow: data?.generatedAt ?? '',
+      timeZone: selectedSite?.timeZone ?? null,
+      verified: data !== undefined,
+      workplacePolicy: data?.policy ?? null,
+    }),
+    [
+      capabilities.canUpdateWorkplaceBooking,
+      data,
+      endsAt,
+      relocationOccupancy,
+      selectedSite?.timeZone,
+      startsAt,
+    ]
   );
   const candidates = useMemo(
     () =>
-      (data?.resources ?? []).filter(
-        (resource) =>
-          resource.type === booking?.resourceType &&
-          resource.state === 'AVAILABLE' &&
-          resource.mode !== 'UNAVAILABLE' &&
-          !occupiedIds.has(resource.resourceId)
+      workplaceRelocationCandidates(
+        data?.resources ?? [],
+        booking?.resourceType,
+        relocationBookability
       ),
-    [booking?.resourceType, data?.resources, occupiedIds]
+    [booking?.resourceType, data?.resources, relocationBookability]
   );
   const selectedResource =
     candidates.find((resource) => resource.resourceId === resourceId) ?? null;
@@ -312,7 +331,7 @@ export function WorkplaceRelocateBookingDialog({
     >
       <Stack spacing={2}>
         {query.isLoading && <Skeleton variant="rectangular" height={220} />}
-        {query.isError && (
+        {(targetSourceState === 'STALE' || targetSourceState === 'UNAVAILABLE') && (
           <Alert
             severity={data ? 'warning' : 'error'}
             action={

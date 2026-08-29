@@ -1,8 +1,8 @@
 {
   "entryRawBytes": 460000,
   "entryGzipBytes": 140000,
-  "initialRawBytes": 1200000,
-  "initialGzipBytes": 350000,
+  "initialRawBytes": 1100000,
+  "initialGzipBytes": 325000,
   "initialRequestCount": 5,
   "largestAsyncRawBytes": 550000,
   "largestAsyncGzipBytes": 170000

@@ -222,6 +222,53 @@ function booking(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function roomAvailabilityForRequest(
+  requestUrl: string,
+  {
+    rooms = [CALENDAR_RESOURCES_FIXTURE[0]],
+    occupancy = [],
+    generatedAt = '2026-08-19T00:00:00Z',
+    reasonCode = 'ELIGIBLE',
+  }: {
+    rooms?: Array<(typeof CALENDAR_RESOURCES_FIXTURE)[number]>;
+    occupancy?: Array<{
+      resourceId: string;
+      startsAt: string;
+      endsAt: string;
+      bookingStatus: 'PENDING' | 'CONFIRMED';
+    }>;
+    generatedAt?: string;
+    reasonCode?: 'ELIGIBLE' | 'RESOURCE_UNAVAILABLE' | 'POLICY_BLOCKED' | 'RESOURCE_CONFLICT';
+  } = {}
+) {
+  const url = new URL(requestUrl);
+  const evaluatedFrom = (url.searchParams.get('from') ?? '2026-08-19T01:00:00Z').replace(
+    /\.000Z$/u,
+    'Z'
+  );
+  const evaluatedTo = (url.searchParams.get('to') ?? '2026-08-19T02:00:00Z').replace(
+    /\.000Z$/u,
+    'Z'
+  );
+  const excludedEventId = url.searchParams.get('excludeEventId');
+  return {
+    rooms,
+    occupancy,
+    bookingEligibility: rooms.map((room) => ({
+      resourceId: room.resourceId,
+      eligible: reasonCode === 'ELIGIBLE',
+      reasonCode,
+      evaluatedFrom,
+      evaluatedTo,
+      excludedEventId,
+      evaluatedAt: generatedAt,
+      resourceVersion: room.version,
+      policyVersion: 4,
+    })),
+    generatedAt,
+  };
+}
+
 const workplaceCalendarHome = {
   date: '2026-08-19',
   timeZone: 'Asia/Seoul',
@@ -907,8 +954,6 @@ test('workplace home replaces an unverified check-in notice after authoritative 
   );
   await page.clock.fastForward(60_010);
   await firstFailure;
-  await page.clock.fastForward(1_100);
-
   const decisionStatus = page.getByTestId('workplace-decision-status');
   await expect(checkIn).toHaveCount(0);
   await expect(decisionStatus).toHaveText(
@@ -1410,7 +1455,6 @@ test('workplace home closes cached room-policy eligibility until recovery', asyn
   policyUnavailable = true;
   await page.clock.fastForward(60_500);
   await expect.poll(() => failedPolicyCalls).toBeGreaterThanOrEqual(1);
-  await page.clock.fastForward(2_000);
   await expect(
     page.getByRole('heading', { name: 'Refresh availability before choosing a space' })
   ).toBeVisible();
@@ -1458,6 +1502,7 @@ test('members discover and book a workspace using tenant policy and site time zo
   await dialog.getByLabel('Purpose').fill('Workplace E2E review');
   await dialog.getByRole('button', { name: 'Book', exact: true }).click();
   await expect(dialog).toBeHidden();
+  await expect(page.locator('main')).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -1721,8 +1766,6 @@ test('cached room policy refresh failures close Explore booking until recovery',
   policyUnavailable = true;
   await page.clock.fastForward(60_500);
   await expect.poll(() => failedPolicyCalls).toBeGreaterThanOrEqual(1);
-  await page.clock.fastForward(2_000);
-
   await expect(
     page.getByText(
       'The latest meeting-room policy could not be refreshed. The last verified policy is shown for reference, and room booking remains paused until recovery.'
@@ -1740,9 +1783,506 @@ test('cached room policy refresh failures close Explore booking until recovery',
   ).toBeVisible();
 
   policyUnavailable = false;
-  await page.getByRole('button', { name: 'Try again' }).first().click();
+  await page.clock.fastForward(1_100);
   await expect(page.getByText('1 pass initial booking checks')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Book this space' })).toBeEnabled();
+});
+
+test('an open workspace booking dialog becomes read-only on the first stale read and recovers', async ({
+  page,
+}) => {
+  let source: 'READY' | 'STALE' = 'READY';
+  let failedCalls = 0;
+  let releaseRetry: (() => void) | undefined;
+  const retryGate = new Promise<void>((resolve) => {
+    releaseRetry = resolve;
+  });
+  let bookingWrites = 0;
+  await page.route('**/api/platform/v1/workplace/explore**', async (route) => {
+    if (source === 'READY') return fulfillSuccess(route, workplaceExploreFixture);
+    failedCalls += 1;
+    if (failedCalls > 1) await retryGate;
+    return source === 'READY'
+      ? fulfillSuccess(route, workplaceExploreFixture)
+      : route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+        });
+  });
+  page.on('request', (request) => {
+    if (
+      request.method() === 'POST' &&
+      new URL(request.url()).pathname === '/api/platform/v1/workplace/bookings'
+    ) {
+      bookingWrites += 1;
+    }
+  });
+
+  await page.goto('/workplace/explore');
+  await page
+    .getByRole('button', {
+      name: /^Focus desk 12.*Physically open.*Initial booking checks passed$/u,
+    })
+    .click();
+  await page.getByRole('button', { name: 'Book this space' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Book a workspace' });
+  await dialog.getByLabel('Purpose').fill('Preserve this draft');
+  const submit = dialog.getByRole('button', { name: 'Book', exact: true });
+  await expect(submit).toBeEnabled();
+
+  const workspaceStartMinutes = dialog
+    .getByLabel('Start')
+    .getByRole('spinbutton', { name: 'Minutes' });
+  const workspaceInitialMinute = await workspaceStartMinutes.getAttribute('aria-valuenow');
+  expect(workspaceInitialMinute).not.toBeNull();
+  const workspaceChangedMinute = String((Number(workspaceInitialMinute) + 1) % 60).padStart(2, '0');
+  await workspaceStartMinutes.fill(workspaceChangedMinute);
+  await expect(
+    dialog.getByText(
+      'This time differs from the verified search range. Update the search time and select the space again before booking.'
+    )
+  ).toBeVisible();
+  await expect(submit).toBeDisabled();
+  expect(bookingWrites).toBe(0);
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Book this space' }).click();
+  await dialog.getByLabel('Purpose').fill('Preserve this draft');
+  await expect(submit).toBeEnabled();
+
+  source = 'STALE';
+  const firstFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/explore'
+  );
+  await page.clock.fastForward(60_010);
+  await firstFailure;
+
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel('Purpose')).toHaveValue('Preserve this draft');
+  await expect(
+    dialog.getByText(
+      'Live availability could not be refreshed. Review is available, but booking is disabled until the connection is restored.'
+    )
+  ).toBeVisible();
+  await expect(submit).toBeDisabled();
+  expect(bookingWrites).toBe(0);
+
+  source = 'READY';
+  releaseRetry?.();
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(dialog).toBeHidden();
+  expect(bookingWrites).toBe(1);
+});
+
+test('an open room booking dialog fails closed across stale recovery and authority denial', async ({
+  page,
+}) => {
+  const mappedRoom = {
+    ...resource,
+    resourceId: '30000000-0000-0000-0000-000000000025',
+    calendarResourceId: CALENDAR_RESOURCES_FIXTURE[0].resourceId,
+    code: 'R-DIALOG-AUTHORITY',
+    name: 'Authority room',
+    nameKo: '권위 검증 회의실',
+    nameEn: 'Authority room',
+    type: 'ROOM',
+    capacity: 8,
+    version: 17,
+  };
+  let policySource: 'READY' | 'STALE' | 'DENIED' = 'READY';
+  let failedCalls = 0;
+  let releaseRetry: (() => void) | undefined;
+  const retryGate = new Promise<void>((resolve) => {
+    releaseRetry = resolve;
+  });
+  let roomBookingWrites = 0;
+  await page.route('**/api/platform/v1/workplace/explore**', (route) =>
+    fulfillSuccess(route, { ...workplaceExploreFixture, resources: [mappedRoom] })
+  );
+  await page.route('**/api/platform/v1/rooms/policy', async (route) => {
+    if (policySource === 'READY') return route.fallback();
+    if (policySource === 'DENIED') {
+      return route.fulfill({
+        status: 403,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'FORBIDDEN', message: 'Access revoked.' }),
+      });
+    }
+    failedCalls += 1;
+    if (failedCalls > 1) await retryGate;
+    return policySource === 'READY'
+      ? route.fallback()
+      : route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+        });
+  });
+  page.on('request', (request) => {
+    if (
+      request.method() === 'POST' &&
+      new URL(request.url()).pathname === '/api/platform/v1/rooms/bookings'
+    ) {
+      roomBookingWrites += 1;
+    }
+  });
+
+  await page.goto('/workplace/explore');
+  await page
+    .getByRole('button', {
+      name: /^Authority room.*Physically open.*Initial booking checks passed$/u,
+    })
+    .click();
+  await page.getByRole('button', { name: 'Book this space' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Book a room' });
+  await dialog.getByLabel('Meeting subject').fill('Preserve room draft');
+  const submit = dialog.getByRole('button', { name: 'Book', exact: true });
+  await expect(submit).toBeEnabled();
+
+  const roomStartMinutes = dialog.getByLabel('Start').getByRole('spinbutton', { name: 'Minutes' });
+  const roomInitialMinute = await roomStartMinutes.getAttribute('aria-valuenow');
+  expect(roomInitialMinute).not.toBeNull();
+  const roomChangedMinute = String((Number(roomInitialMinute) + 1) % 60).padStart(2, '0');
+  await roomStartMinutes.fill(roomChangedMinute);
+  await expect(
+    dialog.getByText(
+      'This time differs from the verified search range. Update the search time and select the room again before booking.'
+    )
+  ).toBeVisible();
+  await expect(submit).toBeDisabled();
+  expect(roomBookingWrites).toBe(0);
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Book this space' }).click();
+  await dialog.getByLabel('Meeting subject').fill('Preserve room draft');
+  await expect(submit).toBeEnabled();
+
+  policySource = 'STALE';
+  const firstFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/policy'
+  );
+  await page.clock.fastForward(60_010);
+  await firstFailure;
+
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel('Meeting subject')).toHaveValue('Preserve room draft');
+  await expect(
+    dialog.getByText(
+      'Live room availability could not be refreshed. Review is available, but booking is disabled until the connection is restored.'
+    )
+  ).toBeVisible();
+  await expect(submit).toBeDisabled();
+  expect(roomBookingWrites).toBe(0);
+
+  policySource = 'READY';
+  releaseRetry?.();
+  await expect(submit).toBeEnabled();
+
+  policySource = 'DENIED';
+  const denied = page.waitForResponse(
+    (response) =>
+      response.status() === 403 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/policy'
+  );
+  await page.clock.fastForward(60_010);
+  await denied;
+  await expect(dialog).toHaveCount(0);
+  expect(roomBookingWrites).toBe(0);
+});
+
+test('my bookings discards retained rows after an authoritative access rejection', async ({
+  page,
+}) => {
+  let denied = false;
+  await page.route('**/api/platform/v1/workplace/bookings**', (route) => {
+    const request = route.request();
+    if (
+      request.method() !== 'GET' ||
+      new URL(request.url()).pathname !== '/api/platform/v1/workplace/bookings'
+    ) {
+      return route.fallback();
+    }
+    return denied
+      ? route.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'FORBIDDEN', message: 'Access revoked.' }),
+        })
+      : fulfillSuccess(route, [booking()]);
+  });
+
+  await page.goto('/workplace/my-bookings');
+  await expect(page.getByText('Focus desk 12', { exact: true })).toBeVisible();
+
+  denied = true;
+  const deniedResponse = page.waitForResponse(
+    (response) =>
+      response.status() === 403 &&
+      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await deniedResponse;
+
+  await expect(page.getByText('Your space bookings could not be loaded.')).toBeVisible();
+  await expect(page.getByText('Focus desk 12', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('No upcoming space bookings')).toHaveCount(0);
+});
+
+test('room finder keeps a stale draft read-only and discards it after authority denial', async ({
+  page,
+}) => {
+  let source: 'READY' | 'STALE' | 'DENIED' = 'READY';
+  let eligibilityReason:
+    'ELIGIBLE' | 'RESOURCE_UNAVAILABLE' | 'POLICY_BLOCKED' | 'RESOURCE_CONFLICT' = 'ELIGIBLE';
+  let failedCalls = 0;
+  let releaseRetry: (() => void) | undefined;
+  const retryGate = new Promise<void>((resolve) => {
+    releaseRetry = resolve;
+  });
+  let bookingWrites = 0;
+  await page.route('**/api/platform/v1/rooms/availability**', async (route) => {
+    if (source === 'READY') {
+      return fulfillSuccess(
+        route,
+        roomAvailabilityForRequest(route.request().url(), { reasonCode: eligibilityReason })
+      );
+    }
+    if (source === 'DENIED') {
+      return route.fulfill({
+        status: 403,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'FORBIDDEN', message: 'Access revoked.' }),
+      });
+    }
+    failedCalls += 1;
+    if (failedCalls > 1) await retryGate;
+    return source === 'READY'
+      ? fulfillSuccess(
+          route,
+          roomAvailabilityForRequest(route.request().url(), { reasonCode: eligibilityReason })
+        )
+      : route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+        });
+  });
+  page.on('request', (request) => {
+    if (
+      request.method() === 'POST' &&
+      new URL(request.url()).pathname === '/api/platform/v1/rooms/bookings'
+    ) {
+      bookingWrites += 1;
+    }
+  });
+
+  await page.goto('/workplace/rooms');
+  await page.getByRole('button', { name: /Book Focus 08 at 09:30 AM/u }).click();
+  const dialog = page.getByRole('dialog', { name: 'Book a room' });
+  await dialog.getByLabel('Meeting subject').fill('Keep this finder draft');
+  const submit = dialog.getByRole('button', { name: 'Book', exact: true });
+  await expect(submit).toBeEnabled();
+
+  eligibilityReason = 'RESOURCE_CONFLICT';
+  await page.clock.fastForward(60_010);
+  await expect(
+    dialog.getByText(/room or its required booking buffer is no longer open/u)
+  ).toBeVisible();
+  await expect(submit).toBeDisabled();
+  expect(bookingWrites).toBe(0);
+
+  eligibilityReason = 'ELIGIBLE';
+  await page.clock.fastForward(60_010);
+  await expect(submit).toBeEnabled();
+
+  source = 'STALE';
+  const firstFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/availability'
+  );
+  await page.clock.fastForward(60_010);
+  await firstFailure;
+
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel('Meeting subject')).toHaveValue('Keep this finder draft');
+  await expect(submit).toBeDisabled();
+  expect(bookingWrites).toBe(0);
+
+  source = 'READY';
+  releaseRetry?.();
+  await expect(submit).toBeEnabled();
+
+  source = 'DENIED';
+  const denied = page.waitForResponse(
+    (response) =>
+      response.status() === 403 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/availability'
+  );
+  await page.clock.fastForward(60_010);
+  await denied;
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByText('Focus 08', { exact: true })).toHaveCount(0);
+  expect(bookingWrites).toBe(0);
+});
+
+test('room booking edits revalidate their range and cached meeting actions fail closed', async ({
+  page,
+}) => {
+  const editableEvent = {
+    ...ROOM_BOOKING_EVENT_FIXTURE,
+    myResponse: 'NEEDS_ACTION' as const,
+    restrictionReason: null,
+    capabilities: {
+      ...ROOM_BOOKING_EVENT_FIXTURE.capabilities,
+      canEdit: true,
+      canDelete: true,
+      canRespond: true,
+    },
+  };
+  let bookingSource: 'READY' | 'STALE' | 'DENIED' = 'READY';
+  let failedBookingCalls = 0;
+  let releaseBookingRetry: (() => void) | undefined;
+  const bookingRetryGate = new Promise<void>((resolve) => {
+    releaseBookingRetry = resolve;
+  });
+  let holdEditedRange = false;
+  let editedRangeEligibility:
+    'ELIGIBLE' | 'RESOURCE_UNAVAILABLE' | 'POLICY_BLOCKED' | 'RESOURCE_CONFLICT' = 'ELIGIBLE';
+  let releaseEditedRange: (() => void) | undefined;
+  let markEditedRangeStarted: (() => void) | undefined;
+  const editedRangeGate = new Promise<void>((resolve) => {
+    releaseEditedRange = resolve;
+  });
+  const editedRangeStarted = new Promise<void>((resolve) => {
+    markEditedRangeStarted = resolve;
+  });
+  let updateWrites = 0;
+  let actionWrites = 0;
+  await page.route('**/api/platform/v1/rooms/bookings**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path === '/api/platform/v1/rooms/bookings') {
+      if (bookingSource === 'READY') return fulfillSuccess(route, [editableEvent]);
+      if (bookingSource === 'DENIED') {
+        return route.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 'FORBIDDEN', message: 'Access revoked.' }),
+        });
+      }
+      failedBookingCalls += 1;
+      if (failedBookingCalls > 1) await bookingRetryGate;
+      return bookingSource === 'READY'
+        ? fulfillSuccess(route, [editableEvent])
+        : route.fulfill({
+            status: 503,
+            contentType: 'application/json',
+            body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
+          });
+    }
+    if (request.method() === 'PUT') {
+      updateWrites += 1;
+      return fulfillSuccess(route, { ...editableEvent, ...request.postDataJSON(), version: 2 });
+    }
+    if (request.method() === 'POST') {
+      actionWrites += 1;
+      return fulfillSuccess(route, editableEvent);
+    }
+    return route.fallback();
+  });
+  await page.route('**/api/platform/v1/rooms/availability**', async (route) => {
+    if (holdEditedRange) {
+      markEditedRangeStarted?.();
+      await editedRangeGate;
+    }
+    return fulfillSuccess(
+      route,
+      roomAvailabilityForRequest(route.request().url(), {
+        reasonCode: editedRangeEligibility,
+      })
+    );
+  });
+
+  await page.goto('/workplace/my-meetings');
+  await expect(page.getByText(editableEvent.title, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  const editDialog = page.getByRole('dialog', { name: 'Change room booking' });
+  const save = editDialog.getByRole('button', { name: 'Save', exact: true });
+  await expect(save).toBeEnabled();
+
+  holdEditedRange = true;
+  const editStartMinutes = editDialog
+    .getByLabel('Start')
+    .getByRole('spinbutton', { name: 'Minutes' });
+  const initialMinute = await editStartMinutes.getAttribute('aria-valuenow');
+  expect(initialMinute).not.toBeNull();
+  await editStartMinutes.fill(String((Number(initialMinute) + 1) % 60).padStart(2, '0'));
+  await editedRangeStarted;
+  await expect(save).toBeDisabled();
+  expect(updateWrites).toBe(0);
+  editedRangeEligibility = 'RESOURCE_CONFLICT';
+  releaseEditedRange?.();
+  await expect(
+    editDialog.getByText(/room or its required booking buffer is no longer open/u)
+  ).toBeVisible();
+  await expect(save).toBeDisabled();
+  expect(updateWrites).toBe(0);
+
+  editedRangeEligibility = 'ELIGIBLE';
+  const eligibilityRecovery = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return (
+      response.status() === 200 &&
+      url.pathname === '/api/platform/v1/rooms/availability' &&
+      url.searchParams.get('excludeEventId') === editableEvent.eventId
+    );
+  });
+  await page.clock.fastForward(60_010);
+  await eligibilityRecovery;
+  await expect(save).toBeEnabled();
+  await save.click();
+  await expect(editDialog).toHaveCount(0);
+  expect(updateWrites).toBe(1);
+
+  await page.getByRole('button', { name: 'Cancel booking', exact: true }).click();
+  const cancelDialog = page.getByRole('alertdialog', { name: 'Cancel this room booking?' });
+  await expect(cancelDialog).toBeVisible();
+
+  bookingSource = 'STALE';
+  const firstFailure = page.waitForResponse(
+    (response) =>
+      response.status() === 503 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await firstFailure;
+  await expect(cancelDialog).toHaveCount(0);
+  await expect(page.getByText(editableEvent.title, { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Cancel booking', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Accept', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Decline', exact: true })).toHaveCount(0);
+  expect(actionWrites).toBe(0);
+
+  bookingSource = 'READY';
+  releaseBookingRetry?.();
+  await expect(page.getByRole('button', { name: 'Cancel booking', exact: true })).toBeVisible();
+
+  bookingSource = 'DENIED';
+  const denied = page.waitForResponse(
+    (response) =>
+      response.status() === 403 &&
+      new URL(response.url()).pathname === '/api/platform/v1/rooms/bookings'
+  );
+  await page.clock.fastForward(60_010);
+  await denied;
+  await expect(page.getByText(editableEvent.title, { exact: true })).toHaveCount(0);
+  expect(actionWrites).toBe(0);
 });
 
 test('Korean discovery reflows at 200 percent text and preserves keyboard access', async ({
@@ -2092,8 +2632,6 @@ test('my bookings replaces an unverified release notice after authoritative reco
   );
   await page.clock.fastForward(60_010);
   await firstFailure;
-  await page.clock.fastForward(1_100);
-
   const decisionStatus = page.getByTestId('workplace-booking-decision-status');
   await expect(release).toHaveCount(0);
   await expect(decisionStatus).toHaveText(
@@ -2579,7 +3117,7 @@ test('relocation is bound to the current identity and booking snapshot', async (
   expect(relocateWrites).toBe(0);
 
   await page.getByRole('button', { name: 'Change reservation' }).click();
-  await relocateDialog.getByLabel('Available space').click();
+  await relocateDialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
   await relocateDialog.getByLabel('Reason for change').fill('Move under the active identity');
   await relocateDialog.getByRole('button', { name: 'Save reservation change' }).click();
@@ -2638,7 +3176,7 @@ test('members can move a future reservation to an available space of the same ty
 
   await page.getByRole('button', { name: 'Change reservation' }).click();
   await expect(dialog).toBeVisible();
-  await dialog.getByLabel('Available space').click();
+  await dialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
   await dialog.getByLabel('Reason for change').fill('Move closer to the project team');
 
@@ -2654,6 +3192,62 @@ test('members can move a future reservation to an available space of the same ty
   });
   expect(relocationWrites).toBe(1);
   await expect(dialog).toBeHidden();
+});
+
+test('relocation only offers targets that pass the shared eligibility checks', async ({ page }) => {
+  const futureDropIn = {
+    ...unplacedResource,
+    resourceId: '30000000-0000-0000-0000-000000000014',
+    code: 'D-1210',
+    name: 'Future drop-in desk',
+    nameKo: '미래 드롭인 좌석',
+    nameEn: 'Future drop-in desk',
+    mode: 'DROP_IN',
+    version: 3,
+  } as const;
+  const assignedToColleague = {
+    ...unplacedResource,
+    resourceId: '30000000-0000-0000-0000-000000000015',
+    code: 'D-1211',
+    name: 'Assigned colleague desk',
+    nameKo: '동료 고정 좌석',
+    nameEn: 'Assigned colleague desk',
+    mode: 'ASSIGNED',
+    assignedUserId: 77,
+    assignedPersonPublicId: 'person-77',
+    assignedDisplayName: null,
+    version: 4,
+  } as const;
+  let relocationWrites = 0;
+  await page.route('**/api/platform/v1/workplace/explore**', (route) =>
+    fulfillSuccess(route, {
+      ...workplaceExploreFixture,
+      resources: [resource, unplacedResource, futureDropIn, assignedToColleague],
+    })
+  );
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/relocate')) {
+      relocationWrites += 1;
+    }
+  });
+
+  await page.goto('/workplace/my-bookings');
+  await page.getByRole('button', { name: 'Change reservation' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Change space or time' });
+  const target = dialog.getByLabel('Space passing initial checks');
+  const save = dialog.getByRole('button', { name: 'Save reservation change' });
+
+  await expect(save).toBeDisabled();
+  await target.click();
+  await expect(page.getByRole('option', { name: /Future drop-in desk/u })).toHaveCount(0);
+  await expect(page.getByRole('option', { name: /Assigned colleague desk/u })).toHaveCount(0);
+  await expect(page.getByRole('option', { name: /Focus desk 13/u })).toBeVisible();
+  expect(relocationWrites).toBe(0);
+
+  await page.getByRole('option', { name: /Focus desk 13/u }).click();
+  await dialog.getByLabel('Reason for change').fill('Use a target that passed shared checks');
+  await expect(save).toBeEnabled();
+  expect(relocationWrites).toBe(0);
 });
 
 test('relocation requires a fresh authoritative target snapshot before saving', async ({
@@ -2731,7 +3325,7 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
   await relocateTrigger.click();
   const dialog = page.getByRole('dialog', { name: 'Change space or time' });
   const save = dialog.getByRole('button', { name: 'Save reservation change' });
-  await dialog.getByLabel('Available space').click();
+  await dialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
   await dialog.getByLabel('Reason for change').fill('Use a verified target');
   await expect(save).toBeEnabled();
@@ -2743,11 +3337,9 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
   await save.focus();
   await expect(save).toBeFocused();
   staleFailure.value.release();
-  await page.clock.fastForward(1_100);
-
   await expect(
     dialog.getByText(
-      'Available spaces could not be refreshed. The last verified options are read-only, and saving remains disabled until recovery.'
+      'Relocation options could not be refreshed. The last verified options are read-only, and saving remains disabled until recovery.'
     )
   ).toBeVisible();
   await expect(save).toBeDisabled();
@@ -2771,7 +3363,7 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
   await expect(dialog).toHaveCount(0);
   const deniedNotice = page.getByTestId('workplace-relocate-denied-alert');
   await expect(deniedNotice).toHaveText(
-    'You no longer have permission to view available spaces. The reservation change was closed and no update was sent.'
+    'You no longer have permission to view relocation options. The reservation change was closed and no update was sent.'
   );
   await expect(deniedNotice).toHaveAttribute('role', 'alert');
   await expect(deniedNotice).toHaveAttribute('aria-live', 'assertive');
@@ -2784,11 +3376,11 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
   await relocateTrigger.click();
   await freshRecoveryStarted;
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByLabel('Available space')).toHaveCount(0);
+  await expect(dialog.getByLabel('Space passing initial checks')).toHaveCount(0);
   await expect(save).toBeDisabled();
   await expect(deniedNotice).toHaveCount(0);
   releaseFreshRecovery?.();
-  await dialog.getByLabel('Available space').click();
+  await dialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
   await dialog.getByLabel('Reason for change').fill('Use a newly authorized target');
   await expect(save).toBeEnabled();
@@ -2838,7 +3430,7 @@ test('Korean relocation denial persists outside the dialog and restores its trig
   const dialog = page.getByRole('dialog', { name: '공간 또는 시간 변경', exact: true });
   const save = dialog.getByRole('button', { name: '예약 변경 저장', exact: true });
   await expect(dialog).toBeVisible();
-  await dialog.getByLabel('예약 가능한 공간').click();
+  await dialog.getByLabel('예약 1차 확인 통과 공간').click();
   await page.getByRole('option', { name: /(?:집중 좌석 13|Focus desk 13)/u }).click();
   await dialog.getByLabel('변경 사유').fill('권한 거부 시 안전한 복귀 확인');
   await expect(save).toBeEnabled();
@@ -2853,7 +3445,7 @@ test('Korean relocation denial persists outside the dialog and restores its trig
   await expect(dialog).toHaveCount(0);
   const deniedNotice = page.getByTestId('workplace-relocate-denied-alert');
   await expect(deniedNotice).toHaveText(
-    '예약 가능한 공간을 볼 권한이 없습니다. 예약 변경 창을 닫았으며 변경 요청은 전송되지 않았습니다.'
+    '이동 후보를 볼 권한이 없습니다. 예약 변경 창을 닫았으며 변경 요청은 전송되지 않았습니다.'
   );
   await expect(deniedNotice).toHaveAttribute('role', 'alert');
   await expect(deniedNotice).toHaveAttribute('aria-live', 'assertive');

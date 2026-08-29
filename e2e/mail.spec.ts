@@ -110,6 +110,48 @@ function detail(item: ReturnType<typeof thread>, deliveryState = 'FAILED') {
   };
 }
 
+function draftDetail(
+  id: string,
+  fields: { toEmail?: string; subject?: string; body?: string },
+  version: number
+) {
+  const item = {
+    ...thread(id, { subject: fields.subject || '(No subject)' }),
+    folderType: 'DRAFTS',
+    workflowState: 'DRAFT',
+    preview: fields.body ?? '',
+    participants: fields.toEmail ? [{ name: fields.toEmail, email: fields.toEmail }] : [],
+    unread: false,
+    externalSender: false,
+    messageCount: 1,
+    version,
+  };
+  return {
+    thread: item,
+    messages: [
+      {
+        messageId: '30000000-0000-0000-0000-000000000099',
+        senderEmail: 'mina.kim@sk.com',
+        senderName: 'Mina Kim',
+        recipients: fields.toEmail
+          ? [{ name: fields.toEmail, email: fields.toEmail, type: 'TO' }]
+          : [],
+        direction: 'DRAFT',
+        bodyFormat: 'TEXT',
+        body: fields.body ?? '',
+        attachments: [],
+        sentAt: '2026-08-29T03:00:00Z',
+        deliveryState: 'DRAFT',
+        acceptedAt: null,
+        lastDeliveryError: null,
+      },
+    ],
+    internalComments: [],
+    proposals: [],
+    sharedInboxMembers: [],
+  };
+}
+
 function mailOrganization(): MailOrganization {
   return {
     accounts: [
@@ -120,7 +162,7 @@ function mailOrganization(): MailOrganization {
         accountKind: 'PERSONAL',
         providerType: 'DWP_SANDBOX',
         connectionState: 'ACTIVE',
-        synchronizationState: 'SYNCED',
+        synchronizationState: 'READY',
         defaultAccount: true,
       },
     ],
@@ -215,6 +257,319 @@ test('mail home exposes work signals without serious accessibility defects', asy
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(overflow).toBeLessThanOrEqual(1);
+
+  await page.getByRole('button', { name: /Later/ }).click();
+  await expect(page).toHaveURL(/\/mail\/inbox\?state=SNOOZED/u);
+  await page.goBack();
+  await page.getByRole('button', { name: 'Open shared inboxes' }).click();
+  await expect(page).toHaveURL(/\/mail\/shared$/u);
+});
+
+test('connected accounts expose actual account and synchronization states', async ({ page }) => {
+  await mockMailMember(page);
+  const organization = mailOrganization();
+  await page.route('**/api/platform/v1/mail/home', (route) =>
+    fulfill(route, {
+      accounts: [
+        {
+          ...organization.accounts[0],
+          connectionState: 'REAUTHENTICATION_REQUIRED',
+          synchronizationState: 'READY',
+        },
+        {
+          ...organization.accounts[0],
+          accountId: '10000000-0000-0000-0000-000000000002',
+          emailAddress: 'shared@sk.com',
+          displayName: 'Shared operations',
+          accountKind: 'SHARED',
+          connectionState: 'DISCONNECTED',
+          synchronizationState: 'PAUSED',
+          defaultAccount: false,
+        },
+      ],
+      metrics: { unread: 0, urgent: 0, needsReply: 0, assigned: 0, snoozed: 0, activeProposals: 0 },
+      focusQueue: [],
+      proposals: [],
+      sharedInboxes: [],
+      generatedAt: '2026-08-29T03:00:00Z',
+    })
+  );
+
+  await page.goto('/mail/accounts');
+  await expect(page.getByText('Reauthentication required')).toBeVisible();
+  await expect(page.getByText(/authenticate with the provider again/i)).toBeVisible();
+  await expect(page.getByText('Disconnected')).toBeVisible();
+  await expect(page.getByText(/mail cannot be retrieved or sent/i)).toBeVisible();
+});
+
+test('partial drafts autosave and promote the same draft when sent', async ({ page }) => {
+  await mockMailMember(page);
+  const organization = mailOrganization();
+  const draftId = '40000000-0000-0000-0000-000000000020';
+  const creates: Array<Record<string, unknown>> = [];
+  const saves: Array<Record<string, unknown>> = [];
+  const sends: Array<Record<string, unknown>> = [];
+  let version = 1;
+  let fields: { toEmail?: string; subject?: string; body?: string } = {};
+  await page.route('**/api/platform/v1/mail/organization', (route) => fulfill(route, organization));
+  await page.route('**/api/platform/v1/mail/threads**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/threads')) {
+      return fulfill(route, { items: [], total: 0, page: 0, pageSize: 30 });
+    }
+    if (request.method() === 'PUT' && path.endsWith(`/${draftId}/draft`)) {
+      const input = (await request.postDataJSON()) as Record<string, unknown>;
+      sends.push(input);
+      return fulfill(route, {
+        ...draftDetail(draftId, fields, version + 1),
+        thread: {
+          ...draftDetail(draftId, fields, version + 1).thread,
+          folderType: 'SENT',
+          workflowState: 'DONE',
+        },
+      });
+    }
+    return route.fallback();
+  });
+  await page.route('**/api/platform/v1/mail/drafts**', async (route) => {
+    const request = route.request();
+    const input = (await request.postDataJSON()) as Record<string, unknown>;
+    if (request.method() === 'POST') {
+      creates.push(input);
+      fields = { subject: String(input.subject ?? '') };
+      return fulfill(route, draftDetail(draftId, fields, version));
+    }
+    if (request.method() === 'PUT') {
+      saves.push(input);
+      expect(input.version).toBe(version);
+      version += 1;
+      fields = {
+        toEmail: input.toEmail ? String(input.toEmail) : undefined,
+        subject: input.subject ? String(input.subject) : undefined,
+        body: input.body ? String(input.body) : undefined,
+      };
+      return fulfill(route, draftDetail(draftId, fields, version));
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/inbox');
+  await page.getByRole('button', { name: 'New message' }).click();
+  const dialog = page.getByRole('dialog', { name: 'New message' });
+  await dialog.getByLabel('Subject').fill('Subject-only planning note');
+  await expect(dialog.getByRole('button', { name: 'Send' })).toBeDisabled();
+  await expect.poll(() => creates.length).toBe(1);
+  expect(creates[0]).toMatchObject({ subject: 'Subject-only planning note' });
+  expect(creates[0]).not.toHaveProperty('toEmail');
+  await expect(dialog.getByRole('status')).toContainText('All changes saved');
+
+  await dialog.getByLabel('Recipient email').fill('alex.park@example.com');
+  await dialog.getByLabel('Message').fill('Please review the launch plan.');
+  await expect.poll(() => saves.length).toBeGreaterThan(0);
+  await expect(dialog.getByRole('status')).toContainText('All changes saved');
+  await dialog.getByRole('button', { name: 'Send' }).click();
+  await expect.poll(() => sends.length).toBe(1);
+  expect(sends[0]).toMatchObject({
+    toEmail: 'alex.park@example.com',
+    subject: 'Subject-only planning note',
+    body: 'Please review the launch plan.',
+    deliveryMode: 'SEND',
+    version,
+  });
+  expect(creates).toHaveLength(1);
+});
+
+test('closing during an active draft save waits for completion instead of discarding', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const draftId = '40000000-0000-0000-0000-000000000022';
+  let requestStarted = false;
+  let releaseSave!: () => void;
+  const saveGate = new Promise<void>((resolve) => {
+    releaseSave = resolve;
+  });
+  await page.route('**/api/platform/v1/mail/threads**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    return request.method() === 'GET' && path.endsWith('/v1/mail/threads')
+      ? fulfill(route, { items: [], total: 0, page: 0, pageSize: 30 })
+      : route.fallback();
+  });
+  await page.route('**/api/platform/v1/mail/drafts', async (route) => {
+    requestStarted = true;
+    const input = (await route.request().postDataJSON()) as { subject?: string };
+    await saveGate;
+    return fulfill(route, draftDetail(draftId, input, 1));
+  });
+
+  await page.goto('/mail/inbox');
+  await page.getByRole('button', { name: 'New message' }).click();
+  const dialog = page.getByRole('dialog', { name: 'New message' });
+  await dialog.getByLabel('Subject').fill('Wait for this save');
+  await expect.poll(() => requestStarted).toBe(true);
+  await expect(dialog.getByRole('status')).toContainText('Saving draft');
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
+  await expect(dialog.getByText('Finishing the draft save before closing.')).toBeVisible();
+  releaseSave();
+  await expect(dialog).not.toBeVisible();
+  await expect(page).not.toHaveURL(/compose=open/u);
+});
+
+test('existing drafts hydrate without writes and preserve local text on a version conflict', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const draftId = '40000000-0000-0000-0000-000000000021';
+  const initialFields = {
+    toEmail: 'alex.park@example.com',
+    subject: 'Hydrated draft',
+    body: 'Original draft body',
+  };
+  const current = draftDetail(draftId, initialFields, 7);
+  let creates = 0;
+  let saves = 0;
+  await page.route('**/api/platform/v1/mail/threads**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/threads')) {
+      return fulfill(route, { items: [current.thread], total: 1, page: 0, pageSize: 30 });
+    }
+    if (request.method() === 'GET' && path.endsWith(`/${draftId}`)) {
+      return fulfill(route, current);
+    }
+    return route.fallback();
+  });
+  await page.route('**/api/platform/v1/mail/drafts**', async (route) => {
+    if (route.request().method() === 'POST') {
+      creates += 1;
+      return fulfill(route, current);
+    }
+    saves += 1;
+    return route.fulfill({
+      status: 409,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: false, status: 'ERROR', message: 'Draft version conflict' }),
+    });
+  });
+
+  await page.goto(`/mail/drafts?thread=${draftId}`);
+  await expect(page.getByRole('heading', { name: 'Continue writing' })).toBeVisible();
+  await page.waitForTimeout(2_000);
+  expect(creates).toBe(0);
+  expect(saves).toBe(0);
+
+  const body = page.getByRole('textbox', { name: 'Message' });
+  await body.fill('Local text that must survive the conflict');
+  await expect(page.getByText(/draft changed elsewhere/i)).toBeVisible();
+  expect(saves).toBe(1);
+  await expect(body).toHaveValue('Local text that must survive the conflict');
+  await expect(page.getByRole('button', { name: 'Send' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Back' }).click();
+  const confirm = page.getByRole('alertdialog', { name: 'Discard unsaved changes?' });
+  await expect(confirm).toBeVisible();
+  await confirm.getByRole('button', { name: 'Keep editing' }).click();
+  await expect(body).toHaveValue('Local text that must survive the conflict');
+});
+
+test('mail URL lanes, keyboard commands, and custom snooze keep one truthful workflow', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const organization = mailOrganization();
+  let current = thread('40000000-0000-0000-0000-000000000010', {
+    subject: 'Keyboard and snooze review',
+  });
+  const listRequests: Array<{ lane: string | null; state: string | null }> = [];
+  const lifecycleActions: string[] = [];
+  let snoozePayload: { until: string; version: number } | null = null;
+  await page.route('**/api/platform/v1/mail/organization', (route) => fulfill(route, organization));
+  await page.route('**/api/platform/v1/mail/threads**', async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const path = url.pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/threads')) {
+      listRequests.push({
+        lane: url.searchParams.get('lane'),
+        state: url.searchParams.get('state'),
+      });
+      return fulfill(route, { items: [current], total: 1, page: 0, pageSize: 30 });
+    }
+    if (request.method() === 'GET' && path.endsWith(`/${current.threadId}`)) {
+      return fulfill(route, detail(current, 'SENT'));
+    }
+    if (request.method() === 'POST' && path.endsWith('/snooze')) {
+      snoozePayload = (await request.postDataJSON()) as { until: string; version: number };
+      current = {
+        ...current,
+        workflowState: 'SNOOZED',
+        snoozedUntil: snoozePayload.until,
+        version: current.version + 1,
+      };
+      return fulfill(route, detail(current, 'SENT'));
+    }
+    if (request.method() === 'POST' && path.endsWith('/lifecycle')) {
+      const input = await request.postDataJSON();
+      lifecycleActions.push(input.action);
+      return fulfill(route, { thread: current, deleted: false });
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/inbox?lane=PRIORITY');
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (mobile) {
+    await page.getByRole('button', { name: /Keyboard and snooze review/ }).click();
+  }
+  const snooze = page.getByRole('button', { name: 'Remind me later' });
+  await expect(snooze).toBeVisible();
+  await snooze.focus();
+  await page.keyboard.press('e');
+  expect(lifecycleActions).toEqual([]);
+
+  await page.keyboard.press('Control+K');
+  const commandInput = page.getByRole('combobox', { name: 'Search mail commands' });
+  await expect(commandInput).toHaveAttribute('aria-expanded', 'true');
+  await expect(commandInput).toHaveAttribute('aria-controls');
+  await commandInput.fill('show');
+  const firstActive = await commandInput.getAttribute('aria-activedescendant');
+  expect(firstActive).toBeTruthy();
+  await commandInput.press('ArrowDown');
+  await expect.poll(() => commandInput.getAttribute('aria-activedescendant')).not.toBe(firstActive);
+  const secondActive = await commandInput.getAttribute('aria-activedescendant');
+  await commandInput.press('ArrowUp');
+  await expect.poll(() => commandInput.getAttribute('aria-activedescendant')).toBe(firstActive);
+  await commandInput.press('ArrowDown');
+  await expect.poll(() => commandInput.getAttribute('aria-activedescendant')).toBe(secondActive);
+  await commandInput.press('Enter');
+  await expect(page).toHaveURL(/lane=NEEDS_REPLY/u);
+  await expect
+    .poll(() => listRequests.some((request) => request.lane === 'NEEDS_REPLY'))
+    .toBe(true);
+
+  if (mobile) {
+    await page.getByRole('button', { name: /Keyboard and snooze review/ }).click();
+  }
+  await page.getByRole('button', { name: 'Remind me later' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Choose when to return' });
+  const custom = dialog.getByRole('group', { name: 'Choose a date and time' });
+  await custom.getByRole('spinbutton', { name: 'Month' }).fill('08');
+  await custom.getByRole('spinbutton', { name: 'Day' }).fill('01');
+  await custom.getByRole('spinbutton', { name: 'Year' }).fill('2027');
+  await custom.getByRole('spinbutton', { name: 'Hours' }).fill('10');
+  await custom.getByRole('spinbutton', { name: 'Minutes' }).fill('30');
+  await custom.getByRole('spinbutton', { name: 'Meridiem' }).fill('AM');
+  await custom.getByRole('spinbutton', { name: 'Meridiem' }).press('Tab');
+  await dialog.getByRole('button', { name: 'Snooze until then' }).click();
+  await expect.poll(() => snoozePayload).not.toBeNull();
+  expect(snoozePayload?.version).toBe(3);
+  expect(new Date(snoozePayload!.until).getUTCFullYear()).toBe(2027);
+
+  await page.goto('/mail/inbox?state=SNOOZED');
+  await expect(page.getByRole('heading', { name: 'Later' })).toBeVisible();
+  await expect.poll(() => listRequests.some((request) => request.state === 'SNOOZED')).toBe(true);
 });
 
 test('personal folders and sender rules can be created and run from one workspace', async ({
@@ -224,7 +579,6 @@ test('personal folders and sender rules can be created and run from one workspac
   const state = mailOrganization();
   let createdFolderName = '';
   let createdRuleName = '';
-  let executedRule = false;
   await page.route('**/api/platform/v1/mail/organization**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -274,22 +628,6 @@ test('personal folders and sender rules can be created and run from one workspac
       state.rules.push(rule);
       return fulfill(route, rule);
     }
-    if (request.method() === 'POST' && path.endsWith('/run')) {
-      executedRule = true;
-      state.rules[0]!.lastRunAt = '2026-08-27T08:10:00Z';
-      state.rules[0]!.lastMatchCount = 2;
-      return fulfill(route, {
-        runId: '13000000-0000-0000-0000-000000000001',
-        ruleId: state.rules[0]!.ruleId,
-        triggerKind: 'MANUAL',
-        status: 'SUCCEEDED',
-        scannedCount: 6,
-        matchedCount: 2,
-        changedCount: 2,
-        startedAt: '2026-08-27T08:10:00Z',
-        completedAt: '2026-08-27T08:10:01Z',
-      });
-    }
     return route.fallback();
   });
 
@@ -311,9 +649,10 @@ test('personal folders and sender rules can be created and run from one workspac
   await ruleDialog.getByRole('button', { name: 'Save' }).click();
   await expect.poll(() => createdRuleName).toBe('Partner launch mail');
   await expect(page.getByText('Partner launch mail')).toBeVisible();
-  await page.getByRole('button', { name: 'Run now' }).click();
-  await expect.poll(() => executedRule).toBe(true);
-  await expect(page.locator('span:visible', { hasText: 'Last run · 2 matched' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Run now' })).toHaveCount(0);
+  await expect(
+    page.locator('main').locator('span:visible', { hasText: /^Not run yet$/u })
+  ).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -406,6 +745,7 @@ test('existing mail rule backfill previews impact and retries one idempotent req
   await expect(page.getByRole('heading', { name: 'Apply rules to existing mail' })).toBeVisible();
   await expect(page.getByText('Planned changes')).toBeVisible();
   await page.getByRole('button', { name: 'Apply to existing mail' }).click();
+  await page.getByRole('button', { name: 'Confirm and apply' }).click();
   await expect(page.getByText(/command result is unknown/i)).toBeVisible();
   await expect.poll(() => commands.length).toBe(1);
   await page.getByRole('button', { name: 'Retry same request' }).click();
@@ -508,6 +848,7 @@ test('stale mail backfill preview requires an explicit refresh and a new command
   await page.getByRole('tab', { name: 'Organization rules' }).click();
   const apply = page.getByRole('button', { name: 'Apply to existing mail' });
   await apply.click();
+  await page.getByRole('button', { name: 'Confirm and apply' }).click();
   await expect(page.getByText(/preview is no longer current/i)).toBeVisible();
   await expect(apply).toBeDisabled();
   await page.waitForTimeout(250);
@@ -517,12 +858,65 @@ test('stale mail backfill preview requires an explicit refresh and a new command
   await expect.poll(() => previewRequests).toBeGreaterThanOrEqual(2);
   await expect(apply).toBeEnabled();
   await apply.click();
+  await page.getByRole('button', { name: 'Confirm and apply' }).click();
   await expect(page.getByText(/rules changed 1 existing conversation/i)).toBeVisible();
 
   expect(commands).toHaveLength(2);
   expect(commands[0]?.previewFingerprint).toBe('c'.repeat(64));
   expect(commands[1]?.previewFingerprint).toBe('d'.repeat(64));
   expect(commands[1]?.requestId).not.toBe(commands[0]?.requestId);
+});
+
+test('truncated rule preview blocks backfill until the bounded scope is resolved', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const state = mailOrganization();
+  state.rules.push({
+    ruleId: '12000000-0000-0000-0000-000000000003',
+    accountId: state.accounts[0]!.accountId,
+    displayName: 'Large historical rule',
+    priority: 100,
+    matchMode: 'ALL',
+    conditions: [{ field: 'SENDER', operator: 'CONTAINS', value: '@example.com' }],
+    actions: [{ type: 'MARK_READ' }],
+    stopProcessing: false,
+    enabled: true,
+    synchronizationState: 'LOCAL_ONLY',
+    lastRunAt: null,
+    lastMatchCount: 0,
+    version: 0,
+  });
+  let commands = 0;
+  await page.route('**/api/platform/v1/mail/organization**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/v1/mail/organization')) {
+      return fulfill(route, state);
+    }
+    if (request.method() === 'GET' && path.endsWith('/rules/backfill-preview')) {
+      return fulfill(route, {
+        accountId: state.accounts[0]!.accountId,
+        previewFingerprint: 'e'.repeat(64),
+        enabledRuleCount: 1,
+        scannedCount: 500,
+        matchedThreadCount: 500,
+        plannedApplicationCount: 500,
+        truncated: true,
+        generatedAt: '2026-08-29T03:10:00Z',
+      });
+    }
+    if (request.method() === 'POST' && path.endsWith('/rules/backfill')) {
+      commands++;
+    }
+    return route.fallback();
+  });
+
+  await page.goto('/mail/organization');
+  await page.getByRole('tab', { name: 'Organization rules' }).click();
+  await expect(page.getByText(/execution is blocked/i)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Apply to existing mail' })).toBeDisabled();
+  expect(commands).toBe(0);
 });
 
 test('mailbox pagination, shared ownership, and failed delivery retry are complete', async ({
@@ -588,14 +982,11 @@ test('mailbox pagination, shared ownership, and failed delivery retry are comple
     await page.getByRole('button', { name: 'Back' }).click();
   }
   await page.getByRole('button', { name: 'Next page' }).click();
+  await expect(page.getByText('Page 2 of 2')).toBeVisible();
   if (mobile) {
-    await expect(page.getByText('Page 2 of 2')).toBeVisible();
     await page.getByRole('button', { name: /Second page request/ }).click();
   }
   await expect(page.getByRole('heading', { name: 'Second page request' })).toBeVisible();
-  if (!mobile) {
-    await expect(page.getByText('Page 2 of 2')).toBeVisible();
-  }
 
   await page.goto(`/mail/shared?thread=${shared.threadId}`);
   await expect(page.getByText('Delivery failed')).toBeVisible();
@@ -662,14 +1053,76 @@ test('trash and restore keep the mailbox lifecycle reversible', async ({ page })
   await page.getByRole('button', { name: 'Move to folder' }).click();
   await page.getByRole('menuitem', { name: 'Move to trash' }).click();
   await expect.poll(() => lifecycleActions).toEqual(['TRASH']);
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE']);
+
+  await page.getByRole('button', { name: 'Move to folder' }).click();
+  await page.getByRole('menuitem', { name: 'Move to trash' }).click();
+  await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE', 'TRASH']);
 
   await page.goto('/mail/trash');
   if (mobile) {
     await page.getByRole('button', { name: /Reversible lifecycle review/ }).click();
   }
   await expect(page.getByRole('heading', { name: 'Reversible lifecycle review' })).toBeVisible();
+  await expect(
+    page.getByRole('button', {
+      name: 'Permanent deletion is unavailable until retention and legal-hold policy is ready',
+    })
+  ).toBeDisabled();
   await page.getByRole('button', { name: 'Restore to previous location' }).click();
-  await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE']);
+  await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE', 'TRASH', 'RESTORE']);
+});
+
+test('mail workspace reflows at 320px and 200% text zoom without critical accessibility defects', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'The dedicated 320px audit runs once in Chromium.');
+  await mockMailMember(page);
+  const organization = mailOrganization();
+  const item = thread('40000000-0000-0000-0000-000000000011', {
+    subject: 'Narrow viewport review',
+  });
+  await page.route('**/api/platform/v1/mail/organization', (route) => fulfill(route, organization));
+  await page.route('**/api/platform/v1/mail/threads**', (route) => {
+    const url = new URL(route.request().url());
+    return url.pathname.endsWith('/v1/mail/threads')
+      ? fulfill(route, { items: [item], total: 1, page: 0, pageSize: 30 })
+      : fulfill(route, detail(item, 'SENT'));
+  });
+
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto('/mail/organization');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+  await page.getByRole('button', { name: 'New folder' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+      )
+    )
+    .toBeLessThanOrEqual(1);
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  await page.goto('/mail/inbox');
+  await page.getByRole('button', { name: /Narrow viewport review/ }).click();
+  await expect(page.getByRole('heading', { name: 'Narrow viewport review' })).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+      )
+    )
+    .toBeLessThanOrEqual(1);
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
 });
 
 test('mail administrators see contract readiness separately from deployed adapters', async ({

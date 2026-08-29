@@ -152,6 +152,7 @@
     "TENANT_LIFECYCLE": "Tenant lifecycle"
   },
   "auditActions": {
+    "ARCHIVE": "Archived mail",
     "ARCHIVE_NOW": "Archived immediately",
     "APPLY": "Applied",
     "APPROVE": "Approved",
@@ -169,6 +170,8 @@
     "EXTEND_RETENTION": "Archive deadline extended",
     "RETRY_SCHEDULED": "Export retry scheduled",
     "SNOOZE": "Notification snoozed",
+    "SPAM": "Moved mail to spam",
+    "TRASH": "Moved mail to trash",
     "UNSAVE": "Notification removed from saved items",
     "ACCESS_REVIEW_CAMPAIGN_ACTIVATED": "Access review campaign activated",
     "ACCESS_REVIEW_CAMPAIGN_COMPLETED": "Access review campaign completed",

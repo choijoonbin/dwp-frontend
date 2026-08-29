@@ -10,19 +10,21 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  defaultRegionalPreference,
   getPersonalPreference,
-  HttpError,
-  normalizeRegionalPreference,
   patchPersonalPreference,
   resetPersonalPreference,
-  writeRegionalPreference,
   type PersonalPreference,
   type PersonalPreferencePatch,
   type PersonalPreferenceValues,
-} from '@dwp-frontend/shared-utils';
+} from '@dwp-frontend/shared-utils/api/personal-preference-api';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { HttpError } from '@dwp-frontend/shared-utils/http-error';
+import {
+  defaultRegionalPreference,
+  normalizeRegionalPreference,
+  writeRegionalPreference,
+} from '@dwp-frontend/shared-utils/regional-preference';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 

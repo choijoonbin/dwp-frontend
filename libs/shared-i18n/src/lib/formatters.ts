@@ -1,5 +1,5 @@
 import { getCurrentLanguage } from './i18n';
-import { readRegionalPreference } from '@dwp-frontend/shared-utils';
+import { readRegionalPreference } from '@dwp-frontend/shared-utils/regional-preference';
 
 type DateValue = Date | number | string;
 

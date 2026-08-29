@@ -124,11 +124,13 @@ export function MailThreadListItem({
   selected = false,
   onSelect,
   compact = false,
+  disabled = false,
 }: {
   thread: MailThread;
   selected?: boolean;
   onSelect: () => void;
   compact?: boolean;
+  disabled?: boolean;
 }) {
   const { t, i18n } = useTranslation('mail');
   const participant = thread.participants[0];
@@ -138,7 +140,9 @@ export function MailThreadListItem({
       component="button"
       type="button"
       onClick={onSelect}
+      disabled={disabled}
       aria-pressed={selected}
+      aria-busy={disabled || undefined}
       sx={(theme) => ({
         width: 1,
         minHeight: compact ? 86 : 104,
@@ -158,7 +162,7 @@ export function MailThreadListItem({
             : alpha(theme.palette.background.paper, 0.72),
         color: 'text.primary',
         textAlign: 'left',
-        cursor: 'pointer',
+        cursor: disabled ? 'wait' : 'pointer',
         position: 'relative',
         '&::before': selected
           ? {
@@ -170,7 +174,8 @@ export function MailThreadListItem({
               borderRadius: '0 3px 3px 0',
             }
           : undefined,
-        '&:hover': { bgcolor: 'action.hover' },
+        '&:hover': { bgcolor: disabled ? undefined : 'action.hover' },
+        '&:disabled': { opacity: 0.72 },
         '&:focus-visible': {
           outline: `2px solid ${theme.palette.primary.main}`,
           outlineOffset: -2,

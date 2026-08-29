@@ -6,6 +6,7 @@ import type {
   VideoMeetingAdminCapabilities,
   VideoMeetingAdminPolicy,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type { VideoMeetingAdminIntelligenceReadiness as RuntimeMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
 
 import {
   MeetingAdminIntelligence,
@@ -13,10 +14,11 @@ import {
 } from './meeting-admin-intelligence';
 import {
   MEETING_ADMIN_OPERATION_CAPABILITIES,
-  deriveMeetingAdminIntelligenceReadiness,
+  createUnavailableMeetingAdminIntelligenceReadiness,
   formatMeetingAdminQualityScore,
   hasMeetingAdminPolicyErrors,
   isMeetingAdminCapabilityAvailable,
+  projectMeetingAdminIntelligenceReadiness,
   validateMeetingAdminPolicy,
 } from './meeting-admin-model';
 
@@ -57,6 +59,20 @@ const labels: MeetingAdminIntelligenceLabels = {
   title: 'Recording, transcript, and AI readiness',
   description: 'Verify governed dependencies and evidence before enabling content processing.',
   accessBoundary: 'Administrators have no default access to meeting content.',
+  runtimeEvidenceTitle: 'Authoritative runtime evidence',
+  runtimeEvidence: {
+    version: 'Readiness contract',
+    recordingPolicy: 'Recording policy',
+    provider: 'Managed provider',
+    model: 'Approved model',
+    region: 'Processing region',
+  },
+  recordingPolicies: {
+    NEVER: 'Disabled by tenant policy',
+    HOST_OPT_IN: 'Host opt-in with governed consent',
+    ADMIN_REQUIRED: 'Administrator-required governed recording',
+  },
+  unavailable: 'Not reported',
   capabilitiesTitle: 'Content readiness',
   capabilitiesDescription: 'Capabilities stay blocked until their requirements are verified.',
   dependenciesTitle: 'Dependency chain',
@@ -75,15 +91,7 @@ const labels: MeetingAdminIntelligenceLabels = {
     CONNECTION_REQUIRED: 'Connection required',
     NOT_VERIFIED: 'Not verified',
   },
-  reasons: {
-    POLICY_NEVER: 'Tenant policy prohibits recording.',
-    CAPABILITY_NOT_CONFIGURED: 'The capability is not configured.',
-    REALTIME_PROVIDER_UNAVAILABLE: 'The realtime provider is unavailable.',
-    DEPENDENCY_STATUS_CONTRACT_MISSING: 'A readiness contract must be connected.',
-    WORKFLOW_ENFORCEMENT_NOT_VERIFIED: 'Workflow enforcement is not verified.',
-    LEGAL_HOLD_NOT_CONNECTED: 'Legal hold is not connected.',
-    DELETION_EVIDENCE_NOT_CONNECTED: 'Deletion evidence is not connected.',
-  },
+  reason: (value) => value,
   capabilities: {
     recording: item('Recording'),
     transcript: item('Transcript'),
@@ -110,6 +118,66 @@ const labels: MeetingAdminIntelligenceLabels = {
     meeting: item('Meeting record'),
     artifact: item('Artifacts'),
     chat: item('Meeting chat'),
+    intelligence: item('AI intelligence reports'),
+    worker: item('Retention execution worker'),
+  },
+};
+
+const runtimeReadiness: RuntimeMeetingAdminIntelligenceReadiness = {
+  readinessVersion: 'meeting-intelligence-readiness-v1',
+  observedAt: '2026-08-28T00:00:00Z',
+  recordingPolicy: 'ADMIN_REQUIRED',
+  providerCode: 'managed-provider',
+  providerModel: 'enterprise-model',
+  processingRegion: 'kr-central-1',
+  capabilities: {
+    recording: { state: 'READY' },
+    transcript: { state: 'BLOCKED', reason: 'STT_NOT_READY' },
+    aiNotes: { state: 'BLOCKED', reason: 'LLM_NOT_READY' },
+  },
+  dependencies: {
+    provider: { state: 'READY' },
+    region: { state: 'READY' },
+    kms: { state: 'READY' },
+    audit: { state: 'READY' },
+    egress: { state: 'READY' },
+    storage: { state: 'READY' },
+    stt: { state: 'BLOCKED', reason: 'STT_NOT_READY' },
+    llm: { state: 'BLOCKED', reason: 'LLM_NOT_READY' },
+  },
+  governance: {
+    humanReview: { state: 'READY' },
+    explicitPublish: { state: 'READY' },
+    adminContentAccess: { state: 'READY' },
+    legalHold: {
+      state: 'NOT_VERIFIED',
+      reason: 'LEGAL_HOLD_ADMIN_WORKFLOW_NOT_CONFIGURED',
+    },
+    deletionEvidence: {
+      state: 'NOT_VERIFIED',
+      reason: 'COMPLETE_DELETION_EVIDENCE_NOT_VERIFIED',
+    },
+  },
+  retention: {
+    meetingDays: 90,
+    artifactDays: 30,
+    chatDays: 60,
+    intelligenceWorkerReady: true,
+    signals: {
+      intelligenceReports: { state: 'READY' },
+      meetingRecords: {
+        state: 'NOT_VERIFIED',
+        reason: 'MEETING_RECORD_RETENTION_WORKER_NOT_CONFIGURED',
+      },
+      artifacts: {
+        state: 'NOT_VERIFIED',
+        reason: 'ARTIFACT_RETENTION_WORKER_NOT_CONFIGURED',
+      },
+      chat: {
+        state: 'NOT_VERIFIED',
+        reason: 'CHAT_RETENTION_WORKER_NOT_CONFIGURED',
+      },
+    },
   },
 };
 
@@ -167,31 +235,51 @@ describe('meeting admin operations projection', () => {
 });
 
 describe('meeting admin intelligence control center', () => {
-  it('derives fail-closed content and dependency states from the available contract', () => {
-    const readiness = deriveMeetingAdminIntelligenceReadiness(
-      policy,
-      capabilities,
-      '2026-08-28T00:00:00Z'
-    );
+  it('projects authoritative runtime evidence without inferring readiness from configuration', () => {
+    const readiness = projectMeetingAdminIntelligenceReadiness(runtimeReadiness);
 
-    expect(readiness.capabilities.recording).toEqual({
+    expect(readiness.capabilities.recording).toEqual({ state: 'READY' });
+    expect(readiness.capabilities.transcript).toEqual({
       state: 'BLOCKED',
-      reason: 'POLICY_NEVER',
+      reason: 'STT_NOT_READY',
     });
-    expect(readiness.capabilities.transcript.state).toBe('CONNECTION_REQUIRED');
-    expect(readiness.capabilities.aiNotes.state).toBe('CONNECTION_REQUIRED');
     expect(readiness.dependencies.provider).toEqual({ state: 'READY' });
-    expect(readiness.dependencies.kms.state).toBe('CONNECTION_REQUIRED');
-    expect(readiness.governance.adminContentAccess.state).toBe('NOT_VERIFIED');
-    expect(readiness.retention).toEqual({ meetingDays: 90, artifactDays: 30, chatDays: 60 });
+    expect(readiness.governance.adminContentAccess.state).toBe('READY');
+    expect(readiness.providerModel).toBe('enterprise-model');
+    expect(readiness.recordingPolicy).toBe('ADMIN_REQUIRED');
+    expect(readiness.retention).toEqual({
+      meetingDays: 90,
+      artifactDays: 30,
+      chatDays: 60,
+      intelligenceWorkerReady: true,
+      signals: runtimeReadiness.retention.signals,
+    });
+  });
+
+  it('fails closed when the readiness endpoint or a required runtime signal is unavailable', () => {
+    const unavailable = createUnavailableMeetingAdminIntelligenceReadiness(policy);
+    const missingSignal = projectMeetingAdminIntelligenceReadiness({
+      ...runtimeReadiness,
+      dependencies: { ...runtimeReadiness.dependencies, kms: undefined! },
+    });
+
+    expect(unavailable.capabilities.recording).toEqual({
+      state: 'NOT_VERIFIED',
+      reason: 'READINESS_ENDPOINT_UNAVAILABLE',
+    });
+    expect(unavailable.retention.intelligenceWorkerReady).toBeNull();
+    expect(unavailable.retention.signals.artifacts).toEqual({
+      state: 'NOT_VERIFIED',
+      reason: 'READINESS_ENDPOINT_UNAVAILABLE',
+    });
+    expect(missingSignal.dependencies.kms).toEqual({
+      state: 'NOT_VERIFIED',
+      reason: 'RUNTIME_SIGNAL_MISSING',
+    });
   });
 
   it('renders every governed dependency and principle without unsafe enable controls', () => {
-    const readiness = deriveMeetingAdminIntelligenceReadiness(
-      policy,
-      capabilities,
-      '2026-08-28T00:00:00Z'
-    );
+    const readiness = projectMeetingAdminIntelligenceReadiness(runtimeReadiness);
     const markup = renderToStaticMarkup(
       createElement(MeetingAdminIntelligence, { readiness, labels })
     );
@@ -211,6 +299,10 @@ describe('meeting admin intelligence control center', () => {
     expect(markup).toContain('Legal hold');
     expect(markup).toContain('Deletion evidence');
     expect(markup).toContain('Administrators have no default access to meeting content.');
+    expect(markup).toContain('enterprise-model');
+    expect(markup).toContain('Retention execution worker');
+    expect(markup).toContain('AI intelligence reports');
+    expect(markup).toContain('MEETING_RECORD_RETENTION_WORKER_NOT_CONFIGURED');
     expect(markup).not.toContain('<button');
     expect(markup).not.toContain('<input');
   });

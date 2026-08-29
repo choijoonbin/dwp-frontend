@@ -116,6 +116,18 @@ export function workplaceBookingBlockCode(
   return null;
 }
 
+export function workplaceRelocationCandidates(
+  resources: readonly WorkplaceResource[],
+  resourceType: WorkplaceResourceType | null | undefined,
+  context: WorkplaceBookabilityContext
+) {
+  if (!resourceType) return [];
+  return resources.filter(
+    (resource) =>
+      resource.type === resourceType && workplaceBookingBlockCode(resource, context) === null
+  );
+}
+
 export function filterWorkplaceResources(
   resources: readonly WorkplaceResource[],
   occupancy: readonly WorkplaceOccupancy[],

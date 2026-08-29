@@ -28,7 +28,7 @@ DWP는 화면 완료 여부를 정적 검사와 육안 확인만으로 판정하
 | 항목                      |       R1 예산 |
 | ------------------------- | ------------: |
 | Entry raw / gzip          | 460KB / 140KB |
-| 초기 정적 JS raw / gzip   | 1.2MB / 350KB |
+| 초기 정적 JS raw / gzip   | 1.1MB / 325KB |
 | 초기 JS request           |      5개 이하 |
 | 최대 지연 청크 raw / gzip | 550KB / 170KB |
 
@@ -64,6 +64,17 @@ R1 Lab Gate는 Shell Ready 3초, SPA Route Transition 1초, CLS 0.1 이하이다
 
 Screenshot은 운영체제와 Browser Rendering 차이에 종속되므로 동일 CI Image에서 생성하고
 비교한다. Snapshot 갱신은 UI 변경 의도와 검토 근거가 있는 변경에서만 허용한다.
+
+### 4.1 2026-08-29 초기 그래프 강화
+
+공용 i18n, Toast와 Shell Provider가 `shared-utils` 루트 Barrel을 Runtime Import하면서 Provider,
+인사, 회의, 메신저, 결재 API 구현까지 초기 그래프에 포함되던 경로를 기능별 Subpath Import로
+교체했다. Production 실측은 초기 raw `1145.6 KiB`에서 `1021.9 KiB`, gzip `324.5 KiB`에서
+`298.0 KiB`로 감소했고 초기 Request는 5개로 유지됐다.
+
+개선분이 후속 기능 추가로 조용히 소진되지 않도록 초기 예산을 `1,100,000 bytes`와
+`325,000 bytes`로 강화한다. 예산 상향은 기존 결정대로 원인, 사용자 영향, 대안과 새 실측값을
+이 ADR에 먼저 기록해야 한다.
 
 ## 5. 접근성 및 Reflow
 

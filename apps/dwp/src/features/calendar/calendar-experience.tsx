@@ -194,30 +194,46 @@ export function CalendarSignal({
   );
   const surfaceSx = (theme: Theme) => {
     const color = toneColor(theme, tone);
+    const wash = alpha(
+      color,
+      theme.palette.mode === 'dark' ? (isSelected ? 0.2 : 0.1) : isSelected ? 0.11 : 0.045
+    );
+    const base = alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.95 : 0.98);
     return {
       width: 1,
       minWidth: 0,
       height: 1,
       display: 'block',
+      position: 'relative',
       overflow: 'hidden',
-      border: onClick ? 1 : 0,
+      border: 1,
       borderColor: isSelected ? alpha(color, 0.52) : alpha(theme.palette.divider, 0.72),
-      borderRadius: onClick ? 1 : 0,
+      borderRadius: 1.25,
       color: 'text.primary',
-      bgcolor: onClick
-        ? isSelected
-          ? alpha(color, theme.palette.mode === 'dark' ? 0.2 : 0.085)
-          : alpha(color, theme.palette.mode === 'dark' ? 0.09 : 0.035)
-        : 'transparent',
+      bgcolor: 'background.paper',
+      backgroundImage: `linear-gradient(145deg, ${wash} 0%, ${base} 68%)`,
+      boxShadow: onClick ? theme.shadows[1] : 'none',
       transition: theme.transitions.create(['background-color', 'border-color', 'transform'], {
         duration: theme.transitions.duration.shorter,
       }),
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        insetInlineStart: 0,
+        top: 12,
+        bottom: 12,
+        width: 3,
+        borderRadius: '0 999px 999px 0',
+        bgcolor: alpha(color, 0.74),
+      },
       '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
       '@media (forced-colors: active)': {
         borderColor: 'CanvasText',
         backgroundColor: 'Canvas',
+        backgroundImage: 'none',
         outline: isSelected ? '2px solid Highlight' : 'none',
         outlineOffset: -2,
+        '&::before': { backgroundColor: 'Highlight' },
       },
     };
   };
@@ -232,12 +248,123 @@ export function CalendarSignal({
         ...surfaceSx(theme),
         '&:hover': {
           borderColor: alpha(toneColor(theme, tone), 0.62),
-          bgcolor: alpha(toneColor(theme, tone), theme.palette.mode === 'dark' ? 0.18 : 0.075),
+          backgroundImage: `linear-gradient(145deg, ${alpha(
+            toneColor(theme, tone),
+            theme.palette.mode === 'dark' ? 0.18 : 0.08
+          )} 0%, ${alpha(theme.palette.background.paper, 0.96)} 72%)`,
           transform: 'translateY(-1px)',
         },
         '&:focus-visible': {
           outline: `2px solid ${theme.palette.primary.main}`,
           outlineOffset: 2,
+        },
+      })}
+    >
+      {content}
+    </ButtonBase>
+  );
+}
+
+export function CalendarRecommendationRow({
+  label,
+  title,
+  description,
+  icon: Icon,
+  tone = 'primary',
+  onClick,
+  actionLabel,
+}: {
+  label: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  tone?: CalendarExperienceTone;
+  onClick?: () => void;
+  actionLabel?: string;
+}) {
+  const accessibleLabel = [label, title, description, actionLabel].filter(Boolean).join('. ');
+  const content = (
+    <Stack direction="row" spacing={1.5} alignItems="center" sx={{ width: 1, minWidth: 0, p: 2 }}>
+      <Box
+        aria-hidden="true"
+        sx={(theme) => {
+          const color = toneColor(theme, tone);
+          return {
+            width: 38,
+            height: 38,
+            flex: '0 0 38px',
+            display: 'grid',
+            placeItems: 'center',
+            borderRadius: 1,
+            color,
+            bgcolor: alpha(color, theme.palette.mode === 'dark' ? 0.18 : 0.09),
+            '@media (forced-colors: active)': {
+              border: '1px solid CanvasText',
+              color: 'CanvasText',
+              backgroundColor: 'Canvas',
+            },
+          };
+        }}
+      >
+        <Icon size={18} strokeWidth={1.9} />
+      </Box>
+      <Box sx={{ minWidth: 0, flex: 1 }}>
+        <Typography variant="caption" color="text.secondary" fontWeight={700}>
+          {label}
+        </Typography>
+        <Typography fontWeight={700} sx={{ mt: 0.25 }}>
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4, lineHeight: 1.55 }}>
+          {description}
+        </Typography>
+      </Box>
+      {onClick && (
+        <Stack direction="row" spacing={0.5} alignItems="center" color="primary.main">
+          {actionLabel && (
+            <Typography
+              variant="caption"
+              fontWeight={700}
+              sx={{ display: { xs: 'none', sm: 'block' }, whiteSpace: 'nowrap' }}
+            >
+              {actionLabel}
+            </Typography>
+          )}
+          <ChevronRight size={17} aria-hidden="true" />
+        </Stack>
+      )}
+    </Stack>
+  );
+  const surfaceSx = (theme: Theme) => ({
+    width: 1,
+    minWidth: 0,
+    display: 'block',
+    color: 'text.primary',
+    textAlign: 'left',
+    transition: theme.transitions.create(['background-color', 'transform'], {
+      duration: theme.transitions.duration.shorter,
+    }),
+    '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+    '@media (forced-colors: active)': {
+      color: 'CanvasText',
+      backgroundColor: 'Canvas',
+    },
+  });
+
+  if (!onClick) return <Box sx={surfaceSx}>{content}</Box>;
+  return (
+    <ButtonBase
+      aria-label={accessibleLabel}
+      onClick={onClick}
+      sx={(theme) => ({
+        ...surfaceSx(theme),
+        '&:hover': {
+          bgcolor: alpha(toneColor(theme, tone), theme.palette.mode === 'dark' ? 0.11 : 0.045),
+          transform: 'translateX(2px)',
+        },
+        '&:focus-visible': {
+          outline: `2px solid ${theme.palette.primary.main}`,
+          outlineOffset: -2,
         },
       })}
     >

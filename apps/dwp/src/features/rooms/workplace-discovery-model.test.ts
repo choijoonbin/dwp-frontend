@@ -5,6 +5,7 @@ import {
   workplaceBookingBlockCode,
   workplaceDiscoverySort,
   workplaceDiscoveryType,
+  workplaceRelocationCandidates,
 } from './workplace-discovery-model';
 
 import type {
@@ -115,7 +116,7 @@ describe('workplace discovery model', () => {
         {
           resourceId: 'desk-b',
           bookingId: 'booking-1',
-          status: 'RESERVED',
+          status: 'RESERVED' as const,
           startsAt: '2026-08-27T04:00:00Z',
           endsAt: '2026-08-27T05:00:00Z',
           bookedByDisplayName: null,
@@ -218,5 +219,38 @@ describe('workplace discovery model', () => {
         rangeTo: '2026-08-27T13:00:00Z',
       })
     ).toBe('POLICY_RANGE');
+  });
+
+  it('uses discovery eligibility for relocation targets', () => {
+    const eligible = resource('eligible', 'Eligible');
+    const assigned = resource('assigned', 'Assigned', { mode: 'ASSIGNED' });
+    const dropIn = resource('drop-in', 'Drop in', { mode: 'DROP_IN' });
+    const occupied = resource('occupied', 'Occupied');
+    const futureRange = {
+      ...bookability,
+      occupancy: [
+        {
+          resourceId: occupied.resourceId,
+          bookingId: 'other-booking',
+          status: 'RESERVED' as const,
+          startsAt: bookability.rangeFrom,
+          endsAt: bookability.rangeTo,
+          bookedByDisplayName: null,
+          currentUser: false,
+        },
+      ],
+      rangeFrom: '2026-08-27T04:30:00Z',
+      rangeTo: '2026-08-27T05:00:00Z',
+    };
+
+    expect(
+      workplaceRelocationCandidates([eligible, assigned, dropIn, occupied], 'DESK', futureRange)
+    ).toEqual([eligible]);
+    expect(
+      workplaceRelocationCandidates([eligible], 'DESK', {
+        ...futureRange,
+        canCreateWorkplaceBooking: false,
+      })
+    ).toEqual([]);
   });
 });

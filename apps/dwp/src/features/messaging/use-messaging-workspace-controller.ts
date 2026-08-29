@@ -12,7 +12,6 @@ import {
   markMessagingConversationRead,
   removeMessagingReaction,
   saveMessagingMessage,
-  sendMessagingMessage,
   updateMessagingMessage,
   useAuth,
   useToast,
@@ -21,7 +20,7 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useMessagingMeetingLabels } from './meeting';
-import { messagingMentionUserIds, type MessagingMentionDraft } from './messaging-composer-model';
+import type { MessagingMentionDraft } from './messaging-composer-model';
 import {
   mergeMessagingMessages,
   messagingReplyCounts,
@@ -35,6 +34,7 @@ import {
   useMessagingTypingPublisher,
 } from './use-messaging-realtime';
 import { useMessagingAttachmentQueue } from './use-messaging-attachment-queue';
+import { useMessagingSendController } from './use-messaging-send-controller';
 
 import type { Theme } from '@mui/material/styles';
 import type {
@@ -42,11 +42,7 @@ import type {
   MessagingConversationDetail,
   MessagingMessage,
 } from '@dwp-frontend/shared-utils';
-import type {
-  MessagingReactionMutationInput,
-  MessagingScope,
-  MessagingSendMutationInput,
-} from './messaging-workspace-types';
+import type { MessagingReactionMutationInput, MessagingScope } from './messaging-workspace-types';
 
 type MessagingHistoryScrollAnchor = {
   target: 'timeline' | 'document';
@@ -85,8 +81,6 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const detailScrollRef = useRef<HTMLDivElement | null>(null);
   const historyScrollAnchorRef = useRef<MessagingHistoryScrollAnchor | null>(null);
   const readCursorRef = useRef<string | null>(null);
-  const mainSendAttemptRef = useRef<MessagingSendMutationInput | null>(null);
-  const threadSendAttemptRef = useRef<MessagingSendMutationInput | null>(null);
   const draftRef = useRef('');
   const draftMentionsRef = useRef<MessagingMentionDraft[]>([]);
   const threadDraftRef = useRef('');
@@ -114,8 +108,37 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   }, []);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('conversation');
-  const mainAttachmentQueue = useMessagingAttachmentQueue(selectedId);
-  const threadAttachmentQueue = useMessagingAttachmentQueue(selectedId);
+  const mainAttachmentQueue = useMessagingAttachmentQueue(selectedId, selectedId);
+  const threadAttachmentQueue = useMessagingAttachmentQueue(
+    selectedId,
+    selectedId && threadRootId ? `${selectedId}:${threadRootId}` : null
+  );
+  const {
+    sendPending,
+    sendError,
+    threadSendPending,
+    threadSendError,
+    resetSendError,
+    resetThreadSendError,
+    send,
+    retrySend,
+    sendThreadReply,
+    retryThreadReply,
+  } = useMessagingSendController({
+    selectedId,
+    threadRootId,
+    draftRef,
+    draftMentionsRef,
+    threadDraftRef,
+    threadDraftMentionsRef,
+    detailScrollRef,
+    mainAttachmentQueue,
+    threadAttachmentQueue,
+    setDraft,
+    setDraftMentions,
+    setThreadDraft,
+    setThreadDraftMentions,
+  });
 
   const conversationsQuery = useQuery({
     queryKey: ['messaging', 'conversations', activeScope, debouncedSearch],
@@ -162,77 +185,6 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     retry: 1,
   });
 
-  const sendMutation = useMutation({
-    mutationFn: (input: MessagingSendMutationInput) =>
-      sendMessagingMessage({
-        conversationId: selectedId!,
-        body: input.body,
-        idempotencyKey: input.idempotencyKey,
-        attachmentIds: input.attachmentIds,
-        mentionedUserIds: input.mentionedUserIds,
-      }),
-    onSuccess: async (message, input) => {
-      if (draftRef.current.trim() === input.body) {
-        setDraft('');
-        setDraftMentions([]);
-      }
-      mainAttachmentQueue.clear();
-      mainSendAttemptRef.current = null;
-      queryClient.setQueryData<MessagingConversationDetail>(
-        ['messaging', 'conversation', message.conversationId],
-        (current) =>
-          current
-            ? {
-                ...current,
-                conversation: {
-                  ...current.conversation,
-                  lastMessage: message,
-                  lastMessageAt: message.createdAt,
-                },
-                messages: upsertMessagingMessage(current.messages, message),
-              }
-            : current
-      );
-      await queryClient.invalidateQueries({ queryKey: ['messaging', 'conversations'] });
-      await queryClient.invalidateQueries({ queryKey: ['messaging', 'home'] });
-      requestAnimationFrame(() => {
-        detailScrollRef.current?.scrollTo({ top: detailScrollRef.current.scrollHeight });
-      });
-    },
-  });
-  const threadSendMutation = useMutation({
-    mutationFn: (input: MessagingSendMutationInput) =>
-      sendMessagingMessage({
-        conversationId: selectedId!,
-        body: input.body,
-        replyToMessageId: input.replyToMessageId,
-        idempotencyKey: input.idempotencyKey,
-        attachmentIds: input.attachmentIds,
-        mentionedUserIds: input.mentionedUserIds,
-      }),
-    onSuccess: async (message, input) => {
-      if (threadDraftRef.current.trim() === input.body) {
-        setThreadDraft('');
-        setThreadDraftMentions([]);
-      }
-      threadAttachmentQueue.clear();
-      threadSendAttemptRef.current = null;
-      queryClient.setQueryData<MessagingConversationDetail>(
-        ['messaging', 'conversation', message.conversationId],
-        (current) =>
-          current
-            ? { ...current, messages: upsertMessagingMessage(current.messages, message) }
-            : current
-      );
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['messaging', 'conversations'] }),
-        queryClient.invalidateQueries({ queryKey: ['messaging', 'home'] }),
-        queryClient.invalidateQueries({
-          queryKey: ['messaging', 'thread', selectedId, threadRootId],
-        }),
-      ]);
-    },
-  });
   const reactionMutation = useMutation({
     mutationFn: ({ messageId, emoji, remove }: MessagingReactionMutationInput) =>
       remove
@@ -536,53 +488,6 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     next.delete('attention');
     setParams(next, { replace: true });
   };
-  const send = () => {
-    const body = draft.trim();
-    if (
-      (!body && mainAttachmentQueue.readyIds.length === 0) ||
-      !selectedId ||
-      sendMutation.isPending ||
-      mainAttachmentQueue.busy
-    )
-      return;
-    const input = {
-      body,
-      idempotencyKey: crypto.randomUUID(),
-      attachmentIds: mainAttachmentQueue.readyIds,
-      mentionedUserIds: messagingMentionUserIds(draftMentions),
-    } satisfies MessagingSendMutationInput;
-    mainSendAttemptRef.current = input;
-    sendMutation.mutate(input);
-  };
-  const retrySend = () => {
-    if (!mainSendAttemptRef.current || sendMutation.isPending) return;
-    sendMutation.mutate(mainSendAttemptRef.current);
-  };
-  const sendThreadReply = () => {
-    const body = threadDraft.trim();
-    if (
-      (!body && threadAttachmentQueue.readyIds.length === 0) ||
-      !selectedId ||
-      !thread?.root.messageId ||
-      threadSendMutation.isPending ||
-      threadAttachmentQueue.busy
-    ) {
-      return;
-    }
-    const input = {
-      body,
-      replyToMessageId: thread.root.messageId,
-      idempotencyKey: crypto.randomUUID(),
-      attachmentIds: threadAttachmentQueue.readyIds,
-      mentionedUserIds: messagingMentionUserIds(threadDraftMentions),
-    } satisfies MessagingSendMutationInput;
-    threadSendAttemptRef.current = input;
-    threadSendMutation.mutate(input);
-  };
-  const retryThreadReply = () => {
-    if (!threadSendAttemptRef.current || threadSendMutation.isPending) return;
-    threadSendMutation.mutate(threadSendAttemptRef.current);
-  };
   const toggleReaction = (messageId: string, emoji: string, remove: boolean) => {
     if (!selectedId || reactionMutation.isPending) return;
     reactionMutation.mutate({ messageId, emoji, remove });
@@ -676,8 +581,12 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     setDeletingMessage,
     editBody,
     setEditBody,
-    sendMutation,
-    threadSendMutation,
+    sendPending,
+    sendError,
+    threadSendPending,
+    threadSendError,
+    resetSendError,
+    resetThreadSendError,
     editMutation,
     deleteMutation,
     selectConversation,

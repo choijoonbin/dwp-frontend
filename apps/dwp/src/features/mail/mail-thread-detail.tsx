@@ -46,6 +46,7 @@ import Typography from '@mui/material/Typography';
 
 import { mailRelativeTime, MailProposalCard } from './mail-components';
 import { MailDraftEditor } from './mail-draft-editor';
+import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadLifecycleActions } from './mail-thread-lifecycle-actions';
 
 import type { MailActionProposal, MailThread, MailThreadAction } from '@dwp-frontend/shared-utils';
@@ -69,6 +70,7 @@ export function MailThreadDetailPane({
   const [reply, setReply] = useState('');
   const [comment, setComment] = useState('');
   const [assigneeId, setAssigneeId] = useState<number | ''>('');
+  const [snoozeOpen, setSnoozeOpen] = useState(false);
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const query = useQuery({
     queryKey: ['mail', 'thread', threadId],
@@ -102,13 +104,9 @@ export function MailThreadDetailPane({
     onError: () => toast.error(t('thread.actionError')),
   });
   const snoozeMutation = useMutation({
-    mutationFn: () =>
-      snoozeMailThread(
-        threadId!,
-        new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-        query.data!.thread.version
-      ),
+    mutationFn: (until: string) => snoozeMailThread(threadId!, until, query.data!.thread.version),
     onSuccess: async (detail) => {
+      setSnoozeOpen(false);
       queryClient.setQueryData(['mail', 'thread', threadId], detail);
       await refresh(detail.thread);
       toast.success(t('thread.snoozed'));
@@ -226,7 +224,14 @@ export function MailThreadDetailPane({
   const language = i18n.resolvedLanguage ?? i18n.language;
 
   if (thread.workflowState === 'DRAFT') {
-    return <MailDraftEditor detail={detail} onBack={onBack} onUpdated={onUpdated} />;
+    return (
+      <MailDraftEditor
+        key={thread.threadId}
+        detail={detail}
+        onBack={onBack}
+        onUpdated={onUpdated}
+      />
+    );
   }
 
   return (
@@ -243,8 +248,13 @@ export function MailThreadDetailPane({
           zIndex: 2,
         }}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'stretch', sm: 'center' }}
+          spacing={1}
+        >
+          <Stack direction="row" alignItems="center" spacing={0.5} useFlexGap flexWrap="wrap">
             {onBack && (
               <ActionIconButton label={t('actions.back')} onClick={onBack}>
                 <ArrowLeft size={18} />
@@ -268,7 +278,7 @@ export function MailThreadDetailPane({
             <ActionIconButton
               label={t('thread.snooze')}
               loading={snoozeMutation.isPending}
-              onClick={() => snoozeMutation.mutate()}
+              onClick={() => setSnoozeOpen(true)}
             >
               <Clock3 size={18} />
             </ActionIconButton>
@@ -285,6 +295,7 @@ export function MailThreadDetailPane({
             size="small"
             variant="outlined"
             label={t(`classification.${thread.classification}`)}
+            sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }}
           />
         </Stack>
       </Box>
@@ -365,7 +376,7 @@ export function MailThreadDetailPane({
                 }}
               >
                 <Stack direction="row" spacing={1.25} alignItems="center">
-                  <Avatar sx={{ width: 34, height: 34, fontSize: 13 }}>
+                  <Avatar sx={{ width: 34, height: 34, fontSize: 13, bgcolor: 'primary.dark' }}>
                     {message.senderName.slice(0, 2)}
                   </Avatar>
                   <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -468,7 +479,7 @@ export function MailThreadDetailPane({
             <Stack spacing={1} sx={{ mt: 1.25 }}>
               {detail.internalComments.map((item) => (
                 <Box key={item.commentId} sx={{ display: 'flex', gap: 1.25, py: 0.75 }}>
-                  <Avatar sx={{ width: 30, height: 30, fontSize: 12 }}>
+                  <Avatar sx={{ width: 30, height: 30, fontSize: 12, bgcolor: 'primary.dark' }}>
                     {item.authorName.slice(0, 2)}
                   </Avatar>
                   <Box sx={{ minWidth: 0 }}>
@@ -488,7 +499,12 @@ export function MailThreadDetailPane({
               ))}
             </Stack>
           )}
-          <Stack direction="row" spacing={1} alignItems="flex-end" sx={{ mt: 1.25 }}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1}
+            alignItems={{ xs: 'stretch', sm: 'flex-end' }}
+            sx={{ mt: 1.25 }}
+          >
             <FormField
               size="small"
               label={t('thread.addComment')}
@@ -521,7 +537,13 @@ export function MailThreadDetailPane({
             inputProps={{ maxLength: 100_000 }}
             onChange={(event) => setReply(event.target.value)}
           />
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            justifyContent="space-between"
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+            spacing={1}
+            sx={{ mt: 1 }}
+          >
             <Typography variant="caption" color="text.secondary">
               {t('thread.replyIdentity', {
                 name: auth.user?.displayName ?? t('home.member'),
@@ -556,6 +578,12 @@ export function MailThreadDetailPane({
             proposalMutation.mutate({ proposal: proposalToAccept, decision: 'ACCEPT' });
           }
         }}
+      />
+      <MailSnoozeDialog
+        open={snoozeOpen}
+        busy={snoozeMutation.isPending}
+        onClose={() => setSnoozeOpen(false)}
+        onSubmit={(until) => snoozeMutation.mutate(until)}
       />
     </Box>
   );

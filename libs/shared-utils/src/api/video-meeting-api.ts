@@ -247,7 +247,7 @@ export type VideoMeetingAdminPolicy = {
   reactionsAllowed: boolean;
   screenShareAllowed: boolean;
   unmuteControl: 'REQUEST_ONLY';
-  recordingPolicy: 'NEVER';
+  recordingPolicy: 'NEVER' | 'HOST_OPT_IN' | 'ADMIN_REQUIRED';
   allowJoinBeforeHost: boolean;
   requireAuthenticatedInternalUsers: boolean;
   maximumParticipants: number;

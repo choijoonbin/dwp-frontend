@@ -13,7 +13,7 @@ import {
   mergeFilterSearchParams,
 } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { getRoomAvailability, getRoomsPolicy } from '@dwp-frontend/shared-utils';
+import { getRoomAvailability, getRoomsPolicy, useAuth } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -37,6 +37,8 @@ import {
 } from './room-availability-model';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomIdentity, RoomsPageHeading, RoomsPermissionNotice, RoomStateChip } from './rooms-ui';
+import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
+import { workplaceHomeSourceData, workplaceHomeSourceState } from './workplace-home-source-state';
 
 import type { CalendarPolicy, CalendarResource, RoomOccupancy } from '@dwp-frontend/shared-utils';
 
@@ -222,6 +224,8 @@ function RoomTimeline({
 export function RoomsFind() {
   const { t } = useTranslation('rooms');
   const capabilities = useRoomsCapabilities();
+  const auth = useAuth();
+  const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
   const [searchParams, setSearchParams] = useSearchParams();
   const date = searchParams.get('date') ?? roomLocalDate('UTC');
   const search = searchParams.get('q') ?? '';
@@ -233,22 +237,43 @@ export function RoomsFind() {
   const defaultedTimeZoneRef = useRef(false);
   const range = useMemo(() => roomAvailabilityRange(date), [date]);
   const availabilityQuery = useQuery({
-    queryKey: ['rooms', 'availability', range.from, range.to],
+    queryKey: ['rooms', 'availability', identityKey, range.from, range.to],
     queryFn: () => getRoomAvailability(range.from, range.to),
     staleTime: 15_000,
     refetchInterval: 60_000,
-    retry: 1,
+    retry: retryRecoverableWorkplaceRead,
   });
   const policyQuery = useQuery({
-    queryKey: ['rooms', 'policy'],
+    queryKey: ['rooms', 'policy', identityKey],
     queryFn: getRoomsPolicy,
     enabled: capabilities.isLoaded && capabilities.canViewRooms,
     staleTime: 30_000,
-    retry: 1,
+    refetchInterval: 60_000,
+    retry: retryRecoverableWorkplaceRead,
   });
-  const policy = policyQuery.data ?? DEFAULT_ROOM_POLICY;
-  const policyAvailable = Boolean(policyQuery.data);
-  const rooms = useMemo(() => availabilityQuery.data?.rooms ?? [], [availabilityQuery.data?.rooms]);
+  const availabilitySourceState = workplaceHomeSourceState({
+    data: availabilityQuery.data,
+    error: availabilityQuery.error,
+    failureCount: availabilityQuery.failureCount,
+    failureReason: availabilityQuery.failureReason,
+    isError: availabilityQuery.isError,
+    isPending: availabilityQuery.isPending,
+    required: true,
+  });
+  const policySourceState = workplaceHomeSourceState({
+    data: policyQuery.data,
+    error: policyQuery.error,
+    failureCount: policyQuery.failureCount,
+    failureReason: policyQuery.failureReason,
+    isError: policyQuery.isError,
+    isPending: policyQuery.isPending,
+    required: capabilities.isLoaded && capabilities.canViewRooms,
+  });
+  const availability = workplaceHomeSourceData(availabilitySourceState, availabilityQuery.data);
+  const verifiedPolicy = workplaceHomeSourceData(policySourceState, policyQuery.data);
+  const policy = verifiedPolicy ?? DEFAULT_ROOM_POLICY;
+  const policyAvailable = policySourceState === 'READY' && Boolean(verifiedPolicy);
+  const rooms = useMemo(() => availability?.rooms ?? [], [availability?.rooms]);
   const sites = [...new Set(rooms.map((room) => room.site))].sort();
   const features = [...new Set(rooms.flatMap((room) => room.features))].sort();
   const activeTimeZone =
@@ -259,7 +284,7 @@ export function RoomsFind() {
   const dateBounds = roomDateBounds(
     activeTimeZone,
     policy.maximumAdvanceDays,
-    availabilityQuery.data?.generatedAt
+    availability?.generatedAt
   );
   const updateParams = useCallback(
     (values: Record<string, string | number | null | undefined>) => {
@@ -271,9 +296,18 @@ export function RoomsFind() {
     if (defaultedTimeZoneRef.current || !rooms[0]) return;
     defaultedTimeZoneRef.current = true;
     if (!searchParams.has('date')) {
-      updateParams({ date: roomLocalDate(rooms[0].timeZone, availabilityQuery.data?.generatedAt) });
+      updateParams({ date: roomLocalDate(rooms[0].timeZone, availability?.generatedAt) });
     }
-  }, [availabilityQuery.data?.generatedAt, rooms, searchParams, updateParams]);
+  }, [availability?.generatedAt, rooms, searchParams, updateParams]);
+  useEffect(() => {
+    setSelection(null);
+    defaultedTimeZoneRef.current = false;
+  }, [identityKey]);
+  useEffect(() => {
+    if (availabilitySourceState === 'DENIED' || policySourceState === 'DENIED') {
+      setSelection(null);
+    }
+  }, [availabilitySourceState, policySourceState]);
   useEffect(() => {
     if (!durationOptions.includes(duration)) {
       updateParams({ duration: durationOptions[0] ?? policy.defaultEventMinutes });
@@ -293,17 +327,40 @@ export function RoomsFind() {
   });
   const occupancyByRoom = useMemo(() => {
     const result = new Map<string, RoomOccupancy[]>();
-    for (const slot of availabilityQuery.data?.occupancy ?? []) {
+    for (const slot of availability?.occupancy ?? []) {
       const current = result.get(slot.resourceId) ?? [];
       current.push(slot);
       result.set(slot.resourceId, current);
     }
     return result;
-  }, [availabilityQuery.data?.occupancy]);
+  }, [availability?.occupancy]);
+  const selectedRoom = selection
+    ? (availability?.rooms.find(
+        (room) =>
+          room.resourceId === selection.room.resourceId && room.version === selection.room.version
+      ) ?? null)
+    : null;
+  const bookingSourceSnapshot =
+    selection &&
+    selectedRoom &&
+    availability &&
+    verifiedPolicy &&
+    availabilitySourceState === 'READY' &&
+    policySourceState === 'READY'
+      ? {
+          identityKey,
+          resourceId: selectedRoom.resourceId,
+          resourceVersion: selectedRoom.version,
+          rangeFrom: selection.startsAt,
+          rangeTo: selection.endsAt,
+          generatedAt: availability.generatedAt,
+          policyVersion: verifiedPolicy.version,
+        }
+      : null;
   const resetFilters = () => {
     updateParams({
       q: null,
-      date: roomLocalDate(activeTimeZone, availabilityQuery.data?.generatedAt),
+      date: roomLocalDate(activeTimeZone, availability?.generatedAt),
       site: null,
       capacity: null,
       duration: policy.defaultEventMinutes,
@@ -322,19 +379,21 @@ export function RoomsFind() {
       {capabilities.isLoaded && !capabilities.canCreateRoomBooking && (
         <RoomsPermissionNotice>{t('permissions.roomBookingReadOnly')}</RoomsPermissionNotice>
       )}
-      {policyQuery.isError && (
-        <Alert
-          severity={policyAvailable ? 'warning' : 'error'}
-          action={
-            <ActionButton intent="quiet" onClick={() => policyQuery.refetch()}>
-              {t('actions.retry')}
-            </ActionButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {t(policyAvailable ? 'find.policyStale' : 'find.policyUnavailable')}
-        </Alert>
-      )}
+      {policySourceState !== 'READY' &&
+        policySourceState !== 'LOADING' &&
+        policySourceState !== 'SKIPPED' && (
+          <Alert
+            severity={policySourceState === 'STALE' ? 'warning' : 'error'}
+            action={
+              <ActionButton intent="quiet" onClick={() => policyQuery.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {t(policySourceState === 'STALE' ? 'find.policyStale' : 'find.policyUnavailable')}
+          </Alert>
+        )}
 
       <Box
         sx={{ bgcolor: 'background.paper', borderInline: 1, borderColor: 'divider', px: 2, mb: 2 }}
@@ -453,7 +512,7 @@ export function RoomsFind() {
             {t('find.resultCount', { count: filtered.length })}
           </Typography>
         </Stack>
-        {availabilityQuery.isError && availabilityQuery.data && (
+        {availabilitySourceState === 'STALE' && (
           <Alert
             severity="warning"
             action={
@@ -465,13 +524,13 @@ export function RoomsFind() {
             {t('workplace.staleWarning')}
           </Alert>
         )}
-        {availabilityQuery.isLoading ? (
+        {availabilitySourceState === 'LOADING' ? (
           <Stack spacing={1} p={2}>
             {Array.from({ length: 4 }, (_, index) => (
               <Skeleton key={index} variant="rounded" height={112} />
             ))}
           </Stack>
-        ) : availabilityQuery.isError && !availabilityQuery.data ? (
+        ) : availabilitySourceState === 'DENIED' || availabilitySourceState === 'UNAVAILABLE' ? (
           <Alert
             severity="error"
             action={
@@ -529,16 +588,16 @@ export function RoomsFind() {
                   canBook={
                     capabilities.canCreateRoomBooking &&
                     policyAvailable &&
-                    !availabilityQuery.isError
+                    availabilitySourceState === 'READY'
                   }
                   bookingBlockedReason={
                     !policyAvailable
                       ? t('find.policyUnavailable')
-                      : availabilityQuery.isError
+                      : availabilitySourceState !== 'READY'
                         ? t('find.availabilityStale')
                         : undefined
                   }
-                  serverNow={availabilityQuery.data?.generatedAt ?? new Date().toISOString()}
+                  serverNow={availability?.generatedAt ?? new Date().toISOString()}
                   onSelect={setSelection}
                 />
               </Box>
@@ -549,10 +608,11 @@ export function RoomsFind() {
 
       <RoomBookingDialog
         open={Boolean(selection)}
-        room={selection?.room ?? null}
+        room={selectedRoom ?? selection?.room ?? null}
         initialStart={selection?.startsAt}
         initialEnd={selection?.endsAt}
-        policy={policyQuery.data ?? null}
+        policy={verifiedPolicy ?? null}
+        sourceSnapshot={bookingSourceSnapshot}
         onClose={() => setSelection(null)}
       />
     </PageCanvas>

@@ -1,7 +1,10 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
-import { readLocalePreference, writeLocalePreference } from '@dwp-frontend/shared-utils';
+import {
+  readLocalePreference,
+  writeLocalePreference,
+} from '@dwp-frontend/shared-utils/locale-preference';
 
 import {
   productLocales,

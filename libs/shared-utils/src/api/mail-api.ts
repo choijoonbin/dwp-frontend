@@ -6,6 +6,9 @@ export type MailProviderType =
   'DWP_SANDBOX' | 'MICROSOFT_GRAPH' | 'GOOGLE_GMAIL' | 'NAVER_WORKS' | 'JMAP' | 'IMAP_SMTP';
 export type MailConnectionState =
   'ACTIVE' | 'CONFIGURATION_REQUIRED' | 'SYNCING' | 'DEGRADED' | 'SUSPENDED';
+export type MailAccountConnectionState =
+  'ACTIVE' | 'REAUTHENTICATION_REQUIRED' | 'SUSPENDED' | 'DISCONNECTED';
+export type MailAccountSynchronizationState = 'READY' | 'SYNCING' | 'DEGRADED' | 'PAUSED';
 export type MailTriageLane = 'PRIORITY' | 'NEEDS_REPLY' | 'ASSIGNED' | 'UPDATES' | 'NEWSLETTERS';
 export type MailWorkflowState =
   'OPEN' | 'DONE' | 'SNOOZED' | 'ARCHIVED' | 'DRAFT' | 'TRASHED' | 'SPAM';
@@ -29,8 +32,8 @@ export type MailAccount = {
   displayName: string;
   accountKind: 'PERSONAL' | 'SHARED';
   providerType: MailProviderType;
-  connectionState: string;
-  synchronizationState: string;
+  connectionState: MailAccountConnectionState;
+  synchronizationState: MailAccountSynchronizationState;
   defaultAccount: boolean;
 };
 
@@ -111,6 +114,15 @@ export type MailThreadDetail = {
   internalComments: MailInternalComment[];
   proposals: MailActionProposal[];
   sharedInboxMembers: MailSharedInboxMember[];
+};
+
+export type MailDraftSaveInput = {
+  toEmail?: string;
+  toName?: string;
+  subject?: string;
+  body?: string;
+  idempotencyKey: string;
+  version?: number;
 };
 
 export type MailSharedInboxMember = {
@@ -474,6 +486,25 @@ export async function composeMail(input: {
     '/api/platform/v1/mail/messages',
     input
   );
+  return response.data.data;
+}
+
+export async function createMailDraft(input: MailDraftSaveInput): Promise<MailThreadDetail> {
+  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>, MailDraftSaveInput>(
+    '/api/platform/v1/mail/drafts',
+    input
+  );
+  return response.data.data;
+}
+
+export async function saveMailDraft(
+  threadId: string,
+  input: MailDraftSaveInput & { version: number }
+): Promise<MailThreadDetail> {
+  const response = await axiosInstance.put<
+    ApiResponse<MailThreadDetail>,
+    MailDraftSaveInput & { version: number }
+  >(`/api/platform/v1/mail/drafts/${encodeURIComponent(threadId)}`, input);
   return response.data.data;
 }
 

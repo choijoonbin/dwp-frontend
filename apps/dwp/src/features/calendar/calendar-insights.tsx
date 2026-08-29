@@ -16,7 +16,6 @@ import { getCalendarHome, usePermissions } from '@dwp-frontend/shared-utils';
 import { ActionButton, ErrorState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
@@ -32,6 +31,7 @@ import {
 } from './calendar-components';
 import {
   CalendarCanvas,
+  CalendarRecommendationRow,
   CalendarSectionHeader,
   CalendarWeekBalanceRail,
 } from './calendar-experience';
@@ -164,62 +164,56 @@ export function CalendarInsights() {
               />
               <Divider />
               <Stack divider={<Divider flexItem />}>
-                <Box sx={{ p: 2 }}>
-                  <Chip
-                    size="small"
-                    icon={<Focus size={14} />}
-                    label={t('insights.focusLabel')}
-                    color={derived.focusProgress >= 100 ? 'success' : 'warning'}
-                    variant="outlined"
-                  />
-                  <Typography fontWeight={600} sx={{ mt: 1 }}>
-                    {derived.focusProgress >= 100
+                <CalendarRecommendationRow
+                  icon={Focus}
+                  label={t('insights.focusLabel')}
+                  tone={derived.focusProgress >= 100 ? 'success' : 'warning'}
+                  title={
+                    derived.focusProgress >= 100
                       ? t('insights.focusProtected')
                       : t('insights.focusGap', {
                           count: Math.max(
                             0,
                             query.data.metrics.focusTargetMinutes - query.data.metrics.focusMinutes
                           ),
-                        })}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                    {t('insights.focusAction')}
-                  </Typography>
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  <Chip
-                    size="small"
-                    icon={<Clock3 size={14} />}
-                    label={t('insights.balanceLabel')}
-                    variant="outlined"
-                  />
-                  <Typography fontWeight={600} sx={{ mt: 1 }}>
-                    {derived.healthiest
+                        })
+                  }
+                  description={t('insights.focusAction')}
+                  onClick={canCreate ? () => setFocusDialog(true) : undefined}
+                  actionLabel={canCreate ? t('insights.protectFocus') : undefined}
+                />
+                <CalendarRecommendationRow
+                  icon={Clock3}
+                  label={t('insights.balanceLabel')}
+                  tone="info"
+                  title={
+                    derived.healthiest
                       ? t('insights.bestWindow', {
                           date: calendarDate(derived.healthiest.date, language),
                         })
-                      : t('insights.noBestWindow')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                    {t('insights.bestWindowDescription')}
-                  </Typography>
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  <Chip
-                    size="small"
-                    icon={<BarChart3 size={14} />}
-                    label={t('insights.meetingLabel')}
-                    variant="outlined"
-                  />
-                  <Typography fontWeight={600} sx={{ mt: 1 }}>
-                    {derived.meetingShare > 70
+                      : t('insights.noBestWindow')
+                  }
+                  description={t('insights.bestWindowDescription')}
+                  onClick={
+                    derived.healthiest
+                      ? () =>
+                          navigate(`/calendar/schedule?view=week&date=${derived.healthiest!.date}`)
+                      : undefined
+                  }
+                  actionLabel={derived.healthiest ? t('actions.openCalendar') : undefined}
+                />
+                <CalendarRecommendationRow
+                  icon={BarChart3}
+                  label={t('insights.meetingLabel')}
+                  title={
+                    derived.meetingShare > 70
                       ? t('insights.meetingHeavy')
-                      : t('insights.meetingBalanced')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                    {t('insights.meetingAction')}
-                  </Typography>
-                </Box>
+                      : t('insights.meetingBalanced')
+                  }
+                  description={t('insights.meetingAction')}
+                  onClick={() => navigate('/calendar/schedule')}
+                  actionLabel={t('actions.openCalendar')}
+                />
               </Stack>
             </Box>
           </Box>
@@ -244,6 +238,7 @@ export function CalendarInsights() {
               icon={UsersRound}
               tone="primary"
               onClick={() => navigate('/calendar/schedule')}
+              actionLabel={t('actions.openCalendar')}
             />
             <CalendarMetric
               label={t('insights.metrics.focusTime')}
@@ -254,6 +249,7 @@ export function CalendarInsights() {
               progress={derived.focusProgress}
               progressLabel={`${derived.focusProgress}%`}
               onClick={() => navigate('/calendar/focus')}
+              actionLabel={t('actions.details')}
             />
             <CalendarMetric
               label={t('insights.metrics.overloadDays')}
@@ -261,6 +257,8 @@ export function CalendarInsights() {
               hint={t('insights.metrics.overloadDescription')}
               icon={Gauge}
               tone={derived.overloaded ? 'warning' : 'neutral'}
+              onClick={() => navigate('/calendar/schedule')}
+              actionLabel={t('actions.openCalendar')}
             />
             <CalendarMetric
               label={t('insights.metrics.conflicts')}
@@ -269,6 +267,7 @@ export function CalendarInsights() {
               icon={AlertTriangle}
               tone={query.data.metrics.conflictCount ? 'error' : 'neutral'}
               onClick={() => navigate('/calendar/invitations')}
+              actionLabel={t('actions.details')}
             />
           </Box>
 

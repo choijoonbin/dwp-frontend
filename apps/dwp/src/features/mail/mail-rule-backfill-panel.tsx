@@ -7,7 +7,7 @@ import {
   HttpError,
   runMailRuleBackfill,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, SelectField } from '@dwp-frontend/design-system';
+import { ActionButton, ConfirmDialog, SelectField } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -40,6 +40,7 @@ export function MailRuleBackfillPanel({
   const [accountId, setAccountId] = useState('');
   const [attempt, setAttempt] = useState<BackfillAttempt | null>(null);
   const [result, setResult] = useState<MailRuleBackfillResult | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (personalAccounts.some((account) => account.accountId === accountId)) return;
@@ -48,6 +49,7 @@ export function MailRuleBackfillPanel({
     setAccountId(nextAccount?.accountId ?? '');
     setAttempt(null);
     setResult(null);
+    setConfirmOpen(false);
   }, [accountId, personalAccounts]);
 
   const preview = useQuery({
@@ -65,10 +67,12 @@ export function MailRuleBackfillPanel({
         previewFingerprint: command.previewFingerprint,
       }),
     onSuccess: async (nextResult) => {
+      setConfirmOpen(false);
       setAttempt(null);
       setResult(nextResult);
       await onCompleted();
     },
+    onError: () => setConfirmOpen(false),
   });
 
   const selectAccount = (nextAccountId: string) => {
@@ -76,6 +80,7 @@ export function MailRuleBackfillPanel({
     setAccountId(nextAccountId);
     setAttempt(null);
     setResult(null);
+    setConfirmOpen(false);
     mutation.reset();
   };
   const refreshPreview = async () => {
@@ -109,6 +114,7 @@ export function MailRuleBackfillPanel({
   const retryable = mutation.isError && !rejected;
   const canRun =
     Boolean(preview.data) &&
+    !preview.data?.truncated &&
     !preview.isFetching &&
     !mutation.isPending &&
     !rejected &&
@@ -253,7 +259,7 @@ export function MailRuleBackfillPanel({
                 startIcon={<Play size={16} />}
                 loading={mutation.isPending}
                 disabled={!canRun}
-                onClick={runBackfill}
+                onClick={() => setConfirmOpen(true)}
               >
                 {t('organization.backfill.run')}
               </ActionButton>
@@ -261,6 +267,21 @@ export function MailRuleBackfillPanel({
           </>
         )}
       </Stack>
+      <ConfirmDialog
+        open={confirmOpen}
+        title={t('organization.backfill.confirmTitle')}
+        description={t('organization.backfill.confirmDescription', {
+          account:
+            personalAccounts.find((account) => account.accountId === accountId)?.emailAddress ?? '',
+          count: preview.data?.plannedApplicationCount ?? 0,
+        })}
+        cancelLabel={t('actions.cancel')}
+        confirmLabel={t('organization.backfill.confirm')}
+        confirmingLabel={t('organization.backfill.running')}
+        busy={mutation.isPending}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={runBackfill}
+      />
     </Box>
   );
 }

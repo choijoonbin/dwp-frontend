@@ -5,6 +5,7 @@ import { resetCsrfToken } from '../axios-instance';
 import {
   createVideoMeetingIntelligenceRun,
   deleteVideoMeetingIntelligenceReport,
+  getLatestPublishedVideoMeetingIntelligenceReport,
   getLatestVisibleVideoMeetingIntelligenceReport,
   getVideoMeetingIntelligenceReport,
   getVideoMeetingIntelligenceRun,
@@ -113,6 +114,30 @@ describe('video meeting intelligence API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(getLatestVisibleVideoMeetingIntelligenceReport('meeting-1')).resolves.toBeNull();
+  });
+
+  it('loads the latest published recap through its dedicated projection route', async () => {
+    const published = {
+      ...report,
+      state: 'PUBLISHED' as const,
+      audience: 'MEETING_PARTICIPANTS' as const,
+    };
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(published));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getLatestPublishedVideoMeetingIntelligenceReport('meeting/1')).resolves.toEqual(
+      published
+    );
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/meetings/v1/meetings/meeting%2F1/intelligence/reports/latest-published'
+    );
+  });
+
+  it('maps a published recap 404 to unavailable without reusing another report', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ message: 'Not found' }, 404));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getLatestPublishedVideoMeetingIntelligenceReport('meeting-1')).resolves.toBeNull();
   });
 
   it('creates a governed run with an idempotency key and preserves a domain-level failure', async () => {

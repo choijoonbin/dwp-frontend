@@ -82,8 +82,12 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     setDeletingMessage,
     editBody,
     setEditBody,
-    sendMutation,
-    threadSendMutation,
+    sendPending,
+    sendError,
+    threadSendPending,
+    threadSendError,
+    resetSendError,
+    resetThreadSendError,
     editMutation,
     deleteMutation,
     selectConversation,
@@ -252,8 +256,8 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                 allowMentionAll={
                   currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
                 }
-                sending={sendMutation.isPending}
-                sendError={sendMutation.isError}
+                sending={sendPending}
+                sendError={sendError}
                 attachmentQueue={mainAttachmentQueue}
                 lastReadSequence={currentMember?.lastReadSequence}
                 newMessageCount={newMessageCount}
@@ -274,7 +278,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                 onLoadOlder={loadOlderMessages}
                 onJumpToLatest={jumpToLatest}
                 onDraftChange={(value) => {
-                  if (sendMutation.isError) sendMutation.reset();
+                  if (sendError) resetSendError();
                   setDraft(value);
                 }}
                 onDraftMentionsChange={setDraftMentions}
@@ -314,14 +318,14 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                 currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
               }
               onDraftChange={(value) => {
-                if (threadSendMutation.isError) threadSendMutation.reset();
+                if (threadSendError) resetThreadSendError();
                 setThreadDraft(value);
               }}
               onDraftMentionsChange={setThreadDraftMentions}
               onSend={sendThreadReply}
               onRetry={retryThreadReply}
-              isSending={threadSendMutation.isPending}
-              hasError={threadSendMutation.isError}
+              isSending={threadSendPending}
+              hasError={threadSendError}
               attachmentQueue={threadAttachmentQueue}
               onClose={() => setThreadRootId(null)}
               onReact={toggleReaction}
