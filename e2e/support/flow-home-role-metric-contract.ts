@@ -1,6 +1,15 @@
 import { expect, type Locator } from '@playwright/test';
 
 export async function expectRoleMetricAlignment(insight: Locator) {
+  await insight.evaluate(async () => {
+    // Compact comparisons can wrap differently under fallback glyph metrics.
+    // Measure only after the product font and the resulting container layout settle.
+    await document.fonts.ready;
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+  });
+
   const geometry = await insight.locator('[data-home-role-lens]').evaluateAll((lenses) =>
     lenses.map((lens) => {
       const bounds = lens.getBoundingClientRect();

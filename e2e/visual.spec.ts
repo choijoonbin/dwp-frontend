@@ -456,10 +456,11 @@ async function mockPersonalHome(page: Page, locale = 'en', homeOverview?: unknow
   await page.clock.setFixedTime(new Date('2026-09-01T00:00:00Z'));
   await mockAuthenticated(page, locale, homeOverview);
 }
-
 async function expectPersonalHomeLaunchpadReady(page: Page) {
-  // Keep Darwin pixel geometry independent of the runner's scrollbar preference.
-  await page.addStyleTag({ content: ':root { scrollbar-width: none; }' });
+  // Keep pixel geometry independent of OS-level classic versus overlay scrollbars.
+  await page.addStyleTag({
+    content: '* { scrollbar-gutter: auto !important; scrollbar-width: none !important; }',
+  });
   const launchpad = page.locator('[data-launchpad-surface="page"]');
   await expect(launchpad).toBeVisible();
   await expect(launchpad.locator('[data-launchpad-group-target]')).toHaveCount(4);
