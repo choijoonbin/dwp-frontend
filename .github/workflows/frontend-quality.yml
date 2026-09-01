@@ -206,8 +206,8 @@ jobs:
       - name: Install dependencies
         run: corepack yarn install --immutable
 
-      - name: Install Playwright Chromium
-        run: corepack yarn playwright install chromium
+      - name: Install Playwright browsers
+        run: corepack yarn playwright install chromium webkit
 
       - name: Run approved design-system Storybook pixel baselines
         run: corepack yarn test:storybook --project=chromium --project=mobile
