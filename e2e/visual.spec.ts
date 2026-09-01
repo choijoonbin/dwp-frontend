@@ -452,6 +452,11 @@ async function setLocale(page: Page, locale: string) {
   }, locale);
 }
 
+async function mockPersonalHome(page: Page, locale = 'en', homeOverview?: unknown) {
+  await page.clock.setFixedTime(new Date('2026-09-01T00:00:00Z'));
+  await mockAuthenticated(page, locale, homeOverview);
+}
+
 async function expectPersonalHomeLaunchpadReady(page: Page) {
   const launchpad = page.locator('[data-launchpad-surface="page"]');
   await expect(launchpad).toBeVisible();
@@ -654,7 +659,7 @@ test('personal home reference visual baseline', async ({ page }) => {
     }
   });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await mockAuthenticated(page);
+  await mockPersonalHome(page);
   await setAppearance(page, {
     mode: 'light',
     density: 'standard',
@@ -683,7 +688,7 @@ test('personal home news and command rail visual baseline', async ({ page }, tes
   );
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const overview = createHomeOverviewFixture(['ADMIN']);
-  await mockAuthenticated(page, 'en', {
+  await mockPersonalHome(page, 'en', {
     ...overview,
     communications: {
       ...overview.communications,
@@ -721,7 +726,7 @@ test('personal home tablet reference visual baseline', async ({ page }, testInfo
   );
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await mockAuthenticated(page);
+  await mockPersonalHome(page);
   await setAppearance(page, {
     mode: 'light',
     density: 'standard',
@@ -746,7 +751,7 @@ test('personal home tablet reference visual baseline', async ({ page }, testInfo
 
 test('personal home Korean visual baseline', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await mockAuthenticated(page, 'ko');
+  await mockPersonalHome(page, 'ko');
   await setLocale(page, 'ko');
   await setAppearance(page, {
     mode: 'light',
@@ -770,7 +775,7 @@ test('personal home Korean visual baseline', async ({ page }) => {
 });
 
 test('account command panel visual baseline', async ({ page }) => {
-  await mockAuthenticated(page);
+  await mockPersonalHome(page);
   await setAppearance(page, {
     mode: 'light',
     density: 'standard',
@@ -793,7 +798,7 @@ test('account command panel visual baseline', async ({ page }) => {
 });
 
 test('account command panel dark high-contrast visual baseline', async ({ page }) => {
-  await mockAuthenticated(page);
+  await mockPersonalHome(page);
   await setAppearance(page, {
     mode: 'dark',
     density: 'standard',
@@ -818,7 +823,7 @@ test('account command panel dark high-contrast visual baseline', async ({ page }
 
 test('personal home dark reference visual baseline', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await mockAuthenticated(page);
+  await mockPersonalHome(page);
   await setAppearance(page, {
     mode: 'dark',
     density: 'standard',
@@ -840,7 +845,7 @@ test('personal home dark reference visual baseline', async ({ page }) => {
 });
 
 test('global search command palette visual baseline', async ({ page }) => {
-  await mockAuthenticated(page);
+  await mockPersonalHome(page);
   await setAppearance(page, {
     mode: 'light',
     density: 'standard',

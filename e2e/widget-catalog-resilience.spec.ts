@@ -253,9 +253,11 @@ test('keeps a hidden widget draft when a 409 conflict is dismissed', async ({ pa
   expect(conflictState.submittedVersions).toEqual([0]);
   await expect(conflict.getByText(/My draft: 1 change/)).toBeVisible();
   await expect(conflict.getByText('Latest version: 1')).toBeVisible();
-  await expect(
-    page.getByText('A newer home version was found. Your draft has been kept.')
-  ).toBeVisible();
+  const conflictToast = page.getByRole('alert', { includeHidden: true }).filter({
+    hasText: 'A newer home version was found. Your draft has been kept.',
+  });
+  await expect(conflictToast).toBeVisible();
+  await conflictToast.hover();
   expect(await conflict.evaluate((element) => element.contains(document.activeElement))).toBe(true);
   await expectAccessibleDialogWithoutOverflow(page, conflict);
   const content = conflict.locator('.MuiDialogContent-root');
@@ -287,6 +289,8 @@ test('keeps a hidden widget draft when a 409 conflict is dismissed', async ({ pa
   const saveButton = page.getByRole('button', { name: 'Save' });
   await expect(saveButton).toBeFocused();
   await expect(saveButton).toBeEnabled();
+  await conflictToast.getByRole('button', { name: 'Close' }).click();
+  await expect(conflictToast).toBeHidden();
   await expectActivityState(page, 'RESTORE');
 });
 
