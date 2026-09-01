@@ -7,6 +7,7 @@ import {
   mockAskRuntime,
   mockRuntimeNavigation,
 } from './support/runtime-access';
+import { mockAuthenticatedAdminSession } from './support/authenticated-admin-session';
 import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-session';
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
 
@@ -23,44 +24,6 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
     })),
   }));
   expect(summary).toEqual([]);
-}
-
-async function mockAuthenticatedAdminSession(page: Page) {
-  await page.route('**/api/auth/me', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: {
-          userId: 1,
-          personPublicId: 'person-session-user',
-          displayName: 'Admin',
-          jobTitle: 'Platform administrator',
-          email: 'admin@dwp.local',
-          tenantId: 1,
-          tenantCode: 'default',
-          tenantName: 'SKAX',
-          identityPlane: 'TENANT',
-          preferredLocale: 'en',
-          tenantDefaultLocale: 'en',
-          roles: ['ADMIN'],
-          groups: [],
-          resourceRoles: [],
-        },
-      }),
-    })
-  );
-  await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: DEFAULT_APP_PERMISSIONS,
-      }),
-    })
-  );
 }
 
 test.beforeEach(async ({ page }) => {
@@ -2051,9 +2014,18 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
     testInfo.project.name === 'mobile'
       ? page.getByTestId('work-mobile-sidebar')
       : page.getByTestId('work-sidebar');
+  if (testInfo.project.name === 'mobile') {
+    await page.getByTestId('work-mobile-navigation-trigger').click();
+  }
   await expect(workSidebar.getByRole('link', { name: 'DWAI·ON', exact: true })).toHaveCount(0);
   await expect(workSidebar.getByRole('link', { name: 'Back to personal home' })).toBeVisible();
-  await page.getByRole('button', { name: 'Open DWAI·ON' }).click();
+  if (testInfo.project.name === 'mobile') {
+    await workSidebar.getByRole('button', { name: 'Close navigation' }).click();
+  }
+  await page
+    .getByTestId('dwaion-launcher')
+    .getByRole('button', { name: 'Open DWAI·ON', exact: true })
+    .click();
   await expect(
     page.getByRole('dialog', { name: 'DWAI·ON conversation and support panel' })
   ).toBeVisible();

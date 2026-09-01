@@ -105,6 +105,7 @@ export function ProductAreaLayout({
   const { t } = useTranslation(translationNamespace);
   const { t: tCommon } = useTranslation('common');
   const { t: tAccount } = useTranslation('account');
+  const { t: tShell } = useTranslation('shell');
   const { preference } = useAppearance();
   const shell = shellRegistry[areaKey];
   const productExperience = getProductExperienceProfile(areaKey);
@@ -519,7 +520,10 @@ export function ProductAreaLayout({
         navigation={{
           controlsId: mobileNavigationId,
           expanded: mobileNavigation.open,
-          label: t('shell.openNavigation'),
+          label:
+            areaKey === 'work' || areaKey === 'activity'
+              ? tShell('navigation.open')
+              : t('shell.openNavigation'),
           testId: `${areaKey}-mobile-navigation-trigger`,
           onOpen: mobileNavigation.openFrom,
         }}
