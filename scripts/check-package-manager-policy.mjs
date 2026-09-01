@@ -10,6 +10,7 @@ const forbiddenArtifacts = [
   'bun.lock',
   'bun.lockb',
 ];
+const forbiddenInstallArtifacts = ['node_modules/.pnpm'];
 
 const issues = [];
 const currentNodeVersion = process.versions.node.split('.').map(Number);
@@ -37,6 +38,14 @@ if (!fs.existsSync('yarn.lock')) {
 for (const artifact of forbiddenArtifacts) {
   if (fs.existsSync(artifact)) {
     issues.push(`${artifact} conflicts with the Yarn 4 workspace policy.`);
+  }
+}
+
+for (const artifact of forbiddenInstallArtifacts) {
+  if (fs.existsSync(artifact)) {
+    issues.push(
+      `${artifact} indicates a mixed package-manager install. Remove node_modules and reinstall with Yarn 4.`
+    );
   }
 }
 
