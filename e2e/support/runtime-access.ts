@@ -467,6 +467,25 @@ export async function mockAuthenticatedRuntime(page: Page): Promise<void> {
   await mockShellNotificationRuntime(page);
   await mockRuntimeCodeCatalog(page);
   await mockWorkspaceRuntime(page);
+  await page.route('**/api/platform/v1/observability/web-vitals', (route) =>
+    route.fulfill({ status: 202, body: '' })
+  );
+  await page.route('**/api/platform/v1/search/audit', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success({ eventId: 'search-audit-event', queryDigest: '0'.repeat(64) }),
+    })
+  );
+  await page.route('**/api/auth/policy', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success({
+        localLoginAvailable: true,
+        ssoLoginAvailable: false,
+        preferredLoginType: 'LOCAL',
+      }),
+    })
+  );
   await page.route(/\/api\/platform\/v1\/admin\/catalog(?:\?.*)?$/, (route) =>
     route.fulfill({
       contentType: 'application/json',

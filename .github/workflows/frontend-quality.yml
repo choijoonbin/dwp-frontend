@@ -178,7 +178,7 @@ jobs:
   visual-baselines:
     name: Approved macOS pixel baselines
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       YARN_ENABLE_HARDENED_MODE: '1'
 
@@ -210,17 +210,67 @@ jobs:
         run: corepack yarn playwright install chromium webkit
 
       - name: Run approved design-system Storybook pixel baselines
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/storybook
+          PLAYWRIGHT_OUTPUT_DIR: test-results/storybook
         run: corepack yarn test:storybook --project=chromium --project=mobile
 
-      - name: Run approved Darwin visual baselines
-        run: corepack yarn playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/menu-visual-baseline.spec.ts e2e/video-meeting-visual-quality.spec.ts e2e/flow-home-visual.spec.ts --project=chromium --project=mobile --workers=2
+      - name: Run approved Darwin core visual baselines (desktop)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/core-desktop
+          PLAYWRIGHT_OUTPUT_DIR: test-results/core-desktop
+        run: corepack yarn playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/video-meeting-visual-quality.spec.ts --project=chromium --workers=2
+
+      - name: Run approved Darwin core visual baselines (mobile)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/core-mobile
+          PLAYWRIGHT_OUTPUT_DIR: test-results/core-mobile
+        run: corepack yarn playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/video-meeting-visual-quality.spec.ts --project=mobile --workers=2
+
+      - name: Run approved Darwin menu visual baselines (desktop 1/2)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/menu-desktop-1
+          PLAYWRIGHT_OUTPUT_DIR: test-results/menu-desktop-1
+        run: corepack yarn playwright test e2e/menu-visual-baseline.spec.ts --project=chromium --workers=2 --shard=1/2
+
+      - name: Run approved Darwin menu visual baselines (desktop 2/2)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/menu-desktop-2
+          PLAYWRIGHT_OUTPUT_DIR: test-results/menu-desktop-2
+        run: corepack yarn playwright test e2e/menu-visual-baseline.spec.ts --project=chromium --workers=2 --shard=2/2
+
+      - name: Run approved Darwin menu visual baselines (mobile 1/2)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/menu-mobile-1
+          PLAYWRIGHT_OUTPUT_DIR: test-results/menu-mobile-1
+        run: corepack yarn playwright test e2e/menu-visual-baseline.spec.ts --project=mobile --workers=2 --shard=1/2
+
+      - name: Run approved Darwin menu visual baselines (mobile 2/2)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/menu-mobile-2
+          PLAYWRIGHT_OUTPUT_DIR: test-results/menu-mobile-2
+        run: corepack yarn playwright test e2e/menu-visual-baseline.spec.ts --project=mobile --workers=2 --shard=2/2
+
+      - name: Run approved Darwin Flow Home visual baselines (desktop)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/flow-home-desktop
+          PLAYWRIGHT_OUTPUT_DIR: test-results/flow-home-desktop
+        run: corepack yarn playwright test e2e/flow-home-visual.spec.ts --project=chromium --workers=1
+
+      - name: Run approved Darwin Flow Home visual baselines (mobile)
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/flow-home-mobile
+          PLAYWRIGHT_OUTPUT_DIR: test-results/flow-home-mobile
+        run: corepack yarn playwright test e2e/flow-home-visual.spec.ts --project=mobile --workers=1
 
       - name: Upload visual regression report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: playwright-visual-report-macos
-          path: playwright-report/
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 14
 
   dependency-review:

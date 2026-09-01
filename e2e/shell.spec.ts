@@ -1,5 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expect, test } from '@playwright/test';
 
 import {
   ASK_RUNTIME_FIXTURE,
@@ -8,23 +7,10 @@ import {
   mockRuntimeNavigation,
 } from './support/runtime-access';
 import { mockAuthenticatedAdminSession } from './support/authenticated-admin-session';
+import { expectNoAutomaticAccessibilityViolations } from './support/accessibility';
 import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-session';
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
-
-async function expectNoAutomaticAccessibilityViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).analyze();
-  const summary = results.violations.map((violation) => ({
-    id: violation.id,
-    impact: violation.impact,
-    nodes: violation.nodes.map((node) => ({
-      target: node.target,
-      html: node.html,
-      failureSummary: node.failureSummary,
-      checks: node.any.map((check) => check.data),
-    })),
-  }));
-  expect(summary).toEqual([]);
-}
+import { readHorizontalWorkspaceSurfaceGaps } from './support/workspace-geometry';
 
 test.beforeEach(async ({ page }) => {
   let personalPreference = {
@@ -683,6 +669,7 @@ test('tenant policy promotes SSO without exposing the configured provider key', 
 test('authenticated users enter a personal home before the business shell', async ({
   page,
 }, testInfo) => {
+  test.slow();
   let preferredLocale = 'en';
   const currentUser = () => ({
     userId: 1,
@@ -1193,30 +1180,12 @@ test('workspace widget surfaces use the governed responsive visual gap', async (
   }
 
   if (testInfo.project.name !== 'mobile') {
-    const horizontalSurfaceGaps = await canvas.evaluate((element) => {
-      const surfaces = Array.from(element.querySelectorAll<HTMLElement>('[data-workspace-widget]'))
-        .map((widget) => {
-          const surface = widget.querySelector<HTMLElement>(
-            ':scope > [data-workspace-widget-content] > section'
-          );
-          const bounds = surface?.getBoundingClientRect();
-          return bounds
-            ? { x: bounds.x, y: bounds.y, right: bounds.right, bottom: bounds.bottom }
-            : null;
-        })
-        .filter(
-          (bounds): bounds is { x: number; y: number; right: number; bottom: number } =>
-            bounds !== null
-        );
-      return surfaces.flatMap((left, index) =>
-        surfaces.slice(index + 1).flatMap((right) => {
-          const sameRow = Math.abs(left.y - right.y) < 2;
-          if (!sameRow) return [];
-          return right.x >= left.right ? [right.x - left.right] : [left.x - right.right];
-        })
-      );
-    });
-    expect(horizontalSurfaceGaps.some((gap) => Math.abs(gap - expectedGap) < 1)).toBe(true);
+    const horizontalSurfaceGaps = await readHorizontalWorkspaceSurfaceGaps(canvas);
+    expect(horizontalSurfaceGaps.length).toBeGreaterThan(0);
+    for (const gap of horizontalSurfaceGaps) {
+      expect(gap.actual, `${gap.leftKey} to ${gap.rightKey}`).toBeCloseTo(expectedGap, 0);
+      expect(gap.expected, `${gap.leftKey}/${gap.rightKey} spacing`).toBeCloseTo(expectedGap, 0);
+    }
   }
 });
 
@@ -1302,6 +1271,7 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
 test('personal home launcher can create, rename, persist, and reset folders', async ({
   page,
 }, testInfo) => {
+  test.slow();
   test.skip(
     testInfo.project.name === 'mobile',
     'Desktop pointer and menu behavior is covered here.'
@@ -1959,6 +1929,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
 test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', async ({
   page,
 }, testInfo) => {
+  test.slow();
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
