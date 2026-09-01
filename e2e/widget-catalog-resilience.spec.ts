@@ -314,6 +314,11 @@ test('reapplies a widget draft after a 409 without overwriting the latest home',
 
   const saveButton = page.getByRole('button', { name: 'Save' });
   await expect(saveButton).toBeFocused();
+  await page.evaluate(() => {
+    const current = new URL(window.location.href);
+    current.searchParams.set('source', 'widget-resilience');
+    window.history.replaceState(window.history.state, '', current);
+  });
   await page.keyboard.press('Enter');
   await expect(page.getByText('Home view saved.')).toBeVisible();
   expect(conflictState.submittedVersions).toEqual([0, 1]);
@@ -333,6 +338,12 @@ test('reapplies a widget draft after a 409 without overwriting the latest home',
   ]);
   expect(conflictState.serverVersion).toBe(2);
 
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/' &&
+      !url.searchParams.has('edit') &&
+      url.searchParams.get('source') === 'widget-resilience'
+  );
   await page.reload();
   await page.getByRole('button', { name: 'Edit home' }).click();
   await expectActivityState(page, 'RESTORE');

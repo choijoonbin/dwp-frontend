@@ -158,11 +158,9 @@ export default function HomePage() {
     setConflictTarget(null);
     conflictResolutionRef.current = null;
     setPreviewDevice('desktop');
-    if (searchParams.get('edit') === 'home') {
-      const next = new URLSearchParams(searchParams);
-      next.delete('edit');
-      setSearchParams(next, { replace: true });
-    }
+    const next = new URLSearchParams(window.location.search);
+    next.delete('edit');
+    setSearchParams(next, { replace: true });
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         const retainedEntry = editEntryFocusRef.current;
@@ -171,7 +169,7 @@ export default function HomePage() {
         target?.focus({ preventScroll: true });
       });
     });
-  }, [searchParams, setSearchParams]);
+  }, [setSearchParams]);
   const firstName = auth.user?.displayName?.split(' ')[0];
   const timeZone = useMemo(resolveHomeTimeZone, []);
   const accessFingerprint = homeUserAccessFingerprint(permissions, auth.user);
