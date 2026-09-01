@@ -452,6 +452,26 @@ async function setLocale(page: Page, locale: string) {
   }, locale);
 }
 
+async function expectPersonalHomeLaunchpadReady(page: Page) {
+  const launchpad = page.locator('[data-launchpad-surface="page"]');
+  await expect(launchpad).toBeVisible();
+  await expect(launchpad.locator('[data-launchpad-group-target]')).toHaveCount(4);
+  await expect
+    .poll(
+      () =>
+        launchpad
+          .locator('[data-launchpad-group-target]')
+          .evaluateAll((groups) =>
+            groups.map(
+              (group) =>
+                group.querySelectorAll<HTMLElement>(':scope > [data-launchpad-item]').length
+            )
+          ),
+      { timeout: 15_000 }
+    )
+    .toEqual([5, 7, 2, 4]);
+}
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
@@ -648,6 +668,7 @@ test('personal home reference visual baseline', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('home-command-center')).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await expect(page).toHaveScreenshot('personal-home-reference.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -683,6 +704,7 @@ test('personal home news and command rail visual baseline', async ({ page }, tes
       name: 'A new way to collaborate with colleagues in the AI era',
     })
   ).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await expect(page.getByTestId('home-priority-rail').locator(':scope > div')).toHaveCount(3);
   await expect(page).toHaveScreenshot('personal-home-news-command.png', {
     animations: 'disabled',
@@ -709,6 +731,7 @@ test('personal home tablet reference visual baseline', async ({ page }, testInfo
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await expect(page.getByRole('region', { name: 'Work tools' })).toBeVisible();
   await expect(
     page.locator('[data-testid="home-workspace-grid"] [data-workspace-widget]')
@@ -736,6 +759,7 @@ test('personal home Korean visual baseline', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: 'Admin님, 다시 오신 것을 환영합니다' })
   ).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await expect(page.getByTestId('home-command-center')).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference-ko.png', {
     animations: 'disabled',
@@ -756,6 +780,7 @@ test('account command panel visual baseline', async ({ page }) => {
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await page.getByRole('button', { name: 'Account' }).click();
   await expect(page.getByRole('menuitem', { name: 'Account settings' })).toBeVisible();
   await expect(page.getByText('admin@dwp.local', { exact: true })).toBeVisible();
@@ -780,6 +805,7 @@ test('account command panel dark high-contrast visual baseline', async ({ page }
   await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await page.getByRole('button', { name: 'Account' }).click();
   await expect(page.getByRole('menuitem', { name: 'Account settings' })).toBeVisible();
   await expect(page).toHaveScreenshot('account-command-panel-dark-high-contrast.png', {
@@ -804,6 +830,7 @@ test('personal home dark reference visual baseline', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('home-command-center')).toBeVisible();
+  await expectPersonalHomeLaunchpadReady(page);
   await expect(page).toHaveScreenshot('personal-home-reference-dark.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -822,6 +849,7 @@ test('global search command palette visual baseline', async ({ page }) => {
   });
 
   await page.goto('/');
+  await expectPersonalHomeLaunchpadReady(page);
   await page.getByRole('button', { name: 'Search' }).click();
   await expect(page.getByRole('dialog', { name: 'Search DWP' })).toBeVisible();
   await expect(page.getByRole('combobox', { name: 'Search DWP' })).toBeFocused();

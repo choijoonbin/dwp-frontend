@@ -20,6 +20,7 @@ import {
   expectVerticallyStackedDockGroups,
   flowDockRowSizes,
 } from './support/flow-home-layout-contracts';
+import { expectRoleMetricAlignment } from './support/flow-home-role-metric-contract';
 import { mockShellNotificationRuntime } from './support/runtime-access';
 
 const FLOW_FIXTURE_NOW = new Date('2026-08-11T00:30:00.000Z');
@@ -198,51 +199,6 @@ async function expectContextualListRhythm(section: Locator) {
   expect(geometry.gap).toBeLessThanOrEqual(9);
   expect(geometry.visualOverflow).toBeLessThanOrEqual(1);
   expect(geometry.listOverflow).toBeLessThanOrEqual(1);
-}
-
-async function expectRoleMetricAlignment(insight: Locator) {
-  const geometry = await insight.locator('[data-home-role-lens]').evaluateAll((lenses) =>
-    lenses.map((lens) => {
-      const bounds = lens.getBoundingClientRect();
-      const value = lens.querySelector<HTMLElement>('[data-home-role-value]')!;
-      const unit = lens.querySelector<HTMLElement>('[data-home-role-unit]')!;
-      const label = lens.querySelector<HTMLElement>('[data-home-role-label]')!;
-      const comparison = lens.querySelector<HTMLElement>('[data-home-role-comparison]')!;
-      const rail = lens.querySelector<HTMLElement>('[data-home-role-metric-rail]')!;
-      const valueBounds = value.getBoundingClientRect();
-      const unitBounds = unit.getBoundingClientRect();
-      const labelBounds = label.getBoundingClientRect();
-      const comparisonBounds = comparison.getBoundingClientRect();
-      const railBounds = rail.getBoundingClientRect();
-      return {
-        width: bounds.width,
-        height: bounds.height,
-        valueTop: valueBounds.top,
-        unitEndInset: bounds.right - unitBounds.right,
-        labelTop: labelBounds.top,
-        comparisonTop: comparisonBounds.top,
-        railTop: railBounds.top,
-        railWidth: railBounds.width,
-        railHeight: railBounds.height,
-        overflow: Math.max(0, lens.scrollWidth - lens.clientWidth),
-      };
-    })
-  );
-
-  expect(geometry).toHaveLength(4);
-  for (const key of ['width', 'height', 'unitEndInset', 'railWidth', 'railHeight'] as const) {
-    const values = geometry.map((item) => item[key]);
-    expect(Math.max(...values) - Math.min(...values), `${key} alignment`).toBeLessThanOrEqual(1);
-  }
-  for (const [first, second] of [
-    [geometry[0], geometry[1]],
-    [geometry[2], geometry[3]],
-  ]) {
-    for (const key of ['valueTop', 'labelTop', 'comparisonTop', 'railTop'] as const) {
-      expect(Math.abs(first[key] - second[key]), `${key} row alignment`).toBeLessThanOrEqual(1);
-    }
-  }
-  expect(geometry.every((item) => item.overflow <= 1)).toBe(true);
 }
 
 async function routeFlowExperience(page: Page, overrides: Record<string, unknown> = {}) {
