@@ -28,6 +28,7 @@ export type ResolveFlowAppDockModelInput = Readonly<{
   groups: readonly HomeAppGroup[];
   layout: LaunchpadLayout;
   itemLimit: number;
+  itemLimitPerGroup?: number;
 }>;
 
 export type FlowAppDockNotificationSummary = Readonly<{
@@ -35,6 +36,24 @@ export type FlowAppDockNotificationSummary = Readonly<{
   actionable: number;
   urgent: number;
 }>;
+
+/**
+ * Keeps the governed group surface stable even when a compact item budget or
+ * entitlement set leaves one of the configured groups without a visible item.
+ */
+export function preserveFlowAppDockGroupSurfaces(
+  groups: readonly HomeAppGroup[],
+  selectedGroups: readonly FlowAppDockResolvedGroup[]
+): readonly FlowAppDockResolvedGroup[] {
+  const selectedItemIdsByGroup = new Map(
+    selectedGroups.map((group) => [group.id, group.itemIds] as const)
+  );
+
+  return groups.map((group) => ({
+    ...group,
+    itemIds: selectedItemIdsByGroup.get(group.id) ?? [],
+  }));
+}
 
 const EMPTY_NOTIFICATION_SUMMARY: FlowAppDockNotificationSummary = {
   total: 0,
@@ -112,6 +131,7 @@ export function resolveFlowAppDockModel({
   groups,
   layout,
   itemLimit,
+  itemLimitPerGroup,
 }: ResolveFlowAppDockModelInput): FlowAppDockModel {
   const appIds = new Set(apps.map((app) => app.id));
   const claimedItemIds = new Set<string>();
@@ -131,10 +151,14 @@ export function resolveFlowAppDockModel({
     })
     .filter(({ validItemIds }) => validItemIds.length > 0);
   const limit = normalizedItemLimit(itemLimit);
+  const perGroupLimit =
+    itemLimitPerGroup === undefined
+      ? Number.MAX_SAFE_INTEGER
+      : normalizedItemLimit(itemLimitPerGroup);
   const selectedByGroup = validGroups.map(() => [] as string[]);
   let remaining = limit;
 
-  for (let itemIndex = 0; remaining > 0; itemIndex += 1) {
+  for (let itemIndex = 0; remaining > 0 && itemIndex < perGroupLimit; itemIndex += 1) {
     let selectedInRound = false;
 
     for (let groupIndex = 0; groupIndex < validGroups.length && remaining > 0; groupIndex += 1) {

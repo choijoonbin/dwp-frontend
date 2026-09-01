@@ -21,6 +21,10 @@ export type ZonedClock = {
 
 export type ZonedDateKey = string;
 
+export function resolveSystemTimeZone(fallback = ''): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || fallback;
+}
+
 function asDate(value: DateValue): Date {
   return value instanceof Date ? value : new Date(value);
 }

@@ -45,6 +45,7 @@ import {
   ROOM_BOOKING_EVENT_FIXTURE,
   hrDomainOperationsFixture,
 } from './product-area-fixtures';
+import { resolveMenuRouteProductFixture } from './menu-route-product-fixtures';
 
 import type { Page, Route } from '@playwright/test';
 import type {
@@ -101,6 +102,12 @@ type MockHomeSurface = {
 
 export const FULL_PRODUCT_PERMISSIONS = [
   ...DEFAULT_APP_PERMISSIONS,
+  ...['APP.MEETINGS', 'APP.MESSAGING', 'APP.NOTIFICATIONS'].map((resourceKey) => ({
+    resourceType: 'APP',
+    resourceKey,
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  })),
   {
     resourceType: 'APP',
     resourceKey: 'APP.WORKFORCE_MANAGEMENT',
@@ -137,6 +144,12 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode: 'MANAGE',
     effect: 'ALLOW' as const,
   },
+  ...['TIME', 'ABSENCE', 'BENEFITS', 'PAY', 'TALENT'].map((domain) => ({
+    resourceType: 'DATA',
+    resourceKey: `DATA.HR_${domain}`,
+    permissionCode: 'MANAGE',
+    effect: 'ALLOW' as const,
+  })),
   {
     resourceType: 'ACTION',
     resourceKey: 'ACTION.WORKFORCE_REFERENCE',
@@ -149,7 +162,50 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode: 'MANAGE',
     effect: 'ALLOW' as const,
   },
+  {
+    resourceType: 'ACTION',
+    resourceKey: 'ACTION.WORKFORCE_ORG_DESIGN',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'ACTION',
+    resourceKey: 'ACTION.WORKFORCE_CONTROLLED_EXPORT',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
   ...[
+    ['ADMIN.DWAION_OPERATIONS', 'VIEW'],
+    ['ADMIN.DWAION_AGENTS', 'VIEW'],
+    ['ADMIN.DWAION_AGENTS', 'MANAGE'],
+    ['ADMIN.DWAION_SOURCES', 'VIEW'],
+    ['ADMIN.DWAION_SOURCES', 'MANAGE'],
+    ['ADMIN.DWAION_ACTIONS', 'VIEW'],
+    ['ADMIN.DWAION_ACTIONS', 'MANAGE'],
+    ['ADMIN.DWAION_SAFETY', 'VIEW'],
+    ['ADMIN.DWAION_SAFETY', 'MANAGE'],
+    ['ADMIN.DWAION_EVALUATION', 'VIEW'],
+    ['ADMIN.DWAION_EVALUATION', 'MANAGE'],
+    ['ADMIN.DWAION_GATES', 'VIEW'],
+    ['ADMIN.DWAION_GATES', 'MANAGE'],
+    ['ADMIN.DWAION_RETENTION', 'VIEW'],
+    ['ADMIN.DWAION_RETENTION', 'MANAGE'],
+    ['ADMIN.DWAION_AUDIT', 'VIEW'],
+    ['ADMIN.DWAION_AUDIT', 'MANAGE'],
+    ['ADMIN.NOTIFICATION_OPERATIONS', 'VIEW'],
+    ['ADMIN.NOTIFICATION_OPERATIONS', 'MANAGE'],
+    ['ADMIN.NOTIFICATION_CONTRACT', 'VIEW'],
+    ['ADMIN.NOTIFICATION_CONTRACT', 'MANAGE'],
+    ['ADMIN.NOTIFICATION_POLICY', 'VIEW'],
+    ['ADMIN.NOTIFICATION_POLICY', 'MANAGE'],
+    ['ADMIN.NOTIFICATION_TEMPLATE', 'VIEW'],
+    ['ADMIN.NOTIFICATION_TEMPLATE', 'MANAGE'],
+    ['ADMIN.MAIL', 'VIEW'],
+    ['ADMIN.MAIL', 'MANAGE'],
+    ['ADMIN.MEETINGS', 'VIEW'],
+    ['ADMIN.MEETINGS', 'MANAGE'],
+    ['ADMIN.MESSAGING', 'VIEW'],
+    ['ADMIN.MESSAGING', 'MANAGE'],
     ['ADMIN.COMMUNICATIONS', 'VIEW'],
     ['ADMIN.COMMUNICATIONS', 'CREATE'],
     ['ADMIN.COMMUNICATIONS', 'UPDATE'],
@@ -1290,6 +1346,137 @@ export async function mockShellSession(
         preferredLoginType: 'LOCAL',
       });
     }
+    if (path === '/api/spaces/v1/home') {
+      return fulfillSuccess(route, {
+        generatedAt: '2026-08-11T00:20:00Z',
+        metrics: {
+          mySpaces: 0,
+          discoverableSpaces: 0,
+          pendingRequests: 0,
+          reviewQueue: 0,
+          unreadSignals: 0,
+        },
+        focusSpaces: [],
+        recentActivity: [],
+        recommendedTemplates: [],
+        insights: [],
+        canCreate: true,
+        canAdminister: true,
+      });
+    }
+    if (path === '/api/notifications/v1/capabilities') {
+      return fulfillSuccess(route, {
+        enabledChannels: ['IN_APP'],
+        unavailableChannels: ['EMAIL', 'WEB_PUSH', 'MOBILE_PUSH', 'TEAMS', 'SLACK'],
+        canonicalStore: 'POSTGRESQL',
+        realtimeTransport: 'SSE_HINT_WITH_DURABLE_SYNC',
+        externalDeliveryState: 'DISABLED',
+        generatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/notifications/v1/summary') {
+      return fulfillSuccess(route, {
+        partial: false,
+        unavailableSources: [],
+        message: null,
+        actionableUnread: 0,
+        totalUnread: 0,
+        viewCounts: { PRIORITY: 0, ALL: 0, MENTIONS: 0, SAVED: 0, SNOOZED: 0, DONE: 0 },
+        changeVersion: '0',
+        counterVersion: '0',
+        generatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/notifications/v1/stream') {
+      return route.fulfill({
+        status: 200,
+        headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        body: ': connected\n\n',
+      });
+    }
+    if (path === '/api/notifications/v1/me/delivery-profile') {
+      return fulfillSuccess(route, {
+        channels: {
+          IN_APP: true,
+          EMAIL: false,
+          WEB_PUSH: false,
+          MOBILE_PUSH: false,
+          TEAMS: false,
+          SLACK: false,
+        },
+        quietHours: {
+          enabled: false,
+          start: '22:00',
+          end: '07:00',
+          timeZone: 'Asia/Seoul',
+          days: [1, 2, 3, 4, 5, 6, 7],
+          allowUrgentBypass: true,
+        },
+        digest: { mode: 'OFF', deliveryTime: '09:00', dayOfWeek: null },
+        presentation: { bannerMode: 'SMART', previewMode: 'FULL' },
+        version: '0',
+        updatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/notifications/v1/me/effective-settings') {
+      return fulfillSuccess(route, {
+        partial: false,
+        unavailableSources: [],
+        message: null,
+        globalChannels: {},
+        apps: [],
+        generatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/meetings/v1/home') {
+      return fulfillSuccess(route, {
+        serverNow: '2026-08-11T00:20:00Z',
+        timeZone: 'Asia/Seoul',
+        activeMeeting: null,
+        nextMeeting: null,
+        today: [],
+        recent: [],
+        metrics: {
+          meetingsToday: 0,
+          meetingMinutesToday: 0,
+          waitingForApproval: 0,
+          qualityScore: null,
+          averageJoinSeconds: null,
+        },
+        capabilities: {
+          available: true,
+          provider: 'LIVEKIT',
+          unavailableReason: null,
+          audio: true,
+          video: true,
+          screenShare: true,
+          chat: true,
+          reactions: true,
+          handRaise: true,
+          captions: false,
+          recordingConfigured: false,
+          transcriptConfigured: false,
+          aiNotesConfigured: false,
+          maximumParticipants: 100,
+          participantList: true,
+          tokenTtlSeconds: 300,
+          unmuteControl: 'REQUEST_ONLY',
+        },
+      });
+    }
+    if (path === '/api/agent/v1/admin/safety') {
+      return fulfillSuccess(route, {
+        promptInjectionOutcome: 'DENY',
+        privilegedDataOutcome: 'DENY',
+        mutationOutcome: 'HANDOFF',
+        requireCitations: true,
+        publicWebEnabled: false,
+        maxSourceScopes: 5,
+        maxToolCalls: 6,
+        policyVersion: 3,
+        updatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
     if (path === '/api/auth/me/policy') {
       return fulfillSuccess(route, {
         tenantId: 1,
@@ -2023,7 +2210,7 @@ export async function mockShellSession(
       return fulfillSuccess(route, HR_TALENT_FIXTURE);
     }
     const hrOperationsMatch = path.match(
-      /^\/api\/people\/v1\/hr\/operations\/(time|absence|benefits|pay|talent)$/u
+      /^\/api\/people\/v1\/hr\/operations\/(time|absence|benefits|pay|talent)$/iu
     );
     if (hrOperationsMatch) {
       return fulfillSuccess(
@@ -2215,6 +2402,9 @@ export async function mockShellSession(
         relationships: [],
         openPositions: [],
       });
+    }
+    if (path === '/api/people/v1/workforce/organization/candidates') {
+      return fulfillSuccess(route, []);
     }
     if (path === '/api/people/v1/workforce/organization/intelligence') {
       return fulfillSuccess(route, {
@@ -4113,6 +4303,9 @@ export async function mockShellSession(
         ],
       });
     }
+
+    const menuRouteFixture = resolveMenuRouteProductFixture(request.method(), path);
+    if (menuRouteFixture) return fulfillSuccess(route, menuRouteFixture.data);
 
     return route.fulfill({
       status: 503,

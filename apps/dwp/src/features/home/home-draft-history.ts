@@ -1,5 +1,13 @@
 import type { HomePresentation, HomeWidgetPreference } from '@dwp-frontend/shared-utils';
-import type { LaunchpadLayout } from '../../components/workspace-composer/app-launchpad-model';
+import {
+  mergeConcurrentTokenOrder,
+  reapplyEntitledLaunchpadProjection,
+} from '../../components/workspace-composer/app-launchpad-model';
+
+import type {
+  HomeAppDefinition,
+  LaunchpadLayout,
+} from '../../components/workspace-composer/app-launchpad-model';
 
 export type HomeDraft = Readonly<{
   appLayout: LaunchpadLayout;
@@ -16,6 +24,84 @@ export type HomeDraftHistory = Readonly<{
 
 function sameDraft(left: HomeDraft, right: HomeDraft): boolean {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function sameValue(left: unknown, right: unknown): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function reapplyValue<T>(base: T, draft: T, latest: T): T {
+  return sameValue(base, draft) ? latest : draft;
+}
+
+function reapplyWidgets(
+  base: readonly HomeWidgetPreference[],
+  draft: readonly HomeWidgetPreference[],
+  latest: readonly HomeWidgetPreference[]
+): HomeWidgetPreference[] {
+  const baseByKey = new Map(base.map((widget) => [widget.widgetKey, widget]));
+  const draftByKey = new Map(draft.map((widget) => [widget.widgetKey, widget]));
+  const latestByKey = new Map(latest.map((widget) => [widget.widgetKey, widget]));
+  const baseOrder = base.map((widget) => widget.widgetKey);
+  const draftOrder = draft.map((widget) => widget.widgetKey);
+  const latestOrder = latest.map((widget) => widget.widgetKey);
+  const candidateKeys = [...new Set([...latestOrder, ...draftOrder])];
+  const mergedByKey = new Map<string, HomeWidgetPreference>();
+  candidateKeys.forEach((key) => {
+    const baseWidget = baseByKey.get(key);
+    const draftWidget = draftByKey.get(key);
+    const latestWidget = latestByKey.get(key);
+    const localMembershipChanged = Boolean(baseWidget) !== Boolean(draftWidget);
+    if (localMembershipChanged) {
+      if (draftWidget) mergedByKey.set(key, draftWidget);
+      return;
+    }
+    if (!draftWidget || !baseWidget) {
+      if (latestWidget) mergedByKey.set(key, latestWidget);
+      return;
+    }
+    if (!latestWidget) return;
+
+    const size = reapplyValue(baseWidget.size, draftWidget.size, latestWidget.size);
+    const height = reapplyValue(baseWidget.height, draftWidget.height, latestWidget.height);
+    const merged: HomeWidgetPreference = {
+      widgetKey: key,
+      visible: reapplyValue(baseWidget.visible, draftWidget.visible, latestWidget.visible),
+    };
+    if (size !== undefined) merged.size = size;
+    if (height !== undefined) merged.height = height;
+    mergedByKey.set(key, merged);
+  });
+  const mergedOrder = candidateKeys.filter((key) => mergedByKey.has(key));
+  return mergeConcurrentTokenOrder(mergedOrder, baseOrder, draftOrder, latestOrder).map((key) =>
+    mergedByKey.get(key)!
+  );
+}
+
+/**
+ * Reapplies only the user's local changes after an optimistic-lock conflict.
+ * Untouched fields come from the latest server revision so a retry cannot silently
+ * overwrite changes made in another session.
+ */
+export function reapplyHomeDraft(
+  base: HomeDraft,
+  draft: HomeDraft,
+  latest: HomeDraft,
+  entitledApps: readonly HomeAppDefinition[]
+): HomeDraft {
+  return {
+    appLayout: reapplyEntitledLaunchpadProjection(
+      latest.appLayout,
+      base.appLayout,
+      draft.appLayout,
+      entitledApps
+    ),
+    presentation: reapplyValue(base.presentation, draft.presentation, latest.presentation),
+    // A conflicted reset must not be retried as a destructive reset against a newer revision.
+    // Its visible local deltas are reapplied below and the user can explicitly reset again.
+    resetIntent: false,
+    widgets: reapplyWidgets(base.widgets, draft.widgets, latest.widgets),
+  };
 }
 
 export function createHomeDraftHistory(draft: HomeDraft): HomeDraftHistory {

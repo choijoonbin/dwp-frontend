@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock3,
-  Copy,
   FileSearch,
   Gauge,
   Globe2,
@@ -14,13 +13,11 @@ import {
   Route,
   Search,
   Server,
-  X,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   getApiHistoryOverview,
-  getApiHistoryTrace,
   listAuditEvents,
   listApiHistoryEvents,
 } from '@dwp-frontend/shared-utils';
@@ -30,13 +27,12 @@ import {
   LiveStatus,
   OperationalContextBar,
 } from '@dwp-frontend/design-system';
-import { formatDate, formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -63,19 +59,27 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
+import { ApiMonitoringTraceDrawer as TraceDrawer } from './api-monitoring-detail';
+import {
+  apiMonitoringCompactTimestamp as compactTimestamp,
+  apiMonitoringDuration as duration,
+  apiMonitoringErrorMessage as errorMessage,
+  apiMonitoringEventTimestamp as eventTimestamp,
+  apiMonitoringOutcomeColor as outcomeColor,
+  auditWindowForApiHistory,
+} from './api-monitoring-model';
+import {
+  ApiMonitoringMetric as Metric,
+  TrafficChart,
+  createApiHistoryColumns,
+} from './api-monitoring-visuals';
 
-import type { GridColDef } from '@mui/x-data-grid';
 import type {
-  ApiHistoryEvent,
   ApiHistoryFilters,
   ApiHistoryObservationPoint,
   ApiHistoryOutcome,
-  ApiHistoryTrendPoint,
   ApiHistoryWindow,
-  AuditEvent,
-  AuditWindow,
 } from '@dwp-frontend/shared-utils';
-import type { LucideIcon } from 'lucide-react';
 
 const WINDOW_FALLBACK: ApiHistoryWindow[] = ['H1', 'H6', 'H24', 'D7', 'D30'];
 const OBSERVATION_POINT_FALLBACK: ApiHistoryObservationPoint[] = ['GATEWAY', 'SERVICE', 'ALL'];
@@ -96,478 +100,6 @@ const SERVICES = [
   'dwp-provider-server',
   'dwp-agent-runtime',
 ];
-
-type MetricProps = {
-  label: string;
-  value: string;
-  hint: string;
-  icon: LucideIcon;
-  tone?: 'neutral' | 'success' | 'warning' | 'error';
-};
-
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
-}
-
-function eventTimestamp(value: string): string {
-  return formatDate(value, { dateStyle: 'medium', timeStyle: 'medium' });
-}
-
-function compactTimestamp(value: string): string {
-  return formatDate(value, { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-}
-
-function duration(value: number): string {
-  if (value < 1_000) return `${formatNumber(value)} ms`;
-  return `${formatNumber(value / 1_000, { maximumFractionDigits: 2 })} s`;
-}
-
-function auditWindowForApiHistory(value: ApiHistoryWindow): AuditWindow {
-  if (value === 'D7') return 'D7';
-  if (value === 'D30') return 'D30';
-  return 'H24';
-}
-
-function bytes(value?: number | null): string {
-  if (value == null) return '—';
-  if (value < 1_024) return `${formatNumber(value)} B`;
-  if (value < 1_048_576) return `${formatNumber(value / 1_024, { maximumFractionDigits: 1 })} KB`;
-  return `${formatNumber(value / 1_048_576, { maximumFractionDigits: 1 })} MB`;
-}
-
-function outcomeColor(outcome: ApiHistoryOutcome): 'success' | 'warning' | 'error' | 'default' {
-  if (outcome === 'SUCCESS') return 'success';
-  if (outcome === 'REDIRECTION' || outcome === 'CLIENT_ERROR') return 'warning';
-  if (outcome === 'SERVER_ERROR' || outcome === 'CANCELLED') return 'error';
-  return 'default';
-}
-
-function Metric({ label, value, hint, icon: Icon, tone = 'neutral' }: MetricProps) {
-  const theme = useTheme();
-  const colors = {
-    neutral: theme.palette.info.main,
-    success: theme.palette.success.main,
-    warning: theme.palette.warning.main,
-    error: theme.palette.error.main,
-  };
-  const color = colors[tone];
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        minHeight: 112,
-        px: { xs: 1.5, md: 2 },
-        py: 1.75,
-        borderRight: { xs: 0, sm: 1 },
-        borderBottom: { xs: 1, md: 0 },
-        borderColor: 'divider',
-        '&:last-of-type': { borderRight: 0 },
-      }}
-    >
-      <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-        <Typography variant="caption" color="text.secondary" fontWeight={700}>
-          {label}
-        </Typography>
-        <Box
-          aria-hidden="true"
-          sx={{ width: 28, height: 28, display: 'grid', placeItems: 'center', color }}
-        >
-          <Icon size={17} strokeWidth={1.8} />
-        </Box>
-      </Stack>
-      <Typography
-        component="p"
-        sx={{
-          mt: 1,
-          fontSize: 24,
-          lineHeight: 1.1,
-          fontWeight: 760,
-          fontVariantNumeric: 'tabular-nums',
-        }}
-      >
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
-        {hint}
-      </Typography>
-    </Box>
-  );
-}
-
-function TrafficChart({
-  points,
-  changes,
-  label,
-}: {
-  points: ApiHistoryTrendPoint[];
-  changes: AuditEvent[];
-  label: string;
-}) {
-  const theme = useTheme();
-  const display = useDisplayDictionary();
-  const width = 900;
-  const height = 220;
-  const padding = { top: 20, right: 16, bottom: 28, left: 36 };
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
-  const maximum = Math.max(1, ...points.map((point) => point.totalRequests));
-  const x = (index: number) =>
-    padding.left +
-    (points.length <= 1 ? chartWidth / 2 : (index / (points.length - 1)) * chartWidth);
-  const y = (value: number) => padding.top + chartHeight - (value / maximum) * chartHeight;
-  const line = points.map((point, index) => `${x(index)},${y(point.totalRequests)}`).join(' ');
-  const barWidth = Math.max(2, Math.min(10, chartWidth / Math.max(1, points.length) - 2));
-  const changeMarkers = changes
-    .map((change) => {
-      const occurredAt = new Date(change.occurredAt).getTime();
-      const nearestIndex = points.reduce(
-        (best, point, index) =>
-          Math.abs(new Date(point.bucket).getTime() - occurredAt) < best.distance
-            ? { index, distance: Math.abs(new Date(point.bucket).getTime() - occurredAt) }
-            : best,
-        { index: 0, distance: Number.POSITIVE_INFINITY }
-      ).index;
-      return { change, index: nearestIndex };
-    })
-    .filter(() => points.length > 0);
-
-  return (
-    <Box>
-      <Box
-        component="svg"
-        role="img"
-        aria-label={label}
-        viewBox={`0 0 ${width} ${height}`}
-        sx={{ display: 'block', width: 1, height: 220, overflow: 'visible' }}
-      >
-        {[0, 0.5, 1].map((ratio) => (
-          <line
-            key={ratio}
-            x1={padding.left}
-            x2={width - padding.right}
-            y1={padding.top + chartHeight * ratio}
-            y2={padding.top + chartHeight * ratio}
-            stroke={theme.palette.divider}
-            strokeWidth="1"
-          />
-        ))}
-        {changeMarkers.map(({ change, index }) => (
-          <g key={change.eventId}>
-            <line
-              x1={x(index)}
-              x2={x(index)}
-              y1={padding.top}
-              y2={padding.top + chartHeight}
-              stroke={theme.palette.secondary.main}
-              strokeWidth="1"
-              strokeDasharray="4 4"
-              opacity="0.65"
-            />
-            <circle
-              cx={x(index)}
-              cy={padding.top + 5}
-              r="4"
-              fill={theme.palette.secondary.main}
-              stroke={theme.palette.background.paper}
-              strokeWidth="1.5"
-            >
-              <title>{display('auditActions', change.action)}</title>
-            </circle>
-          </g>
-        ))}
-        {points.map((point, index) => {
-          const errors = point.clientErrors + point.serverErrors;
-          const errorHeight = (errors / maximum) * chartHeight;
-          return errors > 0 ? (
-            <rect
-              key={`${point.bucket}-error`}
-              x={x(index) - barWidth / 2}
-              y={padding.top + chartHeight - errorHeight}
-              width={barWidth}
-              height={Math.max(2, errorHeight)}
-              rx="1"
-              fill={point.serverErrors > 0 ? theme.palette.error.main : theme.palette.warning.main}
-              opacity="0.75"
-            />
-          ) : null;
-        })}
-        {points.length > 1 && (
-          <polyline
-            points={line}
-            fill="none"
-            stroke={theme.palette.info.main}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        )}
-        {points.map((point, index) => (
-          <circle
-            key={point.bucket}
-            cx={x(index)}
-            cy={y(point.totalRequests)}
-            r={points.length > 32 ? 1.5 : 2.75}
-            fill={theme.palette.background.paper}
-            stroke={theme.palette.info.main}
-            strokeWidth="2"
-          />
-        ))}
-        <text x="0" y={padding.top + 5} fill={theme.palette.text.secondary} fontSize="11">
-          {formatNumber(maximum)}
-        </text>
-        <text
-          x="0"
-          y={padding.top + chartHeight + 4}
-          fill={theme.palette.text.secondary}
-          fontSize="11"
-        >
-          0
-        </text>
-      </Box>
-      <Stack direction="row" justifyContent="space-between" gap={2} sx={{ mt: -2.25 }}>
-        <Typography variant="caption" color="text.secondary">
-          {points[0] ? compactTimestamp(points[0].bucket) : '—'}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {points.at(-1) ? compactTimestamp(points.at(-1)!.bucket) : '—'}
-        </Typography>
-      </Stack>
-    </Box>
-  );
-}
-
-function CopyValue({ value, label }: { value?: string | null; label: string }) {
-  if (!value) return <Typography variant="body2">—</Typography>;
-  return (
-    <Stack direction="row" alignItems="center" gap={0.5} sx={{ minWidth: 0 }}>
-      <Typography
-        variant="body2"
-        sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-      >
-        {value}
-      </Typography>
-      <Tooltip title={label}>
-        <IconButton
-          size="small"
-          aria-label={label}
-          onClick={() => void navigator.clipboard.writeText(value)}
-        >
-          <Copy size={15} />
-        </IconButton>
-      </Tooltip>
-    </Stack>
-  );
-}
-
-function TraceDrawer({ historyId, onClose }: { historyId: string | null; onClose: () => void }) {
-  const { t } = useTranslation('admin');
-  const navigate = useNavigate();
-  const detailQuery = useQuery({
-    queryKey: ['admin', 'api-history', 'detail', historyId],
-    queryFn: () => getApiHistoryTrace(historyId!),
-    enabled: Boolean(historyId),
-  });
-  const detail = detailQuery.data;
-
-  return (
-    <Drawer
-      anchor="right"
-      open={Boolean(historyId)}
-      onClose={onClose}
-      slotProps={{
-        paper: { sx: { width: { xs: '100%', sm: 540 }, maxWidth: '100%' } },
-      }}
-    >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ minHeight: 64, px: 2.5, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Box>
-          <Typography component="h2" variant="subtitle1">
-            {t('apiMonitoring.detail.title')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('apiMonitoring.detail.subtitle')}
-          </Typography>
-        </Box>
-        <Tooltip title={t('common.actions.close')}>
-          <IconButton aria-label={t('common.actions.close')} onClick={onClose}>
-            <X size={19} />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-      {detailQuery.isLoading && (
-        <ManagementPanelLoading label={t('apiMonitoring.detail.loading')} />
-      )}
-      {detailQuery.isError && (
-        <ManagementPanelError
-          message={errorMessage(detailQuery.error, t('apiMonitoring.detail.loadError'))}
-        />
-      )}
-      {detail && (
-        <Box sx={{ overflowY: 'auto' }}>
-          <Box sx={{ p: 2.5 }}>
-            <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-              <Chip
-                label={detail.selected.statusCode}
-                size="small"
-                color={outcomeColor(detail.selected.outcome)}
-                variant="outlined"
-              />
-              <Chip label={detail.selected.httpMethod} size="small" variant="outlined" />
-              <Chip label={detail.selected.observationPoint} size="small" variant="outlined" />
-            </Stack>
-            <Typography
-              component="p"
-              variant="subtitle1"
-              sx={{ mt: 1.5, overflowWrap: 'anywhere' }}
-            >
-              {detail.selected.routeTemplate}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-              {eventTimestamp(detail.selected.occurredAt)} / {duration(detail.selected.durationMs)}
-            </Typography>
-          </Box>
-          <Divider />
-          <Box
-            component="dl"
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: '140px minmax(0, 1fr)',
-              gap: 0,
-              m: 0,
-              px: 2.5,
-              '& > dt, & > dd': { m: 0, py: 1.25, borderBottom: 1, borderColor: 'divider' },
-            }}
-          >
-            {[
-              [t('apiMonitoring.detail.fields.service'), detail.selected.serviceName],
-              [t('apiMonitoring.detail.fields.instance'), detail.selected.serviceInstance ?? '—'],
-              [
-                t('apiMonitoring.detail.fields.actor'),
-                detail.selected.actorId ?? detail.selected.actorType,
-              ],
-              [t('apiMonitoring.detail.fields.auth'), detail.selected.authType],
-              [
-                t('apiMonitoring.detail.fields.requestSize'),
-                bytes(detail.selected.requestSizeBytes),
-              ],
-              [
-                t('apiMonitoring.detail.fields.responseSize'),
-                bytes(detail.selected.responseSizeBytes),
-              ],
-              [t('apiMonitoring.detail.fields.client'), detail.selected.userAgentFamily ?? '—'],
-              [t('apiMonitoring.detail.fields.error'), detail.selected.errorType ?? '—'],
-            ].map(([term, value]) => (
-              <Box key={term} sx={{ display: 'contents' }}>
-                <Typography component="dt" variant="caption" color="text.secondary">
-                  {term}
-                </Typography>
-                <Typography component="dd" variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-                  {value}
-                </Typography>
-              </Box>
-            ))}
-            <Typography component="dt" variant="caption" color="text.secondary">
-              {t('apiMonitoring.detail.fields.correlation')}
-            </Typography>
-            <Box component="dd">
-              <CopyValue
-                value={detail.selected.correlationId}
-                label={t('apiMonitoring.detail.copyCorrelation')}
-              />
-            </Box>
-            <Typography component="dt" variant="caption" color="text.secondary">
-              {t('apiMonitoring.detail.fields.trace')}
-            </Typography>
-            <Box component="dd">
-              <CopyValue
-                value={detail.selected.traceId}
-                label={t('apiMonitoring.detail.copyTrace')}
-              />
-            </Box>
-          </Box>
-          <Box sx={{ px: 2.5, py: 2.5 }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
-              <Typography component="h3" variant="subtitle2">
-                {t('apiMonitoring.detail.traceTitle')}
-              </Typography>
-              <Chip label={detail.trace.length} size="small" variant="outlined" />
-            </Stack>
-            <Box component="ol" sx={{ listStyle: 'none', p: 0, m: 0, mt: 1.5 }}>
-              {detail.trace.map((hop, index) => (
-                <Box
-                  component="li"
-                  key={hop.historyId}
-                  sx={{
-                    position: 'relative',
-                    pl: 3.5,
-                    pb: 2,
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      left: 8,
-                      top: 10,
-                      bottom: index === detail.trace.length - 1 ? 'auto' : -2,
-                      width: 1,
-                      height: index === detail.trace.length - 1 ? 0 : '100%',
-                      bgcolor: 'divider',
-                    },
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      left: 4,
-                      top: 6,
-                      width: 9,
-                      height: 9,
-                      borderRadius: '50%',
-                      bgcolor: hop.statusCode >= 500 ? 'error.main' : 'success.main',
-                      boxShadow: (theme) => `0 0 0 4px ${theme.palette.background.paper}`,
-                    },
-                  }}
-                >
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
-                    <Typography variant="subtitle2">{hop.serviceName}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {duration(hop.durationMs)}
-                    </Typography>
-                  </Stack>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 0.25, overflowWrap: 'anywhere' }}
-                  >
-                    {hop.observationPoint} / {hop.httpMethod} / {hop.statusCode} /{' '}
-                    {hop.routeTemplate}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-          {detail.selected.correlationId && (
-            <Box sx={{ px: 2.5, pb: 2.5 }}>
-              <ActionButton
-                fullWidth
-                intent="secondary"
-                startIcon={<FileSearch size={17} />}
-                onClick={() => {
-                  navigate(
-                    `/admin/governance/audit-events?mode=events&query=${encodeURIComponent(detail.selected.correlationId!)}`
-                  );
-                  onClose();
-                }}
-              >
-                {t('apiMonitoring.detail.openAuditEvidence')}
-              </ActionButton>
-            </Box>
-          )}
-        </Box>
-      )}
-    </Drawer>
-  );
-}
 
 export function ApiMonitoring() {
   const { t } = useTranslation('admin');
@@ -636,76 +168,7 @@ export function ApiMonitoring() {
   );
   const changeEvents = changesQuery.data?.content ?? [];
 
-  const columns = useMemo<GridColDef<ApiHistoryEvent>[]>(
-    () => [
-      {
-        field: 'occurredAt',
-        headerName: t('apiMonitoring.events.columns.time'),
-        width: 178,
-        renderCell: ({ row }) => eventTimestamp(row.occurredAt),
-      },
-      {
-        field: 'statusCode',
-        headerName: t('apiMonitoring.events.columns.status'),
-        width: 94,
-        renderCell: ({ row }) => (
-          <Chip
-            label={row.statusCode}
-            size="small"
-            color={outcomeColor(row.outcome)}
-            variant="outlined"
-          />
-        ),
-      },
-      {
-        field: 'httpMethod',
-        headerName: t('apiMonitoring.events.columns.method'),
-        width: 88,
-      },
-      {
-        field: 'routeTemplate',
-        headerName: t('apiMonitoring.events.columns.route'),
-        minWidth: 250,
-        flex: 1.4,
-        renderCell: ({ row }) => (
-          <Typography
-            variant="body2"
-            title={row.routeTemplate}
-            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-          >
-            {row.routeTemplate}
-          </Typography>
-        ),
-      },
-      {
-        field: 'serviceName',
-        headerName: t('apiMonitoring.events.columns.service'),
-        minWidth: 160,
-        flex: 0.8,
-      },
-      {
-        field: 'durationMs',
-        headerName: t('apiMonitoring.events.columns.latency'),
-        width: 112,
-        align: 'right',
-        headerAlign: 'right',
-        renderCell: ({ row }) => duration(row.durationMs),
-      },
-      {
-        field: 'actorId',
-        headerName: t('apiMonitoring.events.columns.actor'),
-        width: 132,
-        valueGetter: (_value, row) => row.actorId ?? row.actorType,
-      },
-      {
-        field: 'traceId',
-        headerName: t('apiMonitoring.events.columns.trace'),
-        width: 156,
-        renderCell: ({ row }) => row.traceId?.slice(0, 12) ?? '—',
-      },
-    ],
-    [t]
-  );
+  const columns = useMemo(() => createApiHistoryColumns(t), [t]);
 
   if (overviewQuery.isLoading && !overviewQuery.data) {
     return <ManagementPanelLoading label={t('apiMonitoring.loading')} />;
@@ -745,7 +208,7 @@ export function ApiMonitoring() {
   const applySearch = () => setQuery(queryInput.trim());
 
   return (
-    <Box data-testid="api-monitoring" sx={{ width: 1, maxWidth: 1680, mx: 'auto' }}>
+    <Box data-testid="api-monitoring" sx={{ width: 1, minWidth: 0 }}>
       <OperationalContextBar
         label={t('apiMonitoring.context.label')}
         items={[

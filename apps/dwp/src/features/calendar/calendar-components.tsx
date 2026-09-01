@@ -68,10 +68,6 @@ export function calendarDate(value: string | Date, language: string, includeWeek
   );
 }
 
-export function calendarLocale(language: string) {
-  return resolveSupportedLocale(language);
-}
-
 export function calendarDuration(event: Pick<CalendarEvent, 'startsAt' | 'endsAt'>) {
   return Math.max(
     0,

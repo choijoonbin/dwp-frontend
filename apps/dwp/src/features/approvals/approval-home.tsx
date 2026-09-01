@@ -502,16 +502,35 @@ export function ApprovalHome() {
               setBaseVersion(preference.data?.version ?? 0);
               setEditing(true);
             }}
-            disabled={preference.isLoading}
+            disabled={preference.isLoading || preference.isError}
           >
             {t('home.customize')}
           </ActionButton>
         )}
       </Stack>
+      {preference.isError && (
+        <Alert
+          severity="error"
+          sx={{ mb: 2 }}
+          action={
+            <ActionButton
+              intent="quiet"
+              size="small"
+              disabled={preference.isFetching}
+              onClick={() => void preference.refetch()}
+            >
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('home.preferenceLoadError')}
+        </Alert>
+      )}
       {editing && (
         <WorkspaceComposerToolbar
           presentation={draftPresentation}
           busy={mutation.isPending}
+          canSave={!preference.isError}
           onPresentationChange={setDraftPresentation}
           onAdd={() => setGalleryOpen(true)}
           onReset={() => {

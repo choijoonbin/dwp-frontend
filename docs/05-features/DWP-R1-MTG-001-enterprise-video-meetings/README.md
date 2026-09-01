@@ -33,7 +33,7 @@ The product is not a visual clone of Zoom or WEHAGO Meet. It combines:
 DWP web /meetings
         |
         v
-Gateway /api/meetings/**
+Gateway public /api/meetings/v1/**
         |
         v
 dwp-meeting-server ---- PostgreSQL dwp_meetings
@@ -53,6 +53,21 @@ state and artifact metadata only. LiveKit tokens are generated server-side,
 short-lived, tenant-scoped, and withheld while a participant is waiting for
 admission.
 
+The browser-facing contract is the versioned public `/api/meetings/v1/**`
+surface. Provider callbacks and trusted artifact-ingest/finalize paths are
+separate service-to-service boundaries; provider credentials, object keys, and
+raw transcript bodies never cross the public API. Recording playback is granted
+only through a short-lived, artifact/version-bound ticket after the caller's
+current membership and content ACL, retention, legal-hold, and artifact state
+are re-evaluated.
+
+Meeting users and meeting administrators have separate content boundaries:
+users see only content authorized by the meeting membership and artifact ACL;
+`MEETING_ADMIN` can operate policy, readiness, capacity, and deletion evidence
+without acquiring recording, transcript, chat, or recap content access. Any
+future compliance/content-custody access is a separately scoped, case-bound
+role with explicit evidence.
+
 ## Delivery scope
 
 ### Implemented foundation
@@ -70,18 +85,37 @@ admission.
   acknowledgement, and graceful leave/rejoin states.
 - Durable room start/end commands with lease reclaim, fenced completion, bounded retry,
   and rolling migration from legacy room names to incarnation-bound rooms.
+- Durable recording start/stop commands with a governed provider port, idempotent
+  receipts, crash reclaim, lease fencing, immutable actor/reason provenance for
+  `START`/`STOP`, and provider I/O outside database locks.
+- Trusted recording finalization verifies a signed service assertion and the
+  tenant/meeting/session binding, object digest, byte length, content type,
+  encryption, region, retention, and ACL before an artifact becomes available.
+  Finalization is not a browser-authorized mutation and never stores raw media
+  or provider response bodies in audit history.
+- Playback uses a short-lived HTTPS access ticket bound to the current artifact
+  version and retention boundary; expired, stale, held, deleted, or unauthorized
+  artifacts do not receive a URL.
 - Bounded, signature-verified LiveKit webhook ingestion with replay protection,
   tenant/meeting/participant/incarnation binding, and provider-authoritative attendance.
+- Signed transcript artifact registration and finalization bound to tenant, meeting,
+  recording, consent, region, retention, object hash, and replay-safe workload identity.
+  Transcript text and provider response bodies are never stored in command or audit rows.
 - Governed transcript-to-intelligence runs with workload assertions, provider-policy
   attestations, cited summaries, topics, decisions, action candidates, open questions,
   risks, and meeting-level conversation climate. Raw transcript and provider payloads
   are not persisted or logged.
-- Human review and explicit publication. A delegated reviewer may review a draft, while
-  generation and publication remain host-only; recap reads only the latest authorized
-  published report.
+- Human review and explicit publication. A host can assign or revoke an eligible,
+  admitted participant as an independent reviewer; the draft requester cannot review
+  or manage that draft. Generation, review, and publication remain distinct audited
+  actions, and recap reads only the latest authorized published report.
 - An administrator-only AI and data-governance readiness surface. It reports policy,
   provider liveness, processing region, KMS, audit, Egress, storage, STT, recent model
   execution, retention, and deletion evidence without granting meeting-content access.
+- Leased, compare-and-set (CAS) deletion orchestration and crypto-shred readiness
+  are modeled across source objects, indexes, caches, and derivatives. A deletion
+  receipt is not complete until every governed target is accounted for; key
+  destruction is evidence-backed and legal holds fence deletion.
 - Tenant policy and operations surfaces.
 - Responsive and keyboard-accessible Korean and English UI, including 320 px layouts,
   mobile overlay focus containment, 200% zoom-equivalent layouts, dark mode, forced
@@ -103,11 +137,17 @@ governance gates pass:
   provider-event lag and replay alarms, operational reconciliation, and proof that all
   `vm_meeting_media_upgrades` rows reached `SUCCEEDED`. Client `connected`/`leave`
   acknowledgement remains UX telemetry and never replaces provider evidence.
-- Egress workers, encrypted object storage, consent, retention, legal hold, and deletion evidence.
+- Live Egress workers, KMS-encrypted object storage, governed STT callbacks, consent,
+  retention, legal hold, and deletion evidence in the target tenant and region. The
+  code adapter alone does not satisfy this gate.
+- Trusted recording-finalize delivery, playback-ticket enforcement, and immutable
+  `START`/`STOP` provenance in the deployed audit sink.
 - WCAG-conformant live captions, streaming STT, editable transcript, and
   human-reviewed AI summary.
-- Executable retention, legal-hold, deletion, and deletion-evidence workers for
-  meeting, attendance, audit, and future artifact data.
+- Executable retention, legal-hold, leased/CAS deletion, crypto-shred, and
+  deletion-evidence workers for meeting, attendance, audit, and future artifact
+  data. Raw transcript object deletion remains unverified and is an explicit
+  production NO-GO until storage-level evidence is supplied.
 - Verified external guest identity/invitation and governed join-before-host entry.
 - Governed co-host delegation and revocation, participant removal, request-to-mute,
   return-to-lobby, and bulk admission controls with provider-side enforcement.

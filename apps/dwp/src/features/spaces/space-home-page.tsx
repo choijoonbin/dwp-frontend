@@ -12,11 +12,16 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ActionButton, EmptyState, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import { getSpaceHome, useAuth } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
@@ -31,22 +36,36 @@ import { SpaceCard, SpaceGlyph } from './space-ui';
 
 const METRIC_ICONS = [Layers3, Compass, Activity, UsersRound] as const;
 
-function SpaceHomeLoading() {
+function SpaceHomeLoading({ label }: { label: string }) {
   return (
     <PageCanvas>
-      <Skeleton variant="rounded" height={264} />
-      <Box
-        sx={{
-          mt: 2,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' },
-          gap: 1,
-        }}
-      >
-        {[0, 1, 2, 3].map((item) => (
-          <Skeleton key={item} variant="rounded" height={92} />
-        ))}
-      </Box>
+      <LoadingState
+        label={label}
+        variant="skeleton"
+        size="page"
+        embedded
+        skeleton={
+          <>
+            <Skeleton variant="rounded" height={264} />
+            <Box
+              sx={{
+                mt: 2,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  md: 'repeat(2, 1fr)',
+                  xl: 'repeat(4, 1fr)',
+                },
+                gap: 1,
+              }}
+            >
+              {[0, 1, 2, 3].map((item) => (
+                <Skeleton key={item} variant="rounded" height={92} />
+              ))}
+            </Box>
+          </>
+        }
+      />
     </PageCanvas>
   );
 }
@@ -64,20 +83,16 @@ export function SpaceHomePage() {
     retry: 1,
   });
 
-  if (home.isLoading) return <SpaceHomeLoading />;
+  if (home.isLoading) return <SpaceHomeLoading label={t('home.loading')} />;
   if (home.isError || !home.data) {
     return (
       <PageCanvas>
-        <Alert
-          severity="error"
-          action={
-            <ActionButton intent="quiet" onClick={() => home.refetch()}>
-              {t('actions.retry')}
-            </ActionButton>
-          }
-        >
-          {t('home.loadError')}
-        </Alert>
+        <ErrorState
+          title={t('home.loadError')}
+          retryLabel={t('actions.retry')}
+          onRetry={() => void home.refetch()}
+          size="page"
+        />
       </PageCanvas>
     );
   }

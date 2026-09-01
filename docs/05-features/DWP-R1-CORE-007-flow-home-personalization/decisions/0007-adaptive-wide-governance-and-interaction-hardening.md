@@ -47,7 +47,8 @@ responsive layout의 목적과 맞지 않는다. 확장형은 같은 카드의 �
 
 ### 2. Adaptive 적용 여부는 명시적 구조 계약이다
 
-- `isFlowAdaptiveTemplateEligible`가 역할별 기본 네 Section의 순서, 표시 상태와 폭을 판정한다.
+- `isFlowAdaptiveTemplateEligible`가 개인 `우선 업무`와 역할별 기본 네 Section, 총 다섯 개인
+  위젯의 순서·표시 상태·폭을 판정한다.
 - 사용자가 순서·표시·폭을 변경하면 adaptive template를 끄고 저장한 twelve-column footprint를
   모든 viewport에서 source of truth로 사용한다.
 - 높이는 footprint가 아니라 콘텐츠 깊이이므로 adaptive eligibility에서 제외하고 실제 저장값을
@@ -104,8 +105,9 @@ responsive layout의 목적과 맞지 않는다. 확장형은 같은 카드의 �
 - Wide의 역할별 업무 현황에는 Calendar overview의 실제 `weekLoad`와 focus target을 작은 추세
   차트와 progress로 제공한다. 추정 KPI나 예시 데이터는 만들지 않으며 source가 없으면 인사이트
   자체를 표시하지 않는다.
-- 막대는 `최근 7일 일정 부하`, progress는 `집중 시간`으로 각각 가시적인 label을 가져 서로 다른
-  신호로 오독되지 않게 한다. 충돌이 있는 날만 warning tone을 사용한다.
+- 막대는 `이번 주 일별 회의 부하`, progress는 `집중 시간`으로 각각 가시적인 label을 가져 서로
+  다른 신호로 오독되지 않게 한다. 회의 부하는 테넌트의 일일 회의 기준 대비 0~100% 고정 척도로
+  표시하고, 오늘은 외곽선, 충돌 또는 기준 초과는 점선/이중선으로 색상 외에도 구분한다.
 - 이 인사이트는 기존 `role-pulse` Widget의 responsive 표현이며 새로운 저장 Widget이 아니다.
   따라서 사용자의 기존 순서·폭·높이·표시 설정과 서버 저장 schema를 바꾸지 않는다.
 - 진행 중 요청이 0건일 때 보이는 `접수 → 검토 → 완료`는 “일반적인 요청 처리 과정”이라는

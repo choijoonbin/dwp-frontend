@@ -180,5 +180,3 @@ export function resolveLegacyProductRedirect(
     replace: true,
   };
 }
-
-export const productRoutePatternMatches = registeredPageMatches;

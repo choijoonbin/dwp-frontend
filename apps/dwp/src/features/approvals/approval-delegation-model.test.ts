@@ -4,6 +4,7 @@ import {
   buildApprovalDelegationCreateInput,
   buildApprovalDelegationWorkflowReference,
   buildApprovalDelegationWorkflowOptions,
+  isApprovalDelegationDirection,
 } from './approval-delegation-model';
 
 import type { ApprovalWorkflow } from '@dwp-frontend/shared-utils';
@@ -28,6 +29,13 @@ function workflow(workflowId: string, nameKo: string): ApprovalWorkflow {
 }
 
 describe('approval delegation workflow identity', () => {
+  it('keeps the direction contract closed when an API response is partial or invalid', () => {
+    expect(isApprovalDelegationDirection('OUTGOING')).toBe(true);
+    expect(isApprovalDelegationDirection('INCOMING')).toBe(true);
+    expect(isApprovalDelegationDirection(undefined)).toBe(false);
+    expect(isApprovalDelegationDirection('SIDEWAYS')).toBe(false);
+  });
+
   it('keeps same-key A/B workflows distinct by immutable UUID and uses the key only in labels', () => {
     const options = buildApprovalDelegationWorkflowOptions(
       [

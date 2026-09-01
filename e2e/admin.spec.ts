@@ -437,7 +437,21 @@ test('tenant administrators configure and reset the personal home presentation',
     backgroundSizeBytes: null as number | null,
     backgroundWidth: null as number | null,
     backgroundHeight: null as number | null,
-    launchpadConfiguration: { schemaVersion: 1, groups: [], placements: [] },
+    launchpadConfiguration: {
+      schemaVersion: 1,
+      groups: ['work', 'connect', 'services', 'systems'].map((groupKey, sortOrder) => ({
+        groupKey,
+        labels: { ko: groupKey, en: groupKey },
+        descriptions: { ko: groupKey, en: groupKey },
+        sortOrder,
+        enabled: true,
+      })),
+      placements: Array.from({ length: 10 }, (_, index) => ({
+        resourceKey: `APP.PREVIEW_${index + 1}`,
+        groupKey: ['work', 'connect', 'services', 'systems'][index % 4]!,
+        sortOrder: index,
+      })),
+    },
     compositionPolicy: {
       schemaVersion: 3,
       experienceVariant: 'FLOW_V1',
@@ -557,9 +571,34 @@ test('tenant administrators configure and reset the personal home presentation',
     const geometry = await previewFrame.evaluate((frame) => {
       const workscape = frame.querySelector<HTMLElement>('[data-tenant-workscape-preview]');
       if (!workscape) throw new Error('Preview workscape is missing.');
+      const dock = workscape.querySelector<HTMLElement>(
+        '[data-testid="home-experience-preview-dock"]'
+      );
+      if (!dock) throw new Error('Preview app dock is missing.');
       const frameBounds = frame.getBoundingClientRect();
       const workscapeBounds = workscape.getBoundingClientRect();
+      const dockBounds = dock.getBoundingClientRect();
+      const workscapeStyle = window.getComputedStyle(workscape);
+      const groupSurfaces = Array.from(
+        dock.querySelectorAll<HTMLElement>('[data-home-experience-preview-group]')
+      ).map((group) => {
+        const style = window.getComputedStyle(group);
+        return {
+          display: style.display,
+          borderStyle: style.borderTopStyle,
+          borderWidth: Number.parseFloat(style.borderTopWidth),
+          borderRadius: Number.parseFloat(style.borderTopLeftRadius),
+          backgroundColor: style.backgroundColor,
+          backgroundImage: style.backgroundImage,
+        };
+      });
+      const workscapeContentWidth =
+        (workscape.clientWidth -
+          Number.parseFloat(workscapeStyle.paddingLeft) -
+          Number.parseFloat(workscapeStyle.paddingRight)) *
+        (workscapeBounds.width / workscape.clientWidth);
       return {
+        virtualHeight: Number(frame.dataset.previewVirtualHeight),
         frameWidth: frameBounds.width,
         frameHeight: frameBounds.height,
         workscapeWidth: workscapeBounds.width,
@@ -568,14 +607,37 @@ test('tenant administrators configure and reset the personal home presentation',
         contentHeight: workscape.clientHeight,
         scrollWidth: workscape.scrollWidth,
         scrollHeight: workscape.scrollHeight,
+        dockWidth: dockBounds.width,
+        workscapeContentWidth,
+        groupSurfaces,
       };
     });
-    expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(width / height, 2);
+    expect(geometry.virtualHeight).toBeGreaterThanOrEqual(height);
+    expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(
+      width / geometry.virtualHeight,
+      2
+    );
     expect(geometry.frameWidth).toBeLessThanOrEqual(stageWidth);
     expect(Math.abs(geometry.workscapeWidth - geometry.frameWidth)).toBeLessThanOrEqual(1);
     expect(Math.abs(geometry.workscapeHeight - geometry.frameHeight)).toBeLessThanOrEqual(1);
     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.contentWidth + 1);
     expect(geometry.scrollHeight).toBeLessThanOrEqual(geometry.contentHeight + 1);
+    expect(Math.abs(geometry.dockWidth - geometry.workscapeContentWidth)).toBeLessThanOrEqual(2);
+    expect(geometry.groupSurfaces).toHaveLength(4);
+    if (width >= 600) {
+      expect(
+        geometry.groupSurfaces.every(
+          (group) =>
+            group.display !== 'contents' &&
+            group.borderStyle === 'solid' &&
+            group.borderWidth >= 1 &&
+            group.borderRadius >= 10 &&
+            (group.backgroundColor !== 'rgba(0, 0, 0, 0)' || group.backgroundImage !== 'none')
+        )
+      ).toBe(true);
+    } else {
+      expect(geometry.groupSurfaces.every((group) => group.display === 'contents')).toBe(true);
+    }
   };
   await expect(workscapePreview).toHaveAttribute('data-preview-viewport', 'wide');
   await expectPreviewGeometry(1920, 312, 1320);
@@ -655,7 +717,8 @@ test('tenant administrators configure and reset the personal home presentation',
   await expect(workscapePreview.locator('[data-tenant-workscape-preview="desktop"]')).toBeVisible();
   await expectPreviewGeometry(1440, 326, 1120);
   await expect(workscapePreview.getByText('My apps')).toBeVisible();
-  await expect(workscapePreview.getByText('The tenant-default app dock is empty.')).toBeVisible();
+  await expect(workscapePreview.locator('[data-home-experience-preview-group]')).toHaveCount(4);
+  await expect(workscapePreview.getByText('The tenant-default app dock is empty.')).toHaveCount(0);
   await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
   await page.getByLabel('Headline').fill('One workspace, ready for action');
   await page

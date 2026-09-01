@@ -16,6 +16,7 @@ export type HomeDeviceWidthControl = {
 };
 
 const FLOW_DEVICE_WIDTHS = {
+  'command-rail': ['large', 'full'],
   schedule: ['fifth', 'quarter', 'compact', 'medium'],
   'daily-brief': ['compact', 'large', 'full'],
   focus: ['quarter', 'compact', 'medium', 'large', 'full'],

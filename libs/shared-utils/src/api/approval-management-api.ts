@@ -11,7 +11,7 @@ import type {
   ApprovalSignatureProvider,
   ApprovalWorkflow,
   ApprovalWorkflowDetail,
-} from './approval-api';
+} from './approval-management-contract';
 import type { ApiResponse } from '../types';
 
 const base = '/api/approvals/v1/admin';

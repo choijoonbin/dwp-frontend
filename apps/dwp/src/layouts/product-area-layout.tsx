@@ -1,7 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Home, LifeBuoy, Settings2 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import {
+  PRODUCT_EXPERIENCE_SELECTION_OPACITY,
+  PRODUCT_EXPERIENCE_SOFT_OPACITY,
+  resolveProductExperienceTones,
+} from '@dwp-frontend/design-system/foundation/product-experience-tokens';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
@@ -99,6 +105,7 @@ export function ProductAreaLayout({
   const { t } = useTranslation(translationNamespace);
   const { t: tCommon } = useTranslation('common');
   const { t: tAccount } = useTranslation('account');
+  const { preference } = useAppearance();
   const shell = shellRegistry[areaKey];
   const productExperience = getProductExperienceProfile(areaKey);
   const AreaIcon = shell.context.icon;
@@ -407,28 +414,39 @@ export function ProductAreaLayout({
       data-dwp-navigation-state={compact ? 'compact' : 'expanded'}
       data-product-concept={productExperience.concept}
       data-product-density={productExperience.density}
-      sx={(theme) => ({
-        minHeight: '100dvh',
-        bgcolor: theme.palette.mode === 'dark' ? 'background.default' : productExperience.canvas,
-        '--dwp-product-accent': productExperience.accent,
-        '--dwp-product-secondary': productExperience.secondary,
-        '--dwp-product-soft':
-          theme.palette.mode === 'dark'
-            ? alpha(productExperience.accent, 0.18)
-            : productExperience.softSurface,
-        '--dwp-product-canvas':
-          theme.palette.mode === 'dark'
+      sx={(theme) => {
+        const dark = theme.palette.mode === 'dark';
+        const canvas =
+          dark || preference.highContrast
             ? theme.palette.background.default
-            : productExperience.canvas,
-        '--dwp-product-sidebar':
-          theme.palette.mode === 'dark'
+            : productExperience.canvas;
+        const sidebar =
+          dark || preference.highContrast
             ? theme.palette.background.paper
-            : productExperience.sidebar,
-        '--dwp-product-selection':
-          theme.palette.mode === 'dark'
-            ? alpha(productExperience.accent, 0.2)
+            : productExperience.sidebar;
+        const tones = resolveProductExperienceTones(productExperience, {
+          mode: theme.palette.mode,
+          highContrast: preference.highContrast,
+          canvas,
+          sidebar,
+        });
+
+        return {
+          minHeight: '100dvh',
+          bgcolor: canvas,
+          '--dwp-product-accent': tones.accent,
+          '--dwp-product-secondary': tones.secondary,
+          '--dwp-product-accent-border': alpha(tones.accent, dark ? 0.34 : 0.2),
+          '--dwp-product-soft': dark
+            ? alpha(tones.accent, PRODUCT_EXPERIENCE_SOFT_OPACITY)
+            : productExperience.softSurface,
+          '--dwp-product-canvas': canvas,
+          '--dwp-product-sidebar': sidebar,
+          '--dwp-product-selection': dark
+            ? alpha(tones.accent, PRODUCT_EXPERIENCE_SELECTION_OPACITY)
             : productExperience.selection,
-      })}
+        };
+      }}
     >
       <Box
         component="aside"
@@ -457,19 +475,33 @@ export function ProductAreaLayout({
         width={shell.desktopNavigationWidth}
       >
         <Box
-          sx={(theme) => ({
-            height: 1,
-            minHeight: 0,
-            bgcolor:
-              theme.palette.mode === 'dark'
+          sx={(theme) => {
+            const dark = theme.palette.mode === 'dark';
+            const canvas =
+              dark || preference.highContrast
+                ? theme.palette.background.default
+                : productExperience.canvas;
+            const sidebar =
+              dark || preference.highContrast
                 ? theme.palette.background.paper
-                : productExperience.sidebar,
-            '--dwp-product-accent': productExperience.accent,
-            '--dwp-product-selection':
-              theme.palette.mode === 'dark'
-                ? alpha(productExperience.accent, 0.2)
+                : productExperience.sidebar;
+            const tones = resolveProductExperienceTones(productExperience, {
+              mode: theme.palette.mode,
+              highContrast: preference.highContrast,
+              canvas,
+              sidebar,
+            });
+
+            return {
+              height: 1,
+              minHeight: 0,
+              bgcolor: sidebar,
+              '--dwp-product-accent': tones.accent,
+              '--dwp-product-selection': dark
+                ? alpha(tones.accent, PRODUCT_EXPERIENCE_SELECTION_OPACITY)
                 : productExperience.selection,
-          })}
+            };
+          }}
         >
           {navigationContent(false, mobileNavigation.navigate, mobileNavigation.dismiss)}
         </Box>
@@ -583,7 +615,7 @@ export function ProductAreaLayout({
         sx={
           presentationPlane === 'management'
             ? {
-                boxShadow: `inset 0 3px 0 ${productExperience.accent}`,
+                boxShadow: 'inset 0 3px 0 var(--dwp-product-accent)',
                 '@media (forced-colors: active)': {
                   boxShadow: 'none',
                   borderTop: '3px solid CanvasText',

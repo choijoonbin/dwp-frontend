@@ -111,7 +111,8 @@ export function HrTimeWorkspace() {
   return (
     <QueryBoundary
       loading={query.isLoading}
-      error={query.isError}
+      error={query.error}
+      retrying={query.isFetching}
       onRetry={() => void query.refetch()}
     >
       {!card ? (

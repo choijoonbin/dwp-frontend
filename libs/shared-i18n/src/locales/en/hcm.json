@@ -608,6 +608,18 @@
   "domains": {
     "loading": "Loading HR information",
     "loadError": "HR work information could not be loaded. Check your permission and service connection.",
+    "queryState": {
+      "permissionTitle": "This HR information cannot be accessed safely",
+      "permissionDescription": "Your role, organization scope, or service permission connection could not be verified. Check access again or contact an administrator.",
+      "checkAccess": "Check access information",
+      "notFoundTitle": "The requested HR information was not found",
+      "notFoundDescription": "The effective date may have changed or the information is no longer available. Check the latest state.",
+      "contextChangedTitle": "Your access scope changed",
+      "contextChangedDescription": "Reload the information to apply your latest role and organization scope.",
+      "unavailableTitle": "The HR service connection is delayed",
+      "unavailableDescription": "The data could not be verified safely. Wait a moment and try again.",
+      "reference": "Support reference: {{reference}}"
+    },
     "teamBoundary": "Only people and requests inside the current team data boundary ({{boundary}}) are shown.",
     "names": {
       "TIME": "Time",
@@ -627,6 +639,8 @@
     },
     "status": {
       "OPEN": "Open",
+      "SCHEDULED": "Scheduled",
+      "CLOSED": "Closed",
       "SUBMITTED": "Awaiting approval",
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
@@ -644,7 +658,8 @@
       "ASSIGNED": "Assigned",
       "AT_RISK": "At risk",
       "CANCELLED": "Cancelled",
-      "RESOLVED": "Resolved"
+      "RESOLVED": "Resolved",
+      "PUBLISHED": "Published"
     },
     "reference": {
       "title": "Reference data is being shown",
@@ -655,9 +670,12 @@
       "error": "The request changed or is outside your authority. Refresh and review it again.",
       "approve": "Approve",
       "reject": "Reject",
+      "approveFor": "Approve {{name}}'s request",
+      "rejectFor": "Reject {{name}}'s request",
       "approveTitle": "Approve request",
       "rejectTitle": "Reject request",
       "note": "Decision reason",
+      "noteHint": "Enter at least 3 characters for the audit record.",
       "emptyTitle": "No request is awaiting approval",
       "emptyDescription": "All requests in your current population have been processed."
     },
@@ -753,9 +771,16 @@
       "notEnrolled": "Not enrolled",
       "plansTitle": "My benefits",
       "plansDescription": "Review benefits and coverage currently in effect.",
+      "effectivePeriod": "Effective {{start}} - {{end}}",
+      "current": "Current",
       "reportLifeEvent": "Report life event",
       "emptyTitle": "There are no active benefits",
       "emptyDescription": "Coverage appears when eligibility and enrollment are connected.",
+      "windowsTitle": "Enrollment schedule",
+      "windowsDescription": "Review current and scheduled enrollment periods so that you do not miss an action window.",
+      "windowPeriod": "{{start}} - {{end}}",
+      "noWindowTitle": "No enrollment period is scheduled",
+      "noWindowDescription": "A confirmed period will appear with its opening and closing time.",
       "coverage": {
         "EMPLOYEE": "Employee",
         "EMPLOYEE_SPOUSE": "Employee and spouse",
@@ -797,11 +822,14 @@
       "noGoalsDescription": "A manager-aligned growth goal will appear here.",
       "learningTitle": "Learning",
       "learningDescription": "Completion state for required and recommended learning.",
+      "learningSupport": "Request learning support",
       "required": "Required",
       "noLearningTitle": "No learning is in progress",
       "noLearningDescription": "Assigned learning will appear here.",
       "journeyTitle": "Growth journey",
       "journeyDescription": "Connected stages for role change and growth.",
+      "noJourneyTitle": "No growth journey is in progress",
+      "noJourneyDescription": "An onboarding, role transition, or growth journey will appear with its stage progress when assigned.",
       "getJourneyHelp": "Get journey help",
       "updateGoalTitle": "Update goal progress",
       "progress": "Progress",

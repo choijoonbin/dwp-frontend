@@ -137,7 +137,7 @@
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/administration-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/admin.tsx",
-      "{workspaceRoot}/apps/dwp/src/features/{admin,integrations,spaces}/**/*"
+      "{workspaceRoot}/apps/dwp/src/features/{admin,integrations}/**/*"
     ],
     "providerProduct": [
       "productRuntime",

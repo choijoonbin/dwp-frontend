@@ -66,7 +66,7 @@ export function MessagingAttachmentDrafts({
             }}
           >
             {item.state === 'UPLOADING' ? (
-              <CircularProgress size={16} />
+              <CircularProgress size={16} aria-hidden="true" />
             ) : (
               <FileText size={16} aria-hidden="true" />
             )}

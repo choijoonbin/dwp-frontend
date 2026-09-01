@@ -15,6 +15,7 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   EnterpriseDataGrid,
+  EnterpriseGridEmptyOverlay,
   ErrorState,
   FilterBar,
   GuidedEmptyState,
@@ -494,23 +495,29 @@ function WorkforceAccessManagerContent() {
             slots={{
               noRowsOverlay: () =>
                 hasFilters ? (
-                  <GuidedEmptyState
-                    kind="no-results"
-                    title={t('workforceAccess.empty.filteredTitle')}
-                    description={t('workforceAccess.empty.filteredDescription')}
-                    actionLabel={t('workforceAccess.filters.reset')}
-                    onAction={resetFilters}
-                    size="compact"
-                  />
+                  <EnterpriseGridEmptyOverlay>
+                    <GuidedEmptyState
+                      kind="no-results"
+                      title={t('workforceAccess.empty.filteredTitle')}
+                      description={t('workforceAccess.empty.filteredDescription')}
+                      actionLabel={t('workforceAccess.filters.reset')}
+                      onAction={resetFilters}
+                      size="compact"
+                      announce={false}
+                    />
+                  </EnterpriseGridEmptyOverlay>
                 ) : (
-                  <GuidedEmptyState
-                    kind="first-use"
-                    title={t('workforceAccess.empty.title')}
-                    description={t('workforceAccess.empty.description')}
-                    actionLabel={t('workforceAccess.create')}
-                    onAction={() => setOpen(true)}
-                    size="compact"
-                  />
+                  <EnterpriseGridEmptyOverlay>
+                    <GuidedEmptyState
+                      kind="first-use"
+                      title={t('workforceAccess.empty.title')}
+                      description={t('workforceAccess.empty.description')}
+                      actionLabel={t('workforceAccess.create')}
+                      onAction={() => setOpen(true)}
+                      size="compact"
+                      announce={false}
+                    />
+                  </EnterpriseGridEmptyOverlay>
                 ),
             }}
             sx={{ border: 0, borderRadius: 0 }}

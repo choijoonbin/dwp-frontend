@@ -12,7 +12,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -117,12 +117,7 @@ export function OrganizationIntelligencePanel({
 
   if (loading) {
     return (
-      <Stack alignItems="center" justifyContent="center" sx={{ minHeight: 360 }} gap={1}>
-        <LinearProgress sx={{ width: 220 }} />
-        <Typography variant="body2" color="text.secondary">
-          {t('orgChart.intelligence.loading')}
-        </Typography>
-      </Stack>
+      <LoadingState label={t('orgChart.intelligence.loading')} variant="skeleton" size="page" />
     );
   }
 
@@ -761,6 +756,8 @@ function QualityTriageView({
               variant="determinate"
               value={score}
               color={score >= 90 ? 'success' : 'warning'}
+              aria-label={t('orgChart.intelligence.decision.qualityTitle')}
+              aria-valuetext={`${score}%`}
               sx={{ height: 7 }}
             />
           </Box>

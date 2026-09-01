@@ -9,6 +9,12 @@ export type ApprovalDelegationWorkflowOption = Readonly<{
   label: string;
 }>;
 
+export function isApprovalDelegationDirection(
+  direction: unknown
+): direction is ApprovalDelegation['direction'] {
+  return direction === 'OUTGOING' || direction === 'INCOMING';
+}
+
 export function buildApprovalDelegationWorkflowOptions(
   workflows: readonly ApprovalWorkflow[],
   locale?: string

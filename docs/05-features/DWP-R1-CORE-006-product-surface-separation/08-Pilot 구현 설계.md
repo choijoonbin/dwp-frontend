@@ -1291,7 +1291,7 @@ hr (Auth + neutral HCM context)
 - `apps/dwp/src/features/hcm/hr-domain-operations.tsx`
 - `apps/dwp/src/features/hcm/hr-benefits-pay-talent.tsx`
 - `apps/dwp/src/features/hcm/hr-service-hub.tsx`
-- `apps/dwp/src/features/workforce/workforce-overview.tsx`
+- `apps/dwp/src/features/hcm/hr-operations-overview.tsx`
 - `apps/dwp/src/features/workforce/assignment-register.tsx`
 - `apps/dwp/src/features/workforce/workforce-reference-data.tsx`
 - `apps/dwp/src/features/workforce/hris-operations-workbench.tsx`
@@ -1318,7 +1318,7 @@ hr (Auth + neutral HCM context)
 
 | Consumer / Contract                                                                                                                     | Exact Public ↔ Service Binding                                                                       | Access·Projection                                                                                                    |
 | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `apps/dwp/src/features/workforce/workforce-overview.tsx` / `route.hcm.operations.overview.page`                                         | `GET /api/people/v1/workforce/operations/overview` ↔ `GET /v1/workforce/operations/overview`         | NORMAL은 허용 Operations Read의 ANY + Target Population; SUPPORT는 `hcm.operations-overview-read.v1`, Read-only Mask |
+| `apps/dwp/src/features/hcm/hr-operations-overview.tsx` / `route.hcm.operations.overview.page`                                           | `GET /api/people/v1/workforce/operations/overview` ↔ `GET /v1/workforce/operations/overview`         | NORMAL은 허용 Operations Read의 ANY + Target Population; SUPPORT는 `hcm.operations-overview-read.v1`, Read-only Mask |
 | `apps/dwp/src/features/people/organization/organization-chart-manager.tsx` / `route.hcm.management.org-design.page`의 Candidate Binding | `GET /api/people/v1/workforce/organization/candidates` ↔ `GET /v1/workforce/organization/candidates` | `hcm.org-design.read` + Config Scope; Candidate 최소 Projection                                                      |
 
 `libs/shared-utils/src/api/people-admin-api.ts`에 `getWorkforceOperationsOverview`와

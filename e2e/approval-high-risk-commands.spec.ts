@@ -244,9 +244,9 @@ for (const highRiskCase of cases) {
     expect(initialIssuer?.body.payload).toEqual(highRiskCase.expectedPayload);
     expect(initialIssuer?.body).not.toHaveProperty('expectedDecisionRevision');
     expect(initialIssuer?.body).toMatchObject({
-      contextKey: 'ctx:approvals:admin',
       contextScopeKey: 'scope:approvals:tenant',
     });
+    expect(initialIssuer?.body).not.toHaveProperty('contextKey');
     expect(initialIssuer?.headers['x-dwp-expected-decision-revision']).toBe(authority.revision());
 
     await page.getByRole('button', { name: '작업 확인' }).click();

@@ -23,13 +23,6 @@
       "removalCondition": "Remove when Home Studio and launchpad share the design-system action and form contracts with equivalent drag, focus, and empty-state coverage."
     },
     {
-      "id": "DS-EX-INTEGRATIONS",
-      "pathPrefix": "apps/dwp/src/features/integrations/",
-      "owner": "Identity Integrations",
-      "reason": "Provisioning operations use legacy multi-step forms while external SCIM contracts remain fail-closed.",
-      "removalCondition": "Migrate alongside the next approved provisioning journey and retain dry-run, retry, secret, and partial-failure evidence."
-    },
-    {
       "id": "DS-EX-PEOPLE",
       "pathPrefix": "apps/dwp/src/features/people/",
       "owner": "People Platform",
@@ -70,6 +63,132 @@
       "owner": "Identity Experience",
       "reason": "Account activation is a security-sensitive standalone flow with existing legacy form controls.",
       "removalCondition": "Remove after activation, expiry, invalid token, password policy, and screen-reader journeys pass on the shared auth form contract."
+    },
+    {
+      "id": "DS-EX-FEATURE-ACCOUNT",
+      "pathPrefix": "apps/dwp/src/features/account/",
+      "owner": "Identity Experience",
+      "reason": "Account security surfaces still mix legacy query-state primitives with reauthentication and privileged-access controls.",
+      "removalCondition": "Migrate each query boundary to shared loading and error contracts with reauthentication, keyboard, and mobile evidence."
+    },
+    {
+      "id": "DS-EX-FEATURE-ACTIVITY",
+      "pathPrefix": "apps/dwp/src/features/activity/",
+      "owner": "Workspace Experience",
+      "reason": "The activity timeline retains product-owned density and typography specifications while the shared timeline presentation contract is established.",
+      "removalCondition": "Remove after activity events use shared surface, typography, density, and responsive timeline tokens with desktop, mobile, keyboard, and partial-source coverage."
+    },
+    {
+      "id": "DS-EX-FEATURE-APPROVALS",
+      "pathPrefix": "apps/dwp/src/features/approvals/",
+      "owner": "Approval Experience",
+      "reason": "Approval work queues and policy studios retain contextual legacy state indicators around governed commands.",
+      "removalCondition": "Migrate per workflow after loading, partial-error, stale-version, retry, and approval-command journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-CALENDAR",
+      "pathPrefix": "apps/dwp/src/features/calendar/",
+      "owner": "Calendar Experience",
+      "reason": "Calendar views use shape-preserving loading and inline conflict states while time-grid interactions stabilize.",
+      "removalCondition": "Migrate after shared query states preserve time-grid geometry, recurrence, keyboard, mobile, and partial-source behavior."
+    },
+    {
+      "id": "DS-EX-FEATURE-COMMUNICATIONS",
+      "pathPrefix": "apps/dwp/src/features/communications/",
+      "owner": "Communications Experience",
+      "reason": "Publishing and acknowledgement workflows retain contextual state primitives tied to content lifecycle operations.",
+      "removalCondition": "Migrate after draft, publish, acknowledgement, retry, and partial-feed journeys use shared state contracts."
+    },
+    {
+      "id": "DS-EX-FEATURE-DWAION",
+      "pathPrefix": "apps/dwp/src/features/dwaion/",
+      "owner": "DWAI-ON Experience",
+      "reason": "Agent execution, approval gates, and streaming answers require specialized progressive status presentation.",
+      "removalCondition": "Migrate after shared states cover streaming, approval, cancellation, partial tool failure, and reduced-motion journeys."
+    },
+    {
+      "id": "DS-EX-FEATURE-HCM",
+      "pathPrefix": "apps/dwp/src/features/hcm/",
+      "owner": "HCM Experience",
+      "reason": "People operations retain legacy loading and alert patterns across policy-sensitive employee workflows.",
+      "removalCondition": "Migrate per journey with role, privacy, effective-date, partial-failure, mobile, and keyboard evidence."
+    },
+    {
+      "id": "DS-EX-FEATURE-HOME-PERSONALIZATION",
+      "pathPrefix": "apps/dwp/src/features/home-personalization/",
+      "owner": "Workspace Experience",
+      "reason": "Home Studio controls retain compact state feedback around draft preview and device overlays.",
+      "removalCondition": "Migrate after draft, preview, publish-conflict, responsive-device, and keyboard journeys use public contracts."
+    },
+    {
+      "id": "DS-EX-FEATURE-MAIL",
+      "pathPrefix": "apps/dwp/src/features/mail/",
+      "owner": "Mail Experience",
+      "reason": "Mailbox synchronization and draft lifecycle use contextual state indicators that must preserve optimistic continuity.",
+      "removalCondition": "Migrate after sync, draft recovery, undo, partial-folder, offline, keyboard, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-MEETINGS",
+      "pathPrefix": "apps/dwp/src/features/meetings/",
+      "owner": "Meeting Experience",
+      "reason": "Live meeting and artifact processing surfaces require media-specific progressive and degraded states.",
+      "removalCondition": "Migrate after lobby, live media, reconnect, artifact processing, accessibility, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-MESSAGING",
+      "pathPrefix": "apps/dwp/src/features/messaging/",
+      "owner": "Messaging Experience",
+      "reason": "Conversation, attachment, and live meeting states must preserve streaming continuity and compact density.",
+      "removalCondition": "Migrate after send, retry, attachment, presence, partial-history, keyboard, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-NOTIFICATIONS",
+      "pathPrefix": "apps/dwp/src/features/notifications/",
+      "owner": "Notification Experience",
+      "reason": "Notification delivery, policy, and bulk actions retain contextual state primitives around live invalidation.",
+      "removalCondition": "Migrate after live refresh, bulk undo, suppression, policy, partial-source, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-ROOMS",
+      "pathPrefix": "apps/dwp/src/features/rooms/",
+      "owner": "Workplace Experience",
+      "reason": "Booking and spatial-governance views use geometry-preserving loading and localized command feedback.",
+      "removalCondition": "Migrate after availability, booking conflict, floor plan, governance, keyboard, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-SERVICES",
+      "pathPrefix": "apps/dwp/src/features/services/",
+      "owner": "Service Management Experience",
+      "reason": "Catalog and operations workflows mix legacy query states with long-running service commands.",
+      "removalCondition": "Migrate after catalog, request, retry, partial-failure, command progress, keyboard, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-SPACES",
+      "pathPrefix": "apps/dwp/src/features/spaces/",
+      "owner": "Space Experience",
+      "reason": "Collaboration spaces retain contextual state primitives around membership and ownership operations.",
+      "removalCondition": "Migrate after directory, membership, ownership recovery, request, partial-failure, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-WORK",
+      "pathPrefix": "apps/dwp/src/features/work/",
+      "owner": "Work Management Experience",
+      "reason": "Cross-product work items retain source-specific status while common action contracts evolve.",
+      "removalCondition": "Migrate after source identity, action handoff, retry, permission, keyboard, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-FEATURE-WORKFORCE",
+      "pathPrefix": "apps/dwp/src/features/workforce/",
+      "owner": "Workforce Experience",
+      "reason": "Workforce planning and export workflows retain legacy state presentation around governed datasets.",
+      "removalCondition": "Migrate after planning, export, privacy, partial-data, effective-date, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-ROUTES",
+      "pathPrefix": "apps/dwp/src/routes/",
+      "owner": "Frontend Platform",
+      "reason": "Route error and suspense boundaries retain minimal primitives before the product design system is available.",
+      "removalCondition": "Remove when boot-safe shared route loading and error contracts cover chunk failure, retry, focus, and localization."
     },
     {
       "id": "DS-EX-WORKSPACE-PAGES",

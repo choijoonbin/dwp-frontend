@@ -301,6 +301,7 @@ export function DwaionAdminGates() {
         variant="determinate"
         value={portfolio?.completionPercent ?? 0}
         color={portfolio?.deliveryReady ? 'success' : 'primary'}
+        aria-label={t('dwaionAdmin.gates.metrics.readiness')}
         sx={{ height: 3, borderRadius: 0 }}
       />
       <Alert severity={readinessSeverity} sx={{ mt: 2 }}>

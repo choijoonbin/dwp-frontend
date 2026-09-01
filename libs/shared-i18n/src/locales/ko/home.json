@@ -147,8 +147,16 @@
         "title": "답변·확인 요청",
         "description": "초대, 알림, 요청처럼 내 답변을 기다리는 항목입니다.",
         "listLabel": "내 응답을 기다리는 항목",
-        "distributionLabel": "응답 상태 분포: {{segments}}. 전체 {{count}}건",
-        "distributionTotal": "전체 {{count}}건",
+        "priorityLabel": "처리 우선순위",
+        "prioritySummary": "처리 우선순위: {{segments}}. {{total}}",
+        "priorityCount": "{{label}} {{count}}건",
+        "waitingTotal": "응답 대기 총 {{count}}건",
+        "availableTotal": "현재 확인된 응답 대기 {{count}}건 · 일부 소스 미반영",
+        "priority": {
+          "critical": "긴급",
+          "high": "우선 확인",
+          "standard": "일반"
+        },
         "empty": "기다리는 응답이 없습니다",
         "emptyDescription": "현재 응답 지연으로 멈춘 업무가 없습니다."
       },
@@ -381,6 +389,7 @@
       "openWork": "열린 업무",
       "focusTime": "집중 시간",
       "scheduleLoad": "일정 부하",
+      "scheduleLoadToday": "오늘 회의 부하",
       "activityAttention": "확인할 활동",
       "unit": {
         "items": "건",
@@ -401,6 +410,11 @@
       "seriesCaption": "{{signal}} 차트의 원본 데이터",
       "seriesRange": "{{start}}~{{end}}",
       "recentWeek": "최근 7일",
+      "currentWeek": "이번 주",
+      "scheduleLoadContext": "일일 회의 기준 대비 · 이번 주 추이 · {{comparison}}",
+      "scheduleLoadContextCompact": "이번 주 · {{comparison}}",
+      "weekSeriesLabel": "이번 주 일별 회의 부하입니다. 외곽선은 오늘, 점선은 충돌, 이중선은 일일 기준 초과를 뜻합니다.",
+      "seriesPoint": "{{date}} · 회의 부하 {{load}}% · 충돌 {{conflicts}}건",
       "conflictMarker": "점선: 충돌 있음",
       "date": "날짜",
       "load": "업무량",
@@ -458,6 +472,7 @@
       "discardChanges": "변경 취소",
       "leaveHome": "홈 나가기",
       "sections": {
+        "action-queue": "우선 업무",
         "today": "오늘 일정",
         "response-hub": "답변·확인 요청",
         "request-tracker": "내 요청 현황",

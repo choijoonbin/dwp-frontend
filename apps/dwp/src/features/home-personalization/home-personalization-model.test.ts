@@ -48,10 +48,17 @@ describe('home personalization model', () => {
     );
 
     expect(changes).toContainEqual(
-      expect.objectContaining({ operation: 'MOVE_WIDGET', widgetKey: 'schedule', afterIndex: 1 })
+      expect.objectContaining({ operation: 'MOVE_WIDGET', widgetKey: 'schedule', afterIndex: 0 })
     );
     expect(changes).toContainEqual({ operation: 'SHOW_WIDGET', widgetKey: 'focus' });
     expect(changes.every((change) => !isFixedZoneChange(change))).toBe(true);
+  });
+
+  it('treats the action queue as personal while retaining actual governed zones', () => {
+    expect(isFixedZoneChange({ operation: 'HIDE_WIDGET', widgetKey: 'command-rail' })).toBe(false);
+    expect(isFixedZoneChange({ operation: 'MOVE_WIDGET', widgetKey: 'command-rail' })).toBe(false);
+    expect(isFixedZoneChange({ operation: 'SET_WIDTH', widgetKey: 'command-rail' })).toBe(false);
+    expect(isFixedZoneChange({ operation: 'HIDE_WIDGET', widgetKey: 'announcements' })).toBe(true);
   });
 
   it('never emits a direct mutation while building a proposal', () => {

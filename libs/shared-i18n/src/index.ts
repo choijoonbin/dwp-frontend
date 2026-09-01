@@ -12,6 +12,7 @@ export {
   formatList,
   formatNumber,
   formatRelativeTime,
+  resolveSystemTimeZone,
   resolveZonedDateKey,
   resolveZonedClock,
   type ZonedDateKey,

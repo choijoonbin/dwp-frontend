@@ -352,6 +352,7 @@
       "disabled": "Disabled",
       "required": "Required",
       "blocked": "Blocked",
+      "retry": "Try again",
       "reason": "Change reason",
       "reasonError": "Enter at least 10 characters for the change reason.",
       "version": "Policy version {{version}}"
@@ -506,6 +507,7 @@
       "title": "Policy and safety controls",
       "description": "Manage tenant AI safety boundaries and tool and source limits as versioned policy.",
       "saved": "The safety policy was saved.",
+      "loading": "Loading the safety policy.",
       "error": "The safety policy request could not be completed.",
       "lockedBoundary": "Prompt injection blocking, privilege escalation prevention, mutation confirmation, and citations are locked platform minimums.",
       "prompt": {
@@ -1548,6 +1550,7 @@
     },
     "available": "Available apps",
     "manage": "Manage",
+    "manageForApp": "Manage {{app}}",
     "manageable": {
       "title": "Apps you manage",
       "count": "{{count}} management areas",
@@ -1609,6 +1612,10 @@
       "loading": "Checking the app administration duties you can request",
       "loadErrorTitle": "App management request information could not be loaded",
       "loadErrorDescription": "Refresh your authorization state and try again.",
+      "moduleLoadErrorTitle": "App management request could not be opened",
+      "moduleLoadErrorDescription": "The app catalog is still available. Close this message or reload the page to download the request form again.",
+      "close": "Close",
+      "reloadPage": "Reload page",
       "retry": "Try again",
       "emptyTitle": "No management duty can be requested",
       "emptyDescription": "There is no active self-service preset for this app and scope. Contact the app owner or tenant administrator.",

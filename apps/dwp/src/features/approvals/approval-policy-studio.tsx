@@ -201,12 +201,20 @@ export function ApprovalPolicyStudio() {
       getApprovalPolicyVersions(selectedId!, requestScope.contextScopeKey, signal),
     enabled: Boolean(selectedId),
     staleTime: 30_000,
+    retry: 1,
   });
   const selected = useMemo(
     () => policies.data?.find((policy) => policy.policyId === selectedId) ?? null,
     [policies.data, selectedId]
   );
   const publishedVersion = versions.data?.[0]?.versionNumber ?? null;
+  const publishedVersionLabel = versions.isError
+    ? t('admin.studio.policyVersionUnavailable')
+    : versions.isLoading
+      ? t('admin.studio.policyVersionLoading')
+      : publishedVersion === null
+        ? t('admin.studio.unpublishedVersion')
+        : `v${publishedVersion}`;
   const enumLabel = (group: 'policyTypes' | 'enforcementModes' | 'severities', value: string) =>
     t(`admin.studio.${group}.${value}`, { defaultValue: value });
   const evidenceText = (value: string) => {
@@ -395,6 +403,12 @@ export function ApprovalPolicyStudio() {
                     <ActionButton
                       intent="primary"
                       startIcon={<CheckCircle2 size={17} />}
+                      disabled={versions.isLoading || versions.isError}
+                      sx={{
+                        bgcolor: approvalTone.primary,
+                        transition: 'none',
+                        '&:hover': { bgcolor: '#1F449E' },
+                      }}
                       onClick={() => setReviewOpen(true)}
                     >
                       {t('admin.studio.reviewAndPublish')}
@@ -419,12 +433,7 @@ export function ApprovalPolicyStudio() {
                   enumLabel('enforcementModes', selected.enforcementMode),
                 ],
                 [t('admin.studio.severity'), enumLabel('severities', selected.severity)],
-                [
-                  t('admin.studio.policyVersion'),
-                  publishedVersion === null
-                    ? t('admin.studio.unpublishedVersion')
-                    : `v${publishedVersion}`,
-                ],
+                [t('admin.studio.policyVersion'), publishedVersionLabel],
               ].map(([label, value]) => (
                 <Box
                   key={String(label)}
@@ -433,7 +442,7 @@ export function ApprovalPolicyStudio() {
                   <Typography variant="caption" color="text.secondary">
                     {label}
                   </Typography>
-                  <Typography variant="h6" sx={{ mt: 0.4 }}>
+                  <Typography component="p" variant="h6" sx={{ mt: 0.4 }}>
                     {value}
                   </Typography>
                 </Box>
@@ -490,7 +499,24 @@ export function ApprovalPolicyStudio() {
               meta={t('admin.studio.historyMeta')}
               action={<History size={17} />}
             >
-              {(versions.data ?? []).length === 0 ? (
+              {versions.isError ? (
+                <Alert
+                  severity="error"
+                  sx={{ m: 2 }}
+                  action={
+                    <ActionButton
+                      intent="quiet"
+                      size="small"
+                      disabled={versions.isFetching}
+                      onClick={() => void versions.refetch()}
+                    >
+                      {t('actions.retry')}
+                    </ActionButton>
+                  }
+                >
+                  {t('admin.studio.historyLoadError')}
+                </Alert>
+              ) : (versions.data ?? []).length === 0 ? (
                 <Typography variant="body2" color="text.secondary" sx={{ px: 2, py: 3 }}>
                   {t('admin.studio.historyEmpty')}
                 </Typography>

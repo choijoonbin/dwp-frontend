@@ -591,6 +591,17 @@ export function HomePurposeWidget({
   const roleVisualOnly = showRoleInsight && items.length === 0;
   const compactRoleException =
     showRoleInsight && contentPolicy.density === 'short' && visible.length > 0;
+  const showContextualVisual =
+    (sectionKey === 'request' || sectionKey === 'response') &&
+    contentPolicy.density !== 'short' &&
+    items.length > 0;
+  const defaultListMarginTop = supportStack
+    ? 0
+    : contentPolicy.density === 'short'
+      ? 0.35
+      : compact
+        ? 0.65
+        : 0.75;
   const sectionAnchorId = `flow-purpose-${sectionKey}`;
   return (
     <Box
@@ -789,17 +800,19 @@ export function HomePurposeWidget({
         </Box>
       )}
 
-      {(sectionKey === 'request' || sectionKey === 'response') &&
-        contentPolicy.density !== 'short' && (
-          <HomePurposeContextualVisual sectionKey={sectionKey} items={items} />
-        )}
+      {showContextualVisual && (
+        <HomePurposeContextualVisual sectionKey={sectionKey} items={items} state={resolvedState} />
+      )}
 
       {!roleVisualOnly && !compactRoleException && (
         <Box
           sx={{
-            mt: supportStack ? 0 : contentPolicy.density === 'short' ? 0.35 : compact ? 0.65 : 0.75,
+            mt: showContextualVisual ? 1 : defaultListMarginTop,
             flex: '1 1 auto',
             display: 'flex',
+            "[data-workspace-widget-content-state='editing-preview'] &": {
+              mt: defaultListMarginTop,
+            },
           }}
         >
           {loading && items.length === 0 ? (

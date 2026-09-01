@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -27,7 +27,7 @@ import {
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
-import Popover from '@mui/material/Popover';
+import Popover, { type PopoverActions } from '@mui/material/Popover';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -86,6 +86,7 @@ export function AccountMenu({
   const location = useLocation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const popoverActions = useRef<PopoverActions>(null);
   const buttonId = useId();
   const panelId = useId();
   const settingsDescriptionId = useId();
@@ -122,6 +123,30 @@ export function AccountMenu({
   const identityCollapseQuery = collapseIdentityEarly
     ? '@container dwp-shell-header (max-width: 1250px)'
     : '@container dwp-shell-header (max-width: 62.5rem)';
+
+  // MUI's Popover listens for viewport resize, but not for anchor movement caused by
+  // ModalManager scrollbar compensation. Track the small trigger rect only while open.
+  useEffect(() => {
+    if (!anchor) return undefined;
+
+    let frame = 0;
+    let previousAnchorFrame = '';
+    const trackAnchor = () => {
+      const bounds = anchor.getBoundingClientRect();
+      const nextAnchorFrame = [bounds.x, bounds.y, bounds.width, bounds.height].join(':');
+
+      if (nextAnchorFrame !== previousAnchorFrame) {
+        previousAnchorFrame = nextAnchorFrame;
+        popoverActions.current?.updatePosition();
+      }
+      frame = window.requestAnimationFrame(trackAnchor);
+    };
+    frame = window.requestAnimationFrame(trackAnchor);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
+  }, [anchor]);
 
   const close = () => setAnchor(null);
   const dismiss = () => {
@@ -231,6 +256,7 @@ export function AccountMenu({
       </Tooltip>
 
       <Popover
+        action={popoverActions}
         anchorEl={anchor}
         open={Boolean(anchor)}
         onClose={dismiss}

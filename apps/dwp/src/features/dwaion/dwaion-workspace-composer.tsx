@@ -183,7 +183,7 @@ export function DwaionWorkspaceComposer({
               onCancel ? (
                 <Square size={15} fill="currentColor" aria-hidden="true" />
               ) : (
-                <CircularProgress size={17} color="inherit" />
+                <CircularProgress size={17} color="inherit" aria-hidden="true" />
               )
             ) : (
               <ArrowUp size={18} strokeWidth={2} aria-hidden="true" />

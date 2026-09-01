@@ -75,11 +75,11 @@ export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.m
 );
 
 export const HOME_WIDGET_ROLE_ORDER: Record<HomeAudienceProfile, readonly HomeWidgetKey[]> = {
-  // command-rail is the governed Action Queue and is not a Flow personal key.
-  // Personal alias order: today, response-hub, request-tracker, role-pulse.
+  // Personal alias order: action-queue, today, response-hub,
+  // request-tracker, role-pulse.
   MEMBER: ['command-rail', 'schedule', 'daily-brief', 'focus', 'activity'],
   MANAGER: ['command-rail', 'schedule', 'daily-brief', 'focus', 'activity'],
-  // Operators start with role-pulse before the shared personal sequence.
+  // Operators keep the action queue first and then start with role-pulse.
   OPERATOR: ['command-rail', 'activity', 'schedule', 'daily-brief', 'focus'],
 };
 

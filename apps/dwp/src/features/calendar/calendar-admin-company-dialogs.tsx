@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays } from 'lucide-react';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { resolveIdempotentMutationIntent } from '@dwp-frontend/shared-utils';
 import {
   DatePickerField,
@@ -163,7 +164,7 @@ function eventDraft(event: CompanyCalendarEvent | null): CompanyEventDraft {
     type: event?.type ?? 'REMINDER',
     startsAt: event?.startsAt ?? start.toISOString(),
     endsAt: event?.endsAt ?? new Date(start.getTime() + 60 * 60_000).toISOString(),
-    timeZone: event?.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'Asia/Seoul',
+    timeZone: event?.timeZone ?? resolveSystemTimeZone('Asia/Seoul'),
     allDay: event?.allDay ?? false,
     location: event?.location ?? '',
     visibility: event?.visibility ?? 'DEFAULT',

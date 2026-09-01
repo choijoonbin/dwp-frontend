@@ -321,7 +321,7 @@ function LoadingAnswer({
   return (
     <Box role="status" aria-live="polite" sx={{ mt: 3, py: 2 }}>
       <Stack direction="row" spacing={1.25} alignItems="center">
-        <CircularProgress size={22} />
+        <CircularProgress size={22} aria-hidden="true" />
         <Box>
           <Typography component="p" variant="subtitle2" fontWeight={800}>
             {progressStage

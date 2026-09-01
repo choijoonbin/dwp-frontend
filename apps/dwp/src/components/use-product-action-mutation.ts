@@ -53,7 +53,3 @@ export function productActionMutationBinding(routeContractKey: ProductActionRout
 export function useProductActionMutation(routeContractKey: ProductActionRouteContractKey) {
   return useProductSurfaceGovernedMutation(productActionMutationBinding(routeContractKey));
 }
-
-export const GOVERNED_PRODUCT_ACTION_ROUTE_KEYS = Object.freeze(
-  [...PRODUCT_ACTION_BINDINGS.keys()].sort()
-);

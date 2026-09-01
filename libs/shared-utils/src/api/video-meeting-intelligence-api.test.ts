@@ -8,6 +8,7 @@ import {
   getLatestPublishedVideoMeetingIntelligenceReport,
   getLatestVisibleVideoMeetingIntelligenceReport,
   getVideoMeetingIntelligenceReport,
+  getVideoMeetingIntelligenceReviewerAssignments,
   getVideoMeetingIntelligenceRun,
   grantVideoMeetingIntelligenceAccess,
   publishVideoMeetingIntelligenceReport,
@@ -133,6 +134,34 @@ describe('video meeting intelligence API boundary', () => {
     );
   });
 
+  it('loads report-scoped reviewer eligibility without deriving authority in the client', async () => {
+    const assignments = {
+      reportId: 'report-1',
+      reportVersion: 3,
+      eligibleParticipants: [
+        {
+          userId: 41,
+          participantId: 'participant-41',
+          displayName: 'Independent reviewer',
+          participantRole: 'ATTENDEE' as const,
+          attendanceState: 'LEFT' as const,
+          assignmentEligible: true,
+          ineligibleReason: null,
+        },
+      ],
+      activeGrants: [],
+    };
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(assignments));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      getVideoMeetingIntelligenceReviewerAssignments('meeting/1', 'report/1')
+    ).resolves.toEqual(assignments);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/meetings/v1/meetings/meeting%2F1/intelligence/reports/report%2F1/reviewer-assignments'
+    );
+  });
+
   it('maps a published recap 404 to unavailable without reusing another report', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ message: 'Not found' }, 404));
     vi.stubGlobal('fetch', fetchMock);
@@ -211,11 +240,12 @@ describe('video meeting intelligence API boundary', () => {
     await publishVideoMeetingIntelligenceReport('meeting-1', 'report-1', 4);
     await deleteVideoMeetingIntelligenceReport('meeting-1', 'report-1', 5);
     await grantVideoMeetingIntelligenceAccess('meeting-1', 'report-1', 41, {
+      expectedReportVersion: 3,
       permission: 'REVIEW',
       expiresAt: '2026-08-28T02:00:00Z',
       reasonCode: 'INDEPENDENT_REVIEW',
     });
-    await revokeVideoMeetingIntelligenceAccess('meeting-1', 'report-1', 41, 'REVIEW');
+    await revokeVideoMeetingIntelligenceAccess('meeting-1', 'report-1', 41, 'REVIEW', 3);
 
     expect(JSON.parse(String(requestAt(fetchMock, 1).body))).toEqual({
       expectedVersion: 3,
@@ -231,11 +261,14 @@ describe('video meeting intelligence API boundary', () => {
     expect(fetchMock.mock.calls[4]?.[0]).toContain('/reports/report-1/acl/41');
     expect(requestAt(fetchMock, 4).method).toBe('PUT');
     expect(JSON.parse(String(requestAt(fetchMock, 4).body))).toEqual({
+      expectedReportVersion: 3,
       permission: 'REVIEW',
       expiresAt: '2026-08-28T02:00:00Z',
       reasonCode: 'INDEPENDENT_REVIEW',
     });
-    expect(fetchMock.mock.calls[5]?.[0]).toContain('/reports/report-1/acl/41/REVIEW');
+    expect(fetchMock.mock.calls[5]?.[0]).toContain(
+      '/reports/report-1/acl/41/REVIEW?expectedReportVersion=3'
+    );
     expect(requestAt(fetchMock, 5).method).toBe('DELETE');
   });
 

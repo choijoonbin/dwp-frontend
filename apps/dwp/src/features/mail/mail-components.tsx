@@ -11,13 +11,12 @@ import {
   Star,
   UserRoundPlus,
 } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, ProgressMeter } from '@dwp-frontend/design-system';
 import { formatRelativeTime, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
@@ -325,14 +324,13 @@ export function MailProposalCard({
           </Typography>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.25 }}>
             <Bot size={14} />
-            <LinearProgress
-              variant="determinate"
+            <ProgressMeter
+              label={t('proposal.confidence', { value: confidence })}
               value={confidence}
-              sx={{ width: 74, height: 4, borderRadius: 2 }}
+              valueLabel={`${confidence}%`}
+              size="compact"
+              sx={{ width: 160 }}
             />
-            <Typography variant="caption" color="text.secondary">
-              {t('proposal.confidence', { value: confidence })}
-            </Typography>
           </Stack>
           <Stack direction="row" spacing={0.75} justifyContent="flex-end" sx={{ mt: 1.5 }}>
             <ActionButton intent="quiet" size="small" onClick={onDismiss} disabled={busy}>

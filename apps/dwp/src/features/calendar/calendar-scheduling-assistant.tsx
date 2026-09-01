@@ -299,7 +299,7 @@ export function CalendarSchedulingAssistant({
 
         {availabilityMutation.isPending && (
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-            <CircularProgress size={18} />
+            <CircularProgress size={18} aria-hidden="true" />
             <Typography variant="body2" color="text.secondary" role="status">
               {t('schedulingAssistant.checkingDescription')}
             </Typography>

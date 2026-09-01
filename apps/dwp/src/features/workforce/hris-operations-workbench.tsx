@@ -2,8 +2,6 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
   CircleGauge,
   DatabaseZap,
   FileCheck2,
@@ -44,7 +42,7 @@ import {
   GuidedEmptyState,
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
-import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -67,6 +65,12 @@ import { useOptionalAllowedProductSurface } from '../../components/allowed-produ
 import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { ConnectorDialog, IssueResolutionDialog, MappingDialog } from './hris-operations-dialogs';
+import {
+  formatHrisInstant,
+  HrisMappingView,
+  HrisReconciliationView,
+  HrisStateChip,
+} from './hris-operations-secondary-views';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -80,22 +84,6 @@ type HrisView = 'connectors' | 'runs' | 'reconciliation' | 'mappings';
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
-}
-
-function StateChip({ state }: { state: string }) {
-  const display = useDisplayDictionary();
-  const color = ['ACTIVE', 'HEALTHY', 'SUCCEEDED', 'RESOLVED'].includes(state)
-    ? 'success'
-    : ['FAILED', 'CRITICAL'].includes(state)
-      ? 'error'
-      : ['DEGRADED', 'WARNING', 'PARTIAL'].includes(state)
-        ? 'warning'
-        : 'default';
-  return <Chip size="small" variant="outlined" color={color} label={display('states', state)} />;
-}
-
-function formatInstant(value?: string | null): string {
-  return value ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }) : '-';
 }
 
 export function HrisOperationsWorkbench() {
@@ -273,7 +261,7 @@ export function HrisOperationsWorkbench() {
       key: 'lastRun',
       label: t('provisioning.hris.kpi.lastRun'),
       value: runs.data?.[0] ? display('states', runs.data[0].lifecycleState) : '-',
-      detail: runs.data?.[0] ? formatInstant(runs.data[0].startedAt) : t('provisioning.never'),
+      detail: runs.data?.[0] ? formatHrisInstant(runs.data[0].startedAt) : t('provisioning.never'),
       tone: runs.data?.[0]?.lifecycleState === 'FAILED' ? ('critical' as const) : ('info' as const),
       onSelect: () => setView('runs'),
     },
@@ -492,7 +480,7 @@ export function HrisOperationsWorkbench() {
         />
       )}
       {view === 'reconciliation' && (
-        <ReconciliationView
+        <HrisReconciliationView
           issues={issues.data ?? []}
           runs={reconciliations.data ?? []}
           canUpdate={canUpdate}
@@ -500,7 +488,7 @@ export function HrisOperationsWorkbench() {
         />
       )}
       {view === 'mappings' && (
-        <MappingView
+        <HrisMappingView
           mappings={mappings.data ?? []}
           canCreate={canCreate}
           canUpdate={canUpdate}
@@ -673,8 +661,8 @@ function ConnectorView({
                 </Box>
               </Stack>
               <Stack direction="row" gap={0.75}>
-                <StateChip state={connector.lifecycleState} />
-                <StateChip state={connector.healthState} />
+                <HrisStateChip state={connector.lifecycleState} />
+                <HrisStateChip state={connector.healthState} />
               </Stack>
             </Stack>
             <Box
@@ -694,11 +682,11 @@ function ConnectorView({
                 ],
                 [
                   t('provisioning.hris.connector.lastSuccess'),
-                  formatInstant(connector.lastSuccessfulSyncAt),
+                  formatHrisInstant(connector.lastSuccessfulSyncAt),
                 ],
                 [
                   t('provisioning.hris.connector.lastAttempt'),
-                  formatInstant(connector.lastAttemptedSyncAt),
+                  formatHrisInstant(connector.lastAttemptedSyncAt),
                 ],
                 [
                   t('provisioning.hris.connector.failures'),
@@ -816,7 +804,7 @@ function RunView({
         field: 'startedAt',
         headerName: t('provisioning.hris.columns.started'),
         width: 180,
-        valueGetter: (_value, row) => formatInstant(row.startedAt),
+        valueGetter: (_value, row) => formatHrisInstant(row.startedAt),
       },
       {
         field: 'sourceKey',
@@ -829,7 +817,7 @@ function RunView({
         field: 'lifecycleState',
         headerName: t('provisioning.hris.columns.state'),
         width: 125,
-        renderCell: ({ row }) => <StateChip state={row.lifecycleState} />,
+        renderCell: ({ row }) => <HrisStateChip state={row.lifecycleState} />,
       },
       {
         field: 'pageCount',
@@ -915,171 +903,5 @@ function RunView({
       hideFooter={runs.length <= 25}
       sx={{ border: 0, borderRadius: 0 }}
     />
-  );
-}
-
-function ReconciliationView({
-  issues,
-  runs,
-  canUpdate,
-  onResolve,
-}: {
-  issues: HrisReconciliationIssue[];
-  runs: Awaited<ReturnType<typeof listHrisReconciliations>>;
-  canUpdate: boolean;
-  onResolve: (issue: HrisReconciliationIssue) => void;
-}) {
-  const { t } = useTranslation('workforce');
-  const columns = useMemo<GridColDef<HrisReconciliationIssue>[]>(
-    () => [
-      {
-        field: 'firstDetectedAt',
-        headerName: t('provisioning.hris.reconciliation.detected'),
-        width: 180,
-        valueGetter: (_value, row) => formatInstant(row.firstDetectedAt),
-      },
-      {
-        field: 'severity',
-        headerName: t('provisioning.hris.reconciliation.severity'),
-        width: 120,
-        renderCell: ({ row }) => <StateChip state={row.severity} />,
-      },
-      {
-        field: 'issueCode',
-        headerName: t('provisioning.hris.reconciliation.issue'),
-        minWidth: 220,
-        flex: 0.8,
-      },
-      { field: 'entityType', headerName: t('provisioning.hris.reconciliation.entity'), width: 120 },
-      {
-        field: 'redactedSummary',
-        headerName: t('provisioning.hris.reconciliation.summary'),
-        minWidth: 320,
-        flex: 1.3,
-      },
-      {
-        field: 'action',
-        headerName: '',
-        width: 70,
-        sortable: false,
-        renderCell: ({ row }) => (
-          <ActionIconButton
-            label={t('provisioning.hris.actions.resolve')}
-            size="small"
-            disabled={!canUpdate}
-            onClick={() => onResolve(row)}
-          >
-            <ArrowRight size={15} />
-          </ActionIconButton>
-        ),
-      },
-    ],
-    [canUpdate, onResolve, t]
-  );
-  return (
-    <Box>
-      <Stack
-        direction="row"
-        gap={2}
-        sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Typography variant="body2" fontWeight={700}>
-          {t('provisioning.hris.reconciliation.open', { count: issues.length })}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {t('provisioning.hris.reconciliation.runs', { count: runs.length })}
-        </Typography>
-      </Stack>
-      {issues.length ? (
-        <EnterpriseDataGrid
-          ariaLabel={t('provisioning.hris.views.reconciliation')}
-          rows={issues}
-          columns={columns}
-          getRowId={(row) => row.reconciliationIssueId}
-          minVisibleRows={5}
-          maxVisibleRows={10}
-          hideFooter={issues.length <= 25}
-          sx={{ border: 0, borderRadius: 0 }}
-        />
-      ) : (
-        <GuidedEmptyState
-          kind="first-use"
-          title={t('provisioning.hris.reconciliation.emptyTitle')}
-          description={t('provisioning.hris.reconciliation.emptyDescription')}
-        />
-      )}
-    </Box>
-  );
-}
-
-function MappingView({
-  mappings,
-  canCreate,
-  canUpdate,
-  busy,
-  onCreate,
-  onActivate,
-}: {
-  mappings: HrisMappingProfile[];
-  canCreate: boolean;
-  canUpdate: boolean;
-  busy: boolean;
-  onCreate: () => void;
-  onActivate: (mapping: HrisMappingProfile) => Promise<void>;
-}) {
-  const { t } = useTranslation('workforce');
-  return (
-    <Box>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          {t('provisioning.hris.mapping.policy')}
-        </Typography>
-        <ActionButton
-          intent="secondary"
-          size="small"
-          startIcon={<Plus size={15} />}
-          disabled={!canCreate || busy}
-          onClick={onCreate}
-        >
-          {t('provisioning.hris.actions.newMapping')}
-        </ActionButton>
-      </Stack>
-      {mappings.map((mapping) => (
-        <Stack
-          key={mapping.mappingProfileId}
-          direction={{ xs: 'column', md: 'row' }}
-          alignItems={{ xs: 'stretch', md: 'center' }}
-          gap={1.5}
-          sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
-        >
-          <CheckCircle2 size={17} color="currentColor" />
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="subtitle2">{mapping.profileKey}</Typography>
-            <Typography variant="caption" color="text.secondary">
-              {mapping.adapterType} · {mapping.sourceSchemaVersion} → {mapping.targetSchemaVersion}
-            </Typography>
-          </Box>
-          <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
-            {mapping.mappingSha256.slice(0, 12)}
-          </Typography>
-          <StateChip state={mapping.lifecycleState} />
-          {mapping.lifecycleState === 'DRAFT' && (
-            <ActionButton
-              intent="secondary"
-              size="small"
-              disabled={!canUpdate || busy}
-              onClick={() => void onActivate(mapping)}
-            >
-              {t('provisioning.hris.actions.activate')}
-            </ActionButton>
-          )}
-        </Stack>
-      ))}
-    </Box>
   );
 }

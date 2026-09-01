@@ -56,6 +56,11 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { ApprovalSurface, PriorityChip, StatusChip } from './approval-ui';
+import {
+  ApprovalQueryErrorAlert,
+  PublishedApprovalFormSelector,
+  PublishedApprovalTemplateSummary,
+} from './approval-request-form-context';
 import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
 import { useApprovalExperience } from './use-approval-experience';
 import {
@@ -92,6 +97,7 @@ function NewApprovalRequest() {
     queryKey: ['approvals', 'forms', 'published'],
     queryFn: getPublishedApprovalForms,
     staleTime: 60_000,
+    retry: 1,
   });
   const [formId, setFormId] = useState('');
   const [title, setTitle] = useState('');
@@ -109,12 +115,14 @@ function NewApprovalRequest() {
     queryFn: () => getApprovalRequestDetail(draftId!),
     enabled: Boolean(draftId),
     staleTime: 0,
+    retry: 1,
   });
   const template = useQuery({
     queryKey: ['approvals', 'forms', 'published', formId, 'template'],
     queryFn: () => getPublishedApprovalFormTemplate(formId),
     enabled: Boolean(formId),
     staleTime: 60_000,
+    retry: 1,
   });
   useEffect(() => {
     if (!draftId || !draft.data || hydratedDraftId === draftId) return;
@@ -156,9 +164,12 @@ function NewApprovalRequest() {
   const requestContextReady =
     Boolean(formId) &&
     Boolean(template.data) &&
+    !forms.isError &&
     !draft.isLoading &&
+    !draft.isError &&
     (!draftId || Boolean(draft.data)) &&
-    !template.isLoading;
+    !template.isLoading &&
+    !template.isError;
   const submissionReady =
     requestContextReady &&
     title.trim().length >= 2 &&
@@ -243,75 +254,57 @@ function NewApprovalRequest() {
           }}
         >
           {dwaionDraft && <Alert severity="info">{t('requests.compose.dwaionDraftNotice')}</Alert>}
-          {draft.isError && <Alert severity="error">{t('requests.draftLoadError')}</Alert>}
-          <FormControl fullWidth required>
-            <InputLabel id="approval-request-form-label">{t('requests.fields.form')}</InputLabel>
-            <Select
-              id="approval-request-form"
-              labelId="approval-request-form-label"
-              label={t('requests.fields.form')}
-              value={formId}
-              onChange={(event) => {
-                setFormId(event.target.value);
-                setPayloadValues({});
-              }}
-            >
-              {(forms.data ?? []).map((form) => (
-                <MenuItem key={form.formId} value={form.formId}>
-                  <Box minWidth={0}>
-                    <Typography variant="body2" fontWeight={720}>
-                      {i18n.resolvedLanguage?.startsWith('ko') ? form.nameKo : form.nameEn}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {i18n.resolvedLanguage?.startsWith('ko')
-                        ? form.categoryNameKo
-                        : form.categoryNameEn}
-                    </Typography>
-                  </Box>
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {template.isError && <Alert severity="error">{t('requests.templateError')}</Alert>}
+          {forms.isError && (
+            <ApprovalQueryErrorAlert
+              message={t('requests.formsLoadError')}
+              retryLabel={t('actions.retry')}
+              retrying={forms.isFetching}
+              onRetry={() => void forms.refetch()}
+            />
+          )}
+          {draft.isError && (
+            <ApprovalQueryErrorAlert
+              message={t('requests.draftLoadError')}
+              retryLabel={t('actions.retry')}
+              retrying={draft.isFetching}
+              onRetry={() => void draft.refetch()}
+            />
+          )}
+          <PublishedApprovalFormSelector
+            forms={forms.data ?? []}
+            value={formId}
+            label={t('requests.fields.form')}
+            korean={i18n.resolvedLanguage?.startsWith('ko') ?? false}
+            disabled={forms.isLoading || forms.isError}
+            onChange={(nextFormId) => {
+              setFormId(nextFormId);
+              setPayloadValues({});
+            }}
+          />
+          {template.isError && (
+            <ApprovalQueryErrorAlert
+              message={t('requests.templateError')}
+              retryLabel={t('actions.retry')}
+              retrying={template.isFetching}
+              onRetry={() => void template.refetch()}
+            />
+          )}
           {template.data && (
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
-                border: 1,
-                borderColor: 'divider',
-                bgcolor: 'background.default',
-              }}
-            >
-              {[
-                [
-                  t('requests.template.process'),
-                  i18n.resolvedLanguage?.startsWith('ko')
-                    ? template.data.workflow.nameKo
-                    : template.data.workflow.nameEn,
-                ],
-                [
-                  t('requests.template.sla'),
-                  t('admin.minutes', { count: template.data.workflow.slaMinutes }),
-                ],
-                [
-                  t('requests.template.form'),
-                  t('requests.template.formVersion', {
-                    version: template.data.form.form.currentVersion,
-                    count: template.data.form.form.fieldCount,
-                  }),
-                ],
-              ].map(([label, value]) => (
-                <Box key={label} sx={{ p: 1.5, borderRight: { sm: 1 }, borderColor: 'divider' }}>
-                  <Typography variant="caption" color="text.secondary">
-                    {label}
-                  </Typography>
-                  <Typography variant="body2" fontWeight={740} sx={{ mt: 0.35 }}>
-                    {value}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
+            <PublishedApprovalTemplateSummary
+              processLabel={t('requests.template.process')}
+              processValue={
+                i18n.resolvedLanguage?.startsWith('ko')
+                  ? template.data.workflow.nameKo
+                  : template.data.workflow.nameEn
+              }
+              slaLabel={t('requests.template.sla')}
+              slaValue={t('admin.minutes', { count: template.data.workflow.slaMinutes })}
+              formLabel={t('requests.template.form')}
+              formValue={t('requests.template.formVersion', {
+                version: template.data.form.form.currentVersion,
+                count: template.data.form.form.fieldCount,
+              })}
+            />
           )}
           <FormField
             required

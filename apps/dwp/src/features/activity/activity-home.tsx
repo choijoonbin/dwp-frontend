@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, ArrowRight, Bot, CircleAlert, ShieldX } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -22,8 +22,12 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
+
 export function ActivityHome() {
   const { t } = useTranslation('work');
+  const recentActivityRef = useRef<HTMLElement | null>(null);
+  useShellAuxiliaryAvoidance({ boundaryRef: recentActivityRef });
   const query = useQuery({
     queryKey: ['workspace', 'activity'],
     queryFn: getWorkspaceActivity,
@@ -117,7 +121,12 @@ export function ActivityHome() {
           ]}
         />
       </Box>
-      <Box component="section" aria-labelledby="activity-home-recent" sx={{ mt: 4 }}>
+      <Box
+        ref={recentActivityRef}
+        component="section"
+        aria-labelledby="activity-home-recent"
+        sx={{ mt: 4 }}
+      >
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="space-between"
@@ -156,6 +165,7 @@ export function ActivityHome() {
                 <Box key={event.id}>
                   {index > 0 && <Divider />}
                   <Stack
+                    data-shell-auxiliary-avoidance="inline-end"
                     direction={{ xs: 'column', sm: 'row' }}
                     justifyContent="space-between"
                     alignItems={{ xs: 'flex-start', sm: 'center' }}

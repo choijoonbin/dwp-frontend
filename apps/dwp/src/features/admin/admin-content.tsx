@@ -1,10 +1,16 @@
 import {
+  Component,
   lazy,
   Suspense,
   type ComponentType,
+  type ErrorInfo,
   type LazyExoticComponent,
   type ReactNode,
 } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LocalErrorState } from '@dwp-frontend/design-system/components/states/state-panels';
+
+import Box from '@mui/material/Box';
 
 import type { AdminView } from './admin-navigation';
 
@@ -108,11 +114,48 @@ const ADMIN_CONTENT: Record<AdminView, AdminComponent> = {
   ),
 };
 
+class AdminContentErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(_error: Error, _info: ErrorInfo) {
+    // Keep the administration shell available. A page reload is the reliable retry for a
+    // rejected dynamic import because the browser may cache the failed module request.
+  }
+
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+function AdminContentLoadError() {
+  const { t } = useTranslation('admin');
+  return (
+    <Box data-testid="admin-content-load-error">
+      <LocalErrorState
+        title={t('contentLoadError.title')}
+        description={t('contentLoadError.description')}
+        retryLabel={t('contentLoadError.reloadPage')}
+        onRetry={() => window.location.reload()}
+        size="page"
+      />
+    </Box>
+  );
+}
+
 export function AdminContent({ view, fallback }: { view: AdminView; fallback: ReactNode }) {
   const Content = ADMIN_CONTENT[view];
   return (
-    <Suspense fallback={fallback}>
-      <Content />
-    </Suspense>
+    <AdminContentErrorBoundary key={view} fallback={<AdminContentLoadError />}>
+      <Suspense fallback={fallback}>
+        <Content />
+      </Suspense>
+    </AdminContentErrorBoundary>
   );
 }

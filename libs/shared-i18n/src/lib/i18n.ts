@@ -84,7 +84,7 @@ export function initI18n(namespaces: readonly string[] = PRODUCT_NAMESPACES) {
       },
       saveMissing: import.meta.env.DEV,
       missingKeyHandler: import.meta.env.DEV
-        ? (lngs: readonly string[], ns: string, key: string) => {
+        ? (_languages: readonly string[], ns: string, key: string) => {
             console.warn(`[i18n] Missing key: ${key} (ns: ${ns})`);
           }
         : undefined,

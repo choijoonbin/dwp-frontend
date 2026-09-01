@@ -6,10 +6,17 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
+import {
+  HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_VISIBLE_COLUMNS,
+} from '../../../components/workspace-composer/home-launchpad-layout-contract';
 import { AppGlyph } from '../app-glyph';
 import { AppManagementAction } from '../app-management-action';
 import { LAUNCHPAD_LONG_PRESS_DELAY_MS } from '../app-launchpad-long-press';
-import { resolveFlowAppDockModel } from './flow-app-dock-model';
+import { LAUNCHPAD_TILE_HEIGHT_CSS, LAUNCHPAD_TILE_WIDTH } from '../app-launchpad-styles';
+import { preserveFlowAppDockGroupSurfaces, resolveFlowAppDockModel } from './flow-app-dock-model';
 
 import type {
   HomeAppDefinition,
@@ -22,6 +29,7 @@ type FlowAppDockListProps = {
   groups: readonly HomeAppGroup[];
   layout: LaunchpadLayout;
   itemLimit?: number;
+  itemLimitPerGroup?: number;
   onLaunch: (app: HomeAppDefinition) => void;
   onManage?: (app: HomeAppDefinition) => void;
   onOpenFolder: (folderId: string) => void;
@@ -41,6 +49,7 @@ export function FlowAppDockList({
   groups,
   layout,
   itemLimit = 8,
+  itemLimitPerGroup,
   onLaunch,
   onManage,
   onOpenFolder,
@@ -51,10 +60,16 @@ export function FlowAppDockList({
   const appById = useMemo(() => new Map(apps.map((app) => [app.id, app])), [apps]);
   const press = useRef<PressState | null>(null);
   const suppressClickUntil = useRef(0);
-  const itemGroups = useMemo(
-    () => resolveFlowAppDockModel({ apps, groups, layout, itemLimit }).groups,
-    [apps, groups, itemLimit, layout]
-  );
+  const itemGroups = useMemo(() => {
+    const selectedGroups = resolveFlowAppDockModel({
+      apps,
+      groups,
+      layout,
+      itemLimit,
+      itemLimitPerGroup,
+    }).groups;
+    return preserveFlowAppDockGroupSurfaces(groups, selectedGroups);
+  }, [apps, groups, itemLimit, itemLimitPerGroup, layout]);
 
   const cancelLongPress = () => {
     if (!press.current) return;
@@ -124,14 +139,17 @@ export function FlowAppDockList({
         columnGap: 0.75,
         rowGap: 0.5,
         overflow: 'visible',
-        '@container flow-dock (min-width: 640px)': {
-          display: 'flex',
-          alignItems: 'stretch',
-          gap: 2,
+        [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gap: 1.25,
+          gridAutoRows: '1fr',
+        },
+        [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
         },
       }}
     >
-      {itemGroups.map((group, groupIndex) => (
+      {itemGroups.map((group) => (
         <Box
           component="section"
           key={group.id}
@@ -139,14 +157,40 @@ export function FlowAppDockList({
           data-flow-dock-group={group.id}
           sx={{
             display: 'contents',
-            '@container flow-dock (min-width: 640px)': {
+            [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
               display: 'flex',
               flexDirection: 'column',
-              gap: 1.25,
-              minWidth: 104,
-              pl: groupIndex === 0 ? 0 : 2,
-              borderInlineStart: groupIndex === 0 ? 0 : 1,
-              borderColor: 'rgba(255,255,255,0.14)',
+              gap: 0.75,
+              minWidth: 0,
+              height: '100%',
+              boxSizing: 'border-box',
+              px: 1.25,
+              py: 1,
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '12px',
+              bgcolor: 'rgba(255,255,255,0.035)',
+              backgroundImage:
+                'linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012) 62%, rgba(78,165,255,0.035))',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+              '&:focus-within': {
+                borderColor: 'rgba(147,197,253,0.72)',
+                bgcolor: 'rgba(78,165,255,0.07)',
+              },
+            },
+            [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+              px: 1.5,
+              py: 1.25,
+            },
+            '@media (prefers-reduced-transparency: reduce)': {
+              bgcolor: '#10284D',
+              backgroundImage: 'none',
+              boxShadow: 'none',
+            },
+            '@media (forced-colors: active)': {
+              borderColor: 'CanvasText',
+              bgcolor: 'Canvas',
+              backgroundImage: 'none',
+              boxShadow: 'none',
             },
           }}
         >
@@ -154,34 +198,64 @@ export function FlowAppDockList({
             id={`flow-dock-group-${group.id}`}
             data-flow-dock-group-label
             title={group.name}
+            component="h3"
             variant="caption"
             fontWeight={750}
             sx={{
               display: 'none',
               minHeight: 18,
-              px: 0.5,
               letterSpacing: '0.01em',
               color: 'rgba(248,250,252,0.72)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              '@container flow-dock (min-width: 640px)': { display: 'block' },
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+                display: 'block',
+              },
             }}
           >
             {group.name}
+          </Typography>
+          <Typography
+            component="p"
+            data-flow-dock-group-description
+            variant="caption"
+            sx={{
+              display: 'none',
+              minHeight: '1.25em',
+              color: 'rgba(226,232,240,0.62)',
+              lineHeight: 1.25,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+                display: 'block',
+              },
+              '@media (forced-colors: active)': { color: 'CanvasText' },
+            }}
+          >
+            {group.description}
           </Typography>
           <Box
             component="ul"
             sx={{
               display: 'contents',
               p: 0,
+              pt: 1,
               m: 0,
               listStyle: 'none',
-              '@container flow-dock (min-width: 640px)': {
-                display: 'flex',
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+                display: 'grid',
+                gridTemplateColumns: `repeat(auto-fill, ${LAUNCHPAD_TILE_WIDTH}px)`,
                 alignItems: 'start',
-                gap: 0.75,
+                justifyContent: 'start',
+                columnGap: 0.75,
+                rowGap: 0.75,
               },
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                {
+                  gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${LAUNCHPAD_TILE_WIDTH}px)`,
+                },
             }}
           >
             {group.itemIds.map((itemId) => {
@@ -276,7 +350,11 @@ export function FlowAppDockList({
                   sx={{
                     position: 'relative',
                     minWidth: 0,
-                    '@container flow-dock (min-width: 640px)': { width: 76 },
+                    [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                      {
+                        width: LAUNCHPAD_TILE_WIDTH,
+                        height: LAUNCHPAD_TILE_HEIGHT_CSS,
+                      },
                   }}
                 >
                   <ButtonBase
@@ -329,10 +407,12 @@ export function FlowAppDockList({
                       gap: 0.5,
                       borderRadius: 2,
                       color: '#F8FAFC',
-                      '@container flow-dock (min-width: 640px)': {
-                        minHeight: 72,
-                        py: 0.25,
-                      },
+                      [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                        {
+                          height: 1,
+                          minHeight: 72,
+                          py: 0.25,
+                        },
                       '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
                       '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
                       '&:focus-visible': {
@@ -373,12 +453,14 @@ export function FlowAppDockList({
                             position: 'absolute',
                             top: -5,
                             right: -7,
-                            minWidth: 22,
-                            height: 22,
-                            px: 0.5,
+                            minWidth: '1.375rem',
+                            minHeight: '1.375rem',
+                            height: 'auto',
+                            px: '0.35em',
+                            py: '0.1em',
                             display: 'grid',
                             placeItems: 'center',
-                            borderRadius: 11,
+                            borderRadius: 999,
                             bgcolor:
                               badgeIntent === 'urgent'
                                 ? 'error.main'
@@ -393,7 +475,8 @@ export function FlowAppDockList({
                                   : 'primary.contrastText',
                             border: 2,
                             borderColor: '#10284D',
-                            fontSize: 10,
+                            fontSize: '0.625rem',
+                            lineHeight: 1.15,
                             fontWeight: 800,
                             fontVariantNumeric: 'tabular-nums',
                           }}
@@ -404,11 +487,12 @@ export function FlowAppDockList({
                     </Box>
                     <Typography
                       component="span"
+                      data-flow-dock-item-label
                       variant="caption"
                       fontWeight={700}
                       sx={{
                         width: 1,
-                        minHeight: 17,
+                        minHeight: '1.3em',
                         display: '-webkit-box',
                         overflow: 'hidden',
                         WebkitLineClamp: 1,
@@ -416,10 +500,16 @@ export function FlowAppDockList({
                         lineHeight: 1.3,
                         wordBreak: 'keep-all',
                         overflowWrap: 'break-word',
-                        fontSize: 11.5,
-                        '@container flow-dock (min-width: 640px)': {
-                          minHeight: 17,
-                          WebkitLineClamp: 1,
+                        fontSize: '0.71875rem',
+                        [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                          {
+                            minHeight: '2.6em',
+                            WebkitLineClamp: 2,
+                          },
+                        '[data-flow-large-text="true"] &': {
+                          minHeight: '2.6em',
+                          WebkitLineClamp: 2,
+                          overflow: 'visible',
                         },
                       }}
                     >

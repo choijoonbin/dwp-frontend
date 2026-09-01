@@ -28,6 +28,7 @@ import type {
   GridRowSelectionModel,
   GridValidRowModel,
 } from '@mui/x-data-grid';
+import type { ReactNode } from 'react';
 
 type AccessibleCheckboxInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   ownerState?: unknown;
@@ -92,6 +93,20 @@ const GRID_ROW_HEIGHT: Record<GridDensity, number> = {
 
 const GRID_FOOTER_HEIGHT = 52;
 const GRID_CHROME_HEIGHT = 2;
+
+/** Keeps rich empty-state content inside the ARIA row/cell hierarchy required by a grid. */
+export function EnterpriseGridEmptyOverlay({ children }: { children: ReactNode }) {
+  return (
+    <Box role="row" sx={{ width: 1, height: 1 }}>
+      <Box
+        role="gridcell"
+        sx={{ width: 1, height: 1, display: 'grid', placeItems: 'center', minWidth: 0 }}
+      >
+        {children}
+      </Box>
+    </Box>
+  );
+}
 
 const GRID_LOCALES: Record<string, Partial<GridLocaleText>> = {
   en: enUS.components.MuiDataGrid.defaultProps.localeText,

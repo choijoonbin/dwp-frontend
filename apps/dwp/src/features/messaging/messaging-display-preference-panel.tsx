@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RotateCcw } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 import {
   getMessagingConversationDisplayPreference,
   getMessagingDisplayPreference,
@@ -14,7 +14,6 @@ import {
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
@@ -156,9 +155,7 @@ export function MessagingDisplayPreferencePanel({
       </ToggleButtonGroup>
 
       {loading ? (
-        <Box sx={{ display: 'grid', placeItems: 'center', minHeight: 180 }} aria-busy="true">
-          <CircularProgress size={24} />
-        </Box>
+        <LoadingState label={t('common:labels.loading')} size="standard" embedded />
       ) : failed || !global || !local ? (
         <Alert severity="error">{t('conversation.display.loadError')}</Alert>
       ) : (

@@ -566,6 +566,14 @@ const WORKSCAPE_POSITIONS = ['LEFT', 'CENTER', 'RIGHT'] as const;
 const WORKSCAPE_SCHEMES = ['light', 'dark'] as const;
 const WORKSCAPE_PHOTO = '/media/communications/workplace-improvement.jpg';
 
+function maximumWorkscapeHeight(viewportWidth: number): number {
+  if (viewportWidth >= 1600) return 500;
+  if (viewportWidth >= 1200) return 600;
+  if (viewportWidth >= 900) return 800;
+  if (viewportWidth >= 600) return 1000;
+  return 620;
+}
+
 for (const viewport of WORKSCAPE_VIEWPORTS) {
   for (const backgroundPosition of WORKSCAPE_POSITIONS) {
     for (const colorScheme of WORKSCAPE_SCHEMES) {
@@ -642,7 +650,7 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
             };
           });
           const groupLabels = Array.from(
-            surface.querySelectorAll<HTMLElement>('[data-flow-dock-group] > .MuiTypography-root')
+            surface.querySelectorAll<HTMLElement>('[data-flow-dock-group-label]')
           )
             .filter((label) => window.getComputedStyle(label).display !== 'none')
             .map((label) => {
@@ -658,6 +666,37 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
                 },
               };
             });
+          const groupSurfaces = Array.from(
+            surface.querySelectorAll<HTMLElement>('[data-flow-dock-group]')
+          ).map((group) => {
+            const bounds = group.getBoundingClientRect();
+            const style = window.getComputedStyle(group);
+            return {
+              id: group.dataset.flowDockGroup,
+              display: style.display,
+              left: bounds.left,
+              right: bounds.right,
+              top: bounds.top,
+              bottom: bounds.bottom,
+              width: bounds.width,
+              height: bounds.height,
+              borderStyles: [
+                style.borderTopStyle,
+                style.borderRightStyle,
+                style.borderBottomStyle,
+                style.borderLeftStyle,
+              ],
+              borderWidths: [
+                style.borderTopWidth,
+                style.borderRightWidth,
+                style.borderBottomWidth,
+                style.borderLeftWidth,
+              ].map(Number.parseFloat),
+              borderRadius: Number.parseFloat(style.borderTopLeftRadius),
+              backgroundColor: style.backgroundColor,
+              backgroundImage: style.backgroundImage,
+            };
+          });
           const dockAction = surface
             .querySelector<HTMLElement>('[data-flow-dock-action]')!
             .getBoundingClientRect();
@@ -682,6 +721,7 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
             appLabels,
             appItemBounds,
             groupLabels,
+            groupSurfaces,
             dockAction: {
               left: dockAction.left,
               right: dockAction.right,
@@ -703,6 +743,36 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
         expect(contract.groupLabels.every((label) => label.text.length > 0 && !label.clipped)).toBe(
           true
         );
+        expect(contract.groupSurfaces).toHaveLength(4);
+        if (viewport.width >= 600) {
+          expect(contract.groupSurfaces.every((group) => group.display !== 'contents')).toBe(true);
+          expect(
+            contract.groupSurfaces.every(
+              (group) =>
+                group.borderStyles.every((style) => style === 'solid') &&
+                group.borderWidths.every((width) => width >= 1) &&
+                group.borderRadius >= 10 &&
+                (group.backgroundColor !== 'rgba(0, 0, 0, 0)' || group.backgroundImage !== 'none')
+            )
+          ).toBe(true);
+          expect(
+            Math.max(...contract.groupSurfaces.map((group) => group.height)) -
+              Math.min(...contract.groupSurfaces.map((group) => group.height))
+          ).toBeLessThanOrEqual(2);
+          const rowTops = contract.groupSurfaces.reduce<number[]>((tops, group) => {
+            if (!tops.some((top) => Math.abs(top - group.top) <= 2)) tops.push(group.top);
+            return tops;
+          }, []);
+          expect(rowTops).toHaveLength(viewport.width >= 1200 ? 1 : 2);
+          expect(
+            rowTops.map(
+              (top) =>
+                contract.groupSurfaces.filter((group) => Math.abs(group.top - top) <= 2).length
+            )
+          ).toEqual(viewport.width >= 1200 ? [4] : [2, 2]);
+        } else {
+          expect(contract.groupSurfaces.every((group) => group.display === 'contents')).toBe(true);
+        }
         expect(
           contract.groupLabels.every(
             (label) =>
@@ -722,23 +792,17 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
           )
         ).toBe(true);
         expect(contract.workscapeHeight).toBeLessThanOrEqual(
-          viewport.width >= 1200 ? 340 : viewport.width >= 900 ? 380 : 460
+          maximumWorkscapeHeight(viewport.width)
         );
+
+        expect(Math.abs(contract.frame.left - contract.dock.left)).toBeLessThanOrEqual(2);
+        expect(Math.abs(contract.frame.right - contract.dock.right)).toBeLessThanOrEqual(2);
+        expect(Math.abs(contract.frame.width - contract.dock.width)).toBeLessThanOrEqual(2);
 
         if (viewport.width >= 900 && backgroundPosition === 'RIGHT') {
           expect(Math.abs(contract.copy.left - contract.dock.left)).toBeLessThanOrEqual(2);
-          expect(contract.frame.right - contract.dock.right).toBeGreaterThanOrEqual(
-            contract.frame.width * 0.24
-          );
         } else if (viewport.width >= 900 && backgroundPosition === 'LEFT') {
           expect(Math.abs(contract.copy.right - contract.dock.right)).toBeLessThanOrEqual(2);
-          expect(contract.dock.left - contract.frame.left).toBeGreaterThanOrEqual(
-            contract.frame.width * 0.24
-          );
-        } else if (viewport.width >= 900) {
-          expect(Math.abs(contract.frame.center - contract.dock.center)).toBeLessThanOrEqual(2);
-        } else {
-          expect(Math.abs(contract.frame.width - contract.dock.width)).toBeLessThanOrEqual(2);
         }
 
         await expect(workscape).toHaveScreenshot(
@@ -780,10 +844,35 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
       dockBackground: window.getComputedStyle(
         surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!
       ).backgroundColor,
+      groupPanels: Array.from(surface.querySelectorAll<HTMLElement>('[data-flow-dock-group]')).map(
+        (group) => {
+          const style = window.getComputedStyle(group);
+          return {
+            display: style.display,
+            borderStyle: style.borderTopStyle,
+            borderWidth: Number.parseFloat(style.borderTopWidth),
+            background: style.backgroundColor,
+            boxShadow: style.boxShadow,
+          };
+        }
+      ),
     }));
     expect(forcedContract.beforeDisplay).toBe('none');
     expect(forcedContract.afterDisplay).toBe('none');
     expect(forcedContract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
+    expect(forcedContract.groupPanels).toHaveLength(4);
+    if (viewport.width >= 600) {
+      expect(
+        forcedContract.groupPanels.every(
+          (group) =>
+            group.display !== 'contents' &&
+            group.borderStyle === 'solid' &&
+            group.borderWidth >= 1 &&
+            group.background !== 'rgba(0, 0, 0, 0)' &&
+            group.boxShadow === 'none'
+        )
+      ).toBe(true);
+    }
     await expectNoHorizontalOverflow(page);
     await expect(workscape).toHaveScreenshot(`flow-workscape-${viewport.width}-forced-colors.png`, {
       animations: 'disabled',
@@ -903,7 +992,7 @@ test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page 
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeLessThanOrEqual(340);
+  expect(workscapeHeight).toBeLessThanOrEqual(maximumWorkscapeHeight(1440));
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
@@ -997,6 +1086,10 @@ test('Flow Home expressive Korean desktop 1440 visual baseline', async ({ page }
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
   await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
+    '40'
+  );
+  await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
+    'data-flow-dock-group-item-limit',
     '10'
   );
   await expectDesktopPurposeComposition(flowHome);
@@ -1027,7 +1120,11 @@ test('Flow Home expressive Korean desktop 1920 visual baseline', async ({ page }
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
   await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
-    '12'
+    '40'
+  );
+  await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
+    'data-flow-dock-group-item-limit',
+    '10'
   );
   await expectDesktopPurposeComposition(flowHome, 'adaptive-wide');
   const priorityLayout = flowHome.locator(
@@ -1062,7 +1159,7 @@ test('Flow Home expressive Korean desktop 1920 visual baseline', async ({ page }
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeLessThanOrEqual(340);
+  expect(workscapeHeight).toBeLessThanOrEqual(500);
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
@@ -1100,7 +1197,7 @@ test('Flow Home tenant photo keeps brand colour and a readable launch deck', asy
     };
   });
   expect(contract.imageOpacity).toBe('1');
-  expect(contract.workscapeHeight).toBeLessThanOrEqual(340);
+  expect(contract.workscapeHeight).toBeLessThanOrEqual(maximumWorkscapeHeight(1440));
   expect(contract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
@@ -1212,11 +1309,28 @@ test('Flow Home Korean desktop 1280 at 200 percent text keeps a dark visual base
   await mockFlowHome(page, 'balanced', {}, { colorScheme: 'dark' });
 
   await page.goto('/');
-  await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
   const flowHome = page.getByTestId('flow-home');
+  const baseDockTypography = await flowHome.evaluate((root) => {
+    const fontSizes = (selector: string) =>
+      Array.from(root.querySelectorAll<HTMLElement>(selector)).map((node) =>
+        Number.parseFloat(window.getComputedStyle(node).fontSize)
+      );
+    return {
+      appLabels: fontSizes('[data-flow-dock-item-label]'),
+      hiddenApps: fontSizes('[data-flow-dock-hidden-app-count]'),
+      hiddenNotifications: fontSizes('[data-hidden-notification-intent]'),
+      appBadges: fontSizes('[data-badge-intent]'),
+    };
+  });
+  expect(baseDockTypography.appLabels.length).toBeGreaterThan(1);
+
+  await page.evaluate(() => {
+    document.documentElement.style.setProperty('font-size', '200%', 'important');
+  });
   await expect
     .poll(() => page.evaluate(() => window.getComputedStyle(document.documentElement).fontSize))
     .toBe('32px');
+  await page.evaluate(() => window.dispatchEvent(new Event('resize')));
   await expect(flowHome).toHaveAttribute('data-flow-large-text', 'true');
   const largeTextMeaning = await flowHome.evaluate((root) => {
     const measure = (element: HTMLElement) => ({
@@ -1228,9 +1342,47 @@ test('Flow Home Korean desktop 1280 at 200 percent text keeps a dark visual base
     const groupLabels = Array.from(
       root.querySelectorAll<HTMLElement>('[data-flow-dock-group-label]')
     ).filter((label) => window.getComputedStyle(label).display !== 'none');
+    const dockText = Array.from(
+      root.querySelectorAll<HTMLElement>(
+        '[data-flow-dock-item-label], [data-flow-dock-hidden-app-count], [data-hidden-notification-intent], [data-badge-intent]'
+      )
+    ).map((node) => {
+      const bounds = node.getBoundingClientRect();
+      return {
+        kind: node.hasAttribute('data-flow-dock-item-label')
+          ? 'appLabel'
+          : node.hasAttribute('data-flow-dock-hidden-app-count')
+            ? 'hiddenApps'
+            : node.hasAttribute('data-hidden-notification-intent')
+              ? 'hiddenNotifications'
+              : 'appBadges',
+        fontSize: Number.parseFloat(window.getComputedStyle(node).fontSize),
+        clippedHorizontally: node.scrollWidth > node.clientWidth + 1,
+        clippedVertically: node.scrollHeight > node.clientHeight + 1,
+        bounds: {
+          left: bounds.left,
+          right: bounds.right,
+          top: bounds.top,
+          bottom: bounds.bottom,
+          width: bounds.width,
+          height: bounds.height,
+        },
+      };
+    });
+    const action = root.querySelector<HTMLElement>('[data-flow-dock-action]');
+    const actionBounds = action?.getBoundingClientRect();
     return {
       description: description ? measure(description) : null,
       groupLabels: groupLabels.map(measure),
+      dockText,
+      actionBounds: actionBounds
+        ? {
+            left: actionBounds.left,
+            right: actionBounds.right,
+            top: actionBounds.top,
+            bottom: actionBounds.bottom,
+          }
+        : null,
     };
   });
   expect(largeTextMeaning.description).not.toBeNull();
@@ -1244,6 +1396,50 @@ test('Flow Home Korean desktop 1280 at 200 percent text keeps a dark visual base
     ),
     JSON.stringify(largeTextMeaning.groupLabels)
   ).toBe(true);
+  const assertScaledDockText = (
+    kind: 'appLabel' | 'hiddenApps' | 'hiddenNotifications' | 'appBadges',
+    baseSizes: number[]
+  ) => {
+    const scaled = largeTextMeaning.dockText.filter((item) => item.kind === kind);
+    expect(scaled).toHaveLength(baseSizes.length);
+    expect(
+      scaled.every(
+        (item, index) =>
+          item.fontSize >= (baseSizes[index] ?? baseSizes[0] ?? 0) * 1.9 &&
+          !item.clippedHorizontally &&
+          !item.clippedVertically &&
+          item.bounds.width > 0 &&
+          item.bounds.height > 0
+      ),
+      JSON.stringify(scaled)
+    ).toBe(true);
+  };
+  assertScaledDockText('appLabel', baseDockTypography.appLabels);
+  assertScaledDockText('hiddenApps', baseDockTypography.hiddenApps);
+  assertScaledDockText('hiddenNotifications', baseDockTypography.hiddenNotifications);
+  assertScaledDockText('appBadges', baseDockTypography.appBadges);
+  expect(largeTextMeaning.actionBounds).not.toBeNull();
+  const statusPills = largeTextMeaning.dockText.filter(
+    (item) => item.kind === 'hiddenApps' || item.kind === 'hiddenNotifications'
+  );
+  expect(
+    statusPills.every(
+      (pill) =>
+        pill.bounds.left >= largeTextMeaning.actionBounds!.left - 1 &&
+        pill.bounds.right <= largeTextMeaning.actionBounds!.right + 1 &&
+        pill.bounds.top >= largeTextMeaning.actionBounds!.top - 1 &&
+        pill.bounds.bottom <= largeTextMeaning.actionBounds!.bottom + 1
+    )
+  ).toBe(true);
+  if (statusPills.length > 1) {
+    const [first, second] = statusPills;
+    expect(
+      first!.bounds.right <= second!.bounds.left ||
+        second!.bounds.right <= first!.bounds.left ||
+        first!.bounds.bottom <= second!.bounds.top ||
+        second!.bounds.bottom <= first!.bounds.top
+    ).toBe(true);
+  }
   const columns = await flowHome
     .locator('[data-workspace-presentation]')
     .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);

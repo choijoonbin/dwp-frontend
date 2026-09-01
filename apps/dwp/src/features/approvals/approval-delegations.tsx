@@ -22,6 +22,7 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -32,6 +33,7 @@ import {
   buildApprovalDelegationCreateInput,
   buildApprovalDelegationWorkflowReference,
   buildApprovalDelegationWorkflowOptions,
+  isApprovalDelegationDirection,
 } from './approval-delegation-model';
 import { useApprovalExperience } from './use-approval-experience';
 import {
@@ -60,18 +62,21 @@ export function ApprovalDelegations() {
     queryKey: ['approvals', 'delegations'],
     queryFn: getApprovalDelegations,
     staleTime: 20_000,
+    retry: 1,
   });
   const candidates = useQuery({
     queryKey: ['approvals', 'delegations', 'candidates', deferredCandidateQuery],
     queryFn: () => searchApprovalDelegationCandidates(deferredCandidateQuery),
     enabled: open && deferredCandidateQuery.length >= 2,
     staleTime: 30_000,
+    retry: 1,
   });
   const workflows = useQuery({
     queryKey: ['approvals', 'workflows', 'published'],
     queryFn: getPublishedApprovalWorkflows,
     enabled: open,
     staleTime: 60_000,
+    retry: 1,
   });
   const workflowOptions = useMemo(
     () => buildApprovalDelegationWorkflowOptions(workflows.data ?? [], i18n.resolvedLanguage),
@@ -126,9 +131,10 @@ export function ApprovalDelegations() {
   const selectedWorkflowAvailable = workflowOptions.some((option) => option.value === workflowId);
   const valid =
     selected !== null &&
+    !candidates.isError &&
     reason.trim().length >= 10 &&
     new Date(endsAt) > new Date(startsAt) &&
-    (scopeType === 'ALL' || selectedWorkflowAvailable);
+    (scopeType === 'ALL' || (!workflows.isError && selectedWorkflowAvailable));
 
   return (
     <ApprovalSurface
@@ -147,24 +153,45 @@ export function ApprovalDelegations() {
         ) : undefined
       }
     >
-      {(delegations.data ?? []).map((delegation) => (
-        <DelegationRow
-          key={delegation.delegationId}
-          delegation={delegation}
-          canRevoke={canManage && delegation.direction === 'OUTGOING'}
-          onRevoke={() => setRevoking(delegation)}
-        />
-      ))}
-      {!delegations.isLoading && delegations.data?.length === 0 && (
-        <Box sx={{ py: 8, textAlign: 'center' }}>
-          <CalendarClock size={34} color="#728096" />
-          <Typography variant="subtitle1" sx={{ mt: 1 }}>
-            {t('delegations.empty')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('delegations.emptyDescription')}
-          </Typography>
-        </Box>
+      {delegations.isError ? (
+        <Alert
+          severity="error"
+          action={
+            <ActionButton
+              type="button"
+              intent="quiet"
+              size="small"
+              disabled={delegations.isFetching}
+              onClick={() => void delegations.refetch()}
+            >
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('delegations.loadError')}
+        </Alert>
+      ) : (
+        <>
+          {(delegations.data ?? []).map((delegation) => (
+            <DelegationRow
+              key={delegation.delegationId}
+              delegation={delegation}
+              canRevoke={canManage && delegation.direction === 'OUTGOING'}
+              onRevoke={() => setRevoking(delegation)}
+            />
+          ))}
+          {!delegations.isLoading && delegations.data?.length === 0 && (
+            <Box sx={{ py: 8, textAlign: 'center' }}>
+              <CalendarClock size={34} color="#728096" />
+              <Typography component="p" variant="subtitle1" sx={{ mt: 1 }}>
+                {t('delegations.empty')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('delegations.emptyDescription')}
+              </Typography>
+            </Box>
+          )}
+        </>
       )}
       <FormDialog
         open={open}
@@ -178,13 +205,31 @@ export function ApprovalDelegations() {
         onSubmit={() => create.mutate()}
       >
         <Stack gap={2}>
+          {candidates.isError && deferredCandidateQuery.length >= 2 && (
+            <Alert
+              severity="error"
+              action={
+                <ActionButton
+                  type="button"
+                  intent="quiet"
+                  size="small"
+                  disabled={candidates.isFetching}
+                  onClick={() => void candidates.refetch()}
+                >
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              {t('delegations.candidateLoadError')}
+            </Alert>
+          )}
           <AutocompleteField<ApprovalDelegationCandidate>
             required
             label={t('delegations.fields.delegate')}
             supportingText={t('delegations.fields.delegateHelp')}
             value={selected}
             inputValue={candidateQuery}
-            options={candidates.data ?? []}
+            options={candidates.isError ? [] : (candidates.data ?? [])}
             loading={candidates.isFetching}
             filterOptions={(options) => options}
             isOptionEqualToValue={(option, value) => option.userId === value.userId}
@@ -216,13 +261,33 @@ export function ApprovalDelegations() {
               onValueChange={(value) => value && setScopeType(value as 'ALL' | 'WORKFLOW')}
             />
             {scopeType === 'WORKFLOW' ? (
-              <SelectField
-                required
-                label={t('delegations.fields.workflow')}
-                value={workflowId}
-                options={workflowOptions}
-                onValueChange={(value) => setWorkflowId(value ?? '')}
-              />
+              <Stack gap={1}>
+                {workflows.isError && (
+                  <Alert
+                    severity="error"
+                    action={
+                      <ActionButton
+                        type="button"
+                        intent="quiet"
+                        size="small"
+                        disabled={workflows.isFetching}
+                        onClick={() => void workflows.refetch()}
+                      >
+                        {t('actions.retry')}
+                      </ActionButton>
+                    }
+                  >
+                    {t('delegations.workflowLoadError')}
+                  </Alert>
+                )}
+                <SelectField
+                  required
+                  label={t('delegations.fields.workflow')}
+                  value={workflowId}
+                  options={workflows.isError ? [] : workflowOptions}
+                  onValueChange={(value) => setWorkflowId(value ?? '')}
+                />
+              </Stack>
             ) : (
               <Box />
             )}
@@ -279,7 +344,10 @@ function DelegationRow({
   onRevoke: () => void;
 }) {
   const { t } = useTranslation('approvals');
-  const incoming = delegation.direction === 'INCOMING';
+  const direction = isApprovalDelegationDirection(delegation.direction)
+    ? delegation.direction
+    : null;
+  const incoming = direction === 'INCOMING';
   const workflowReference = buildApprovalDelegationWorkflowReference(delegation);
   return (
     <Stack
@@ -311,11 +379,13 @@ function DelegationRow({
                 ? t('delegations.receivedFrom', { userId: delegation.delegatorUserId })
                 : delegation.delegateDisplayName}
             </Typography>
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t(`delegations.directions.${delegation.direction.toLowerCase()}`)}
-            />
+            {direction ? (
+              <Chip
+                size="small"
+                variant="outlined"
+                label={t(`delegations.directions.${direction.toLowerCase()}`)}
+              />
+            ) : null}
             <StatusChip status={delegation.lifecycleState} />
           </Stack>
           <Typography variant="caption" color="text.secondary">

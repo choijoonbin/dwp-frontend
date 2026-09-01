@@ -1,7 +1,7 @@
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
-import type { VideoMeetingParticipant } from './video-meeting-api';
+import type { VideoMeetingParticipant } from './video-meeting-lifecycle-contract';
 
 export const VIDEO_MEETING_API_BASE = '/api/meetings/v1';
 

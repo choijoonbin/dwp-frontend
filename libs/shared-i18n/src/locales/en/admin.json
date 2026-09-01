@@ -9,6 +9,11 @@
     "openNavigation": "Open administration navigation",
     "backToWorkspace": "Back to workspace"
   },
+  "contentLoadError": {
+    "title": "This administration page could not be opened",
+    "description": "The administration shell is still available. Reload the page to download this page again.",
+    "reloadPage": "Reload page"
+  },
   "navigation": {
     "groups": {
       "experience": "Experience",
@@ -3444,6 +3449,7 @@
       "revoke": "Revoke",
       "revoked": "Revoke",
       "openWorkbench": "Open {{app}} management workbench",
+      "openWorkbenchForScope": "Open {{app}} management workbench for {{scope}}",
       "requestPreset": "Request app admin preset",
       "resolveReview": "Resolve review",
       "dismissReview": "Dismiss review"

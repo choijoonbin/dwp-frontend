@@ -378,7 +378,9 @@ export function MessagingComposer({
         </Stack>
         <ActionButton
           intent="primary"
-          endIcon={isSending ? <CircularProgress size={15} /> : <Send size={16} />}
+          endIcon={
+            isSending ? <CircularProgress size={15} aria-hidden="true" /> : <Send size={16} />
+          }
           disabled={!drafting || isSending || attachmentBusy || attachmentFailed}
           onClick={onSend}
           sx={{ minWidth: compact ? 92 : 108, flexShrink: 0, whiteSpace: 'nowrap' }}

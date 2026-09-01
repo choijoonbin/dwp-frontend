@@ -29,4 +29,36 @@ describe('HCM query discriminator source contract', () => {
     expect(serviceHub).toContain('getHcmServiceRequests');
     expect(serviceHub).toContain("'surface:hcm'");
   });
+
+  it('keeps directory identity resolution out of the shared shell and non-profile pages', () => {
+    for (const path of ['../../pages/hcm.tsx', '../../layouts/hcm-layout.tsx', './hcm-home.tsx']) {
+      const pageSource = source(path);
+      expect(pageSource).not.toContain('useCurrentHcmPerson');
+      expect(pageSource).not.toContain('listPeople');
+      expect(pageSource).not.toContain('getPerson');
+    }
+
+    expect(source('./my-hr-profile.tsx')).toContain('useCurrentHcmPerson');
+  });
+
+  it('keeps HCM request tracking independent from catalog key discovery', () => {
+    const serviceHub = source('./hr-service-hub.tsx');
+    expect(serviceHub).toContain('const hrRequests = requests.data ?? []');
+    expect(serviceHub).not.toContain('peopleServiceKeys');
+    expect(serviceHub).toContain('catalog.isError && requests.isError');
+  });
+
+  it('connects every operations summary domain to its actionable workspace', () => {
+    const overview = source('./hr-operations-overview.tsx');
+    for (const path of [
+      '/hr/operations/time',
+      '/hr/operations/absence',
+      '/hr/operations/benefits',
+      '/hr/operations/pay',
+      '/hr/operations/talent',
+    ]) {
+      expect(overview).toContain(`path: '${path}'`);
+    }
+    expect(overview).toContain('navigate(destination.path)');
+  });
 });

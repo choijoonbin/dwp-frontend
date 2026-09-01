@@ -7,6 +7,12 @@ function matchedLeaf(pathname: string) {
   return matchRoutes(notificationRoutes, pathname)?.at(-1)?.route;
 }
 
+function matchedPathChain(pathname: string) {
+  return (matchRoutes(notificationRoutes, pathname) ?? [])
+    .map((match) => match.route.path)
+    .filter((path): path is string => Boolean(path));
+}
+
 describe('notification route contract', () => {
   it('redirects the product root to its dedicated home', () => {
     expect(matchedLeaf('/notifications')?.index).toBe(true);
@@ -25,9 +31,21 @@ describe('notification route contract', () => {
   });
 
   it('exposes tenant policy governance as a dedicated administration route', () => {
-    expect(matchedLeaf('/notifications/admin/policies')?.path).toBe('admin/policies');
-    expect(matchedLeaf('/notifications/admin/templates')?.path).toBe('admin/templates');
-    expect(matchedLeaf('/notifications/admin/suppressions')?.path).toBe('admin/suppressions');
+    expect(matchedPathChain('/notifications/admin/policies')).toEqual([
+      'notifications',
+      'admin',
+      'policies',
+    ]);
+    expect(matchedPathChain('/notifications/admin/templates')).toEqual([
+      'notifications',
+      'admin',
+      'templates',
+    ]);
+    expect(matchedPathChain('/notifications/admin/suppressions')).toEqual([
+      'notifications',
+      'admin',
+      'suppressions',
+    ]);
   });
 
   it('recovers unsupported nested paths through the notification fallback', () => {

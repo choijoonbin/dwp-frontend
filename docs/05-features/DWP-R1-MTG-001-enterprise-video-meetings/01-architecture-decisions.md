@@ -137,6 +137,97 @@ cannot justify surveillance claims about people. This boundary also avoids workp
 emotion-recognition patterns that create significant legal, privacy, and employee-trust
 risk.
 
+## ADR-013: Recording commands cross the provider boundary durably
+
+**Decision:** Recording start and stop first commit an idempotent command receipt and
+bounded lease. Provider HTTP runs after that transaction commits. A matching,
+unexpired fence is required to commit the terminal session and audit projection;
+expired work can be reclaimed, while its former worker cannot complete late.
+
+**Reason:** Egress cannot participate in the PostgreSQL transaction. Holding a meeting
+row lock across network I/O creates availability failures, while retrying an
+unrecorded request can create duplicate captures. Durable receipts make both crash
+recovery and operator evidence explicit without persisting provider payload bodies.
+
+## ADR-014: Draft generation, review, and publication are separate duties
+
+**Decision:** Reviewer assignment is projected from admitted meeting participants and
+stored as report-scoped authority. The current report manager and the user who
+requested generation are ineligible for review or management authority. Assignment,
+revocation, review, and publication are separately authorized and audited.
+
+**Reason:** A human-review label has no value when the same actor can generate,
+self-approve, and publish unobserved. Report-scoped separation of duties turns review
+into an enforceable product boundary while avoiding tenant-admin access to content.
+
+## ADR-015: The browser contract is a versioned public surface
+
+**Decision:** Expose meeting user and administrator operations only through the
+public Gateway namespace `/api/meetings/v1/**`. Provider callbacks, recording
+finalization, and other artifact-ingest operations use separate authenticated
+service-to-service boundaries and are never treated as browser mutations.
+
+**Reason:** A stable public contract can evolve independently from provider
+protocols while keeping credentials, object keys, raw transcript bodies, and
+trusted workload assertions out of the user-facing API. Every public read and
+mutation re-evaluates tenant, membership/role, artifact ACL, retention, and
+legal-hold state.
+
+## ADR-016: Recording finalization is trusted, and playback is ticketed
+
+**Decision:** A recording becomes `AVAILABLE` only after a signed trusted
+finalization assertion proves the meeting/session binding and verifies object
+digest, length, content type, encryption, region, retention, and ACL. Playback
+returns only a short-lived HTTPS ticket bound to the artifact version and its
+retention boundary; the ticket is denied for stale, held, deleted, expired, or
+unauthorized artifacts.
+
+**Reason:** A provider callback or stored URL alone does not prove that the
+object belongs to this tenant or remains eligible for access. Version-bound
+tickets limit replay and ensure each playback decision uses current content
+custody policy without exposing provider credentials or durable URLs.
+
+## ADR-017: START/STOP provenance is immutable
+
+**Decision:** Recording `START` and `STOP` commands first create idempotent,
+lease-fenced receipts, then append immutable provenance containing the actor or
+service identity, reason, notice/consent and policy versions, command key,
+aggregate/session version, timestamps, and outcome. Retries may add correlated
+attempt evidence but cannot rewrite the original provenance or manufacture a
+second terminal session.
+
+**Reason:** Recording changes privacy and evidentiary state. An immutable chain
+separates user intent, provider execution, and finalization while making stale
+workers and late callbacks unable to alter the historical decision.
+
+## ADR-018: Deletion uses leased CAS orchestration and crypto-shred readiness
+
+**Decision:** Retention expiry or an approved deletion request transitions each
+artifact lineage through a leased, compare-and-set (CAS) deletion workflow.
+Workers claim bounded targets, re-check legal hold and current ACL/state, delete
+source objects and derivatives in dependency order, and record per-target
+evidence. Crypto-shred is a readiness control: destroying the envelope key is
+allowed only after the governed target set is accounted for and the key
+destruction receipt is durable; partial success remains incomplete.
+
+**Reason:** Deletion spans object storage, transcript/index/embedding derivatives,
+caches, and backups that do not share one transaction. Lease fencing prevents
+duplicate or stale workers from closing a deletion, while CAS preserves legal
+holds and concurrent state changes. Storage-level evidence for raw transcript
+object deletion is not yet verified and therefore remains a production NO-GO.
+
+## ADR-019: User content custody is distinct from administration
+
+**Decision:** Meeting membership and artifact ACL govern user playback, transcript,
+chat, and recap reads. `MEETING_ADMIN` is limited to policy, provider readiness,
+capacity, retention/legal-hold state, and deletion evidence; it does not imply
+content access. Compliance/content-custody access, if introduced, must be a
+separate scoped, case-bound role with independent approval and audit evidence.
+
+**Reason:** Operational authority and content custody are different duties.
+Keeping them separate limits insider access and prevents aggregate operational
+views from becoming an indirect content disclosure path.
+
 ## Runtime target
 
 ```text
@@ -145,14 +236,16 @@ public edge -> regional L4 load balancer -> LiveKit nodes
                               |               +-- UDP/ICE and WebRTC/TCP
                               +-- TURN/TLS 443
 
-meeting API -> PostgreSQL
+public `/api/meetings/v1/**` -> Meeting API -> PostgreSQL
             -> Kafka outbox/inbox
             -> LiveKit Server API
             -> signed webhook receiver
             -> internal Agent meeting-intelligence API
 
-Egress pool -> KMS-encrypted S3-compatible storage
+Egress pool -> trusted finalize -> KMS-encrypted S3-compatible storage
 STT workers -> transcript object + searchable ACL metadata
+Playback -> current ACL/retention check -> short-lived artifact ticket
+Deletion workers -> leased CAS -> dependency deletes -> crypto-shred evidence
 Agent runtime -> approved zero-retention model route -> strict cited JSON
 ```
 

@@ -9,6 +9,7 @@ import {
 import type { HomeWidgetPreference } from '@dwp-frontend/shared-utils';
 
 const widgets: HomeWidgetPreference[] = [
+  { widgetKey: 'command-rail', visible: true, size: 'large' },
   { widgetKey: 'schedule', visible: true, size: 'quarter' },
   { widgetKey: 'focus', visible: true, size: 'medium' },
   { widgetKey: 'activity', visible: true, size: 'quarter' },
@@ -23,6 +24,7 @@ describe('home device overlay', () => {
         density: 'compact',
       })
     ).toEqual([
+      { widgetKey: 'command-rail', visible: true, size: 'large' },
       { widgetKey: 'schedule', visible: true, size: 'quarter' },
       { widgetKey: 'focus', visible: true, size: 'full' },
       { widgetKey: 'activity', visible: true, size: 'quarter' },
@@ -35,6 +37,12 @@ describe('home device overlay', () => {
     );
 
     expect(buildFlowDeviceWidthControls(focusHidden)).toEqual([
+      {
+        storageKey: 'command-rail',
+        sourceSize: 'large',
+        labelKey: 'content.widgetLabels.command-rail',
+        allowedSizes: ['large', 'full'],
+      },
       {
         storageKey: 'schedule',
         sourceSize: 'quarter',
@@ -52,6 +60,11 @@ describe('home device overlay', () => {
 
   it('keeps request and role-pulse widths independently round-trippable', () => {
     expect(buildFlowDeviceWidthControls(widgets)).toEqual([
+      expect.objectContaining({
+        storageKey: 'command-rail',
+        sourceSize: 'large',
+        allowedSizes: ['large', 'full'],
+      }),
       expect.objectContaining({ storageKey: 'schedule' }),
       expect.objectContaining({ storageKey: 'focus', sourceSize: 'medium' }),
       expect.objectContaining({ storageKey: 'activity', sourceSize: 'quarter' }),
@@ -62,13 +75,19 @@ describe('home device overlay', () => {
     expect(
       mergeFlowDeviceWidthOverrides(
         {
+          'command-rail': 'full',
           schedule: 'quarter',
           focus: 'full',
           activity: 'invalid',
           unknown: 'large',
         },
-        { schedule: 'medium', activity: 'compact' }
+        { 'command-rail': 'large', schedule: 'medium', activity: 'compact' }
       )
-    ).toEqual({ schedule: 'medium', focus: 'full', activity: 'compact' });
+    ).toEqual({
+      'command-rail': 'large',
+      schedule: 'medium',
+      focus: 'full',
+      activity: 'compact',
+    });
   });
 });

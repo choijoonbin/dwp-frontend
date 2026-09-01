@@ -6,9 +6,14 @@ import {
   WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
   workspaceWidgetSettle,
 } from '../../components/workspace-composer/workspace-edit-motion';
+import {
+  HOME_LAUNCHPAD_TILE_HEIGHT,
+  HOME_LAUNCHPAD_TILE_WIDTH,
+} from '../../components/workspace-composer/home-launchpad-layout-contract';
 
-export const LAUNCHPAD_TILE_WIDTH = 72;
-export const LAUNCHPAD_TILE_HEIGHT = 84;
+export const LAUNCHPAD_TILE_WIDTH = HOME_LAUNCHPAD_TILE_WIDTH;
+export const LAUNCHPAD_TILE_HEIGHT = HOME_LAUNCHPAD_TILE_HEIGHT;
+export const LAUNCHPAD_TILE_HEIGHT_CSS = `var(--launchpad-tile-height, ${LAUNCHPAD_TILE_HEIGHT}px)`;
 
 export function launchpadLabelFontSize(label: string) {
   return label.length > 8 ? '0.625rem' : '0.6875rem';
@@ -57,7 +62,7 @@ export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
 export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme> {
   return {
     width: 1,
-    height: LAUNCHPAD_TILE_HEIGHT,
+    height: LAUNCHPAD_TILE_HEIGHT_CSS,
     boxSizing: 'border-box',
     px: editing ? 0 : 0.25,
     py: editing ? 0 : 0.125,

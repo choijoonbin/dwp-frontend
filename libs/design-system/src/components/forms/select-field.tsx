@@ -34,8 +34,12 @@ export function SelectField<T extends SelectValue = string>({
   errorMessage,
   reserveFeedbackSpace = false,
   fullWidth = true,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  slotProps,
   ...props
 }: SelectFieldProps<T>) {
+  const selectSlotProps = slotProps?.select;
   return (
     <TextField
       {...props}
@@ -45,6 +49,21 @@ export function SelectField<T extends SelectValue = string>({
       error={Boolean(errorMessage)}
       helperText={resolveFieldFeedback({ errorMessage, supportingText, reserveFeedbackSpace })}
       onChange={(event) => onValueChange(event.target.value as T | '')}
+      slotProps={{
+        ...slotProps,
+        select: (ownerState) => {
+          const configured =
+            typeof selectSlotProps === 'function' ? selectSlotProps(ownerState) : selectSlotProps;
+          return {
+            ...configured,
+            inputProps: {
+              ...configured?.inputProps,
+              ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+              ...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {}),
+            },
+          };
+        },
+      }}
     >
       {placeholder && (
         <MenuItem value="" disabled>

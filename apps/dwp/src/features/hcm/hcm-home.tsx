@@ -2,12 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDown,
-  ArrowRight,
   BookOpenCheck,
   CalendarDays,
   CheckCircle2,
   Clock3,
-  GraduationCap,
   HeartPulse,
   LayoutDashboard,
   LifeBuoy,
@@ -44,7 +42,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import { PersonAvatar } from '../../components/person-avatar';
 import { WorkspaceComposerToolbar } from '../../components/workspace-composer/workspace-composer-toolbar';
 import {
   defaultWorkspaceWidgets,
@@ -54,16 +51,10 @@ import {
 } from '../../components/workspace-composer/workspace-composer-model';
 import { WorkspaceWidgetCanvas } from '../../components/workspace-composer/workspace-widget-canvas';
 import { WorkspaceWidgetGallery } from '../../components/workspace-composer/workspace-widget-gallery';
-import {
-  HcmAttentionItem,
-  HcmSectionSurface,
-  HcmStageRail,
-  HcmToolLink,
-  hcmToneColor,
-} from './hcm-home-visuals';
-import { HcmRhythmMetric } from './hcm-rhythm-metric';
+import { HcmAttentionItem, hcmToneColor } from './hcm-home-visuals';
+import { HcmHomeWidgetContent } from './hcm-home-widgets';
 import { HCM_HOME_WIDGET_REGISTRY } from './hcm-home-widget-registry';
-import { useHcmExperience } from './use-hcm-experience';
+import { useHcmAccess } from './use-hcm-experience';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
 
 import type { LucideIcon } from 'lucide-react';
@@ -75,6 +66,7 @@ import type {
   PersonalHomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 import type { HcmHomeWidgetKey } from './hcm-home-widget-registry';
+import type { HcmHomeTimeStage, HcmHomeToolLink } from './hcm-home-widgets';
 
 type HomeMode = 'personal' | 'team';
 type AttentionPriority = 'critical' | 'attention' | 'routine';
@@ -88,15 +80,6 @@ type AttentionSignal = {
   actionLabel: string;
   route: string;
   priority: AttentionPriority;
-};
-
-type ToolLink = {
-  id: string;
-  icon: LucideIcon;
-  label: string;
-  description: string;
-  route: string;
-  badge?: string;
 };
 
 function greetingKey(hour: number): 'morning' | 'afternoon' | 'evening' {
@@ -124,7 +107,7 @@ export function HcmHome() {
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const experience = useHcmExperience();
+  const access = useHcmAccess();
   const [homeMode, setHomeMode] = useState<HomeMode>('personal');
   const [editorOpen, setEditorOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -140,7 +123,7 @@ export function HcmHome() {
     retry: 1,
   });
   const resolvedIsManager =
-    experience.isManager || (hrOverview.data?.employee.directReportCount ?? 0) > 0;
+    access.isManager || (hrOverview.data?.employee.directReportCount ?? 0) > 0;
 
   useEffect(() => {
     if (homeMode === 'team' && !resolvedIsManager) setHomeMode('personal');
@@ -259,17 +242,12 @@ export function HcmHome() {
   const customizationBusy = homePreference.isLoading || preferenceMutation.isPending;
 
   const directReports = useMemo(() => {
-    const managerPersonId =
-      hrOverview.data?.employee.personId || experience.currentPerson?.personId;
+    const managerPersonId = hrOverview.data?.employee.personId;
     if (!managerPersonId) return [];
     return (teamChart.data?.people ?? []).filter(
       (person) => person.managerPersonId === managerPersonId
     );
-  }, [
-    experience.currentPerson?.personId,
-    hrOverview.data?.employee.personId,
-    teamChart.data?.people,
-  ]);
+  }, [hrOverview.data?.employee.personId, teamChart.data?.people]);
   if (hrOverview.isLoading) {
     return (
       <PageCanvas>
@@ -346,7 +324,6 @@ export function HcmHome() {
     domainStates: {},
     referenceDataPresent: false,
   };
-  const directoryPerson = experience.currentPerson;
   const domainAvailable = (domain: keyof typeof overview.domainStates) =>
     overview.domainStates[domain]?.availability !== 'UNAVAILABLE';
   const currentTime = domainAvailable('TIME') ? overview.time : null;
@@ -379,6 +356,10 @@ export function HcmHome() {
     .filter((window) => window.lifecycleState === 'OPEN')
     .sort((left, right) => new Date(left.closesAt).getTime() - new Date(right.closesAt).getTime());
   const nearestBenefitWindow = openBenefitWindows[0];
+  const nearestBenefitWindowDays = daysUntilInstant(
+    nearestBenefitWindow?.closesAt,
+    overview.generatedAt
+  );
   const activeJourney = [...overview.journeys]
     .filter((journey) => !['COMPLETED', 'CANCELLED'].includes(journey.status))
     .sort((left, right) =>
@@ -440,9 +421,7 @@ export function HcmHome() {
             description: t('home.needsAttention.benefitWindow.description', {
               name: nearestBenefitWindow.name,
             }),
-            value: t('home.values.dDay', {
-              value: daysUntilInstant(nearestBenefitWindow.closesAt, overview.generatedAt) ?? 0,
-            }),
+            value: t('home.values.dDay', { value: nearestBenefitWindowDays ?? 0 }),
             actionLabel: t('home.needsAttention.reviewEnrollment'),
             route: '/hr/benefits',
             priority: 'attention' as const,
@@ -521,7 +500,7 @@ export function HcmHome() {
     homeMode === 'team'
       ? !domainAvailable('TEAM')
       : !domainAvailable('TIME') || !domainAvailable('BENEFITS') || !domainAvailable('TALENT');
-  const personalTools: ToolLink[] = [
+  const personalTools: HcmHomeToolLink[] = [
     {
       id: 'time',
       icon: Clock3,
@@ -558,7 +537,7 @@ export function HcmHome() {
       route: '/hr/directory',
     },
   ];
-  const teamTools: ToolLink[] = [
+  const teamTools: HcmHomeToolLink[] = [
     {
       id: 'team',
       icon: UsersRound,
@@ -587,11 +566,7 @@ export function HcmHome() {
   const tools = homeMode === 'team' ? teamTools : personalTools;
 
   const timeStatus = currentTime?.status ?? 'UNAVAILABLE';
-  const timeStages: Array<{
-    label: string;
-    detail: string;
-    state: 'completed' | 'current' | 'upcoming';
-  }> = [
+  const timeStages: HcmHomeTimeStage[] = [
     {
       label: t('home.rhythm.time.record'),
       detail: currentTime
@@ -666,411 +641,37 @@ export function HcmHome() {
     </Stack>
   );
 
-  const renderWidget = (widgetKey: HcmHomeWidgetKey, size: HomeWidgetSize) => {
-    switch (widgetKey) {
-      case 'quick-actions':
-        return (
-          <Box component="section" aria-labelledby="hcm-tools-title">
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
-              justifyContent="space-between"
-              gap={1}
-              sx={{ mb: 1.25 }}
-            >
-              <Box>
-                <Typography id="hcm-tools-title" component="h2" variant="h6" fontWeight={800}>
-                  {t('home.tools.title')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.2 }}>
-                  {t('home.tools.meta')}
-                </Typography>
-              </Box>
-              <Typography variant="caption" color="text.secondary">
-                {t('home.tools.count', { count: tools.length })}
-              </Typography>
-            </Stack>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  sm: 'repeat(2, minmax(0, 1fr))',
-                  lg: size === 'medium' ? 'repeat(2, minmax(0, 1fr))' : 'repeat(3, 1fr)',
-                },
-                gap: 0.8,
-              }}
-            >
-              {tools.map((tool) => (
-                <HcmToolLink
-                  key={tool.id}
-                  icon={tool.icon}
-                  label={tool.label}
-                  description={tool.description}
-                  badge={tool.badge}
-                  onClick={() => navigate(tool.route)}
-                />
-              ))}
-            </Box>
-          </Box>
-        );
-      case 'people-signals':
-        return (
-          <Box id="hcm-rhythm" tabIndex={-1} sx={{ scrollMarginTop: 16 }}>
-            <HcmSectionSurface
-              eyebrow={t(`home.rhythm.${homeMode}.eyebrow`)}
-              title={t(`home.rhythm.${homeMode}.title`)}
-              meta={t(`home.rhythm.${homeMode}.meta`)}
-            >
-              <Box sx={{ px: { xs: 1.5, md: 2 }, pb: 2 }}>
-                {homeMode === 'personal' && (
-                  <Stack gap={1.5}>
-                    <Box
-                      sx={(theme) => ({
-                        p: { xs: 1.4, sm: 1.75 },
-                        borderRadius: 1,
-                        bgcolor: alpha(
-                          hcmToneColor.teal,
-                          theme.palette.mode === 'dark' ? 0.1 : 0.035
-                        ),
-                      })}
-                    >
-                      <Stack
-                        direction={{ xs: 'column', sm: 'row' }}
-                        alignItems={{ xs: 'flex-start', sm: 'center' }}
-                        justifyContent="space-between"
-                        gap={1.25}
-                        sx={{ mb: 1.5 }}
-                      >
-                        <Box>
-                          <Typography variant="body2" fontWeight={800}>
-                            {t('home.rhythm.time.title')}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {currentTime
-                              ? t('home.rhythm.time.period', {
-                                  start: formatDate(currentTime.periodStart, {
-                                    dateStyle: 'medium',
-                                  }),
-                                  end: formatDate(currentTime.periodEnd, { dateStyle: 'medium' }),
-                                })
-                              : t('home.rhythm.time.noCard')}
-                          </Typography>
-                        </Box>
-                        <ActionButton
-                          intent="quiet"
-                          size="small"
-                          endIcon={<ArrowRight size={15} />}
-                          onClick={() => navigate('/hr/time')}
-                        >
-                          {t('home.rhythm.time.open')}
-                        </ActionButton>
-                      </Stack>
-                      <HcmStageRail label={t('home.rhythm.time.title')} stages={timeStages} />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                          xs: '1fr',
-                          sm: 'repeat(2, minmax(0, 1fr))',
-                          xl: size === 'full' ? 'repeat(4, minmax(0, 1fr))' : 'repeat(2, 1fr)',
-                        },
-                        gap: 0.8,
-                      }}
-                    >
-                      <HcmRhythmMetric
-                        icon={CalendarDays}
-                        label={t('home.rhythm.leave.label')}
-                        value={
-                          !domainAvailable('ABSENCE') || availableLeaveDays === null
-                            ? t('home.states.unavailable')
-                            : t('home.values.days', { value: availableLeaveDays })
-                        }
-                        detail={
-                          domainAvailable('ABSENCE') && primaryLeaveBalance
-                            ? t('home.rhythm.leave.detail', {
-                                used: usedLeaveDays,
-                                pending:
-                                  standardDayMinutes === null
-                                    ? t('home.states.unavailable')
-                                    : Math.round(
-                                        (primaryLeaveBalance.pendingMinutes / standardDayMinutes) *
-                                          10
-                                      ) / 10,
-                              })
-                            : t('home.rhythm.leave.noPlan')
-                        }
-                        progress={
-                          domainAvailable('ABSENCE') && primaryLeaveBalance?.grantedMinutes
-                            ? (primaryLeaveBalance.usedMinutes /
-                                primaryLeaveBalance.grantedMinutes) *
-                              100
-                            : undefined
-                        }
-                        onClick={() => navigate('/hr/absence')}
-                      />
-                      <HcmRhythmMetric
-                        icon={ReceiptText}
-                        label={t('home.rhythm.pay.label')}
-                        value={
-                          !domainAvailable('PAY') || payDaysRemaining === null
-                            ? t('home.states.unavailable')
-                            : t('home.values.dDay', { value: payDaysRemaining })
-                        }
-                        detail={
-                          domainAvailable('PAY') && overview.pay
-                            ? t('home.rhythm.pay.scheduleDetail')
-                            : t('home.rhythm.pay.noCycle')
-                        }
-                        onClick={() => navigate('/hr/pay')}
-                      />
-                      <HcmRhythmMetric
-                        icon={HeartPulse}
-                        label={t('home.rhythm.benefits.label')}
-                        value={
-                          domainAvailable('BENEFITS')
-                            ? t('home.values.count', { value: overview.activeBenefitCount })
-                            : t('home.states.unavailable')
-                        }
-                        detail={
-                          !domainAvailable('BENEFITS')
-                            ? t('home.states.unavailable')
-                            : nearestBenefitWindow
-                              ? t('home.rhythm.benefits.window', {
-                                  days:
-                                    daysUntilInstant(
-                                      nearestBenefitWindow.closesAt,
-                                      overview.generatedAt
-                                    ) ?? 0,
-                                })
-                              : t('home.rhythm.benefits.steady')
-                        }
-                        onClick={() => navigate('/hr/benefits')}
-                      />
-                      <HcmRhythmMetric
-                        icon={GraduationCap}
-                        label={t('home.rhythm.journey.label')}
-                        value={
-                          !domainAvailable('TALENT')
-                            ? t('home.states.unavailable')
-                            : activeJourney
-                              ? `${activeJourney.progressPercent}%`
-                              : t('home.rhythm.journey.emptyValue')
-                        }
-                        detail={
-                          !domainAvailable('TALENT')
-                            ? t('home.states.unavailable')
-                            : activeJourney
-                              ? t('home.rhythm.journey.detail', {
-                                  name: activeJourney.name,
-                                  days: journeyTargetDays ?? '-',
-                                })
-                              : t('home.rhythm.journey.empty')
-                        }
-                        progress={
-                          domainAvailable('TALENT') ? activeJourney?.progressPercent : undefined
-                        }
-                        onClick={() => navigate('/hr/talent')}
-                      />
-                    </Box>
-                  </Stack>
-                )}
-                {homeMode === 'team' && (
-                  <Box
-                    sx={{
-                      display: 'grid',
-                      gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-                      gap: 0.8,
-                    }}
-                  >
-                    <HcmRhythmMetric
-                      icon={Clock3}
-                      label={t('home.rhythm.team.time')}
-                      value={
-                        !domainAvailable('TEAM') || teamTimePendingCount === null
-                          ? t('home.states.unavailable')
-                          : t('home.values.count', { value: teamTimePendingCount })
-                      }
-                      detail={t('home.rhythm.team.timeDetail')}
-                      onClick={() => navigate('/hr/team/time')}
-                    />
-                    <HcmRhythmMetric
-                      icon={CalendarDays}
-                      label={t('home.rhythm.team.absence')}
-                      value={
-                        !domainAvailable('TEAM') || teamAbsencePendingCount === null
-                          ? t('home.states.unavailable')
-                          : t('home.values.count', { value: teamAbsencePendingCount })
-                      }
-                      detail={t('home.rhythm.team.absenceDetail')}
-                      onClick={() => navigate('/hr/team/absence')}
-                    />
-                    <HcmRhythmMetric
-                      icon={UsersRound}
-                      label={t('home.rhythm.team.people')}
-                      value={t('home.values.people', {
-                        value: overview.employee.directReportCount,
-                      })}
-                      detail={t('home.rhythm.team.peopleDetail')}
-                      onClick={() => navigate('/hr/team')}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </HcmSectionSurface>
-          </Box>
-        );
-      case 'profile':
-        return (
-          <HcmSectionSurface
-            eyebrow={t('home.profile.eyebrow')}
-            title={t('home.profile.title')}
-            meta={t('home.profile.meta')}
-            action={
-              <ActionButton intent="quiet" size="small" onClick={() => navigate('/hr/me')}>
-                {t('home.profile.open')}
-              </ActionButton>
-            }
-          >
-            <Stack gap={1.5} sx={{ px: { xs: 1.5, md: 2 }, pb: 2 }}>
-              <Stack direction="row" alignItems="center" gap={1.25}>
-                <PersonAvatar name={selfDisplayName} size={48} />
-                <Box minWidth={0}>
-                  <Typography fontWeight={800}>{selfDisplayName}</Typography>
-                  <Typography variant="caption" color="text.secondary" display="block">
-                    {overview.employee.businessTitle ||
-                      directoryPerson?.businessTitle ||
-                      auth.user?.jobTitle ||
-                      t('home.profile.titleFallback')}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" display="block">
-                    {organizationName}
-                  </Typography>
-                </Box>
-              </Stack>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: size === 'medium' ? 'repeat(2, minmax(0, 1fr))' : '1fr',
-                  gap: 1,
-                }}
-              >
-                {[
-                  [
-                    t('home.profile.manager'),
-                    overview.employee.managerDisplayName || directoryPerson?.managerDisplayName,
-                  ],
-                  [t('home.profile.location'), directoryPerson?.locationName],
-                  [t('home.profile.email'), directoryPerson?.workEmail || auth.user?.email],
-                ].map(([label, value]) => (
-                  <Box key={label} minWidth={0}>
-                    <Typography variant="caption" color="text.secondary">
-                      {label}
-                    </Typography>
-                    <Typography variant="body2" fontWeight={720} sx={{ mt: 0.15 }}>
-                      {value || t('home.states.unavailable')}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Stack>
-          </HcmSectionSurface>
-        );
-      case 'team':
-        return (
-          <HcmSectionSurface
-            eyebrow={t('home.team.eyebrow')}
-            title={t('home.team.title')}
-            meta={t('home.team.meta', {
-              count: overview.employee.directReportCount,
-            })}
-            action={
-              <ActionButton intent="quiet" size="small" onClick={() => navigate('/hr/team')}>
-                {t('home.team.open')}
-              </ActionButton>
-            }
-          >
-            {teamChart.isLoading ? (
-              <Stack
-                gap={0.8}
-                role="status"
-                aria-live="polite"
-                aria-label={t('domains.loading')}
-                sx={{ px: { xs: 1.5, md: 2 }, pb: 2 }}
-              >
-                <Skeleton variant="rounded" height={52} />
-                <Skeleton variant="rounded" height={52} />
-              </Stack>
-            ) : teamChart.isError ? (
-              <Stack alignItems="center" gap={1} role="alert" sx={{ pb: 2 }}>
-                <EmptyState
-                  size="compact"
-                  title={t('home.team.loadErrorTitle')}
-                  description={t('home.team.loadErrorDescription')}
-                />
-                <ActionButton
-                  intent="secondary"
-                  size="small"
-                  startIcon={<RefreshCw size={15} />}
-                  onClick={() => void teamChart.refetch()}
-                >
-                  {t('common.retry')}
-                </ActionButton>
-              </Stack>
-            ) : directReports.length ? (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: {
-                    xs: '1fr',
-                    md: size === 'medium' ? '1fr' : 'repeat(2, minmax(0, 1fr))',
-                  },
-                  gap: 0.7,
-                  px: { xs: 1.5, md: 2 },
-                  pb: 2,
-                }}
-              >
-                {directReports.slice(0, size === 'medium' ? 4 : 6).map((report) => (
-                  <Stack
-                    key={report.personId}
-                    direction="row"
-                    alignItems="center"
-                    gap={1}
-                    sx={{ px: 1, py: 0.9, minWidth: 0, borderBottom: 1, borderColor: 'divider' }}
-                  >
-                    <PersonAvatar name={report.displayName} size={36} />
-                    <Box minWidth={0}>
-                      <Typography
-                        variant="body2"
-                        fontWeight={760}
-                        sx={{ overflowWrap: 'anywhere' }}
-                      >
-                        {report.displayName}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        display="block"
-                        sx={{ overflowWrap: 'anywhere' }}
-                      >
-                        {report.businessTitle || t('home.profile.titleFallback')}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                ))}
-              </Box>
-            ) : (
-              <EmptyState
-                size="compact"
-                title={t('home.team.emptyTitle')}
-                description={t('home.team.emptyDescription')}
-              />
-            )}
-          </HcmSectionSurface>
-        );
-    }
-  };
+  const renderWidget = (widgetKey: HcmHomeWidgetKey, size: HomeWidgetSize) => (
+    <HcmHomeWidgetContent
+      widgetKey={widgetKey}
+      size={size}
+      homeMode={homeMode}
+      tools={tools}
+      overview={overview}
+      currentTime={currentTime}
+      timeStages={timeStages}
+      domainAvailable={domainAvailable}
+      availableLeaveDays={availableLeaveDays}
+      usedLeaveDays={usedLeaveDays}
+      standardDayMinutes={standardDayMinutes}
+      primaryLeaveBalance={primaryLeaveBalance}
+      payDaysRemaining={payDaysRemaining}
+      nearestBenefitWindow={nearestBenefitWindow}
+      nearestBenefitWindowDays={nearestBenefitWindowDays}
+      activeJourney={activeJourney}
+      journeyTargetDays={journeyTargetDays}
+      selfDisplayName={selfDisplayName}
+      businessTitle={overview.employee.businessTitle || auth.user?.jobTitle}
+      organizationName={organizationName}
+      email={auth.user?.email}
+      teamTimePendingCount={teamTimePendingCount}
+      teamAbsencePendingCount={teamAbsencePendingCount}
+      directReports={directReports}
+      teamLoading={teamChart.isLoading}
+      teamError={teamChart.isError}
+      onRetryTeam={() => void teamChart.refetch()}
+    />
+  );
 
   return (
     <PageCanvas>
@@ -1144,12 +745,7 @@ export function HcmHome() {
             {modeSummary}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ mt: 0.65, display: 'block' }}>
-            {[
-              overview.employee.businessTitle ||
-                directoryPerson?.businessTitle ||
-                auth.user?.jobTitle,
-              organizationName,
-            ]
+            {[overview.employee.businessTitle || auth.user?.jobTitle, organizationName]
               .filter(Boolean)
               .join(' · ')}
           </Typography>

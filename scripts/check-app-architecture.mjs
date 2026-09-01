@@ -9,6 +9,36 @@ const routeCompositionPath = path.join(root, 'deploy/nginx/dwp-product-routes.co
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const failures = [];
 
+function collectProductionSourceFiles(entryPath) {
+  if (!fs.existsSync(entryPath)) return [];
+  const stat = fs.statSync(entryPath);
+  if (stat.isFile()) return [entryPath];
+  return fs.readdirSync(entryPath, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(entryPath, entry.name);
+    if (entry.isDirectory()) return collectProductionSourceFiles(absolute);
+    if (!/\.[jt]sx?$/.test(entry.name) || /\.(?:test|spec|stories)\.[jt]sx?$/.test(entry.name)) {
+      return [];
+    }
+    return [absolute];
+  });
+}
+
+const shellCriticalSources = [
+  path.join(root, 'apps/dwp/src/main.tsx'),
+  path.join(root, 'apps/dwp/src/features/shell'),
+  path.join(root, 'apps/dwp/src/layouts'),
+  path.join(root, 'apps/dwp/src/routes'),
+].flatMap(collectProductionSourceFiles);
+
+for (const file of shellCriticalSources) {
+  const source = fs.readFileSync(file, 'utf8');
+  if (/['"]@dwp-frontend\/design-system['"]/.test(source)) {
+    failures.push(
+      `${path.relative(root, file)} imports the design-system root barrel from the initial shell graph; use a supported focused entry point.`
+    );
+  }
+}
+
 if (manifest.schemaVersion !== 1) failures.push('Unsupported frontend app manifest version.');
 if (manifest.composition !== 'same-origin-route') {
   failures.push('Frontend applications must use same-origin route composition.');

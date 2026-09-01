@@ -4,7 +4,7 @@
   "generatedFrom": {
     "backend": {
       "repository": "https://github.com/choijoonbin/dwp-backend",
-      "revision": "cf0038088af414484a03647ec8080060191fb43c"
+      "revision": "373d233e4bcc350d454c49d1e5cdeef2b62a618f"
     },
     "authorizationBundle": {
       "artifact": "product-surfaces-v1.bundle-v4.json",

@@ -66,8 +66,6 @@ export const MESSAGING_NAVIGATION: readonly MessagingNavigationGroup[] = [
   },
 ];
 
-export const MESSAGING_DEFAULT_PATH = '/messages/home';
-
 export function findMessagingNavigationItem(pathname: string): MessagingNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
   return MESSAGING_NAVIGATION.flatMap((group) => group.items).find(

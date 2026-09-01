@@ -344,6 +344,11 @@
         "configureResources": "공간 추가",
         "openType": "{{type}} {{available}}개가 물리적으로 비어 있고 {{bookable}}개가 예약 1차 확인을 통과함, 공간 찾기 열기",
         "pulseCount": "물리적 공석 {{open}} · 1차 확인 통과 {{bookable}}",
+        "locationMetric": "공간 기준",
+        "windowMetric": "확인 범위",
+        "nextHour": "향후 60분",
+        "physicalOpenMetric": "물리적 공석",
+        "initialChecksMetric": "예약 1차 확인 통과",
         "bookableCount": "예약 1차 확인 통과 {{count}}개",
         "accessible": "접근성 지원 및 예약 1차 확인 통과 {{count}}개",
         "emptyTitle": "향후 60분 동안 물리적으로 비어 있는 공간이 없습니다",
@@ -354,12 +359,15 @@
         "description": "공간 예약과 회의·집중 시간을 함께 보며 한 주의 균형을 확인합니다.",
         "meetings": "회의",
         "focus": "집중",
+        "minutesShort": "{{count}}분",
         "workloadLabel": "회의 {{meetingMinutes}}분, 집중 {{focusMinutes}}분",
         "today": "오늘",
         "reservations": "공간 예약 {{count}}건",
         "noReservation": "공간 예약 없음",
         "partial": "일부 예약 소스가 연결되지 않아 확인된 활동만 표시합니다.",
-        "unverified": "예약 상태를 모두 확인하지 못했습니다"
+        "unverified": "예약 상태를 모두 확인하지 못했습니다",
+        "emptyTitle": "이번 주에 계획된 공간 활동이 없습니다",
+        "emptyDescription": "회의나 집중 시간이 생기면 요일별 업무 리듬을 이곳에서 비교할 수 있습니다."
       },
       "attention": {
         "title": "확인하면 좋은 항목",

@@ -116,13 +116,6 @@ export function notificationMatchesView(item: NotificationItem, view: Notificati
   return true;
 }
 
-export function removeItemsOutsideView(
-  items: readonly NotificationItem[],
-  view: NotificationView
-): NotificationItem[] {
-  return items.filter((item) => notificationMatchesView(item, view));
-}
-
 export function defaultSnoozeTime(hours = 4): string {
   return new Date(Date.now() + hours * 60 * 60 * 1_000).toISOString();
 }

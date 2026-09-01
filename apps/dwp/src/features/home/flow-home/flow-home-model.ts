@@ -39,6 +39,7 @@ export type FlowSignal = Readonly<{
   generatedAt: string;
   route: string;
   series?: readonly CalendarDayLoad[];
+  seriesCurrentDate?: string;
 }>;
 
 export type FlowHomeViewModel = Readonly<{
@@ -272,6 +273,7 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
         generatedAt: overview.calendar.generatedAt,
         route: '/calendar/insights',
         series: calendar.weekLoad,
+        seriesCurrentDate: calendar.date,
       });
     }
   }

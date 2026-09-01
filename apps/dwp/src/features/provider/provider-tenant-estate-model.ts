@@ -49,35 +49,3 @@ export function providerEstateState(
   if (estate?.provisioningTenants || estate?.suspendedTenants) return 'ATTENTION';
   return 'HEALTHY';
 }
-
-export function providerTenantBuiltInViews(labels: {
-  all: string;
-  active: string;
-  onboarding: string;
-}) {
-  const configuration = {
-    q: '',
-    region: 'ALL',
-    tier: 'ALL',
-    isolation: 'ALL',
-    compare: '',
-  };
-  return [
-    {
-      id: 'all-estate',
-      name: labels.all,
-      configuration: { ...configuration, state: 'ALL' },
-      isDefault: true,
-    },
-    {
-      id: 'active-estate',
-      name: labels.active,
-      configuration: { ...configuration, state: 'ACTIVE' },
-    },
-    {
-      id: 'onboarding-estate',
-      name: labels.onboarding,
-      configuration: { ...configuration, state: 'PROVISIONING' },
-    },
-  ];
-}

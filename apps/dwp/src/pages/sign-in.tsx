@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -75,11 +75,10 @@ export default function SignInPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const loginOptionsQuery = useLoginOptionsQuery();
-  const [email, setEmail] = useState(searchParams.get('email') ?? '');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorKey, setErrorKey] = useState<'loginFailed' | null>(null);
+  const submissionInFlight = useRef(false);
 
   const allowLocal = useMemo(
     () => Boolean(loginOptionsQuery.data?.localLoginAvailable),
@@ -90,8 +89,13 @@ export default function SignInPage() {
     allowSso && (!allowLocal || loginOptionsQuery.data?.preferredLoginType === 'SSO')
   );
 
-  const submit = async (event: React.FormEvent) => {
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submissionInFlight.current) return;
+    submissionInFlight.current = true;
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get('email') ?? '').trim();
+    const password = String(formData.get('password') ?? '');
     setErrorKey(null);
     setSubmitting(true);
     try {
@@ -100,6 +104,7 @@ export default function SignInPage() {
     } catch {
       setErrorKey('loginFailed');
     } finally {
+      submissionInFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -111,7 +116,7 @@ export default function SignInPage() {
         aria-label={t('signIn.loadingOptions')}
         sx={{ minHeight: 300, display: 'grid', placeItems: 'center' }}
       >
-        <CircularProgress size={28} />
+        <CircularProgress size={28} aria-hidden="true" />
       </Box>
     );
   }
@@ -121,7 +126,16 @@ export default function SignInPage() {
   }
 
   const localForm = allowLocal ? (
-    <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
+    <Box
+      component="form"
+      id="dwp-sign-in-form"
+      name="dwp-sign-in"
+      method="post"
+      action="/api/auth/login"
+      autoComplete="on"
+      onSubmit={submit}
+      sx={{ display: 'grid', gap: 2.5 }}
+    >
       <FormControl required fullWidth>
         <FormLabel htmlFor="dwp-email" sx={labelSx}>
           {t('signIn.email')}
@@ -134,13 +148,11 @@ export default function SignInPage() {
           hiddenLabel
           type="email"
           inputMode="email"
-          autoFocus={!preferSso}
           autoComplete="username"
           autoCapitalize="none"
           spellCheck={false}
           placeholder={t('signIn.emailPlaceholder')}
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          defaultValue={searchParams.get('email') ?? ''}
           sx={fieldSx}
         />
       </FormControl>
@@ -158,8 +170,6 @@ export default function SignInPage() {
           type={showPassword ? 'text' : 'password'}
           autoComplete="current-password"
           placeholder={t('signIn.passwordPlaceholder')}
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
           sx={fieldSx}
           slotProps={{
             input: {
@@ -197,7 +207,7 @@ export default function SignInPage() {
       >
         {submitting ? (
           <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-            <CircularProgress size={17} color="inherit" />
+            <CircularProgress size={17} color="inherit" aria-hidden="true" />
             {t('signIn.submitting')}
           </Box>
         ) : (

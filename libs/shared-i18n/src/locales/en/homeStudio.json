@@ -63,6 +63,7 @@
     "fields": "Visible information",
     "filterPreset": "Content focus",
     "widgetLabels": {
+      "command-rail": "My action queue",
       "activity": "Work pulse",
       "focus": "My requests",
       "schedule": "Today",

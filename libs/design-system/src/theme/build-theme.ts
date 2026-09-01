@@ -3,7 +3,7 @@ import type {} from '@mui/x-data-grid/themeAugmentation';
 
 import { foundationTokens } from '../foundation';
 
-import type { DensityPreference } from '../appearance';
+import type { DensityPreference } from '../appearance/appearance-policy';
 
 type BuildDwpThemeInput = {
   mode: 'light' | 'dark';

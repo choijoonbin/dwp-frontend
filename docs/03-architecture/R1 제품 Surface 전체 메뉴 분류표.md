@@ -387,7 +387,7 @@ Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Actio
 
 ## 18. 동적 Route와 호환 목록
 
-다음은 정적 186개에 추가하지 않지만 Surface Resolver와 회귀 Test에 포함한다. W0에서는 수기
+다음은 정적 187개에 추가하지 않지만 Surface Resolver와 회귀 Test에 포함한다. W0에서는 수기
 목록을 `Alias/Index/Dynamic Matcher Registry`로 이전하고 문서 Snapshot과 Test를 같은 Registry에서
 생성한다.
 

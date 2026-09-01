@@ -1,15 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Database, X } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  ActionButton,
-  EmptyState,
-  ErrorState,
-  FormDialog,
-  FormField,
-  LoadingState,
-} from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, FormDialog, FormField } from '@dwp-frontend/design-system';
 import { decideHrRequest, decideHrTeamRequest, useToast } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -21,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
+import { HcmQueryState } from '../../components/hcm-query-state';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
 import { useProductSurfaceCapabilityAccess } from '../../components/product-surface-capability-access';
 import { canDiscloseHcmApprovalAction } from './hcm-approval-action-access';
@@ -38,8 +32,16 @@ export function DomainSection({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const titleId = useId();
+  const descriptionId = useId();
   return (
-    <Paper component="section" variant="outlined" sx={{ overflow: 'hidden', minWidth: 0 }}>
+    <Paper
+      component="section"
+      variant="outlined"
+      aria-labelledby={titleId}
+      aria-describedby={description ? descriptionId : undefined}
+      sx={{ overflow: 'hidden', minWidth: 0 }}
+    >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
@@ -48,11 +50,11 @@ export function DomainSection({
         sx={{ px: 2, py: 1.75 }}
       >
         <Box minWidth={0}>
-          <Typography component="h2" variant="subtitle1" fontWeight={760}>
+          <Typography id={titleId} component="h2" variant="subtitle1" fontWeight={760}>
             {title}
           </Typography>
           {description && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography id={descriptionId} variant="caption" color="text.secondary">
               {description}
             </Typography>
           )}
@@ -78,6 +80,7 @@ export function ProgressSignal({
   progress: number;
   tone?: 'primary' | 'success' | 'warning' | 'error';
 }) {
+  const detailId = useId();
   return (
     <Paper variant="outlined" sx={{ p: 2, minWidth: 0 }}>
       <Stack direction="row" alignItems="baseline" justifyContent="space-between" gap={1}>
@@ -90,12 +93,20 @@ export function ProgressSignal({
       </Stack>
       <LinearProgress
         aria-label={label}
+        aria-describedby={detailId}
+        aria-valuetext={`${value}. ${detail}`}
         variant="determinate"
         color={tone}
         value={Math.max(0, Math.min(100, progress))}
         sx={{ mt: 1.5, height: 7, borderRadius: 1 }}
       />
-      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
+      <Typography
+        id={detailId}
+        variant="caption"
+        color="text.secondary"
+        display="block"
+        sx={{ mt: 1 }}
+      >
         {detail}
       </Typography>
     </Paper>
@@ -104,8 +115,12 @@ export function ProgressSignal({
 
 export function ReferenceNotice() {
   const { t } = useTranslation('hcm');
+  const titleId = useId();
   return (
     <Stack
+      component="aside"
+      role="note"
+      aria-labelledby={titleId}
       direction="row"
       alignItems="flex-start"
       gap={1}
@@ -113,7 +128,7 @@ export function ReferenceNotice() {
     >
       <Database size={17} aria-hidden="true" />
       <Box>
-        <Typography variant="body2" fontWeight={700}>
+        <Typography id={titleId} variant="body2" fontWeight={700}>
           {t('domains.reference.title')}
         </Typography>
         <Typography variant="caption" color="text.secondary">
@@ -246,7 +261,10 @@ export function ApprovalQueue({
                         <ActionButton
                           intent="secondary"
                           size="small"
-                          startIcon={<X size={15} />}
+                          startIcon={<X size={15} aria-hidden="true" />}
+                          aria-label={t('domains.approvals.rejectFor', {
+                            name: item.employeeName,
+                          })}
                           onClick={() => setDecision({ item, action: 'REJECT' })}
                         >
                           {t('domains.approvals.reject')}
@@ -254,7 +272,10 @@ export function ApprovalQueue({
                         <ActionButton
                           intent="primary"
                           size="small"
-                          startIcon={<Check size={15} />}
+                          startIcon={<Check size={15} aria-hidden="true" />}
+                          aria-label={t('domains.approvals.approveFor', {
+                            name: item.employeeName,
+                          })}
                           onClick={() => setDecision({ item, action: 'APPROVE' })}
                         >
                           {t('domains.approvals.approve')}
@@ -296,6 +317,7 @@ export function ApprovalQueue({
           multiline
           minRows={3}
           label={t('domains.approvals.note')}
+          supportingText={t('domains.approvals.noteHint')}
           value={note}
           onChange={(event) => setNote(event.target.value)}
           slotProps={{ htmlInput: { maxLength: 1000 } }}
@@ -308,26 +330,22 @@ export function ApprovalQueue({
 export function QueryBoundary({
   loading,
   error,
+  retrying = false,
   onRetry,
   children,
 }: {
   loading: boolean;
-  error: boolean;
+  error: unknown;
+  retrying?: boolean;
   onRetry: () => void;
   children: React.ReactNode;
 }) {
-  const { t } = useTranslation('hcm');
-  if (loading) return <LoadingState size="standard" label={t('domains.loading')} />;
-  if (error) {
-    return (
-      <ErrorState
-        size="standard"
-        title={t('common.loadError')}
-        description={t('domains.loadError')}
-        retryLabel={t('common.retry')}
-        onRetry={onRetry}
-      />
-    );
+  if (loading || error) {
+    return <HcmQueryState loading={loading} error={error} retrying={retrying} onRetry={onRetry} />;
   }
-  return children;
+  return (
+    <Box data-testid="hcm-query-state" data-query-state="ready" minWidth={0}>
+      {children}
+    </Box>
+  );
 }

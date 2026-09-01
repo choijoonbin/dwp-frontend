@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { BadgeCheck, CircleAlert, History, RefreshCw, TrendingUp } from 'lucide-react';
+import { LoadingState } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -34,12 +35,7 @@ export function OrganizationScenarioDecisionPackView({
   const { t } = useTranslation('workforce');
   if (loading) {
     return (
-      <Stack alignItems="center" justifyContent="center" gap={1} sx={{ minHeight: 150 }}>
-        <CircularProgress size={24} />
-        <Typography variant="caption" color="text.secondary">
-          {t('orgChart.scenarios.decision.loading')}
-        </Typography>
-      </Stack>
+      <LoadingState label={t('orgChart.scenarios.decision.loading')} size="compact" embedded />
     );
   }
   if (!decision) return null;
@@ -101,6 +97,8 @@ export function OrganizationScenarioDecisionPackView({
               value={decision.readinessScore}
               size={54}
               thickness={4.5}
+              aria-label={t('orgChart.scenarios.decision.eyebrow')}
+              aria-valuetext={`${decision.readinessScore}%`}
               sx={{ color: decisionColor }}
             />
             <Typography
@@ -129,7 +127,9 @@ export function OrganizationScenarioDecisionPackView({
         <Button
           size="small"
           variant="outlined"
-          startIcon={validating ? <CircularProgress size={13} /> : <RefreshCw size={14} />}
+          startIcon={
+            validating ? <CircularProgress size={13} aria-hidden="true" /> : <RefreshCw size={14} />
+          }
           disabled={!canValidate || validating}
           onClick={onValidate}
           sx={{ color: '#F8FAFC', borderColor: '#60758B', '&:hover': { borderColor: '#AFC1D4' } }}

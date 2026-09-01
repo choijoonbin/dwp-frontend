@@ -6,7 +6,7 @@ import type {
   HomeLaunchpadGroup,
   LocalizedHomeCopy,
 } from './home-experience-api';
-import type { TenantExperiencePreview } from './tenant-experience-preview-api';
+import type { TenantExperiencePreview } from './tenant-experience-preview-model';
 
 const RFC3339 =
   /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(?:Z|[+-](\d{2}):(\d{2}))$/;

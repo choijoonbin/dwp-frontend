@@ -3,7 +3,13 @@ import { describe, expect, it } from 'vitest';
 import type { AppAdminAssignment } from '@dwp-frontend/shared-utils/api/app-governance-api';
 import type { ResourceRoleDTO } from '@dwp-frontend/shared-utils/api/auth-api';
 
-import { resolveManagementWorkbenchEntries } from './app-governance-manager';
+import {
+  browserSessionStorage,
+  clearManagementWorkbenchReturnFocus,
+  hasManagementWorkbenchReturnFocus,
+  rememberManagementWorkbenchReturnFocus,
+  resolveManagementWorkbenchEntries,
+} from './app-governance-manager';
 import {
   canRequestGovernedAssignment,
   governedRequestScopes,
@@ -60,6 +66,55 @@ describe('tenant governance product workbench links', () => {
         },
       ])
     ).toEqual([]);
+  });
+});
+
+describe('tenant governance workbench focus restoration', () => {
+  it('records and consumes the progressive focus marker', () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+      removeItem: (key: string) => values.delete(key),
+    };
+
+    expect(hasManagementWorkbenchReturnFocus(storage)).toBe(false);
+    rememberManagementWorkbenchReturnFocus(storage);
+    expect(hasManagementWorkbenchReturnFocus(storage)).toBe(true);
+    clearManagementWorkbenchReturnFocus(storage);
+    expect(hasManagementWorkbenchReturnFocus(storage)).toBe(false);
+  });
+
+  it('keeps navigation available when browser storage is restricted', () => {
+    const unavailableStorage = {
+      getItem: () => {
+        throw new DOMException('Storage disabled', 'SecurityError');
+      },
+      setItem: () => {
+        throw new DOMException('Storage disabled', 'SecurityError');
+      },
+      removeItem: () => {
+        throw new DOMException('Storage disabled', 'SecurityError');
+      },
+    };
+
+    expect(hasManagementWorkbenchReturnFocus(unavailableStorage)).toBe(false);
+    expect(() => rememberManagementWorkbenchReturnFocus(unavailableStorage)).not.toThrow();
+    expect(() => clearManagementWorkbenchReturnFocus(unavailableStorage)).not.toThrow();
+  });
+
+  it('fails soft when the browser blocks the sessionStorage property itself', () => {
+    const restrictedBrowser = Object.defineProperty({}, 'sessionStorage', {
+      get: () => {
+        throw new DOMException('Storage disabled', 'SecurityError');
+      },
+    }) as Pick<Window, 'sessionStorage'>;
+
+    expect(browserSessionStorage(restrictedBrowser)).toBeUndefined();
+    expect(hasManagementWorkbenchReturnFocus(browserSessionStorage(restrictedBrowser))).toBe(false);
+    expect(() =>
+      rememberManagementWorkbenchReturnFocus(browserSessionStorage(restrictedBrowser))
+    ).not.toThrow();
   });
 });
 

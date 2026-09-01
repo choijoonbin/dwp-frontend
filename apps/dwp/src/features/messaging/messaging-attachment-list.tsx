@@ -64,7 +64,13 @@ export function MessagingAttachmentList({
             key={attachment.attachmentId}
             intent="quiet"
             size="small"
-            startIcon={downloading ? <CircularProgress size={14} /> : <FileText size={15} />}
+            startIcon={
+              downloading ? (
+                <CircularProgress size={14} aria-hidden="true" />
+              ) : (
+                <FileText size={15} />
+              )
+            }
             endIcon={downloading ? undefined : <Download size={14} />}
             disabled={Boolean(downloadingId)}
             onClick={() => void download(attachment)}

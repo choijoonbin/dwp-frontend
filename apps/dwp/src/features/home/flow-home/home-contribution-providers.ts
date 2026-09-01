@@ -845,8 +845,10 @@ export const notificationContributionProvider =
             id: `notification:${appKey}`,
             kind: actionable ? 'RESPONSE' : 'PULSE',
             scope: 'ME',
-            priority: app.urgentUnread > 0 ? 'CRITICAL' : 'HIGH',
-            status: app.urgentUnread > 0 ? 'URGENT' : 'ACTIONABLE',
+            // Actionable and urgent counters can overlap. Do not promote the
+            // full actionable population to critical when only a subset is urgent.
+            priority: actionable ? 'HIGH' : 'CRITICAL',
+            status: actionable ? 'ACTIONABLE' : 'URGENT',
             title: translateContribution(
               context,
               actionable

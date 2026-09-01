@@ -76,7 +76,7 @@ export default function OidcCallbackPage() {
         <Alert severity="error">{t(`callback.${errorKey}`)}</Alert>
       ) : (
         <Box role="status" aria-label={t('callback.processing')}>
-          <CircularProgress />
+          <CircularProgress aria-hidden="true" />
         </Box>
       )}
     </Box>

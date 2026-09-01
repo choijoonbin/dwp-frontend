@@ -608,6 +608,18 @@
   "domains": {
     "loading": "HR 정보를 불러오는 중",
     "loadError": "HR 업무 정보를 불러오지 못했습니다. 권한과 서비스 연결을 확인해 주세요.",
+    "queryState": {
+      "permissionTitle": "이 HR 정보에 안전하게 접근할 수 없습니다",
+      "permissionDescription": "현재 역할·조직 범위 또는 서비스 권한 연결을 확인하지 못했습니다. 접근 정보를 다시 확인하거나 관리자에게 문의해 주세요.",
+      "checkAccess": "접근 정보 다시 확인",
+      "notFoundTitle": "요청한 HR 정보를 찾을 수 없습니다",
+      "notFoundDescription": "기준일이 바뀌었거나 정보가 더 이상 제공되지 않습니다. 최신 상태를 다시 확인해 주세요.",
+      "contextChangedTitle": "접근 범위가 변경되었습니다",
+      "contextChangedDescription": "최신 역할과 조직 범위를 반영하려면 정보를 다시 불러와야 합니다.",
+      "unavailableTitle": "HR 서비스 연결이 지연되고 있습니다",
+      "unavailableDescription": "표시할 데이터를 안전하게 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "reference": "문의 참조: {{reference}}"
+    },
     "teamBoundary": "현재 팀 데이터 경계({{boundary}}) 안의 구성원과 요청만 표시합니다.",
     "names": {
       "TIME": "근태",
@@ -627,6 +639,8 @@
     },
     "status": {
       "OPEN": "작성 중",
+      "SCHEDULED": "예정",
+      "CLOSED": "종료됨",
       "SUBMITTED": "승인 대기",
       "APPROVED": "승인됨",
       "REJECTED": "반려됨",
@@ -644,7 +658,8 @@
       "ASSIGNED": "할당됨",
       "AT_RISK": "주의 필요",
       "CANCELLED": "취소됨",
-      "RESOLVED": "해결됨"
+      "RESOLVED": "해결됨",
+      "PUBLISHED": "게시됨"
     },
     "reference": {
       "title": "참조 데이터가 표시되고 있습니다",
@@ -655,9 +670,12 @@
       "error": "요청 상태가 변경되었거나 처리 권한이 없습니다. 새로 고침 후 다시 확인해 주세요.",
       "approve": "승인",
       "reject": "반려",
+      "approveFor": "{{name}}님의 요청 승인",
+      "rejectFor": "{{name}}님의 요청 반려",
       "approveTitle": "요청 승인",
       "rejectTitle": "요청 반려",
       "note": "결정 사유",
+      "noteHint": "감사 기록에 남을 사유를 3자 이상 입력해 주세요.",
       "emptyTitle": "현재 승인 대기 요청이 없습니다",
       "emptyDescription": "현재 관리 범위에 있는 모든 요청이 처리되었습니다."
     },
@@ -753,9 +771,16 @@
       "notEnrolled": "미가입",
       "plansTitle": "나의 복리후생",
       "plansDescription": "현재 적용되는 혜택과 보장 범위를 확인합니다.",
+      "effectivePeriod": "적용 기간 {{start}} - {{end}}",
+      "current": "현재",
       "reportLifeEvent": "생애사건 신고",
       "emptyTitle": "현재 가입된 혜택이 없습니다",
       "emptyDescription": "자격과 등록 내역이 연결되면 이곳에 표시됩니다.",
+      "windowsTitle": "등록 일정",
+      "windowsDescription": "현재와 예정된 등록 기간을 확인해 신청 시점을 놓치지 않도록 합니다.",
+      "windowPeriod": "{{start}} - {{end}}",
+      "noWindowTitle": "예정된 등록 기간이 없습니다",
+      "noWindowDescription": "새 등록 기간이 확정되면 시작·종료 시각과 함께 표시됩니다.",
       "coverage": {
         "EMPLOYEE": "본인",
         "EMPLOYEE_SPOUSE": "본인과 배우자",
@@ -797,11 +822,14 @@
       "noGoalsDescription": "새 성장 목표가 정렬되면 이곳에 표시됩니다.",
       "learningTitle": "학습",
       "learningDescription": "필수 및 추천 학습의 완료 상태입니다.",
+      "learningSupport": "학습 지원 요청",
       "required": "필수",
       "noLearningTitle": "진행 중인 학습이 없습니다",
       "noLearningDescription": "할당된 학습이 생기면 이곳에 표시됩니다.",
       "journeyTitle": "성장 여정",
       "journeyDescription": "역할 변화와 성장을 위한 연결된 단계입니다.",
+      "noJourneyTitle": "진행 중인 성장 여정이 없습니다",
+      "noJourneyDescription": "입사·직무 전환 또는 성장 여정이 배정되면 단계별 진행 상태가 표시됩니다.",
       "getJourneyHelp": "여정 지원 요청",
       "updateGoalTitle": "목표 진행률 업데이트",
       "progress": "진행률",

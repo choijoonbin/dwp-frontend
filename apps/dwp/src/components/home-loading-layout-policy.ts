@@ -13,11 +13,11 @@ export type HomeLoadingLayout = Readonly<{
   presentation: HomePresentationHint;
   template: HomeLoadingReadTemplate;
   dockItemCount: number;
-  dockPreferredWidth: number;
   dockStacked: boolean;
 }>;
 
 export const HOME_PRESENTATION_HINT_STORAGE_KEY = 'dwp.home.presentation-hint.v1';
+export const HOME_LAUNCHPAD_HINT_STORAGE_KEY = 'dwp.home.launchpad-hint.v1';
 export const HOME_LOADING_LARGE_TEXT_ROOT_PX = 24;
 
 const DEFAULT_PRESENTATION: HomePresentationHint = 'balanced';
@@ -63,6 +63,39 @@ export function writeHomePresentationHint(
   }
 }
 
+export function readHomeLaunchpadGroupItemCounts(
+  storage: HomePresentationHintStorage | null | undefined
+): readonly number[] | null {
+  if (!storage) return null;
+  try {
+    const parsed = JSON.parse(storage.getItem(HOME_LAUNCHPAD_HINT_STORAGE_KEY) ?? 'null');
+    if (!Array.isArray(parsed) || parsed.length < 1 || parsed.length > 8) return null;
+    const counts = parsed.map((value) =>
+      typeof value === 'number' && Number.isFinite(value)
+        ? Math.min(10, Math.max(0, Math.floor(value)))
+        : Number.NaN
+    );
+    return counts.every(Number.isFinite) ? counts : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeHomeLaunchpadGroupItemCounts(
+  storage: HomePresentationHintStorage | null | undefined,
+  counts: readonly number[]
+): void {
+  if (!storage || counts.length < 1 || counts.length > 8) return;
+  try {
+    storage.setItem(
+      HOME_LAUNCHPAD_HINT_STORAGE_KEY,
+      JSON.stringify(counts.map((count) => Math.min(10, Math.max(0, Math.floor(count)))))
+    );
+  } catch {
+    // Storage can be unavailable in hardened or private browser contexts.
+  }
+}
+
 export function resolveHomeLoadingLayout({
   presentation,
   viewportWidth,
@@ -96,16 +129,12 @@ export function resolveHomeLoadingLayout({
           : safePresentation === 'expressive' && safeViewportWidth >= 1200
             ? 10
             : 8;
-  const dockPreferredWidth = Math.min(1120, Math.max(540, 240 + dockItemCount * 78));
-  const dockStacked =
-    safeViewportWidth >= 600 &&
-    (safeViewportWidth < 900 || dockPreferredWidth < 800 || dockItemCount > 10);
+  const dockStacked = safeViewportWidth >= 600;
 
   return {
     presentation: safePresentation,
     template,
     dockItemCount,
-    dockPreferredWidth,
     dockStacked,
   };
 }

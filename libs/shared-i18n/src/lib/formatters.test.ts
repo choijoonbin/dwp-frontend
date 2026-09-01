@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { defaultRegionalPreference, writeRegionalPreference } from '@dwp-frontend/shared-utils';
 
 import {
   formatDate,
   formatNumber,
   formatRelativeTime,
+  resolveSystemTimeZone,
   resolveZonedClock,
   resolveZonedDateKey,
 } from './formatters';
@@ -62,5 +63,19 @@ describe('locale-aware formatters', () => {
       '2026-08-24'
     );
     expect(resolveZonedDateKey('2026-08-24T15:30:00.000Z', 'Invalid/TimeZone')).toBeNull();
+  });
+
+  it('resolves the browser time zone while preserving each product fallback', () => {
+    const resolvedOptions = Intl.DateTimeFormat().resolvedOptions();
+    const resolvedOptionsSpy = vi
+      .spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions')
+      .mockReturnValue({ ...resolvedOptions, timeZone: '' });
+
+    expect(resolveSystemTimeZone()).toBe('');
+    expect(resolveSystemTimeZone('Asia/Seoul')).toBe('Asia/Seoul');
+    expect(resolveSystemTimeZone('UTC')).toBe('UTC');
+
+    resolvedOptionsSpy.mockReturnValue({ ...resolvedOptions, timeZone: 'America/Los_Angeles' });
+    expect(resolveSystemTimeZone('Asia/Seoul')).toBe('America/Los_Angeles');
   });
 });

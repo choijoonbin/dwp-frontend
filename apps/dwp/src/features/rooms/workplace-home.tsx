@@ -9,7 +9,11 @@ import {
   PageCanvas,
   ResourcePageHeader,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import {
+  formatDate,
+  resolveSupportedLocale,
+  resolveSystemTimeZone,
+} from '@dwp-frontend/shared-i18n';
 import {
   checkInWorkplaceBooking,
   getCalendarHome,
@@ -42,8 +46,8 @@ import {
   WorkplaceDayBrief,
   WorkplaceReadySpaces,
   WorkplaceTodayFlow,
-  WorkplaceWeekRhythm,
 } from './workplace-home-sections';
+import { WorkplaceWeekRhythm } from './workplace-week-rhythm';
 
 import type { WorkplaceBooking, WorkplaceExploreResponse } from '@dwp-frontend/shared-utils';
 
@@ -80,10 +84,7 @@ export function WorkplaceHome() {
   const [submittedCheckInAction, setSubmittedCheckInAction] =
     useState<SubmittedCheckInAction | null>(null);
   activeIdentityRef.current = identityKey;
-  const browserTimeZone = useMemo(
-    () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul',
-    []
-  );
+  const browserTimeZone = useMemo(() => resolveSystemTimeZone('Asia/Seoul'), []);
   const exploreQuery = useQuery({
     queryKey: ['workplace', 'home', identityKey, 'explore'],
     queryFn: async (): Promise<WorkplaceHomeExploreSnapshot> => {
@@ -583,16 +584,10 @@ export function WorkplaceHome() {
           onRefresh={() => void exploreQuery.refetch()}
         />
       </Box>
-      <Box
-        sx={{
-          mt: 3,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.45fr) minmax(320px, 0.85fr)' },
-          gap: 3,
-          alignItems: 'stretch',
-        }}
-      >
+      <Box sx={{ mt: 3 }}>
         <WorkplaceWeekRhythm week={model.week} complete={agendaComplete} />
+      </Box>
+      <Box sx={{ mt: 3 }}>
         <WorkplaceAttentionSection items={model.attention} complete={attentionComplete} />
       </Box>
     </PageCanvas>

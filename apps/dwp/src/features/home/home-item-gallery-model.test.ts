@@ -104,7 +104,7 @@ describe('home item gallery model', () => {
     ]);
   });
 
-  it('keeps entitled widgets discoverable and excludes the managed Flow command rail', () => {
+  it('keeps every entitled personal Flow widget discoverable', () => {
     const preferences = defaultHomeWidgets(HOME_WIDGET_KEYS).map((preference) =>
       preference.widgetKey === 'schedule' ? { ...preference, visible: false } : preference
     );
@@ -116,11 +116,24 @@ describe('home item gallery model', () => {
     );
 
     expect(items.map(({ widget, state }) => [widget.key, state])).toEqual([
+      ['command-rail', 'ADDED'],
       ['daily-brief', 'ADDED'],
       ['focus', 'ADDED'],
       ['schedule', 'RESTORE'],
       ['activity', 'ADDED'],
     ]);
+  });
+
+  it('restores the personal Flow action queue after the user hides it', () => {
+    const preferences = defaultHomeWidgets(HOME_WIDGET_KEYS).map((preference) =>
+      preference.widgetKey === 'command-rail' ? { ...preference, visible: false } : preference
+    );
+
+    const items = resolveHomeWidgetGalleryItems(HOME_WIDGET_KEYS, preferences, APPS, true);
+
+    expect(items.find(({ widget }) => widget.key === 'command-rail')).toMatchObject({
+      state: 'RESTORE',
+    });
   });
 
   it('does not disclose a widget whose owning app is not entitled', () => {

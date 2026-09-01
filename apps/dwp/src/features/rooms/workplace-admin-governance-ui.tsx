@@ -1,10 +1,9 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ActionButton, EmptyState } from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, LoadingState } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -68,12 +67,18 @@ export function GovernanceQueryError({ retry }: { retry: () => void }) {
 }
 
 export function GovernanceLoading({ rows = 4 }: { rows?: number }) {
+  const { t } = useTranslation('common');
   return (
-    <Stack spacing={1} sx={{ p: 2 }} aria-busy="true">
-      {Array.from({ length: rows }, (_, index) => (
-        <Skeleton key={index} height={54} />
-      ))}
-    </Stack>
+    <LoadingState
+      label={t('labels.loading')}
+      variant="skeleton"
+      size="compact"
+      embedded
+      skeletonRows={rows}
+      skeletonHeight={54}
+      skeletonGap={1}
+      skeletonPadding={2}
+    />
   );
 }
 

@@ -209,7 +209,7 @@ export function ProviderOverview() {
   };
 
   return (
-    <Stack gap={2.5} sx={{ width: 1, maxWidth: 1600, mx: 'auto' }}>
+    <Stack data-testid="provider-overview-canvas" gap={2.5} sx={{ width: 1, minWidth: 0 }}>
       <OperationalContextBar
         label={t('command.context.label')}
         items={[

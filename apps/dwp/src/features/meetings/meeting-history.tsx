@@ -15,13 +15,14 @@ import { useSearchParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import { formatMeetingDateTime, MeetingPageHeading } from './meeting-components';
 import { MeetingRecapDetail } from './meeting-recap-detail';
+import { meetingListSurface } from './meeting-visual-system';
 
 export function MeetingHistory() {
   const { t, i18n } = useTranslation('meetings');
@@ -37,7 +38,7 @@ export function MeetingHistory() {
 
   if (selectedMeetingId) {
     return (
-      <PageCanvas>
+      <PageCanvas mode="focus">
         <MeetingRecapDetail
           meetingId={selectedMeetingId}
           onClose={() => {
@@ -51,13 +52,13 @@ export function MeetingHistory() {
   }
 
   return (
-    <PageCanvas>
+    <PageCanvas mode="focus">
       <MeetingPageHeading
         eyebrow={t('history.eyebrow')}
         title={t('history.title')}
         description={t('history.description')}
       />
-      <Alert severity="info" icon={<FileClock size={19} />} sx={{ mb: 2 }}>
+      <Alert severity="info" icon={<FileClock size={19} />} sx={{ mb: 2.5, borderRadius: 2.5 }}>
         {t('history.recordingGovernance')}
       </Alert>
 
@@ -72,26 +73,37 @@ export function MeetingHistory() {
         />
       ) : query.data.items.length ? (
         <>
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
-            }}
-          >
-            {query.data.items.map((meeting, index) => (
+          <Box sx={(theme) => meetingListSurface(theme)}>
+            {query.data.items.map((meeting) => (
               <Box key={meeting.meetingId}>
-                {index > 0 && <Divider />}
                 <Stack
                   direction={{ xs: 'column', md: 'row' }}
                   alignItems={{ xs: 'flex-start', md: 'center' }}
                   gap={2}
-                  sx={{ p: 2 }}
+                  sx={{
+                    p: { xs: 1.75, sm: 2.25 },
+                    transition: 'background-color 160ms ease',
+                    '&:hover': { bgcolor: 'action.hover' },
+                    '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                  }}
                 >
+                  <Box
+                    aria-hidden="true"
+                    sx={{
+                      display: 'grid',
+                      width: 44,
+                      height: 44,
+                      flex: '0 0 auto',
+                      placeItems: 'center',
+                      borderRadius: 2,
+                      color: 'primary.main',
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.09),
+                    }}
+                  >
+                    <FileClock size={20} />
+                  </Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography component="h2" variant="subtitle1" fontWeight={800}>
+                    <Typography component="h2" variant="subtitle1" fontWeight={750}>
                       {meeting.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>

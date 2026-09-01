@@ -28,6 +28,13 @@ function resolve(overrides: Partial<Parameters<typeof resolveFlowHomeReadLayout>
 
 describe('Flow Home read layout', () => {
   it('activates the wide support stack only for an eligible expressive read view', () => {
+    expect(sectionsFor().map((section) => section.widgetKey)).toEqual([
+      'action-queue',
+      'today',
+      'response-hub',
+      'request-tracker',
+      'role-pulse',
+    ]);
     expect(resolve()).toEqual({
       template: 'adaptive-wide',
       adaptiveEligible: true,
@@ -82,12 +89,15 @@ describe('Flow Home read layout', () => {
   });
 
   it('keeps a saved height eligible but rejects visibility and width changes', () => {
-    const heightOnly = sectionsFor().map((section) => ({ ...section, height: 'tall' as const }));
+    const heightOnly = sectionsFor().map((section) => ({
+      ...section,
+      height: section.widgetKey === 'action-queue' ? ('short' as const) : ('tall' as const),
+    }));
     const hidden = sectionsFor().map((section) =>
-      section.widgetKey === 'role-pulse' ? { ...section, visible: false } : section
+      section.widgetKey === 'action-queue' ? { ...section, visible: false } : section
     );
     const resized = sectionsFor().map((section) =>
-      section.widgetKey === 'today' ? { ...section, size: 'medium' as const } : section
+      section.widgetKey === 'action-queue' ? { ...section, size: 'full' as const } : section
     );
 
     expect(resolve({ sections: heightOnly }).template).toBe('adaptive-wide');
@@ -99,7 +109,7 @@ describe('Flow Home read layout', () => {
     expect(
       resolveFlowHomeReadItemLimit({
         template: 'adaptive-wide',
-        sectionKey: 'action',
+        sectionKey: 'action-queue',
         firstSectionKey: 'today',
       })
     ).toBe(4);

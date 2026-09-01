@@ -409,7 +409,7 @@ export function ProviderOperations() {
   const primaryRecovery = recoveryOperations[0];
 
   return (
-    <Stack gap={2.5} sx={{ width: 1, maxWidth: 1600, mx: 'auto' }}>
+    <Stack data-testid="provider-operations-canvas" gap={2.5} sx={{ width: 1, minWidth: 0 }}>
       <OperationalContextBar
         label={t('operations.context.label')}
         items={[

@@ -99,8 +99,15 @@ export function OrganizationScenarioComparison({
       </Stack>
 
       {comparisonScenarioId && loading && (
-        <Stack direction="row" alignItems="center" justifyContent="center" gap={1} sx={{ py: 4 }}>
-          <CircularProgress size={18} />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          gap={1}
+          role="status"
+          sx={{ py: 4 }}
+        >
+          <CircularProgress size={18} aria-hidden="true" />
           <Typography variant="caption" color="text.secondary">
             {t('orgChart.scenarios.compare.loading')}
           </Typography>

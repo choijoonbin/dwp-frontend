@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { MessageSquareReply, Undo2, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
+import { ActionButton, ActionIconButton, LoadingState } from '@dwp-frontend/design-system';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { getApprovalRequestDetail } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
@@ -109,9 +108,7 @@ export function ApprovalRequestDetailDrawer({
           </ActionIconButton>
         </Stack>
         {detail.isLoading && (
-          <Box sx={{ minHeight: 320, display: 'grid', placeItems: 'center' }}>
-            <CircularProgress size={28} />
-          </Box>
+          <LoadingState label={t('common:labels.loading')} size="page" embedded />
         )}
         {detail.isError && (
           <Alert severity="error" sx={{ m: 2 }}>

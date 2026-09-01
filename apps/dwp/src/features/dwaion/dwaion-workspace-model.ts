@@ -4,8 +4,6 @@ export const DWAION_MODE_KEYS = ['brief', 'blockers', 'meeting', 'access'] as co
 
 export type DwaionModeKey = (typeof DWAION_MODE_KEYS)[number];
 
-export const DWAION_SOURCE_TYPES = ['WORK_ITEM', 'MAIL', 'CALENDAR'] as const;
-
 export type DwaionWorkspaceState = 'idle' | 'loading' | 'ready' | 'error';
 
 export function verifiedConversationId(

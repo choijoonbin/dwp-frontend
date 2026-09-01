@@ -53,7 +53,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { alpha } from '@mui/material/styles';
 
-import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import type { GridRowSelectionModel } from '@mui/x-data-grid';
 import type {
   OnboardingPlanRequest,
   ProviderOperation,
@@ -62,6 +62,7 @@ import type {
 
 import { ProviderOnboardingDialog } from './provider-onboarding-dialog';
 import { ProviderOperationDialog } from './provider-operation-dialog';
+import { useProviderTenantColumns } from './provider-tenant-columns';
 import {
   formatProviderDate,
   ProviderError,
@@ -171,72 +172,7 @@ export function ProviderTenants() {
   const onboardingCatalogUnavailable = entitlements.isError || regions.isError;
   const canOnboard = canWrite && onboardingCatalogReady;
 
-  const columns = useMemo<GridColDef<ProviderTenant>[]>(
-    () => [
-      {
-        field: 'displayName',
-        headerName: t('tenants.columns.tenant'),
-        flex: 1.5,
-        minWidth: 220,
-        renderCell: ({ row }) => (
-          <Box sx={{ minWidth: 0, py: 0.5 }}>
-            <Typography variant="body2" fontWeight={700} noWrap>
-              {row.displayName}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {row.tenantKey} / {row.environmentKey}
-            </Typography>
-          </Box>
-        ),
-      },
-      {
-        field: 'organizationName',
-        headerName: t('tenants.columns.organization'),
-        flex: 1,
-        minWidth: 170,
-      },
-      {
-        field: 'serviceTier',
-        headerName: t('tenants.columns.tier'),
-        width: 130,
-        valueFormatter: (value: string) => t(`tiers.${value}`, { defaultValue: value }),
-      },
-      { field: 'dataRegion', headerName: t('tenants.columns.region'), width: 145 },
-      {
-        field: 'isolationModel',
-        headerName: t('tenants.columns.isolation'),
-        width: 120,
-        valueFormatter: (value: string) => t(`isolation.${value}`, { defaultValue: value }),
-      },
-      {
-        field: 'serviceHealth',
-        headerName: t('tenants.columns.health'),
-        width: 125,
-        valueGetter: (_value, row) => providerTenantServiceHealth(row),
-        renderCell: ({ value }) => <ProviderStatusChip state={String(value)} />,
-      },
-      {
-        field: 'subscription',
-        headerName: t('tenants.columns.subscription'),
-        minWidth: 165,
-        flex: 0.75,
-        valueGetter: (_value, row) => row.subscription?.planName ?? t('tenants.noSubscription'),
-      },
-      {
-        field: 'onboardingState',
-        headerName: t('tenants.columns.onboarding'),
-        width: 150,
-        renderCell: ({ value }) => <ProviderStatusChip state={String(value)} />,
-      },
-      {
-        field: 'lifecycleState',
-        headerName: t('tenants.columns.state'),
-        width: 120,
-        renderCell: ({ value }) => <ProviderStatusChip state={String(value)} />,
-      },
-    ],
-    [t]
-  );
+  const columns = useProviderTenantColumns();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['provider'] });
   const preview = async (request: OnboardingPlanRequest) => {
@@ -367,7 +303,7 @@ export function ProviderTenants() {
   ];
 
   return (
-    <Stack gap={2.5} sx={{ width: 1, maxWidth: 1680, mx: 'auto' }}>
+    <Stack data-testid="provider-tenants-canvas" gap={2.5} sx={{ width: 1, minWidth: 0 }}>
       <OperationalContextBar
         label={t('tenants.context.label')}
         items={[
@@ -756,8 +692,14 @@ export function ProviderTenants() {
                 </Alert>
               )}
               {comparisonLoading && (
-                <Stack direction="row" alignItems="center" gap={1} sx={{ px: 1.5, py: 2 }}>
-                  <CircularProgress size={18} />
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  gap={1}
+                  role="status"
+                  sx={{ px: 1.5, py: 2 }}
+                >
+                  <CircularProgress size={18} aria-hidden="true" />
                   <Typography variant="body2">{t('tenants.compare.loading')}</Typography>
                 </Stack>
               )}

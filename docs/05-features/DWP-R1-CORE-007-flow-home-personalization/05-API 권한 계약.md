@@ -196,22 +196,26 @@ POST /api/platform/v1/home-preferences/reset
 `customized=false`일 때 UI는 Reset을 비활성화한다. 저장 행이 없는데 직접 호출한 경우 `404`,
 Version이 다르면 `409`, Tenant가 개인화를 막으면 `403`이다.
 
-### 4.5 Flow 고정 Zone 저장 규칙
+### 4.5 Flow 고정 Zone과 개인 Action Queue 저장 규칙
 
-- `My App Dock`의 Page 위치, 관리형 공지와 `Now`의 위치·표시 여부는 개인 Preference API의
-  저장 대상이 아니다.
+- `My App Dock`의 Page 위치와 관리형 공지는 개인 Preference API의 저장 대상이 아니다.
 - `appLayout`은 Dock 내부 App·Folder·숨김·순서만 저장한다.
 - 관리형 공지는 Home Experience의 `governedZones`와 Revision·Audit API로만 변경한다.
-- Flow Renderer는 기존 `command-rail` Entry를 Classic 호환 Snapshot으로 보존하되 개인 Canvas
-  순서에서는 제외하고 `Now`를 고정 Slot에 합성한다.
-- Flow Editor는 저장할 때 기준 Payload의 `command-rail` Entry를 변경 없이 다시 합성하며, Flow
-  진입만으로 이를 추가·삭제·이동·표시 변경하지 않는다.
+- `command-rail`은 `PERSONAL` Widget이며 Flow Renderer에서 `action-queue`와 1:1로 매핑한다.
+  사용자는 숨김·복원하고 개인 Canvas 순서를 이동할 수 있으며, 크기는 `large|full`,
+  높이는 `short|standard`만 허용한다.
+- Flow Editor는 Action Queue의 표시·순서·크기·높이 변경을 동일한 `command-rail`
+  Entry로 저장하고 다시 읽었을 때 손실 없이 복원한다.
+- Device Layout Overlay API는 기존 저장 Key `command-rail`만 기록한다. Flow 클라이언트
+  Adapter는 화면 별칭 `action-queue`와 저장 Key를 모두 해석한 뒤 단일 `command-rail` 폭
+  설정으로 정규화한다.
 - `zoneOrder`, `fixedZones`, `managedZoneOverrides`, `now.visible` 등 미등록 필드는
   `400 E1001 INVALID_HOME_LAYOUT`로 거부한다.
-- 직접 API로 바꾼 Classic 전용 `command-rail` 값도 Flow `Now`의 위치·표시에는 영향을 주지 않는다.
+- 직접 API로 저장한 유효한 `command-rail` 값도 동일한 개인화 검증을 거쳐 Flow Action Queue에
+  적용된다.
 
-Contract Test는 Flow 편집 전후 정규화 v5 Payload Hash 보존, 고정 Zone 변조 거부, Classic
-Rollback 후 기존 `command-rail` 복원을 포함한다.
+Contract Test는 Action Queue의 숨김·이동·`large|full`·`short|standard` round-trip,
+legacy Device Layout Overlay Key 호환, 고정 Zone 변조 거부와 Classic Rollback 복원을 포함한다.
 
 ## 5. Home Overview 부분 장애 계약
 

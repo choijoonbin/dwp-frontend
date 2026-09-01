@@ -42,6 +42,7 @@ const signals: readonly FlowSignal[] = [
     source: 'calendar',
     generatedAt: '2026-08-27T08:00:00Z',
     route: '/calendar/insights',
+    seriesCurrentDate: '2026-08-25',
     series: [
       {
         date: '2026-08-24',
@@ -58,6 +59,14 @@ const signals: readonly FlowSignal[] = [
         eventCount: 4,
         conflictCount: 1,
         loadPercent: 80,
+      },
+      {
+        date: '2026-08-26',
+        meetingMinutes: 300,
+        focusMinutes: 0,
+        eventCount: 5,
+        conflictCount: 0,
+        loadPercent: 120,
       },
     ],
   },
@@ -148,11 +157,29 @@ describe('RolePulseInsight', () => {
     const markup = renderInsight();
 
     expect(markup).toContain('data-home-role-series="true"');
+    expect(markup).toContain('data-home-role-series-scale="daily-limit-100"');
+    expect(markup.match(/data-home-role-series-current="true"/g)).toHaveLength(1);
+    expect(markup.match(/data-home-role-series-conflict="true"/g)).toHaveLength(1);
+    expect(markup.match(/data-home-role-series-over-limit="true"/g)).toHaveLength(1);
     expect(markup).toContain('<table ');
     expect(markup).toContain('<td>2026-08-24</td>');
     expect(markup).toContain('role="progressbar"');
     expect(markup).toContain('aria-valuenow="15"');
     expect(markup.match(/role="progressbar"/g)).toHaveLength(1);
+  });
+
+  it('explains the current-day KPI and current-week daily-limit chart in visible copy', () => {
+    const markup = renderInsight(signals.filter((signal) => signal.key === 'schedule-load'));
+
+    expect(markup).toContain('flow.signals.scheduleLoadToday');
+    expect(markup).toContain('flow.signals.scheduleLoadContext');
+    expect(markup).toContain('flow.signals.scheduleLoadContextCompact');
+    expect(markup).toContain('flow.signals.weekSeriesLabel');
+    expect(markup).toContain('flow.signals.seriesPoint');
+    expect(markup).toContain('height:40%');
+    expect(markup).toContain('height:80%');
+    expect(markup).toContain('height:100%');
+    expect(markup).not.toContain('height:50%');
   });
 
   it('announces schedule load as a percentage and keeps conflicts as supporting context', () => {
@@ -176,10 +203,15 @@ describe('RolePulseInsight', () => {
     'keeps all four source-backed metrics in the 2 by 2 contract at %s density',
     (density) => {
       const markup = renderInsight(signals, density);
+      const policy = rolePulseLayoutPolicy[density];
 
       expect(markup).toContain(`data-home-role-density="${density}"`);
       expect(markup).toContain('data-home-role-layout="2x2"');
+      expect(markup).toContain(`data-home-role-metric-rail-width="${policy.metricRailWidth}"`);
+      expect(markup).toContain(`data-home-role-metric-rail-height="${policy.metricRailHeight}"`);
       expect(markup.match(/data-home-role-lens=/g)).toHaveLength(4);
+      expect(markup.match(/data-home-role-metric-rail=/g)).toHaveLength(4);
+      expect(markup.match(/data-home-role-unit=/g)).toHaveLength(4);
     }
   );
 

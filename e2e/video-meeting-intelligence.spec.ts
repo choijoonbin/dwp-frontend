@@ -237,6 +237,16 @@ test('host retries one intelligence intent and stale review or publish cannot re
           ? fulfill(route, latest)
           : fulfill(route, { code: 'NOT_FOUND' }, 404)
   );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/${reportId}/reviewer-assignments`,
+    (route) =>
+      fulfill(route, {
+        reportId,
+        reportVersion: typeof latest?.version === 'number' ? latest.version : 0,
+        eligibleParticipants: [],
+        activeGrants: [],
+      })
+  );
   await page.route(`**/api/meetings/v1/meetings/${meetingId}/intelligence/runs`, (route) => {
     createAttempts += 1;
     idempotencyKeys.push(route.request().headers()['idempotency-key'] ?? '');
@@ -374,6 +384,258 @@ test('host retries one intelligence intent and stale review or publish cannot re
     await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     )
+  ).toBeLessThanOrEqual(1);
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+});
+
+test('draft host assigns an independent reviewer and revokes existing review authority at 390px', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockMeetingHost(page);
+
+  const transcript = {
+    artifactId: transcriptId,
+    artifactType: 'TRANSCRIPT',
+    artifactState: 'AVAILABLE',
+    contentType: 'application/json',
+    sizeBytes: 12_480,
+    retentionUntil: '2026-09-27T01:50:00Z',
+    metadata: {},
+    version: 3,
+  };
+  const draft = {
+    reportId,
+    meetingId,
+    runId,
+    state: 'DRAFT',
+    audience: 'PRIVATE_REVIEWERS',
+    schemaVersion: 'meeting-intelligence-v1',
+    retentionUntil: '2026-09-27T01:50:00Z',
+    legalHold: false,
+    approvedAt: null,
+    publishedAt: null,
+    version: 0,
+    canCurrentViewerReview: false,
+    analysis: {
+      executiveSummary: {
+        text: 'The team prepared a staged launch decision for independent review.',
+        citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }],
+      },
+      topics: [],
+      decisions: [],
+      actionItems: [],
+      openQuestions: [],
+      risks: [],
+      conversationClimate: {
+        label: 'INSUFFICIENT_EVIDENCE',
+        signals: ['LOW_TRANSCRIPT_EVIDENCE'],
+        citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }],
+      },
+    },
+    reviews: [],
+  };
+  const eligibleParticipants = [
+    {
+      userId: 42,
+      participantId: '82000000-0000-0000-0000-000000000091',
+      displayName: 'Mina Kim',
+      participantRole: 'ORGANIZER',
+      attendanceState: 'LEFT',
+      assignmentEligible: false,
+      ineligibleReason: 'CURRENT_MANAGER',
+    },
+    {
+      userId: 43,
+      participantId: '82000000-0000-0000-0000-000000000092',
+      displayName: 'Alex Reviewer',
+      participantRole: 'ATTENDEE',
+      attendanceState: 'LEFT',
+      assignmentEligible: true,
+      ineligibleReason: null,
+    },
+    {
+      userId: 44,
+      participantId: '82000000-0000-0000-0000-000000000093',
+      displayName: 'Priya Shah',
+      participantRole: 'ATTENDEE',
+      attendanceState: 'LEFT',
+      assignmentEligible: true,
+      ineligibleReason: null,
+    },
+  ];
+  let activeGrants = [
+    {
+      aclId: '89000000-0000-0000-0000-000000000091',
+      reportId,
+      principalUserId: 43,
+      permission: 'REVIEW',
+      grantedAt: '2026-08-27T02:01:00Z',
+      grantedBy: 42,
+      expiresAt: null,
+      reasonCode: 'HUMAN_REVIEW_ASSIGNED',
+    },
+  ];
+  let assignmentReads = 0;
+
+  await page.route('**/api/meetings/v1/meetings?*', (route) =>
+    fulfill(route, { items: [summary], page: 0, pageSize: 30, total: 1 })
+  );
+  await page.route(`**/api/meetings/v1/meetings/${meetingId}`, (route) =>
+    fulfill(route, {
+      ...summary,
+      guestAccessEnabled: false,
+      provider: 'LIVEKIT',
+      participants: [],
+      artifacts: [transcript],
+      decisions: [],
+      followUpActions: [],
+      recordingAvailable: false,
+      transcriptAvailable: true,
+      aiNotesAvailable: true,
+    })
+  );
+  await page.route(`**/api/meetings/v1/meetings/${meetingId}/content-plan`, (route) =>
+    fulfill(route, {
+      meetingId,
+      planId: '85000000-0000-0000-0000-000000000091',
+      recordingRequested: false,
+      transcriptionRequested: true,
+      aiSummaryRequested: true,
+      e2eeEnabled: false,
+      state: 'READY',
+      blockers: [],
+      dependencies: {
+        egressAvailable: false,
+        storageAvailable: true,
+        kmsAvailable: true,
+        auditAvailable: true,
+        speechToTextAvailable: true,
+        languageModelAvailable: true,
+      },
+      notice: null,
+      consent: { requiredAcknowledgements: 2, receivedAcknowledgements: 2, complete: true },
+      recordingSession: null,
+      version: 8,
+      updatedAt: '2026-08-27T01:55:00Z',
+    })
+  );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/latest`,
+    (route) => fulfill(route, draft)
+  );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/${reportId}/reviewer-assignments`,
+    (route) => {
+      assignmentReads += 1;
+      return fulfill(route, {
+        reportId,
+        reportVersion: 0,
+        eligibleParticipants,
+        activeGrants,
+      });
+    }
+  );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/${reportId}/acl/44`,
+    (route) => {
+      expect(route.request().method()).toBe('PUT');
+      expect(route.request().postDataJSON()).toEqual({
+        expectedReportVersion: 0,
+        permission: 'REVIEW',
+        expiresAt: null,
+        reasonCode: 'HUMAN_REVIEW_ASSIGNED',
+      });
+      const grant = {
+        aclId: '89000000-0000-0000-0000-000000000092',
+        reportId,
+        principalUserId: 44,
+        permission: 'REVIEW',
+        grantedAt: '2026-08-27T02:05:00Z',
+        grantedBy: 42,
+        expiresAt: null,
+        reasonCode: 'HUMAN_REVIEW_ASSIGNED',
+      };
+      activeGrants = [...activeGrants, grant];
+      return fulfill(route, grant);
+    }
+  );
+  await page.route(
+    `**/api/meetings/v1/meetings/${meetingId}/intelligence/reports/${reportId}/acl/43/REVIEW?expectedReportVersion=0`,
+    (route) => {
+      expect(route.request().method()).toBe('DELETE');
+      expect(route.request().postData()).toBeNull();
+      activeGrants = activeGrants.filter((grant) => grant.principalUserId !== 43);
+      return fulfill(route, null);
+    }
+  );
+
+  await page.goto('/meetings/mine');
+  await page.getByRole('button', { name: 'Open meeting recap' }).click();
+  await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
+
+  const reviewerRegion = page.getByRole('region', {
+    name: 'Reviewers and separation of duties',
+  });
+  await expect(reviewerRegion).toBeVisible();
+  await expect(
+    reviewerRegion.getByText(
+      'The person who generated the draft cannot review or manage it. Review authority stays separate from publication authority and every change is audited.'
+    )
+  ).toBeVisible();
+  await expect(reviewerRegion.getByText('Alex Reviewer')).toBeVisible();
+  await expect(reviewerRegion.getByText('Reviewer', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Approve draft' })).toHaveCount(0);
+
+  const reviewerSelect = reviewerRegion.getByRole('combobox', { name: 'Assign reviewer' });
+  await reviewerSelect.click();
+  await expect(page.getByRole('option', { name: /Mina Kim/u })).toHaveCount(0);
+  await page.getByRole('option', { name: 'Priya Shah · Attendee' }).click();
+  const assignButton = reviewerRegion.getByRole('button', { name: 'Assign review' });
+  await expect(assignButton).toBeEnabled();
+  const grantResponse = page.waitForResponse(
+    (response) =>
+      response.url().endsWith(`/reports/${reportId}/acl/44`) && response.status() === 200
+  );
+  await assignButton.click();
+  await grantResponse;
+  await expect.poll(() => assignmentReads).toBeGreaterThanOrEqual(2);
+  await expect(reviewerRegion.getByText('Priya Shah')).toBeVisible();
+  await expect(page.getByText('Review authority assigned.')).toBeVisible();
+
+  const alexReviewer = reviewerRegion.getByRole('listitem').filter({ hasText: 'Alex Reviewer' });
+  const revokeResponse = page.waitForResponse(
+    (response) =>
+      response.url().endsWith(`/reports/${reportId}/acl/43/REVIEW?expectedReportVersion=0`) &&
+      response.status() === 200
+  );
+  await alexReviewer.getByRole('button', { name: 'Revoke' }).click();
+  await revokeResponse;
+  await expect.poll(() => assignmentReads).toBeGreaterThanOrEqual(3);
+  await expect(reviewerRegion.getByText('Alex Reviewer')).toHaveCount(0);
+  await expect(reviewerRegion.getByText('Priya Shah')).toBeVisible();
+  await expect(page.getByText('Review authority revoked.')).toBeVisible();
+
+  const actionTargets = await reviewerRegion.getByRole('button').evaluateAll((buttons) =>
+    buttons.map((button) => {
+      const bounds = button.getBoundingClientRect();
+      return { width: bounds.width, height: bounds.height };
+    })
+  );
+  expect(actionTargets.every(({ width, height }) => width >= 44 && height >= 44)).toBe(true);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    )
+  ).toBeLessThanOrEqual(1);
+  const main = page.locator('#dwp-main-content');
+  expect(
+    await main.evaluate((element) => element.scrollWidth - element.clientWidth)
   ).toBeLessThanOrEqual(1);
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(

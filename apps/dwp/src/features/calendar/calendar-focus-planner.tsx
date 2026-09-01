@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, CalendarPlus, Clock3, Focus, ListTodo, Sparkles, Target } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   getCalendarAvailability,
   getCalendarEvents,
@@ -193,7 +194,7 @@ export function CalendarFocusPlanner() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+  const timeZone = resolveSystemTimeZone('Asia/Seoul');
   const now = useMemo(() => new Date(), []);
   const range = useMemo(() => calendarHorizon(now, 0, 14), [now]);
   const [creating, setCreating] = useState<PlannerCreateState | null>(null);

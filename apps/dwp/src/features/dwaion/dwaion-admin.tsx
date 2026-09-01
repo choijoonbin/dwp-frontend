@@ -396,7 +396,12 @@ function SignalSection({
           </Box>
         ))}
       </Box>
-      <LinearProgress variant="determinate" value={100} sx={{ height: 2, mt: 1 }} />
+      <LinearProgress
+        variant="determinate"
+        value={100}
+        aria-hidden="true"
+        sx={{ height: 2, mt: 1 }}
+      />
     </Box>
   );
 }

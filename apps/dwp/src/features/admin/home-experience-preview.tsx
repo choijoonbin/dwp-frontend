@@ -14,6 +14,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { TenantWorkscape } from '../../components/tenant-workscape';
+import {
+  HOME_LAUNCHPAD_GROUP_ITEM_LIMIT,
+  HOME_LAUNCHPAD_VISIBLE_COLUMNS,
+} from '../../components/workspace-composer/home-launchpad-layout-contract';
 
 import type { HomeContentAlignment, HomeExperience } from '@dwp-frontend/shared-utils';
 
@@ -87,8 +91,57 @@ export function HomeExperiencePreview({
   const dark = theme === 'DARK';
   const textAlign =
     contentAlignment === 'CENTER' ? 'center' : contentAlignment === 'RIGHT' ? 'right' : 'left';
-  const configuredApps = experience.launchpadConfiguration?.placements?.length ?? 0;
-  const visibleApps = Math.min(mobile ? 4 : viewport === 'TABLET' ? 6 : 10, configuredApps);
+  const launchpad = experience.launchpadConfiguration;
+  const configuredApps = launchpad?.placements?.length ?? 0;
+  const previewGroupKeys = (launchpad?.groups ?? [])
+    .filter((group) => group.enabled)
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((group) => group.groupKey);
+  const desktopGroupItemCounts = Array.from(
+    { length: Math.max(1, previewGroupKeys.length) },
+    (_, groupIndex) => {
+      const groupKey = previewGroupKeys[groupIndex];
+      if (!groupKey) return 0;
+      return Math.min(
+        HOME_LAUNCHPAD_GROUP_ITEM_LIMIT,
+        launchpad?.placements.filter((placement) => placement.groupKey === groupKey).length ?? 0
+      );
+    }
+  );
+  const mobileVisibleApps = Math.min(4, configuredApps);
+  const previewGroupItemCounts = mobile
+    ? Array.from(
+        { length: 4 },
+        (_, groupIndex) =>
+          Math.floor(mobileVisibleApps / 4) + (groupIndex < mobileVisibleApps % 4 ? 1 : 0)
+      )
+    : desktopGroupItemCounts;
+  const visibleApps = previewGroupItemCounts.reduce((total, count) => total + count, 0);
+  const previewItemColumns = viewport === 'WIDE' ? HOME_LAUNCHPAD_VISIBLE_COLUMNS : 4;
+  const previewGroupColumns = mobile ? 4 : viewport === 'TABLET' ? 2 : 4;
+  const previewGroupBands = mobile
+    ? []
+    : Array.from(
+        { length: Math.ceil(previewGroupItemCounts.length / previewGroupColumns) },
+        (_, bandIndex) =>
+          previewGroupItemCounts.slice(
+            bandIndex * previewGroupColumns,
+            (bandIndex + 1) * previewGroupColumns
+          )
+      );
+  const previewVirtualHeight = mobile
+    ? dimensions.height
+    : Math.max(
+        dimensions.height,
+        280 +
+          previewGroupBands.reduce(
+            (height, band) =>
+              height +
+              70 +
+              Math.max(1, ...band.map((count) => Math.ceil(count / previewItemColumns))) * 52,
+            0
+          )
+      );
   const previewFrameRef = useRef<HTMLDivElement | null>(null);
   const [previewFrameWidth, setPreviewFrameWidth] = useState(0);
 
@@ -146,11 +199,11 @@ export function HomeExperiencePreview({
         ref={previewFrameRef}
         data-testid="home-experience-preview-frame"
         data-preview-virtual-width={dimensions.width}
-        data-preview-virtual-height={dimensions.height}
+        data-preview-virtual-height={previewVirtualHeight}
         sx={{
           position: 'relative',
           width: 1,
-          aspectRatio: `${dimensions.width} / ${dimensions.height}`,
+          aspectRatio: `${dimensions.width} / ${previewVirtualHeight}`,
           minWidth: 0,
           overflow: 'hidden',
           borderRadius: 2.5,
@@ -164,7 +217,7 @@ export function HomeExperiencePreview({
             insetBlockStart: 0,
             insetInlineStart: 0,
             width: `${dimensions.width}px`,
-            height: `${dimensions.height}px`,
+            height: `${previewVirtualHeight}px`,
             transform: `scale(${previewScale})`,
             transformOrigin: 'top left',
           }}
@@ -256,16 +309,9 @@ export function HomeExperiencePreview({
             <Box
               data-testid="home-experience-preview-dock"
               sx={{
-                width: mobile
-                  ? 1
-                  : `min(100%, ${Math.min(1120, Math.max(540, 240 + visibleApps * 78))}px)`,
+                width: 1,
                 mt: 'auto',
-                alignSelf:
-                  contentAlignment === 'CENTER'
-                    ? 'center'
-                    : contentAlignment === 'RIGHT'
-                      ? 'flex-end'
-                      : 'flex-start',
+                alignSelf: 'stretch',
                 px: 1.5,
                 py: shortCanvas ? 1 : 1.25,
                 borderRadius: 2,
@@ -304,39 +350,91 @@ export function HomeExperiencePreview({
                   sx={{
                     mt: shortCanvas ? 0.5 : 1,
                     display: 'grid',
-                    gridTemplateColumns: `repeat(${mobile ? 4 : visibleApps}, minmax(0, 1fr))`,
+                    gridTemplateColumns: `repeat(${previewGroupColumns}, minmax(0, 1fr))`,
+                    gridAutoRows: mobile ? undefined : '1fr',
                     gap: shortCanvas ? 0.5 : 0.75,
                   }}
                 >
-                  {Array.from({ length: visibleApps }, (_, index) => {
-                    const Icon = APP_ICONS[index % APP_ICONS.length]!;
-                    const iconSize = shortCanvas ? 36 : 38;
-                    return (
-                      <Stack key={index} alignItems="center" gap={shortCanvas ? 0.25 : 0.5}>
-                        <Box
-                          sx={{
-                            width: iconSize,
-                            height: iconSize,
-                            display: 'grid',
-                            placeItems: 'center',
-                            borderRadius: 1.5,
-                            bgcolor: ['#EAF0FF', '#F1ECFF', '#E8F6F5', '#ECF2F8'][index % 4],
-                            color: ['#315FD5', '#7A4FC4', '#087E8B', '#2F5E8A'][index % 4],
-                          }}
-                        >
-                          <Icon size={18} aria-hidden="true" />
-                        </Box>
-                        <Box
-                          sx={{
-                            width: shortCanvas ? 32 : 36,
-                            height: shortCanvas ? 4 : 5,
-                            borderRadius: 99,
-                            bgcolor: 'rgba(248,250,252,0.32)',
-                          }}
-                        />
-                      </Stack>
-                    );
-                  })}
+                  {previewGroupItemCounts.map((itemCount, groupIndex) => (
+                    <Box
+                      key={groupIndex}
+                      data-home-experience-preview-group
+                      sx={{
+                        display: mobile ? 'contents' : 'grid',
+                        gridTemplateRows: mobile ? undefined : 'auto 1fr',
+                        gap: mobile ? 0 : shortCanvas ? 0.5 : 0.75,
+                        minWidth: 0,
+                        height: '100%',
+                        p: mobile ? 0 : shortCanvas ? 0.75 : 1,
+                        border: mobile ? 0 : '1px solid rgba(255,255,255,0.15)',
+                        borderRadius: mobile ? 0 : '10px',
+                        bgcolor: mobile ? 'transparent' : 'rgba(255,255,255,0.035)',
+                        backgroundImage: mobile
+                          ? 'none'
+                          : 'linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012) 62%, rgba(78,165,255,0.035))',
+                        '@media (forced-colors: active)': {
+                          borderColor: 'CanvasText',
+                          bgcolor: mobile ? 'transparent' : 'Canvas',
+                          backgroundImage: 'none',
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: mobile ? 'none' : 'block',
+                          width: `${38 + groupIndex * 6}%`,
+                          height: shortCanvas ? 4 : 5,
+                          borderRadius: 99,
+                          bgcolor: 'rgba(248,250,252,0.32)',
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          display: mobile ? 'contents' : 'grid',
+                          gridTemplateColumns: mobile
+                            ? undefined
+                            : `repeat(${previewItemColumns}, minmax(0, 1fr))`,
+                          alignItems: 'start',
+                          gap: shortCanvas ? 0.5 : 0.75,
+                        }}
+                      >
+                        {Array.from({ length: itemCount }, (_, itemIndex) => {
+                          const index = groupIndex + itemIndex * 4;
+                          const Icon = APP_ICONS[index % APP_ICONS.length]!;
+                          const iconSize = shortCanvas ? 36 : 38;
+                          return (
+                            <Stack
+                              key={itemIndex}
+                              alignItems="center"
+                              gap={shortCanvas ? 0.25 : 0.5}
+                            >
+                              <Box
+                                sx={{
+                                  width: iconSize,
+                                  height: iconSize,
+                                  display: 'grid',
+                                  placeItems: 'center',
+                                  borderRadius: 1.5,
+                                  bgcolor: ['#EAF0FF', '#F1ECFF', '#E8F6F5', '#ECF2F8'][index % 4],
+                                  color: ['#315FD5', '#7A4FC4', '#087E8B', '#2F5E8A'][index % 4],
+                                }}
+                              >
+                                <Icon size={18} aria-hidden="true" />
+                              </Box>
+                              <Box
+                                sx={{
+                                  width: shortCanvas ? 32 : 36,
+                                  height: shortCanvas ? 4 : 5,
+                                  borderRadius: 99,
+                                  bgcolor: 'rgba(248,250,252,0.32)',
+                                }}
+                              />
+                            </Stack>
+                          );
+                        })}
+                      </Box>
+                    </Box>
+                  ))}
                 </Box>
               ) : (
                 <Typography

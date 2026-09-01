@@ -31,20 +31,6 @@ export function useOnlineStatus(): boolean {
   return online;
 }
 
-export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReduced(query.matches);
-    update();
-    query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
-  }, []);
-
-  return reduced;
-}
-
 /**
  * The approved shell transport dispatches a content-free CustomEvent after SSE version
  * reconciliation. The feature never opens an ungoverned transport on its own.

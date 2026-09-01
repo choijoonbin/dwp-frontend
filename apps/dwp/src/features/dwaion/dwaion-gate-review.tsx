@@ -6,12 +6,12 @@ import type {
   DwaionOperationalGateDetail,
 } from '@dwp-frontend/shared-utils';
 import { CheckCircle2, CircleAlert, FileCheck2, History, ShieldCheck } from 'lucide-react';
+import { LoadingState } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -27,11 +27,7 @@ export function DwaionGateReview({ detail, loading = false, error = false }: Pro
   const { t } = useTranslation('work');
 
   if (loading) {
-    return (
-      <Box aria-label={t('dwaionAdmin.gates.review.loading')}>
-        <LinearProgress />
-      </Box>
-    );
+    return <LoadingState label={t('dwaionAdmin.gates.review.loading')} embedded />;
   }
   if (error || !detail) {
     return <Alert severity="error">{t('dwaionAdmin.gates.review.loadError')}</Alert>;

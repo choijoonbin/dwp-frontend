@@ -10,7 +10,7 @@ export type HomeStudioSection =
   'profiles' | 'appearance' | 'content' | 'device' | 'templates' | 'history' | 'ai';
 export type HomeWorkstyleIntent = 'FOCUS_DEADLINES' | 'BALANCE_DAY' | 'REDUCE_NOISE';
 
-const FIXED_WIDGET_KEYS = new Set(['my-app-dock', 'announcements', 'command-rail', 'now']);
+const FIXED_WIDGET_KEYS = new Set(['my-app-dock', 'announcements', 'now']);
 
 export function createHomeViewKey(name: string, occupiedKeys: readonly string[]): string {
   const normalized = name

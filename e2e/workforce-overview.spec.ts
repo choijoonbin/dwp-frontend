@@ -68,7 +68,7 @@ test('workforce overview exposes a retryable boundary when aggregate evidence fa
   await page.goto('/hr/operations');
 
   await expect(
-    page.getByRole('heading', { name: 'Information could not be loaded' })
+    page.getByRole('heading', { name: 'The HR service connection is delayed' })
   ).toBeVisible();
   const failedAttempts = attempts;
   recoveryAllowed = true;

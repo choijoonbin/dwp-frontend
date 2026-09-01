@@ -9,3 +9,4 @@ export * from './actions';
 export * from './dialogs';
 export * from './forms';
 export * from './states';
+export * from './progress-meter';

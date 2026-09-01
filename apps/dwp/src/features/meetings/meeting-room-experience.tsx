@@ -33,6 +33,7 @@ import { createMeetingDepartureSynchronizer } from './meeting-departure-sync';
 import { createMeetingEndSynchronizer } from './meeting-end-sync';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingPreJoin } from './meeting-prejoin';
+import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
 
 const LazyLiveVideoMeetingRoom = lazy(() => import('./live-video-meeting-room'));
 
@@ -383,15 +384,18 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
         }}
       >
         <Box
-          sx={{
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            bgcolor: 'background.paper',
+          sx={(theme) => ({
+            ...meetingSurface(theme, { tone: 'primary' }),
             overflow: 'hidden',
-          }}
+          })}
         >
-          <Box sx={{ p: { xs: 2, md: 3 } }}>
+          <Box
+            sx={{
+              p: { xs: 2.25, md: 3.5 },
+              background: (theme) =>
+                `linear-gradient(145deg, ${theme.palette.action.hover}, transparent 72%)`,
+            }}
+          >
             <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
               <Box sx={{ minWidth: 0 }}>
                 <Typography component="h2" variant="h5" fontWeight={800}>
@@ -410,11 +414,17 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
               {meeting.agenda || t('room.agendaEmpty')}
             </Typography>
           </Box>
-          <Divider />
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
-            gap={2}
-            sx={{ px: { xs: 2, md: 3 }, py: 2 }}
+            gap={{ xs: 1, sm: 2 }}
+            flexWrap="wrap"
+            sx={(theme) => ({
+              ...meetingInsetSurface(theme),
+              mx: { xs: 1.5, md: 2 },
+              my: 1.5,
+              px: { xs: 1.5, md: 2 },
+              py: 1.25,
+            })}
           >
             <Stack direction="row" gap={0.75} alignItems="center">
               <CalendarClock size={16} />

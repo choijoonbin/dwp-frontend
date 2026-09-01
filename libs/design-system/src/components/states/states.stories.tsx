@@ -23,6 +23,16 @@ export const CompleteSet: Story = {
     <Box sx={{ p: 3 }}>
       <LoadingState label="Loading members" variant="skeleton" size="compact" />
       <Divider />
+      <Box sx={{ p: 2 }}>
+        <LoadingState
+          label="Loading calendar workspace"
+          variant="skeleton"
+          embedded
+          skeletonHeights={[126, 360]}
+          skeletonGap={2}
+        />
+      </Box>
+      <Divider />
       <EmptyState
         title="No members found"
         description="Try changing the organization or status filters."
@@ -53,6 +63,7 @@ export const CompleteSet: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('status', { name: 'Loading members' })).toBeVisible();
+    await expect(canvas.getByRole('status', { name: 'Loading calendar workspace' })).toBeVisible();
     await expect(canvas.getByRole('alert')).toHaveTextContent('Members could not be loaded');
     await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();
   },

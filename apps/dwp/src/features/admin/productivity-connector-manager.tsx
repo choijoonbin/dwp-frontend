@@ -38,6 +38,7 @@ import {
   ActionIconButton,
   FormDialog,
   FormField,
+  ProgressMeter,
   SelectField,
 } from '@dwp-frontend/design-system';
 
@@ -45,8 +46,8 @@ import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import LinearProgress from '@mui/material/LinearProgress';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -481,43 +482,45 @@ export function ProductivityConnectorManager() {
             </Box>
             <List disablePadding aria-label={t('productivity.connections.title')}>
               {connectors.map((connector) => (
-                <ListItemButton
-                  key={connector.connectorId}
-                  selected={connector.connectorId === selectedId}
-                  onClick={() => setSelectedId(connector.connectorId)}
-                  sx={{ px: 2, py: 1.5, gap: 1.25, borderBottom: 1, borderColor: 'divider' }}
-                >
-                  <Box
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      display: 'grid',
-                      placeItems: 'center',
-                      borderRadius: 1,
-                      color: 'primary.main',
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    }}
+                <ListItem key={connector.connectorId} disablePadding>
+                  <ListItemButton
+                    selected={connector.connectorId === selectedId}
+                    onClick={() => setSelectedId(connector.connectorId)}
+                    sx={{ px: 2, py: 1.5, gap: 1.25, borderBottom: 1, borderColor: 'divider' }}
                   >
-                    <Cloud size={19} />
-                  </Box>
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography variant="subtitle2" noWrap>
-                      {connector.displayName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" noWrap>
-                      {connector.connectorKey}
-                    </Typography>
-                  </Box>
-                  <Box
-                    aria-label={t(`productivity.health.${connector.healthState}`)}
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      bgcolor: `${healthTone(connector.healthState)}.main`,
-                    }}
-                  />
-                </ListItemButton>
+                    <Box
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        display: 'grid',
+                        placeItems: 'center',
+                        borderRadius: 1,
+                        color: 'primary.main',
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      }}
+                    >
+                      <Cloud size={19} />
+                    </Box>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography variant="subtitle2" noWrap>
+                        {connector.displayName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap>
+                        {connector.connectorKey}
+                      </Typography>
+                    </Box>
+                    <Box
+                      role="img"
+                      aria-label={t(`productivity.health.${connector.healthState}`)}
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: `${healthTone(connector.healthState)}.main`,
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
               ))}
             </List>
           </Box>
@@ -629,24 +632,11 @@ export function ProductivityConnectorManager() {
               >
                 <Stack gap={2.5} sx={{ p: 2.5, borderRight: { md: 1 }, borderColor: 'divider' }}>
                   <Box>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      gap={2}
-                    >
-                      <Typography variant="subtitle2">
-                        {t('productivity.readiness.title')}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {readinessChecks}/4
-                      </Typography>
-                    </Stack>
-                    <LinearProgress
-                      variant="determinate"
+                    <ProgressMeter
+                      label={t('productivity.readiness.title')}
                       value={readinessChecks * 25}
-                      color={readinessChecks === 4 ? 'success' : 'warning'}
-                      sx={{ mt: 1, height: 6, borderRadius: 1 }}
+                      valueLabel={`${readinessChecks}/4`}
+                      tone={readinessChecks === 4 ? 'success' : 'warning'}
                     />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                       {selected.safeErrorCode

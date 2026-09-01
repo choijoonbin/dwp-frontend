@@ -14,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DomainSection, ProgressSignal, QueryBoundary } from './hr-domain-components';
+import { HcmQueryState } from '../../components/hcm-query-state';
 
 import type { ServiceRequestStatus } from '@dwp-frontend/shared-utils';
 
@@ -44,18 +45,9 @@ export function HrServiceHub() {
     () => (catalog.data?.items ?? []).filter((item) => item.categoryKey === 'PEOPLE'),
     [catalog.data?.items]
   );
-  const peopleServiceKeys = useMemo(
-    () => new Set(peopleServices.map((item) => item.serviceKey)),
-    [peopleServices]
-  );
-  const hrRequests = useMemo(
-    () =>
-      (requests.data ?? []).filter(
-        (request) =>
-          peopleServiceKeys.has(request.serviceKey) || request.serviceKey.startsWith('people.')
-      ),
-    [peopleServiceKeys, requests.data]
-  );
+  // The requests endpoint is already constrained by `surface=hcm`; do not make request tracking
+  // depend on the independently loaded catalog or on a legacy `people.` key convention.
+  const hrRequests = requests.data ?? [];
   const openRequests = hrRequests.filter((request) => OPEN_STATUSES.has(request.status));
   const awaitingRequester = hrRequests.filter(
     (request) => request.status === 'AWAITING_REQUESTER'
@@ -63,8 +55,9 @@ export function HrServiceHub() {
 
   return (
     <QueryBoundary
-      loading={catalog.isLoading || requests.isLoading}
-      error={catalog.isError || requests.isError}
+      loading={catalog.isLoading && requests.isLoading}
+      error={catalog.isError && requests.isError ? (catalog.error ?? requests.error) : null}
+      retrying={catalog.isFetching || requests.isFetching}
       onRetry={() => {
         void catalog.refetch();
         void requests.refetch();
@@ -80,23 +73,24 @@ export function HrServiceHub() {
         >
           <ProgressSignal
             label={t('services.metrics.available')}
-            value={String(peopleServices.length)}
+            value={catalog.isError ? '-' : String(peopleServices.length)}
             detail={t('services.metrics.availableDetail')}
-            progress={peopleServices.length ? 100 : 0}
-            tone={peopleServices.length ? 'success' : 'warning'}
+            progress={!catalog.isError && peopleServices.length ? 100 : 0}
+            tone={catalog.isError ? 'error' : peopleServices.length ? 'success' : 'warning'}
           />
           <ProgressSignal
             label={t('services.metrics.open')}
-            value={String(openRequests.length)}
+            value={requests.isError ? '-' : String(openRequests.length)}
             detail={t('services.metrics.openDetail')}
-            progress={Math.min(100, openRequests.length * 20)}
+            progress={requests.isError ? 0 : Math.min(100, openRequests.length * 20)}
+            tone={requests.isError ? 'error' : 'primary'}
           />
           <ProgressSignal
             label={t('services.metrics.awaiting')}
-            value={String(awaitingRequester)}
+            value={requests.isError ? '-' : String(awaitingRequester)}
             detail={t('services.metrics.awaitingDetail')}
-            progress={awaitingRequester ? 100 : 0}
-            tone={awaitingRequester ? 'warning' : 'success'}
+            progress={!requests.isError && awaitingRequester ? 100 : 0}
+            tone={requests.isError ? 'error' : awaitingRequester ? 'warning' : 'success'}
           />
         </Box>
 
@@ -114,7 +108,16 @@ export function HrServiceHub() {
             </ActionButton>
           }
         >
-          {peopleServices.length ? (
+          {catalog.isLoading ? (
+            <HcmQueryState loading size="compact" />
+          ) : catalog.isError ? (
+            <HcmQueryState
+              size="compact"
+              error={catalog.error}
+              retrying={catalog.isFetching}
+              onRetry={() => void catalog.refetch()}
+            />
+          ) : peopleServices.length ? (
             <Box
               sx={{
                 display: 'grid',
@@ -215,7 +218,16 @@ export function HrServiceHub() {
             </ActionButton>
           }
         >
-          {hrRequests.length ? (
+          {requests.isLoading ? (
+            <HcmQueryState loading size="compact" />
+          ) : requests.isError ? (
+            <HcmQueryState
+              size="compact"
+              error={requests.error}
+              retrying={requests.isFetching}
+              onRetry={() => void requests.refetch()}
+            />
+          ) : hrRequests.length ? (
             <Box>
               {hrRequests.slice(0, 6).map((request, index) => (
                 <Box key={request.requestId}>

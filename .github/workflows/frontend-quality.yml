@@ -88,6 +88,9 @@ jobs:
       - name: Lint source and design-system boundaries
         run: corepack yarn lint
 
+      - name: Test source-size, design-system, i18n, and reachability ratchet semantics
+        run: corepack yarn quality-ratchets:test
+
       - name: Check types
         run: corepack yarn typecheck
 
@@ -109,8 +112,14 @@ jobs:
       - name: Run shell contract gates
         run: corepack yarn playwright test e2e/shell-contract.spec.ts --project=chromium
 
+      - name: Run shell behavior and accessibility gates
+        run: corepack yarn playwright test e2e/shell.spec.ts --project=chromium --project=mobile --workers=2
+
       - name: Run responsive and accessibility gates
         run: corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1
+
+      - name: Run design-system Storybook interaction and accessibility gates
+        run: corepack yarn test:storybook --project=chromium --ignore-snapshots
 
       - name: Run Provider control-plane and tenant-boundary gates
         id: provider_e2e
@@ -140,8 +149,11 @@ jobs:
       - name: Run Widget Library feature-off rollback gate
         run: corepack yarn test:e2e:widget-library-off
 
-      - name: Run Flow Home visual regression gates
-        run: corepack yarn playwright test e2e/flow-home-visual.spec.ts --project=chromium --project=mobile --workers=1
+      - name: Run Widget Library and governance gates
+        run: corepack yarn playwright test e2e/widget-catalog.spec.ts e2e/widget-catalog-resilience.spec.ts e2e/widget-governance-surfaces.spec.ts --project=chromium --workers=1 --ignore-snapshots
+
+      - name: Run governed menu route contracts
+        run: corepack yarn playwright test e2e/menu-route-contract.spec.ts --project=chromium --project=mobile --workers=2
 
       - name: Run Workplace booking and administration gates
         run: corepack yarn playwright test e2e/rooms.spec.ts --project=chromium --workers=1
@@ -160,6 +172,49 @@ jobs:
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  visual-baselines:
+    name: Approved macOS pixel baselines
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      YARN_ENABLE_HARDENED_MODE: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime and Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Playwright Chromium
+        run: corepack yarn playwright install chromium
+
+      - name: Run approved design-system Storybook pixel baselines
+        run: corepack yarn test:storybook --project=chromium --project=mobile
+
+      - name: Run approved Darwin visual baselines
+        run: corepack yarn playwright test e2e/visual.spec.ts e2e/shell-visual.spec.ts e2e/menu-visual-baseline.spec.ts e2e/video-meeting-visual-quality.spec.ts e2e/flow-home-visual.spec.ts --project=chromium --project=mobile --workers=2
+
+      - name: Upload visual regression report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: playwright-visual-report-macos
           path: playwright-report/
           retention-days: 14
 

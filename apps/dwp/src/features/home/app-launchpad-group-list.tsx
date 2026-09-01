@@ -4,22 +4,29 @@ import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import Box from '@mui/material/Box';
 
 import { groupTargetId } from './app-launchpad-dnd';
-import { LAUNCHPAD_TILE_HEIGHT } from './app-launchpad-styles';
+import {
+  HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_VISIBLE_COLUMNS,
+  HOME_LAUNCHPAD_VISIBLE_ROWS,
+} from '../../components/workspace-composer/home-launchpad-layout-contract';
+import {
+  LAUNCHPAD_TILE_HEIGHT,
+  LAUNCHPAD_TILE_HEIGHT_CSS,
+  LAUNCHPAD_TILE_WIDTH,
+} from './app-launchpad-styles';
 
 import type { HomeAppGroupId } from '../../components/workspace-composer/app-launchpad-model';
 
-const VISIBLE_COLUMNS = 5;
 const VISIBLE_ROWS = 3;
 const ROW_GAP = 2;
 const GRID_TOP_INSET = 8;
-const HOME_VISIBLE_ROWS = 2;
 const HOME_ROW_GAP = 8;
 const GRID_HEIGHT =
   GRID_TOP_INSET + LAUNCHPAD_TILE_HEIGHT * VISIBLE_ROWS + ROW_GAP * (VISIBLE_ROWS - 1);
 const HOME_GRID_HEIGHT =
   GRID_TOP_INSET +
-  LAUNCHPAD_TILE_HEIGHT * HOME_VISIBLE_ROWS +
-  HOME_ROW_GAP * (HOME_VISIBLE_ROWS - 1);
+  LAUNCHPAD_TILE_HEIGHT * HOME_LAUNCHPAD_VISIBLE_ROWS +
+  HOME_ROW_GAP * (HOME_LAUNCHPAD_VISIBLE_ROWS - 1);
 
 type AppLaunchpadGroupListProps = {
   groupId: HomeAppGroupId;
@@ -61,21 +68,21 @@ export function AppLaunchpadGroupList({
           '--launchpad-tile-width': flow ? '72px' : '100%',
           p: 0,
           pt: `${GRID_TOP_INSET}px`,
-          mt: immersive ? 0.75 : flow ? 0.5 : { xs: 0.75, md: 0.5 },
+          mt: immersive ? 0.75 : flow ? 0 : { xs: 0.75, md: 0.5 },
           mb: 0,
           boxSizing: 'border-box',
           listStyle: 'none',
           display: 'grid',
           gridTemplateColumns: flow
-            ? 'repeat(auto-fill, 72px)'
+            ? `repeat(auto-fill, ${LAUNCHPAD_TILE_WIDTH}px)`
             : immersive
-              ? `repeat(${VISIBLE_COLUMNS}, minmax(0, 1fr))`
+              ? `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`
               : {
                   xs: 'repeat(4, minmax(0, 1fr))',
                   lg: 'repeat(3, minmax(0, 1fr))',
                   xl: 'repeat(5, minmax(0, 1fr))',
                 },
-          gridAutoRows: `${LAUNCHPAD_TILE_HEIGHT}px`,
+          gridAutoRows: flow ? LAUNCHPAD_TILE_HEIGHT_CSS : `${LAUNCHPAD_TILE_HEIGHT}px`,
           justifyItems: immersive ? 'stretch' : 'center',
           justifyContent: flow ? 'start' : 'normal',
           columnGap: flow ? 0.75 : immersive ? 0 : { xs: 0.5, md: 1 },
@@ -91,12 +98,12 @@ export function AppLaunchpadGroupList({
               ? undefined
               : { xs: 'none', md: `${HOME_GRID_HEIGHT}px` },
           minHeight: flow
-            ? LAUNCHPAD_TILE_HEIGHT
+            ? LAUNCHPAD_TILE_HEIGHT_CSS
             : immersive
               ? undefined
               : { xs: LAUNCHPAD_TILE_HEIGHT, md: `${HOME_GRID_HEIGHT}px` },
           alignContent: 'start',
-          overflowX: 'hidden',
+          overflowX: flow ? 'visible' : 'hidden',
           overflowY: flow ? 'visible' : immersive ? 'auto' : { xs: 'visible', md: 'auto' },
           overscrollBehaviorY: 'auto',
           scrollbarGutter: flow ? 'auto' : immersive ? 'stable' : { xs: 'auto', md: 'stable' },
@@ -123,6 +130,11 @@ export function AppLaunchpadGroupList({
             ? { backgroundColor: 'rgba(255,255,255,0.52)' }
             : undefined,
           '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+          [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]: flow
+            ? {
+                gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${LAUNCHPAD_TILE_WIDTH}px)`,
+              }
+            : undefined,
         }}
       >
         {children}

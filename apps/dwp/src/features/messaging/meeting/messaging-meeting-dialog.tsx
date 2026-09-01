@@ -234,8 +234,14 @@ export function MessagingMeetingDialog({
       {credential && choices ? (
         <Suspense
           fallback={
-            <Stack height="100%" alignItems="center" justifyContent="center" spacing={2}>
-              <CircularProgress />
+            <Stack
+              height="100%"
+              alignItems="center"
+              justifyContent="center"
+              spacing={2}
+              role="status"
+            >
+              <CircularProgress aria-hidden="true" />
               <Typography color="common.white">{labels.connecting}</Typography>
             </Stack>
           }
@@ -311,10 +317,10 @@ export function MessagingMeetingDialog({
             </Box>
           ) : (
             <Stack spacing={3}>
-              <Stack spacing={2.5} alignItems="center" textAlign="center">
+              <Stack spacing={2.5} alignItems="center" textAlign="center" role="status">
                 {lobbyState === 'LOADING' ? (
                   <>
-                    <CircularProgress size={32} />
+                    <CircularProgress size={32} aria-hidden="true" />
                     <Typography color="text.secondary">{labels.loading}</Typography>
                   </>
                 ) : lobbyState === 'UNAVAILABLE' ? (

@@ -1,4 +1,4 @@
-import { Activity, CalendarRange, Inbox, ListTodo } from 'lucide-react';
+import { Activity, CalendarRange, Inbox, ListTodo, Zap } from 'lucide-react';
 
 import {
   isWorkspaceHomeWidgetSizeAllowed,
@@ -10,7 +10,8 @@ import {
 } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetDefinition } from '../../../components/workspace-composer/workspace-composer-model';
 
-export type FlowHomeSectionKey = 'today' | 'response-hub' | 'request-tracker' | 'role-pulse';
+export type FlowHomeSectionKey =
+  'action-queue' | 'today' | 'response-hub' | 'request-tracker' | 'role-pulse';
 export type FlowHomeSectionPreference = PersonalHomeWidgetPreference<FlowHomeSectionKey>;
 
 /**
@@ -19,6 +20,7 @@ export type FlowHomeSectionPreference = PersonalHomeWidgetPreference<FlowHomeSec
  * loses independent visibility and geometry during a round trip.
  */
 export const FLOW_HOME_STORAGE_ALIAS = {
+  'action-queue': 'command-rail',
   today: 'schedule',
   'response-hub': 'daily-brief',
   'request-tracker': 'focus',
@@ -33,6 +35,7 @@ const FLOW_HOME_SECTION_BY_STORAGE = new Map<HomeWidgetKey, FlowHomeSectionKey>(
 );
 
 export const FLOW_HOME_MEMBER_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
+  'action-queue',
   'today',
   'response-hub',
   'request-tracker',
@@ -40,6 +43,7 @@ export const FLOW_HOME_MEMBER_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
 ];
 
 export const FLOW_HOME_OPERATOR_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
+  'action-queue',
   'role-pulse',
   'today',
   'response-hub',
@@ -48,6 +52,18 @@ export const FLOW_HOME_OPERATOR_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
 
 export const FLOW_HOME_SECTION_REGISTRY: readonly WorkspaceWidgetDefinition<FlowHomeSectionKey>[] =
   [
+    {
+      key: 'action-queue',
+      icon: Zap,
+      canHide: true,
+      defaultSize: 'large',
+      allowedSizes: ['large', 'full'],
+      // Flow has always rendered the action queue at standard depth. Keep that
+      // visual default while exposing the server-supported short alternative.
+      defaultHeight: 'standard',
+      allowedHeights: ['short', 'standard'],
+      surface: 'plain',
+    },
     {
       key: 'today',
       icon: CalendarRange,
@@ -131,6 +147,7 @@ const LEGACY_FLOW_GEOMETRY: Readonly<
     Readonly<{ sizes: readonly HomeWidgetSize[]; heights: readonly HomeWidgetHeight[] }>
   >
 > = {
+  'action-queue': { sizes: ['large'], heights: ['short', 'standard'] },
   today: { sizes: ['quarter', 'compact'], heights: ['standard'] },
   'response-hub': { sizes: ['large', 'full'], heights: ['standard'] },
   'request-tracker': { sizes: ['medium'], heights: ['tall'] },
@@ -201,7 +218,12 @@ function orderedSectionKeys(
     ordered.push(sectionKey);
   });
   FLOW_HOME_MEMBER_SECTION_ORDER.forEach((sectionKey) => {
-    if (!seen.has(sectionKey)) ordered.push(sectionKey);
+    if (seen.has(sectionKey)) return;
+    const defaultIndex = FLOW_HOME_MEMBER_SECTION_ORDER.indexOf(sectionKey);
+    const insertionIndex = ordered.findIndex(
+      (candidate) => FLOW_HOME_MEMBER_SECTION_ORDER.indexOf(candidate) > defaultIndex
+    );
+    ordered.splice(insertionIndex < 0 ? ordered.length : insertionIndex, 0, sectionKey);
   });
   return ordered;
 }
@@ -293,8 +315,8 @@ function withSectionState<Widget extends PersonalHomeWidgetPreference<string>>(
 
 /**
  * Applies Flow preferences back to legacy storage aliases. Non-Flow entries,
- * including command-rail and forward-compatible unknown widgets, stay in their
- * original slots and retain their object state. This also keeps appLayout out
+ * including forward-compatible unknown widgets, stay in their original slots
+ * and retain their object state. This also keeps appLayout out
  * of the migration entirely; the caller persists it unchanged alongside this
  * widget array.
  */

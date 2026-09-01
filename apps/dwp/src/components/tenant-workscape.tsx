@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import Box from '@mui/material/Box';
+import { alpha } from '@mui/material/styles';
 
 import { HOME_FORCED_COLOR_TOKENS, HOME_WORKSCAPE_TOKENS } from './home-surface-tokens';
 
@@ -143,25 +144,24 @@ export function TenantWorkscape({
         const opacity = (minimum: number) => Math.min(0.78, Math.max(minimum, configuredOverlay));
         const contentScrim =
           resolvedContentAlignment === 'CENTER'
-            ? `linear-gradient(180deg, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.64 : 0.58
-              )}) 0%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.32 : 0.26
-              )}) 48%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.5 : 0.44
-              )}) 100%)`
-            : `linear-gradient(${resolvedContentAlignment === 'RIGHT' ? '270deg' : '90deg'}, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.78 : 0.78
-              )}) 0%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.6 : 0.54
-              )}) 42%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.24 : 0.2
-              )}) 72%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${opacity(
-                dark ? 0.16 : 0.1
-              )}) 100%)`;
-        const brandCalmScrim = `linear-gradient(180deg, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${
+            ? `linear-gradient(180deg, ${alpha(
+                workscape.base,
+                opacity(dark ? 0.64 : 0.58)
+              )} 0%, ${alpha(workscape.base, opacity(dark ? 0.32 : 0.26))} 48%, ${alpha(
+                workscape.base,
+                opacity(dark ? 0.5 : 0.44)
+              )} 100%)`
+            : `linear-gradient(${resolvedContentAlignment === 'RIGHT' ? '270deg' : '90deg'}, ${alpha(
+                workscape.base,
+                opacity(dark ? 0.78 : 0.78)
+              )} 0%, ${alpha(workscape.base, opacity(dark ? 0.6 : 0.54))} 42%, ${alpha(
+                workscape.base,
+                opacity(dark ? 0.24 : 0.2)
+              )} 72%, ${alpha(workscape.base, opacity(dark ? 0.16 : 0.1))} 100%)`;
+        const brandCalmScrim = `linear-gradient(180deg, ${alpha(
+          workscape.base,
           dark ? 0.24 : 0.18
-        }) 0%, rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, 0) 42%)`;
+        )} 0%, ${alpha(workscape.base, 0)} 42%)`;
         const scrim = `${brandCalmScrim}, ${contentScrim}`;
         return {
           position: 'relative',
@@ -218,10 +218,7 @@ export function TenantWorkscape({
             zIndex: -1,
             inset: 0,
             background: mobilePreview
-              ? `rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${Math.min(
-                  0.78,
-                  Math.max(0.62, configuredOverlay)
-                )})`
+              ? alpha(workscape.base, Math.min(0.78, Math.max(0.62, configuredOverlay)))
               : scrim,
             pointerEvents: 'none',
           },
@@ -232,10 +229,10 @@ export function TenantWorkscape({
                     ? { backgroundPosition: `${compactFocalX}% ${compactFocalY}%` }
                     : undefined,
                   '&::after': {
-                    background: `rgba(${HOME_WORKSCAPE_TOKENS.scrim.rgb}, ${Math.min(
-                      0.78,
-                      Math.max(0.62, configuredOverlay)
-                    )})`,
+                    background: alpha(
+                      workscape.base,
+                      Math.min(0.78, Math.max(0.62, configuredOverlay))
+                    ),
                   },
                 },
               }

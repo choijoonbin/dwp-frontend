@@ -93,6 +93,8 @@ Gate로 검증한다.
 - `ConfirmDialog`: 일반·파괴적 확인, 초기 취소 Focus와 Busy 상태의 공통 계약
 - `EmptyState`·`ErrorState`·`LoadingState`: 안정된 높이와 Live Region을 가진 비동기 상태
 - `PageCanvas`: 운영형 Fluid Canvas와 집중형 Bounded Canvas의 공통 폭 계약
+- `ProgressMeter`: 필수 의미 Label, 정규화된 값, Tone과 선택적 값 설명을 결합한 공통
+  진행률 계약. 의미 없는 장식용 Bar로 사용하지 않는다.
 - `EnterpriseDataGrid`: Client·Server 처리 모드, Toolbar, 검색, 내보내기, 새로고침,
   페이지 간 선택과 Bulk Action을 DWP Density·접근성 계약에 연결
 - `DwpDateTimeProvider`: 제품 Locale과 IANA Timezone의 단일 공급자
@@ -166,8 +168,10 @@ Public Gate로 추가한다.
 ## 도입과 강제 규칙
 
 `scripts/check-design-system-adoption.mjs`가 제품 Source의 직접 MUI Button·IconButton,
-TextField·Autocomplete, Dialog, DataGrid, Date Picker와 Native Date Input 사용을 TypeScript
-AST로 검사한다.
+TextField·Autocomplete, Dialog, DataGrid, Date Picker, Native Date Input과 비동기 상태 원시
+요소(Alert·Skeleton·CircularProgress·LinearProgress), 제품 JSX의 하드코딩 색상 사용을
+TypeScript AST로 검사한다. 비동기 상태 원시 요소는 무조건 치환하지 않고, 제품별 실루엣이나
+인라인 상태가 공통 접근성 상태 영역 안에서 유지되도록 단계적으로 전환한다.
 
 - 기존 직접 사용은 `scripts/design-system-adoption-baseline.json`에 파일·Component별로만
   한시 허용한다.
@@ -176,8 +180,14 @@ AST로 검사한다.
   숫자 예외는 CI에서 거부한다.
 - 신규 파일의 직접 사용과 기존 파일의 증가분은 `yarn lint`, `yarn build`와
   `yarn design-system:check`를 실패시킨다.
-- 기존 화면 전환으로 숫자가 줄면 `yarn design-system:baseline`을 실행해 기준선을
-  낮춘다. 증가를 승인하는 용도로 기준선을 갱신하지 않는다.
+- 기존 화면 전환으로 숫자가 줄면 Gate가 의도적으로 실패한다. 이때
+  `yarn design-system:baseline`을 실행해 기준선을 낮춘다. 증가를 승인하는 용도로 기준선을
+  갱신하지 않는다. Writer 자체도 신규·증가 예외를 거부하므로 기준선 명령으로 Gate를
+  우회할 수 없다.
+- 제품 색상 역할은 Feature JSX에서 다시 만들지 않고 Foundation·Product Experience Token에
+  둔다. 기존 색상 Literal도 같은 하향 Ratchet을 적용한다.
+- Locale별 조건 분기와 번역 호출의 한국어 `defaultValue`도 i18n Source Debt로 추적한다.
+  `yarn i18n:baseline`은 감소분만 반영하며 신규·증가 예외를 승인하지 않는다.
 - 새 화면은 처음부터 Public Component를 사용한다. 기존 화면은 기능 수정 시 인접한
   Action·Form·Dialog·State를 함께 전환하는 Boy Scout 방식으로 줄인다.
 - 예외가 필요하면 Public API로 흡수할 제품 의미인지 먼저 검토하고, 일회성 시각 차이는

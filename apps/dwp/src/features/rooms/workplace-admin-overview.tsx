@@ -174,6 +174,8 @@ export function WorkplaceAdminOverview() {
               <LinearProgress
                 variant="determinate"
                 value={overview.utilizationPercent}
+                aria-label={t('workplace.admin.overview.utilization')}
+                aria-valuetext={`${overview.utilizationPercent}%`}
                 sx={{ mt: 1, height: 8 }}
               />
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>

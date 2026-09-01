@@ -27,7 +27,12 @@ import {
   updateGovernanceRole,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid, ErrorState, GuidedEmptyState } from '@dwp-frontend/design-system';
+import {
+  EnterpriseDataGrid,
+  EnterpriseGridEmptyOverlay,
+  ErrorState,
+  GuidedEmptyState,
+} from '@dwp-frontend/design-system';
 import { useDisplayDictionary, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -284,17 +289,20 @@ function RolesPanel() {
         maxVisibleRows={9}
         slots={{
           noRowsOverlay: () => (
-            <GuidedEmptyState
-              kind="first-use"
-              title={t('roleGovernance.empty.rolesTitle')}
-              description={t('roleGovernance.empty.rolesDescription')}
-              actionLabel={t('roleGovernance.actions.newRole')}
-              onAction={() => {
-                setEditingRole(null);
-                setDialogOpen(true);
-              }}
-              size="compact"
-            />
+            <EnterpriseGridEmptyOverlay>
+              <GuidedEmptyState
+                kind="first-use"
+                title={t('roleGovernance.empty.rolesTitle')}
+                description={t('roleGovernance.empty.rolesDescription')}
+                actionLabel={t('roleGovernance.actions.newRole')}
+                onAction={() => {
+                  setEditingRole(null);
+                  setDialogOpen(true);
+                }}
+                size="compact"
+                announce={false}
+              />
+            </EnterpriseGridEmptyOverlay>
           ),
         }}
         sx={{ border: 0, borderRadius: 0 }}

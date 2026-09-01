@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowUpRight,
@@ -12,7 +12,7 @@ import {
   UserRoundCog,
   X,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createAppAdminAssignment,
@@ -53,6 +53,8 @@ import TableRow from '@mui/material/TableRow';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import {
   ManagementPanelError,
@@ -74,6 +76,49 @@ type View = 'assignments' | 'presets' | 'boundaries';
 type Decision = 'APPROVED' | 'DENIED' | 'REVOKED';
 
 const queryKey = ['admin', 'app-governance'] as const;
+const managementWorkbenchReturnFocusKey = 'dwp.app-governance.management-workbench-return-focus';
+type FocusMarkerStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+export function browserSessionStorage(
+  browser: Pick<Window, 'sessionStorage'> = window
+): FocusMarkerStorage | undefined {
+  try {
+    return browser.sessionStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+export function hasManagementWorkbenchReturnFocus(
+  storage: FocusMarkerStorage | undefined
+): boolean {
+  if (!storage) return false;
+  try {
+    return storage.getItem(managementWorkbenchReturnFocusKey) === 'heading';
+  } catch {
+    return false;
+  }
+}
+
+export function rememberManagementWorkbenchReturnFocus(
+  storage: FocusMarkerStorage | undefined
+): void {
+  if (!storage) return;
+  try {
+    storage.setItem(managementWorkbenchReturnFocusKey, 'heading');
+  } catch {
+    // Focus restoration is progressive enhancement and must never block navigation.
+  }
+}
+
+export function clearManagementWorkbenchReturnFocus(storage: FocusMarkerStorage | undefined): void {
+  if (!storage) return;
+  try {
+    storage.removeItem(managementWorkbenchReturnFocusKey);
+  } catch {
+    // A restricted storage policy may retain the marker; navigation remains authoritative.
+  }
+}
 const CONTROL_PLANE_RESPONSIBILITIES = new Set([
   'APP_OWNER',
   'APP_ACCESS_APPROVER',
@@ -105,9 +150,10 @@ export function resolveManagementWorkbenchEntries(resources: readonly AppResourc
 
 export function AppGovernanceManager() {
   const { t } = useTranslation('admin');
+  const theme = useTheme();
+  const compactViewControls = useMediaQuery(theme.breakpoints.down('sm'));
   const auth = useAuth();
   const toast = useToast();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [view, setView] = useState<View>('presets');
   const [assignmentOpen, setAssignmentOpen] = useState(false);
@@ -129,6 +175,18 @@ export function AppGovernanceManager() {
   const requestScopes = governedRequestScopes(actor);
   const canRequest = canRequestGovernedAssignment(actor);
   const canCreateBoundary = actor.roles.includes('APP_CATALOG_ADMIN');
+
+  useEffect(() => {
+    if (!hasManagementWorkbenchReturnFocus(browserSessionStorage())) return;
+    const frame = window.requestAnimationFrame(() => {
+      clearManagementWorkbenchReturnFocus(browserSessionStorage());
+      const heading = document.querySelector<HTMLHeadingElement>('#dwp-main-content h1');
+      if (!heading) return;
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey });
@@ -202,10 +260,18 @@ export function AppGovernanceManager() {
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} justifyContent="space-between">
         <ToggleButtonGroup
           exclusive
+          orientation={compactViewControls ? 'vertical' : 'horizontal'}
           size="small"
           value={view}
           onChange={(_, next: View | null) => next && setView(next)}
           aria-label={t('appGovernance.viewLabel')}
+          sx={{
+            width: { xs: 1, sm: 'auto' },
+            '& .MuiToggleButton-root': {
+              justifyContent: { xs: 'flex-start', sm: 'center' },
+              whiteSpace: 'normal',
+            },
+          }}
         >
           <ToggleButton value="assignments">
             {t('appGovernance.views.assignments')} ({data.assignments.length})
@@ -217,7 +283,7 @@ export function AppGovernanceManager() {
             {t('appGovernance.views.boundaries')} ({data.resourceSets.length})
           </ToggleButton>
         </ToggleButtonGroup>
-        <Stack direction="row" gap={1}>
+        <Stack direction="row" gap={1} flexWrap="wrap">
           <ActionIconButton label={t('common.actions.refresh')} onClick={() => void refresh()}>
             <RefreshCw size={17} />
           </ActionIconButton>
@@ -409,9 +475,12 @@ export function AppGovernanceManager() {
                 assignment.lifecycleState === 'ACTIVE'
             );
             const managementEntries = resolveManagementWorkbenchEntries(resourceSet.resources);
+            const headingId = `app-governance-resource-set-${index}-heading`;
             return (
               <Box
+                component="section"
                 key={resourceSet.resourceSetId}
+                aria-labelledby={headingId}
                 sx={{
                   minHeight: 180,
                   p: 2.25,
@@ -422,7 +491,9 @@ export function AppGovernanceManager() {
               >
                 <Stack direction="row" justifyContent="space-between" gap={1}>
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="subtitle1">{resourceSet.name}</Typography>
+                    <Typography id={headingId} component="h3" variant="subtitle1">
+                      {resourceSet.name}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {resourceSet.key}
                     </Typography>
@@ -451,10 +522,27 @@ export function AppGovernanceManager() {
                     {managementEntries.map(({ productId, path, resource }) => (
                       <ActionButton
                         key={`${productId}:${resource.resourceKey}`}
+                        component={NavLink}
+                        to={path}
                         intent="quiet"
                         size="small"
                         endIcon={<ArrowUpRight size={15} aria-hidden="true" />}
-                        onClick={() => navigate(path)}
+                        aria-label={t('appGovernance.actions.openWorkbenchForScope', {
+                          app: resource.resourceName,
+                          scope: resourceSet.name,
+                        })}
+                        onClick={(event) => {
+                          if (
+                            event.button === 0 &&
+                            !event.metaKey &&
+                            !event.ctrlKey &&
+                            !event.shiftKey &&
+                            !event.altKey
+                          ) {
+                            rememberManagementWorkbenchReturnFocus(browserSessionStorage());
+                          }
+                        }}
+                        sx={{ maxWidth: '100%', whiteSpace: 'normal', textAlign: 'start' }}
                       >
                         {t('appGovernance.actions.openWorkbench', { app: resource.resourceName })}
                       </ActionButton>

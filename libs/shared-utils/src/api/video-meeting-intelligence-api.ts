@@ -3,7 +3,11 @@ import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
 
-import { VIDEO_MEETING_API_BASE } from './video-meeting-api';
+import {
+  VIDEO_MEETING_API_BASE,
+  type VideoMeetingAttendanceState,
+  type VideoMeetingRole,
+} from './video-meeting-api';
 
 export type VideoMeetingIntelligenceRunState = 'RUNNING' | 'SUCCEEDED' | 'FAILED';
 export type VideoMeetingIntelligenceReportState =
@@ -113,7 +117,25 @@ export type VideoMeetingIntelligenceGrant = {
   reasonCode: string;
 };
 
+export type VideoMeetingIntelligenceReviewerCandidate = {
+  userId: number;
+  participantId: string;
+  displayName: string;
+  participantRole: VideoMeetingRole;
+  attendanceState: VideoMeetingAttendanceState;
+  assignmentEligible: boolean;
+  ineligibleReason?: 'CURRENT_MANAGER' | 'INTELLIGENCE_REQUESTER' | null;
+};
+
+export type VideoMeetingIntelligenceReviewerAssignments = {
+  reportId: string;
+  reportVersion: number;
+  eligibleParticipants: VideoMeetingIntelligenceReviewerCandidate[];
+  activeGrants: VideoMeetingIntelligenceGrant[];
+};
+
 export type GrantVideoMeetingIntelligenceAccessInput = {
+  expectedReportVersion: number;
   permission: VideoMeetingIntelligencePermission;
   expiresAt?: string | null;
   reasonCode: string;
@@ -284,6 +306,7 @@ export async function grantVideoMeetingIntelligenceAccess(
       `reports/${encodeURIComponent(reportId)}/acl/${encodeURIComponent(String(principalUserId))}`
     ),
     {
+      expectedReportVersion: input.expectedReportVersion,
       permission: input.permission,
       expiresAt: input.expiresAt,
       reasonCode: input.reasonCode,
@@ -293,18 +316,30 @@ export async function grantVideoMeetingIntelligenceAccess(
   return response.data.data;
 }
 
+export async function getVideoMeetingIntelligenceReviewerAssignments(
+  meetingId: string,
+  reportId: string
+): Promise<VideoMeetingIntelligenceReviewerAssignments> {
+  const response = await axiosInstance.get<
+    ApiResponse<VideoMeetingIntelligenceReviewerAssignments>
+  >(intelligencePath(meetingId, `reports/${encodeURIComponent(reportId)}/reviewer-assignments`));
+  return response.data.data;
+}
+
 export async function revokeVideoMeetingIntelligenceAccess(
   meetingId: string,
   reportId: string,
   principalUserId: number,
   permission: VideoMeetingIntelligencePermission,
+  expectedReportVersion: number,
   correlationId?: string
 ): Promise<void> {
+  const search = new URLSearchParams({ expectedReportVersion: String(expectedReportVersion) });
   await axiosInstance.delete<ApiResponse<void>>(
-    intelligencePath(
+    `${intelligencePath(
       meetingId,
       `reports/${encodeURIComponent(reportId)}/acl/${encodeURIComponent(String(principalUserId))}/${encodeURIComponent(permission)}`
-    ),
+    )}?${search.toString()}`,
     commandHeaders({ correlationId })
   );
 }

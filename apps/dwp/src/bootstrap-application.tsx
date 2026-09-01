@@ -11,6 +11,7 @@ import { resolveTenantLogoUrl } from '@dwp-frontend/shared-utils/api/tenant-bran
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import { DwpDateTimeProvider } from '@dwp-frontend/design-system/enterprise/date-time/date-time-provider';
 import { DwpThemeProvider } from '@dwp-frontend/design-system/appearance';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter, type RouteObject } from 'react-router-dom';
 
@@ -35,7 +36,7 @@ const ProviderSupportAuthorityBoundary = lazy(() =>
 
 const defaultTenantAppearance = {
   productName: 'Digital Workplace',
-  accentColor: '#2457D6',
+  accentColor: foundationTokens.color.product.primary,
   navigationPattern: 'sidebar' as const,
 };
 

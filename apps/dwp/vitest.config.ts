@@ -3,9 +3,11 @@ import { fileURLToPath } from 'node:url';
 
 import { defineProject } from 'vitest/config';
 
-const workspaceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(projectRoot, '../..');
 
 export default defineProject({
+  root: projectRoot,
   resolve: {
     alias: {
       '@dwp-frontend/design-system': path.join(workspaceRoot, 'libs/design-system/src'),
@@ -16,6 +18,6 @@ export default defineProject({
   test: {
     name: 'dwp-app',
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
   },
 });

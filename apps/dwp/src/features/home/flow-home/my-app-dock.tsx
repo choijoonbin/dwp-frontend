@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { HOME_LAUNCHPAD_GROUP_ITEM_LIMIT } from '../../../components/workspace-composer/home-launchpad-layout-contract';
 import { AppLaunchpad } from '../app-launchpad';
 import { HOME_MOTION_TOKENS } from '../../../components/home-surface-tokens';
 import {
@@ -20,8 +21,6 @@ import type {
   HomeAppGroup,
   LaunchpadLayout,
 } from '../../../components/workspace-composer/app-launchpad-model';
-import type { HomeContentAlignment, HomePresentation } from '@dwp-frontend/shared-utils';
-
 type MyAppDockProps = {
   apps: readonly HomeAppDefinition[];
   groups: readonly HomeAppGroup[];
@@ -31,8 +30,6 @@ type MyAppDockProps = {
   busy: boolean;
   compact?: boolean;
   priorityCompact?: boolean;
-  presentation: HomePresentation;
-  contentAlignment: HomeContentAlignment;
   onBrowseAll: () => void;
   onLaunch: (app: HomeAppDefinition) => void;
   onManage?: (app: HomeAppDefinition) => void;
@@ -49,8 +46,6 @@ export function MyAppDock({
   busy,
   compact = false,
   priorityCompact = false,
-  presentation,
-  contentAlignment,
   onBrowseAll,
   onLaunch,
   onManage,
@@ -59,27 +54,17 @@ export function MyAppDock({
 }: MyAppDockProps) {
   const { t } = useTranslation('home');
   const narrowViewport = useMediaQuery('(max-width:599.95px)', { noSsr: true });
-  const tabletViewport = useMediaQuery('(min-width:900px) and (max-width:1199.95px)', {
-    noSsr: true,
+  const itemLimitPerGroup = compact || narrowViewport ? undefined : HOME_LAUNCHPAD_GROUP_ITEM_LIMIT;
+  const itemLimit = itemLimitPerGroup ? groups.length * itemLimitPerGroup : 4;
+  const dockModel = resolveFlowAppDockModel({
+    apps,
+    groups,
+    layout,
+    itemLimit,
+    itemLimitPerGroup,
   });
-  const expressiveViewport = useMediaQuery('(min-width:1200px)', { noSsr: true });
-  const wideViewport = useMediaQuery('(min-width:1600px)', { noSsr: true });
-  const itemLimit =
-    compact || narrowViewport
-      ? 4
-      : tabletViewport
-        ? 6
-        : presentation === 'expressive'
-          ? wideViewport
-            ? 12
-            : expressiveViewport
-              ? 10
-              : 8
-          : 8;
-  const dockModel = resolveFlowAppDockModel({ apps, groups, layout, itemLimit });
   const visibleItemCount = dockModel.visibleItemCount;
   const hiddenItemCount = dockModel.hiddenItemCount;
-  const preferredDockWidth = Math.min(1120, Math.max(540, 240 + visibleItemCount * 78));
   const visibleAppIds = new Set(dockModel.visibleAppIds);
   const hiddenAppCount = dockModel.hiddenAppCount;
   const hiddenNotificationSummary = summarizeHiddenFlowAppNotifications(apps, visibleAppIds);
@@ -102,23 +87,18 @@ export function MyAppDock({
       data-flow-section="app-dock"
       data-flow-dock-shell
       data-flow-dock-item-limit={itemLimit}
+      data-flow-dock-group-item-limit={itemLimitPerGroup ?? 0}
       data-flow-dock-visible-count={visibleItemCount}
       data-flow-dock-hidden-count={hiddenAppCount}
       data-flow-dock-hidden-tile-count={hiddenItemCount}
       sx={(theme) => ({
         minWidth: 0,
-        width: editing ? 1 : { xs: 1, md: `min(100%, ${preferredDockWidth}px)` },
-        alignSelf: editing
-          ? 'stretch'
-          : contentAlignment === 'RIGHT'
-            ? { xs: 'stretch', md: 'flex-end' }
-            : contentAlignment === 'CENTER'
-              ? { xs: 'stretch', md: 'center' }
-              : { xs: 'stretch', md: 'flex-start' },
+        width: 1,
+        alignSelf: 'stretch',
         minHeight: editing ? 0 : { xs: 136, sm: 132 },
         color: '#F8FAFC',
         px: compact ? 1 : { xs: 1.25, sm: 1.5, md: 1.75 },
-        pt: compact ? 0.75 : { xs: 1, md: 1.5 },
+        pt: compact ? 0.75 : { xs: 1, md: 1.25 },
         pb: compact ? 0.75 : { xs: 1, md: 1.25 },
         containerName: 'flow-dock',
         containerType: 'inline-size',
@@ -182,17 +162,7 @@ export function MyAppDock({
           gridTemplateColumns: 'minmax(0, 1fr) auto',
           alignItems: 'center',
           columnGap: 1,
-          rowGap: 0.5,
-          ...(!editing && itemLimit <= 10
-            ? {
-                '@container flow-dock (min-width: 800px)': {
-                  gridTemplateAreas: '"meta apps action"',
-                  gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-                  columnGap: 2,
-                  rowGap: 0,
-                },
-              }
-            : {}),
+          rowGap: 0,
         }}
       >
         <Box data-flow-dock-meta sx={{ gridArea: 'meta', minWidth: 0 }}>
@@ -249,14 +219,6 @@ export function MyAppDock({
           sx={{
             gridArea: 'apps',
             minWidth: 0,
-            ...(!editing && itemLimit <= 10
-              ? {
-                  '@container flow-dock (min-width: 800px)': {
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                }
-              : {}),
           }}
         >
           {visibleItemCount > 0 || editing ? (
@@ -270,6 +232,7 @@ export function MyAppDock({
               title={t('flow.dock.title')}
               variant="flow"
               flowItemLimit={itemLimit}
+              flowItemLimitPerGroup={itemLimitPerGroup}
               onLayoutChange={onLayoutChange}
               onLaunch={onLaunch}
               onManage={onManage}
@@ -309,6 +272,12 @@ export function MyAppDock({
             '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
             '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
             '&:focus-visible': { outline: '2px solid #93C5FD', outlineOffset: 2 },
+            '[data-flow-large-text="true"] &': {
+              maxWidth: '100%',
+              flexWrap: 'wrap',
+              whiteSpace: 'normal',
+              lineHeight: 1.2,
+            },
           }}
         >
           {visibleItemCount === 0 ? t('flow.dock.emptyAction') : t('launchpad.allApps')}
@@ -316,10 +285,13 @@ export function MyAppDock({
             <Box
               component="span"
               aria-hidden="true"
+              data-flow-dock-hidden-app-count
               sx={{
-                minWidth: 24,
-                height: 22,
-                px: 0.5,
+                minWidth: '1.5rem',
+                minHeight: '1.375rem',
+                height: 'auto',
+                px: '0.4em',
+                py: '0.125em',
                 display: 'inline-grid',
                 placeItems: 'center',
                 borderRadius: 999,
@@ -327,7 +299,9 @@ export function MyAppDock({
                 bgcolor: 'rgba(255,255,255,0.12)',
                 fontWeight: 750,
                 fontVariantNumeric: 'tabular-nums',
-                fontSize: 10.5,
+                fontSize: '0.65625rem',
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
               }}
             >
               {t('flow.dock.moreApps', { count: hiddenAppCount })}
@@ -339,9 +313,11 @@ export function MyAppDock({
               aria-hidden="true"
               data-hidden-notification-intent={hiddenBadgeIntent}
               sx={{
-                minWidth: 28,
-                height: 22,
-                px: 0.5,
+                minWidth: '1.75rem',
+                minHeight: '1.375rem',
+                height: 'auto',
+                px: '0.4em',
+                py: '0.125em',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -359,11 +335,13 @@ export function MyAppDock({
                     : hiddenBadgeIntent === 'actionable'
                       ? 'warning.contrastText'
                       : 'primary.contrastText',
-                fontSize: 10,
+                fontSize: '0.625rem',
+                lineHeight: 1.2,
                 fontWeight: 800,
+                whiteSpace: 'nowrap',
               }}
             >
-              <BellRing size={11} strokeWidth={2.4} aria-hidden="true" />
+              <BellRing size="1em" strokeWidth={2.4} aria-hidden="true" />
               {Math.min(99, hiddenBadgeCount)}
               {hiddenBadgeCount > 99 ? '+' : ''}
             </Box>

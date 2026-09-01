@@ -10,6 +10,7 @@ const baseLocale = 'en';
 const issues = [];
 const sourceDebtCounts = {};
 const writeSourceDebtBaseline = process.argv.includes('--write-source-debt-baseline');
+const sourceDebtContracts = new Set(['localeStartsWithKo', 'koreanTranslationDefaultValue']);
 
 function incrementSourceDebt(file, contract) {
   const relativeFile = path.relative(root, file).split(path.sep).join('/');
@@ -220,9 +221,49 @@ function containsWords(value) {
   return /[A-Za-z\u3131-\uD79D]/.test(value);
 }
 
+function stringLiteralLikeText(node) {
+  return ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)
+    ? node.text
+    : undefined;
+}
+
+function translatedAttributeValue(attribute) {
+  if (!attribute.initializer) return undefined;
+  if (ts.isStringLiteral(attribute.initializer)) return attribute.initializer.text;
+  if (ts.isJsxExpression(attribute.initializer) && attribute.initializer.expression) {
+    return stringLiteralLikeText(attribute.initializer.expression);
+  }
+  return undefined;
+}
+
 function sourceLocation(sourceFile, node) {
   const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
   return `${path.relative(root, sourceFile.fileName)}:${position.line + 1}`;
+}
+
+function isValidSourceDebtBaseline(value) {
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    value.version !== 1 ||
+    value.files === null ||
+    typeof value.files !== 'object' ||
+    Array.isArray(value.files)
+  ) {
+    return false;
+  }
+  return Object.entries(value.files).every(
+    ([file, counts]) =>
+      file.startsWith('apps/dwp/src/') &&
+      !file.split('/').includes('..') &&
+      counts !== null &&
+      typeof counts === 'object' &&
+      !Array.isArray(counts) &&
+      Object.entries(counts).every(
+        ([contract, count]) =>
+          sourceDebtContracts.has(contract) && Number.isSafeInteger(count) && count > 0
+      )
+  );
 }
 
 function checkSourceFile(file) {
@@ -248,21 +289,17 @@ function checkSourceFile(file) {
     if (
       ts.isJsxExpression(node) &&
       node.expression &&
-      ts.isStringLiteral(node.expression) &&
-      containsWords(node.expression.text)
+      stringLiteralLikeText(node.expression) !== undefined &&
+      containsWords(stringLiteralLikeText(node.expression))
     ) {
       report(node, `direct JSX string: ${JSON.stringify(node.expression.text)}`);
     }
 
     if (ts.isJsxAttribute(node)) {
       const name = node.name.getText(sourceFile);
-      if (
-        translatedStringAttributes.has(name) &&
-        node.initializer &&
-        ts.isStringLiteral(node.initializer) &&
-        containsWords(node.initializer.text)
-      ) {
-        report(node, `literal ${name} attribute: ${JSON.stringify(node.initializer.text)}`);
+      const value = translatedAttributeValue(node);
+      if (translatedStringAttributes.has(name) && value && containsWords(value)) {
+        report(node, `literal ${name} attribute: ${JSON.stringify(value)}`);
       }
     }
 
@@ -272,8 +309,7 @@ function checkSourceFile(file) {
       if (
         method === 'startsWith' &&
         firstArgument &&
-        ts.isStringLiteral(firstArgument) &&
-        firstArgument.text.toLocaleLowerCase() === 'ko'
+        stringLiteralLikeText(firstArgument)?.toLocaleLowerCase() === 'ko'
       ) {
         incrementSourceDebt(file, 'localeStartsWithKo');
       }
@@ -287,10 +323,13 @@ function checkSourceFile(file) {
         const firstArgument = node.arguments[0];
         if (
           firstArgument &&
-          ts.isStringLiteral(firstArgument) &&
-          containsWords(firstArgument.text)
+          stringLiteralLikeText(firstArgument) !== undefined &&
+          containsWords(stringLiteralLikeText(firstArgument))
         ) {
-          report(node, `literal feedback message: ${JSON.stringify(firstArgument.text)}`);
+          report(
+            node,
+            `literal feedback message: ${JSON.stringify(stringLiteralLikeText(firstArgument))}`
+          );
         }
       }
     }
@@ -322,7 +361,7 @@ function checkSourceFile(file) {
     }
 
     if (
-      ts.isNewExpression(node) &&
+      (ts.isNewExpression(node) || ts.isCallExpression(node)) &&
       ts.isPropertyAccessExpression(node.expression) &&
       node.expression.expression.getText(sourceFile) === 'Intl' &&
       ['DateTimeFormat', 'ListFormat', 'NumberFormat', 'RelativeTimeFormat'].includes(
@@ -363,6 +402,33 @@ const currentSourceDebt = {
 };
 
 if (writeSourceDebtBaseline) {
+  if (!fs.existsSync(sourceDebtBaselinePath)) {
+    console.error(
+      'Refusing to create an i18n source-debt baseline; establish the initial policy baseline through an explicit reviewed change.'
+    );
+    process.exit(1);
+  }
+
+  const existingBaseline = JSON.parse(fs.readFileSync(sourceDebtBaselinePath, 'utf8'));
+  if (!isValidSourceDebtBaseline(existingBaseline)) {
+    console.error('Unsupported i18n source-debt baseline format.');
+    process.exit(1);
+  }
+
+  const increases = [];
+  for (const [file, counts] of Object.entries(currentSourceDebt.files)) {
+    for (const [contract, count] of Object.entries(counts)) {
+      const allowed = existingBaseline.files[file]?.[contract] ?? 0;
+      if (count > allowed) increases.push(`${file}: ${contract} ${allowed} -> ${count}`);
+    }
+  }
+  if (issues.length || increases.length) {
+    console.error('Refusing to raise the i18n source-debt baseline:');
+    issues.forEach((issue) => console.error(`- ${issue}`));
+    increases.forEach((increase) => console.error(`- ${increase}`));
+    process.exit(1);
+  }
+
   fs.writeFileSync(sourceDebtBaselinePath, `${JSON.stringify(currentSourceDebt, null, 2)}\n`);
   const total = Object.values(currentSourceDebt.files).reduce(
     (sum, counts) => sum + Object.values(counts).reduce((fileSum, count) => fileSum + count, 0),
@@ -378,9 +444,10 @@ if (!fs.existsSync(sourceDebtBaselinePath)) {
   );
 } else {
   const sourceDebtBaseline = JSON.parse(fs.readFileSync(sourceDebtBaselinePath, 'utf8'));
-  if (sourceDebtBaseline.version !== 1 || !sourceDebtBaseline.files) {
+  if (!isValidSourceDebtBaseline(sourceDebtBaseline)) {
     issues.push('unsupported i18n source-debt baseline format');
   } else {
+    let removedSourceDebtCount = 0;
     for (const [file, counts] of Object.entries(currentSourceDebt.files)) {
       for (const [contract, count] of Object.entries(counts)) {
         const allowed = sourceDebtBaseline.files[file]?.[contract] ?? 0;
@@ -390,6 +457,17 @@ if (!fs.existsSync(sourceDebtBaselinePath)) {
           );
         }
       }
+    }
+    for (const [file, counts] of Object.entries(sourceDebtBaseline.files)) {
+      for (const [contract, count] of Object.entries(counts)) {
+        const currentCount = currentSourceDebt.files[file]?.[contract] ?? 0;
+        removedSourceDebtCount += Math.max(0, count - currentCount);
+      }
+    }
+    if (removedSourceDebtCount > 0) {
+      issues.push(
+        `${removedSourceDebtCount} grandfathered i18n source-debt use(s) were removed; run \`yarn i18n:baseline\` to ratchet the allowance down`
+      );
     }
   }
 }

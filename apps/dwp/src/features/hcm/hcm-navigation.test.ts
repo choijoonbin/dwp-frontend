@@ -50,6 +50,59 @@ describe('HR product navigation', () => {
     expect(mapLegacyHrPath('/workforce/unknown')).toBeUndefined();
     expect(findHcmNavigationItem('/hr/design/organization')?.view).toBe('organization-design');
   });
+
+  it('shows exact management work without requiring the broad workforce operator role', () => {
+    const specialist = visibleHcmNavigation({
+      isManager: false,
+      canOperate: false,
+      canAccessOrganizationDesign: true,
+      canAccessReferenceData: true,
+      canAccessDataOperations: true,
+      canAccessExports: true,
+    });
+    expect(specialist.flatMap((group) => group.items).map((item) => item.view)).toEqual([
+      'home',
+      'me',
+      'time',
+      'absence',
+      'benefits',
+      'pay',
+      'talent',
+      'services',
+      'directory',
+      'organization',
+      'organization-design',
+      'reference-data',
+      'data-operations',
+      'exports',
+    ]);
+  });
+
+  it('shows the operations overview to a single-domain administrator without broad workforce access', () => {
+    const timeAdministrator = visibleHcmNavigation({
+      isManager: false,
+      canOperate: false,
+      canManageTime: true,
+      canAccessOperationsOverview: true,
+    });
+    const operationsViews = timeAdministrator
+      .flatMap((group) => group.items)
+      .filter((item) => item.section === 'operate')
+      .map((item) => item.view);
+
+    expect(operationsViews).toEqual(['operations', 'time-operations']);
+    expect(operationsViews).not.toContain('people');
+    expect(operationsViews).not.toContain('assignments');
+  });
+
+  it('keeps legacy management item resources aligned with exact capability contracts', () => {
+    expect(findHcmNavigationItem('/hr/design/organization')?.requiredResourceKey).toBe(
+      'ACTION.WORKFORCE_ORG_DESIGN'
+    );
+    expect(findHcmNavigationItem('/hr/data/exports')?.requiredResourceKey).toBe(
+      'ACTION.WORKFORCE_CONTROLLED_EXPORT'
+    );
+  });
 });
 
 describe('HR experience evidence', () => {

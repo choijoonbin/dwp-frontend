@@ -20,6 +20,7 @@ import {
   ActionIconButton,
   EnterpriseDataGrid,
   FormField,
+  ProgressMeter,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -36,7 +37,6 @@ import FormControl from '@mui/material/FormControl';
 import { alpha, useTheme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import LinearProgress from '@mui/material/LinearProgress';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProviderError, ProviderLoading } from './provider-ui';
@@ -441,17 +441,12 @@ export function ProviderCodeContracts() {
           value={formatNumber(summary.values, undefined, locale)}
         />
         <Box sx={{ minWidth: 0, px: { xs: 1.75, md: 2.5 }, py: 1.25 }}>
-          <Typography variant="caption" color="text.secondary">
-            {t('codeContracts.summary.coverage')}
-          </Typography>
-          <Stack direction="row" alignItems="baseline" gap={1} sx={{ mt: 0.25 }}>
-            <Typography variant="h5">{summary.coverage}%</Typography>
-            <LinearProgress
-              variant="determinate"
-              value={summary.coverage}
-              sx={{ flex: 1, minWidth: 56, height: 5, borderRadius: 1 }}
-            />
-          </Stack>
+          <ProgressMeter
+            label={t('codeContracts.summary.coverage')}
+            value={summary.coverage}
+            valueLabel={`${summary.coverage}%`}
+            size="compact"
+          />
         </Box>
       </Box>
 

@@ -6,7 +6,6 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
-  FileClock,
   LifeBuoy,
   PencilLine,
   Search,
@@ -17,7 +16,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   cancelServiceRequest,
-  createServiceRequest,
   dwaionHandoffText,
   getServiceDiscoverCatalog,
   getServiceDraftRequest,
@@ -26,7 +24,6 @@ import {
   getServiceMyRequests,
   parseDwaionHandoff,
   submitServiceDraft,
-  updateServiceDraft,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
@@ -35,19 +32,15 @@ import {
   ActionIconButton,
   ConfirmDialog,
   FormField,
-  FormDialog,
   GuidedEmptyState,
   PageCanvas,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -62,12 +55,16 @@ import Typography from '@mui/material/Typography';
 import type {
   ServiceCatalogItem,
   ServiceRequestDetail,
-  ServiceRequestField,
   ServiceRequestStatus,
-  ServiceRequestSummary,
 } from '@dwp-frontend/shared-utils';
 
 import { ServiceCatalogCard } from '../features/services/service-catalog-card';
+import { ServiceRequestDialog } from '../features/services/service-request-dialog';
+import {
+  serviceRequestErrorText,
+  serviceRequestFieldLabel,
+  serviceRequestName,
+} from '../features/services/service-request-model';
 import { useProductActionMutation } from '../components/use-product-action-mutation';
 
 const statusColors: Record<
@@ -84,26 +81,6 @@ const statusColors: Record<
   CANCELLED: 'error',
 };
 
-function errorText(error: unknown, fallback: string) {
-  return error instanceof Error ? error.message : fallback;
-}
-
-function fieldLabel(field: ServiceRequestField, language: string) {
-  return language.startsWith('en') ? field.labelEn : field.labelKo;
-}
-
-function optionLabel(value: string) {
-  return value
-    .toLowerCase()
-    .split('_')
-    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
-    .join(' ');
-}
-
-function requestServiceName(request: ServiceRequestSummary, language: string) {
-  return language.startsWith('en') ? request.serviceNameEn : request.serviceNameKo;
-}
-
 function StatusChip({ status }: { status: ServiceRequestStatus }) {
   const { t } = useTranslation('services');
   return (
@@ -114,250 +91,6 @@ function StatusChip({ status }: { status: ServiceRequestStatus }) {
       label={t(`requests.statusLabels.${status}`)}
       sx={{ height: 24, fontWeight: 700 }}
     />
-  );
-}
-
-function RequestDialog({
-  service,
-  draft,
-  initialSummary = '',
-  fromDwaion = false,
-  onClose,
-}: {
-  service: ServiceCatalogItem | null;
-  draft?: ServiceRequestDetail | null;
-  initialSummary?: string;
-  fromDwaion?: boolean;
-  onClose: () => void;
-}) {
-  const { t, i18n } = useTranslation('services');
-  const toast = useToast();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const createRequest = useProductActionMutation('route.services.work.request-create.action');
-  const updateDraft = useProductActionMutation('route.services.work.draft-update.action');
-  const [summary, setSummary] = useState('');
-  const [values, setValues] = useState<Record<string, unknown>>({});
-  const [validationVisible, setValidationVisible] = useState(false);
-  const fields = service?.requestSchema.fields ?? draft?.requestSchema.fields ?? [];
-  const open = Boolean(service || draft);
-  const language = i18n.resolvedLanguage ?? i18n.language;
-  const targetName = service?.name ?? (draft ? requestServiceName(draft.request, language) : '');
-  const classification = service?.dataClassification ?? draft?.dataClassification;
-
-  useEffect(() => {
-    if (draft) {
-      setSummary(draft.request.summary);
-      setValues(draft.values);
-      setValidationVisible(false);
-    } else if (service) {
-      setSummary(initialSummary);
-      setValues({});
-      setValidationVisible(false);
-    }
-  }, [draft, initialSummary, service]);
-  const valid = Boolean(
-    summary.trim() &&
-    fields.every((field) => {
-      if (!field.required) return true;
-      const value = values[field.key];
-      return value !== undefined && value !== null && value !== '' && value !== false;
-    })
-  );
-  const mutation = useMutation({
-    mutationFn: async ({ submit }: { submit: boolean }) => {
-      if (draft) {
-        const updated = await updateDraft((authority) =>
-          updateServiceDraft(
-            draft.request.requestId,
-            {
-              summary: summary.trim(),
-              values,
-              version: draft.request.version,
-              submit,
-            },
-            authority
-          )
-        );
-        return updated;
-      }
-      if (!service) throw new Error('Service unavailable');
-      return createRequest((authority) =>
-        createServiceRequest(
-          {
-            serviceKey: service.serviceKey,
-            summary: summary.trim(),
-            values,
-            idempotencyKey: crypto.randomUUID(),
-            submit,
-          },
-          authority
-        )
-      );
-    },
-    onSuccess: async (detail, input) => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['services', 'requests'] }),
-        queryClient.invalidateQueries({
-          queryKey: ['services', 'request', detail.request.requestId],
-        }),
-      ]);
-      toast.success(
-        t(
-          input.submit
-            ? draft
-              ? 'requestDialog.updatedAndSubmitted'
-              : 'requestDialog.created'
-            : draft
-              ? 'requestDialog.updated'
-              : 'requestDialog.drafted',
-          {
-            number: detail.request.requestNumber,
-          }
-        )
-      );
-      onClose();
-      navigate(`/services/${input.submit ? 'my' : 'drafts'}/${detail.request.requestId}`);
-    },
-    onError: (error) => toast.error(errorText(error, t('requestDialog.error'))),
-  });
-
-  const submit = (shouldSubmit: boolean) => {
-    if (!summary.trim() || (shouldSubmit && !valid)) {
-      setValidationVisible(true);
-      return;
-    }
-    mutation.mutate({ submit: shouldSubmit });
-  };
-
-  const close = () => {
-    setSummary('');
-    setValues({});
-    setValidationVisible(false);
-    onClose();
-  };
-
-  const renderField = (field: ServiceRequestField) => {
-    const label = fieldLabel(field, i18n.resolvedLanguage ?? i18n.language);
-    const value = values[field.key];
-    const update = (next: unknown) => setValues((current) => ({ ...current, [field.key]: next }));
-    if (field.type === 'CHECKBOX') {
-      return (
-        <FormControlLabel
-          key={field.key}
-          control={
-            <Checkbox checked={Boolean(value)} onChange={(event) => update(event.target.checked)} />
-          }
-          label={label}
-          sx={{ minHeight: 48, alignItems: 'center' }}
-        />
-      );
-    }
-    if (field.type === 'SELECT') {
-      return (
-        <FormField
-          key={field.key}
-          select
-          required={field.required}
-          label={label}
-          value={String(value ?? '')}
-          errorMessage={
-            validationVisible && field.required && !value ? t('requestDialog.required') : undefined
-          }
-          onChange={(event) => update(event.target.value)}
-        >
-          <MenuItem value="" disabled>
-            {t('requestDialog.selectPlaceholder')}
-          </MenuItem>
-          {(field.options ?? []).map((option) => (
-            <MenuItem key={option} value={option}>
-              {optionLabel(option)}
-            </MenuItem>
-          ))}
-        </FormField>
-      );
-    }
-    return (
-      <FormField
-        key={field.key}
-        required={field.required}
-        label={label}
-        type={field.type === 'NUMBER' ? 'number' : field.type === 'DATE' ? 'date' : 'text'}
-        multiline={field.type === 'TEXTAREA'}
-        minRows={field.type === 'TEXTAREA' ? 3 : undefined}
-        value={String(value ?? '')}
-        slotProps={field.type === 'DATE' ? { inputLabel: { shrink: true } } : undefined}
-        errorMessage={
-          validationVisible && field.required && !value ? t('requestDialog.required') : undefined
-        }
-        onChange={(event) => {
-          const next = event.target.value;
-          update(field.type === 'NUMBER' && next !== '' ? Number(next) : next);
-        }}
-      />
-    );
-  };
-
-  return (
-    <FormDialog
-      open={open}
-      title={t(draft ? 'requestDialog.editTitle' : 'requestDialog.title', {
-        service: targetName,
-      })}
-      description={t(draft ? 'requestDialog.editDescription' : 'requestDialog.description')}
-      cancelLabel={t('requestDialog.cancel')}
-      submitLabel={t('requestDialog.submit')}
-      onClose={close}
-      onSubmit={() => submit(true)}
-      busy={mutation.isPending}
-      maxWidth="sm"
-      secondaryActions={
-        <ActionButton
-          intent="secondary"
-          startIcon={<FileClock size={17} />}
-          onClick={() => submit(false)}
-          disabled={mutation.isPending}
-        >
-          {t('requestDialog.saveDraft')}
-        </ActionButton>
-      }
-    >
-      {open && classification && (
-        <Stack gap={2.25}>
-          {fromDwaion && <Alert severity="info">{t('requestDialog.dwaionDraftNotice')}</Alert>}
-          <Alert severity="info" icon={<ShieldCheck size={18} />}>
-            {t('requestDialog.privacy', {
-              classification: t(`classification.${classification}`),
-            })}
-          </Alert>
-          <FormField
-            autoFocus
-            required
-            label={t('requestDialog.summary')}
-            placeholder={t('requestDialog.summaryPlaceholder')}
-            value={summary}
-            errorMessage={
-              validationVisible && !summary.trim() ? t('requestDialog.required') : undefined
-            }
-            supportingText={`${summary.length}/240`}
-            onChange={(event) => setSummary(event.target.value.slice(0, 240))}
-          />
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              gap: 2,
-              '& > .MuiFormControl-root:has(textarea)': { gridColumn: { sm: '1 / -1' } },
-            }}
-          >
-            {fields.map(renderField)}
-          </Box>
-          {validationVisible && !valid && (
-            <Alert severity="warning">{t('requestDialog.invalid')}</Alert>
-          )}
-        </Stack>
-      )}
-    </FormDialog>
   );
 }
 
@@ -543,7 +276,9 @@ function DiscoverView() {
               ))}
             </Box>
           ) : catalog.isError ? (
-            <Alert severity="error">{errorText(catalog.error, t('discover.loadError'))}</Alert>
+            <Alert severity="error">
+              {serviceRequestErrorText(catalog.error, t('discover.loadError'))}
+            </Alert>
           ) : (
             <Stack gap={4}>
               {!query.trim() && categoryKey === 'ALL' && featured.length > 0 && (
@@ -649,7 +384,7 @@ function DiscoverView() {
           )}
         </Box>
       </PageCanvas>
-      <RequestDialog
+      <ServiceRequestDialog
         service={requesting}
         initialSummary={dwaionSummary}
         fromDwaion={dwaionDraft}
@@ -692,7 +427,9 @@ function RequestsView({ drafts }: { drafts: boolean }) {
           </Typography>
         </Box>
         {requests.isError ? (
-          <Alert severity="error">{errorText(requests.error, t('requests.loadError'))}</Alert>
+          <Alert severity="error">
+            {serviceRequestErrorText(requests.error, t('requests.loadError'))}
+          </Alert>
         ) : requests.isLoading ? (
           <Skeleton variant="rounded" height={260} />
         ) : rows.length === 0 ? (
@@ -744,7 +481,7 @@ function RequestsView({ drafts }: { drafts: boolean }) {
                   >
                     <TableCell sx={{ fontWeight: 750 }}>{request.requestNumber}</TableCell>
                     <TableCell>
-                      {requestServiceName(request, i18n.resolvedLanguage ?? i18n.language)}
+                      {serviceRequestName(request, i18n.resolvedLanguage ?? i18n.language)}
                     </TableCell>
                     <TableCell sx={{ maxWidth: 320 }}>
                       <Typography variant="body2" noWrap>
@@ -818,7 +555,7 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
         `/services/${input.operation === 'submit' ? 'my' : 'drafts'}/${data.request.requestId}`
       );
     },
-    onError: (error) => toast.error(errorText(error, t('detail.actionError'))),
+    onError: (error) => toast.error(serviceRequestErrorText(error, t('detail.actionError'))),
   });
   const data = detail.data;
   const fieldByKey = new Map((data?.requestSchema.fields ?? []).map((field) => [field.key, field]));
@@ -838,7 +575,9 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
           {t('detail.back')}
         </ActionButton>
         {detail.isError ? (
-          <Alert severity="error">{errorText(detail.error, t('detail.loadError'))}</Alert>
+          <Alert severity="error">
+            {serviceRequestErrorText(detail.error, t('detail.loadError'))}
+          </Alert>
         ) : !data ? (
           <Skeleton variant="rounded" height={420} />
         ) : (
@@ -852,7 +591,7 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
                   <StatusChip status={data.request.status} />
                 </Stack>
                 <Typography component="h1" variant="h3" sx={{ mt: 0.5 }}>
-                  {requestServiceName(data.request, i18n.resolvedLanguage ?? i18n.language)}
+                  {serviceRequestName(data.request, i18n.resolvedLanguage ?? i18n.language)}
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ mt: 0.75 }}>
                   {data.request.summary}
@@ -999,7 +738,10 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
                         <Box key={key}>
                           <Typography component="dt" variant="caption" color="text.secondary">
                             {field
-                              ? fieldLabel(field, i18n.resolvedLanguage ?? i18n.language)
+                              ? serviceRequestFieldLabel(
+                                  field,
+                                  i18n.resolvedLanguage ?? i18n.language
+                                )
                               : key}
                           </Typography>
                           <Typography
@@ -1101,7 +843,7 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
           busy={mutation.isPending}
           intent="danger"
         />
-        <RequestDialog
+        <ServiceRequestDialog
           service={null}
           draft={editing && data?.request.status === 'DRAFT' ? data : null}
           onClose={() => setEditing(false)}

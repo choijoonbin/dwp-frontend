@@ -512,6 +512,17 @@ async function clickWorkplaceNavigationLink(page: Page, name: string) {
   await link.click();
 }
 
+async function expectWorkplaceHomeAvailability(
+  page: Page,
+  physicalOpen: number,
+  initialChecks: number
+) {
+  await expect(page.getByTestId('workplace-physical-open-count')).toHaveText(String(physicalOpen));
+  await expect(page.getByTestId('workplace-initial-checks-count')).toHaveText(
+    String(initialChecks)
+  );
+}
+
 test.use({ timezoneId: 'UTC' });
 
 test.beforeEach(async ({ page }) => {
@@ -526,6 +537,7 @@ test.beforeEach(async ({ page }) => {
 test('workplace home prioritizes the next action and reflows with accessible visual context', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/workplace');
 
@@ -540,6 +552,22 @@ test('workplace home prioritizes the next action and reflows with accessible vis
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Your workweek rhythm' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Worth your attention' })).toBeVisible();
+  await expect(page.getByTestId('workplace-week-day')).toHaveCount(5);
+  await expect(page.getByTestId('workplace-week-workload')).toHaveCount(5);
+  const desktopWeekLayout = await page.getByTestId('workplace-week-day').evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return { x: bounds.x, y: bounds.y, width: bounds.width };
+    })
+  );
+  expect(
+    Math.max(...desktopWeekLayout.map(({ y }) => y)) -
+      Math.min(...desktopWeekLayout.map(({ y }) => y))
+  ).toBeLessThan(2);
+  expect(
+    Math.max(...desktopWeekLayout.map(({ width }) => width)) -
+      Math.min(...desktopWeekLayout.map(({ width }) => width))
+  ).toBeLessThan(2);
   await expect(page.getByText('Workplace launch alignment still needs a room')).toHaveCount(0);
   await expect(page.getByText('Active sites', { exact: true })).toHaveCount(0);
 
@@ -554,6 +582,20 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     fullPage: true,
   });
 
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.reload();
+  const mediumDesktop = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    documentWidth: document.documentElement.scrollWidth,
+    dayRows: [...document.querySelectorAll('[data-testid="workplace-week-day"]')].map(
+      (element) => element.getBoundingClientRect().y
+    ),
+  }));
+  expect(mediumDesktop.documentWidth, '1280px home width').toBeLessThanOrEqual(
+    mediumDesktop.viewport
+  );
+  expect(Math.max(...mediumDesktop.dayRows) - Math.min(...mediumDesktop.dayRows)).toBeLessThan(2);
+
   for (const viewport of [
     { width: 320, height: 720 },
     { width: 390, height: 844 },
@@ -562,6 +604,16 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     await page.setViewportSize(viewport);
     await page.reload();
     await expect(page.getByTestId('workplace-day-brief')).toBeVisible();
+    const compactWeekLayout = await page.getByTestId('workplace-week-day').evaluateAll((elements) =>
+      elements.map((element) => {
+        const bounds = element.getBoundingClientRect();
+        return { x: bounds.x, y: bounds.y };
+      })
+    );
+    expect(new Set(compactWeekLayout.map(({ x }) => Math.round(x))).size).toBe(1);
+    expect(compactWeekLayout.map(({ y }) => y)).toEqual(
+      [...compactWeekLayout.map(({ y }) => y)].sort((left, right) => left - right)
+    );
     const dimensions = await page.evaluate(() => ({
       viewport: document.documentElement.clientWidth,
       documentWidth: document.documentElement.scrollWidth,
@@ -604,11 +656,19 @@ test('workplace home prioritizes the next action and reflows with accessible vis
     ]
       .filter((element) => element.scrollWidth > element.clientWidth)
       .map((element) => element.textContent),
+    clippedDayContext:
+      document.querySelector('[data-testid="workplace-day-context"]')!.scrollWidth >
+      document.querySelector('[data-testid="workplace-day-context"]')!.clientWidth,
+    clippedWeekDays: [...document.querySelectorAll('[data-testid="workplace-week-day"]')]
+      .filter((element) => element.scrollWidth > element.clientWidth)
+      .map((element) => element.getAttribute('aria-label')),
   }));
   expect(resized.documentWidth, '390px home at 200% text').toBeLessThanOrEqual(resized.viewport);
   expect(resized.dayBriefFontSize).toBeGreaterThanOrEqual(baseDayBriefFontSize * 1.9);
   expect(resized.clippedAgendaTitles).toEqual([]);
   expect(resized.clippedAvailabilityLabels).toEqual([]);
+  expect(resized.clippedDayContext).toBe(false);
+  expect(resized.clippedWeekDays).toEqual([]);
   await page.screenshot({
     path: testInfo.outputPath('workplace-home-390-text-200.png'),
     fullPage: true,
@@ -798,8 +858,12 @@ test('workplace home does not confirm a next action or an empty week from partia
   await expect(
     page.getByText('Some reservation sources are unavailable. Only verified activity is shown.')
   ).toBeVisible();
-  await expect(page.getByText('Reservation status not fully verified').first()).toBeVisible();
+  await expect(
+    page.getByText('Some reservation sources are unavailable. Only verified activity is shown.')
+  ).toHaveCount(1);
+  await expect(page.getByText('Reservation status not fully verified')).toHaveCount(0);
   await expect(page.getByText('No space reservation')).toHaveCount(0);
+  await expect(page.getByText('No workplace activity is planned this week')).toHaveCount(0);
   await expect(page.getByText('No workplace events are scheduled today')).toHaveCount(0);
   await expect(page.getByText("Today's complete workplace flow is not yet verified")).toBeVisible();
   await expect(page.getByText('Your workplace plan is in good shape')).toHaveCount(0);
@@ -821,12 +885,13 @@ test('workplace home discards cached availability after an authoritative access 
   );
 
   await page.goto('/workplace');
-  await expect(page.getByText('2 physically open · 2 initial checks passed').first()).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 2, 2);
   denied = true;
   await page.getByRole('button', { name: 'Try again' }).first().click();
 
   await expect(page.getByText('Availability could not be verified').first()).toBeVisible();
-  await expect(page.getByText('2 physically open · 2 initial checks passed')).toHaveCount(0);
+  await expect(page.getByTestId('workplace-physical-open-count')).toHaveCount(0);
+  await expect(page.getByTestId('workplace-initial-checks-count')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Desk spaces physically open/u })).toHaveCount(0);
 });
 
@@ -1055,7 +1120,7 @@ test('workplace home separates open spaces from booking eligibility for read-onl
     page.getByRole('heading', { name: 'Browse the floor before choosing your next space' })
   ).toBeVisible();
   await expect(page.getByText('2 spaces are physically open.')).toBeVisible();
-  await expect(page.getByText('2 physically open · 0 initial checks passed').first()).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 2, 0);
   await expect(page.getByRole('link', { name: 'Find a space' }).first()).toBeVisible();
 });
 
@@ -1170,7 +1235,7 @@ test('workplace home keeps eligibility attached to the verified range during a d
   await expect.poll(() => exploreCalls).toBeGreaterThanOrEqual(2);
   expect(refreshedFrom).toBe('2026-08-19T00:02:00Z');
   await expect(discovery).not.toHaveAttribute('href', /time=/u);
-  await expect(page.getByText('2 physically open · 0 initial checks passed')).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 2, 0);
 
   const refreshed = page.waitForResponse(
     (response) =>
@@ -1179,7 +1244,7 @@ test('workplace home keeps eligibility attached to the verified range during a d
   releaseRefresh?.();
   await refreshed;
   await expect(discovery).toHaveAttribute('href', /time=09%3A02/u);
-  await expect(page.getByText('0 physically open · 0 initial checks passed')).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 0, 0);
 });
 
 test('workplace home only raises room-needed attention for actionable full-detail meetings', async ({
@@ -1450,7 +1515,7 @@ test('workplace home closes cached room-policy eligibility until recovery', asyn
   await expect(
     page.getByRole('heading', { name: 'Choose the space that fits the work' })
   ).toBeVisible();
-  await expect(page.getByText('1 physically open · 1 initial checks passed').first()).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 1, 1);
 
   policyUnavailable = true;
   await page.clock.fastForward(60_500);
@@ -1458,14 +1523,14 @@ test('workplace home closes cached room-policy eligibility until recovery', asyn
   await expect(
     page.getByRole('heading', { name: 'Refresh availability before choosing a space' })
   ).toBeVisible();
-  await expect(page.getByText('1 physically open · 0 initial checks passed').first()).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 1, 0);
 
   policyUnavailable = false;
   await page.getByRole('button', { name: 'Verify current data' }).click();
   await expect(
     page.getByRole('heading', { name: 'Choose the space that fits the work' })
   ).toBeVisible();
-  await expect(page.getByText('1 physically open · 1 initial checks passed').first()).toBeVisible();
+  await expectWorkplaceHomeAvailability(page, 1, 1);
 });
 
 test('Workplace booking deep links focus the requested personal and meeting reservation', async ({

@@ -9,7 +9,8 @@ const pageMocks = vi.hoisted(() => ({
   useAuth: vi.fn(),
   usePermissions: vi.fn(),
   useProviderSupportContext: vi.fn(),
-  useHcmExperience: vi.fn(),
+  useHcmAccess: vi.fn(),
+  useOptionalAllowedProductSurface: vi.fn(),
 }));
 
 vi.mock('@dwp-frontend/shared-utils/auth/auth-provider', () => ({
@@ -25,7 +26,11 @@ vi.mock('@dwp-frontend/shared-utils/auth/provider-support-context', () => ({
 }));
 
 vi.mock('../features/hcm/use-hcm-experience', () => ({
-  useHcmExperience: pageMocks.useHcmExperience,
+  useHcmAccess: pageMocks.useHcmAccess,
+}));
+
+vi.mock('../components/allowed-product-surface-context', () => ({
+  useOptionalAllowedProductSurface: pageMocks.useOptionalAllowedProductSurface,
 }));
 
 vi.mock('../components/product-surface-access-state', () => ({
@@ -49,7 +54,8 @@ describe('HCM legacy page guard', () => {
       hasPermission: vi.fn(() => false),
     });
     pageMocks.useProviderSupportContext.mockReturnValue({ isLoading: false, data: undefined });
-    pageMocks.useHcmExperience.mockReturnValue({
+    pageMocks.useOptionalAllowedProductSurface.mockReturnValue(undefined);
+    pageMocks.useHcmAccess.mockReturnValue({
       isManager: false,
       canOperate: false,
       canManageTime: false,
@@ -74,11 +80,19 @@ describe('HCM legacy page guard', () => {
     });
 
     expect(renderPage('/hr/pay')).toContain('access:support-scope-denied');
-    expect(pageMocks.useHcmExperience).not.toHaveBeenCalled();
+    expect(pageMocks.useHcmAccess).not.toHaveBeenCalled();
   });
 
   it('denies an HCM administration page without VIEW or MANAGE before mounting it', () => {
     expect(renderPage('/hr/operations/time')).toContain('access:route-denied');
-    expect(pageMocks.useHcmExperience).not.toHaveBeenCalled();
+    expect(pageMocks.useHcmAccess).not.toHaveBeenCalled();
+  });
+
+  it('does not mount legacy audience resolution for an exact governed operations page', () => {
+    pageMocks.useOptionalAllowedProductSurface.mockReturnValue({ surfaceId: 'hcm.operations' });
+
+    renderPage('/hr/operations/time');
+
+    expect(pageMocks.useHcmAccess).not.toHaveBeenCalled();
   });
 });

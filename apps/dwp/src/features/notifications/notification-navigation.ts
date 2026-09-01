@@ -130,8 +130,6 @@ export const NOTIFICATION_NAVIGATION: readonly NotificationNavigationGroup[] = [
   },
 ] as const;
 
-export const NOTIFICATION_DEFAULT_PATH = NOTIFICATION_HOME_PATH;
-
 export function findNotificationNavigationItem(pathname: string) {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
   return NOTIFICATION_NAVIGATION.flatMap((group) => group.items).find(

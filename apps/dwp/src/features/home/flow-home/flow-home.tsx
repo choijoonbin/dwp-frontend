@@ -7,9 +7,14 @@ import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { WorkspaceWidgetCanvas } from '../../../components/workspace-composer/workspace-widget-canvas';
-import { writeHomePresentationHint } from '../../../components/home-loading-layout-policy';
+import {
+  writeHomeLaunchpadGroupItemCounts,
+  writeHomePresentationHint,
+} from '../../../components/home-loading-layout-policy';
+import { HOME_LAUNCHPAD_GROUP_ITEM_LIMIT } from '../../../components/workspace-composer/home-launchpad-layout-contract';
 import { defaultHomeContentAlignment } from '../../../components/tenant-workscape';
 import { FlowHomeContext } from './flow-home-context';
+import { resolveFlowLauncherClearance } from './flow-launcher-clearance';
 import { HomePurposeWidget } from './home-purpose-widget';
 import { MyAppDock } from './my-app-dock';
 import { resolveFlowHomeHealth } from './flow-home-health';
@@ -284,33 +289,38 @@ export function FlowHome({
       storage = undefined;
     }
     writeHomePresentationHint(storage, presentation);
-  }, [editing, presentation]);
+    writeHomeLaunchpadGroupItemCounts(
+      storage,
+      appGroups.map((group) =>
+        Math.min(HOME_LAUNCHPAD_GROUP_ITEM_LIMIT, appLayout.groups[group.id]?.length ?? 0)
+      )
+    );
+  }, [appGroups, appLayout.groups, editing, presentation]);
 
   useEffect(() => {
     const stage = purposeStageRef.current;
     if (!stage) return;
     let animationFrame = 0;
     let observedLauncher: HTMLElement | null = null;
+    const observedWidgets = new Set<HTMLElement>();
+    const clearLauncherClearance = (widget: HTMLElement) => {
+      widget.removeAttribute('data-flow-launcher-edge');
+      widget.removeAttribute('data-flow-launcher-clearance');
+      widget.style.removeProperty('--flow-launcher-clearance');
+    };
     const markLauncherEdgeWidgets = () => {
       animationFrame = 0;
-      const stageRect = stage.getBoundingClientRect();
       const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
       const launcherRect = launcher?.getBoundingClientRect();
-      const launcherVisible = Boolean(
-        launcherRect && launcherRect.width > 0 && launcherRect.height > 0
-      );
+      const launcherPlacement = launcher?.dataset.shellAuxiliaryPlacement;
       stage.querySelectorAll<HTMLElement>('[data-workspace-widget]').forEach((widget) => {
         const widgetRect = widget.getBoundingClientRect();
-        const atInlineEnd = widgetRect.right >= stageRect.right - 24;
-        const crossesLauncherLane = Boolean(
-          launcherVisible &&
-          launcherRect &&
-          widgetRect.bottom >= launcherRect.top - 16 &&
-          widgetRect.top <= launcherRect.bottom + 16
-        );
-        if (atInlineEnd && crossesLauncherLane) {
+        const clearance = resolveFlowLauncherClearance(widgetRect, launcherRect, launcherPlacement);
+        if (clearance > 0) {
           widget.setAttribute('data-flow-launcher-edge', 'true');
-        } else widget.removeAttribute('data-flow-launcher-edge');
+          widget.setAttribute('data-flow-launcher-clearance', String(clearance));
+          widget.style.setProperty('--flow-launcher-clearance', `${clearance}px`);
+        } else clearLauncherClearance(widget);
       });
     };
     const queueLauncherEdgeCheck = () => {
@@ -318,6 +328,21 @@ export function FlowHome({
       animationFrame = window.requestAnimationFrame(markLauncherEdgeWidgets);
     };
     const resizeObserver = new ResizeObserver(queueLauncherEdgeCheck);
+    const syncWidgetObservation = () => {
+      const nextWidgets = new Set(stage.querySelectorAll<HTMLElement>('[data-workspace-widget]'));
+      observedWidgets.forEach((widget) => {
+        if (nextWidgets.has(widget)) return;
+        resizeObserver.unobserve(widget);
+        clearLauncherClearance(widget);
+        observedWidgets.delete(widget);
+      });
+      nextWidgets.forEach((widget) => {
+        if (observedWidgets.has(widget)) return;
+        observedWidgets.add(widget);
+        resizeObserver.observe(widget);
+      });
+      queueLauncherEdgeCheck();
+    };
     const syncLauncherObservation = () => {
       const nextLauncher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
       if (nextLauncher === observedLauncher) return;
@@ -327,11 +352,11 @@ export function FlowHome({
       queueLauncherEdgeCheck();
     };
     const launcherObserver = new MutationObserver(syncLauncherObservation);
+    const stageObserver = new MutationObserver(syncWidgetObservation);
     resizeObserver.observe(stage);
-    stage
-      .querySelectorAll<HTMLElement>('[data-workspace-widget]')
-      .forEach((widget) => resizeObserver.observe(widget));
     launcherObserver.observe(document.body, { childList: true, subtree: true });
+    stageObserver.observe(stage, { childList: true, subtree: true });
+    syncWidgetObservation();
     syncLauncherObservation();
     window.addEventListener('scroll', queueLauncherEdgeCheck, { passive: true });
     window.addEventListener('resize', queueLauncherEdgeCheck);
@@ -339,6 +364,8 @@ export function FlowHome({
     return () => {
       resizeObserver.disconnect();
       launcherObserver.disconnect();
+      stageObserver.disconnect();
+      observedWidgets.forEach(clearLauncherClearance);
       window.removeEventListener('scroll', queueLauncherEdgeCheck);
       window.removeEventListener('resize', queueLauncherEdgeCheck);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
@@ -383,6 +410,12 @@ export function FlowHome({
           '--flow-shell-width': '2560px',
           px: compactPreview ? 2 : { xs: 2, sm: 3, lg: '20px' },
         },
+        '@media (min-width:1800px)': {
+          '&:not([data-flow-home-presentation="focused"])': {
+            '--flow-shell-width': '2560px',
+            px: compactPreview ? 2 : '20px',
+          },
+        },
         '& [data-flow-dock-launch]': { minHeight: editing ? 72 : 62 },
         '&[data-preview-device="mobile"] [data-flow-app-dock-list]': {
           gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
@@ -400,14 +433,23 @@ export function FlowHome({
           overflow: 'visible',
           WebkitLineClamp: 'unset',
         },
-        '&[data-flow-large-text="true"] [data-flow-dock-group-label]': {
-          minHeight: '2.4em',
-          lineHeight: 1.2,
-          whiteSpace: 'normal',
-          wordBreak: 'keep-all',
-          overflowWrap: 'anywhere',
-          overflow: 'visible',
-          textOverflow: 'clip',
+        '&[data-flow-large-text="true"] [data-flow-dock-group-label], &[data-flow-large-text="true"] [data-flow-dock-group-description]':
+          {
+            minHeight: '2.4em',
+            lineHeight: 1.2,
+            whiteSpace: 'normal',
+            wordBreak: 'keep-all',
+            overflowWrap: 'anywhere',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
+        '&[data-flow-large-text="true"] [data-flow-app-dock-list]': {
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        },
+        '&[data-flow-large-text="true"]': {
+          '--launchpad-tile-height': 'calc(60px + 1.65rem)',
+          '--launchpad-label-height': '2.4em',
+          '--launchpad-label-line-height': '1.2',
         },
         '@media (forced-colors: active)': {
           '--home-surface': 'Canvas',
@@ -459,8 +501,6 @@ export function FlowHome({
             busy={customizationBusy}
             compact={compactPreview}
             priorityCompact={narrowViewport || compactPreview}
-            presentation={presentation}
-            contentAlignment={resolvedContentAlignment}
             onBrowseAll={onBrowseAllApps}
             onLaunch={onLaunchApp}
             onManage={onManageApp}
@@ -519,13 +559,15 @@ export function FlowHome({
               borderColor: 'rgba(49,95,213,0.28)',
               boxShadow: '0 14px 34px rgba(15,23,42,0.085)',
             },
-          '& [data-flow-launcher-edge="true"] [data-flow-section^="purpose-"]': {
-            '@media (min-width: 600px)': { pr: 11 },
+          '& [data-flow-launcher-edge="true"] [data-workspace-widget-content] > section': {
+            '@media (min-width: 900px)': {
+              paddingInlineEnd: 'var(--flow-launcher-clearance, 0px)',
+            },
           },
           '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget="action-queue"]': {
             gridColumn: '1 / -1',
           },
-          '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget-policy="PERSONAL"]':
+          '&[data-flow-read-template="adaptive-medium"] [data-workspace-widget-policy="PERSONAL"]:not([data-workspace-widget="action-queue"])':
             {
               gridColumn: 'span 30',
             },
@@ -577,46 +619,6 @@ export function FlowHome({
         <WorkspaceWidgetCanvas<FlowHomeSectionKey>
           registry={FLOW_HOME_SECTION_REGISTRY}
           widgets={sections}
-          governedWidgets={[
-            {
-              widgetKey: 'action-queue',
-              label: t('flow.purpose.action.title'),
-              governance: 'SYSTEM',
-              size: 'large',
-              height: 'standard',
-              surface: 'plain',
-              content: (
-                <HomePurposeWidget
-                  sectionKey="action"
-                  icon={Zap}
-                  items={contributionModel.buckets.action}
-                  loading={contributionLoading}
-                  fetching={contributionFetching}
-                  state={contributionModel.bucketStates.action}
-                  maxItems={resolveFlowHomeReadItemLimit({
-                    template: readLayout.template,
-                    sectionKey: 'action',
-                    firstSectionKey: readLayout.firstSectionKey,
-                  })}
-                  allRoute={homePurposeAllRoute('action', contributionModel.buckets.action)}
-                  compact={compactContent}
-                  footprintHeight="standard"
-                  featuredFirst
-                  wideFeatured={readLayout.template === 'adaptive-wide'}
-                  headerAccessory={
-                    !editing ? (
-                      <NextActionCue
-                        overview={overview}
-                        feedbackBusy={feedbackBusy}
-                        onRecommendationFeedback={onRecommendationFeedback}
-                      />
-                    ) : undefined
-                  }
-                  onRetry={onRetryContributions}
-                />
-              ),
-            },
-          ]}
           trailingGovernedWidgets={
             showUpdates
               ? [
@@ -660,6 +662,34 @@ export function FlowHome({
               footprintHeight: height,
               onRetry: onRetryContributions,
             };
+            if (sectionKey === 'action-queue') {
+              return (
+                <HomePurposeWidget
+                  {...common}
+                  sectionKey="action"
+                  icon={Zap}
+                  items={contributionModel.buckets.action}
+                  state={contributionModel.bucketStates.action}
+                  maxItems={resolveFlowHomeReadItemLimit({
+                    template: readLayout.template,
+                    sectionKey: 'action',
+                    firstSectionKey: readLayout.firstSectionKey,
+                  })}
+                  allRoute={homePurposeAllRoute('action', contributionModel.buckets.action)}
+                  featuredFirst
+                  wideFeatured={readLayout.template === 'adaptive-wide'}
+                  headerAccessory={
+                    !editing ? (
+                      <NextActionCue
+                        overview={overview}
+                        feedbackBusy={feedbackBusy}
+                        onRecommendationFeedback={onRecommendationFeedback}
+                      />
+                    ) : undefined
+                  }
+                />
+              );
+            }
             if (sectionKey === 'today') {
               return (
                 <HomePurposeWidget

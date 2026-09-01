@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
-import { useHcmExperience } from './use-hcm-experience';
+import { useCurrentHcmPerson } from './use-hcm-experience';
 
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
@@ -33,31 +33,31 @@ export function MyHrProfile() {
   const { t } = useTranslation('hcm');
   const navigate = useNavigate();
   const auth = useAuth();
-  const experience = useHcmExperience();
+  const personLink = useCurrentHcmPerson();
   const personDetail = useQuery({
-    queryKey: ['hcm', 'my-profile', experience.currentPerson?.personId],
-    queryFn: () => getPerson(experience.currentPerson!.personId, undefined, 'directory'),
-    enabled: Boolean(experience.currentPerson),
+    queryKey: ['hcm', 'my-profile', personLink.currentPerson?.personId],
+    queryFn: () => getPerson(personLink.currentPerson!.personId, undefined, 'directory'),
+    enabled: Boolean(personLink.currentPerson),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
 
-  if (experience.currentPersonQuery.isLoading) {
+  if (personLink.currentPersonQuery.isLoading) {
     return <LoadingState size="standard" label={t('myProfile.loading')} />;
   }
-  if (experience.currentPersonQuery.isError) {
+  if (personLink.currentPersonQuery.isError) {
     return (
       <ErrorState
         size="standard"
         title={t('common.loadError')}
         description={t('myProfile.loadError')}
         retryLabel={t('common.retry')}
-        onRetry={() => void experience.currentPersonQuery.refetch()}
-        retrying={experience.currentPersonQuery.isFetching}
+        onRetry={() => void personLink.currentPersonQuery.refetch()}
+        retrying={personLink.currentPersonQuery.isFetching}
       />
     );
   }
-  if (!experience.currentPerson) {
+  if (!personLink.currentPerson) {
     return (
       <Paper variant="outlined">
         <EmptyState
@@ -73,7 +73,7 @@ export function MyHrProfile() {
     );
   }
 
-  const person = experience.currentPerson;
+  const person = personLink.currentPerson;
   const detail = personDetail.data;
   const primaryAssignment = detail?.assignments.find((assignment) => assignment.primaryAssignment);
   const selfDisplayName = auth.user?.displayName || person.displayName;

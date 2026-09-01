@@ -105,7 +105,9 @@ export function WorkflowAction({
         )}
         <ActionButton
           intent={actionColor === 'error' ? 'danger' : 'primary'}
-          startIcon={busy ? <CircularProgress size={14} color="inherit" /> : icon}
+          startIcon={
+            busy ? <CircularProgress size={14} color="inherit" aria-hidden="true" /> : icon
+          }
           disabled={busy || disabled || !reason.trim()}
           onClick={() => void onAction()}
         >

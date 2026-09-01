@@ -338,6 +338,11 @@
         "configureResources": "Add spaces",
         "openType": "{{available}} {{type}} spaces physically open and {{bookable}} pass initial booking checks, open Find a space",
         "pulseCount": "{{open}} physically open · {{bookable}} initial checks passed",
+        "locationMetric": "Space context",
+        "windowMetric": "Availability window",
+        "nextHour": "Next 60 minutes",
+        "physicalOpenMetric": "Physically open",
+        "initialChecksMetric": "Initial checks passed",
         "bookableCount": "{{count}} pass initial booking checks",
         "accessible": "{{count}} accessible spaces pass initial booking checks",
         "emptyTitle": "No space is physically open for the next 60 minutes",
@@ -348,12 +353,15 @@
         "description": "Read space reservations alongside meeting and focus time to keep the week balanced.",
         "meetings": "Meetings",
         "focus": "Focus",
+        "minutesShort": "{{count}} min",
         "workloadLabel": "{{meetingMinutes}} meeting minutes and {{focusMinutes}} focus minutes",
         "today": "Today",
         "reservations": "{{count}} space reservations",
         "noReservation": "No space reservation",
         "partial": "Some reservation sources are unavailable. Only verified activity is shown.",
-        "unverified": "Reservation status not fully verified"
+        "unverified": "Reservation status not fully verified",
+        "emptyTitle": "No workplace activity is planned this week",
+        "emptyDescription": "Meeting and focus patterns will appear here as your week takes shape."
       },
       "attention": {
         "title": "Worth your attention",

@@ -42,7 +42,7 @@ export function ProviderSupportPostReviewEvidence({
       </Typography>
       {evidence.isLoading ? (
         <Stack direction="row" alignItems="center" gap={1} role="status" sx={{ mt: 1 }}>
-          <CircularProgress size={16} />
+          <CircularProgress size={16} aria-hidden="true" />
           <Typography variant="body2">{t('support.postReviewEvidence.loading')}</Typography>
         </Stack>
       ) : evidence.isError || !evidence.data ? (

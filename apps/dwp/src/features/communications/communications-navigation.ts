@@ -5,9 +5,6 @@ import type {
   ProductSurfaceNavigationGroup,
 } from '../../components/product-manifest';
 
-export type CommunicationsView =
-  'home' | 'for-you' | 'all' | 'required' | 'saved' | 'admin-content';
-
 export const COMMUNICATIONS_WORK_NAVIGATION = [
   {
     id: 'overview',
@@ -91,5 +88,3 @@ export const COMMUNICATIONS_NAVIGATION = [
     })),
   })),
 ] as const satisfies readonly ProductNavigationGroup[];
-
-export const COMMUNICATIONS_DEFAULT_PATH = '/communications/home';

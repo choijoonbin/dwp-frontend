@@ -540,7 +540,6 @@ export function FlowUpdates({
             minHeight: 44,
             flex: '0 0 auto',
             ml: 'auto',
-            '@media (min-width: 900px)': { mr: 10 },
           }}
         >
           {t('flow.viewAll', { ns: 'home' })}
@@ -822,7 +821,6 @@ export function FlowUpdates({
                         outline: '3px solid var(--dwp-focus-ring, currentColor)',
                         outlineOffset: 2,
                       },
-                      '@media (min-width: 900px)': { mr: 10 },
                       '@container flow-updates (min-width: 720px)': {
                         minHeight: 68,
                         p: 1.25,
@@ -836,7 +834,6 @@ export function FlowUpdates({
                             flex: '1 1 auto',
                             minHeight: bodyHeight,
                             p: 1.5,
-                            mr: index === secondary.length - 1 ? 10 : 0,
                             bgcolor: 'transparent',
                             border: 0,
                             borderRadius: 0,

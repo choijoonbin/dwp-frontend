@@ -18,7 +18,7 @@ type WorkspaceHomePreference = {
   customized: boolean;
   layout: {
     appLayout: Record<string, unknown> | null;
-    presentation: 'balanced';
+    presentation: 'balanced' | 'expressive' | 'focused';
     widgets: Array<{
       widgetKey: string;
       visible: boolean;
@@ -35,10 +35,10 @@ const concurrentHomePreference: WorkspaceHomePreference = {
   customized: true,
   layout: {
     appLayout: null,
-    presentation: 'balanced',
+    presentation: 'focused',
     widgets: [
       { widgetKey: 'activity', visible: true, size: 'quarter' },
-      { widgetKey: 'focus', visible: true, size: 'medium' },
+      { widgetKey: 'focus', visible: true, size: 'quarter' },
       { widgetKey: 'schedule', visible: true, size: 'quarter' },
       { widgetKey: 'daily-brief', visible: true, size: 'full' },
     ],
@@ -103,6 +103,7 @@ async function routeConcurrentHomePreference(page: Page) {
   let serverPreference = structuredClone(concurrentHomePreference);
   let conflictCount = 0;
   const submittedVersions: number[] = [];
+  const submittedLayouts: WorkspaceHomePreference['layout'][] = [];
   await page.route('**/api/platform/v1/home-preferences', async (route) => {
     const request = route.request();
     if (request.method() === 'GET') {
@@ -118,6 +119,7 @@ async function routeConcurrentHomePreference(page: Page) {
       version: number;
     };
     submittedVersions.push(body.version);
+    submittedLayouts.push(structuredClone(body.layout));
     if (conflictCount === 0) {
       conflictCount += 1;
       await route.fulfill({
@@ -144,6 +146,7 @@ async function routeConcurrentHomePreference(page: Page) {
     await fulfillSuccess(route, serverPreference);
   });
   return {
+    submittedLayouts,
     submittedVersions,
     get conflictCount() {
       return conflictCount;
@@ -204,6 +207,38 @@ test('keeps a hidden widget draft after a 500 and persists it on retry', async (
   await expect(dialog.getByRole('tab', { name: 'Hidden 1' })).toBeVisible();
 });
 
+test('discards a gallery draft only after confirmation without mutating the saved home', async ({
+  page,
+}) => {
+  await startEditing(page);
+  let saveCount = 0;
+  await page.route('**/api/platform/v1/home-preferences', async (route) => {
+    if (route.request().method() === 'PUT') saveCount += 1;
+    await route.fallback();
+  });
+
+  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  let dialog = await expectActivityState(page, 'RESTORE');
+  await dialog.getByRole('button', { name: 'Close the home item library' }).click();
+
+  const cancelButton = page.getByRole('button', { name: 'Cancel changes' });
+  await cancelButton.click();
+  const confirmation = page.getByRole('alertdialog', { name: 'Discard your home changes?' });
+  await confirmation.getByRole('button', { name: 'Keep editing' }).click();
+  await expect(cancelButton).toBeFocused();
+  dialog = await expectActivityState(page, 'RESTORE');
+  await dialog.getByRole('button', { name: 'Close the home item library' }).click();
+
+  await cancelButton.click();
+  await confirmation.getByRole('button', { name: 'Discard changes' }).click();
+  await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
+  expect(saveCount).toBe(0);
+
+  await page.reload();
+  await startEditing(page);
+  await expectActivityState(page, 'ADDED');
+});
+
 test('keeps a hidden widget draft when a 409 conflict is dismissed', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await startEditing(page);
@@ -255,7 +290,9 @@ test('keeps a hidden widget draft when a 409 conflict is dismissed', async ({ pa
   await expectActivityState(page, 'RESTORE');
 });
 
-test('reapplies a widget draft after a 409 and persists it on the next save', async ({ page }) => {
+test('reapplies a widget draft after a 409 without overwriting the latest home', async ({
+  page,
+}) => {
   await startEditing(page);
   const conflictState = await routeConcurrentHomePreference(page);
 
@@ -276,6 +313,20 @@ test('reapplies a widget draft after a 409 and persists it on the next save', as
   await page.keyboard.press('Enter');
   await expect(page.getByText('Home view saved.')).toBeVisible();
   expect(conflictState.submittedVersions).toEqual([0, 1]);
+  expect(conflictState.submittedLayouts[1]?.presentation).toBe('focused');
+  expect(conflictState.submittedLayouts[1]?.widgets).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ widgetKey: 'activity', visible: false }),
+      expect.objectContaining({ widgetKey: 'focus', visible: true, size: 'quarter' }),
+    ])
+  );
+  expect(conflictState.submittedLayouts[1]?.widgets.map((widget) => widget.widgetKey)).toEqual([
+    'activity',
+    'focus',
+    'schedule',
+    'daily-brief',
+    'command-rail',
+  ]);
   expect(conflictState.serverVersion).toBe(2);
 
   await page.reload();

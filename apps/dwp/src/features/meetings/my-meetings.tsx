@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 
 import { MeetingPageHeading, MeetingSummaryRow } from './meeting-components';
 import { MeetingScheduleDialog } from './meeting-schedule-dialog';
+import { meetingListSurface } from './meeting-visual-system';
 import {
   scheduleVideoMeeting,
   type ScheduleVideoMeetingInput,
@@ -49,7 +50,7 @@ export function MyMeetings() {
   });
 
   return (
-    <PageCanvas>
+    <PageCanvas mode="focus">
       <MeetingPageHeading
         eyebrow={t('mine.eyebrow')}
         title={t('mine.title')}
@@ -76,15 +77,7 @@ export function MyMeetings() {
         />
       ) : (
         <>
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
-            }}
-          >
+          <Box sx={(theme) => meetingListSurface(theme)}>
             {query.data.items.length ? (
               query.data.items.map((meeting) => (
                 <MeetingSummaryRow

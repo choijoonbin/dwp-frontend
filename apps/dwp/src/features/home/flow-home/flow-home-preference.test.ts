@@ -28,12 +28,13 @@ const customizedWidgets: HomeWidgetPreference[] = [
 describe('Flow Home preference alias migration', () => {
   it('keeps the legacy storage mapping strictly one-to-one', () => {
     expect(FLOW_HOME_STORAGE_ALIAS).toEqual({
+      'action-queue': 'command-rail',
       today: 'schedule',
       'response-hub': 'daily-brief',
       'request-tracker': 'focus',
       'role-pulse': 'activity',
     });
-    expect(new Set(Object.values(FLOW_HOME_STORAGE_ALIAS)).size).toBe(4);
+    expect(new Set(Object.values(FLOW_HOME_STORAGE_ALIAS)).size).toBe(5);
   });
 
   it('derives the Member and Manager default DOM from their role-specific storage order', () => {
@@ -58,6 +59,7 @@ describe('Flow Home preference alias migration', () => {
     const sections = deriveFlowHomeSections(customizedWidgets, true);
 
     expect(sections).toEqual([
+      { widgetKey: 'action-queue', visible: false, size: 'large', height: 'short' },
       { widgetKey: 'role-pulse', visible: true, size: 'quarter', height: 'tall' },
       { widgetKey: 'request-tracker', visible: false, size: 'medium', height: 'tall' },
       { widgetKey: 'today', visible: true, size: 'quarter', height: 'standard' },
@@ -68,6 +70,7 @@ describe('Flow Home preference alias migration', () => {
   it('accepts both Flow keys and legacy storage keys in device width overlays', () => {
     const source = defaultHomeWidgets(undefined, 'MEMBER');
     const sections = deriveFlowHomeSections(source, false, {
+      'action-queue': 'full',
       today: 'medium',
       'daily-brief': 'large',
       'request-tracker': 'large',
@@ -75,6 +78,7 @@ describe('Flow Home preference alias migration', () => {
     });
 
     expect(sections.map(({ widgetKey, size }) => [widgetKey, size])).toEqual([
+      ['action-queue', 'full'],
       ['today', 'medium'],
       ['response-hub', 'large'],
       ['request-tracker', 'large'],
@@ -86,10 +90,10 @@ describe('Flow Home preference alias migration', () => {
     const member = deriveFlowHomeSections(defaultHomeWidgets(undefined, 'MEMBER'), false);
     const operator = deriveFlowHomeSections(defaultHomeWidgets(undefined, 'OPERATOR'), false);
     const resized = member.map((section) =>
-      section.widgetKey === 'today' ? { ...section, size: 'medium' as const } : section
+      section.widgetKey === 'action-queue' ? { ...section, size: 'full' as const } : section
     );
     const hidden = member.map((section) =>
-      section.widgetKey === 'role-pulse' ? { ...section, visible: false } : section
+      section.widgetKey === 'action-queue' ? { ...section, visible: false } : section
     );
     const reordered = [member[1]!, member[0]!, ...member.slice(2)];
     const heightOnly = member.map((section) =>
@@ -119,6 +123,7 @@ describe('Flow Home preference alias migration', () => {
         height,
       }))
     ).toEqual([
+      { widgetKey: 'action-queue', visible: true, size: 'large', height: 'standard' },
       { widgetKey: 'role-pulse', visible: true, size: 'compact', height: 'standard' },
       { widgetKey: 'today', visible: true, size: 'compact', height: 'standard' },
       { widgetKey: 'response-hub', visible: true, size: 'compact', height: 'standard' },
@@ -140,19 +145,46 @@ describe('Flow Home preference alias migration', () => {
     expect(isFlowLegacyGeometryMigrationEligible(4, '2026-08-25T03:00:00.000Z')).toBe(false);
   });
 
-  it('round-trips a customized preference idempotently without changing command-rail', () => {
-    const migratedOnce = applyFlowHomeSections(
-      customizedWidgets,
-      deriveFlowHomeSections(customizedWidgets, true)
-    );
+  it('round-trips the personal action queue order, visibility, width, and height', () => {
+    const editedSections = deriveFlowHomeSections(customizedWidgets, true)
+      .map((section) =>
+        section.widgetKey === 'action-queue'
+          ? {
+              ...section,
+              visible: true,
+              size: 'full' as const,
+              height: 'standard' as const,
+            }
+          : section
+      )
+      .filter((section) => section.widgetKey !== 'action-queue');
+    editedSections.push({
+      widgetKey: 'action-queue',
+      visible: true,
+      size: 'full',
+      height: 'standard',
+    });
+
+    const migratedOnce = applyFlowHomeSections(customizedWidgets, editedSections);
     const migratedTwice = applyFlowHomeSections(
       migratedOnce,
       deriveFlowHomeSections(migratedOnce, true)
     );
 
-    expect(migratedOnce).toEqual(customizedWidgets);
+    expect(migratedOnce.map((widget) => widget.widgetKey)).toEqual([
+      'activity',
+      'focus',
+      'schedule',
+      'daily-brief',
+      'command-rail',
+    ]);
+    expect(migratedOnce.at(-1)).toEqual({
+      widgetKey: 'command-rail',
+      visible: true,
+      size: 'full',
+      height: 'standard',
+    });
     expect(migratedTwice).toEqual(migratedOnce);
-    expect(migratedTwice[0]).toEqual(customizedWidgets[0]);
   });
 
   it('renders Classic focus expanded as Flow tall without losing rollback geometry', () => {
@@ -221,17 +253,16 @@ describe('Flow Home preference alias migration', () => {
     const sections = [...deriveFlowHomeSections(source, true)].reverse();
     const migrated = applyFlowHomeSections(source, sections);
 
-    expect(migrated[0]).toBe(source[0]);
     expect(migrated[1]).toBe(unknownBefore);
     expect(migrated[4]).toBe(unknownAfter);
     expect(migrated.map((widget) => widget.widgetKey)).toEqual([
-      'command-rail',
-      'future-insight',
       'daily-brief',
+      'future-insight',
       'schedule',
-      'future-summary',
       'focus',
+      'future-summary',
       'activity',
+      'command-rail',
     ]);
   });
 

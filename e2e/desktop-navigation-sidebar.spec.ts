@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
@@ -200,6 +201,73 @@ test.describe('desktop sidebar collapse control', () => {
 
 test.describe('compact product shell header contract', () => {
   test.skip(({ isMobile }) => isMobile, 'The viewport matrix runs in the Chromium project.');
+
+  test('keeps catalog navigation usable at the 320 and 390 pixel mobile edges', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await mockShellSession(page, ['TENANT_ADMIN'], {
+      locale: 'en',
+      permissions: FULL_PRODUCT_PERMISSIONS,
+      appearance: {
+        mode: 'light',
+        density: 'standard',
+        highContrast: false,
+        reduceMotion: true,
+      },
+    });
+
+    const runtimeErrors: string[] = [];
+    page.on('pageerror', (error) => runtimeErrors.push(error.message));
+
+    for (const width of [320, 390] as const) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/apps');
+
+      const header = page.getByTestId('catalog-header');
+      const navigationTrigger = page.getByTestId('catalog-mobile-navigation-trigger');
+      await expect(header).toHaveAttribute('data-dwp-shell', 'catalog');
+      await expect(header).toHaveAttribute('data-dwp-shell-context', 'Apps');
+      await expect(header.getByTestId('shell-application-context')).toContainText('Apps');
+      await expect(navigationTrigger).toBeVisible();
+      await expect(navigationTrigger).toHaveAttribute('aria-controls', 'catalog-mobile-navigation');
+      const triggerBox = await navigationTrigger.boundingBox();
+      expect(triggerBox?.width ?? 0).toBeGreaterThanOrEqual(40);
+      expect(triggerBox?.height ?? 0).toBeGreaterThanOrEqual(40);
+      if (width < 360) {
+        await expect(page.getByRole('button', { name: 'Search DWP' })).toHaveCount(0);
+      } else {
+        await expect(page.getByRole('button', { name: 'Search DWP' })).toBeVisible();
+      }
+      await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Account:/ })).toBeVisible();
+      await expectCompactHeaderIntegrity(page, 'catalog-header');
+
+      await navigationTrigger.click();
+      await expect(navigationTrigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.locator('#dwp-main-content')).toHaveAttribute('inert', '');
+      const drawer = page.getByTestId('catalog-mobile-sidebar');
+      await expect(drawer).toBeVisible();
+      await expect(drawer.getByRole('link', { name: 'Apps' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      );
+      const accessibility = await new AxeBuilder({ page })
+        .include('[data-testid="catalog-header"]')
+        .include('[data-testid="catalog-mobile-sidebar"]')
+        .analyze();
+      expect(accessibility.violations).toEqual([]);
+      const close = page.getByRole('button', { name: 'Close navigation' });
+      const closeBox = await close.boundingBox();
+      expect(closeBox?.width ?? 0).toBeGreaterThanOrEqual(40);
+      expect(closeBox?.height ?? 0).toBeGreaterThanOrEqual(40);
+      await close.click();
+      await expect(navigationTrigger).toBeFocused();
+      await expect(page.locator('#dwp-main-content')).not.toHaveAttribute('inert', '');
+    }
+
+    expect(runtimeErrors).toEqual([]);
+  });
 
   test('keeps tenant product actions separated across compact and 200 percent layouts', async ({
     page,

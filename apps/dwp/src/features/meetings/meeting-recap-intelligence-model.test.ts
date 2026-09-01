@@ -19,11 +19,11 @@ const publishedReport: VideoMeetingIntelligenceReport = {
   canCurrentViewerReview: false,
   analysis: {
     executiveSummary: { text: 'Published summary', citations: [] },
-    topics: [],
+    topics: [{ text: 'Launch readiness', citations: [] }],
     decisions: [{ text: 'Published decision', citations: [] }],
     actionItems: [{ text: 'Published action', citations: [] }],
-    openQuestions: [],
-    risks: [],
+    openQuestions: [{ text: 'Who owns rollback?', citations: [] }],
+    risks: [{ text: 'Regional capacity remains unverified', citations: [] }],
     conversationClimate: {
       label: 'INSUFFICIENT_EVIDENCE',
       signals: ['LOW_TRANSCRIPT_EVIDENCE'],
@@ -40,8 +40,16 @@ describe('published meeting recap projection', () => {
       reportId: 'report-published',
       publishedAt: '2026-08-29T00:04:00Z',
       summary: 'Published summary',
+      topics: ['Launch readiness'],
       decisions: ['Published decision'],
       actionItems: ['Published action'],
+      openQuestions: ['Who owns rollback?'],
+      risks: ['Regional capacity remains unverified'],
+      conversationClimate: {
+        label: 'INSUFFICIENT_EVIDENCE',
+        signals: ['LOW_TRANSCRIPT_EVIDENCE'],
+        citations: [],
+      },
     });
   });
 
@@ -58,8 +66,12 @@ describe('published meeting recap projection', () => {
     expect(derivePublishedMeetingRecap(publishedReport, true)).toEqual({
       state: 'FAILED',
       summary: null,
+      topics: [],
       decisions: [],
       actionItems: [],
+      openQuestions: [],
+      risks: [],
+      conversationClimate: null,
     });
   });
 });

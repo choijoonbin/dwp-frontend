@@ -354,18 +354,31 @@ export async function mockWorkspaceRuntime(page: Page): Promise<void> {
 }
 
 export async function mockAskRuntime(page: Page): Promise<void> {
-  await page.route('**/api/agent/v1/ask/stream', (route) =>
-    route.fulfill({
-      contentType: 'text/event-stream',
-      body: `event: result\ndata: ${JSON.stringify({ data: ASK_RUNTIME_FIXTURE })}\n\n`,
-    })
-  );
-  await page.route('**/api/agent/v1/ask', (route) =>
-    route.fulfill({
+  await page.route('**/api/agent/v1/ask/stream', (route) => {
+    const request = route.request().postDataJSON() as { requestId?: unknown };
+    const response = {
+      ...ASK_RUNTIME_FIXTURE,
+      requestId:
+        typeof request.requestId === 'string' ? request.requestId : ASK_RUNTIME_FIXTURE.requestId,
+    };
+    return route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      body: `event: result\ndata: ${JSON.stringify({ data: response })}\n\n`,
+    });
+  });
+  await page.route('**/api/agent/v1/ask', (route) => {
+    const request = route.request().postDataJSON() as { requestId?: unknown };
+    const response = {
+      ...ASK_RUNTIME_FIXTURE,
+      requestId:
+        typeof request.requestId === 'string' ? request.requestId : ASK_RUNTIME_FIXTURE.requestId,
+    };
+    return route.fulfill({
       contentType: 'application/json',
-      body: success(ASK_RUNTIME_FIXTURE),
-    })
-  );
+      body: success(response),
+    });
+  });
 }
 
 export async function mockRuntimeCodeCatalog(page: Page): Promise<void> {

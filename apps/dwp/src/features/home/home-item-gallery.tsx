@@ -698,6 +698,10 @@ function galleryItemCopy(
   }
 
   const flowCopy = {
+    'command-rail': {
+      label: 'flow.purpose.action.title',
+      description: 'flow.purpose.action.description',
+    },
     schedule: {
       label: 'flow.purpose.timeline.title',
       description: 'flow.purpose.timeline.description',

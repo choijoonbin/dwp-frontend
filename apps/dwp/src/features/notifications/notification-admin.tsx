@@ -1,15 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Activity,
-  AlertTriangle,
-  ChevronRight,
-  FileCode2,
-  RadioTower,
-  ScrollText,
-  Search,
-  ShieldCheck,
-} from 'lucide-react';
+import { AlertTriangle, ChevronRight, ScrollText, Search, ShieldCheck } from 'lucide-react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -30,7 +21,6 @@ import {
   LiveStatus,
   LoadingState,
   OperationalKpiStrip,
-  PageCanvas,
 } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import { usePermissions } from '@dwp-frontend/shared-utils';
@@ -42,22 +32,17 @@ import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import Tab from '@mui/material/Tab';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
-import { NotificationPageHeading } from './notification-ui';
 import { useOnlineStatus } from './use-notification-runtime';
 
 import type { ReactNode } from 'react';
-
-type NotificationAdminView = 'overview' | 'contracts' | 'operations';
 
 function metricTone(
   metric: NotificationAdminMetric
@@ -811,53 +796,5 @@ export function NotificationDeliveryOperationsPage({
         <FindingQueue findings={data.findings} onOpenFinding={onOpenFinding} />
       </AdminSection>
     </Stack>
-  );
-}
-
-export function NotificationTenantAdmin({
-  initialView = 'overview',
-  onOpenFinding,
-}: {
-  initialView?: NotificationAdminView;
-  onOpenFinding?: (finding: NotificationOperationalFinding) => void;
-}) {
-  const { t } = useTranslation('notifications');
-  const [view, setView] = useState<NotificationAdminView>(initialView);
-  return (
-    <PageCanvas mode="workspace">
-      <NotificationPageHeading title={t('admin.title')} description={t('admin.description')} />
-      <Tabs
-        value={view}
-        onChange={(_event, next: NotificationAdminView) => setView(next)}
-        aria-label={t('admin.navigationLabel')}
-        sx={{ mt: 2, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Tab
-          value="overview"
-          icon={<Activity size={17} />}
-          iconPosition="start"
-          label={t('admin.navigation.overview')}
-        />
-        <Tab
-          value="contracts"
-          icon={<FileCode2 size={17} />}
-          iconPosition="start"
-          label={t('admin.navigation.contracts')}
-        />
-        <Tab
-          value="operations"
-          icon={<RadioTower size={17} />}
-          iconPosition="start"
-          label={t('admin.navigation.operations')}
-        />
-      </Tabs>
-      <Box sx={{ mt: 2.5 }}>
-        {view === 'overview' && <NotificationAdminOverviewPage onOpenFinding={onOpenFinding} />}
-        {view === 'contracts' && <NotificationTypeCatalogPage />}
-        {view === 'operations' && (
-          <NotificationDeliveryOperationsPage onOpenFinding={onOpenFinding} />
-        )}
-      </Box>
-    </PageCanvas>
   );
 }

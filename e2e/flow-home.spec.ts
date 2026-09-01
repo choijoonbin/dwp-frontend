@@ -171,6 +171,73 @@ function purposeFrame(flowHome: Locator, key: keyof typeof PURPOSE_WIDGET_KEYS) 
   return flowHome.locator(`[data-workspace-widget="${PURPOSE_WIDGET_KEYS[key]}"]`);
 }
 
+async function expectContextualListRhythm(section: Locator) {
+  const visual = section.locator('[data-home-purpose-contextual-visual]');
+  const list = section.locator('[data-home-purpose-list]');
+  await expect(visual).toBeVisible();
+  await expect(list).toBeVisible();
+  const geometry = await section.evaluate((node) => {
+    const visualNode = node.querySelector<HTMLElement>('[data-home-purpose-contextual-visual]')!;
+    const listNode = node.querySelector<HTMLElement>('[data-home-purpose-list]')!;
+    const visualBounds = visualNode.getBoundingClientRect();
+    const listBounds = listNode.getBoundingClientRect();
+    return {
+      gap: listBounds.top - visualBounds.bottom,
+      visualOverflow: visualNode.scrollWidth - visualNode.clientWidth,
+      listOverflow: listNode.scrollWidth - listNode.clientWidth,
+    };
+  });
+  expect(geometry.gap).toBeGreaterThanOrEqual(7);
+  expect(geometry.gap).toBeLessThanOrEqual(9);
+  expect(geometry.visualOverflow).toBeLessThanOrEqual(1);
+  expect(geometry.listOverflow).toBeLessThanOrEqual(1);
+}
+
+async function expectRoleMetricAlignment(insight: Locator) {
+  const geometry = await insight.locator('[data-home-role-lens]').evaluateAll((lenses) =>
+    lenses.map((lens) => {
+      const bounds = lens.getBoundingClientRect();
+      const value = lens.querySelector<HTMLElement>('[data-home-role-value]')!;
+      const unit = lens.querySelector<HTMLElement>('[data-home-role-unit]')!;
+      const label = lens.querySelector<HTMLElement>('[data-home-role-label]')!;
+      const comparison = lens.querySelector<HTMLElement>('[data-home-role-comparison]')!;
+      const rail = lens.querySelector<HTMLElement>('[data-home-role-metric-rail]')!;
+      const valueBounds = value.getBoundingClientRect();
+      const unitBounds = unit.getBoundingClientRect();
+      const labelBounds = label.getBoundingClientRect();
+      const comparisonBounds = comparison.getBoundingClientRect();
+      const railBounds = rail.getBoundingClientRect();
+      return {
+        width: bounds.width,
+        height: bounds.height,
+        valueTop: valueBounds.top,
+        unitEndInset: bounds.right - unitBounds.right,
+        labelTop: labelBounds.top,
+        comparisonTop: comparisonBounds.top,
+        railTop: railBounds.top,
+        railWidth: railBounds.width,
+        railHeight: railBounds.height,
+        overflow: Math.max(0, lens.scrollWidth - lens.clientWidth),
+      };
+    })
+  );
+
+  expect(geometry).toHaveLength(4);
+  for (const key of ['width', 'height', 'unitEndInset', 'railWidth', 'railHeight'] as const) {
+    const values = geometry.map((item) => item[key]);
+    expect(Math.max(...values) - Math.min(...values), `${key} alignment`).toBeLessThanOrEqual(1);
+  }
+  for (const [first, second] of [
+    [geometry[0], geometry[1]],
+    [geometry[2], geometry[3]],
+  ]) {
+    for (const key of ['valueTop', 'labelTop', 'comparisonTop', 'railTop'] as const) {
+      expect(Math.abs(first[key] - second[key]), `${key} row alignment`).toBeLessThanOrEqual(1);
+    }
+  }
+  expect(geometry.every((item) => item.overflow <= 1)).toBe(true);
+}
+
 async function routeFlowExperience(page: Page, overrides: Record<string, unknown> = {}) {
   await page.route('**/api/platform/v1/home-experience', (route) =>
     fulfillSuccess(route, flowExperience(overrides))
@@ -434,6 +501,7 @@ async function expectPurposeDesktopGrid(flowHome: Locator) {
         height: bounds.height,
         contentClientHeight: content?.clientHeight ?? 0,
         contentScrollHeight: content?.scrollHeight ?? 0,
+        launcherEdge: node.dataset.flowLauncherEdge === 'true',
         surfaceBottom: surface?.getBoundingClientRect().bottom ?? bounds.bottom,
       };
     };
@@ -465,10 +533,12 @@ async function expectPurposeDesktopGrid(flowHome: Locator) {
   expect(Math.abs(request.width - pulse.width)).toBeLessThanOrEqual(2);
   expect(response.top).toBeGreaterThanOrEqual(Math.max(action.bottom, timeline.bottom));
 
-  for (const widget of [action, timeline, response, request, pulse]) {
+  const widgets = [action, timeline, response, request, pulse];
+  const maximumWidgetHeight = widgets.some((widget) => widget.launcherEdge) ? 312 : 304;
+  for (const widget of widgets) {
     expect(widget.contentScrollHeight).toBeLessThanOrEqual(widget.contentClientHeight + 1);
     expect(Math.abs(widget.bottom - widget.surfaceBottom)).toBeLessThanOrEqual(2);
-    expect(widget.height).toBeLessThanOrEqual(304);
+    expect(widget.height).toBeLessThanOrEqual(maximumWidgetHeight);
   }
 }
 
@@ -654,6 +724,39 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+test('response hub explains its priority count without an ambiguous single-color rail', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Response semantics run once in Chromium.');
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+
+  const response = page.locator(
+    '[data-workspace-widget="response-hub"] [data-home-response-priority-summary]'
+  );
+  await expect(response).toBeVisible();
+  await expect(response).toHaveAccessibleName(
+    /Response priority: Review first 5\. 5 response requests currently known · some sources unavailable/u
+  );
+  await expect(response.locator('[data-home-response-priority="high"]')).toHaveText(
+    'Review first 5'
+  );
+  await expect(response.locator('[data-home-response-total-label]')).toHaveText(
+    '5 response requests currently known · some sources unavailable'
+  );
+  await expect(response.locator('[data-home-response-priority-track]')).toHaveCount(0);
+  await expectContextualListRhythm(purpose(page.getByTestId('flow-home'), 'response'));
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(response).toBeVisible();
+  await expectContextualListRhythm(purpose(page.getByTestId('flow-home'), 'response'));
+  expect(
+    await page.evaluate(() =>
+      Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
+    )
+  ).toBe(0);
+});
+
 test('clean hard reloads stay runtime-clean across the supported viewport matrix', async ({
   page,
 }, testInfo) => {
@@ -749,7 +852,11 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
   expect(independentSurfaceContract.adjacentSurfaceGap).toBeLessThanOrEqual(18);
   await expect(workscape.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
-    '8'
+    '40'
+  );
+  await expect(workscape.locator('[data-flow-dock-shell]')).toHaveAttribute(
+    'data-flow-dock-group-item-limit',
+    '10'
   );
   const dockDistribution = await workscape
     .locator('[data-flow-dock-group]')
@@ -757,12 +864,11 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
       groups.map((group) => group.querySelectorAll('[data-flow-dock-item]').length)
     );
   expect(dockDistribution).toHaveLength(4);
-  expect(dockDistribution.reduce((total, count) => total + count, 0)).toBe(8);
-  expect(Math.min(...dockDistribution)).toBeGreaterThanOrEqual(1);
-  expect(Math.max(...dockDistribution) - Math.min(...dockDistribution)).toBeLessThanOrEqual(1);
+  expect(dockDistribution).toEqual([5, 6, 2, 3]);
+  expect(dockDistribution.every((count) => count <= 10)).toBe(true);
   const workscapeHeight = (await workscape.boundingBox())?.height ?? Number.POSITIVE_INFINITY;
   expect(workscapeHeight).toBeGreaterThanOrEqual(240);
-  expect(workscapeHeight).toBeLessThanOrEqual(340);
+  expect(workscapeHeight).toBeLessThanOrEqual(500);
   const launchDeckContract = await workscape.evaluate((surface) => {
     const copy = surface.querySelector<HTMLElement>('[data-flow-context-copy]')!;
     const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
@@ -777,8 +883,8 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
   expect(launchDeckContract.inlineStartDelta).toBeLessThanOrEqual(2);
   expect(launchDeckContract.dockBackground).not.toBe('rgba(255, 255, 255, 0.94)');
   expect(launchDeckContract.horizontalOverflow).toBeLessThanOrEqual(1);
-  await expect(workscape.getByText(/8 more$/)).toBeVisible();
-  await expect(workscape.getByText(/^\+8$/)).toHaveCount(0);
+  await expect(workscape.getByText(/\d+ more$/)).toHaveCount(0);
+  await expect(workscape.getByText(/^\+\d+$/)).toHaveCount(0);
   await expect(workscape.getByText(/Some sources are unavailable/i)).toHaveCount(0);
 
   const nextActionCue = purpose(flowHome, 'action').locator('[data-home-recommendation-cue]');
@@ -845,11 +951,12 @@ test('tenant image focal points remain independent from hero content alignment',
     return {
       copyDockEndDelta: Math.abs(copyBounds.right - dockBounds.right),
       dockFromFrameStart: dockBounds.left - frameBounds.left,
-      frameWidth: frameBounds.width,
+      dockFromFrameEnd: frameBounds.right - dockBounds.right,
     };
   });
   expect(alignment.copyDockEndDelta).toBeLessThanOrEqual(2);
-  expect(alignment.dockFromFrameStart).toBeGreaterThan(alignment.frameWidth * 0.2);
+  expect(Math.abs(alignment.dockFromFrameStart)).toBeLessThanOrEqual(2);
+  expect(Math.abs(alignment.dockFromFrameEnd)).toBeLessThanOrEqual(2);
 });
 
 test('Dock lift responds only to pointer intent and is removed for reduced motion', async ({
@@ -920,6 +1027,7 @@ test('Expressive Wide composes a 7+5 primary tier, 4+4+4 support tier, and 6+3+3
   await expect(roleInsight).toBeVisible();
   await expect(roleInsight).toHaveAttribute('role', 'region');
   await expect(roleInsight.locator('[data-home-role-lens]')).toHaveCount(4);
+  await expectRoleMetricAlignment(roleInsight);
   for (const signalKey of ['open-work', 'focus-time', 'schedule-load', 'activity-attention']) {
     const lens = roleInsight.locator(`[data-home-role-lens="${signalKey}"]`);
     await expect(lens).toBeVisible();
@@ -930,7 +1038,27 @@ test('Expressive Wide composes a 7+5 primary tier, 4+4+4 support tier, and 6+3+3
     '[data-home-role-lens="schedule-load"] [data-home-role-series]'
   );
   await expect(scheduleSeries).toBeVisible();
+  await expect(scheduleSeries).toHaveAttribute('data-home-role-series-scale', 'daily-limit-100');
+  await expect(
+    roleInsight.locator('[data-home-role-lens="schedule-load"] [data-home-role-label]')
+  ).toContainText(/Today's meeting load|오늘 회의 부하/u);
+  await expect(
+    roleInsight.locator('[data-home-role-lens="schedule-load"] [data-home-role-comparison-full]')
+  ).toContainText(/Daily meeting limit|일일 회의 기준 대비/u);
+  await expect(scheduleSeries.locator('[data-home-role-series-current="true"]')).toHaveCount(1);
   expect(await scheduleSeries.locator(':scope > *').count()).toBeGreaterThan(0);
+  const scheduleScale = await scheduleSeries.evaluate((series) => {
+    const height = series.getBoundingClientRect().height;
+    return Array.from(series.querySelectorAll<HTMLElement>('[data-home-role-series-point]')).map(
+      (point) => ({
+        load: Number(point.dataset.homeRoleSeriesLoad),
+        ratio: point.getBoundingClientRect().height / height,
+      })
+    );
+  });
+  for (const point of scheduleScale) {
+    expect(Math.abs(point.ratio - Math.min(1, point.load / 100))).toBeLessThanOrEqual(0.08);
+  }
   const roleHeaderContract = await stage
     .locator('[data-workspace-widget="role-pulse"] [data-flow-section="purpose-pulse"]')
     .evaluate((section) => {
@@ -946,6 +1074,21 @@ test('Expressive Wide composes a 7+5 primary tier, 4+4+4 support tier, and 6+3+3
   await expect(
     stage.locator('[data-workspace-widget="request-tracker"] [data-home-request-empty-journey]')
   ).toBeVisible();
+  const contextualListGaps = await stage
+    .locator('[data-home-purpose-contextual-visual]')
+    .evaluateAll((visuals) =>
+      visuals.flatMap((visual) => {
+        const list = visual.parentElement?.querySelector<HTMLElement>('[data-home-purpose-list]');
+        return list
+          ? [list.getBoundingClientRect().top - visual.getBoundingClientRect().bottom]
+          : [];
+      })
+    );
+  expect(contextualListGaps.length).toBeGreaterThan(0);
+  for (const gap of contextualListGaps) {
+    expect(gap).toBeGreaterThanOrEqual(7);
+    expect(gap).toBeLessThanOrEqual(9);
+  }
 
   const geometry = await stage.evaluate((root) => {
     const bounds = (key: string) => {
@@ -1131,7 +1274,15 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
     'data-home-loading-grid-contract',
     '7-5/4-4-4'
   );
-  await expect(page.locator('[data-home-loading-dock-item]:visible')).toHaveCount(12);
+  await expect(page.locator('[data-home-loading-dock-group]')).toHaveCount(4);
+  await expect(page.locator('[data-home-loading-dock-item]:visible')).toHaveCount(16);
+  expect(
+    await page
+      .locator('[data-home-loading-dock-group]')
+      .evaluateAll((groups) =>
+        groups.map((group) => group.querySelectorAll('[data-home-loading-dock-item]').length)
+      )
+  ).toEqual([5, 6, 2, 3]);
   const loadingGrid = await page.locator('[data-home-loading-widgets]').evaluate((root) => {
     const rect = (key: string) => {
       const bounds = root
@@ -1166,13 +1317,17 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   );
   await expect(page.getByTestId('home-experience-bootstrap')).toHaveCount(0);
   const resolvedDock = flowHome.locator('[data-flow-dock-shell]');
-  await expect(resolvedDock).toHaveAttribute('data-flow-dock-item-limit', '12');
-  await expect(resolvedDock.locator('[data-flow-dock-item]')).toHaveCount(12);
+  await expect(resolvedDock).toHaveAttribute('data-flow-dock-item-limit', '40');
+  await expect(resolvedDock).toHaveAttribute('data-flow-dock-group-item-limit', '10');
+  await expect(resolvedDock.locator('[data-flow-dock-item]')).toHaveCount(16);
   const resolvedDockBounds = await resolvedDock.boundingBox();
   expect(resolvedDockBounds).not.toBeNull();
   if (loadingDockBounds && resolvedDockBounds) {
     expect(Math.abs(loadingDockBounds.width - resolvedDockBounds.width)).toBeLessThanOrEqual(2);
-    expect(Math.abs(loadingDockBounds.height - resolvedDockBounds.height)).toBeLessThanOrEqual(4);
+    expect(
+      Math.abs(loadingDockBounds.height - resolvedDockBounds.height),
+      JSON.stringify({ loadingDockBounds, resolvedDockBounds })
+    ).toBeLessThanOrEqual(4);
   }
   const observedStates = await page.evaluate(
     () =>
@@ -1184,6 +1339,70 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   );
   expect(observedStates).not.toContain('balanced:standard');
   expect(observedStates.at(0)).toBe('expressive:adaptive-wide');
+});
+
+test('Balanced Home reload keeps the saved four-group Dock geometry stable', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Initial-frame geometry runs once in Chromium.');
+
+  let releasePreference!: () => void;
+  const preferenceRelease = new Promise<void>((resolve) => {
+    releasePreference = resolve;
+  });
+  let markPreferenceStarted!: () => void;
+  const preferenceStarted = new Promise<void>((resolve) => {
+    markPreferenceStarted = resolve;
+  });
+
+  await page.addInitScript(() => {
+    window.sessionStorage.setItem('dwp.home.presentation-hint.v1', 'balanced');
+    window.sessionStorage.setItem('dwp.home.launchpad-hint.v1', JSON.stringify([5, 6, 2, 3]));
+  });
+  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+      return route.fallback();
+    }
+    markPreferenceStarted();
+    await preferenceRelease;
+    return fulfillSuccess(route, {
+      ...DEFAULT_HOME_PREFERENCE,
+      layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'balanced' },
+    });
+  });
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await preferenceStarted;
+
+  const loadingDock = page.locator('[data-home-loading-dock]');
+  await expect(loadingDock).toBeVisible();
+  await expect(loadingDock).toHaveAttribute('data-home-loading-dock-item-count', '16');
+  expect(
+    await loadingDock
+      .locator('[data-home-loading-dock-group]')
+      .evaluateAll((groups) =>
+        groups.map((group) => group.querySelectorAll('[data-home-loading-dock-item]').length)
+      )
+  ).toEqual([5, 6, 2, 3]);
+  const loadingBounds = await loadingDock.boundingBox();
+  expect(loadingBounds).not.toBeNull();
+
+  releasePreference();
+  const resolvedDock = page.getByTestId('flow-home').locator('[data-flow-dock-shell]');
+  await expect(resolvedDock).toBeVisible();
+  const resolvedBounds = await resolvedDock.boundingBox();
+  expect(resolvedBounds).not.toBeNull();
+  if (loadingBounds && resolvedBounds) {
+    expect(Math.abs(loadingBounds.x - resolvedBounds.x)).toBeLessThanOrEqual(2);
+    expect(Math.abs(loadingBounds.width - resolvedBounds.width)).toBeLessThanOrEqual(2);
+    expect(
+      Math.abs(loadingBounds.height - resolvedBounds.height),
+      JSON.stringify({ loadingBounds, resolvedBounds })
+    ).toBeLessThanOrEqual(4);
+  }
 });
 
 test('A true cold session stays presentation-neutral until the saved Wide preference resolves', async ({
@@ -1242,7 +1461,11 @@ test('A true cold session stays presentation-neutral until the saved Wide prefer
   );
   await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
-    '12'
+    '40'
+  );
+  await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
+    'data-flow-dock-group-item-limit',
+    '10'
   );
   await expect(skeleton).toHaveCount(0);
 });
@@ -1381,7 +1604,13 @@ test('Expressive Wide keeps a personalized widget order out of the adaptive temp
     .evaluateAll((widgets) =>
       widgets.map((widget) => widget.getAttribute('data-workspace-widget'))
     );
-  expect(personalOrder).toEqual(['response-hub', 'today', 'request-tracker', 'role-pulse']);
+  expect(personalOrder).toEqual([
+    'action-queue',
+    'response-hub',
+    'today',
+    'request-tracker',
+    'role-pulse',
+  ]);
 });
 
 for (const viewport of [
@@ -1809,7 +2038,7 @@ test('a required notice remains visible when the organization hides general News
   await expect(flowHome.locator('[data-workspace-widget="announcements"]')).toHaveCount(0);
 });
 
-test('tenant imagery remains colourful behind a bounded, readable app Dock', async ({ page }) => {
+test('tenant imagery remains colourful behind a panelled, readable app Dock', async ({ page }) => {
   await routeFlowExperience(page, {
     backgroundUrl: '/media/communications/workplace-improvement.jpg',
     backgroundPosition: 'RIGHT',
@@ -1827,21 +2056,23 @@ test('tenant imagery remains colourful behind a bounded, readable app Dock', asy
   await expect(workscape).toHaveAttribute('data-tenant-image-opacity', '1');
   const visualContract = await workscape.evaluate((surface) => {
     const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]');
+    const frame = surface.querySelector<HTMLElement>('[data-flow-launch-deck-frame]');
     const surfaceBounds = surface.getBoundingClientRect();
     const dockBounds = dock?.getBoundingClientRect();
+    const frameBounds = frame?.getBoundingClientRect();
     return {
       imageOpacity: window.getComputedStyle(surface, '::before').opacity,
       workscapeHeight: surfaceBounds.height,
       dockWidth: dockBounds?.width ?? 0,
-      workscapeWidth: surfaceBounds.width,
+      frameWidth: frameBounds?.width ?? 0,
       dockBackground: dock ? window.getComputedStyle(dock).backgroundColor : '',
     };
   });
   expect(visualContract.imageOpacity).toBe('1');
-  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(340);
-  expect(visualContract.dockWidth / visualContract.workscapeWidth).toBeLessThanOrEqual(0.82);
+  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(500);
+  expect(Math.abs(visualContract.dockWidth - visualContract.frameWidth)).toBeLessThanOrEqual(2);
   expect(visualContract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
-  await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(8);
+  await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(16);
 });
 
 test('read mode collapses sparse saved footprints while edit mode exposes semantic height controls', async ({
@@ -1943,6 +2174,15 @@ test('role overview keeps all four visual signals across short, standard, and ta
     await expect(insight).toHaveAttribute('data-home-role-density', height);
     await expect(insight).toHaveAttribute('data-home-role-layout', '2x2');
     await expect(insight.locator('[data-home-role-lens]')).toHaveCount(4);
+    await expectRoleMetricAlignment(insight);
+    const visibleScheduleContext = insight.locator(
+      '[data-home-role-lens="schedule-load"] [data-home-role-comparison-full]:visible, ' +
+        '[data-home-role-lens="schedule-load"] [data-home-role-comparison-compact]:visible'
+    );
+    await expect(visibleScheduleContext).toHaveCount(1);
+    await expect(visibleScheduleContext).toContainText(
+      /Daily meeting limit|This week|일일 회의 기준 대비|이번 주/u
+    );
     await expect(insight.locator('[data-home-role-detail]')).toHaveCount(height === 'tall' ? 4 : 0);
     const content = await frame
       .locator('[data-workspace-widget-content]')
@@ -1957,17 +2197,303 @@ test('role overview keeps all four visual signals across short, standard, and ta
   await expect(frame.locator('[data-home-role-exception-summary]')).toHaveCount(1);
 });
 
-test('the editor explains governed ownership and keeps personal resize and move controls', async ({
+test('the editor keeps the action queue personal while announcements remains governed', async ({
   page,
 }) => {
+  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
+      return fulfillSuccess(route, {
+        ...DEFAULT_HOME_PREFERENCE,
+        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'balanced' },
+      });
+    }
+    return route.fallback();
+  });
   await page.route('**/api/platform/v1/home/overview**', (route) =>
     fulfillSuccess(route, overviewWithCommunications())
   );
-  await page.setViewportSize({ width: 1440, height: 720 });
+  await page.setViewportSize({ width: 1920, height: 1000 });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Edit home' }).click();
 
   const flowHome = page.getByTestId('flow-home');
+  const dock = flowHome.locator('[data-flow-dock-shell]');
+  const launchpad = dock.locator('[data-launchpad-surface]');
+  const readGeometry = await dock.evaluate((shell) => {
+    const frame = shell.closest('[data-flow-launch-deck-frame]')!;
+    const frameBounds = frame.getBoundingClientRect();
+    const dockBounds = shell.getBoundingClientRect();
+    const groups = Array.from(shell.querySelectorAll<HTMLElement>('[data-flow-dock-group]')).map(
+      (group) => {
+        const bounds = group.getBoundingClientRect();
+        return {
+          id: group.dataset.flowDockGroup,
+          left: bounds.left,
+          right: bounds.right,
+          top: bounds.top,
+          bottom: bounds.bottom,
+          width: bounds.width,
+          height: bounds.height,
+          display: window.getComputedStyle(group).display,
+          borderStyles: [
+            window.getComputedStyle(group).borderTopStyle,
+            window.getComputedStyle(group).borderRightStyle,
+            window.getComputedStyle(group).borderBottomStyle,
+            window.getComputedStyle(group).borderLeftStyle,
+          ],
+          borderWidths: [
+            window.getComputedStyle(group).borderTopWidth,
+            window.getComputedStyle(group).borderRightWidth,
+            window.getComputedStyle(group).borderBottomWidth,
+            window.getComputedStyle(group).borderLeftWidth,
+          ].map(Number.parseFloat),
+          borderRadius: Number.parseFloat(window.getComputedStyle(group).borderTopLeftRadius),
+          backgroundColor: window.getComputedStyle(group).backgroundColor,
+          backgroundImage: window.getComputedStyle(group).backgroundImage,
+          items: Array.from(group.querySelectorAll<HTMLElement>('[data-flow-dock-item]')).map(
+            (item) => {
+              const itemBounds = item.getBoundingClientRect();
+              return {
+                id: item.dataset.flowDockItem,
+                left: itemBounds.left,
+                top: itemBounds.top,
+              };
+            }
+          ),
+        };
+      }
+    );
+    return {
+      dock: { left: dockBounds.left, right: dockBounds.right, width: dockBounds.width },
+      frame: { left: frameBounds.left, right: frameBounds.right, width: frameBounds.width },
+      groups,
+      overflow: shell.scrollWidth - shell.clientWidth,
+    };
+  });
+  await expect(launchpad).toHaveAttribute('data-launchpad-editing', 'false');
+  await expect(dock.locator('[data-launchpad-remove-control]')).toHaveCount(0);
+  expect(Math.abs(readGeometry.dock.left - readGeometry.frame.left)).toBeLessThanOrEqual(2);
+  expect(Math.abs(readGeometry.dock.right - readGeometry.frame.right)).toBeLessThanOrEqual(2);
+  expect(Math.abs(readGeometry.dock.width - readGeometry.frame.width)).toBeLessThanOrEqual(2);
+  expect(readGeometry.overflow).toBeLessThanOrEqual(1);
+  expect(readGeometry.groups).toHaveLength(4);
+  expect(
+    Math.max(...readGeometry.groups.map((group) => group.top)) -
+      Math.min(...readGeometry.groups.map((group) => group.top))
+  ).toBeLessThanOrEqual(2);
+  expect(
+    Math.max(...readGeometry.groups.map((group) => group.width)) -
+      Math.min(...readGeometry.groups.map((group) => group.width))
+  ).toBeLessThanOrEqual(2);
+  expect(
+    Math.max(...readGeometry.groups.map((group) => group.height)) -
+      Math.min(...readGeometry.groups.map((group) => group.height))
+  ).toBeLessThanOrEqual(2);
+  expect(readGeometry.groups.every((group) => group.display !== 'contents')).toBe(true);
+  expect(
+    readGeometry.groups.every(
+      (group) =>
+        group.borderStyles.every((style) => style === 'solid') &&
+        group.borderWidths.every((width) => width >= 1) &&
+        group.borderRadius >= 10 &&
+        (group.backgroundColor !== 'rgba(0, 0, 0, 0)' || group.backgroundImage !== 'none')
+    )
+  ).toBe(true);
+  const rowSizes = (items: readonly { top: number }[]) => {
+    const rows: number[] = [];
+    items.forEach((item) => {
+      const rowIndex = rows.findIndex((top) => Math.abs(top - item.top) <= 2);
+      if (rowIndex < 0) rows.push(item.top);
+    });
+    return rows.map((top) => items.filter((item) => Math.abs(item.top - top) <= 2).length);
+  };
+  expect(readGeometry.groups.every((group) => group.items.length <= 10)).toBe(true);
+  expect(readGeometry.groups.map((group) => rowSizes(group.items))).toEqual([
+    [5],
+    [5, 1],
+    [2],
+    [3],
+  ]);
+  await expect(dock.locator('[data-flow-dock-group-description]')).toHaveCount(4);
+
+  await page.getByRole('button', { name: 'Edit home' }).click();
+  await expect(launchpad).toHaveAttribute('data-launchpad-editing', 'true');
+
+  const dockGroupLists = flowHome.locator('[data-launchpad-group-target]');
+  await expect(dockGroupLists).toHaveCount(4);
+  const editGeometry = await dock.evaluate((shell) => {
+    const dockBounds = shell.getBoundingClientRect();
+    const groups = Array.from(
+      shell.querySelectorAll<HTMLElement>('[data-launchpad-group-target]')
+    ).map((list) => {
+      const bounds = list.parentElement!.getBoundingClientRect();
+      return {
+        id: list.dataset.launchpadGroupTarget,
+        left: bounds.left,
+        right: bounds.right,
+        top: bounds.top,
+        bottom: bounds.bottom,
+        width: bounds.width,
+        height: bounds.height,
+        borderStyle: window.getComputedStyle(list.parentElement!).borderTopStyle,
+        items: Array.from(list.querySelectorAll<HTMLElement>(':scope > [data-launchpad-item]')).map(
+          (item) => {
+            const itemBounds = item.getBoundingClientRect();
+            return {
+              id: item.dataset.launchpadItem,
+              left: itemBounds.left,
+              top: itemBounds.top,
+            };
+          }
+        ),
+      };
+    });
+    return {
+      dock: { left: dockBounds.left, right: dockBounds.right, width: dockBounds.width },
+      groups,
+      overflow: shell.scrollWidth - shell.clientWidth,
+    };
+  });
+  expect(Math.abs(editGeometry.dock.left - readGeometry.dock.left)).toBeLessThanOrEqual(2);
+  expect(Math.abs(editGeometry.dock.right - readGeometry.dock.right)).toBeLessThanOrEqual(2);
+  expect(Math.abs(editGeometry.dock.width - readGeometry.dock.width)).toBeLessThanOrEqual(2);
+  expect(editGeometry.overflow).toBeLessThanOrEqual(1);
+  expect(editGeometry.groups.map((group) => group.id)).toEqual(
+    readGeometry.groups.map((group) => group.id)
+  );
+  expect(
+    Math.max(...editGeometry.groups.map((group) => group.top)) -
+      Math.min(...editGeometry.groups.map((group) => group.top))
+  ).toBeLessThanOrEqual(2);
+  expect(
+    Math.max(...editGeometry.groups.map((group) => group.width)) -
+      Math.min(...editGeometry.groups.map((group) => group.width))
+  ).toBeLessThanOrEqual(2);
+  expect(
+    Math.max(...editGeometry.groups.map((group) => group.height)) -
+      Math.min(...editGeometry.groups.map((group) => group.height))
+  ).toBeLessThanOrEqual(2);
+  expect(editGeometry.groups.every((group) => group.borderStyle === 'dashed')).toBe(true);
+  const editTextContract = await dock.evaluate((shell) => {
+    const groupTitle = shell.querySelector<HTMLElement>('[data-flow-dock-group-label]');
+    const groupDescription = shell.querySelector<HTMLElement>('[data-flow-dock-group-description]');
+    const appTile = shell.querySelector<HTMLElement>('[data-launchpad-tile]');
+    return {
+      titleColor: groupTitle ? window.getComputedStyle(groupTitle).color : '',
+      descriptionColor: groupDescription ? window.getComputedStyle(groupDescription).color : '',
+      appColor: appTile ? window.getComputedStyle(appTile).color : '',
+    };
+  });
+  expect(editTextContract.titleColor).toBe('rgb(248, 250, 252)');
+  expect(editTextContract.appColor).toBe('rgb(248, 250, 252)');
+  expect(editTextContract.descriptionColor).toBe('rgba(226, 232, 240, 0.76)');
+  for (const [index, readGroup] of readGeometry.groups.entries()) {
+    const editGroup = editGeometry.groups[index]!;
+    expect(Math.abs(editGroup.left - readGroup.left)).toBeLessThanOrEqual(2);
+    expect(Math.abs(editGroup.right - readGroup.right)).toBeLessThanOrEqual(2);
+    expect(
+      Math.abs(editGroup.height - readGroup.height),
+      JSON.stringify({ editHeight: editGroup.height, readHeight: readGroup.height })
+    ).toBeLessThanOrEqual(2);
+    expect(editGroup.items.map((item) => item.id)).toEqual(readGroup.items.map((item) => item.id));
+    expect(rowSizes(editGroup.items)).toEqual(rowSizes(readGroup.items));
+  }
+  const readRemoveControlClipContract = () =>
+    dockGroupLists.evaluateAll((lists) =>
+      lists.map((list) => {
+        const listBounds = list.getBoundingClientRect();
+        const section = list.parentElement;
+        const grid = section?.parentElement;
+        const firstColumnControls = Array.from(
+          list.querySelectorAll<HTMLElement>(':scope > [data-launchpad-item]')
+        )
+          .filter((item) => Math.abs(item.getBoundingClientRect().left - listBounds.left) < 1)
+          .map((item) => {
+            const control = item.querySelector<HTMLElement>('[data-launchpad-remove-control]');
+            if (!control) return null;
+            const bounds = control.getBoundingClientRect();
+            const edgeTarget = document.elementFromPoint(
+              bounds.left + 1,
+              bounds.top + bounds.height / 2
+            );
+            return {
+              edgeHit:
+                edgeTarget === control || Boolean(edgeTarget && control.contains(edgeTarget)),
+              height: Math.round(bounds.height),
+              width: Math.round(bounds.width),
+            };
+          })
+          .filter((control) => control !== null);
+
+        return {
+          firstColumnControls,
+          gridOverflowX: grid ? window.getComputedStyle(grid).overflowX : '',
+          gridOverflowY: grid ? window.getComputedStyle(grid).overflowY : '',
+          listOverflowX: window.getComputedStyle(list).overflowX,
+          listOverflowY: window.getComputedStyle(list).overflowY,
+          sectionOverflowX: section ? window.getComputedStyle(section).overflowX : '',
+          sectionOverflowY: section ? window.getComputedStyle(section).overflowY : '',
+        };
+      })
+    );
+  const expectRemoveControlsUnclipped = async (requireEdgeHit: boolean) => {
+    const contract = await readRemoveControlClipContract();
+    for (const group of contract) {
+      expect(group.listOverflowX).toBe('visible');
+      expect(group.listOverflowY).toBe('visible');
+      expect(group.sectionOverflowX).toBe('visible');
+      expect(group.sectionOverflowY).toBe('visible');
+      expect(group.gridOverflowX).toBe('visible');
+      expect(group.gridOverflowY).toBe('visible');
+      expect(group.firstColumnControls.length).toBeGreaterThan(0);
+      expect(
+        group.firstColumnControls.every(({ height, width }) => height === 44 && width === 44)
+      ).toBe(true);
+      if (requireEdgeHit) {
+        expect(group.firstColumnControls.every(({ edgeHit }) => edgeHit)).toBe(true);
+      }
+    }
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+    ).toBe(0);
+  };
+
+  await expectRemoveControlsUnclipped(true);
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 320, height: 800 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await expectRemoveControlsUnclipped(false);
+  }
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.evaluate(() => document.documentElement.style.setProperty('font-size', '200%'));
+  await expectRemoveControlsUnclipped(false);
+  const largeTextTileContract = await dock.locator('[data-launchpad-item]').evaluateAll((items) =>
+    items.map((item) => {
+      const tile = item.querySelector<HTMLElement>('[data-launchpad-tile]')!;
+      const label = tile.querySelector<HTMLElement>('.MuiTypography-root')!;
+      const labelStyle = window.getComputedStyle(label);
+      return {
+        itemHeight: item.getBoundingClientRect().height,
+        tileHeight: tile.getBoundingClientRect().height,
+        tileScrollHeight: tile.scrollHeight,
+        labelHeight: label.getBoundingClientRect().height,
+        labelLineHeight: Number.parseFloat(labelStyle.lineHeight),
+      };
+    })
+  );
+  expect(
+    largeTextTileContract.every(
+      ({ itemHeight, tileHeight, tileScrollHeight, labelHeight, labelLineHeight }) =>
+        itemHeight >= tileScrollHeight - 1 &&
+        Math.abs(itemHeight - tileHeight) <= 1 &&
+        labelHeight >= labelLineHeight * 1.9
+    )
+  ).toBe(true);
+  await page.evaluate(() => document.documentElement.style.removeProperty('font-size'));
+  await page.setViewportSize({ width: 1440, height: 720 });
   const action = purposeFrame(flowHome, 'action');
   const news = flowHome.locator('[data-workspace-widget="announcements"]');
   const today = purposeFrame(flowHome, 'timeline');
@@ -1975,12 +2501,15 @@ test('the editor explains governed ownership and keeps personal resize and move 
     'data-flow-read-template',
     'editing'
   );
-  await expect(action).toHaveAttribute('data-workspace-widget-policy', 'GOVERNED');
-  await expect(action).toHaveAttribute('data-workspace-widget-governance', 'SYSTEM');
+  await expect(action).toHaveAttribute('data-workspace-widget-policy', 'PERSONAL');
+  await expect(action).not.toHaveAttribute('data-workspace-widget-governance');
   await expect(news).toHaveAttribute('data-workspace-widget-policy', 'GOVERNED');
   await expect(news).toHaveAttribute('data-workspace-widget-governance', 'ORGANIZATION');
   await expect(today).toHaveAttribute('data-workspace-widget-policy', 'PERSONAL');
-  await expect(action.locator('button[aria-label^="Move "]')).toHaveCount(0);
+  await expect(
+    action.getByRole('button', { name: 'Move My action queue widget', exact: true })
+  ).toBeVisible();
+  await expect(action.locator('[data-widget-footprint-trigger]')).toBeVisible();
   await expect(news.locator('button[aria-label^="Move "]')).toHaveCount(0);
   await expect(today.locator('button[aria-label="Move Today\'s schedule widget"]')).toBeVisible();
   await expect(today.locator('[data-widget-footprint-trigger]')).toBeVisible();
@@ -2025,7 +2554,7 @@ test('long-pressing a personal purpose widget enters the existing Home editor', 
   await widget.dispatchEvent('pointerup', { ...pointer, buttons: 0 });
 
   await expect(toolbar).toBeVisible();
-  await expect(page.locator('[data-workspace-widget-motion="settle"]')).toHaveCount(4);
+  await expect(page.locator('[data-workspace-widget-motion="settle"]')).toHaveCount(5);
   await toolbar.getByRole('button', { name: 'Cancel changes' }).click();
   await expect(widget).toHaveAttribute('data-workspace-widget-long-press', 'enabled');
 });
@@ -2051,6 +2580,14 @@ test('keyboard move controls reorder only personal purpose widgets and cancel re
     );
   const original = await order();
   const originalGoverned = await governedOrder();
+  expect(original).toEqual([
+    'action-queue',
+    'today',
+    'response-hub',
+    'request-tracker',
+    'role-pulse',
+  ]);
+  expect(originalGoverned).toEqual(['announcements']);
   const moveEarlier = flowHome.getByRole('button', {
     name: 'Move My requests widget earlier',
     exact: true,
@@ -2058,7 +2595,7 @@ test('keyboard move controls reorder only personal purpose widgets and cancel re
 
   await moveEarlier.focus();
   await moveEarlier.press('Enter');
-  const movedOrder = ['today', 'request-tracker', 'response-hub', 'role-pulse'];
+  const movedOrder = ['action-queue', 'today', 'request-tracker', 'response-hub', 'role-pulse'];
   await expect.poll(order).toEqual(movedOrder);
   await expect.poll(governedOrder).toEqual(originalGoverned);
 
@@ -2096,6 +2633,14 @@ test('pointer drag reorders only personal purpose widgets and cancel restores th
     );
   const original = await order();
   const originalGoverned = await governedOrder();
+  expect(original).toEqual([
+    'action-queue',
+    'today',
+    'response-hub',
+    'request-tracker',
+    'role-pulse',
+  ]);
+  expect(originalGoverned).toEqual(['announcements']);
   const sourceFrame = purposeFrame(flowHome, 'timeline');
   const sourceHandle = sourceFrame.getByRole('button', {
     name: "Move Today's schedule widget",
@@ -2128,7 +2673,9 @@ test('pointer drag reorders only personal purpose widgets and cancel restores th
     await page.mouse.up();
   }
 
-  await expect.poll(order).toEqual(['response-hub', 'request-tracker', 'today', 'role-pulse']);
+  await expect
+    .poll(order)
+    .toEqual(['action-queue', 'response-hub', 'request-tracker', 'today', 'role-pulse']);
   await expect.poll(governedOrder).toEqual(originalGoverned);
   await expect(sourceFrame.locator('[data-widget-drop-slot]')).toHaveCount(0);
 
@@ -2197,6 +2744,7 @@ test('DWAI·ON uses stable compact and desktop anchors through document scrollin
   await page.goto('/');
   await expectDwaionBottomAnchor(page);
   await expectDwaionFixedAcrossDocumentScroll(page);
+  await expect(page.locator('[data-flow-launcher-edge]')).toHaveCount(0);
 
   await page.setViewportSize({ width: 1024, height: 700 });
   await page.reload();
@@ -2204,7 +2752,7 @@ test('DWAI·ON uses stable compact and desktop anchors through document scrollin
   await expectDwaionFixedAcrossDocumentScroll(page);
 });
 
-test('DWAI·ON reserves space only for a purpose widget it actually intersects', async ({
+test('DWAI·ON applies measured clearance to every intersecting widget frame', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Launcher collision geometry runs once.');
@@ -2215,26 +2763,47 @@ test('DWAI·ON reserves space only for a purpose widget it actually intersects',
 
   const stage = page.getByTestId('flow-home-personal-sections');
   await expect(stage.locator('[data-workspace-widget]')).not.toHaveCount(0);
+  await expect(page.getByTestId('dwaion-launcher')).toBeVisible();
   const collisionContract = await stage.evaluate((root) => {
     const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
     const launcherRect = launcher.getBoundingClientRect();
-    const stageRect = root.getBoundingClientRect();
+    const floating = launcher.dataset.shellAuxiliaryPlacement === 'floating';
+    const safetyGap = 16;
     const widgets = Array.from(root.querySelectorAll<HTMLElement>('[data-workspace-widget]')).map(
       (widget) => {
         const rect = widget.getBoundingClientRect();
-        const expected =
-          rect.right >= stageRect.right - 24 &&
-          rect.bottom >= launcherRect.top - 16 &&
-          rect.top <= launcherRect.bottom + 16;
+        const expectedClearance =
+          floating &&
+          rect.right > launcherRect.left - safetyGap &&
+          rect.left < launcherRect.right + safetyGap &&
+          rect.bottom > launcherRect.top - safetyGap &&
+          rect.top < launcherRect.bottom + safetyGap
+            ? Math.max(0, Math.ceil(rect.right - launcherRect.left + safetyGap))
+            : 0;
+        const section = widget.querySelector<HTMLElement>(
+          '[data-workspace-widget-content] > section'
+        );
+        const appliedClearance = Number(widget.dataset.flowLauncherClearance ?? 0);
+        const paddingInlineEnd = section
+          ? Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd)
+          : 0;
         return {
           key: widget.dataset.workspaceWidget,
-          expected,
+          expected: expectedClearance > 0,
           marked: widget.dataset.flowLauncherEdge === 'true',
+          expectedClearance,
+          appliedClearance,
+          paddingInlineEnd,
         };
       }
     );
     return {
-      mismatches: widgets.filter(({ expected, marked }) => expected !== marked),
+      mismatches: widgets.filter(
+        ({ expected, marked, expectedClearance, appliedClearance, paddingInlineEnd }) =>
+          expected !== marked ||
+          Math.abs(expectedClearance - appliedClearance) > 1 ||
+          (expected && paddingInlineEnd + 1 < expectedClearance)
+      ),
       marked: widgets.filter(({ marked }) => marked).length,
       unmarked: widgets.filter(({ marked }) => !marked).length,
     };
@@ -2242,6 +2811,169 @@ test('DWAI·ON reserves space only for a purpose widget it actually intersects',
   expect(collisionContract.mismatches).toEqual([]);
   expect(collisionContract.marked).toBeGreaterThan(0);
   expect(collisionContract.unmarked).toBeGreaterThan(0);
+});
+
+test('News enters and leaves the same DWAI·ON clearance contract without a static inset', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Launcher collision geometry runs once.');
+  await page.setViewportSize({ width: 1440, height: 720 });
+  await page.route('**/api/platform/v1/home/overview**', (route) =>
+    fulfillSuccess(route, overviewWithCommunications())
+  );
+  await page.goto('/');
+
+  const news = page.locator('[data-workspace-widget="announcements"]');
+  const launcher = page.getByTestId('dwaion-launcher');
+  await expect(news).toBeVisible();
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
+
+  const positionNews = async (mode: 'clear' | 'overlap') => {
+    await page.evaluate((position) => {
+      const widget = document.querySelector<HTMLElement>(
+        '[data-workspace-widget="announcements"]'
+      )!;
+      const launcherElement = document.querySelector<HTMLElement>(
+        '[data-testid="dwaion-launcher"]'
+      )!;
+      const widgetRect = widget.getBoundingClientRect();
+      const launcherRect = launcherElement.getBoundingClientRect();
+      const absoluteTop = window.scrollY + widgetRect.top;
+      const desiredTop =
+        position === 'clear'
+          ? launcherRect.bottom + 32
+          : launcherRect.top - Math.min(widgetRect.height - 32, widgetRect.height / 2);
+      window.scrollTo(0, Math.max(0, absoluteTop - desiredTop));
+    }, mode);
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+        )
+    );
+  };
+  const geometry = () =>
+    news.evaluate((widget) => {
+      const section = widget.querySelector<HTMLElement>(
+        '[data-workspace-widget-content] > section'
+      )!;
+      const viewAll = section.querySelector<HTMLElement>('a[href="/communications/for-you"]')!;
+      const launcherElement = document.querySelector<HTMLElement>(
+        '[data-testid="dwaion-launcher"]'
+      )!;
+      const sectionRect = section.getBoundingClientRect();
+      const viewAllRect = viewAll.getBoundingClientRect();
+      const launcherRect = launcherElement.getBoundingClientRect();
+      return {
+        marked: widget.dataset.flowLauncherEdge === 'true',
+        clearance: Number(widget.dataset.flowLauncherClearance ?? 0),
+        paddingInlineEnd: Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd),
+        sectionRight: sectionRect.right,
+        viewAllRight: viewAllRect.right,
+        launcherLeft: launcherRect.left,
+      };
+    });
+
+  await positionNews('clear');
+  const before = await geometry();
+  expect(before.marked).toBe(false);
+  expect(before.clearance).toBe(0);
+  expect(before.sectionRight - before.viewAllRight).toBeLessThanOrEqual(24);
+
+  await positionNews('overlap');
+  await expect(news).toHaveAttribute('data-flow-launcher-edge', 'true');
+  const during = await geometry();
+  expect(during.clearance).toBeGreaterThan(0);
+  expect(during.paddingInlineEnd + 1).toBeGreaterThanOrEqual(during.clearance);
+  expect(during.viewAllRight).toBeLessThanOrEqual(during.launcherLeft - 15);
+  expect(during.viewAllRight).toBeLessThan(before.viewAllRight);
+
+  await positionNews('clear');
+  await expect(news).not.toHaveAttribute('data-flow-launcher-edge');
+  const after = await geometry();
+  expect(after.clearance).toBe(0);
+  expect(after.paddingInlineEnd).toBeCloseTo(before.paddingInlineEnd, 0);
+  expect(after.viewAllRight).toBeCloseTo(before.viewAllRight, 0);
+});
+
+test('a saved widget reorder recalculates clearance for the new launcher-edge widget', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Launcher collision geometry runs once.');
+  let serverPreference = {
+    ...DEFAULT_HOME_PREFERENCE,
+    customized: true,
+    version: 3,
+  };
+  let saved = false;
+  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
+      return fulfillSuccess(route, serverPreference);
+    }
+    if (request.method() === 'PUT' && path.endsWith('/home-preferences')) {
+      const body = request.postDataJSON() as { layout: typeof DEFAULT_HOME_PREFERENCE.layout };
+      serverPreference = {
+        ...serverPreference,
+        layout: body.layout,
+        version: serverPreference.version + 1,
+      };
+      saved = true;
+      return fulfillSuccess(route, serverPreference);
+    }
+    return route.fallback();
+  });
+  await page.setViewportSize({ width: 1440, height: 720 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home' }).click();
+
+  const flowHome = page.getByTestId('flow-home');
+  const personal = flowHome.locator('[data-workspace-widget-policy="PERSONAL"]');
+  const order = () =>
+    personal.evaluateAll((widgets) =>
+      widgets.map((widget) => widget.getAttribute('data-workspace-widget'))
+    );
+  await flowHome
+    .getByRole('button', { name: 'Move Role work status widget earlier', exact: true })
+    .click();
+  await expect
+    .poll(order)
+    .toEqual(['action-queue', 'today', 'response-hub', 'role-pulse', 'request-tracker']);
+  await page
+    .locator('[data-workspace-composer-placement="floating"]')
+    .getByRole('button', { name: 'Save' })
+    .click();
+  await expect.poll(() => saved).toBe(true);
+
+  const launcher = page.getByTestId('dwaion-launcher');
+  const requestWidget = flowHome.locator('[data-workspace-widget="request-tracker"]');
+  const roleWidget = flowHome.locator('[data-workspace-widget="role-pulse"]');
+  await expect(launcher).toBeVisible({ timeout: 15_000 });
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating', {
+    timeout: 15_000,
+  });
+  await page.evaluate(() => {
+    const widget = document.querySelector<HTMLElement>(
+      '[data-workspace-widget="request-tracker"]'
+    )!;
+    const launcherElement = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
+    const widgetRect = widget.getBoundingClientRect();
+    const launcherRect = launcherElement.getBoundingClientRect();
+    const absoluteTop = window.scrollY + widgetRect.top;
+    window.scrollTo(0, absoluteTop - (launcherRect.top - widgetRect.height / 2));
+  });
+  await expect(requestWidget).toHaveAttribute('data-flow-launcher-edge', 'true');
+  await expect(roleWidget).not.toHaveAttribute('data-flow-launcher-edge');
+  const clearance = await requestWidget.evaluate((widget) => {
+    const section = widget.querySelector<HTMLElement>('[data-workspace-widget-content] > section')!;
+    return {
+      measured: Number(widget.getAttribute('data-flow-launcher-clearance') ?? 0),
+      applied: Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd),
+    };
+  });
+  expect(clearance.measured).toBeGreaterThan(0);
+  expect(clearance.applied + 1).toBeGreaterThanOrEqual(clearance.measured);
 });
 
 test('200% text, dark mode, and forced colours preserve a one-column readable Home', async ({
@@ -2261,6 +2993,7 @@ test('200% text, dark mode, and forced colours preserve a one-column readable Ho
     .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).fontSize))
     .toBe('32px');
   await expect(flowHome).toHaveAttribute('data-flow-large-text', 'true');
+  await expectContextualListRhythm(purpose(flowHome, 'response'));
   const darkGrid = await flowHome
     .locator('[data-workspace-presentation]')
     .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
@@ -2391,7 +3124,7 @@ test('notification badges fail closed when a successful summary becomes stale', 
 
   const flowHome = page.getByTestId('flow-home');
   const freshUrgentBadge = flowHome.locator(
-    '[data-badge-intent="urgent"]:visible, [data-hidden-notification-intent="urgent"]:visible'
+    '[data-flow-dock-item="dwp-approvals"] [data-badge-intent="urgent"]:visible, [data-hidden-notification-intent="urgent"]:visible'
   );
   await expect(freshUrgentBadge).toHaveCount(1);
   const freshUrgentCount = Number((await freshUrgentBadge.textContent())?.replace(/\D/gu, '') ?? 0);
@@ -2458,12 +3191,16 @@ test('saved height and width choices round-trip through the existing legacy pref
   await expect(widget).toHaveAttribute('data-workspace-widget-height', 'tall');
 });
 
-test('VIEWS editing and save stay available when the inactive legacy store fails', async ({
+test('VIEWS round-trips the personal action queue after move, resize, hide, and restore', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Store isolation is covered once on desktop.');
   let legacyRequests = 0;
-  let saved = false;
+  let savedBody: {
+    name: string;
+    layout: typeof DEFAULT_HOME_PREFERENCE.layout;
+    version: number;
+  } | null = null;
   let view = defaultHomeView();
   await routeFlowExperience(page, {
     advancedPersonalizationEnabled: true,
@@ -2484,9 +3221,9 @@ test('VIEWS editing and save stay available when the inactive legacy store fails
       return fulfillSuccess(route, [view]);
     }
     if (request.method() === 'PUT' && path.endsWith('/home-views/home-view-default')) {
-      const payload = request.postDataJSON() as { layout: typeof view.layout };
+      const payload = request.postDataJSON() as NonNullable<typeof savedBody>;
+      savedBody = payload;
       view = { ...view, layout: payload.layout, version: view.version + 1 };
-      saved = true;
       return fulfillSuccess(route, view);
     }
     return route.fallback();
@@ -2503,27 +3240,73 @@ test('VIEWS editing and save stay available when the inactive legacy store fails
   await page.goto('/');
   await Promise.all([experienceReady, viewsReady]);
   await expect(page.getByRole('button', { name: 'Edit home' })).toHaveCount(1);
-  await expect(page.getByRole('button', { name: 'Home edit options' })).toBeVisible();
-  await page.getByRole('button', { name: 'Home edit options' }).click();
-  await expect(page.getByRole('menuitem', { name: /Arrange screen/ })).toBeVisible();
-  await page.getByRole('menuitem', { name: /Home settings/ }).click();
-  await expect(page.getByRole('dialog', { name: 'My work home' })).toBeVisible();
-  await page.getByRole('button', { name: 'Close home studio' }).click();
   await page.getByRole('button', { name: 'Edit home' }).click();
-  const widget = page.locator('[data-workspace-widget="request-tracker"]');
-  await widget.locator('[data-widget-footprint-trigger]').click();
-  await page
-    .getByRole('dialog', { name: 'My requests widget size' })
-    .locator('[data-widget-height-option="tall"]')
-    .click();
+
+  const flowHome = page.getByTestId('flow-home');
+  const personalOrder = () =>
+    flowHome
+      .locator('[data-workspace-widget-policy="PERSONAL"]')
+      .evaluateAll((widgets) =>
+        widgets.map((widget) => widget.getAttribute('data-workspace-widget'))
+      );
+  const actionQueue = purposeFrame(flowHome, 'action');
+  await expect(actionQueue).toHaveAttribute('data-workspace-widget-policy', 'PERSONAL');
+  await actionQueue
+    .getByRole('button', { name: 'Move My action queue widget later', exact: true })
+    .press('Enter');
+  await expect
+    .poll(personalOrder)
+    .toEqual(['today', 'action-queue', 'response-hub', 'request-tracker', 'role-pulse']);
+
+  await actionQueue.locator('[data-widget-footprint-trigger]').click();
+  const picker = page.getByRole('dialog', { name: 'My action queue widget size' });
+  await picker.locator('[data-widget-footprint-option="full"]').click();
+  await picker.locator('[data-widget-height-option="short"]').click();
   await page.keyboard.press('Escape');
+
+  await actionQueue.getByRole('button', { name: 'Hide My action queue widget' }).click();
+  await expect(actionQueue).toHaveCount(0);
+  const galleryTrigger = page
+    .getByRole('button', { name: 'Add items' })
+    .or(page.getByRole('button', { name: 'Restore hidden items' }));
+  await galleryTrigger.click();
+  const gallery = page
+    .getByRole('dialog', { name: 'Add to home' })
+    .or(page.getByRole('dialog', { name: 'Hidden items' }));
+  const galleryActionQueue = gallery.locator('[data-home-gallery-item="widget:command-rail"]');
+  await expect(galleryActionQueue).toHaveAttribute('data-home-gallery-state', 'RESTORE');
+  await gallery.getByRole('tab', { name: 'Hidden 1' }).click();
+  await gallery.getByRole('button', { name: 'Restore My Action Queue widget to home' }).click();
+  await expect(galleryActionQueue).toHaveCount(0);
+  await gallery
+    .getByRole('button', { name: 'Close the home item library' })
+    .or(gallery.getByRole('button', { name: 'Close hidden items' }))
+    .click();
+  await expect(actionQueue).toHaveAttribute('data-workspace-widget-size', 'full');
+  await expect(actionQueue).toHaveAttribute('data-workspace-widget-height', 'short');
+
   await page
     .locator('[data-workspace-composer-placement="floating"]')
     .getByRole('button', { name: 'Save' })
     .click();
 
-  await expect.poll(() => saved).toBe(true);
+  await expect.poll(() => savedBody).not.toBeNull();
+  expect(savedBody!.version).toBe(3);
+  const savedWidgetKeys = savedBody!.layout.widgets.map((widget) => widget.widgetKey);
+  expect(savedWidgetKeys).toEqual(['schedule', 'command-rail', 'daily-brief', 'focus', 'activity']);
+  expect(savedWidgetKeys).not.toContain('action-queue');
+  expect(
+    savedBody!.layout.widgets.find((widget) => widget.widgetKey === 'command-rail')
+  ).toMatchObject({ visible: true, size: 'full', height: 'short' });
   expect(legacyRequests).toBe(0);
+
+  await page.reload();
+  await expect(actionQueue).toHaveAttribute('data-workspace-widget-policy', 'PERSONAL');
+  await expect(actionQueue).toHaveAttribute('data-workspace-widget-size', 'full');
+  await expect(actionQueue).toHaveAttribute('data-workspace-widget-height', 'short');
+  await expect
+    .poll(personalOrder)
+    .toEqual(['today', 'action-queue', 'response-hub', 'request-tracker', 'role-pulse']);
 });
 
 test('LEGACY editing and save stay available when the inactive VIEWS store fails', async ({
@@ -2818,10 +3601,15 @@ test('a multi-item request widget preserves its information hierarchy across hei
   );
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
+  const section = purpose(page.getByTestId('flow-home'), 'request');
+  await expectContextualListRhythm(section);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectContextualListRhythm(section);
+  await expectNoHorizontalDocumentOverflow(page, page.getByTestId('flow-home'));
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole('button', { name: 'Edit home' }).click();
 
   const frame = page.locator('[data-workspace-widget="request-tracker"]');
-  const section = purpose(page.getByTestId('flow-home'), 'request');
   await frame.locator('[data-widget-footprint-trigger]').click();
   const picker = page.getByRole('dialog', { name: 'My requests widget size' });
   for (const height of ['short', 'standard', 'tall'] as const) {

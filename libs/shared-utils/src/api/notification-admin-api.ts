@@ -7,7 +7,7 @@ import type {
   NotificationEntityVersion,
   NotificationPartialState,
   NotificationPriority,
-} from './notification-api';
+} from './notification-contract';
 
 const NOTIFICATION_API_BASE = '/api/notifications/v1';
 

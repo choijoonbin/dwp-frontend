@@ -147,8 +147,16 @@
         "title": "Replies & confirmations",
         "description": "Invitations, notices, and requests waiting for your reply.",
         "listLabel": "Items waiting for a response",
-        "distributionLabel": "Response status distribution: {{segments}}. {{count}} total",
-        "distributionTotal": "{{count}} total",
+        "priorityLabel": "Response priority",
+        "prioritySummary": "Response priority: {{segments}}. {{total}}",
+        "priorityCount": "{{label}} {{count}}",
+        "waitingTotal": "{{count}} waiting for response",
+        "availableTotal": "{{count}} response requests currently known · some sources unavailable",
+        "priority": {
+          "critical": "Urgent",
+          "high": "Review first",
+          "standard": "Standard"
+        },
         "empty": "No responses are waiting",
         "emptyDescription": "No work is currently blocked on your response."
       },
@@ -381,6 +389,7 @@
       "openWork": "Open work",
       "focusTime": "Focus time",
       "scheduleLoad": "Schedule load",
+      "scheduleLoadToday": "Today's meeting load",
       "activityAttention": "Activity alerts",
       "unit": {
         "items": "items",
@@ -401,6 +410,11 @@
       "seriesCaption": "Source data for {{signal}} chart",
       "seriesRange": "{{start}}–{{end}}",
       "recentWeek": "Last 7 days",
+      "currentWeek": "This week",
+      "scheduleLoadContext": "Daily meeting limit · This week · {{comparison}}",
+      "scheduleLoadContextCompact": "This week · {{comparison}}",
+      "weekSeriesLabel": "Daily meeting load for this week. The outlined bar is today; dashed caps indicate conflicts and double caps indicate daily-limit overruns.",
+      "seriesPoint": "{{date}} · {{load}}% meeting load · {{conflicts}} conflicts",
       "conflictMarker": "Dashed cap: conflicts",
       "date": "Date",
       "load": "Load",
@@ -458,6 +472,7 @@
       "discardChanges": "Discard changes",
       "leaveHome": "Leave home",
       "sections": {
+        "action-queue": "My action queue",
         "today": "Today's schedule",
         "response-hub": "Replies & confirmations",
         "request-tracker": "My requests",

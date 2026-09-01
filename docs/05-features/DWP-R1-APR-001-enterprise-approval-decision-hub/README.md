@@ -34,12 +34,13 @@ HRIS·직원 서비스·구매·권한·Agent 실행 등 여러 업무 앱의 �
 | 장기 실행 Timer·Retry                 | 검증된 Durable Workflow Engine Adapter |
 | AI 요약·초안                          | DWP Governed Agent Runtime             |
 
-## 2026-08-19 구현 기준선
+## 2026-08-31 내부 완결 기준선
 
 - 개인 홈의 `전자결재` 앱에서 `/approvals/home`으로 진입하며, 결재 현황·우선 결재함·
   단계 흐름·내 요청·정책 인사이트를 개인화 가능한 위젯으로 제공한다.
-- 사용자 메뉴와 설계자·게시 책임자·운영자 메뉴는 같은 Product Shell 안에서 권한별로
-  분리되며 직접 URL과 API도 같은 권한 계약을 적용한다.
+- 사용자 업무 Surface와 설계자·게시 책임자·운영자 관리 Surface를 별도 Shell과 메뉴로
+  분리한다. 같은 사용자가 두 Surface를 모두 사용할 때도 각 Surface에는 해당 메뉴만
+  노출하며, 직접 URL과 API에는 동일한 세부 권한 계약을 적용한다.
 - 계층형 카테고리와 검색이 있는 양식 카탈로그에서 게시된 Form을 선택하고, 양식마다
   연결된 기본 결재선의 단계·후보 역할·SLA를 확인한 뒤 한영 동적 양식을 작성한다.
 - 게시된 Workflow·Form Version으로 초안 생성·재조회·
@@ -50,9 +51,16 @@ HRIS·직원 서비스·구매·권한·Agent 실행 등 여러 업무 앱의 �
   활성화하지 않는다.
 - API 호출은 공통 `sys_api_history`에 Route Template, 상태, 지연, Trace·Correlation을
   기록하고 결정·설계 Command는 Audit Outbox로 연결한다.
+- 결재 위임·대리인 후보·게시 Workflow 조회 실패는 빈 목록으로 가장하지 않는다. 각
+  실패를 독립적으로 알리고 같은 화면에서 재시도하며, 실패한 권위 데이터로 저장하지 않는다.
+- 게시·운영 재처리 같은 고위험 Command는 서버의 exact Action 판단과 OIDC step-up을
+  통과해야 한다. Browser는 임의 `contextKey`를 발급 요청에 넣지 않고 서버가 canonical
+  Context를 파생하며, popup 차단·timeout·foreign origin·stale proof는 mutation 0건으로 닫는다.
 - 로컬 환경은 Auth에 활성화된 SKAX 앱 사용자 21명에게 DB 기반 요청·결재함·Timeline·
   위임 Seed를 제공한다. 읽기 요청에서 Mock 거래를 생성하지 않으며 운영 Flyway에는
   로컬 업무 Seed가 포함되지 않는다.
+- Approval DB 정본은 `V1`~`V14`이며 관리 자산의 resource set 결속과 step-up/recovery
+  증적까지 포함한다.
 
 세부 구현·검증 상태는 [07-수용 테스트.md](07-수용%20테스트.md)를 기준으로 한다.
 

@@ -32,15 +32,21 @@ The integrated shell remains a compatibility host only during extraction. A prod
 
 ## Implemented topology
 
-The deployment topology contains ten independently built browser applications:
+The deployment topology contains sixteen independently built browser applications:
 
 | Deployment unit  | Owned routes                                          | Owned product modules                      |
 | ---------------- | ----------------------------------------------------- | ------------------------------------------ |
 | `platform-shell` | `/sign-in`, `/activate`, `/auth/oidc`, `/403`, `/404` | Authentication and platform error surfaces |
-| `workspace`      | `/`, `/work`, `/ask`, `/activity`, `/apps`            | Workspace and work hub                     |
+| `workspace`      | `/`, `/work`, `/activity`, `/apps`, `/notifications`  | Workspace, work hub, and notifications     |
+| `dwaion`         | `/dwaion`, `/ask`                                     | Governed AI workspace                      |
 | `hcm`            | `/hr`, `/people`, `/workforce`                        | HCM, People, and Workforce                 |
 | `approvals`      | `/approvals`                                          | Approval workflows                         |
+| `spaces`         | `/spaces`                                             | Collaboration spaces                       |
 | `calendar`       | `/calendar`                                           | Calendar                                   |
+| `rooms`          | `/workplace`, `/rooms`                                | Workplace and room booking                 |
+| `mail`           | `/mail`                                               | Enterprise mail                            |
+| `messaging`      | `/messages`                                           | Messaging                                  |
+| `meetings`       | `/meetings`                                           | Video meetings                             |
 | `communications` | `/communications`                                     | Communications                             |
 | `services`       | `/services`                                           | Employee services                          |
 | `administration` | `/admin`                                              | Tenant administration and integrations     |
@@ -60,8 +66,24 @@ not coordinate product business workflows.
   changed product implementation.
 - Every independent artifact enforces entry, initial-load, request-count, and largest-async-chunk
   budgets from `scripts/product-bundle-budgets.json`.
-- HCM, Administration, and Provider use view-level lazy imports so privileged or unrelated
-  operational screens are not part of the initial route payload.
+- HCM, Administration, Provider, Calendar, and Workplace use view-level lazy imports so privileged
+  or unrelated operational screens are not part of the initial route payload.
+- Initial shell, layout, and route-composition modules may not import the design-system root barrel.
+  They use supported focused entry points so enterprise DataGrid and date-time implementations
+  cannot leak into the bootstrap graph.
+- Production modules may not form relative import/export cycles. Shared types move to a dependency-
+  free contract module so API and presentation modules retain a single dependency direction.
+- Production TypeScript modules must be reachable from the workspace entry, an independent product
+  route or manifest registered by Vite, a Vite configuration import, or a library public entry.
+  `yarn production-reachability:check` resolves tsconfig aliases and literal dynamic imports. Its
+  verification-only allowlist requires an owner, reason, and removal condition; new unreachable
+  modules, any difference between the exact inventory and its ratcheted maximum, duplicate
+  allowances, and stale allowances fail the Gate. Removed allowances therefore cannot leave future
+  headroom.
+- A production source file is limited to 1,000 lines unless it is listed at its current exact size
+  in the ratcheted source-size baseline. Any reduction must immediately lower or remove that
+  exception with `yarn source-size:baseline`; historical headroom is not retained, and the writer
+  refuses to add or raise an oversized exception.
 - `architecture:check`, `routes:check`, feature boundaries, API boundaries, type checking, unit
   tests, isolated product builds, accessibility, and performance checks are release-blocking CI
   gates.

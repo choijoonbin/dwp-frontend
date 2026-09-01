@@ -48,7 +48,40 @@ async function mockAuthenticated(
   locale = 'en',
   homeOverview: unknown = createHomeOverviewFixture(['ADMIN'])
 ) {
+  // Keep visual journeys isolated from any locally running backend. Product
+  // contribution providers that are not material to a given baseline must
+  // exercise their partial-failure UI instead of receiving a real 401 and
+  // invalidating the mocked authenticated session.
+  await page.route(/^https?:\/\/[^/]+\/api\//, (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ERROR',
+        errorCode: 'VISUAL_FIXTURE_ENDPOINT_UNAVAILABLE',
+        message: 'This endpoint is outside the visual fixture contract.',
+      }),
+    })
+  );
   await mockRuntimeNavigation(page);
+  await page.route('**/api/auth/me/policy', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          tenantId: 1,
+          defaultLoginType: 'LOCAL',
+          allowedLoginTypes: ['LOCAL'],
+          localLoginEnabled: true,
+          ssoLoginEnabled: false,
+          ssoProviderKey: null,
+          requireMfa: true,
+        },
+      }),
+    })
+  );
   await page.route('**/api/auth/admin/access/privileged/me/**', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -578,6 +611,18 @@ test('administration access grid visual baseline', async ({ page }, testInfo) =>
 });
 
 test('personal home reference visual baseline', async ({ page }) => {
+  const runtimeErrors: string[] = [];
+  page.on('pageerror', (error) => runtimeErrors.push(error.message));
+  page.on('console', (message) => {
+    if (
+      message.type() === 'error' &&
+      !message
+        .text()
+        .startsWith('Failed to load resource: the server responded with a status of 503')
+    ) {
+      runtimeErrors.push(message.text());
+    }
+  });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockAuthenticated(page);
   await setAppearance(page, {
@@ -588,6 +633,8 @@ test('personal home reference visual baseline', async ({ page }) => {
   });
 
   await page.goto('/');
+  await page.waitForTimeout(250);
+  expect(runtimeErrors).toEqual([]);
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('home-command-center')).toBeVisible();
@@ -786,12 +833,11 @@ test('collapsed navigation visual baseline', async ({ page }, testInfo) => {
     reduceMotion: true,
   });
 
-  await page.goto('/apps');
-  await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
-  await expect(page.getByText('Legacy operations', { exact: true })).toBeVisible();
-  await expect(page.getByTestId('desktop-sidebar')).toBeVisible();
+  await page.goto('/work');
+  await expect(page.getByRole('heading', { name: 'Work home', exact: true })).toBeVisible();
+  await expect(page.getByTestId('work-sidebar')).toBeVisible();
   await page.getByRole('button', { name: 'Collapse navigation' }).click();
-  await expect(page.getByTestId('desktop-sidebar')).toHaveCSS('width', '72px');
+  await expect(page.getByTestId('work-sidebar')).toHaveCSS('width', '72px');
   await expect(page).toHaveScreenshot('navigation-collapsed.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -850,7 +896,7 @@ test('DWAI·ON workspace visual baseline', async ({ page }) => {
     reduceMotion: true,
   });
 
-  await page.goto('/dwaion');
+  await page.goto('/dwaion/new');
   await page
     .getByRole('textbox', { name: 'Ask a work question' })
     .fill('Can I work remotely next Friday?');
@@ -877,8 +923,8 @@ test('Activity reference visual baseline', async ({ page }) => {
   });
 
   await page.goto('/activity');
-  await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
-  await expect(page.getByRole('list', { name: 'Workspace activity' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Activity home', exact: true })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Recent activity' })).toBeVisible();
   await expect(page).toHaveScreenshot('activity-reference.png', {
     animations: 'disabled',
     caret: 'hide',

@@ -58,9 +58,10 @@ export function resolveFlowHomeReadLayout({
   wideViewport,
 }: ResolveFlowHomeReadLayoutInput): FlowHomeReadLayout {
   const adaptiveEligible = isFlowAdaptiveTemplateEligible(sections, audience);
-  const firstSectionKey = adaptiveEligible ? (sections[0]?.widgetKey ?? null) : null;
+  const purposeSections = sections.filter((section) => section.widgetKey !== 'action-queue');
+  const firstSectionKey = adaptiveEligible ? (purposeSections[0]?.widgetKey ?? null) : null;
   const supportSectionKeys = adaptiveEligible
-    ? sections.slice(1).map((section) => section.widgetKey)
+    ? purposeSections.slice(1).map((section) => section.widgetKey)
     : [];
 
   if (editing) {
@@ -120,7 +121,8 @@ export function resolveFlowHomeReadItemLimit({
   configuredItemLimit,
 }: ResolveFlowHomeReadItemLimitInput): number {
   const adaptiveWide = template === 'adaptive-wide';
-  const primary = sectionKey === 'action' || sectionKey === firstSectionKey;
+  const primary =
+    sectionKey === 'action' || sectionKey === 'action-queue' || sectionKey === firstSectionKey;
   const fallback = adaptiveWide ? (primary ? 4 : 1) : 3;
   const requested = typeof configuredItemLimit === 'number' ? configuredItemLimit : fallback;
   return Math.min(4, Math.max(1, Math.trunc(requested)));

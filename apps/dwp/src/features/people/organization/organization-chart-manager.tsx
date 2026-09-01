@@ -3,37 +3,8 @@ import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
-import { ActionIconButton, mergeFilterSearchParams } from '@dwp-frontend/design-system';
-import {
-  BriefcaseBusiness,
-  Building2,
-  CalendarDays,
-  CircleDollarSign,
-  Columns3,
-  GitCompareArrows,
-  GitPullRequest,
-  LocateFixed,
-  MapPin,
-  Network,
-  RefreshCw,
-  Rows3,
-  Search,
-  Share2,
-  SlidersHorizontal,
-  Undo2,
-  UserRound,
-  UsersRound,
-} from 'lucide-react';
-import {
-  Background,
-  BackgroundVariant,
-  Controls,
-  MarkerType,
-  MiniMap,
-  ReactFlow,
-  applyNodeChanges,
-} from '@xyflow/react';
+import { mergeFilterSearchParams } from '@dwp-frontend/design-system';
+import { MarkerType, applyNodeChanges } from '@xyflow/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   addOrganizationScenarioPositionMove,
@@ -46,32 +17,10 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Drawer from '@mui/material/Drawer';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import MenuItem from '@mui/material/MenuItem';
-import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
-import TextField from '@mui/material/TextField';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-import {
-  ManagementPanelError,
-  ManagementPanelLoading,
-} from '../../../components/management-panel-state';
+import { HcmQueryState } from '../../../components/hcm-query-state';
 import {
   appendProductPageShortcutScope,
   PRODUCT_PAGE_SHORTCUT_TARGETS,
@@ -80,12 +29,7 @@ import {
 import { useProductActionMutation } from '../../../components/use-product-action-mutation';
 import { useProductSurfaceCapabilityAccess } from '../../../components/product-surface-capability-access';
 import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
-import {
-  OrganizationNode,
-  PersonNode,
-  PositionNode,
-  type OrgChartFlowNode,
-} from './org-chart-nodes';
+import { type OrgChartFlowNode } from './org-chart-nodes';
 import {
   initialViewportTarget,
   layoutChart,
@@ -95,12 +39,8 @@ import {
   type ChartDirection,
 } from './org-chart-layout';
 import { OrgChartInspector, type OrgChartSelection } from './org-chart-inspector';
-import {
-  OrganizationIntelligencePanel,
-  type OrganizationIntelligenceView,
-} from './organization-intelligence-panel';
-import { OrganizationDesignOverview } from './organization-design-overview';
-import { OrganizationScenarioDrawer } from './organization-scenario-drawer';
+import { type OrganizationIntelligenceView } from './organization-intelligence-panel';
+import { OrganizationChartSurface } from './organization-chart-surface';
 import {
   ORGANIZATION_LENSES,
   matchesOrganization,
@@ -132,14 +72,7 @@ import type {
   OnNodeDrag,
   ReactFlowInstance,
 } from '@xyflow/react';
-import type { LucideIcon } from 'lucide-react';
 import type { OrganizationScenario } from '@dwp-frontend/shared-utils';
-
-const nodeTypes = {
-  organization: OrganizationNode,
-  person: PersonNode,
-  position: PositionNode,
-};
 
 function today(): string {
   const value = new Date();
@@ -153,48 +86,6 @@ function monthBefore(date: string): string {
   return value.toISOString().slice(0, 10);
 }
 
-function compactMoney(value: number, currency?: string | null): string {
-  return formatNumber(value, {
-    style: currency && currency !== 'MIXED' ? 'currency' : 'decimal',
-    currency: currency && currency !== 'MIXED' ? currency : undefined,
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  });
-}
-
-function Metric({
-  icon: Icon,
-  label,
-  value,
-  color,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: number | string;
-  color: string;
-}) {
-  return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      gap={1}
-      sx={{ minWidth: 140, px: 2, py: 1.2, borderRight: 1, borderColor: 'divider' }}
-    >
-      <Box sx={{ color, display: 'grid', placeItems: 'center' }}>
-        <Icon size={18} strokeWidth={1.8} />
-      </Box>
-      <Box>
-        <Typography variant="caption" color="text.secondary" display="block">
-          {label}
-        </Typography>
-        <Typography component="p" variant="subtitle2" fontWeight={750}>
-          {typeof value === 'number' ? formatNumber(value) : value}
-        </Typography>
-      </Box>
-    </Stack>
-  );
-}
-
 export type OrganizationExperience = 'directory' | 'workforce';
 
 export function OrganizationExplorer({
@@ -203,7 +94,6 @@ export function OrganizationExplorer({
   experience?: OrganizationExperience;
 }) {
   const { t } = useTranslation('workforce');
-  const display = useDisplayDictionary();
   const auth = useAuth();
   const capabilityAccess = useProductSurfaceCapabilityAccess();
   const controlledExportShortcut = useProductPageShortcutAccess(
@@ -815,13 +705,13 @@ export function OrganizationExplorer({
     void flow?.fitView({ nodes: [{ id }], padding: 0.75, duration: 480, maxZoom: 1.2 });
   };
 
-  if (chartQuery.isLoading) return <ManagementPanelLoading label={t('orgChart.loading')} />;
+  if (chartQuery.isLoading) return <HcmQueryState loading size="page" />;
   if (chartQuery.isError || !chart) {
     return (
-      <ManagementPanelError
-        message={
-          chartQuery.error instanceof Error ? chartQuery.error.message : t('common.operationError')
-        }
+      <HcmQueryState
+        error={chartQuery.error ?? true}
+        retrying={chartQuery.isFetching}
+        onRetry={() => void chartQuery.refetch()}
       />
     );
   }
@@ -931,683 +821,89 @@ export function OrganizationExplorer({
   ) : null;
 
   return (
-    <Stack gap={workforceView ? 2 : 0}>
-      {workforceView && (
-        <OrganizationDesignOverview
-          chart={chart}
-          mode={mode}
-          scenario={selectedScenario}
-          rootOrganizationId={rootOrganizationId}
-          currentDate={currentDate}
-          fetching={chartQuery.isFetching || intelligenceQuery.isFetching}
-          onRefresh={() => {
-            void chartQuery.refetch();
-            if (mode === 'insights') void intelligenceQuery.refetch();
-          }}
-          onOpenInsight={(nextInsight) =>
-            updateNavigationState({
-              mode: 'insights',
-              insight: nextInsight === 'health' ? null : nextInsight,
-              ...organizationSelectionSearchParams(undefined),
-            })
-          }
-        />
-      )}
-      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-        <Box
-          role="region"
-          tabIndex={0}
-          aria-label={t('orgChart.metrics.summaryLabel')}
-          sx={{ overflowX: 'auto', borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Stack direction="row" sx={{ minWidth: 'max-content' }}>
-            <Metric
-              icon={UsersRound}
-              label={t('orgChart.metrics.headcount')}
-              value={chart.metrics.headcount}
-              color="#2563EB"
-            />
-            <Metric
-              icon={Building2}
-              label={t('orgChart.metrics.organizations')}
-              value={chart.metrics.organizationCount}
-              color="#0F8A7B"
-            />
-            <Metric
-              icon={UserRound}
-              label={t('orgChart.metrics.managers')}
-              value={chart.metrics.managerCount}
-              color="#7C3AED"
-            />
-            {workforceView && (
-              <Metric
-                icon={BriefcaseBusiness}
-                label={t('orgChart.metrics.openPositions')}
-                value={chart.metrics.openPositionCount}
-                color="#B7791F"
-              />
-            )}
-            <Metric
-              icon={MapPin}
-              label={t('orgChart.metrics.locations')}
-              value={chart.metrics.locationCount}
-              color="#D55B42"
-            />
-            {workforceView && (
-              <Metric
-                icon={BriefcaseBusiness}
-                label={t('orgChart.metrics.plannedFte')}
-                value={chart.metrics.plannedFte.toFixed(1)}
-                color="#0F766E"
-              />
-            )}
-            {workforceView && (
-              <Metric
-                icon={CircleDollarSign}
-                label={t('orgChart.metrics.workforceCost')}
-                value={compactMoney(chart.metrics.workforceCostAmount, chart.metrics.costCurrency)}
-                color="#9A6700"
-              />
-            )}
-          </Stack>
-        </Box>
-
-        {workforceView && chart.scenario && (
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            alignItems={{ xs: 'flex-start', md: 'center' }}
-            justifyContent="space-between"
-            gap={1}
-            sx={{ px: 1.5, py: 1, bgcolor: '#F5F3FF', borderBottom: 1, borderColor: '#DDD6FE' }}
-          >
-            <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" useFlexGap>
-              <GitPullRequest size={16} color="#6D28D9" />
-              <Typography variant="body2" fontWeight={750}>
-                {chart.scenario.name}
-              </Typography>
-              <Chip
-                size="small"
-                variant="outlined"
-                color={chart.scenario.lifecycleState === 'DRAFT' ? 'warning' : 'info'}
-                label={display('states', chart.scenario.lifecycleState)}
-              />
-              <Typography variant="caption" color="text.secondary">
-                {t('orgChart.scenarios.previewSummary', {
-                  date: chart.scenario.effectiveDate,
-                  count: chart.scenario.activeChangeCount,
-                })}
-              </Typography>
-            </Stack>
-            <Button
-              size="small"
-              startIcon={<Undo2 size={14} />}
-              onClick={() => updateNavigationState({ scenario: null })}
-            >
-              {t('orgChart.scenarios.returnLive')}
-            </Button>
-          </Stack>
-        )}
-
-        <Stack
-          direction={{ xs: 'column', xl: 'row' }}
-          alignItems={{ xs: 'stretch', xl: 'center' }}
-          justifyContent="space-between"
-          gap={1.25}
-          sx={{ px: 1.5, py: 1.25, borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} gap={1}>
-            <ToggleButtonGroup
-              exclusive
-              size="small"
-              value={mode}
-              aria-label={t('orgChart.view.label')}
-              sx={{
-                width: { xs: 1, sm: 'auto' },
-                '& .MuiToggleButton-root': {
-                  flex: { xs: 1, sm: 'initial' },
-                  minWidth: { xs: 44, sm: 'auto' },
-                  px: { xs: 1, sm: 1.25 },
-                },
-              }}
-              onChange={(_event, value: ChartMode | null) => {
-                if (!value) return;
-                updateNavigationState({
-                  mode: value === defaultMode ? null : value,
-                  insight: value === 'insights' ? undefined : null,
-                  ...organizationSelectionSearchParams(undefined),
-                });
-              }}
-            >
-              <ToggleButton
-                value="organizations"
-                aria-label={t('orgChart.view.organizations')}
-                title={t('orgChart.view.organizations')}
-              >
-                <Building2 size={15} />
-                <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
-                  {t('orgChart.view.organizations')}
-                </Box>
-              </ToggleButton>
-              <ToggleButton
-                value="people"
-                aria-label={t('orgChart.view.people')}
-                title={t('orgChart.view.people')}
-              >
-                <UsersRound size={15} />
-                <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
-                  {t('orgChart.view.people')}
-                </Box>
-              </ToggleButton>
-              {workforceView && (
-                <ToggleButton
-                  value="positions"
-                  aria-label={t('orgChart.view.positions')}
-                  title={t('orgChart.view.positions')}
-                >
-                  <BriefcaseBusiness size={15} />
-                  <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
-                    {t('orgChart.view.positions')}
-                  </Box>
-                </ToggleButton>
-              )}
-              {workforceView && (
-                <ToggleButton
-                  value="insights"
-                  aria-label={t('orgChart.view.insights')}
-                  title={t('orgChart.view.insights')}
-                >
-                  <GitCompareArrows size={15} />
-                  <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
-                    {t('orgChart.view.insights')}
-                  </Box>
-                </ToggleButton>
-              )}
-            </ToggleButtonGroup>
-            {mode !== 'insights' && (
-              <TextField
-                size="small"
-                value={search}
-                onChange={(event) => updateNavigationState({ q: event.target.value || null })}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') focusSearchResult();
-                }}
-                placeholder={t('orgChart.search')}
-                inputProps={{ 'aria-label': t('orgChart.search') }}
-                sx={{ width: { xs: 1, sm: 260 } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search size={16} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-            {rootOrganizationId && (
-              <Button
-                size="small"
-                startIcon={<Undo2 size={15} />}
-                onClick={() => {
-                  updateNavigationState({
-                    root: null,
-                    ...organizationSelectionSearchParams(undefined),
-                  });
-                }}
-              >
-                {t('orgChart.actions.showCompany')}
-              </Button>
-            )}
-          </Stack>
-
-          <Stack
-            direction="row"
-            alignItems="center"
-            gap={0.4}
-            flexWrap="wrap"
-            useFlexGap
-            sx={{ width: { xs: 1, xl: 'auto' } }}
-          >
-            {workforceView && (
-              <TextField
-                select
-                size="small"
-                value={scenarioId}
-                onChange={(event) => {
-                  const nextScenarioId = event.target.value;
-                  const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
-                  updateNavigationState({
-                    scenario: nextScenarioId || null,
-                    asOf: scenario?.baselineDate ?? null,
-                    compareTo: scenario?.baselineDate ?? null,
-                    root: null,
-                    ...organizationSelectionSearchParams(undefined),
-                  });
-                }}
-                inputProps={{ 'aria-label': t('orgChart.scenarios.preview') }}
-                SelectProps={{ displayEmpty: true }}
-                sx={{ width: { xs: 1, sm: 210 } }}
-              >
-                <MenuItem value="">{t('orgChart.scenarios.live')}</MenuItem>
-                {scenarios.map((scenario) => (
-                  <MenuItem key={scenario.scenarioId} value={scenario.scenarioId}>
-                    {scenario.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-            {mode === 'organizations' && (
-              <TextField
-                select
-                size="small"
-                value={lens}
-                onChange={(event) =>
-                  updateNavigationState({
-                    lens: event.target.value === 'structure' ? null : event.target.value,
-                  })
-                }
-                inputProps={{ 'aria-label': t('orgChart.lenses.label') }}
-                sx={{ width: { xs: 1, sm: 150 } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SlidersHorizontal size={14} />
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                {(['structure', 'health', 'headcount', 'span', 'vacancy'] as const).map((item) => (
-                  <MenuItem key={item} value={item}>
-                    {t(`orgChart.lenses.${item}`)}
-                  </MenuItem>
-                ))}
-                <MenuItem value="changes" disabled={!scenarioId}>
-                  {t('orgChart.lenses.changes')}
-                </MenuItem>
-              </TextField>
-            )}
-            {mode === 'organizations' && (
-              <FormControlLabel
-                sx={{ mr: 0.5 }}
-                control={
-                  <Switch
-                    size="small"
-                    checked={showMatrix}
-                    onChange={(event) =>
-                      updateNavigationState({ matrix: event.target.checked ? null : 'false' })
-                    }
-                  />
-                }
-                label={<Typography variant="caption">{t('orgChart.actions.matrix')}</Typography>}
-              />
-            )}
-            <TextField
-              size="small"
-              type="date"
-              value={asOf}
-              disabled={Boolean(scenarioId)}
-              onChange={(event) => {
-                updateNavigationState({
-                  asOf: event.target.value === currentDate ? null : event.target.value,
-                  compareTo: null,
-                  ...organizationSelectionSearchParams(undefined),
-                });
-              }}
-              inputProps={{ 'aria-label': t('orgChart.filters.asOf') }}
-              sx={{ width: { xs: 1, sm: 172 } }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CalendarDays size={15} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {mode === 'insights' && !scenarioId && (
-              <TextField
-                size="small"
-                type="date"
-                label={t('orgChart.filters.compareTo')}
-                value={compareTo}
-                onChange={(event) =>
-                  updateNavigationState({
-                    compareTo: event.target.value === monthBefore(asOf) ? null : event.target.value,
-                  })
-                }
-                inputProps={{ 'aria-label': t('orgChart.filters.compareTo') }}
-                InputLabelProps={{ shrink: true }}
-                sx={{ width: { xs: 1, sm: 172 } }}
-              />
-            )}
-            {mode !== 'insights' && (
-              <>
-                <Tooltip title={t('orgChart.actions.changeDirection')}>
-                  <IconButton
-                    size="small"
-                    aria-label={t('orgChart.actions.changeDirection')}
-                    onClick={() => {
-                      directionWasCustomized.current = true;
-                      updateNavigationState({ direction: direction === 'TB' ? 'LR' : null });
-                    }}
-                  >
-                    {direction === 'TB' ? <Rows3 size={17} /> : <Columns3 size={17} />}
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('orgChart.actions.collapseAll')}>
-                  <IconButton
-                    size="small"
-                    aria-label={t('orgChart.actions.collapseAll')}
-                    onClick={collapseAll}
-                  >
-                    <Network size={17} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('orgChart.actions.expandAll')}>
-                  <IconButton
-                    size="small"
-                    aria-label={t('orgChart.actions.expandAll')}
-                    onClick={expandAll}
-                  >
-                    <LocateFixed size={17} />
-                  </IconButton>
-                </Tooltip>
-              </>
-            )}
-            {workforceView && (
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<GitPullRequest size={15} />}
-                disabled={!canOpenScenarios}
-                onClick={() => setScenarioOpen(true)}
-              >
-                {t('orgChart.actions.scenarios')}
-              </Button>
-            )}
-            <ActionIconButton
-              size="small"
-              label={t('orgChart.actions.copyViewLink')}
-              onClick={() => void copyViewLink()}
-            >
-              <Share2 size={17} />
-            </ActionIconButton>
-            <Tooltip title={t('common.actions.refresh')}>
-              <IconButton
-                size="small"
-                aria-label={t('common.actions.refresh')}
-                onClick={() => {
-                  void chartQuery.refetch();
-                  if (mode === 'insights') void intelligenceQuery.refetch();
-                }}
-              >
-                <RefreshCw size={17} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        </Stack>
-
-        <Box
-          sx={{
-            height: { xs: 620, lg: 'clamp(600px, calc(100vh - 340px), 780px)' },
-            minHeight: 0,
-            display: 'grid',
-            gridTemplateColumns:
-              selection && !compactInspector ? 'minmax(0, 1fr) 350px' : 'minmax(0, 1fr)',
-          }}
-        >
-          <Box sx={{ minWidth: 0, minHeight: 0, position: 'relative', bgcolor: '#F7F9FB' }}>
-            {mode === 'insights' ? (
-              <OrganizationIntelligencePanel
-                intelligence={intelligenceQuery.data}
-                loading={intelligenceQuery.isLoading}
-                error={
-                  intelligenceQuery.error instanceof Error
-                    ? intelligenceQuery.error.message
-                    : undefined
-                }
-                view={insightView}
-                onViewChange={(nextInsight) =>
-                  updateNavigationState({ insight: nextInsight === 'health' ? null : nextInsight })
-                }
-                onSelect={(nextSelection) => {
-                  const nextMode =
-                    nextSelection.kind === 'person'
-                      ? 'people'
-                      : nextSelection.kind === 'position'
-                        ? 'positions'
-                        : 'organizations';
-                  updateNavigationState({
-                    mode: nextMode === defaultMode ? null : nextMode,
-                    insight: null,
-                    ...organizationSelectionSearchParams(nextSelection),
-                  });
-                }}
-                onRequestExport={
-                  controlledExportShortcut.disclosed
-                    ? () => {
-                        const params = new URLSearchParams({
-                          dataset: 'ORGANIZATION_INTELLIGENCE',
-                          view: insightView,
-                          asOf: intelligenceQuery.data?.asOf ?? asOf,
-                          compareTo,
-                        });
-                        if (scenarioId) params.set('scenarioId', scenarioId);
-                        if (rootOrganizationId)
-                          params.set('rootOrganizationId', rootOrganizationId);
-                        navigate(
-                          appendProductPageShortcutScope(
-                            `/hr/data/exports?${params.toString()}`,
-                            controlledExportShortcut
-                          )
-                        );
-                      }
-                    : undefined
-                }
-              />
-            ) : (
-              <>
-                <ReactFlow<OrgChartFlowNode, Edge>
-                  nodes={renderNodes}
-                  edges={graph.edges}
-                  nodeTypes={nodeTypes}
-                  onInit={setFlow}
-                  onNodesChange={handleNodeChanges}
-                  onNodeClick={handleNodeClick}
-                  onNodeDragStop={handleNodeDragStop}
-                  nodesDraggable={
-                    (mode === 'organizations' || mode === 'positions') &&
-                    selectedScenario?.lifecycleState === 'DRAFT'
-                  }
-                  nodesConnectable={false}
-                  elementsSelectable
-                  fitView
-                  fitViewOptions={{ padding: 0.15, maxZoom: 1.05 }}
-                  minZoom={0.18}
-                  maxZoom={1.8}
-                  proOptions={{ hideAttribution: true }}
-                  aria-label={t('orgChart.canvasLabel')}
-                >
-                  <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#CBD5E1" />
-                  <MiniMap
-                    pannable
-                    zoomable
-                    nodeStrokeWidth={2}
-                    nodeColor={(node) =>
-                      node.type === 'organization'
-                        ? '#C9D7E6'
-                        : node.type === 'position'
-                          ? '#F1D9A7'
-                          : '#D8E5DC'
-                    }
-                    maskColor="rgba(247, 249, 251, 0.78)"
-                    style={{
-                      width: compactInspector ? 96 : 150,
-                      height: compactInspector ? 64 : 92,
-                    }}
-                  />
-                  <Controls showInteractive={false} position="bottom-left" />
-                </ReactFlow>
-                <Stack
-                  direction="row"
-                  gap={1.5}
-                  sx={{
-                    position: 'absolute',
-                    left: 54,
-                    bottom: 13,
-                    px: 1,
-                    py: 0.6,
-                    bgcolor: 'rgba(255,255,255,0.92)',
-                    border: 1,
-                    borderColor: 'divider',
-                    borderRadius: 1,
-                  }}
-                >
-                  <Stack direction="row" alignItems="center" gap={0.6}>
-                    <Box sx={{ width: 18, borderTop: '2px solid #94A3B8' }} />
-                    <Typography variant="caption">{t('orgChart.legend.supervisory')}</Typography>
-                  </Stack>
-                  {mode === 'organizations' && showMatrix && (
-                    <Stack direction="row" alignItems="center" gap={0.6}>
-                      <Box sx={{ width: 18, borderTop: '2px dashed #D55B42' }} />
-                      <Typography variant="caption">{t('orgChart.legend.matrix')}</Typography>
-                    </Stack>
-                  )}
-                  {mode === 'organizations' && scenarioId && (
-                    <Stack direction="row" alignItems="center" gap={0.6}>
-                      <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#7C3AED' }} />
-                      <Typography variant="caption">
-                        {t('orgChart.legend.scenarioChange')}
-                      </Typography>
-                    </Stack>
-                  )}
-                </Stack>
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  label={t('orgChart.asOf', { date: chart.asOf })}
-                  sx={{
-                    position: 'absolute',
-                    top: 12,
-                    left: 12,
-                    bgcolor: 'rgba(255,255,255,0.92)',
-                  }}
-                />
-                {(mode === 'organizations' || mode === 'positions') &&
-                  selectedScenario?.lifecycleState === 'DRAFT' && (
-                    <Chip
-                      size="small"
-                      color="secondary"
-                      variant="outlined"
-                      label={t('orgChart.scenarios.dragHint')}
-                      sx={{
-                        position: 'absolute',
-                        top: 12,
-                        right: 12,
-                        bgcolor: 'rgba(255,255,255,0.94)',
-                      }}
-                    />
-                  )}
-              </>
-            )}
-          </Box>
-          {selection && !compactInspector && (
-            <Box sx={{ minWidth: 0, borderLeft: 1, borderColor: 'divider' }}>{inspector}</Box>
-          )}
-        </Box>
-
-        <Drawer
-          open={Boolean(selection) && compactInspector}
-          onClose={() => updateNavigationState(organizationSelectionSearchParams(undefined))}
-          anchor="bottom"
-          PaperProps={{
-            'aria-label': t('orgChart.details.panelLabel'),
-            sx: { maxHeight: '76vh', borderRadius: '8px 8px 0 0' },
-          }}
-        >
-          {inspector}
-        </Drawer>
-        {workforceView && (
-          <OrganizationScenarioDrawer
-            open={scenarioOpen && canOpenScenarios}
-            chart={chart}
-            capabilities={scenarioCapabilities}
-            currentUserId={auth.user?.userId}
-            previewScenarioId={scenarioId}
-            onPreviewScenario={(nextScenarioId) => {
-              const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
-              updateNavigationState({
-                scenario: nextScenarioId,
-                asOf: scenario?.baselineDate ?? null,
-                compareTo: scenario?.baselineDate ?? null,
-                root: null,
-                mode: defaultMode === 'organizations' ? null : 'organizations',
-                insight: null,
-                lens: 'changes',
-                ...organizationSelectionSearchParams(undefined),
+    <OrganizationChartSurface
+      workforceView={workforceView}
+      chart={chart}
+      mode={mode}
+      defaultMode={defaultMode}
+      selectedScenario={selectedScenario}
+      rootOrganizationId={rootOrganizationId}
+      currentDate={currentDate}
+      refreshing={chartQuery.isFetching || intelligenceQuery.isFetching}
+      onRefresh={() => {
+        void chartQuery.refetch();
+        if (mode === 'insights') void intelligenceQuery.refetch();
+      }}
+      updateNavigationState={updateNavigationState}
+      search={search}
+      onFocusSearchResult={focusSearchResult}
+      scenarios={scenarios}
+      scenarioId={scenarioId}
+      lens={lens}
+      showMatrix={showMatrix}
+      asOf={asOf}
+      compareTo={compareTo}
+      defaultCompareTo={monthBefore(asOf)}
+      direction={direction}
+      onToggleDirection={() => {
+        directionWasCustomized.current = true;
+        updateNavigationState({ direction: direction === 'TB' ? 'LR' : null });
+      }}
+      onCollapseAll={collapseAll}
+      onExpandAll={expandAll}
+      canOpenScenarios={canOpenScenarios}
+      onOpenScenarios={() => setScenarioOpen(true)}
+      onCopyViewLink={() => void copyViewLink()}
+      selection={selection}
+      compactInspector={compactInspector}
+      intelligence={intelligenceQuery.data}
+      intelligenceLoading={intelligenceQuery.isLoading}
+      intelligenceError={
+        intelligenceQuery.error instanceof Error ? intelligenceQuery.error.message : undefined
+      }
+      insightView={insightView}
+      onRequestIntelligenceExport={
+        controlledExportShortcut.disclosed
+          ? () => {
+              const params = new URLSearchParams({
+                dataset: 'ORGANIZATION_INTELLIGENCE',
+                view: insightView,
+                asOf: intelligenceQuery.data?.asOf ?? asOf,
+                compareTo,
               });
-              setScenarioOpen(false);
-            }}
-            onScenarioChanged={() => {
-              void queryClient.invalidateQueries({ queryKey: ['workforce', 'organization-chart'] });
-            }}
-            onClose={() => setScenarioOpen(false)}
-          />
-        )}
-        <Dialog
-          open={Boolean(pendingMove)}
-          onClose={() => {
-            if (scenarioBusy) return;
-            setPendingMove(undefined);
-            setRenderNodes(graph.nodes);
-          }}
-          maxWidth="xs"
-          fullWidth
-        >
-          <DialogTitle>{t('orgChart.scenarios.dragConfirm.title')}</DialogTitle>
-          <DialogContent>
-            <Typography variant="body2" color="text.secondary">
-              {pendingMove?.kind === 'position'
-                ? t('orgChart.scenarios.dragConfirm.positionMessage', {
-                    position:
-                      chart.positions.find(
-                        (position) => position.positionId === pendingMove.targetId
-                      )?.title ?? '',
-                    parent:
-                      chart.positions.find(
-                        (position) => position.positionId === pendingMove.newParentId
-                      )?.title ?? '',
-                  })
-                : t('orgChart.scenarios.dragConfirm.message', {
-                    organization:
-                      chart.organizations.find(
-                        (organization) => organization.organizationId === pendingMove?.targetId
-                      )?.name ?? '',
-                    parent:
-                      chart.organizations.find(
-                        (organization) => organization.organizationId === pendingMove?.newParentId
-                      )?.name ?? '',
-                  })}
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              disabled={scenarioBusy}
-              onClick={() => {
-                setPendingMove(undefined);
-                setRenderNodes(graph.nodes);
-              }}
-            >
-              {t('common.actions.cancel')}
-            </Button>
-            <Button
-              variant="contained"
-              disabled={scenarioBusy}
-              onClick={() => void confirmScenarioMove()}
-            >
-              {t('orgChart.scenarios.dragConfirm.action')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    </Stack>
+              if (scenarioId) params.set('scenarioId', scenarioId);
+              if (rootOrganizationId) params.set('rootOrganizationId', rootOrganizationId);
+              navigate(
+                appendProductPageShortcutScope(
+                  `/hr/data/exports?${params.toString()}`,
+                  controlledExportShortcut
+                )
+              );
+            }
+          : undefined
+      }
+      renderNodes={renderNodes}
+      edges={graph.edges}
+      onFlowInit={setFlow}
+      onNodesChange={handleNodeChanges}
+      onNodeClick={handleNodeClick}
+      onNodeDragStop={handleNodeDragStop}
+      inspector={inspector}
+      scenarioOpen={scenarioOpen}
+      scenarioCapabilities={scenarioCapabilities}
+      currentUserId={auth.user?.userId}
+      onScenarioChanged={() => {
+        void queryClient.invalidateQueries({ queryKey: ['workforce', 'organization-chart'] });
+      }}
+      onCloseScenarios={() => setScenarioOpen(false)}
+      pendingMove={pendingMove}
+      scenarioBusy={scenarioBusy}
+      onCancelPendingMove={() => {
+        if (scenarioBusy) return;
+        setPendingMove(undefined);
+        setRenderNodes(graph.nodes);
+      }}
+      onConfirmScenarioMove={() => void confirmScenarioMove()}
+    />
   );
 }

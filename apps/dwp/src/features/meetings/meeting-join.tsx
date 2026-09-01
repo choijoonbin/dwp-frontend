@@ -27,6 +27,7 @@ import {
   type MeetingJoinRequestIntent,
   type MeetingJoinResolutionIntent,
 } from './meeting-join-attempt-fence';
+import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
 
 const MIN_JOIN_CODE_LENGTH = 10;
 const MAX_JOIN_CODE_LENGTH = 16;
@@ -129,6 +130,13 @@ export function MeetingJoin() {
     );
   };
 
+  const currentStep = !resolution ? 0 : joinRequest?.state === 'APPROVED' ? 2 : 1;
+  const steps = [
+    { label: t('join.code'), icon: KeyRound },
+    { label: t('join.request'), icon: Clock3 },
+    { label: t('room.deviceCheck'), icon: CheckCircle2 },
+  ] as const;
+
   return (
     <PageCanvas mode="focus">
       <MeetingPageHeading
@@ -138,17 +146,59 @@ export function MeetingJoin() {
       />
 
       <Box
-        sx={{
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'background.paper',
+        sx={(theme) => ({
+          ...meetingSurface(theme, { tone: 'primary' }),
           overflow: 'hidden',
-        }}
+        })}
       >
         <Box
+          component="ol"
+          aria-label={t('join.description')}
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: { xs: 0.5, sm: 1 },
+            m: 0,
+            px: { xs: 1.5, sm: 3 },
+            pt: { xs: 1.5, sm: 2 },
+            listStyle: 'none',
+          }}
+        >
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            const reached = index <= currentStep;
+            return (
+              <Stack
+                component="li"
+                key={step.label}
+                direction={{ xs: 'column', sm: 'row' }}
+                alignItems="center"
+                justifyContent="center"
+                gap={0.75}
+                aria-current={index === currentStep ? 'step' : undefined}
+                sx={(theme) => ({
+                  ...meetingInsetSurface(theme, reached ? 'primary' : 'neutral'),
+                  minHeight: 48,
+                  px: 1,
+                  py: 0.75,
+                  color: reached ? 'primary.main' : 'text.secondary',
+                })}
+              >
+                <Icon size={16} aria-hidden="true" />
+                <Typography variant="caption" fontWeight={reached ? 750 : 550} textAlign="center">
+                  {step.label}
+                </Typography>
+              </Stack>
+            );
+          })}
+        </Box>
+        <Box
           component="form"
-          sx={{ p: { xs: 2, sm: 3 } }}
+          sx={{
+            p: { xs: 2, sm: 3 },
+            background: (theme) =>
+              `linear-gradient(180deg, transparent, ${theme.palette.action.hover})`,
+          }}
           onSubmit={(event) => {
             event.preventDefault();
             if (!hasValidJoinCodeLength(code)) return;
@@ -200,7 +250,7 @@ export function MeetingJoin() {
               loading={pendingResolutionGeneration !== null}
               loadingLabel={t('join.resolving')}
               startIcon={<KeyRound size={17} />}
-              sx={{ mt: { sm: 1 }, minWidth: 144, height: 40 }}
+              sx={{ mt: { sm: 1 }, minWidth: 144, minHeight: 48 }}
             >
               {t('join.resolve')}
             </ActionButton>
@@ -314,7 +364,7 @@ function JoinRequestState({
   const { t } = useTranslation('meetings');
   const state = {
     WAITING: {
-      icon: <CircularProgress size={23} />,
+      icon: <CircularProgress size={23} aria-hidden="true" />,
       title: t('join.waitingTitle'),
       description: t('join.waitingDescription'),
     },
@@ -341,7 +391,18 @@ function JoinRequestState({
       direction={{ xs: 'column', sm: 'row' }}
       alignItems={{ xs: 'flex-start', sm: 'center' }}
       gap={1.5}
-      sx={{ mt: 2.5, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}
+      sx={(theme) => ({
+        ...meetingInsetSurface(
+          theme,
+          request.state === 'APPROVED'
+            ? 'success'
+            : request.state === 'WAITING'
+              ? 'primary'
+              : 'warning'
+        ),
+        mt: 2.5,
+        p: 2,
+      })}
     >
       {state.icon}
       <Box sx={{ flex: 1 }}>

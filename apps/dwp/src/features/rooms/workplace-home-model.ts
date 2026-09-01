@@ -1,4 +1,5 @@
 import { Temporal } from 'temporal-polyfill';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
 import { workplaceBookingBlockCode } from './workplace-discovery-model';
 
@@ -112,10 +113,7 @@ export type WorkplaceHomeModel = {
   verifiedAt: string | null;
 };
 
-export function workplaceHomeQueryRange(
-  now = new Date(),
-  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-) {
+export function workplaceHomeQueryRange(now = new Date(), timeZone = resolveSystemTimeZone('UTC')) {
   const instant = Temporal.Instant.from(now.toISOString());
   const availabilityStart = Temporal.Instant.fromEpochMilliseconds(
     Math.floor(instant.epochMilliseconds / 60_000) * 60_000 + 60_000

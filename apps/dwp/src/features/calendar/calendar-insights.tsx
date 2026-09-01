@@ -12,6 +12,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { getCalendarHome, usePermissions } from '@dwp-frontend/shared-utils';
 import { ActionButton, ErrorState } from '@dwp-frontend/design-system';
 
@@ -47,7 +48,7 @@ export function CalendarInsights() {
   const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const [focusDialog, setFocusDialog] = useState(false);
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+  const timeZone = resolveSystemTimeZone('Asia/Seoul');
   const query = useQuery({
     queryKey: ['calendar', 'home', timeZone],
     queryFn: () => getCalendarHome(timeZone),

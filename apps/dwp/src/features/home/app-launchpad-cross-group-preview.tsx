@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import { AppGlyph } from './app-glyph';
-import { LAUNCHPAD_TILE_HEIGHT, LAUNCHPAD_TILE_WIDTH } from './app-launchpad-styles';
+import { LAUNCHPAD_TILE_HEIGHT_CSS, LAUNCHPAD_TILE_WIDTH } from './app-launchpad-styles';
 
 import type {
   HomeAppDefinition,
@@ -41,7 +41,7 @@ export function AppLaunchpadCrossGroupPreview({
       sx={{
         width: `var(--launchpad-tile-width, ${LAUNCHPAD_TILE_WIDTH}px)`,
         minWidth: `var(--launchpad-tile-width, ${LAUNCHPAD_TILE_WIDTH}px)`,
-        height: LAUNCHPAD_TILE_HEIGHT,
+        height: LAUNCHPAD_TILE_HEIGHT_CSS,
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',

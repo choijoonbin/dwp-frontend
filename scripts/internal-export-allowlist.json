@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "maximumEntries": 5,
+  "entries": [
+    {
+      "path": "apps/dwp/src/components/workspace-composer/workspace-composer-model.ts",
+      "name": "HOME_PRESENTATIONS",
+      "owner": "Home Experience",
+      "reason": "Home presentation vocabulary is retained as an explicit composer contract while the Home team completes contract consolidation.",
+      "removalCondition": "Remove when the presentation contract is sourced exclusively from shared-utils."
+    },
+    {
+      "path": "apps/dwp/src/features/home-personalization/home-personalization-model.ts",
+      "name": "homeDeviceOverlay",
+      "owner": "Home Experience",
+      "reason": "Reserved personalization contract retained during the active Home ownership freeze.",
+      "removalCondition": "Remove after Home connects the projection to runtime composition or retires it."
+    },
+    {
+      "path": "apps/dwp/src/features/home-personalization/home-view-bootstrap.ts",
+      "name": "DEFAULT_HOME_VIEW_KEY",
+      "owner": "Home Experience",
+      "reason": "Bootstrap key retained for the Home persistence compatibility boundary.",
+      "removalCondition": "Remove after Home persistence no longer needs the compatibility key."
+    },
+    {
+      "path": "apps/dwp/src/features/home/flow-home/flow-home-layout.ts",
+      "name": "FLOW_HOME_DESKTOP_MIN_WIDTH",
+      "owner": "Home Experience",
+      "reason": "Named Home layout contract retained during responsive baseline stabilization.",
+      "removalCondition": "Remove when layout tests consume the canonical breakpoint token directly."
+    },
+    {
+      "path": "apps/dwp/src/features/home/flow-home/next-actions.tsx",
+      "name": "NextActions",
+      "owner": "Home Experience",
+      "reason": "Component retained under the Home freeze while its contribution-provider replacement is finalized.",
+      "removalCondition": "Remove after contribution providers are confirmed as the sole runtime path."
+    }
+  ]
+}

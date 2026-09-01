@@ -5,9 +5,6 @@ import type {
   ProductSurfaceNavigationGroup,
 } from '../../components/product-manifest';
 
-export type ServicesView =
-  'home' | 'discover' | 'my' | 'drafts' | 'admin-catalog' | 'admin-operations';
-
 export const SERVICES_WORK_NAVIGATION = [
   {
     id: 'overview',
@@ -83,5 +80,3 @@ export const SERVICES_NAVIGATION = [
     })),
   })),
 ] as const satisfies readonly ProductNavigationGroup[];
-
-export const SERVICES_DEFAULT_PATH = '/services/home';

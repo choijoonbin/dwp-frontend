@@ -45,6 +45,7 @@ import {
   validateMeetingAdminPolicy,
   type MeetingAdminOperationCapabilityKey,
 } from './meeting-admin-model';
+import { meetingListSurface, meetingSurface } from './meeting-visual-system';
 
 const CAPABILITY_ICONS: Record<MeetingAdminOperationCapabilityKey, LucideIcon> = {
   video: Video,
@@ -67,7 +68,7 @@ export function MeetingAdminOperations() {
   });
 
   return (
-    <PageCanvas>
+    <PageCanvas mode="focus">
       <MeetingPageHeading
         eyebrow={t('admin.eyebrow')}
         title={t('admin.operations.title')}
@@ -92,19 +93,16 @@ export function MeetingAdminOperations() {
           <Box
             component="section"
             aria-label={t('admin.operations.title')}
-            sx={{
+            sx={(theme) => ({
+              ...meetingSurface(theme, { tone: 'primary' }),
               display: 'grid',
               gridTemplateColumns: {
                 xs: 'repeat(2, minmax(0, 1fr))',
                 xl: 'repeat(6, minmax(0, 1fr))',
               },
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
-              '& > *:not(:last-child)': { borderRight: 1, borderColor: 'divider' },
-            }}
+              gap: 1,
+              p: 1,
+            })}
           >
             <MeetingMetric
               label={t('admin.operations.live')}
@@ -148,21 +146,12 @@ export function MeetingAdminOperations() {
               id="meeting-capabilities-title"
               title={t('admin.operations.capabilities')}
             />
-            <Box
-              sx={{
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                bgcolor: 'background.paper',
-                overflow: 'hidden',
-              }}
-            >
-              {MEETING_ADMIN_OPERATION_CAPABILITIES.map((key, index) => {
+            <Box sx={(theme) => meetingListSurface(theme)}>
+              {MEETING_ADMIN_OPERATION_CAPABILITIES.map((key) => {
                 const Icon = CAPABILITY_ICONS[key];
                 const available = isMeetingAdminCapabilityAvailable(query.data.capabilities, key);
                 return (
                   <Box key={key}>
-                    {index > 0 && <Divider />}
                     <Stack direction="row" alignItems="center" gap={1.25} sx={{ px: 2, py: 1.5 }}>
                       <Icon size={18} aria-hidden="true" />
                       <Typography variant="body2" sx={{ flex: 1 }}>
@@ -431,19 +420,16 @@ function PolicySection({ title, children }: { title: string; children: React.Rea
     <Box
       component="section"
       aria-label={title}
-      sx={{
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
+      sx={(theme) => ({
+        ...meetingSurface(theme),
         overflow: 'hidden',
-      }}
+      })}
     >
       <Typography
         component="h2"
         variant="subtitle1"
-        fontWeight={800}
-        sx={{ px: 2, py: 1.5, bgcolor: 'action.hover' }}
+        fontWeight={750}
+        sx={{ px: { xs: 2, sm: 2.5 }, py: 1.75, bgcolor: 'action.hover' }}
       >
         {title}
       </Typography>

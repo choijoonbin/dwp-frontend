@@ -78,7 +78,8 @@ Production Build는 통과했다. 저장소 전체 Release Gate는 여전히 통
 - Policy 행 부재, Version 미해석, 예외, Unknown 값이 모두 `DENY`
 - Tenant A 정책이 Tenant B 결과·Count·Title에 영향을 주지 않음
 - App Entitlement 없는 `schedule`이 일반 사용자 Payload에 없음
-- `command-rail`은 Flow 개인 Library에 나타나지 않음
+- `command-rail`은 Flow에서 개인 `action-queue`로 매핑되어 Library의 추가됨·복원 상태와
+  개인 표시·배치 정책을 따름
 
 ### WP-C — Provider Control Façade
 

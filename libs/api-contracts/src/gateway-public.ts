@@ -2037,6 +2037,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/meetings/{meetingId}/artifacts/{artifactId}/access-ticket": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_issueAccessTicket"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/meetings/{meetingId}/chat/messages": {
         parameters: {
             query?: never;
@@ -2335,6 +2351,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["meeting_review"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/intelligence/reports/{reportId}/reviewer-assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_reviewerAssignments"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -14981,6 +15013,20 @@ export interface components {
             support?: string;
             targetPopulation?: string;
         };
+        meeting_AccessTicketCommand: {
+            /** Format: int64 */
+            expectedArtifactVersion: number;
+        };
+        meeting_AccessTicketResponse: {
+            accessUrl?: string;
+            /** Format: uuid */
+            artifactId?: string;
+            /** Format: int64 */
+            artifactVersion?: number;
+            contentType?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+        };
         meeting_AdminCapabilitiesResponse: {
             aiNotesConfigured?: boolean;
             captions?: boolean;
@@ -15007,7 +15053,7 @@ export interface components {
         };
         meeting_AdmissionCommand: {
             /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: number;
         };
         meeting_Analysis: {
             actionItems?: components["schemas"]["meeting_CitedText"][];
@@ -15017,6 +15063,16 @@ export interface components {
             openQuestions?: components["schemas"]["meeting_CitedText"][];
             risks?: components["schemas"]["meeting_CitedText"][];
             topics?: components["schemas"]["meeting_CitedText"][];
+        };
+        meeting_ApiResponseAccessTicketResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_AccessTicketResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
         };
         meeting_ApiResponseAdminOverviewResponse: {
             correlationId?: string;
@@ -15268,6 +15324,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseReviewerAssignmentsResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ReviewerAssignmentsResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseRunResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_RunResponse"];
@@ -15428,7 +15494,7 @@ export interface components {
         };
         meeting_CreateRunCommand: {
             /** Format: int64 */
-            expectedContentPlanVersion?: number;
+            expectedContentPlanVersion: number;
             outputLanguage: string;
             /** Format: uuid */
             sourceArtifactId: string;
@@ -15446,6 +15512,8 @@ export interface components {
             screenShare?: boolean;
         };
         meeting_GrantCommand: {
+            /** Format: int64 */
+            expectedReportVersion: number;
             /** Format: date-time */
             expiresAt?: string;
             permission: string;
@@ -15848,7 +15916,7 @@ export interface components {
         };
         meeting_RequestRecordingCommand: {
             /** Format: int64 */
-            expectedPlanVersion?: number;
+            expectedPlanVersion: number;
         };
         meeting_RetentionReadiness: {
             /** Format: int32 */
@@ -15865,7 +15933,7 @@ export interface components {
         meeting_ReviewCommand: {
             decision: string;
             /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: number;
             reasonCode: string;
         };
         meeting_ReviewResponse: {
@@ -15879,6 +15947,25 @@ export interface components {
             reviewedBy?: number;
             /** Format: int64 */
             reviewedReportVersion?: number;
+        };
+        meeting_ReviewerAssignmentsResponse: {
+            activeGrants?: components["schemas"]["meeting_GrantResponse"][];
+            eligibleParticipants?: components["schemas"]["meeting_ReviewerCandidateResponse"][];
+            /** Format: uuid */
+            reportId?: string;
+            /** Format: int64 */
+            reportVersion?: number;
+        };
+        meeting_ReviewerCandidateResponse: {
+            assignmentEligible?: boolean;
+            attendanceState?: string;
+            displayName?: string;
+            ineligibleReason?: string;
+            /** Format: uuid */
+            participantId?: string;
+            participantRole?: string;
+            /** Format: int64 */
+            userId?: number;
         };
         meeting_RunResponse: {
             analysisProfile?: string;
@@ -15928,7 +16015,7 @@ export interface components {
         };
         meeting_StopRecordingCommand: {
             /** Format: int64 */
-            expectedSessionVersion?: number;
+            expectedSessionVersion: number;
         };
         meeting_TenantPolicyUpdateRequest: {
             allowJoinBeforeHost?: boolean;
@@ -15937,7 +16024,7 @@ export interface components {
             /** Format: int32 */
             chatRetentionDays?: number;
             /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: number;
             guestsAllowed?: boolean;
             /** Format: int32 */
             maximumParticipants?: number;
@@ -15956,17 +16043,17 @@ export interface components {
             aiSummaryRequested?: boolean;
             e2eeEnabled?: boolean;
             /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: number;
             recordingRequested?: boolean;
             transcriptionRequested?: boolean;
         };
         meeting_VersionCommand: {
             /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: number;
         };
         meeting_VersionedCommand: {
             /** Format: int64 */
-            expectedVersion?: number;
+            expectedVersion: number;
         };
         messaging_AddConversationMemberRequest: {
             /** Format: int64 */
@@ -32670,6 +32757,35 @@ export interface operations {
             };
         };
     };
+    meeting_issueAccessTicket: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                artifactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_AccessTicketCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseAccessTicketResponse"];
+                };
+            };
+        };
+    };
     meeting_chatMessages: {
         parameters: {
             query?: {
@@ -33163,7 +33279,9 @@ export interface operations {
     };
     meeting_revoke: {
         parameters: {
-            query?: never;
+            query: {
+                expectedReportVersion: number;
+            };
             header?: {
                 "X-Correlation-ID"?: string;
             };
@@ -33242,6 +33360,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponseReportResponse"];
+                };
+            };
+        };
+    };
+    meeting_reviewerAssignments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+                reportId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseReviewerAssignmentsResponse"];
                 };
             };
         };

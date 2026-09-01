@@ -146,7 +146,7 @@ export function ProviderTenantExperiencePreview({ tenantId }: { tenantId: string
   );
 
   return (
-    <Stack gap={2.5} sx={{ width: 1, maxWidth: 1280, mx: 'auto' }}>
+    <Stack data-testid="provider-tenant-preview-canvas" gap={2.5} sx={{ width: 1, minWidth: 0 }}>
       <Box>
         <ActionButton
           intent="quiet"

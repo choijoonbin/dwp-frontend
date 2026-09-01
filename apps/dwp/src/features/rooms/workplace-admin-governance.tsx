@@ -52,11 +52,14 @@ export function WorkplaceAdminGovernance() {
       (currentLocation.pathname !== nextLocation.pathname ||
         currentLocation.search !== nextLocation.search)
   );
-  const selectTab = (nextTab: WorkplaceGovernanceTab) => {
-    const next = new URLSearchParams(searchParams);
-    next.set('area', nextTab);
-    setSearchParams(next, { replace: true });
-  };
+  const selectTab = useCallback(
+    (nextTab: WorkplaceGovernanceTab) => {
+      const next = new URLSearchParams(searchParams);
+      next.set('area', nextTab);
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
   const handleDraftDirty = useCallback((dirty: boolean) => {
     draftDirtyRef.current = dirty;
     setDraftDirty(dirty);
@@ -64,16 +67,12 @@ export function WorkplaceAdminGovernance() {
   useEffect(() => {
     if (!capabilities.isLoaded || !visibleTabs.length || requestedTab === tab) return;
     selectTab(tab);
-    // Search parameters are intentionally normalized once capabilities resolve.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [capabilities.isLoaded, requestedTab, tab, visibleTabs.length]);
+  }, [capabilities.isLoaded, requestedTab, selectTab, tab, visibleTabs.length]);
   useEffect(() => {
     if (!approvedTab || draftDirty) return;
     selectTab(approvedTab);
     setApprovedTab(null);
-    // The approved tab is applied only after the dirty editor has unmounted its guard.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [approvedTab, draftDirty]);
+  }, [approvedTab, draftDirty, selectTab]);
 
   return (
     <PageCanvas>

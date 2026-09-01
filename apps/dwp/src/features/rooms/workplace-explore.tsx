@@ -4,6 +4,7 @@ import { Accessibility, Building2, Layers3, MapPinned } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Temporal } from 'temporal-polyfill';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { getRoomsPolicy, getWorkplaceExplore, useAuth, useToast } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -89,7 +90,7 @@ function initialSiteTimeZone(value: string | null) {
       // The authoritative site response replaces malformed URL hints.
     }
   }
-  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  return resolveSystemTimeZone('UTC');
 }
 
 export function WorkplaceExplore() {
@@ -842,7 +843,7 @@ export function WorkplaceExplore() {
         )}
         {query.isFetching && !query.isLoading && (
           <Stack direction="row" gap={1} alignItems="center" role="status" sx={{ mt: 1.5 }}>
-            <CircularProgress size={14} />
+            <CircularProgress size={14} aria-hidden="true" />
             <Typography variant="caption" color="text.secondary">
               {t('workplace.explore.refreshing')}
             </Typography>

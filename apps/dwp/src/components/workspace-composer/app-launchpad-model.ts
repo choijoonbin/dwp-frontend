@@ -6,96 +6,28 @@ import {
 } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { isHcmReadEntitled } from '@dwp-frontend/shared-utils/auth/hcm-access';
 
-export type HomeAppGroupId = string;
+import type {
+  HomeAppBadgeIntent,
+  HomeAppBadgeMetadata,
+  HomeAppDefinition,
+  HomeAppGroup,
+  HomeAppGroupId,
+  HomeAppNotificationBadgeValue,
+  LaunchpadFolder,
+  LaunchpadLayout,
+} from './home-launchpad-layout-contract';
 
-export type HomeAppIconKey =
-  | 'activity'
-  | 'admin'
-  | 'approvals'
-  | 'ask'
-  | 'collaboration'
-  | 'calendar'
-  | 'communications'
-  | 'erp'
-  | 'knowledge'
-  | 'legacy'
-  | 'mail'
-  | 'meetings'
-  | 'messaging'
-  | 'notifications'
-  | 'rooms'
-  | 'spaces'
-  | 'hcm'
-  | 'hris'
-  | 'people'
-  | 'services'
-  | 'workforce'
-  | 'work';
-
-export type HomeAppBadgeIntent = 'unread' | 'actionable' | 'urgent';
-
-/**
- * Notification semantics retained alongside the classic, display-only badge string.
- * The exact total remains available to assistive UI even when the visual label is capped.
- */
-export type HomeAppBadgeMetadata = Readonly<{
-  totalUnread: number;
-  actionableUnread: number;
-  urgentUnread: number;
-  intent: HomeAppBadgeIntent;
-  accessibleLabel: string;
-}>;
-
-/** Count-only projections and the notification service counter are both supported. */
-export type HomeAppNotificationBadgeValue =
-  | number
-  | Readonly<{
-      totalUnread: number;
-      actionableUnread: number;
-      urgentUnread: number;
-    }>;
-
-export type HomeAppDefinition = {
-  id: string;
-  name: string;
-  shortName: string;
-  description: string;
-  groupId: HomeAppGroupId;
-  route: string;
-  iconKey: HomeAppIconKey;
-  tone: string;
-  resourceKey: string;
-  /** Backward-compatible visual label consumed by Classic and Flow launchers. */
-  badge?: string;
-  /** Structured semantics for intent styling and an exact accessible announcement. */
-  badgeMetadata?: HomeAppBadgeMetadata;
-  /** Stable notification-platform owner key; never inferred from the app id. */
-  notificationSourceKey?: string;
-  requiredRoles?: readonly string[];
-  /** Server-derived Pilot entry. Never populate from a raw MANAGE permission fallback. */
-  managementRoute?: string;
-  managementOnly?: boolean;
-};
-
-export type HomeAppGroup = {
-  id: HomeAppGroupId;
-  name: string;
-  description: string;
-};
-
-export type LaunchpadFolder = {
-  id: string;
-  name: string;
-  groupId: HomeAppGroupId;
-  appIds: string[];
-};
-
-export type LaunchpadLayout = {
-  version: 1;
-  groups: Record<string, string[]>;
-  folders: Record<string, LaunchpadFolder>;
-  hiddenAppIds: string[];
-};
+export type {
+  HomeAppBadgeIntent,
+  HomeAppBadgeMetadata,
+  HomeAppDefinition,
+  HomeAppGroup,
+  HomeAppGroupId,
+  HomeAppIconKey,
+  HomeAppNotificationBadgeValue,
+  LaunchpadFolder,
+  LaunchpadLayout,
+} from './home-launchpad-layout-contract';
 
 export type { AppEntitlementPermission };
 
@@ -678,7 +610,9 @@ export function reconcileLaunchpadLayout(
 
 export {
   canonicalizePersistedLaunchpadLayout,
+  mergeConcurrentTokenOrder,
   mergeEntitledLaunchpadProjection,
+  reapplyEntitledLaunchpadProjection,
 } from './app-launchpad-persistence';
 
 export function moveLaunchpadItem(

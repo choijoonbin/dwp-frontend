@@ -19,7 +19,11 @@ import {
   PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import {
+  formatDate,
+  resolveSupportedLocale,
+  resolveSystemTimeZone,
+} from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -128,7 +132,7 @@ export function WorkplaceAdminOperations() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const timeZone = resolveSystemTimeZone('UTC');
   const [tab, setTab] = useState<OperationsTab>('bookings');
   const [draftRange, setDraftRange] = useState<DateRangeValue>(() =>
     initialOperationsRange(timeZone)

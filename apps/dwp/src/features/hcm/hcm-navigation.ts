@@ -255,7 +255,8 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/design/organization',
         icon: GitBranch,
         audience: 'operator',
-        requiredAnySupportScopes: ['WORKFORCE_READ'],
+        requiredResourceKey: 'ACTION.WORKFORCE_ORG_DESIGN',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },
@@ -286,8 +287,8 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/data/exports',
         icon: FileLock2,
         audience: 'operator',
-        requiredResourceKey: 'DATA.WORKFORCE',
-        requiredAnyPermissionCodes: ['MANAGE'],
+        requiredResourceKey: 'ACTION.WORKFORCE_CONTROLLED_EXPORT',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },
@@ -364,7 +365,7 @@ export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
 
 export { HCM_DEFAULT_PATH, mapLegacyHrPath } from './hcm-legacy-paths';
 
-export function visibleHcmNavigation(access: {
+export type HcmAudienceAccess = {
   isManager: boolean;
   canOperate: boolean;
   canManageTime?: boolean;
@@ -372,19 +373,45 @@ export function visibleHcmNavigation(access: {
   canManageBenefits?: boolean;
   canManagePay?: boolean;
   canManageTalent?: boolean;
-}): HcmNavigationGroup[] {
-  return HCM_NAVIGATION.flatMap((group) => {
-    const items = group.items.filter(
-      (item) =>
-        item.audience === 'all' ||
-        (item.audience === 'manager' && access.isManager) ||
-        (item.audience === 'operator' && access.canOperate) ||
-        (item.audience === 'time-admin' && access.canManageTime) ||
-        (item.audience === 'absence-admin' && access.canManageAbsence) ||
-        (item.audience === 'benefits-admin' && access.canManageBenefits) ||
-        (item.audience === 'pay-admin' && access.canManagePay) ||
-        (item.audience === 'talent-admin' && access.canManageTalent)
+  canAccessOperationsOverview?: boolean;
+  canAccessOrganizationDesign?: boolean;
+  canAccessReferenceData?: boolean;
+  canAccessDataOperations?: boolean;
+  canAccessExports?: boolean;
+};
+
+export function canAccessHcmNavigationAudience(
+  item: HcmNavigationItem,
+  access: HcmAudienceAccess
+): boolean {
+  if (item.audience === 'all') return true;
+  if (item.audience === 'manager') return access.isManager;
+  if (item.audience === 'time-admin') return access.canManageTime === true;
+  if (item.audience === 'absence-admin') return access.canManageAbsence === true;
+  if (item.audience === 'benefits-admin') return access.canManageBenefits === true;
+  if (item.audience === 'pay-admin') return access.canManagePay === true;
+  if (item.audience === 'talent-admin') return access.canManageTalent === true;
+  if (item.view === 'operations') {
+    return (
+      access.canAccessOperationsOverview === true ||
+      access.canOperate ||
+      access.canManageTime === true ||
+      access.canManageAbsence === true ||
+      access.canManageBenefits === true ||
+      access.canManagePay === true ||
+      access.canManageTalent === true
     );
+  }
+  if (item.view === 'organization-design') return access.canAccessOrganizationDesign === true;
+  if (item.view === 'reference-data') return access.canAccessReferenceData === true;
+  if (item.view === 'data-operations') return access.canAccessDataOperations === true;
+  if (item.view === 'exports') return access.canAccessExports === true;
+  return access.canOperate;
+}
+
+export function visibleHcmNavigation(access: HcmAudienceAccess): HcmNavigationGroup[] {
+  return HCM_NAVIGATION.flatMap((group) => {
+    const items = group.items.filter((item) => canAccessHcmNavigationAudience(item, access));
     return items.length ? [{ ...group, items }] : [];
   });
 }

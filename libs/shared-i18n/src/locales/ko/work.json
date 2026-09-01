@@ -344,6 +344,7 @@
       "disabled": "중지",
       "required": "필수",
       "blocked": "차단",
+      "retry": "다시 시도",
       "reason": "변경 사유",
       "reasonError": "변경 사유를 10자 이상 입력하세요.",
       "version": "정책 버전 {{version}}"
@@ -498,6 +499,7 @@
       "title": "정책 및 안전 제어",
       "description": "테넌트 AI 요청의 안전 경계와 도구·데이터 사용 한도를 버전 정책으로 관리합니다.",
       "saved": "안전 정책을 저장했습니다.",
+      "loading": "안전 정책을 불러오는 중입니다.",
       "error": "안전 정책을 처리하지 못했습니다.",
       "lockedBoundary": "프롬프트 주입 차단, 권한 상승 방지, 변경 작업 확인과 근거 표시는 플랫폼 최소 안전 기준으로 고정됩니다.",
       "prompt": {
@@ -1529,6 +1531,7 @@
     },
     "available": "사용 가능한 앱",
     "manage": "관리",
+    "manageForApp": "{{app}} 관리",
     "manageable": {
       "title": "내가 관리하는 앱",
       "count": "관리 영역 {{count}}개",
@@ -1590,6 +1593,10 @@
       "loading": "요청 가능한 앱 관리 직무를 확인하는 중입니다",
       "loadErrorTitle": "앱 관리 요청 정보를 불러오지 못했습니다",
       "loadErrorDescription": "권한 상태를 새로 확인한 후 다시 시도하세요.",
+      "moduleLoadErrorTitle": "앱 관리 요청 화면을 열지 못했습니다",
+      "moduleLoadErrorDescription": "앱 카탈로그는 계속 사용할 수 있습니다. 이 안내를 닫거나 페이지를 새로고침해 요청 화면을 다시 불러오세요.",
+      "close": "닫기",
+      "reloadPage": "페이지 새로고침",
       "retry": "다시 시도",
       "emptyTitle": "요청 가능한 관리 직무가 없습니다",
       "emptyDescription": "현재 앱과 범위에 활성화된 자기 요청 Preset이 없습니다. 앱 소유자 또는 회사 관리자에게 문의하세요.",

@@ -6,13 +6,17 @@ import {
   CheckCircle2,
   ChevronLeft,
   CircleAlert,
+  FileQuestion,
   FileClock,
   FileText,
   ListChecks,
   LockKeyhole,
+  MessageSquareText,
   Radio,
   RefreshCw,
   ShieldCheck,
+  Sparkles,
+  TriangleAlert,
   UsersRound,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -37,11 +41,14 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { formatMeetingDateTime } from './meeting-components';
+import { MeetingArtifactPlayback } from './meeting-artifact-playback';
+import { deriveMeetingArtifactPlaybackAvailability } from './meeting-artifact-playback-model';
 import { MeetingIntelligenceReportSection } from './meeting-intelligence-report-section';
 import {
   derivePublishedMeetingRecap,
   type PublishedMeetingRecap,
 } from './meeting-recap-intelligence-model';
+import { meetingInsetSurface, meetingListSurface, meetingSurface } from './meeting-visual-system';
 
 type RecapTab = 'overview' | 'artifacts' | 'attendance';
 
@@ -158,6 +165,10 @@ export function MeetingRecapDetail({
         justifyContent="space-between"
         alignItems={{ xs: 'stretch', md: 'flex-start' }}
         gap={2}
+        sx={(theme) => ({
+          ...meetingSurface(theme, { tone: 'primary' }),
+          p: { xs: 2, md: 3 },
+        })}
       >
         <Box sx={{ minWidth: 0 }}>
           <ActionButton
@@ -213,18 +224,19 @@ export function MeetingRecapDetail({
       </Stack>
 
       <Box
-        sx={{
+        sx={(theme) => ({
+          ...meetingSurface(theme, { elevated: false }),
           display: 'grid',
           gridTemplateColumns: { xs: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-          mt: 2.5,
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-          overflow: 'hidden',
-          '& > *': { p: 1.5, minWidth: 0 },
-          '& > *:not(:last-child)': { borderRight: 1, borderColor: 'divider' },
-        }}
+          gap: 1,
+          mt: 2,
+          p: 1,
+          '& > *': {
+            ...meetingInsetSurface(theme),
+            p: 1.5,
+            minWidth: 0,
+          },
+        })}
       >
         <RecapMetric
           icon={CalendarClock}
@@ -255,15 +267,26 @@ export function MeetingRecapDetail({
         aria-label={t('history.recap.tabs.label')}
         sx={{
           mt: 2.5,
-          borderBottom: 1,
-          borderColor: 'divider',
-          '& .MuiTabs-flexContainer': { width: { xs: '100%', sm: 'auto' } },
+          minHeight: 48,
+          p: 0.5,
+          borderRadius: 2.5,
+          bgcolor: 'action.hover',
+          '& .MuiTabs-flexContainer': {
+            width: { xs: '100%', sm: 'auto' },
+            boxSizing: 'border-box',
+            px: 0.75,
+            py: 0.5,
+          },
           '& .MuiTab-root': {
             minWidth: { xs: 0, sm: 90 },
+            minHeight: 44,
             flex: { xs: '1 1 0', sm: '0 0 auto' },
             px: { xs: 1, sm: 2 },
+            borderRadius: 2,
             whiteSpace: 'nowrap',
           },
+          '& .Mui-selected': { bgcolor: 'background.paper' },
+          '& .MuiTabs-indicator': { display: 'none' },
         }}
         onChange={(_, value: RecapTab) => setTab(value)}
       >
@@ -285,7 +308,7 @@ export function MeetingRecapDetail({
         )}
         {tab === 'artifacts' && (
           <Stack gap={3}>
-            <ArtifactCustody artifacts={meeting.artifacts} />
+            <ArtifactCustody meetingId={meeting.meetingId} artifacts={meeting.artifacts} />
             <Divider />
             <MeetingIntelligenceReportSection
               meetingId={meeting.meetingId}
@@ -393,11 +416,107 @@ function MeetingOutcome({
           )}
         </RecapSection>
       </Box>
+
+      {available && (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.2fr) minmax(0, .8fr)' },
+            gap: 2,
+          }}
+        >
+          <RecapSection title={t('history.recap.intelligence.sections.topics')}>
+            <OutcomeList
+              icon={MessageSquareText}
+              items={recap.topics}
+              empty={t('history.recap.intelligence.sectionEmpty')}
+            />
+          </RecapSection>
+          <RecapSection title={t('history.recap.intelligence.sections.conversationClimate')}>
+            <Stack gap={1.25}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                <Stack direction="row" alignItems="center" gap={0.75}>
+                  <Sparkles size={18} aria-hidden="true" />
+                  <Typography fontWeight={750}>
+                    {t(
+                      `history.recap.intelligence.climateLabels.${recap.conversationClimate.label}`
+                    )}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Typography variant="body2" color="text.secondary">
+                {t('history.recap.intelligence.climateDescription')}
+              </Typography>
+              {recap.conversationClimate.signals.length > 0 && (
+                <Stack direction="row" gap={0.75} flexWrap="wrap">
+                  {recap.conversationClimate.signals.map((signal) => (
+                    <Chip
+                      key={signal}
+                      size="small"
+                      variant="outlined"
+                      label={t(`history.recap.intelligence.climateSignals.${signal}`)}
+                    />
+                  ))}
+                </Stack>
+              )}
+            </Stack>
+          </RecapSection>
+        </Box>
+      )}
+
+      {available && (recap.openQuestions.length > 0 || recap.risks.length > 0) && (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' }, gap: 2 }}>
+          <RecapSection title={t('history.recap.intelligence.sections.openQuestions')}>
+            <OutcomeList
+              icon={FileQuestion}
+              items={recap.openQuestions}
+              empty={t('history.recap.intelligence.sectionEmpty')}
+            />
+          </RecapSection>
+          <RecapSection title={t('history.recap.intelligence.sections.risks')}>
+            <OutcomeList
+              icon={TriangleAlert}
+              items={recap.risks}
+              empty={t('history.recap.intelligence.sectionEmpty')}
+            />
+          </RecapSection>
+        </Box>
+      )}
     </Stack>
   );
 }
 
-function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
+function OutcomeList({
+  icon: Icon,
+  items,
+  empty,
+}: {
+  icon: typeof MessageSquareText;
+  items: string[];
+  empty: string;
+}) {
+  if (!items.length) return <OutcomeEmpty text={empty} />;
+  return (
+    <Stack component="ul" gap={1.25} sx={{ m: 0, p: 0, listStyle: 'none' }}>
+      {items.map((item, index) => (
+        <Stack component="li" key={`${item}-${index}`} direction="row" gap={1} alignItems="start">
+          <Icon size={16} aria-hidden="true" style={{ marginTop: 3, flex: '0 0 auto' }} />
+          <Typography variant="body2" fontWeight={650}>
+            {item}
+          </Typography>
+        </Stack>
+      ))}
+    </Stack>
+  );
+}
+
+function ArtifactCustody({
+  meetingId,
+  artifacts,
+}: {
+  meetingId: string;
+  artifacts: VideoMeetingArtifact[];
+}) {
   const { t, i18n } = useTranslation('meetings');
   const byType = useMemo(
     () => new Map(artifacts.map((artifact) => [artifact.artifactType, artifact])),
@@ -405,7 +524,9 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
   );
   const processing = artifacts.some((artifact) => artifact.artifactState === 'PROCESSING');
   const storedWithoutRetrieval = artifacts.some(
-    (artifact) => artifact.artifactState === 'AVAILABLE'
+    (artifact) =>
+      artifact.artifactState === 'AVAILABLE' &&
+      deriveMeetingArtifactPlaybackAvailability(artifact).state !== 'READY'
   );
   return (
     <Stack gap={2}>
@@ -426,23 +547,17 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
           {t('history.recap.artifacts.retrievalUnavailable')}
         </Alert>
       )}
-      <Box
-        sx={{
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-          overflow: 'hidden',
-        }}
-      >
-        {ARTIFACT_TYPES.map((type, index) => {
+      <Box sx={(theme) => meetingListSurface(theme)}>
+        {ARTIFACT_TYPES.map((type) => {
           const artifact = byType.get(type);
           const state = artifact?.artifactState ?? 'UNAVAILABLE';
           const Icon = ARTIFACT_ICONS[type];
           const size = formatBytes(artifact?.sizeBytes);
+          const playback = artifact
+            ? deriveMeetingArtifactPlaybackAvailability(artifact)
+            : { state: 'NOT_AVAILABLE' as const };
           return (
             <Box key={type}>
-              {index > 0 && <Divider />}
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}
                 alignItems={{ xs: 'flex-start', sm: 'center' }}
@@ -455,7 +570,7 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
                     height: 38,
                     display: 'grid',
                     placeItems: 'center',
-                    borderRadius: 1,
+                    borderRadius: 2,
                     color: 'primary.main',
                     bgcolor: (theme) => alpha(theme.palette.primary.main, 0.09),
                   }}
@@ -475,16 +590,26 @@ function ArtifactCustody({ artifacts }: { artifacts: VideoMeetingArtifact[] }) {
                     {size ? ` · ${size}` : ''}
                   </Typography>
                 </Box>
-                <Chip
-                  size="small"
-                  color={ARTIFACT_STATUS_COLORS[state]}
-                  variant={state === 'UNAVAILABLE' ? 'outlined' : 'filled'}
-                  label={t(
-                    state === 'AVAILABLE'
-                      ? 'history.recap.artifacts.states.AVAILABLE_NO_RETRIEVAL'
-                      : `history.recap.artifacts.states.${state}`
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  alignItems={{ xs: 'stretch', sm: 'center' }}
+                  gap={1}
+                  sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: 0 }}
+                >
+                  <Chip
+                    size="small"
+                    color={ARTIFACT_STATUS_COLORS[state]}
+                    variant={state === 'UNAVAILABLE' ? 'outlined' : 'filled'}
+                    label={t(
+                      state === 'AVAILABLE' && playback.state !== 'READY'
+                        ? 'history.recap.artifacts.states.AVAILABLE_NO_RETRIEVAL'
+                        : `history.recap.artifacts.states.${state}`
+                    )}
+                  />
+                  {artifact && (
+                    <MeetingArtifactPlayback meetingId={meetingId} artifact={artifact} />
                   )}
-                />
+                </Stack>
               </Stack>
             </Box>
           );
@@ -512,19 +637,10 @@ function AttendanceEvidence({
       <Alert severity="info" icon={<ShieldCheck size={19} />}>
         {t('history.recap.attendanceGovernance', { access: t(`access.${accessScope}`) })}
       </Alert>
-      <Box
-        sx={{
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-          overflow: 'hidden',
-        }}
-      >
+      <Box sx={(theme) => meetingListSurface(theme)}>
         {ordered.length ? (
-          ordered.map((participant, index) => (
+          ordered.map((participant) => (
             <Box key={participant.participantId}>
-              {index > 0 && <Divider />}
               <Stack direction="row" alignItems="center" gap={1.5} sx={{ p: 1.75 }}>
                 <Box
                   aria-hidden="true"
@@ -593,16 +709,13 @@ function RecapSection({ title, children }: { title: string; children: React.Reac
   return (
     <Box
       component="section"
-      sx={{
+      sx={(theme) => ({
+        ...meetingSurface(theme, { elevated: false }),
         height: '100%',
-        p: 2,
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-      }}
+        p: { xs: 2, sm: 2.5 },
+      })}
     >
-      <Typography component="h3" variant="subtitle1" fontWeight={850} sx={{ mb: 1.25 }}>
+      <Typography component="h3" variant="subtitle1" fontWeight={750} sx={{ mb: 1.25 }}>
         {title}
       </Typography>
       {children}

@@ -7,6 +7,9 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
+
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
 import type { HomeBackgroundPosition, HomeAudienceProfile } from '@dwp-frontend/shared-utils';
 
@@ -81,16 +84,16 @@ export function HomeDayRail({
             position: 'absolute',
             inset: 0,
             zIndex: 0,
-            background: (theme) =>
-              theme.palette.mode === 'dark'
-                ? {
-                    xs: `rgba(9,16,28,${mobileScrim})`,
-                    md: `rgba(9,16,28,${desktopImageScrim})`,
-                  }
-                : {
-                    xs: `rgba(250,248,255,${mobileScrim})`,
-                    md: `rgba(250,248,255,${desktopImageScrim})`,
-                  },
+            background: (theme) => {
+              const scrimColor =
+                theme.palette.mode === 'dark'
+                  ? foundationTokens.color.neutral[900]
+                  : foundationTokens.color.neutral[25];
+              return {
+                xs: alpha(scrimColor, mobileScrim),
+                md: alpha(scrimColor, desktopImageScrim),
+              };
+            },
             pointerEvents: 'none',
           },
           '@media (forced-colors: active)': {

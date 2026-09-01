@@ -1,3 +1,5 @@
+import { foundationTokens } from '../foundation';
+
 export const colorModeOptions = ['system', 'light', 'dark'] as const;
 export const densityOptions = ['compact', 'standard', 'comfortable'] as const;
 export const navigationOptions = ['sidebar', 'rail', 'top'] as const;
@@ -66,4 +68,3 @@ export const defaultAppearancePolicy: AppearancePolicy = {
     allowCollapse: true,
   },
 };
-import { foundationTokens } from '../foundation';

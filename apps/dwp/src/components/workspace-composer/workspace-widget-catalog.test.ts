@@ -42,6 +42,17 @@ describe('workspace widget catalog', () => {
     ).toBe(true);
   });
 
+  it('classifies the command rail as a bounded personal placement', () => {
+    expect(workspaceWidgetCatalogDefinition('command-rail')).toMatchObject({
+      policyClass: 'PERSONAL',
+      canHide: true,
+      defaultSize: 'large',
+      allowedSizes: ['large', 'full'],
+      defaultHeight: 'short',
+      allowedHeights: ['short', 'standard'],
+    });
+  });
+
   it('resolves effective access as a fail-closed intersection', () => {
     const allowed = {
       lifecycle: 'ACTIVE' as const,

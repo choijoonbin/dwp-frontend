@@ -26,10 +26,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import {
-  ManagementPanelError,
-  ManagementPanelLoading,
-} from '../../../components/management-panel-state';
+import { HcmQueryState } from '../../../components/hcm-query-state';
 import {
   appendProductPageShortcutScope,
   PRODUCT_PAGE_SHORTCUT_TARGETS,
@@ -131,14 +128,13 @@ function PersonDetailDialog({
         </IconButton>
       </DialogTitle>
       <DialogContent dividers sx={{ p: 0 }}>
-        {detailQuery.isLoading && <ManagementPanelLoading label={t('people.detail.loading')} />}
+        {detailQuery.isLoading && <HcmQueryState loading size="compact" />}
         {detailQuery.isError && (
-          <ManagementPanelError
-            message={
-              detailQuery.error instanceof Error
-                ? detailQuery.error.message
-                : t('common.operationError')
-            }
+          <HcmQueryState
+            error={detailQuery.error}
+            retrying={detailQuery.isFetching}
+            onRetry={() => void detailQuery.refetch()}
+            size="compact"
           />
         )}
         {detailQuery.data && person && (
@@ -563,16 +559,14 @@ export function PeopleDirectory({
   }, [t, workforceView]);
 
   if (peopleQuery.isLoading) {
-    return <ManagementPanelLoading label={t('people.loading')} />;
+    return <HcmQueryState loading size="page" />;
   }
   if (peopleQuery.isError) {
     return (
-      <ManagementPanelError
-        message={
-          peopleQuery.error instanceof Error
-            ? peopleQuery.error.message
-            : t('common.operationError')
-        }
+      <HcmQueryState
+        error={peopleQuery.error}
+        retrying={peopleQuery.isFetching}
+        onRetry={() => void peopleQuery.refetch()}
       />
     );
   }
@@ -663,8 +657,8 @@ export function PeopleDirectory({
           gap={1.5}
           sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}
         >
-          <Stack direction="row" alignItems="center" gap={1}>
-            <UserRound size={18} strokeWidth={1.8} />
+          <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" useFlexGap>
+            <UserRound size={18} strokeWidth={1.8} aria-hidden="true" />
             <Typography component="h2" variant="subtitle1">
               {t('people.title')}
             </Typography>

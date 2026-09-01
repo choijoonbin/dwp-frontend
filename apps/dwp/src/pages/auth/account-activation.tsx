@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { LoadingState } from '@dwp-frontend/design-system';
 import { activateAccount, getAccountActivation, setTenantId } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
@@ -60,12 +61,7 @@ export default function AccountActivationPage() {
   };
 
   if (!token) return <Alert severity="error">{t('activation.invalid')}</Alert>;
-  if (activation.isLoading)
-    return (
-      <Box sx={{ minHeight: 320, display: 'grid', placeItems: 'center' }}>
-        <CircularProgress size={28} />
-      </Box>
-    );
+  if (activation.isLoading) return <LoadingState label={t('common:labels.loading')} size="page" />;
   if (activation.isError || !activation.data)
     return <Alert severity="error">{t('activation.invalid')}</Alert>;
 
@@ -191,7 +187,14 @@ export default function AccountActivationPage() {
           endIcon={!submitting ? <ArrowRight size={18} /> : undefined}
           sx={{ minHeight: 50 }}
         >
-          {submitting ? <CircularProgress size={18} color="inherit" /> : t('activation.submit')}
+          {submitting ? (
+            <Stack component="span" direction="row" alignItems="center" gap={1}>
+              <CircularProgress size={18} color="inherit" aria-hidden="true" />
+              {t('activation.submit')}
+            </Stack>
+          ) : (
+            t('activation.submit')
+          )}
         </Button>
       </Stack>
     </Box>

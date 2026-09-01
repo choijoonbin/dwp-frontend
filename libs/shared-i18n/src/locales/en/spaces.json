@@ -88,6 +88,7 @@
     "reject": "Reject"
   },
   "home": {
+    "loading": "Loading your Space home.",
     "loadError": "We could not load your Space home.",
     "personFallback": "colleague",
     "hero": {

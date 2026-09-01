@@ -325,3 +325,153 @@ test('DWAI·ON reserves the shell edge without covering compact content or botto
     expect(geometry.bottomActionCovered, `${scenario.label} bottom action overlap`).toBe(false);
   }
 });
+
+test('DWAI·ON keeps every recent Activity action reachable at the desktop shell edge', async ({
+  page,
+}) => {
+  // A common 16:9 desktop viewport places the fixed launcher in the same lane
+  // as the final reference event, which is the regression this contract owns.
+  await page.setViewportSize({ width: 1440, height: 768 });
+  await page.goto('/activity/home');
+
+  const recent = page.getByRole('region', { name: 'Recent activity' });
+  const launcher = page.getByTestId('dwaion-launcher');
+  const actions = recent.getByRole('link', { name: 'Open', exact: true });
+  await expect(recent).toBeVisible();
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
+  expect(await actions.count()).toBeGreaterThan(0);
+
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  );
+
+  const geometry = await page.evaluate(() => {
+    const launcherElement = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
+    const targets = [
+      ...document.querySelectorAll<HTMLElement>(
+        '[aria-labelledby="activity-home-recent"] [data-shell-auxiliary-avoidance]'
+      ),
+    ];
+    if (!launcherElement || targets.length === 0) {
+      throw new Error('Activity auxiliary-avoidance geometry is unavailable.');
+    }
+    const launcherRect = launcherElement.getBoundingClientRect();
+    const intersectingTargets = targets.filter((target) => {
+      const rect = target.getBoundingClientRect();
+      return (
+        rect.left < launcherRect.right &&
+        rect.right > launcherRect.left &&
+        rect.top < launcherRect.bottom &&
+        rect.bottom > launcherRect.top
+      );
+    });
+    const coveredActions = targets.flatMap((target) =>
+      [...target.querySelectorAll<HTMLElement>('a, button')].filter((action) => {
+        const rect = action.getBoundingClientRect();
+        return (
+          rect.left < launcherRect.right &&
+          rect.right > launcherRect.left &&
+          rect.top < launcherRect.bottom &&
+          rect.bottom > launcherRect.top
+        );
+      })
+    );
+    return {
+      launcher: {
+        placement: launcherElement.dataset.shellAuxiliaryPlacement,
+        edge: launcherElement.dataset.shellAuxiliaryEdge,
+        rect: launcherRect.toJSON(),
+      },
+      targets: targets.map((target) => ({
+        active: target.dataset.shellAuxiliaryAvoidanceActive,
+        clearance: target.dataset.shellAuxiliaryClearance,
+        rect: target.getBoundingClientRect().toJSON(),
+      })),
+      intersectingTargetCount: intersectingTargets.length,
+      activeTargetCount: intersectingTargets.filter(
+        (target) => target.dataset.shellAuxiliaryAvoidanceActive === 'true'
+      ).length,
+      coveredActionCount: coveredActions.length,
+    };
+  });
+
+  expect(geometry.intersectingTargetCount, JSON.stringify(geometry)).toBeGreaterThan(0);
+  expect(geometry.activeTargetCount, JSON.stringify(geometry)).toBe(
+    geometry.intersectingTargetCount
+  );
+  expect(geometry.coveredActionCount).toBe(0);
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect
+    .poll(() => recent.locator('[data-shell-auxiliary-avoidance-active="true"]').count())
+    .toBe(0);
+  expect(
+    await recent
+      .locator('[data-shell-auxiliary-avoidance]')
+      .last()
+      .evaluate((target) => Number.parseFloat(getComputedStyle(target).paddingInlineEnd) || 0)
+  ).toBe(0);
+});
+
+test('DWAI·ON keeps the Apps count and catalog actions clear at the 1280px shell edge', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/apps');
+
+  const catalog = page.getByRole('region', { name: 'Available apps' });
+  const launcher = page.getByTestId('dwaion-launcher');
+  await expect(catalog).toBeVisible();
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  );
+
+  const geometry = await page.evaluate(() => {
+    const launcherElement = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
+    const targets = [
+      ...document.querySelectorAll<HTMLElement>(
+        '[aria-labelledby="available-apps-heading"] [data-shell-auxiliary-avoidance]'
+      ),
+    ];
+    if (!launcherElement || targets.length === 0) {
+      throw new Error('Apps auxiliary-avoidance geometry is unavailable.');
+    }
+    const launcherRect = launcherElement.getBoundingClientRect();
+    const intersectsLauncher = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect();
+      return (
+        rect.left < launcherRect.right &&
+        rect.right > launcherRect.left &&
+        rect.top < launcherRect.bottom &&
+        rect.bottom > launcherRect.top
+      );
+    };
+    const intersectingTargets = targets.filter(intersectsLauncher);
+    const coveredContent = intersectingTargets.flatMap((target) =>
+      [...target.querySelectorAll<HTMLElement>('a, button, h2, h3, p')].filter(intersectsLauncher)
+    );
+    return {
+      intersectingTargetCount: intersectingTargets.length,
+      activeTargetCount: intersectingTargets.filter(
+        (target) => target.dataset.shellAuxiliaryAvoidanceActive === 'true'
+      ).length,
+      coveredContentCount: coveredContent.length,
+      minimumClearance: Math.min(
+        ...intersectingTargets.map((target) =>
+          Number.parseFloat(target.dataset.shellAuxiliaryClearance ?? '0')
+        )
+      ),
+    };
+  });
+
+  expect(geometry.intersectingTargetCount, JSON.stringify(geometry)).toBeGreaterThan(0);
+  expect(geometry.activeTargetCount, JSON.stringify(geometry)).toBe(
+    geometry.intersectingTargetCount
+  );
+  expect(geometry.minimumClearance).toBeGreaterThan(0);
+  expect(geometry.coveredContentCount).toBe(0);
+});

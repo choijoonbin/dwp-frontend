@@ -6,8 +6,12 @@ import Box from '@mui/material/Box';
 
 import { ProductAreaPageHeader } from '../components/product-area-page-header';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
-import { findHcmNavigationItem, HCM_DEFAULT_PATH } from '../features/hcm/hcm-navigation';
-import { useHcmExperience } from '../features/hcm/use-hcm-experience';
+import {
+  canAccessHcmNavigationAudience,
+  findHcmNavigationItem,
+  HCM_DEFAULT_PATH,
+} from '../features/hcm/hcm-navigation';
+import { useHcmAccess } from '../features/hcm/use-hcm-experience';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { RouteFallback } from '../routes/route-support';
 
@@ -109,34 +113,7 @@ const WorkforceReferenceData = lazy(() =>
   }))
 );
 
-function HcmPageContent({
-  page,
-  governedPage,
-}: {
-  page: HcmNavigationItem;
-  governedPage: boolean;
-}) {
-  const experience = useHcmExperience();
-  if (!governedPage && page.audience === 'manager' && !experience.isManager) {
-    return <Navigate to={HCM_DEFAULT_PATH} replace />;
-  }
-  if (!governedPage && page.audience === 'operator' && !experience.canOperate) {
-    return <Navigate to={HCM_DEFAULT_PATH} replace />;
-  }
-  const domainAudienceAllowed =
-    (page.audience === 'time-admin' && experience.canManageTime) ||
-    (page.audience === 'absence-admin' && experience.canManageAbsence) ||
-    (page.audience === 'benefits-admin' && experience.canManageBenefits) ||
-    (page.audience === 'pay-admin' && experience.canManagePay) ||
-    (page.audience === 'talent-admin' && experience.canManageTalent);
-  if (
-    !governedPage &&
-    !['all', 'manager', 'operator'].includes(page.audience) &&
-    !domainAudienceAllowed
-  ) {
-    return <Navigate to={HCM_DEFAULT_PATH} replace />;
-  }
-
+function HcmPageContent({ page }: { page: HcmNavigationItem }) {
   if (page.view === 'home') {
     return (
       <Suspense fallback={<RouteFallback />}>
@@ -182,17 +159,24 @@ function HcmPageContent({
   );
 }
 
+function LegacyHcmPageContent({ page }: { page: HcmNavigationItem }) {
+  const access = useHcmAccess();
+  if (!canAccessHcmNavigationAudience(page, access)) {
+    return <Navigate to={HCM_DEFAULT_PATH} replace />;
+  }
+  return <HcmPageContent page={page} />;
+}
+
 export default function HcmPage() {
   const { pathname } = useLocation();
   const governedPage = useOptionalAllowedProductSurface();
   const page = findHcmNavigationItem(pathname);
   if (!page) return <Navigate to={HCM_DEFAULT_PATH} replace />;
 
-  const content = <HcmPageContent page={page} governedPage={Boolean(governedPage)} />;
-  if (governedPage) return content;
+  if (governedPage) return <HcmPageContent page={page} />;
   return (
     <ProductAreaNavigationItemAccessGuard item={page}>
-      {content}
+      <LegacyHcmPageContent page={page} />
     </ProductAreaNavigationItemAccessGuard>
   );
 }

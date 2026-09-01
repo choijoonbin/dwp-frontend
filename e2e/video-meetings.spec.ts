@@ -1060,8 +1060,10 @@ test('ended meetings open the selected recap with actual evidence and honest art
   }
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
   await expect(page.getByText('Processing', { exact: true })).toBeVisible();
-  await expect(page.getByText('Stored · viewing unavailable')).toBeVisible({ timeout: 8_000 });
-  await expect(page.getByText('this client has no authorized retrieval endpoint')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open video recording' })).toBeVisible({
+    timeout: 8_000,
+  });
+  await expect(page.getByText('this client has no authorized retrieval endpoint')).toHaveCount(0);
   await test.info().attach('meeting-recap-artifact-custody', {
     body: await page.screenshot({ fullPage: true }),
     contentType: 'image/png',

@@ -71,7 +71,7 @@ export function MessagingHome() {
 
   return (
     <PageCanvas topInset="compact">
-      <Box sx={{ width: 1, maxWidth: 1440, mx: 'auto' }}>
+      <Box data-testid="messaging-home-canvas" sx={{ width: 1, minWidth: 0 }}>
         <MessagingPageHeading
           eyebrow={t('home.eyebrow')}
           title={t('home.title', {

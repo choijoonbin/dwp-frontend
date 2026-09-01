@@ -81,7 +81,7 @@ export function resolveHomeWidgetGalleryItems(
   const entitledAppResourceKeys = new Set(entitledApps.map((app) => app.resourceKey));
 
   return HOME_WIDGET_REGISTRY.flatMap((widget) => {
-    if (!registered.has(widget.key) || (flow && widget.key === 'command-rail')) return [];
+    if (!registered.has(widget.key)) return [];
     const definition = workspaceWidgetCatalogDefinition(widget.key);
     if (!definition) return [];
     const entitlementResourceKeys = flow

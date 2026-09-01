@@ -32,6 +32,7 @@ import {
   ConfirmDialog,
   FormField,
   GuidedEmptyState,
+  LoadingState,
   SelectField,
 } from '@dwp-frontend/design-system';
 
@@ -39,7 +40,6 @@ import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -195,11 +195,7 @@ export function MailThreadDetailPane({
   }
 
   if (query.isLoading) {
-    return (
-      <Box sx={{ height: 1, minHeight: 360, display: 'grid', placeItems: 'center' }}>
-        <CircularProgress size={26} />
-      </Box>
-    );
+    return <LoadingState label={t('common:labels.loading')} size="page" embedded />;
   }
 
   if (query.isError || !query.data) {

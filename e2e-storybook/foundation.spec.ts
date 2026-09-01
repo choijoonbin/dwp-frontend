@@ -105,6 +105,27 @@ test('server grid toolbar and cross-page selection are accessible', async ({ pag
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
+test('single-row grid keeps its compact row contract accessible', async ({ page }) => {
+  await openStory(page, 'dwp-enterprise-data-grid--single-row');
+
+  const grid = page.getByRole('grid', { name: 'Single-row queue' });
+  await expect(grid).toBeVisible();
+  await expect(grid.getByRole('row')).toHaveCount(2);
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
+test('progress meter exposes meaning, value, and accessibility together', async ({ page }) => {
+  await openStory(page, 'dwp-components-progress-meter--review-progress');
+
+  await expect(page.getByText('Access review decisions')).toBeVisible();
+  await expect(page.getByText('5 of 8 complete')).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Access review decisions' })).toHaveAttribute(
+    'aria-valuenow',
+    '62.5'
+  );
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
 test('date policy and async states expose stable accessible semantics', async ({ page }) => {
   await openStory(page, 'dwp-enterprise-date-and-time--product-policy');
 

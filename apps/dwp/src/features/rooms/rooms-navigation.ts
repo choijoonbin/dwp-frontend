@@ -138,8 +138,6 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
   },
 ] as const satisfies readonly ProductAreaNavigationGroup[];
 
-export const ROOMS_DEFAULT_PATH = '/workplace/home';
-
 export function findFirstAccessibleRoomsPath(
   hasPermission: (resourceKey: string, permissionCode: string) => boolean
 ) {

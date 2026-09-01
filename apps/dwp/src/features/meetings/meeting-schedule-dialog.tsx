@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   AutocompleteMultiField,
   DateTimePickerField,
@@ -21,6 +22,8 @@ import {
   type VideoMeetingAccessScope,
   type VideoMeetingPerson,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+
+import { meetingInsetSurface } from './meeting-visual-system';
 
 type MeetingScheduleForm = Omit<ScheduleVideoMeetingInput, 'startsAt' | 'idempotencyKey'> & {
   startsAt: string | null;
@@ -61,7 +64,7 @@ export function MeetingScheduleDialog({
   onSubmit: (input: ScheduleVideoMeetingInput) => void;
 }) {
   const { t } = useTranslation('meetings');
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timeZone = resolveSystemTimeZone();
   const [form, setForm] = useState(() => emptyForm(timeZone));
   const [participantInput, setParticipantInput] = useState('');
   const [participants, setParticipants] = useState<VideoMeetingPerson[]>([]);
@@ -188,67 +191,79 @@ export function MeetingScheduleDialog({
           }}
         />
 
-        <SelectField<VideoMeetingAccessScope>
-          label={t('schedule.access')}
-          value={form.accessScope}
-          options={(['INTERNAL', 'INVITED'] as const).map((value) => ({
-            value,
-            label: t(`access.${value}`),
-          }))}
-          onValueChange={(value) =>
-            value && setForm((current) => ({ ...current, accessScope: value }))
-          }
-        />
+        <Box
+          component="section"
+          aria-label={t('schedule.access')}
+          sx={(theme) => ({ ...meetingInsetSurface(theme, 'primary'), p: { xs: 1.5, sm: 2 } })}
+        >
+          <SelectField<VideoMeetingAccessScope>
+            label={t('schedule.access')}
+            value={form.accessScope}
+            options={(['INTERNAL', 'INVITED'] as const).map((value) => ({
+              value,
+              label: t(`access.${value}`),
+            }))}
+            onValueChange={(value) =>
+              value && setForm((current) => ({ ...current, accessScope: value }))
+            }
+          />
 
-        <Box component="section" aria-label={t('schedule.waitingRoom')}>
-          {[
-            {
-              key: 'waitingRoomEnabled' as const,
-              label: t('schedule.waitingRoom'),
-              hint: t('schedule.waitingRoomHint'),
-            },
-            {
-              key: 'defaultMicrophoneEnabled' as const,
-              label: t('schedule.microphone'),
-              hint: t('schedule.microphoneHint'),
-            },
-            {
-              key: 'defaultCameraEnabled' as const,
-              label: t('schedule.camera'),
-              hint: t('schedule.cameraHint'),
-            },
-          ].map((item) => (
-            <Stack
-              key={item.key}
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              gap={2}
-              sx={{ py: 1, borderBottom: 1, borderColor: 'divider' }}
-            >
-              <Box>
-                <Typography variant="body2" fontWeight={700}>
-                  {item.label}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {item.hint}
-                </Typography>
-              </Box>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={form[item.key]}
-                    slotProps={{ input: { 'aria-label': item.label } }}
-                    onChange={(_, checked) =>
-                      setForm((current) => ({ ...current, [item.key]: checked }))
-                    }
-                  />
-                }
-                label=""
-                sx={{ m: 0 }}
-              />
-            </Stack>
-          ))}
+          <Stack gap={1} sx={{ mt: 1.5 }}>
+            {[
+              {
+                key: 'waitingRoomEnabled' as const,
+                label: t('schedule.waitingRoom'),
+                hint: t('schedule.waitingRoomHint'),
+              },
+              {
+                key: 'defaultMicrophoneEnabled' as const,
+                label: t('schedule.microphone'),
+                hint: t('schedule.microphoneHint'),
+              },
+              {
+                key: 'defaultCameraEnabled' as const,
+                label: t('schedule.camera'),
+                hint: t('schedule.cameraHint'),
+              },
+            ].map((item) => (
+              <Stack
+                key={item.key}
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                gap={2}
+                sx={{
+                  minHeight: 58,
+                  px: 1.5,
+                  py: 0.75,
+                  borderRadius: 2,
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Box>
+                  <Typography variant="body2" fontWeight={700}>
+                    {item.label}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {item.hint}
+                  </Typography>
+                </Box>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={form[item.key]}
+                      slotProps={{ input: { 'aria-label': item.label } }}
+                      onChange={(_, checked) =>
+                        setForm((current) => ({ ...current, [item.key]: checked }))
+                      }
+                    />
+                  }
+                  label=""
+                  sx={{ m: 0 }}
+                />
+              </Stack>
+            ))}
+          </Stack>
         </Box>
       </Stack>
     </FormDialog>

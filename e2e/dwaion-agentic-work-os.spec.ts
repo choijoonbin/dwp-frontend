@@ -24,6 +24,83 @@ test.beforeEach(async ({ page }) => {
   await mockQuestionLaunches(page);
 });
 
+test('home work brief uses an opaque launch and renders the grounded availability fallback', async ({
+  page,
+}) => {
+  const fallbackAnswer =
+    'AI reasoning is temporarily unavailable. Here are the highest-ranked work items verified within your current access scope.';
+  let submittedQuery = '';
+  let submittedSources: string[] = [];
+
+  await page.route('**/api/agent/v1/conversations', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    })
+  );
+  await page.route('**/api/agent/v1/actions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    })
+  );
+  await page.route('**/api/agent/v1/proposals?**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          items: [],
+          summary: { active: 0, highPriority: 0, snoozed: 0, handled: 0 },
+          nextCursor: null,
+        },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/catalog/registry-entries?**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    })
+  );
+  await page.route('**/api/agent/v1/ask/stream', (route) => {
+    const request = route.request().postDataJSON() as {
+      query: string;
+      requestId: string;
+      sourceScopes: string[];
+    };
+    submittedQuery = request.query;
+    submittedSources = request.sourceScopes;
+    return fulfillAskStream(route, {
+      ...ASK_RUNTIME_FIXTURE,
+      requestId: request.requestId,
+      answer: fallbackAnswer,
+      confidence: 'LOW',
+      modelRoute: {
+        state: 'COMPLETED',
+        provider: 'DWP_GROUNDED_FALLBACK',
+        model: 'evidence-snapshot-v1',
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        latencyMs: 0,
+      },
+    });
+  });
+
+  await page.goto('/dwaion/home');
+  await page.getByRole('button', { name: 'Today’s work brief', exact: true }).click();
+
+  await expect(page).toHaveURL(/\/dwaion\/new$/);
+  await expect(page.getByText(fallbackAnswer)).toBeVisible();
+  await expect(page.getByText('Low confidence')).toBeVisible();
+  expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+  expect(submittedQuery).toBe(
+    'Summarize what I should handle today by priority and deadline risk.'
+  );
+  expect(submittedSources).toEqual(['WORK_ITEM', 'MAIL', 'CALENDAR']);
+});
+
 test('voice input requires transcript review and never submits automatically', async ({ page }) => {
   await page.addInitScript(() => {
     const stream = {

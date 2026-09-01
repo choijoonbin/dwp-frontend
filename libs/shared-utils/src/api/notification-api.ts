@@ -1,7 +1,19 @@
 import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
 
+import type {
+  NotificationChangeVersion,
+  NotificationChannel,
+  NotificationCounterVersion,
+  NotificationDecimalVersion,
+  NotificationDeliveryMode,
+  NotificationEntityVersion,
+  NotificationPartialState,
+  NotificationPriority,
+} from './notification-contract';
 import type { ApiResponse } from '../types';
+
+export type * from './notification-contract';
 
 export const NOTIFICATION_API_BASE = '/api/notifications/v1';
 export const NOTIFICATION_LIVE_EVENT = 'dwp:notification-changed';
@@ -17,16 +29,9 @@ export const NOTIFICATION_API_CAPABILITIES = {
 } as const;
 
 export type NotificationChangeCursor = string;
-export type NotificationDecimalVersion = string;
-export type NotificationChangeVersion = NotificationDecimalVersion;
-export type NotificationCounterVersion = NotificationDecimalVersion;
-export type NotificationEntityVersion = NotificationDecimalVersion;
 
 export type NotificationView = 'PRIORITY' | 'ALL' | 'MENTIONS' | 'SAVED' | 'SNOOZED' | 'DONE';
-export type NotificationPriority = 'URGENT' | 'HIGH' | 'NORMAL' | 'LOW';
 export type NotificationInterruptionLevel = 'PASSIVE' | 'ACTIVE' | 'TIME_SENSITIVE' | 'CRITICAL';
-export type NotificationChannel =
-  'IN_APP' | 'EMAIL' | 'WEB_PUSH' | 'MOBILE_PUSH' | 'TEAMS' | 'SLACK';
 export type NotificationCapabilities = {
   enabledChannels: NotificationChannel[];
   unavailableChannels: NotificationChannel[];
@@ -35,7 +40,6 @@ export type NotificationCapabilities = {
   externalDeliveryState: 'ENABLED' | 'DISABLED';
   generatedAt: string;
 };
-export type NotificationDeliveryMode = 'IMMEDIATE' | 'DAILY_DIGEST' | 'WEEKLY_DIGEST' | 'MUTED';
 export type NotificationTriageAction =
   'READ' | 'UNREAD' | 'SAVE' | 'UNSAVE' | 'COMPLETE' | 'RESTORE' | 'SNOOZE';
 export type NotificationReasonKind =
@@ -109,12 +113,6 @@ export type NotificationTargetResolution = {
   notificationId: string;
   targetState: 'AVAILABLE';
   action: NotificationAction;
-};
-
-export type NotificationPartialState = {
-  partial: boolean;
-  unavailableSources: string[];
-  message?: string | null;
 };
 
 export type NotificationInboxPage = NotificationPartialState & {

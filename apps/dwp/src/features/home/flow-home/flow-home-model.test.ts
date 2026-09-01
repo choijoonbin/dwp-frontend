@@ -132,6 +132,7 @@ describe('Flow Home model', () => {
       unit: 'percent',
       tone: 'risk',
       comparison: { kind: 'threshold', value: 2 },
+      seriesCurrentDate: '2026-08-21',
     });
   });
 

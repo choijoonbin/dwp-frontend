@@ -278,7 +278,12 @@ describe('Home contribution privacy contracts', () => {
       CONTEXT
     );
     expect(both).toHaveLength(1);
-    expect(both[0]).toMatchObject({ kind: 'RESPONSE', count: 5, priority: 'CRITICAL' });
+    expect(both[0]).toMatchObject({
+      kind: 'RESPONSE',
+      count: 5,
+      priority: 'HIGH',
+      status: 'ACTIONABLE',
+    });
   });
 
   it('treats per-app notification counts as confidential runtime aggregates', () => {

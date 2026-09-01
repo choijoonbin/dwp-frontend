@@ -313,7 +313,7 @@ export function SavedViewCustodyManager() {
         });
 
   return (
-    <Stack gap={3} sx={{ width: '100%', maxWidth: 1440, mx: 'auto' }}>
+    <Stack data-testid="saved-view-custody-canvas" gap={3} sx={{ width: 1, minWidth: 0 }}>
       <SavedViewCustodyExplainer />
       <SavedViewCustodyMetrics
         orphanedCount={orphaned.isError ? null : (orphaned.data?.length ?? 0)}

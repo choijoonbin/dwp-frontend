@@ -137,7 +137,7 @@ export function MessagingTimelinePane({
               intent="quiet"
               startIcon={
                 loadingOlder ? (
-                  <CircularProgress size={15} color="inherit" />
+                  <CircularProgress size={15} color="inherit" aria-hidden="true" />
                 ) : (
                   <ArrowUp size={16} />
                 )

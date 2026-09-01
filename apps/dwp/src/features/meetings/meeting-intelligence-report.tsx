@@ -76,6 +76,7 @@ import {
   readStoredIntelligenceIntent,
   type StoredIntelligenceIntent,
 } from './meeting-intelligence-intent';
+import { MeetingIntelligenceReviewerAccess } from './meeting-intelligence-reviewer-access';
 
 export type MeetingIntelligenceReviewReason = {
   code: string;
@@ -558,6 +559,10 @@ export function MeetingIntelligenceReportView({
           <Alert severity="error" role="alert">
             {labels.actionError}
           </Alert>
+        )}
+
+        {canHost && report?.state === 'DRAFT' && (
+          <MeetingIntelligenceReviewerAccess meetingId={report.meetingId} report={report} />
         )}
 
         {(state === 'UNAVAILABLE' || state === 'DELETED') && !report && (

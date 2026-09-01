@@ -1,4 +1,4 @@
-import { Bot, CalendarClock, Gauge, History, House, LogIn, Settings2, Video } from 'lucide-react';
+import { Bot, CalendarClock, Gauge, History, House, LogIn, Settings2 } from 'lucide-react';
 
 import type { ProductNavigationItem } from '../../components/product-manifest';
 
@@ -68,9 +68,7 @@ export const MEETINGS_NAVIGATION: readonly MeetingsNavigationGroup[] = [
   },
 ];
 
-export const MEETINGS_DEFAULT_PATH = '/meetings/home';
 export const MEETINGS_ROOM_PATH_PREFIX = '/meetings/room/';
-export const MEETINGS_PRODUCT_ICON = Video;
 
 export function findMeetingsNavigationItem(pathname: string): MeetingsNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;

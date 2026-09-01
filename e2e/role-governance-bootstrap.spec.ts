@@ -6,6 +6,7 @@ import type {
   AppGovernanceDashboard,
 } from '@dwp-frontend/shared-utils/api/app-governance-api';
 
+import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
 function envelope(data: unknown) {
@@ -53,7 +54,10 @@ async function capture(page: Page, testInfo: TestInfo, name: string) {
   await testInfo.attach(name, { path, contentType: 'image/png' });
 }
 
-async function mockGovernanceDashboard(page: Page) {
+async function mockGovernanceDashboard(
+  page: Page,
+  { duplicateApprovals = false }: { duplicateApprovals?: boolean } = {}
+) {
   let approved = false;
   let decisionPayload: unknown = null;
   const assignments = () => [
@@ -144,7 +148,15 @@ async function mockGovernanceDashboard(page: Page) {
         description: 'A scope that already has an effective approver.',
         lifecycleState: 'ACTIVE',
         version: 0,
-        resources: [],
+        resources: duplicateApprovals
+          ? [
+              {
+                resourceType: 'APP',
+                resourceKey: 'APP.APPROVALS',
+                resourceName: 'Approvals',
+              },
+            ]
+          : [],
       },
     ],
     assignments: assignments(),
@@ -247,4 +259,319 @@ test('independent catalog admin performs only the one-time first approver bootst
     reason: 'Establish independent approval for production access.',
     version: 0,
   });
+});
+
+test('company governance opens the canonical product management workbench without mixing planes', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockGovernanceDashboard(page);
+  await mockApprovalProductSurfaceAuthority(page);
+
+  await page.goto('/admin/identity/app-governance');
+  const governanceHeading = page.getByRole('heading', {
+    level: 1,
+    name: 'App responsibility governance',
+  });
+  await expect(governanceHeading).toBeVisible();
+  await page.getByRole('button', { name: /App resource sets/u }).click();
+
+  const workbench = page.getByRole('link', {
+    name: 'Open Approvals management workbench for Approvals production',
+  });
+  await expect(workbench).toBeVisible();
+  await expect(workbench).toHaveAttribute('href', '/approvals/admin');
+  await workbench.focus();
+  await expect(workbench).toBeFocused();
+  await workbench.click();
+
+  await expect(page).toHaveURL(/\/approvals\/admin\/overview(?:\?.*)?$/u);
+  await expect(page.getByRole('heading', { level: 1, name: 'Approval operations' })).toBeFocused();
+  await expect(
+    page.locator('[data-testid="product-surface-management-mode"]:visible')
+  ).toBeVisible();
+  await expect(page.locator('[data-testid="product-surface-work-return"]:visible')).toBeVisible();
+  await expect(
+    page.getByTestId('approvals-desktop-sidebar').getByRole('link', { name: 'My approvals' })
+  ).toHaveCount(0);
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\/admin\/identity\/app-governance$/u);
+  await expect(governanceHeading).toBeVisible();
+  await expect(governanceHeading).toBeFocused();
+});
+
+test('company governance workbench fails closed before product data without an exact capability', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockGovernanceDashboard(page);
+  await mockApprovalProductSurfaceAuthority(page, { managementCapabilityKeys: [] });
+  let managementPayloadRequests = 0;
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname === '/api/approvals/v1/admin/overview') {
+      managementPayloadRequests += 1;
+    }
+  });
+
+  await page.goto('/admin/identity/app-governance');
+  await page.getByRole('button', { name: /App resource sets/u }).click();
+  await page
+    .getByRole('link', {
+      name: 'Open Approvals management workbench for Approvals production',
+    })
+    .click();
+
+  const accessState = page.getByTestId('product-surface-access-state');
+  await expect(accessState).toBeVisible();
+  await expect(accessState).toHaveAttribute('data-product-access-state', 'route-denied');
+  await expect(accessState.getByText('This page is outside your access')).toBeVisible();
+  expect(managementPayloadRequests).toBe(0);
+});
+
+test('company governance gives repeated app workbenches unique scope-aware names', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockGovernanceDashboard(page, { duplicateApprovals: true });
+
+  await page.goto('/admin/identity/app-governance');
+  await page.getByRole('button', { name: /App resource sets/u }).click();
+
+  const approvalsScope = page.getByRole('region', { name: 'Approvals production' });
+  const collaborationScope = page.getByRole('region', { name: 'Collaboration production' });
+  await expect(
+    approvalsScope.getByRole('link', {
+      name: 'Open Approvals management workbench for Approvals production',
+    })
+  ).toBeVisible();
+  await expect(
+    collaborationScope.getByRole('link', {
+      name: 'Open Approvals management workbench for Collaboration production',
+    })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /Open Approvals management workbench for/u })
+  ).toHaveCount(2);
+});
+
+test('app governance remains operable at 320px and 200% text', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile');
+  await page.setViewportSize({ width: 320, height: 720 });
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockGovernanceDashboard(page);
+
+  await page.goto('/admin/identity/app-governance');
+  await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'App responsibility governance' })
+  ).toBeVisible();
+  await page.getByRole('button', { name: /App resource sets/u }).click();
+  await expect(
+    page.getByRole('link', {
+      name: 'Open Approvals management workbench for Approvals production',
+    })
+  ).toBeVisible();
+
+  const width = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    content: document.documentElement.scrollWidth,
+  }));
+  expect(width.content).toBeLessThanOrEqual(width.viewport + 1);
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter((violation) =>
+      ['critical', 'serious'].includes(violation.impact ?? '')
+    )
+  ).toEqual([]);
+});
+
+test('app catalog exposes product-specific native management links', async ({ page }) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockApprovalProductSurfaceAuthority(page, { work: false, management: true });
+
+  await page.goto('/apps');
+  const managementLink = page.getByRole('link', { name: 'Manage Approvals' });
+  await expect(managementLink).toBeVisible();
+  await expect(managementLink).toHaveAttribute(
+    'href',
+    '/approvals/admin?scope=scope%3Aapprovals%3Atenant'
+  );
+  await expect(page.getByRole('link', { name: 'Manage', exact: true })).toHaveCount(0);
+});
+
+test('app catalog preserves its shell when the management request module cannot load', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Workspace Member',
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  let abortedModuleRequests = 0;
+  await page.route('**/src/components/app-management-request-dialog.tsx*', async (route) => {
+    abortedModuleRequests += 1;
+    await route.abort('failed');
+  });
+
+  await page.goto('/apps?requestManagement=APP.APPROVALS&requestSurface=approvals.admin');
+
+  await expect(page.locator('#dwp-main-content')).toBeVisible();
+  const appsHeading = page.getByRole('heading', { level: 1, name: '앱' });
+  await expect(appsHeading).toBeVisible();
+  const loadError = page.getByTestId('app-management-request-load-error');
+  await expect(loadError).toBeVisible();
+  await expect(loadError).toBeInViewport();
+  await expect(
+    loadError.getByRole('heading', { level: 2, name: '앱 관리 요청 화면을 열지 못했습니다' })
+  ).toBeVisible();
+  await expect(loadError.getByRole('button', { name: '페이지 새로고침' })).toBeVisible();
+  await expect(page.getByText(/Failed to fetch dynamically imported module/u)).toHaveCount(0);
+  expect(abortedModuleRequests).toBeGreaterThan(0);
+
+  await loadError.getByRole('button', { name: '닫기' }).click();
+  await expect(loadError).toHaveCount(0);
+  await expect(appsHeading).toBeFocused();
+  await expect
+    .poll(() => {
+      const url = new URL(page.url());
+      return [url.searchParams.has('requestManagement'), url.searchParams.has('requestSurface')];
+    })
+    .toEqual([false, false]);
+});
+
+test('app catalog cleans up its dialog when a nested management request module cannot load', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Workspace Member',
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await page.route(
+    '**/api/auth/admin/access/app-governance/presets/self-service-options?*',
+    async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: envelope([
+          {
+            preset: {
+              presetCode: 'APPROVAL_DESIGNER',
+              productKey: 'approvals',
+              appResourceKey: 'APP.APPROVALS',
+              displayName: 'Approval designer',
+              description: 'Configure approval forms and workflows.',
+              responsibilityCode: 'APP_CONFIG_ADMIN',
+              riskTier: 'MEDIUM',
+              catalogVersion: 1,
+              duties: [],
+              requestable: true,
+              unavailableReason: null,
+            },
+            resourceSets: [
+              {
+                resourceSetId: 'rs-approvals',
+                resourceSetKey: 'RS_APPROVALS',
+                resourceSetName: 'Approvals production',
+              },
+            ],
+          },
+        ]),
+      });
+    }
+  );
+  let abortedModuleRequests = 0;
+  await page.route(
+    '**/src/components/app-management-request-schedule-fields.tsx*',
+    async (route) => {
+      abortedModuleRequests += 1;
+      await route.abort('failed');
+    }
+  );
+
+  await page.goto('/apps?requestManagement=APP.APPROVALS&requestSurface=approvals.admin');
+
+  const appsHeading = page.getByRole('heading', { level: 1, name: '앱' });
+  const loadError = page.getByTestId('app-management-request-load-error');
+  await expect(loadError).toBeVisible();
+  await expect(loadError).toBeInViewport();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect
+    .poll(() => page.locator('body').evaluate((body) => body.style.overflow))
+    .not.toBe('hidden');
+  await expect(page.locator('#root')).not.toHaveAttribute('aria-hidden', 'true');
+  expect(abortedModuleRequests).toBeGreaterThan(0);
+
+  await loadError.getByRole('button', { name: '닫기' }).click();
+  await expect(loadError).toHaveCount(0);
+  await expect(appsHeading).toBeFocused();
+});
+
+test('company administration preserves its shell when a management page module cannot load', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['ADMIN', 'APP_CATALOG_ADMIN'], {
+    userId: 1,
+    displayName: '회사 관리자',
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  let abortedModuleRequests = 0;
+  await page.route('**/src/features/admin/app-governance-manager.tsx*', async (route) => {
+    abortedModuleRequests += 1;
+    await route.abort('failed');
+  });
+
+  await page.goto('/admin/identity/app-governance');
+
+  await expect(page.getByTestId('admin-shell')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: '앱 책임 및 위임' })).toBeVisible();
+  const loadError = page.getByTestId('admin-content-load-error');
+  await expect(loadError).toBeVisible();
+  await expect(loadError.getByText('관리 화면을 열지 못했습니다', { exact: true })).toBeVisible();
+  await expect(
+    loadError.getByText(
+      '관리 셸은 계속 사용할 수 있습니다. 페이지를 새로고침해 이 화면을 다시 불러오세요.',
+      { exact: true }
+    )
+  ).toBeVisible();
+  await expect(loadError.getByRole('button', { name: '페이지 새로고침' })).toBeVisible();
+  await expect(page.getByText(/^contentLoadError\./u)).toHaveCount(0);
+  await expect(page.getByText(/Failed to fetch dynamically imported module/u)).toHaveCount(0);
+  expect(abortedModuleRequests).toBeGreaterThan(0);
 });

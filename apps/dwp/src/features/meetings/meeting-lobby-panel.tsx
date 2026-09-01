@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { formatMeetingTime } from './meeting-components';
+import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
 
 export function MeetingLobbyPanel({ meetingId }: { meetingId: string }) {
   const { t, i18n } = useTranslation('meetings');
@@ -42,7 +43,15 @@ export function MeetingLobbyPanel({ meetingId }: { meetingId: string }) {
   });
 
   return (
-    <Box component="section" aria-labelledby="meeting-lobby-title" sx={{ minWidth: 0 }}>
+    <Box
+      component="section"
+      aria-labelledby="meeting-lobby-title"
+      sx={(theme) => ({
+        ...meetingSurface(theme, { tone: 'warning' }),
+        minWidth: 0,
+        p: 1.5,
+      })}
+    >
       <Stack
         direction="row"
         alignItems="center"
@@ -77,7 +86,7 @@ export function MeetingLobbyPanel({ meetingId }: { meetingId: string }) {
           {t('room.lobbyLoadError')}
         </Alert>
       ) : query.data?.waiting.length ? (
-        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={(theme) => ({ ...meetingInsetSurface(theme), overflow: 'hidden' })}>
           {query.data.waiting.map((participant, index) => {
             const busy =
               decisionMutation.isPending &&

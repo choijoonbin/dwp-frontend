@@ -5,11 +5,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Bookmark,
-  BookmarkCheck,
-  CalendarDays,
   Check,
   CircleAlert,
-  Clock3,
   ExternalLink,
   EyeOff,
   HeartHandshake,
@@ -34,10 +31,16 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, ActionIconButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  EmptyState,
+  ErrorState,
+  FormField,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -49,6 +52,10 @@ import Typography from '@mui/material/Typography';
 
 import { useProductActionMutation } from '../components/use-product-action-mutation';
 import { FeedLoading, storyDate } from '../features/communications/communication-feed-support';
+import {
+  CommunicationSaveButton,
+  CommunicationStoryMeta,
+} from '../features/communications/communication-story-controls';
 
 import type {
   CommunicationContentType,
@@ -114,75 +121,6 @@ function useCommunicationImpression(id: number) {
   return ref;
 }
 
-function StoryMeta({ item, light = false }: { item: CommunicationItem; light?: boolean }) {
-  const { t } = useTranslation('communications');
-  const color = light ? 'rgba(255,255,255,0.78)' : 'text.secondary';
-  return (
-    <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-      <Typography variant="caption" color={color} fontWeight={700}>
-        {item.publisherName}
-      </Typography>
-      <Box aria-hidden="true" sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: color }} />
-      <Stack direction="row" alignItems="center" gap={0.45} color={color}>
-        <CalendarDays size={13} aria-hidden="true" />
-        <Typography variant="caption" color="inherit">
-          {storyDate(item.publishedAt)}
-        </Typography>
-      </Stack>
-      <Stack direction="row" alignItems="center" gap={0.45} color={color}>
-        <Clock3 size={13} aria-hidden="true" />
-        <Typography variant="caption" color="inherit">
-          {t('story.readTime', { count: item.readingMinutes })}
-        </Typography>
-      </Stack>
-    </Stack>
-  );
-}
-
-function SaveButton({ item, compact = false }: { item: CommunicationItem; compact?: boolean }) {
-  const { t } = useTranslation('communications');
-  const toast = useToast();
-  const queryClient = useQueryClient();
-  const updateReaderState = useProductActionMutation(
-    'route.communications.work.reader-state.action'
-  );
-  const mutation = useMutation({
-    mutationFn: () =>
-      updateReaderState((authority) =>
-        updateCommunicationReaderState(
-          item.communicationId,
-          { saved: !item.readerState.saved },
-          authority
-        )
-      ),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['communications'] }),
-    onError: () => toast.error(t('story.saveError')),
-  });
-  const label = item.readerState.saved ? t('story.removeSaved') : t('story.save');
-
-  if (compact) {
-    return (
-      <ActionIconButton
-        label={label}
-        onClick={() => mutation.mutate()}
-        disabled={mutation.isPending}
-      >
-        {item.readerState.saved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-      </ActionIconButton>
-    );
-  }
-  return (
-    <ActionButton
-      intent="secondary"
-      startIcon={item.readerState.saved ? <BookmarkCheck size={17} /> : <Bookmark size={17} />}
-      onClick={() => mutation.mutate()}
-      disabled={mutation.isPending}
-    >
-      {item.readerState.saved ? t('story.saved') : t('story.save')}
-    </ActionButton>
-  );
-}
-
 function FeaturedStory({
   item,
   scope,
@@ -246,7 +184,7 @@ function FeaturedStory({
               <Chip size="small" label={t('page.unread')} color="primary" />
             )}
           </Stack>
-          <SaveButton item={item} compact />
+          <CommunicationSaveButton item={item} compact />
         </Stack>
         <Typography component="h2" variant="h4" sx={{ maxWidth: 900, color: 'common.white' }}>
           {item.title}
@@ -260,7 +198,7 @@ function FeaturedStory({
           justifyContent="space-between"
           gap={1.5}
         >
-          <StoryMeta item={item} light />
+          <CommunicationStoryMeta item={item} light />
           <ActionButton
             component={Link}
             to={`/communications/${scope}/${item.communicationId}`}
@@ -348,7 +286,7 @@ function StoryCard({
               <Chip size="small" color="warning" label={t('page.required')} />
             )}
           </Stack>
-          <SaveButton item={item} compact />
+          <CommunicationSaveButton item={item} compact />
         </Stack>
         <Typography
           component={Link}
@@ -372,7 +310,7 @@ function StoryCard({
           {item.summary}
         </Typography>
         <Box sx={{ mt: 'auto' }}>
-          <StoryMeta item={item} />
+          <CommunicationStoryMeta item={item} />
         </Box>
       </Stack>
     </Box>
@@ -571,7 +509,7 @@ function StoryDetail({ item, scope }: { item: CommunicationItem; scope: Communic
               )}
             </Stack>
             <Stack direction="row" gap={0.5}>
-              <SaveButton item={item} compact />
+              <CommunicationSaveButton item={item} compact />
               <ActionIconButton label={t('story.share')} onClick={() => void share()}>
                 <Share2 size={18} />
               </ActionIconButton>
@@ -589,7 +527,7 @@ function StoryDetail({ item, scope }: { item: CommunicationItem; scope: Communic
             {item.summary}
           </Typography>
           <Box sx={{ mt: 2 }}>
-            <StoryMeta item={item} />
+            <CommunicationStoryMeta item={item} />
           </Box>
           <Divider sx={{ my: { xs: 3, md: 4 } }} />
           <Stack gap={2.25}>
@@ -727,10 +665,13 @@ export default function CommunicationsPage() {
         >
           {t('story.back')}
         </ActionButton>
-        <Alert severity="error" sx={{ mt: 2 }}>
-          <Typography variant="subtitle2">{t('page.detailErrorTitle')}</Typography>
-          <Typography variant="body2">{t('page.detailErrorDescription')}</Typography>
-        </Alert>
+        <Box sx={{ mt: 2 }}>
+          <ErrorState
+            title={t('page.detailErrorTitle')}
+            description={t('page.detailErrorDescription')}
+            size="standard"
+          />
+        </Box>
       </PageCanvas>
     );
   }
@@ -752,18 +693,15 @@ export default function CommunicationsPage() {
         >
           {t('story.back')}
         </ActionButton>
-        <Alert
-          severity="error"
-          sx={{ mt: 2 }}
-          action={
-            <ActionButton intent="quiet" onClick={() => void detail.refetch()}>
-              {t('page.retry')}
-            </ActionButton>
-          }
-        >
-          <Typography variant="subtitle2">{t('page.detailErrorTitle')}</Typography>
-          <Typography variant="body2">{t('page.detailErrorDescription')}</Typography>
-        </Alert>
+        <Box sx={{ mt: 2 }}>
+          <ErrorState
+            title={t('page.detailErrorTitle')}
+            description={t('page.detailErrorDescription')}
+            retryLabel={t('page.retry')}
+            onRetry={() => void detail.refetch()}
+            size="standard"
+          />
+        </Box>
       </PageCanvas>
     );
   }
@@ -780,7 +718,7 @@ export default function CommunicationsPage() {
 
   return (
     <PageCanvas>
-      <Box sx={{ maxWidth: 1540, mx: 'auto' }}>
+      <Box sx={{ width: 1, minWidth: 0 }}>
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           alignItems={{ xs: 'stretch', md: 'flex-end' }}
@@ -925,41 +863,22 @@ export default function CommunicationsPage() {
         </Stack>
 
         {feed.isError ? (
-          <Alert
-            severity="error"
-            action={
-              <ActionButton intent="quiet" onClick={() => void feed.refetch()}>
-                {t('page.retry')}
-              </ActionButton>
-            }
-          >
-            <Typography variant="subtitle2">{t('page.errorTitle')}</Typography>
-            <Typography variant="body2">{t('page.errorDescription')}</Typography>
-          </Alert>
+          <ErrorState
+            title={t('page.errorTitle')}
+            description={t('page.errorDescription')}
+            retryLabel={t('page.retry')}
+            onRetry={() => void feed.refetch()}
+            size="standard"
+          />
         ) : feed.isLoading ? (
           <FeedLoading />
         ) : !hasVisibleContent ? (
-          <Box
-            sx={{
-              minHeight: 360,
-              display: 'grid',
-              placeItems: 'center',
-              textAlign: 'center',
-              borderTop: 1,
-              borderBottom: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <Box>
-              <Search size={30} color="#667085" aria-hidden="true" />
-              <Typography variant="h6" sx={{ mt: 1.5 }}>
-                {t('page.emptyTitle')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                {t('page.emptyDescription')}
-              </Typography>
-            </Box>
-          </Box>
+          <EmptyState
+            icon={<Search size={30} aria-hidden="true" />}
+            title={t('page.emptyTitle')}
+            description={t('page.emptyDescription')}
+            size="page"
+          />
         ) : (
           <>
             {editorialFeatured && <FeaturedStory item={editorialFeatured} scope={scope} />}

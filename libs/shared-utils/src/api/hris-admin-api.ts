@@ -16,7 +16,7 @@ import type {
   HrisReconciliationRun,
   HrisSourceSystem,
   HrisSyncRun,
-} from './people-admin-api';
+} from './hris-contract';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 const HRIS_BASE = '/api/people/v1/workforce/data-operations/hris';

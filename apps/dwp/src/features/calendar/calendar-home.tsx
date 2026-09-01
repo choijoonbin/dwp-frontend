@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   getCalendarHome,
   cancelCalendarEvent,
@@ -77,7 +78,7 @@ export function CalendarHome() {
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+  const timeZone = resolveSystemTimeZone('Asia/Seoul');
   const language = i18n.resolvedLanguage ?? i18n.language;
   const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');

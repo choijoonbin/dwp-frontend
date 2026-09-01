@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Building2, Clock3, Search, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { evaluateCalendarScheduling, listPeople, usePermissions } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -71,7 +72,7 @@ export function CalendarAvailability() {
   const [selectedSlot, setSelectedSlot] = useState<CalendarAvailabilitySlot | null>(null);
   const [, setFreshnessTick] = useState(0);
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+  const timeZone = resolveSystemTimeZone('Asia/Seoul');
   const peopleQuery = useQuery({
     queryKey: ['calendar', 'availability', 'people'],
     queryFn: () => listPeople({ size: 100, surface: 'directory' }),

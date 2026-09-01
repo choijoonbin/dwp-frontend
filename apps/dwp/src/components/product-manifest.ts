@@ -134,15 +134,6 @@ export type ProductSurfaceManifest = {
   adminMode?: 'none' | 'embedded' | 'control-center';
 };
 
-export type GovernedMenuRecord = {
-  menuId: string;
-  path: `/${string}`;
-  plane: GovernedMenuPlane;
-  taskKind: ProductTaskKind;
-  navigationContextId: string;
-  productSurfaceId?: string;
-};
-
 export type LegacyProductManifest<AreaKey extends string = string> = {
   id: string;
   appKey: string;

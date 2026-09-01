@@ -79,6 +79,7 @@ import {
   commitHomeDraftReset,
   homeDraftChangeCount,
   isHomeDraftDirty,
+  reapplyHomeDraft,
 } from '../features/home/home-draft-history';
 import { HomePreferenceConflictDialog } from '../features/home/home-preference-conflict-dialog';
 import { applyHomeDeviceOverlay } from '../features/home-personalization/home-device-overlay';
@@ -671,6 +672,11 @@ export default function HomePage() {
 
   const reapplyAfterConflict = () => {
     conflictResolutionRef.current = 'reapply';
+    if (editBaseDraft) {
+      replaceDraft(
+        reapplyHomeDraft(editBaseDraft, draftHistory.present, initialEditingDraft, entitledApps)
+      );
+    }
     setEditSession((current) =>
       current && conflictTarget ? rebaseHomeEditSession(current, conflictTarget) : current
     );

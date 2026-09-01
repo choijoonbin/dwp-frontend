@@ -6,6 +6,15 @@ import Typography from '@mui/material/Typography';
 
 import { shellHeaderHeight } from '../features/shell/shell-registry';
 import {
+  HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_TILE_HEIGHT,
+  HOME_LAUNCHPAD_TILE_WIDTH,
+  HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_VISIBLE_COLUMNS,
+} from './workspace-composer/home-launchpad-layout-contract';
+import {
+  readHomeLaunchpadGroupItemCounts,
   readOptionalHomePresentationHint,
   resolveHomeLoadingLayout,
   type HomeLoadingLayout,
@@ -15,7 +24,11 @@ type HomeLoadingSkeletonProps = {
   reserveHeader?: boolean;
 };
 
-type BrowserHomeLoadingLayout = HomeLoadingLayout & Readonly<{ presentationResolved: boolean }>;
+type BrowserHomeLoadingLayout = HomeLoadingLayout &
+  Readonly<{
+    presentationResolved: boolean;
+    dockGroupItemCounts: readonly number[] | null;
+  }>;
 
 const skeletonLine = {
   bgcolor: 'rgba(226,232,240,0.22)',
@@ -38,6 +51,7 @@ function browserHomeLoadingLayout(): BrowserHomeLoadingLayout {
         rootFontSize: 16,
       }),
       presentationResolved: false,
+      dockGroupItemCounts: null,
     };
   }
   let storage: Storage | undefined;
@@ -57,6 +71,7 @@ function browserHomeLoadingLayout(): BrowserHomeLoadingLayout {
       rootFontSize,
     }),
     presentationResolved: presentation !== null,
+    dockGroupItemCounts: readHomeLaunchpadGroupItemCounts(storage),
   };
 }
 
@@ -88,7 +103,7 @@ function NeutralDockSkeleton() {
       data-home-loading-dock
       data-home-loading-dock-state="neutral"
       sx={{
-        width: 'min(100%, clamp(720px, 58vw, 1120px))',
+        width: 1,
         minHeight: { xs: 138, sm: 132 },
         mt: { xs: 3, md: 2 },
         p: { xs: 1.5, md: 2 },
@@ -119,61 +134,164 @@ function NeutralDockSkeleton() {
   );
 }
 
-function DockSkeleton({ layout }: { layout: HomeLoadingLayout }) {
+function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
+  const largeText = layout.template === 'single-column' && layout.dockStacked;
+  const groupItemCounts =
+    layout.dockGroupItemCounts ??
+    Array.from(
+      { length: 4 },
+      (_, groupIndex) =>
+        Math.floor(layout.dockItemCount / 4) + (groupIndex < layout.dockItemCount % 4 ? 1 : 0)
+    );
+  const renderedItemCount = groupItemCounts.reduce((total, count) => total + count, 0);
+
   return (
     <Box
       data-home-loading-dock
-      data-home-loading-dock-item-count={layout.dockItemCount}
+      data-home-loading-dock-item-count={renderedItemCount}
       data-home-loading-dock-stacked={layout.dockStacked ? 'true' : 'false'}
       sx={{
         width: 1,
-        minHeight: layout.dockStacked ? 169 : { xs: 138, sm: 132 },
+        maxWidth: layout.presentation === 'focused' ? 1280 : { md: 1280, xl: 1520 },
+        mx: 'auto',
+        minHeight: layout.dockStacked ? (largeText ? 540 : { xs: 315, sm: 540, lg: 315 }) : 138,
         mt: { xs: 3, md: 2 },
         p: { xs: 1.5, md: 2 },
         border: '1px solid rgba(255,255,255,0.20)',
         borderRadius: '16px',
         bgcolor: 'rgba(4,18,43,0.72)',
         display: 'grid',
-        alignContent: 'center',
+        containerName: 'flow-dock',
+        containerType: 'inline-size',
+        gridTemplateRows: 'auto minmax(0, 1fr)',
+        alignContent: 'stretch',
         gap: 1.5,
-        '@media (min-width: 900px)': {
-          width: `min(100%, ${layout.dockPreferredWidth}px)`,
+        '@media (min-width:1800px)': {
+          maxWidth: layout.presentation === 'focused' ? 1280 : 'none',
         },
       }}
     >
       <Box sx={{ ...skeletonLine, width: 42, height: 12 }} />
       <Box
+        data-home-loading-dock-groups
         sx={{
           display: 'grid',
-          gridTemplateColumns:
-            layout.dockItemCount <= 4
-              ? 'repeat(4, minmax(0, 1fr))'
-              : `repeat(${layout.dockItemCount}, 56px)`,
-          justifyContent: 'start',
-          gap: { xs: 1, sm: 1.5 },
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          gap: 1,
+          [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gridAutoRows: '1fr',
+            gap: 1.5,
+          },
+          [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+            gridTemplateColumns: largeText
+              ? 'repeat(2, minmax(0, 1fr))'
+              : 'repeat(4, minmax(0, 1fr))',
+          },
         }}
       >
-        {Array.from({ length: layout.dockItemCount }, (_, index) => (
+        {groupItemCounts.map((itemCount, groupIndex) => (
           <Box
-            key={index}
-            data-home-loading-dock-item
+            key={groupIndex}
+            data-home-loading-dock-group
             sx={{
+              display: 'contents',
               minWidth: 0,
-              display: 'grid',
-              justifyItems: 'center',
-              gap: 0.75,
+              height: '100%',
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.75,
+                px: 1.25,
+                py: 1,
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: '12px',
+                bgcolor: 'rgba(255,255,255,0.035)',
+                backgroundImage:
+                  'linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012) 62%, rgba(78,165,255,0.035))',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+              },
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                {
+                  px: 1.5,
+                  py: 1.25,
+                },
+              '@media (forced-colors: active)': {
+                borderColor: 'CanvasText',
+                bgcolor: 'Canvas',
+                backgroundImage: 'none',
+                boxShadow: 'none',
+              },
             }}
           >
             <Box
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '12px',
-                bgcolor: 'rgba(226,232,240,0.14)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                display: 'none',
+                minHeight: 18,
+                alignItems: 'center',
+                [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                  {
+                    display: 'flex',
+                  },
+              }}
+            >
+              <Box sx={{ ...skeletonLine, width: '42%', height: 8 }} />
+            </Box>
+            <Box
+              sx={{
+                ...skeletonLine,
+                display: 'none',
+                width: '68%',
+                minHeight: '1.25em',
+                height: 8,
+                [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                  {
+                    display: 'block',
+                  },
               }}
             />
-            <Box sx={{ ...skeletonLine, width: 34, height: 7 }} />
+            <Box
+              sx={{
+                display: 'contents',
+                gap: 0.75,
+                pt: 1,
+                [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                  {
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(auto-fill, ${HOME_LAUNCHPAD_TILE_WIDTH}px)`,
+                    justifyContent: 'start',
+                  },
+                [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                  {
+                    gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${HOME_LAUNCHPAD_TILE_WIDTH}px)`,
+                  },
+              }}
+            >
+              {Array.from({ length: itemCount }, (_, itemIndex) => (
+                <Box
+                  key={itemIndex}
+                  data-home-loading-dock-item
+                  sx={{
+                    minWidth: 0,
+                    minHeight: HOME_LAUNCHPAD_TILE_HEIGHT,
+                    display: 'grid',
+                    justifyItems: 'center',
+                    gap: 0.75,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '12px',
+                      bgcolor: 'rgba(226,232,240,0.14)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                    }}
+                  />
+                  <Box sx={{ ...skeletonLine, width: 34, height: 7 }} />
+                </Box>
+              ))}
+            </Box>
           </Box>
         ))}
       </Box>
@@ -232,7 +350,7 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
         sx={{
           position: 'relative',
           minHeight: { xs: 328, sm: 343, lg: 308 },
-          p: { xs: 2, sm: 3 },
+          p: { xs: 2, sm: 3, xl: 3.5 },
           overflow: 'hidden',
           borderRadius: '16px',
           bgcolor: '#061630',

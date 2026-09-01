@@ -57,8 +57,6 @@ export const SPACE_NAVIGATION: readonly SpaceNavigationGroup[] = [
   },
 ] as const;
 
-export const SPACE_DEFAULT_PATH = '/spaces/home';
-
 export function findSpaceView(pathname: string): SpaceView | undefined {
   for (const group of SPACE_NAVIGATION) {
     const item = group.items.find((candidate) => candidate.path === pathname);

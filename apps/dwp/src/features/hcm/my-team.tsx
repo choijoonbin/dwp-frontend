@@ -2,13 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Building2, ClipboardCheck, Network, UsersRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import {
-  ActionButton,
-  EmptyState,
-  ErrorState,
-  LoadingState,
-  SignalMetric,
-} from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, SignalMetric } from '@dwp-frontend/design-system';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
 import { getHrTeam } from '@dwp-frontend/shared-utils';
 
@@ -20,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
+import { HcmQueryState } from '../../components/hcm-query-state';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 export function MyTeam() {
   const { t } = useTranslation('hcm');
@@ -41,15 +36,12 @@ export function MyTeam() {
   const pendingCount = (team.data?.timePendingCount ?? 0) + (team.data?.absencePendingCount ?? 0);
 
   if (team.isLoading) {
-    return <LoadingState size="standard" label={t('myTeam.loading')} />;
+    return <HcmQueryState loading />;
   }
   if (team.isError) {
     return (
-      <ErrorState
-        size="standard"
-        title={t('common.loadError')}
-        description={t('myTeam.loadError')}
-        retryLabel={t('common.retry')}
+      <HcmQueryState
+        error={team.error}
         onRetry={() => void team.refetch()}
         retrying={team.isFetching}
       />

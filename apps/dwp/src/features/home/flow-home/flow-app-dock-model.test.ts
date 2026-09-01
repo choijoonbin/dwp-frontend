@@ -7,6 +7,7 @@ import type {
   LaunchpadLayout,
 } from '../../../components/workspace-composer/app-launchpad-model';
 import {
+  preserveFlowAppDockGroupSurfaces,
   resolveFlowAppDockModel,
   summarizeHiddenFlowAppNotifications,
 } from './flow-app-dock-model';
@@ -148,6 +149,54 @@ describe('Flow App Dock model', () => {
       totalValidItemCount: 17,
       totalValidAppCount: 17,
     });
+  });
+
+  it('preserves every configured group surface when compact selection leaves groups empty', () => {
+    const groups = ['work', 'connect', 'services', 'systems'].map(group);
+    const selectedGroups = resolveFlowAppDockModel({
+      apps: groups.map(({ id }) => app(`${id}-1`, id)),
+      groups,
+      layout: layout(Object.fromEntries(groups.map(({ id }) => [id, [`${id}-1`]]))),
+      itemLimit: 2,
+    }).groups;
+
+    expect(
+      preserveFlowAppDockGroupSurfaces(groups, selectedGroups).map(({ id, itemIds }) => [
+        id,
+        itemIds,
+      ])
+    ).toEqual([
+      ['work', ['work-1']],
+      ['connect', ['connect-1']],
+      ['services', []],
+      ['systems', []],
+    ]);
+  });
+
+  it('keeps the view projection to two five-item rows per governed group', () => {
+    const groups = [group('work'), group('connect')];
+    const workItems = Array.from({ length: 12 }, (_, index) => `work-${index + 1}`);
+    const connectItems = ['connect-1', 'connect-2'];
+    const apps = [
+      ...workItems.map((itemId) => app(itemId, 'work')),
+      ...connectItems.map((itemId) => app(itemId, 'connect')),
+    ];
+
+    const result = resolveFlowAppDockModel({
+      apps,
+      groups,
+      layout: layout({ work: workItems, connect: connectItems }),
+      itemLimit: 20,
+      itemLimitPerGroup: 10,
+    });
+
+    expect(result.groups.map(({ id, itemIds }) => [id, itemIds])).toEqual([
+      ['work', workItems.slice(0, 10)],
+      ['connect', connectItems],
+    ]);
+    expect(result.hiddenItemIds).toEqual(['work-11', 'work-12']);
+    expect(result.visibleItemCount).toBe(12);
+    expect(result.hiddenItemCount).toBe(2);
   });
 
   it('limits by leading group order when the budget is smaller than the non-empty group count', () => {

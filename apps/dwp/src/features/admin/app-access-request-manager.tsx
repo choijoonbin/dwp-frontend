@@ -314,6 +314,16 @@ export function AppAccessRequestManager() {
               setSelectedId(null);
             }}
             aria-label={t('appAccess.filterLabel')}
+            sx={{
+              maxWidth: '100%',
+              overflowX: 'auto',
+              alignSelf: 'flex-start',
+              '& .MuiToggleButton-root': {
+                flex: '0 0 auto',
+                minHeight: 44,
+                whiteSpace: 'nowrap',
+              },
+            }}
           >
             {STATES.map((candidate) => (
               <ToggleButton key={candidate} value={candidate}>

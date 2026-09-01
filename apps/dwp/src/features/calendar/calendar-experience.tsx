@@ -14,15 +14,6 @@ import type { Theme } from '@mui/material/styles';
 export type CalendarCanvasArchetype =
   'temporal' | 'command' | 'queue' | 'coach' | 'policy' | 'master-detail';
 
-const CALENDAR_CANVAS_WIDTHS: Record<CalendarCanvasArchetype, number | 'none'> = {
-  temporal: 'none',
-  command: 1360,
-  queue: 1280,
-  coach: 1280,
-  policy: 1160,
-  'master-detail': 1440,
-};
-
 export function CalendarCanvas({
   archetype,
   children,
@@ -30,13 +21,9 @@ export function CalendarCanvas({
   archetype: CalendarCanvasArchetype;
   children: ReactNode;
 }) {
-  const maxWidth = CALENDAR_CANVAS_WIDTHS[archetype];
   return (
     <PageCanvas>
-      <Box
-        data-calendar-canvas={archetype}
-        sx={{ width: 1, minWidth: 0, maxWidth, mx: maxWidth === 'none' ? 0 : 'auto' }}
-      >
+      <Box data-calendar-canvas={archetype} sx={{ width: 1, minWidth: 0 }}>
         {children}
       </Box>
     </PageCanvas>

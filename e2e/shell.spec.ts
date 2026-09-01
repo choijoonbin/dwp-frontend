@@ -503,10 +503,12 @@ test('unauthenticated users see the login shell without business navigation', as
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
-test('local sign-in stays on the login surface until tenant branding is ready', async ({
+test('local sign-in submits browser-autofilled credentials once and waits for tenant branding', async ({
   page,
 }) => {
   let authenticated = false;
+  let loginRequestCount = 0;
+  let submittedCredentials: Record<string, unknown> | null = null;
   let signalBrandingRequest = () => undefined;
   let releaseBranding = () => undefined;
   const brandingRequested = new Promise<void>((resolve) => {
@@ -568,6 +570,8 @@ test('local sign-in stays on the login surface until tenant branding is ready', 
     })
   );
   await page.route('**/api/auth/login', (route) => {
+    loginRequestCount += 1;
+    submittedCredentials = route.request().postDataJSON() as Record<string, unknown>;
     authenticated = true;
     return route.fulfill({
       contentType: 'application/json',
@@ -590,6 +594,18 @@ test('local sign-in stays on the login surface until tenant branding is ready', 
 
   await page.goto('/');
   await expect(page).toHaveURL(/\/sign-in/);
+  const signInForm = page.locator('#dwp-sign-in-form');
+  const emailInput = page.locator('#dwp-email');
+  const passwordInput = page.locator('#dwp-password');
+  await expect(emailInput).toBeVisible();
+  await expect(passwordInput).toBeVisible();
+  await expect(emailInput).not.toBeFocused();
+  await expect(signInForm).toHaveAttribute('name', 'dwp-sign-in');
+  await expect(signInForm).toHaveAttribute('method', 'post');
+  await expect(signInForm).toHaveAttribute('action', '/api/auth/login');
+  await expect(signInForm).toHaveAttribute('autocomplete', 'on');
+  await expect(emailInput).toHaveAttribute('autocomplete', 'username');
+  await expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
   await page.evaluate(() => {
     const state = window as typeof window & {
       __dwpShellBootObserved?: boolean;
@@ -604,10 +620,30 @@ test('local sign-in stays on the login surface until tenant branding is ready', 
     state.__dwpShellBootObserver.observe(document.body, { childList: true, subtree: true });
   });
 
-  await page.getByRole('textbox', { name: /^Work email/ }).fill('admin@dwp.local');
-  await page.getByRole('textbox', { name: /^Password/ }).fill('access-policy-test');
+  await page.evaluate(
+    ({ email, password }) => {
+      const emailInput = document.querySelector<HTMLInputElement>('#dwp-email');
+      const passwordInput = document.querySelector<HTMLInputElement>('#dwp-password');
+      if (!emailInput || !passwordInput) throw new Error('Sign-in inputs were not rendered.');
+      emailInput.value = email;
+      passwordInput.value = password;
+    },
+    { email: 'admin@dwp.local', password: 'access-policy-test' }
+  );
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await brandingRequested;
+  await page.evaluate(() => {
+    const form = document.querySelector<HTMLFormElement>('#dwp-sign-in-form');
+    if (!form) throw new Error('Sign-in form was not rendered.');
+    form.requestSubmit();
+    form.requestSubmit();
+  });
+
+  expect(loginRequestCount).toBe(1);
+  expect(submittedCredentials).toMatchObject({
+    email: 'admin@dwp.local',
+    password: 'access-policy-test',
+  });
 
   await expect(page).toHaveURL(/\/sign-in/);
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();

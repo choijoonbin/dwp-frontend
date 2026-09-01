@@ -27,13 +27,13 @@ import {
   ActionIconButton,
   FormField,
   GuidedEmptyState,
+  LoadingState,
   PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
@@ -423,9 +423,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                 {t('organization.loadError')}
               </Alert>
             ) : query.isLoading ? (
-              <Box sx={{ minHeight: 280, display: 'grid', placeItems: 'center' }}>
-                <CircularProgress size={25} />
-              </Box>
+              <LoadingState label={t('common:labels.loading')} size="page" embedded />
             ) : query.isError ? (
               <Alert
                 severity="error"

@@ -284,8 +284,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
   },
 ];
 
-export const ADMIN_DEFAULT_PATH = '/admin/identity/access';
-
 const ADMIN_ITEMS = ADMIN_NAVIGATION.flatMap((group) => group.items);
 
 const LEGACY_ADMIN_ITEMS: AdminNavigationItem[] = [
@@ -307,8 +305,4 @@ export function findAdminNavigationItem(
   return [...ADMIN_ITEMS, ...LEGACY_ADMIN_ITEMS].find(
     (item) => item.section === section && item.path === requestedPath
   );
-}
-
-export function getLegacyAdminPath(view: string | null): string {
-  return ADMIN_ITEMS.find((item) => item.view === view)?.path ?? ADMIN_DEFAULT_PATH;
 }

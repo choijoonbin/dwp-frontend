@@ -136,3 +136,17 @@ html[data-dwp-transition='session-exit']::view-transition-group(root) {
     animation: none !important;
   }
 }
+
+html[data-motion='reduced'] *,
+html[data-motion='reduced'] *::before,
+html[data-motion='reduced'] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+html[data-motion='reduced'][data-dwp-transition='session-exit']::view-transition-old(root),
+html[data-motion='reduced'][data-dwp-transition='session-exit']::view-transition-new(root) {
+  animation: none !important;
+}

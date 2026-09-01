@@ -5,12 +5,36 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import type { NormalizedHomeContribution } from '../contributions';
+import type { HomeContributionBucketState, NormalizedHomeContribution } from '../contributions';
 
 type ContextualVisualProps = Readonly<{
   sectionKey: 'response' | 'request';
   items: readonly NormalizedHomeContribution[];
+  state?: HomeContributionBucketState;
 }>;
+
+export type ResponsePriorityKey = 'critical' | 'high' | 'standard';
+
+export type ResponsePrioritySummary = Readonly<{
+  total: number;
+  counts: Readonly<Record<ResponsePriorityKey, number>>;
+}>;
+
+export function summarizeResponsePriorities(
+  items: readonly NormalizedHomeContribution[]
+): ResponsePrioritySummary {
+  const counts: Record<ResponsePriorityKey, number> = { critical: 0, high: 0, standard: 0 };
+  for (const item of items) {
+    const count = Math.max(1, item.count);
+    const priority: ResponsePriorityKey =
+      item.priority === 'CRITICAL' ? 'critical' : item.priority === 'HIGH' ? 'high' : 'standard';
+    counts[priority] += count;
+  }
+  return {
+    total: counts.critical + counts.high + counts.standard,
+    counts,
+  };
+}
 
 function requestStage(status: string): 0 | 1 | 2 {
   const normalized = status.toLocaleLowerCase('en-US');
@@ -93,79 +117,145 @@ function RequestJourney({ item }: { item: NormalizedHomeContribution }) {
   );
 }
 
-function ResponseDistribution({ items }: { items: readonly NormalizedHomeContribution[] }) {
+function ResponsePrioritySummary({
+  items,
+  state,
+}: {
+  items: readonly NormalizedHomeContribution[];
+  state?: HomeContributionBucketState;
+}) {
   const { t } = useTranslation('home');
-  const counts = items.reduce(
-    (result, item) => {
-      const count = Math.max(1, item.count);
-      if (item.priority === 'CRITICAL' || item.priority === 'HIGH') result.urgent += count;
-      else if (item.priority === 'MEDIUM') result.actionable += count;
-      else result.pending += count;
-      return result;
-    },
-    { urgent: 0, actionable: 0, pending: 0 }
-  );
-  const total = Math.max(1, counts.urgent + counts.actionable + counts.pending);
+  const summary = summarizeResponsePriorities(items);
   const segments = [
     {
-      key: 'urgent',
-      count: counts.urgent,
-      label: t('flow.purpose.status.urgent'),
+      key: 'critical' as const,
+      count: summary.counts.critical,
+      label: t('flow.purpose.response.priority.critical'),
       color: 'error.main',
     },
     {
-      key: 'actionable',
-      count: counts.actionable,
-      label: t('flow.purpose.status.actionable'),
+      key: 'high' as const,
+      count: summary.counts.high,
+      label: t('flow.purpose.response.priority.high'),
       color: 'warning.main',
     },
     {
-      key: 'pending',
-      count: counts.pending,
-      label: t('flow.purpose.status.pending'),
+      key: 'standard' as const,
+      count: summary.counts.standard,
+      label: t('flow.purpose.response.priority.standard'),
       color: 'info.main',
     },
   ].filter((segment) => segment.count > 0);
-  const segmentSummary = segments.map((segment) => `${segment.label} ${segment.count}`).join(', ');
-  const totalLabel = t('flow.purpose.response.distributionTotal', { count: total });
+  const segmentSummary = segments
+    .map((segment) =>
+      t('flow.purpose.response.priorityCount', {
+        label: segment.label,
+        count: segment.count,
+      })
+    )
+    .join(', ');
+  const partial = state === 'PARTIAL' || items.some((item) => item.freshness.state === 'STALE');
+  const totalLabel = t(
+    partial ? 'flow.purpose.response.availableTotal' : 'flow.purpose.response.waitingTotal',
+    { count: summary.total }
+  );
+  const singlePriority = segments.length === 1;
 
   return (
     <Box
       data-home-response-distribution
-      data-home-response-total={total}
-      role="img"
-      aria-label={t('flow.purpose.response.distributionLabel', {
+      data-home-response-priority-summary
+      data-home-response-total={summary.total}
+      role="group"
+      aria-label={t('flow.purpose.response.prioritySummary', {
         segments: segmentSummary,
-        count: total,
+        total: totalLabel,
       })}
     >
-      <Box
-        aria-hidden="true"
-        sx={{
-          display: 'flex',
-          width: 1,
-          height: 5,
-          overflow: 'hidden',
-          borderRadius: 99,
-          bgcolor: 'action.hover',
-        }}
+      <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          fontWeight={700}
+          sx={{ fontSize: 10.5 }}
+        >
+          {t('flow.purpose.response.priorityLabel')}
+        </Typography>
+        <Typography
+          data-home-response-total-label
+          variant="caption"
+          color={partial ? 'warning.main' : 'text.secondary'}
+          fontWeight={700}
+          sx={{ ml: 'auto', fontSize: 10.5 }}
+        >
+          {totalLabel}
+        </Typography>
+      </Stack>
+
+      {!singlePriority && (
+        <Box
+          data-home-response-priority-track
+          aria-hidden="true"
+          sx={{
+            display: 'flex',
+            width: 1,
+            height: 7,
+            mt: 0.55,
+            overflow: 'hidden',
+            borderRadius: 99,
+            bgcolor: 'action.hover',
+            border: 1,
+            borderColor: 'divider',
+            '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+          }}
+        >
+          {segments.map((segment) => (
+            <Box
+              key={segment.key}
+              sx={{
+                width: `${(segment.count / summary.total) * 100}%`,
+                minWidth: 4,
+                bgcolor: segment.color,
+                opacity: 0.72,
+                '@media (forced-colors: active)': {
+                  opacity: 1,
+                  bgcolor: 'CanvasText',
+                  borderInlineEnd: '1px solid Canvas',
+                },
+              }}
+            />
+          ))}
+        </Box>
+      )}
+
+      <Stack
+        direction="row"
+        alignItems="center"
+        gap={1.25}
+        flexWrap="wrap"
+        sx={{ mt: singlePriority ? 0.5 : 0.6 }}
       >
         {segments.map((segment) => (
-          <Box
+          <Stack
             key={segment.key}
-            sx={{
-              width: `${(segment.count / total) * 100}%`,
-              minWidth: 4,
-              bgcolor: segment.color,
-              opacity: 0.68,
-              '@media (forced-colors: active)': { opacity: 1 },
-            }}
-          />
-        ))}
-      </Box>
-      <Stack direction="row" alignItems="center" gap={1.25} flexWrap="wrap" sx={{ mt: 0.65 }}>
-        {segments.map((segment) => (
-          <Stack key={segment.key} direction="row" alignItems="center" gap={0.45}>
+            data-home-response-priority={segment.key}
+            direction="row"
+            alignItems="center"
+            gap={0.45}
+            sx={
+              singlePriority
+                ? {
+                    minHeight: 24,
+                    px: 0.75,
+                    borderRadius: 99,
+                    bgcolor: 'background.paper',
+                    border: 1,
+                    borderColor: 'divider',
+                    '@media (forced-colors: active)': { borderColor: 'CanvasText' },
+                  }
+                : undefined
+            }
+          >
             <Box
               aria-hidden="true"
               sx={(theme) => ({
@@ -176,26 +266,25 @@ function ResponseDistribution({ items }: { items: readonly NormalizedHomeContrib
                 boxShadow: `0 0 0 3px ${alpha(theme.palette.background.paper, 0.9)}`,
               })}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10.5 }}>
-              {segment.label} {segment.count}
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontWeight={650}
+              sx={{ fontSize: 10.5 }}
+            >
+              {t('flow.purpose.response.priorityCount', {
+                label: segment.label,
+                count: segment.count,
+              })}
             </Typography>
           </Stack>
         ))}
-        <Typography
-          data-home-response-total-label
-          variant="caption"
-          color="text.secondary"
-          fontWeight={700}
-          sx={{ ml: 'auto', fontSize: 10.5 }}
-        >
-          {totalLabel}
-        </Typography>
       </Stack>
     </Box>
   );
 }
 
-export function HomePurposeContextualVisual({ sectionKey, items }: ContextualVisualProps) {
+export function HomePurposeContextualVisual({ sectionKey, items, state }: ContextualVisualProps) {
   if (items.length === 0) return null;
   return (
     <Box
@@ -214,7 +303,7 @@ export function HomePurposeContextualVisual({ sectionKey, items }: ContextualVis
       {sectionKey === 'request' ? (
         <RequestJourney item={items[0]!} />
       ) : (
-        <ResponseDistribution items={items} />
+        <ResponsePrioritySummary items={items} state={state} />
       )}
     </Box>
   );

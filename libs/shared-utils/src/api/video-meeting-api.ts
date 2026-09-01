@@ -2,16 +2,19 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 import { VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
+import type { VideoMeetingParticipant, VideoMeetingRole } from './video-meeting-lifecycle-contract';
 
 export { leaveVideoMeeting, VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
+export type {
+  VideoMeetingAttendanceState,
+  VideoMeetingParticipant,
+  VideoMeetingRole,
+} from './video-meeting-lifecycle-contract';
 
 export type VideoMeetingLifecycleState =
   'DRAFT' | 'SCHEDULED' | 'LOBBY' | 'LIVE' | 'ENDED' | 'CANCELLED';
 export type VideoMeetingAccessScope = 'INTERNAL' | 'INVITED' | 'PUBLIC_CODE';
-export type VideoMeetingRole = 'ORGANIZER' | 'CO_HOST' | 'PRESENTER' | 'ATTENDEE' | 'GUEST';
 export type VideoMeetingJoinState = 'WAITING' | 'APPROVED' | 'DENIED' | 'EXPIRED';
-export type VideoMeetingAttendanceState =
-  'INVITED' | 'REQUESTED' | 'ADMITTED' | 'DENIED' | 'JOINED' | 'LEFT';
 export type VideoMeetingArtifactType =
   'RECORDING' | 'TRANSCRIPT' | 'SUMMARY' | 'ATTENDANCE' | 'CHAT_EXPORT';
 export type VideoMeetingArtifactState =
@@ -70,24 +73,6 @@ export type VideoMeetingPerson = {
   displayName: string;
   jobTitle?: string | null;
   organizationName?: string | null;
-};
-
-export type VideoMeetingParticipant = {
-  participantId: string;
-  userId?: number | null;
-  personPublicId?: string | null;
-  emailAddress?: string | null;
-  displayName: string;
-  jobTitle?: string | null;
-  organizationName?: string | null;
-  participantRole: VideoMeetingRole;
-  attendanceState: VideoMeetingAttendanceState;
-  canSelfUnmute: boolean;
-  joinRequestedAt?: string | null;
-  admittedAt?: string | null;
-  joinedAt?: string | null;
-  leftAt?: string | null;
-  version: number;
 };
 
 export type VideoMeetingSummary = {

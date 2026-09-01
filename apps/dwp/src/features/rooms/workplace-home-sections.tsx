@@ -26,7 +26,6 @@ import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -37,14 +36,11 @@ import {
   WorkplaceHomeSectionShell as SectionShell,
 } from './workplace-home-section-frame';
 import { workplaceDecisionActionProps } from './workplace-decision-status';
-import { WorkplaceHomeWorkloadBar } from './workplace-home-workload-bar';
 
 import type {
   WorkplaceHomeAgendaItem,
   WorkplaceHomeAttention,
-  WorkplaceHomeAvailability,
   WorkplaceHomeModel,
-  WorkplaceHomeWeekDay,
 } from './workplace-home-model';
 import type { WorkplaceResourceType } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
@@ -136,64 +132,6 @@ function nextActionCopy(model: WorkplaceHomeModel, t: ReturnType<typeof useTrans
   };
 }
 
-function AvailabilityPulse({ items }: { items: readonly WorkplaceHomeAvailability[] }) {
-  const { t } = useTranslation('rooms');
-  return (
-    <Stack component="ul" spacing={1.25} sx={{ p: 0, m: 0, listStyle: 'none' }}>
-      {items.slice(0, 4).map((item) => {
-        const Icon = RESOURCE_ICONS[item.type];
-        const percent = item.total ? Math.round((item.available / item.total) * 100) : 0;
-        return (
-          <Box component="li" key={item.type}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
-              <Stack direction="row" alignItems="center" spacing={0.75} minWidth={0}>
-                <Icon size={14} aria-hidden="true" />
-                <Typography
-                  variant="caption"
-                  fontWeight={700}
-                  data-testid="workplace-availability-label"
-                >
-                  {t(`workplace.resourceTypes.${item.type}`)}
-                </Typography>
-              </Stack>
-              <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                {t('workplace.home.availability.pulseCount', {
-                  open: item.available,
-                  bookable: item.bookable,
-                })}
-              </Typography>
-            </Stack>
-            <Box
-              role="meter"
-              aria-label={t('workplace.home.availability.meterLabel', {
-                type: t(`workplace.resourceTypes.${item.type}`),
-                available: item.available,
-                bookable: item.bookable,
-                total: item.total,
-              })}
-              aria-valuemin={0}
-              aria-valuemax={item.total}
-              aria-valuenow={item.available}
-              sx={{
-                mt: 0.65,
-                height: 6,
-                bgcolor: 'action.hover',
-                overflow: 'hidden',
-                borderRadius: 0.5,
-              }}
-            >
-              <Box
-                aria-hidden="true"
-                sx={{ width: `${percent}%`, height: 1, bgcolor: 'success.main' }}
-              />
-            </Box>
-          </Box>
-        );
-      })}
-    </Stack>
-  );
-}
-
 export function WorkplaceDayBrief({
   model,
   availabilityState,
@@ -245,17 +183,22 @@ export function WorkplaceDayBrief({
       data-testid="workplace-day-brief"
       sx={(theme) => ({
         mt: 3,
-        minHeight: 218,
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.55fr) minmax(300px, 0.75fr)' },
-        border: 1,
+        borderTop: 1,
+        borderBottom: 1,
         borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.025),
+        bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.04),
         overflow: 'hidden',
       })}
     >
-      <Box sx={{ px: { xs: 2.25, md: 3.25 }, py: { xs: 2.5, md: 3 }, minWidth: 0 }}>
+      <Box
+        sx={{
+          px: { xs: 2.25, md: 3.25 },
+          pt: { xs: 2.75, md: 3.5 },
+          pb: { xs: 2.5, md: 3 },
+          minWidth: 0,
+          maxWidth: 980,
+        }}
+      >
         <Stack direction="row" spacing={0.75} alignItems="center" color="primary.main">
           {checkInAction ? <LogIn size={16} /> : <CalendarClock size={16} />}
           <Typography variant="overline">{copy.eyebrow}</Typography>
@@ -372,48 +315,140 @@ export function WorkplaceDayBrief({
         )}
       </Box>
       <Box
-        sx={{
-          minWidth: 0,
-          px: { xs: 2.25, md: 2.75 },
-          py: { xs: 2.25, md: 3 },
-          borderTop: { xs: 1, lg: 0 },
-          borderLeft: { xs: 0, lg: 1 },
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-        }}
+        component="div"
+        data-testid="workplace-day-context"
+        sx={(theme) => ({
+          m: 0,
+          px: { xs: 2.25, md: 3.25 },
+          py: 2,
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            md: 'minmax(240px, 1.4fr) repeat(3, minmax(140px, 0.7fr))',
+          },
+          gap: { xs: 2, md: 3 },
+          bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.035),
+        })}
       >
-        <Typography variant="caption" color="text.secondary" fontWeight={700}>
-          {t('workplace.home.availability.scope')}
-        </Typography>
-        <Typography variant="subtitle1" fontWeight={800} sx={{ mt: 0.25 }}>
-          {[model.selectedSiteName, model.selectedFloorName].filter(Boolean).join(' · ') ||
-            t('workplace.home.availability.noScope')}
-        </Typography>
         {availabilityState !== 'READY' ? (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
-            {t(
-              availabilityState === 'STALE'
-                ? 'workplace.home.availability.staleDescription'
-                : 'workplace.home.availability.unavailableDescription'
-            )}
-          </Typography>
-        ) : model.selectedFloorPlan ? (
-          <Box
-            component="img"
-            src={model.selectedFloorPlan}
-            alt={t('workplace.home.availability.floorPlanAlt', {
-              scope: [model.selectedSiteName, model.selectedFloorName].filter(Boolean).join(' · '),
-            })}
-            sx={{ mt: 1.5, width: 1, height: 112, objectFit: 'contain', bgcolor: 'action.hover' }}
-          />
-        ) : model.availability.length ? (
-          <Box sx={{ mt: 1.5 }}>
-            <AvailabilityPulse items={model.availability} />
-          </Box>
+          <Stack
+            component="div"
+            direction="row"
+            spacing={1}
+            alignItems="flex-start"
+            sx={{ gridColumn: '1 / -1' }}
+          >
+            <AlertCircle size={17} aria-hidden="true" />
+            <Box component="div">
+              <Typography
+                component="span"
+                variant="caption"
+                color="text.secondary"
+                fontWeight={700}
+              >
+                {t('workplace.home.availability.scope')}
+              </Typography>
+              <Typography component="p" variant="body2" sx={{ m: 0, mt: 0.25 }}>
+                {t(
+                  availabilityState === 'STALE'
+                    ? 'workplace.home.availability.staleDescription'
+                    : 'workplace.home.availability.unavailableDescription'
+                )}
+              </Typography>
+            </Box>
+          </Stack>
         ) : (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
-            {t('workplace.home.availability.noData')}
-          </Typography>
+          <>
+            <Stack
+              component="div"
+              direction="row"
+              spacing={1}
+              alignItems="flex-start"
+              sx={{ gridColumn: { xs: '1 / -1', md: 'auto' } }}
+            >
+              <MapPinned size={17} aria-hidden="true" />
+              <Box component="div" minWidth={0}>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={700}
+                >
+                  {t('workplace.home.availability.locationMetric')}
+                </Typography>
+                <Typography component="p" variant="body2" fontWeight={800} sx={{ m: 0, mt: 0.2 }}>
+                  {[model.selectedSiteName, model.selectedFloorName].filter(Boolean).join(' · ') ||
+                    t('workplace.home.availability.noScope')}
+                </Typography>
+              </Box>
+            </Stack>
+            {(model.selectedSiteName || model.selectedFloorName) && (
+              <>
+                <Stack component="div" direction="row" spacing={1} alignItems="flex-start">
+                  <Clock3 size={17} aria-hidden="true" />
+                  <Box component="div">
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                      fontWeight={700}
+                    >
+                      {t('workplace.home.availability.windowMetric')}
+                    </Typography>
+                    <Typography
+                      component="p"
+                      variant="body2"
+                      fontWeight={800}
+                      sx={{ m: 0, mt: 0.2 }}
+                    >
+                      {t('workplace.home.availability.nextHour')}
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Stack component="div" direction="row" spacing={1} alignItems="flex-start">
+                  <Armchair size={17} aria-hidden="true" />
+                  <Box component="div">
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                      fontWeight={700}
+                    >
+                      {t('workplace.home.availability.physicalOpenMetric')}
+                    </Typography>
+                    <Typography
+                      component="p"
+                      data-testid="workplace-physical-open-count"
+                      sx={{ m: 0, mt: 0.2, fontSize: '1.25rem', lineHeight: 1, fontWeight: 800 }}
+                    >
+                      {model.availableCount}
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Stack component="div" direction="row" spacing={1} alignItems="flex-start">
+                  <CheckCircle2 size={17} aria-hidden="true" />
+                  <Box component="div">
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                      fontWeight={700}
+                    >
+                      {t('workplace.home.availability.initialChecksMetric')}
+                    </Typography>
+                    <Typography
+                      component="p"
+                      data-testid="workplace-initial-checks-count"
+                      color="primary.main"
+                      sx={{ m: 0, mt: 0.2, fontSize: '1.25rem', lineHeight: 1, fontWeight: 800 }}
+                    >
+                      {model.bookableCount}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </>
+            )}
+          </>
         )}
       </Box>
     </Box>
@@ -730,127 +765,6 @@ export function WorkplaceReadySpaces({
           </Typography>
         </Box>
       )}
-    </SectionShell>
-  );
-}
-
-export function WorkplaceWeekRhythm({
-  week,
-  complete,
-}: {
-  week: readonly WorkplaceHomeWeekDay[];
-  complete: boolean;
-}) {
-  const { t, i18n } = useTranslation('rooms');
-  const locale = resolveSupportedLocale(i18n.resolvedLanguage);
-  return (
-    <SectionShell labelledBy="workplace-week-rhythm">
-      <SectionHeader
-        id="workplace-week-rhythm"
-        icon={CalendarClock}
-        title={t('workplace.home.week.title')}
-        description={t('workplace.home.week.description')}
-        action={
-          <Stack direction="row" spacing={1.25} alignItems="center" color="text.secondary">
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <Box sx={{ width: 8, height: 8, bgcolor: 'primary.main' }} />
-              <Typography variant="caption">{t('workplace.home.week.meetings')}</Typography>
-            </Stack>
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <Box sx={{ width: 8, height: 8, bgcolor: 'success.main' }} />
-              <Typography variant="caption">{t('workplace.home.week.focus')}</Typography>
-            </Stack>
-          </Stack>
-        }
-      />
-      <Divider />
-      {!complete && (
-        <Typography
-          color="warning.main"
-          variant="caption"
-          sx={{ display: 'block', px: 2, pt: 1.5 }}
-        >
-          {t('workplace.home.week.partial')}
-        </Typography>
-      )}
-      <Box
-        component="ol"
-        sx={{
-          p: 0,
-          m: 0,
-          listStyle: 'none',
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, minmax(0, 1fr))',
-            lg: 'repeat(5, minmax(0, 1fr))',
-          },
-        }}
-      >
-        {week.map((day, index) => (
-          <Box
-            component="li"
-            key={day.date}
-            sx={(theme) => ({
-              minWidth: 0,
-              px: 1.75,
-              py: 1.7,
-              borderTop: {
-                xs: index ? 1 : 0,
-                sm: index > 1 ? 1 : 0,
-                lg: 0,
-              },
-              borderLeft: {
-                xs: 0,
-                sm: index % 2 ? 1 : 0,
-                lg: index ? 1 : 0,
-              },
-              borderColor: 'divider',
-              bgcolor: day.current
-                ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.055)
-                : 'transparent',
-            })}
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
-              <Typography variant="body2" fontWeight={day.current ? 850 : 700}>
-                {formatDate(
-                  `${day.date}T00:00:00Z`,
-                  { weekday: 'short', month: 'numeric', day: 'numeric', timeZone: 'UTC' },
-                  locale
-                )}
-              </Typography>
-              {day.current && <Chip size="small" label={t('workplace.home.week.today')} />}
-            </Stack>
-            <Box sx={{ mt: 1.15 }}>
-              <WorkplaceHomeWorkloadBar
-                day={day}
-                label={t('workplace.home.week.workloadLabel', {
-                  meetingMinutes: day.meetingMinutes,
-                  focusMinutes: day.focusMinutes,
-                })}
-              />
-            </Box>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', mt: 0.85 }}
-            >
-              {day.reservationCount
-                ? t('workplace.home.week.reservations', { count: day.reservationCount })
-                : t(
-                    complete
-                      ? 'workplace.home.week.noReservation'
-                      : 'workplace.home.week.unverified'
-                  )}
-            </Typography>
-            {day.locations.length > 0 && (
-              <Typography variant="caption" fontWeight={700} sx={{ display: 'block', mt: 0.25 }}>
-                {day.locations.join(' · ')}
-              </Typography>
-            )}
-          </Box>
-        ))}
-      </Box>
     </SectionShell>
   );
 }

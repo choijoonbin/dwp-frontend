@@ -75,6 +75,7 @@ test('tenant administration shell preserves Korean context in dark mode', async 
 
 test('provider control plane keeps global scope visually distinct', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium');
+  await page.clock.install({ time: new Date('2026-08-11T00:00:30Z') });
   await page.setViewportSize({ width: 1280, height: 800 });
   await mockShellSession(page, ['PROVIDER_ADMIN'], {
     locale: 'en',

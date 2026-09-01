@@ -440,7 +440,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
       ? t('tenantDetail.live.loadedWithoutSourceTime')
       : t(`tenantDetail.live.${liveState}`);
   return (
-    <Stack gap={2.5} sx={{ width: 1, maxWidth: 1600, mx: 'auto' }}>
+    <Stack data-testid="provider-tenant-detail-canvas" gap={2.5} sx={{ width: 1, minWidth: 0 }}>
       <Box>
         <Button
           size="small"

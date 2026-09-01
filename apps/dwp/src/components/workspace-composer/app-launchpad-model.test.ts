@@ -14,6 +14,7 @@ import {
   moveLaunchpadItemToGroup,
   mergeEntitledLaunchpadProjection,
   placeLaunchpadApp,
+  reapplyEntitledLaunchpadProjection,
   reconcileLaunchpadLayout,
   removeAppFromLaunchpadFolder,
   renameLaunchpadFolder,
@@ -405,6 +406,275 @@ describe('personal home launchpad layout', () => {
 
     expect(saved.groups.work).toEqual(['future-a', 'dwp-work', 'future-b', 'dwp-activity']);
     expect(saved.hiddenAppIds).toEqual(['dwp-communications']);
+  });
+
+  it('atomically restores a locally edited folder after a concurrent dissolution', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-ask', 'dwp-activity'].includes(app.id)
+    );
+    const base = {
+      version: 1 as const,
+      groups: { work: ['focus-folder', 'dwp-activity'] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const edited = {
+      ...base,
+      folders: {
+        'focus-folder': {
+          ...base.folders['focus-folder'],
+          appIds: ['dwp-ask', 'dwp-work'],
+        },
+      },
+    };
+    const latest = {
+      version: 1 as const,
+      groups: { work: ['dwp-work', 'dwp-ask', 'dwp-activity'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved.groups.work).toEqual(['focus-folder', 'dwp-activity']);
+    expect(saved.folders['focus-folder']?.appIds).toEqual(['dwp-ask', 'dwp-work']);
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('atomically restores unchanged members when a local folder addition conflicts with dissolution', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-ask', 'dwp-activity'].includes(app.id)
+    );
+    const base = {
+      version: 1 as const,
+      groups: { work: ['focus-folder', 'dwp-activity'] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const edited = {
+      ...base,
+      groups: { work: ['focus-folder'] },
+      folders: {
+        'focus-folder': {
+          ...base.folders['focus-folder'],
+          appIds: ['dwp-work', 'dwp-ask', 'dwp-activity'],
+        },
+      },
+    };
+    const latest = {
+      version: 1 as const,
+      groups: { work: ['dwp-work', 'dwp-ask', 'dwp-activity'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved.groups.work).toEqual(['focus-folder']);
+    expect(saved.folders['focus-folder']?.appIds).toEqual(['dwp-work', 'dwp-ask', 'dwp-activity']);
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('atomically restores a local folder reorder after a concurrent dissolution', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-ask', 'dwp-activity'].includes(app.id)
+    );
+    const base = {
+      version: 1 as const,
+      groups: { work: ['focus-folder', 'dwp-activity'] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const edited = {
+      ...base,
+      groups: { work: ['dwp-activity', 'focus-folder'] },
+    };
+    const latest = {
+      version: 1 as const,
+      groups: { work: ['dwp-work', 'dwp-ask', 'dwp-activity'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved.groups.work).toEqual(['dwp-activity', 'focus-folder']);
+    expect(saved.folders['focus-folder']?.appIds).toEqual(['dwp-work', 'dwp-ask']);
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('keeps folder metadata bound to the locally chosen token placement', () => {
+    const apps = HOME_APPS.filter((app) =>
+      ['dwp-work', 'dwp-ask', 'dwp-activity'].includes(app.id)
+    );
+    const base = {
+      version: 1 as const,
+      groups: { work: ['focus-folder', 'dwp-activity'], connect: [] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const edited = {
+      ...base,
+      groups: { work: ['dwp-activity', 'focus-folder'], connect: [] },
+    };
+    const latest = {
+      ...base,
+      groups: { work: ['dwp-activity'], connect: ['focus-folder'] },
+      folders: {
+        'focus-folder': {
+          ...base.folders['focus-folder'],
+          groupId: 'connect',
+        },
+      },
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved.groups).toEqual({ work: ['dwp-activity', 'focus-folder'], connect: [] });
+    expect(saved.folders['focus-folder']?.groupId).toBe('work');
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('keeps the latest placement when entitlement loss makes local folder replay invalid', () => {
+    const apps = HOME_APPS.filter((app) => app.id === 'dwp-ask');
+    const base = {
+      version: 1 as const,
+      groups: { work: ['focus-folder'] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const edited = {
+      ...base,
+      folders: {
+        'focus-folder': {
+          ...base.folders['focus-folder'],
+          name: 'My focus',
+        },
+      },
+    };
+    const latest = {
+      version: 1 as const,
+      groups: { work: ['dwp-ask'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved).toEqual(latest);
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('keeps an independent local hide when entitlement loss prevents folder replay', () => {
+    const apps = HOME_APPS.filter((app) => ['dwp-ask', 'dwp-activity'].includes(app.id));
+    const base = {
+      version: 1 as const,
+      groups: { work: ['focus-folder'] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask', 'dwp-activity'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const edited = {
+      ...base,
+      folders: {
+        'focus-folder': {
+          ...base.folders['focus-folder'],
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: ['dwp-activity'],
+    };
+    const latest = {
+      version: 1 as const,
+      groups: { work: ['dwp-ask', 'dwp-activity'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved).toEqual({
+      version: 1,
+      groups: { work: ['dwp-ask'] },
+      folders: {},
+      hiddenAppIds: ['dwp-activity'],
+    });
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
+  });
+
+  it('keeps the latest placement when entitlement loss invalidates a new local folder', () => {
+    const apps = HOME_APPS.filter((app) => app.id === 'dwp-ask');
+    const base = {
+      version: 1 as const,
+      groups: { work: ['dwp-work', 'dwp-ask'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+    const edited = {
+      version: 1 as const,
+      groups: { work: ['focus-folder'] },
+      folders: {
+        'focus-folder': {
+          id: 'focus-folder',
+          name: 'Focus',
+          groupId: 'work',
+          appIds: ['dwp-work', 'dwp-ask'],
+        },
+      },
+      hiddenAppIds: [],
+    };
+    const latest = {
+      version: 1 as const,
+      groups: { work: ['dwp-ask'] },
+      folders: {},
+      hiddenAppIds: [],
+    };
+
+    const saved = reapplyEntitledLaunchpadProjection(latest, base, edited, apps);
+
+    expect(saved).toEqual(latest);
+    expect(canonicalizePersistedLaunchpadLayout(saved, apps, HOME_APP_GROUPS)).toEqual(saved);
   });
 
   it('persists a same-group reorder for an app projected from a future group', () => {

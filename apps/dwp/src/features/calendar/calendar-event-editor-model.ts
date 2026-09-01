@@ -1,3 +1,5 @@
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
+
 import type {
   CalendarAttendeeInput,
   CalendarAttendeeType,
@@ -39,7 +41,7 @@ export type CalendarEditorAttendee = Pick<
 };
 
 export function calendarSystemTimeZone() {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+  return resolveSystemTimeZone('Asia/Seoul');
 }
 
 function roundToHalfHour(value = new Date()) {

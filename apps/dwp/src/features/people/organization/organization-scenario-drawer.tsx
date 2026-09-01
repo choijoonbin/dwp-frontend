@@ -40,9 +40,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -51,14 +48,17 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import type {
-  OrganizationChart,
-  OrganizationScenario,
-  OrganizationScenarioChange,
-} from '@dwp-frontend/shared-utils';
+import type { OrganizationChart, OrganizationScenario } from '@dwp-frontend/shared-utils';
 
 import { OrganizationScenarioComparison } from './organization-scenario-comparison';
 import { OrganizationScenarioDecisionPackView } from './organization-scenario-decision-pack';
+import {
+  changeSnapshot,
+  plusDays,
+  scenarioKey,
+  scenarioStatusColor,
+} from './organization-scenario-drawer-model';
+import { OrganizationScenarioListSection } from './organization-scenario-list-section';
 import { OrganizationScenarioPositionEditor } from './organization-scenario-position-editor';
 import { organizationScenarioQueryKeys } from './organization-scenario-query-keys';
 import { ChangeTypeIcon, WorkflowAction, signed } from './organization-scenario-support';
@@ -85,37 +85,6 @@ type Props = {
   onScenarioChanged: () => void;
   onClose: () => void;
 };
-
-function plusDays(date: string, days: number): string {
-  const value = new Date(`${date}T00:00:00Z`);
-  value.setUTCDate(value.getUTCDate() + days);
-  return value.toISOString().slice(0, 10);
-}
-
-function scenarioKey(): string {
-  const now = new Date();
-  const timestamp = now
-    .toISOString()
-    .replace(/[-:TZ.]/g, '')
-    .slice(0, 14);
-  return `org-${timestamp}-${crypto.randomUUID().slice(0, 8)}`;
-}
-
-function statusColor(state: string): 'default' | 'info' | 'warning' | 'success' | 'error' {
-  if (state === 'DRAFT') return 'default';
-  if (state === 'IN_REVIEW') return 'warning';
-  if (state === 'APPROVED' || state === 'PUBLISHED') return 'success';
-  if (state === 'REJECTED' || state === 'STALE') return 'error';
-  return 'info';
-}
-
-function changeSnapshot(change: OrganizationScenarioChange): Record<string, unknown> {
-  try {
-    return JSON.parse(change.afterSnapshot) as Record<string, unknown>;
-  } catch {
-    return {};
-  }
-}
 
 export function OrganizationScenarioDrawer({
   open,
@@ -412,83 +381,26 @@ export function OrganizationScenarioDrawer({
           flex: 1,
         }}
       >
-        <Box
-          sx={{ borderRight: { md: 1 }, borderBottom: { xs: 1, md: 0 }, borderColor: 'divider' }}
-        >
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ px: 1.5, py: 1.25 }}
-          >
-            <Typography variant="subtitle2">{t('orgChart.scenarios.list')}</Typography>
-            <Tooltip title={t('orgChart.scenarios.create')}>
-              <IconButton
-                size="small"
-                disabled={!capabilities.create}
-                onClick={() => {
-                  setCloneSourceId(undefined);
-                  setName('');
-                  setDescription('');
-                  setBaselineDate(chart.asOf);
-                  setEffectiveDate(plusDays(chart.asOf, 30));
-                  setCreating(true);
-                }}
-                aria-label={t('orgChart.scenarios.create')}
-              >
-                <Plus size={17} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-          <Divider />
-          {scenariosQuery.isLoading ? (
-            <Stack alignItems="center" sx={{ py: 4 }}>
-              <CircularProgress size={22} />
-            </Stack>
-          ) : (
-            <List
-              dense
-              disablePadding
-              sx={{ maxHeight: { xs: 180, md: 'calc(100vh - 150px)' }, overflow: 'auto' }}
-            >
-              {scenarios.map((scenario) => (
-                <ListItemButton
-                  key={scenario.scenarioId}
-                  selected={scenario.scenarioId === selected?.scenarioId}
-                  onClick={() => {
-                    setSelectedId(scenario.scenarioId);
-                    setCreating(false);
-                    setCloneSourceId(undefined);
-                    setError(undefined);
-                  }}
-                  sx={{ alignItems: 'flex-start', py: 1.25 }}
-                >
-                  <ListItemText
-                    primary={scenario.name}
-                    secondary={t('orgChart.scenarios.listItem', {
-                      date: scenario.effectiveDate,
-                      count: scenario.changes.length,
-                    })}
-                    primaryTypographyProps={{ variant: 'body2', fontWeight: 650 }}
-                    secondaryTypographyProps={{ variant: 'caption' }}
-                  />
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    color={statusColor(scenario.lifecycleState)}
-                    label={display('states', scenario.lifecycleState)}
-                    sx={{ ml: 0.5 }}
-                  />
-                </ListItemButton>
-              ))}
-              {!scenarios.length && (
-                <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
-                  {t('orgChart.scenarios.empty')}
-                </Typography>
-              )}
-            </List>
-          )}
-        </Box>
+        <OrganizationScenarioListSection
+          scenarios={scenarios}
+          selectedScenarioId={selected?.scenarioId}
+          loading={scenariosQuery.isLoading}
+          canCreate={capabilities.create}
+          onCreate={() => {
+            setCloneSourceId(undefined);
+            setName('');
+            setDescription('');
+            setBaselineDate(chart.asOf);
+            setEffectiveDate(plusDays(chart.asOf, 30));
+            setCreating(true);
+          }}
+          onSelect={(scenarioId) => {
+            setSelectedId(scenarioId);
+            setCreating(false);
+            setCloneSourceId(undefined);
+            setError(undefined);
+          }}
+        />
 
         <Box sx={{ minWidth: 0, overflow: 'auto', maxHeight: 'calc(100vh - 82px)' }}>
           {error && (
@@ -560,7 +472,11 @@ export function OrganizationScenarioDrawer({
                 <Button
                   variant="contained"
                   startIcon={
-                    busy ? <CircularProgress size={14} color="inherit" /> : <Plus size={15} />
+                    busy ? (
+                      <CircularProgress size={14} color="inherit" aria-hidden="true" />
+                    ) : (
+                      <Plus size={15} />
+                    )
                   }
                   disabled={!capabilities.create || busy || !name.trim()}
                   onClick={() => void handleCreate()}
@@ -582,7 +498,7 @@ export function OrganizationScenarioDrawer({
                     <Chip
                       size="small"
                       variant="outlined"
-                      color={statusColor(selected.lifecycleState)}
+                      color={scenarioStatusColor(selected.lifecycleState)}
                       label={display('states', selected.lifecycleState)}
                     />
                     {(selected.approval || selected.lifecycleState === 'PUBLISHED') && (
@@ -1009,7 +925,11 @@ export function OrganizationScenarioDrawer({
                   <Button
                     variant="contained"
                     startIcon={
-                      busy ? <CircularProgress size={14} color="inherit" /> : <Check size={15} />
+                      busy ? (
+                        <CircularProgress size={14} color="inherit" aria-hidden="true" />
+                      ) : (
+                        <Check size={15} />
+                      )
                     }
                     disabled={!capabilities.publish || busy}
                     onClick={() =>

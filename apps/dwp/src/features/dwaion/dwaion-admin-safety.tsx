@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LockKeyhole, ShieldAlert } from 'lucide-react';
-import { ActionButton, FormField, PageCanvas, SelectField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ErrorState,
+  FormField,
+  LoadingState,
+  PageCanvas,
+  SelectField,
+} from '@dwp-frontend/design-system';
 import {
   getDwaionSafetyPolicy,
   updateDwaionSafetyPolicy,
@@ -14,7 +21,6 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import Skeleton from '@mui/material/Skeleton';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -85,13 +91,26 @@ export function DwaionAdminSafety() {
           {t('dwaionAdmin.safety.saved')}
         </Alert>
       )}
-      {(query.isError || mutation.isError) && (
+      {mutation.isError && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {t('dwaionAdmin.safety.error')}
         </Alert>
       )}
-      {query.isLoading || !draft ? (
-        <Skeleton variant="rounded" height={480} sx={{ mt: 3 }} />
+      {query.isLoading ? (
+        <LoadingState
+          label={t('dwaionAdmin.safety.loading')}
+          variant="skeleton"
+          skeletonRows={7}
+          size="page"
+        />
+      ) : query.isError || !draft ? (
+        <ErrorState
+          title={t('dwaionAdmin.safety.error')}
+          retryLabel={t('dwaionAdmin.shared.retry')}
+          retrying={query.isFetching}
+          onRetry={() => void query.refetch()}
+          size="page"
+        />
       ) : (
         <Box component="section" sx={{ mt: 3, maxWidth: 880 }}>
           <Alert severity="info" icon={<LockKeyhole size={19} />}>

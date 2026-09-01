@@ -1,11 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  HOME_LAUNCHPAD_HINT_STORAGE_KEY,
   HOME_PRESENTATION_HINT_STORAGE_KEY,
   normalizeHomePresentationHint,
+  readHomeLaunchpadGroupItemCounts,
   readOptionalHomePresentationHint,
   readHomePresentationHint,
   resolveHomeLoadingLayout,
+  writeHomeLaunchpadGroupItemCounts,
   writeHomePresentationHint,
 } from './home-loading-layout-policy';
 
@@ -47,6 +50,32 @@ describe('Home loading layout policy', () => {
     expect(setItem).toHaveBeenCalledTimes(1);
   });
 
+  it('restores the governed group count and caps each loading group at two rows', () => {
+    const setItem = vi.fn();
+    const storage = {
+      getItem: vi.fn((key: string) =>
+        key === HOME_LAUNCHPAD_HINT_STORAGE_KEY ? '[5,12,2,4,1]' : null
+      ),
+      setItem,
+    };
+
+    expect(readHomeLaunchpadGroupItemCounts(storage)).toEqual([5, 10, 2, 4, 1]);
+    writeHomeLaunchpadGroupItemCounts(storage, [5, 7, 2, 4]);
+    expect(setItem).toHaveBeenCalledWith(HOME_LAUNCHPAD_HINT_STORAGE_KEY, '[5,7,2,4]');
+  });
+
+  it('rejects malformed or out-of-policy launchpad loading hints', () => {
+    expect(
+      readHomeLaunchpadGroupItemCounts({ getItem: () => '[5,"7"]', setItem: vi.fn() })
+    ).toBeNull();
+    expect(
+      readHomeLaunchpadGroupItemCounts({
+        getItem: () => JSON.stringify(Array(9).fill(1)),
+        setItem: vi.fn(),
+      })
+    ).toBeNull();
+  });
+
   it('tolerates storage that is blocked by the browser', () => {
     const storage = {
       getItem: () => {
@@ -59,7 +88,9 @@ describe('Home loading layout policy', () => {
 
     expect(readHomePresentationHint(storage)).toBe('balanced');
     expect(readOptionalHomePresentationHint(storage)).toBeNull();
+    expect(readHomeLaunchpadGroupItemCounts(storage)).toBeNull();
     expect(() => writeHomePresentationHint(storage, 'focused')).not.toThrow();
+    expect(() => writeHomeLaunchpadGroupItemCounts(storage, [5, 7, 2, 4])).not.toThrow();
   });
 
   it('keeps the balanced 1440 skeleton on the 8+4 standard contract', () => {
@@ -69,7 +100,7 @@ describe('Home loading layout policy', () => {
         viewportWidth: 1440,
         rootFontSize: 16,
       })
-    ).toMatchObject({ template: 'standard', dockItemCount: 8, dockPreferredWidth: 864 });
+    ).toMatchObject({ template: 'standard', dockItemCount: 8, dockStacked: true });
   });
 
   it('restores the expressive 1920 skeleton on the 7+5 adaptive-wide contract', () => {
@@ -82,7 +113,6 @@ describe('Home loading layout policy', () => {
     ).toMatchObject({
       template: 'adaptive-wide',
       dockItemCount: 12,
-      dockPreferredWidth: 1120,
       dockStacked: true,
     });
   });

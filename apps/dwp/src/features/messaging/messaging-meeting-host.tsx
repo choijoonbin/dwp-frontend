@@ -43,7 +43,7 @@ export function MessagingMeetingHost({
               placeItems: 'center',
             }}
           >
-            <CircularProgress size={32} />
+            <CircularProgress size={32} aria-hidden="true" />
           </Box>
         ) : null
       }

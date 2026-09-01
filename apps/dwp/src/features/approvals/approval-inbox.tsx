@@ -61,8 +61,15 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     queryKey: ['approvals', 'tasks', view],
     queryFn: () => getApprovalTasks(view),
     staleTime: 20_000,
+    retry: 1,
   });
   useEffect(() => {
+    if (!tasks.isError) return;
+    setSelectedId(undefined);
+    setDecision(undefined);
+  }, [tasks.isError]);
+  useEffect(() => {
+    if (tasks.isError) return;
     if (!tasks.data?.length) {
       if (selectedId) setSelectedId(undefined);
       return;
@@ -70,11 +77,11 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     if (selectedId && tasks.data.some((task) => task.taskId === selectedId)) return;
     const requested = tasks.data.find((task) => task.taskId === requestedTaskId);
     setSelectedId(requested?.taskId ?? tasks.data[0].taskId);
-  }, [requestedTaskId, selectedId, tasks.data]);
+  }, [requestedTaskId, selectedId, tasks.data, tasks.isError]);
   const detail = useQuery({
     queryKey: ['approvals', 'task', selectedId],
     queryFn: () => getApprovalTask(selectedId!),
-    enabled: Boolean(selectedId),
+    enabled: Boolean(selectedId) && !tasks.isError,
     staleTime: 10_000,
   });
   const runDecision = useApprovalGovernedMutation('route.approvals.work.task-decision.action');
@@ -110,7 +117,7 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     onError: (error) =>
       !isProductSurfaceOperationCancelledError(error) && toast.error(t('inbox.claimError')),
   });
-  const selected = detail.data;
+  const selected = tasks.isError ? undefined : detail.data;
 
   return (
     <Paper
@@ -135,27 +142,41 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
                 {t(`${queueCopy}.queueMeta`)}
               </Typography>
             </Box>
-            <Chip size="small" label={tasks.data?.length ?? 0} />
+            <Chip size="small" label={tasks.isError ? '—' : (tasks.data?.length ?? 0)} />
           </Stack>
         </Box>
         {tasks.isError && (
-          <Alert severity="error" sx={{ m: 1.5 }}>
+          <Alert
+            severity="error"
+            sx={{ m: 1.5 }}
+            action={
+              <ActionButton
+                intent="quiet"
+                size="small"
+                disabled={tasks.isFetching}
+                onClick={() => void tasks.refetch()}
+              >
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
             {t(`${queueCopy}.loadError`)}
           </Alert>
         )}
         <Box sx={{ maxHeight: { lg: 560 }, overflowY: 'auto' }}>
-          {(tasks.data ?? []).map((task) => (
-            <TaskRow
-              key={task.taskId}
-              task={task}
-              selected={selectedId === task.taskId}
-              onClick={() => setSelectedId(task.taskId)}
-            />
-          ))}
-          {!tasks.isLoading && tasks.data?.length === 0 && (
+          {!tasks.isError &&
+            (tasks.data ?? []).map((task) => (
+              <TaskRow
+                key={task.taskId}
+                task={task}
+                selected={selectedId === task.taskId}
+                onClick={() => setSelectedId(task.taskId)}
+              />
+            ))}
+          {!tasks.isLoading && !tasks.isError && tasks.data?.length === 0 && (
             <Box sx={{ px: 3, py: 8, textAlign: 'center' }}>
               <ShieldCheck size={32} color={approvalTone.teal} />
-              <Typography variant="subtitle1" sx={{ mt: 1 }}>
+              <Typography component="p" variant="subtitle1" sx={{ mt: 1 }}>
                 {t(`${queueCopy}.empty`)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -178,7 +199,7 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
           >
             <Box>
               <MessageSquareText size={34} color="#728096" />
-              <Typography variant="subtitle1" sx={{ mt: 1 }}>
+              <Typography component="p" variant="subtitle1" sx={{ mt: 1 }}>
                 {t(`${queueCopy}.select`)}
               </Typography>
               <Typography variant="body2" color="text.secondary">

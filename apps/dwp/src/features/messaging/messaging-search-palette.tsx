@@ -78,8 +78,14 @@ export function MessagingSearchPalette({
         {query.trim().length < 2 ? (
           <PaletteStatus>{t('search.minimum')}</PaletteStatus>
         ) : search.isFetching && !results ? (
-          <Stack direction="row" spacing={1.2} alignItems="center" sx={{ px: 2, py: 3 }}>
-            <CircularProgress size={18} />
+          <Stack
+            direction="row"
+            spacing={1.2}
+            alignItems="center"
+            role="status"
+            sx={{ px: 2, py: 3 }}
+          >
+            <CircularProgress size={18} aria-hidden="true" />
             <Typography variant="body2" color="text.secondary">
               {t('search.loading')}
             </Typography>

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "maximumEntries": 3,
+  "entries": [
+    {
+      "path": "apps/dwp/src/routes/draft-product-page-route-contracts.ts",
+      "owner": "Frontend Architecture",
+      "reason": "Verification-only draft route projection consumed by architecture contract tests.",
+      "removalCondition": "Remove when draft route verification is generated directly from the canonical route source."
+    },
+    {
+      "path": "apps/dwp/src/routes/product-page-route-contracts.ts",
+      "owner": "Frontend Architecture",
+      "reason": "Verification-only combined route projection consumed by architecture contract tests.",
+      "removalCondition": "Remove when combined route verification is generated directly from the canonical route source."
+    },
+    {
+      "path": "apps/dwp/src/routes/product-menu-manifest.ts",
+      "owner": "Frontend Architecture",
+      "reason": "Verification-only menu projection consumed by route and menu contract tests.",
+      "removalCondition": "Remove when menu verification reads the generated product manifests directly."
+    }
+  ]
+}

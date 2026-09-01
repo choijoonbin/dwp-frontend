@@ -32,7 +32,7 @@
       "localeStartsWithKo": 1
     },
     "apps/dwp/src/features/approvals/approval-requests.tsx": {
-      "localeStartsWithKo": 8
+      "localeStartsWithKo": 7
     },
     "apps/dwp/src/features/approvals/approval-workflow-studio.tsx": {
       "localeStartsWithKo": 3

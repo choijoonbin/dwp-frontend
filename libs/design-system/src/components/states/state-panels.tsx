@@ -118,6 +118,8 @@ export type GuidedEmptyStateProps = {
   secondaryActionLabel?: string;
   onSecondaryAction?: () => void;
   size?: StatePanelSize;
+  /** Disable the live-region role when the state is rendered inside a composite widget such as a grid. */
+  announce?: boolean;
 };
 
 const guidedEmptyIcons = {
@@ -137,6 +139,7 @@ export function GuidedEmptyState({
   secondaryActionLabel,
   onSecondaryAction,
   size,
+  announce = true,
 }: GuidedEmptyStateProps) {
   const Icon = guidedEmptyIcons[kind];
   const action =
@@ -155,7 +158,7 @@ export function GuidedEmptyState({
 
   return (
     <StatePanel
-      role="status"
+      role={announce ? 'status' : undefined}
       icon={<Icon size={28} strokeWidth={1.7} />}
       title={title}
       titleComponent={titleComponent}
@@ -267,6 +270,16 @@ export type LoadingStateProps = {
   description?: string;
   variant?: 'spinner' | 'skeleton';
   skeletonRows?: number;
+  /** Uniform row height used by the shared skeleton renderer. */
+  skeletonHeight?: number;
+  /** Per-row heights for product surfaces whose stable loading geometry is not uniform. */
+  skeletonHeights?: readonly number[];
+  skeletonGap?: number;
+  skeletonPadding?: number;
+  /** Preserves a product-specific loading silhouette inside the shared accessible status region. */
+  skeleton?: React.ReactNode;
+  /** Removes panel chrome when the status region is embedded in an existing product surface. */
+  embedded?: boolean;
   size?: StatePanelSize;
 };
 
@@ -275,6 +288,12 @@ export function LoadingState({
   description,
   variant = 'spinner',
   skeletonRows = 3,
+  skeletonHeight = 36,
+  skeletonHeights,
+  skeletonGap = 1.25,
+  skeletonPadding = 0,
+  skeleton,
+  embedded = false,
   size = 'standard',
 }: LoadingStateProps) {
   if (variant === 'skeleton') {
@@ -283,16 +302,29 @@ export function LoadingState({
         role="status"
         aria-label={label}
         aria-live="polite"
-        sx={{ minHeight: MIN_HEIGHT[size], px: 3, py: 4 }}
+        sx={{
+          minHeight: embedded ? 0 : MIN_HEIGHT[size],
+          px: embedded ? 0 : 3,
+          py: embedded ? 0 : 4,
+        }}
       >
-        <Typography variant="subtitle2" sx={{ mb: 2 }}>
-          {label}
-        </Typography>
-        <Stack gap={1.25} aria-hidden="true">
-          {Array.from({ length: Math.max(1, skeletonRows) }, (_, index) => (
-            <Skeleton key={index} variant="rounded" height={36} />
-          ))}
-        </Stack>
+        {!embedded ? (
+          <Typography variant="subtitle2" sx={{ mb: 2 }}>
+            {label}
+          </Typography>
+        ) : null}
+        <Box aria-hidden="true">
+          {skeleton ?? (
+            <Stack gap={skeletonGap} sx={{ p: skeletonPadding }}>
+              {(
+                skeletonHeights ??
+                Array.from({ length: Math.max(1, skeletonRows) }, () => skeletonHeight)
+              ).map((height, index) => (
+                <Skeleton key={index} variant="rounded" height={height} />
+              ))}
+            </Stack>
+          )}
+        </Box>
       </Box>
     );
   }
@@ -303,7 +335,7 @@ export function LoadingState({
       icon={
         <Box sx={{ position: 'relative', display: 'grid', placeItems: 'center' }}>
           <LoaderCircle size={28} strokeWidth={1.5} />
-          <CircularProgress size={32} sx={{ position: 'absolute' }} />
+          <CircularProgress size={32} aria-hidden="true" sx={{ position: 'absolute' }} />
         </Box>
       }
       title={label}

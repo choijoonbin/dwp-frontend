@@ -32,20 +32,32 @@ export const rolePulseLayoutPolicy = {
     gap: 0.5,
     readRowHeight: 44,
     editingRowHeight: 34,
+    metricRailWidth: 44,
+    metricRailHeight: 8,
   },
   standard: {
     gap: 0.75,
     readRowHeight: 58,
     editingRowHeight: 58,
+    metricRailWidth: 56,
+    metricRailHeight: 13,
   },
   tall: {
     gap: 0.75,
     readRowHeight: 76,
     editingRowHeight: 76,
+    metricRailWidth: 64,
+    metricRailHeight: 13,
   },
 } as const satisfies Record<
   RolePulseInsightDensity,
-  Readonly<{ gap: number; readRowHeight: number; editingRowHeight: number }>
+  Readonly<{
+    gap: number;
+    readRowHeight: number;
+    editingRowHeight: number;
+    metricRailWidth: number;
+    metricRailHeight: number;
+  }>
 >;
 
 const visuallyHidden = {
@@ -93,6 +105,21 @@ function comparisonLabel(signal: FlowSignal, t: TFunction<'home'>): string {
   return t('flow.signals.baselinePending');
 }
 
+function roleSignalLabel(signal: FlowSignal, t: TFunction<'home'>): string {
+  return signal.key === 'schedule-load'
+    ? t('flow.signals.scheduleLoadToday')
+    : t(`flow.signals.${signal.label}`);
+}
+
+function roleComparisonLabel(signal: FlowSignal, t: TFunction<'home'>, compact = false): string {
+  const comparison = comparisonLabel(signal, t);
+  if (signal.key !== 'schedule-load' || !signal.series?.length) return comparison;
+  return t(
+    compact ? 'flow.signals.scheduleLoadContextCompact' : 'flow.signals.scheduleLoadContext',
+    { comparison }
+  );
+}
+
 function focusProgress(signal: FlowSignal): number | undefined {
   if (
     signal.key !== 'focus-time' ||
@@ -114,48 +141,79 @@ function ScheduleMiniBars({
   const { t } = useTranslation('home');
   const series = signal.key === 'schedule-load' ? (signal.series ?? []) : [];
   if (series.length === 0) return null;
-  const maxLoad = Math.max(1, ...series.map((point) => point.loadPercent));
+  const chartLabel = t('flow.signals.weekSeriesLabel');
 
   return (
     <>
       <Box
         data-home-role-series
-        aria-hidden="true"
+        data-home-role-series-density={density}
+        data-home-role-series-scale="daily-limit-100"
+        role="img"
+        aria-label={chartLabel}
+        title={chartLabel}
         sx={{
-          height: density === 'short' ? 8 : 13,
-          minWidth: density === 'short' ? 32 : 56,
+          width: 1,
+          height: 'var(--home-role-metric-rail-height)',
+          minWidth: 0,
           display: 'flex',
           alignItems: 'end',
           gap: '2px',
           borderBlockEnd: '1px solid',
           borderColor: 'divider',
           '@media (max-width: 359.95px)': {
-            height: 8,
-            minWidth: 32,
+            minWidth: 0,
           },
         }}
       >
-        {series.map((point) => (
-          <Box
-            key={point.date}
-            sx={(theme) => ({
-              flex: '1 1 0',
-              minWidth: 2,
-              height: `${(point.loadPercent / maxLoad) * 100}%`,
-              minHeight: point.loadPercent > 0 ? 2 : 0,
-              borderRadius: '2px 2px 0 0',
-              bgcolor: alpha(
-                point.conflictCount > 0 ? theme.palette.error.main : theme.palette.primary.main,
-                point.conflictCount > 0 ? 0.78 : 0.42
-              ),
-              '@media (forced-colors: active)': {
-                bgcolor: 'CanvasText',
+        {series.map((point) => {
+          const isCurrent = point.date === signal.seriesCurrentDate;
+          const hasConflict = point.conflictCount > 0;
+          const exceedsLimit = point.loadPercent > 100;
+          return (
+            <Box
+              key={point.date}
+              data-home-role-series-point={point.date}
+              data-home-role-series-load={Math.round(point.loadPercent)}
+              data-home-role-series-current={isCurrent ? 'true' : 'false'}
+              data-home-role-series-conflict={hasConflict ? 'true' : 'false'}
+              data-home-role-series-over-limit={exceedsLimit ? 'true' : 'false'}
+              aria-hidden="true"
+              title={t('flow.signals.seriesPoint', {
+                date: formatDate(point.date, { month: 'short', day: 'numeric' }),
+                load: Math.round(point.loadPercent),
+                conflicts: point.conflictCount,
+              })}
+              sx={(theme) => ({
+                flex: '1 1 0',
+                minWidth: 2,
+                boxSizing: 'border-box',
+                height: `${Math.min(100, Math.max(0, point.loadPercent))}%`,
+                minHeight: isCurrent ? '3px' : '1px',
+                borderRadius: '2px 2px 0 0',
+                bgcolor: alpha(
+                  hasConflict ? theme.palette.error.main : theme.palette.primary.main,
+                  hasConflict ? 0.78 : isCurrent ? 0.88 : 0.34
+                ),
                 borderBlockStart:
-                  point.conflictCount > 0 ? '2px dashed Highlight' : '1px solid CanvasText',
-              },
-            })}
-          />
-        ))}
+                  hasConflict || exceedsLimit
+                    ? `2px ${hasConflict ? 'dashed' : 'double'}`
+                    : '0 solid transparent',
+                borderBlockStartColor: hasConflict ? 'error.main' : 'warning.main',
+                outline: isCurrent ? `1px solid ${alpha(theme.palette.primary.dark, 0.9)}` : 'none',
+                outlineOffset: 1,
+                '@media (forced-colors: active)': {
+                  bgcolor: 'CanvasText',
+                  borderBlockStart:
+                    hasConflict || exceedsLimit
+                      ? `2px ${hasConflict ? 'dashed' : 'double'} CanvasText`
+                      : '0 solid transparent',
+                  outline: isCurrent ? '1px solid Highlight' : 'none',
+                },
+              })}
+            />
+          );
+        })}
       </Box>
       <Box sx={visuallyHidden}>
         <Box component="table">
@@ -193,9 +251,10 @@ function RolePulseLens({
 }) {
   const { t } = useTranslation('home');
   const Icon = signalIcon[signal.key];
-  const label = t(`flow.signals.${signal.label}`);
+  const label = roleSignalLabel(signal, t);
   const unit = t(`flow.signals.unit.${signal.unit}`);
-  const comparison = comparisonLabel(signal, t);
+  const comparison = roleComparisonLabel(signal, t);
+  const compactComparison = roleComparisonLabel(signal, t, true);
   const progress = focusProgress(signal);
   const layout = rolePulseLayoutPolicy[density];
   const sourceDetail =
@@ -221,13 +280,17 @@ function RolePulseLens({
       sx={(theme) => {
         const accent = signalAccent(theme, signal.tone);
         return {
+          '--home-role-metric-rail-width': `${layout.metricRailWidth}px`,
+          '--home-role-metric-rail-height': `${layout.metricRailHeight}px`,
           minWidth: 0,
           minHeight: layout.readRowHeight,
           px: density === 'short' ? 0.5 : 1,
           py: density === 'short' ? 0.25 : 0.65,
           display: 'grid',
           gridTemplateColumns:
-            density === 'short' ? '18px minmax(0, 1fr) auto' : '24px minmax(0, 1fr) auto',
+            density === 'short'
+              ? '18px minmax(0, 1fr) var(--home-role-metric-rail-width)'
+              : '24px minmax(0, 1fr) var(--home-role-metric-rail-width)',
           gridTemplateRows:
             density === 'tall'
               ? '24px minmax(14px, auto) auto'
@@ -260,14 +323,18 @@ function RolePulseLens({
             '&:hover': { transform: 'none' },
           },
           '@media (max-width: 359.95px)': {
+            '--home-role-metric-rail-width': `${rolePulseLayoutPolicy.short.metricRailWidth}px`,
+            '--home-role-metric-rail-height': `${rolePulseLayoutPolicy.short.metricRailHeight}px`,
             minHeight: rolePulseLayoutPolicy.short.readRowHeight,
             px: 0.5,
             py: 0.25,
-            gridTemplateColumns: '18px minmax(0, 1fr) auto',
+            gridTemplateColumns: '18px minmax(0, 1fr) var(--home-role-metric-rail-width)',
             gridTemplateRows: 'minmax(16px, auto) minmax(11px, auto)',
             columnGap: 0.4,
           },
           '@container home-role-pulse (max-width: 460px)': {
+            '--home-role-metric-rail-width': `${rolePulseLayoutPolicy.short.metricRailWidth}px`,
+            '--home-role-metric-rail-height': `${rolePulseLayoutPolicy.short.metricRailHeight}px`,
             minHeight:
               density === 'short'
                 ? rolePulseLayoutPolicy.short.readRowHeight
@@ -276,7 +343,7 @@ function RolePulseLens({
                   : 64,
             px: 0.5,
             py: 0.35,
-            gridTemplateColumns: '18px minmax(0, 1fr) auto',
+            gridTemplateColumns: '18px minmax(0, 1fr) var(--home-role-metric-rail-width)',
             gridTemplateRows:
               density === 'tall'
                 ? 'minmax(18px, auto) minmax(12px, auto) auto'
@@ -329,6 +396,7 @@ function RolePulseLens({
         fontWeight={720}
         sx={{
           minWidth: 0,
+          alignSelf: 'baseline',
           fontSize: density === 'short' ? 10.5 : undefined,
           lineHeight: density === 'short' ? 1.1 : 1.2,
           wordBreak: density === 'short' ? 'keep-all' : undefined,
@@ -358,7 +426,12 @@ function RolePulseLens({
       <Typography
         data-home-role-value
         sx={{
+          width: 1,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'baseline',
           alignSelf: 'baseline',
+          textAlign: 'end',
           fontSize: density === 'short' ? { xs: 15, sm: 17 } : 22,
           lineHeight: 1,
           fontWeight: 760,
@@ -372,10 +445,14 @@ function RolePulseLens({
         {signal.value}
         <Typography
           component="span"
+          data-home-role-unit
           variant="caption"
           color="text.secondary"
           sx={{
             ml: 0.35,
+            alignSelf: 'baseline',
+            lineHeight: 1,
+            verticalAlign: 'baseline',
             letterSpacing: 0,
             fontSize: density === 'short' ? { xs: 8.5, sm: 9.5 } : undefined,
             '@media (max-width: 359.95px)': { fontSize: 8.5 },
@@ -415,13 +492,42 @@ function RolePulseLens({
           },
         }}
       >
-        {comparison}
+        {signal.key === 'schedule-load' ? (
+          <>
+            <Box
+              component="span"
+              data-home-role-comparison-full
+              sx={{
+                '@media (max-width: 359.95px)': { display: 'none' },
+                '@container home-role-pulse (max-width: 460px)': { display: 'none' },
+              }}
+            >
+              {comparison}
+            </Box>
+            <Box
+              component="span"
+              data-home-role-comparison-compact
+              sx={{
+                display: 'none',
+                '@media (max-width: 359.95px)': { display: 'inline' },
+                '@container home-role-pulse (max-width: 460px)': { display: 'inline' },
+              }}
+            >
+              {compactComparison}
+            </Box>
+          </>
+        ) : (
+          comparison
+        )}
       </Typography>
       <Box
+        data-home-role-metric-rail
         sx={{
-          minWidth: density === 'short' ? 32 : { xs: 44, sm: 50 },
-          '@media (max-width: 359.95px)': { minWidth: 32 },
-          '@container home-role-pulse (max-width: 460px)': { minWidth: 32 },
+          width: 'var(--home-role-metric-rail-width)',
+          height: 'var(--home-role-metric-rail-height)',
+          minWidth: 0,
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
         {progress !== undefined ? (
@@ -497,9 +603,9 @@ export function RolePulseInsight({
 
   const accessibleSummary = visible
     .map((signal) => {
-      const label = t(`flow.signals.${signal.label}`);
+      const label = roleSignalLabel(signal, t);
       const unit = t(`flow.signals.unit.${signal.unit}`);
-      return `${label} ${signal.value}${unit}, ${comparisonLabel(signal, t)}`;
+      return `${label} ${signal.value}${unit}, ${roleComparisonLabel(signal, t)}`;
     })
     .join('; ');
 
@@ -510,6 +616,8 @@ export function RolePulseInsight({
       data-home-role-layout="2x2"
       data-home-role-tall-detail={density === 'tall' ? 'true' : 'false'}
       data-home-role-edit-row-height={layout.editingRowHeight}
+      data-home-role-metric-rail-width={layout.metricRailWidth}
+      data-home-role-metric-rail-height={layout.metricRailHeight}
       role="region"
       aria-label={t('flow.signals.title')}
       sx={{

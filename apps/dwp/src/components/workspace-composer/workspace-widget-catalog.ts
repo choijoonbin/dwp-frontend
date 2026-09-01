@@ -56,7 +56,7 @@ export const WORKSPACE_WIDGET_CATALOG: readonly WorkspaceWidgetCatalogDefinition
     analyticsKey: 'home.command-rail',
     runtime: 'NATIVE',
     lifecycle: 'ACTIVE',
-    policyClass: 'GOVERNED',
+    policyClass: 'PERSONAL',
     canHide: true,
     defaultSize: 'large',
     allowedSizes: ['large', 'full'],

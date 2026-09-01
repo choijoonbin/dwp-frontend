@@ -56,7 +56,8 @@ export function HrBenefitsWorkspace() {
   return (
     <QueryBoundary
       loading={query.isLoading}
-      error={query.isError}
+      error={query.error}
+      retrying={query.isFetching}
       onRetry={() => void query.refetch()}
     >
       <Stack gap={2}>
@@ -161,6 +162,14 @@ export function HrBenefitsWorkspace() {
                     <Typography variant="caption" color="text.secondary" display="block">
                       {[plan.planType, plan.providerName].filter(Boolean).join(' · ')}
                     </Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      {t('domains.benefits.effectivePeriod', {
+                        start: formatDate(plan.effectiveStart, { dateStyle: 'medium' }),
+                        end: plan.effectiveEnd
+                          ? formatDate(plan.effectiveEnd, { dateStyle: 'medium' })
+                          : t('domains.benefits.current'),
+                      })}
+                    </Typography>
                     <Chip
                       size="small"
                       variant="outlined"
@@ -177,6 +186,55 @@ export function HrBenefitsWorkspace() {
             <EmptyState
               title={t('domains.benefits.emptyTitle')}
               description={t('domains.benefits.emptyDescription')}
+            />
+          )}
+        </DomainSection>
+
+        <DomainSection
+          title={t('domains.benefits.windowsTitle')}
+          description={t('domains.benefits.windowsDescription')}
+        >
+          {query.data?.windows.length ? (
+            <Box>
+              {query.data.windows.map((window, index) => (
+                <Box key={window.windowId}>
+                  {index > 0 && <Divider />}
+                  <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    alignItems={{ xs: 'stretch', sm: 'center' }}
+                    gap={1.25}
+                    sx={{ px: 2, py: 1.5 }}
+                  >
+                    <Stack direction="row" alignItems="flex-start" gap={1.25} minWidth={0} flex={1}>
+                      <CalendarClock size={18} aria-hidden="true" />
+                      <Box minWidth={0}>
+                        <Typography variant="body2" fontWeight={750}>
+                          {window.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('domains.benefits.windowPeriod', {
+                            start: formatDate(window.opensAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            }),
+                            end: formatDate(window.closesAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            }),
+                          })}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <StatusChip status={window.lifecycleState} />
+                  </Stack>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <EmptyState
+              size="compact"
+              title={t('domains.benefits.noWindowTitle')}
+              description={t('domains.benefits.noWindowDescription')}
             />
           )}
         </DomainSection>
@@ -203,7 +261,8 @@ export function HrPayWorkspace() {
   return (
     <QueryBoundary
       loading={query.isLoading}
-      error={query.isError}
+      error={query.error}
+      retrying={query.isFetching}
       onRetry={() => void query.refetch()}
     >
       <Stack gap={2}>
@@ -369,7 +428,8 @@ export function HrTalentWorkspace() {
   return (
     <QueryBoundary
       loading={query.isLoading}
-      error={query.isError}
+      error={query.error}
+      retrying={query.isFetching}
       onRetry={() => void query.refetch()}
     >
       <Stack gap={2}>
@@ -468,6 +528,20 @@ export function HrTalentWorkspace() {
           <DomainSection
             title={t('domains.talent.learningTitle')}
             description={t('domains.talent.learningDescription')}
+            action={
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<LifeBuoy size={15} aria-hidden="true" />}
+                onClick={() =>
+                  navigate(
+                    '/services/discover?category=PEOPLE&service=people.learning-support&source=hr'
+                  )
+                }
+              >
+                {t('domains.talent.learningSupport')}
+              </ActionButton>
+            }
           >
             {query.data?.learning.length ? (
               query.data.learning.map((item, index) => (
@@ -516,28 +590,45 @@ export function HrTalentWorkspace() {
             </ActionButton>
           }
         >
-          {query.data?.journeys.map((journey, index) => (
-            <Box key={journey.journeyId}>
-              {index > 0 && <Divider />}
-              <Stack direction="row" alignItems="center" gap={1.25} sx={{ px: 2, py: 1.5 }}>
-                <CalendarClock size={18} aria-hidden="true" />
-                <Box minWidth={0} flex={1}>
-                  <Typography variant="body2" fontWeight={750}>
-                    {journey.name}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {journey.targetDate
-                      ? formatDate(journey.targetDate, { dateStyle: 'medium' })
-                      : journey.journeyType}
-                  </Typography>
-                </Box>
-                <Typography variant="body2" fontWeight={760}>
-                  {journey.progressPercent}%
-                </Typography>
-                <StatusChip status={journey.status} />
-              </Stack>
-            </Box>
-          ))}
+          {query.data?.journeys.length ? (
+            query.data.journeys.map((journey, index) => (
+              <Box key={journey.journeyId}>
+                {index > 0 && <Divider />}
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  alignItems={{ xs: 'stretch', sm: 'center' }}
+                  gap={1.25}
+                  sx={{ px: 2, py: 1.5 }}
+                >
+                  <Stack direction="row" alignItems="center" gap={1.25} minWidth={0} flex={1}>
+                    <CalendarClock size={18} aria-hidden="true" />
+                    <Box minWidth={0} flex={1}>
+                      <Typography variant="body2" fontWeight={750}>
+                        {journey.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {journey.targetDate
+                          ? formatDate(journey.targetDate, { dateStyle: 'medium' })
+                          : journey.journeyType}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" gap={1}>
+                    <Typography variant="body2" fontWeight={760}>
+                      {journey.progressPercent}%
+                    </Typography>
+                    <StatusChip status={journey.status} />
+                  </Stack>
+                </Stack>
+              </Box>
+            ))
+          ) : (
+            <EmptyState
+              size="compact"
+              title={t('domains.talent.noJourneyTitle')}
+              description={t('domains.talent.noJourneyDescription')}
+            />
+          )}
         </DomainSection>
       </Stack>
 

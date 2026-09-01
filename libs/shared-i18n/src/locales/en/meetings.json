@@ -79,6 +79,14 @@
     "title": "Run today's conversations with less friction",
     "description": "Start, schedule, and join from one calm workspace, then return to decisions and records.",
     "loading": "Loading your meeting day",
+    "refreshing": "Refreshing your meeting day",
+    "command": {
+      "label": "Today's meeting command center",
+      "ready": "Ready when you are",
+      "clearTitle": "Your next conversation can start here",
+      "clearDescription": "Open a private device check with your camera and microphone off, then enter when you are ready.",
+      "focusDescription": "Review the context, check your devices, and enter with the right access."
+    },
     "instant": {
       "title": "Instant meeting",
       "description": "Open a secure room now with your microphone and camera off.",
@@ -107,11 +115,14 @@
     },
     "metrics": {
       "title": "Meeting pulse",
+      "description": "Only meaningful preparation and admission signals from your meeting day.",
       "today": "Meetings today",
       "minutes": "Meeting time today",
       "waiting": "Waiting for admission",
       "joinTime": "Average join time",
-      "notMeasured": "Not measured"
+      "notMeasured": "Not measured",
+      "quietTitle": "No meeting signal needs attention",
+      "quietDescription": "Keep the focus time or prepare a new conversation when you are ready."
     },
     "today": {
       "title": "Today's timeline",
@@ -125,7 +136,12 @@
       "empty": "No completed meeting records",
       "emptyDescription": "Meeting records appear here after a session ends."
     },
-    "serviceUnavailable": "Video meetings are not configured for this tenant: {{reason}}"
+    "serviceUnavailable": "Video meetings are not ready yet. {{reason}}",
+    "unavailableReasons": {
+      "configuration": "Ask an administrator to finish the secure meeting setup.",
+      "policy": "Your organization's meeting policy currently disables this feature.",
+      "temporary": "The secure media service is temporarily unavailable. Try again later."
+    }
   },
   "schedule": {
     "title": "Schedule a video meeting",
@@ -302,6 +318,33 @@
         "approving": "Approving draft",
         "reject": "Reject draft",
         "rejecting": "Rejecting draft",
+        "reviewers": {
+          "title": "Reviewers and separation of duties",
+          "description": "Assign an eligible meeting participant to verify the AI draft before approval.",
+          "separationNote": "The person who generated the draft cannot review or manage it. Review authority stays separate from publication authority and every change is audited.",
+          "loading": "Loading eligible reviewers…",
+          "loadError": "Reviewer eligibility could not be verified. No authority was changed.",
+          "retry": "Retry",
+          "candidateLabel": "Assign reviewer",
+          "candidatePlaceholder": "Select an eligible participant",
+          "candidateHelp": "Only admitted participants who are independent of this draft can be assigned.",
+          "noEligible": "No additional independent participant is currently eligible.",
+          "assign": "Assign review",
+          "assigning": "Assigning review",
+          "assigned": "Review authority assigned.",
+          "actionError": "Review authority was not changed. Check eligibility and try again.",
+          "activeTitle": "Active review authority",
+          "noActive": "No independent reviewer is assigned yet.",
+          "unknownParticipant": "Former participant",
+          "permissions": {
+            "VIEW": "Viewer",
+            "REVIEW": "Reviewer",
+            "MANAGE": "Review manager"
+          },
+          "revoke": "Revoke",
+          "revoking": "Revoking authority",
+          "revoked": "Review authority revoked."
+        },
         "publishTitle": "Publish the approved report",
         "publishDescription": "Publishing makes this exact reviewed version visible to authorized meeting participants.",
         "publish": "Publish to participants",
@@ -310,9 +353,27 @@
       "artifacts": {
         "governance": "Recording, transcript, summary, chat, and attendance evidence each have independent access, retention, and deletion evidence.",
         "processingRefresh": "An artifact is still processing. This recap refreshes automatically while processing continues.",
-        "retrievalUnavailable": "The service reports stored evidence, but this client has no authorized retrieval endpoint yet. Nothing can be opened or downloaded from this screen.",
+        "retrievalUnavailable": "Direct access is limited to supported recordings with a verified retention window. Other stored evidence remains protected and cannot be opened from this screen.",
         "retention": "Retained until {{time}}",
         "noRetention": "No governed artifact retention applied",
+        "access": {
+          "open": {
+            "video": "Open video recording",
+            "audio": "Open audio recording"
+          },
+          "loading": "Preparing secure playback",
+          "opened": "Secure playback opened in a new tab. This access expires {{time}}.",
+          "retentionExpired": "The retention period ended. Playback access is no longer available.",
+          "unverified": "Playback remains blocked because media type or retention could not be verified.",
+          "errors": {
+            "STALE": "The recording changed. Refresh the meeting recap before trying again.",
+            "NOT_AVAILABLE": "The recording is no longer available under the current retention policy.",
+            "NOT_AUTHORIZED": "Your current meeting participation does not grant access to this recording.",
+            "SERVICE_UNAVAILABLE": "Secure playback is temporarily unavailable. No storage location was exposed.",
+            "INVALID_TICKET": "The playback response could not be verified, so the recording was not opened.",
+            "UNKNOWN": "Secure playback could not be opened. Check that pop-ups are allowed and try again."
+          }
+        },
         "types": {
           "RECORDING": "Meeting recording",
           "TRANSCRIPT": "Speaker and timestamp transcript",

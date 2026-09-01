@@ -63,6 +63,7 @@
     "fields": "표시할 정보",
     "filterPreset": "콘텐츠 초점",
     "widgetLabels": {
+      "command-rail": "우선 업무",
       "activity": "업무 점검",
       "focus": "내 요청 현황",
       "schedule": "오늘",

@@ -88,6 +88,7 @@
     "reject": "반려"
   },
   "home": {
+    "loading": "Space 홈을 불러오는 중입니다.",
     "loadError": "Space 홈을 불러오지 못했습니다.",
     "personFallback": "구성원",
     "hero": {

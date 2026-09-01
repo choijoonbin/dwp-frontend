@@ -70,11 +70,10 @@ export function WorkplaceHomeSectionShell({
       aria-labelledby={labelledBy}
       sx={{
         minWidth: 0,
-        height: 1,
-        border: 1,
+        borderTop: 1,
+        borderBottom: 1,
         borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
+        bgcolor: 'transparent',
         overflow: 'hidden',
       }}
     >

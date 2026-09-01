@@ -9,8 +9,6 @@ import Typography from '@mui/material/Typography';
 
 import type { LucideIcon } from 'lucide-react';
 
-import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
-
 export function ProductAreaPageHeader({
   area,
   view,
@@ -21,7 +19,7 @@ export function ProductAreaPageHeader({
   icon: LucideIcon;
 }) {
   const { t } = useTranslation(area === 'hcm' ? 'hcm' : 'workforce');
-  const productTone = area === 'hcm' ? getProductExperienceProfile('hcm').accent : undefined;
+  const productTone = area === 'hcm' ? 'var(--dwp-product-accent)' : undefined;
   const workforce =
     area === 'workforce' ||
     (area === 'hcm' &&
@@ -51,7 +49,19 @@ export function ProductAreaPageHeader({
       }}
     >
       <Stack direction="row" alignItems="flex-start" gap={1.5} sx={{ minWidth: 0 }}>
-        <GlyphSurface size={42} variant="soft" tone={productTone}>
+        <GlyphSurface
+          size={42}
+          variant="soft"
+          sx={
+            productTone
+              ? {
+                  color: productTone,
+                  bgcolor: 'var(--dwp-product-soft)',
+                  borderColor: 'var(--dwp-product-accent-border)',
+                }
+              : undefined
+          }
+        >
           <Icon size={21} strokeWidth={1.8} aria-hidden="true" />
         </GlyphSurface>
         <Box sx={{ minWidth: 0 }}>

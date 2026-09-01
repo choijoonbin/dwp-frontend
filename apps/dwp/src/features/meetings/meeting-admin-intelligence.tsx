@@ -42,6 +42,11 @@ import {
   type MeetingAdminReadinessState,
 } from './meeting-admin-model';
 import { MeetingPageHeading, MeetingSectionHeading } from './meeting-components';
+import {
+  meetingInsetSurface,
+  meetingSurface,
+  type MeetingSurfaceTone,
+} from './meeting-visual-system';
 
 type IntelligenceLabel = {
   label: string;
@@ -137,6 +142,13 @@ const STATE_PRESENTATION: Record<
   NOT_VERIFIED: { color: 'default', icon: CircleHelp, tone: 'text.secondary' },
 };
 
+function readinessTone(state: MeetingAdminReadinessState): MeetingSurfaceTone {
+  if (state === 'READY') return 'success';
+  if (state === 'BLOCKED') return 'error';
+  if (state === 'CONNECTION_REQUIRED') return 'warning';
+  return 'neutral';
+}
+
 export function MeetingAdminIntelligence({
   readiness,
   labels,
@@ -145,7 +157,7 @@ export function MeetingAdminIntelligence({
   const id = useId();
 
   return (
-    <PageCanvas>
+    <PageCanvas mode="focus">
       <MeetingPageHeading
         eyebrow={labels.eyebrow}
         title={labels.title}
@@ -214,15 +226,13 @@ export function MeetingAdminIntelligence({
           />
           <Box
             role="list"
-            sx={{
+            sx={(theme) => ({
+              ...meetingSurface(theme),
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
-            }}
+              gap: 1,
+              p: 1,
+            })}
           >
             {MEETING_ADMIN_INTELLIGENCE_DEPENDENCIES.map((key) => (
               <DependencyRow
@@ -315,16 +325,16 @@ function ReadinessCard({
     <Box
       role="listitem"
       data-state={signal.state}
-      sx={{
+      sx={(theme) => ({
+        ...meetingSurface(theme, {
+          tone: readinessTone(signal.state),
+          elevated: false,
+        }),
         minWidth: 0,
         p: compact ? 2 : 2.25,
-        border: 1,
-        borderColor: 'divider',
         borderTop: 3,
         borderTopColor: presentation.tone,
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-      }}
+      })}
     >
       <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1.5}>
         <Box
@@ -334,7 +344,7 @@ function ReadinessCard({
             height: 36,
             flex: '0 0 auto',
             placeItems: 'center',
-            borderRadius: 1,
+            borderRadius: 2,
             bgcolor: 'action.hover',
             color: presentation.tone,
           }}
@@ -380,13 +390,11 @@ function DependencyRow({
       alignItems="flex-start"
       gap={1.25}
       data-state={signal.state}
-      sx={{
+      sx={(theme) => ({
+        ...meetingInsetSurface(theme, readinessTone(signal.state)),
         minWidth: 0,
         p: 2,
-        borderBottom: 1,
-        borderRight: { sm: 1 },
-        borderColor: 'divider',
-      }}
+      })}
     >
       <Box sx={{ color: presentation.tone, pt: 0.25 }}>
         <Icon size={18} aria-hidden="true" />
@@ -452,7 +460,7 @@ function RetentionPanel({
     <Box
       component="section"
       aria-label={labels.retentionTitle}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }}
+      sx={(theme) => ({ ...meetingSurface(theme), overflow: 'hidden' })}
     >
       <Box sx={{ px: 2, py: 1.5 }}>
         <Typography component="h3" variant="subtitle1" fontWeight={800}>
@@ -568,7 +576,7 @@ function RuntimeEvidencePanel({
     <Box
       component="section"
       aria-label={labels.runtimeEvidenceTitle}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }}
+      sx={(theme) => ({ ...meetingSurface(theme), overflow: 'hidden' })}
     >
       <Typography component="h2" variant="subtitle1" fontWeight={800} sx={{ px: 2, py: 1.5 }}>
         {labels.runtimeEvidenceTitle}

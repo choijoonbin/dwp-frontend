@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck } from 'lucide-react';
+import { LoadingState } from '@dwp-frontend/design-system';
 
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -10,11 +10,16 @@ export function errorMessage(error: unknown, fallback: string) {
 }
 
 export function AdminLoading() {
+  const { t } = useTranslation('common');
   return (
-    <Stack spacing={2}>
-      <Skeleton variant="rounded" height={126} />
-      <Skeleton variant="rounded" height={360} />
-    </Stack>
+    <LoadingState
+      label={t('labels.loading')}
+      variant="skeleton"
+      size="page"
+      embedded
+      skeletonHeights={[126, 360]}
+      skeletonGap={2}
+    />
   );
 }
 

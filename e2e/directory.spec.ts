@@ -42,35 +42,13 @@ test('workforce administrators explore effective organization and reporting stru
     const path = new URL(route.request().url()).pathname;
     const data = path.endsWith('/scenarios')
       ? []
-      : path.endsWith('/intelligence')
-        ? intelligenceFixture()
-        : chartFixture();
+      : path.endsWith('/candidates')
+        ? []
+        : path.endsWith('/intelligence')
+          ? intelligenceFixture()
+          : chartFixture();
     return route.fulfill({ contentType: 'application/json', body: envelope(data) });
   });
-  await page.route('**/api/auth/admin/identity/users**', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        content: [
-          {
-            userId: 11,
-            displayName: 'Kim Jiwon',
-            email: 'jiwon.kim@sk.com',
-            status: 'ACTIVE',
-            mfaEnabled: true,
-            roles: ['ADMIN'],
-            accessRevision: 1,
-            version: 1,
-          },
-        ],
-        page: 0,
-        size: 100,
-        totalElements: 1,
-        totalPages: 1,
-      }),
-    })
-  );
-
   await page.goto('/hr/design/organization');
   await expect(
     page.getByRole('heading', { name: 'Organization design', exact: true })
@@ -126,8 +104,8 @@ test('workforce administrators explore effective organization and reporting stru
   await expect(reportingLines).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText('Kim Jiwon', { exact: true })).toBeVisible();
   await page.getByText('Kim Jiwon', { exact: true }).click();
-  await expect(page.getByText('System roles')).toBeVisible();
-  await expect(page.getByText('ADMIN', { exact: true })).toBeVisible();
+  await expect(page.getByText('Management candidate eligibility')).toBeVisible();
+  await expect(page.getByText('No management candidate record')).toBeVisible();
   await closeDetails(page);
 
   await page.getByPlaceholder('Search organizations, people, or titles').fill('AI Lead');
@@ -147,7 +125,7 @@ test('people profile deep-links to the selected person in the reporting chart', 
   await mockAdminSession(page);
   await page.route('**/api/people/v1/workforce/organization/**', (route) => {
     const path = new URL(route.request().url()).pathname;
-    const data = path.endsWith('/scenarios') ? [] : chartFixture();
+    const data = path.endsWith('/scenarios') || path.endsWith('/candidates') ? [] : chartFixture();
     return route.fulfill({ contentType: 'application/json', body: envelope(data) });
   });
   await page.route('**/api/people/v1/workforce/people**', (route) => {

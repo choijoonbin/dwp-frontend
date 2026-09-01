@@ -121,6 +121,7 @@ export function AuthLayout() {
               lineHeight: { xs: 1.25, md: 1.12 },
               fontWeight: 760,
               letterSpacing: 0,
+              outline: 'none',
               textShadow: '0 2px 24px rgba(0, 0, 0, 0.28)',
             }}
           >

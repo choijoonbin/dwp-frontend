@@ -1,6 +1,6 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRight,
@@ -41,6 +41,7 @@ import {
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
@@ -57,7 +58,9 @@ import {
   findGovernedProductEntry,
   useGovernedProductEntryCatalog,
 } from '../features/shell/product-entry-point-registry';
+import { useShellAuxiliaryAvoidance } from '../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 
+import type { ErrorInfo, ReactNode } from 'react';
 import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 
 type AppFilter = 'all' | 'available' | 'requestable' | 'pending' | 'pinned' | 'connected';
@@ -67,6 +70,61 @@ const AppManagementRequestDialog = lazy(() =>
     default: module.AppManagementRequestDialog,
   }))
 );
+
+class AppManagementRequestErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(_error: Error, _info: ErrorInfo) {
+    // The recovery UI intentionally keeps the app catalog mounted. A full reload is the
+    // reliable retry for a failed dynamic import because the browser may cache the rejection.
+  }
+
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+function AppManagementRequestLoadError({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('work');
+  return (
+    <Alert
+      severity="error"
+      role="alert"
+      data-testid="app-management-request-load-error"
+      sx={{ mt: 2, alignItems: 'flex-start' }}
+    >
+      <Stack gap={1.5} alignItems="flex-start">
+        <Box>
+          <Typography component="h2" variant="subtitle1">
+            {t('appsPage.managementRequest.moduleLoadErrorTitle')}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.25 }}>
+            {t('appsPage.managementRequest.moduleLoadErrorDescription')}
+          </Typography>
+        </Box>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          gap={1}
+          sx={{ width: { xs: 1, sm: 'auto' } }}
+        >
+          <ActionButton intent="secondary" onClick={onClose}>
+            {t('appsPage.managementRequest.close')}
+          </ActionButton>
+          <ActionButton onClick={() => window.location.reload()}>
+            {t('appsPage.managementRequest.reloadPage')}
+          </ActionButton>
+        </Stack>
+      </Stack>
+    </Alert>
+  );
+}
 
 const homeAppById = new Map(HOME_APPS.map((app) => [app.id, app]));
 const fallbackAppVisual = { iconKey: 'legacy', tone: '#4B5663' } as const;
@@ -184,6 +242,20 @@ export default function AppsPage() {
   const requestedManagementResource = searchParams.get('requestManagement');
   const requestedManagementSurface = searchParams.get('requestSurface');
   const [requestingApp, setRequestingApp] = useState<WorkspaceApp | null>(null);
+  const availableAppsRef = useRef<HTMLElement | null>(null);
+  useShellAuxiliaryAvoidance({ boundaryRef: availableAppsRef });
+  const closeManagementRequest = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('requestManagement');
+    next.delete('requestSurface');
+    setSearchParams(next, { replace: true });
+    window.requestAnimationFrame(() => {
+      const heading = document.querySelector<HTMLHeadingElement>('#dwp-main-content h1');
+      if (!heading) return;
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    });
+  };
   const appsQuery = useQuery({
     queryKey: ['workspace', 'apps'],
     queryFn: getWorkspaceApps,
@@ -332,10 +404,27 @@ export default function AppsPage() {
       }
     />
   );
+  const managementRequest = requestedManagementResource ? (
+    <AppManagementRequestErrorBoundary
+      key={`${requestedManagementResource}:${requestedManagementSurface ?? ''}`}
+      fallback={<AppManagementRequestLoadError onClose={closeManagementRequest} />}
+    >
+      <Suspense
+        fallback={<LoadingState label={t('appsPage.managementRequest.loading')} size="standard" />}
+      >
+        <AppManagementRequestDialog
+          appResourceKey={requestedManagementResource}
+          requestedSurfaceId={requestedManagementSurface}
+          onClose={closeManagementRequest}
+        />
+      </Suspense>
+    </AppManagementRequestErrorBoundary>
+  ) : null;
   if (appsQuery.isLoading) {
     return (
       <PageCanvas>
         {header}
+        {managementRequest}
         <LoadingState label={t('appsPage.loading')} variant="skeleton" size="page" />
       </PageCanvas>
     );
@@ -344,6 +433,7 @@ export default function AppsPage() {
     return (
       <PageCanvas>
         {header}
+        {managementRequest}
         <LocalErrorState
           title={t('appsPage.loadErrorTitle')}
           description={t('appsPage.loadErrorDescription')}
@@ -359,6 +449,7 @@ export default function AppsPage() {
     return (
       <PageCanvas>
         {header}
+        {managementRequest}
         <EmptyState
           title={t('appsPage.emptyTitle')}
           description={t('appsPage.emptyDescription')}
@@ -371,6 +462,7 @@ export default function AppsPage() {
   return (
     <PageCanvas>
       {header}
+      {managementRequest}
 
       {managementOnlyEntries.length > 0 && (
         <Box component="section" aria-labelledby="manageable-apps-heading" sx={{ mt: 4 }}>
@@ -417,9 +509,13 @@ export default function AppsPage() {
                       </Typography>
                     </Box>
                     <ActionButton
+                      component={NavLink}
+                      to={entry.management!.path}
                       intent="secondary"
                       startIcon={<ShieldCheck size={16} aria-hidden="true" />}
-                      onClick={() => navigate(entry.management!.path)}
+                      aria-label={t('appsPage.manageForApp', {
+                        app: definition?.name ?? entry.productId,
+                      })}
                     >
                       {t('appsPage.manage')}
                     </ActionButton>
@@ -616,194 +712,210 @@ export default function AppsPage() {
         />
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mt: 3 }}>
-        <Typography component="h2" variant="h6">
-          {t('appsPage.available')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {t('appsPage.appCount', { count: visibleApps.length })}
-        </Typography>
-      </Box>
-
-      {visibleApps.length > 0 ? (
+      <Box ref={availableAppsRef} component="section" aria-labelledby="available-apps-heading">
         <Box
-          component="ul"
-          sx={{
-            p: 0,
-            mt: 1.5,
-            mb: 0,
-            listStyle: 'none',
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, minmax(0, 1fr))' },
-            borderTop: 1,
-            borderLeft: { xs: 0, lg: 1 },
-            borderColor: 'divider',
-          }}
+          data-shell-auxiliary-avoidance="inline-end"
+          sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mt: 3 }}
         >
-          {visibleApps.map((app) => {
-            const selected = selectedAppId === app.id;
-            const governedEntry = findGovernedProductEntry(governedEntries, app.resourceKey);
-            const healthColor =
-              app.health === 'healthy'
-                ? 'success.main'
-                : app.health === 'attention'
-                  ? 'warning.main'
-                  : app.health === 'configuration-required'
+          <Typography id="available-apps-heading" component="h2" variant="h6">
+            {t('appsPage.available')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t('appsPage.appCount', { count: visibleApps.length })}
+          </Typography>
+        </Box>
+
+        {visibleApps.length > 0 ? (
+          <Box
+            component="ul"
+            sx={{
+              p: 0,
+              mt: 1.5,
+              mb: 0,
+              listStyle: 'none',
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, minmax(0, 1fr))' },
+              borderTop: 1,
+              borderLeft: { xs: 0, lg: 1 },
+              borderColor: 'divider',
+            }}
+          >
+            {visibleApps.map((app) => {
+              const selected = selectedAppId === app.id;
+              const governedEntry = findGovernedProductEntry(governedEntries, app.resourceKey);
+              const healthColor =
+                app.health === 'healthy'
+                  ? 'success.main'
+                  : app.health === 'attention'
                     ? 'warning.main'
-                    : 'info.main';
-            return (
-              <Box
-                component="li"
-                key={app.id}
-                sx={{
-                  minWidth: 0,
-                  position: 'relative',
-                  borderRight: { xs: 0, lg: 1 },
-                  borderBottom: 1,
-                  borderColor: 'divider',
-                }}
-              >
-                <ButtonBase
-                  onClick={() => launch(app)}
+                    : app.health === 'configuration-required'
+                      ? 'warning.main'
+                      : 'info.main';
+              return (
+                <Box
+                  component="li"
+                  key={app.id}
+                  data-shell-auxiliary-avoidance="inline-end"
                   sx={{
-                    width: 1,
-                    minHeight: 116,
-                    p: 2,
-                    display: 'grid',
-                    gridTemplateColumns: '46px minmax(0, 1fr) auto',
-                    alignItems: 'start',
-                    gap: 1.75,
-                    textAlign: 'left',
-                    bgcolor: selected ? 'action.selected' : 'transparent',
-                    transition: (theme) => theme.transitions.create('background-color'),
-                    '&:hover': { bgcolor: 'action.hover' },
+                    minWidth: 0,
+                    position: 'relative',
+                    borderRight: { xs: 0, lg: 1 },
+                    borderBottom: 1,
+                    borderColor: 'divider',
                   }}
                 >
-                  <AppIcon app={app} />
-                  <Box sx={{ minWidth: 0 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                      <Typography component="h3" variant="subtitle2">
-                        {app.name}
+                  <ButtonBase
+                    onClick={() => launch(app)}
+                    sx={{
+                      width: 1,
+                      minHeight: 116,
+                      p: 2,
+                      display: 'grid',
+                      gridTemplateColumns: '46px minmax(0, 1fr) auto',
+                      alignItems: 'start',
+                      gap: 1.75,
+                      textAlign: 'left',
+                      bgcolor: selected ? 'action.selected' : 'transparent',
+                      transition: (theme) => theme.transitions.create('background-color'),
+                      '&:hover': { bgcolor: 'action.hover' },
+                    }}
+                  >
+                    <AppIcon app={app} />
+                    <Box sx={{ minWidth: 0 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                        <Typography component="h3" variant="subtitle2">
+                          {app.name}
+                        </Typography>
+                        {app.pinned && (
+                          <Chip label={t('appsPage.pinned')} size="small" color="info" />
+                        )}
+                        <Chip
+                          label={t(`appsPage.access.states.${app.accessState}`)}
+                          size="small"
+                          color={
+                            app.accessState === 'AVAILABLE'
+                              ? 'success'
+                              : app.accessState === 'REQUESTABLE'
+                                ? 'info'
+                                : 'warning'
+                          }
+                          variant="outlined"
+                        />
+                      </Box>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.2 }}>
+                        {app.description}
                       </Typography>
-                      {app.pinned && (
-                        <Chip label={t('appsPage.pinned')} size="small" color="info" />
-                      )}
-                      <Chip
-                        label={t(`appsPage.access.states.${app.accessState}`)}
-                        size="small"
-                        color={
-                          app.accessState === 'AVAILABLE'
-                            ? 'success'
-                            : app.accessState === 'REQUESTABLE'
-                              ? 'info'
-                              : 'warning'
-                        }
-                        variant="outlined"
-                      />
-                    </Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.2 }}>
-                      {app.description}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        flexWrap: 'wrap',
-                        mt: 1,
-                      }}
-                    >
-                      <Chip
-                        label={t(`appsPage.launchMode.${app.launchMode}`)}
-                        size="small"
-                        variant="outlined"
-                      />
                       <Box
                         sx={{
-                          display: 'inline-flex',
+                          display: 'flex',
                           alignItems: 'center',
-                          gap: 0.5,
-                          color: healthColor,
+                          gap: 1,
+                          flexWrap: 'wrap',
+                          mt: 1,
                         }}
                       >
-                        <HealthIcon health={app.health} />
-                        <Typography variant="caption" color="inherit" fontWeight={700}>
-                          {t(`appsPage.health.${app.health}`)}
+                        <Chip
+                          label={t(`appsPage.launchMode.${app.launchMode}`)}
+                          size="small"
+                          variant="outlined"
+                        />
+                        <Box
+                          sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 0.5,
+                            color: healthColor,
+                          }}
+                        >
+                          <HealthIcon health={app.health} />
+                          <Typography variant="caption" color="inherit" fontWeight={700}>
+                            {t(`appsPage.health.${app.health}`)}
+                          </Typography>
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">
+                          {app.owner}
                         </Typography>
                       </Box>
-                      <Typography variant="caption" color="text.secondary">
-                        {app.owner}
-                      </Typography>
                     </Box>
-                  </Box>
-                  {app.accessState === 'AVAILABLE' ? (
-                    <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
-                  ) : app.accessState === 'REQUESTABLE' ? (
-                    <LockKeyhole size={17} strokeWidth={1.8} aria-hidden="true" />
-                  ) : app.accessState === 'PENDING' ? (
-                    <Clock3 size={17} strokeWidth={1.8} aria-hidden="true" />
-                  ) : (
-                    <Send size={17} strokeWidth={1.8} aria-hidden="true" />
-                  )}
-                </ButtonBase>
-                {governedEntry?.management && (
-                  <Box sx={{ px: 2, py: 1, pr: 6, borderTop: 1, borderColor: 'divider' }}>
-                    <ActionButton
-                      intent="quiet"
-                      size="small"
-                      startIcon={<ShieldCheck size={15} aria-hidden="true" />}
-                      onClick={() => navigate(governedEntry.management!.path)}
-                    >
-                      {t('appsPage.manage')}
-                    </ActionButton>
-                  </Box>
-                )}
-                {app.accessState === 'AVAILABLE' ? (
-                  <ActionIconButton
-                    label={
-                      app.pinned
-                        ? t('appsPage.unpinApp', { app: app.name })
-                        : t('appsPage.pinApp', { app: app.name })
-                    }
-                    tooltip={app.pinned ? t('appsPage.unpin') : t('appsPage.pin')}
-                    disabled={pinMutation.isPending}
-                    onClick={() => pinMutation.mutate(app)}
-                    sx={{ position: 'absolute', right: 8, bottom: 8 }}
-                  >
-                    {app.pinned ? (
-                      <PinOff size={16} strokeWidth={1.8} />
+                    {app.accessState === 'AVAILABLE' ? (
+                      <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
+                    ) : app.accessState === 'REQUESTABLE' ? (
+                      <LockKeyhole size={17} strokeWidth={1.8} aria-hidden="true" />
+                    ) : app.accessState === 'PENDING' ? (
+                      <Clock3 size={17} strokeWidth={1.8} aria-hidden="true" />
                     ) : (
-                      <Pin size={16} strokeWidth={1.8} />
+                      <Send size={17} strokeWidth={1.8} aria-hidden="true" />
                     )}
-                  </ActionIconButton>
-                ) : app.accessState === 'PENDING' && app.accessRequestId ? (
-                  <ActionIconButton
-                    label={t('appsPage.access.cancelRequestFor', { app: app.name })}
-                    tooltip={t('appsPage.access.cancelRequest')}
-                    disabled={cancelRequestMutation.isPending}
-                    onClick={() => cancelRequestMutation.mutate(app)}
-                    sx={{ position: 'absolute', right: 8, bottom: 8 }}
-                  >
-                    <X size={16} strokeWidth={1.8} />
-                  </ActionIconButton>
-                ) : null}
-              </Box>
-            );
-          })}
-        </Box>
-      ) : (
-        <GuidedEmptyState
-          kind="no-results"
-          title={t('appsPage.noMatches')}
-          description={t('appsPage.noMatchesDescription')}
-          actionLabel={t('appsPage.resetFilters')}
-          onAction={() =>
-            setSearchParams(mergeFilterSearchParams(searchParams, { q: null, type: null }), {
-              replace: true,
-            })
-          }
-        />
-      )}
+                  </ButtonBase>
+                  {governedEntry?.management && (
+                    <Box sx={{ px: 2, py: 1, pr: 6, borderTop: 1, borderColor: 'divider' }}>
+                      <ActionButton
+                        component={NavLink}
+                        to={governedEntry.management.path}
+                        intent="quiet"
+                        size="small"
+                        startIcon={<ShieldCheck size={15} aria-hidden="true" />}
+                        aria-label={t('appsPage.manageForApp', { app: app.name })}
+                      >
+                        {t('appsPage.manage')}
+                      </ActionButton>
+                    </Box>
+                  )}
+                  {app.accessState === 'AVAILABLE' ? (
+                    <ActionIconButton
+                      label={
+                        app.pinned
+                          ? t('appsPage.unpinApp', { app: app.name })
+                          : t('appsPage.pinApp', { app: app.name })
+                      }
+                      tooltip={app.pinned ? t('appsPage.unpin') : t('appsPage.pin')}
+                      disabled={pinMutation.isPending}
+                      onClick={() => pinMutation.mutate(app)}
+                      sx={{
+                        position: 'absolute',
+                        right: 'calc(8px + var(--dwp-shell-auxiliary-inline-clearance, 0px))',
+                        bottom: 8,
+                      }}
+                    >
+                      {app.pinned ? (
+                        <PinOff size={16} strokeWidth={1.8} />
+                      ) : (
+                        <Pin size={16} strokeWidth={1.8} />
+                      )}
+                    </ActionIconButton>
+                  ) : app.accessState === 'PENDING' && app.accessRequestId ? (
+                    <ActionIconButton
+                      label={t('appsPage.access.cancelRequestFor', { app: app.name })}
+                      tooltip={t('appsPage.access.cancelRequest')}
+                      disabled={cancelRequestMutation.isPending}
+                      onClick={() => cancelRequestMutation.mutate(app)}
+                      sx={{
+                        position: 'absolute',
+                        right: 'calc(8px + var(--dwp-shell-auxiliary-inline-clearance, 0px))',
+                        bottom: 8,
+                      }}
+                    >
+                      <X size={16} strokeWidth={1.8} />
+                    </ActionIconButton>
+                  ) : null}
+                </Box>
+              );
+            })}
+          </Box>
+        ) : (
+          <GuidedEmptyState
+            kind="no-results"
+            title={t('appsPage.noMatches')}
+            description={t('appsPage.noMatchesDescription')}
+            actionLabel={t('appsPage.resetFilters')}
+            onAction={() =>
+              setSearchParams(mergeFilterSearchParams(searchParams, { q: null, type: null }), {
+                replace: true,
+              })
+            }
+          />
+        )}
+      </Box>
       <AccessRequestDialog
         app={requestingApp}
         busy={requestMutation.isPending}
@@ -817,24 +929,6 @@ export default function AppsPage() {
           });
         }}
       />
-      {requestedManagementResource && (
-        <Suspense
-          fallback={
-            <LoadingState label={t('appsPage.managementRequest.loading')} size="standard" />
-          }
-        >
-          <AppManagementRequestDialog
-            appResourceKey={requestedManagementResource}
-            requestedSurfaceId={requestedManagementSurface}
-            onClose={() => {
-              const next = new URLSearchParams(searchParams);
-              next.delete('requestManagement');
-              next.delete('requestSurface');
-              setSearchParams(next, { replace: true });
-            }}
-          />
-        </Suspense>
-      )}
     </PageCanvas>
   );
 }

@@ -89,7 +89,7 @@ export function FlowHomeHeroSurface({
           position: 'relative',
           zIndex: 1,
           width: 1,
-          maxWidth: presentation === 'expressive' && wide ? 'none' : { md: 1280, xl: 1520 },
+          maxWidth: wide && presentation !== 'focused' ? 'none' : { md: 1280, xl: 1520 },
           mx: 'auto',
           minWidth: 0,
           display: 'flex',
