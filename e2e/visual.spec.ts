@@ -458,6 +458,8 @@ async function mockPersonalHome(page: Page, locale = 'en', homeOverview?: unknow
 }
 
 async function expectPersonalHomeLaunchpadReady(page: Page) {
+  // Keep Darwin pixel geometry independent of the runner's scrollbar preference.
+  await page.addStyleTag({ content: ':root { scrollbar-width: none; }' });
   const launchpad = page.locator('[data-launchpad-surface="page"]');
   await expect(launchpad).toBeVisible();
   await expect(launchpad.locator('[data-launchpad-group-target]')).toHaveCount(4);
