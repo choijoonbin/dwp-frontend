@@ -40,6 +40,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function expectPageReady(page: Page) {
+  await expect(
+    page.getByRole('progressbar', { name: /Loading page|페이지 불러오는 중/u })
+  ).toHaveCount(0, { timeout: 15_000 });
   const main = page.locator('#dwp-main-content');
   await expect(main).toBeVisible({ timeout: 15_000 });
   await expect(main.locator('.MuiSkeleton-root')).toHaveCount(0, { timeout: 15_000 });
@@ -270,10 +273,10 @@ test('home EMPTY uses a dominant command deck without zero-value KPI cells at 14
   await mockMeetingVisualHome(page, 'EMPTY');
 
   await page.goto('/meetings/home');
+  await expectPageReady(page);
   await expect(
     page.getByRole('heading', { level: 1, name: '오늘의 대화를 더 매끄럽게 운영하세요' })
-  ).toBeVisible();
-  await expectPageReady(page);
+  ).toBeVisible({ timeout: 15_000 });
   await expectHomeCommandDeck(page, { desktopDominance: true });
   await expectMeaningfulEmptyInsights(page);
   const primaryAction = page.getByTestId('meeting-command-primary').getByRole('button').first();

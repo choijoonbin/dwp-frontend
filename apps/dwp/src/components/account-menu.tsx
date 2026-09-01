@@ -270,8 +270,11 @@ export function AccountMenu({
             sx: {
               width: { xs: 'calc(100vw - 24px)', sm: 344 },
               maxWidth: 344,
+              maxHeight: 'calc(100dvh - 32px)',
               mt: 1,
-              overflow: 'hidden',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              overscrollBehavior: 'contain',
             },
           },
         }}

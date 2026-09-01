@@ -584,7 +584,12 @@ test('administration access grid visual baseline', async ({ page }, testInfo) =>
   });
 
   await page.goto('/admin/identity/access');
-  await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(
+    page.getByTestId('shell-notification-control').getByRole('button')
+  ).toHaveAccessibleName(/0 actionable notifications, 0 total unread/i, { timeout: 15_000 });
 
   if (testInfo.project.name === 'mobile') {
     await expect(

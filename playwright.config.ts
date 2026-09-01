@@ -4,6 +4,7 @@ const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:4200';
 const REUSE_EXISTING_SERVER = process.env.E2E_REUSE_EXISTING_SERVER === 'true';
 const HTML_REPORT_OUTPUT = process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report';
 const TEST_OUTPUT = process.env.PLAYWRIGHT_OUTPUT_DIR || 'test-results';
+const TIMEZONE_ID = process.env.E2E_TIMEZONE_ID;
 
 export default defineConfig({
   testDir: './e2e',
@@ -21,6 +22,7 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    ...(TIMEZONE_ID ? { timezoneId: TIMEZONE_ID } : {}),
   },
 
   projects: [

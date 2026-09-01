@@ -3,6 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 const BASE_URL = process.env.STORYBOOK_BASE_URL || 'http://localhost:6006';
 const HTML_REPORT_OUTPUT = process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report';
 const TEST_OUTPUT = process.env.PLAYWRIGHT_OUTPUT_DIR || 'test-results';
+const TIMEZONE_ID = process.env.E2E_TIMEZONE_ID;
 
 export default defineConfig({
   testDir: './e2e-storybook',
@@ -19,6 +20,7 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    ...(TIMEZONE_ID ? { timezoneId: TIMEZONE_ID } : {}),
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

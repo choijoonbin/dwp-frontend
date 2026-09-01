@@ -11,6 +11,7 @@ import {
   APPROVAL_WORKFLOW_FIXTURE,
 } from './support/product-area-fixtures';
 import { fulfillSuccess, mockShellSession } from './support/shell-session';
+import { NOTIFICATIONS_VIEW, expectApprovalsMobileHeader } from './support/ui-contracts';
 
 function deferred() {
   let resolve!: () => void;
@@ -377,7 +378,7 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
 }, testInfo) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_OPERATOR'], {
     locale: 'ko',
-    permissions: APPROVAL_ADMIN_PERMISSIONS,
+    permissions: [...APPROVAL_ADMIN_PERMISSIONS, NOTIFICATIONS_VIEW],
   });
   await mockApprovalProductSurfaceAuthority(page);
 
@@ -408,12 +409,7 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
   ]) {
     await page.setViewportSize(viewport);
     await page.goto('/approvals/home');
-    const managementLink = page
-      .getByTestId('approvals-mobile-surface-switcher')
-      .getByTestId('product-surface-management-entry');
-    await expect(managementLink).toBeVisible();
-    await expect(managementLink).toHaveAccessibleName('앱 관리: 전자결재');
-    await expect(managementLink.getByText('관리', { exact: true })).toBeVisible();
+    const { applicationContext, managementLink } = await expectApprovalsMobileHeader(page);
     await managementLink.focus();
     await expect(managementLink).toBeFocused();
     await expect(page.getByTestId('product-surface-mobile-disclosure')).toHaveCount(0);
@@ -466,7 +462,7 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
           .getByTestId('product-surface-management-entry')
       ).toBeVisible();
     }
-    await expect(page.getByTestId('shell-application-context')).toBeVisible();
+    await expect(applicationContext).toBeVisible();
     await page.screenshot({
       path: testInfo.outputPath(`approvals-surface-switch-mobile-${viewport.width}.png`),
       fullPage: true,

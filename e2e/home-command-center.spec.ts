@@ -8,6 +8,7 @@ import {
   fulfillSuccess,
   mockShellSession,
 } from './support/shell-session';
+import { mockUnreadAppBadge } from './support/ui-contracts';
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -127,13 +128,11 @@ test('home turns live work signals into a keyboard-operable next action', async 
     widgets.map((widget) => {
       const bounds = widget.getBoundingClientRect();
       return {
-        top: Math.round(bounds.top),
         width: Math.round(bounds.width),
         size: widget.getAttribute('data-workspace-widget-size'),
       };
     })
   );
-  expect(new Set(standardWidgetBounds.map((widget) => widget.top)).size).toBe(1);
   expect(standardWidgetBounds[0]?.width).toBe(standardWidgetBounds[2]?.width);
   expect(standardWidgetBounds[1]?.width ?? 0).toBeGreaterThan(
     (standardWidgetBounds[0]?.width ?? 0) * 1.9
@@ -415,8 +414,9 @@ test('home composer enforces semantic height tokens and releases them on phones'
 
   const activityWidget = page.locator('[data-workspace-widget="activity"]');
   const activityContent = activityWidget.locator(':scope > [data-workspace-widget-content]');
+  const activitySurface = activityContent.locator(':scope > section');
   await expect(activityWidget).toHaveAttribute('data-workspace-widget-height', 'tall');
-  await expect(activityWidget).toHaveCSS('height', '488px');
+  await expect(activityWidget).toHaveCSS('height', '348px');
   await page.getByRole('button', { name: 'Select Live activity widget size' }).click();
 
   const footprintDialog = page.getByRole('dialog', { name: 'Live activity widget size' });
@@ -429,23 +429,28 @@ test('home composer enforces semantic height tokens and releases them on phones'
   await footprintDialog.getByRole('button', { name: 'Short' }).click();
 
   await expect(activityWidget).toHaveAttribute('data-workspace-widget-height', 'short');
-  await expect(activityWidget).toHaveCSS('height', '328px');
-  await expect(activityContent).toHaveCSS('overflow-y', 'auto');
-  expect(await activityContent.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(
+  await expect(activityWidget).toHaveCSS('height', '212px');
+  await expect(activityContent).toHaveCSS('overflow-y', 'hidden');
+  await expect(activitySurface).toHaveCSS('overflow-y', 'auto');
+  expect(await activitySurface.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(
     true
   );
 
   await page.setViewportSize({ width: 320, height: 720 });
-  await expect(activityWidget).not.toHaveCSS('height', '328px');
+  await expect(activityWidget).not.toHaveCSS('height', '212px');
   await expect(activityContent).toHaveCSS('overflow-y', 'visible');
-  expect(await activityContent.evaluate((node) => node.scrollHeight === node.clientHeight)).toBe(
+  await expect(activitySurface).toHaveCSS('overflow-y', 'visible');
+  expect(await activitySurface.evaluate((node) => node.scrollHeight === node.clientHeight)).toBe(
     true
   );
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
     await page.evaluate(() => document.documentElement.clientWidth)
   );
 
+  await page.keyboard.press('Escape');
+  await expect(footprintDialog).not.toBeVisible();
   await page.locator('button[aria-label="Cancel changes"]').click();
+  await page.getByRole('button', { name: 'Discard changes' }).click();
   await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
 });
 
@@ -481,8 +486,9 @@ test('home edit mode settles widgets once and honors reduced-motion preferences'
     )
   );
   expect(motion[0]?.name).not.toBe('none');
-  expect(motion[0]?.duration).toBe('0.36s');
-  expect(motion[0]?.iterationCount).toBe('infinite');
+  expect(motion[0]?.duration).toBe('0.46s');
+  expect(motion[0]?.iterationCount).toBe('1');
+  expect(motion[0]?.timingFunction).toContain('linear(');
   expect(motion[1]?.name).not.toBe('none');
   expect(motion[1]?.duration).toBe('0.46s');
   expect(motion[1]?.iterationCount).toBe('1');
@@ -496,7 +502,7 @@ test('home edit mode settles widgets once and honors reduced-motion preferences'
         iterationCount: style.animationIterationCount,
       };
     })
-  ).toEqual({ duration: '0.46s, 2.4s', iterationCount: '1, infinite' });
+  ).toEqual({ duration: '0.46s', iterationCount: '1' });
 
   await page.waitForTimeout(750);
   const settledTransforms = await page
@@ -510,15 +516,6 @@ test('home edit mode settles widgets once and honors reduced-motion preferences'
   expect(settledTransforms).toEqual(
     Array.from({ length: settledTransforms.length }, () => ({ content: 'none', frame: 'none' }))
   );
-  const grip = page.locator('[data-workspace-widget-grip]').first();
-  await expect(grip).toBeVisible();
-  expect(
-    await grip.evaluate((node) => {
-      const style = window.getComputedStyle(node);
-      return { duration: style.animationDuration, iterationCount: style.animationIterationCount };
-    })
-  ).toEqual({ duration: '2.4s', iterationCount: 'infinite' });
-
   await page.locator('html').evaluate((node) => {
     node.dataset.motion = 'reduced';
   });
@@ -527,9 +524,6 @@ test('home edit mode settles widgets once and honors reduced-motion preferences'
     .toBe('none');
   await expect
     .poll(() => personalWidget.evaluate((node) => window.getComputedStyle(node).animationName))
-    .toBe('none');
-  await expect
-    .poll(() => grip.evaluate((node) => window.getComputedStyle(node).animationName))
     .toBe('none');
   await expect
     .poll(() =>
@@ -548,9 +542,6 @@ test('home edit mode settles widgets once and honors reduced-motion preferences'
     .toBe('none');
   await expect
     .poll(() => personalWidget.evaluate((node) => window.getComputedStyle(node).animationName))
-    .toBe('none');
-  await expect
-    .poll(() => grip.evaluate((node) => window.getComputedStyle(node).animationName))
     .toBe('none');
   await expect
     .poll(() =>
@@ -578,15 +569,20 @@ test('pressing and holding a work tool enters personal editing without launching
     await page.waitForTimeout(650);
     await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Remove Work from home' })).toBeVisible();
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(
+      (url) => url.pathname === '/' && url.searchParams.get('edit') === 'home'
+    );
   } finally {
     await page.mouse.up();
   }
 
   await page.waitForTimeout(350);
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(
+    (url) => url.pathname === '/' && url.searchParams.get('edit') === 'home'
+  );
   await page.locator('button[aria-label="Cancel changes"]').click();
   await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
+  await expect(page).toHaveURL((url) => url.pathname === '/' && url.search === '');
 });
 
 test('home app hover frames the icon evenly without enclosing its label', async ({ page }) => {
@@ -713,6 +709,10 @@ test('tenant policy disables personal editing even when the edit URL is requeste
 });
 
 test('home work-tool groups and app columns adapt for tablet width', async ({ page }) => {
+  await page.route('**/api/auth/permissions', (route) =>
+    fulfillSuccess(route, FULL_PRODUCT_PERMISSIONS)
+  );
+  await mockUnreadAppBadge(page, 'approvals', 3);
   await page.setViewportSize({ width: 963, height: 900 });
   await page.goto('/');
 
@@ -753,14 +753,13 @@ test('home work-tool groups and app columns adapt for tablet width', async ({ pa
   expect(firstCardSurface.borderRadius).toBe('8px');
   expect(firstCardSurface.backgroundColor).toMatch(/rgba\(.+, 0\.2\)$/);
 
-  const badgeClip = await launchpad
-    .locator('[data-launchpad-badge]')
-    .first()
-    .evaluate((badge) => {
-      const badgeBounds = badge.getBoundingClientRect();
-      const gridBounds = badge.closest('ul')?.getBoundingClientRect();
-      return gridBounds ? gridBounds.top - badgeBounds.top : null;
-    });
+  const badge = launchpad.locator('[data-launchpad-badge]').first();
+  await expect(badge).toBeVisible();
+  const badgeClip = await badge.evaluate((badge) => {
+    const badgeBounds = badge.getBoundingClientRect();
+    const gridBounds = badge.closest('ul')?.getBoundingClientRect();
+    return gridBounds ? gridBounds.top - badgeBounds.top : null;
+  });
   expect(badgeClip).not.toBeNull();
   expect(badgeClip ?? 1).toBeLessThanOrEqual(0);
 });

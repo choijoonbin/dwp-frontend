@@ -136,6 +136,18 @@ export function ClassicHome({
         <Box
           data-testid="home-workspace-grid"
           sx={{
+            '& [data-workspace-widget-content]': {
+              overflowY: { xs: 'visible !important', sm: 'hidden !important' },
+              scrollbarGutter: 'auto !important',
+              '& > section': {
+                height: { xs: 'auto !important', sm: '100% !important' },
+                minHeight: { xs: 'auto !important', sm: '100% !important' },
+                overflowX: { xs: 'visible !important', sm: 'hidden !important' },
+                overflowY: { xs: 'visible !important', sm: 'auto !important' },
+                overscrollBehaviorY: 'auto',
+                scrollbarGutter: { xs: 'auto', sm: 'stable' },
+              },
+            },
             '& [data-workspace-widget-surface="card"] [data-workspace-widget-content] > section': {
               bgcolor: 'background.paper',
               border: 1,

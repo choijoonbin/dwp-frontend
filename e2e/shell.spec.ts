@@ -10,6 +10,7 @@ import { mockAuthenticatedAdminSession } from './support/authenticated-admin-ses
 import { expectNoAutomaticAccessibilityViolations } from './support/accessibility';
 import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-session';
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
+import { expectDialogViewportInset } from './support/ui-contracts';
 import { readHorizontalWorkspaceSurfaceGaps } from './support/workspace-geometry';
 
 test.beforeEach(async ({ page }) => {
@@ -860,8 +861,7 @@ test('authenticated users enter a personal home before the business shell', asyn
 
   const accountButton = page.getByRole('button', { name: 'Account' });
   await accountButton.click();
-  const accountPanel = page.getByRole('dialog', { name: 'Account and session' });
-  await expect(accountPanel).toHaveCSS('opacity', '1');
+  await expectDialogViewportInset(page, 'Account and session');
   await expect(page.getByText('admin@dwp.local', { exact: true })).toBeVisible();
   await expect(page.getByText('Workspace · default', { exact: true })).toBeVisible();
   const accountSettingsItem = page.getByRole('menuitem', { name: 'Account settings' });

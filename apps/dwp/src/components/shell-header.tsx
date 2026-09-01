@@ -168,7 +168,11 @@ export function ShellHeader({
               minWidth: 0,
               maxWidth: { xs: 132, sm: 220, xl: 280 },
               display: 'flex',
-              flex: '0 1 auto',
+              // Product surface controls and global utilities share the first
+              // mobile row. Do not let those fixed controls collapse a short
+              // product name into an ambiguous one-character ellipsis. The
+              // surface control already moves to its rail at <=360px.
+              flex: mobilePrimaryNavigation ? { xs: '0 0 auto', sm: '0 1 auto' } : '0 1 auto',
               alignItems: 'center',
               gap: 1,
               px: 0.5,
