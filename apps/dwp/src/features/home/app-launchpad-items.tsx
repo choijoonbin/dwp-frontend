@@ -302,6 +302,7 @@ export function AppTile({
             </Box>
             <Typography
               component="span"
+              data-launchpad-item-label
               variant="caption"
               fontWeight={700}
               sx={{
@@ -459,6 +460,7 @@ export function FolderTile({
             </Box>
             <Typography
               component="span"
+              data-launchpad-item-label
               variant="caption"
               fontWeight={700}
               sx={{

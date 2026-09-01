@@ -417,9 +417,6 @@ export function FlowHome({
           },
         },
         '& [data-flow-dock-launch]': { minHeight: editing ? 72 : 62 },
-        '&[data-preview-device="mobile"] [data-flow-app-dock-list]': {
-          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-        },
         '&[data-preview-device="mobile"] [data-workspace-presentation], &[data-flow-large-text="true"] [data-workspace-presentation]':
           {
             gridTemplateColumns: 'minmax(0, 1fr)',
@@ -447,9 +444,9 @@ export function FlowHome({
           gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
         },
         '&[data-flow-large-text="true"]': {
-          '--launchpad-tile-height': 'calc(60px + 1.65rem)',
-          '--launchpad-label-height': '2.4em',
-          '--launchpad-label-line-height': '1.2',
+          '--launchpad-tile-height': 'calc(44px + 2.25rem)',
+          '--launchpad-label-height': '3em',
+          '--launchpad-label-line-height': (theme) => theme.typography.caption.lineHeight ?? 1.5,
         },
         '@media (forced-colors: active)': {
           '--home-surface': 'Canvas',

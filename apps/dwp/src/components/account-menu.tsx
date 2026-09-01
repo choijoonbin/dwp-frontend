@@ -132,6 +132,13 @@ export function AccountMenu({
     let frame = 0;
     let previousAnchorFrame = '';
     const trackAnchor = () => {
+      // Full-page capture temporarily collapses Chromium's visual viewport to
+      // 1px. MUI cannot satisfy its 16px edge threshold in that state, so wait
+      // for a real viewport before asking it to reposition the panel.
+      if (window.innerWidth <= 32 || window.innerHeight <= 32) {
+        frame = window.requestAnimationFrame(trackAnchor);
+        return;
+      }
       const bounds = anchor.getBoundingClientRect();
       const nextAnchorFrame = [bounds.x, bounds.y, bounds.width, bounds.height].join(':');
 

@@ -11,8 +11,13 @@ import {
   FULL_PRODUCT_PERMISSIONS,
   HOME_COMMUNICATIONS_FIXTURE,
 } from './support/shell-session';
+import { emulateVisualTransparency } from './support/visual-media';
 
 test.describe.configure({ mode: 'serial' });
+
+test.beforeEach(async ({ page }) => {
+  await emulateVisualTransparency(page);
+});
 
 const authPolicy = {
   status: 'SUCCESS',

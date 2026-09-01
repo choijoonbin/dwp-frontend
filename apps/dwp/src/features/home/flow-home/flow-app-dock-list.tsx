@@ -252,6 +252,10 @@ export function FlowAppDockList({
                 columnGap: 0.75,
                 rowGap: 0.75,
               },
+              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                {
+                  gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+                },
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
                 {
                   gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${LAUNCHPAD_TILE_WIDTH}px)`,
@@ -263,6 +267,7 @@ export function FlowAppDockList({
               const app = appById.get(itemId);
               if (!folder && !app) return null;
               const label = folder?.name ?? app!.shortName;
+              const singleLineCompactLabel = itemId === 'dwp-ask';
               const folderApps = folder
                 ? folder.appIds.map((appId) => appById.get(appId)).filter(Boolean)
                 : [];
@@ -354,6 +359,10 @@ export function FlowAppDockList({
                       {
                         width: LAUNCHPAD_TILE_WIDTH,
                         height: LAUNCHPAD_TILE_HEIGHT_CSS,
+                      },
+                    [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                      {
+                        width: '100%',
                       },
                   }}
                 >
@@ -500,7 +509,28 @@ export function FlowAppDockList({
                         lineHeight: 1.3,
                         wordBreak: 'keep-all',
                         overflowWrap: 'break-word',
-                        fontSize: '0.71875rem',
+                        fontSize: (theme) => theme.typography.caption.fontSize,
+                        [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                          {
+                            fontSize: (theme) =>
+                              singleLineCompactLabel
+                                ? theme.typography.overline.fontSize
+                                : theme.typography.caption.fontSize,
+                            display: singleLineCompactLabel ? 'block' : '-webkit-box',
+                            whiteSpace: singleLineCompactLabel ? 'nowrap' : 'normal',
+                            width: singleLineCompactLabel
+                              ? (theme) => `calc(100% + ${theme.spacing(0.5)})`
+                              : 1,
+                            mx: singleLineCompactLabel ? (theme) => theme.spacing(-0.25) : 0,
+                          },
+                        [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                          {
+                            fontSize: (theme) => theme.typography.caption.fontSize,
+                            display: '-webkit-box',
+                            whiteSpace: 'normal',
+                            width: 1,
+                            mx: 0,
+                          },
                         [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
                           {
                             minHeight: '2.6em',

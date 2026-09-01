@@ -8,8 +8,13 @@ import {
   mockShellSession,
 } from './support/shell-session';
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
+import { emulateVisualTransparency } from './support/visual-media';
 
 test.describe.configure({ mode: 'serial' });
+
+test.beforeEach(async ({ page }) => {
+  await emulateVisualTransparency(page);
+});
 
 const FLOW_VISUAL_NOW = new Date('2026-08-11T00:30:00.000Z');
 
@@ -308,15 +313,10 @@ async function mockFlowHome(
 }
 
 async function emulateReducedTransparency(page: Page, colorScheme: 'light' | 'dark') {
-  const session = await page.context().newCDPSession(page);
-  await session.send('Emulation.setEmulatedMedia', {
-    media: '',
-    features: [
-      { name: 'prefers-color-scheme', value: colorScheme },
-      { name: 'prefers-reduced-motion', value: 'reduce' },
-      { name: 'prefers-reduced-transparency', value: 'reduce' },
-    ],
-  });
+  await emulateVisualTransparency(page, 'reduce', [
+    { name: 'prefers-color-scheme', value: colorScheme },
+    { name: 'prefers-reduced-motion', value: 'reduce' },
+  ]);
 }
 
 async function waitForVisualState(page: Page) {

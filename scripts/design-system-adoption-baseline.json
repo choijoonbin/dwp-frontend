@@ -909,7 +909,7 @@
       "HardcodedColor": 17,
       "RawRadius": 4,
       "RawShadow": 1,
-      "RawTypography": 9
+      "RawTypography": 8
     },
     "apps/dwp/src/features/home/flow-home/flow-home-context.tsx": {
       "HardcodedColor": 31,
@@ -921,7 +921,7 @@
     "apps/dwp/src/features/home/flow-home/flow-home.tsx": {
       "HardcodedColor": 5,
       "RawRadius": 1,
-      "RawTypography": 2,
+      "RawTypography": 1,
       "RawShadow": 2,
       "RawMotion": 1
     },

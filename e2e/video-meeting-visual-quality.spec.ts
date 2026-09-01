@@ -8,6 +8,7 @@ import {
   mockMeetingVisualPublishedRecap,
   mockMeetingVisualSession,
 } from './support/video-meeting-visual-fixtures';
+import { emulateVisualTransparency } from './support/visual-media';
 
 import type { Locator, Page } from '@playwright/test';
 
@@ -23,6 +24,7 @@ const VIEWPORT = {
 const runtimeDiagnostics = new WeakMap<Page, string[]>();
 
 test.beforeEach(async ({ page }) => {
+  await emulateVisualTransparency(page);
   const diagnostics: string[] = [];
   runtimeDiagnostics.set(page, diagnostics);
   page.on('console', (message) => {

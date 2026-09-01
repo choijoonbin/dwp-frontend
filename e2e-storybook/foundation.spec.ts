@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
+import { emulateVisualTransparency } from '../e2e/support/visual-media';
+
 async function openStory(page: Page, id: string, globals?: string) {
   const search = new URLSearchParams({ id, viewMode: 'story' });
   if (globals) search.set('globals', globals);
@@ -32,6 +34,7 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  await emulateVisualTransparency(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 

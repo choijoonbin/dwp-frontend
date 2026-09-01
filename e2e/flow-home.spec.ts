@@ -13,6 +13,13 @@ import {
   HR_HOME_FIXTURE,
   HR_SERVICE_REQUESTS_FIXTURE,
 } from './support/product-area-fixtures';
+import {
+  expectFlowDockDistribution,
+  expectLaunchpadEditControlsFit,
+  expectReadableDockLabels,
+  expectVerticallyStackedDockGroups,
+  flowDockRowSizes,
+} from './support/flow-home-layout-contracts';
 import { mockShellNotificationRuntime } from './support/runtime-access';
 
 const FLOW_FIXTURE_NOW = new Date('2026-08-11T00:30:00.000Z');
@@ -858,14 +865,8 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
     'data-flow-dock-group-item-limit',
     '10'
   );
-  const dockDistribution = await workscape
-    .locator('[data-flow-dock-group]')
-    .evaluateAll((groups) =>
-      groups.map((group) => group.querySelectorAll('[data-flow-dock-item]').length)
-    );
-  expect(dockDistribution).toHaveLength(4);
-  expect(dockDistribution).toEqual([5, 6, 2, 3]);
-  expect(dockDistribution.every((count) => count <= 10)).toBe(true);
+  await expectFlowDockDistribution(workscape.locator('[data-flow-dock-group]'), [5, 7, 2, 3], 10);
+  await expectReadableDockLabels(workscape.locator('[data-flow-dock-item-label]'), 'dwp-ask');
   const workscapeHeight = (await workscape.boundingBox())?.height ?? Number.POSITIVE_INFINITY;
   expect(workscapeHeight).toBeGreaterThanOrEqual(240);
   expect(workscapeHeight).toBeLessThanOrEqual(500);
@@ -1275,14 +1276,14 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
     '7-5/4-4-4'
   );
   await expect(page.locator('[data-home-loading-dock-group]')).toHaveCount(4);
-  await expect(page.locator('[data-home-loading-dock-item]:visible')).toHaveCount(16);
+  await expect(page.locator('[data-home-loading-dock-item]:visible')).toHaveCount(17);
   expect(
     await page
       .locator('[data-home-loading-dock-group]')
       .evaluateAll((groups) =>
         groups.map((group) => group.querySelectorAll('[data-home-loading-dock-item]').length)
       )
-  ).toEqual([5, 6, 2, 3]);
+  ).toEqual([5, 7, 2, 3]);
   const loadingGrid = await page.locator('[data-home-loading-widgets]').evaluate((root) => {
     const rect = (key: string) => {
       const bounds = root
@@ -1319,7 +1320,7 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   const resolvedDock = flowHome.locator('[data-flow-dock-shell]');
   await expect(resolvedDock).toHaveAttribute('data-flow-dock-item-limit', '40');
   await expect(resolvedDock).toHaveAttribute('data-flow-dock-group-item-limit', '10');
-  await expect(resolvedDock.locator('[data-flow-dock-item]')).toHaveCount(16);
+  await expect(resolvedDock.locator('[data-flow-dock-item]')).toHaveCount(17);
   const resolvedDockBounds = await resolvedDock.boundingBox();
   expect(resolvedDockBounds).not.toBeNull();
   if (loadingDockBounds && resolvedDockBounds) {
@@ -1357,6 +1358,8 @@ test('Balanced Home reload keeps the saved four-group Dock geometry stable', asy
 
   await page.addInitScript(() => {
     window.sessionStorage.setItem('dwp.home.presentation-hint.v1', 'balanced');
+    // A cached entitlement hint can trail the current app catalog by one item.
+    // Both states still occupy two rows, so resolving the live catalog must not shift the Dock.
     window.sessionStorage.setItem('dwp.home.launchpad-hint.v1', JSON.stringify([5, 6, 2, 3]));
   });
   await page.route('**/api/platform/v1/home-preferences**', async (route) => {
@@ -1393,6 +1396,12 @@ test('Balanced Home reload keeps the saved four-group Dock geometry stable', asy
   releasePreference();
   const resolvedDock = page.getByTestId('flow-home').locator('[data-flow-dock-shell]');
   await expect(resolvedDock).toBeVisible();
+  await expect(resolvedDock.locator('[data-flow-dock-item]')).toHaveCount(17);
+  await expectFlowDockDistribution(
+    resolvedDock.locator('[data-flow-dock-group]'),
+    [5, 7, 2, 3],
+    10
+  );
   const resolvedBounds = await resolvedDock.boundingBox();
   expect(resolvedBounds).not.toBeNull();
   if (loadingBounds && resolvedBounds) {
@@ -2072,7 +2081,7 @@ test('tenant imagery remains colourful behind a panelled, readable app Dock', as
   expect(visualContract.workscapeHeight).toBeLessThanOrEqual(500);
   expect(Math.abs(visualContract.dockWidth - visualContract.frameWidth)).toBeLessThanOrEqual(2);
   expect(visualContract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
-  await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(16);
+  await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(17);
 });
 
 test('read mode collapses sparse saved footprints while edit mode exposes semantic height controls', async ({
@@ -2300,18 +2309,10 @@ test('the editor keeps the action queue personal while announcements remains gov
         (group.backgroundColor !== 'rgba(0, 0, 0, 0)' || group.backgroundImage !== 'none')
     )
   ).toBe(true);
-  const rowSizes = (items: readonly { top: number }[]) => {
-    const rows: number[] = [];
-    items.forEach((item) => {
-      const rowIndex = rows.findIndex((top) => Math.abs(top - item.top) <= 2);
-      if (rowIndex < 0) rows.push(item.top);
-    });
-    return rows.map((top) => items.filter((item) => Math.abs(item.top - top) <= 2).length);
-  };
   expect(readGeometry.groups.every((group) => group.items.length <= 10)).toBe(true);
-  expect(readGeometry.groups.map((group) => rowSizes(group.items))).toEqual([
+  expect(readGeometry.groups.map((group) => flowDockRowSizes(group.items))).toEqual([
     [5],
-    [5, 1],
+    [5, 2],
     [2],
     [3],
   ]);
@@ -2397,79 +2398,20 @@ test('the editor keeps the action queue personal while announcements remains gov
       JSON.stringify({ editHeight: editGroup.height, readHeight: readGroup.height })
     ).toBeLessThanOrEqual(2);
     expect(editGroup.items.map((item) => item.id)).toEqual(readGroup.items.map((item) => item.id));
-    expect(rowSizes(editGroup.items)).toEqual(rowSizes(readGroup.items));
+    expect(flowDockRowSizes(editGroup.items)).toEqual(flowDockRowSizes(readGroup.items));
   }
-  const readRemoveControlClipContract = () =>
-    dockGroupLists.evaluateAll((lists) =>
-      lists.map((list) => {
-        const listBounds = list.getBoundingClientRect();
-        const section = list.parentElement;
-        const grid = section?.parentElement;
-        const firstColumnControls = Array.from(
-          list.querySelectorAll<HTMLElement>(':scope > [data-launchpad-item]')
-        )
-          .filter((item) => Math.abs(item.getBoundingClientRect().left - listBounds.left) < 1)
-          .map((item) => {
-            const control = item.querySelector<HTMLElement>('[data-launchpad-remove-control]');
-            if (!control) return null;
-            const bounds = control.getBoundingClientRect();
-            const edgeTarget = document.elementFromPoint(
-              bounds.left + 1,
-              bounds.top + bounds.height / 2
-            );
-            return {
-              edgeHit:
-                edgeTarget === control || Boolean(edgeTarget && control.contains(edgeTarget)),
-              height: Math.round(bounds.height),
-              width: Math.round(bounds.width),
-            };
-          })
-          .filter((control) => control !== null);
-
-        return {
-          firstColumnControls,
-          gridOverflowX: grid ? window.getComputedStyle(grid).overflowX : '',
-          gridOverflowY: grid ? window.getComputedStyle(grid).overflowY : '',
-          listOverflowX: window.getComputedStyle(list).overflowX,
-          listOverflowY: window.getComputedStyle(list).overflowY,
-          sectionOverflowX: section ? window.getComputedStyle(section).overflowX : '',
-          sectionOverflowY: section ? window.getComputedStyle(section).overflowY : '',
-        };
-      })
-    );
-  const expectRemoveControlsUnclipped = async (requireEdgeHit: boolean) => {
-    const contract = await readRemoveControlClipContract();
-    for (const group of contract) {
-      expect(group.listOverflowX).toBe('visible');
-      expect(group.listOverflowY).toBe('visible');
-      expect(group.sectionOverflowX).toBe('visible');
-      expect(group.sectionOverflowY).toBe('visible');
-      expect(group.gridOverflowX).toBe('visible');
-      expect(group.gridOverflowY).toBe('visible');
-      expect(group.firstColumnControls.length).toBeGreaterThan(0);
-      expect(
-        group.firstColumnControls.every(({ height, width }) => height === 44 && width === 44)
-      ).toBe(true);
-      if (requireEdgeHit) {
-        expect(group.firstColumnControls.every(({ edgeHit }) => edgeHit)).toBe(true);
-      }
-    }
-    expect(
-      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
-    ).toBe(0);
-  };
-
-  await expectRemoveControlsUnclipped(true);
+  await expectLaunchpadEditControlsFit(page, dockGroupLists, true);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expectLaunchpadEditControlsFit(page, dockGroupLists, true);
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 320, height: 800 },
   ]) {
     await page.setViewportSize(viewport);
-    await expectRemoveControlsUnclipped(false);
+    await expectLaunchpadEditControlsFit(page, dockGroupLists, false);
   }
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.evaluate(() => document.documentElement.style.setProperty('font-size', '200%'));
-  await expectRemoveControlsUnclipped(false);
+  await expectLaunchpadEditControlsFit(page, dockGroupLists, false, flowHome);
   const largeTextTileContract = await dock.locator('[data-launchpad-item]').evaluateAll((items) =>
     items.map((item) => {
       const tile = item.querySelector<HTMLElement>('[data-launchpad-tile]')!;
@@ -2703,7 +2645,8 @@ test('mobile preview keeps semantic DOM order while rendering every purpose widg
   // Edit mode expands the Dock into its existing reorderable launchpad. The
   // 4-item mobile read-mode budget is covered by the responsive matrix above.
   await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(0);
-  await expect(flowHome.locator('[data-launchpad-item]')).toHaveCount(16);
+  await expect(flowHome.locator('[data-launchpad-item]')).toHaveCount(17);
+  await expectVerticallyStackedDockGroups(flowHome.locator('[data-flow-app-dock-list]'), 4);
   const layout = await flowHome.getByTestId('flow-home-personal-sections').evaluate((root) => {
     const grid = root.querySelector<HTMLElement>('[data-workspace-presentation]')!;
     const gridBounds = grid.getBoundingClientRect();

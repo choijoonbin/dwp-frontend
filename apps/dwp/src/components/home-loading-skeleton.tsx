@@ -261,6 +261,10 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
                     gridTemplateColumns: `repeat(auto-fill, ${HOME_LAUNCHPAD_TILE_WIDTH}px)`,
                     justifyContent: 'start',
                   },
+                [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                  {
+                    gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+                  },
                 [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
                   {
                     gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${HOME_LAUNCHPAD_TILE_WIDTH}px)`,

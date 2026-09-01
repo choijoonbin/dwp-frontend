@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import { groupTargetId } from './app-launchpad-dnd';
 import {
   HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH,
   HOME_LAUNCHPAD_VISIBLE_COLUMNS,
   HOME_LAUNCHPAD_VISIBLE_ROWS,
 } from '../../components/workspace-composer/home-launchpad-layout-contract';
@@ -66,6 +67,10 @@ export function AppLaunchpadGroupList({
         aria-label={groupName}
         sx={{
           '--launchpad-tile-width': flow ? '72px' : '100%',
+          '--launchpad-label-height': flow ? '3em' : undefined,
+          '--launchpad-label-line-height': flow
+            ? (theme) => theme.typography.caption.lineHeight ?? 1.5
+            : undefined,
           p: 0,
           pt: `${GRID_TOP_INSET}px`,
           mt: immersive ? 0.75 : flow ? 0 : { xs: 0.75, md: 0.5 },
@@ -130,6 +135,21 @@ export function AppLaunchpadGroupList({
             ? { backgroundColor: 'rgba(255,255,255,0.52)' }
             : undefined,
           '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+          '& [data-launchpad-edit-frame]': flow ? { width: 44, height: 44 } : undefined,
+          '& [data-launchpad-glyph]': flow ? { scale: `${44 / 52}` } : undefined,
+          '& [data-launchpad-remove-control]': flow ? { left: 'calc(50% - 34px)' } : undefined,
+          '& [data-launchpad-item-label]': flow
+            ? {
+                fontSize: (theme) => theme.typography.caption.fontSize,
+                overflowWrap: 'anywhere',
+              }
+            : undefined,
+          [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]: flow
+            ? {
+                '--launchpad-tile-width': '100%',
+                gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+              }
+            : undefined,
           [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]: flow
             ? {
                 gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${LAUNCHPAD_TILE_WIDTH}px)`,

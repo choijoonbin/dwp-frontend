@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
+import { emulateVisualTransparency } from './support/visual-media';
 
 test.describe.configure({ mode: 'serial' });
 
 test.beforeEach(async ({ page }) => {
+  await emulateVisualTransparency(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 

@@ -14,8 +14,13 @@ import {
   MENU_VISUAL_BASELINE_EXCEPTIONS,
   validateMenuVisualBaselinePolicy,
 } from './support/menu-visual-baseline-policy';
+import { emulateVisualTransparency } from './support/visual-media';
 
 test.describe.configure({ mode: 'parallel' });
+
+test.beforeEach(async ({ page }) => {
+  await emulateVisualTransparency(page);
+});
 
 const routeById = new Map(PRODUCT_MENU_ROUTES.map((route) => [route.id, route]));
 const baselineRouteIds = [...new Set(MENU_VISUAL_BASELINE_INVENTORY.map((entry) => entry.routeId))];
