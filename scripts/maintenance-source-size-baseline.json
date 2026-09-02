@@ -9,7 +9,7 @@
     "e2e/messaging.spec.ts": 1413,
     "e2e/product-surface-approvals-pilot.spec.ts": 1318,
     "e2e/rooms.spec.ts": 3842,
-    "e2e/shell.spec.ts": 2154,
+    "e2e/shell.spec.ts": 2075,
     "e2e/support/shell-session.ts": 4318,
     "e2e/video-meetings.spec.ts": 1318,
     "scripts/check-product-surface-production-readiness.mjs": 2132,

@@ -87,11 +87,16 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
   }, [queryClient]);
 
   const verifySession = useCallback(
-    (showLoading: boolean) => {
-      if (verificationInFlight.current) return verificationInFlight.current;
+    (showLoading: boolean, requireFreshVerification = false) => {
+      const pendingVerification = verificationInFlight.current;
+      if (pendingVerification && !requireFreshVerification) return pendingVerification;
       if (showLoading) setIsLoading(true);
       const verification = (async () => {
         try {
+          // A login can complete while the unauthenticated bootstrap `/me`
+          // request is still in flight. Wait for that request, then verify the
+          // newly created session instead of reusing its stale result.
+          if (pendingVerification) await pendingVerification;
           const meResponse = await getMe();
           const identityPlane = resolveIdentityPlane(meResponse.data);
           const nextIdentity = `${identityPlane}:${meResponse.data.tenantId}:${meResponse.data.userId}`;
@@ -176,10 +181,10 @@ export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProv
   const login = useCallback(
     async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
       await loginApi(payload);
-      const authenticated = await refreshSession();
+      const authenticated = await verifySession(true, true);
       if (!authenticated) throw new Error('The authenticated session could not be verified.');
     },
-    [refreshSession]
+    [verifySession]
   );
 
   const logout = useCallback(async () => {

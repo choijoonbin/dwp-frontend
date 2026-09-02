@@ -205,6 +205,40 @@ describe('authenticated client lifecycle', () => {
     expect(currentAuth?.isAuthenticated).toBe(true);
   });
 
+  it('starts a fresh session verification when login completes during bootstrap verification', async () => {
+    let rejectBootstrapVerification: (error: Error) => void = () => undefined;
+    const bootstrapVerification = new Promise<never>((_, reject) => {
+      rejectBootstrapVerification = reject;
+    });
+    authApi.getMe
+      .mockReturnValueOnce(bootstrapVerification)
+      .mockResolvedValueOnce({ data: member });
+    authApi.login.mockResolvedValue({ data: {} });
+
+    await renderAuthProvider();
+    await vi.waitFor(() => expect(authApi.getMe).toHaveBeenCalledOnce());
+
+    let loginPromise: Promise<void> | undefined;
+    await act(async () => {
+      loginPromise = currentAuth?.login({
+        email: 'member@dwp.local',
+        password: 'not-a-fixture',
+      });
+      await Promise.resolve();
+    });
+    await vi.waitFor(() => expect(authApi.login).toHaveBeenCalledOnce());
+    const loginResult = expect(loginPromise).resolves.toBeUndefined();
+
+    await act(async () => {
+      rejectBootstrapVerification(new HttpError('Authentication required.', 401));
+    });
+    await loginResult;
+
+    expect(authApi.getMe).toHaveBeenCalledTimes(2);
+    expect(currentAuth?.user).toEqual(member);
+    expect(currentAuth?.isAuthenticated).toBe(true);
+  });
+
   it('clears the previous identity cache when a verified session changes user', async () => {
     await mountAuthProvider();
     queryClient.setQueryData(['workspace', 'activity'], { events: ['member-private'] });

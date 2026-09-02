@@ -12,6 +12,7 @@ import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-sessi
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
 import { expectDialogViewportInset } from './support/ui-contracts';
 import { readHorizontalWorkspaceSurfaceGaps } from './support/workspace-geometry';
+import { mockPendingBootstrapSignIn } from './support/sign-in-session';
 
 test.beforeEach(async ({ page }) => {
   let personalPreference = {
@@ -453,96 +454,13 @@ test('unauthenticated users see the login shell without business navigation', as
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
-test('local sign-in submits browser-autofilled credentials once and waits for tenant branding', async ({
+test('local sign-in submits browser-autofilled credentials once across pending session verification', async ({
   page,
 }) => {
-  let authenticated = false;
-  let loginRequestCount = 0;
-  let submittedCredentials: Record<string, unknown> | null = null;
-  let signalBrandingRequest = () => undefined;
-  let releaseBranding = () => undefined;
-  const brandingRequested = new Promise<void>((resolve) => {
-    signalBrandingRequest = resolve;
-  });
-  const brandingGate = new Promise<void>((resolve) => {
-    releaseBranding = resolve;
-  });
+  const signInSession = await mockPendingBootstrapSignIn(page);
 
-  await page.route('**/api/auth/me', (route) =>
-    route.fulfill(
-      authenticated
-        ? {
-            contentType: 'application/json',
-            body: JSON.stringify({
-              status: 'SUCCESS',
-              message: 'OK',
-              data: {
-                userId: 1,
-                displayName: 'Admin',
-                jobTitle: 'Platform administrator',
-                email: 'admin@dwp.local',
-                tenantId: 1,
-                tenantCode: 'default',
-                identityPlane: 'TENANT',
-                roles: ['ADMIN'],
-              },
-            }),
-          }
-        : {
-            status: 401,
-            contentType: 'application/json',
-            body: JSON.stringify({ status: 'ERROR', errorCode: 'UNAUTHORIZED' }),
-          }
-    )
-  );
-  await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: DEFAULT_APP_PERMISSIONS,
-      }),
-    })
-  );
-  await page.route('**/api/auth/policy', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: {
-          localLoginAvailable: true,
-          ssoLoginAvailable: false,
-          preferredLoginType: 'LOCAL',
-        },
-      }),
-    })
-  );
-  await page.route('**/api/auth/login', (route) => {
-    loginRequestCount += 1;
-    submittedCredentials = route.request().postDataJSON() as Record<string, unknown>;
-    authenticated = true;
-    return route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: {} }),
-    });
-  });
-  await page.unroute('**/api/platform/v1/tenant-branding');
-  await page.route('**/api/platform/v1/tenant-branding', async (route) => {
-    signalBrandingRequest();
-    await brandingGate;
-    await route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: { organizationName: 'SK AX', logoUrl: null, version: 1 },
-      }),
-    });
-  });
-
-  await page.goto('/');
+  await page.goto('/sign-in');
+  await signInSession.bootstrapVerificationRequested;
   await expect(page).toHaveURL(/\/sign-in/);
   const signInForm = page.locator('#dwp-sign-in-form');
   const emailInput = page.locator('#dwp-email');
@@ -581,7 +499,9 @@ test('local sign-in submits browser-autofilled credentials once and waits for te
     { email: 'admin@dwp.local', password: 'access-policy-test' }
   );
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await brandingRequested;
+  await signInSession.loginRequested;
+  signInSession.releaseBootstrapVerification();
+  await signInSession.brandingRequested;
   await page.evaluate(() => {
     const form = document.querySelector<HTMLFormElement>('#dwp-sign-in-form');
     if (!form) throw new Error('Sign-in form was not rendered.');
@@ -589,8 +509,9 @@ test('local sign-in submits browser-autofilled credentials once and waits for te
     form.requestSubmit();
   });
 
-  expect(loginRequestCount).toBe(1);
-  expect(submittedCredentials).toMatchObject({
+  expect(signInSession.loginRequestCount()).toBe(1);
+  expect(signInSession.meRequestCount()).toBe(2);
+  expect(signInSession.submittedCredentials()).toMatchObject({
     email: 'admin@dwp.local',
     password: 'access-policy-test',
   });
@@ -600,7 +521,7 @@ test('local sign-in submits browser-autofilled credentials once and waits for te
   await expect(page.getByTestId('shell-boot-screen')).toHaveCount(0);
   await expect(page.getByTestId('home-header')).toHaveCount(0);
 
-  releaseBranding();
+  signInSession.releaseBranding();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId('home-header')).toBeVisible();
   expect(
