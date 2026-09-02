@@ -502,11 +502,11 @@ test('local sign-in submits browser-autofilled credentials once across pending s
   await signInSession.loginRequested;
   signInSession.releaseBootstrapVerification();
   await signInSession.brandingRequested;
-  await page.evaluate(() => {
-    const form = document.querySelector<HTMLFormElement>('#dwp-sign-in-form');
-    if (!form) throw new Error('Sign-in form was not rendered.');
-    form.requestSubmit();
-    form.requestSubmit();
+  await signInForm.waitFor({ state: 'visible' });
+  await signInForm.evaluate((form) => {
+    const htmlForm = form as HTMLFormElement;
+    htmlForm.requestSubmit();
+    htmlForm.requestSubmit();
   });
 
   expect(signInSession.loginRequestCount()).toBe(1);
