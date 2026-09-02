@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
@@ -39,6 +39,11 @@ import Typography from '@mui/material/Typography';
 import { alpha, lighten } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
+import {
+  calendarReadSourceData,
+  calendarReadSourceState,
+  retryRecoverableCalendarRead,
+} from './calendar-read-source-state';
 import { eventCapability } from './calendar-source-model';
 import {
   CALENDAR_EVENT_TONES,
@@ -80,15 +85,14 @@ export function CalendarHome() {
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
   const timeZone = resolveSystemTimeZone('Asia/Seoul');
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
-  const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
-  const canRespond = canUpdate;
+  const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
+  const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
   const roomsPath = hasPermission('APP.ROOMS', 'VIEW') ? '/workplace/rooms' : null;
   const query = useQuery({
     queryKey: ['calendar', 'home', timeZone],
     queryFn: () => getCalendarHome(timeZone),
     staleTime: 30_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
   const respondMutation = useMutation({
     mutationFn: ({
@@ -144,7 +148,29 @@ export function CalendarHome() {
     },
     onError: () => toast.error(t('event.starError')),
   });
-  const data = query.data;
+  const readState = calendarReadSourceState({
+    data: query.data,
+    error: query.error,
+    failureCount: query.failureCount,
+    failureReason: query.failureReason,
+    isError: query.isError,
+    isPending: query.isPending,
+  });
+  const data = calendarReadSourceData(readState, query.data);
+  const writable = readState === 'READY';
+  const canCreate = canCreateGranted && writable;
+  const canUpdate = canUpdateGranted && writable;
+  const canRespond = canUpdate;
+
+  useEffect(() => {
+    if (writable) return;
+    setCreateOpen(false);
+    setEditing(null);
+    setCancelling(null);
+    setTrashing(null);
+    if (readState === 'DENIED') setSelected(null);
+  }, [readState, writable]);
+
   const metrics = data?.metrics;
   const next = data?.nextEvent;
   const nextTone = next ? CALENDAR_EVENT_TONES[next.type] : CALENDAR_EVENT_TONES.MEETING;
@@ -192,20 +218,28 @@ export function CalendarHome() {
         }
       />
 
-      {query.isError && (
+      {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
         <Alert
-          severity="error"
+          data-testid="calendar-read-state"
+          data-calendar-read-state={readState}
+          severity={readState === 'STALE' ? 'warning' : 'error'}
           action={
-            <ActionButton intent="quiet" onClick={() => query.refetch()}>
+            <ActionButton intent="quiet" onClick={() => void query.refetch()}>
               {t('actions.retry')}
             </ActionButton>
           }
         >
-          {t('home.loadError')}
+          {t(
+            readState === 'STALE'
+              ? 'readState.stale'
+              : readState === 'DENIED'
+                ? 'readState.denied'
+                : 'readState.unavailable'
+          )}
         </Alert>
       )}
 
-      {query.isLoading ? (
+      {readState === 'LOADING' ? (
         <Stack spacing={2}>
           <Skeleton variant="rounded" height={188} />
           <Skeleton variant="rounded" height={118} />

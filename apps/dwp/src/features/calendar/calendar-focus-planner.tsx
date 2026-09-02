@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, CalendarPlus, Clock3, Focus, ListTodo, Sparkles, Target } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -25,6 +25,12 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
+import {
+  calendarReadSourceData,
+  calendarReadSourceState,
+  combineCalendarReadSourceStates,
+  retryRecoverableCalendarRead,
+} from './calendar-read-source-state';
 import { eventCapability } from './calendar-source-model';
 import {
   CalendarEventDrawer,
@@ -201,20 +207,20 @@ export function CalendarFocusPlanner() {
   const [selected, setSelected] = useState<CalendarEvent | null>(null);
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
-  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
-  const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
+  const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
+  const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
 
   const home = useQuery({
     queryKey: ['calendar', 'home', timeZone],
     queryFn: () => getCalendarHome(timeZone),
     staleTime: 30_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
   const events = useQuery({
     queryKey: ['calendar', 'events', range.from, range.to],
     queryFn: () => getCalendarEvents(range.from, range.to),
     staleTime: 20_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
   const recommendations = useMutation({
     mutationFn: () => getCalendarAvailability([], range.from, range.to, 90, timeZone),
@@ -249,8 +255,41 @@ export function CalendarFocusPlanner() {
     onError: () => toast.error(t('event.starError')),
   });
 
-  const plan = useMemo(() => calendarPlanningEvents(events.data ?? [], now), [events.data, now]);
-  const metrics = home.data?.metrics;
+  const homeState = calendarReadSourceState({
+    data: home.data,
+    error: home.error,
+    failureCount: home.failureCount,
+    failureReason: home.failureReason,
+    isError: home.isError,
+    isPending: home.isPending,
+  });
+  const eventsState = calendarReadSourceState({
+    data: events.data,
+    error: events.error,
+    failureCount: events.failureCount,
+    failureReason: events.failureReason,
+    isError: events.isError,
+    isPending: events.isPending,
+  });
+  const readState = combineCalendarReadSourceStates([homeState, eventsState]);
+  const homeData =
+    readState === 'DENIED' ? undefined : calendarReadSourceData(homeState, home.data);
+  const eventsData =
+    readState === 'DENIED' ? undefined : calendarReadSourceData(eventsState, events.data);
+  const writable = readState === 'READY';
+  const canCreate = canCreateGranted && writable;
+  const canUpdate = canUpdateGranted && writable;
+
+  useEffect(() => {
+    if (writable) return;
+    setCreating(null);
+    setEditing(null);
+    setTrashing(null);
+    if (readState === 'DENIED') setSelected(null);
+  }, [readState, writable]);
+
+  const plan = useMemo(() => calendarPlanningEvents(eventsData ?? [], now), [eventsData, now]);
+  const metrics = homeData?.metrics;
   const focusProgress = metrics
     ? Math.min(
         100,
@@ -265,7 +304,7 @@ export function CalendarFocusPlanner() {
     selected && canUpdate && eventCapability(selected, 'canDelete')
   );
   const selectedCanStar = Boolean(selected && canUpdate && eventCapability(selected, 'canStar'));
-  const loading = home.isLoading && events.isLoading;
+  const loading = homeState === 'LOADING' && eventsState === 'LOADING';
   return (
     <CalendarCanvas archetype="coach">
       <CalendarPageHeading
@@ -295,9 +334,11 @@ export function CalendarFocusPlanner() {
         }
       />
 
-      {(home.isError || events.isError) && (
+      {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
         <Alert
-          severity="error"
+          data-testid="calendar-read-state"
+          data-calendar-read-state={readState}
+          severity={readState === 'STALE' ? 'warning' : 'error'}
           action={
             <ActionButton
               intent="quiet"
@@ -310,7 +351,13 @@ export function CalendarFocusPlanner() {
             </ActionButton>
           }
         >
-          {t('focusPlan.loadError')}
+          {t(
+            readState === 'STALE'
+              ? 'readState.stale'
+              : readState === 'DENIED'
+                ? 'readState.denied'
+                : 'readState.unavailable'
+          )}
         </Alert>
       )}
 
@@ -324,8 +371,8 @@ export function CalendarFocusPlanner() {
         </Stack>
       ) : (
         <Stack spacing={2.5}>
-          {home.isLoading && !home.data && <Skeleton variant="rounded" height={214} />}
-          {home.data && (
+          {homeState === 'LOADING' && !homeData && <Skeleton variant="rounded" height={214} />}
+          {homeData && (
             <Box
               component="section"
               aria-label={t('focusPlan.weeklyGoal')}
@@ -439,10 +486,10 @@ export function CalendarFocusPlanner() {
                     ))}
                   </Stack>
                 </Box>
-                {home.data?.weekLoad.length ? (
+                {homeData.weekLoad.length ? (
                   <Box sx={{ pt: 2.25, borderTop: 1, borderColor: 'divider' }}>
                     <CalendarWeekBalanceRail
-                      days={home.data.weekLoad.map((day) => ({
+                      days={homeData.weekLoad.map((day) => ({
                         key: day.date,
                         label: calendarDate(day.date, language, false),
                         meetingMinutes: day.meetingMinutes,
@@ -547,6 +594,7 @@ export function CalendarFocusPlanner() {
                     <ActionButton
                       intent="quiet"
                       loading={recommendations.isPending}
+                      disabled={!writable}
                       onClick={() => recommendations.mutate()}
                     >
                       {t('actions.retry')}
@@ -556,6 +604,7 @@ export function CalendarFocusPlanner() {
                   <ActionButton
                     intent="primary"
                     loading={recommendations.isPending}
+                    disabled={!writable}
                     startIcon={<Sparkles size={16} />}
                     onClick={() => recommendations.mutate()}
                     sx={{ mt: 2 }}
@@ -567,7 +616,7 @@ export function CalendarFocusPlanner() {
             </Box>
           )}
 
-          {events.isLoading && !events.data && (
+          {eventsState === 'LOADING' && !eventsData && (
             <Box
               sx={{
                 display: 'grid',
@@ -579,7 +628,7 @@ export function CalendarFocusPlanner() {
               <Skeleton variant="rounded" height={320} />
             </Box>
           )}
-          {events.data && (
+          {eventsData && (
             <Box
               sx={{
                 display: 'grid',

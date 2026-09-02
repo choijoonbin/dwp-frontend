@@ -50,6 +50,7 @@ type CalendarInteractiveGridProps = {
   workingDayStart: string;
   workingDayEnd: string;
   canCreate: boolean;
+  interactionLocked: boolean;
   canMove: (event: CalendarEvent) => boolean;
   onRangeChange: (range: CalendarRange) => void;
   onCalendarStateChange: (view: CalendarScheduleView, date: Date) => void;
@@ -112,6 +113,7 @@ export function CalendarInteractiveGrid({
   workingDayStart,
   workingDayEnd,
   canCreate,
+  interactionLocked,
   canMove,
   onRangeChange,
   onCalendarStateChange,
@@ -187,7 +189,8 @@ export function CalendarInteractiveGrid({
       data-testid="interactive-calendar"
       data-controlled-view={view}
       data-active-view={activeView}
-      aria-busy={loading}
+      data-calendar-interaction-locked={interactionLocked}
+      aria-busy={loading || interactionLocked}
       sx={(theme) => ({
         minWidth: 0,
         '--fc-border-color': alpha(theme.palette.divider, 0.72),
@@ -315,10 +318,10 @@ export function CalendarInteractiveGrid({
         selectMirror={canCreate}
         selectMinDistance={4}
         select={select}
-        editable
-        eventStartEditable
-        eventDurationEditable
-        eventResizableFromStart
+        editable={!interactionLocked}
+        eventStartEditable={!interactionLocked}
+        eventDurationEditable={!interactionLocked}
+        eventResizableFromStart={!interactionLocked}
         eventDrop={move}
         eventResize={move}
         eventClick={(info) => onOpenEvent(sourceEvent(info))}

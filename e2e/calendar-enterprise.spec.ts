@@ -8,6 +8,15 @@ test('calendar supports governed range creation and drag rescheduling', async ({
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
+  let releaseMove = () => {};
+  const moveGate = new Promise<void>((resolve) => {
+    releaseMove = resolve;
+  });
+  await page.route('**/api/platform/v1/calendar/events/calendar-event-focus', async (route) => {
+    if (route.request().method() !== 'PUT') return route.fallback();
+    await moveGate;
+    return route.fallback();
+  });
   await page.clock.setFixedTime(new Date('2026-08-18T01:00:00Z'));
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/calendar/schedule');
@@ -57,6 +66,9 @@ test('calendar supports governed range creation and drag rescheduling', async ({
   const payload = request.postDataJSON() as { startsAt: string; endsAt: string; version: number };
   expect(Date.parse(payload.endsAt)).toBeGreaterThan(Date.parse(payload.startsAt));
   expect(payload.version).toBe(CALENDAR_FOCUS_VERSION);
+  await expect(calendar).toHaveAttribute('data-calendar-interaction-locked', 'true');
+  releaseMove();
+  await expect(calendar).toHaveAttribute('data-calendar-interaction-locked', 'false');
 
   const lockedRecurringEvent = calendar.getByRole('button', {
     name: /Digital workplace operating review.*Read only/u,
@@ -74,6 +86,79 @@ test('calendar supports governed range creation and drag rescheduling', async ({
   const accessibility = await new AxeBuilder({ page })
     .include('[data-testid="interactive-calendar"]')
     .analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+});
+
+test('calendar purges cached schedules on authority denial and keeps transient data read-only', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(60_000);
+  test.skip(testInfo.project.name !== 'chromium');
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  let mode: 'live' | 'transient' | 'denied' = 'live';
+  let transientRequests = 0;
+  let deniedRequests = 0;
+  await page.route('**/api/platform/v1/calendar/home**', async (route) => {
+    if (route.request().method() !== 'GET' || mode === 'live') return route.fallback();
+    if (mode === 'denied') deniedRequests += 1;
+    else transientRequests += 1;
+    return route.fulfill({
+      status: mode === 'denied' ? 403 : 503,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ERROR',
+        errorCode: mode === 'denied' ? 'ROUTE_CAPABILITY_REQUIRED' : 'SERVICE_UNAVAILABLE',
+      }),
+    });
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  await page.goto('/calendar/home');
+  await expect(
+    page.getByRole('heading', { name: 'Digital workplace operating review' })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
+  const staleEvent = page.getByRole('dialog', { name: 'Digital workplace operating review' });
+  await expect(staleEvent).toBeVisible();
+
+  mode = 'transient';
+  await staleEvent.getByRole('button', { name: 'Tentative', exact: true }).click();
+
+  const readState = page.getByTestId('calendar-read-state');
+  await expect(readState).toHaveAttribute('data-calendar-read-state', 'STALE');
+  await expect(readState).toContainText(/last known schedule is shown in read-only mode/iu);
+  await expect.poll(() => transientRequests).toBe(2);
+  await expect(
+    page.getByRole('heading', { name: 'Digital workplace operating review' })
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(0);
+  await expect(staleEvent).toBeVisible();
+  await expect(staleEvent.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+  await expect(staleEvent.getByRole('button', { name: 'Tentative', exact: true })).toHaveCount(0);
+
+  await staleEvent.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(staleEvent).toHaveCount(0);
+  mode = 'denied';
+  await page.getByRole('link', { name: 'Schedule', exact: true }).click();
+  await expect(page).toHaveURL(/\/calendar\/schedule/u);
+  await expect(page.getByRole('heading', { level: 1, name: 'Schedule' })).toBeVisible();
+  await page.getByRole('link', { name: 'Today', exact: true }).click();
+  await expect(page).toHaveURL(/\/calendar\/home/u);
+  await expect(readState).toHaveAttribute('data-calendar-read-state', 'DENIED');
+  await expect(readState).toContainText(/Previously loaded calendar data was cleared/iu);
+  await expect(
+    page.getByRole('heading', { name: 'Digital workplace operating review' })
+  ).toHaveCount(0);
+  await expect(staleEvent).toHaveCount(0);
+  expect(deniedRequests).toBeGreaterThanOrEqual(1);
+
+  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
   expect(
     accessibility.violations.filter(
       (violation) => violation.impact === 'critical' || violation.impact === 'serious'
@@ -323,6 +408,15 @@ test('calendar governs company sources, explicit sharing, favorites, and trash r
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
+  let releaseSubscription = () => {};
+  const subscriptionGate = new Promise<void>((resolve) => {
+    releaseSubscription = resolve;
+  });
+  await page.route('**/api/platform/v1/calendar/calendars/*/subscription', async (route) => {
+    if (route.request().method() !== 'PUT') return route.fallback();
+    await subscriptionGate;
+    return route.fallback();
+  });
   await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/calendar/schedule');
@@ -356,6 +450,11 @@ test('calendar governs company sources, explicit sharing, favorites, and trash r
       request.url().includes('/api/platform/v1/calendar/calendars/calendar-personal/subscription')
   );
   await page.getByRole('button', { name: 'Remove My calendar from favorites' }).click();
+  await favoriteRequest;
+  const favoriteButtons = page.getByRole('button', { name: /favorites$/u });
+  await expect(favoriteButtons.first()).toBeDisabled();
+  await expect(favoriteButtons.nth(1)).toBeDisabled();
+  releaseSubscription();
   const favoritePayload = (await favoriteRequest).postDataJSON() as {
     favorite: boolean;
     selected: boolean;

@@ -26,7 +26,12 @@ import {
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, ConfirmDialog } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ConfirmDialog,
+  LiveStatus,
+  OperationalContextBar,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -38,6 +43,12 @@ import { CalendarEventDialog } from './calendar-event-dialog';
 import { CalendarEventDrawer, CalendarPageHeading } from './calendar-components';
 import { CalendarCanvas } from './calendar-experience';
 import { CalendarInteractiveGrid, type CalendarRange } from './calendar-interactive-grid';
+import {
+  calendarReadSourceData,
+  calendarReadSourceState,
+  combineCalendarReadSourceStates,
+  retryRecoverableCalendarRead,
+} from './calendar-read-source-state';
 import { CalendarShareDialog } from './calendar-share-dialog';
 import { CalendarSourcePanel, CalendarSourcePicker } from './calendar-source-rail';
 import {
@@ -160,8 +171,8 @@ export function CalendarSchedule() {
     ? calendarScheduleDate(routeSearchParams.get('date'), navigateDateState)
     : navigateDateState;
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
-  const canUpdate = hasPermission('APP.CALENDAR', 'UPDATE');
+  const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
+  const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
   const dwaionHandoff = useMemo(
     () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
     [location.state]
@@ -171,34 +182,70 @@ export function CalendarSchedule() {
     queryKey: ['calendar', 'events', range.from, range.to],
     queryFn: () => getCalendarEvents(range.from, range.to),
     staleTime: 20_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
   const calendarsQuery = useQuery({
     queryKey: ['calendar', 'calendars'],
     queryFn: getCalendars,
     staleTime: 60_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
   const policyQuery = useQuery({
     queryKey: ['calendar', 'policy'],
     queryFn: getCalendarPolicy,
     staleTime: 5 * 60_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
+  const eventsState = calendarReadSourceState({
+    data: eventsQuery.data,
+    error: eventsQuery.error,
+    failureCount: eventsQuery.failureCount,
+    failureReason: eventsQuery.failureReason,
+    isError: eventsQuery.isError,
+    isPending: eventsQuery.isPending,
+  });
+  const calendarsState = calendarReadSourceState({
+    data: calendarsQuery.data,
+    error: calendarsQuery.error,
+    failureCount: calendarsQuery.failureCount,
+    failureReason: calendarsQuery.failureReason,
+    isError: calendarsQuery.isError,
+    isPending: calendarsQuery.isPending,
+  });
+  const policyState = calendarReadSourceState({
+    data: policyQuery.data,
+    error: policyQuery.error,
+    failureCount: policyQuery.failureCount,
+    failureReason: policyQuery.failureReason,
+    isError: policyQuery.isError,
+    isPending: policyQuery.isPending,
+  });
+  const readState = combineCalendarReadSourceStates([eventsState, calendarsState, policyState]);
+  const eventsData =
+    readState === 'DENIED' ? undefined : calendarReadSourceData(eventsState, eventsQuery.data);
+  const calendarsData =
+    readState === 'DENIED'
+      ? undefined
+      : calendarReadSourceData(calendarsState, calendarsQuery.data);
+  const policyData =
+    readState === 'DENIED' ? undefined : calendarReadSourceData(policyState, policyQuery.data);
+  const scheduleWritable = readState === 'READY';
+  const canCreate = canCreateGranted && scheduleWritable;
+  const canUpdate = canUpdateGranted && scheduleWritable;
   const selectedCalendars = useMemo(() => {
-    if (!calendarsQuery.data || calendarsQuery.isError) return [];
+    if (!calendarsData) return [];
     const configured = routeSearchParams.has('calendars')
       ? (calendarScheduleCalendarIds(routeSearchParams.get('calendars')) ?? [])
       : selectedCalendarsState;
-    return normalizeCalendarSelection(calendarsQuery.data, configured);
-  }, [calendarsQuery.data, calendarsQuery.isError, routeSearchParams, selectedCalendarsState]);
+    return normalizeCalendarSelection(calendarsData, configured);
+  }, [calendarsData, routeSearchParams, selectedCalendarsState]);
 
   useEffect(() => {
-    if (calendarSelectionInitialized || !calendarsQuery.data) return;
+    if (calendarSelectionInitialized || !calendarsData) return;
     const configured = calendarScheduleCalendarIds(routeSearchParams.get('calendars'));
-    setSelectedCalendars(normalizeCalendarSelection(calendarsQuery.data, configured));
+    setSelectedCalendars(normalizeCalendarSelection(calendarsData, configured));
     setCalendarSelectionInitialized(true);
-  }, [calendarSelectionInitialized, calendarsQuery.data, routeSearchParams]);
+  }, [calendarSelectionInitialized, calendarsData, routeSearchParams]);
 
   useEffect(() => {
     const requestedView = routeSearchParams.get('view');
@@ -218,20 +265,21 @@ export function CalendarSchedule() {
     }
 
     const requestedCalendars = routeSearchParams.get('calendars');
-    if (requestedCalendars === null || !calendarSelectionInitialized || !calendarsQuery.data) {
+    if (requestedCalendars === null || !calendarSelectionInitialized || !calendarsData) {
       return;
     }
     const configured = calendarScheduleCalendarIds(requestedCalendars);
     if (configured === null) return;
-    const nextCalendars = normalizeCalendarSelection(calendarsQuery.data, configured);
+    const nextCalendars = normalizeCalendarSelection(calendarsData, configured);
     setSelectedCalendars((current) =>
       sameCalendarSelection(current, nextCalendars) ? current : nextCalendars
     );
-  }, [calendarSelectionInitialized, calendarsQuery.data, compact, routeSearchParams]);
+  }, [calendarSelectionInitialized, calendarsData, compact, routeSearchParams]);
 
   useEffect(() => {
     const requestedType = routeSearchParams.get('create');
     if (!requestedType && !dwaionHandoff) return;
+    if (canCreateGranted && !scheduleWritable) return;
     if (canCreate) {
       setCreateState({
         start: dwaionHandoffText(dwaionHandoff, 'startsAt') ?? new Date().toISOString(),
@@ -249,13 +297,31 @@ export function CalendarSchedule() {
       { pathname: location.pathname, search: search ? `?${search}` : '' },
       { replace: true, state: null }
     );
-  }, [canCreate, dwaionHandoff, location.pathname, location.search, navigate, routeSearchParams]);
+  }, [
+    canCreate,
+    canCreateGranted,
+    dwaionHandoff,
+    location.pathname,
+    location.search,
+    navigate,
+    routeSearchParams,
+    scheduleWritable,
+  ]);
 
   useEffect(() => {
-    if (!requestedEventId || !eventsQuery.data) return;
-    const requested = eventsQuery.data.find((event) => event.eventId === requestedEventId);
+    if (!requestedEventId || !eventsData) return;
+    const requested = eventsData.find((event) => event.eventId === requestedEventId);
     if (requested) setSelected(requested);
-  }, [eventsQuery.data, requestedEventId]);
+  }, [eventsData, requestedEventId]);
+
+  useEffect(() => {
+    if (scheduleWritable) return;
+    setCreateState(null);
+    setEditing(null);
+    setCancelling(null);
+    setTrashing(null);
+    if (readState === 'DENIED') setSelected(null);
+  }, [readState, scheduleWritable]);
 
   const clearEventSelection = () => {
     setSelected(null);
@@ -354,22 +420,17 @@ export function CalendarSchedule() {
     [canUpdate]
   );
   const canMove = useCallback(
-    (event: CalendarEvent) => canManage(event) && event.recurrence === 'NONE',
-    [canManage]
+    (event: CalendarEvent) =>
+      !moveMutation.isPending && canManage(event) && event.recurrence === 'NONE',
+    [canManage, moveMutation.isPending]
   );
   const events = useMemo(() => {
-    const source = eventsQuery.data ?? [];
-    if (!calendarSelectionInitialized || calendarsQuery.isError || !calendarsQuery.data) {
+    const source = eventsData ?? [];
+    if (!calendarSelectionInitialized || !calendarsData) {
       return [];
     }
     return source.filter((event) => selectedCalendars.includes(event.calendarId));
-  }, [
-    calendarSelectionInitialized,
-    calendarsQuery.data,
-    calendarsQuery.isError,
-    eventsQuery.data,
-    selectedCalendars,
-  ]);
+  }, [calendarSelectionInitialized, calendarsData, eventsData, selectedCalendars]);
   const syncScheduleState = useCallback(
     (next: Readonly<{ view: CalendarScheduleView; date: Date; calendarIds: readonly string[] }>) =>
       setSearchParams(calendarScheduleSearchParams(new URLSearchParams(location.search), next)),
@@ -407,13 +468,13 @@ export function CalendarSchedule() {
   );
   const selectCalendars = useCallback(
     (nextCalendarIds: string[]) => {
-      const normalized = calendarsQuery.data
-        ? normalizeCalendarSelection(calendarsQuery.data, nextCalendarIds)
+      const normalized = calendarsData
+        ? normalizeCalendarSelection(calendarsData, nextCalendarIds)
         : [];
       setSelectedCalendars(normalized);
       syncScheduleState({ view, date: navigateDate, calendarIds: normalized });
     },
-    [calendarsQuery.data, navigateDate, syncScheduleState, view]
+    [calendarsData, navigateDate, syncScheduleState, view]
   );
   const subscriptionMutation = useMutation({
     mutationFn: ({
@@ -456,6 +517,7 @@ export function CalendarSchedule() {
   });
   const changeCalendarSelection = useCallback(
     (calendar: CalendarSummary, nextSelected: boolean) => {
+      if (subscriptionMutation.isPending || !scheduleWritable) return;
       if (!calendarCanChangeSelection(calendar, nextSelected)) return;
       const nextCalendarIds = nextSelected
         ? [...selectedCalendars, calendar.calendarId]
@@ -469,10 +531,11 @@ export function CalendarSchedule() {
         previousCalendarIds,
       });
     },
-    [selectCalendars, selectedCalendars, subscriptionMutation]
+    [scheduleWritable, selectCalendars, selectedCalendars, subscriptionMutation]
   );
   const changeCalendarFavorite = useCallback(
     (calendar: CalendarSummary, favorite: boolean) => {
+      if (subscriptionMutation.isPending || !scheduleWritable) return;
       subscriptionMutation.mutate({
         calendar,
         selected: selectedCalendars.includes(calendar.calendarId),
@@ -480,7 +543,7 @@ export function CalendarSchedule() {
         previousCalendarIds: [...selectedCalendars],
       });
     },
-    [selectedCalendars, subscriptionMutation]
+    [scheduleWritable, selectedCalendars, subscriptionMutation]
   );
   const savedViewConfiguration = useMemo(
     () =>
@@ -500,23 +563,23 @@ export function CalendarSchedule() {
       });
       const next = {
         ...state,
-        calendarIds: normalizeCalendarSelection(calendarsQuery.data ?? [], state.calendarIds),
+        calendarIds: normalizeCalendarSelection(calendarsData ?? [], state.calendarIds),
       };
       setView(next.view);
       setNavigateDate(next.date);
       setSelectedCalendars(next.calendarIds);
       syncScheduleState(next);
     },
-    [calendarsQuery.data, navigateDate, selectedCalendars, syncScheduleState, view]
+    [calendarsData, navigateDate, selectedCalendars, syncScheduleState, view]
   );
   const initialWritableCalendarId = useMemo(
     () =>
-      calendarsQuery.data?.find(
+      calendarsData?.find(
         (calendar) =>
           selectedCalendars.includes(calendar.calendarId) &&
           calendar.capabilities?.canCreateEvents === true
       )?.calendarId ?? null,
-    [calendarsQuery.data, selectedCalendars]
+    [calendarsData, selectedCalendars]
   );
   const openNow = (type: CalendarEventType) => {
     if (!canCreate) return;
@@ -600,6 +663,44 @@ export function CalendarSchedule() {
         )}
       </Stack>
 
+      {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
+        <Box
+          data-testid="calendar-read-state"
+          data-calendar-read-state={readState}
+          sx={{ mb: 1.5 }}
+        >
+          <OperationalContextBar
+            label={t('shell.calendar.name')}
+            items={[]}
+            status={
+              <LiveStatus
+                state={readState === 'STALE' ? 'stale' : 'degraded'}
+                label={t('shell.calendar.name')}
+                detail={t(
+                  readState === 'STALE'
+                    ? 'readState.stale'
+                    : readState === 'DENIED'
+                      ? 'readState.denied'
+                      : 'readState.unavailable'
+                )}
+              />
+            }
+            actions={
+              <ActionButton
+                intent="quiet"
+                onClick={() => {
+                  void eventsQuery.refetch();
+                  void calendarsQuery.refetch();
+                  void policyQuery.refetch();
+                }}
+              >
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          />
+        </Box>
+      )}
+
       <Box
         data-testid="calendar-schedule-surface"
         data-location-search={location.search}
@@ -611,10 +712,10 @@ export function CalendarSchedule() {
           overflow: 'hidden',
         }}
       >
-        {(eventsQuery.isFetching || calendarsQuery.isFetching) && (
+        {(eventsQuery.isFetching || calendarsQuery.isFetching || moveMutation.isPending) && (
           <LinearProgress aria-label={t('schedule.loading')} />
         )}
-        {calendarsQuery.isError ? (
+        {!calendarsData && calendarsState !== 'LOADING' ? (
           <Alert
             severity="error"
             action={
@@ -653,16 +754,12 @@ export function CalendarSchedule() {
               }}
             >
               <CalendarSourcePanel
-                calendars={calendarsQuery.data ?? []}
+                calendars={calendarsData ?? []}
                 selectedCalendarIds={selectedCalendars}
                 date={navigateDate}
                 loading={calendarsQuery.isLoading}
-                error={calendarsQuery.isError}
-                busyCalendarId={
-                  subscriptionMutation.isPending
-                    ? subscriptionMutation.variables?.calendar.calendarId
-                    : null
-                }
+                error={!calendarsData && calendarsState !== 'LOADING'}
+                busy={subscriptionMutation.isPending || !scheduleWritable}
                 onDateChange={selectDate}
                 onSelectionChange={changeCalendarSelection}
                 onFavoriteChange={changeCalendarFavorite}
@@ -670,7 +767,7 @@ export function CalendarSchedule() {
                 onRetry={() => void calendarsQuery.refetch()}
               />
             </Box>
-            {eventsQuery.isError ? (
+            {!eventsData && eventsState !== 'LOADING' ? (
               <Box sx={{ minWidth: 0, p: { xs: 1.5, sm: 2 } }}>
                 <Alert
                   severity="error"
@@ -691,10 +788,11 @@ export function CalendarSchedule() {
                 loading={eventsQuery.isLoading || calendarsQuery.isLoading}
                 view={view}
                 navigateDate={navigateDate}
-                weekStart={policyQuery.data?.weekStart ?? 1}
-                workingDayStart={policyQuery.data?.workingDayStart ?? '08:00'}
-                workingDayEnd={policyQuery.data?.workingDayEnd ?? '19:00'}
+                weekStart={policyData?.weekStart ?? 1}
+                workingDayStart={policyData?.workingDayStart ?? '08:00'}
+                workingDayEnd={policyData?.workingDayEnd ?? '19:00'}
                 canCreate={canCreate}
+                interactionLocked={moveMutation.isPending}
                 canMove={canMove}
                 onRangeChange={(next) =>
                   setRange((current) =>
@@ -724,16 +822,12 @@ export function CalendarSchedule() {
       <CalendarSourcePicker
         open={sourcePickerOpen}
         mobile={mobileSourcePicker}
-        calendars={calendarsQuery.data ?? []}
+        calendars={calendarsData ?? []}
         selectedCalendarIds={selectedCalendars}
         date={navigateDate}
         loading={calendarsQuery.isLoading}
-        error={calendarsQuery.isError}
-        busyCalendarId={
-          subscriptionMutation.isPending
-            ? subscriptionMutation.variables?.calendar.calendarId
-            : null
-        }
+        error={!calendarsData && calendarsState !== 'LOADING'}
+        busy={subscriptionMutation.isPending || !scheduleWritable}
         onClose={() => setSourcePickerOpen(false)}
         onDateChange={selectDate}
         onSelectionChange={changeCalendarSelection}

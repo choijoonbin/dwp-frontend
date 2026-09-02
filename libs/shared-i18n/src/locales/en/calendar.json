@@ -55,6 +55,11 @@
   "error": {
     "description": "Check the calendar service connection and access permission, then try again."
   },
+  "readState": {
+    "stale": "Live calendar data is temporarily unavailable. The last known schedule is shown in read-only mode.",
+    "denied": "Your calendar access changed. Previously loaded calendar data was cleared.",
+    "unavailable": "Calendar data is unavailable. Check the connection and try again."
+  },
   "units": {
     "hour": "h",
     "minute": "m",

@@ -32,7 +32,7 @@ type CalendarSourcePanelProps = Readonly<{
   date: Date;
   loading: boolean;
   error: boolean;
-  busyCalendarId?: string | null;
+  busy?: boolean;
   onDateChange: (date: Date) => void;
   onSelectionChange: (calendar: CalendarSummary, selected: boolean) => void;
   onFavoriteChange: (calendar: CalendarSummary, favorite: boolean) => void;
@@ -227,7 +227,7 @@ export function CalendarSourcePanel(props: CalendarSourcePanelProps) {
                     key={calendar.calendarId}
                     calendar={calendar}
                     selected={props.selectedCalendarIds.includes(calendar.calendarId)}
-                    busy={props.busyCalendarId === calendar.calendarId}
+                    busy={props.busy === true}
                     onSelectionChange={props.onSelectionChange}
                     onFavoriteChange={props.onFavoriteChange}
                     onManageSharing={props.onManageSharing}
