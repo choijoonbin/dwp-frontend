@@ -12,6 +12,7 @@ import {
   HOME_COMMUNICATIONS_FIXTURE,
 } from './support/shell-session';
 import { emulateVisualTransparency } from './support/visual-media';
+import { expectShellReady, settleWorkNavigation } from './support/visual-shell';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -620,9 +621,7 @@ test('administration access grid visual baseline', async ({ page }, testInfo) =>
   await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible({
     timeout: 15_000,
   });
-  await expect(
-    page.getByTestId('shell-notification-control').getByRole('button')
-  ).toHaveAccessibleName(/0 actionable notifications, 0 total unread/i, { timeout: 15_000 });
+  await expectShellReady(page);
 
   if (testInfo.project.name === 'mobile') {
     await expect(
@@ -882,8 +881,7 @@ test('collapsed navigation visual baseline', async ({ page }, testInfo) => {
   await page.goto('/work');
   await expect(page.getByRole('heading', { name: 'Work home', exact: true })).toBeVisible();
   await expect(page.getByTestId('work-sidebar')).toBeVisible();
-  await page.getByRole('button', { name: 'Collapse navigation' }).click();
-  await expect(page.getByTestId('work-sidebar')).toHaveCSS('width', '72px');
+  await settleWorkNavigation(page);
   await expect(page).toHaveScreenshot('navigation-collapsed.png', {
     animations: 'disabled',
     caret: 'hide',
