@@ -2145,7 +2145,7 @@ test('room finder keeps a stale draft read-only and discards it after authority 
     }
   });
 
-  await page.goto('/workplace/rooms');
+  await page.goto('/workplace/rooms?date=2026-08-19');
   const ownerAvailability = page.waitForResponse((response) => {
     const url = new URL(response.url());
     return (
@@ -2991,6 +2991,7 @@ test('submitted release and cancel commands keep truthful state and preserve ver
   releaseSubmitted?.();
   await expect(page.getByText('The space was released.')).toBeVisible();
   await expect(releaseDialog).toHaveCount(0);
+  await expect(page.locator('.MuiDialog-root')).toHaveCount(0);
   expect(releaseWrites).toBe(1);
 
   await page.getByRole('button', { name: 'Cancel booking' }).click();
