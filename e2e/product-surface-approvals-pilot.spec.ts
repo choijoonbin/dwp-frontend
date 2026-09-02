@@ -602,12 +602,8 @@ for (const scenario of [
     await expect(expiry).toBeVisible();
     await expect(expiry.getByText(scenario.compactLabel, { exact: true })).toBeVisible();
     await expect(expiry).toHaveAccessibleName(scenario.accessibleLabel);
-    expect(
-      await expiry.evaluate((element) => ({
-        borderStyle: getComputedStyle(element).borderTopStyle,
-        borderWidth: getComputedStyle(element).borderTopWidth,
-      }))
-    ).toEqual({ borderStyle: 'solid', borderWidth: '1px' });
+    await expect(expiry).toHaveCSS('border-top-style', 'solid');
+    await expect(expiry).toHaveCSS('border-top-width', '1px');
     expect(
       await rail.evaluate((element) => element.scrollWidth - element.clientWidth)
     ).toBeLessThanOrEqual(1);

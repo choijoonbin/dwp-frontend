@@ -8,6 +8,7 @@ import {
   mockShellSession,
 } from './support/shell-session';
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
+import { expectDwaionClearOfHomeActions } from './support/flow-home-launcher-clearance';
 import { emulateVisualTransparency } from './support/visual-media';
 
 test.describe.configure({ mode: 'serial' });
@@ -377,78 +378,6 @@ async function waitForVisualState(page: Page) {
   expect(viewport.height - bounds.y - bounds.height).toBeCloseTo(24, 0);
   await expect(launcher).toHaveCSS('position', 'fixed');
   await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
-}
-
-async function expectDwaionClearOfHomeActions(page: Page) {
-  const launcher = page.getByTestId('dwaion-launcher');
-  const placement = await launcher.getAttribute('data-shell-auxiliary-placement');
-  // Compact launchers live inside the opaque shell header. Main content can
-  // geometrically pass behind that fixed layer while remaining neither visible
-  // nor interactive, so collision geometry only applies to the floating mode.
-  if (placement !== 'floating') return;
-  const scrollRange = await page.evaluate(
-    () => document.documentElement.scrollHeight - window.innerHeight
-  );
-  const scrollPositions = [...new Set([0, 0.33, 0.66, 1].map((ratio) => scrollRange * ratio))];
-
-  for (const top of scrollPositions) {
-    await page.evaluate(async (scrollTop) => {
-      window.scrollTo(0, scrollTop);
-      await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-      });
-    }, top);
-    const geometry = await page.evaluate(() => {
-      const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
-      if (!launcher) return { launcher: null, collisions: ['launcher missing'] };
-      const launcherRect = launcher.getBoundingClientRect();
-      const clearance = 8;
-      const collisions = Array.from(
-        document.querySelectorAll<HTMLElement>('#dwp-main-content a, #dwp-main-content button')
-      )
-        .filter((element) => {
-          const style = window.getComputedStyle(element);
-          const rect = element.getBoundingClientRect();
-          return (
-            style.visibility !== 'hidden' &&
-            style.display !== 'none' &&
-            rect.width > 0 &&
-            rect.height > 0 &&
-            rect.bottom > 0 &&
-            rect.top < window.innerHeight
-          );
-        })
-        .filter((element) => {
-          const rect = element.getBoundingClientRect();
-          return !(
-            rect.right <= launcherRect.left - clearance ||
-            rect.left >= launcherRect.right + clearance ||
-            rect.bottom <= launcherRect.top - clearance ||
-            rect.top >= launcherRect.bottom + clearance
-          );
-        })
-        .map(
-          (element) =>
-            element.getAttribute('aria-label') ||
-            element.getAttribute('data-home-contribution') ||
-            element.textContent?.trim().slice(0, 60) ||
-            element.tagName
-        );
-      return {
-        launcher: {
-          left: launcherRect.left,
-          right: launcherRect.right,
-          top: launcherRect.top,
-          bottom: launcherRect.bottom,
-        },
-        collisions,
-      };
-    });
-    expect(geometry.launcher).not.toBeNull();
-    expect(geometry.collisions, `DWAI collision at scrollTop ${Math.round(top)}`).toEqual([]);
-  }
-
-  await page.evaluate(() => window.scrollTo(0, 0));
 }
 
 async function expectNoHorizontalOverflow(page: Page) {

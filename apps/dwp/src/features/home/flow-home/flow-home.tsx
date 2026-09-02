@@ -301,6 +301,7 @@ export function FlowHome({
     const stage = purposeStageRef.current;
     if (!stage) return;
     let animationFrame = 0;
+    let launcherClearanceRevision = 0;
     let observedLauncher: HTMLElement | null = null;
     const observedWidgets = new Set<HTMLElement>();
     const clearLauncherClearance = (widget: HTMLElement) => {
@@ -322,6 +323,12 @@ export function FlowHome({
           widget.style.setProperty('--flow-launcher-clearance', `${clearance}px`);
         } else clearLauncherClearance(widget);
       });
+      launcherClearanceRevision += 1;
+      stage.setAttribute('data-flow-launcher-clearance-scroll-y', String(window.scrollY));
+      stage.setAttribute(
+        'data-flow-launcher-clearance-revision',
+        String(launcherClearanceRevision)
+      );
     };
     const queueLauncherEdgeCheck = () => {
       if (animationFrame) return;
@@ -366,6 +373,8 @@ export function FlowHome({
       launcherObserver.disconnect();
       stageObserver.disconnect();
       observedWidgets.forEach(clearLauncherClearance);
+      stage.removeAttribute('data-flow-launcher-clearance-scroll-y');
+      stage.removeAttribute('data-flow-launcher-clearance-revision');
       window.removeEventListener('scroll', queueLauncherEdgeCheck);
       window.removeEventListener('resize', queueLauncherEdgeCheck);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
