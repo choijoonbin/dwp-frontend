@@ -260,7 +260,7 @@ test.describe('compatibility 제품 Work·Management 메뉴 분리', () => {
   }
 });
 
-test('대표 앱의 Work·Management 전환은 1440·1024·390·320에서 제품 문맥과 복귀를 보존한다', async ({
+test('대표 앱의 Work·Management 전환은 1440·1024·600·390·320에서 제품 문맥과 복귀를 보존한다', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', '공통 반응형 Product Surface 계약 전용 검증');
@@ -276,6 +276,7 @@ test('대표 앱의 Work·Management 전환은 1440·1024·390·320에서 제품
     for (const viewport of [
       { width: 1440, height: 900 },
       { width: 1024, height: 768 },
+      { width: 600, height: 800 },
       { width: 390, height: 844 },
       { width: 320, height: 720 },
     ]) {
@@ -287,7 +288,7 @@ test('대표 앱의 Work·Management 전환은 1440·1024·390·320에서 제품
 
       const entry = await managementEntry(page, scenario);
       await expect(entry).toHaveAccessibleName(/앱 관리/u);
-      if (viewport.width <= 360) {
+      if (viewport.width < 600) {
         const workRail = header.getByTestId('shell-mobile-context-rail');
         await expect(workRail).toBeVisible();
         await expect(workRail.getByText('관리', { exact: true })).toBeVisible();

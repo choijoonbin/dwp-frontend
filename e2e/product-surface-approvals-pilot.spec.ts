@@ -450,7 +450,7 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
     ]);
     expect(Math.abs(mainPaddingTop - (headerBox?.height ?? 0))).toBeLessThanOrEqual(1);
     await page.goBack();
-    if (viewport.width <= 360) {
+    if (viewport.width < 600) {
       const workRail = page.getByTestId('shell-mobile-context-rail');
       await expect(workRail).toBeVisible();
       await expect(workRail.getByTestId('product-surface-management-entry')).toBeVisible();

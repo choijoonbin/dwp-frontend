@@ -306,7 +306,11 @@ test.describe('compact product shell header contract', () => {
           await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
         }
         await expect(page.getByTestId(product.headerTestId)).toBeVisible();
-        await expect(page.getByRole('button', { name: 'Search DWP' })).toBeVisible();
+        if (scenario.width < 360) {
+          await expect(page.getByRole('button', { name: 'Search DWP' })).toHaveCount(0);
+        } else {
+          await expect(page.getByRole('button', { name: 'Search DWP' })).toBeVisible();
+        }
         await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
         await expect(page.getByRole('button', { name: /^Account:/ })).toBeVisible();
         await page.evaluate(
@@ -321,10 +325,7 @@ test.describe('compact product shell header contract', () => {
           await expect(launcher).toHaveCount(0);
         } else {
           await expect(launcher).toBeVisible();
-          await expect(launcher).toHaveAttribute(
-            'data-shell-auxiliary-placement',
-            scenario.width < 360 ? 'header-rail' : 'header'
-          );
+          await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
         }
         await expectCompactHeaderIntegrity(page, product.headerTestId);
       }

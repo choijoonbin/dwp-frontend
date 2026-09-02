@@ -214,7 +214,7 @@ export function ProductAreaLayout({
   const legacyReturnSurface = legacyPresentation?.headerEntryPoints.find(
     (entry) => entry.entryKind === 'work-return'
   );
-  const compactWorkSurfaceRail = useMediaQuery('(max-width:360px)');
+  const compactWorkSurfaceRail = useMediaQuery('(max-width:599.95px)', { noSsr: true });
   const showMobileSurfaceContextRail = Boolean(
     currentSurfaceId &&
     presentationEntries &&
