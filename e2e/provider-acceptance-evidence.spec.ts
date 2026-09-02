@@ -14,6 +14,24 @@ const SUPPORT_EVIDENCE_NOW = new Date('2026-08-27T01:45:00.000Z');
 const SUPPORT_EVIDENCE_EXPIRES_AT = '2026-08-27T02:00:00.000Z';
 const supportClockInstallations = new WeakMap<BrowserContext, Promise<void>>();
 
+async function hardReloadForRuntimeEvidence(page: Page) {
+  const originalUrl = page.url();
+  try {
+    await page.reload({ waitUntil: 'domcontentloaded' });
+  } catch (error) {
+    if (
+      page.context().browser()?.browserType().name() !== 'webkit' ||
+      !(error instanceof Error) ||
+      !error.message.startsWith('page.reload: WebKit encountered an internal error')
+    ) {
+      throw error;
+    }
+    // WebKit can reject a reload after the navigation has already started. Recreate the same
+    // document once so the runtime contract is still exercised without a test-level retry.
+    await page.goto(originalUrl, { waitUntil: 'domcontentloaded' });
+  }
+}
+
 type SupportTarget = {
   supportSessionId: string;
   tenantId: string;
@@ -703,7 +721,7 @@ for (const plane of ['TENANT', 'PROVIDER'] as const) {
       await cdp.send('Network.enable');
       await cdp.send('Network.setCacheDisabled', { cacheDisabled: true });
     }
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await hardReloadForRuntimeEvidence(page);
 
     if (plane === 'PROVIDER') {
       await expect(page.getByRole('heading', { name: 'Operations command center' })).toBeVisible();

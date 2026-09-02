@@ -102,6 +102,38 @@ function screenshotPng({ pixelCanary = false } = {}) {
   ]);
 }
 
+function pngWithEmailShapedPixelBytes({ metadataEmail, metadataType = 'tEXt' } = {}) {
+  const header = Buffer.alloc(13);
+  header.writeUInt32BE(2, 0);
+  header.writeUInt32BE(1, 4);
+  header[8] = 8;
+  header[9] = 6;
+  const row = Buffer.alloc(9);
+  Buffer.from('a@b.zz').copy(row, 1);
+  const imageData = deflateSync(row, { level: 0 });
+  const chunks = [pngChunk('IHDR', header)];
+  if (metadataEmail) {
+    const metadata =
+      metadataType === 'tEXt'
+        ? Buffer.from(`Comment\0${metadataEmail}`, 'latin1')
+        : metadataType === 'zTXt'
+          ? Buffer.concat([
+              Buffer.from('Comment\0', 'latin1'),
+              Buffer.from([0]),
+              deflateSync(Buffer.from(metadataEmail, 'latin1')),
+            ])
+          : Buffer.concat([
+              Buffer.from('Comment\0', 'utf8'),
+              Buffer.from([1, 0]),
+              Buffer.from('en\0Comment\0', 'utf8'),
+              deflateSync(Buffer.from(metadataEmail, 'utf8')),
+            ]);
+    chunks.push(pngChunk(metadataType, metadata));
+  }
+  chunks.push(pngChunk('IDAT', imageData), pngChunk('IEND', Buffer.alloc(0)));
+  return Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), ...chunks]);
+}
+
 async function withTemporaryDirectory(run) {
   const directory = await mkdtemp(join(tmpdir(), 'dwp-provider-dlp-'));
   try {
@@ -205,6 +237,33 @@ test('detects the reserved canary after it is rasterized into screenshot pixels'
     assert.ok(
       result.findings.some((finding) => finding.kind === 'pii-canary-pixel-marker'),
       formatFindings(result.findings)
+    );
+  });
+});
+
+test('ignores email-shaped compressed pixels while scanning PNG text metadata', async () => {
+  await withTemporaryDirectory(async (directory) => {
+    const pixelsOnly = pngWithEmailShapedPixelBytes();
+    assert.match(pixelsOnly.toString('latin1'), /a@b\.zz/u);
+    await writeFile(join(directory, 'pixels-only.png'), pixelsOnly);
+
+    const sanitized = await scanProviderArtifacts([directory]);
+    assert.equal(sanitized.findings.length, 0, formatFindings(sanitized.findings));
+
+    for (const metadataType of ['tEXt', 'zTXt', 'iTXt']) {
+      await writeFile(
+        join(directory, `${metadataType}-metadata.png`),
+        pngWithEmailShapedPixelBytes({
+          metadataEmail: 'operator@customer.example.com',
+          metadataType,
+        })
+      );
+    }
+    const withMetadata = await scanProviderArtifacts([directory]);
+    assert.equal(
+      withMetadata.findings.filter((finding) => finding.kind === 'email').length,
+      3,
+      formatFindings(withMetadata.findings)
     );
   });
 });

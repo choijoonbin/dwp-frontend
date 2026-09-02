@@ -154,6 +154,39 @@ function pixelCanaryColor(row, pixel, channels, colorType) {
   return null;
 }
 
+function scanPngTextChunk(type, data, location, findings) {
+  const keywordEnd = data.indexOf(0);
+  if (keywordEnd < 1) fail(`${location} has an invalid ${type} keyword`);
+  const keyword = data.subarray(0, keywordEnd).toString('latin1');
+  if (type === 'tEXt') {
+    scanText(`${keyword}\0${data.subarray(keywordEnd + 1).toString('latin1')}`, location, findings);
+    return;
+  }
+  if (type === 'zTXt') {
+    const compressionMethod = data[keywordEnd + 1];
+    if (compressionMethod !== 0) fail(`${location} uses unsupported PNG text compression`);
+    const text = inflateSync(data.subarray(keywordEnd + 2)).toString('latin1');
+    scanText(`${keyword}\0${text}`, location, findings);
+    return;
+  }
+
+  const compressionFlag = data[keywordEnd + 1];
+  const compressionMethod = data[keywordEnd + 2];
+  if ((compressionFlag !== 0 && compressionFlag !== 1) || compressionMethod !== 0) {
+    fail(`${location} has invalid iTXt compression metadata`);
+  }
+  const languageEnd = data.indexOf(0, keywordEnd + 3);
+  const translatedKeywordEnd = languageEnd < 0 ? -1 : data.indexOf(0, languageEnd + 1);
+  if (languageEnd < 0 || translatedKeywordEnd < 0) {
+    fail(`${location} has invalid iTXt language metadata`);
+  }
+  const language = data.subarray(keywordEnd + 3, languageEnd).toString('ascii');
+  const translatedKeyword = data.subarray(languageEnd + 1, translatedKeywordEnd).toString('utf8');
+  const textPayload = data.subarray(translatedKeywordEnd + 1);
+  const text = (compressionFlag === 1 ? inflateSync(textPayload) : textPayload).toString('utf8');
+  scanText(`${keyword}\0${language}\0${translatedKeyword}\0${text}`, location, findings);
+}
+
 function scanPngPixelCanary(buffer, location, findings) {
   if (buffer.length < PNG_SIGNATURE.length || !buffer.subarray(0, 8).equals(PNG_SIGNATURE)) {
     fail(`${location} has an invalid PNG signature`);
@@ -180,7 +213,9 @@ function scanPngPixelCanary(buffer, location, findings) {
       colorType = data[9];
       interlace = data[12];
     } else if (type === 'IDAT') imageData.push(data);
-    else if (type === 'IEND') break;
+    else if (type === 'tEXt' || type === 'zTXt' || type === 'iTXt') {
+      scanPngTextChunk(type, data, `${location}!/${type}`, findings);
+    } else if (type === 'IEND') break;
     offset = dataEnd + 4;
   }
   if (!width || !height || imageData.length === 0) fail(`${location} has no PNG image data`);
@@ -277,9 +312,13 @@ function scanZip(buffer, location, findings) {
 }
 
 function scanBuffer(buffer, location, findings, { scanRawText = true } = {}) {
-  if (location.toLowerCase().endsWith('.png')) scanPngPixelCanary(buffer, location, findings);
+  const png = location.toLowerCase().endsWith('.png');
+  if (png) scanPngPixelCanary(buffer, location, findings);
   const text = buffer.toString('utf8');
-  if (scanRawText) scanText(text, location, findings);
+  // IDAT is compressed binary data and can randomly contain an email-shaped
+  // byte sequence. PNG text chunks and the rasterized canary are scanned by
+  // scanPngPixelCanary, so only non-PNG artifacts need a raw text scan.
+  if (scanRawText && !png) scanText(text, location, findings);
   for (const [index, payload] of embeddedZipPayloads(text).entries()) {
     scanZip(payload, `${location}!/embedded-report-${index + 1}.zip`, findings);
   }
