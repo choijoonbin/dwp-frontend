@@ -2990,7 +2990,6 @@ test('submitted release and cancel commands keep truthful state and preserve ver
 
   releaseSubmitted?.();
   await expect(page.getByText('The space was released.')).toBeVisible();
-  await expect(releaseDialog).toHaveCount(0);
   await expect(page.locator('.MuiDialog-root')).toHaveCount(0);
   expect(releaseWrites).toBe(1);
 
