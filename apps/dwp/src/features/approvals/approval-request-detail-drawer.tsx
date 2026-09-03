@@ -42,15 +42,22 @@ export function ApprovalRequestDetailDrawer({
     queryKey: ['approvals', 'requests', 'detail-view', requestId],
     queryFn: () => getApprovalRequestDetail(requestId!),
     enabled: Boolean(requestId),
-    staleTime: 10_000,
+    staleTime: 0,
+    retry: 1,
   });
+  const visibleDetail = detail.isError || detail.isFetching ? undefined : detail.data;
 
   return (
     <Drawer
       anchor="right"
       open={Boolean(requestId)}
       onClose={onClose}
-      PaperProps={{ sx: { width: { xs: '100%', sm: 620 }, maxWidth: '100vw' } }}
+      PaperProps={{
+        role: 'dialog',
+        'aria-modal': 'true',
+        'aria-labelledby': 'approval-request-detail-title',
+        sx: { width: { xs: '100%', sm: 620 }, maxWidth: '100vw' },
+      }}
     >
       <Box sx={{ minHeight: '100%', bgcolor: '#FAFBFD' }}>
         <Stack
@@ -64,34 +71,34 @@ export function ApprovalRequestDetailDrawer({
             <Typography variant="overline" color="primary.main">
               {t('requests.detail.eyebrow')}
             </Typography>
-            <Typography component="h2" variant="h5">
-              {detail.data?.request.title ?? t('requests.detail.title')}
+            <Typography id="approval-request-detail-title" component="h2" variant="h5">
+              {visibleDetail?.request.title ?? t('requests.detail.title')}
             </Typography>
-            {detail.data && (
+            {visibleDetail && (
               <Stack gap={1.25} sx={{ mt: 1 }}>
                 <Stack direction="row" gap={0.75} alignItems="center">
-                  <StatusChip status={detail.data.request.status} />
+                  <StatusChip status={visibleDetail.request.status} />
                   <Typography variant="caption" color="text.secondary">
-                    {detail.data.request.requestNumber}
+                    {visibleDetail.request.requestNumber}
                   </Typography>
                 </Stack>
-                {canUpdateRequests && detail.data.request.status === 'NEEDS_INFO' && (
+                {canUpdateRequests && visibleDetail.request.status === 'NEEDS_INFO' && (
                   <ActionButton
                     intent="primary"
                     size="small"
                     startIcon={<MessageSquareReply size={15} />}
-                    onClick={() => onRespond(detail.data.request)}
+                    onClick={() => onRespond(visibleDetail.request)}
                   >
                     {t('actions.respondInfo')}
                   </ActionButton>
                 )}
                 {canUpdateRequests &&
-                  ['SUBMITTED', 'IN_REVIEW'].includes(detail.data.request.status) && (
+                  ['SUBMITTED', 'IN_REVIEW'].includes(visibleDetail.request.status) && (
                     <ActionButton
                       intent="secondary"
                       size="small"
                       startIcon={<Undo2 size={15} />}
-                      onClick={() => onWithdraw(detail.data.request)}
+                      onClick={() => onWithdraw(visibleDetail.request)}
                     >
                       {t('actions.withdraw')}
                     </ActionButton>
@@ -107,15 +114,29 @@ export function ApprovalRequestDetailDrawer({
             <X size={19} />
           </ActionIconButton>
         </Stack>
-        {detail.isLoading && (
+        {Boolean(requestId) && detail.isFetching && (
           <LoadingState label={t('common:labels.loading')} size="page" embedded />
         )}
         {detail.isError && (
-          <Alert severity="error" sx={{ m: 2 }}>
+          <Alert
+            severity="error"
+            sx={{ m: 2 }}
+            action={
+              <ActionButton
+                type="button"
+                intent="quiet"
+                size="small"
+                disabled={detail.isFetching}
+                onClick={() => void detail.refetch()}
+              >
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
             {t('requests.detail.loadError')}
           </Alert>
         )}
-        {detail.data && (
+        {visibleDetail && (
           <Stack gap={2} sx={{ p: 2.5 }}>
             <ApprovalSurface title={t('requests.detail.context')}>
               <Stack divider={<Divider flexItem />} sx={{ p: 2 }} gap={1.25}>
@@ -124,7 +145,7 @@ export function ApprovalRequestDetailDrawer({
                     {t('requests.fields.summary')}
                   </Typography>
                   <Typography variant="body2" sx={{ mt: 0.35 }}>
-                    {detail.data.request.summary}
+                    {visibleDetail.request.summary}
                   </Typography>
                 </Box>
                 <Box>
@@ -133,26 +154,26 @@ export function ApprovalRequestDetailDrawer({
                   </Typography>
                   <Typography variant="body2" fontWeight={720} sx={{ mt: 0.35 }}>
                     {i18n.resolvedLanguage?.startsWith('ko')
-                      ? detail.data.request.workflowNameKo
-                      : detail.data.request.workflowNameEn}
+                      ? visibleDetail.request.workflowNameKo
+                      : visibleDetail.request.workflowNameEn}
                   </Typography>
                 </Box>
               </Stack>
             </ApprovalSurface>
             <ApprovalSurface title={t('requests.detail.payload')}>
               <ApprovalPayloadData
-                payload={detail.data.payload}
-                formSchema={detail.data.formSchema}
+                payload={visibleDetail.payload}
+                formSchema={visibleDetail.formSchema}
                 hideSystemFields
                 labelWidth="minmax(130px, .42fr)"
               />
             </ApprovalSurface>
             <ApprovalSurface
               title={t('requests.detail.timeline')}
-              meta={t('requests.detail.timelineMeta', { count: detail.data.timeline.length })}
+              meta={t('requests.detail.timelineMeta', { count: visibleDetail.timeline.length })}
             >
               <Stack divider={<Divider flexItem />} sx={{ p: 2 }}>
-                {detail.data.timeline.map((event) => (
+                {visibleDetail.timeline.map((event) => (
                   <Box key={event.eventId} sx={{ py: 1 }}>
                     <Typography variant="body2" fontWeight={720}>
                       {t(`events.${event.eventType}`, {

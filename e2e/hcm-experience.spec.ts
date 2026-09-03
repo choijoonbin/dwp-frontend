@@ -235,14 +235,77 @@ test('HR operators without a linked worker use the operations Surface without pe
   await expectNoHorizontalOverflow(page);
 });
 
-test('tenant administrators without workforce data access stay in the personal HR boundary', async ({
+test('single-domain administrators reach only their HR operations boundary', async ({ page }) => {
+  await mockShellSession(page, ['ADMIN'], {
+    displayName: 'Time Administrator',
+    jobTitle: 'Time operations lead',
+    permissions: [
+      ...FULL_PRODUCT_PERMISSIONS.filter(
+        (permission) =>
+          permission.resourceKey !== 'DATA.WORKFORCE' &&
+          !permission.resourceKey.startsWith('DATA.HR_')
+      ),
+      {
+        resourceType: 'DATA',
+        resourceKey: 'DATA.HR_TIME',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+    ],
+  });
+  await page.route('**/api/people/v1/workforce/operations/overview', (route) =>
+    fulfillSuccess(route, {
+      generatedAt: '2026-08-12T09:30:00Z',
+      dataBoundary: 'TENANT',
+      fieldGroups: ['DIRECTORY', 'EMPLOYMENT'],
+      domains: [
+        {
+          domain: 'TIME',
+          pendingCount: 7,
+          metrics: [
+            { key: 'submitted', value: 18, severity: 'INFO' },
+            { key: 'openExceptions', value: 3, severity: 'ATTENTION' },
+          ],
+        },
+      ],
+    })
+  );
+
+  await page.goto('/hr/operations');
+
+  await expect(page).toHaveURL(/\/hr\/operations$/u);
+  await expect(page.getByRole('heading', { name: 'Workforce operations', level: 1 })).toBeVisible();
+  const operationsNavigation = await hcmNavigation(page);
+  await expect(
+    operationsNavigation.getByRole('link', { name: 'Operations overview' })
+  ).toBeVisible();
+  await expect(operationsNavigation.getByRole('link', { name: 'Time operations' })).toBeVisible();
+  await expect(operationsNavigation.getByRole('link', { name: 'Absence operations' })).toHaveCount(
+    0
+  );
+  await expect(operationsNavigation.getByRole('link', { name: 'Workforce people' })).toHaveCount(0);
+  await expect(operationsNavigation.getByRole('link', { name: 'Assignments' })).toHaveCount(0);
+  if ((page.viewportSize()?.width ?? 1280) < 900) await page.keyboard.press('Escape');
+  await expect(page.getByText('Time operations summary')).toBeVisible();
+  await expect(page.getByText('Absence operations summary')).toHaveCount(0);
+
+  await page.goto('/hr/operations/absence');
+  await expect(page).toHaveURL(/\/hr\/operations\/absence$/u);
+  await expect(
+    page.getByRole('heading', { name: 'This page is outside your access' })
+  ).toBeVisible();
+});
+
+test('tenant administrators without HR operations capabilities stay in the personal HR boundary', async ({
   page,
 }) => {
   await mockShellSession(page, ['ADMIN'], {
     displayName: 'Tenant Administrator',
     jobTitle: 'Company administrator',
     permissions: FULL_PRODUCT_PERMISSIONS.filter(
-      (permission) => permission.resourceKey !== 'DATA.WORKFORCE'
+      (permission) =>
+        permission.resourceKey !== 'DATA.WORKFORCE' &&
+        !permission.resourceKey.startsWith('DATA.HR_')
     ),
   });
 

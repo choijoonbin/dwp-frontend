@@ -25,6 +25,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import { HcmQueryState } from '../../../components/hcm-query-state';
 import {
@@ -33,6 +35,7 @@ import {
   useProductPageShortcutAccess,
 } from '../../../components/product-page-shortcut-access';
 import { isIsoDate } from '../organization/organization-navigation';
+import { PeopleDirectoryMobileList, statusColor } from './people-directory-mobile-list';
 import { PersonAvatar } from './person-avatar';
 import { GovernedSavedViewControl } from '../../../components/governed-saved-view-control';
 import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
@@ -46,12 +49,6 @@ export type PeopleDirectoryExperience = 'directory' | 'workforce';
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
-}
-
-function statusColor(status?: string | null): 'success' | 'warning' | 'default' {
-  if (status === 'ACTIVE') return 'success';
-  if (status === 'LEAVE' || status === 'PENDING') return 'warning';
-  return 'default';
 }
 
 function Fact({ label, value }: { label: string; value?: string | null }) {
@@ -377,6 +374,8 @@ export function PeopleDirectory({
   experience?: PeopleDirectoryExperience;
 }) {
   const { t } = useTranslation('workforce');
+  const theme = useTheme();
+  const desktopDirectory = useMediaQuery(theme.breakpoints.up('md'));
   const workforceView = experience === 'workforce';
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'hcm',
@@ -864,46 +863,53 @@ export function PeopleDirectory({
           />
         ) : (
           <>
-            <EnterpriseDataGrid
-              ariaLabel={t('people.title')}
-              rows={filteredRows}
-              columns={columns}
-              getRowId={(row) => row.personId}
-              hideFooter
-              minVisibleRows={5}
-              maxVisibleRows={12}
-              onRowClick={({ row }) => updateSearchParams({ person: row.personId })}
-              columnVisibilityModel={
-                columnPreset === 'compact'
-                  ? {
-                      locationName: false,
-                      managerDisplayName: false,
-                    }
-                  : undefined
-              }
-              stickyColumns={{ left: ['displayName'], right: ['workerStatus'] }}
-              toolbar={{
-                ariaLabel: t('people.grid.toolbar'),
-                showColumns: false,
-                showFilters: false,
-                showQuickFilter: false,
-                refreshLabel: t('common.actions.refresh'),
-                refreshing: peopleQuery.isFetching || chartQuery.isFetching,
-                onRefresh: () => {
-                  void peopleQuery.refetch();
-                  void chartQuery.refetch();
-                },
-                columnPresetsLabel: t('people.grid.columnPresets.label'),
-                selectedColumnPresetId: columnPreset,
-                columnPresets: [
-                  { id: 'operational', label: t('people.grid.columnPresets.operational') },
-                  { id: 'compact', label: t('people.grid.columnPresets.compact') },
-                ],
-                onColumnPresetChange: (value) =>
-                  updateSearchParams({ columns: value === 'operational' ? null : value }),
-              }}
-              sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
-            />
+            {desktopDirectory ? (
+              <EnterpriseDataGrid
+                ariaLabel={t('people.title')}
+                rows={filteredRows}
+                columns={columns}
+                getRowId={(row) => row.personId}
+                hideFooter
+                minVisibleRows={5}
+                maxVisibleRows={12}
+                onRowClick={({ row }) => updateSearchParams({ person: row.personId })}
+                columnVisibilityModel={
+                  columnPreset === 'compact'
+                    ? {
+                        locationName: false,
+                        managerDisplayName: false,
+                      }
+                    : undefined
+                }
+                stickyColumns={{ left: ['displayName'], right: ['workerStatus'] }}
+                toolbar={{
+                  ariaLabel: t('people.grid.toolbar'),
+                  showColumns: false,
+                  showFilters: false,
+                  showQuickFilter: false,
+                  refreshLabel: t('common.actions.refresh'),
+                  refreshing: peopleQuery.isFetching || chartQuery.isFetching,
+                  onRefresh: () => {
+                    void peopleQuery.refetch();
+                    void chartQuery.refetch();
+                  },
+                  columnPresetsLabel: t('people.grid.columnPresets.label'),
+                  selectedColumnPresetId: columnPreset,
+                  columnPresets: [
+                    { id: 'operational', label: t('people.grid.columnPresets.operational') },
+                    { id: 'compact', label: t('people.grid.columnPresets.compact') },
+                  ],
+                  onColumnPresetChange: (value) =>
+                    updateSearchParams({ columns: value === 'operational' ? null : value }),
+                }}
+                sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
+              />
+            ) : (
+              <PeopleDirectoryMobileList
+                rows={filteredRows}
+                onSelect={(personId) => updateSearchParams({ person: personId })}
+              />
+            )}
             {peopleQuery.hasNextPage && (
               <Stack alignItems="center" sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
                 <ActionButton

@@ -44,10 +44,17 @@ import {
 
 import type { HrGoal } from '@dwp-frontend/shared-utils';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import {
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../components/product-page-shortcut-access';
 
 export function HrBenefitsWorkspace() {
   const { t } = useTranslation('hcm');
   const navigate = useNavigate();
+  const employeeServicesShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
+  );
   const query = useQuery({
     queryKey: ['hcm', 'benefits'],
     queryFn: getHrBenefits,
@@ -104,18 +111,20 @@ export function HrBenefitsWorkspace() {
           title={t('domains.benefits.plansTitle')}
           description={t('domains.benefits.plansDescription')}
           action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<LifeBuoy size={15} />}
-              onClick={() =>
-                navigate(
-                  '/services/discover?category=PEOPLE&service=people.benefits-life-event&source=hr'
-                )
-              }
-            >
-              {t('domains.benefits.reportLifeEvent')}
-            </ActionButton>
+            employeeServicesShortcut.disclosed ? (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<LifeBuoy size={15} />}
+                onClick={() =>
+                  navigate(
+                    '/services/discover?category=PEOPLE&service=people.benefits-life-event&source=hr'
+                  )
+                }
+              >
+                {t('domains.benefits.reportLifeEvent')}
+              </ActionButton>
+            ) : undefined
           }
         >
           {query.data?.plans.length ? (
@@ -246,6 +255,9 @@ export function HrBenefitsWorkspace() {
 export function HrPayWorkspace() {
   const { t } = useTranslation('hcm');
   const navigate = useNavigate();
+  const employeeServicesShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
+  );
   const query = useQuery({ queryKey: ['hcm', 'pay'], queryFn: getHrPay, staleTime: 60_000 });
   const cycle = query.data?.nextCycle;
   const dDay = cycle
@@ -331,48 +343,62 @@ export function HrPayWorkspace() {
           title={t('domains.pay.statementsTitle')}
           description={t('domains.pay.statementsDescription')}
           action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<LifeBuoy size={15} />}
-              onClick={() =>
-                navigate(
-                  '/services/discover?category=PEOPLE&service=people.payroll-inquiry&source=hr'
-                )
-              }
-            >
-              {t('domains.pay.askPayroll')}
-            </ActionButton>
+            employeeServicesShortcut.disclosed ? (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<LifeBuoy size={15} />}
+                onClick={() =>
+                  navigate(
+                    '/services/discover?category=PEOPLE&service=people.payroll-inquiry&source=hr'
+                  )
+                }
+              >
+                {t('domains.pay.askPayroll')}
+              </ActionButton>
+            ) : undefined
           }
         >
           {query.data?.statements.length ? (
             <Box>
-              {query.data.statements.map((statement, index) => (
-                <Box key={statement.statementId}>
-                  {index > 0 && <Divider />}
-                  <Stack direction="row" alignItems="center" gap={1.25} sx={{ px: 2, py: 1.5 }}>
-                    <ReceiptText size={19} aria-hidden="true" />
-                    <Box minWidth={0} flex={1}>
-                      <Typography variant="body2" fontWeight={750}>
-                        {statement.periodLabel}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {statement.publishedAt
-                          ? formatDate(statement.publishedAt, { dateStyle: 'medium' })
-                          : t('domains.pay.awaitingPublication')}
-                      </Typography>
-                    </Box>
-                    <StatusChip status={statement.availabilityState} />
-                    <ActionButton
-                      intent="secondary"
-                      size="small"
-                      disabled={!statement.downloadable}
-                    >
-                      {t('domains.pay.openStatement')}
-                    </ActionButton>
-                  </Stack>
-                </Box>
-              ))}
+              {query.data.statements.map((statement, index) => {
+                const connectionNoticeId = `pay-statement-connection-${index}`;
+                return (
+                  <Box key={statement.statementId}>
+                    {index > 0 && <Divider />}
+                    <Stack direction="row" alignItems="center" gap={1.25} sx={{ px: 2, py: 1.5 }}>
+                      <ReceiptText size={19} aria-hidden="true" />
+                      <Box minWidth={0} flex={1}>
+                        <Typography variant="body2" fontWeight={750}>
+                          {statement.periodLabel}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {statement.publishedAt
+                            ? formatDate(statement.publishedAt, { dateStyle: 'medium' })
+                            : t('domains.pay.awaitingPublication')}
+                        </Typography>
+                        <Typography
+                          id={connectionNoticeId}
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          {t('domains.pay.statementConnectionPending')}
+                        </Typography>
+                      </Box>
+                      <StatusChip status={statement.availabilityState} />
+                      <ActionButton
+                        intent="secondary"
+                        size="small"
+                        disabled
+                        aria-describedby={connectionNoticeId}
+                      >
+                        {t('domains.pay.openStatement')}
+                      </ActionButton>
+                    </Stack>
+                  </Box>
+                );
+              })}
             </Box>
           ) : (
             <EmptyState
@@ -391,6 +417,9 @@ export function HrTalentWorkspace() {
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const employeeServicesShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
+  );
   const updateGoal = useProductActionMutation('route.hcm.personal.talent-goal-update.action');
   const query = useQuery({
     queryKey: ['hcm', 'talent'],
@@ -529,18 +558,20 @@ export function HrTalentWorkspace() {
             title={t('domains.talent.learningTitle')}
             description={t('domains.talent.learningDescription')}
             action={
-              <ActionButton
-                intent="quiet"
-                size="small"
-                startIcon={<LifeBuoy size={15} aria-hidden="true" />}
-                onClick={() =>
-                  navigate(
-                    '/services/discover?category=PEOPLE&service=people.learning-support&source=hr'
-                  )
-                }
-              >
-                {t('domains.talent.learningSupport')}
-              </ActionButton>
+              employeeServicesShortcut.disclosed ? (
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  startIcon={<LifeBuoy size={15} aria-hidden="true" />}
+                  onClick={() =>
+                    navigate(
+                      '/services/discover?category=PEOPLE&service=people.learning-support&source=hr'
+                    )
+                  }
+                >
+                  {t('domains.talent.learningSupport')}
+                </ActionButton>
+              ) : undefined
             }
           >
             {query.data?.learning.length ? (
@@ -576,18 +607,20 @@ export function HrTalentWorkspace() {
           title={t('domains.talent.journeyTitle')}
           description={t('domains.talent.journeyDescription')}
           action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<LifeBuoy size={15} />}
-              onClick={() =>
-                navigate(
-                  '/services/discover?category=PEOPLE&service=people.onboarding-transition-help&source=hr'
-                )
-              }
-            >
-              {t('domains.talent.getJourneyHelp')}
-            </ActionButton>
+            employeeServicesShortcut.disclosed ? (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<LifeBuoy size={15} />}
+                onClick={() =>
+                  navigate(
+                    '/services/discover?category=PEOPLE&service=people.onboarding-transition-help&source=hr'
+                  )
+                }
+              >
+                {t('domains.talent.getJourneyHelp')}
+              </ActionButton>
+            ) : undefined
           }
         >
           {query.data?.journeys.length ? (

@@ -6,6 +6,13 @@ import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './shell-session';
 const isExpectedFixtureTransportError = (text: string) =>
   text.includes('Failed to load resource') && text.includes('503');
 
+function rolesForMenuRoute(productRoute: ProductMenuRoute): string[] {
+  if (productRoute.shell === 'provider') return ['PROVIDER_ADMIN'];
+  const roles = ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN', 'APP_CATALOG_ADMIN'];
+  if (productRoute.shell === 'hcm' && productRoute.taskKind === 'team') roles.push('MANAGER');
+  return roles;
+}
+
 export async function exerciseGovernedMenuRoute(
   page: Page,
   testInfo: TestInfo,
@@ -41,21 +48,20 @@ export async function exerciseGovernedMenuRoute(
     ),
   });
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
-  await mockShellSession(
-    page,
-    productRoute.shell === 'provider'
-      ? ['PROVIDER_ADMIN']
-      : ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN', 'APP_CATALOG_ADMIN'],
-    {
-      locale: 'ko',
-      displayName: productRoute.shell === 'provider' ? 'Provider Admin' : '박현우',
-      jobTitle: productRoute.shell === 'provider' ? 'Platform operations lead' : '회사 관리자',
-      permissions: FULL_PRODUCT_PERMISSIONS,
-      appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
-    }
-  );
+  await mockShellSession(page, rolesForMenuRoute(productRoute), {
+    locale: 'ko',
+    displayName: productRoute.shell === 'provider' ? 'Provider Admin' : '박현우',
+    jobTitle: productRoute.shell === 'provider' ? 'Platform operations lead' : '회사 관리자',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
+  });
   await page.goto(productRoute.path);
   await page.waitForLoadState('domcontentloaded');
+  await expect
+    .poll(() => new URL(page.url()).pathname, {
+      message: `${productRoute.id} redirected away from its canonical menu route`,
+    })
+    .toBe(productRoute.path);
   const productMain = page.locator('#dwp-main-content');
   await expect(productMain).toBeVisible({ timeout: 15_000 });
   await expect(page).not.toHaveURL(/\/(403|404)(?:$|\?)/);

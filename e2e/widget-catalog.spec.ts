@@ -12,6 +12,39 @@ const reducedMotionAppearance = {
   reduceMotion: true,
 } as const;
 
+type WorkspaceHomePreference = {
+  layout: {
+    widgets: Array<{
+      widgetKey: string;
+      visible: boolean;
+    }>;
+  };
+  version: number;
+};
+
+type WorkspaceHomePreferenceUpdate = Pick<WorkspaceHomePreference, 'layout' | 'version'>;
+
+function isWorkspaceHomePreferenceResponse(
+  response: Parameters<Parameters<Page['waitForResponse']>[0]>[0],
+  method: 'GET' | 'PUT'
+) {
+  return (
+    new URL(response.url()).pathname === '/api/platform/v1/home-preferences' &&
+    response.request().method() === method
+  );
+}
+
+function widgetKeys(preference: WorkspaceHomePreference | WorkspaceHomePreferenceUpdate) {
+  return preference.layout.widgets.map((widget) => widget.widgetKey);
+}
+
+function widgetVisibility(
+  preference: WorkspaceHomePreference | WorkspaceHomePreferenceUpdate,
+  widgetKey: string
+) {
+  return preference.layout.widgets.find((widget) => widget.widgetKey === widgetKey)?.visible;
+}
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
@@ -122,13 +155,48 @@ test('persists a hide and restore journey across reloads and restores focus safe
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await startEditing(page);
+  const initialResponsePromise = page.waitForResponse((response) =>
+    isWorkspaceHomePreferenceResponse(response, 'GET')
+  );
+  await page.goto('/');
+  const initialPreference = (await (await initialResponsePromise).json())
+    .data as WorkspaceHomePreference;
+  expect(widgetVisibility(initialPreference, 'activity')).toBe(true);
+  await page.getByRole('button', { name: 'Edit home' }).click();
 
   await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  const hideResponsePromise = page.waitForResponse((response) =>
+    isWorkspaceHomePreferenceResponse(response, 'PUT')
+  );
   await page.getByRole('button', { name: 'Save' }).click();
+  const hideResponse = await hideResponsePromise;
+  const hideRequest = hideResponse.request().postDataJSON() as WorkspaceHomePreferenceUpdate;
+  const hiddenPreference = (await hideResponse.json()).data as WorkspaceHomePreference;
+  const persistedWidgetKeys = widgetKeys(hideRequest);
+  expect(hideRequest.version).toBe(initialPreference.version);
+  expect(persistedWidgetKeys).toEqual([
+    'command-rail',
+    'schedule',
+    'daily-brief',
+    'focus',
+    'activity',
+  ]);
+  expect(widgetVisibility(hideRequest, 'activity')).toBe(false);
+  expect(hiddenPreference.version).toBe(initialPreference.version);
+  expect(widgetKeys(hiddenPreference)).toEqual(persistedWidgetKeys);
+  expect(widgetVisibility(hiddenPreference, 'activity')).toBe(false);
   await expect(page.getByText('Home view saved.')).toBeVisible();
+  await expect(page).not.toHaveURL(/[?&]edit=home/u);
+  await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
 
+  const hiddenReloadPromise = page.waitForResponse((response) =>
+    isWorkspaceHomePreferenceResponse(response, 'GET')
+  );
   await page.reload();
+  const hiddenReload = (await (await hiddenReloadPromise).json()).data as WorkspaceHomePreference;
+  expect(hiddenReload.version).toBe(hiddenPreference.version);
+  expect(widgetKeys(hiddenReload)).toEqual(persistedWidgetKeys);
+  expect(widgetVisibility(hiddenReload, 'activity')).toBe(false);
   await ensureEditing(page);
   let dialog = await openItemLibrary(page);
   await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveAttribute(
@@ -146,10 +214,32 @@ test('persists a hide and restore journey across reloads and restores focus safe
   );
   await dialog.getByRole('button', { name: 'Close the home item library' }).click();
   await expect(page.getByRole('button', { name: 'Add items' })).toBeFocused();
+  const restoreResponsePromise = page.waitForResponse((response) =>
+    isWorkspaceHomePreferenceResponse(response, 'PUT')
+  );
   await page.getByRole('button', { name: 'Save' }).click();
+  const restoreResponse = await restoreResponsePromise;
+  const restoreRequest = restoreResponse.request().postDataJSON() as WorkspaceHomePreferenceUpdate;
+  const restoredPreference = (await restoreResponse.json()).data as WorkspaceHomePreference;
+  expect(restoreRequest.version).toBe(hiddenReload.version);
+  expect(widgetKeys(restoreRequest)).toEqual(persistedWidgetKeys);
+  expect(widgetVisibility(restoreRequest, 'activity')).toBe(true);
+  expect(restoredPreference.version).toBe(hiddenReload.version + 1);
+  expect(widgetKeys(restoredPreference)).toEqual(persistedWidgetKeys);
+  expect(widgetVisibility(restoredPreference, 'activity')).toBe(true);
   await expect(page.getByText('Home view saved.')).toBeVisible();
+  await expect(page).not.toHaveURL(/[?&]edit=home/u);
+  await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
 
+  const restoredReloadPromise = page.waitForResponse((response) =>
+    isWorkspaceHomePreferenceResponse(response, 'GET')
+  );
   await page.reload();
+  const restoredReload = (await (await restoredReloadPromise).json())
+    .data as WorkspaceHomePreference;
+  expect(restoredReload.version).toBe(restoredPreference.version);
+  expect(widgetKeys(restoredReload)).toEqual(persistedWidgetKeys);
+  expect(widgetVisibility(restoredReload, 'activity')).toBe(true);
   await ensureEditing(page);
   dialog = await openItemLibrary(page);
   await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveAttribute(

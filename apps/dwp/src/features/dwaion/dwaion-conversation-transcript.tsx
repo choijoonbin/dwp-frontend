@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 
 import type { DwaionConversationMessage } from '@dwp-frontend/shared-utils';
 
+import { isGroundedFallbackStatus } from './dwaion-workspace-model';
+
 export function DwaionConversationTranscript({
   messages,
   excludedMessageIds = [],
@@ -25,6 +27,7 @@ export function DwaionConversationTranscript({
       <Stack spacing={1.25}>
         {visible.map((message) => {
           const assistant = message.role === 'ASSISTANT';
+          const groundedFallback = assistant && isGroundedFallbackStatus(message.statusCode);
           const Icon = assistant ? Bot : UserRound;
           const content =
             assistant && message.statusCode && message.content === message.statusCode
@@ -58,9 +61,35 @@ export function DwaionConversationTranscript({
                 <Icon size={17} aria-hidden="true" />
               </Box>
               <Box sx={{ minWidth: 0 }}>
-                <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  {t(assistant ? 'askPage.history.assistant' : 'askPage.history.you')}
-                </Typography>
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  alignItems="center"
+                  useFlexGap
+                  flexWrap="wrap"
+                >
+                  <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                    {t(assistant ? 'askPage.history.assistant' : 'askPage.history.you')}
+                  </Typography>
+                  {groundedFallback && (
+                    <Chip
+                      size="small"
+                      color="info"
+                      variant="outlined"
+                      label={t('askPage.fallback.state')}
+                    />
+                  )}
+                </Stack>
+                {groundedFallback && (
+                  <Typography
+                    component="p"
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 0.5 }}
+                  >
+                    {t('askPage.history.fallbackDescription')}
+                  </Typography>
+                )}
                 <Typography sx={{ mt: 0.4, whiteSpace: 'pre-wrap', lineHeight: 1.75 }}>
                   {content}
                 </Typography>

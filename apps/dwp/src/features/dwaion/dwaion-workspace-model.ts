@@ -6,6 +6,9 @@ export type DwaionModeKey = (typeof DWAION_MODE_KEYS)[number];
 
 export type DwaionWorkspaceState = 'idle' | 'loading' | 'ready' | 'error';
 
+const GROUNDED_FALLBACK_PROVIDER = 'DWP_GROUNDED_FALLBACK';
+const GROUNDED_FALLBACK_STATUS = 'ANSWER_GROUNDED_FALLBACK';
+
 export function verifiedConversationId(
   selectedConversationId: string | null,
   loadedConversationId: string | undefined
@@ -27,9 +30,23 @@ export function visibleWorkItems(items: readonly WorkspaceWorkItem[]): Workspace
 }
 
 export function responseTone(response: AskDwpResponse): 'success' | 'warning' | 'info' {
+  if (isGroundedFallbackResponse(response)) return 'info';
   if (response.state === 'COMPLETED') return 'success';
   if (response.state === 'CONFIGURATION_REQUIRED') return 'info';
   return 'warning';
+}
+
+export function isGroundedFallbackResponse(response: AskDwpResponse): boolean {
+  return (
+    response.state === 'COMPLETED' &&
+    response.modelRoute.state === 'COMPLETED' &&
+    response.modelRoute.provider === GROUNDED_FALLBACK_PROVIDER &&
+    isGroundedFallbackStatus(response.statusCode)
+  );
+}
+
+export function isGroundedFallbackStatus(statusCode: string | null | undefined): boolean {
+  return statusCode === GROUNDED_FALLBACK_STATUS;
 }
 
 export function confidenceValue(response: AskDwpResponse): string {

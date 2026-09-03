@@ -59,6 +59,22 @@ describe('app administrator preset actions', () => {
     expect(resolvePresetAssignmentActions(approved, actor(40, [manager])).mayActivate).toBe(true);
   });
 
+  it('fails closed when the preset requester identity is absent', () => {
+    const approver = actor(20, [scopedRole('APP_ACCESS_APPROVER')]);
+    const manager = actor(40, [scopedRole('APP_ACCESS_MANAGER')]);
+
+    for (const requestedBy of [null, undefined]) {
+      expect(
+        resolvePresetAssignmentActions({ ...assignment('PENDING_APPROVAL'), requestedBy }, approver)
+          .mayApprove
+      ).toBe(false);
+      expect(
+        resolvePresetAssignmentActions({ ...assignment('APPROVED'), requestedBy }, manager)
+          .mayActivate
+      ).toBe(false);
+    }
+  });
+
   it('allows only an exact-scope access manager to cancel approved or active packages', () => {
     const manager = actor(40, [scopedRole('APP_ACCESS_MANAGER')]);
     expect(resolvePresetAssignmentActions(assignment('APPROVED'), manager).mayRevoke).toBe(true);

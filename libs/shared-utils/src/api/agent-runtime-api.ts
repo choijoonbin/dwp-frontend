@@ -86,6 +86,7 @@ const MODEL_STATES: ReadonlySet<AskModelRouteState> = new Set([
   'CONFIGURATION_REQUIRED',
   'REFUSED',
 ]);
+const GROUNDED_FALLBACK_PROVIDER = 'DWP_GROUNDED_FALLBACK';
 const RISK_TIERS: ReadonlySet<AgentRiskTier> = new Set(['L0', 'L1', 'L2', 'L3']);
 
 function nonEmptyString(value: unknown): value is string {
@@ -204,6 +205,10 @@ function isAskResponse(value: unknown): value is AskDwpResponse {
   }
 
   const completed = response.state === 'COMPLETED';
+  const fallbackUsed =
+    isModelRoute(response.modelRoute) &&
+    response.modelRoute.provider === GROUNDED_FALLBACK_PROVIDER;
+  const expectedCompletedStatus = fallbackUsed ? 'ANSWER_GROUNDED_FALLBACK' : 'ANSWER_GROUNDED';
   return completed
     ? nonEmptyString(response.answer) &&
         response.confidence !== null &&
@@ -211,7 +216,7 @@ function isAskResponse(value: unknown): value is AskDwpResponse {
         response.policy.outcome === 'ALLOW' &&
         response.policy.modelAllowed &&
         response.modelRoute.state === 'COMPLETED' &&
-        response.statusCode === 'ANSWER_GROUNDED'
+        response.statusCode === expectedCompletedStatus
     : response.answer === null && response.confidence === null && response.citations.length === 0;
 }
 

@@ -76,6 +76,7 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
       requestId: request.requestId,
       answer: fallbackAnswer,
       confidence: 'LOW',
+      statusCode: 'ANSWER_GROUNDED_FALLBACK',
       modelRoute: {
         state: 'COMPLETED',
         provider: 'DWP_GROUNDED_FALLBACK',
@@ -93,12 +94,61 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
 
   await expect(page).toHaveURL(/\/dwaion\/new$/);
   await expect(page.getByText(fallbackAnswer)).toBeVisible();
+  await expect(page.getByText('Evidence-only fallback')).toHaveCount(2);
+  await expect(page.getByText('This response is a direct evidence summary')).toBeVisible();
+  await expect(page.getByText('Verified source evidence only')).toBeVisible();
+  await expect(page.getByText('Verified answer', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Low confidence')).toBeVisible();
   expect(new URL(page.url()).searchParams.has('q')).toBe(false);
   expect(submittedQuery).toBe(
     'Summarize what I should handle today by priority and deadline risk.'
   );
   expect(submittedSources).toEqual(['WORK_ITEM', 'MAIL', 'CALENDAR']);
+
+  await page.route('**/api/agent/v1/conversations/fallback-conversation', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          summary: {
+            conversationId: 'fallback-conversation',
+            title: 'Today’s work brief',
+            locale: 'en',
+            messageCount: 2,
+            createdAt: '2026-08-11T01:00:00Z',
+            updatedAt: '2026-08-11T01:00:01Z',
+            lastMessageAt: '2026-08-11T01:00:01Z',
+          },
+          messages: [
+            {
+              messageId: 'message-user',
+              role: 'USER',
+              content: submittedQuery,
+              runId: null,
+              statusCode: null,
+              citations: [],
+              createdAt: '2026-08-11T01:00:00Z',
+            },
+            {
+              messageId: 'message-assistant',
+              role: 'ASSISTANT',
+              content: fallbackAnswer,
+              runId: 'run-ref-1042',
+              statusCode: 'ANSWER_GROUNDED_FALLBACK',
+              citations: ASK_RUNTIME_FIXTURE.citations,
+              createdAt: '2026-08-11T01:00:01Z',
+            },
+          ],
+        },
+      }),
+    })
+  );
+  await page.goto('/dwaion/conversations/fallback-conversation');
+  await expect(page.getByText('Evidence-only fallback')).toBeVisible();
+  await expect(
+    page.getByText(/directly summarizes source evidence verified under your access/)
+  ).toBeVisible();
 });
 
 test('voice input requires transcript review and never submits automatically', async ({ page }) => {

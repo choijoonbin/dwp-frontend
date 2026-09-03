@@ -16,6 +16,9 @@ import type {
   HrEmployeeContext,
   HrHomeOverview,
   HrPayWorkspace,
+  HrTeamAbsenceWorkspace,
+  HrTeamTimeWorkspace,
+  HrTeamWorkspace,
   HrTalentWorkspace,
   HrTimeWorkspace,
   ServiceCatalog,
@@ -26,31 +29,35 @@ export * from './product-area-approval-fixtures';
 
 const HR_SERVICE_DEFINITIONS = [
   [
-    'people.personal-data-change',
-    'Personal data change',
-    'Update governed personal and contact information.',
+    'people.personal-information-change',
+    'Personal information change',
+    'Request a verified change to personal or contact information.',
   ],
   [
-    'people.payroll-question',
-    'Payroll question',
-    'Ask a confidential question about a pay statement or cycle.',
+    'people.payroll-inquiry',
+    'Payroll inquiry',
+    'Ask a confidential question about a pay statement, deduction, or payment schedule.',
   ],
   [
-    'people.benefits-support',
-    'Benefits support',
-    'Get help with eligibility, coverage, or enrollment.',
+    'people.benefits-life-event',
+    'Benefits life event',
+    'Report a life event that may change benefit coverage.',
   ],
   [
-    'people.onboarding-support',
-    'Onboarding support',
-    'Resolve a new-hire or role-transition onboarding issue.',
+    'people.onboarding-transition-help',
+    'Onboarding and transition support',
+    'Get help with onboarding, transfer, return, or offboarding tasks.',
   ],
   [
     'people.employment-certificate',
     'Employment certificate',
     'Request a verified employment certificate.',
   ],
-  ['people.hr-general', 'General HR help', 'Route an HR question to the right specialist team.'],
+  [
+    'people.learning-support',
+    'Learning support',
+    'Ask for support with training, certification, or external learning.',
+  ],
 ] as const;
 
 export const HR_SERVICE_CATALOG_FIXTURE = {
@@ -98,9 +105,9 @@ export const HR_SERVICE_REQUESTS_FIXTURE = [
   {
     requestId: 'service-request-people-001',
     requestNumber: 'HR-2026-0811-001',
-    serviceKey: 'people.benefits-support',
+    serviceKey: 'people.benefits-life-event',
     serviceNameKo: '복리후생 지원',
-    serviceNameEn: 'Benefits support',
+    serviceNameEn: 'Benefits life event',
     summary: 'Confirm dependent enrollment evidence',
     dataClassification: 'CONFIDENTIAL',
     status: 'AWAITING_REQUESTER',
@@ -178,6 +185,13 @@ export const HR_TIME_FIXTURE = {
       status: 'SUBMITTED',
       submittedAt: '2026-08-11T00:05:00Z',
       version: 1,
+      evidence: {
+        periodStart: '2026-08-10',
+        periodEnd: '2026-08-16',
+        scheduledMinutes: 2400,
+        recordedMinutes: 2400,
+        exceptionCount: 0,
+      },
     },
   ],
 } satisfies HrTimeWorkspace;
@@ -225,6 +239,13 @@ export const HR_ABSENCE_FIXTURE = {
       status: 'SUBMITTED',
       submittedAt: '2026-08-10T08:30:00Z',
       version: 1,
+      evidence: {
+        startAt: '2026-08-24T00:00:00Z',
+        endAt: '2026-08-24T09:00:00Z',
+        requestedMinutes: 480,
+        availableMinutes: 5280,
+        reason: 'Family appointment',
+      },
     },
   ],
   teamCalendar: [
@@ -240,6 +261,42 @@ export const HR_ABSENCE_FIXTURE = {
     },
   ],
 } satisfies HrAbsenceWorkspace;
+
+export const HR_TEAM_FIXTURE = {
+  manager: HR_EMPLOYEE_FIXTURE,
+  members: [
+    {
+      personId: 'person-minseo-kim',
+      displayName: 'Minseo Kim',
+      businessTitle: 'Product design lead',
+      organizationName: 'Digital Workplace',
+      directReportCount: 1,
+    },
+    {
+      personId: 'person-jinho-park',
+      displayName: 'Jinho Park',
+      businessTitle: 'Network automation engineer',
+      organizationName: 'Digital Workplace',
+      directReportCount: 0,
+    },
+  ],
+  timePendingCount: HR_TIME_FIXTURE.teamQueue.length,
+  absencePendingCount: HR_ABSENCE_FIXTURE.teamQueue.length,
+  dataBoundary: 'TEAM',
+} satisfies HrTeamWorkspace;
+
+export const HR_TEAM_TIME_FIXTURE = {
+  manager: HR_EMPLOYEE_FIXTURE,
+  teamQueue: HR_TIME_FIXTURE.teamQueue,
+  dataBoundary: 'TEAM',
+} satisfies HrTeamTimeWorkspace;
+
+export const HR_TEAM_ABSENCE_FIXTURE = {
+  manager: HR_EMPLOYEE_FIXTURE,
+  teamQueue: HR_ABSENCE_FIXTURE.teamQueue,
+  teamCalendar: HR_ABSENCE_FIXTURE.teamCalendar,
+  dataBoundary: 'TEAM',
+} satisfies HrTeamAbsenceWorkspace;
 
 export const HR_BENEFITS_FIXTURE = {
   employee: HR_EMPLOYEE_FIXTURE,

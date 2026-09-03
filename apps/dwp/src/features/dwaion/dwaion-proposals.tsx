@@ -272,6 +272,12 @@ export function DwaionProposals() {
               }
             }}
             aria-label={t('dwaionProposals.filterLabel')}
+            sx={{
+              '& .MuiToggleButton-root': { color: 'text.primary' },
+              '& .MuiToggleButton-root.Mui-selected': {
+                color: 'text.primary',
+              },
+            }}
           >
             {(['ACTIVE', 'SNOOZED', 'HANDLED'] as const).map((value) => (
               <ToggleButton key={value} value={value}>

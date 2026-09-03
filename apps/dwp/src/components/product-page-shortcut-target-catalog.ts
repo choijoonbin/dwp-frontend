@@ -20,6 +20,11 @@ export const PRODUCT_PAGE_SHORTCUT_TARGET_CATALOG = {
     surfaceId: 'hcm.management',
     routeContractKey: 'route.hcm.management.org-design.page',
   },
+  hcmEmployeeServices: {
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeContractKey: 'route.hcm.personal.services.page',
+  },
 } as const satisfies Readonly<
   Record<string, Readonly<{ productId: string; surfaceId: string; routeContractKey: string }>>
 >;

@@ -31,6 +31,12 @@ const desktopScenarios: readonly WidthScenario[] = [
     root: '[data-testid="messaging-home-canvas"]',
   },
   {
+    name: 'meetings',
+    path: '/meetings/home',
+    roles: ['WORKSPACE_MEMBER'],
+    root: '[data-testid="meeting-command-deck"]',
+  },
+  {
     name: 'communications',
     path: '/communications/all',
     roles: ['ADMIN'],

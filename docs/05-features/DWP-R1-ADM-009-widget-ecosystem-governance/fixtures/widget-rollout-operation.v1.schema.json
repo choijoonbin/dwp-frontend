@@ -246,6 +246,239 @@
         }
       }
     },
+    "activationRuntimeSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deploymentBuildDigest",
+        "migrationSetDigests",
+        "catalogRevision",
+        "bindingCatalogRevision",
+        "policyRevision",
+        "safetyRevision",
+        "rolloutQuerySetRevision",
+        "selectorKeyId",
+        "selectorState"
+      ],
+      "properties": {
+        "deploymentBuildDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "migrationSetDigests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["platform", "provider", "auth"],
+          "properties": {
+            "platform": {
+              "$ref": "#/definitions/sha256"
+            },
+            "provider": {
+              "$ref": "#/definitions/sha256"
+            },
+            "auth": {
+              "$ref": "#/definitions/sha256"
+            }
+          }
+        },
+        "catalogRevision": {
+          "$ref": "#/definitions/revision"
+        },
+        "bindingCatalogRevision": {
+          "$ref": "#/definitions/sha256"
+        },
+        "policyRevision": {
+          "$ref": "#/definitions/revision"
+        },
+        "safetyRevision": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/revision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rolloutQuerySetRevision": {
+          "$ref": "#/definitions/sha256"
+        },
+        "selectorKeyId": {
+          "$ref": "#/definitions/revision"
+        },
+        "selectorState": {
+          "const": "ACTIVE"
+        }
+      }
+    },
+    "activationSnapshotRecheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result",
+        "evaluatedAt",
+        "evidenceDigest",
+        "querySetRevision",
+        "immutableSnapshotRefHash",
+        "authorityVerificationRecordId"
+      ],
+      "properties": {
+        "result": {
+          "const": "SUCCESS"
+        },
+        "evaluatedAt": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "evidenceDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "querySetRevision": {
+          "$ref": "#/definitions/sha256"
+        },
+        "immutableSnapshotRefHash": {
+          "$ref": "#/definitions/sha256"
+        },
+        "authorityVerificationRecordId": {
+          "$ref": "#/definitions/uuid"
+        }
+      }
+    },
+    "trustedActivationContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lockedCurrentHead",
+        "lockedLatestApproval",
+        "headLockAffectedRows",
+        "approvalLockAffectedRows",
+        "currentBootstrapPrerequisiteId",
+        "currentBootstrapPrerequisiteDigest",
+        "currentRuntimeSnapshot",
+        "currentRolloutEvidenceDigest",
+        "currentEvidenceAuthorityVerificationId",
+        "snapshotRecheck"
+      ],
+      "properties": {
+        "lockedCurrentHead": {
+          "$ref": "#/definitions/widgetCatalogRolloutStateResponse"
+        },
+        "lockedLatestApproval": {
+          "$ref": "#/definitions/widgetCatalogRolloutApprovalResponse"
+        },
+        "headLockAffectedRows": {
+          "const": 1
+        },
+        "approvalLockAffectedRows": {
+          "const": 1
+        },
+        "currentBootstrapPrerequisiteId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "currentBootstrapPrerequisiteDigest": {
+          "$ref": "#/definitions/sha256"
+        },
+        "currentRuntimeSnapshot": {
+          "$ref": "#/definitions/activationRuntimeSnapshot"
+        },
+        "currentRolloutEvidenceDigest": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currentEvidenceAuthorityVerificationId": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "snapshotRecheck": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/activationSnapshotRecheck"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "title": "Bootstrap activation context",
+          "properties": {
+            "currentRuntimeSnapshot": {
+              "properties": {
+                "safetyRevision": {
+                  "type": "null"
+                }
+              }
+            },
+            "currentRolloutEvidenceDigest": {
+              "type": "null"
+            },
+            "currentEvidenceAuthorityVerificationId": {
+              "type": "null"
+            },
+            "snapshotRecheck": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "title": "Promotion activation context",
+          "properties": {
+            "currentRuntimeSnapshot": {
+              "properties": {
+                "safetyRevision": {
+                  "$ref": "#/definitions/revision"
+                }
+              }
+            },
+            "currentRolloutEvidenceDigest": {
+              "$ref": "#/definitions/sha256"
+            },
+            "currentEvidenceAuthorityVerificationId": {
+              "$ref": "#/definitions/uuid"
+            },
+            "snapshotRecheck": {
+              "$ref": "#/definitions/activationSnapshotRecheck"
+            }
+          }
+        }
+      ]
+    },
+    "trustedTerminalTransitionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lockedCurrentHead",
+        "lockedLatestApproval",
+        "headLockAffectedRows",
+        "approvalLockAffectedRows"
+      ],
+      "properties": {
+        "lockedCurrentHead": {
+          "$ref": "#/definitions/widgetCatalogRolloutStateResponse"
+        },
+        "lockedLatestApproval": {
+          "$ref": "#/definitions/widgetCatalogRolloutApprovalResponse"
+        },
+        "headLockAffectedRows": {
+          "const": 1
+        },
+        "approvalLockAffectedRows": {
+          "const": 1
+        }
+      }
+    },
     "rolloutStopRequest": {
       "type": "object",
       "additionalProperties": false,
@@ -905,6 +1138,7 @@
         "operation",
         "provenance",
         "lockedApprovalState",
+        "trustedActivationContext",
         "request",
         "response"
       ],
@@ -920,6 +1154,9 @@
         },
         "lockedApprovalState": {
           "enum": ["ACTIVE", "REVOKED", "EXPIRED"]
+        },
+        "trustedActivationContext": {
+          "$ref": "#/definitions/trustedActivationContext"
         },
         "request": {
           "$ref": "#/definitions/rolloutActivateRequest"
@@ -948,6 +1185,7 @@
         "operation",
         "provenance",
         "lockedApprovalState",
+        "trustedActivationContext",
         "request",
         "response"
       ],
@@ -963,6 +1201,9 @@
         },
         "lockedApprovalState": {
           "enum": ["ACTIVE", "REVOKED", "EXPIRED"]
+        },
+        "trustedActivationContext": {
+          "$ref": "#/definitions/trustedActivationContext"
         },
         "request": {
           "$ref": "#/definitions/rolloutActivateRequest"
@@ -986,7 +1227,14 @@
     "stopExample": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["exampleId", "operation", "provenance", "request", "response"],
+      "required": [
+        "exampleId",
+        "operation",
+        "provenance",
+        "trustedTerminalTransitionContext",
+        "request",
+        "response"
+      ],
       "properties": {
         "exampleId": {
           "$ref": "#/definitions/revision"
@@ -996,6 +1244,9 @@
         },
         "provenance": {
           "$ref": "#/definitions/provenance"
+        },
+        "trustedTerminalTransitionContext": {
+          "$ref": "#/definitions/trustedTerminalTransitionContext"
         },
         "request": {
           "$ref": "#/definitions/rolloutStopRequest"
@@ -1111,6 +1362,8 @@
         "operation",
         "cause",
         "terminalApprovalState",
+        "terminalApprovalId",
+        "terminalApprovalRevision",
         "transitionIntent",
         "transitionIdempotencyTarget",
         "idempotencyPolicy",
@@ -1126,6 +1379,12 @@
         },
         "terminalApprovalState": {
           "enum": ["REVOKED", "EXPIRED"]
+        },
+        "terminalApprovalId": {
+          "$ref": "#/definitions/uuid"
+        },
+        "terminalApprovalRevision": {
+          "$ref": "#/definitions/positiveInteger"
         },
         "transitionIntent": {
           "enum": ["REVOKE_ACTIVE_APPROVAL_AND_RESET_HEAD", "EXPIRE_ACTIVE_APPROVAL_AND_RESET_HEAD"]
@@ -1188,7 +1447,14 @@
     "expireExample": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["exampleId", "operation", "provenance", "request", "response"],
+      "required": [
+        "exampleId",
+        "operation",
+        "provenance",
+        "trustedTerminalTransitionContext",
+        "request",
+        "response"
+      ],
       "properties": {
         "exampleId": {
           "$ref": "#/definitions/revision"
@@ -1198,6 +1464,9 @@
         },
         "provenance": {
           "$ref": "#/definitions/provenance"
+        },
+        "trustedTerminalTransitionContext": {
+          "$ref": "#/definitions/trustedTerminalTransitionContext"
         },
         "request": {
           "$ref": "#/definitions/rolloutExpiryEvaluationRequest"

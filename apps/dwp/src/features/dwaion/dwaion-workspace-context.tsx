@@ -29,7 +29,11 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
 
-import { confidenceValue, responseTone } from './dwaion-workspace-model';
+import {
+  confidenceValue,
+  isGroundedFallbackResponse,
+  responseTone,
+} from './dwaion-workspace-model';
 
 type DwaionWorkspaceContextProps = {
   response: AskDwpResponse | null;
@@ -221,6 +225,7 @@ function ResponseContext({
 }) {
   const { t } = useTranslation('work');
   const tone = responseTone(response);
+  const groundedFallback = isGroundedFallbackResponse(response);
 
   return (
     <>
@@ -230,7 +235,9 @@ function ResponseContext({
             size="small"
             color={tone}
             variant="outlined"
-            label={t(`askPage.states.${response.state}`)}
+            label={
+              groundedFallback ? t('askPage.fallback.state') : t(`askPage.states.${response.state}`)
+            }
           />
           <Chip
             size="small"
@@ -307,6 +314,13 @@ function ResponseContext({
             label={t('askPage.contextRail.policy')}
             value={t(`askPage.policyOutcomes.${response.policy.outcome}`)}
           />
+          {groundedFallback && (
+            <EvidenceRow
+              icon={BookOpenCheck}
+              label={t('askPage.fallback.responseMode')}
+              value={t('askPage.fallback.responseModeValue')}
+            />
+          )}
           <EvidenceRow
             icon={Gauge}
             label={t('askPage.evidence.usage')}

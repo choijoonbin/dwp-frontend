@@ -172,7 +172,17 @@ export function MeetingAdminIntelligence({
       />
 
       <Stack gap={3}>
-        <Alert severity="info" icon={<ShieldCheck size={19} aria-hidden="true" />}>
+        <Alert
+          severity="info"
+          icon={<ShieldCheck size={19} aria-hidden="true" />}
+          sx={{
+            '& .MuiAlert-message': {
+              minWidth: 0,
+              overflow: 'visible',
+              overflowWrap: 'anywhere',
+            },
+          }}
+        >
           {labels.accessBoundary}
         </Alert>
 

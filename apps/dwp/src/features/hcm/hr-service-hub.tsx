@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Children, useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Clock3, FileText, Inbox, LifeBuoy, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DomainSection, ProgressSignal, QueryBoundary } from './hr-domain-components';
+import { prioritizeHrServiceRequests } from './hr-service-hub-model';
 import { HcmQueryState } from '../../components/hcm-query-state';
 
 import type { ServiceRequestStatus } from '@dwp-frontend/shared-utils';
@@ -25,6 +26,17 @@ const OPEN_STATUSES = new Set<ServiceRequestStatus>([
   'IN_PROGRESS',
   'AWAITING_REQUESTER',
 ]);
+
+function ServiceSectionOrder({
+  requestsFirst,
+  children,
+}: {
+  requestsFirst: boolean;
+  children: ReactNode;
+}) {
+  const sections = Children.toArray(children);
+  return <>{requestsFirst ? sections.reverse() : sections}</>;
+}
 
 export function HrServiceHub() {
   const { t } = useTranslation('hcm');
@@ -48,6 +60,10 @@ export function HrServiceHub() {
   // The requests endpoint is already constrained by `surface=hcm`; do not make request tracking
   // depend on the independently loaded catalog or on a legacy `people.` key convention.
   const hrRequests = requests.data ?? [];
+  const prioritizedRequests = useMemo(
+    () => prioritizeHrServiceRequests(requests.data ?? []),
+    [requests.data]
+  );
   const openRequests = hrRequests.filter((request) => OPEN_STATUSES.has(request.status));
   const awaitingRequester = hrRequests.filter(
     (request) => request.status === 'AWAITING_REQUESTER'
@@ -64,6 +80,36 @@ export function HrServiceHub() {
       }}
     >
       <Stack gap={2}>
+        {awaitingRequester > 0 && (
+          <Box
+            component="aside"
+            aria-label={t('services.attentionTitle', { count: awaitingRequester })}
+            sx={{ p: 1.5, border: 1, borderColor: 'warning.main', bgcolor: 'background.paper' }}
+          >
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+              justifyContent="space-between"
+              gap={1.5}
+            >
+              <Box minWidth={0}>
+                <Typography component="p" variant="subtitle2">
+                  {t('services.attentionTitle', { count: awaitingRequester })}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('services.attentionDescription')}
+                </Typography>
+              </Box>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                onClick={() => navigate('/services/my')}
+              >
+                {t('services.attentionAction')}
+              </ActionButton>
+            </Stack>
+          </Box>
+        )}
         <Box
           sx={{
             display: 'grid',
@@ -94,199 +140,201 @@ export function HrServiceHub() {
           />
         </Box>
 
-        <DomainSection
-          title={t('services.catalogTitle')}
-          description={t('services.catalogDescription')}
-          action={
-            <ActionButton
-              intent="secondary"
-              size="small"
-              startIcon={<LifeBuoy size={16} />}
-              onClick={() => navigate('/services/discover?category=PEOPLE&source=hr')}
-            >
-              {t('services.openCatalog')}
-            </ActionButton>
-          }
-        >
-          {catalog.isLoading ? (
-            <HcmQueryState loading size="compact" />
-          ) : catalog.isError ? (
-            <HcmQueryState
-              size="compact"
-              error={catalog.error}
-              retrying={catalog.isFetching}
-              onRetry={() => void catalog.refetch()}
-            />
-          ) : peopleServices.length ? (
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
-              }}
-            >
-              {peopleServices.map((service, index) => (
-                <Stack
-                  key={service.serviceKey}
-                  direction="row"
-                  alignItems="flex-start"
-                  gap={1.25}
-                  sx={{
-                    minHeight: 138,
-                    p: 2,
-                    borderTop: index > 1 ? 1 : 0,
-                    borderLeft: { md: index % 2 ? 1 : 0 },
-                    borderColor: 'divider',
-                  }}
-                >
-                  <Box
-                    aria-hidden="true"
+        <ServiceSectionOrder requestsFirst={requests.isError || openRequests.length > 0}>
+          <DomainSection
+            title={t('services.catalogTitle')}
+            description={t('services.catalogDescription')}
+            action={
+              <ActionButton
+                intent="secondary"
+                size="small"
+                startIcon={<LifeBuoy size={16} />}
+                onClick={() => navigate('/services/discover?category=PEOPLE&source=hr')}
+              >
+                {t('services.openCatalog')}
+              </ActionButton>
+            }
+          >
+            {catalog.isLoading ? (
+              <HcmQueryState loading size="compact" />
+            ) : catalog.isError ? (
+              <HcmQueryState
+                size="compact"
+                error={catalog.error}
+                retrying={catalog.isFetching}
+                onRetry={() => void catalog.refetch()}
+              />
+            ) : peopleServices.length ? (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                }}
+              >
+                {peopleServices.map((service, index) => (
+                  <Stack
+                    key={service.serviceKey}
+                    direction="row"
+                    alignItems="flex-start"
+                    gap={1.25}
                     sx={{
-                      width: 38,
-                      height: 38,
-                      flex: '0 0 38px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      borderRadius: 1,
-                      color: 'var(--dwp-product-accent, #11756D)',
-                      bgcolor: 'var(--dwp-product-soft, #E7F4F1)',
+                      minHeight: 138,
+                      p: 2,
+                      borderTop: index > 1 ? 1 : 0,
+                      borderLeft: { md: index % 2 ? 1 : 0 },
+                      borderColor: 'divider',
                     }}
                   >
-                    <FileText size={19} />
-                  </Box>
-                  <Box minWidth={0} flex={1}>
-                    <Typography variant="body2" fontWeight={760}>
-                      {service.name}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      display="block"
-                      sx={{ mt: 0.35 }}
+                    <Box
+                      aria-hidden="true"
+                      sx={{
+                        width: 38,
+                        height: 38,
+                        flex: '0 0 38px',
+                        display: 'grid',
+                        placeItems: 'center',
+                        borderRadius: 1,
+                        color: 'var(--dwp-product-accent, #11756D)',
+                        bgcolor: 'var(--dwp-product-soft, #E7F4F1)',
+                      }}
                     >
-                      {service.description}
-                    </Typography>
-                    <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                      <FileText size={19} />
+                    </Box>
+                    <Box minWidth={0} flex={1}>
+                      <Typography variant="body2" fontWeight={760}>
+                        {service.name}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                        sx={{ mt: 0.35 }}
+                      >
+                        {service.description}
+                      </Typography>
+                      <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          icon={<Clock3 size={13} />}
+                          label={t('services.sla', { hours: service.slaHours })}
+                        />
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          icon={<ShieldCheck size={13} />}
+                          label={t(`services.classification.${service.dataClassification}`)}
+                        />
+                      </Stack>
+                    </Box>
+                    <ActionButton
+                      intent="quiet"
+                      size="small"
+                      endIcon={<ArrowRight size={15} />}
+                      onClick={() =>
+                        navigate(
+                          `/services/discover?category=PEOPLE&service=${encodeURIComponent(service.serviceKey)}&source=hr`
+                        )
+                      }
+                    >
+                      {t('services.request')}
+                    </ActionButton>
+                  </Stack>
+                ))}
+              </Box>
+            ) : (
+              <EmptyState
+                size="compact"
+                title={t('services.emptyCatalogTitle')}
+                description={t('services.emptyCatalogDescription')}
+              />
+            )}
+          </DomainSection>
+
+          <DomainSection
+            title={t('services.requestsTitle')}
+            description={t('services.requestsDescription')}
+            action={
+              <ActionButton
+                intent="quiet"
+                size="small"
+                endIcon={<ArrowRight size={15} />}
+                onClick={() => navigate('/services/my')}
+              >
+                {t('services.allRequests')}
+              </ActionButton>
+            }
+          >
+            {requests.isLoading ? (
+              <HcmQueryState loading size="compact" />
+            ) : requests.isError ? (
+              <HcmQueryState
+                size="compact"
+                error={requests.error}
+                retrying={requests.isFetching}
+                onRetry={() => void requests.refetch()}
+              />
+            ) : hrRequests.length ? (
+              <Box>
+                {prioritizedRequests.slice(0, 6).map((request, index) => (
+                  <Box key={request.requestId}>
+                    {index > 0 && <Divider />}
+                    <Stack
+                      component="button"
+                      type="button"
+                      direction={{ xs: 'column', sm: 'row' }}
+                      alignItems={{ xs: 'stretch', sm: 'center' }}
+                      gap={1.25}
+                      onClick={() =>
+                        navigate(
+                          `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${request.requestId}`
+                        )
+                      }
+                      sx={{
+                        width: 1,
+                        px: 2,
+                        py: 1.5,
+                        border: 0,
+                        bgcolor: 'transparent',
+                        color: 'inherit',
+                        font: 'inherit',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: 'action.hover' },
+                      }}
+                    >
+                      <Inbox size={18} aria-hidden="true" />
+                      <Box minWidth={0} flex={1}>
+                        <Typography variant="body2" fontWeight={750} noWrap>
+                          {request.summary}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" noWrap display="block">
+                          {request.requestNumber} · {request.assignedGroup}
+                        </Typography>
+                      </Box>
                       <Chip
                         size="small"
                         variant="outlined"
-                        icon={<Clock3 size={13} />}
-                        label={t('services.sla', { hours: service.slaHours })}
+                        color={request.status === 'AWAITING_REQUESTER' ? 'warning' : 'default'}
+                        label={t(`services.status.${request.status}`)}
                       />
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        icon={<ShieldCheck size={13} />}
-                        label={t(`services.classification.${service.dataClassification}`)}
-                      />
+                      <Typography variant="caption" color="text.secondary">
+                        {formatDate(request.updatedAt, { dateStyle: 'medium' })}
+                      </Typography>
+                      <ArrowRight size={16} aria-hidden="true" />
                     </Stack>
                   </Box>
-                  <ActionButton
-                    intent="quiet"
-                    size="small"
-                    endIcon={<ArrowRight size={15} />}
-                    onClick={() =>
-                      navigate(
-                        `/services/discover?category=PEOPLE&service=${encodeURIComponent(service.serviceKey)}&source=hr`
-                      )
-                    }
-                  >
-                    {t('services.request')}
-                  </ActionButton>
-                </Stack>
-              ))}
-            </Box>
-          ) : (
-            <EmptyState
-              size="compact"
-              title={t('services.emptyCatalogTitle')}
-              description={t('services.emptyCatalogDescription')}
-            />
-          )}
-        </DomainSection>
-
-        <DomainSection
-          title={t('services.requestsTitle')}
-          description={t('services.requestsDescription')}
-          action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              endIcon={<ArrowRight size={15} />}
-              onClick={() => navigate('/services/my')}
-            >
-              {t('services.allRequests')}
-            </ActionButton>
-          }
-        >
-          {requests.isLoading ? (
-            <HcmQueryState loading size="compact" />
-          ) : requests.isError ? (
-            <HcmQueryState
-              size="compact"
-              error={requests.error}
-              retrying={requests.isFetching}
-              onRetry={() => void requests.refetch()}
-            />
-          ) : hrRequests.length ? (
-            <Box>
-              {hrRequests.slice(0, 6).map((request, index) => (
-                <Box key={request.requestId}>
-                  {index > 0 && <Divider />}
-                  <Stack
-                    component="button"
-                    type="button"
-                    direction={{ xs: 'column', sm: 'row' }}
-                    alignItems={{ xs: 'stretch', sm: 'center' }}
-                    gap={1.25}
-                    onClick={() =>
-                      navigate(
-                        `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${request.requestId}`
-                      )
-                    }
-                    sx={{
-                      width: 1,
-                      px: 2,
-                      py: 1.5,
-                      border: 0,
-                      bgcolor: 'transparent',
-                      color: 'inherit',
-                      font: 'inherit',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: 'action.hover' },
-                    }}
-                  >
-                    <Inbox size={18} aria-hidden="true" />
-                    <Box minWidth={0} flex={1}>
-                      <Typography variant="body2" fontWeight={750} noWrap>
-                        {request.summary}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" noWrap display="block">
-                        {request.requestNumber} · {request.assignedGroup}
-                      </Typography>
-                    </Box>
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={request.status === 'AWAITING_REQUESTER' ? 'warning' : 'default'}
-                      label={t(`services.status.${request.status}`)}
-                    />
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDate(request.updatedAt, { dateStyle: 'medium' })}
-                    </Typography>
-                    <ArrowRight size={16} aria-hidden="true" />
-                  </Stack>
-                </Box>
-              ))}
-            </Box>
-          ) : (
-            <EmptyState
-              size="compact"
-              title={t('services.emptyRequestsTitle')}
-              description={t('services.emptyRequestsDescription')}
-            />
-          )}
-        </DomainSection>
+                ))}
+              </Box>
+            ) : (
+              <EmptyState
+                size="compact"
+                title={t('services.emptyRequestsTitle')}
+                description={t('services.emptyRequestsDescription')}
+              />
+            )}
+          </DomainSection>
+        </ServiceSectionOrder>
       </Stack>
     </QueryBoundary>
   );

@@ -101,6 +101,8 @@ export function resolvePresetAssignmentActions(
   const mayApprove =
     assignment.lifecycleState === 'PENDING_APPROVAL' &&
     actor.userId !== undefined &&
+    assignment.requestedBy !== undefined &&
+    assignment.requestedBy !== null &&
     assignment.requestedBy !== actor.userId &&
     !actorIsPrincipal(assignment.principalType, assignment.principalRef, actor) &&
     hasScopedAppResponsibility(
@@ -111,6 +113,8 @@ export function resolvePresetAssignmentActions(
   const mayActivate =
     assignment.lifecycleState === 'APPROVED' &&
     actor.userId !== undefined &&
+    assignment.requestedBy !== undefined &&
+    assignment.requestedBy !== null &&
     assignment.approvedBy !== undefined &&
     assignment.approvedBy !== null &&
     assignment.requestedBy !== actor.userId &&

@@ -62,6 +62,7 @@ import {
   PublishedApprovalTemplateSummary,
 } from './approval-request-form-context';
 import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
+import { ApprovalInformationResponseFields } from './approval-information-response-fields';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
@@ -558,12 +559,13 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   }>();
   const [responseMessage, setResponseMessage] = useState('');
   const [responsePayload, setResponsePayload] = useState<Record<string, string>>({});
-  const [responseHydratedId, setResponseHydratedId] = useState('');
+  const [responseHydratedRevision, setResponseHydratedRevision] = useState('');
   const [detailId, setDetailId] = useState<string>();
   const requests = useQuery({
     queryKey: ['approvals', 'requests', viewMap[view]],
     queryFn: () => getApprovalRequests(viewMap[view]),
     staleTime: 20_000,
+    retry: 1,
   });
   useEffect(() => {
     if (
@@ -580,10 +582,14 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
     queryFn: () => getApprovalRequestDetail(requestAction!.request.requestId),
     enabled: requestAction?.kind === 'respond',
     staleTime: 0,
+    retry: 1,
   });
+  const reviewedInformationDetail =
+    informationDetail.isError || informationDetail.isFetching ? undefined : informationDetail.data;
   useEffect(() => {
-    const detail = informationDetail.data;
-    if (!detail || responseHydratedId === detail.request.requestId) return;
+    const detail = reviewedInformationDetail;
+    const revision = detail ? `${detail.request.requestId}:${detail.request.version}` : '';
+    if (!detail || responseHydratedRevision === revision) return;
     setResponsePayload(
       Object.fromEntries(
         Object.entries(detail.payload)
@@ -591,32 +597,47 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
           .map(([key, value]) => [key, String(value)])
       )
     );
-    setResponseHydratedId(detail.request.requestId);
-  }, [informationDetail.data, responseHydratedId]);
+    setResponseHydratedRevision(revision);
+  }, [responseHydratedRevision, reviewedInformationDetail]);
   const responseFields = useMemo(() => {
-    const schemaFields = new Map(
-      (informationDetail.data?.formSchema?.fields ?? []).map((field) => [field.key, field])
-    );
-    return Object.keys(responsePayload).map<ApprovalFormField>(
-      (key) =>
-        schemaFields.get(key) ?? {
-          key,
-          type: key === 'summary' ? 'TEXTAREA' : 'TEXT',
-          required: false,
-        }
-    );
-  }, [informationDetail.data?.formSchema?.fields, responsePayload]);
+    const schemaFields = reviewedInformationDetail?.formSchema?.fields ?? [];
+    const schemaKeys = new Set(schemaFields.map((field) => field.key));
+    const legacyFields = Object.keys(responsePayload)
+      .filter((key) => key !== 'createdFrom' && !schemaKeys.has(key))
+      .map<ApprovalFormField>((key) => ({
+        key,
+        type: key === 'summary' ? 'TEXTAREA' : 'TEXT',
+        required: false,
+      }));
+    return [...schemaFields, ...legacyFields];
+  }, [responsePayload, reviewedInformationDetail?.formSchema?.fields]);
   const responseRequiredFieldsComplete = responseFields
     .filter((field) => field.required)
     .every((field) => responsePayload[field.key]?.trim());
+  const requestActionsReady = canUpdateRequests && !requests.isFetching && !requests.isError;
+  const actionRequestIsCurrent = (request: ApprovalRequest) => {
+    if (!requestActionsReady) return false;
+    const current = requests.data?.find((candidate) => candidate.requestId === request.requestId);
+    return current?.version === request.version && current.status === request.status;
+  };
   const runSubmit = useApprovalGovernedMutation('route.approvals.work.request-submit.action');
   const runRespond = useApprovalGovernedMutation(
     'route.approvals.work.request-information-response.action'
   );
   const runWithdraw = useApprovalGovernedMutation('route.approvals.work.request-withdraw.action');
   const submit = useMutation({
-    mutationFn: ({ requestId, version }: { requestId: string; version: number }) =>
-      runSubmit((execution) => submitApprovalRequest(requestId, version, execution)),
+    mutationFn: ({ requestId, version }: { requestId: string; version: number }) => {
+      const current = requests.data?.find((candidate) => candidate.requestId === requestId);
+      if (
+        !requestActionsReady ||
+        !current ||
+        current.version !== version ||
+        current.status !== 'DRAFT'
+      ) {
+        throw new Error('Approval request authority is not current.');
+      }
+      return runSubmit((execution) => submitApprovalRequest(requestId, version, execution));
+    },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['approvals', 'requests'] }),
@@ -629,9 +650,18 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   });
   const act = useMutation({
     mutationFn: async (action: NonNullable<typeof requestAction>) => {
+      if (!actionRequestIsCurrent(action.request)) {
+        throw new Error('Approval request authority is not current.');
+      }
       if (action.kind === 'respond') {
-        const reviewed = informationDetail.data;
-        if (!reviewed) throw new Error('Approval information context is not loaded.');
+        const reviewed = reviewedInformationDetail;
+        if (
+          !reviewed ||
+          reviewed.request.requestId !== action.request.requestId ||
+          reviewed.request.status !== 'NEEDS_INFO'
+        ) {
+          throw new Error('Approval information context is not loaded.');
+        }
         return runRespond((execution) =>
           respondToApprovalInformationRequest(
             reviewed.request.requestId,
@@ -650,7 +680,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
       setRequestAction(undefined);
       setResponseMessage('');
       setResponsePayload({});
-      setResponseHydratedId('');
+      setResponseHydratedRevision('');
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['approvals', 'requests'] }),
         queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
@@ -664,7 +694,21 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   });
   if (requests.isError)
     return (
-      <Alert severity="error" sx={{ mt: 3 }}>
+      <Alert
+        severity="error"
+        sx={{ mt: 3 }}
+        action={
+          <ActionButton
+            type="button"
+            intent="quiet"
+            size="small"
+            disabled={requests.isFetching}
+            onClick={() => void requests.refetch()}
+          >
+            {t('actions.retry')}
+          </ActionButton>
+        }
+      >
         {t('requests.loadError')}
       </Alert>
     );
@@ -755,7 +799,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                     >
                       <Eye size={17} />
                     </ActionIconButton>
-                    {canUpdateRequests && request.status === 'DRAFT' && (
+                    {requestActionsReady && request.status === 'DRAFT' && (
                       <>
                         <ActionButton
                           intent="secondary"
@@ -783,7 +827,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                         </ActionButton>
                       </>
                     )}
-                    {canUpdateRequests && request.status === 'NEEDS_INFO' && (
+                    {requestActionsReady && request.status === 'NEEDS_INFO' && (
                       <ActionButton
                         intent="primary"
                         size="small"
@@ -793,7 +837,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                         {t('actions.respondInfo')}
                       </ActionButton>
                     )}
-                    {canUpdateRequests && ['SUBMITTED', 'IN_REVIEW'].includes(request.status) && (
+                    {requestActionsReady && ['SUBMITTED', 'IN_REVIEW'].includes(request.status) && (
                       <ActionButton
                         intent="secondary"
                         size="small"
@@ -832,19 +876,26 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
         submitIntent={requestAction?.kind === 'withdraw' ? 'danger' : 'primary'}
         busy={act.isPending}
         submitDisabled={
-          requestAction?.kind === 'respond' &&
-          (responseMessage.trim().length < 4 ||
-            informationDetail.isLoading ||
-            !informationDetail.data ||
-            !responseRequiredFieldsComplete)
+          !requestActionsReady ||
+          !requestAction ||
+          !actionRequestIsCurrent(requestAction.request) ||
+          (requestAction.kind === 'respond' &&
+            (responseMessage.trim().length < 4 ||
+              informationDetail.isFetching ||
+              informationDetail.isError ||
+              !reviewedInformationDetail ||
+              !responseRequiredFieldsComplete))
         }
         onClose={() => {
           setRequestAction(undefined);
           setResponseMessage('');
           setResponsePayload({});
-          setResponseHydratedId('');
+          setResponseHydratedRevision('');
         }}
-        onSubmit={() => requestAction && act.mutate(requestAction)}
+        onSubmit={() => {
+          if (!requestAction || !actionRequestIsCurrent(requestAction.request)) return;
+          act.mutate(requestAction);
+        }}
       >
         {requestAction?.kind === 'respond' && (
           <Stack gap={2}>
@@ -853,105 +904,40 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                 {requestAction.request.latestInformationRequest}
               </Alert>
             )}
-            <FormField
-              autoFocus
-              required
-              multiline
-              minRows={4}
-              label={t('requests.responseLabel')}
-              supportingText={t('requests.responseHelp')}
-              value={responseMessage}
-              onChange={(event) => setResponseMessage(event.target.value)}
-              inputProps={{ maxLength: 2000 }}
+            <ApprovalInformationResponseFields
+              responseMessage={responseMessage}
+              responsePayload={responsePayload}
+              responseFields={responseFields}
+              detailReady={Boolean(reviewedInformationDetail)}
+              korean={i18n.resolvedLanguage?.startsWith('ko') ?? false}
+              detailStatus={
+                informationDetail.isFetching ? (
+                  <Typography variant="body2" color="text.secondary">
+                    {t('requests.amendmentLoading')}
+                  </Typography>
+                ) : informationDetail.isError ? (
+                  <Alert
+                    severity="error"
+                    action={
+                      <ActionButton
+                        type="button"
+                        intent="quiet"
+                        size="small"
+                        onClick={() => void informationDetail.refetch()}
+                      >
+                        {t('actions.retry')}
+                      </ActionButton>
+                    }
+                  >
+                    {t('requests.draftLoadError')}
+                  </Alert>
+                ) : undefined
+              }
+              onResponseMessageChange={setResponseMessage}
+              onResponsePayloadChange={(key, value) =>
+                setResponsePayload((current) => ({ ...current, [key]: value }))
+              }
             />
-            <Box>
-              <Typography variant="subtitle2">{t('requests.amendmentTitle')}</Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t('requests.amendmentHelp')}
-              </Typography>
-            </Box>
-            {informationDetail.isLoading && (
-              <Typography variant="body2" color="text.secondary">
-                {t('requests.amendmentLoading')}
-              </Typography>
-            )}
-            {informationDetail.isError && (
-              <Alert severity="error">{t('requests.draftLoadError')}</Alert>
-            )}
-            {informationDetail.data && (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-                  gap: 1.25,
-                }}
-              >
-                {responseFields.map((field) => {
-                  const korean = i18n.resolvedLanguage?.startsWith('ko');
-                  const label = korean
-                    ? (field.labelKo ??
-                      t(`requestFields.${field.key}`, { defaultValue: field.key }))
-                    : (field.labelEn ??
-                      t(`requestFields.${field.key}`, { defaultValue: field.key }));
-                  const help = korean ? field.helpKo : field.helpEn;
-                  const value = responsePayload[field.key] ?? '';
-                  const setValue = (next: string) =>
-                    setResponsePayload((current) => ({ ...current, [field.key]: next }));
-                  if (field.type === 'SELECT') {
-                    const labelId = `approval-amendment-${field.key}-label`;
-                    return (
-                      <FormControl key={field.key} fullWidth required={field.required}>
-                        <InputLabel id={labelId}>{label}</InputLabel>
-                        <Select
-                          id={`approval-amendment-${field.key}`}
-                          labelId={labelId}
-                          label={label}
-                          value={value}
-                          onChange={(event) => setValue(event.target.value)}
-                        >
-                          {(field.options ?? []).map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        <FormHelperText>
-                          {help || t('requests.template.fieldHelp.SELECT')}
-                        </FormHelperText>
-                      </FormControl>
-                    );
-                  }
-                  if (field.type === 'DATE') {
-                    return (
-                      <DatePickerField
-                        key={field.key}
-                        required={field.required}
-                        label={label}
-                        value={value || null}
-                        onValueChange={(next) => setValue(next ?? '')}
-                        supportingText={help}
-                      />
-                    );
-                  }
-                  return (
-                    <FormField
-                      key={field.key}
-                      required={field.required}
-                      multiline={field.type === 'TEXTAREA'}
-                      minRows={field.type === 'TEXTAREA' ? 3 : undefined}
-                      type={field.type === 'NUMBER' ? 'number' : 'text'}
-                      label={label}
-                      value={value}
-                      onChange={(event) => setValue(event.target.value)}
-                      supportingText={
-                        help ||
-                        (field.type === 'USER' ? t('requests.template.fieldHelp.USER') : undefined)
-                      }
-                    />
-                  );
-                })}
-              </Box>
-            )}
           </Stack>
         )}
         {requestAction?.kind === 'withdraw' && (
@@ -960,7 +946,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
       </FormDialog>
       <ApprovalRequestDetailDrawer
         requestId={detailId}
-        canUpdateRequests={canUpdateRequests}
+        canUpdateRequests={requestActionsReady}
         onClose={() => setDetailId(undefined)}
         onRespond={(request) => {
           setDetailId(undefined);

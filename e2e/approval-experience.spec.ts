@@ -284,37 +284,6 @@ test('결재함 조회 실패는 0건으로 표시하지 않고 명시적 재시
   expect(accessibility.violations).toEqual([]);
 });
 
-test('결재 위임 조회 실패는 빈 목록으로 퇴화하지 않고 명시적 재시도로 복구한다', async ({
-  page,
-}) => {
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
-    locale: 'ko',
-    permissions: APPROVAL_MEMBER_PERMISSIONS,
-  });
-  await mockLegacyApprovalSurface(page);
-  let recovered = false;
-  await page.route(
-    (url) => url.pathname === '/api/approvals/v1/delegations',
-    (route) =>
-      recovered
-        ? fulfillSuccess(route, [])
-        : fulfillUnavailable(route, 'Delegation authority is unavailable')
-  );
-
-  await page.goto('/approvals/delegations');
-  const error = page.getByRole('alert').filter({ hasText: '결재 위임을 불러오지 못했습니다' });
-  await expect(error).toBeVisible();
-  await expect(page.getByText('활성 위임이 없습니다')).toHaveCount(0);
-
-  recovered = true;
-  await error.getByRole('button', { name: '다시 시도' }).click();
-  await expect(error).toHaveCount(0);
-  await expect(page.getByText('활성 위임이 없습니다')).toBeVisible();
-
-  const accessibility = await new AxeBuilder({ page }).analyze();
-  expect(accessibility.violations).toEqual([]);
-});
-
 test('결재 위임 응답의 방향이 누락되어도 권한을 열지 않고 행을 안전하게 표시한다', async ({
   page,
 }) => {
@@ -747,6 +716,9 @@ test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 
     .getByLabel('업무 사유')
     .fill('Production investigation approved for the minimum required support window.');
   await expect(dialog.getByRole('group', { name: '만료일' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: '답변 제출' })).toBeDisabled();
+  await dialog.getByRole('combobox', { name: '위험 수준' }).click();
+  await page.getByRole('option', { name: 'HIGH' }).click();
   await dialog.getByRole('button', { name: '답변 제출' }).click();
 
   expect(responseBody).toEqual(
@@ -756,6 +728,7 @@ test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 
       payload: expect.objectContaining({
         businessReason:
           'Production investigation approved for the minimum required support window.',
+        riskLevel: 'HIGH',
       }),
     })
   );

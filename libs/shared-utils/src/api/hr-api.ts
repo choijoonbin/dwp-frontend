@@ -56,6 +56,18 @@ export type HrApprovalItem = {
   status: string;
   submittedAt?: string | null;
   version: number;
+  evidence?: {
+    periodStart?: string | null;
+    periodEnd?: string | null;
+    startAt?: string | null;
+    endAt?: string | null;
+    scheduledMinutes?: number | null;
+    recordedMinutes?: number | null;
+    exceptionCount?: number | null;
+    requestedMinutes?: number | null;
+    availableMinutes?: number | null;
+    reason?: string | null;
+  } | null;
 };
 
 export type HrTimeWorkspace = {

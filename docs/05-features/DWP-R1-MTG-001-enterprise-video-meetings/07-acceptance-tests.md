@@ -32,6 +32,19 @@
 - Transcript registration and finalization require a replay-safe signed workload
   assertion and matching tenant, meeting, recording, consent, region, retention, and
   object digest. Neither endpoint accepts or stores transcript text.
+- Recording finalization is accepted only through the trusted service boundary after
+  a durable successful stop and immutable session provenance. Tenant, meeting,
+  recording session, artifact, method, path, body digest, validity window, and replay
+  identifier are all signed; a browser credential cannot finalize an artifact.
+- Playback re-evaluates admitted membership, content ACL, artifact type/state/version,
+  meeting end state, retention, and legal hold before issuing a short-lived HTTPS
+  ticket. The public response, DOM, state, logs, and audit never expose a provider
+  object key or durable storage URL.
+- Expired recording and transcript source objects are claimed by durable leased
+  deletion commands. Provider I/O occurs outside database transactions; crash reclaim,
+  stale-worker fencing, legal hold, immutable object identity, broker failure, and
+  deletion/crypto-shred receipt validation are covered before custody metadata is
+  cleared.
 
 ## User experience
 
@@ -99,49 +112,63 @@
   meeting-level conversation climate as well as summary, decisions, and actions.
   Individual sentiment, personality, health, productivity, or biometric inference is
   never derived or displayed.
+- Raw transcript text is normalized only for the bounded Agent request and is not
+  stored in command, audit, or intelligence result rows. Source-object deletion uses
+  the trusted transcript broker; deployed object-store/KMS deletion evidence remains
+  a production gate rather than an inferred success.
 
 ## Release gates
 
 - Backend module tests, migration validation, and OpenAPI export pass.
 - Frontend typecheck, lint, i18n, unit, bundle, and source-size checks pass.
 - Playwright covers desktop and mobile scheduling, code join, waiting, and pre-join.
+- Playwright also covers short-lived recording playback, provider failure/retry,
+  expired retention, popup isolation, no durable URL leakage, and serious/critical
+  accessibility findings.
 - A real browser verifies camera/microphone permission handling without auto-joining.
 - Production promotion additionally requires TURN-only, node-drain, webhook replay,
   Egress failure, recovery, load, mobile, and WCAG 2.2 AA evidence.
 
-## Revalidated local evidence (2026-08-31)
+## Revalidated local evidence (2026-09-02)
 
-- `:dwp-meeting-server:check` passed 297 tests with zero failures, errors, or skips;
+- `:dwp-meeting-server:check` passed 357 tests with zero failures, errors, or skips;
   global backend source-size and service-boundary checks also passed. PostgreSQL tests
   cover recording prepare/provider-I/O/terminal separation, same-key provider-failure
   recovery, expired lease reclaim, stale-worker fencing, atomic terminal audit,
   transcript registration/finalization replay, reviewer separation of duties, stale
   reviewer version rejection, intelligence execution, retention fencing, authoritative
-  webhook replay/order, lifecycle recovery, and legacy-room migration.
-- A fresh Meeting service applied V23, started successfully, returned health `UP`, and
-  exposed 45 service OpenAPI paths. The two trusted transcript-ingest paths remain
-  internal, while the reviewer-assignment projection is public. Backend export and the
-  generated frontend contract match 721 public Gateway paths with zero internal paths.
-  All 13 Meeting request-body `expected*Version` properties are required and reject
+  webhook replay/order, lifecycle recovery, legacy-room migration, governed transcript
+  deletion, V25 legacy custody quarantine, and production-constructor wiring. The
+  retention/deletion security subset passed 42 PostgreSQL and invariant checks,
+  including crash-after-provider-success receipt recovery after lease reclaim.
+- A fresh Meeting service applied V25, started successfully, returned health `UP`, and
+  exposed 44 public service OpenAPI paths with zero internal paths. Trusted recording
+  and transcript finalization routes remain callable only on their service boundary and
+  are excluded from the browser schema, while the reviewer-assignment projection is
+  public. Backend export and the generated frontend
+  contract match 722 public Gateway paths with zero internal paths. All 14 Meeting
+  request-body `expected*Version` properties are required and reject
   omission rather than falling back to primitive zero.
-- The Agent suite passed 264 tests with 26 environment-dependent PostgreSQL tests
+- The Agent suite passed 262 tests with 26 environment-dependent PostgreSQL tests
   skipped; the two Meeting intelligence targets passed 30/30. Tests cover workload
   assertion replay, provider-policy attestation, strict cited output, unsupported
   climate rejection, and raw-content non-persistence. Agent compile and public OpenAPI
   checks passed.
-- The frontend suite passed 301 files and 1,705 tests; Meeting plus its API boundary
-  passed 15 files and 74 tests. Node 24.19/Yarn 4 typecheck, Meeting lint/format, i18n,
-  source-size, OpenAPI generation, production Vite compilation, and design-system
-  adoption for Meeting passed. The canonical full build is recorded only after shared
-  product files reach the same green snapshot.
-- A fresh Node 24 Yarn server ran 44 Playwright checks across Chromium desktop and
-  mobile: 24 core journeys, four governed intelligence/reviewer journeys, and 16 exact
-  visual regressions. They cover home, scheduling, content planning, waiting/admission,
-  stale join responses, pre-join, live-room accessibility, recap evidence, reviewer
-  assignment/revocation, AI authorization fencing, and recording-policy states. The
-  visual pass covers 320 px and 390 px layouts, 200% zoom-equivalent flow, dark mode,
-  forced colors, reduced motion, 44 px action targets, overflow, and serious/critical
-  axe violations (`0`).
+- The frontend suite passed 313 files and 1,763 tests; Meeting plus its public API
+  boundary passed 21 files and 114 tests. Node 24.19/Yarn 4 clean non-incremental
+  typecheck, Meeting-scoped ESLint and Prettier, i18n, display dictionary, source-size,
+  generated OpenAPI checks, source-size gate, and the canonical Node 24 production build
+  passed on the shared release snapshot.
+- A fresh Node 24 canonical Yarn server on an isolated port, without server reuse, ran
+  48 Playwright checks across Chromium desktop and mobile: 24 core journeys, four
+  governed intelligence/reviewer journeys, 16 exact visual regressions, and four
+  recording-playback custody journeys. They cover home, scheduling, content planning,
+  waiting/admission, stale join responses, pre-join, live-room accessibility, recap
+  evidence, reviewer assignment/revocation, AI authorization fencing, recording-policy
+  states, short-lived playback, provider failure/retry, retention expiry, popup opener
+  isolation, and storage-location non-disclosure. The visual pass covers 320 px and
+  390 px layouts, 200% zoom-equivalent flow, dark mode, forced colors, reduced motion,
+  44 px action targets, overflow, and serious/critical axe violations (`0`).
 - An unauthenticated real browser request to `/meetings/home` redirected to the sign-in
   boundary with the return URL intact. Authenticated media behavior was exercised with
   deterministic route contracts; real-device camera/microphone, TURN-only, packet-loss,

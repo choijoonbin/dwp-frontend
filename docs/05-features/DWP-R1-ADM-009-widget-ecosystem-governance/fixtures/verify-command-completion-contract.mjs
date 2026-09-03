@@ -13,13 +13,13 @@ const manifestSchemaSource = readFileSync(manifestSchemaUrl, 'utf8');
 
 const anchors = Object.freeze({
   schemaFile: '840c4002bc67dc214b36057f274ca79a046ad54a4f7c085dee72f9de5d3c2139',
-  goldenFile: '275bcc670e02a0cbcd72faec05f4ce46cb170ecd5de954c0d62ae74a2004f2cb',
-  negativeFile: 'cc95e8071bc300c326496e45fa84423b7db742ef347165e283fd64fb0e579542',
-  positiveResponsesCanonical: 'e994c4769f7650f9d4ac946f401be54745d3e27822232704522122d4af0c8590',
+  goldenFile: 'b71455ce969ce19b13a6783c98cbad310f50355e6a15f78193df01fd32225941',
+  negativeFile: '1b88e11b59e2d9f315bce8ff3229193017a7d33591beeb6a548bed12f72dddc9',
+  positiveResponsesCanonical: 'aed088b1e21ad7b461ca3bb2c42392989eee3e64656504181e839928ee2f545d',
   trustedLedgerContextsCanonical:
-    'f0db6961df486b48b7394b61d6f1dd09ec2f243b95c9f53e453d873c1a4cce7b',
-  completionCatalogCanonical: '7cef4c3e26b31aa813db9495b677b3791f09d35d0fdd7f01c0cadea3566c64f8',
-  negativeCatalogCanonical: '68c0eacdb97120a477dcf0d1c2bbfc33bef91ffbc8e00afe6113dd856561ef0a',
+    'c4a324f36bd61d2accaa2f1748aac261aa225205118a9b3ceb684ceda3071d43',
+  completionCatalogCanonical: 'ecb0111dc58b181dd6399a2e812ac6e8992482a2d6193f48deb94b69ba94cbb4',
+  negativeCatalogCanonical: '4a4cdabe668163a0f8c824eefaf984b94bf36e4d7b37aeaf411f01fe2087bb52',
 });
 
 const completionKeys = Object.freeze([
@@ -301,7 +301,7 @@ const commandContextPolicies = Object.freeze({
   }),
   REWORK: Object.freeze({
     targetKeys: ['targetId', 'targetType', 'versionId'],
-    requestKeys: [],
+    requestKeys: ['rejectedDecisionId'],
   }),
   RECORD_EVIDENCE: Object.freeze({
     targetKeys: ['targetId', 'targetType', 'versionId'],
@@ -769,7 +769,22 @@ function validateTrustedLedgerBinding(response, context, matrix) {
   ) {
     fail('LEDGER_BINDING', 'Completion target differs from the trusted full command target.');
   }
-  if (response.commandType === 'WAIVE_EVIDENCE' && response.outcome === 'SUCCEEDED') {
+  if (response.commandType === 'REWORK' && response.outcome === 'SUCCEEDED') {
+    exactKeys(
+      context.currentTargetProjection,
+      ['currentReviewDecisionId', 'versionId', 'workflowState'],
+      'FIXTURE_SHAPE',
+      'trusted rejected version projection'
+    );
+    const current = context.currentTargetProjection;
+    if (
+      !uuidPattern.test(current.versionId) ||
+      !uuidPattern.test(current.currentReviewDecisionId) ||
+      current.workflowState !== 'REJECTED'
+    ) {
+      fail('FIXTURE_SHAPE', 'Trusted rejected version projection is malformed.');
+    }
+  } else if (response.commandType === 'WAIVE_EVIDENCE' && response.outcome === 'SUCCEEDED') {
     exactKeys(
       context.currentTargetProjection,
       ['evidenceId', 'evidenceRef', 'evidenceSha256', 'evidenceType', 'manifestHash', 'versionId'],
@@ -959,16 +974,31 @@ function validateOperationSuccessSemantics(response, context) {
     case 'DECIDE': {
       const expectedState = request.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED';
       assertRequestBinding(body.workflowState === expectedState, 'Review decision result drifted.');
+      assertSuccessState(
+        request.decision === 'REJECT'
+          ? uuidPattern.test(body.currentReviewDecisionId)
+          : body.currentReviewDecisionId === null,
+        'Review decision identity does not match the successful workflow transition.'
+      );
       break;
     }
-    case 'REWORK':
+    case 'REWORK': {
+      const current = context.currentTargetProjection;
+      assertRequestBinding(
+        current.versionId === target.versionId &&
+          current.workflowState === 'REJECTED' &&
+          current.currentReviewDecisionId === request.rejectedDecisionId,
+        'Rework must bind the exact current rejected decision.'
+      );
       assertSuccessState(
         body.workflowState === 'DRAFT' &&
           body.attestation === 'PENDING' &&
-          body.certificationStatus === 'NOT_RUN',
+          body.certificationStatus === 'NOT_RUN' &&
+          body.currentReviewDecisionId === null,
         'Rework must reset the version to DRAFT/PENDING/NOT_RUN.'
       );
       break;
+    }
     case 'RECORD_EVIDENCE':
       for (const field of [
         'evidenceType',
@@ -1483,6 +1513,30 @@ for (const entry of golden.completions) {
   );
   validateCompletion(entry.response, schema, externalSchemas, entry.verificationContext);
 }
+const rejectDecisionVector = golden.completions.find((entry) => entry.caseId === 'success-decide');
+assert(
+  rejectDecisionVector?.verificationContext.requestProjection.decision === 'REJECT' &&
+    rejectDecisionVector.response.outcome === 'SUCCEEDED' &&
+    rejectDecisionVector.response.responseBody.workflowState === 'REJECTED',
+  'A review REJECT must be modeled as a successful command that transitions workflow state.'
+);
+const approveDecisionRegression = structuredClone(rejectDecisionVector);
+approveDecisionRegression.verificationContext.requestProjection.decision = 'APPROVE';
+approveDecisionRegression.response.responseBody.workflowState = 'APPROVED';
+approveDecisionRegression.response.responseBody.currentReviewDecisionId = null;
+approveDecisionRegression.response.responseHash = responseHash(approveDecisionRegression.response);
+validateCompletion(
+  approveDecisionRegression.response,
+  schema,
+  externalSchemas,
+  approveDecisionRegression.verificationContext
+);
+const reworkVector = golden.completions.find((entry) => entry.caseId === 'success-rework');
+assert(
+  reworkVector?.verificationContext.requestProjection.rejectedDecisionId ===
+    rejectDecisionVector.response.responseBody.currentReviewDecisionId,
+  'REWORK must continue from the exact successful REJECT decision identity.'
+);
 const successVectors = golden.completions.filter((entry) => entry.response.outcome === 'SUCCEEDED');
 assert(successVectors.length === 21, 'Every command needs one success vector.');
 assert(

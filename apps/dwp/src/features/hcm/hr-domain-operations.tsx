@@ -62,7 +62,11 @@ export function HrDomainOperations({
             </Box>
           </Stack>
           <Stack direction="row" alignItems="center" gap={0.75}>
-            <Chip size="small" variant="outlined" label={t('domains.operations.tenantScope')} />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(`domains.operations.boundaries.${query.data?.dataBoundary ?? 'TENANT'}`)}
+            />
             <Chip
               size="small"
               variant="outlined"
@@ -74,6 +78,17 @@ export function HrDomainOperations({
             />
           </Stack>
         </Stack>
+
+        {actionableDomain && (
+          <ApprovalQueue
+            domain={domain === 'TIME' ? 'time' : 'absence'}
+            items={query.data?.workQueue ?? []}
+            title={t('domains.operations.queueTitle', { domain: t(`domains.names.${domain}`) })}
+            description={t('domains.operations.queueDescription', {
+              boundary: t(`domains.operations.boundaries.${query.data?.dataBoundary ?? 'TENANT'}`),
+            })}
+          />
+        )}
 
         <Box
           aria-label={t('domains.operations.metrics')}
@@ -109,14 +124,7 @@ export function HrDomainOperations({
           ))}
         </Box>
 
-        {actionableDomain ? (
-          <ApprovalQueue
-            domain={domain === 'TIME' ? 'time' : 'absence'}
-            items={query.data?.workQueue ?? []}
-            title={t('domains.operations.queueTitle', { domain: t(`domains.names.${domain}`) })}
-            description={t('domains.operations.queueDescription')}
-          />
-        ) : (
+        {!actionableDomain && (
           <DomainSection
             title={t('domains.operations.readinessTitle')}
             description={t('domains.operations.readinessDescription', {

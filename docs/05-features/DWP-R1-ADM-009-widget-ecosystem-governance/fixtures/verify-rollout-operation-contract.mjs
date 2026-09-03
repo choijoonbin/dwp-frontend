@@ -18,13 +18,13 @@ const sources = Object.fromEntries(
 );
 
 const anchors = Object.freeze({
-  schemaFile: 'a00164c1bc42a51c60187b548d302f3a4d3b21274c4ad8d22772fd1ffc51b093',
-  goldenFile: 'e2707a1b81724c4b6a98437039e0b59c0329f4f22a9bfe0b97a395dd80473ca7',
-  negativeFile: '9c53f7a2d6bb39cce450d6671668dd522929c361be42702b4fbd9d341d06d70a',
+  schemaFile: 'fa83b976eb505a7a2669f85847dfa62478b2b936710d2815812c4a62d4d84e23',
+  goldenFile: '254d9c9ce8808214618500ef2ecb7c15371d2a7e7a249604626b6ad4d6331526',
+  negativeFile: '929f5dce5299376fc9da7cbe9a8d8039c0b7f572ba6ea770d9ee5953ce33218b',
   bootstrapSchemaFile: 'abb40678362b5522cc200e1c6644036f22a3a8d5e18b53a6da091fcaeef652b6',
   evidenceSchemaFile: '607f7dc49953800e043113394e9f11590192e6055ce8dd4eb8f4205832dd7b20',
-  goldenCanonical: '5a9ec9408b7b7e5cf2ba4d0f1c89525a390bc289b3113da69c515817ea762ca6',
-  negativeCanonical: 'd41cf97bd316f1bec32d8b87d4edbb6a7c3de96e18b3531e7ec9b038a0540757',
+  goldenCanonical: 'dceb39dc467a7779b12098af39134134135e4530db71ac202c2e0bc581f54af2',
+  negativeCanonical: 'a566f656b4aa6e54e9f7e010fe8afbe2f007bd1b69313658b181ba86341a4b8a',
 });
 
 function sha256(value) {
@@ -134,6 +134,24 @@ for (const field of ['rolloutRevision', 'ring']) {
   assert(
     schema.definitions.widgetCatalogRolloutEvidenceResponse.required.includes(field),
     `Evidence response must expose ${field}.`
+  );
+}
+for (const definitionName of ['activateBootstrapExample', 'activateShadowExample']) {
+  assert(
+    schema.definitions[definitionName].required.includes('trustedActivationContext'),
+    `${definitionName} must require the activation-time authoritative context.`
+  );
+}
+for (const definitionName of ['stopExample', 'expireExample']) {
+  assert(
+    schema.definitions[definitionName].required.includes('trustedTerminalTransitionContext'),
+    `${definitionName} must require locked Head and latest Approval context.`
+  );
+}
+for (const field of ['terminalApprovalId', 'terminalApprovalRevision']) {
+  assert(
+    schema.definitions.rolloutStoppedResponse.required.includes(field),
+    `STOPPED response must expose the atomic ${field}.`
   );
 }
 
@@ -782,6 +800,170 @@ function validateActivationClock(example, byId) {
   return approvalExample;
 }
 
+function expectedStaticPredecessorHead(approval) {
+  return {
+    environment: 'STAGING',
+    phase: 'STATIC',
+    rolloutRevision: approval.rolloutRevision - 1,
+    headVersion: approval.headVersion,
+    ringBps: approval.fromRingBps,
+    selectorKeyId: null,
+    activeApprovalId: null,
+    activeApprovalRevision: null,
+    activeApprovalExpiresAt: null,
+    bootstrapPrerequisiteId: null,
+    bootstrapPrerequisiteDigest: null,
+    ciAttestationJti: null,
+    activeRolloutEvidenceId: null,
+    activeRolloutEvidenceDigest: null,
+  };
+}
+
+function expectedActivationRuntimeSnapshot(approvalExample, bootstrapExample) {
+  const prerequisite = bootstrapExample.request.bootstrapPrerequisite;
+  const migrations = prerequisite.migrations;
+  const common = {
+    migrationSetDigests: {
+      platform: migrations.platform.migrationSetDigest,
+      provider: migrations.provider.migrationSetDigest,
+      auth: migrations.auth.migrationSetDigest,
+    },
+    selectorKeyId: approvalExample.request.selectorKeyId,
+    selectorState: 'ACTIVE',
+  };
+  if (approvalExample.request.kind === 'BOOTSTRAP') {
+    return {
+      deploymentBuildDigest: prerequisite.source.deploymentBuildDigest,
+      ...common,
+      catalogRevision: prerequisite.revisions.manifestFixtureRevision,
+      bindingCatalogRevision: prerequisite.revisions.bindingCatalogRevision,
+      policyRevision: prerequisite.revisions.tenantPolicyFixtureRevision,
+      safetyRevision: null,
+      rolloutQuerySetRevision: prerequisite.revisions.rolloutQuerySetRevision,
+    };
+  }
+  const evidence = approvalExample.request.rolloutEvidence;
+  return {
+    deploymentBuildDigest: evidence.revisions.deploymentBuildDigest,
+    ...common,
+    catalogRevision: evidence.revisions.catalogRevision,
+    bindingCatalogRevision: evidence.revisions.bindingCatalogRevision,
+    policyRevision: evidence.revisions.policyRevision,
+    safetyRevision: evidence.revisions.safetyRevision,
+    rolloutQuerySetRevision: evidence.source.querySetRevision,
+  };
+}
+
+function validateTrustedActivationContext(example, approvalExample, byId) {
+  const approval = approvalExample.response;
+  const context = example.trustedActivationContext;
+  const bootstrapExample = byId.get('approve-bootstrap');
+  const prerequisite = bootstrapExample.request.bootstrapPrerequisite;
+  const expectedCurrentHead =
+    approval.kind === 'BOOTSTRAP'
+      ? expectedStaticPredecessorHead(approval)
+      : approvalExample.trustedCurrentHead;
+
+  if (
+    context.headLockAffectedRows !== 1 ||
+    context.approvalLockAffectedRows !== 1 ||
+    !same(context.lockedCurrentHead, expectedCurrentHead)
+  ) {
+    fail(
+      'ACTIVATION_CURRENT_HEAD',
+      'Activation must lock exactly one authoritative current Head at the approved predecessor.'
+    );
+  }
+  if (
+    !same(context.lockedLatestApproval, approval) ||
+    context.lockedLatestApproval.state !== 'ACTIVE' ||
+    context.lockedLatestApproval.approvalId !== example.request.approvalId ||
+    context.lockedLatestApproval.approvalRevision !== example.request.approvalRevision
+  ) {
+    fail(
+      'ACTIVATION_LATEST_APPROVAL',
+      'Activation must lock the latest revision of the exact ACTIVE Approval.'
+    );
+  }
+  if (
+    context.lockedCurrentHead.headVersion !== example.request.expectedHeadVersion ||
+    context.lockedCurrentHead.headVersion !== approval.headVersion ||
+    context.lockedCurrentHead.rolloutRevision !== approval.rolloutRevision - 1 ||
+    context.lockedCurrentHead.ringBps !== approval.fromRingBps
+  ) {
+    fail(
+      'ACTIVATION_PREDECESSOR',
+      'Activation request and Approval must bind the locked current Head predecessor.'
+    );
+  }
+  const prerequisiteDigest = canonicalDigest(prerequisite);
+  if (
+    context.currentBootstrapPrerequisiteId !== prerequisite.prerequisiteId ||
+    context.currentBootstrapPrerequisiteDigest !== prerequisiteDigest ||
+    approval.bootstrapPrerequisiteId !== prerequisite.prerequisiteId ||
+    approval.bootstrapPrerequisiteDigest !== prerequisiteDigest
+  ) {
+    fail(
+      'ACTIVATION_PREREQUISITE',
+      'Activation must rebind the current immutable bootstrap prerequisite.'
+    );
+  }
+  if (
+    !same(
+      context.currentRuntimeSnapshot,
+      expectedActivationRuntimeSnapshot(approvalExample, bootstrapExample)
+    )
+  ) {
+    fail(
+      'ACTIVATION_RUNTIME_SNAPSHOT',
+      'Activation-time build, migration, catalog, policy, safety, query, or selector snapshot drifted.'
+    );
+  }
+
+  if (approval.kind === 'BOOTSTRAP') {
+    if (
+      context.currentRolloutEvidenceDigest !== null ||
+      context.currentEvidenceAuthorityVerificationId !== null ||
+      context.snapshotRecheck !== null
+    ) {
+      fail('ACTIVATION_EVIDENCE_BINDING', 'Bootstrap activation cannot carry Promotion evidence.');
+    }
+    return;
+  }
+
+  const evidence = approvalExample.request.rolloutEvidence;
+  const evidenceDigest = canonicalDigest(evidence);
+  const recheck = context.snapshotRecheck;
+  if (
+    context.currentRolloutEvidenceDigest !== evidenceDigest ||
+    approval.rolloutEvidenceDigest !== evidenceDigest ||
+    context.currentEvidenceAuthorityVerificationId !==
+      approvalExample.trustedAttestationVerification.verificationRecordId ||
+    context.currentEvidenceAuthorityVerificationId !==
+      approvalExample.request.evidenceAuthorityAttestation.verificationRecordId ||
+    recheck.evidenceDigest !== evidenceDigest ||
+    recheck.querySetRevision !== evidence.source.querySetRevision ||
+    recheck.immutableSnapshotRefHash !== evidence.source.immutableSnapshotRefHash ||
+    recheck.authorityVerificationRecordId !== context.currentEvidenceAuthorityVerificationId
+  ) {
+    fail(
+      'ACTIVATION_EVIDENCE_BINDING',
+      'Promotion activation must lock the approved evidence and immutable authority verification row.'
+    );
+  }
+  const recheckedAt = utcEpoch(recheck.evaluatedAt);
+  if (
+    recheck.result !== 'SUCCESS' ||
+    recheckedAt < utcEpoch(approval.createdAt) ||
+    recheckedAt > utcEpoch(example.provenance.evaluatedAt)
+  ) {
+    fail(
+      'ACTIVATION_SNAPSHOT_RECHECK',
+      'Immutable Promotion snapshot must be successfully rechecked after Approval and before activation.'
+    );
+  }
+}
+
 function validateActivation(example, byId) {
   const approvalExample = validateActivationClock(example, byId);
   const approval = approvalExample.response;
@@ -828,14 +1010,57 @@ function validateActivation(example, byId) {
       fail('ACTIVATION_BINDING', `Activation ${stateField} must match Approval.`);
     }
   }
+  validateTrustedActivationContext(example, approvalExample, byId);
+}
+
+function validateTrustedTerminalTransitionContext(example, byId) {
+  const context = example.trustedTerminalTransitionContext;
+  const activeHead = byId.get('activate-shadow').response;
+  const activeApproval = byId.get('approve-promotion').response;
+  if (
+    context.headLockAffectedRows !== 1 ||
+    context.approvalLockAffectedRows !== 1 ||
+    !same(context.lockedCurrentHead, activeHead)
+  ) {
+    fail(
+      'TERMINAL_CURRENT_HEAD',
+      'STOP/EXPIRE must lock exactly one authoritative current active Head.'
+    );
+  }
+  if (
+    !same(context.lockedLatestApproval, activeApproval) ||
+    context.lockedLatestApproval.state !== 'ACTIVE' ||
+    context.lockedCurrentHead.activeApprovalId !== context.lockedLatestApproval.approvalId ||
+    context.lockedCurrentHead.activeApprovalRevision !==
+      context.lockedLatestApproval.approvalRevision
+  ) {
+    fail(
+      'TERMINAL_LATEST_APPROVAL',
+      'STOP/EXPIRE must lock the exact latest ACTIVE Approval referenced by the current Head.'
+    );
+  }
+  if (example.request.expectedHeadVersion !== context.lockedCurrentHead.headVersion) {
+    fail('TERMINAL_HEAD_BINDING', 'STOP/EXPIRE request must bind the locked current Head version.');
+  }
+  if (
+    example.response.terminalApprovalId !== context.lockedLatestApproval.approvalId ||
+    example.response.terminalApprovalRevision !== context.lockedLatestApproval.approvalRevision + 1
+  ) {
+    fail(
+      'TERMINAL_APPROVAL_TRANSITION',
+      'STOP/EXPIRE must atomically advance the exact active Approval to its terminal revision.'
+    );
+  }
+  return context;
 }
 
 function validateStopped(example, byId) {
   const { request, response } = example;
   const state = response.state;
+  const context = validateTrustedTerminalTransitionContext(example, byId);
   if (
     request.expectedHeadVersion + 1 !== state.headVersion ||
-    byId.get('activate-shadow').response.rolloutRevision + 1 !== state.rolloutRevision
+    context.lockedCurrentHead.rolloutRevision + 1 !== state.rolloutRevision
   ) {
     fail('STOP_TRANSITION', 'STOPPED must increment Head and rollout revision exactly once.');
   }
@@ -863,12 +1088,11 @@ function validateStopped(example, byId) {
     return;
   }
 
-  const active = byId.get('activate-shadow').response;
   if (
-    request.activeApprovalId !== active.activeApprovalId ||
-    request.activeApprovalRevision !== active.activeApprovalRevision ||
-    request.activeApprovalExpiresAt !== active.activeApprovalExpiresAt ||
-    request.expectedHeadVersion !== active.headVersion
+    request.activeApprovalId !== context.lockedLatestApproval.approvalId ||
+    request.activeApprovalRevision !== context.lockedLatestApproval.approvalRevision ||
+    request.activeApprovalExpiresAt !== context.lockedLatestApproval.expiresAt ||
+    request.expectedHeadVersion !== context.lockedCurrentHead.headVersion
   ) {
     fail('EXPIRY_BINDING', 'Expiry evaluation must bind the exact active Approval and Head.');
   }

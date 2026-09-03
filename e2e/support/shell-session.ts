@@ -6,6 +6,7 @@ import {
   mockShellNotificationRuntime,
 } from './runtime-access';
 import { mockLegacyProductSurfaceAuthority } from './product-surface-authority';
+import { resolveHcmShellFixture } from './hcm-shell-session';
 import {
   APPROVAL_ADMIN_FIXTURE,
   APPROVAL_DELEGATIONS_FIXTURE,
@@ -34,16 +35,9 @@ import {
   CALENDAR_TRASH_FIXTURE,
   COMPANY_CALENDARS_FIXTURE,
   COMPANY_CALENDAR_EVENTS_FIXTURE,
-  HR_ABSENCE_FIXTURE,
-  HR_BENEFITS_FIXTURE,
-  HR_HOME_FIXTURE,
-  HR_PAY_FIXTURE,
   HR_SERVICE_CATALOG_FIXTURE,
   HR_SERVICE_REQUESTS_FIXTURE,
-  HR_TALENT_FIXTURE,
-  HR_TIME_FIXTURE,
   ROOM_BOOKING_EVENT_FIXTURE,
-  hrDomainOperationsFixture,
 } from './product-area-fixtures';
 import { resolveMenuRouteProductFixture } from './menu-route-product-fixtures';
 
@@ -822,29 +816,6 @@ function workforceOverviewChartFixture(asOf: string) {
         primaryRelationship: true,
       })),
     openPositions,
-  };
-}
-
-function workforceOperationsOverviewFixture() {
-  return {
-    generatedAt: '2026-08-12T09:30:00Z',
-    dataBoundary: 'TENANT',
-    fieldGroups: ['DIRECTORY', 'EMPLOYMENT', 'JOB_GRADE'],
-    domains: [
-      {
-        domain: 'TIME',
-        pendingCount: 7,
-        metrics: [
-          { key: 'submitted', value: 18, severity: 'INFO' },
-          { key: 'openExceptions', value: 3, severity: 'ATTENTION' },
-        ],
-      },
-      {
-        domain: 'ABSENCE',
-        pendingCount: 2,
-        metrics: [{ key: 'submitted', value: 2, severity: 'CRITICAL' }],
-      },
-    ],
   };
 }
 
@@ -2191,35 +2162,8 @@ export async function mockShellSession(
     if (path === '/api/approvals/v1/admin/signatures') {
       return fulfillSuccess(route, APPROVAL_SIGNATURE_FIXTURES);
     }
-    if (path === '/api/people/v1/hr/home') {
-      return fulfillSuccess(route, HR_HOME_FIXTURE);
-    }
-    if (path === '/api/people/v1/hr/time') {
-      return fulfillSuccess(route, HR_TIME_FIXTURE);
-    }
-    if (path === '/api/people/v1/hr/absence') {
-      return fulfillSuccess(route, HR_ABSENCE_FIXTURE);
-    }
-    if (path === '/api/people/v1/hr/benefits') {
-      return fulfillSuccess(route, HR_BENEFITS_FIXTURE);
-    }
-    if (path === '/api/people/v1/hr/pay') {
-      return fulfillSuccess(route, HR_PAY_FIXTURE);
-    }
-    if (path === '/api/people/v1/hr/talent') {
-      return fulfillSuccess(route, HR_TALENT_FIXTURE);
-    }
-    const hrOperationsMatch = path.match(
-      /^\/api\/people\/v1\/hr\/operations\/(time|absence|benefits|pay|talent)$/iu
-    );
-    if (hrOperationsMatch) {
-      return fulfillSuccess(
-        route,
-        hrDomainOperationsFixture(
-          hrOperationsMatch[1].toUpperCase() as Parameters<typeof hrDomainOperationsFixture>[0]
-        )
-      );
-    }
+    const hcmFixture = resolveHcmShellFixture(path);
+    if (hcmFixture !== undefined) return fulfillSuccess(route, hcmFixture);
     const sessionDisplayName =
       options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin');
     const sessionEmail =
@@ -2346,9 +2290,6 @@ export async function mockShellSession(
         relationships: [],
         openPositions: [],
       });
-    }
-    if (path === '/api/people/v1/workforce/operations/overview') {
-      return fulfillSuccess(route, workforceOperationsOverviewFixture());
     }
     if (path === '/api/people/v1/workforce/organization/chart') {
       if (url.searchParams.get('depth') === '12') {

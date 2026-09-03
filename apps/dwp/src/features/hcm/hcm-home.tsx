@@ -56,6 +56,10 @@ import { HcmHomeWidgetContent } from './hcm-home-widgets';
 import { HCM_HOME_WIDGET_REGISTRY } from './hcm-home-widget-registry';
 import { useHcmAccess } from './use-hcm-experience';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import {
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../components/product-page-shortcut-access';
 
 import type { LucideIcon } from 'lucide-react';
 import type {
@@ -108,6 +112,9 @@ export function HcmHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const access = useHcmAccess();
+  const employeeServicesShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
+  );
   const [homeMode, setHomeMode] = useState<HomeMode>('personal');
   const [editorOpen, setEditorOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -563,7 +570,9 @@ export function HcmHome() {
     },
     personalTools[4],
   ];
-  const tools = homeMode === 'team' ? teamTools : personalTools;
+  const tools = (homeMode === 'team' ? teamTools : personalTools).filter(
+    (tool) => tool.id !== 'services' || employeeServicesShortcut.disclosed
+  );
 
   const timeStatus = currentTime?.status ?? 'UNAVAILABLE';
   const timeStages: HcmHomeTimeStage[] = [

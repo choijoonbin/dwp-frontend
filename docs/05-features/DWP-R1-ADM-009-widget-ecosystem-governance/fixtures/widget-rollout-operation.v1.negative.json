@@ -1318,6 +1318,200 @@
         }
       ],
       "expectedCode": "EVIDENCE_ROUNDING"
+    },
+    {
+      "caseId": "trusted-attestation-reject-result-cannot-authorize",
+      "baseExampleId": "approve-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedAttestationVerification/result",
+        "value": "REJECT"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "activation-head-lock-must-affect-one-row",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/headLockAffectedRows",
+        "value": 0
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "stop-between-approve-and-activate",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/lockedCurrentHead",
+        "value": {
+          "environment": "STAGING",
+          "phase": "STATIC",
+          "rolloutRevision": 9,
+          "headVersion": 44,
+          "ringBps": 0,
+          "selectorKeyId": null,
+          "activeApprovalId": null,
+          "activeApprovalRevision": null,
+          "activeApprovalExpiresAt": null,
+          "bootstrapPrerequisiteId": null,
+          "bootstrapPrerequisiteDigest": null,
+          "ciAttestationJti": null,
+          "activeRolloutEvidenceId": null,
+          "activeRolloutEvidenceDigest": null
+        }
+      },
+      "expectedCode": "ACTIVATION_CURRENT_HEAD"
+    },
+    {
+      "caseId": "expire-between-approve-and-activate",
+      "baseExampleId": "activate-bootstrap",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/lockedCurrentHead",
+        "value": {
+          "environment": "STAGING",
+          "phase": "STATIC",
+          "rolloutRevision": 7,
+          "headVersion": 42,
+          "ringBps": 0,
+          "selectorKeyId": null,
+          "activeApprovalId": null,
+          "activeApprovalRevision": null,
+          "activeApprovalExpiresAt": null,
+          "bootstrapPrerequisiteId": null,
+          "bootstrapPrerequisiteDigest": null,
+          "ciAttestationJti": null,
+          "activeRolloutEvidenceId": null,
+          "activeRolloutEvidenceDigest": null
+        }
+      },
+      "expectedCode": "ACTIVATION_CURRENT_HEAD"
+    },
+    {
+      "caseId": "newer-revoked-approval-hides-historical-active-row",
+      "baseExampleId": "activate-shadow",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/trustedActivationContext/lockedLatestApproval/state",
+          "value": "REVOKED"
+        },
+        {
+          "op": "replace",
+          "path": "/trustedActivationContext/lockedLatestApproval/approvalRevision",
+          "value": 2
+        }
+      ],
+      "expectedCode": "ACTIVATION_LATEST_APPROVAL"
+    },
+    {
+      "caseId": "activation-catalog-revision-drift",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/currentRuntimeSnapshot/catalogRevision",
+        "value": "catalog-2026.08.27.drift"
+      },
+      "expectedCode": "ACTIVATION_RUNTIME_SNAPSHOT"
+    },
+    {
+      "caseId": "activation-safety-revision-drift",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/currentRuntimeSnapshot/safetyRevision",
+        "value": "safety-2026.08.27.drift"
+      },
+      "expectedCode": "ACTIVATION_RUNTIME_SNAPSHOT"
+    },
+    {
+      "caseId": "activation-selector-retired",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/currentRuntimeSnapshot/selectorState",
+        "value": "RETIRED"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "activation-evidence-row-digest-drift",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/currentRolloutEvidenceDigest",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expectedCode": "ACTIVATION_EVIDENCE_BINDING"
+    },
+    {
+      "caseId": "activation-snapshot-recheck-unavailable",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/snapshotRecheck/result",
+        "value": "UNAVAILABLE"
+      },
+      "expectedCode": "SCHEMA_INVALID"
+    },
+    {
+      "caseId": "activation-snapshot-recheck-must-follow-approval",
+      "baseExampleId": "activate-shadow",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedActivationContext/snapshotRecheck/evaluatedAt",
+        "value": "2026-08-28T07:04:59Z"
+      },
+      "expectedCode": "ACTIVATION_SNAPSHOT_RECHECK"
+    },
+    {
+      "caseId": "stop-must-lock-current-active-head",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "replace",
+        "path": "/trustedTerminalTransitionContext/lockedCurrentHead/headVersion",
+        "value": 42
+      },
+      "expectedCode": "TERMINAL_CURRENT_HEAD"
+    },
+    {
+      "caseId": "stop-must-lock-latest-active-approval",
+      "baseExampleId": "stop-safety",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/trustedTerminalTransitionContext/lockedLatestApproval/state",
+          "value": "REVOKED"
+        },
+        {
+          "op": "replace",
+          "path": "/trustedTerminalTransitionContext/lockedLatestApproval/approvalRevision",
+          "value": 2
+        }
+      ],
+      "expectedCode": "TERMINAL_LATEST_APPROVAL"
+    },
+    {
+      "caseId": "stop-terminal-approval-revision-must-advance-once",
+      "baseExampleId": "stop-safety",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/terminalApprovalRevision",
+        "value": 1
+      },
+      "expectedCode": "TERMINAL_APPROVAL_TRANSITION"
+    },
+    {
+      "caseId": "expiry-terminal-approval-id-must-bind",
+      "baseExampleId": "expire-approval",
+      "mutation": {
+        "op": "replace",
+        "path": "/response/terminalApprovalId",
+        "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "expectedCode": "TERMINAL_APPROVAL_TRANSITION"
     }
   ]
 }

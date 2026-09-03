@@ -300,6 +300,19 @@
     "loadError": "발령 정보를 불러오지 못했습니다.",
     "search": "구성원, 발령, 조직 또는 관리자 검색",
     "count": "발령 {{count}}건",
+    "moreAvailable": "추가 발령 있음",
+    "loadMore": "발령 더 불러오기",
+    "detail": {
+      "title": "발령 상세",
+      "legalEmployer": "법적 고용 주체",
+      "hireDate": "최초 입사일",
+      "assignments": "발령 이력 및 예정",
+      "openFor": "{{name}}님의 발령 상세 열기",
+      "primary": "주 발령",
+      "current": "현재",
+      "scheduled": "예정",
+      "empty": "이 유효일에 조회 가능한 발령이 없습니다."
+    },
     "filters": {
       "status": "상태",
       "asOf": "유효일"
@@ -311,7 +324,8 @@
       "manager": "관리자",
       "location": "근무지",
       "effectiveFrom": "유효 시작일",
-      "status": "상태"
+      "status": "상태",
+      "detail": "상세"
     },
     "status": {
       "ALL": "전체 상태",

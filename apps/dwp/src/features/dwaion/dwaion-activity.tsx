@@ -150,6 +150,12 @@ export function DwaionActivity() {
             value={filter}
             onChange={(_, value: RunFilter | null) => value && setFilter(value)}
             aria-label={t('dwaionActivity.filterLabel')}
+            sx={{
+              '& .MuiToggleButton-root': { color: 'text.primary' },
+              '& .MuiToggleButton-root.Mui-selected': {
+                color: 'text.primary',
+              },
+            }}
           >
             {(['ALL', 'RUNNING', 'COMPLETED', 'FAILED'] as const).map((state) => (
               <ToggleButton key={state} value={state}>

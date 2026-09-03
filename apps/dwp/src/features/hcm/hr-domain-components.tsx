@@ -3,7 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Check, Database, X } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ActionButton, EmptyState, FormDialog, FormField } from '@dwp-frontend/design-system';
-import { decideHrRequest, decideHrTeamRequest, useToast } from '@dwp-frontend/shared-utils';
+import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import {
+  decideHrRequest,
+  decideHrTeamRequest,
+  HttpError,
+  useToast,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -160,6 +166,92 @@ export function StatusChip({ status }: { status: string }) {
   );
 }
 
+function ApprovalEvidenceList({ item }: { item: HrApprovalItem }) {
+  const { t } = useTranslation('hcm');
+  const evidence = item.evidence;
+  if (!evidence) return null;
+
+  const duration = (minutes: number) =>
+    minutes % 60 === 0
+      ? t('domains.approvals.evidence.durationHours', {
+          value: formatNumber(minutes / 60),
+        })
+      : t('domains.approvals.evidence.durationMinutes', {
+          value: formatNumber(minutes),
+        });
+  const lines: string[] = [];
+  if (item.domain === 'TIME') {
+    if (evidence.periodStart && evidence.periodEnd) {
+      lines.push(
+        t('domains.approvals.evidence.period', {
+          start: formatDate(evidence.periodStart, { dateStyle: 'medium' }),
+          end: formatDate(evidence.periodEnd, { dateStyle: 'medium' }),
+        })
+      );
+    }
+    if (
+      typeof evidence.recordedMinutes === 'number' &&
+      typeof evidence.scheduledMinutes === 'number'
+    ) {
+      lines.push(
+        t('domains.approvals.evidence.timeTotals', {
+          recorded: duration(evidence.recordedMinutes),
+          scheduled: duration(evidence.scheduledMinutes),
+        })
+      );
+    }
+    if (typeof evidence.exceptionCount === 'number') {
+      lines.push(
+        t('domains.approvals.evidence.exceptions', {
+          count: formatNumber(evidence.exceptionCount),
+        })
+      );
+    }
+  } else {
+    if (evidence.startAt && evidence.endAt) {
+      lines.push(
+        t('domains.approvals.evidence.leaveDates', {
+          start: formatDate(evidence.startAt, { dateStyle: 'medium' }),
+          end: formatDate(evidence.endAt, { dateStyle: 'medium' }),
+        })
+      );
+    }
+    if (typeof evidence.requestedMinutes === 'number') {
+      lines.push(
+        t('domains.approvals.evidence.requested', {
+          duration: duration(evidence.requestedMinutes),
+        })
+      );
+    }
+    if (typeof evidence.availableMinutes === 'number') {
+      lines.push(
+        t('domains.approvals.evidence.available', {
+          duration: duration(evidence.availableMinutes),
+        })
+      );
+    }
+    if (evidence.reason?.trim()) {
+      lines.push(t('domains.approvals.evidence.reason', { reason: evidence.reason.trim() }));
+    }
+  }
+
+  if (!lines.length) return null;
+  return (
+    <Stack
+      component="ul"
+      gap={0.25}
+      aria-label={t('domains.approvals.evidence.details')}
+      sx={{ m: 0, mt: 0.75, pl: 2.25 }}
+    >
+      {lines.map((line) => (
+        <Typography key={line} component="li" variant="caption" color="text.secondary">
+          {line}
+        </Typography>
+      ))}
+    </Stack>
+  );
+}
+
 export function ApprovalQueue({
   domain,
   items,
@@ -178,6 +270,8 @@ export function ApprovalQueue({
   const queryClient = useQueryClient();
   const capabilityAccess = useProductSurfaceCapabilityAccess();
   const canDecide = canDiscloseHcmApprovalAction(capabilityAccess, decisionScope, domain);
+  const [authorityRejected, setAuthorityRejected] = useState(false);
+  const mayDecide = canDecide && !authorityRejected;
   const [decision, setDecision] = useState<{
     item: HrApprovalItem;
     action: 'APPROVE' | 'REJECT';
@@ -194,10 +288,13 @@ export function ApprovalQueue({
   useEffect(() => {
     setDecision(null);
     setNote('');
+    setAuthorityRejected(false);
   }, [capabilityAccess.contextScopeKey]);
   const mutation = useMutation({
     mutationFn: () => {
-      if (!canDecide) throw new Error('The approval action is not authorized.');
+      if (!mayDecide || decision?.item.status.toUpperCase() !== 'SUBMITTED') {
+        throw new Error('The approval action is not authorized.');
+      }
       const decide = decisionScope === 'team' ? decideHrTeamRequest : decideHrRequest;
       const govern =
         decisionScope === 'team'
@@ -226,7 +323,19 @@ export function ApprovalQueue({
       setDecision(null);
       setNote('');
     },
-    onError: () => toast.error(t('domains.approvals.error')),
+    onError: async (error) => {
+      if (error instanceof HttpError && [401, 403, 409].includes(error.status)) {
+        setDecision(null);
+        setNote('');
+        if (error.status === 401 || error.status === 403) setAuthorityRejected(true);
+        await queryClient.invalidateQueries({ queryKey: ['hcm'] });
+        toast.error(
+          t(error.status === 409 ? 'domains.approvals.conflict' : 'domains.approvals.authorityLost')
+        );
+        return;
+      }
+      toast.error(t('domains.approvals.error'));
+    },
   });
 
   return (
@@ -245,18 +354,45 @@ export function ApprovalQueue({
                 >
                   <Stack direction="row" alignItems="center" gap={1.25} minWidth={0} flex={1}>
                     <PersonAvatar name={item.employeeName} size={38} />
-                    <Box minWidth={0}>
+                    <Box minWidth={0} flex={1}>
                       <Typography variant="body2" fontWeight={750} noWrap>
                         {item.employeeName}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" noWrap display="block">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                        sx={{ overflowWrap: 'anywhere' }}
+                      >
                         {[item.employeeTitle, item.summary].filter(Boolean).join(' · ')}
+                      </Typography>
+                      <ApprovalEvidenceList item={item} />
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {item.submittedAt
+                          ? t('domains.approvals.submittedAt', {
+                              date: formatDate(item.submittedAt, { dateStyle: 'medium' }),
+                            })
+                          : t('domains.approvals.submittedAtUnknown')}{' '}
+                        · {t('domains.approvals.version', { version: item.version })}
                       </Typography>
                     </Box>
                   </Stack>
-                  <Stack direction="row" alignItems="center" gap={0.75}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap={0.75}
+                    sx={{
+                      width: { xs: 1, md: 'auto' },
+                      flexWrap: 'wrap',
+                      '& .MuiButton-root': {
+                        flex: { xs: '1 1 96px', md: '0 0 auto' },
+                        minWidth: 0,
+                        whiteSpace: 'normal',
+                      },
+                    }}
+                  >
                     <StatusChip status={item.status} />
-                    {canDecide && (
+                    {mayDecide && item.status.toUpperCase() === 'SUBMITTED' && (
                       <>
                         <ActionButton
                           intent="secondary"
@@ -264,6 +400,7 @@ export function ApprovalQueue({
                           startIcon={<X size={15} aria-hidden="true" />}
                           aria-label={t('domains.approvals.rejectFor', {
                             name: item.employeeName,
+                            summary: item.summary,
                           })}
                           onClick={() => setDecision({ item, action: 'REJECT' })}
                         >
@@ -275,6 +412,7 @@ export function ApprovalQueue({
                           startIcon={<Check size={15} aria-hidden="true" />}
                           aria-label={t('domains.approvals.approveFor', {
                             name: item.employeeName,
+                            summary: item.summary,
                           })}
                           onClick={() => setDecision({ item, action: 'APPROVE' })}
                         >
@@ -297,7 +435,7 @@ export function ApprovalQueue({
       </DomainSection>
 
       <FormDialog
-        open={Boolean(decision) && canDecide}
+        open={Boolean(decision) && mayDecide && decision?.item.status.toUpperCase() === 'SUBMITTED'}
         title={t(
           `domains.approvals.${decision?.action === 'APPROVE' ? 'approveTitle' : 'rejectTitle'}`
         )}
@@ -305,23 +443,50 @@ export function ApprovalQueue({
           decision ? `${decision.item.employeeName} · ${decision.item.summary}` : undefined
         }
         cancelLabel={t('domains.actions.cancel')}
-        submitLabel={t('domains.actions.confirm')}
+        submitLabel={t(
+          `domains.approvals.${decision?.action === 'APPROVE' ? 'approveTitle' : 'rejectTitle'}`
+        )}
         submitIntent={decision?.action === 'APPROVE' ? 'primary' : 'danger'}
         busy={mutation.isPending}
         submitDisabled={note.trim().length < 3}
         onClose={() => setDecision(null)}
         onSubmit={() => mutation.mutate()}
       >
-        <FormField
-          autoFocus
-          multiline
-          minRows={3}
-          label={t('domains.approvals.note')}
-          supportingText={t('domains.approvals.noteHint')}
-          value={note}
-          onChange={(event) => setNote(event.target.value)}
-          slotProps={{ htmlInput: { maxLength: 1000 } }}
-        />
+        <Stack gap={2}>
+          {decision && (
+            <Box
+              component="section"
+              aria-label={t('domains.approvals.evidenceTitle')}
+              sx={{ p: 1.5, border: 1, borderColor: 'divider', bgcolor: 'action.hover' }}
+            >
+              <Typography component="h3" variant="subtitle2">
+                {t('domains.approvals.evidenceTitle')}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5 }}>
+                {[decision.item.employeeTitle, decision.item.summary].filter(Boolean).join(' · ')}
+              </Typography>
+              <ApprovalEvidenceList item={decision.item} />
+              <Typography variant="caption" color="text.secondary" display="block">
+                {decision.item.submittedAt
+                  ? t('domains.approvals.submittedAt', {
+                      date: formatDate(decision.item.submittedAt, { dateStyle: 'medium' }),
+                    })
+                  : t('domains.approvals.submittedAtUnknown')}{' '}
+                · {t('domains.approvals.version', { version: decision.item.version })}
+              </Typography>
+            </Box>
+          )}
+          <FormField
+            autoFocus
+            multiline
+            minRows={3}
+            label={t('domains.approvals.note')}
+            supportingText={t('domains.approvals.noteHint')}
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            slotProps={{ htmlInput: { maxLength: 1000 } }}
+          />
+        </Stack>
       </FormDialog>
     </>
   );

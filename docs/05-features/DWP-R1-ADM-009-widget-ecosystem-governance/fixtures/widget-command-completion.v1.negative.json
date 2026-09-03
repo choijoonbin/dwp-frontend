@@ -1204,6 +1204,76 @@
         }
       ],
       "expectedError": "CHILD_APPROVAL_BINDING"
+    },
+    {
+      "caseId": "reject-decision-workflow-cannot-be-approved-rehashed",
+      "baseCaseId": "success-decide",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/workflowState",
+          "value": "APPROVED"
+        },
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentReviewDecisionId",
+          "value": null
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "reject-decision-must-carry-decision-id-rehashed",
+      "baseCaseId": "success-decide",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentReviewDecisionId",
+          "value": null
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
+    },
+    {
+      "caseId": "rework-must-bind-rejected-decision-id-rehashed",
+      "baseCaseId": "success-rework",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/requestProjection/rejectedDecisionId",
+          "value": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        }
+      ],
+      "expectedError": "REQUEST_RESPONSE_BINDING"
+    },
+    {
+      "caseId": "rework-current-projection-must-be-rejected-rehashed",
+      "baseCaseId": "success-rework",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/verificationContext/currentTargetProjection/workflowState",
+          "value": "DRAFT"
+        }
+      ],
+      "expectedError": "FIXTURE_SHAPE"
+    },
+    {
+      "caseId": "rework-must-clear-current-review-decision-rehashed",
+      "baseCaseId": "success-rework",
+      "recomputeResponseHash": true,
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/response/responseBody/currentReviewDecisionId",
+          "value": "88888888-8888-4888-8888-888888888888"
+        }
+      ],
+      "expectedError": "SCHEMA_VALIDATION"
     }
   ]
 }

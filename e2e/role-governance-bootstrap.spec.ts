@@ -3,6 +3,8 @@ import { expect, test, type Page, type Route, type TestInfo } from '@playwright/
 
 import type {
   AppAdminAssignment,
+  AppAdminPresetAssignment,
+  AppAdminPresetCatalogItem,
   AppGovernanceDashboard,
 } from '@dwp-frontend/shared-utils/api/app-governance-api';
 
@@ -46,6 +48,72 @@ function assignment(
   };
 }
 
+function presetCatalogItem(): AppAdminPresetCatalogItem {
+  return {
+    presetCode: 'APPROVALS_ADMIN',
+    productKey: 'approvals',
+    appResourceKey: 'APP.APPROVALS',
+    displayName: 'Approvals administrator',
+    description: 'Administers the Approvals application.',
+    responsibilityCode: 'APP_CONFIG_ADMIN',
+    riskTier: 'HIGH',
+    catalogVersion: 1,
+    duties: [
+      {
+        dutyCode: 'APPROVALS_CONFIGURATION',
+        resourceKey: 'APP.APPROVALS',
+        riskTier: 'HIGH',
+        auditPolicyException: false,
+        capabilityContractKeys: ['approvals.management.configure'],
+      },
+    ],
+    requestable: true,
+  };
+}
+
+function activePresetAssignment(): AppAdminPresetAssignment {
+  return {
+    presetAssignmentId: 'preset-active',
+    presetCode: 'APPROVALS_ADMIN',
+    productKey: 'approvals',
+    presetName: 'Approvals administrator',
+    principalType: 'USER',
+    principalRef: '30',
+    principalName: 'Mina Preset Administrator',
+    resourceSetId: 'rs-approvals',
+    resourceSetKey: 'RS_APPROVALS',
+    resourceSetName: 'Approvals production',
+    responsibilityAssignmentId: 'preset-responsibility-active',
+    assignmentSource: 'APP_ADMIN_PRESET',
+    requestChannel: 'GOVERNANCE',
+    lifecycleState: 'ACTIVE',
+    validFrom: '2026-08-27T00:00:00Z',
+    validTo: '2027-08-27T00:00:00Z',
+    reviewDueAt: '2027-02-27T00:00:00Z',
+    justification: 'Administer the Approvals application.',
+    requestedBy: 11,
+    requestedByName: 'Olivia App Owner',
+    approvedBy: 12,
+    approvedByName: 'Alex Access Approver',
+    approvedAt: '2026-08-27T00:30:00Z',
+    activatedBy: 13,
+    activatedByName: 'Morgan Access Manager',
+    activatedAt: '2026-08-27T01:00:00Z',
+    version: 3,
+    catalogVersion: 1,
+    createdAt: '2026-08-27T00:00:00Z',
+    updatedAt: '2026-08-27T01:00:00Z',
+    duties: [
+      {
+        assignmentId: 'preset-duty-active',
+        dutyCode: 'APPROVALS_CONFIGURATION',
+        lifecycleState: 'ACTIVE',
+        version: 1,
+      },
+    ],
+  };
+}
+
 async function capture(page: Page, testInfo: TestInfo, name: string) {
   const path = testInfo.outputPath(`${name}.png`);
   // Viewport capture avoids Playwright's fixed-dialog stitching artifacts while
@@ -56,10 +124,23 @@ async function capture(page: Page, testInfo: TestInfo, name: string) {
 
 async function mockGovernanceDashboard(
   page: Page,
-  { duplicateApprovals = false }: { duplicateApprovals?: boolean } = {}
+  {
+    duplicateApprovals = false,
+    emptyResourceSets = false,
+    failFirstDashboard = false,
+    includeRequestablePreset = false,
+    includeActivePresetAssignment = false,
+  }: {
+    duplicateApprovals?: boolean;
+    emptyResourceSets?: boolean;
+    failFirstDashboard?: boolean;
+    includeRequestablePreset?: boolean;
+    includeActivePresetAssignment?: boolean;
+  } = {}
 ) {
   let approved = false;
   let decisionPayload: unknown = null;
+  let dashboardRequests = 0;
   const assignments = () => [
     assignment('owner-active', {
       principalRef: '11',
@@ -125,43 +206,46 @@ async function mockGovernanceDashboard(
       { type: 'USER', ref: '31', displayName: 'Joon Later Approver' },
       { type: 'USER', ref: '32', displayName: 'Self-request guard' },
     ],
-    resourceSets: [
-      {
-        resourceSetId: 'rs-approvals',
-        key: 'RS_APPROVALS',
-        name: 'Approvals production',
-        description: 'Production approvals application boundary.',
-        lifecycleState: 'ACTIVE',
-        version: 0,
-        resources: [
+    resourceSets: emptyResourceSets
+      ? []
+      : [
           {
-            resourceType: 'APP',
-            resourceKey: 'APP.APPROVALS',
-            resourceName: 'Approvals',
-          },
-        ],
-      },
-      {
-        resourceSetId: 'rs-collaboration',
-        key: 'RS_COLLABORATION',
-        name: 'Collaboration production',
-        description: 'A scope that already has an effective approver.',
-        lifecycleState: 'ACTIVE',
-        version: 0,
-        resources: duplicateApprovals
-          ? [
+            resourceSetId: 'rs-approvals',
+            key: 'RS_APPROVALS',
+            name: 'Approvals production',
+            description: 'Production approvals application boundary.',
+            lifecycleState: 'ACTIVE',
+            version: 0,
+            resources: [
               {
                 resourceType: 'APP',
                 resourceKey: 'APP.APPROVALS',
                 resourceName: 'Approvals',
               },
-            ]
-          : [],
-      },
-    ],
+            ],
+          },
+          {
+            resourceSetId: 'rs-collaboration',
+            key: 'RS_COLLABORATION',
+            name: 'Collaboration production',
+            description: 'A scope that already has an effective approver.',
+            lifecycleState: 'ACTIVE',
+            version: 0,
+            resources: duplicateApprovals
+              ? [
+                  {
+                    resourceType: 'APP',
+                    resourceKey: 'APP.APPROVALS',
+                    resourceName: 'Approvals',
+                  },
+                ]
+              : [],
+          },
+        ],
     assignments: assignments(),
-    presetCatalog: [],
-    presetAssignments: [],
+    presetCatalog:
+      includeRequestablePreset || includeActivePresetAssignment ? [presetCatalogItem()] : [],
+    presetAssignments: includeActivePresetAssignment ? [activePresetAssignment()] : [],
     presetReviews: [],
   });
 
@@ -169,6 +253,19 @@ async function mockGovernanceDashboard(
     const request = route.request();
     const path = new URL(request.url()).pathname;
     if (request.method() === 'GET' && path === '/api/auth/admin/access/app-governance') {
+      dashboardRequests += 1;
+      // The app QueryClient retries once before rendering its explicit recovery state.
+      if (failFirstDashboard && dashboardRequests <= 2) {
+        await route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            code: 'SERVICE_UNAVAILABLE',
+            message: 'dial tcp auth-db.internal:5432: connection refused',
+          }),
+        });
+        return;
+      }
       await route.fulfill({ contentType: 'application/json', body: envelope(dashboard()) });
       return;
     }
@@ -191,7 +288,10 @@ async function mockGovernanceDashboard(
     });
   });
 
-  return { decisionPayload: () => decisionPayload };
+  return {
+    decisionPayload: () => decisionPayload,
+    dashboardRequests: () => dashboardRequests,
+  };
 }
 
 test('independent catalog admin performs only the one-time first approver bootstrap', async ({
@@ -371,6 +471,168 @@ test('company governance gives repeated app workbenches unique scope-aware names
   await expect(
     page.getByRole('link', { name: /Open Approvals management workbench for/u })
   ).toHaveCount(2);
+});
+
+test('app governance hides service diagnostics and recovers through a localized retry', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'ko',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  const governance = await mockGovernanceDashboard(page, { failFirstDashboard: true });
+
+  await page.goto('/admin/identity/app-governance');
+
+  const errorState = page.getByRole('alert');
+  await expect(
+    errorState.getByRole('heading', { level: 2, name: '요청한 데이터를 불러오지 못했습니다.' })
+  ).toBeVisible();
+  await expect(
+    errorState.getByText(
+      '앱 관리 책임 정보를 불러오지 못했습니다. 잠시 후 다시 시도하세요. 문제가 계속되면 지원팀에 문의하세요.',
+      { exact: true }
+    )
+  ).toBeVisible();
+  await expect(page.getByText(/auth-db\.internal|connection refused|dial tcp/u)).toHaveCount(0);
+
+  await errorState.getByRole('button', { name: '다시 시도' }).click();
+  await expect(page.getByRole('button', { name: /앱 리소스 범위/u })).toBeVisible();
+  expect(governance.dashboardRequests()).toBe(3);
+});
+
+test('app governance explains an empty resource-set catalog without a dead-end create action', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockGovernanceDashboard(page, {
+    emptyResourceSets: true,
+    includeRequestablePreset: true,
+  });
+
+  await page.goto('/admin/identity/app-governance');
+  await expect(page.getByRole('button', { name: 'Request app admin preset' })).toHaveCount(0);
+  await page.getByRole('button', { name: /App resource sets/u }).click();
+
+  const emptyState = page.getByTestId('app-governance-resource-set-empty');
+  await expect(
+    emptyState.getByRole('heading', { level: 2, name: 'No app resource sets are available' })
+  ).toBeVisible();
+  await expect(emptyState.getByRole('button', { name: 'Refresh' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create app scope' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Request assignment' })).toHaveCount(0);
+});
+
+test('app governance never exposes owner-service diagnostics from a failed mutation', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [],
+  });
+  await mockGovernanceDashboard(page);
+
+  await page.goto('/admin/identity/app-governance');
+  await page.getByRole('button', { name: /Responsibility assignments/u }).click();
+  await page
+    .getByTestId('app-governance-assignment-owner-active')
+    .getByRole('button', { name: 'Revoke' })
+    .click();
+
+  const dialog = page.getByRole('dialog', { name: 'Revoke this active responsibility?' });
+  await dialog
+    .getByLabel('Decision rationale')
+    .fill('Remove this assignment after the scheduled access review.');
+  await dialog.getByRole('button', { name: 'Revoke' }).click();
+
+  await expect(
+    page.getByText('The operation could not be completed.', { exact: true })
+  ).toBeVisible();
+  await expect(page.getByText(/Auth rejected this decision|FORBIDDEN/u)).toHaveCount(0);
+
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await page
+    .getByTestId('app-governance-assignment-owner-active')
+    .getByRole('button', { name: 'Revoke' })
+    .click();
+  await expect(dialog.getByLabel('Decision rationale')).toHaveValue('');
+  await expect(dialog.getByRole('button', { name: 'Revoke' })).toBeDisabled();
+});
+
+test('app governance sanitizes preset failures and resets preset audit rationale', async ({
+  page,
+}, testInfo) => {
+  await mockShellSession(page, ['APP_CATALOG_ADMIN', 'WORKSPACE_MEMBER'], {
+    userId: 1,
+    displayName: 'Independent Catalog Admin',
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    resourceRoles: [
+      {
+        responsibilityCode: 'APP_ACCESS_MANAGER',
+        resourceType: 'APP',
+        resourceKey: 'APP.APPROVALS',
+        resourceSetId: 'rs-approvals',
+        resourceSetKey: 'RS_APPROVALS',
+      },
+    ],
+  });
+  await mockGovernanceDashboard(page, { includeActivePresetAssignment: true });
+
+  await page.goto('/admin/identity/app-governance');
+  const presetRow = page.getByRole('row').filter({ hasText: 'Mina Preset Administrator' });
+  const revokeButton = presetRow.getByRole('button', { name: 'Revoke' });
+  if (testInfo.project.name === 'chromium') {
+    await expect
+      .poll(() =>
+        revokeButton.evaluate((button) => {
+          const rect = button.getBoundingClientRect();
+          const hitTarget = document.elementFromPoint(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2
+          );
+          return hitTarget === button || button.contains(hitTarget);
+        })
+      )
+      .toBe(true);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+      )
+    ).toBe(true);
+  }
+  await revokeButton.click();
+
+  const dialog = page.getByRole('dialog', {
+    name: 'Revoke this app administrator preset?',
+  });
+  await dialog
+    .getByLabel('Decision rationale')
+    .fill('Remove the preset after the scheduled access review.');
+  await dialog.getByRole('button', { name: 'Confirm' }).click();
+
+  await expect(
+    page.getByText('The operation could not be completed.', { exact: true })
+  ).toBeVisible();
+  await expect(page.getByText(/Auth rejected this decision|FORBIDDEN/u)).toHaveCount(0);
+
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(revokeButton).toBeFocused();
+  await revokeButton.click();
+  await expect(dialog.getByLabel('Decision rationale')).toHaveValue('');
+  await expect(dialog.getByRole('button', { name: 'Confirm' })).toBeDisabled();
 });
 
 test('app governance remains operable at 320px and 200% text', async ({ page }, testInfo) => {

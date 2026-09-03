@@ -170,6 +170,15 @@ describe('Product action disclosure contracts', () => {
     expect(people).toContain("experience !== 'workforce' || organizationDesignShortcut.disclosed");
     expect(people).toContain('appendProductPageShortcutScope(href, organizationDesignShortcut)');
 
+    for (const hcmSource of [
+      source('features/hcm/hcm-home.tsx'),
+      source('features/hcm/my-hr-profile.tsx'),
+      source('features/hcm/hr-benefits-pay-talent.tsx'),
+    ]) {
+      expect(hcmSource).toContain('PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices');
+      expect(hcmSource).toContain('employeeServicesShortcut.disclosed');
+    }
+
     const approvals = source('features/approvals/approval-admin.tsx');
     expect(approvals).toContain('PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows');
     expect(approvals).toContain('PRODUCT_PAGE_SHORTCUT_TARGETS.approvalOperations');

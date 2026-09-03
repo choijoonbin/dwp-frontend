@@ -1317,6 +1317,15 @@
     },
     "answerHeading": "DWAI·ON response",
     "answerDescription": "Review sources and processing status in the verification panel.",
+    "fallback": {
+      "state": "Evidence-only fallback",
+      "answerHeading": "Work evidence within your access",
+      "answerDescription": "Verified source evidence was prioritized without AI synthesis.",
+      "noticeTitle": "This response is a direct evidence summary",
+      "noticeDescription": "Sources and priorities were verified, but AI comparison and synthesis did not run. Run again after the model connection recovers to compare the result.",
+      "responseMode": "Response mode",
+      "responseModeValue": "Verified source evidence only"
+    },
     "yourQuestion": "Your question",
     "sourcesHeading": "Verified sources ({{count}})",
     "sourceTypes": {
@@ -1353,7 +1362,8 @@
       "transcript": "Conversation transcript",
       "assistant": "DWAI·ON",
       "you": "You",
-      "withheld": "The answer was withheld because policy or evidence requirements were not met."
+      "withheld": "The answer was withheld because policy or evidence requirements were not met.",
+      "fallbackDescription": "This response directly summarizes source evidence verified under your access at that time, without AI comparison or synthesis."
     },
     "citationPreview": {
       "description": "Preview the portion of evidence available under your current access.",

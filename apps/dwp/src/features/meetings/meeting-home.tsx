@@ -135,7 +135,7 @@ export function MeetingHome() {
 
   if (query.isLoading) {
     return (
-      <PageCanvas mode="focus" topInset="compact">
+      <PageCanvas mode="workspace" topInset="compact">
         <LoadingState label={t('home.loading')} variant="skeleton" skeletonRows={5} />
       </PageCanvas>
     );
@@ -143,7 +143,7 @@ export function MeetingHome() {
 
   if (query.isError || !query.data) {
     return (
-      <PageCanvas mode="focus" topInset="compact">
+      <PageCanvas mode="workspace" topInset="compact">
         <ErrorState
           title={t('errors.loadTitle')}
           description={t('errors.loadDescription')}
@@ -208,7 +208,7 @@ export function MeetingHome() {
   };
 
   return (
-    <PageCanvas mode="focus" topInset="compact">
+    <PageCanvas mode="workspace" topInset="compact">
       <MeetingPageHeading
         eyebrow={t('home.eyebrow')}
         title={t('home.title')}

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ContactRound, ExternalLink, PencilLine, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ActionButton, EmptyState, ErrorState, LoadingState } from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { getPerson, useAuth } from '@dwp-frontend/shared-utils';
 
@@ -14,6 +14,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PersonAvatar } from '../../components/person-avatar';
+import { HcmQueryState } from '../../components/hcm-query-state';
+import {
+  PRODUCT_PAGE_SHORTCUT_TARGETS,
+  useProductPageShortcutAccess,
+} from '../../components/product-page-shortcut-access';
 import { useCurrentHcmPerson } from './use-hcm-experience';
 
 function Field({ label, value }: { label: string; value?: string | null }) {
@@ -32,6 +37,9 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 export function MyHrProfile() {
   const { t } = useTranslation('hcm');
   const navigate = useNavigate();
+  const employeeServicesShortcut = useProductPageShortcutAccess(
+    PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
+  );
   const auth = useAuth();
   const personLink = useCurrentHcmPerson();
   const personDetail = useQuery({
@@ -43,15 +51,12 @@ export function MyHrProfile() {
   });
 
   if (personLink.currentPersonQuery.isLoading) {
-    return <LoadingState size="standard" label={t('myProfile.loading')} />;
+    return <HcmQueryState loading />;
   }
   if (personLink.currentPersonQuery.isError) {
     return (
-      <ErrorState
-        size="standard"
-        title={t('common.loadError')}
-        description={t('myProfile.loadError')}
-        retryLabel={t('common.retry')}
+      <HcmQueryState
+        error={personLink.currentPersonQuery.error}
         onRetry={() => void personLink.currentPersonQuery.refetch()}
         retrying={personLink.currentPersonQuery.isFetching}
       />
@@ -115,18 +120,20 @@ export function MyHrProfile() {
               icon={<ShieldCheck size={14} />}
               label={t('myProfile.directorySafe')}
             />
-            <ActionButton
-              intent="secondary"
-              size="small"
-              startIcon={<PencilLine size={15} />}
-              onClick={() =>
-                navigate(
-                  '/services/discover?category=PEOPLE&service=people.personal-information-change&source=hr'
-                )
-              }
-            >
-              {t('myProfile.requestChange')}
-            </ActionButton>
+            {employeeServicesShortcut.disclosed && (
+              <ActionButton
+                intent="secondary"
+                size="small"
+                startIcon={<PencilLine size={15} />}
+                onClick={() =>
+                  navigate(
+                    '/services/discover?category=PEOPLE&service=people.personal-information-change&source=hr'
+                  )
+                }
+              >
+                {t('myProfile.requestChange')}
+              </ActionButton>
+            )}
           </Stack>
         </Box>
         <Divider />
@@ -162,12 +169,11 @@ export function MyHrProfile() {
           </Stack>
           <Divider />
           {personDetail.isLoading ? (
-            <LoadingState size="compact" label={t('myProfile.employment.loading')} />
+            <HcmQueryState loading size="compact" />
           ) : personDetail.isError ? (
-            <ErrorState
+            <HcmQueryState
               size="compact"
-              title={t('common.loadError')}
-              retryLabel={t('common.retry')}
+              error={personDetail.error}
               onRetry={() => void personDetail.refetch()}
               retrying={personDetail.isFetching}
             />

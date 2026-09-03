@@ -262,6 +262,7 @@
     "queue": "Priority decision queue",
     "queueMeta": "Ordered by due time and risk",
     "loadError": "The decision queue could not be loaded.",
+    "detailLoadError": "The selected approval could not be reverified. Its evidence and decision actions remain hidden until the latest authority is confirmed.",
     "empty": "No decisions need you",
     "emptyDescription": "New approval tasks will appear here.",
     "select": "Select a request to review",

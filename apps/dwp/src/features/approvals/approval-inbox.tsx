@@ -11,7 +11,13 @@ import {
   X,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, FormDialog, FormField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ErrorState,
+  FormDialog,
+  FormField,
+  LoadingState,
+} from '@dwp-frontend/design-system';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   claimApprovalTask,
@@ -64,10 +70,11 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     retry: 1,
   });
   useEffect(() => {
-    if (!tasks.isError) return;
-    setSelectedId(undefined);
+    if (!tasks.isFetching && !tasks.isError) return;
     setDecision(undefined);
-  }, [tasks.isError]);
+    setComment('');
+    if (tasks.isError) setSelectedId(undefined);
+  }, [tasks.isError, tasks.isFetching]);
   useEffect(() => {
     if (tasks.isError) return;
     if (!tasks.data?.length) {
@@ -82,22 +89,43 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     queryKey: ['approvals', 'task', selectedId],
     queryFn: () => getApprovalTask(selectedId!),
     enabled: Boolean(selectedId) && !tasks.isError,
-    staleTime: 10_000,
+    staleTime: 0,
+    retry: 1,
   });
+  useEffect(() => {
+    if (!decision || (!detail.isFetching && !detail.isError)) return;
+    setDecision(undefined);
+    setComment('');
+  }, [decision, detail.isError, detail.isFetching]);
   const runDecision = useApprovalGovernedMutation('route.approvals.work.task-decision.action');
   const runClaim = useApprovalGovernedMutation('route.approvals.work.task-claim.action');
   const decide = useMutation({
-    mutationFn: (input: { decision: Decision; comment?: string; expectedVersion: number }) =>
-      runDecision((execution) => decideApprovalTask(selectedId!, input, execution)),
-    onSuccess: async () => {
+    mutationFn: (input: {
+      taskId: string;
+      decision: Decision;
+      comment?: string;
+      expectedVersion: number;
+    }) =>
+      runDecision((execution) =>
+        decideApprovalTask(
+          input.taskId,
+          {
+            decision: input.decision,
+            comment: input.comment,
+            expectedVersion: input.expectedVersion,
+          },
+          execution
+        )
+      ),
+    onSuccess: async (_result, input) => {
       setDecision(undefined);
       setComment('');
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['approvals', 'tasks'] }),
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'task', selectedId] }),
+        queryClient.invalidateQueries({ queryKey: ['approvals', 'task', input.taskId] }),
         queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
       ]);
-      setSelectedId(undefined);
+      setSelectedId((current) => (current === input.taskId ? undefined : current));
       toast.success(t('inbox.decisionSaved'));
     },
     onError: (error) =>
@@ -117,7 +145,10 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     onError: (error) =>
       !isProductSurfaceOperationCancelledError(error) && toast.error(t('inbox.claimError')),
   });
-  const selected = tasks.isError ? undefined : detail.data;
+  const selected =
+    tasks.isFetching || tasks.isError || detail.isError || detail.isFetching
+      ? undefined
+      : detail.data;
 
   return (
     <Paper
@@ -170,6 +201,7 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
                 key={task.taskId}
                 task={task}
                 selected={selectedId === task.taskId}
+                disabled={tasks.isFetching}
                 onClick={() => setSelectedId(task.taskId)}
               />
             ))}
@@ -187,7 +219,28 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
         </Box>
       </Box>
       <Box sx={{ minWidth: 0, bgcolor: '#FAFBFD' }}>
-        {!selected && (
+        {tasks.isFetching && (
+          <Box sx={{ minHeight: 560, display: 'grid', placeItems: 'center', px: 3 }}>
+            <LoadingState label={t('common:labels.loading')} size="page" embedded />
+          </Box>
+        )}
+        {!tasks.isFetching && selectedId && detail.isFetching && (
+          <Box sx={{ minHeight: 560, display: 'grid', placeItems: 'center', px: 3 }}>
+            <LoadingState label={t('common:labels.loading')} size="page" embedded />
+          </Box>
+        )}
+        {!tasks.isFetching && selectedId && detail.isError && (
+          <Box sx={{ minHeight: 560, display: 'grid', placeItems: 'center', px: 3 }}>
+            <ErrorState
+              title={t('inbox.detailLoadError')}
+              retryLabel={t('actions.retry')}
+              retrying={detail.isFetching}
+              onRetry={() => void detail.refetch()}
+              size="standard"
+            />
+          </Box>
+        )}
+        {!tasks.isFetching && !selectedId && !detail.isFetching && !detail.isError && (
           <Box
             sx={{
               minHeight: 560,
@@ -422,22 +475,24 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
         )}
       </Box>
       <FormDialog
-        open={Boolean(decision)}
+        open={Boolean(decision && selected)}
         title={t(`inbox.dialog.${decision ?? 'APPROVE'}.title`)}
         description={t(`inbox.dialog.${decision ?? 'APPROVE'}.description`)}
         cancelLabel={t('actions.cancel')}
         submitLabel={t(`inbox.dialog.${decision ?? 'APPROVE'}.confirm`)}
         submitIntent={decision === 'REJECT' ? 'danger' : 'primary'}
         busy={decide.isPending}
-        submitDisabled={decision !== 'APPROVE' && comment.trim().length < 8}
+        submitDisabled={!selected || (decision !== 'APPROVE' && comment.trim().length < 8)}
         onClose={() => setDecision(undefined)}
-        onSubmit={() =>
+        onSubmit={() => {
+          if (!decision || !selected) return;
           decide.mutate({
-            decision: decision!,
+            taskId: selected.task.taskId,
+            decision,
             comment: comment.trim() || undefined,
-            expectedVersion: selected!.task.version,
-          })
-        }
+            expectedVersion: selected.task.version,
+          });
+        }}
       >
         <FormField
           autoFocus
@@ -456,14 +511,17 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
 function TaskRow({
   task,
   selected,
+  disabled,
   onClick,
 }: {
   task: ApprovalTask;
   selected: boolean;
+  disabled: boolean;
   onClick: () => void;
 }) {
   return (
     <ButtonBase
+      disabled={disabled}
       onClick={onClick}
       sx={{
         width: 1,

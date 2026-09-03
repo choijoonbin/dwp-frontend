@@ -27,7 +27,7 @@ import type { TFunction } from 'i18next';
 import type { AskDwpResponse, AskProgressStage } from '@dwp-frontend/shared-utils';
 import type { DwaionWorkspaceState } from './dwaion-workspace-model';
 
-import { responseTone } from './dwaion-workspace-model';
+import { isGroundedFallbackResponse, responseTone } from './dwaion-workspace-model';
 import { DwaionSpeechButton } from '../../components/dwaion-assistant/dwaion-voice-controls';
 
 type DwaionWorkspaceAnswerProps = {
@@ -62,6 +62,7 @@ export function DwaionWorkspaceAnswer({
   const { t, i18n } = useTranslation('work');
   const toast = useToast();
   const [feedback, setFeedback] = useState<'UP' | 'DOWN' | null>(null);
+  const groundedFallback = response ? isGroundedFallbackResponse(response) : false;
 
   useEffect(() => setFeedback(null), [response?.runId]);
 
@@ -170,10 +171,14 @@ export function DwaionWorkspaceAnswer({
               </Box>
               <Box>
                 <Typography component="h2" variant="subtitle1" fontWeight={800}>
-                  {t('askPage.answerHeading')}
+                  {t(groundedFallback ? 'askPage.fallback.answerHeading' : 'askPage.answerHeading')}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {t('askPage.answerDescription')}
+                  {t(
+                    groundedFallback
+                      ? 'askPage.fallback.answerDescription'
+                      : 'askPage.answerDescription'
+                  )}
                 </Typography>
               </Box>
             </Stack>
@@ -182,7 +187,11 @@ export function DwaionWorkspaceAnswer({
                 size="small"
                 color={responseTone(response)}
                 variant="outlined"
-                label={t(`askPage.states.${response.state}`)}
+                label={
+                  groundedFallback
+                    ? t('askPage.fallback.state')
+                    : t(`askPage.states.${response.state}`)
+                }
               />
               {response.answer && (
                 <DwaionSpeechButton
@@ -237,6 +246,32 @@ export function DwaionWorkspaceAnswer({
           </Stack>
 
           <Divider sx={{ mt: 1.75 }} />
+
+          {groundedFallback && (
+            <Box
+              role="status"
+              sx={{
+                mt: 2,
+                px: 1.5,
+                py: 1.25,
+                borderInlineStart: 3,
+                borderColor: 'info.main',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <Stack direction="row" spacing={1} alignItems="flex-start">
+                <ShieldCheck size={17} aria-hidden="true" />
+                <Box>
+                  <Typography component="p" variant="subtitle2">
+                    {t('askPage.fallback.noticeTitle')}
+                  </Typography>
+                  <Typography component="p" variant="body2" sx={{ mt: 0.25 }}>
+                    {t('askPage.fallback.noticeDescription')}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+          )}
 
           {response.state === 'COMPLETED' && response.answer ? (
             <Box

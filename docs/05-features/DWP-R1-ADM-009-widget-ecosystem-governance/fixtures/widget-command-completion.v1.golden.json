@@ -451,7 +451,7 @@
             "versionId": "22222222-2222-4222-8222-222222222222"
           }
         },
-        "requestProjection": { "decision": "APPROVE" },
+        "requestProjection": { "decision": "REJECT" },
         "currentTargetProjection": null
       },
       "response": {
@@ -509,12 +509,12 @@
             }
           },
           "manifestHash": "a3a1fd5ffff9d7f6014ec3007a16ebea10dbf8ce3ae19e02fd2bd001fee0eb97",
-          "workflowState": "APPROVED",
+          "workflowState": "REJECTED",
           "releaseState": "UNPUBLISHED",
           "safetyState": "CLEAR",
           "attestation": "PROVIDER_CERTIFIED",
           "certificationStatus": "PASS",
-          "currentReviewDecisionId": null,
+          "currentReviewDecisionId": "88888888-8888-4888-8888-888888888888",
           "currentQuarantineEventId": null,
           "bindingCatalogRevision": "binding_catalog_revision_0042",
           "version": 42,
@@ -523,7 +523,7 @@
           "allowedTransitions": []
         },
         "responseEtag": "\"v42\"",
-        "responseHash": "187fb6b02431a9fd97813deca34d9eea8823b8d0e7c04dda3d1425ff5fb865ae",
+        "responseHash": "aafcfd30168903733c5abd3de4710555623cdfd809b4212d00d10e82ef9aeb3f",
         "completedAt": "2026-08-27T10:00:00Z"
       }
     },
@@ -540,8 +540,14 @@
             "versionId": "22222222-2222-4222-8222-222222222222"
           }
         },
-        "requestProjection": {},
-        "currentTargetProjection": null
+        "requestProjection": {
+          "rejectedDecisionId": "88888888-8888-4888-8888-888888888888"
+        },
+        "currentTargetProjection": {
+          "versionId": "22222222-2222-4222-8222-222222222222",
+          "workflowState": "REJECTED",
+          "currentReviewDecisionId": "88888888-8888-4888-8888-888888888888"
+        }
       },
       "response": {
         "schemaVersion": 1,

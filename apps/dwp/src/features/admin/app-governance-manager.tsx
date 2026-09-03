@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowUpRight,
@@ -61,6 +61,7 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-point-catalog';
+import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 import { AppAdminPresetManager } from './app-admin-preset-manager';
 import {
   canRequestGovernedAssignment,
@@ -164,6 +165,8 @@ export function AppGovernanceManager() {
     approvalMode: AppGovernanceApprovalMode | null;
   } | null>(null);
   const [busy, setBusy] = useState(false);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  useShellAuxiliaryAvoidance({ boundaryRef: contentRef });
   const dashboard = useQuery({ queryKey, queryFn: getAppGovernanceDashboard });
   const data = dashboard.data;
   const actor: AppGovernanceActor = {
@@ -174,7 +177,7 @@ export function AppGovernanceManager() {
   };
   const requestScopes = governedRequestScopes(actor);
   const canRequest = canRequestGovernedAssignment(actor);
-  const canCreateBoundary = actor.roles.includes('APP_CATALOG_ADMIN');
+  const canAdministerBoundaries = actor.roles.includes('APP_CATALOG_ADMIN');
 
   useEffect(() => {
     if (!hasManagementWorkbenchReturnFocus(browserSessionStorage())) return;
@@ -197,15 +200,24 @@ export function AppGovernanceManager() {
   if (dashboard.isError || !data) {
     return (
       <ManagementPanelError
-        message={
-          dashboard.error instanceof Error ? dashboard.error.message : t('common.operationError')
-        }
+        message={t('appGovernance.loadErrorDescription')}
+        retryLabel={t('common.actions.retry')}
+        onRetry={() => void dashboard.refetch()}
+        retrying={dashboard.isFetching}
       />
     );
   }
+  const canCreateBoundary =
+    canAdministerBoundaries &&
+    data.resourceSets.some((resourceSet) => resourceSet.resources.length > 0);
+  const canRequestAssignment =
+    canRequest &&
+    data.resourceSets.some(
+      (resourceSet) => !requestScopes || requestScopes.has(resourceSet.resourceSetId)
+    );
 
   return (
-    <Stack gap={2.5}>
+    <Stack ref={contentRef} gap={2.5}>
       {(data.metrics.pendingApprovals > 0 || data.metrics.resourcesWithoutOwner > 0) && (
         <Alert severity={data.metrics.resourcesWithoutOwner > 0 ? 'warning' : 'info'}>
           {t('appGovernance.attention', {
@@ -296,7 +308,7 @@ export function AppGovernanceManager() {
               {t('appGovernance.actions.newBoundary')}
             </ActionButton>
           )}
-          {canRequest && (
+          {canRequestAssignment && (
             <ActionButton startIcon={<Plus size={17} />} onClick={() => setAssignmentOpen(true)}>
               {t('appGovernance.actions.requestAssignment')}
             </ActionButton>
@@ -389,7 +401,7 @@ export function AppGovernanceManager() {
                             label={t(`appGovernance.states.${assignment.lifecycleState}`)}
                           />
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell align="right" data-shell-auxiliary-avoidance="inline-end">
                           <Stack
                             direction="row"
                             justifyContent="flex-end"
@@ -456,7 +468,7 @@ export function AppGovernanceManager() {
             />
           )}
         </Stack>
-      ) : (
+      ) : data.resourceSets.length > 0 ? (
         <Box
           sx={{
             display: 'grid',
@@ -553,6 +565,16 @@ export function AppGovernanceManager() {
             );
           })}
         </Box>
+      ) : (
+        <Box data-testid="app-governance-resource-set-empty">
+          <GuidedEmptyState
+            kind="first-use"
+            title={t('appGovernance.empty.boundariesTitle')}
+            description={t('appGovernance.empty.boundariesDescription')}
+            actionLabel={t('common.actions.refresh')}
+            onAction={() => void refresh()}
+          />
+        </Box>
       )}
 
       <AssignmentDialog
@@ -568,8 +590,8 @@ export function AppGovernanceManager() {
             await refresh();
             setAssignmentOpen(false);
             toast.success(t('appGovernance.toasts.requested'));
-          } catch (error) {
-            toast.error(error instanceof Error ? error.message : t('common.operationError'));
+          } catch {
+            toast.error(t('common.operationError'));
           } finally {
             setBusy(false);
           }
@@ -587,14 +609,15 @@ export function AppGovernanceManager() {
             await refresh();
             setBoundaryOpen(false);
             toast.success(t('appGovernance.toasts.boundaryCreated'));
-          } catch (error) {
-            toast.error(error instanceof Error ? error.message : t('common.operationError'));
+          } catch {
+            toast.error(t('common.operationError'));
           } finally {
             setBusy(false);
           }
         }}
       />
       <DecisionDialog
+        key={action ? `${action.assignment.assignmentId}:${action.decision}` : 'closed'}
         action={action}
         busy={busy}
         onClose={() => setAction(null)}
@@ -610,8 +633,8 @@ export function AppGovernanceManager() {
             await refresh();
             setAction(null);
             toast.success(t(`appGovernance.toasts.${action.decision.toLowerCase()}`));
-          } catch (error) {
-            toast.error(error instanceof Error ? error.message : t('common.operationError'));
+          } catch {
+            toast.error(t('common.operationError'));
           } finally {
             setBusy(false);
           }

@@ -126,6 +126,14 @@ describe('Ask runtime API', () => {
     ['active registry has no revision', { agentRegistry: { revision: 0 } }],
     ['completed answer has no confidence', { confidence: null }],
     ['completed answer follows a handoff', { policy: { outcome: 'HANDOFF', modelAllowed: false } }],
+    [
+      'fallback provider uses the normal answer status',
+      { modelRoute: { provider: 'DWP_GROUNDED_FALLBACK' } },
+    ],
+    [
+      'fallback status is paired with an external model provider',
+      { statusCode: 'ANSWER_GROUNDED_FALLBACK' },
+    ],
   ])('fails closed when %s', async (_label, patch) => {
     const safe = groundedResponse();
     const unsafePatch = patch as Record<string, Record<string, unknown> | unknown>;
@@ -153,6 +161,37 @@ describe('Ask runtime API', () => {
     await expect(
       askDwp({ requestId: 'request-ask-1', query: 'Question', locale: 'en' })
     ).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('accepts an explicitly identified evidence-only fallback', async () => {
+    const grounded = groundedResponse();
+    const response = {
+      ...grounded,
+      confidence: 'LOW',
+      statusCode: 'ANSWER_GROUNDED_FALLBACK',
+      modelRoute: {
+        ...grounded.modelRoute,
+        provider: 'DWP_GROUNDED_FALLBACK',
+        model: 'evidence-snapshot-v1',
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        latencyMs: 0,
+      },
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, { data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(
+        jsonResponse(200, { status: 'SUCCESS', message: 'OK', data: response })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      askDwp({ requestId: 'request-ask-1', query: 'Question', locale: 'en' })
+    ).resolves.toEqual(response);
   });
 
   it('accepts an honest configuration-required result without an answer', async () => {

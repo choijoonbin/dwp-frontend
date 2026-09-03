@@ -94,6 +94,15 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
   const presets = data.presetCatalog ?? [];
   const assignments = data.presetAssignments ?? [];
   const reviews = data.presetReviews ?? [];
+  const requestablePresets = presets.filter(
+    (preset) =>
+      preset.requestable !== false &&
+      data.resourceSets.some(
+        (resourceSet) =>
+          (!requestScopes || requestScopes.has(resourceSet.resourceSetId)) &&
+          resourceSet.resources.some((resource) => resource.resourceKey === preset.appResourceKey)
+      )
+  );
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: governanceQueryKey });
@@ -108,8 +117,8 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
       setPresetAction(null);
       setReviewAction(null);
       toast.success(t(successKey));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('common.operationError'));
+    } catch {
+      toast.error(t('common.operationError'));
     } finally {
       setBusy(false);
     }
@@ -127,7 +136,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
             {t('appGovernance.presets.description')}
           </Typography>
         </Box>
-        {canRequest && presets.some((preset) => preset.requestable !== false) && (
+        {canRequest && requestablePresets.length > 0 && (
           <ActionButton startIcon={<Plus size={17} />} onClick={() => setRequestOpen(true)}>
             {t('appGovernance.actions.requestPreset')}
           </ActionButton>
@@ -207,7 +216,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                         label={t(`appGovernance.states.${assignment.lifecycleState}`)}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell align="right" data-shell-auxiliary-avoidance="inline-end">
                       <Stack direction="row" justifyContent="flex-end" gap={0.5}>
                         {mayApprove && (
                           <>
@@ -297,7 +306,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                         label={t(`appGovernance.presets.reviewStates.${review.lifecycleState}`)}
                       />
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell align="right" data-shell-auxiliary-avoidance="inline-end">
                       {mayDecidePresetReview(review, actor) && (
                         <Stack direction="row" justifyContent="flex-end" gap={0.5}>
                           <ActionIconButton
@@ -327,7 +336,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
         open={requestOpen}
         busy={busy}
         data={data}
-        presets={presets}
+        presets={requestablePresets}
         allowedResourceSetIds={requestScopes}
         onClose={() => setRequestOpen(false)}
         onSubmit={(payload) =>
@@ -335,6 +344,13 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
         }
       />
       <ReasonDialog
+        key={
+          presetAction
+            ? `preset:${presetAction.assignment.presetAssignmentId}:${presetAction.decision}`
+            : reviewAction
+              ? `review:${reviewAction.review.reviewId}:${reviewAction.decision}`
+              : 'closed'
+        }
         open={Boolean(presetAction || reviewAction)}
         busy={busy}
         title={t(

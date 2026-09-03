@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ExternalLink, X } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -47,6 +47,7 @@ export function DetailInspector({
   onDeepLink,
   status,
 }: DetailInspectorProps) {
+  const titleId = useId();
   const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export function DetailInspector({
         sx={{ px: 2.5, py: 2, borderBottom: 1, borderColor: 'divider' }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" variant="h6">
+          <Typography id={titleId} component="h2" variant="h6">
             {title}
           </Typography>
           {subtitle && (
@@ -142,7 +143,7 @@ export function DetailInspector({
         anchor="right"
         open={open}
         onClose={close}
-        slotProps={{ paper: { sx: { maxWidth: '100%' } } }}
+        slotProps={{ paper: { 'aria-labelledby': titleId, sx: { maxWidth: '100%' } } }}
       >
         {content}
       </Drawer>

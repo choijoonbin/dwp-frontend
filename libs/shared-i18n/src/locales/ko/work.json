@@ -1306,6 +1306,15 @@
     },
     "answerHeading": "DWAI·ON 응답",
     "answerDescription": "출처와 처리 상태는 검증 패널에서 확인할 수 있습니다.",
+    "fallback": {
+      "state": "근거 기반 대체 응답",
+      "answerHeading": "권한 내 업무 근거 요약",
+      "answerDescription": "AI 추론 연결 대신 검증된 원본 근거를 우선순위로 정리했습니다.",
+      "noticeTitle": "현재는 원본 근거를 직접 정리한 응답입니다",
+      "noticeDescription": "출처와 우선순위는 검증됐지만 AI 비교·종합은 수행되지 않았습니다. 모델 연결이 복구되면 다시 실행해 결과를 비교하세요.",
+      "responseMode": "응답 방식",
+      "responseModeValue": "검증된 원본 근거 직접 정리"
+    },
     "yourQuestion": "내 질문",
     "sourcesHeading": "검증된 출처 ({{count}})",
     "sourceTypes": {
@@ -1342,7 +1351,8 @@
       "transcript": "대화 기록",
       "assistant": "DWAI·ON",
       "you": "나",
-      "withheld": "정책 또는 근거 부족으로 답변을 보류했습니다."
+      "withheld": "정책 또는 근거 부족으로 답변을 보류했습니다.",
+      "fallbackDescription": "AI 비교·종합 없이 당시 권한으로 검증된 원본 근거를 직접 정리한 응답입니다."
     },
     "citationPreview": {
       "description": "현재 권한으로 공개 가능한 근거 일부를 확인합니다.",

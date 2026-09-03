@@ -492,6 +492,7 @@
       "save": "Save",
       "close": "Close",
       "refresh": "Refresh",
+      "retry": "Retry",
       "edit": "Edit",
       "create": "Create",
       "delete": "Delete",
@@ -3407,6 +3408,7 @@
   },
   "appGovernance": {
     "loading": "Loading application responsibility governance",
+    "loadErrorDescription": "Application governance data could not be loaded. Try again in a moment. If the problem continues, contact support.",
     "attention": "Review {{pending}} pending approvals and {{ownerless}} app scopes without an owner.",
     "viewLabel": "Application governance view",
     "controlResponsibilitiesNotice": "This view manages only app ownership and access approval, fulfillment, and review responsibilities. App configuration administrators and product specialist duties must be requested, approved, and activated together through an app admin preset.",
@@ -3535,7 +3537,9 @@
     },
     "empty": {
       "assignmentsTitle": "No application responsibilities assigned",
-      "assignmentsDescription": "Request an assignment with an explicit responsibility, resource scope, and validity."
+      "assignmentsDescription": "Request an assignment with an explicit responsibility, resource scope, and validity.",
+      "boundariesTitle": "No app resource sets are available",
+      "boundariesDescription": "Enabled tenant applications are provisioned into auditable resource sets. Refresh after application provisioning is complete."
     },
     "toasts": {
       "requested": "Responsibility assignment submitted for approval.",

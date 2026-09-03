@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarClock, Plus, RotateCcw, UserRoundCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -78,6 +78,18 @@ export function ApprovalDelegations() {
     staleTime: 60_000,
     retry: 1,
   });
+  useEffect(() => {
+    if (delegations.isError) {
+      setOpen(false);
+      setCandidateQuery('');
+      setSelected(null);
+      setScopeType('ALL');
+      setWorkflowId('');
+      setReason('');
+    }
+    if (!delegations.isFetching && !delegations.isError) return;
+    setRevoking(null);
+  }, [delegations.isError, delegations.isFetching]);
   const workflowOptions = useMemo(
     () => buildApprovalDelegationWorkflowOptions(workflows.data ?? [], i18n.resolvedLanguage),
     [i18n.resolvedLanguage, workflows.data]
@@ -95,6 +107,9 @@ export function ApprovalDelegations() {
   };
   const create = useMutation({
     mutationFn: () => {
+      if (delegations.isFetching || delegations.isError || !delegations.data) {
+        throw new Error('Delegation authority is not loaded.');
+      }
       if (!selected) throw new Error('Delegation candidate is required.');
       const input = buildApprovalDelegationCreateInput({
         delegateUserId: selected.userId,
@@ -116,10 +131,23 @@ export function ApprovalDelegations() {
       !isProductSurfaceOperationCancelledError(error) && toast.error(t('delegations.createError')),
   });
   const revoke = useMutation({
-    mutationFn: (delegation: ApprovalDelegation) =>
-      runRevoke((execution) =>
+    mutationFn: (delegation: ApprovalDelegation) => {
+      const authoritative = delegations.data?.find(
+        (candidate) => candidate.delegationId === delegation.delegationId
+      );
+      if (
+        delegations.isFetching ||
+        delegations.isError ||
+        !authoritative ||
+        authoritative.version !== delegation.version ||
+        authoritative.direction !== 'OUTGOING'
+      ) {
+        throw new Error('Delegation authority is not current.');
+      }
+      return runRevoke((execution) =>
         revokeApprovalDelegation(delegation.delegationId, delegation.version, execution)
-      ),
+      );
+    },
     onSuccess: (next) => {
       queryClient.setQueryData(['approvals', 'delegations'], next);
       setRevoking(null);
@@ -131,10 +159,13 @@ export function ApprovalDelegations() {
   const selectedWorkflowAvailable = workflowOptions.some((option) => option.value === workflowId);
   const valid =
     selected !== null &&
+    !delegations.isFetching &&
+    !delegations.isError &&
     !candidates.isError &&
     reason.trim().length >= 10 &&
     new Date(endsAt) > new Date(startsAt) &&
-    (scopeType === 'ALL' || (!workflows.isError && selectedWorkflowAvailable));
+    (scopeType === 'ALL' ||
+      (!workflows.isFetching && !workflows.isError && selectedWorkflowAvailable));
 
   return (
     <ApprovalSurface
@@ -143,9 +174,10 @@ export function ApprovalDelegations() {
       action={
         canManage ? (
           <ActionButton
-            intent="primary"
+            intent="secondary"
             size="small"
             startIcon={<Plus size={16} />}
+            disabled={delegations.isFetching || delegations.isError}
             onClick={() => setOpen(true)}
           >
             {t('delegations.add')}
@@ -176,7 +208,12 @@ export function ApprovalDelegations() {
             <DelegationRow
               key={delegation.delegationId}
               delegation={delegation}
-              canRevoke={canManage && delegation.direction === 'OUTGOING'}
+              canRevoke={
+                canManage &&
+                !delegations.isFetching &&
+                !delegations.isError &&
+                delegation.direction === 'OUTGOING'
+              }
               onRevoke={() => setRevoking(delegation)}
             />
           ))}
@@ -202,7 +239,10 @@ export function ApprovalDelegations() {
         busy={create.isPending}
         submitDisabled={!valid}
         onClose={closeEditor}
-        onSubmit={() => create.mutate()}
+        onSubmit={() => {
+          if (!valid) return;
+          create.mutate();
+        }}
       >
         <Stack gap={2}>
           {candidates.isError && deferredCandidateQuery.length >= 2 && (

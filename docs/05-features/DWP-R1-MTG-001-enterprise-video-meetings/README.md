@@ -43,9 +43,13 @@ dwp-meeting-server ---- PostgreSQL dwp_meetings
         v
 LiveKit provider port ---- LiveKit SFU / TURN ---- signed webhook
         |
+        +-- trusted recording finalize ---- short-lived playback ticket
+        |
         +-- governed transcript source ---- internal Agent ---- attested managed model
         |
-        +-- Egress -> KMS-encrypted object storage (production enablement gate)
+        +-- fenced deletion broker ---- object delete / crypto-shred evidence
+        |
+        +-- Egress / STT -> KMS-encrypted object storage (production enablement gate)
 ```
 
 Media bytes do not belong in PostgreSQL. The database stores control-plane
@@ -112,10 +116,13 @@ role with explicit evidence.
 - An administrator-only AI and data-governance readiness surface. It reports policy,
   provider liveness, processing region, KMS, audit, Egress, storage, STT, recent model
   execution, retention, and deletion evidence without granting meeting-content access.
-- Leased, compare-and-set (CAS) deletion orchestration and crypto-shred readiness
-  are modeled across source objects, indexes, caches, and derivatives. A deletion
-  receipt is not complete until every governed target is accounted for; key
-  destruction is evidence-backed and legal holds fence deletion.
+- Recording and transcript source objects use durable, leased, compare-and-set
+  deletion commands. Provider I/O runs outside the database transaction; current
+  fence, unexpired lease, immutable object identity, and deletion/crypto-shred
+  receipt are revalidated before metadata can be cleared or completion evidence
+  can be committed. Legal hold, stale workers, failed or stale broker health, and
+  overdue retention backlog keep recording start, transcript registration and
+  finalization, and intelligence analysis fail-closed.
 - Tenant policy and operations surfaces.
 - Responsive and keyboard-accessible Korean and English UI, including 320 px layouts,
   mobile overlay focus containment, 200% zoom-equivalent layouts, dark mode, forced
@@ -144,10 +151,20 @@ governance gates pass:
   `START`/`STOP` provenance in the deployed audit sink.
 - WCAG-conformant live captions, streaming STT, editable transcript, and
   human-reviewed AI summary.
-- Executable retention, legal-hold, leased/CAS deletion, crypto-shred, and
-  deletion-evidence workers for meeting, attendance, audit, and future artifact
-  data. Raw transcript object deletion remains unverified and is an explicit
-  production NO-GO until storage-level evidence is supplied.
+- Real broker execution against each approved object store and KMS, including
+  provider-side object-not-found/idempotency behavior, envelope-key destruction,
+  legal-hold preservation, backup/replica expiry, and independently retrievable
+  deletion evidence. The code-level recording and transcript deletion workflows do
+  not by themselves prove storage-level deletion or crypto-shred; that evidence is
+  an explicit production NO-GO.
+- A live broker heartbeat must attest customer-managed storage, provider retention
+  disabled, bounded orphan cleanup, delete and crypto-shred capabilities, and the
+  configured maximum orphan TTL. Missing configuration, stale heartbeat, or a failed
+  deletion receipt keeps artifact registration/finalization and downstream analysis
+  unavailable; a local adapter or mock capability never opens this gate.
+- Executable retention and deletion coverage for attendance, audit, search/index,
+  cache, backup, and any future derived artifact that is outside the recording and
+  transcript source-object workflows.
 - Verified external guest identity/invitation and governed join-before-host entry.
 - Governed co-host delegation and revocation, participant removal, request-to-mute,
   return-to-lobby, and bulk admission controls with provider-side enforcement.

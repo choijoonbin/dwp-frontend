@@ -202,19 +202,23 @@ workers and late callbacks unable to alter the historical decision.
 
 ## ADR-018: Deletion uses leased CAS orchestration and crypto-shred readiness
 
-**Decision:** Retention expiry or an approved deletion request transitions each
-artifact lineage through a leased, compare-and-set (CAS) deletion workflow.
-Workers claim bounded targets, re-check legal hold and current ACL/state, delete
-source objects and derivatives in dependency order, and record per-target
-evidence. Crypto-shred is a readiness control: destroying the envelope key is
-allowed only after the governed target set is accounted for and the key
-destruction receipt is durable; partial success remains incomplete.
+**Decision:** Retention expiry transitions recording and transcript source objects
+through durable, leased, compare-and-set (CAS) deletion commands. Workers claim a
+bounded immutable object identity, re-check legal hold and current state, execute
+the trusted deletion broker outside the database transaction, then require the
+current fence and an unexpired lease before clearing custody metadata and committing
+the deletion/crypto-shred receipt. Stale workers, overdue backlog, broker failure,
+and missing fresh worker evidence keep new recording or transcript custody
+fail-closed. Other indexes, caches, backups, and derivatives must join the governed
+target set before they can be represented as deleted.
 
-**Reason:** Deletion spans object storage, transcript/index/embedding derivatives,
-caches, and backups that do not share one transaction. Lease fencing prevents
-duplicate or stale workers from closing a deletion, while CAS preserves legal
-holds and concurrent state changes. Storage-level evidence for raw transcript
-object deletion is not yet verified and therefore remains a production NO-GO.
+**Reason:** Deletion spans systems that do not share one transaction. Durable
+commands make provider success recoverable after a process crash, lease fencing
+prevents a reclaimed command's former worker from closing it, and CAS preserves
+legal holds and concurrent state changes. A passing code adapter still does not
+prove deletion in the deployed object store, KMS, replicas, or backups; real
+storage-level deletion and crypto-shred evidence therefore remain a production
+NO-GO.
 
 ## ADR-019: User content custody is distinct from administration
 
@@ -243,9 +247,9 @@ public `/api/meetings/v1/**` -> Meeting API -> PostgreSQL
             -> internal Agent meeting-intelligence API
 
 Egress pool -> trusted finalize -> KMS-encrypted S3-compatible storage
-STT workers -> transcript object + searchable ACL metadata
-Playback -> current ACL/retention check -> short-lived artifact ticket
-Deletion workers -> leased CAS -> dependency deletes -> crypto-shred evidence
+STT workers -> trusted transcript registration/finalization -> transcript object metadata
+Playback -> current membership/ACL/retention/version check -> short-lived artifact ticket
+Deletion workers -> durable lease/CAS -> trusted broker -> delete/crypto-shred evidence
 Agent runtime -> approved zero-retention model route -> strict cited JSON
 ```
 

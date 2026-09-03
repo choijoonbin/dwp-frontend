@@ -184,7 +184,21 @@ test('people profile deep-links to the selected person in the reporting chart', 
   );
 
   await page.goto('/hr/operations/people?asOf=2026-08-10&q=Hana');
-  await page.getByText('Lee Hana', { exact: true }).click();
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByRole('list', { name: 'People directory' })).toBeVisible();
+    await expect(page.getByRole('grid', { name: 'People directory' })).toBeHidden();
+    const geometry = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }));
+    expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
+    const accessibility = await new AxeBuilder({ page }).analyze();
+    expect(accessibility.violations).toEqual([]);
+    await page.getByRole('button', { name: /^Lee Hana,/ }).click();
+  } else {
+    await expect(page.getByRole('grid', { name: 'People directory' })).toBeVisible();
+    await page.getByText('Lee Hana', { exact: true }).click();
+  }
   await expect(
     page.getByRole('dialog').getByText('Workforce profile', { exact: true })
   ).toBeVisible();

@@ -34,7 +34,7 @@ HRIS·직원 서비스·구매·권한·Agent 실행 등 여러 업무 앱의 �
 | 장기 실행 Timer·Retry                 | 검증된 Durable Workflow Engine Adapter |
 | AI 요약·초안                          | DWP Governed Agent Runtime             |
 
-## 2026-08-31 내부 완결 기준선
+## 2026-09-02 내부 완결 기준선
 
 - 개인 홈의 `전자결재` 앱에서 `/approvals/home`으로 진입하며, 결재 현황·우선 결재함·
   단계 흐름·내 요청·정책 인사이트를 개인화 가능한 위젯으로 제공한다.
@@ -53,6 +53,12 @@ HRIS·직원 서비스·구매·권한·Agent 실행 등 여러 업무 앱의 �
   기록하고 결정·설계 Command는 Audit Outbox로 연결한다.
 - 결재 위임·대리인 후보·게시 Workflow 조회 실패는 빈 목록으로 가장하지 않는다. 각
   실패를 독립적으로 알리고 같은 화면에서 재시도하며, 실패한 권위 데이터로 저장하지 않는다.
+- Task·Request 상세는 매 진입과 재검증에서 최신 권위를 요구한다. 403/503 또는 조회 중에는
+  캐시된 Payload·Timeline·결정 작업을 숨기고, 열린 명령은 원 식별자·version과 현재 목록
+  상태가 일치할 때만 제출한다.
+- 보완 답변은 기존 Payload Key가 아니라 요청에 고정된 `formSchema` 전체를 렌더링한다.
+  기존 Payload에 없던 필수 Field도 사용자가 입력해야 하며, 상세 권위가 확인되지 않으면
+  답변 전송을 fail-closed한다.
 - 게시·운영 재처리 같은 고위험 Command는 서버의 exact Action 판단과 OIDC step-up을
   통과해야 한다. Browser는 임의 `contextKey`를 발급 요청에 넣지 않고 서버가 canonical
   Context를 파생하며, popup 차단·timeout·foreign origin·stale proof는 mutation 0건으로 닫는다.
