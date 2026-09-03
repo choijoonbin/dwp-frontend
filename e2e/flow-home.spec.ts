@@ -2670,13 +2670,16 @@ test('DWAI·ON applies measured clearance to every intersecting widget frame', a
     const safetyGap = 16;
     const widgets = Array.from(root.querySelectorAll<HTMLElement>('[data-workspace-widget]')).map(
       (widget) => {
-        const rect = widget.getBoundingClientRect();
+        const surface = widget.querySelector<HTMLElement>(
+          '[data-workspace-widget-content] > section'
+        );
+        const rect = (surface ?? widget).getBoundingClientRect();
         const expectedClearance =
           floating &&
-          rect.right > launcherRect.left - safetyGap &&
-          rect.left < launcherRect.right + safetyGap &&
-          rect.bottom > launcherRect.top - safetyGap &&
-          rect.top < launcherRect.bottom + safetyGap
+          rect.right > launcherRect.left &&
+          rect.left < launcherRect.right &&
+          rect.bottom > launcherRect.top &&
+          rect.top < launcherRect.bottom
             ? Math.max(0, Math.ceil(rect.right - launcherRect.left + safetyGap))
             : 0;
         const section = widget.querySelector<HTMLElement>(
@@ -2727,7 +2730,7 @@ test('News enters and leaves the same DWAI·ON clearance contract without a stat
   await expect(news).toBeVisible();
   await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
 
-  const positionNews = async (mode: 'clear' | 'overlap') => {
+  const positionNews = async (mode: 'clear' | 'near-miss' | 'overlap') => {
     await page.evaluate((position) => {
       const widget = document.querySelector<HTMLElement>(
         '[data-workspace-widget="announcements"]'
@@ -2741,7 +2744,9 @@ test('News enters and leaves the same DWAI·ON clearance contract without a stat
       const desiredTop =
         position === 'clear'
           ? launcherRect.bottom + 32
-          : launcherRect.top - Math.min(widgetRect.height - 32, widgetRect.height / 2);
+          : position === 'near-miss'
+            ? launcherRect.top - widgetRect.height - 0.5
+            : launcherRect.top - Math.min(widgetRect.height - 32, widgetRect.height / 2);
       window.scrollTo(0, Math.max(0, absoluteTop - desiredTop));
     }, mode);
     await page.evaluate(
@@ -2768,15 +2773,19 @@ test('News enters and leaves the same DWAI·ON clearance contract without a stat
         clearance: Number(widget.dataset.flowLauncherClearance ?? 0),
         paddingInlineEnd: Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd),
         sectionRight: sectionRect.right,
+        sectionBottom: sectionRect.bottom,
         viewAllRight: viewAllRect.right,
         launcherLeft: launcherRect.left,
+        launcherTop: launcherRect.top,
       };
     });
 
-  await positionNews('clear');
+  await positionNews('near-miss');
   const before = await geometry();
   expect(before.marked).toBe(false);
   expect(before.clearance).toBe(0);
+  expect(before.launcherTop - before.sectionBottom).toBeGreaterThanOrEqual(0);
+  expect(before.launcherTop - before.sectionBottom).toBeLessThanOrEqual(2);
   expect(before.sectionRight - before.viewAllRight).toBeLessThanOrEqual(24);
 
   await positionNews('overlap');

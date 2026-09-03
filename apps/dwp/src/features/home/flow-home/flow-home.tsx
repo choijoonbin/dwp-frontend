@@ -314,9 +314,19 @@ export function FlowHome({
       const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]');
       const launcherRect = launcher?.getBoundingClientRect();
       const launcherPlacement = launcher?.dataset.shellAuxiliaryPlacement;
-      stage.querySelectorAll<HTMLElement>('[data-workspace-widget]').forEach((widget) => {
-        const widgetRect = widget.getBoundingClientRect();
-        const clearance = resolveFlowLauncherClearance(widgetRect, launcherRect, launcherPlacement);
+      const measurements = Array.from(
+        stage.querySelectorAll<HTMLElement>('[data-workspace-widget]')
+      ).map((widget) => {
+        const surface = widget.querySelector<HTMLElement>(
+          '[data-workspace-widget-content] > section'
+        );
+        const visibleRect = (surface ?? widget).getBoundingClientRect();
+        return {
+          widget,
+          clearance: resolveFlowLauncherClearance(visibleRect, launcherRect, launcherPlacement),
+        };
+      });
+      measurements.forEach(({ widget, clearance }) => {
         if (clearance > 0) {
           widget.setAttribute('data-flow-launcher-edge', 'true');
           widget.setAttribute('data-flow-launcher-clearance', String(clearance));

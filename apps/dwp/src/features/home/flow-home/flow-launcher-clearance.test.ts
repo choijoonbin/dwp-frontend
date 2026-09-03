@@ -35,6 +35,35 @@ describe('resolveFlowLauncherClearance', () => {
     ).toBe(0);
   });
 
+  it('does not reserve space for a near miss or an exact edge touch', () => {
+    expect(
+      resolveFlowLauncherClearance(
+        widget({ top: 500, bottom: launcher.top - 0.5 }),
+        launcher,
+        'floating'
+      )
+    ).toBe(0);
+    expect(
+      resolveFlowLauncherClearance(widget({ top: 500, bottom: launcher.top }), launcher, 'floating')
+    ).toBe(0);
+    expect(
+      resolveFlowLauncherClearance(widget({ right: launcher.left - 0.5 }), launcher, 'floating')
+    ).toBe(0);
+    expect(
+      resolveFlowLauncherClearance(widget({ right: launcher.left }), launcher, 'floating')
+    ).toBe(0);
+  });
+
+  it('adds the safety gap only after a real collision begins', () => {
+    expect(
+      resolveFlowLauncherClearance(
+        widget({ top: 500, bottom: launcher.top + 1 }),
+        launcher,
+        'floating'
+      )
+    ).toBe(56);
+  });
+
   it('uses the supplied safety gap without relying on a widget type or fixed width', () => {
     expect(
       resolveFlowLauncherClearance(

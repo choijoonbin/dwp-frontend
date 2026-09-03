@@ -24,10 +24,11 @@ export function resolveFlowLauncherClearance(
     return 0;
   }
 
-  const intersectsInlineLane =
-    widget.right > launcher.left - clearance && widget.left < launcher.right + clearance;
-  const intersectsBlockLane =
-    widget.bottom > launcher.top - clearance && widget.top < launcher.bottom + clearance;
+  // The safety gap belongs to the clearance applied *after* a collision.
+  // Expanding the hit area by that gap makes a nearby launcher reserve space
+  // before it touches the widget, leaving a permanent-looking empty gutter.
+  const intersectsInlineLane = widget.right > launcher.left && widget.left < launcher.right;
+  const intersectsBlockLane = widget.bottom > launcher.top && widget.top < launcher.bottom;
   if (!intersectsInlineLane || !intersectsBlockLane) return 0;
 
   return Math.max(0, Math.ceil(widget.right - launcher.left + clearance));
