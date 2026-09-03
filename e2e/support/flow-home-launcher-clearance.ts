@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 type LauncherClearanceState = {
   revision: number;
@@ -73,6 +73,100 @@ async function readLauncherCollisions(page: Page) {
           element.tagName
       );
     return { launcher: launcherRect.toJSON(), collisions };
+  });
+}
+
+export async function readFlowLauncherCollisionContract(stage: Locator) {
+  return stage.evaluate((root) => {
+    const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
+    const launcherRect = launcher.getBoundingClientRect();
+    const floating = launcher.dataset.shellAuxiliaryPlacement === 'floating';
+    const safetyGap = 16;
+    const widgets = Array.from(root.querySelectorAll<HTMLElement>('[data-workspace-widget]')).map(
+      (widget) => {
+        const section = widget.querySelector<HTMLElement>(
+          '[data-workspace-widget-content] > section'
+        );
+        const rect = (section ?? widget).getBoundingClientRect();
+        const expectedClearance =
+          floating &&
+          rect.right > launcherRect.left &&
+          rect.left < launcherRect.right &&
+          rect.bottom > launcherRect.top &&
+          rect.top < launcherRect.bottom
+            ? Math.max(0, Math.ceil(rect.right - launcherRect.left + safetyGap))
+            : 0;
+        const appliedClearance = Number(widget.dataset.flowLauncherClearance ?? 0);
+        const paddingInlineEnd = section
+          ? Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd)
+          : 0;
+        return {
+          key: widget.dataset.workspaceWidget,
+          expected: expectedClearance > 0,
+          marked: widget.dataset.flowLauncherEdge === 'true',
+          expectedClearance,
+          appliedClearance,
+          paddingInlineEnd,
+        };
+      }
+    );
+    return {
+      mismatches: widgets.filter(
+        ({ expected, marked, expectedClearance, appliedClearance, paddingInlineEnd }) =>
+          expected !== marked ||
+          Math.abs(expectedClearance - appliedClearance) > 1 ||
+          (expected && paddingInlineEnd + 1 < expectedClearance)
+      ),
+      marked: widgets.filter(({ marked }) => marked).length,
+      unmarked: widgets.filter(({ marked }) => !marked).length,
+    };
+  });
+}
+
+export async function positionFlowNewsRelativeToLauncher(
+  page: Page,
+  position: 'clear' | 'near-miss' | 'overlap'
+) {
+  await page.evaluate((nextPosition) => {
+    const widget = document.querySelector<HTMLElement>('[data-workspace-widget="announcements"]')!;
+    const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
+    const widgetRect = widget.getBoundingClientRect();
+    const launcherRect = launcher.getBoundingClientRect();
+    const absoluteTop = window.scrollY + widgetRect.top;
+    const desiredTop =
+      nextPosition === 'clear'
+        ? launcherRect.bottom + 32
+        : nextPosition === 'near-miss'
+          ? launcherRect.top - widgetRect.height - 0.5
+          : launcherRect.top - Math.min(widgetRect.height - 32, widgetRect.height / 2);
+    window.scrollTo(0, Math.max(0, absoluteTop - desiredTop));
+  }, position);
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      )
+  );
+}
+
+export async function readFlowNewsLauncherGeometry(news: Locator) {
+  return news.evaluate((widget) => {
+    const section = widget.querySelector<HTMLElement>('[data-workspace-widget-content] > section')!;
+    const viewAll = section.querySelector<HTMLElement>('a[href="/communications/for-you"]')!;
+    const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
+    const sectionRect = section.getBoundingClientRect();
+    const viewAllRect = viewAll.getBoundingClientRect();
+    const launcherRect = launcher.getBoundingClientRect();
+    return {
+      marked: widget.dataset.flowLauncherEdge === 'true',
+      clearance: Number(widget.dataset.flowLauncherClearance ?? 0),
+      paddingInlineEnd: Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd),
+      sectionRight: sectionRect.right,
+      sectionBottom: sectionRect.bottom,
+      viewAllRight: viewAllRect.right,
+      launcherLeft: launcherRect.left,
+      launcherTop: launcherRect.top,
+    };
   });
 }
 

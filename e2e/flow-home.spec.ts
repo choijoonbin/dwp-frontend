@@ -21,6 +21,11 @@ import {
   flowDockRowSizes,
 } from './support/flow-home-layout-contracts';
 import { expectRoleMetricAlignment } from './support/flow-home-role-metric-contract';
+import {
+  positionFlowNewsRelativeToLauncher,
+  readFlowLauncherCollisionContract,
+  readFlowNewsLauncherGeometry,
+} from './support/flow-home-launcher-clearance';
 import { mockShellNotificationRuntime } from './support/runtime-access';
 
 const FLOW_FIXTURE_NOW = new Date('2026-08-11T00:30:00.000Z');
@@ -2663,53 +2668,7 @@ test('DWAI·ON applies measured clearance to every intersecting widget frame', a
   const stage = page.getByTestId('flow-home-personal-sections');
   await expect(stage.locator('[data-workspace-widget]')).not.toHaveCount(0);
   await expect(page.getByTestId('dwaion-launcher')).toBeVisible();
-  const collisionContract = await stage.evaluate((root) => {
-    const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
-    const launcherRect = launcher.getBoundingClientRect();
-    const floating = launcher.dataset.shellAuxiliaryPlacement === 'floating';
-    const safetyGap = 16;
-    const widgets = Array.from(root.querySelectorAll<HTMLElement>('[data-workspace-widget]')).map(
-      (widget) => {
-        const surface = widget.querySelector<HTMLElement>(
-          '[data-workspace-widget-content] > section'
-        );
-        const rect = (surface ?? widget).getBoundingClientRect();
-        const expectedClearance =
-          floating &&
-          rect.right > launcherRect.left &&
-          rect.left < launcherRect.right &&
-          rect.bottom > launcherRect.top &&
-          rect.top < launcherRect.bottom
-            ? Math.max(0, Math.ceil(rect.right - launcherRect.left + safetyGap))
-            : 0;
-        const section = widget.querySelector<HTMLElement>(
-          '[data-workspace-widget-content] > section'
-        );
-        const appliedClearance = Number(widget.dataset.flowLauncherClearance ?? 0);
-        const paddingInlineEnd = section
-          ? Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd)
-          : 0;
-        return {
-          key: widget.dataset.workspaceWidget,
-          expected: expectedClearance > 0,
-          marked: widget.dataset.flowLauncherEdge === 'true',
-          expectedClearance,
-          appliedClearance,
-          paddingInlineEnd,
-        };
-      }
-    );
-    return {
-      mismatches: widgets.filter(
-        ({ expected, marked, expectedClearance, appliedClearance, paddingInlineEnd }) =>
-          expected !== marked ||
-          Math.abs(expectedClearance - appliedClearance) > 1 ||
-          (expected && paddingInlineEnd + 1 < expectedClearance)
-      ),
-      marked: widgets.filter(({ marked }) => marked).length,
-      unmarked: widgets.filter(({ marked }) => !marked).length,
-    };
-  });
+  const collisionContract = await readFlowLauncherCollisionContract(stage);
   expect(collisionContract.mismatches).toEqual([]);
   expect(collisionContract.marked).toBeGreaterThan(0);
   expect(collisionContract.unmarked).toBeGreaterThan(0);
@@ -2730,75 +2689,25 @@ test('News enters and leaves the same DWAI·ON clearance contract without a stat
   await expect(news).toBeVisible();
   await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating');
 
-  const positionNews = async (mode: 'clear' | 'near-miss' | 'overlap') => {
-    await page.evaluate((position) => {
-      const widget = document.querySelector<HTMLElement>(
-        '[data-workspace-widget="announcements"]'
-      )!;
-      const launcherElement = document.querySelector<HTMLElement>(
-        '[data-testid="dwaion-launcher"]'
-      )!;
-      const widgetRect = widget.getBoundingClientRect();
-      const launcherRect = launcherElement.getBoundingClientRect();
-      const absoluteTop = window.scrollY + widgetRect.top;
-      const desiredTop =
-        position === 'clear'
-          ? launcherRect.bottom + 32
-          : position === 'near-miss'
-            ? launcherRect.top - widgetRect.height - 0.5
-            : launcherRect.top - Math.min(widgetRect.height - 32, widgetRect.height / 2);
-      window.scrollTo(0, Math.max(0, absoluteTop - desiredTop));
-    }, mode);
-    await page.evaluate(
-      () =>
-        new Promise<void>((resolve) =>
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-        )
-    );
-  };
-  const geometry = () =>
-    news.evaluate((widget) => {
-      const section = widget.querySelector<HTMLElement>(
-        '[data-workspace-widget-content] > section'
-      )!;
-      const viewAll = section.querySelector<HTMLElement>('a[href="/communications/for-you"]')!;
-      const launcherElement = document.querySelector<HTMLElement>(
-        '[data-testid="dwaion-launcher"]'
-      )!;
-      const sectionRect = section.getBoundingClientRect();
-      const viewAllRect = viewAll.getBoundingClientRect();
-      const launcherRect = launcherElement.getBoundingClientRect();
-      return {
-        marked: widget.dataset.flowLauncherEdge === 'true',
-        clearance: Number(widget.dataset.flowLauncherClearance ?? 0),
-        paddingInlineEnd: Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd),
-        sectionRight: sectionRect.right,
-        sectionBottom: sectionRect.bottom,
-        viewAllRight: viewAllRect.right,
-        launcherLeft: launcherRect.left,
-        launcherTop: launcherRect.top,
-      };
-    });
-
-  await positionNews('near-miss');
-  const before = await geometry();
+  await positionFlowNewsRelativeToLauncher(page, 'near-miss');
+  const before = await readFlowNewsLauncherGeometry(news);
   expect(before.marked).toBe(false);
   expect(before.clearance).toBe(0);
   expect(before.launcherTop - before.sectionBottom).toBeGreaterThanOrEqual(0);
   expect(before.launcherTop - before.sectionBottom).toBeLessThanOrEqual(2);
   expect(before.sectionRight - before.viewAllRight).toBeLessThanOrEqual(24);
 
-  await positionNews('overlap');
+  await positionFlowNewsRelativeToLauncher(page, 'overlap');
   await expect(news).toHaveAttribute('data-flow-launcher-edge', 'true');
-  const during = await geometry();
+  const during = await readFlowNewsLauncherGeometry(news);
   expect(during.clearance).toBeGreaterThan(0);
   expect(during.paddingInlineEnd + 1).toBeGreaterThanOrEqual(during.clearance);
   expect(during.viewAllRight).toBeLessThanOrEqual(during.launcherLeft - 15);
   expect(during.viewAllRight).toBeLessThan(before.viewAllRight);
 
-  await positionNews('clear');
+  await positionFlowNewsRelativeToLauncher(page, 'clear');
   await expect(news).not.toHaveAttribute('data-flow-launcher-edge');
-  const after = await geometry();
+  const after = await readFlowNewsLauncherGeometry(news);
   expect(after.clearance).toBe(0);
   expect(after.paddingInlineEnd).toBeCloseTo(before.paddingInlineEnd, 0);
   expect(after.viewAllRight).toBeCloseTo(before.viewAllRight, 0);
