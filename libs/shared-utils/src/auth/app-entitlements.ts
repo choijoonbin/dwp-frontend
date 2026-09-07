@@ -24,6 +24,18 @@ export function isAppResourceEntitled(
   );
   if (appPermissions.length === 0) return true;
 
+  return isExplicitAppResourceEntitled(resourceKey, permissions);
+}
+
+/** Requires an explicit application launch grant and never applies the legacy empty-list fallback. */
+export function isExplicitAppResourceEntitled(
+  resourceKey: string,
+  permissions: readonly AppEntitlementPermission[]
+): boolean {
+  const appPermissions = permissions.filter(
+    (permission) => permission.resourceType.trim().toUpperCase() === 'APP'
+  );
+
   const resourceKeys = new Set(appResourceAliasCandidates(resourceKey));
   const matchingPermissions = appPermissions.filter(
     (permission) =>

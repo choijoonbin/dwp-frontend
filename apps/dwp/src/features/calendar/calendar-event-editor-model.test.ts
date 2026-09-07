@@ -91,6 +91,31 @@ describe('calendar event editor model', () => {
     });
 
     expect(attendees.map((attendee) => attendee.type)).toEqual(['REQUIRED', 'REQUIRED']);
+    expect(draft.timeZone).toBe('Asia/Seoul');
     expect(calendarEventInput(draft, attendees).attendees[1]?.personPublicId).toBeNull();
   });
+
+  it.each(['FOCUS', 'TASK', 'OUT_OF_OFFICE'] as const)(
+    'removes meeting-only participants and room metadata from %s payloads',
+    (type) => {
+      const draft = {
+        ...calendarEventDraft(EVENT, { fallbackTimeZone: 'Asia/Seoul' }),
+        type,
+        resourceId: 'room-1',
+        location: 'Seoul HQ',
+        conferenceUrl: 'https://meet.example.invalid/event',
+        responseRequired: true,
+      };
+      const input = calendarEventInput(draft, calendarEditorAttendees(EVENT, [], []));
+
+      expect(input).toMatchObject({
+        type,
+        resourceId: null,
+        location: null,
+        conferenceUrl: null,
+        responseRequired: false,
+        attendees: [],
+      });
+    }
+  );
 });

@@ -19,6 +19,8 @@ import {
 } from './messaging-timeline-model';
 import { MessagingTypingIndicator } from './messaging-typing-indicator';
 import { useMessagingDisplayPreference } from './use-messaging-display-preference';
+import { useMessagingReadReceipts } from './use-messaging-read-receipts';
+import { useMessagingReadObserver } from './use-messaging-read-observer';
 
 import type {
   MessagingConversation,
@@ -109,6 +111,8 @@ export function MessagingTimelinePane({
 }: MessagingTimelinePaneProps) {
   const { i18n } = useTranslation('messaging');
   const { preference: displayPreference } = useMessagingDisplayPreference(conversation);
+  const receipts = useMessagingReadReceipts(conversation.conversationId, messages, currentUserId);
+  useMessagingReadObserver(scrollRef, conversation.conversationId, messages, currentUserId);
   const timelineItems = useMemo(
     () => buildMessagingTimelineItems(messages, currentUserId, lastReadSequence),
     [currentUserId, lastReadSequence, messages]
@@ -125,8 +129,8 @@ export function MessagingTimelinePane({
           minHeight: 0,
           overflowY: 'auto',
           overscrollBehavior: 'contain',
-          px: { xs: 1.25, sm: 2 },
-          py: 1.5,
+          px: { xs: 1.1, sm: 1.5 },
+          py: 1.15,
           scrollBehavior: 'auto',
           ...messagingTimelineSurfaceSx(displayPreference.effectiveTheme, theme),
         })}
@@ -181,7 +185,7 @@ export function MessagingTimelinePane({
                   direction="row"
                   alignItems="center"
                   spacing={1.25}
-                  role="separator"
+                  component="article"
                   aria-label={labels.unread}
                   sx={{ py: 1 }}
                 >
@@ -200,6 +204,7 @@ export function MessagingTimelinePane({
                 message={message}
                 mine={message.senderUserId === currentUserId}
                 display={displayPreference}
+                receipt={receipts.get(message.messageId)}
                 groupedWithPrevious={item.groupedWithPrevious}
                 groupedWithNext={item.groupedWithNext}
                 replyCount={message.replyCount ?? replyCounts.get(message.messageId) ?? 0}
@@ -238,6 +243,22 @@ export function MessagingTimelinePane({
             </ActionButton>
           </Box>
         ) : null}
+      </Box>
+      <Box
+        sx={{
+          px: { xs: 0.75, sm: 1.25 },
+          pt: { xs: 0.5, sm: 0.75 },
+          pb: { xs: 'calc(6px + env(safe-area-inset-bottom))', sm: 1 },
+          minWidth: 0,
+          width: 1,
+          maxWidth: 1,
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+          borderTop: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+        }}
+      >
         <Box
           role="status"
           aria-live="polite"
@@ -255,20 +276,6 @@ export function MessagingTimelinePane({
         >
           {newMessageCount > 0 ? labels.newMessages : ''}
         </Box>
-      </Box>
-      <Box
-        sx={{
-          p: 1.5,
-          minWidth: 0,
-          width: 1,
-          maxWidth: 1,
-          boxSizing: 'border-box',
-          overflow: 'hidden',
-          borderTop: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.default',
-        }}
-      >
         <MessagingTypingIndicator names={typingNames} />
         <MessagingComposer
           value={draft}

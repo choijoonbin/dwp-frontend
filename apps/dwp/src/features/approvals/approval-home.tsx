@@ -1,9 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Clock3, FileCheck2, PencilRuler, ShieldAlert, Sparkles } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  FileCheck2,
+  FilePlus2,
+  PencilRuler,
+  Radar,
+  ShieldAlert,
+  Sparkles,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import { PageCanvas } from '@dwp-frontend/design-system/components/page-canvas/page-canvas';
+import { ProgressMeter } from '@dwp-frontend/design-system/components/progress-meter/progress-meter';
+import { OperationalKpiStrip } from '@dwp-frontend/design-system/enterprise/resource/operational-kpi-strip';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
@@ -19,12 +33,10 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import Chip from '@mui/material/Chip';
-import LinearProgress from '@mui/material/LinearProgress';
-import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import { WorkspaceComposerToolbar } from '../../components/workspace-composer/workspace-composer-toolbar';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
@@ -37,14 +49,13 @@ import {
 import { WorkspaceWidgetCanvas } from '../../components/workspace-composer/workspace-widget-canvas';
 import { WorkspaceWidgetGallery } from '../../components/workspace-composer/workspace-widget-gallery';
 import { APPROVAL_HOME_WIDGET_REGISTRY } from './approval-home-widget-registry';
-import { approvalInsightFallback } from './approval-insight-copy';
 import {
-  ApprovalLinkRow,
-  ApprovalSurface,
-  PriorityChip,
-  StatusChip,
-  approvalTone,
-} from './approval-ui';
+  approvalHomeRiskColor,
+  approvalRequestProgress,
+  approvalHomeRowLimit,
+} from './approval-home-model';
+import { approvalInsightFallback } from './approval-insight-copy';
+import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
@@ -52,16 +63,22 @@ import {
 } from './use-approval-governed-mutation';
 
 import type { ApprovalHomeWidgetKey } from './approval-home-widget-registry';
+import type { LucideIcon } from 'lucide-react';
 import type {
   HomePreferenceLayout,
   HomePresentation,
   HomeWidgetSize,
+  HomeWidgetHeight,
   PersonalHomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 
 function LoadingHome() {
+  const { t } = useTranslation('approvals');
   return (
     <PageCanvas>
+      <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
+        {t('navigation.items.approvals.home.label')}
+      </Typography>
       <Skeleton variant="rounded" height={210} />
       <Box
         sx={{ mt: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' }, gap: 2 }}
@@ -85,6 +102,23 @@ export function ApprovalHome() {
     surfaceKey: 'approvals.work',
   });
   const [editing, setEditing] = useState(false);
+  const customizeButton = useRef<HTMLButtonElement>(null);
+  const preferenceRetryButton = useRef<HTMLButtonElement>(null);
+  const homeHeading = useRef<HTMLHeadingElement>(null);
+  const editor = useRef<HTMLDivElement>(null);
+  const focusEditorTransition = useRef(false);
+  useEffect(() => {
+    if (!focusEditorTransition.current) return;
+    focusEditorTransition.current = false;
+    const target = editing
+      ? editor.current?.querySelector('button')
+      : customizeButton.current && !customizeButton.current.disabled
+        ? customizeButton.current
+        : preferenceRetryButton.current && !preferenceRetryButton.current.disabled
+          ? preferenceRetryButton.current
+          : homeHeading.current;
+    target?.focus();
+  }, [editing]);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [baseVersion, setBaseVersion] = useState<number | null>(null);
   const [draftPresentation, setDraftPresentation] = useState<HomePresentation>('balanced');
@@ -119,8 +153,11 @@ export function ApprovalHome() {
     meta: requestScope.queryMeta,
   });
   const persistedWidgets = useMemo(
-    () => reconcileWorkspaceWidgets(preference.data?.layout.widgets, APPROVAL_HOME_WIDGET_REGISTRY),
-    [preference.data?.layout.widgets]
+    () =>
+      preference.data?.customized === false
+        ? defaultWorkspaceWidgets(APPROVAL_HOME_WIDGET_REGISTRY)
+        : reconcileWorkspaceWidgets(preference.data?.layout.widgets, APPROVAL_HOME_WIDGET_REGISTRY),
+    [preference.data?.customized, preference.data?.layout.widgets]
   );
   const persistedPresentation = preference.data?.layout.presentation ?? 'balanced';
   const activeWidgets = editing ? draftWidgets : persistedWidgets;
@@ -135,6 +172,7 @@ export function ApprovalHome() {
   }, [editing, persistedPresentation, persistedWidgets]);
 
   const closeEditor = () => {
+    focusEditorTransition.current = true;
     setEditing(false);
     setGalleryOpen(false);
     setBaseVersion(null);
@@ -161,8 +199,10 @@ export function ApprovalHome() {
     },
     onError: async (error) => {
       if (isProductSurfaceOperationCancelledError(error)) return;
-      if (error instanceof HttpError && error.status === 409) await preference.refetch();
-      closeEditor();
+      if (error instanceof HttpError && error.status === 409) {
+        const refreshed = await preference.refetch();
+        setBaseVersion(refreshed.data?.version ?? null);
+      }
       toast.error(
         t(
           error instanceof HttpError && error.status === 409
@@ -176,6 +216,9 @@ export function ApprovalHome() {
   if (home.isError)
     return (
       <PageCanvas>
+        <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
+          {t('navigation.items.approvals.home.label')}
+        </Typography>
         <Alert
           severity="error"
           action={
@@ -191,129 +234,201 @@ export function ApprovalHome() {
   if (home.isLoading || !home.data) return <LoadingHome />;
 
   const data = home.data;
-  const renderWidget = (key: ApprovalHomeWidgetKey, _size: HomeWidgetSize) => {
+  const renderWidget = (
+    key: ApprovalHomeWidgetKey,
+    _size: HomeWidgetSize,
+    height: HomeWidgetHeight
+  ) => {
+    const rowLimit = approvalHomeRowLimit(height);
     if (key === 'decision-pulse') {
+      const leadTask = data.focusQueue[0];
+      const hasUrgentTask = data.focusQueue.some((task) => task.priority === 'URGENT');
       return (
-        <Paper
+        <Box
           component="section"
-          elevation={0}
+          aria-labelledby="approval-decision-pulse-title"
+          data-testid="approval-daily-briefing"
+          style={{ borderRadius: foundationTokens.radius.surface }}
           sx={{
-            minHeight: 214,
-            p: { xs: 2.5, md: 3.5 },
-            color: 'common.white',
-            bgcolor: approvalTone.ink,
             border: 1,
-            borderColor: 'rgba(255,255,255,0.12)',
-            borderRadius: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
             overflow: 'hidden',
           }}
         >
-          <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" gap={3}>
-            <Box sx={{ maxWidth: 660 }}>
-              <Stack direction="row" gap={1} alignItems="center">
-                <Chip
-                  size="small"
-                  icon={<Sparkles size={14} />}
-                  label={t('home.pulse.trusted')}
-                  sx={{
-                    color: '#DCE7FF',
-                    borderColor: 'rgba(255,255,255,0.2)',
-                    bgcolor: 'rgba(65,105,225,0.2)',
-                  }}
-                  variant="outlined"
-                />
-                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.62)' }}>
-                  {formatDate(new Date(data.generatedAt), { timeStyle: 'short' })}
-                </Typography>
-              </Stack>
-              <Typography component="h2" variant="h3" sx={{ mt: 2, maxWidth: 560 }}>
-                {t('home.pulse.title', {
-                  name: auth.user?.displayName ?? t('home.personFallback'),
-                })}
-              </Typography>
-              <Typography sx={{ mt: 1, color: 'rgba(255,255,255,0.72)', maxWidth: 620 }}>
-                {t('home.pulse.description', {
-                  pending: data.metrics.pending,
-                  overdue: data.metrics.overdue,
-                })}
-              </Typography>
-              <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} sx={{ mt: 2.5 }}>
-                {experience.canViewTasks && (
-                  <ActionButton
-                    intent="primary"
-                    startIcon={<FileCheck2 size={17} />}
-                    onClick={() => navigate('/approvals/inbox')}
-                  >
-                    {t('actions.reviewInbox')}
-                  </ActionButton>
-                )}
-                {experience.canStartRequests && (
-                  <ActionButton
-                    intent="quiet"
-                    startIcon={<FileInputIcon />}
-                    onClick={() => navigate('/approvals/requests/new')}
-                    sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.36)' }}
-                  >
-                    {t('actions.newRequest')}
-                  </ActionButton>
-                )}
-                {experience.canAskExpert && (
-                  <ActionButton
-                    intent="quiet"
-                    startIcon={<Sparkles size={17} />}
-                    onClick={() =>
-                      navigate(
-                        dwaionWorkspaceRoute(undefined, undefined, DWAION_APPROVAL_EXPERT_AGENT_KEY)
-                      )
-                    }
-                    sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.36)' }}
-                  >
-                    {t('actions.askExpert')}
-                  </ActionButton>
-                )}
-              </Stack>
-            </Box>
-            <Box
-              sx={{
-                minWidth: { lg: 460 },
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                border: 1,
-                borderColor: 'rgba(255,255,255,0.13)',
-              }}
+          <Box
+            sx={(theme) => ({
+              px: { xs: 1.75, md: 2.5 },
+              py: { xs: 1.75, md: 2.25 },
+              borderLeft: 4,
+              borderColor: 'primary.main',
+              bgcolor: alpha(
+                theme.palette.primary.main,
+                theme.palette.mode === 'dark' ? 0.04 : 0.035
+              ),
+            })}
+          >
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              alignItems={{ md: 'flex-start' }}
+              justifyContent="space-between"
+              gap={2}
             >
-              {[
-                [t('metrics.pending'), data.metrics.pending, approvalTone.primary],
-                [t('metrics.dueToday'), data.metrics.dueToday, approvalTone.amber],
-                [t('metrics.overdue'), data.metrics.overdue, approvalTone.red],
-                [
-                  t('metrics.sla'),
-                  `${formatNumber(data.metrics.slaCompliancePercent)}%`,
-                  approvalTone.teal,
-                ],
-              ].map(([label, value, tone]) => (
-                <Box
-                  key={String(label)}
-                  sx={{
-                    minHeight: 86,
-                    p: 2,
-                    borderRight: 1,
-                    borderBottom: 1,
-                    borderColor: 'rgba(255,255,255,0.13)',
-                    boxShadow: `inset 3px 0 0 ${tone}`,
-                  }}
+              <Box sx={{ minWidth: 0, maxWidth: 760 }}>
+                <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
+                  <Radar size={16} aria-hidden="true" />
+                  <Typography variant="overline" color="primary.main">
+                    {t('home.briefing.eyebrow')}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {formatDate(data.generatedAt, {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Typography>
+                </Stack>
+                <Typography
+                  id="approval-decision-pulse-title"
+                  component="h2"
+                  variant="h6"
+                  sx={{ mt: 0.5 }}
                 >
-                  <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.62)' }}>
-                    {label}
-                  </Typography>
-                  <Typography component="p" variant="h4" sx={{ mt: 0.5 }}>
-                    {value}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Stack>
-        </Paper>
+                  {t('home.briefing.title')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  {t('home.briefing.description', {
+                    pending: data.metrics.pending,
+                    overdue: data.metrics.overdue,
+                    dueToday: data.metrics.dueToday,
+                  })}
+                </Typography>
+                {leadTask ? (
+                  <Box
+                    sx={{
+                      mt: 1.5,
+                      pl: 1.5,
+                      borderLeft: 2,
+                      borderColor:
+                        leadTask.riskScore >= 70
+                          ? approvalHomeRiskColor(leadTask.riskScore)
+                          : 'divider',
+                    }}
+                  >
+                    <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
+                      <PriorityChip priority={leadTask.priority} />
+                      <Typography variant="caption" color="text.secondary">
+                        {leadTask.requestNumber}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color={approvalHomeRiskColor(leadTask.riskScore)}
+                        fontWeight="fontWeightBold"
+                      >
+                        {t('home.commandCenter.riskCompact', { score: leadTask.riskScore })}
+                      </Typography>
+                    </Stack>
+                    <Typography
+                      component="p"
+                      variant="subtitle2"
+                      sx={{ mt: 0.5, overflowWrap: 'anywhere' }}
+                    >
+                      {leadTask.title}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {leadTask.summary}
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Stack direction="row" gap={1} alignItems="center" sx={{ mt: 1.5 }}>
+                    <CheckCircle2 size={18} color={approvalTone.teal} aria-hidden="true" />
+                    <Typography variant="body2">{t('home.briefing.clear')}</Typography>
+                  </Stack>
+                )}
+              </Box>
+              {experience.canViewTasks && (
+                <Stack
+                  direction={{ xs: 'column', sm: 'row', md: 'column', xl: 'row' }}
+                  gap={1}
+                  sx={{ width: { xs: 1, md: 'auto' }, flex: '0 0 auto' }}
+                >
+                  {leadTask && (
+                    <ActionButton
+                      intent="primary"
+                      endIcon={<ArrowRight size={16} />}
+                      onClick={() =>
+                        navigate(`/approvals/inbox?task=${encodeURIComponent(leadTask.taskId)}`)
+                      }
+                    >
+                      {t('actions.reviewInbox')}
+                    </ActionButton>
+                  )}
+                  <ActionButton
+                    intent="secondary"
+                    startIcon={hasUrgentTask ? <ShieldAlert size={16} /> : <FileCheck2 size={16} />}
+                    onClick={() =>
+                      navigate(`/approvals/inbox?queue=${hasUrgentTask ? 'URGENT' : 'ALL'}`)
+                    }
+                  >
+                    {t(
+                      hasUrgentTask
+                        ? 'home.briefing.reviewUrgent'
+                        : 'navigation.items.approvals.inbox.label'
+                    )}
+                  </ActionButton>
+                </Stack>
+              )}
+            </Stack>
+          </Box>
+          <OperationalKpiStrip
+            ariaLabel={t('home.commandCenter.metricsLabel')}
+            sx={{ borderBottom: 0 }}
+            items={[
+              {
+                key: 'pending',
+                label: t('metrics.pending'),
+                value: data.metrics.pending,
+                detail: t('home.commandCenter.metricPendingDetail'),
+                tone: 'info',
+                onSelect: experience.canViewTasks
+                  ? () => navigate('/approvals/inbox?queue=ALL')
+                  : undefined,
+              },
+              {
+                key: 'due-today',
+                label: t('metrics.dueToday'),
+                value: data.metrics.dueToday,
+                detail: t('home.commandCenter.metricDueDetail'),
+                tone: data.metrics.dueToday > 0 ? 'warning' : 'neutral',
+                onSelect: experience.canViewTasks
+                  ? () => navigate('/approvals/inbox?queue=DUE_TODAY')
+                  : undefined,
+              },
+              {
+                key: 'in-flight',
+                label: t('metrics.inFlight'),
+                value: data.metrics.myRequestsInFlight,
+                detail: t('home.commandCenter.metricInFlightDetail'),
+                tone: 'neutral',
+                onSelect: experience.canViewRequests
+                  ? () => navigate('/approvals/requests/submitted')
+                  : undefined,
+              },
+              {
+                key: 'cycle-time',
+                label: t('metrics.averageCycle'),
+                value: t('metrics.hours', {
+                  value: formatNumber(data.metrics.averageCycleHours),
+                }),
+                detail: t('home.commandCenter.metricCycleDetail', {
+                  percent: formatNumber(data.metrics.slaCompliancePercent),
+                }),
+                tone: data.metrics.slaCompliancePercent >= 95 ? 'success' : 'warning',
+              },
+            ]}
+          />
+        </Box>
       );
     }
     if (key === 'focus-queue')
@@ -334,29 +449,96 @@ export function ApprovalHome() {
             ) : undefined
           }
         >
-          {data.focusQueue.slice(0, 5).map((task) => (
-            <ApprovalLinkRow
-              key={task.taskId}
-              route="/approvals/inbox"
-              title={task.title}
-              detail={`${task.stepName} · ${task.requesterName ?? t('home.unknownRequester')}`}
-              tone={
-                task.riskScore >= 80
-                  ? approvalTone.red
-                  : task.riskScore >= 60
-                    ? approvalTone.amber
-                    : approvalTone.primary
-              }
-              trailing={
-                <Stack direction="row" gap={0.75}>
-                  <PriorityChip priority={task.priority} />
-                  <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>
-                    {task.riskScore}
+          {data.focusQueue.length === 0 ? (
+            <Box role="status" sx={{ px: 2, py: 4, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                {t('inbox.empty')}
+              </Typography>
+            </Box>
+          ) : (
+            data.focusQueue.slice(0, rowLimit).map((task, index) => (
+              <ButtonBase
+                key={task.taskId}
+                aria-label={`${task.title} ${t('actions.openDetails')}`}
+                onClick={() => navigate(`/approvals/inbox?task=${encodeURIComponent(task.taskId)}`)}
+                sx={(theme) => ({
+                  width: 1,
+                  minWidth: 0,
+                  px: { xs: 1.5, sm: 2 },
+                  py: 1.5,
+                  display: 'block',
+                  textAlign: 'left',
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  bgcolor:
+                    index === 0
+                      ? alpha(
+                          theme.palette.primary.main,
+                          theme.palette.mode === 'dark' ? 0.1 : 0.035
+                        )
+                      : 'transparent',
+                  '&:last-of-type': { borderBottom: 0 },
+                  '&:hover': { bgcolor: 'action.hover' },
+                })}
+              >
+                <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                  <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
+                    <PriorityChip priority={task.priority} />
+                    <Typography variant="caption" color="text.secondary">
+                      {task.requestNumber}
+                    </Typography>
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    color={approvalHomeRiskColor(task.riskScore)}
+                    fontWeight="fontWeightBold"
+                  >
+                    {t('home.commandCenter.riskCompact', { score: task.riskScore })}
                   </Typography>
                 </Stack>
-              }
-            />
-          ))}
+                <Typography
+                  variant="body2"
+                  fontWeight="fontWeightBold"
+                  sx={{ mt: 0.75, overflowWrap: 'anywhere' }}
+                >
+                  {task.title}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', mt: 0.35, overflowWrap: 'anywhere' }}
+                >
+                  {task.requesterName ?? t('home.unknownRequester')} · {task.stepName}
+                </Typography>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  alignItems={{ sm: 'center' }}
+                  justifyContent="space-between"
+                  gap={0.5}
+                  sx={{ mt: 0.8 }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    {task.dueAt
+                      ? t('home.focusQueue.dueAt', {
+                          date: formatDate(task.dueAt, {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }),
+                        })
+                      : t('home.commandCenter.noDueDate')}
+                  </Typography>
+                  <Stack direction="row" alignItems="center" gap={0.5} color="primary.main">
+                    <Typography variant="caption" fontWeight="fontWeightBold">
+                      {t('home.focusQueue.open')}
+                    </Typography>
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </Stack>
+                </Stack>
+              </ButtonBase>
+            ))
+          )}
         </ApprovalSurface>
       );
     if (key === 'flow') {
@@ -366,28 +548,21 @@ export function ApprovalHome() {
           title={t('home.widgets.flow.label')}
           meta={t('home.widgets.flow.description')}
         >
-          <Stack gap={1.7} sx={{ p: 2 }}>
-            {data.flow.map((stage) => (
-              <Box key={stage.stage}>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" fontWeight={700}>
-                    {t(`status.${stage.stage}`, { defaultValue: stage.stage })}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {stage.count} · {t('metrics.atRisk', { count: stage.atRisk })}
-                  </Typography>
-                </Stack>
-                <LinearProgress
-                  variant="determinate"
+          {data.flow.length === 0 ? (
+            <HomeEmptyState icon={Radar} text={t('home.flow.empty')} />
+          ) : (
+            <Stack gap={1.75} sx={{ p: 2 }}>
+              {data.flow.map((stage) => (
+                <ProgressMeter
+                  key={stage.stage}
+                  label={t(`status.${stage.stage}`, { defaultValue: stage.stage })}
                   value={(stage.count / max) * 100}
-                  color={stage.atRisk > 0 ? 'warning' : 'primary'}
-                  aria-label={`${t(`status.${stage.stage}`, { defaultValue: stage.stage })} ${stage.count}`}
-                  aria-valuetext={`${stage.count}`}
-                  sx={{ mt: 0.75, height: 7, borderRadius: 0.5 }}
+                  valueLabel={`${stage.count} · ${t('metrics.atRisk', { count: stage.atRisk })}`}
+                  tone={stage.atRisk > 0 ? 'warning' : 'success'}
                 />
-              </Box>
-            ))}
-          </Stack>
+              ))}
+            </Stack>
+          )}
         </ApprovalSurface>
       );
     }
@@ -408,66 +583,175 @@ export function ApprovalHome() {
             ) : undefined
           }
         >
-          {data.recentRequests.slice(0, 4).map((request) => (
-            <ApprovalLinkRow
-              key={request.requestId}
-              route="/approvals/requests/submitted"
-              title={request.title}
-              detail={
-                request.currentStepName
-                  ? t('requests.currentStep', {
-                      name: request.currentStepName,
-                      current: request.currentStepSequence,
-                      total: request.totalSteps,
-                    })
-                  : request.requestNumber
-              }
-              tone={approvalTone.teal}
-              trailing={<StatusChip status={request.status} />}
-            />
-          ))}
+          {data.recentRequests.length === 0 ? (
+            <HomeEmptyState icon={FileCheck2} text={t('home.myRequests.empty')} />
+          ) : (
+            data.recentRequests.slice(0, rowLimit).map((request) => {
+              const progress = approvalRequestProgress(request);
+              return (
+                <ButtonBase
+                  key={request.requestId}
+                  onClick={() =>
+                    navigate(
+                      `/approvals/requests/submitted?request=${encodeURIComponent(request.requestId)}`
+                    )
+                  }
+                  sx={{
+                    width: 1,
+                    minWidth: 0,
+                    px: { xs: 1.5, sm: 2 },
+                    py: 1.5,
+                    display: 'block',
+                    textAlign: 'left',
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    '&:last-of-type': { borderBottom: 0 },
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
+                >
+                  <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    justifyContent="space-between"
+                    gap={1}
+                  >
+                    <Box minWidth={0}>
+                      <Typography variant="caption" color="text.secondary">
+                        {request.requestNumber}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        fontWeight="fontWeightBold"
+                        sx={{ mt: 0.35, overflowWrap: 'anywhere' }}
+                      >
+                        {request.title}
+                      </Typography>
+                    </Box>
+                    <StatusChip status={request.status} />
+                  </Stack>
+                  {progress == null ? (
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ mt: 1, display: 'block' }}
+                    >
+                      {t(`status.${request.status}`)}
+                    </Typography>
+                  ) : (
+                    <ProgressMeter
+                      label={
+                        request.status === 'APPROVED'
+                          ? t('status.APPROVED')
+                          : request.currentStepName
+                            ? t('requests.currentStep', {
+                                name: request.currentStepName,
+                                current: request.currentStepSequence,
+                                total: request.totalSteps,
+                              })
+                            : t('home.myRequests.awaitingStart')
+                      }
+                      value={progress}
+                      valueLabel={`${formatNumber(progress)}%`}
+                      size="compact"
+                      sx={{ mt: 1 }}
+                    />
+                  )}
+                </ButtonBase>
+              );
+            })
+          )}
         </ApprovalSurface>
       );
     return (
       <ApprovalSurface
         title={t('home.widgets.insights.label')}
         meta={t('home.widgets.insights.description')}
+        action={
+          experience.canAskExpert ? (
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<Sparkles size={15} />}
+              onClick={() =>
+                navigate(
+                  dwaionWorkspaceRoute(undefined, undefined, DWAION_APPROVAL_EXPERT_AGENT_KEY)
+                )
+              }
+            >
+              {t('home.insights.askExpert')}
+            </ActionButton>
+          ) : undefined
+        }
       >
-        <Stack gap={1.25} sx={{ p: 2 }}>
-          {data.insights.map((insight) => {
-            const fallback = approvalInsightFallback(insight, i18n.resolvedLanguage);
-            return (
-              <ButtonBase
-                key={insight.key}
-                onClick={() => navigate(insight.route)}
-                sx={{
-                  p: 1.5,
-                  display: 'flex',
-                  gap: 1.25,
-                  alignItems: 'flex-start',
-                  textAlign: 'left',
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
-                }}
-              >
-                <ShieldAlert
-                  size={19}
-                  color={insight.tone === 'critical' ? approvalTone.red : approvalTone.primary}
-                />
-                <Box>
-                  <Typography variant="body2" fontWeight={750}>
-                    {t(`insights.${insight.key}.title`, { defaultValue: fallback.title })}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t(`insights.${insight.key}.detail`, { defaultValue: fallback.detail })}
-                  </Typography>
-                </Box>
-              </ButtonBase>
-            );
-          })}
-        </Stack>
+        {data.insights.length === 0 ? (
+          <HomeEmptyState icon={Sparkles} text={t('home.insights.empty')} />
+        ) : (
+          <Stack gap={1} sx={{ p: 1.5 }}>
+            {data.insights.map((insight) => {
+              const fallback = approvalInsightFallback(insight, i18n.resolvedLanguage);
+              const critical = ['critical', 'risk'].includes(insight.tone.toLowerCase());
+              return (
+                <ButtonBase
+                  key={insight.key}
+                  style={{ borderRadius: foundationTokens.radius.surface }}
+                  onClick={() => navigate(insight.route)}
+                  sx={(theme) => {
+                    const tone = critical ? theme.palette.error.main : theme.palette.primary.main;
+                    return {
+                      color: tone,
+                      minWidth: 0,
+                      p: 1.5,
+                      display: 'flex',
+                      gap: 1.15,
+                      alignItems: 'flex-start',
+                      justifyContent: 'flex-start',
+                      textAlign: 'left',
+                      border: 1,
+                      borderLeft: 3,
+                      borderColor: alpha(tone, theme.palette.mode === 'dark' ? 0.55 : 0.28),
+                      borderLeftColor: tone,
+                      bgcolor: alpha(tone, theme.palette.mode === 'dark' ? 0.09 : 0.025),
+                      '&:hover': {
+                        borderColor: tone,
+                        bgcolor: alpha(tone, theme.palette.mode === 'dark' ? 0.14 : 0.06),
+                      },
+                    };
+                  }}
+                >
+                  <Box sx={{ color: 'inherit', mt: 0.15 }}>
+                    <ShieldAlert size={18} aria-hidden="true" />
+                  </Box>
+                  <Box minWidth={0}>
+                    <Typography
+                      variant="body2"
+                      fontWeight="fontWeightBold"
+                      sx={{ color: 'text.primary', overflowWrap: 'anywhere' }}
+                    >
+                      {t(`insights.${insight.key}.title`, { defaultValue: fallback.title })}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: 'block', mt: 0.4, overflowWrap: 'anywhere' }}
+                    >
+                      {t(`insights.${insight.key}.detail`, { defaultValue: fallback.detail })}
+                    </Typography>
+                    <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 0.8 }}>
+                      <Typography
+                        variant="caption"
+                        color="primary.main"
+                        fontWeight="fontWeightBold"
+                      >
+                        {t('home.insights.open')}
+                      </Typography>
+                      <ArrowRight size={13} aria-hidden="true" />
+                    </Stack>
+                  </Box>
+                </ButtonBase>
+              );
+            })}
+          </Stack>
+        )}
       </ApprovalSurface>
     );
   };
@@ -481,31 +765,63 @@ export function ApprovalHome() {
         gap={2}
         sx={{ mb: 2.5 }}
       >
-        <Box>
+        <Box sx={{ minWidth: 0, overflowWrap: 'anywhere', wordBreak: 'keep-all' }}>
           <Typography variant="overline" color="primary.main">
             {t('home.eyebrow')}
           </Typography>
-          <Typography component="h1" variant="h4">
-            {t('home.title')}
+          <Typography component="h1" variant="h4" ref={homeHeading} tabIndex={-1}>
+            {t('home.greeting', {
+              name: auth.user?.displayName ?? t('home.personFallback'),
+            })}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.35 }}>
             {t('home.subtitle')}
           </Typography>
         </Box>
         {!editing && (
-          <ActionButton
-            intent="secondary"
-            startIcon={<PencilRuler size={17} />}
-            onClick={() => {
-              setDraftWidgets(persistedWidgets);
-              setDraftPresentation(persistedPresentation);
-              setBaseVersion(preference.data?.version ?? 0);
-              setEditing(true);
-            }}
-            disabled={preference.isLoading || preference.isError}
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            gap={1}
+            sx={{ width: { xs: 1, md: 'auto' }, flexShrink: 0, flexWrap: 'wrap' }}
           >
-            {t('home.customize')}
-          </ActionButton>
+            {experience.canAskExpert && (
+              <ActionButton
+                intent="secondary"
+                startIcon={<Sparkles size={17} />}
+                onClick={() =>
+                  navigate(
+                    dwaionWorkspaceRoute(undefined, undefined, DWAION_APPROVAL_EXPERT_AGENT_KEY)
+                  )
+                }
+              >
+                {t('actions.askExpert')}
+              </ActionButton>
+            )}
+            {experience.canStartRequests && (
+              <ActionButton
+                intent="primary"
+                startIcon={<FileInputIcon />}
+                onClick={() => navigate('/approvals/requests/new')}
+              >
+                {t('actions.newRequest')}
+              </ActionButton>
+            )}
+            <ActionButton
+              ref={customizeButton}
+              intent="secondary"
+              startIcon={<PencilRuler size={17} />}
+              onClick={() => {
+                focusEditorTransition.current = true;
+                setDraftWidgets(persistedWidgets);
+                setDraftPresentation(persistedPresentation);
+                setBaseVersion(preference.data?.version ?? 0);
+                setEditing(true);
+              }}
+              disabled={preference.isLoading || preference.isError}
+            >
+              {t('home.customize')}
+            </ActionButton>
+          </Stack>
         )}
       </Stack>
       {preference.isError && (
@@ -516,6 +832,7 @@ export function ApprovalHome() {
             <ActionButton
               intent="quiet"
               size="small"
+              ref={preferenceRetryButton}
               disabled={preference.isFetching}
               onClick={() => void preference.refetch()}
             >
@@ -527,41 +844,60 @@ export function ApprovalHome() {
         </Alert>
       )}
       {editing && (
-        <WorkspaceComposerToolbar
-          presentation={draftPresentation}
-          busy={mutation.isPending}
-          canSave={!preference.isError}
-          onPresentationChange={setDraftPresentation}
-          onAdd={() => setGalleryOpen(true)}
-          onReset={() => {
-            setDraftWidgets(defaultWorkspaceWidgets(APPROVAL_HOME_WIDGET_REGISTRY));
-            setDraftPresentation('balanced');
+        <Box
+          ref={editor}
+          sx={{
+            display: 'contents',
+            '& [data-workspace-composer-placement]': {
+              bgcolor: 'background.paper',
+              color: 'text.primary',
+              borderColor: 'divider',
+              maxWidth: 1,
+              flexWrap: 'wrap',
+            },
           }}
-          onCancel={closeEditor}
-          onDone={() =>
-            mutation.mutate({
-              appLayout: null,
-              presentation: draftPresentation,
-              widgets: draftWidgets,
-            })
-          }
-        />
+        >
+          <WorkspaceComposerToolbar
+            presentation={draftPresentation}
+            busy={mutation.isPending}
+            canSave={!preference.isError}
+            onPresentationChange={setDraftPresentation}
+            onAdd={() => setGalleryOpen(true)}
+            onReset={() => {
+              setDraftWidgets(defaultWorkspaceWidgets(APPROVAL_HOME_WIDGET_REGISTRY));
+              setDraftPresentation('balanced');
+            }}
+            onCancel={closeEditor}
+            onDone={() =>
+              mutation.mutate({
+                appLayout: null,
+                presentation: draftPresentation,
+                widgets: draftWidgets,
+              })
+            }
+          />
+        </Box>
       )}
       <Box
         data-workspace-presentation={activePresentation}
-        sx={{
+        style={{ borderRadius: foundationTokens.radius.surface }}
+        sx={(theme) => ({
           p: activePresentation === 'expressive' ? { xs: 1, md: 1.5 } : 0,
-          bgcolor: activePresentation === 'expressive' ? '#F4F7FB' : 'transparent',
-          borderRadius: 1,
-          ...(activePresentation === 'focused' && {
-            '& [data-workspace-widget]': { filter: 'saturate(0.8)' },
-          }),
+          bgcolor:
+            activePresentation === 'expressive'
+              ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.06 : 0.025)
+              : 'transparent',
+          wordBreak: 'keep-all',
+          overflowWrap: 'anywhere',
+          '& .MuiButtonBase-root.Mui-focusVisible, & .MuiButtonBase-root:focus-visible': {
+            outlineOffset: -3,
+          },
           ...(activePresentation === 'expressive' && {
             '& [data-workspace-widget] [data-workspace-widget-content] > section': {
-              boxShadow: '0 12px 32px rgba(15,23,42,0.09)',
+              boxShadow: theme.shadows[1],
             },
           }),
-        }}
+        })}
       >
         <WorkspaceWidgetCanvas
           registry={registry}
@@ -592,5 +928,18 @@ export function ApprovalHome() {
 }
 
 function FileInputIcon() {
-  return <Clock3 size={17} />;
+  return <FilePlus2 size={17} />;
+}
+
+function HomeEmptyState({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
+  return (
+    <Stack role="status" alignItems="center" gap={1} sx={{ px: 2, py: 5, textAlign: 'center' }}>
+      <Box sx={{ color: 'text.secondary' }}>
+        <Icon size={25} aria-hidden="true" />
+      </Box>
+      <Typography variant="body2" color="text.secondary">
+        {text}
+      </Typography>
+    </Stack>
+  );
 }

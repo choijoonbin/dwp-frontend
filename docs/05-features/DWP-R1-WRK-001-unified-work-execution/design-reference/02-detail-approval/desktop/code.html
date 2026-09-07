@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DWP 통합업무함 - APR-031 전자결재 상세 검토</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#004ac6",
+            "primary-container": "#2563eb",
+            "primary-fixed": "#dbe1ff",
+            "on-primary": "#ffffff",
+            "surface": "#f8f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "secondary": "#565e74",
+            "secondary-container": "#dae2fd",
+            "on-secondary-fixed": "#131b2e",
+            "tertiary": "#006242",
+            "tertiary-container": "#007d55",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#434655",
+            "outline": "#737686",
+            "background": "#f8f9ff"
+          },
+          fontFamily: {
+            sans: ["geist", "-apple-system", "BlinkMacSystemFont", "Apple SD Gothic Neo", "Pretendard", "sans-serif"],
+            mono: ["geist", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#F5F7FA] font-sans text-slate-900 antialiased min-w-[1440px]">
+<!-- Top Global Navigation Bar (height 56px) -->
+<header class="fixed top-0 left-0 right-0 h-14 z-50 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
+<!-- Left: Logo & Context Selector -->
+<div class="flex items-center gap-4 min-w-[280px]">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white text-[18px]">corporate_fare</span>
+</div>
+<span class="font-bold text-slate-900 text-base tracking-tight">DWP Workspace</span>
+</div>
+<div class="h-4 w-px bg-slate-200"></div>
+<button class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors text-xs font-medium">
+<span>업무 (통합업무함)</span>
+<span class="material-symbols-outlined text-slate-500 text-[16px]">unfold_more</span>
+</button>
+</div>
+<!-- Center: Global Search Input -->
+<div class="flex-1 max-w-xl">
+<div class="relative flex items-center w-full">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">search</span>
+<input class="w-96 px-3 py-1.5 pl-9 bg-slate-100 border border-slate-200 rounded text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-all" placeholder="[⌘K] 업무, 결재, 티켓 검색..." type="text"/>
+</div>
+</div>
+<!-- Right: Status, Notifications & Profile -->
+<div class="flex items-center gap-3.5 justify-end">
+<button class="relative p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors" title="알림">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">2</span>
+</button>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>AVAILABLE</span>
+</div>
+<div class="h-4 w-px bg-slate-200"></div>
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-slate-900 leading-tight">김민아</span>
+<span class="text-[11px] text-slate-500 leading-tight">업무/검토자</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Shell Wrapper -->
+<div class="flex w-full pt-14 min-h-screen">
+<!-- Left Sidebar Navigation (width 240px / 60) -->
+<aside class="fixed left-0 top-14 bottom-0 w-60 bg-white border-r border-slate-200 p-4 shrink-0 flex flex-col justify-between z-40">
+<div class="flex flex-col gap-1">
+<div class="px-2 py-1.5 mb-1 flex items-center justify-between">
+<span class="text-[11px] font-bold tracking-wider uppercase text-slate-400">업무 실행 허브</span>
+<span class="material-symbols-outlined text-slate-400 text-[16px] cursor-pointer hover:text-slate-600">tune</span>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-blue-50 text-blue-700 font-semibold text-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">inbox</span>
+<span>통합업무함</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold">5</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span>
+<span>내 조치 대기</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-medium">3</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">today</span>
+<span>오늘 계획</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-medium">1</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">timelapse</span>
+<span>진행 중</span>
+</div>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+<span>응답 대기</span>
+</div>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+<span>완료된 업무</span>
+</div>
+</a>
+</nav>
+</div>
+<!-- Bottom Status & Actions in Sidebar -->
+<div class="flex flex-col gap-2.5 pt-3 border-t border-slate-200">
+<button class="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>개인 할 일 추가</span>
+</button>
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-medium text-slate-500">원천 연동 상태</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<span class="text-xs font-semibold text-slate-800">정상 4개 원천, 1개 확인 필요</span>
+</div>
+<a class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-blue-600 text-xs transition-colors" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 text-[18px]">neurology</span>
+<span class="font-medium">DWAI·ON 연계</span>
+</div>
+<span class="text-[11px] text-slate-400">검토 보조</span>
+</a>
+</div>
+</aside>
+<!-- Main Body Split View (ml-60 for sidebar) -->
+<div class="ml-60 flex-1 flex flex-col min-w-0 bg-[#F5F7FA]">
+<!-- Top Global Context & Breadcrumb Bar -->
+<div class="h-12 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2 text-xs">
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">통합업무함</a>
+<span class="material-symbols-outlined text-slate-300 text-[14px]">chevron_right</span>
+<span class="text-slate-500">전자결재 업무</span>
+<span class="material-symbols-outlined text-slate-300 text-[14px]">chevron_right</span>
+<span class="font-bold text-slate-900">APR-031 상세</span>
+<span class="ml-2 px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold">WRK-D01-1440-LIGHT</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mr-2 font-mono">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>결재 엔진 v2.4 동기화 09:30:14 KST</span>
+</div>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors">
+<span class="material-symbols-outlined text-[15px] text-slate-500">share</span>
+<span>공유</span>
+</button>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors">
+<span class="material-symbols-outlined text-[15px] text-slate-500">print</span>
+<span>인쇄</span>
+</button>
+<a class="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[15px] text-slate-500">close</span>
+<span>닫기/목록으로</span>
+</a>
+</div>
+</div>
+<!-- Main Split Layout: Left Queue Column (460px) + Right Inspector Detail (flex-1) -->
+<div class="flex flex-1 min-h-[calc(100vh-104px)] overflow-hidden">
+<!-- LEFT PANE: The Unified Queue context (w-[460px] shrink-0 border-r border-slate-200 bg-white flex flex-col) -->
+<aside class="w-[460px] shrink-0 border-r border-slate-200 bg-white flex flex-col h-[calc(100vh-104px)] overflow-hidden">
+<!-- Queue Header & Filter Tabs -->
+<div class="p-3.5 border-b border-slate-200 bg-white flex flex-col gap-2.5 shrink-0">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 text-sm">업무 대기열</span>
+<span class="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[11px] font-bold">5</span>
+</div>
+<div class="flex items-center gap-1 text-xs text-slate-500">
+<button class="flex items-center gap-0.5 px-2 py-1 rounded hover:bg-slate-100 text-slate-700 font-medium">
+<span class="material-symbols-outlined text-[14px]">swap_vert</span>
+<span>지연·임박 우선</span>
+</button>
+</div>
+</div>
+<!-- Segmented Filter Bar -->
+<div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-medium text-slate-600">
+<button class="flex-1 py-1 text-center rounded hover:text-slate-900 transition-colors">전체 (5)</button>
+<button class="flex-1 py-1 text-center rounded bg-white text-blue-700 font-semibold shadow-sm">내 조치 (3)</button>
+<button class="flex-1 py-1 text-center rounded hover:text-slate-900 transition-colors">진행 중 (1)</button>
+<button class="flex-1 py-1 text-center rounded hover:text-slate-900 transition-colors">응답 대기 (1)</button>
+<button class="flex-1 py-1 text-center rounded hover:text-slate-900 transition-colors">완료</button>
+</div>
+</div>
+<!-- Scrollable Task List -->
+<div class="flex-1 overflow-y-auto divide-y divide-slate-100">
+<!-- Task 1: APR-031 (SELECTED & HIGHLIGHTED) -->
+<article class="relative p-3.5 bg-blue-50/70 border-l-4 border-blue-600 cursor-pointer transition-all hover:bg-blue-50">
+<div class="flex items-center justify-between gap-2 mb-1">
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">전자결재</span>
+<span class="font-mono text-xs font-bold text-blue-700">APR-031</span>
+<span class="px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">현재 선택됨</span>
+</div>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[11px] font-bold">
+<span class="material-symbols-outlined text-[12px]">alarm</span>
+<span>오늘 11:00 마감</span>
+</span>
+</div>
+<h3 class="font-bold text-slate-900 text-sm leading-snug mb-1.5">
+                고객 지원 장비 구매 승인 · 1,850,000원
+              </h3>
+<div class="flex items-center justify-between text-xs text-slate-500">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-slate-400">person</span>
+<span class="font-medium text-slate-700">박서진 대리</span>
+<span class="text-slate-300">·</span>
+<span>고객운영팀</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-semibold text-[11px]">내 결재 순번</span>
+</div>
+</article>
+<!-- Task 2: IG-014 -->
+<article class="p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer border-l-4 border-transparent">
+<div class="flex items-center justify-between gap-2 mb-1">
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold">권한 관리</span>
+<span class="font-mono text-xs font-semibold text-slate-600">IG-014</span>
+</div>
+<span class="text-[11px] text-slate-500 font-mono">오늘 17:00 마감</span>
+</div>
+<h4 class="font-medium text-slate-800 text-xs leading-snug mb-1.5">
+                재무 시스템 접근권한 정기 검토
+              </h4>
+<div class="flex items-center justify-between text-xs text-slate-500">
+<span>원천: 권한 관리 / 대상 12개 계정</span>
+<span class="text-slate-600 font-medium text-[11px]">내 검토</span>
+</div>
+</article>
+<!-- Task 3: SR-088 -->
+<article class="p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer border-l-4 border-transparent">
+<div class="flex items-center justify-between gap-2 mb-1">
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold">IT 서비스</span>
+<span class="font-mono text-xs font-semibold text-slate-600">SR-088</span>
+</div>
+<span class="text-[11px] text-slate-500 font-mono">9/5 16:00</span>
+</div>
+<h4 class="font-medium text-slate-800 text-xs leading-snug mb-1.5">
+                원격접속 신청의 사용 사유 보완
+              </h4>
+<div class="flex items-center justify-between text-xs text-slate-500">
+<span>IT 인프라팀 요청</span>
+<span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-medium text-[11px]">내 응답 필요</span>
+</div>
+</article>
+<!-- Task 4: NAT-001 -->
+<article class="p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer border-l-4 border-transparent">
+<div class="flex items-center justify-between gap-2 mb-1">
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">DWP 개인 할 일</span>
+<span class="font-mono text-xs font-semibold text-slate-600">NAT-001</span>
+</div>
+<span class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">
+                  ⭐ 오늘 계획
+                </span>
+</div>
+<h4 class="font-medium text-slate-800 text-xs leading-snug mb-1.5">
+                분기 고객 안내 초안 정리
+              </h4>
+<div class="flex items-center justify-between text-xs text-slate-500">
+<span>직접 등록 · 초안 작성</span>
+<span class="text-slate-400 text-[11px]">기한 없음</span>
+</div>
+</article>
+<!-- Task 5: NAT-002 -->
+<article class="p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer border-l-4 border-transparent">
+<div class="flex items-center justify-between gap-2 mb-1">
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">DWP 개인 할 일</span>
+<span class="font-mono text-xs font-semibold text-slate-600">NAT-002</span>
+</div>
+<span class="text-[11px] text-slate-500 font-mono">오늘 17:00</span>
+</div>
+<h4 class="font-medium text-slate-800 text-xs leading-snug mb-1.5">
+                팀 예산 검토 메모 작성
+              </h4>
+<div class="flex items-center justify-between text-xs text-slate-500">
+<span>작성중 (초안)</span>
+<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold text-[11px]">진행 중</span>
+</div>
+</article>
+</div>
+<!-- Queue Footer Status -->
+<div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+<span>대기열 5건 중 1건 선택됨</span>
+<span class="font-mono text-[11px]">SYNC_OK 09:30:14</span>
+</div>
+</aside>
+<!-- RIGHT PANE: Dedicated Approval Document Inspector (Full Detail, flex-1, p-8 overflow-y-auto bg-slate-50/50) -->
+<main class="flex-1 p-8 overflow-y-auto bg-[#F8FAFC]">
+<div class="max-w-5xl mx-auto flex flex-col gap-6">
+<!-- Top Header Card of Document -->
+<section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col gap-4">
+<!-- Badges Row -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-blue-600 text-white font-bold text-xs tracking-tight">APR-031 · 전자결재 원본</span>
+<span class="px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 font-bold text-xs">내 결재 순번</span>
+<span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+                  검토 대기 (AVAILABLE)
+                </span>
+<span class="px-2.5 py-1 rounded-md bg-red-100 text-red-700 font-bold text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">alarm</span>
+                  ⏰ 오늘 11:00 KST 마감 (1시간 30분 남음)
+                </span>
+</div>
+<!-- Document Title -->
+<div>
+<h1 class="text-2xl font-bold text-slate-900 tracking-tight leading-tight">
+                  고객 지원 장비 구매 승인 · 1,850,000원
+                </h1>
+</div>
+<!-- Metadata Row -->
+<div class="flex flex-wrap items-center gap-6 text-xs text-slate-600 pt-2 border-t border-slate-100">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">badge</span>
+<span class="text-slate-500">기안자:</span>
+<strong class="text-slate-800 font-semibold">박서진 대리</strong>
+<span class="text-slate-500">(고객지원본부 고객운영팀)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">calendar_today</span>
+<span class="text-slate-500">기안일시:</span>
+<span class="font-mono text-slate-800 font-medium">2026-09-04 08:24 KST</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">tag</span>
+<span class="text-slate-500">문서번호:</span>
+<span class="font-mono font-bold text-blue-700">EDOC-2026-CS-0841</span>
+</div>
+</div>
+<!-- Callout Box: Why I am assigned -->
+<div class="flex items-start gap-3 p-4 rounded-lg bg-blue-50 border border-blue-200">
+<span class="material-symbols-outlined text-blue-600 text-[20px] shrink-0 mt-0.5">info</span>
+<div class="flex flex-col gap-1 text-xs leading-relaxed text-slate-700">
+<strong class="font-bold text-blue-900 text-sm">담당 결재자 배정 사유</strong>
+<p>
+                    본 건은 <strong>고객지원본부 2026 하반기 정기 운영비 집행</strong>에 해당하며, 위임전결 규정 제14조 2항(부서 운영비 300만원 미만)에 의거하여 <strong class="text-blue-700 font-bold">팀장 김민아</strong>의 승인이 필수적인 결재 단계입니다.
+                  </p>
+</div>
+</div>
+<!-- Primary Action & Audit Trail Banner -->
+<div class="flex flex-col gap-3.5 p-4 rounded-xl bg-slate-100 border border-slate-200">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div>
+<div class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-blue-600 text-[18px]">verified_user</span>
+<span>결정 및 감사 권한 행사</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">
+                      안전한 법적 효력 보장 및 감사 로그(Audit Trail) 동기화를 위해 공식 전자결재 원본 엔진으로 이동합니다.
+                    </p>
+</div>
+<div>
+<button class="flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition-all active:scale-[0.99]" onclick="alert('공식 전자결재 원본 시스템 뷰어로 이동합니다.')">
+<span>전자결재 원본에서 검토 및 결재 (새 창)</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200">
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[16px] text-amber-500">star</span>
+<span>⭐ 오늘 계획에 추가</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[16px] text-blue-600">smart_toy</span>
+<span>🤖 DWAI·ON 요약 질의</span>
+</button>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-slate-500">
+<span class="material-symbols-outlined text-slate-400 text-[14px]">lock</span>
+<span>직접 인라인 결재는 보안 감사 정책에 따라 원본 계약 연동 시에만 한시 허용</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Approval Line Flow (Horizontal 4-Step Stepper) -->
+<section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 text-[20px]">account_tree</span>
+<h3 class="font-bold text-slate-900 text-base">결재선 진행 현황</h3>
+</div>
+<span class="text-xs text-slate-500 font-mono">규정: CS팀 일반품의 4단계</span>
+</div>
+<!-- 4-Stage Stepper Grid -->
+<div class="grid grid-cols-4 gap-3">
+<!-- Step 1: Done -->
+<div class="flex flex-col p-3 rounded-lg bg-slate-50 border border-slate-200">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-xs font-bold text-slate-500">1단계 · 기안</span>
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-600 text-white">
+<span class="material-symbols-outlined text-[13px]">check</span>
+</span>
+</div>
+<span class="text-xs font-bold text-slate-900">박서진 대리</span>
+<span class="text-[11px] text-emerald-700 font-semibold mt-0.5">기안완료</span>
+<span class="text-[10px] font-mono text-slate-400 mt-1">09-04 08:24</span>
+</div>
+<!-- Step 2: Done -->
+<div class="flex flex-col p-3 rounded-lg bg-slate-50 border border-slate-200">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-xs font-bold text-slate-500">2단계 · 검토</span>
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-600 text-white">
+<span class="material-symbols-outlined text-[13px]">check</span>
+</span>
+</div>
+<span class="text-xs font-bold text-slate-900">최준빈 과장</span>
+<span class="text-[11px] text-emerald-700 font-semibold mt-0.5">검토승인 (적격)</span>
+<span class="text-[10px] font-mono text-slate-400 mt-1">09-04 09:12</span>
+</div>
+<!-- Step 3: Current (Me - Highlighted) -->
+<div class="flex flex-col p-3 rounded-lg bg-blue-50 border-2 border-blue-600 shadow-sm relative">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-xs font-bold text-blue-700">3단계 · 결재 (현재)</span>
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white">
+<span class="material-symbols-outlined text-[13px] animate-spin">refresh</span>
+</span>
+</div>
+<span class="text-xs font-bold text-blue-900">김민아 팀장 (나)</span>
+<span class="text-[11px] text-blue-700 font-bold mt-0.5">내 결재 대기 중</span>
+<span class="text-[10px] font-mono text-red-600 font-bold mt-1">마감 11:00</span>
+</div>
+<!-- Step 4: Upcoming -->
+<div class="flex flex-col p-3 rounded-lg bg-slate-50/70 border border-slate-200 opacity-60">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-xs font-bold text-slate-400">4단계 · 승인</span>
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-slate-500">
+<span class="material-symbols-outlined text-[13px]">hourglass_empty</span>
+</span>
+</div>
+<span class="text-xs font-bold text-slate-700">재무회계팀</span>
+<span class="text-[11px] text-slate-500 mt-0.5">예산 집행 승인 예정</span>
+<span class="text-[10px] font-mono text-slate-400 mt-1">-</span>
+</div>
+</div>
+</section>
+<!-- Core Justification & Financial Budget Details Table/Card -->
+<section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 text-[20px]">receipt_long</span>
+<h3 class="font-bold text-slate-900 text-base">품의 핵심 근거 및 내역</h3>
+</div>
+<span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 text-xs font-semibold">예산계정: 502-04 (소모품비)</span>
+</div>
+<!-- 3 Key Metrics Cards -->
+<div class="grid grid-cols-3 gap-4">
+<div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+<span class="text-xs font-medium text-slate-500">구매 목적</span>
+<p class="text-xs font-semibold text-slate-800 leading-snug mt-2">
+                    CS 인입 상담원 전용 노이즈캔슬링 헤드셋 10기 및 데스크독 5기 교체
+                  </p>
+</div>
+<div class="p-4 rounded-xl bg-blue-50 border border-blue-200 flex flex-col justify-between">
+<span class="text-xs font-medium text-blue-700">총 요청 집행액</span>
+<div class="flex items-baseline gap-1 mt-2">
+<span class="text-2xl font-bold text-blue-700 tracking-tight">1,850,000</span>
+<span class="text-xs font-semibold text-slate-600">원 (VAT 포함)</span>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col justify-between">
+<span class="text-xs font-medium text-emerald-800">부서 잔여 예산</span>
+<div class="flex items-baseline gap-1 mt-2">
+<span class="text-xl font-bold text-emerald-700 tracking-tight">14,220,000</span>
+<span class="text-xs font-semibold text-slate-600">원 (충족)</span>
+</div>
+</div>
+</div>
+<!-- Comparison Quotation Table (3 Suppliers) -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-900">비교 견적 검토 요약 (3개 공급사 대조)</span>
+<span class="text-xs font-medium text-emerald-700 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    최저가 및 워런티 적합 판정 완료
+                  </span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<!-- Vendor 1: Selected -->
+<div class="p-4 rounded-xl bg-blue-50/60 border-2 border-blue-600 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">1안 (선정안)</span>
+<span class="font-mono text-sm font-bold text-blue-700">1,850,000원</span>
+</div>
+<div class="font-bold text-slate-900 text-sm">(주)델타시스템즈</div>
+<p class="text-xs text-slate-600 leading-relaxed">
+                      사양 일치, 당일 납품 보증 및 2년 무상 A/S 계약 포함 (최저 견적)
+                    </p>
+<span class="mt-auto inline-block text-[11px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded w-fit">
+                      ✓ 적합 판정
+                    </span>
+</div>
+<!-- Vendor 2 -->
+<div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-bold">2안</span>
+<span class="font-mono text-sm font-semibold text-slate-600">1,980,000원</span>
+</div>
+<div class="font-semibold text-slate-800 text-sm">네오아이티몰</div>
+<p class="text-xs text-slate-500 leading-relaxed">
+                      단가 13만원 초과, 배송 리드타임 5영업일 소요로 부적합
+                    </p>
+<span class="mt-auto inline-block text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded w-fit">
+                      ✕ 단가 및 일정 미충족
+                    </span>
+</div>
+<!-- Vendor 3 -->
+<div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-bold">3안</span>
+<span class="font-mono text-sm font-semibold text-slate-600">2,100,000원</span>
+</div>
+<div class="font-semibold text-slate-800 text-sm">알파테크 글로벌</div>
+<p class="text-xs text-slate-500 leading-relaxed">
+                      패키지 구성 변경 요구 및 예산 한도 초과
+                    </p>
+<span class="mt-auto inline-block text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded w-fit">
+                      ✕ 예산 초과
+                    </span>
+</div>
+</div>
+</div>
+<!-- Attached Evidence Documents (2 Files) -->
+<div class="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-900">첨부 증빙 문서 (2건)</span>
+<span class="text-xs text-slate-500 font-mono">총 1.54 MB · 검증 완료</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- File 1 -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-red-600 text-[24px]">picture_as_pdf</span>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-semibold text-slate-800 truncate">견적서_2026Q3_공식인감날인본.pdf</span>
+<span class="font-mono text-[11px] text-slate-400">1.2 MB · 전자서명 검증완료</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<button class="px-2 py-1 rounded bg-white hover:bg-blue-50 text-blue-700 border border-slate-200 text-xs font-medium transition-colors">
+                        미리보기
+                      </button>
+<button class="p-1 rounded hover:bg-slate-200 text-slate-600 transition-colors" title="다운로드">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+</div>
+</div>
+<!-- File 2 -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-emerald-600 text-[24px]">table_view</span>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-semibold text-slate-800 truncate">비교견적표_사양검토_최종.xlsx</span>
+<span class="font-mono text-[11px] text-slate-400">340 KB · 기안자 실시간 확인본</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<button class="px-2 py-1 rounded bg-white hover:bg-blue-50 text-blue-700 border border-slate-200 text-xs font-medium transition-colors">
+                        미리보기
+                      </button>
+<button class="p-1 rounded hover:bg-slate-200 text-slate-600 transition-colors" title="다운로드">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Disclaimer Bar -->
+<footer class="flex items-center justify-between px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-500 font-mono text-xs">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-blue-600"></span>
+<span>화면 ID: <strong class="text-slate-800 font-bold">WRK-D01-1440-LIGHT</strong></span>
+<span>·</span>
+<span>2026-09-04 09:30 KST Fixture</span>
+</div>
+<div>
+<span>구현 경계: 원본 이동 기본형, 조건부 직접 결정 변형 분리</span>
+</div>
+</footer>
+</div>
+</main>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,4 +1,5 @@
 import { CommandRailWidget } from './command-rail-widget';
+import { CalendarInsightHomeWidget } from './calendar-insight-home-widget';
 import { ActivityWidget, DailyBriefWidget, FocusWidget, ScheduleWidget } from './home-widgets';
 
 import type { HomeOverviewWidgetProps } from './home-widgets';
@@ -27,5 +28,15 @@ export function HomeOverviewWidget({
       return <ScheduleWidget {...overviewProps} size={size} height={height} />;
     case 'activity':
       return <ActivityWidget {...overviewProps} size={size} height={height} />;
+    case 'focus-balance':
+    case 'meeting-load':
+      return (
+        <CalendarInsightHomeWidget
+          {...overviewProps}
+          widgetKey={widgetKey}
+          compact={size === 'quarter' || size === 'compact'}
+          height={height}
+        />
+      );
   }
 }

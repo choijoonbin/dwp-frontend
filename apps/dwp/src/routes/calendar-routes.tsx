@@ -5,8 +5,9 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 import { CALENDAR_PRODUCT_MANIFEST } from '../features/calendar/calendar-product-manifest';
 import { CalendarLayout } from '../layouts/calendar-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -21,9 +22,15 @@ const page = (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.CALENDAR">
+  <ProductWorkRouteGuard productId="calendar" surfaceId="calendar.work" resourceKey="APP.CALENDAR">
     <CalendarLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const managementLegacyShell = (
+  <ProductRouteGuard resourceKey="ADMIN.CALENDAR">
+    <CalendarLayout />
+  </ProductRouteGuard>
 );
 
 export const calendarRoutes: RouteObject[] = [
@@ -43,6 +50,7 @@ export const calendarRoutes: RouteObject[] = [
       managementBasePath: '/calendar/admin',
       legacyPath: '/calendar/home',
       legacyShell,
+      managementLegacyShell,
       areaKey: 'calendar',
       translationNamespace: 'calendar',
       renderPage: () => page,

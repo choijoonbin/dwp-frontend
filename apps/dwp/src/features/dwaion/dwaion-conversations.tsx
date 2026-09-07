@@ -1,35 +1,43 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { MessageSquarePlus, Search, Trash2 } from 'lucide-react';
+import { MessageSquarePlus, RefreshCw, Search, X } from 'lucide-react';
 import {
   ActionButton,
+  ActionIconButton,
   ConfirmDialog,
+  ErrorState,
   FormField,
   GuidedEmptyState,
   PageCanvas,
+  SelectField,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   deleteDwaionConversation,
   getDwaionConversations,
   type DwaionConversationSummary,
 } from '@dwp-frontend/shared-utils';
-
+import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import InputAdornment from '@mui/material/InputAdornment';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
+import { archiveConversations, type ArchivePeriod, type ArchiveSort } from './dwaion-archive-model';
+import { DwaionArchiveList } from './dwaion-archive-list';
+import { DwaionArchiveInsights } from './dwaion-archive-insights';
 
 export function DwaionConversations() {
-  const { t, i18n } = useTranslation('work');
+  const { t } = useTranslation('work');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
+  const [period, setPeriod] = useState<ArchivePeriod>('all');
+  const [sort, setSort] = useState<ArchiveSort>('recent');
   const [deleteTarget, setDeleteTarget] = useState<DwaionConversationSummary | null>(null);
   const conversations = useQuery({
     queryKey: ['dwaion', 'conversations'],
@@ -37,176 +45,239 @@ export function DwaionConversations() {
     staleTime: 20_000,
   });
   const deleteConversation = useMutation({
-    mutationFn: (conversationId: string) => deleteDwaionConversation(conversationId),
-    onSuccess: async () => {
+    mutationFn: (id: string) => deleteDwaionConversation(id),
+    onSuccess: async (_, id) => {
       setDeleteTarget(null);
+      queryClient.removeQueries({ queryKey: ['dwaion', 'conversation', id], exact: true });
+      queryClient.setQueryData<DwaionConversationSummary[]>(['dwaion', 'conversations'], (items) =>
+        items?.filter((item) => item.conversationId !== id)
+      );
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'conversations'] });
     },
   });
-  const normalizedSearch = search.trim().toLocaleLowerCase();
-  const filtered = useMemo(
-    () =>
-      (conversations.data ?? []).filter((conversation) =>
-        conversation.title.toLocaleLowerCase().includes(normalizedSearch)
-      ),
-    [conversations.data, normalizedSearch]
-  );
-  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
+  const now = Math.max(Date.now(), conversations.dataUpdatedAt);
+  const items = conversations.isError ? [] : (conversations.data ?? []);
+  const filtered = archiveConversations(items, search, period, sort, now);
+  const hasFilter = Boolean(search.trim()) || period !== 'all';
+  const resetFilters = () => {
+    setSearch('');
+    setPeriod('all');
+  };
+  const deleteStatus =
+    deleteConversation.error instanceof HttpError ? deleteConversation.error.status : undefined;
 
   return (
-    <PageCanvas>
-      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={2}>
-        <Box>
-          <Typography component="h1" variant="h4">
-            {t('dwaionConversations.title', { defaultValue: '대화 기록' })}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.6 }}>
-            {t('dwaionConversations.description', {
-              defaultValue: '내 권한 범위에서 생성된 DWAI·ON 대화를 이어서 확인합니다.',
-            })}
-          </Typography>
-        </Box>
-        <ActionButton
-          intent="primary"
-          startIcon={<MessageSquarePlus size={16} />}
-          onClick={() => navigate('/dwaion/new')}
+    <PageCanvas topInset="compact">
+      <Box data-testid="dwaion-archive" sx={{ maxWidth: 1480, mx: 'auto' }}>
+        <Stack
+          component="header"
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          gap={2}
+          alignItems={{ sm: 'center' }}
         >
-          {t('dwaionConversations.new', { defaultValue: '새 대화' })}
-        </ActionButton>
-      </Stack>
-
-      <FormField
-        fullWidth
-        size="small"
-        label={t('dwaionConversations.searchLabel', { defaultValue: '대화 검색' })}
-        placeholder={t('dwaionConversations.searchPlaceholder', {
-          defaultValue: '대화 제목으로 검색',
-        })}
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search size={16} aria-hidden="true" />
-              </InputAdornment>
-            ),
-          },
-        }}
-        sx={{ mt: 3, maxWidth: 560 }}
-      />
-
-      {conversations.isError && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {t('dwaionConversations.loadError', {
-            defaultValue: '대화 기록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.',
-          })}
-        </Alert>
-      )}
-
-      <Box component="section" aria-live="polite" sx={{ mt: 2 }}>
-        {conversations.isLoading ? (
-          <Stack spacing={1}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography component="h1" variant="h5">
+              {t('dwaionConversations.title')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+              {t('dwaionConversations.description')}
+            </Typography>
+          </Box>
+          <Stack direction="row" gap={1} alignItems="center">
+            <ActionIconButton
+              label={t('dwaionArchive.refresh')}
+              disabled={conversations.isFetching}
+              onClick={() => void conversations.refetch()}
+            >
+              <RefreshCw size={17} />
+            </ActionIconButton>
+            <ActionButton
+              intent="primary"
+              startIcon={<MessageSquarePlus size={16} />}
+              onClick={() => navigate('/dwaion/new')}
+            >
+              {t('dwaionConversations.new')}
+            </ActionButton>
+          </Stack>
+        </Stack>
+        <Box
+          component="section"
+          aria-label={t('dwaionConversations.searchLabel')}
+          sx={{ mt: 3, pb: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'minmax(0, 1fr) 180px' },
+              gap: 1.5,
+            }}
+          >
+            <FormField
+              fullWidth
+              size="small"
+              label={t('dwaionConversations.searchLabel')}
+              placeholder={t('dwaionConversations.searchPlaceholder')}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') setSearch('');
+              }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search size={16} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: search ? (
+                    <InputAdornment position="end">
+                      <ActionIconButton
+                        size="small"
+                        label={t('dwaionArchive.clearSearch')}
+                        onClick={() => setSearch('')}
+                      >
+                        <X size={14} />
+                      </ActionIconButton>
+                    </InputAdornment>
+                  ) : undefined,
+                },
+              }}
+            />
+            <SelectField
+              fullWidth
+              size="small"
+              label={t('dwaionArchive.sortLabel')}
+              value={sort}
+              onValueChange={(value) => {
+                if (value) setSort(value);
+              }}
+              options={(['recent', 'oldest', 'messages'] as const).map((value) => ({
+                value,
+                label: t(`dwaionArchive.sort.${value}`),
+              }))}
+            />
+          </Box>
+          <Tabs
+            value={period}
+            onChange={(_, value: ArchivePeriod) => setPeriod(value)}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            aria-label={t('dwaionArchive.periodLabel')}
+            sx={{ mt: 1.5, minHeight: 42, '& .MuiTab-root': { minHeight: 42, minWidth: 70 } }}
+          >
+            {(['all', 'day', 'week', 'month'] as const).map((value) => (
+              <Tab key={value} value={value} label={t(`dwaionArchive.period.${value}`)} />
+            ))}
+          </Tabs>
+        </Box>
+        {conversations.isError ? (
+          <Alert
+            severity="error"
+            sx={{ mt: 2 }}
+            action={
+              <ActionButton intent="quiet" onClick={() => void conversations.refetch()}>
+                {t('dwaionStudio.retry')}
+              </ActionButton>
+            }
+          >
+            {t('dwaionConversations.loadError')}
+          </Alert>
+        ) : conversations.isLoading ? (
+          <Stack spacing={1} sx={{ mt: 2 }} aria-label={t('askPage.history.loading')}>
             {[0, 1, 2].map((index) => (
-              <Skeleton key={index} variant="rounded" height={76} />
+              <Skeleton key={index} variant="rounded" height={120} />
             ))}
           </Stack>
-        ) : filtered.length ? (
-          <Box sx={{ borderBlock: 1, borderColor: 'divider' }}>
-            {filtered.map((conversation, index) => (
-              <Box key={conversation.conversationId}>
-                {index > 0 && <Divider />}
-                <Stack direction="row" alignItems="center" gap={1} sx={{ py: 1.5 }}>
-                  <Box
-                    component="button"
-                    type="button"
-                    onClick={() =>
-                      navigate(
-                        `/dwaion/conversations/${encodeURIComponent(conversation.conversationId)}`
-                      )
-                    }
-                    sx={{
-                      flex: 1,
-                      minWidth: 0,
-                      border: 0,
-                      bgcolor: 'transparent',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      py: 0.5,
-                    }}
-                  >
-                    <Typography variant="body2" fontWeight={800} noWrap>
-                      {conversation.title}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('dwaionConversations.meta', {
-                        defaultValue: '{{count}}개 메시지 · {{date}}',
-                        count: conversation.messageCount,
-                        date: formatDate(
-                          conversation.lastMessageAt,
-                          { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
-                          locale
-                        ),
-                      })}
-                    </Typography>
-                  </Box>
-                  <ActionButton
-                    intent="quiet"
-                    size="small"
-                    startIcon={<Trash2 size={15} />}
-                    onClick={() => setDeleteTarget(conversation)}
-                  >
-                    {t('dwaionConversations.delete', { defaultValue: '삭제' })}
-                  </ActionButton>
-                </Stack>
-              </Box>
-            ))}
-          </Box>
         ) : (
-          <GuidedEmptyState
-            kind={normalizedSearch ? 'no-results' : 'empty'}
-            title={t(
-              normalizedSearch
-                ? 'dwaionConversations.noResultsTitle'
-                : 'dwaionConversations.emptyTitle',
-              { defaultValue: normalizedSearch ? '검색 결과가 없습니다' : '아직 대화가 없습니다' }
-            )}
-            description={t(
-              normalizedSearch
-                ? 'dwaionConversations.noResultsDescription'
-                : 'dwaionConversations.emptyDescription',
-              {
-                defaultValue: normalizedSearch
-                  ? '다른 검색어를 입력해 보세요.'
-                  : '새 대화를 시작하면 이곳에서 안전하게 이어갈 수 있습니다.',
-              }
-            )}
-            actionLabel={
-              normalizedSearch
-                ? undefined
-                : t('dwaionConversations.new', { defaultValue: '새 대화' })
-            }
-            onAction={normalizedSearch ? undefined : () => navigate('/dwaion/new')}
-          />
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 280px' },
+              gap: 3,
+              mt: 2.5,
+            }}
+          >
+            <Box
+              component="section"
+              aria-label={t('dwaionConversations.title')}
+              sx={{ minWidth: 0 }}
+            >
+              <Typography
+                role="status"
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', mb: 1.5 }}
+              >
+                {t('dwaionArchive.results', { count: filtered.length, total: items.length })}
+              </Typography>
+              {filtered.length ? (
+                <DwaionArchiveList
+                  items={filtered}
+                  onDelete={(item) => {
+                    deleteConversation.reset();
+                    setDeleteTarget(item);
+                  }}
+                />
+              ) : (
+                <GuidedEmptyState
+                  kind={hasFilter ? 'no-results' : 'empty'}
+                  title={t(
+                    hasFilter
+                      ? 'dwaionConversations.noResultsTitle'
+                      : 'dwaionConversations.emptyTitle'
+                  )}
+                  description={t(
+                    hasFilter ? 'dwaionArchive.noResults' : 'dwaionConversations.emptyDescription'
+                  )}
+                  actionLabel={t(
+                    hasFilter ? 'dwaionArchive.resetFilters' : 'dwaionConversations.new'
+                  )}
+                  onAction={hasFilter ? resetFilters : () => navigate('/dwaion/new')}
+                />
+              )}
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
+                {t('dwaionArchive.window')}
+              </Typography>
+            </Box>
+            <DwaionArchiveInsights items={items} now={now} />
+          </Box>
         )}
+        <ConfirmDialog
+          open={Boolean(deleteTarget)}
+          title={t('dwaionConversations.deleteTitle')}
+          description={t('dwaionConversations.deleteDescription')}
+          details={
+            <>
+              <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
+                {deleteTarget?.title}
+              </Typography>
+              {deleteConversation.isError && (
+                <ErrorState
+                  size="compact"
+                  title={t(
+                    deleteStatus === 409
+                      ? 'dwaionArchive.deleteHeld'
+                      : deleteStatus === 404
+                        ? 'dwaionArchive.deleteMissing'
+                        : 'dwaionArchive.deleteError'
+                  )}
+                />
+              )}
+            </>
+          }
+          cancelLabel={t('dwaionConversations.cancel')}
+          confirmLabel={t('dwaionConversations.confirmDelete')}
+          confirmingLabel={t('dwaionConversations.deleting')}
+          busy={deleteConversation.isPending}
+          intent="danger"
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={() => {
+            if (deleteTarget) deleteConversation.mutate(deleteTarget.conversationId);
+          }}
+        />
       </Box>
-
-      <ConfirmDialog
-        open={Boolean(deleteTarget)}
-        title={t('dwaionConversations.deleteTitle', { defaultValue: '대화를 삭제할까요?' })}
-        description={t('dwaionConversations.deleteDescription', {
-          defaultValue: '이 대화와 메시지는 복구할 수 없습니다.',
-        })}
-        cancelLabel={t('dwaionConversations.cancel', { defaultValue: '취소' })}
-        confirmLabel={t('dwaionConversations.confirmDelete', { defaultValue: '삭제' })}
-        confirmingLabel={t('dwaionConversations.deleting', { defaultValue: '삭제 중' })}
-        busy={deleteConversation.isPending}
-        intent="danger"
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={() =>
-          deleteTarget ? deleteConversation.mutateAsync(deleteTarget.conversationId) : undefined
-        }
-      />
     </PageCanvas>
   );
 }

@@ -146,6 +146,7 @@ const labels: MeetingIntelligenceReportLabels = {
   sectionEmpty: 'No evidence-backed item was identified.',
   citationLabel: (value) => `Transcript ${value}`,
   citationDetail: (segmentId, value) => `Transcript evidence ${segmentId}, ${value}`,
+  citationSeek: (segmentId, value) => `Seek recording to ${segmentId}, ${value}`,
   climateDescription:
     'This meeting-level signal is not person-level emotion or performance inference.',
   climateLabels: {

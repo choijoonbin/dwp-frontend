@@ -1,4 +1,36 @@
 {
+  "privacy": {
+    "tab": "Privacy",
+    "scope": "Applies to all conversations in this company",
+    "shareReadStatus": "Share my read status",
+    "shareDescription": "Let message senders see when you have viewed their messages. This does not change anyone else's sharing preference.",
+    "enabledDescription": "Turning this off hides your read status, including past messages. Turning it back on shares previously recorded views too.",
+    "disabledDescription": "Others see ‘Not shared’. Your unread conversations and reading position are still maintained.",
+    "loading": "Loading privacy settings",
+    "loadError": "Privacy settings could not be loaded.",
+    "saveError": "Your preference could not be saved. Check the latest setting and try again.",
+    "saved": "Read status sharing preference saved.",
+    "retry": "Try again"
+  },
+  "receipts": {
+    "open": "Read status: {{status}}",
+    "title": "Message read status",
+    "description": "Only shared read status is shown.",
+    "readCount": "Read by {{count}}",
+    "loading": "Loading read status",
+    "loadError": "Read status could not be loaded. This does not mean the message is unread.",
+    "empty": "No eligible participants to display.",
+    "attachmentMessage": "Attachment message",
+    "privacyNote": "Not confirmed means a screen view has not yet been recorded. Notification previews and connectivity can affect this. Not shared does not mean unread.",
+    "summary": {
+      "READ": "Read",
+      "UNREAD": "Not confirmed",
+      "UNAVAILABLE": "Not shared",
+      "SENT": "Sent",
+      "UNKNOWN": "Read status"
+    },
+    "recipient": { "READ": "Read", "UNREAD": "Not confirmed", "UNAVAILABLE": "Not shared" }
+  },
   "shell": {
     "tenantFallback": "Workspace",
     "backToHome": "Back to workspace",
@@ -42,6 +74,16 @@
     "cancel": "Cancel",
     "close": "Close"
   },
+  "formatting": {
+    "toolbar": "Message formatting",
+    "bold": "Bold",
+    "italic": "Italic",
+    "inlineCode": "Inline code",
+    "codeBlock": "Code block",
+    "bulletList": "Bulleted list",
+    "numberedList": "Numbered list",
+    "copyFailed": "Copy failed. Select and copy the code."
+  },
   "expressions": {
     "open": "Open emoji",
     "search": "Search emoji or work expression",
@@ -72,9 +114,32 @@
     "member": "member",
     "title": "{{greeting}}, {{name}}",
     "description": "Conversations that need attention and work to resume are organized in one view.",
+    "contextRail": "Messenger context",
+    "huddle": {
+      "title": "Talk it through in a huddle",
+      "description": "Bring your conversation together for a quick voice or video meeting.",
+      "choose": "Choose conversation",
+      "chooseTitle": "Start or join a huddle",
+      "chooseDescription": "Choose the conversation to meet with.",
+      "search": "Find a conversation",
+      "emptyTitle": "No matching conversations",
+      "emptyDescription": "Start a conversation or choose another search term."
+    },
+    "sharedAssets": {
+      "title": "Recently shared files and links",
+      "description": "Recent shares from your conversations.",
+      "loading": "Loading shared files and links",
+      "loadError": "Shared files and links could not be loaded.",
+      "emptyTitle": "No shared files or links yet",
+      "emptyDescription": "Recent conversation shares will appear here.",
+      "openConversation": "Open {{title}} in {{conversation}}",
+      "FILE": "File",
+      "LINK": "Link"
+    },
     "signalSummary": "{{unread}} unread conversations, {{mentions}} mentions, {{saved}} saved items",
     "loadError": "Messenger home could not be loaded.",
     "sync": {
+      "stale": "Refresh needed",
       "current": "Up to date",
       "refreshing": "Updating",
       "updated": "Retrieved {{time}}"
@@ -122,6 +187,14 @@
       }
     },
     "focus": {
+      "filters": {
+        "label": "Conversation focus",
+        "ALL": "All",
+        "MENTIONS": "Mentions",
+        "SPACE": "Space",
+        "DIRECT": "DM"
+      },
+      "mentionsError": "Mentions could not be refreshed.",
       "title": "Conversations to handle now",
       "description": "Up to six unread direct, Space, and other conversations in that order.",
       "open": "View all",
@@ -139,6 +212,10 @@
       }
     },
     "spaces": {
+      "scope": "Conversation groups",
+      "openDirect": "Open all direct conversations",
+      "directEmptyTitle": "No direct conversations yet",
+      "directEmptyDescription": "Find a colleague to start a conversation.",
       "title": "My Space flow",
       "description": "Space conversations available through your current membership.",
       "open": "Open all Space conversations",
@@ -157,6 +234,21 @@
       "emptyTitle": "No saved messages",
       "emptyDescription": "Save a message to resume it from here later.",
       "startDirect": "Find a person and start a new DM"
+    },
+    "people": {
+      "availableSnapshot": "{{count}} people available in this snapshot",
+      "messagePerson": "Message {{name}}",
+      "presence": {
+        "AVAILABLE": "Available",
+        "BUSY": "Busy",
+        "AWAY": "Away",
+        "FOCUS": "Focus mode",
+        "OFFLINE": "Offline",
+        "UNKNOWN": "Presence unavailable"
+      },
+      "title": "People available now",
+      "description": "{{count}} people are currently active",
+      "open": "Open people directory"
     }
   },
   "type": {
@@ -186,7 +278,7 @@
     "noMessagesTitle": "No messages yet",
     "noMessagesDescription": "Send the first message to start the work context.",
     "composerLabel": "Compose message",
-    "composerPlaceholder": "Write a message. Shift+Enter for a new line",
+    "composerPlaceholder": "Write a message",
     "composerHint": "Press Enter to send, Shift+Enter for a new line.",
     "typing": {
       "one": "{{name}} is typing.",
@@ -318,6 +410,10 @@
   },
   "message": {
     "me": "Me",
+    "aiProposal": "DWP AI proposal",
+    "code": "Code",
+    "copyCode": "Copy code",
+    "codeCopied": "Code copied",
     "deleted": "This message was deleted",
     "edited": "Edited",
     "reaction": "React",
@@ -326,10 +422,10 @@
     "removeReaction": "Remove {{emoji}} reaction",
     "reply": "Reply in thread",
     "replyCount": "{{count}} replies",
+    "moreActions": "More message actions",
     "save": "Save for later",
     "edit": "Edit message",
     "delete": "Delete message",
-    "connectionRequired": "This action is unavailable in the current environment.",
     "saveSuccess": "Message saved for later.",
     "saveError": "Message could not be saved.",
     "editTitle": "Edit message",
@@ -364,7 +460,7 @@
     "replyCount": "{{count}} replies",
     "empty": "No replies yet. Start the thread with the first reply.",
     "composerLabel": "Compose thread reply",
-    "composerPlaceholder": "Reply in thread. Shift+Enter for a new line",
+    "composerPlaceholder": "Reply in thread",
     "loadError": "Thread replies could not be loaded.",
     "loading": "Loading thread replies."
   },
@@ -469,6 +565,8 @@
     "loadError": "Conversation list could not be loaded.",
     "emptyTitle": "No matching conversations",
     "emptyDescription": "Try another search or start a new DM.",
+    "loadMore": "Load more conversations",
+    "loadingMore": "Loading conversations",
     "ALL": {
       "title": "Inbox",
       "description": "Handle DMs, Spaces, and announcements in one place."
@@ -495,11 +593,44 @@
       "showAll": "Show all inbox"
     }
   },
+  "navigator": {
+    "title": "Conversations",
+    "count": "{{count}} conversations loaded",
+    "filterLabel": "Filter loaded conversations",
+    "filters": { "ALL": "All", "FAVORITES": "Favorites", "UNREAD": "Unread" },
+    "loadedOnly": "Filters apply to loaded conversations. More conversations are available below.",
+    "filterEmpty": "No matching conversations",
+    "filterEmptyDescription": "Choose All or load more conversations.",
+    "create": "Create a conversation from the navigator",
+    "sections": {
+      "PINNED": "Favorites",
+      "CHANNELS": "Spaces and channels",
+      "DIRECT": "Direct messages"
+    }
+  },
   "context": {
     "members": "Members",
     "governance": "Governance",
+    "catchUp": "Quick catch-up",
+    "catchUpDescription": "The latest messages, directly from this conversation.",
+    "toggle": "Conversation context",
+    "panelTitle": "Conversation briefing",
+    "collapseBrief": "Collapse briefing",
+    "expandBrief": "Expand briefing",
+    "jumpToMessage": "Go to message from {{name}}",
+    "sharedContent": "Shared content",
+    "noMessages": "No messages yet.",
+    "allMembers": "View all {{count}} members",
+    "unread": "{{count}} unread",
+    "recent": "Recent flow",
+    "threads": "Active threads",
+    "noThreads": "No active threads yet.",
+    "replies": "{{count}} replies",
+    "openThread": "Open thread",
+    "activeNow": "{{count}} marked active",
+    "preview": "“{{message}}”",
     "spaceLinked": "Linked to {{space}} Space.",
-    "membershipBound": "Access follows Space membership.",
+    "membershipBound": "Only conversation members can access this conversation.",
     "empty": "Select a conversation to see members and policy context."
   },
   "people": {

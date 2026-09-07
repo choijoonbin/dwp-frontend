@@ -3,20 +3,16 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
   AlertTriangle,
-  CalendarRange,
   CheckCircle2,
   ChevronDown,
   Clock3,
-  Inbox,
   LayoutDashboard,
-  ListTodo,
   Pencil,
   RefreshCw,
   ShieldCheck,
   SlidersHorizontal,
 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
-import { formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -34,12 +30,7 @@ import Typography from '@mui/material/Typography';
 
 import type { HomeAudienceProfile, HomeContentAlignment } from '@dwp-frontend/shared-utils';
 import type { FlowHomeHealth, FlowHomeHealthDomain, FlowHomeHealthIssue } from './flow-home-health';
-
-type FlowHomeContextMetrics = Readonly<{
-  action: number;
-  timeline: number;
-  response: number;
-}>;
+import { FlowHomeStatusChip, type FlowHomeContextMetrics } from './flow-home-status-chip';
 
 type FlowHomeContextProps = {
   audience: HomeAudienceProfile;
@@ -120,28 +111,9 @@ export function FlowHomeContext({
   const [editAnchor, setEditAnchor] = useState<HTMLElement | null>(null);
   const [healthAnchor, setHealthAnchor] = useState<HTMLElement | null>(null);
   const copyOnRight = contentAlignment === 'RIGHT' && !compact;
+  const copyCentered = contentAlignment === 'CENTER' && !compact;
   const degraded =
     health.state === 'DELAYED' || health.state === 'PARTIAL' || health.state === 'UNAVAILABLE';
-  const metricItems = [
-    {
-      key: 'action',
-      value: metrics.action,
-      icon: ListTodo,
-      href: '#flow-purpose-action',
-    },
-    {
-      key: 'timeline',
-      value: metrics.timeline,
-      icon: CalendarRange,
-      href: '#flow-purpose-timeline',
-    },
-    {
-      key: 'response',
-      value: metrics.response,
-      icon: Inbox,
-      href: '#flow-purpose-response',
-    },
-  ] as const;
   const canEditLayout = customizationEnabled && Boolean(onEdit);
   const hasEditHub = canEditLayout || Boolean(onOpenStudio);
 
@@ -150,6 +122,8 @@ export function FlowHomeContext({
       component="header"
       data-testid="flow-home-context"
       data-flow-context-side={copyOnRight ? 'right' : 'left'}
+      data-flow-context-alignment={contentAlignment.toLowerCase()}
+      data-flow-context-composition="inline-greeting"
       sx={{
         position: 'relative',
         width: 1,
@@ -157,11 +131,22 @@ export function FlowHomeContext({
         px: compact ? 0.5 : { xs: 0.5, md: 0 },
         py: compact ? 0.25 : { xs: 0.25, md: 0.5 },
         display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'repeat(12, minmax(0, 1fr))' },
-        columnGap: { md: 2 },
+        gridTemplateColumns: compact
+          ? 'minmax(0, 1fr)'
+          : {
+              xs: 'minmax(0, 1fr)',
+              md: copyOnRight
+                ? 'auto minmax(280px, 360px) minmax(0, 1fr)'
+                : 'minmax(0, 1fr) minmax(280px, 360px) auto',
+              lg: copyOnRight
+                ? 'auto minmax(300px, 390px) minmax(0, 1fr)'
+                : 'minmax(0, 1fr) minmax(300px, 390px) auto',
+            },
+        columnGap: { md: 1.5, lg: 2 },
         rowGap: { xs: 0.75, sm: 1 },
         alignItems: 'center',
         color: '#F8FAFC',
+        '[data-flow-large-text="true"] &': { gridTemplateColumns: 'minmax(0, 1fr)' },
         '@media (forced-colors: active)': { color: 'CanvasText' },
       }}
     >
@@ -169,17 +154,26 @@ export function FlowHomeContext({
         data-flow-context-copy
         sx={{
           minWidth: 0,
-          gridColumn: copyOnRight ? { xs: '1', md: '6 / 13' } : { xs: '1', md: '1 / 8' },
-          gridRow: { md: '1' },
+          gridColumn: compact ? '1' : { xs: '1', md: copyOnRight ? '3' : '1' },
+          gridRow: compact ? 'auto' : { md: '1' },
           justifySelf: copyOnRight ? { md: 'end' } : 'start',
-          textAlign: copyOnRight ? { md: 'right' } : 'left',
-          textShadow: '0 2px 12px rgba(0,0,0,0.38)',
+          width: 1,
+          textAlign: { xs: 'left', md: copyOnRight ? 'right' : copyCentered ? 'center' : 'left' },
+          '[data-flow-large-text="true"] &': {
+            gridColumn: '1',
+            gridRow: 'auto',
+            justifySelf: 'start',
+            textAlign: 'left',
+          },
         }}
       >
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent={copyOnRight ? { md: 'flex-end' } : 'flex-start'}
+          justifyContent={{
+            xs: 'flex-start',
+            md: copyOnRight ? 'flex-end' : copyCentered ? 'center' : 'flex-start',
+          }}
           gap={1}
           flexWrap="wrap"
           sx={{ display: priorityCompact ? 'none' : 'flex' }}
@@ -187,7 +181,12 @@ export function FlowHomeContext({
           <Typography
             variant="overline"
             fontWeight={700}
-            sx={{ color: 'rgba(248,250,252,0.84)', letterSpacing: '0.035em', lineHeight: 1.4 }}
+            sx={{
+              color: 'rgba(248,250,252,0.76)',
+              fontSize: '0.6875rem',
+              letterSpacing: '0.02em',
+              lineHeight: 1.3,
+            }}
           >
             {currentDate}
           </Typography>
@@ -198,8 +197,10 @@ export function FlowHomeContext({
             variant="outlined"
             sx={{
               color: '#F8FAFC',
-              bgcolor: 'rgba(5,15,35,0.46)',
-              borderColor: 'rgba(255,255,255,0.4)',
+              height: 20,
+              fontSize: '0.625rem',
+              bgcolor: 'rgba(255,255,255,0.06)',
+              borderColor: 'rgba(255,255,255,0.18)',
               '& .MuiChip-icon': { color: 'inherit' },
             }}
           />
@@ -216,9 +217,9 @@ export function FlowHomeContext({
           sx={{
             mt: 0.25,
             maxWidth: 880,
-            fontSize: compact ? 24 : { xs: 25, sm: 26, md: 28, lg: 30, xl: 32 },
+            fontSize: { xs: '1.25rem', md: '1.375rem', lg: '1.5rem' },
             fontWeight: 720,
-            lineHeight: 1.08,
+            lineHeight: 1.2,
             letterSpacing: '-0.022em',
             wordBreak: 'keep-all',
             overflowWrap: 'break-word',
@@ -233,6 +234,7 @@ export function FlowHomeContext({
             mt: 0.35,
             maxWidth: 780,
             color: 'rgba(248,250,252,0.84)',
+            fontSize: '0.75rem',
             lineHeight: 1.35,
             wordBreak: 'keep-all',
             overflowWrap: 'break-word',
@@ -247,134 +249,61 @@ export function FlowHomeContext({
       </Box>
 
       <Box
-        component="ul"
-        data-flow-context-metrics
-        aria-label={t('flow.context.metrics.label')}
+        data-flow-context-status-slot
         sx={{
-          p: 0,
-          m: 0,
-          listStyle: 'none',
           minWidth: 0,
-          gridColumn: copyOnRight ? { xs: '1', md: '6 / 13' } : { xs: '1', md: '1 / 8' },
-          gridRow: { md: '2' },
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-          maxWidth: 680,
           width: 1,
-          justifySelf: copyOnRight ? { md: 'end' } : 'start',
-          overflow: 'hidden',
-          border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: 2.5,
-          bgcolor: 'rgba(3,12,28,0.52)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          '& > li:not(:last-of-type)': {
-            borderInlineEnd: '1px solid rgba(255,255,255,0.16)',
-          },
-          '@media (prefers-reduced-transparency: reduce)': {
-            bgcolor: '#10284D',
-            backdropFilter: 'none',
-            WebkitBackdropFilter: 'none',
-          },
-          '@media (forced-colors: active)': {
-            bgcolor: 'Canvas',
-            borderColor: 'CanvasText',
-            '& > li:not(:last-of-type)': { borderColor: 'CanvasText' },
+          maxWidth: compact ? '100%' : { xs: '100%', md: 390 },
+          gridColumn: compact ? '1' : { xs: '1', md: '2' },
+          gridRow: compact ? 'auto' : { md: '1' },
+          justifySelf: { xs: 'stretch', md: 'center' },
+          '[data-flow-large-text="true"] &': {
+            gridColumn: '1',
+            gridRow: 'auto',
+            justifySelf: 'stretch',
+            maxWidth: '100%',
           },
         }}
       >
-        {metricItems.map(({ key, value, icon: Icon, href }) => (
-          <Box component="li" key={key} data-flow-context-metric={key} sx={{ minWidth: 0 }}>
-            <ButtonBase
-              component="a"
-              href={href}
-              aria-label={`${t(`flow.context.metrics.${key}`)} ${t('flow.purpose.count', {
-                count: value,
-              })}`}
-              sx={{
-                width: 1,
-                minWidth: 0,
-                minHeight: 44,
-                px: { xs: 0.75, sm: 1.25 },
-                py: 0.5,
-                display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                gap: { xs: 0.5, sm: 0.75 },
-                color: 'inherit',
-                textAlign: 'left',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
-                '&:focus-visible': {
-                  outline: '3px solid var(--dwp-focus-ring, #93C5FD)',
-                  outlineOffset: -3,
-                },
-              }}
-            >
-              <Icon size={16} aria-hidden="true" style={{ flexShrink: 0 }} />
-              <Box
-                sx={{
-                  minWidth: 0,
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  gap: 0.5,
-                  flexWrap: { xs: 'wrap', sm: 'nowrap' },
-                }}
-              >
-                <Typography component="span" sx={{ fontSize: 17, fontWeight: 800, lineHeight: 1 }}>
-                  {formatNumber(value)}
-                </Typography>
-                <Typography
-                  component="span"
-                  variant="caption"
-                  sx={{
-                    color: 'rgba(248,250,252,0.78)',
-                    lineHeight: 1.15,
-                    whiteSpace: { sm: 'nowrap' },
-                  }}
-                >
-                  <Box component="span" sx={{ '@media (max-width:359.95px)': { display: 'none' } }}>
-                    {t(`flow.context.metrics.${key}`)}
-                  </Box>
-                  <Box
-                    component="span"
-                    sx={{ display: 'none', '@media (max-width:359.95px)': { display: 'inline' } }}
-                  >
-                    {t(`flow.context.metricsShort.${key}`)}
-                  </Box>
-                </Typography>
-              </Box>
-            </ButtonBase>
-          </Box>
-        ))}
+        <FlowHomeStatusChip metrics={metrics} />
       </Box>
 
       <Stack
         data-flow-context-controls
         direction="row"
         alignItems="center"
-        justifyContent={copyOnRight ? { md: 'flex-start' } : { md: 'flex-end' }}
+        justifyContent={
+          compact ? 'flex-start' : copyOnRight ? { md: 'flex-start' } : { md: 'flex-end' }
+        }
         gap={0.75}
         flexWrap="wrap"
         sx={{
           minWidth: 0,
-          gridColumn: copyOnRight ? { xs: '1', md: '1 / 6' } : { xs: '1', md: '8 / 13' },
-          gridRow: { md: '1' },
-          justifySelf: { xs: 'stretch', md: copyOnRight ? 'start' : 'end' },
+          gridColumn: compact ? '1' : { xs: '1', md: copyOnRight ? '1' : '3' },
+          gridRow: compact ? 'auto' : { md: '1' },
+          justifySelf: compact ? 'stretch' : { xs: 'stretch', md: copyOnRight ? 'start' : 'end' },
           alignSelf: { md: 'center' },
+          maxWidth: compact ? '100%' : { md: 260 },
+          '[data-flow-large-text="true"] &': {
+            gridColumn: '1',
+            gridRow: 'auto',
+            justifySelf: 'start',
+            maxWidth: '100%',
+          },
         }}
       >
         <Stack
           direction="row"
           alignItems="center"
           gap={0.65}
-          sx={{ minHeight: 44, color: 'rgba(248,250,252,0.82)' }}
+          sx={{ minHeight: 24, whiteSpace: 'nowrap', color: 'rgba(248,250,252,0.76)' }}
           role="status"
           aria-live="polite"
         >
           {health.state === 'REFRESHING' ? (
             <CircularProgress size={14} thickness={5} color="inherit" aria-hidden="true" />
           ) : (
-            <Clock3 size={15} aria-hidden="true" />
+            <Clock3 size={12} aria-hidden="true" style={{ flexShrink: 0 }} />
           )}
           <Typography variant="caption">
             {health.state === 'REFRESHING'
@@ -389,9 +318,9 @@ export function FlowHomeContext({
               minHeight: 44,
               display: 'inline-flex',
               alignItems: 'stretch',
-              border: '1px solid rgba(255,255,255,0.5)',
+              border: '1px solid rgba(255,255,255,0.16)',
               borderRadius: 2,
-              bgcolor: 'rgba(3,12,28,0.42)',
+              bgcolor: 'rgba(255,255,255,0.06)',
               '&:hover': { bgcolor: 'rgba(255,255,255,0.14)' },
               '@media (forced-colors: active)': {
                 color: 'CanvasText',
@@ -411,15 +340,20 @@ export function FlowHomeContext({
               title={t('flow.context.editHub')}
               sx={{
                 minHeight: 44,
+                minWidth: 44,
+                px: { xs: 1, md: 0.75, xl: 1 },
                 color: '#F8FAFC',
                 border: 0,
                 borderRadius: canEditLayout && onOpenStudio ? '7px 0 0 7px' : 1.75,
                 bgcolor: 'transparent',
+                '& .MuiButton-startIcon': { mr: { xs: 0.5, md: 0, xl: 0.5 } },
                 '&:focus-visible': { outline: '2px solid #93C5FD', outlineOffset: -2 },
                 '@media (forced-colors: active)': { color: 'CanvasText' },
               }}
             >
-              {t('flow.context.editHub')}
+              <Box component="span" sx={{ display: { xs: 'inline', md: 'none', xl: 'inline' } }}>
+                {t('flow.context.editHub')}
+              </Box>
             </ActionButton>
             {canEditLayout && onOpenStudio && (
               <ButtonBase
@@ -453,10 +387,11 @@ export function FlowHomeContext({
           data-flow-health-domains={health.issues.map((issue) => issue.domain).join(',')}
           role="status"
           aria-live="polite"
+          aria-busy={health.refreshing ? 'true' : undefined}
           sx={{
             minWidth: 0,
-            gridColumn: copyOnRight ? { xs: '1', md: '1 / 6' } : { xs: '1', md: '8 / 13' },
-            gridRow: { md: '2' },
+            gridColumn: '1 / -1',
+            gridRow: 'auto',
             justifySelf: { xs: 'stretch', md: copyOnRight ? 'start' : 'end' },
             width: 1,
             minHeight: 44,
@@ -601,7 +536,10 @@ export function FlowHomeContext({
           paper: {
             role: 'region',
             'aria-label': t('flow.context.health.details'),
-            sx: { minWidth: 320, maxWidth: 'min(420px, calc(100vw - 24px))' },
+            sx: {
+              minWidth: 'min(320px, calc(100vw - 24px))',
+              maxWidth: 'min(420px, calc(100vw - 24px))',
+            },
           },
         }}
       >

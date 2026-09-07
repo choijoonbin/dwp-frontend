@@ -307,15 +307,23 @@ export async function getApprovalHome(contextScopeKey?: string): Promise<Approva
   });
   return response.data.data;
 }
-export async function getApprovalTasks(view = 'INBOX'): Promise<ApprovalTask[]> {
+export async function getApprovalTasks(
+  view = 'INBOX',
+  contextScopeKey?: string
+): Promise<ApprovalTask[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalTask[]>>(
-    `${base}/tasks?view=${encodeURIComponent(view)}`
+    `${base}/tasks?view=${encodeURIComponent(view)}`,
+    { contextScopeKey }
   );
   return response.data.data;
 }
-export async function getApprovalTask(taskId: string): Promise<ApprovalTaskDetail> {
+export async function getApprovalTask(
+  taskId: string,
+  contextScopeKey?: string
+): Promise<ApprovalTaskDetail> {
   const response = await axiosInstance.get<ApiResponse<ApprovalTaskDetail>>(
-    `${base}/tasks/${taskId}`
+    `${base}/tasks/${taskId}`,
+    { contextScopeKey }
   );
   return response.data.data;
 }

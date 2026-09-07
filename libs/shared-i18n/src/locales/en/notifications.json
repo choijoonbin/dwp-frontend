@@ -13,7 +13,7 @@
     "groups": {
       "notifications": {
         "overview": "Overview",
-        "center": "My notifications",
+        "center": "Triage",
         "settings": "Personal settings",
         "administration": "Tenant operations"
       }
@@ -21,7 +21,7 @@
     "items": {
       "notifications": {
         "home": { "label": "Notifications home" },
-        "center": { "label": "Notification center" },
+        "center": { "label": "Priority inbox" },
         "settings": { "label": "Notification settings" },
         "admin-overview": { "label": "Operations overview" },
         "admin-contracts": { "label": "Notification contracts" },
@@ -34,13 +34,17 @@
   },
   "home": {
     "eyebrow": "Attention hub",
-    "title": "Focus on the changes that need a response",
+    "title": "Notifications home",
     "description": "Organize notifications from work apps by priority, mention, and actionability so the next action is clear.",
     "live": "Live synchronization",
+    "searchLabel": "Search notifications",
+    "searchPlaceholder": "Search notifications, people, or work apps",
+    "searchAction": "Search",
     "loading": "Preparing priority notifications",
     "errorTitle": "Notifications home could not be loaded",
     "errorDescription": "Check the connection and try again. Existing notification state has not changed.",
     "summaryLabel": "Notification summary",
+    "appDistribution": "Unread notifications by app",
     "metrics": {
       "actionable": "Action required",
       "actionableDetail": "Unread actionable items",
@@ -52,11 +56,75 @@
       "laterDetail": "Items scheduled to return"
     },
     "priorityTitle": "Review first",
-    "priorityDescription": "Ordered by due date, direct assignment, and work impact.",
+    "priorityDescription": "Actionable notifications, ordered by recent activity.",
     "openCenter": "Open notification center",
     "open": "Review",
     "emptyTitle": "No priority notifications",
     "emptyDescription": "New actionable items will appear here."
+  },
+  "workbench": {
+    "title": "Notification center",
+    "description": "Review and act on notifications from every work app by priority and context.",
+    "live": "Live sync",
+    "syncedAt": "Last synced {{time}}",
+    "kpis": {
+      "ACTIONABLE": "Action required",
+      "UNREAD": "Unread",
+      "MENTIONS": "Mentions",
+      "SNOOZED": "Snoozed",
+      "INBOX": "Inbox",
+      "UNREAD_SHARE": "Unread share of inbox",
+      "UNREAD_SHARE_VALUE": "{{value}}% unread"
+    },
+    "digest": {
+      "title": "DWP work briefing",
+      "withLead": "You have {{count}} actionable notifications. Start with ‘{{title}}’.",
+      "withoutLead": "{{count}} actionable notifications remain outside the current view.",
+      "clear": "There are no notifications requiring immediate action.",
+      "review": "Review priority items",
+      "dismiss": "Dismiss briefing"
+    },
+    "groups": {
+      "ACTION_REQUIRED": {
+        "title": "Action required",
+        "description": "Recent activity first"
+      },
+      "CONVERSATIONS": {
+        "title": "Mentions & conversations",
+        "description": "Review replies and direct mentions in one place."
+      },
+      "UPDATES": {
+        "title": "Work updates",
+        "description": "Status changes and notices from your apps."
+      }
+    },
+    "shortcuts": {
+      "label": "Quick triage",
+      "move": "Move",
+      "complete": "Done",
+      "snooze": "Snooze"
+    },
+    "card": {
+      "actionRequired": "Action required",
+      "due": "Due {{time}}",
+      "reply": "Quick reply",
+      "replyLabel": "Reply",
+      "replyPlaceholder": "Write a message",
+      "replyError": "The message could not be sent. Your draft is preserved; try again.",
+      "replyCompletionPending": "Your reply was sent, but the notification could not be cleared. Clear the remaining notification again.",
+      "send": "Send",
+      "replySent": "Reply sent.",
+      "unread": "Unread notification",
+      "read": "Read notification"
+    },
+    "filters": {
+      "label": "Notification views and filters"
+    },
+    "announcements": {
+      "pending": "Updating ‘{{title}}’.",
+      "completed": "Updated ‘{{title}}’.",
+      "failed": "Could not update ‘{{title}}’."
+    }
   },
   "settings": {
     "eyebrow": "Personal notification settings",
@@ -66,9 +134,11 @@
   "actions": {
     "back": "Back",
     "complete": "Move to done",
+    "detail": "View details",
     "loadMore": "Load more",
     "markRead": "Mark as read",
     "markUnread": "Mark as unread",
+    "more": "More actions",
     "refresh": "Refresh",
     "resynchronize": "Resynchronize all",
     "restore": "Restore to inbox",
@@ -99,6 +169,7 @@
     "LOW": "Low"
   },
   "reason": {
+    "UNKNOWN": "Recipient reason unavailable",
     "DIRECT": "Assigned directly to you",
     "MENTION": "Mentioned you",
     "ROLE": "Sent to your role",
@@ -107,6 +178,7 @@
     "MANDATORY_POLICY": "Required by policy"
   },
   "reasonExplanation": {
+    "UNKNOWN": "The source application's recipient reason has not been classified.",
     "DIRECT": "The source app addressed your account directly.",
     "MENTION": "A colleague mentioned you in related work.",
     "ROLE": "This was sent because of a role assigned to you.",
@@ -124,12 +196,12 @@
     "security": "Security"
   },
   "views": {
-    "PRIORITY": "Priority",
-    "ALL": "All",
+    "PRIORITY": "Action required",
+    "ALL": "Inbox",
     "MENTIONS": "Mentions",
     "SAVED": "Saved",
     "SNOOZED": "Later",
-    "DONE": "Done"
+    "DONE": "Cleared"
   },
   "states": {
     "live": "Live connection",
@@ -138,6 +210,7 @@
     "degraded": "Some delivery paths are delayed.",
     "partial": "Information from {{count}} sources is temporarily unavailable.",
     "loading": "Loading notifications",
+    "loadingSummary": "Loading notification summary",
     "loadingMore": "Loading more notifications",
     "loadingDetail": "Loading notification details",
     "loadingPreferences": "Loading notification settings",
@@ -221,6 +294,14 @@
     "listLabel": "Notification list"
   },
   "filters": {
+    "reason": "Recipient reason",
+    "allReasons": "All recipient reasons",
+    "reset": "Reset filters",
+    "open": "More filters",
+    "close": "Close filters",
+    "viewCount": "{{count}} before additional filters",
+    "emptyTitle": "No matching notifications",
+    "emptyDescription": "Try a different search or recipient reason.",
     "priority": "Priority filter",
     "allPriorities": "All priorities",
     "app": "App filter",
@@ -280,6 +361,7 @@
   "preferences": {
     "title": "Notification settings",
     "description": "Manage global defaults and exceptions by app, notification type, and delivery channel.",
+    "sectionNavigation": "Notification settings shortcuts",
     "offline": "Settings cannot be changed while offline. Try again when you reconnect.",
     "managed": "Managed",
     "managedBy": "Managed by {{owner}}",
@@ -500,7 +582,15 @@
       "baseline": "Baseline {{value}}",
       "trendTitle": "Volume and user impact",
       "trendDescription": "Compare created, actionable, failed, and muted notifications.",
+      "trendChartLabel": "Recent notification volume and user impact chart",
+      "trendChartScrollLabel": "Horizontally scrollable notification trend chart",
+      "legendLabel": "Notification trend legend",
+      "trendPointLabel": "{{time}}: {{created}} created, {{actionable}} actionable, {{failed}} failed, {{muted}} muted",
       "trendTableLabel": "Notification volume and user impact trend",
+      "trendTableScrollLabel": "Horizontally scrollable exact notification trend values",
+      "exactData": "View exact values",
+      "emptyTrendTitle": "No trend data to display",
+      "emptyTrendDescription": "Volume and user impact trends will appear after notifications are generated.",
       "columns": {
         "time": "Time",
         "created": "Created",

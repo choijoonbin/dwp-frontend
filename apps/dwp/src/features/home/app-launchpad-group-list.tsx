@@ -67,12 +67,12 @@ export function AppLaunchpadGroupList({
         aria-label={groupName}
         sx={{
           '--launchpad-tile-width': flow ? '72px' : '100%',
-          '--launchpad-label-height': flow ? '3em' : undefined,
+          '--launchpad-label-height': flow ? '3.5em' : undefined,
           '--launchpad-label-line-height': flow
             ? (theme) => theme.typography.caption.lineHeight ?? 1.5
             : undefined,
           p: 0,
-          pt: `${GRID_TOP_INSET}px`,
+          pt: flow ? 0 : `${GRID_TOP_INSET}px`,
           mt: immersive ? 0.75 : flow ? 0 : { xs: 0.75, md: 0.5 },
           mb: 0,
           boxSizing: 'border-box',
@@ -148,11 +148,15 @@ export function AppLaunchpadGroupList({
             ? {
                 '--launchpad-tile-width': '100%',
                 gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+                justifyContent: 'center',
+                '& [data-launchpad-edit-frame]': { width: 48, height: 48 },
+                '& [data-launchpad-glyph]': { scale: `${48 / 52}` },
               }
             : undefined,
           [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]: flow
             ? {
-                gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${LAUNCHPAD_TILE_WIDTH}px)`,
+                gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+                justifyContent: 'center',
               }
             : undefined,
         }}

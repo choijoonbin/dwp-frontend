@@ -111,8 +111,9 @@
   },
   "governance": { "evidence": "결정 증적 보존" },
   "home": {
-    "eyebrow": "나의 의사결정 허브",
+    "eyebrow": "전자결재 홈",
     "title": "전자결재",
+    "greeting": "안녕하세요, {{name}}님",
     "subtitle": "지금 필요한 결정과 결재 흐름의 건강 상태를 한눈에 확인합니다.",
     "personFallback": "구성원",
     "customize": "결재 홈 편집",
@@ -127,23 +128,132 @@
       "title": "{{name}}님의 결정이 기다리고 있습니다",
       "description": "검토 대기 {{pending}}건 중 기한을 넘긴 항목은 {{overdue}}건입니다. 위험도와 기한을 기준으로 우선 처리하세요."
     },
+    "briefing": {
+      "eyebrow": "오늘의 결재 워크플로 브리핑",
+      "title": "우선순위가 높은 결재부터 책임 있게 처리하세요",
+      "description": "검토 대기 {{pending}}건 · 오늘 마감 {{dueToday}}건 · 기한 초과 {{overdue}}건",
+      "clear": "현재 우선 검토할 결재가 없습니다.",
+      "reviewUrgent": "긴급 결재 보기"
+    },
+    "focusQueue": {
+      "dueAt": "처리 기한 {{date}}",
+      "open": "검토 열기"
+    },
+    "flow": { "empty": "표시할 결재 흐름이 없습니다." },
+    "myRequests": {
+      "empty": "최근 상신한 결재가 없습니다.",
+      "awaitingStart": "결재선 시작 대기",
+      "progressLabel": "{{title}} 결재 진행률"
+    },
+    "insights": {
+      "askExpert": "전문가",
+      "empty": "현재 확인할 정책 또는 SLA 신호가 없습니다.",
+      "open": "관련 항목 확인"
+    },
     "widgets": {
       "decision-pulse": {
-        "label": "결재 현황",
-        "description": "우선순위와 SLA를 요약한 고정 현황"
+        "label": "오늘의 결재 브리핑",
+        "description": "우선순위와 SLA를 요약한 실행 브리핑"
       },
       "focus-queue": {
-        "label": "우선 결재함",
+        "label": "우선 심의 큐",
         "description": "위험도와 기한을 고려한 검토 항목",
-        "meta": "우선 검토 {{count}}건"
+        "meta": "우선 검토 {{count}}건",
+        "meta_one": "우선 검토 {{count}}건",
+        "meta_other": "우선 검토 {{count}}건"
       },
-      "flow": { "label": "결재 흐름", "description": "단계별 처리량과 위험 신호" },
-      "my-requests": { "label": "내가 올린 결재", "description": "최근 기안의 현재 처리 상태" },
-      "insights": { "label": "의사결정 인사이트", "description": "지금 확인할 정책·SLA 신호" },
+      "flow": { "label": "실시간 결재 흐름", "description": "단계별 처리량과 위험 신호" },
+      "my-requests": { "label": "내 기안 진행 추적", "description": "최근 기안의 현재 처리 상태" },
+      "insights": { "label": "의사결정 내비게이터", "description": "지금 확인할 정책·SLA 신호" },
       "admin-health": {
         "label": "결재 운영 상태",
         "description": "프로세스와 통합 전달의 운영 건강도",
         "metricDetail": "현재 테넌트 범위"
+      }
+    },
+    "commandCenter": {
+      "title": "전자결재 업무 센터",
+      "description": "화면을 벗어나지 않고 검토, 증적 확인, 결정을 이어갑니다.",
+      "metricsLabel": "전자결재 판단 지표",
+      "metricPendingDetail": "나의 검토를 기다리는 항목",
+      "metricDueDetail": "오늘 안에 처리할 항목",
+      "metricOverdueDetail": "즉시 확인이 필요한 항목",
+      "metricInFlightDetail": "내가 상신해 진행 중인 결재",
+      "metricCycleDetail": "SLA 준수율 {{percent}}%",
+      "queueNavigation": "결재 큐 필터",
+      "queueTitle": "결재 워크플로",
+      "queueDescription": "긴급도와 위험도 기준",
+      "filterCount_one": "{{count}}건",
+      "filterCount_other": "{{count}}건",
+      "countUnavailable": "건수를 확인하는 중",
+      "filters": {
+        "ALL": "전체 대기",
+        "URGENT": "긴급 결재",
+        "DUE_TODAY": "오늘 마감",
+        "HIGH_RISK": "고위험"
+      },
+      "searchLabel": "결재 검색",
+      "searchPlaceholder": "문서번호, 제목, 요청자 또는 단계",
+      "resultCount_one": "결재 {{count}}건",
+      "resultCount_other": "결재 {{count}}건",
+      "taskList": "검토 대기 결재 목록",
+      "noResults": "조건에 맞는 결재가 없습니다",
+      "noResultsDescription": "큐 필터나 검색어를 변경하세요.",
+      "noDueDate": "기한 없음",
+      "riskCompact": "위험 {{score}}",
+      "selectForBatch": "{{title}} 배치 승인 선택",
+      "selectedCount_one": "{{count}}건 선택",
+      "selectedCount_other": "{{count}}건 선택",
+      "batchLimit": "한 번에 최대 {{count}}건",
+      "batchLimitReached": "배치 승인은 한 번에 최대 20건까지 가능합니다.",
+      "batchApprove": "선택 항목 승인",
+      "batchDialogTitle": "선택한 결재를 승인할까요?",
+      "batchDialogDescription": "선택한 {{count}}건을 각각 다시 검증한 뒤 한 건씩 승인합니다.",
+      "batchDialogEvidence": "각 결재는 승인 직전에 최신 권한과 버전을 다시 확인합니다. 처리할 수 없는 항목은 건너뛰고 권한 또는 저장 실패 시 안전하게 중단합니다.",
+      "batchDialogConfirm": "배치 승인 시작",
+      "batchCompleted": "배치 승인을 완료했습니다.",
+      "batchStopped": "배치 승인을 안전하게 중단했습니다. 남은 항목을 확인하세요.",
+      "batchFailed": "배치 승인을 시작하지 못했습니다.",
+      "batchResult": "승인 {{approved}}건 · 처리 불가 {{ineligible}}건 · 남음 {{remaining}}건",
+      "queueFailClosed": "현재 권한을 확인하기 전까지 캐시된 결재와 결정 작업을 표시하지 않습니다.",
+      "detailTitle": "결재 상세",
+      "backToQueue": "결재 목록으로 돌아가기",
+      "selectTitle": "검토할 결재를 선택하세요",
+      "selectDescription": "검증된 요청 내용, 정책 신호, 실제 결재 이력과 처리 버튼이 이곳에 표시됩니다.",
+      "decisionBrief": "정책 및 위험 브리프",
+      "decisionBriefDescription": "현재 결재 기록과 결정 권한에서 확인된 사실만 요약합니다.",
+      "workflowEvidence": "실시간 결재 진행",
+      "workflowEvidenceDescription": "기록된 단계와 실제 현재 단계만 표시하며 미래 단계를 추정하지 않습니다.",
+      "stepNumber": "{{sequence}}단계",
+      "signals": {
+        "SELF_APPROVAL_BLOCKED": {
+          "title": "자기 결재가 차단되었습니다",
+          "description": "요청자와 결정자는 분리되어야 합니다."
+        },
+        "DECISION_AUTHORITY_UNAVAILABLE": {
+          "title": "결정 권한을 확인할 수 없습니다",
+          "description": "최신 권한을 확인할 때까지 이 결재는 읽기 전용입니다."
+        },
+        "OVERDUE": {
+          "title": "처리 기한을 넘겼습니다",
+          "description": "업무 영향을 확인하고 책임 있는 결과를 기록하세요."
+        },
+        "DUE_TODAY": {
+          "title": "오늘 처리 기한입니다",
+          "description": "현재 SLA가 끝나기 전에 검토를 마치세요."
+        },
+        "HIGH_RISK": {
+          "title": "위험 점수가 높습니다",
+          "description": "결정 전에 범위, 기간, 보완 통제를 확인하세요."
+        },
+        "RESTRICTED_DATA": {
+          "title": "민감 데이터가 포함됩니다",
+          "description": "기록된 데이터 분류 기준에 따라 요청을 취급하세요."
+        },
+        "STANDARD_REVIEW": {
+          "title": "추가 위험 신호가 없습니다",
+          "description": "표준 증적 검토 절차를 계속 진행하세요."
+        }
       }
     }
   },
@@ -151,6 +261,9 @@
     "pending": "검토 대기",
     "dueToday": "오늘 기한",
     "overdue": "기한 초과",
+    "inFlight": "진행 중인 내 기안",
+    "averageCycle": "평균 결재 시간",
+    "hours": "{{value}}시간",
     "sla": "SLA 준수율",
     "atRisk": "위험 {{count}}"
   },

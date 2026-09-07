@@ -25,6 +25,8 @@ const koreanCopy: Readonly<Record<string, string>> = {
   'device.mobile': '모바일',
   'content.widgetLabels.activity': '최근 활동',
   'content.widgetLabels.daily-brief': '다음 행동',
+  'content.widgetLabels.focus-balance': '집중 시간',
+  'content.widgetLabels.meeting-load': '회의 부하',
 };
 
 const t = ((key: string, options?: Record<string, unknown>) => {
@@ -50,6 +52,9 @@ describe('home history localization', () => {
     );
     expect(homeRevisionSummaryLabel(t, 'daily-brief configuration updated')).toBe(
       '다음 행동 콘텐츠 설정을 변경했습니다.'
+    );
+    expect(homeRevisionSummaryLabel(t, 'meeting-load configuration updated')).toBe(
+      '회의 부하 콘텐츠 설정을 변경했습니다.'
     );
     expect(homeRevisionSummaryLabel(t, 'Revision 12 restored')).toBe('12번 버전을 복원했습니다.');
   });

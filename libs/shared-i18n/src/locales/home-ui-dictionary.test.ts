@@ -67,4 +67,11 @@ describe('Home purpose UI dictionaries', () => {
       expect(enHomeStudio.device[key]).toBeTruthy();
     }
   });
+
+  it('uses the Messenger product name for the Korean Home launcher label', () => {
+    expect(koHome.apps.items['dwp-messaging']).toMatchObject({
+      name: '메신저',
+      shortName: '메신저',
+    });
+  });
 });

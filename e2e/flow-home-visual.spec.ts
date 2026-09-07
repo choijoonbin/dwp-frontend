@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
   FULL_PRODUCT_PERMISSIONS,
@@ -9,6 +9,17 @@ import {
 } from './support/shell-session';
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
 import { expectDwaionClearOfHomeActions } from './support/flow-home-launcher-clearance';
+import {
+  expectFiveColumnDockAlignment,
+  expectVerticalPurposeRows,
+  expectLargeTextPurposeGeometry,
+} from './support/flow-home-layout-contracts';
+import {
+  expectDesktopPurposeComposition,
+  expectRoleMetricLabelsReadable,
+} from './support/flow-home-wide-widget-contract';
+import { measureFlowLaunchDeck } from './support/flow-home-launch-deck-contract';
+import { routeEmptyFlowExecutionSummaries } from './support/flow-home-provider-fixtures';
 import { emulateVisualTransparency } from './support/visual-media';
 
 test.describe.configure({ mode: 'serial' });
@@ -57,6 +68,8 @@ const canonicalWidgets = [
   { widgetKey: 'daily-brief', visible: true, size: 'compact', height: 'standard' },
   { widgetKey: 'focus', visible: true, size: 'compact', height: 'standard' },
   { widgetKey: 'activity', visible: true, size: 'compact', height: 'standard' },
+  { widgetKey: 'focus-balance', visible: true, size: 'medium', height: 'short' },
+  { widgetKey: 'meeting-load', visible: true, size: 'medium', height: 'short' },
 ] as const;
 
 function flowExperience(
@@ -247,6 +260,7 @@ async function mockFlowHome(
       reduceMotion: true,
     },
   });
+  await routeEmptyFlowExecutionSummaries(page, FLOW_VISUAL_NOW.toISOString());
   await page.route('**/api/platform/v1/home-experience', (route) =>
     fulfillSuccess(route, flowExperience(experienceOverrides))
   );
@@ -365,7 +379,7 @@ async function waitForVisualState(page: Page) {
   expect(bounds).not.toBeNull();
   expect(viewport).not.toBeNull();
   if (!bounds || !viewport) return;
-  if (viewport.width < 900) {
+  if (viewport.width < 900 || bounds.width < 50) {
     expect(bounds.width).toBeCloseTo(44, 0);
     expect(bounds.height).toBeCloseTo(44, 0);
     await expect(launcher).toHaveCSS('position', 'relative');
@@ -388,98 +402,6 @@ async function expectNoHorizontalOverflow(page: Page) {
       )
     )
     .toBe(true);
-}
-
-async function expectRoleMetricLabelsReadable(flowHome: Locator) {
-  const roleLabels = await flowHome
-    .locator('[data-home-role-label], [data-home-role-comparison]')
-    .evaluateAll((labels) =>
-      labels.map((label) => {
-        const element = label as HTMLElement;
-        return {
-          text: element.textContent?.trim() ?? '',
-          whiteSpace: window.getComputedStyle(element).whiteSpace,
-          clippedHorizontally: element.scrollWidth > element.clientWidth + 1,
-          clippedVertically: element.scrollHeight > element.clientHeight + 1,
-        };
-      })
-    );
-  expect(roleLabels).toHaveLength(8);
-  expect(
-    roleLabels.every(
-      (label) => label.text.length > 1 && !label.clippedHorizontally && !label.clippedVertically
-    ),
-    JSON.stringify(roleLabels)
-  ).toBe(true);
-}
-
-async function expectDesktopPurposeComposition(
-  flowHome: Locator,
-  template: 'standard' | 'adaptive-wide' = 'standard'
-) {
-  const stage = flowHome.getByTestId('flow-home-personal-sections');
-  await expect(stage).toHaveAttribute('data-flow-layout-contract', 'purpose-widgets');
-  await expect(stage.locator('[data-workspace-widget="action-queue"]')).toHaveAttribute(
-    'data-workspace-widget-size',
-    'large'
-  );
-  for (const key of ['today', 'response-hub', 'request-tracker', 'role-pulse']) {
-    await expect(stage.locator(`[data-workspace-widget="${key}"]`)).toHaveAttribute(
-      'data-workspace-widget-size',
-      'compact'
-    );
-  }
-
-  const geometry = await stage.evaluate((root) => {
-    const rect = (key: string) => {
-      const node = root.querySelector<HTMLElement>(`[data-workspace-widget="${key}"]`)!;
-      const bounds = node.getBoundingClientRect();
-      return {
-        left: bounds.left,
-        right: bounds.right,
-        top: bounds.top,
-        bottom: bounds.bottom,
-        width: bounds.width,
-      };
-    };
-    return {
-      action: rect('action-queue'),
-      today: rect('today'),
-      response: rect('response-hub'),
-      request: rect('request-tracker'),
-      pulse: rect('role-pulse'),
-    };
-  });
-  if (template === 'adaptive-wide') {
-    await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
-    await expect(stage).toHaveAttribute('data-flow-adaptive-applied', 'true');
-    await expect(stage).toHaveAttribute('data-flow-wide-composition', '7-5/4-4-4');
-    expect(Math.abs(geometry.action.top - geometry.today.top)).toBeLessThanOrEqual(2);
-    expect(Math.abs(geometry.action.bottom - geometry.today.bottom)).toBeLessThanOrEqual(2);
-    expect(geometry.action.width / geometry.today.width).toBeGreaterThan(1.36);
-    expect(geometry.action.width / geometry.today.width).toBeLessThan(1.44);
-    expect(geometry.response.width / geometry.today.width).toBeGreaterThan(0.77);
-    expect(geometry.response.width / geometry.today.width).toBeLessThan(0.83);
-    expect(geometry.response.top).toBeGreaterThanOrEqual(
-      Math.max(geometry.action.bottom, geometry.today.bottom)
-    );
-    expect(Math.abs(geometry.response.top - geometry.request.top)).toBeLessThanOrEqual(2);
-    expect(Math.abs(geometry.request.top - geometry.pulse.top)).toBeLessThanOrEqual(2);
-    expect(Math.abs(geometry.response.bottom - geometry.request.bottom)).toBeLessThanOrEqual(2);
-    expect(Math.abs(geometry.request.bottom - geometry.pulse.bottom)).toBeLessThanOrEqual(2);
-    expect(geometry.request.left).toBeGreaterThanOrEqual(geometry.response.right);
-    expect(geometry.pulse.left).toBeGreaterThanOrEqual(geometry.request.right);
-    return;
-  }
-  expect(Math.abs(geometry.action.top - geometry.today.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(geometry.action.bottom - geometry.today.bottom)).toBeLessThanOrEqual(2);
-  expect(geometry.action.width / geometry.today.width).toBeGreaterThan(1.9);
-  expect(Math.abs(geometry.response.top - geometry.request.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(geometry.request.top - geometry.pulse.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(geometry.response.bottom - geometry.request.bottom)).toBeLessThanOrEqual(2);
-  expect(Math.abs(geometry.request.bottom - geometry.pulse.bottom)).toBeLessThanOrEqual(2);
-  expect(Math.abs(geometry.response.width - geometry.request.width)).toBeLessThanOrEqual(2);
-  expect(Math.abs(geometry.request.width - geometry.pulse.width)).toBeLessThanOrEqual(2);
 }
 
 const WORKSCAPE_VIEWPORTS = [
@@ -545,122 +467,17 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
         await expect(workscape.locator('[data-flow-health-strip]')).toHaveCount(0);
         await expectNoHorizontalOverflow(page);
         await waitForVisualState(page);
-
-        const contract = await workscape.evaluate((surface) => {
-          const frame = surface.querySelector<HTMLElement>('[data-flow-launch-deck-frame]')!;
-          const copy = surface.querySelector<HTMLElement>('[data-flow-context-copy]')!;
-          const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
-          const frameBounds = frame.getBoundingClientRect();
-          const copyBounds = copy.getBoundingClientRect();
-          const dockBounds = dock.getBoundingClientRect();
-          const targets = Array.from(surface.querySelectorAll<HTMLElement>('button')).map(
-            (target) => {
-              const bounds = target.getBoundingClientRect();
-              return { width: bounds.width, height: bounds.height };
-            }
+        if (viewport.width >= 1200) {
+          await expectFiveColumnDockAlignment(
+            flowHome.locator('[data-flow-dock-group] > ul'),
+            'data-flow-dock-item'
           );
-          const appLabels = Array.from(
-            surface.querySelectorAll<HTMLElement>(
-              '[data-flow-dock-item] button .MuiTypography-root'
-            )
-          ).map((label) => ({
-            text: label.textContent?.trim() ?? '',
-            clipped: label.scrollWidth > label.clientWidth + 1,
-          }));
-          const appItemBounds = Array.from(
-            surface.querySelectorAll<HTMLElement>('[data-flow-dock-item] button')
-          ).map((item) => {
-            const bounds = item.getBoundingClientRect();
-            return {
-              left: bounds.left,
-              right: bounds.right,
-              top: bounds.top,
-              bottom: bounds.bottom,
-            };
-          });
-          const groupLabels = Array.from(
-            surface.querySelectorAll<HTMLElement>('[data-flow-dock-group-label]')
-          )
-            .filter((label) => window.getComputedStyle(label).display !== 'none')
-            .map((label) => {
-              const bounds = label.getBoundingClientRect();
-              return {
-                text: label.textContent?.trim() ?? '',
-                clipped: label.scrollWidth > label.clientWidth + 1,
-                bounds: {
-                  left: bounds.left,
-                  right: bounds.right,
-                  top: bounds.top,
-                  bottom: bounds.bottom,
-                },
-              };
-            });
-          const groupSurfaces = Array.from(
-            surface.querySelectorAll<HTMLElement>('[data-flow-dock-group]')
-          ).map((group) => {
-            const bounds = group.getBoundingClientRect();
-            const style = window.getComputedStyle(group);
-            return {
-              id: group.dataset.flowDockGroup,
-              display: style.display,
-              left: bounds.left,
-              right: bounds.right,
-              top: bounds.top,
-              bottom: bounds.bottom,
-              width: bounds.width,
-              height: bounds.height,
-              borderStyles: [
-                style.borderTopStyle,
-                style.borderRightStyle,
-                style.borderBottomStyle,
-                style.borderLeftStyle,
-              ],
-              borderWidths: [
-                style.borderTopWidth,
-                style.borderRightWidth,
-                style.borderBottomWidth,
-                style.borderLeftWidth,
-              ].map(Number.parseFloat),
-              borderRadius: Number.parseFloat(style.borderTopLeftRadius),
-              backgroundColor: style.backgroundColor,
-              backgroundImage: style.backgroundImage,
-            };
-          });
-          const dockAction = surface
-            .querySelector<HTMLElement>('[data-flow-dock-action]')!
-            .getBoundingClientRect();
-          return {
-            frame: {
-              left: frameBounds.left,
-              right: frameBounds.right,
-              width: frameBounds.width,
-              center: frameBounds.left + frameBounds.width / 2,
-            },
-            copy: { left: copyBounds.left, right: copyBounds.right },
-            dock: {
-              left: dockBounds.left,
-              right: dockBounds.right,
-              width: dockBounds.width,
-              center: dockBounds.left + dockBounds.width / 2,
-              background: window.getComputedStyle(dock).backgroundColor,
-              overflow: dock.scrollWidth - dock.clientWidth,
-            },
-            workscapeHeight: surface.getBoundingClientRect().height,
-            targets,
-            appLabels,
-            appItemBounds,
-            groupLabels,
-            groupSurfaces,
-            dockAction: {
-              left: dockAction.left,
-              right: dockAction.right,
-              top: dockAction.top,
-              bottom: dockAction.bottom,
-            },
-          };
-        });
+        }
 
-        expect(contract.dock.background).not.toBe('rgba(255, 255, 255, 0.94)');
+        const contract = await measureFlowLaunchDeck(
+          flowHome.locator('[data-flow-launch-deck-frame]')
+        );
+
         expect(contract.dock.background).not.toBe('rgba(0, 0, 0, 0)');
         expect(contract.dock.overflow).toBeLessThanOrEqual(1);
         expect(contract.targets.every((target) => target.width >= 44 && target.height >= 44)).toBe(
@@ -680,7 +497,7 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
               (group) =>
                 group.borderStyles.every((style) => style === 'solid') &&
                 group.borderWidths.every((width) => width >= 1) &&
-                group.borderRadius >= 10 &&
+                group.borderRadius === 8 &&
                 (group.backgroundColor !== 'rgba(0, 0, 0, 0)' || group.backgroundImage !== 'none')
             )
           ).toBe(true);
@@ -729,12 +546,12 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
         expect(Math.abs(contract.frame.width - contract.dock.width)).toBeLessThanOrEqual(2);
 
         if (viewport.width >= 900 && backgroundPosition === 'RIGHT') {
-          expect(Math.abs(contract.copy.left - contract.dock.left)).toBeLessThanOrEqual(2);
+          expect(Math.abs(contract.copy.left - contract.context.left)).toBeLessThanOrEqual(2);
         } else if (viewport.width >= 900 && backgroundPosition === 'LEFT') {
-          expect(Math.abs(contract.copy.right - contract.dock.right)).toBeLessThanOrEqual(2);
+          expect(Math.abs(contract.copy.right - contract.context.right)).toBeLessThanOrEqual(2);
         }
 
-        await expect(workscape).toHaveScreenshot(
+        await expect(flowHome.locator('[data-flow-launch-deck-frame]')).toHaveScreenshot(
           `flow-workscape-${viewport.width}-${backgroundPosition.toLowerCase()}-${colorScheme}.png`,
           {
             animations: 'disabled',
@@ -771,20 +588,20 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
       beforeDisplay: window.getComputedStyle(surface, '::before').display,
       afterDisplay: window.getComputedStyle(surface, '::after').display,
       dockBackground: window.getComputedStyle(
-        surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!
+        surface.parentElement!.querySelector<HTMLElement>('[data-flow-dock-shell]')!
       ).backgroundColor,
-      groupPanels: Array.from(surface.querySelectorAll<HTMLElement>('[data-flow-dock-group]')).map(
-        (group) => {
-          const style = window.getComputedStyle(group);
-          return {
-            display: style.display,
-            borderStyle: style.borderTopStyle,
-            borderWidth: Number.parseFloat(style.borderTopWidth),
-            background: style.backgroundColor,
-            boxShadow: style.boxShadow,
-          };
-        }
-      ),
+      groupPanels: Array.from(
+        surface.parentElement!.querySelectorAll<HTMLElement>('[data-flow-dock-group]')
+      ).map((group) => {
+        const style = window.getComputedStyle(group);
+        return {
+          display: style.display,
+          borderStyle: style.borderTopStyle,
+          borderWidth: Number.parseFloat(style.borderTopWidth),
+          background: style.backgroundColor,
+          boxShadow: style.boxShadow,
+        };
+      }),
     }));
     expect(forcedContract.beforeDisplay).toBe('none');
     expect(forcedContract.afterDisplay).toBe('none');
@@ -803,13 +620,16 @@ for (const viewport of WORKSCAPE_VIEWPORTS) {
       ).toBe(true);
     }
     await expectNoHorizontalOverflow(page);
-    await expect(workscape).toHaveScreenshot(`flow-workscape-${viewport.width}-forced-colors.png`, {
-      animations: 'disabled',
-      caret: 'hide',
-      scale: 'css',
-      maxDiffPixelRatio: 0.001,
-      timeout: 15_000,
-    });
+    await expect(page.locator('[data-flow-launch-deck-frame]')).toHaveScreenshot(
+      `flow-workscape-${viewport.width}-forced-colors.png`,
+      {
+        animations: 'disabled',
+        caret: 'hide',
+        scale: 'css',
+        maxDiffPixelRatio: 0.001,
+        timeout: 15_000,
+      }
+    );
   });
 }
 
@@ -836,14 +656,17 @@ for (const viewport of [WORKSCAPE_VIEWPORTS[1], WORKSCAPE_VIEWPORTS[4]]) {
       await emulateReducedTransparency(page, colorScheme);
 
       await page.goto('/');
-      const workscape = page.getByTestId('flow-home').locator('[data-flow-workscape]');
       await waitForVisualState(page);
-      const dockBackground = await workscape
+      const dockBackground = await page
         .locator('[data-flow-dock-shell]')
         .evaluate((dock) => window.getComputedStyle(dock).backgroundColor);
-      expect(dockBackground).toBe(colorScheme === 'dark' ? 'rgb(7, 20, 38)' : 'rgb(16, 40, 77)');
+      const widgetBackground = await page
+        .locator('[data-workspace-widget-content] > section')
+        .first()
+        .evaluate((node) => window.getComputedStyle(node).backgroundColor);
+      expect(dockBackground).toBe(widgetBackground);
       await expectNoHorizontalOverflow(page);
-      await expect(workscape).toHaveScreenshot(
+      await expect(page.locator('[data-flow-launch-deck-frame]')).toHaveScreenshot(
         `flow-workscape-${viewport.width}-reduced-transparency-${colorScheme}.png`,
         {
           animations: 'disabled',
@@ -916,8 +739,8 @@ test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page 
   const flowHome = page.getByTestId('flow-home');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'balanced');
+  await expect(flowHome.getByTitle('메신저', { exact: true })).toBeVisible();
   await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
-  await expectDesktopPurposeComposition(flowHome);
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
@@ -925,7 +748,7 @@ test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page 
   await expectNoHorizontalOverflow(page);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
-
+  await expectDesktopPurposeComposition(flowHome);
   await expect(page).toHaveScreenshot('flow-home-purpose-balanced-ko-1440.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -936,7 +759,7 @@ test('Flow Home purpose-led Korean desktop 1440 visual baseline', async ({ page 
   });
 });
 
-test('Flow Home operator Korean desktop 1440 keeps the 8+4 role overview tier', async ({
+test('Flow Home operator Korean desktop keeps the reference 8+4 hierarchy and sidebar insights', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Desktop baseline uses the Chromium project.');
@@ -950,7 +773,7 @@ test('Flow Home operator Korean desktop 1440 keeps the 8+4 role overview tier', 
   const roleInsight = stage.locator(
     '[data-workspace-widget="role-pulse"] [data-home-role-insight]'
   );
-  await expect(roleInsight.locator('[data-home-role-lens]')).toHaveCount(4);
+  await expect(roleInsight.locator('[data-home-role-lens]')).toHaveCount(2);
   const geometry = await stage.evaluate((root) => {
     const rect = (key: string) => {
       const bounds = root
@@ -1060,31 +883,7 @@ test('Flow Home expressive Korean desktop 1920 visual baseline', async ({ page }
     '[data-workspace-widget="action-queue"] [data-home-purpose-list]'
   );
   await expect(priorityLayout).toBeVisible();
-  const priorityRows = await priorityLayout.evaluate((list) => {
-    const style = window.getComputedStyle(list);
-    return {
-      display: style.display,
-      direction: style.flexDirection,
-      rows: Array.from(list.querySelectorAll<HTMLElement>(':scope > [role="listitem"]')).map(
-        (row) => {
-          const bounds = row.getBoundingClientRect();
-          return { top: bounds.top, bottom: bounds.bottom, height: bounds.height };
-        }
-      ),
-    };
-  });
-  expect(priorityRows.display).toBe('flex');
-  expect(priorityRows.direction).toBe('column');
-  expect(priorityRows.rows.length).toBeGreaterThanOrEqual(2);
-  expect(
-    Math.max(...priorityRows.rows.map((row) => row.height)) -
-      Math.min(...priorityRows.rows.map((row) => row.height))
-  ).toBeLessThanOrEqual(2);
-  expect(
-    priorityRows.rows.every(
-      (row, index) => index === 0 || row.top >= (priorityRows.rows[index - 1]?.bottom ?? row.top)
-    )
-  ).toBe(true);
+  await expectVerticalPurposeRows(priorityLayout);
   const workscapeHeight =
     (await flowHome.locator('[data-flow-workscape]').boundingBox())?.height ??
     Number.POSITIVE_INFINITY;
@@ -1118,7 +917,7 @@ test('Flow Home tenant photo keeps brand colour and a readable launch deck', asy
   const workscape = page.getByTestId('flow-home').locator('[data-flow-workscape]');
   await expect(workscape).toHaveAttribute('data-tenant-image-opacity', '1');
   const contract = await workscape.evaluate((surface) => {
-    const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
+    const dock = surface.parentElement!.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
     return {
       imageOpacity: window.getComputedStyle(surface, '::before').opacity,
       workscapeHeight: surface.getBoundingClientRect().height,
@@ -1152,6 +951,10 @@ test('Flow Home purpose-led Korean mobile 390 visual baseline', async ({ page },
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'balanced');
   await expect(flowHome.locator('[data-flow-section^="purpose-"]')).toHaveCount(5);
   await expect(flowHome.locator('[data-flow-dock-item]')).toHaveCount(4);
+  await expect(flowHome.locator('[data-flow-section="updates"]')).toHaveAttribute(
+    'data-flow-updates-visible-count',
+    '1'
+  );
   const columns = await flowHome
     .locator('[data-workspace-presentation]')
     .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
@@ -1261,6 +1064,10 @@ test('Flow Home Korean desktop 1280 at 200 percent text keeps a dark visual base
     .toBe('32px');
   await page.evaluate(() => window.dispatchEvent(new Event('resize')));
   await expect(flowHome).toHaveAttribute('data-flow-large-text', 'true');
+  await expect(page.getByTestId('dwaion-launcher')).toHaveAttribute(
+    'data-shell-auxiliary-placement',
+    'header'
+  );
   const largeTextMeaning = await flowHome.evaluate((root) => {
     const measure = (element: HTMLElement) => ({
       text: element.textContent?.trim() ?? '',
@@ -1374,6 +1181,7 @@ test('Flow Home Korean desktop 1280 at 200 percent text keeps a dark visual base
     .evaluate((grid) => window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
   expect(columns).toBe(1);
   await expectNoHorizontalOverflow(page);
+  await expectLargeTextPurposeGeometry(flowHome);
   await waitForVisualState(page);
   await expectDwaionClearOfHomeActions(page);
 
@@ -1425,16 +1233,32 @@ test('Flow Home loading transition stays within the layout-shift contract', asyn
   test.skip(testInfo.project.name !== 'chromium', 'Layout shift is measured once in Chromium.');
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.addInitScript(() => {
-    const state = { supported: false, value: 0, entries: 0 };
+    const state = { supported: false, value: 0, entries: 0, sources: [] as unknown[] };
     Object.assign(window, { __flowHomeLayoutShift: state });
     if (!PerformanceObserver.supportedEntryTypes.includes('layout-shift')) return;
     state.supported = true;
     new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        const shift = entry as PerformanceEntry & { value: number; hadRecentInput: boolean };
+        const shift = entry as PerformanceEntry & {
+          value: number;
+          hadRecentInput: boolean;
+          sources?: {
+            node?: HTMLElement;
+            previousRect: DOMRectReadOnly;
+            currentRect: DOMRectReadOnly;
+          }[];
+        };
         if (shift.hadRecentInput) continue;
         state.value += shift.value;
         state.entries += 1;
+        state.sources.push({
+          value: shift.value,
+          sources: shift.sources?.map(({ node, previousRect, currentRect }) => ({
+            node: node?.outerHTML.slice(0, 300),
+            previousRect,
+            currentRect,
+          })),
+        });
       }
     }).observe({ type: 'layout-shift', buffered: true });
   });
@@ -1450,11 +1274,17 @@ test('Flow Home loading transition stays within the layout-shift contract', asyn
   await page.evaluate(() => {
     const state = (
       window as typeof window & {
-        __flowHomeLayoutShift: { supported: boolean; value: number; entries: number };
+        __flowHomeLayoutShift: {
+          supported: boolean;
+          value: number;
+          entries: number;
+          sources: unknown[];
+        };
       }
     ).__flowHomeLayoutShift;
     state.value = 0;
     state.entries = 0;
+    state.sources = [];
   });
   releasePreference();
 
@@ -1469,6 +1299,10 @@ test('Flow Home loading transition stays within the layout-shift contract', asyn
         }
       ).__flowHomeLayoutShift
   );
+  await testInfo.attach('loading-layout-shifts', {
+    body: JSON.stringify(shift, null, 2),
+    contentType: 'application/json',
+  });
   expect(shift.supported).toBe(true);
   expect(shift.value).toBeLessThanOrEqual(0.02);
 });

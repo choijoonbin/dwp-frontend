@@ -15,6 +15,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { MessagingComposer } from './messaging-composer';
 import { MessagingMessageRow } from './messaging-message-row';
 import { useMessagingDisplayPreference } from './use-messaging-display-preference';
+import { useMessagingReadReceipts } from './use-messaging-read-receipts';
+import { useMessagingReadObserver } from './use-messaging-read-observer';
 
 import type { MessagingThread } from './messaging-model';
 import type { MessagingMentionDraft } from './messaging-composer-model';
@@ -75,6 +77,19 @@ export function MessagingThreadPanel({
   const nearBottomRef = useRef(true);
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const { preference: displayPreference } = useMessagingDisplayPreference(conversation);
+  const receipts = useMessagingReadReceipts(
+    conversation?.conversationId,
+    thread ? [thread.root, ...thread.replies] : [],
+    currentUserId,
+    open
+  );
+  useMessagingReadObserver(
+    scrollRef,
+    conversation?.conversationId,
+    thread ? [thread.root, ...thread.replies] : [],
+    currentUserId,
+    open
+  );
 
   useEffect(() => {
     if (!open || !thread) return;
@@ -107,7 +122,12 @@ export function MessagingThreadPanel({
         direction="row"
         spacing={1}
         alignItems="center"
-        sx={{ px: 1.75, py: 1.4, borderBottom: 1, borderColor: 'divider' }}
+        sx={{
+          px: { xs: 1, sm: 1.75 },
+          py: { xs: 0.75, sm: 1.4 },
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
       >
         <MessageSquareReply size={18} color="var(--dwp-product-accent)" />
         <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -137,6 +157,7 @@ export function MessagingThreadPanel({
         </Typography>
         <MessagingMessageRow
           message={thread.root}
+          receipt={receipts.get(thread.root.messageId)}
           mine={thread.root.senderUserId === currentUserId}
           display={{ ...displayPreference, effectiveLayoutMode: 'COLLABORATIVE' }}
           compact
@@ -169,6 +190,7 @@ export function MessagingThreadPanel({
             <MessagingMessageRow
               key={reply.messageId}
               message={reply}
+              receipt={receipts.get(reply.messageId)}
               mine={reply.senderUserId === currentUserId}
               display={{ ...displayPreference, effectiveLayoutMode: 'COLLABORATIVE' }}
               compact
@@ -193,7 +215,9 @@ export function MessagingThreadPanel({
 
       <Box
         sx={{
-          p: 1.5,
+          px: { xs: 0.75, sm: 1.5 },
+          pt: { xs: 0.5, sm: 1.5 },
+          pb: { xs: 'calc(6px + env(safe-area-inset-bottom))', sm: 1.5 },
           minWidth: 0,
           boxSizing: 'border-box',
           overflow: 'hidden',

@@ -59,7 +59,7 @@ const expectedRouteCount = Object.values(EXPECTED_SHELL_COUNTS).reduce(
 
 describe('product menu manifest', () => {
   it('keeps every supported menu route unique and under visual governance', () => {
-    expect(PRODUCT_MENU_ROUTES).toHaveLength(187);
+    expect(PRODUCT_MENU_ROUTES).toHaveLength(193);
     expect(PRODUCT_MENU_ROUTES).toHaveLength(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.id)).size).toBe(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.path)).size).toBe(expectedRouteCount);
@@ -81,31 +81,31 @@ describe('product menu manifest', () => {
       }, {});
 
     expect(countBy('plane')).toEqual({
-      work: 84,
+      work: 90,
       management: 61,
       'tenant-governance': 24,
       'provider-control': 10,
       account: 8,
     });
     expect(countBy('taskKind')).toEqual({
-      work: 89,
+      work: 95,
       team: 3,
       operations: 47,
       administration: 48,
     });
     expect(countBy('migrationWave')).toEqual({
-      Keep: 48,
+      Keep: 47,
       'W0.5': 12,
       W1a: 15,
       W1b: 25,
       W2: 35,
-      W3: 52,
+      W3: 59,
     });
   });
 
-  it('binds each of the 139 business-app menus to exactly one matching surface item', () => {
+  it('binds each of the 146 business-app menus to exactly one matching surface item', () => {
     const productRoutes = PRODUCT_MENU_ROUTES.filter((route) => route.productSurfaceId);
-    expect(productRoutes).toHaveLength(139);
+    expect(productRoutes).toHaveLength(146);
     expect(
       productRoutes.every((route) => route.navigationContextId === route.productSurfaceId)
     ).toBe(true);
@@ -157,13 +157,13 @@ describe('product menu manifest', () => {
       ),
       'utf8'
     );
-    expect(document).toContain('정적 Menu Route **187개 전부**');
-    expect(document).toContain('12개 업무 앱 139개');
+    expect(document).toContain('정적 Menu Route **193개 전부**');
+    expect(document).toContain('12개 업무 앱 146개');
     expect(document).toContain('| `W2`     |             35 | DWAI·ON, Notifications, Spaces');
     expect(document).toContain(
-      '| `W3`     |             52 | Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
+      '| `W3`     |             59 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
     );
-    expect(document).toContain('| **합계** |        **187** |');
+    expect(document).toContain('| **합계** |        **193** |');
   });
 
   it('locks every governed menu identity, path, plane, task, surface, and wave to the ADR checksum', () => {
@@ -188,8 +188,29 @@ describe('product menu manifest', () => {
         migrationWave,
       })
     ).sort((left, right) => left.id.localeCompare(right.id));
+    const newDwaionMenuIds = new Set([
+      'dwaion.artifacts',
+      'dwaion.personal-controls',
+      'dwaion.routines',
+    ]);
+    const previousLedger = canonicalLedger.filter((route) => !newDwaionMenuIds.has(route.id));
+    expect(previousLedger).toHaveLength(190);
+    expect(createHash('sha256').update(JSON.stringify(previousLedger)).digest('hex')).toBe(
+      'cd0fea0d21ee314d080435cbc12f3fd72852839129260b27e29d0b2d0ac8fbdf'
+    );
+    const earlierMenuIds = new Set([
+      'mail.contacts',
+      'meetings.follow-ups',
+      'meetings.templates',
+      'meetings.preferences',
+    ]);
+    const earlierLedger = previousLedger.filter((route) => !earlierMenuIds.has(route.id));
+    expect(earlierLedger).toHaveLength(186);
+    expect(createHash('sha256').update(JSON.stringify(earlierLedger)).digest('hex')).toBe(
+      'dc66a58d22bcd74729aeb8033ebbc42f72575eec8f47f7f053c57f1f9f281834'
+    );
     const checksum = createHash('sha256').update(JSON.stringify(canonicalLedger)).digest('hex');
-    expect(checksum).toBe('c77a266fc9e1320ba4a75d639e4dd8903b7d031610854f793e904174057b85ec');
+    expect(checksum).toBe('a718725494d965dc85f031544c1d04f07824656eb7cef5e6b9bd206b10d4fee6');
     const document = fs.readFileSync(
       new URL(
         '../../../../docs/03-architecture/R1 제품 Surface 전체 메뉴 분류표.md',

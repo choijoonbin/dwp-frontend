@@ -19,6 +19,18 @@ export const MEETINGS_WORK_NAVIGATION = projectProductSurfaceNavigation(MEETINGS
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'meetings.work-access.v1' },
   },
+  templates: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'meetings.work-access.v1' },
+  },
+  'follow-ups': {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'meetings.work-access.v1' },
+  },
+  preferences: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'meetings.work-access.v1' },
+  },
 });
 
 export const MEETINGS_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(MEETINGS_NAVIGATION, {

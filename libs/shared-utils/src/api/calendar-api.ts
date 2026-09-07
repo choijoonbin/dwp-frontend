@@ -2,6 +2,8 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
+export * from './calendar-team-api';
+
 export type CalendarType = 'PERSONAL' | 'TEAM' | 'RESOURCE' | 'SYSTEM';
 export type CalendarEventType = 'MEETING' | 'FOCUS' | 'TASK' | 'OUT_OF_OFFICE' | 'REMINDER';
 export type CalendarEventStatus = 'CONFIRMED' | 'TENTATIVE' | 'CANCELLED';

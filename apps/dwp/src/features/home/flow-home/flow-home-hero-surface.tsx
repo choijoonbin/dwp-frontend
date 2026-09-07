@@ -51,7 +51,6 @@ export function FlowHomeHeroSurface({
   presentation = 'balanced',
   compact = false,
   editing = false,
-  wide = false,
   ariaLabel,
   previewViewport,
   darkPreview = false,
@@ -66,41 +65,41 @@ export function FlowHomeHeroSurface({
         : { xs: 'stretch', md: 'flex-start' };
 
   return (
-    <TenantWorkscape
-      backgroundUrl={backgroundUrl}
-      backgroundPosition={backgroundPosition}
-      focalX={focalX}
-      focalY={focalY}
-      mobileFocalX={mobileFocalX}
-      mobileFocalY={mobileFocalY}
-      contentAlignment={resolvedContentAlignment}
-      overlayOpacity={overlayOpacity}
-      presentation={presentation}
-      compact={compact}
-      previewViewport={previewViewport}
-      darkPreview={darkPreview}
-      ariaLabel={ariaLabel}
-    >
-      <Box
-        data-flow-launch-deck-frame
-        data-flow-hero-surface
-        data-flow-hero-content-alignment={resolvedContentAlignment.toLowerCase()}
-        sx={{
-          position: 'relative',
-          zIndex: 1,
-          width: 1,
-          maxWidth: wide && presentation !== 'focused' ? 'none' : { md: 1280, xl: 1520 },
-          mx: 'auto',
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 1,
-          alignItems: editing ? 'stretch' : alignItems,
-        }}
+    <Box data-flow-launch-deck-frame sx={{ width: 1, minWidth: 0, display: 'grid', gap: 2 }}>
+      <TenantWorkscape
+        backgroundUrl={backgroundUrl}
+        backgroundPosition={backgroundPosition}
+        focalX={focalX}
+        focalY={focalY}
+        mobileFocalX={mobileFocalX}
+        mobileFocalY={mobileFocalY}
+        contentAlignment={resolvedContentAlignment}
+        overlayOpacity={overlayOpacity}
+        presentation={presentation}
+        compact={compact}
+        previewViewport={previewViewport}
+        darkPreview={darkPreview}
+        ariaLabel={ariaLabel}
       >
-        {context}
-        {dock}
-      </Box>
-    </TenantWorkscape>
+        <Box
+          data-flow-hero-surface
+          data-flow-hero-content-alignment={resolvedContentAlignment.toLowerCase()}
+          sx={{
+            position: 'relative',
+            zIndex: 1,
+            width: 1,
+            mx: 'auto',
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            alignItems: editing ? 'stretch' : alignItems,
+          }}
+        >
+          {context}
+        </Box>
+      </TenantWorkscape>
+      {dock}
+    </Box>
   );
 }

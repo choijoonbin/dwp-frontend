@@ -1,74 +1,91 @@
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  BookOpenCheck,
-  BriefcaseBusiness,
-  CalendarDays,
-  CheckCircle2,
-  ExternalLink,
-  FileCheck2,
-  FileText,
-  Gauge,
-  ListChecks,
-  LockKeyhole,
-  Mail,
-  ShieldCheck,
-} from 'lucide-react';
-import { ActionIconButton } from '@dwp-frontend/design-system';
-
+import { BookOpenCheck, ExternalLink, Gauge, LockKeyhole, ShieldCheck } from 'lucide-react';
+import { ActionButton, ActionIconButton, ContentDialog } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-
-import type {
-  AskCitation,
-  AskCitationSourceType,
-  AskDwpResponse,
-  WorkspaceWorkSummary,
-} from '@dwp-frontend/shared-utils';
-import type { LucideIcon } from 'lucide-react';
-
+import useMediaQuery from '@mui/material/useMediaQuery';
+import type { Theme } from '@mui/material/styles';
+import type { AskCitation, AskDwpResponse } from '@dwp-frontend/shared-utils';
 import {
   confidenceValue,
   isGroundedFallbackResponse,
   responseTone,
 } from './dwaion-workspace-model';
 
-type DwaionWorkspaceContextProps = {
-  response: AskDwpResponse | null;
-  workSummary?: WorkspaceWorkSummary;
-  sourceScopes: AskCitationSourceType[];
-  showWorkSignals?: boolean;
-  onOpenCitation: (citation: AskCitation) => void;
-};
-
-const SOURCE_ICONS: Record<AskCitationSourceType, LucideIcon> = {
-  WORK_ITEM: BriefcaseBusiness,
-  MAIL: Mail,
-  CALENDAR: CalendarDays,
-  APPROVAL_TASK: ListChecks,
-  APPROVAL_REQUEST: FileCheck2,
-  APPROVAL_FORM: FileText,
-  APPROVAL_OPERATION: Gauge,
-};
-
 export function DwaionWorkspaceContext({
   response,
-  workSummary,
-  sourceScopes,
-  showWorkSignals = true,
   onOpenCitation,
-}: DwaionWorkspaceContextProps) {
+}: {
+  response: AskDwpResponse;
+  onOpenCitation: (citation: AskCitation) => void;
+}) {
   const { t } = useTranslation('work');
+  const compact = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const [open, setOpen] = useState(false);
+  const triggerId = useId();
+
+  const close = () => {
+    setOpen(false);
+    globalThis.requestAnimationFrame(() => document.getElementById(triggerId)?.focus());
+  };
+
+  if (compact) {
+    return (
+      <>
+        <ActionButton
+          id={triggerId}
+          intent="secondary"
+          startIcon={<BookOpenCheck size={18} aria-hidden="true" />}
+          onClick={() => setOpen(true)}
+          sx={{ minHeight: 44, width: '100%', justifyContent: 'space-between' }}
+        >
+          {t('askPage.contextRail.evidenceTitle')}
+          <Typography component="span" variant="caption" color="text.secondary">
+            {t('askPage.contextRail.sourceCount', { count: response.sourceCount })}
+          </Typography>
+        </ActionButton>
+        <ContentDialog
+          open={open}
+          fullScreen
+          title={t('askPage.contextRail.evidenceTitle')}
+          description={t('askPage.contextRail.evidenceDescription')}
+          closeLabel={t('askPage.citationPreview.close')}
+          onClose={close}
+          titleStart={<BookOpenCheck size={20} aria-hidden="true" />}
+          closeButtonSx={{ width: 44, height: 44 }}
+          contentDividers
+          contentSx={{ p: 0, pb: 'env(safe-area-inset-bottom, 0px)' }}
+          slotProps={{
+            paper: {
+              sx: {
+                pt: 'env(safe-area-inset-top, 0px)',
+                pl: 'env(safe-area-inset-left, 0px)',
+                pr: 'env(safe-area-inset-right, 0px)',
+              },
+            },
+          }}
+        >
+          <ResponseContext
+            response={response}
+            onOpenCitation={(citation) => {
+              setOpen(false);
+              onOpenCitation(citation);
+            }}
+          />
+        </ContentDialog>
+      </>
+    );
+  }
 
   return (
     <Box
       component="aside"
       aria-label={t('askPage.contextRail.label')}
       sx={{
-        position: { lg: 'sticky' },
-        top: { lg: 82 },
         alignSelf: 'start',
         border: 1,
         borderColor: 'divider',
@@ -77,142 +94,22 @@ export function DwaionWorkspaceContext({
         overflow: 'hidden',
       }}
     >
-      <Box sx={{ px: 2, py: 1.75 }}>
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Box
-            sx={{
-              width: 30,
-              height: 30,
-              display: 'grid',
-              placeItems: 'center',
-              borderRadius: 1,
-              bgcolor: 'primary.lighter',
-              color: 'primary.main',
-            }}
-          >
-            {response ? (
-              <BookOpenCheck size={17} aria-hidden="true" />
-            ) : (
-              <ShieldCheck size={17} aria-hidden="true" />
-            )}
-          </Box>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography component="h2" variant="subtitle2" fontWeight={800}>
-              {t(response ? 'askPage.contextRail.evidenceTitle' : 'askPage.contextRail.scopeTitle')}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t(
-                response
-                  ? 'askPage.contextRail.evidenceDescription'
-                  : 'askPage.contextRail.scopeDescription'
-              )}
-            </Typography>
-          </Box>
-        </Stack>
-      </Box>
-
-      <Divider />
-
-      {response ? (
-        <ResponseContext response={response} onOpenCitation={onOpenCitation} />
-      ) : (
-        <IdleContext
-          workSummary={workSummary}
-          sourceScopes={sourceScopes}
-          showWorkSignals={showWorkSignals}
-        />
-      )}
-    </Box>
-  );
-}
-
-function IdleContext({
-  workSummary,
-  sourceScopes,
-  showWorkSignals,
-}: {
-  workSummary?: WorkspaceWorkSummary;
-  sourceScopes: AskCitationSourceType[];
-  showWorkSignals: boolean;
-}) {
-  const { t } = useTranslation('work');
-  return (
-    <>
-      <Box sx={{ px: 2, py: 1.5 }}>
-        <Stack spacing={0.5}>
-          {sourceScopes.map((key) => {
-            const Icon = SOURCE_ICONS[key];
-            return (
-              <Box
-                key={key}
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: '28px minmax(0, 1fr) auto',
-                  alignItems: 'center',
-                  gap: 1,
-                  py: 0.75,
-                }}
-              >
-                <Icon size={17} color="currentColor" aria-hidden="true" />
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="body2" fontWeight={700}>
-                    {t(`askPage.sourceTypes.${key}`)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t(`askPage.contextRail.sources.${key}`)}
-                  </Typography>
-                </Box>
-                <CheckCircle2
-                  size={15}
-                  color="#188464"
-                  aria-label={t('askPage.contextRail.enabled')}
-                />
-              </Box>
-            );
-          })}
-        </Stack>
-      </Box>
-
-      {showWorkSignals && <Divider />}
-
-      {showWorkSignals && (
-        <Box sx={{ px: 2, py: 1.75 }}>
-          <Typography component="h3" variant="caption" color="text.secondary" fontWeight={800}>
-            {t('askPage.contextRail.signalsTitle')}
-          </Typography>
-          <Box
-            sx={{
-              mt: 1.25,
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-              gap: 1,
-            }}
-          >
-            {[
-              ['total', workSummary?.total ?? 0],
-              ['dueSoon', workSummary?.dueSoon ?? 0],
-              ['waiting', workSummary?.waiting ?? 0],
-            ].map(([key, value]) => (
-              <Box key={String(key)} sx={{ minWidth: 0 }}>
-                <Typography component="p" variant="h6">
-                  {value}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" noWrap display="block">
-                  {t(`askPage.contextRail.signals.${key}`)}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      )}
-
-      <Box sx={{ px: 2, py: 1.5, bgcolor: 'action.hover', display: 'flex', gap: 1 }}>
-        <LockKeyhole size={16} color="currentColor" aria-hidden="true" />
-        <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.5 }}>
-          {t('askPage.contextRail.permissionNote')}
+      <Box sx={{ p: 2 }}>
+        <Typography
+          component="h2"
+          variant="subtitle2"
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
+          <BookOpenCheck size={17} />
+          {t('askPage.contextRail.evidenceTitle')}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {t('askPage.contextRail.evidenceDescription')}
         </Typography>
       </Box>
-    </>
+      <Divider />
+      <ResponseContext response={response} onOpenCitation={onOpenCitation} />
+    </Box>
   );
 }
 
@@ -278,10 +175,15 @@ function ResponseContext({
                   {index + 1}
                 </Typography>
                 <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="body2" fontWeight={700} noWrap>
+                  <Typography variant="body2" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
                     {citation.title}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" noWrap display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    sx={{ overflowWrap: 'anywhere' }}
+                  >
                     {t(`askPage.sourceTypes.${citation.sourceType}`)} · {citation.sourceSystem}
                   </Typography>
                 </Box>
@@ -291,6 +193,7 @@ function ResponseContext({
                     tooltip={t('askPage.openSource', { title: citation.title })}
                     size="small"
                     onClick={() => onOpenCitation(citation)}
+                    sx={{ width: 44, height: 44 }}
                   >
                     <ExternalLink size={15} aria-hidden="true" />
                   </ActionIconButton>
@@ -369,8 +272,7 @@ function EvidenceRow({
         <Typography
           variant="body2"
           fontWeight={700}
-          noWrap
-          sx={{ fontFamily: mono ? 'monospace' : undefined }}
+          sx={{ fontFamily: mono ? 'monospace' : undefined, overflowWrap: 'anywhere' }}
         >
           {value}
         </Typography>

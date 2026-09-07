@@ -57,4 +57,17 @@ describe('DWAI-ON product manifest', () => {
 
     expect(navigationPaths.every((path) => staticPaths.has(path))).toBe(true);
   });
+
+  it('keeps personal memory and privacy access independently delegable', () => {
+    const controls = DWAION_PRODUCT_MANIFEST.navigation
+      .flatMap((group) => group.items)
+      .find((item) => item.view === 'personal-controls');
+
+    expect(
+      controls && 'requiredAnyAuthorities' in controls ? controls.requiredAnyAuthorities : []
+    ).toEqual([
+      { resourceKey: 'APP.DWAION_MEMORY', permissionCode: 'VIEW' },
+      { resourceKey: 'APP.DWAION_PRIVACY', permissionCode: 'VIEW' },
+    ]);
+  });
 });

@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 158,
+  "dependencyCount": 159,
   "licenseCounts": {
     "(Apache-2.0 AND BSD-3-Clause)": 1,
     "0BSD": 1,
     "Apache-2.0": 9,
     "BSD-3-Clause": 5,
     "ISC": 11,
-    "MIT": 131
+    "MIT": 132
   },
   "packages": [
     {
@@ -724,6 +724,12 @@
       "version": "1.33.0",
       "license": "ISC",
       "repository": "https://github.com/lucide-icons/lucide.git"
+    },
+    {
+      "name": "marked",
+      "version": "18.0.11",
+      "license": "MIT",
+      "repository": "git+https://github.com/markedjs/marked.git"
     },
     {
       "name": "ms",

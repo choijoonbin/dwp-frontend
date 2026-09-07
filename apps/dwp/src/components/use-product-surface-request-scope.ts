@@ -1,9 +1,10 @@
-import { useAuth, useProductSurfaceAuthority } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
 import { useOptionalAllowedProductSurface } from './allowed-product-surface-context';
 import { resolveCanonicalProductSurfaceContext } from './product-surface-capability-access';
 
-import type { ProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils';
+import type { ProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
 import type { AllowedSurfaceDecision } from '../features/shell/product-surface-context';
 
 export type ProductSurfaceRequestScope = Readonly<{

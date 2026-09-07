@@ -2,6 +2,7 @@
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HttpError } from '@dwp-frontend/shared-utils';
 
 import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import type {
@@ -61,6 +62,7 @@ vi.mock('react-i18next', () => ({
 
 type QueryState<T> = {
   data?: VideoMeetingCollaborationPage<T>;
+  error?: unknown;
   isError: boolean;
   isLoading: boolean;
   isFetching: boolean;
@@ -71,7 +73,7 @@ type ObservedQueryOptions = {
   queryKey: readonly unknown[];
   enabled: boolean;
   refetchInterval: number | false;
-  retry: number;
+  retry: number | ((failureCount: number, error: unknown) => boolean);
 };
 
 const enabledPermissions: VideoMeetingEffectivePermissions = {
@@ -134,6 +136,7 @@ type RuntimeProps = Parameters<typeof MeetingCollaborationRuntime>[0];
 
 const baseProps: RuntimeProps = {
   meetingId: 'meeting-runtime-1',
+  authorizationScope: 'tenant:1:user:7:revision:1',
   activeTab: null,
   meetingLive: true,
   canModerate: false,
@@ -196,13 +199,18 @@ describe('meeting collaboration runtime', () => {
     expect(latestQueryOptions('chat')).toMatchObject({
       enabled: true,
       refetchInterval: 2_000,
-      retry: 1,
     });
     expect(latestQueryOptions('floor')).toMatchObject({
       enabled: true,
       refetchInterval: 2_000,
-      retry: 1,
     });
+    expect(latestQueryOptions('chat').retry).toBeTypeOf('function');
+    expect(
+      (latestQueryOptions('chat').retry as (count: number, error: unknown) => boolean)(
+        0,
+        new HttpError('Forbidden', 403)
+      )
+    ).toBe(false);
     expect(mocks.panel).not.toHaveBeenCalled();
     expect(container?.childElementCount).toBe(0);
   });
@@ -282,5 +290,28 @@ describe('meeting collaboration runtime', () => {
       'server-peer-1',
       'server-own-2',
     ]);
+  });
+
+  it('redacts chat and disables its stream immediately after an authority denial', async () => {
+    chatQuery = queryState({
+      items: [chatMessage('sensitive-message', 1, 'Confidential room text')],
+      nextSequence: 1,
+      hasMore: false,
+    });
+    await renderRuntime({ activeTab: 'chat' });
+    expect(latestPanelProps().chat.messages[0]?.body).toBe('Confidential room text');
+
+    chatQuery = {
+      ...queryState<VideoMeetingChatMessage>(),
+      error: new HttpError('Forbidden', 403),
+      isError: true,
+    };
+    await renderRuntime({ activeTab: 'chat' });
+
+    expect(latestPanelProps().chat.messages).toEqual([]);
+    expect(latestPanelProps().permissions.canReadChat).toBe(false);
+    expect(latestPanelProps().permissions.canSendChat).toBe(false);
+    expect(latestQueryOptions('chat').enabled).toBe(false);
+    expect(JSON.stringify(latestPanelProps())).not.toContain('Confidential room text');
   });
 });

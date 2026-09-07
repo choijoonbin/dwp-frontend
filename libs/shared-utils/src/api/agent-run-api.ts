@@ -30,6 +30,23 @@ export async function getDwaionUserRuns(
   return response.data.data;
 }
 
+export async function getDwaionUserRun(
+  runId: string,
+  signal?: AbortSignal
+): Promise<DwaionUserRun> {
+  if (!UUID_PATTERN.test(runId)) throw new TypeError('Agent run ID is invalid.');
+  const canonicalRunId = runId.toLowerCase();
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
+    `/api/agent/v1/runs/${encodeURIComponent(canonicalRunId)}`,
+    { signal }
+  );
+  const run = response.data.data;
+  if (!isUserRun(run) || run.runId.toLowerCase() !== canonicalRunId) {
+    throw new HttpError('Agent run detail response is invalid.', 502, response.data);
+  }
+  return { ...run, runId: canonicalRunId };
+}
+
 function isUserRun(value: unknown): value is DwaionUserRun {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const run = value as Record<string, unknown>;

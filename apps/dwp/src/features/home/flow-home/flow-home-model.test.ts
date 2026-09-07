@@ -98,7 +98,21 @@ const overview = {
     status: 'AVAILABLE',
     source: 'DWP_ACTIVITY',
     generatedAt: '2026-08-21T00:00:00Z',
-    data: { events: [], generatedAt: '2026-08-21T00:00:00Z' },
+    data: {
+      events: [],
+      generatedAt: '2026-08-21T00:00:00Z',
+      executionSummary: {
+        total: 0,
+        running: 0,
+        needsInput: 0,
+        policyBlocked: 0,
+        completed: 0,
+        failed: 0,
+        cancelled: 0,
+        generatedAt: '2026-08-21T00:00:00Z',
+        coverage: { supportedObjectTypes: [] },
+      },
+    },
   },
   recommendations: {
     status: 'AVAILABLE',
@@ -350,6 +364,65 @@ describe('Flow Home model', () => {
       kind: 'target',
       value: 60,
     });
+  });
+
+  it('does not infer current activity attention from historical events when the ledger summary is absent', () => {
+    const historical = {
+      ...overview,
+      activity: {
+        ...overview.activity,
+        data: {
+          events: [{ state: 'needs-input' }, { state: 'policy-blocked' }],
+          generatedAt: overview.generatedAt,
+        },
+      },
+    } as unknown as HomeOverview;
+    expect(buildFlowSignals(historical).some((signal) => signal.key === 'activity-attention')).toBe(
+      false
+    );
+  });
+
+  it('uses current ledger attention independently of the size and state of the history page', () => {
+    const ledger = {
+      ...overview,
+      activity: {
+        ...overview.activity,
+        data: {
+          ...overview.activity.data,
+          events: [],
+          executionSummary: {
+            ...overview.activity.data!.executionSummary!,
+            needsInput: 2,
+            policyBlocked: 1,
+          },
+        },
+      },
+    } as HomeOverview;
+    expect(
+      buildFlowSignals(ledger).find((signal) => signal.key === 'activity-attention')
+    ).toMatchObject({
+      value: 3,
+      route: '/activity/timeline',
+      activityBreakdown: { needsInput: 2, policyBlocked: 1 },
+    });
+    expect(
+      buildFlowSignals({ ...ledger, activity: { ...ledger.activity, status: 'FORBIDDEN' } }).some(
+        (signal) => signal.key === 'activity-attention'
+      )
+    ).toBe(false);
+    const unavailable = {
+      ...ledger,
+      activity: {
+        ...ledger.activity,
+        data: {
+          ...ledger.activity.data!,
+          executionSummaryStatus: 'UNAVAILABLE' as const,
+        },
+      },
+    };
+    expect(
+      buildFlowSignals(unavailable).some((signal) => signal.key === 'activity-attention')
+    ).toBe(false);
   });
 
   it('does not repeat any of the three visible priority items in the timeline', () => {

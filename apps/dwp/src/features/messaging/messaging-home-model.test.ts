@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import {
   buildMessagingHomeView,
   compareMessagingAttention,
+  filterMessagingHomeConversations,
   messagingAttentionState,
   messagingFocusReason,
+  messagingHomeFilter,
 } from './messaging-home-model';
 
 import type { MessagingConversation, MessagingHome } from '@dwp-frontend/shared-utils';
@@ -112,5 +114,44 @@ describe('messaging home model', () => {
     expect(result.focusConversations).not.toContainEqual(
       expect.objectContaining({ conversationId: 'conversation-0' })
     );
+  });
+
+  it('accepts only known persisted focus values', () => {
+    expect(messagingHomeFilter('MENTIONS')).toBe('MENTIONS');
+    expect(messagingHomeFilter('SPACE')).toBe('SPACE');
+    expect(messagingHomeFilter('DIRECT')).toBe('DIRECT');
+    expect(messagingHomeFilter('admin')).toBe('ALL');
+    expect(messagingHomeFilter(null)).toBe('ALL');
+  });
+
+  it('uses the server mention scope rather than guessing from preview text', () => {
+    const ordinary = conversation('ordinary', { unreadCount: 3 });
+    const mention = conversation('mention', { unreadCount: 1 });
+    const readMention = conversation('read-mention');
+    expect(
+      filterMessagingHomeConversations([ordinary], 'MENTIONS', [mention, readMention])
+    ).toEqual([mention]);
+    expect(filterMessagingHomeConversations([ordinary], 'MENTIONS')).toEqual([]);
+  });
+
+  it('filters the complete source before limiting rows and excludes duplicate or archived work', () => {
+    const direct = conversation('direct', { unreadCount: 1, conversationType: 'DIRECT' });
+    const space = conversation('space', { unreadCount: 2, visibility: 'SPACE' });
+    const archived = conversation('archived', { unreadCount: 10, lifecycleState: 'ARCHIVED' });
+    const source = [direct, space, archived, direct];
+    expect(filterMessagingHomeConversations(source, 'ALL')).toEqual([direct, space]);
+    expect(filterMessagingHomeConversations(source, 'SPACE')).toEqual([space]);
+    expect(filterMessagingHomeConversations(source, 'DIRECT')).toEqual([direct]);
+  });
+
+  it('includes read direct conversations in the connection rail but not the attention queue', () => {
+    const direct = conversation('read-direct', { conversationType: 'DIRECT' });
+    const archived = conversation('closed-direct', {
+      conversationType: 'DIRECT',
+      lifecycleState: 'ARCHIVED',
+    });
+    const view = buildMessagingHomeView(home(), [direct, archived]);
+    expect(view.directConversations).toEqual([direct]);
+    expect(view.focusConversations).toEqual([]);
   });
 });

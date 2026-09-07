@@ -24,6 +24,13 @@ import {
 } from './app-launchpad-model';
 
 describe('personal home app entitlements', () => {
+  it('launches Workplace at its home instead of the space discovery screen', () => {
+    expect(HOME_APPS.find((app) => app.id === 'dwp-rooms')).toMatchObject({
+      route: '/workplace/home',
+      resourceKey: 'APP.WORKPLACE',
+    });
+  });
+
   it('uses role guards when the app permission registry is not seeded', () => {
     const employeeApps = HOME_APPS.filter((app) => isAppEntitled(app, ['EMPLOYEE'], []));
     const adminApps = HOME_APPS.filter((app) => isAppEntitled(app, ['ADMIN'], []));

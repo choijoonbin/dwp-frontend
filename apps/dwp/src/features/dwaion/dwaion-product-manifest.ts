@@ -39,6 +39,18 @@ export const DWAION_WORK_NAVIGATION = projectProductSurfaceNavigation(DWAION_NAV
       ],
     },
   },
+  routines: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },
+  },
+  'personal-controls': {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },
+  },
+  artifacts: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },
+  },
 });
 
 export const DWAION_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(DWAION_NAVIGATION, {

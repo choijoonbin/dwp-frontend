@@ -1,4 +1,12 @@
-import { Activity, CalendarRange, Inbox, ListTodo, Zap } from 'lucide-react';
+import {
+  Activity,
+  CalendarClock,
+  CalendarRange,
+  Inbox,
+  ListTodo,
+  TimerReset,
+  Zap,
+} from 'lucide-react';
 
 import {
   isWorkspaceHomeWidgetSizeAllowed,
@@ -11,7 +19,13 @@ import {
 import type { WorkspaceWidgetDefinition } from '../../../components/workspace-composer/workspace-composer-model';
 
 export type FlowHomeSectionKey =
-  'action-queue' | 'today' | 'response-hub' | 'request-tracker' | 'role-pulse';
+  | 'action-queue'
+  | 'today'
+  | 'response-hub'
+  | 'request-tracker'
+  | 'role-pulse'
+  | 'focus-balance'
+  | 'meeting-load';
 export type FlowHomeSectionPreference = PersonalHomeWidgetPreference<FlowHomeSectionKey>;
 
 /**
@@ -25,6 +39,8 @@ export const FLOW_HOME_STORAGE_ALIAS = {
   'response-hub': 'daily-brief',
   'request-tracker': 'focus',
   'role-pulse': 'activity',
+  'focus-balance': 'focus-balance',
+  'meeting-load': 'meeting-load',
 } as const satisfies Record<FlowHomeSectionKey, HomeWidgetKey>;
 
 const FLOW_HOME_SECTION_BY_STORAGE = new Map<HomeWidgetKey, FlowHomeSectionKey>(
@@ -40,6 +56,8 @@ export const FLOW_HOME_MEMBER_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
   'response-hub',
   'request-tracker',
   'role-pulse',
+  'focus-balance',
+  'meeting-load',
 ];
 
 export const FLOW_HOME_OPERATOR_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
@@ -48,6 +66,8 @@ export const FLOW_HOME_OPERATOR_SECTION_ORDER: readonly FlowHomeSectionKey[] = [
   'today',
   'response-hub',
   'request-tracker',
+  'meeting-load',
+  'focus-balance',
 ];
 
 export const FLOW_HOME_SECTION_REGISTRY: readonly WorkspaceWidgetDefinition<FlowHomeSectionKey>[] =
@@ -106,6 +126,26 @@ export const FLOW_HOME_SECTION_REGISTRY: readonly WorkspaceWidgetDefinition<Flow
       allowedHeights: ['short', 'standard', 'tall'],
       surface: 'plain',
     },
+    {
+      key: 'focus-balance',
+      icon: TimerReset,
+      canHide: true,
+      defaultSize: 'medium',
+      allowedSizes: ['quarter', 'compact', 'medium'],
+      defaultHeight: 'short',
+      allowedHeights: ['short', 'standard'],
+      surface: 'plain',
+    },
+    {
+      key: 'meeting-load',
+      icon: CalendarClock,
+      canHide: true,
+      defaultSize: 'medium',
+      allowedSizes: ['quarter', 'compact', 'medium'],
+      defaultHeight: 'short',
+      allowedHeights: ['short', 'standard'],
+      surface: 'plain',
+    },
   ];
 
 const flowSectionDefinitions = new Map(
@@ -152,6 +192,8 @@ const LEGACY_FLOW_GEOMETRY: Readonly<
   'response-hub': { sizes: ['large', 'full'], heights: ['standard'] },
   'request-tracker': { sizes: ['medium'], heights: ['tall'] },
   'role-pulse': { sizes: ['quarter', 'compact'], heights: ['tall'] },
+  'focus-balance': { sizes: ['medium'], heights: ['short'] },
+  'meeting-load': { sizes: ['medium'], heights: ['short'] },
 };
 
 /**

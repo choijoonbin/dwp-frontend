@@ -16,7 +16,7 @@ const generatedPath = path.join(
 );
 const INDEX_FILE = 'product-surfaces-v1.index.json';
 const LATEST_ALIAS_FILE = 'product-surfaces-v1.json';
-const VERSIONS = [1, 2, 3, 4];
+const VERSIONS = [1, 2, 3, 4, 5];
 const LATEST_VERSION = VERSIONS.at(-1);
 const SNAPSHOT_FIELDS = [
   'bundles',
@@ -85,6 +85,13 @@ const EXPECTED_COUNTS = {
     predicatePolicies: 33,
     routes: 155,
   },
+  5: {
+    capabilities: 72,
+    accessPolicies: 22,
+    entitlementExpressions: 16,
+    predicatePolicies: 33,
+    routes: 160,
+  },
 };
 const EXPECTED_ROLLOUT_PRODUCTS = [
   'approvals',
@@ -100,7 +107,12 @@ const EXPECTED_ROLLOUT_PRODUCTS = [
   'spaces',
   'workplace',
 ];
-const PRESERVED_V1_CHECKSUM = 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67';
+const PRESERVED_CHECKSUMS = Object.freeze({
+  1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
+  2: '5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c',
+  3: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
+  4: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
+});
 const SHA_256 = /^[a-f0-9]{64}$/u;
 
 function fail(message) {
@@ -270,7 +282,20 @@ function validateNoDroppedContracts(previous, next) {
       const candidate = nextByKey.get(record[key]);
       if (!candidate)
         fail(`v${next.version} dropped v${previous.version} ${section} ${record[key]}`);
-      if (!isAppendOnlySuperset(record, candidate)) {
+      const previousDescriptor = structuredClone(record);
+      const candidateDescriptor = structuredClone(candidate);
+      const previousRouteKeys = previousDescriptor.routeContractKeys ?? [];
+      const candidateRouteKeys = candidateDescriptor.routeContractKeys ?? [];
+      delete previousDescriptor.routeContractKeys;
+      delete candidateDescriptor.routeContractKeys;
+      const routeReferencesAreMonotonic =
+        Array.isArray(previousRouteKeys) &&
+        Array.isArray(candidateRouteKeys) &&
+        previousRouteKeys.every((routeKey) => candidateRouteKeys.includes(routeKey));
+      if (
+        !routeReferencesAreMonotonic ||
+        !isAppendOnlySuperset(previousDescriptor, candidateDescriptor)
+      ) {
         fail(
           `v${next.version} non-monotonically changed v${previous.version} ${section} ${record[key]}`
         );
@@ -351,7 +376,11 @@ function validateSnapshot(value) {
   if (bundles.length !== VERSIONS.length) {
     fail(`authorization snapshot must contain v1-v${LATEST_VERSION} exactly`);
   }
-  if (bundles[0].checksum !== PRESERVED_V1_CHECKSUM) fail('preserved v1 checksum changed');
+  for (const [version, checksum] of Object.entries(PRESERVED_CHECKSUMS)) {
+    if (bundles[Number(version) - 1]?.checksum !== checksum) {
+      fail(`preserved v${version} checksum changed`);
+    }
+  }
   for (let index = 1; index < bundles.length; index += 1) {
     validateNoDroppedContracts(bundles[index - 1], bundles[index]);
   }
@@ -577,7 +606,9 @@ function readOfficialSnapshot(artifactDirectory) {
     )
     .sort();
   if (canonicalJson(packagedBundles) !== canonicalJson(expectedBundles)) {
-    fail('official artifact directory must contain exactly immutable bundle v1-v4 files');
+    fail(
+      `official artifact directory must contain exactly immutable bundle v1-v${LATEST_VERSION} files`
+    );
   }
   const index = readOfficialJson(INDEX_FILE, 'registry index');
   const bundles = VERSIONS.map((version) =>

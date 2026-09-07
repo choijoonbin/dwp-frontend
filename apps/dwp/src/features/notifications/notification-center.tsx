@@ -1,61 +1,40 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowLeft,
-  Bell,
-  Bookmark,
-  BookmarkCheck,
-  Check,
-  CheckCheck,
-  ChevronDown,
-  Clock3,
-  Filter,
-  Inbox,
-  MailOpen,
-  RotateCcw,
-  Search,
-  Settings2,
-} from 'lucide-react';
+import { Bookmark, Check, CheckCheck, Clock3, Inbox } from 'lucide-react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   applyNotificationTriage,
   createNotificationIdempotencyKey,
-  getNotificationDetail,
   getNotificationDeliveryProfile,
   getNotificationInbox,
   getNotificationSummary,
   isNotificationCursorResetError,
-  NOTIFICATION_API_CAPABILITIES,
   type NotificationDetail,
   type NotificationInboxPage,
   type NotificationItem,
-  type NotificationPriority,
+  type NotificationSummary,
   type NotificationTriageAction,
   type NotificationView,
 } from '@dwp-frontend/shared-utils/api/notification-api';
-import { useToast } from '@dwp-frontend/shared-utils';
+import {
+  getNotificationSummaryByApp,
+  sendMessagingMessage,
+  useToast,
+} from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ActionIconButton,
   EmptyState,
   ErrorState,
-  FormField,
   LoadingState,
   PageCanvas,
 } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import InputAdornment from '@mui/material/InputAdornment';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationQueryKeys } from './integration-contract';
 import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
@@ -65,14 +44,31 @@ import {
   defaultSnoozeTime,
   flattenNotificationPages,
   moveNotificationSelection,
-  NOTIFICATION_VIEWS,
   notificationMatchesView,
   optimisticTriageItem,
 } from './notification-model';
 import {
+  groupNotificationStream,
+  isNotificationShortcutTarget,
+  notificationMatchesInboxScope,
+  optimisticNotificationSummary,
+} from './notification-inbox-model';
+import { NotificationActionCard } from './notification-action-card';
+import { NotificationFilterBar } from './notification-filter-bar';
+import {
+  EMPTY_NOTIFICATION_FILTERS,
+  hasNotificationFilters,
+  notificationFiltersForView,
+} from './notification-filter-model';
+import type { CenterFilters, NotificationCenterScope } from './notification-filter-model';
+export type { CenterFilters, NotificationCenterScope } from './notification-filter-model';
+import { NotificationDetailPane } from './notification-detail-pane';
+import {
+  NotificationStreamGroupHeading,
+  NotificationWorkbenchHeader,
+} from './notification-inbox-chrome';
+import {
   NotificationConnectionNotice,
-  NotificationItemRow,
-  NotificationPageHeading,
   NotificationSyncResetNotice,
   useNotificationClock,
 } from './notification-ui';
@@ -82,334 +78,106 @@ import {
   useOnlineStatus,
 } from './use-notification-runtime';
 import { useNotificationBulkActions } from './use-notification-bulk-actions';
-import { useNotificationTargetNavigation } from './use-notification-target-navigation';
 
 import type { InfiniteData } from '@tanstack/react-query';
-import type { Theme } from '@mui/material/styles';
+import type { NotificationInboxFilterScope } from './notification-inbox-model';
 
 const PAGE_SIZE = 30;
-
-type CenterFilters = {
-  query: string;
-  appKey: string;
-  priority: NotificationPriority | 'ALL';
-  readState: 'ALL' | 'UNREAD' | 'READ';
-};
-
-const EMPTY_FILTERS: CenterFilters = {
-  query: '',
-  appKey: '',
-  priority: 'ALL',
-  readState: 'ALL',
-};
 
 export type NotificationCenterProps = {
   initialView?: NotificationView;
   initialNotificationId?: string | null;
+  initialQuery?: string;
+  initialReadState?: CenterFilters['readState'];
+  initialAppKey?: string;
+  initialPriority?: CenterFilters['priority'];
+  initialReason?: CenterFilters['reason'];
   onOpenSettings: () => void;
   onOpenTarget?: (href: string) => void;
+  onViewChange?: (view: NotificationView) => void;
+  onScopeChange?: (scope: NotificationCenterScope) => void;
 };
 
-function updatePageItem(
-  data: InfiniteData<NotificationInboxPage> | undefined,
+type NotificationInboxCache = InfiniteData<NotificationInboxPage> | NotificationInboxPage;
+
+function updatePageItems(
+  page: NotificationInboxPage,
   item: NotificationItem,
-  view: NotificationView
-): InfiniteData<NotificationInboxPage> | undefined {
-  if (!data) return data;
+  scope: NotificationInboxFilterScope
+): NotificationInboxPage {
   return {
-    ...data,
-    pages: data.pages.map((page) => ({
-      ...page,
-      items: page.items
-        .map((candidate) => (candidate.notificationId === item.notificationId ? item : candidate))
-        .filter((candidate) => notificationMatchesView(candidate, view)),
-    })),
+    ...page,
+    items: page.items
+      .map((candidate) => (candidate.notificationId === item.notificationId ? item : candidate))
+      .filter((candidate) => notificationMatchesInboxScope(candidate, scope)),
   };
 }
 
-function NotificationDetailPane({
-  item,
-  onBack,
-  onTriage,
-  onOpenTarget,
-  busy,
-}: {
-  item: NotificationItem;
-  onBack?: () => void;
-  onTriage: (action: NotificationTriageAction, snoozedUntil?: string) => void;
-  onOpenTarget?: (href: string) => void;
-  busy: boolean;
-}) {
-  const { t } = useTranslation('notifications');
-  const [snoozeAnchor, setSnoozeAnchor] = useState<HTMLElement | null>(null);
-  const [sensitiveRevealed, setSensitiveRevealed] = useState(false);
-  const detailQuery = useQuery({
-    queryKey: notificationQueryKeys.detail(item.notificationId),
-    queryFn: ({ signal }) => getNotificationDetail(item.notificationId, signal),
-    staleTime: 30_000,
-    retry: 1,
-  });
-  const targetNavigation = useNotificationTargetNavigation(
-    onOpenTarget,
-    () => void detailQuery.refetch()
-  );
-  const detail = detailQuery.data;
-  const primary = (detail?.item ?? item).actions.find((action) => action.primary);
+function updateInboxCache(
+  data: NotificationInboxCache | undefined,
+  item: NotificationItem,
+  scope: NotificationInboxFilterScope
+): NotificationInboxCache | undefined {
+  if (!data) return data;
+  if (!('pages' in data)) return updatePageItems(data, item, scope);
+  return {
+    ...data,
+    pages: data.pages.map((page) => updatePageItems(page, item, scope)),
+  };
+}
 
-  useEffect(() => {
-    setSensitiveRevealed(false);
-  }, [item.notificationId]);
-
-  return (
-    <Box component="aside" aria-label={t('detail.regionLabel')} sx={{ minWidth: 0 }}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        gap={1}
-        sx={{ minHeight: 52, px: 1.5, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Stack direction="row" alignItems="center" gap={0.5}>
-          {onBack && (
-            <ActionIconButton label={t('actions.back')} onClick={onBack} size="small">
-              <ArrowLeft size={18} />
-            </ActionIconButton>
-          )}
-          <Typography component="h2" variant="subtitle1" fontWeight={760}>
-            {t('detail.title')}
-          </Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" gap={0.25}>
-          <ActionIconButton
-            label={item.readAt ? t('actions.markUnread') : t('actions.markRead')}
-            onClick={() => onTriage(item.readAt ? 'UNREAD' : 'READ')}
-            disabled={busy}
-            size="small"
-          >
-            {item.readAt ? <MailOpen size={18} /> : <CheckCheck size={18} />}
-          </ActionIconButton>
-          {(!item.savedAt || NOTIFICATION_API_CAPABILITIES.unsave) && (
-            <ActionIconButton
-              label={item.savedAt ? t('actions.unsave') : t('actions.save')}
-              onClick={() => onTriage(item.savedAt ? 'UNSAVE' : 'SAVE')}
-              disabled={busy}
-              size="small"
-            >
-              {item.savedAt ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-            </ActionIconButton>
-          )}
-          <ActionIconButton
-            label={t('actions.snooze')}
-            onClick={(event) => setSnoozeAnchor(event.currentTarget)}
-            disabled={busy}
-            size="small"
-          >
-            <Clock3 size={18} />
-          </ActionIconButton>
-          {(!item.completedAt || NOTIFICATION_API_CAPABILITIES.restore) && (
-            <ActionIconButton
-              label={item.completedAt ? t('actions.restore') : t('actions.complete')}
-              onClick={() => onTriage(item.completedAt ? 'RESTORE' : 'COMPLETE')}
-              disabled={busy}
-              size="small"
-            >
-              {item.completedAt ? <RotateCcw size={18} /> : <Check size={18} />}
-            </ActionIconButton>
-          )}
-        </Stack>
-      </Stack>
-      <Menu
-        anchorEl={snoozeAnchor}
-        open={Boolean(snoozeAnchor)}
-        onClose={() => setSnoozeAnchor(null)}
-      >
-        {[4, 24, 72].map((hours) => (
-          <MenuItem
-            key={hours}
-            onClick={() => {
-              setSnoozeAnchor(null);
-              onTriage('SNOOZE', defaultSnoozeTime(hours));
-            }}
-          >
-            {t('actions.snoozeHours', { count: hours })}
-          </MenuItem>
-        ))}
-      </Menu>
-
-      {detailQuery.isLoading ? (
-        <LoadingState label={t('states.loadingDetail')} variant="skeleton" skeletonRows={5} />
-      ) : detailQuery.isError || !detail ? (
-        <ErrorState
-          title={t('states.detailErrorTitle')}
-          description={t('states.detailErrorDescription')}
-          retryLabel={t('actions.retry')}
-          onRetry={() => void detailQuery.refetch()}
-          retrying={detailQuery.isFetching}
-        />
-      ) : (
-        <Box sx={{ p: { xs: 2, md: 2.5 } }}>
-          <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t(`sources.${detail.item.source.appKey.toLocaleLowerCase('en-US')}`, {
-                defaultValue: detail.item.source.appName,
-              })}
-            />
-            <Chip
-              size="small"
-              variant="outlined"
-              color={
-                detail.item.priority === 'URGENT'
-                  ? 'error'
-                  : detail.item.priority === 'HIGH'
-                    ? 'warning'
-                    : 'default'
-              }
-              label={t(`priority.${detail.item.priority}`)}
-            />
-            {detail.item.sensitive && (
-              <Chip size="small" variant="outlined" label={t('detail.protected')} />
-            )}
-          </Stack>
-          {detail.item.sensitive && !sensitiveRevealed ? (
-            <Alert severity="info" sx={{ mt: 2 }}>
-              <Stack gap={1.25} alignItems="flex-start">
-                <Typography variant="body2" fontWeight={700}>
-                  {t('arrival.protectedContent')}
-                </Typography>
-                <ActionButton
-                  intent="secondary"
-                  size="small"
-                  onClick={() => setSensitiveRevealed(true)}
-                >
-                  {t('home.open')}
-                </ActionButton>
-              </Stack>
-            </Alert>
-          ) : (
-            <>
-              <Typography component="h3" variant="h5" sx={{ mt: 2, overflowWrap: 'anywhere' }}>
-                {detail.item.title}
-              </Typography>
-              {detail.item.preview && (
-                <Typography color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
-                  {detail.item.preview}
-                </Typography>
-              )}
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mt: 1.5 }}
-              >
-                {formatDate(detail.absoluteOccurredAt, {
-                  dateStyle: 'long',
-                  timeStyle: 'short',
-                })}
-              </Typography>
-
-              {detail.targetState !== 'AVAILABLE' && (
-                <Alert severity="warning" sx={{ mt: 2 }}>
-                  {detail.targetStateReason
-                    ? t(`detail.targetReason.${detail.targetStateReason}`, {
-                        defaultValue: t(`detail.targetState.${detail.targetState}`),
-                      })
-                    : t(`detail.targetState.${detail.targetState}`)}
-                </Alert>
-              )}
-
-              <Box
-                component="section"
-                sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
-              >
-                <Typography component="h4" variant="subtitle2">
-                  {t('detail.whyTitle')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  {t(`reasonExplanation.${detail.item.reason.kind}`, {
-                    defaultValue: detail.reasonExplanation,
-                  })}
-                </Typography>
-              </Box>
-
-              {detail.timeline.length > 0 && (
-                <Box
-                  component="section"
-                  sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
-                >
-                  <Typography component="h4" variant="subtitle2">
-                    {t('detail.timelineTitle')}
-                  </Typography>
-                  <Stack component="ol" gap={0} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
-                    {detail.timeline.map((entry) => (
-                      <Box
-                        component="li"
-                        key={entry.entryId}
-                        sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
-                      >
-                        <Stack direction="row" justifyContent="space-between" gap={1}>
-                          <Typography variant="body2" fontWeight={700}>
-                            {entry.title === 'Notification received'
-                              ? t('detail.notificationReceived')
-                              : entry.title}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
-                            {formatDate(entry.occurredAt, {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </Typography>
-                        </Stack>
-                        {entry.detail && (
-                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                            {entry.detail}
-                          </Typography>
-                        )}
-                      </Box>
-                    ))}
-                  </Stack>
-                </Box>
-              )}
-
-              {primary?.href && detail.targetState === 'AVAILABLE' && (
-                <ActionButton
-                  intent="primary"
-                  sx={{ mt: 3 }}
-                  loading={targetNavigation.openingId === item.notificationId}
-                  onClick={() => void targetNavigation.openTarget(item.notificationId)}
-                >
-                  {primary.label}
-                </ActionButton>
-              )}
-            </>
-          )}
-        </Box>
-      )}
-    </Box>
-  );
+function inboxScopeFromQueryKey(queryKey: readonly unknown[]): NotificationInboxFilterScope {
+  const scope = queryKey[2];
+  if (!scope || typeof scope !== 'object') return { view: 'PRIORITY' };
+  return scope as NotificationInboxFilterScope;
 }
 
 export function NotificationCenter({
   initialView = 'PRIORITY',
   initialNotificationId = null,
+  initialQuery = '',
+  initialReadState = 'ALL',
+  initialAppKey = '',
+  initialPriority = 'ALL',
+  initialReason = 'ALL',
   onOpenSettings,
   onOpenTarget,
+  onViewChange,
+  onScopeChange,
 }: NotificationCenterProps) {
   const { t } = useTranslation('notifications');
   const toast = useToast();
   const queryClient = useQueryClient();
   const online = useOnlineStatus();
-  const compactLayout = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'));
   const notificationClock = useNotificationClock();
-  const [view, setView] = useState<NotificationView>(initialView);
-  const [filters, setFilters] = useState<CenterFilters>(EMPTY_FILTERS);
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [localView, setView] = useState<NotificationView>(initialView);
+  const [localFilters, setFilters] = useState<CenterFilters>(() => ({
+    ...EMPTY_NOTIFICATION_FILTERS,
+    query: initialQuery,
+    readState: initialReadState,
+    appKey: initialAppKey,
+    priority: initialPriority,
+    reason: initialReason,
+  }));
+  const view = onScopeChange ? initialView : localView;
+  // Route-controlled facets cannot lag browser history. Keep only the search draft local.
+  const filters = onScopeChange
+    ? {
+        ...localFilters,
+        appKey: initialAppKey,
+        priority: initialPriority,
+        readState: initialReadState,
+        reason: initialReason,
+      }
+    : localFilters;
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery.trim());
   const [selectedId, setSelectedId] = useState<string | null>(initialNotificationId);
+  const [detailOpen, setDetailOpen] = useState(Boolean(initialNotificationId));
+  const [retainedDetailItem, setRetainedDetailItem] = useState<NotificationItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [knownApps, setKnownApps] = useState<Map<string, string>>(new Map());
   const [resynchronizing, setResynchronizing] = useState(false);
+  const [triageAnnouncement, setTriageAnnouncement] = useState('');
   const rowRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const scopeInitializedRef = useRef(false);
   const lastSummaryChangeVersionRef = useRef<string | null>(null);
@@ -419,6 +187,27 @@ export function NotificationCenter({
     return () => window.clearTimeout(timer);
   }, [filters.query]);
 
+  useEffect(() => {
+    setView(initialView);
+  }, [initialView]);
+
+  useEffect(() => {
+    setFilters((current) => ({
+      ...current,
+      query: initialQuery,
+      readState: initialReadState,
+      appKey: initialAppKey,
+      priority: initialPriority,
+      reason: initialReason,
+    }));
+  }, [initialAppKey, initialPriority, initialQuery, initialReadState, initialReason]);
+
+  useEffect(() => {
+    if (!initialNotificationId) return;
+    setSelectedId(initialNotificationId);
+    setDetailOpen(true);
+  }, [initialNotificationId]);
+
   const queryScope = useMemo(
     () => ({
       view,
@@ -426,9 +215,11 @@ export function NotificationCenter({
       appKey: filters.appKey || undefined,
       priority: filters.priority,
       readState: filters.readState,
+      reason: view === 'MENTIONS' ? ('ALL' as const) : filters.reason,
     }),
-    [debouncedQuery, filters.appKey, filters.priority, filters.readState, view]
+    [debouncedQuery, filters.appKey, filters.priority, filters.readState, filters.reason, view]
   );
+
   const inboxKey = notificationQueryKeys.inbox(queryScope);
   const inboxQuery = useInfiniteQuery({
     queryKey: inboxKey,
@@ -449,6 +240,13 @@ export function NotificationCenter({
   const summaryQuery = useQuery({
     queryKey: notificationQueryKeys.summary(),
     queryFn: ({ signal }) => getNotificationSummary(signal),
+    staleTime: 15_000,
+    refetchInterval: online ? 30_000 : false,
+    retry: 1,
+  });
+  const appSummaryQuery = useQuery({
+    queryKey: notificationQueryKeys.appSummary({ surface: 'center' }),
+    queryFn: ({ signal }) => getNotificationSummaryByApp(signal),
     staleTime: 15_000,
     refetchInterval: online ? 30_000 : false,
     retry: 1,
@@ -476,10 +274,20 @@ export function NotificationCenter({
   );
   const items = loadedItems;
   const selectedItem = items.find((item) => item.notificationId === selectedId) ?? null;
-  const appOptions = useMemo(
-    () => [...knownApps.entries()].sort((left, right) => left[1].localeCompare(right[1])),
-    [knownApps]
-  );
+  const detailItem =
+    selectedItem ?? (retainedDetailItem?.notificationId === selectedId ? retainedDetailItem : null);
+  const appOptions = useMemo(() => {
+    const options = new Map(knownApps);
+    for (const app of appSummaryQuery.data?.apps ?? []) {
+      if (!options.has(app.appKey)) {
+        options.set(
+          app.appKey,
+          t(`sources.${app.appKey.toLocaleLowerCase('en-US')}`, { defaultValue: app.appKey })
+        );
+      }
+    }
+    return [...options.entries()].sort((left, right) => left[1].localeCompare(right[1]));
+  }, [appSummaryQuery.data?.apps, knownApps, t]);
 
   useEffect(() => {
     if (loadedItems.length === 0) return;
@@ -496,9 +304,9 @@ export function NotificationCenter({
   }, [loadedItems]);
 
   useEffect(() => {
-    if (compactLayout || selectedId || items.length === 0) return;
+    if (selectedId || items.length === 0) return;
     setSelectedId(items[0].notificationId);
-  }, [compactLayout, items, selectedId]);
+  }, [items, selectedId]);
 
   useEffect(() => {
     if (!scopeInitializedRef.current) {
@@ -507,7 +315,9 @@ export function NotificationCenter({
     }
     setSelectedIds(new Set());
     setSelectedId(null);
-  }, [view, debouncedQuery, filters.appKey, filters.priority, filters.readState]);
+    setDetailOpen(false);
+    setRetainedDetailItem(null);
+  }, [view, debouncedQuery, filters.appKey, filters.priority, filters.readState, filters.reason]);
 
   const refreshNotificationData = useCallback(async () => {
     await scheduleNotificationCacheInvalidation(queryClient);
@@ -524,6 +334,7 @@ export function NotificationCenter({
       item: NotificationItem;
       action: NotificationTriageAction;
       snoozedUntil?: string;
+      announce?: boolean;
     }) =>
       applyNotificationTriage(item.notificationId, {
         action,
@@ -531,30 +342,81 @@ export function NotificationCenter({
         snoozedUntil,
         idempotencyKey: createNotificationIdempotencyKey(`center-${action.toLowerCase()}`),
       }),
-    onMutate: async ({ item, action, snoozedUntil }) => {
-      await queryClient.cancelQueries({ queryKey: inboxKey });
-      const previous = queryClient.getQueryData<InfiniteData<NotificationInboxPage>>(inboxKey);
+    onMutate: async ({ item, action, snoozedUntil, announce }) => {
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: notificationQueryKeys.inboxRoot() }),
+        queryClient.cancelQueries({ queryKey: notificationQueryKeys.summary() }),
+      ]);
+      const previousInboxes = queryClient.getQueriesData<NotificationInboxCache>({
+        queryKey: notificationQueryKeys.inboxRoot(),
+      });
+      const previousSummary = queryClient.getQueryData<NotificationSummary>(
+        notificationQueryKeys.summary()
+      );
       const optimistic = optimisticTriageItem(item, action, undefined, snoozedUntil);
-      queryClient.setQueryData(inboxKey, updatePageItem(previous, optimistic, view));
-      return { previous };
+      for (const [queryKey, pageData] of previousInboxes) {
+        queryClient.setQueryData(
+          queryKey,
+          updateInboxCache(pageData, optimistic, inboxScopeFromQueryKey(queryKey))
+        );
+      }
+      if (previousSummary) {
+        queryClient.setQueryData(
+          notificationQueryKeys.summary(),
+          optimisticNotificationSummary(previousSummary, item, optimistic)
+        );
+      }
+      if (detailOpen && selectedId === item.notificationId) setRetainedDetailItem(optimistic);
+      if (announce !== false) {
+        setTriageAnnouncement(t('workbench.announcements.pending', { title: item.title }));
+      }
+      return { previousInboxes, previousSummary, previousDetailItem: retainedDetailItem };
     },
-    onError: (_error, _variables, context) => {
-      if (context?.previous) queryClient.setQueryData(inboxKey, context.previous);
-      toast.error(t('feedback.triageError'));
+    onError: (_error, variables, context) => {
+      for (const [queryKey, pageData] of context?.previousInboxes ?? []) {
+        queryClient.setQueryData(queryKey, pageData);
+      }
+      if (context?.previousSummary) {
+        queryClient.setQueryData(notificationQueryKeys.summary(), context.previousSummary);
+      }
+      if (context?.previousDetailItem) setRetainedDetailItem(context.previousDetailItem);
+      if (variables.announce !== false) {
+        setTriageAnnouncement(t('workbench.announcements.failed', { title: variables.item.title }));
+        toast.error(t('feedback.triageError'));
+      }
     },
     onSuccess: (result, variables) => {
-      const current = queryClient.getQueryData<InfiniteData<NotificationInboxPage>>(inboxKey);
-      queryClient.setQueryData(inboxKey, updatePageItem(current, result.item, view));
+      const currentInboxes = queryClient.getQueriesData<NotificationInboxCache>({
+        queryKey: notificationQueryKeys.inboxRoot(),
+      });
+      for (const [queryKey, pageData] of currentInboxes) {
+        queryClient.setQueryData(
+          queryKey,
+          updateInboxCache(pageData, result.item, inboxScopeFromQueryKey(queryKey))
+        );
+      }
+      queryClient.setQueryData(notificationQueryKeys.summary(), result.summary);
       queryClient.setQueryData<NotificationDetail>(
         notificationQueryKeys.detail(result.item.notificationId),
         (currentDetail) => (currentDetail ? { ...currentDetail, item: result.item } : currentDetail)
       );
-      if (!notificationMatchesView(result.item, view)) setSelectedId(null);
-      toast.success(t(`feedback.${variables.action}`));
+      setRetainedDetailItem((current) =>
+        current?.notificationId === result.item.notificationId ? result.item : current
+      );
+      if (!notificationMatchesView(result.item, view)) {
+        setDetailOpen(false);
+        setRetainedDetailItem(null);
+      }
+      if (variables.announce !== false) {
+        setTriageAnnouncement(
+          t('workbench.announcements.completed', { title: variables.item.title })
+        );
+        toast.success(t(`feedback.${variables.action}`));
+      }
     },
     onSettled: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: notificationQueryKeys.summary() }),
+        scheduleNotificationCacheInvalidation(queryClient),
         queryClient.invalidateQueries({ queryKey: notificationQueryKeys.detail(selectedId) }),
       ]);
     },
@@ -582,8 +444,10 @@ export function NotificationCenter({
     }
   };
 
-  const selectItem = (item: NotificationItem) => {
+  const openItemDetails = (item: NotificationItem) => {
     setSelectedId(item.notificationId);
+    setRetainedDetailItem(item);
+    setDetailOpen(true);
     if (!item.readAt && !triageMutation.isPending) {
       triageMutation.mutate({ item, action: 'READ' });
     }
@@ -593,12 +457,51 @@ export function NotificationCenter({
     setSelectedId(item.notificationId);
   };
 
+  const triageItem = useCallback(
+    (item: NotificationItem, action: NotificationTriageAction) => {
+      triageMutation.mutate({
+        item,
+        action,
+        ...(action === 'SNOOZE' ? { snoozedUntil: defaultSnoozeTime(4) } : {}),
+      });
+    },
+    [triageMutation]
+  );
+
+  const quickReply = async (
+    item: NotificationItem,
+    target: { conversationId: string; replyToMessageId?: string },
+    body: string,
+    idempotencyKey: string
+  ) => {
+    await sendMessagingMessage({
+      conversationId: target.conversationId,
+      body,
+      replyToMessageId: target.replyToMessageId,
+      idempotencyKey,
+    });
+    await queryClient.invalidateQueries({ queryKey: ['messaging'] });
+    let completionPending = false;
+    if (!item.completedAt) {
+      try {
+        await triageMutation.mutateAsync({ item, action: 'COMPLETE', announce: false });
+      } catch {
+        completionPending = true;
+      }
+    }
+    if (completionPending) toast.warning(t('workbench.card.replyCompletionPending'));
+    else toast.success(t('workbench.card.replySent'));
+  };
+
   const handleListKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
     const target = event.target instanceof Element ? event.target : null;
-    if (!target?.closest('[data-notification-focus-id]')) return;
+    const focusedId = target
+      ?.closest('[data-notification-focus-id]')
+      ?.getAttribute('data-notification-focus-id');
+    if (!focusedId) return;
     event.preventDefault();
-    const currentIndex = items.findIndex((item) => item.notificationId === selectedId);
+    const currentIndex = items.findIndex((item) => item.notificationId === focusedId);
     const next = moveNotificationSelection(
       currentIndex,
       event.key as 'ArrowDown' | 'ArrowUp' | 'Home' | 'End',
@@ -611,6 +514,63 @@ export function NotificationCenter({
     rowRefs.current[next]?.focus();
   };
 
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.isComposing ||
+        isNotificationShortcutTarget(event.target)
+      ) {
+        return;
+      }
+      const key = event.key.toLocaleLowerCase('en-US');
+      const focusedId =
+        event.target instanceof Element
+          ? event.target
+              .closest('[data-notification-focus-id]')
+              ?.getAttribute('data-notification-focus-id')
+          : null;
+      const currentIndex = Math.max(
+        0,
+        items.findIndex((item) => item.notificationId === (focusedId ?? selectedId))
+      );
+      if (key === 'j' || key === 'k') {
+        event.preventDefault();
+        const nextIndex = Math.max(
+          0,
+          Math.min(items.length - 1, currentIndex + (key === 'j' ? 1 : -1))
+        );
+        const nextItem = items[nextIndex];
+        if (!nextItem) return;
+        setSelectedId(nextItem.notificationId);
+        rowRefs.current[nextIndex]?.focus();
+        return;
+      }
+      if ((key !== 'e' && key !== 's') || triageMutation.isPending || !online) return;
+      const currentItem = items[currentIndex];
+      if (!currentItem) return;
+      event.preventDefault();
+      const nextItem = items[currentIndex + 1] ?? items[currentIndex - 1] ?? null;
+      setSelectedId(nextItem?.notificationId ?? null);
+      triageItem(currentItem, key === 'e' ? 'COMPLETE' : 'SNOOZE');
+      window.setTimeout(() => {
+        const nextIndex = nextItem
+          ? Math.max(
+              0,
+              items.findIndex((item) => item.notificationId === nextItem.notificationId) -
+                (currentIndex < items.length - 1 ? 1 : 0)
+            )
+          : -1;
+        if (nextIndex >= 0) rowRefs.current[nextIndex]?.focus();
+      }, 0);
+    };
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [items, online, selectedId, triageItem, triageMutation.isPending]);
+
   const partial = inboxQuery.data?.pages.some((page) => page.partial) || summaryQuery.data?.partial;
   const unavailableSources = [
     ...new Set([
@@ -618,319 +578,181 @@ export function NotificationCenter({
       ...(inboxQuery.data?.pages.flatMap((page) => page.unavailableSources) ?? []),
     ]),
   ];
-  const showDetailOnly = compactLayout && selectedItem;
+  const streamGroups = groupNotificationStream(items);
+  const itemIndexById = new Map(items.map((item, index) => [item.notificationId, index]));
+
+  const selectView = (nextView: NotificationView) => {
+    const nextFilters = notificationFiltersForView(filters, nextView);
+    setView(nextView);
+    setFilters(nextFilters);
+    onScopeChange?.({ ...nextFilters, view: nextView });
+    onViewChange?.(nextView);
+  };
+
+  const changeFilters = (nextFilters: CenterFilters) => {
+    setFilters(nextFilters);
+    onScopeChange?.({ ...nextFilters, view });
+  };
 
   return (
     <PageCanvas mode="workspace">
-      <NotificationPageHeading
-        title={t('center.title')}
-        description={t('center.description')}
-        actions={
-          <ActionButton
-            intent="secondary"
-            startIcon={<Settings2 size={17} />}
-            onClick={onOpenSettings}
-          >
-            {t('actions.settings')}
-          </ActionButton>
-        }
-      />
+      <Box sx={{ width: 1, pb: 8 }}>
+        <NotificationWorkbenchHeader
+          state={connectionState}
+          generatedAt={summaryQuery.data?.generatedAt}
+          onOpenSettings={onOpenSettings}
+        />
 
-      <NotificationConnectionNotice
-        state={connectionState}
-        partial={partial}
-        unavailableSources={unavailableSources}
-      />
-      {cursorResetRequired && items.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <NotificationSyncResetNotice
-            onResynchronize={() => void resynchronize()}
-            busy={resynchronizing}
+        {(connectionState === 'offline' || partial) && (
+          <NotificationConnectionNotice
+            state={connectionState}
+            partial={partial}
+            unavailableSources={unavailableSources}
           />
-        </Box>
-      )}
-
-      <Box
-        sx={{
-          mt: 2.5,
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            lg: '156px minmax(320px, 0.9fr) minmax(360px, 1.1fr)',
-          },
-          minHeight: { lg: 620 },
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          overflow: 'hidden',
-          bgcolor: 'background.paper',
-        }}
-      >
-        {!showDetailOnly && (
-          <Box
-            component="nav"
-            aria-label={t('center.viewsLabel')}
-            sx={{
-              display: { xs: 'none', lg: 'block' },
-              borderRight: 1,
-              borderColor: 'divider',
-              bgcolor: 'background.default',
-              py: 1,
-            }}
-          >
-            {NOTIFICATION_VIEWS.map((candidate) => (
-              <ActionButton
-                key={candidate}
-                intent="quiet"
-                fullWidth
-                aria-current={candidate === view ? 'page' : undefined}
-                onClick={() => setView(candidate)}
-                sx={{
-                  minHeight: 42,
-                  justifyContent: 'space-between',
-                  borderRadius: 0,
-                  px: 1.5,
-                  bgcolor: candidate === view ? 'action.selected' : undefined,
-                  color: candidate === view ? 'primary.main' : 'text.primary',
-                }}
-              >
-                <span>
-                  {t(`views.${candidate}`, {
-                    count: summaryQuery.data?.viewCounts[candidate] ?? 0,
-                  })}
-                </span>
-                <Typography component="span" variant="caption" color="text.secondary">
-                  {summaryQuery.data?.viewCounts[candidate] ?? 0}
-                </Typography>
-              </ActionButton>
-            ))}
+        )}
+        {cursorResetRequired && items.length > 0 && (
+          <Box sx={{ mt: 1.5 }}>
+            <NotificationSyncResetNotice
+              onResynchronize={() => void resynchronize()}
+              busy={resynchronizing}
+            />
           </Box>
         )}
 
-        {!showDetailOnly && (
-          <Box sx={{ minWidth: 0, borderRight: { lg: 1 }, borderColor: 'divider' }}>
-            <Box sx={{ p: 1.25, borderBottom: 1, borderColor: 'divider' }}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
-                <Select
-                  value={view}
-                  onChange={(event) => setView(event.target.value as NotificationView)}
-                  size="small"
-                  inputProps={{ 'aria-label': t('center.viewsLabel') }}
-                  sx={{ display: { lg: 'none' }, minWidth: 160 }}
-                >
-                  {NOTIFICATION_VIEWS.map((candidate) => (
-                    <MenuItem key={candidate} value={candidate}>
-                      {t(`views.${candidate}`, {
-                        count: summaryQuery.data?.viewCounts[candidate] ?? 0,
-                      })}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormField
-                  value={filters.query}
-                  onChange={(event) =>
-                    setFilters((current) => ({ ...current, query: event.target.value }))
-                  }
-                  placeholder={t('center.searchPlaceholder')}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Search size={17} />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                  sx={{ flex: 1 }}
-                />
-                <Select
-                  value={filters.priority}
-                  onChange={(event) =>
-                    setFilters((current) => ({
-                      ...current,
-                      priority: event.target.value as CenterFilters['priority'],
-                    }))
-                  }
-                  size="small"
-                  inputProps={{ 'aria-label': t('filters.priority') }}
-                  IconComponent={ChevronDown}
-                  startAdornment={<Filter size={16} />}
-                  sx={{ minWidth: 132 }}
-                >
-                  {(['ALL', 'URGENT', 'HIGH', 'NORMAL', 'LOW'] as const).map((priority) => (
-                    <MenuItem key={priority} value={priority}>
-                      {priority === 'ALL' ? t('filters.allPriorities') : t(`priority.${priority}`)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-              <Stack direction="row" gap={1} sx={{ mt: 1 }}>
-                <Select
-                  value={filters.appKey}
-                  onChange={(event) =>
-                    setFilters((current) => ({ ...current, appKey: event.target.value }))
-                  }
-                  size="small"
-                  inputProps={{ 'aria-label': t('filters.app') }}
-                  displayEmpty
-                  sx={{ minWidth: 140 }}
-                >
-                  <MenuItem value="">{t('filters.allApps')}</MenuItem>
-                  {appOptions.map(([key, label]) => (
-                    <MenuItem key={key} value={key}>
-                      {t(`sources.${key.toLocaleLowerCase('en-US')}`, { defaultValue: label })}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Select
-                  value={filters.readState}
-                  onChange={(event) =>
-                    setFilters((current) => ({
-                      ...current,
-                      readState: event.target.value as CenterFilters['readState'],
-                    }))
-                  }
-                  size="small"
-                  inputProps={{ 'aria-label': t('filters.readState') }}
-                  sx={{ minWidth: 120 }}
-                >
-                  {(['ALL', 'UNREAD', 'READ'] as const).map((state) => (
-                    <MenuItem key={state} value={state}>
-                      {t(`filters.read.${state}`)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Box>
+        <NotificationFilterBar
+          view={view}
+          filters={filters}
+          summary={summaryQuery.data}
+          appOptions={appOptions}
+          onViewChange={selectView}
+          onChange={changeFilters}
+        />
 
-            {selectedIds.size > 0 && (
-              <Stack
-                role="toolbar"
-                aria-label={t('bulk.toolbarLabel')}
-                direction="row"
-                alignItems="center"
-                gap={0.5}
-                sx={{
-                  px: 1.25,
-                  py: 0.75,
-                  borderBottom: 1,
-                  borderColor: 'divider',
-                  bgcolor: 'action.hover',
-                }}
-              >
-                <Typography variant="caption" fontWeight={700} sx={{ mr: 'auto' }}>
-                  {t('bulk.selected', { count: selectedIds.size })}
-                </Typography>
-                <ActionIconButton
-                  label={t('actions.markRead')}
-                  onClick={() => bulkMutation.mutate('READ')}
-                  disabled={bulkMutation.isPending || !online}
-                  size="small"
-                >
-                  <CheckCheck size={17} />
-                </ActionIconButton>
-                <ActionIconButton
-                  label={t('actions.save')}
-                  onClick={() => bulkMutation.mutate('SAVE')}
-                  disabled={bulkMutation.isPending || !online}
-                  size="small"
-                >
-                  <Bookmark size={17} />
-                </ActionIconButton>
-                <ActionIconButton
-                  label={t('actions.snooze')}
-                  onClick={() => bulkMutation.mutate('SNOOZE')}
-                  disabled={bulkMutation.isPending || !online}
-                  size="small"
-                >
-                  <Clock3 size={17} />
-                </ActionIconButton>
-                <ActionIconButton
-                  label={t('actions.complete')}
-                  onClick={() => bulkMutation.mutate('COMPLETE')}
-                  disabled={bulkMutation.isPending || !online}
-                  size="small"
-                >
-                  <Check size={17} />
-                </ActionIconButton>
-              </Stack>
-            )}
-            {undoReceipt && (
-              <NotificationBulkUndoBanner
-                expiresAt={undoReceipt.expiresAt}
-                busy={undoMutation.isPending}
-                onUndo={() => undoMutation.mutate(undoReceipt.token)}
-                onDismiss={dismissUndo}
-              />
-            )}
+        {selectedIds.size > 0 && (
+          <Stack
+            role="toolbar"
+            aria-label={t('bulk.toolbarLabel')}
+            direction="row"
+            alignItems="center"
+            gap={0.5}
+            sx={{
+              mt: 1,
+              px: 1.25,
+              py: 0.75,
+              border: 1,
+              borderColor: 'divider',
+              bgcolor: 'action.hover',
+            }}
+          >
+            <Typography variant="caption" fontWeight={750} sx={{ mr: 'auto' }}>
+              {t('bulk.selected', { count: selectedIds.size })}
+            </Typography>
+            <ActionIconButton
+              label={t('actions.markRead')}
+              onClick={() => bulkMutation.mutate('READ')}
+              disabled={bulkMutation.isPending || !online}
+              size="small"
+            >
+              <CheckCheck size={17} />
+            </ActionIconButton>
+            <ActionIconButton
+              label={t('actions.save')}
+              onClick={() => bulkMutation.mutate('SAVE')}
+              disabled={bulkMutation.isPending || !online}
+              size="small"
+            >
+              <Bookmark size={17} />
+            </ActionIconButton>
+            <ActionIconButton
+              label={t('actions.snooze')}
+              onClick={() => bulkMutation.mutate('SNOOZE')}
+              disabled={bulkMutation.isPending || !online}
+              size="small"
+            >
+              <Clock3 size={17} />
+            </ActionIconButton>
+            <ActionIconButton
+              label={t('actions.complete')}
+              onClick={() => bulkMutation.mutate('COMPLETE')}
+              disabled={bulkMutation.isPending || !online}
+              size="small"
+            >
+              <Check size={17} />
+            </ActionIconButton>
+          </Stack>
+        )}
+        {undoReceipt && (
+          <NotificationBulkUndoBanner
+            expiresAt={undoReceipt.expiresAt}
+            busy={undoMutation.isPending}
+            onUndo={() => undoMutation.mutate(undoReceipt.token)}
+            onDismiss={dismissUndo}
+          />
+        )}
 
-            <Box sx={{ maxHeight: { lg: 680 }, overflowY: 'auto' }}>
-              {inboxQuery.isLoading ? (
-                <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
-              ) : inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error) ? (
-                <ErrorState
-                  title={t('states.loadErrorTitle')}
-                  description={t('states.loadErrorDescription')}
-                  retryLabel={t('actions.retry')}
-                  onRetry={() => void inboxQuery.refetch()}
-                  retrying={inboxQuery.isFetching}
-                />
-              ) : cursorResetRequired && items.length === 0 ? (
-                <NotificationSyncResetNotice
-                  onResynchronize={() => void resynchronize()}
-                  busy={resynchronizing}
-                  compact
-                />
-              ) : items.length === 0 ? (
-                <EmptyState
-                  icon={<Inbox size={28} />}
-                  title={t(`empty.${view}.title`)}
-                  description={t(`empty.${view}.description`)}
-                />
-              ) : (
-                <>
-                  <Box
-                    component="ul"
-                    aria-label={t('center.listLabel')}
-                    onKeyDown={handleListKeyDown}
-                    sx={{ p: 0, m: 0, listStyle: 'none' }}
-                  >
-                    {items.map((item, index) => {
+        <Box sx={{ mt: 1.5 }}>
+          {inboxQuery.isLoading ? (
+            <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
+          ) : inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error) ? (
+            <ErrorState
+              title={t('states.loadErrorTitle')}
+              description={t('states.loadErrorDescription')}
+              retryLabel={t('actions.retry')}
+              onRetry={() => void inboxQuery.refetch()}
+              retrying={inboxQuery.isFetching}
+            />
+          ) : cursorResetRequired && items.length === 0 ? (
+            <NotificationSyncResetNotice
+              onResynchronize={() => void resynchronize()}
+              busy={resynchronizing}
+              compact
+            />
+          ) : items.length === 0 ? (
+            <EmptyState
+              icon={<Inbox size={28} />}
+              title={t(
+                hasNotificationFilters(filters) ? 'filters.emptyTitle' : `empty.${view}.title`
+              )}
+              description={t(
+                hasNotificationFilters(filters)
+                  ? 'filters.emptyDescription'
+                  : `empty.${view}.description`
+              )}
+            />
+          ) : (
+            <Box
+              component="ul"
+              aria-label={t('center.listLabel')}
+              onKeyDown={handleListKeyDown}
+              sx={{ p: 0, m: 0, listStyle: 'none' }}
+            >
+              {streamGroups.map((group) => (
+                <Box component="li" key={group.key} sx={{ listStyle: 'none' }}>
+                  <NotificationStreamGroupHeading groupKey={group.key} count={group.items.length} />
+                  <Stack component="ul" gap={0.85} sx={{ p: 0, m: 0, listStyle: 'none' }}>
+                    {group.items.map((item) => {
+                      const index = itemIndexById.get(item.notificationId) ?? 0;
                       const content = notificationArrivalContent(
                         item,
                         profileQuery.data,
                         t('arrival.protectedContent')
                       );
+                      const displayItem = {
+                        ...item,
+                        title: content.title,
+                        preview: content.preview,
+                      };
                       const concealContext =
                         item.sensitive || profileQuery.data?.presentation.previewMode === 'HIDDEN';
                       return (
-                        <Box
-                          component="li"
-                          key={item.notificationId}
-                          sx={{ display: 'grid', gridTemplateColumns: '40px minmax(0, 1fr)' }}
-                        >
-                          <Box sx={{ display: 'grid', placeItems: 'start center', pt: 1.5 }}>
-                            <Checkbox
-                              size="small"
-                              checked={selectedIds.has(item.notificationId)}
-                              onChange={(event) => {
-                                setSelectedIds((current) => {
-                                  const next = new Set(current);
-                                  if (event.target.checked) next.add(item.notificationId);
-                                  else next.delete(item.notificationId);
-                                  return next;
-                                });
-                              }}
-                              inputProps={{
-                                'aria-label': t('bulk.selectItem', { title: content.title }),
-                              }}
-                            />
-                          </Box>
-                          <NotificationItemRow
-                            item={{ ...item, title: content.title, preview: content.preview }}
+                        <Box component="li" key={item.notificationId}>
+                          <NotificationActionCard
+                            item={displayItem}
                             now={notificationClock}
+                            active={item.notificationId === selectedId}
+                            checked={selectedIds.has(item.notificationId)}
+                            busy={triageMutation.isPending || !online}
                             concealContext={concealContext}
-                            selected={item.notificationId === selectedId}
                             tabIndex={
                               item.notificationId === selectedId || (!selectedId && index === 0)
                                 ? 0
@@ -939,55 +761,97 @@ export function NotificationCenter({
                             rowRef={(element) => {
                               rowRefs.current[index] = element;
                             }}
-                            onSelect={() => selectItem(item)}
+                            onFocus={() => previewItem(item)}
+                            onToggleChecked={(checked) => {
+                              setSelectedIds((current) => {
+                                const next = new Set(current);
+                                if (checked) next.add(item.notificationId);
+                                else next.delete(item.notificationId);
+                                return next;
+                              });
+                            }}
+                            onOpenDetails={() => openItemDetails(item)}
+                            onTriage={(action) => triageItem(item, action)}
+                            onOpenTarget={onOpenTarget}
+                            onQuickReply={(target, body, idempotencyKey) =>
+                              quickReply(item, target, body, idempotencyKey)
+                            }
                           />
                         </Box>
                       );
                     })}
-                  </Box>
-                  {inboxQuery.hasNextPage && (
-                    <Box sx={{ p: 1.5, display: 'grid', placeItems: 'center' }}>
-                      <ActionButton
-                        intent="secondary"
-                        loading={inboxQuery.isFetchingNextPage}
-                        loadingLabel={t('states.loadingMore')}
-                        onClick={() => void inboxQuery.fetchNextPage()}
-                      >
-                        {t('actions.loadMore')}
-                      </ActionButton>
-                    </Box>
-                  )}
-                  {inboxQuery.isFetchNextPageError && (
-                    <Alert severity="warning" sx={{ m: 1.5 }}>
-                      {t('states.loadMoreError')}
-                    </Alert>
-                  )}
-                </>
-              )}
+                  </Stack>
+                </Box>
+              ))}
             </Box>
-          </Box>
-        )}
+          )}
 
-        {selectedItem ? (
+          {inboxQuery.hasNextPage && (
+            <Box sx={{ pt: 1.5, display: 'grid', placeItems: 'center' }}>
+              <ActionButton
+                intent="secondary"
+                loading={inboxQuery.isFetchingNextPage}
+                loadingLabel={t('states.loadingMore')}
+                onClick={() => void inboxQuery.fetchNextPage()}
+              >
+                {t('actions.loadMore')}
+              </ActionButton>
+            </Box>
+          )}
+          {inboxQuery.isFetchNextPageError && (
+            <Alert severity="warning" sx={{ mt: 1.5 }}>
+              {t('states.loadMoreError')}
+            </Alert>
+          )}
+        </Box>
+
+        <Box
+          role="status"
+          aria-live="polite"
+          sx={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            p: 0,
+            m: -1,
+            overflow: 'hidden',
+            clip: 'rect(0 0 0 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          {triageAnnouncement}
+        </Box>
+      </Box>
+
+      <Drawer
+        anchor="right"
+        open={detailOpen && Boolean(detailItem)}
+        onClose={() => {
+          setDetailOpen(false);
+          setRetainedDetailItem(null);
+        }}
+        slotProps={{
+          paper: {
+            sx: { width: { xs: '100%', sm: 520 }, maxWidth: '100%', bgcolor: 'background.paper' },
+          },
+        }}
+      >
+        {detailItem && (
           <NotificationDetailPane
-            item={selectedItem}
-            onBack={compactLayout ? () => setSelectedId(null) : undefined}
+            item={detailItem}
+            onBack={() => {
+              setDetailOpen(false);
+              setRetainedDetailItem(null);
+            }}
             onTriage={(action, snoozedUntil) =>
-              triageMutation.mutate({ item: selectedItem, action, snoozedUntil })
+              triageMutation.mutate({ item: detailItem, action, snoozedUntil })
             }
             onOpenTarget={onOpenTarget}
             busy={triageMutation.isPending || !online}
           />
-        ) : (
-          !compactLayout && (
-            <EmptyState
-              icon={<Bell size={28} />}
-              title={t('detail.emptyTitle')}
-              description={t('detail.emptyDescription')}
-            />
-          )
         )}
-      </Box>
+      </Drawer>
     </PageCanvas>
   );
 }

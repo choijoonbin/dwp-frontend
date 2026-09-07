@@ -179,6 +179,10 @@ describe('notification arrival signal identity', () => {
 });
 
 describe('notification arrival policy', () => {
+  it.each([undefined, null])('suppresses a missing detail item (%s) without throwing', (item) => {
+    expect(shouldSurfaceNotificationArrival(item, profile, effectiveSettings)).toBe(false);
+  });
+
   it('fails closed until both personal and effective policy are authoritative', () => {
     expect(shouldSurfaceNotificationArrival(messagingItem, undefined, effectiveSettings)).toBe(
       false

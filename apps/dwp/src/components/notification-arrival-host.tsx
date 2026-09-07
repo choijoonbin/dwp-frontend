@@ -222,7 +222,9 @@ export function NotificationArrivalHost() {
         inFlight.delete(signalKey);
         if (identityRef.current !== processingIdentity) return;
 
-        if (result.status === 'rejected') {
+        // A fulfilled request can still contain a missing detail item. Retry before acknowledging it.
+        const item = result.status === 'fulfilled' ? result.value?.item : undefined;
+        if (!item) {
           const attempts = (retryAttempts.current.get(signalKey) ?? 0) + 1;
           retryAttempts.current.set(signalKey, attempts);
           retryRequired ||= attempts < MAXIMUM_RETRY_ATTEMPTS;
@@ -240,7 +242,6 @@ export function NotificationArrivalHost() {
           seenSignals.current.delete(oldest);
         }
 
-        const item = result.value.item;
         if (!shouldSurfaceNotificationArrival(item, policyState.profile, policyState.settings)) {
           return;
         }

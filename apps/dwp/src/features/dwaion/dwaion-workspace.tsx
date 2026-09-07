@@ -1,9 +1,9 @@
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
-import { PageCanvas } from '@dwp-frontend/design-system';
+import { ErrorState, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import {
   askDwpStream,
@@ -20,9 +20,6 @@ import {
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 
 import {
   DWAION_APPROVAL_EXPERT_AGENT_KEY,
@@ -42,7 +39,8 @@ import {
 import { DwaionWorkspaceStart } from './dwaion-workspace-start';
 import { DwaionActionShelf } from './dwaion-action-shelf';
 import { DwaionCitationDialog } from '../../components/dwaion-assistant/dwaion-citation-dialog';
-import { DwaionConversationMenu } from './dwaion-conversation-menu';
+import { DwaionStudioHeader } from './dwaion-studio-header';
+import { DwaionStudioRail } from './dwaion-studio-rail';
 import { DwaionConversationTranscript } from './dwaion-conversation-transcript';
 
 export function DwaionWorkspace() {
@@ -285,18 +283,6 @@ export function DwaionWorkspace() {
     navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { replace: true });
   };
 
-  const selectConversation = (nextConversationId: string) => {
-    requestSequence.current += 1;
-    requestController.current?.abort('conversation-changed');
-    internalConversationNavigation.current = null;
-    setConversationId(nextConversationId);
-    setSubmittedQuery(null);
-    setResponse(null);
-    setState('idle');
-    setDraft('');
-    navigate(dwaionWorkspaceRoute(undefined, nextConversationId, agentKey));
-  };
-
   const cancelRequest = () => {
     requestSequence.current += 1;
     requestController.current?.abort('user-cancelled');
@@ -316,7 +302,7 @@ export function DwaionWorkspace() {
   };
 
   const openWork = (item: WorkspaceWorkItem) => {
-    navigate(item.sourceRoute || `/work?item=${encodeURIComponent(item.id)}`);
+    navigate(workspaceWorkItemRoute(item));
   };
 
   const openCitation = (citation: AskCitation) => {
@@ -330,168 +316,127 @@ export function DwaionWorkspace() {
 
   return (
     <PageCanvas topInset="compact">
-      <Box
-        component="header"
-        sx={{
-          display: 'flex',
-          alignItems: { xs: 'flex-start', sm: 'center' },
-          justifyContent: 'space-between',
-          flexDirection: { xs: 'column', sm: 'row' },
-          gap: 1.5,
-          pb: 2,
-          borderBottom: 1,
-          borderColor: 'divider',
-        }}
-      >
-        <Stack direction="row" spacing={1.25} alignItems="center">
-          <Box
-            sx={{
-              width: 42,
-              height: 42,
-              display: 'grid',
-              placeItems: 'center',
-              borderRadius: 1,
-              bgcolor: '#071A3B',
-              border: '1px solid rgba(98, 215, 255, 0.5)',
-              boxShadow: '0 8px 20px rgba(13, 42, 91, 0.18)',
-            }}
-          >
-            <Box
-              component="img"
-              src="/assets/assistants/dwaion-link-v1.png"
-              alt=""
-              sx={{ width: 36, height: 36, objectFit: 'contain' }}
-            />
-          </Box>
-          <Box>
-            <Stack direction="row" spacing={0.6} alignItems="center">
-              <Sparkles size={14} color="#2459D3" aria-hidden="true" />
-              <Typography variant="overline" color="primary.main">
-                {t(
-                  approvalExpert
-                    ? 'askPage.approvalExpert.header.eyebrow'
-                    : 'askPage.header.eyebrow'
+      <Box data-testid="dwaion-studio" sx={{ maxWidth: 1480, mx: 'auto' }}>
+        <DwaionStudioHeader expert={approvalExpert} onNew={reset} />
+
+        {launchFailure && (
+          <Alert severity="warning" variant="outlined" sx={{ mt: 2 }}>
+            {t('askPage.questionLaunchUnavailable')}
+          </Alert>
+        )}
+
+        <Box
+          sx={{
+            mt: 2.5,
+            display: 'grid',
+            gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 280px' },
+            gap: { xs: 2.5, lg: 3 },
+            alignItems: 'start',
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            {!submittedQuery && !conversationId ? (
+              <DwaionWorkspaceStart
+                expert={approvalExpert}
+                firstName={firstName}
+                query={draft}
+                loading={state === 'loading'}
+                workLoading={workQueue.isLoading}
+                workError={workQueue.isError}
+                workItems={workQueue.isError ? [] : workItems}
+                onRetryWork={() => void workQueue.refetch()}
+                sourceScopes={sourceScopes}
+                availableSources={availableSourceScopes}
+                onQueryChange={setDraft}
+                onSubmit={() => runQuestion(draft)}
+                onChooseMode={(_mode, prompt) => runQuestion(prompt)}
+                onOpenWork={openWork}
+                onToggleSource={toggleSource}
+                onCancel={cancelRequest}
+              />
+            ) : conversationId &&
+              (conversation.isError || !conversation.data) &&
+              !submittedQuery ? (
+              conversation.isError ? (
+                <ErrorState
+                  size="compact"
+                  title={t('dwaionStudio.conversationUnavailable')}
+                  retryLabel={t('dwaionStudio.retry')}
+                  onRetry={() => void conversation.refetch()}
+                />
+              ) : (
+                <LoadingState
+                  embedded
+                  variant="skeleton"
+                  skeletonRows={1}
+                  skeletonHeight={240}
+                  label={t('askPage.history.loading')}
+                />
+              )
+            ) : (
+              <>
+                {conversation.data && !conversation.isError && (
+                  <DwaionConversationTranscript
+                    messages={conversation.data.messages}
+                    excludedMessageIds={[
+                      response?.userMessageId,
+                      response?.assistantMessageId,
+                    ].filter((value): value is string => Boolean(value))}
+                  />
                 )}
-              </Typography>
-            </Stack>
-            <Typography component="h1" variant="h5" sx={{ lineHeight: 1.15 }}>
-              {t(approvalExpert ? 'askPage.approvalExpert.header.title' : 'askPage.header.title')}
-            </Typography>
+                {submittedQuery && (
+                  <DwaionWorkspaceAnswer
+                    question={submittedQuery}
+                    state={state}
+                    response={response}
+                    progressStage={progressStage}
+                    onCancel={cancelRequest}
+                    onRetry={() => void prepareAnswer(submittedQuery)}
+                    onReset={reset}
+                  />
+                )}
+                <DwaionActionShelf query={submittedQuery} response={response} />
+                <Box sx={{ mt: 3 }}>
+                  <DwaionWorkspaceComposer
+                    value={draft}
+                    loading={state === 'loading'}
+                    compact
+                    sourceScopes={sourceScopes}
+                    availableSources={availableSourceScopes}
+                    onToggleSource={toggleSource}
+                    onCancel={cancelRequest}
+                    onChange={setDraft}
+                    onSubmit={() => runQuestion(draft)}
+                  />
+                </Box>
+              </>
+            )}
           </Box>
-        </Stack>
-        <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
-          {!approvalExpert && (
-            <DwaionConversationMenu
-              currentConversationId={conversationId}
-              onSelect={selectConversation}
-              onNew={reset}
-            />
-          )}
-          <Chip
-            icon={<ShieldCheck size={14} aria-hidden="true" />}
-            label={t('askPage.permissionScoped')}
-            size="small"
-            variant="outlined"
-          />
-          <Chip
-            icon={<LockKeyhole size={14} aria-hidden="true" />}
-            label={t('askPage.readOnly')}
-            size="small"
-            variant="outlined"
-          />
-        </Stack>
-      </Box>
 
-      {launchFailure && (
-        <Alert severity="warning" variant="outlined" sx={{ mt: 2 }}>
-          {t('askPage.questionLaunchUnavailable')}
-        </Alert>
-      )}
-
-      <Box
-        sx={{
-          mt: 2.5,
-          display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 304px' },
-          gap: { xs: 2.5, lg: 3 },
-          alignItems: 'start',
-        }}
-      >
-        <Box component="main" sx={{ minWidth: 0 }}>
-          {!submittedQuery && !conversationId ? (
-            <DwaionWorkspaceStart
-              expert={approvalExpert}
-              firstName={firstName}
-              query={draft}
-              loading={state === 'loading'}
-              workLoading={workQueue.isLoading}
-              workError={workQueue.isError}
-              workItems={workItems}
-              sourceScopes={sourceScopes}
-              availableSources={availableSourceScopes}
-              onQueryChange={setDraft}
-              onSubmit={() => runQuestion(draft)}
-              onChooseMode={(_mode, prompt) => runQuestion(prompt)}
-              onOpenWork={openWork}
-              onToggleSource={toggleSource}
-              onCancel={cancelRequest}
-            />
+          {response ? (
+            <DwaionWorkspaceContext response={response} onOpenCitation={setSelectedCitation} />
           ) : (
-            <>
-              {conversation.data && (
-                <DwaionConversationTranscript
-                  messages={conversation.data.messages}
-                  excludedMessageIds={[
-                    response?.userMessageId,
-                    response?.assistantMessageId,
-                  ].filter((value): value is string => Boolean(value))}
-                />
-              )}
-              {submittedQuery && (
-                <DwaionWorkspaceAnswer
-                  question={submittedQuery}
-                  state={state}
-                  response={response}
-                  progressStage={progressStage}
-                  onCancel={cancelRequest}
-                  onRetry={() => void prepareAnswer(submittedQuery)}
-                  onReset={reset}
-                />
-              )}
-              <DwaionActionShelf query={submittedQuery} response={response} />
-              <Box sx={{ mt: 3 }}>
-                <DwaionWorkspaceComposer
-                  value={draft}
-                  loading={state === 'loading'}
-                  compact
-                  sourceScopes={sourceScopes}
-                  availableSources={availableSourceScopes}
-                  onToggleSource={toggleSource}
-                  onCancel={cancelRequest}
-                  onChange={setDraft}
-                  onSubmit={() => runQuestion(draft)}
-                />
-              </Box>
-            </>
+            <DwaionStudioRail
+              selected={sourceScopes}
+              available={availableSourceScopes}
+              onToggle={toggleSource}
+              summary={workQueue.data?.summary}
+              loading={workQueue.isLoading}
+              error={workQueue.isError}
+              expert={approvalExpert}
+              onRetry={() => void workQueue.refetch()}
+            />
           )}
         </Box>
-
-        <DwaionWorkspaceContext
-          response={response}
-          workSummary={workQueue.data?.summary}
-          sourceScopes={availableSourceScopes}
-          showWorkSignals={!approvalExpert}
-          onOpenCitation={setSelectedCitation}
+        <DwaionCitationDialog
+          citation={selectedCitation}
+          onClose={() => setSelectedCitation(null)}
+          onOpenSource={(citation) => {
+            setSelectedCitation(null);
+            openCitation(citation);
+          }}
         />
       </Box>
-      <DwaionCitationDialog
-        citation={selectedCitation}
-        onClose={() => setSelectedCitation(null)}
-        onOpenSource={(citation) => {
-          setSelectedCitation(null);
-          openCitation(citation);
-        }}
-      />
     </PageCanvas>
   );
 }

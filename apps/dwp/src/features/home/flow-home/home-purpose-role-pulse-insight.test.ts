@@ -31,6 +31,7 @@ const signals: readonly FlowSignal[] = [
     source: 'activity',
     generatedAt: '2026-08-27T08:00:00Z',
     route: '/activity',
+    activityBreakdown: { needsInput: 2, policyBlocked: 1 },
   },
   {
     key: 'schedule-load',

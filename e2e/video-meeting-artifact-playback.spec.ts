@@ -97,7 +97,7 @@ test.beforeEach(async ({ page }) => {
   await mockMeetingVisualPublishedRecap(page);
 });
 
-test('AVAILABLE recording fails closed, retries, and opens a short-lived verified ticket without an opener', async ({
+test('AVAILABLE recording fails closed, retries, and mounts a short-lived verified inline player', async ({
   page,
   context,
 }, testInfo) => {
@@ -153,9 +153,7 @@ test('AVAILABLE recording fails closed, retries, and opens a short-lived verifie
   expect(bounds?.width ?? 0).toBeGreaterThanOrEqual(44);
   expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(44);
 
-  const failedPopupPromise = page.waitForEvent('popup');
   await action.click();
-  const failedPopup = await failedPopupPromise;
   await expect(page.getByRole('button', { name: 'Preparing secure playback' })).toHaveAttribute(
     'aria-busy',
     'true'
@@ -164,15 +162,17 @@ test('AVAILABLE recording fails closed, retries, and opens a short-lived verifie
   await expect(
     page.getByText('Secure playback is temporarily unavailable. No storage location was exposed.')
   ).toBeVisible();
-  await expect.poll(() => failedPopup.isClosed()).toBe(true);
+  await expect(page.locator('audio, video')).toHaveCount(0);
 
-  const popupPromise = page.waitForEvent('popup');
   await action.click();
-  const popup = await popupPromise;
-  await popup.waitForURL('https://media.dwp.example/opaque/playback-ticket');
-  await popup.waitForLoadState('load');
-  expect(await popup.evaluate(() => window.opener)).toBeNull();
-  await expect(page.getByText(/Secure playback opened in a new tab/u)).toBeVisible();
+  const player = page.getByLabel(
+    contentType.startsWith('audio/')
+      ? 'Authorized meeting audio recording'
+      : 'Authorized meeting video recording'
+  );
+  await expect(player).toBeVisible();
+  await expect(player).toHaveAttribute('src', 'https://media.dwp.example/opaque/playback-ticket');
+  await expect(page.getByText(/Secure inline playback is ready/u)).toBeVisible();
   expect(requestBodies).toEqual([{ expectedArtifactVersion: 2 }, { expectedArtifactVersion: 2 }]);
 
   const mainText = await page.locator('#dwp-main-content').innerText();
@@ -183,7 +183,6 @@ test('AVAILABLE recording fails closed, retries, and opens a short-lived verifie
   expect(mainText).not.toContain('LIVEKIT');
   await expectNoHorizontalOverflow(page);
   await expectNoBlockingAccessibilityViolations(page);
-  await popup.close();
 });
 
 test('expired AVAILABLE recording remains fail-closed with an explicit retention message', async ({

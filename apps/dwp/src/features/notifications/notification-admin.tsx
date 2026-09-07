@@ -39,6 +39,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
+import { NotificationAdminOverviewTrend } from './notification-admin-overview-trend';
 import { notificationQueryKeys } from './integration-contract';
 import { useOnlineStatus } from './use-notification-runtime';
 
@@ -233,6 +234,20 @@ export function NotificationAdminOverviewPage({
   };
   return (
     <Stack gap={3}>
+      <Stack direction="row" justifyContent="flex-end">
+        <LiveStatus
+          state={
+            !online ? 'stale' : data.partial ? 'degraded' : query.isFetching ? 'syncing' : 'live'
+          }
+          label={
+            !online ? t('states.offline') : data.partial ? t('states.degraded') : t('states.live')
+          }
+          detail={formatDate(data.generatedAt, { dateStyle: 'medium', timeStyle: 'short' })}
+          refreshLabel={t('actions.refresh')}
+          onRefresh={() => void query.refetch()}
+          refreshing={query.isFetching}
+        />
+      </Stack>
       {data.partial && (
         <Alert severity="warning">
           {t('states.partial', { count: data.unavailableSources.length })}
@@ -262,46 +277,97 @@ export function NotificationAdminOverviewPage({
           title={t('admin.overview.trendTitle')}
           description={t('admin.overview.trendDescription')}
         >
-          <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-            <Table
-              size="small"
-              aria-label={t('admin.overview.trendTableLabel')}
-              sx={{ minWidth: 620 }}
+          <NotificationAdminOverviewTrend points={data.trend} />
+          <Box
+            component="details"
+            sx={{
+              mt: 1.5,
+              borderTop: 1,
+              borderBottom: 1,
+              borderColor: 'divider',
+              '&[open] > summary': { borderBottom: 1, borderColor: 'divider' },
+              '&[open] .notification-exact-data-chevron': { transform: 'rotate(90deg)' },
+              '@media (prefers-reduced-motion: reduce)': {
+                '& .notification-exact-data-chevron': { transition: 'none !important' },
+              },
+            }}
+          >
+            <Box
+              component="summary"
+              sx={{
+                minHeight: 42,
+                px: 1,
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                color: 'text.secondary',
+                '&:hover': { bgcolor: 'action.hover' },
+              }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('admin.overview.columns.time')}</TableCell>
-                  <TableCell align="right">{t('admin.overview.columns.created')}</TableCell>
-                  <TableCell align="right">{t('admin.overview.columns.actionable')}</TableCell>
-                  <TableCell align="right">{t('admin.overview.columns.failed')}</TableCell>
-                  <TableCell align="right">{t('admin.overview.columns.muted')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.trend.map((point) => (
-                  <TableRow key={point.bucket}>
-                    <TableCell>
-                      {formatDate(point.bucket, {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                      })}
-                    </TableCell>
-                    <TableCell align="right">{formatNumber(point.created)}</TableCell>
-                    <TableCell align="right">{formatNumber(point.actionable)}</TableCell>
-                    <TableCell align="right">
-                      <Typography
-                        component="span"
-                        color={point.failed > 0 ? 'error.main' : 'text.primary'}
-                      >
-                        {formatNumber(point.failed)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">{formatNumber(point.muted)}</TableCell>
+              <Box
+                component="span"
+                className="notification-exact-data-chevron"
+                aria-hidden="true"
+                sx={{
+                  display: 'inline-flex',
+                  mr: 0.75,
+                  transition: (theme) =>
+                    theme.transitions.create('transform', {
+                      duration: theme.transitions.duration.shorter,
+                    }),
+                }}
+              >
+                <ChevronRight size={16} />
+              </Box>
+              <Typography component="span" variant="caption" color="inherit">
+                {t('admin.overview.exactData')}
+              </Typography>
+            </Box>
+            <Box
+              tabIndex={0}
+              aria-label={t('admin.overview.trendTableScrollLabel')}
+              sx={{ overflowX: 'auto' }}
+            >
+              <Table
+                size="small"
+                aria-label={t('admin.overview.trendTableLabel')}
+                sx={{ minWidth: 620 }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t('admin.overview.columns.time')}</TableCell>
+                    <TableCell align="right">{t('admin.overview.columns.created')}</TableCell>
+                    <TableCell align="right">{t('admin.overview.columns.actionable')}</TableCell>
+                    <TableCell align="right">{t('admin.overview.columns.failed')}</TableCell>
+                    <TableCell align="right">{t('admin.overview.columns.muted')}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {data.trend.map((point) => (
+                    <TableRow key={point.bucket}>
+                      <TableCell>
+                        {formatDate(point.bucket, {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                        })}
+                      </TableCell>
+                      <TableCell align="right">{formatNumber(point.created)}</TableCell>
+                      <TableCell align="right">{formatNumber(point.actionable)}</TableCell>
+                      <TableCell align="right">
+                        <Typography
+                          component="span"
+                          color={point.failed > 0 ? 'error.main' : 'text.primary'}
+                        >
+                          {formatNumber(point.failed)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">{formatNumber(point.muted)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
           </Box>
         </AdminSection>
         <AdminSection

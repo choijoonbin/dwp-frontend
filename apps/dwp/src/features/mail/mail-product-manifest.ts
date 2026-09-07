@@ -17,6 +17,10 @@ export const MAIL_WORK_NAVIGATION = projectProductSurfaceNavigation(MAIL_NAVIGAT
   trash: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   folders: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   shared: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  contacts: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+  },
   organization: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },

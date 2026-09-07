@@ -182,8 +182,26 @@ function activityEvent(
   };
 }
 
-function activityFeed(events: WorkspaceActivityEvent[]): WorkspaceActivityFeed {
-  return { events, generatedAt: NOW };
+function activityFeed(
+  events: WorkspaceActivityEvent[],
+  needsInput = 0,
+  policyBlocked = 0
+): WorkspaceActivityFeed {
+  return {
+    events,
+    generatedAt: NOW,
+    executionSummary: {
+      total: needsInput + policyBlocked,
+      running: 0,
+      needsInput,
+      policyBlocked,
+      completed: 0,
+      failed: 0,
+      cancelled: 0,
+      generatedAt: NOW,
+      coverage: { supportedObjectTypes: ['WORK_ITEM'] },
+    },
+  };
 }
 
 function approvalTask(id: string, requestId = id): ApprovalTask {
@@ -380,10 +398,17 @@ const cardinalityCases = [
     provider: 'activity aggregation',
     zero: () => activityContributionProvider.normalize(activityFeed([]), CONTEXT),
     one: () =>
-      activityContributionProvider.normalize(activityFeed([activityEvent('activity-1')]), CONTEXT),
+      activityContributionProvider.normalize(
+        activityFeed([activityEvent('activity-1')], 1),
+        CONTEXT
+      ),
     many: () =>
       activityContributionProvider.normalize(
-        activityFeed([activityEvent('activity-1'), activityEvent('activity-2', 'policy-blocked')]),
+        activityFeed(
+          [activityEvent('activity-1'), activityEvent('activity-2', 'policy-blocked')],
+          1,
+          1
+        ),
         CONTEXT
       ),
     manyCount: 1,
@@ -512,6 +537,30 @@ describe.each(cardinalityCases)('$provider Home Contribution adapter', (testCase
 });
 
 describe('integrated Home Contribution adapters', () => {
+  it('never infers current activity attention or urgency from a history page', () => {
+    const history = [activityEvent('old-input'), activityEvent('old-policy', 'policy-blocked')];
+    expect(
+      activityContributionProvider.normalize({ events: history, generatedAt: NOW }, CONTEXT)
+    ).toEqual([]);
+    expect(activityContributionProvider.normalize(activityFeed(history), CONTEXT)).toEqual([]);
+    const current = activityFeed([], 2, 1);
+    expect(activityContributionProvider.normalize(current, CONTEXT)[0]).toMatchObject({
+      count: 3,
+      priority: 'HIGH',
+      deepLink: '/activity/timeline',
+      generatedAt: NOW,
+    });
+    expect(
+      activityContributionProvider.normalize(
+        { ...current, executionSummaryStatus: 'UNAVAILABLE' },
+        CONTEXT
+      )
+    ).toEqual([]);
+    expect(
+      activityContributionProvider.normalize(activityFeed(history, 1), CONTEXT)[0]
+    ).toMatchObject({ count: 1, priority: 'MEDIUM' });
+  });
+
   it('fails work and activity providers closed against their exact backend authorities', () => {
     const work = resolveHomeContributionProvider(
       workspaceWorkContributionProvider,
@@ -520,7 +569,11 @@ describe('integrated Home Contribution adapters', () => {
     );
     const activity = resolveHomeContributionProvider(
       activityContributionProvider,
-      { state: 'AVAILABLE', generatedAt: NOW, data: activityFeed([activityEvent('activity-1')]) },
+      {
+        state: 'AVAILABLE',
+        generatedAt: NOW,
+        data: activityFeed([activityEvent('activity-1')], 1),
+      },
       CONTEXT
     );
 
@@ -850,7 +903,7 @@ describe('integrated Home Contribution adapters', () => {
       {
         state: 'AVAILABLE',
         generatedAt: NOW,
-        data: activityFeed([activityEvent('activity-1')]),
+        data: activityFeed([activityEvent('activity-1')], 1),
       },
       CONTEXT
     );

@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=geist:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-container-highest":"#d3e4fe","surface":"#f8f9ff","on-tertiary-fixed-variant":"#005236","outline":"#737686","primary":"#004ac6","error":"#ba1a1a","surface-container-low":"#eff4ff","tertiary-container":"#007d55","on-secondary-fixed-variant":"#3f465c","secondary-fixed-dim":"#bec6e0","surface-container-lowest":"#ffffff","primary-fixed":"#dbe1ff","on-primary-fixed":"#00174b","on-secondary":"#ffffff","on-secondary-container":"#5c647a","surface-container-high":"#dce9ff","on-error-container":"#93000a","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#bdffdb","on-primary-container":"#eeefff","surface-dim":"#cbdbf5","outline-variant":"#c3c6d7","error-container":"#ffdad6","surface-bright":"#f8f9ff","surface-tint":"#0053db","inverse-surface":"#213145","surface-container":"#e5eeff","on-tertiary":"#ffffff","secondary":"#565e74","tertiary-fixed-dim":"#4edea3","on-background":"#0b1c30","on-surface-variant":"#434655","on-secondary-fixed":"#131b2e","inverse-primary":"#b4c5ff","secondary-container":"#dae2fd","inverse-on-surface":"#eaf1ff","tertiary":"#006242","on-surface":"#0b1c30","primary-container":"#2563eb","primary-fixed-dim":"#b4c5ff","surface-variant":"#d3e4fe","on-primary":"#ffffff","background":"#f8f9ff","on-error":"#ffffff","secondary-fixed":"#dae2fd","on-tertiary-fixed":"#002113","tertiary-fixed":"#6ffbbe"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-2xl":"2rem","grid-slot-15min":"1rem","space-xl":"1.5rem","space-lg":"1rem","time-rail-width":"3.5rem","header-height":"3.5rem","grid-slot-60min":"4rem","space-md":"0.75rem","sidebar-width":"16rem","grid-slot-30min":"2rem","space-xxs":"0.125rem","space-sm":"0.5rem","space-xs":"0.25rem"},"fontFamily":{"shortcut-key":["geist"],"mono-time":["geist"],"headline-md":["geist"],"body-lg":["geist"],"headline-sm":["geist"],"label-md":["geist"],"body-md":["geist"],"label-sm":["geist"],"display-lg":["geist"],"body-sm":["geist"],"headline-lg":["geist"]},"fontSize":{"shortcut-key":["10px",{"lineHeight":"12px","letterSpacing":"0.05em","fontWeight":"600"}],"mono-time":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"500"}],"body-md":["13px",{"lineHeight":"18px","letterSpacing":"-0.005em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"600"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.03em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.025em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface text-on-surface font-body-md"><div class=""><main class="relative w-full bg-surface min-h-screen flex"><div class="flex flex-col w-full pb-space-2xl px-space-md max-w-2xl">
+<!-- Screen Context / Accessibility Handoff Header -->
+<header class="w-full mb-space-md pt-space-xs">
+<div class="flex items-center justify-between gap-space-sm mb-space-xs">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-space-xxs rounded-full bg-surface-container-high text-primary">
+<span class="material-symbols-outlined text-[14px]">cell_tower</span>
+<span class="font-mono-time text-mono-time font-semibold">WRK-M01-M1</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-space-xxs px-space-xs py-space-xxs rounded bg-surface-container-highest text-on-surface-variant font-shortcut-key text-shortcut-key">
+<span class="material-symbols-outlined text-[12px]">keyboard</span> TAB 1~6
+        </span>
+<span class="inline-flex items-center gap-space-xxs px-space-xs py-space-xxs rounded bg-surface-container-highest text-on-surface-variant font-shortcut-key text-shortcut-key">
+          MIN 44px
+        </span>
+</div>
+</div>
+<div class="flex items-baseline justify-between">
+<h1 class="font-headline-md text-headline-md text-on-surface">M1 원천 검토 여정</h1>
+<span class="font-label-sm text-label-sm text-secondary">390px Viewport</span>
+</div>
+</header>
+<!-- 1. Top Step Navigator (Linear Progressive Timeline) -->
+<nav aria-label="검토 여정 단계" class="w-full bg-surface-container-lowest p-space-sm rounded-xl shadow-sm mb-space-md">
+<div class="flex items-center justify-between relative">
+<!-- Track bar -->
+<div class="absolute top-1/2 left-4 right-4 -translate-y-1/2 h-0.5 bg-surface-container pointer-events-none"></div>
+<!-- Step 1 Complete -->
+<button aria-label="1단계: 큐 선택 완료" class="relative z-10 flex flex-col items-center gap-space-xxs group min-w-[56px] focus:outline-none" type="button">
+<span class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">1. 큐선택</span>
+</button>
+<!-- Step 2 Complete -->
+<button aria-label="2단계: 상세 검토 확인" class="relative z-10 flex flex-col items-center gap-space-xxs group min-w-[56px] focus:outline-none" type="button">
+<span class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">2. 상세</span>
+</button>
+<!-- Step 3 Active Focus -->
+<button aria-current="step" aria-label="3단계: 결정 제출 진행 중" class="relative z-10 flex flex-col items-center gap-space-xxs group min-w-[56px] focus:outline-none" type="button">
+<span class="w-7 h-7 rounded-full bg-surface-tint text-on-primary flex items-center justify-center font-label-sm text-label-sm shadow-sm">
+          3
+        </span>
+<span class="font-label-sm text-label-sm text-surface-tint font-bold">3. 결정제출</span>
+</button>
+<!-- Step 4 Pending -->
+<button aria-label="4단계: 결과 및 큐 복귀 대기" class="relative z-10 flex flex-col items-center gap-space-xxs group min-w-[56px] focus:outline-none" type="button">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-sm text-label-sm">
+          4
+        </span>
+<span class="font-label-sm text-label-sm text-outline">4. 결과·복귀</span>
+</button>
+</div>
+</nav>
+<!-- 2. Step 1: Mini 390px Queue card (Origin Context Anchor) -->
+<section aria-labelledby="queue-card-heading" class="w-full bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-md">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-time text-mono-time px-space-xs py-space-xxs rounded bg-secondary-container text-on-secondary-fixed font-bold">
+          IG-014
+        </span>
+<span class="font-label-sm text-label-sm text-outline">정기 컴플라이언스 큐</span>
+</div>
+<span class="inline-flex items-center gap-space-xxs px-space-xs py-space-xxs rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-tint"></span>
+        검토 대기
+      </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-space-sm" id="queue-card-heading">
+      재무 시스템 접근권한 정기 검토
+    </h2>
+<div class="grid grid-cols-2 gap-space-sm p-space-sm bg-surface-container-low rounded-lg text-body-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">person</span>
+<div>
+<span class="text-on-surface-variant block font-label-sm text-label-sm">대상자</span>
+<strong class="text-on-surface font-body-md text-body-md">김현수 수석</strong>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-error">schedule</span>
+<div>
+<span class="text-on-surface-variant block font-label-sm text-label-sm">처리 기한</span>
+<strong class="text-error font-body-md text-body-md">오늘 17:00 마감</strong>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Step 2: Full Screen Detail View Panel -->
+<section aria-labelledby="detail-view-heading" class="w-full bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-md">
+<div class="flex items-center justify-between border-none pb-space-xs mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">fact_check</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface" id="detail-view-heading">전체 원천 상세 검토</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-space-xs py-space-xxs rounded">
+        단계 2/4 확인됨
+      </span>
+</div>
+<!-- Target Detail List -->
+<div class="flex flex-col gap-space-sm">
+<div class="p-space-sm bg-surface-container-low rounded-lg">
+<span class="font-label-sm text-label-sm text-outline block mb-space-xxs">검토 대상 사용자</span>
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">김현수 (재경팀 수석)</span>
+<span class="font-mono-time text-mono-time text-on-surface-variant">EMP-88219</span>
+</div>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg">
+<span class="font-label-sm text-label-sm text-outline block mb-space-xxs">보유 권한 명세</span>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">lock_open</span>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold block">SAP ERP 재무 보고 및 전표 조회 권한</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ROLE_FI_REPORT_READ (최종 사용: 어제 18:42)</span>
+</div>
+</div>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg">
+<span class="font-label-sm text-label-sm text-outline block mb-space-xxs">캠페인 근거</span>
+<span class="font-body-md text-body-md text-on-surface">2026년 3분기 임직원 직무별 접근 통제 정기 재인증</span>
+</div>
+<div class="p-space-sm bg-surface-container rounded-lg">
+<span class="font-label-sm text-label-sm text-primary font-bold block mb-space-xxs">사유 및 권고 사항</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+          “조직 개편에 따른 재경팀 내 결산 총괄 직무 이동이 확인되었습니다. 본 권한이 실제 결산 감사 업무에 잔여 유효한지 확인 후 결정을 제출해 주십시오.”
+        </p>
+</div>
+<!-- Explicit Notice on Async Revocation -->
+<div class="p-space-sm bg-surface-container-highest rounded-lg flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[20px] text-primary flex-shrink-0 mt-0.5">info</span>
+<div class="flex-1">
+<span class="font-label-sm text-label-sm font-bold text-on-surface block">권한 처리 분리 고지</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xxs">
+            본 검토 화면의 결정은 즉각적인 SAP 권한 파기가 아니며, <strong>원천 거버넌스 워크플로우에 승인 요청으로 저장</strong>된 후 스케줄러를 통해 반영됩니다.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Step 3: Decision Form -->
+<section aria-labelledby="decision-heading" class="w-full bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-surface-tint">how_to_vote</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface" id="decision-heading">결정 제출 (유지/회수)</h3>
+</div>
+<span class="font-label-sm text-label-sm text-surface-tint font-bold bg-secondary-container px-space-xs py-space-xxs rounded">필수 입력</span>
+</div>
+<form class="flex flex-col gap-space-md" id="decision-form" onsubmit="event.preventDefault();">
+<!-- Radio Tabs (Minimum 44px touch targets) -->
+<div aria-label="권한 결정 유형 선택" class="grid grid-cols-2 gap-space-xs p-1 bg-surface-container-low rounded-lg" role="radiogroup">
+<!-- Option 1: Maintain (Active Selected State) -->
+<label class="cursor-pointer min-h-[44px] flex items-center justify-center gap-space-xs px-space-sm rounded-lg bg-surface-container-lowest text-primary font-bold shadow-sm transition-all select-none">
+<input checked="" class="sr-only" name="decision-type" type="radio" value="MAINTAIN">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="font-body-md text-body-md">권한 유지</span>
+</label>
+<!-- Option 2: Revoke (High Risk) -->
+<label class="cursor-pointer min-h-[44px] flex items-center justify-center gap-space-xs px-space-sm rounded-lg bg-transparent text-on-surface-variant hover:text-error transition-all select-none">
+<input class="sr-only" name="decision-type" type="radio" value="REVOKE">
+<span class="material-symbols-outlined text-[18px]">gpp_bad</span>
+<span class="font-body-md text-body-md">권한 회수 (위험)</span>
+</label>
+</div>
+<!-- Textarea with safe virtual keyboard space -->
+<div class="flex flex-col gap-space-xxs">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm font-semibold text-on-surface" for="decision-reason">
+            의사결정 상세 근거 사유 <span class="text-error">*</span>
+</label>
+<span class="font-mono-time text-mono-time text-on-surface-variant" id="char-counter">45 / 500자</span>
+</div>
+<textarea class="w-full p-space-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:shadow-sm resize-none" id="decision-reason" placeholder="유지 또는 회수를 결정한 업무적 사유를 명확히 기록해 주세요." rows="3">2026 하반기 IFRS 결산 감사 대응을 위해 권한 유지 필요</textarea>
+</div>
+<!-- Action Buttons (>= 44px touch targets) -->
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<button class="min-h-[44px] px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md font-semibold hover:bg-surface-container transition-colors flex items-center justify-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span class="">상세 복귀</span>
+</button>
+<button class="min-h-[44px] px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary font-body-md text-body-md font-bold shadow-md hover:bg-primary transition-all flex items-center justify-center gap-space-xs" type="submit">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span class="">결정 제출</span>
+</button>
+</div>
+</form>
+</section>
+<!-- 5. Step 4: Result & Exception Branches -->
+<section aria-label="결과 및 예외 분기" class="w-full flex flex-col gap-space-md mb-space-md">
+<!-- Branch A: Success Notification -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">결정 저장 완료</h4>
+<span class="font-mono-time text-mono-time text-on-surface-variant">09:30 KST</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xxs">
+            원천 시스템(SAP GRC) 반영 큐로 전송되었습니다. 배치 동기화 완료 시 알림이 발송됩니다.
+          </p>
+<div class="mt-space-sm inline-flex items-center gap-space-xs px-space-xs py-space-xxs rounded bg-surface-container text-tertiary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+            원천 시스템 반영 대기 중 (Pending Sync)
+          </div>
+</div>
+</div>
+</div>
+<!-- Branch B: 409 Conflict Simulation Box -->
+<div class="bg-error-container p-space-md rounded-xl shadow-sm text-on-error-container">
+<div class="flex items-start gap-space-sm mb-space-sm">
+<span class="material-symbols-outlined text-[22px] text-error flex-shrink-0">crisis_alert</span>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="font-headline-sm text-headline-sm text-error font-bold">최신 버전 충돌 (409 Conflict)</h4>
+<span class="font-mono-time text-mono-time text-error font-bold">REV-2.1</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-error-container mt-space-xxs">
+            다른 검토자에 의해 사용자 대상 권한 정책이 이미 변경되었습니다. 입력하신 유지 사유는 안전하게 임시 보존되었습니다.
+          </p>
+</div>
+</div>
+<!-- Preserved Content Display -->
+<div class="p-space-sm bg-surface-container-lowest/80 rounded-lg mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary font-bold block mb-space-xxs">보존된 입력 사유:</span>
+<p class="font-body-sm text-body-sm text-on-surface italic">
+          “2026 하반기 IFRS 결산 감사 대응을 위해 권한 유지 필요”
+        </p>
+</div>
+<!-- Conflict Action Button (>= 44px) -->
+<button class="w-full min-h-[44px] px-space-md py-space-sm rounded-lg bg-error text-on-error font-body-md text-body-md font-bold hover:opacity-95 transition-opacity flex items-center justify-center gap-space-xs shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">update</span>
+<span class="">새 근거 확인 후 재제출</span>
+</button>
+</div>
+<!-- Step 4 Nav Button: Return to Queue preserving search & scroll -->
+<button class="w-full min-h-[48px] px-space-md py-space-sm rounded-xl bg-surface-container-high text-on-surface font-body-md text-body-md font-bold hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-space-sm shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">view_list</span>
+<span class="">이전 큐(목록)로 복귀 (상태·필터 유지)</span>
+</button>
+</section>
+<!-- 6. Handoff & Accessibility Spec Panel (Korean Mobile Standards) -->
+<aside aria-label="디자인 핸드오프 및 접근성 정보" class="w-full bg-surface-container-low p-space-md rounded-xl text-on-surface-variant">
+<div class="flex items-center gap-space-xs mb-space-xs text-primary font-bold font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">accessibility_new</span>
+<span class="">Mobile UX &amp; Handoff Checklist</span>
+</div>
+<ul class="flex flex-col gap-space-xxs font-body-sm text-body-sm">
+<li class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<strong>터치 타깃:</strong> 모든 라디오 탭 및 액션 버튼 44px 이상 확보
+      </li>
+<li class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<strong>명도 대비:</strong> 주요 텍스트 #0B1C30 기준 WCAG 4.5:1 이상 충족
+      </li>
+<li class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<strong>키보드 탐색:</strong> 탭 순서 1(상태 요약) → 2(결정 탭) → 3(사유 작성) → 4(제출)
+      </li>
+<li class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<strong>가상 키보드:</strong> 하단 pb-space-2xl safe-area 여백 적용
+      </li>
+</ul>
+</aside>
+</div>
+<script>
+  // Simple interactive counter and radio styling enhancement for prototype testing
+  (function() {
+    const reasonInput = document.getElementById('decision-reason');
+    const counter = document.getElementById('char-counter');
+    if (reasonInput && counter) {
+      reasonInput.addEventListener('input', function(e) {
+        const len = e.target.value.length;
+        counter.textContent = len + ' / 500자';
+      });
+    }
+
+    const radios = document.querySelectorAll('input[name="decision-type"]');
+    radios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        radios.forEach(r => {
+          const parentLabel = r.closest('label');
+          if (r.checked) {
+            parentLabel.className = 'cursor-pointer min-h-[44px] flex items-center justify-center gap-space-xs px-space-sm rounded-lg bg-surface-container-lowest text-primary font-bold shadow-sm transition-all select-none';
+          } else {
+            parentLabel.className = 'cursor-pointer min-h-[44px] flex items-center justify-center gap-space-xs px-space-sm rounded-lg bg-transparent text-on-surface-variant hover:text-error transition-all select-none';
+          }
+        });
+      });
+    });
+  })();
+</script></main></div>
+
+</body></html>

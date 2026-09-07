@@ -712,6 +712,14 @@ function galleryItemCopy(
     },
     focus: { label: 'flow.purpose.request.title', description: 'flow.purpose.request.description' },
     activity: { label: 'flow.purpose.pulse.title', description: 'flow.purpose.pulse.description' },
+    'focus-balance': {
+      label: 'flow.calendarInsights.focusTitle',
+      description: 'flow.calendarInsights.focusDescription',
+    },
+    'meeting-load': {
+      label: 'flow.calendarInsights.meetingTitle',
+      description: 'flow.calendarInsights.meetingDescription',
+    },
   } as const;
   const purposeCopy = flow ? flowCopy[item.widget.key as keyof typeof flowCopy] : undefined;
   const definition = workspaceWidgetCatalogDefinition(item.widget.key);

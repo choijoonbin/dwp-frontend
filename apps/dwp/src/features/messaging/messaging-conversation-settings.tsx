@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bell, Palette, Pin, Settings2, SlidersHorizontal, Star } from 'lucide-react';
+import { Bell, Palette, Pin, Settings2, ShieldCheck, SlidersHorizontal, Star } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionIconButton, FormDialog, SelectField } from '@dwp-frontend/design-system';
 import {
@@ -21,6 +21,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { MessagingDisplayPreferencePanel } from './messaging-display-preference-panel';
+import { MessagingPrivacyPanel } from './messaging-privacy-panel';
 
 import type {
   MessagingConversation,
@@ -39,7 +40,7 @@ export function MessagingConversationSettings({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [section, setSection] = useState<'GENERAL' | 'DISPLAY'>('GENERAL');
+  const [section, setSection] = useState<'GENERAL' | 'DISPLAY' | 'PRIVACY'>('GENERAL');
   const preferencesAvailable = MESSAGING_API_CAPABILITIES.conversationPreferences;
   const settingsQuery = useQuery({
     queryKey: ['messaging', 'conversation-settings', conversation.conversationId],
@@ -96,7 +97,7 @@ export function MessagingConversationSettings({
         <Stack spacing={1.5}>
           <Tabs
             value={section}
-            onChange={(_, value: 'GENERAL' | 'DISPLAY') => setSection(value)}
+            onChange={(_, value: 'GENERAL' | 'DISPLAY' | 'PRIVACY') => setSection(value)}
             variant="fullWidth"
             aria-label={t('conversation.settings.sectionsLabel')}
             sx={{
@@ -121,8 +122,17 @@ export function MessagingConversationSettings({
               iconPosition="start"
               label={t('conversation.settings.sections.display')}
             />
+            <Tab
+              disableRipple
+              value="PRIVACY"
+              icon={<ShieldCheck size={16} />}
+              iconPosition="start"
+              label={t('privacy.tab')}
+            />
           </Tabs>
-          {section === 'DISPLAY' ? (
+          {section === 'PRIVACY' ? (
+            <MessagingPrivacyPanel />
+          ) : section === 'DISPLAY' ? (
             <MessagingDisplayPreferencePanel conversation={conversation} />
           ) : (
             <>

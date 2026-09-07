@@ -23,6 +23,8 @@ const customizedWidgets: HomeWidgetPreference[] = [
   { widgetKey: 'focus', visible: false, size: 'medium', height: 'tall' },
   { widgetKey: 'schedule', visible: true, size: 'quarter', height: 'standard' },
   { widgetKey: 'daily-brief', visible: true, size: 'full', height: 'standard' },
+  { widgetKey: 'meeting-load', visible: true, size: 'quarter', height: 'standard' },
+  { widgetKey: 'focus-balance', visible: false, size: 'compact', height: 'short' },
 ];
 
 describe('Flow Home preference alias migration', () => {
@@ -33,8 +35,10 @@ describe('Flow Home preference alias migration', () => {
       'response-hub': 'daily-brief',
       'request-tracker': 'focus',
       'role-pulse': 'activity',
+      'focus-balance': 'focus-balance',
+      'meeting-load': 'meeting-load',
     });
-    expect(new Set(Object.values(FLOW_HOME_STORAGE_ALIAS)).size).toBe(5);
+    expect(new Set(Object.values(FLOW_HOME_STORAGE_ALIAS)).size).toBe(7);
   });
 
   it('derives the Member and Manager default DOM from their role-specific storage order', () => {
@@ -64,6 +68,8 @@ describe('Flow Home preference alias migration', () => {
       { widgetKey: 'request-tracker', visible: false, size: 'medium', height: 'tall' },
       { widgetKey: 'today', visible: true, size: 'quarter', height: 'standard' },
       { widgetKey: 'response-hub', visible: true, size: 'full', height: 'standard' },
+      { widgetKey: 'meeting-load', visible: true, size: 'quarter', height: 'standard' },
+      { widgetKey: 'focus-balance', visible: false, size: 'compact', height: 'short' },
     ]);
   });
 
@@ -75,6 +81,8 @@ describe('Flow Home preference alias migration', () => {
       'daily-brief': 'large',
       'request-tracker': 'large',
       activity: 'medium',
+      'focus-balance': 'quarter',
+      'meeting-load': 'compact',
     });
 
     expect(sections.map(({ widgetKey, size }) => [widgetKey, size])).toEqual([
@@ -83,6 +91,8 @@ describe('Flow Home preference alias migration', () => {
       ['response-hub', 'large'],
       ['request-tracker', 'large'],
       ['role-pulse', 'medium'],
+      ['focus-balance', 'quarter'],
+      ['meeting-load', 'compact'],
     ]);
   });
 
@@ -128,6 +138,8 @@ describe('Flow Home preference alias migration', () => {
       { widgetKey: 'today', visible: true, size: 'compact', height: 'standard' },
       { widgetKey: 'response-hub', visible: true, size: 'compact', height: 'standard' },
       { widgetKey: 'request-tracker', visible: true, size: 'compact', height: 'standard' },
+      { widgetKey: 'meeting-load', visible: true, size: 'medium', height: 'short' },
+      { widgetKey: 'focus-balance', visible: true, size: 'medium', height: 'short' },
     ]);
 
     const intentionalResize = legacy.map((section) =>
@@ -176,6 +188,8 @@ describe('Flow Home preference alias migration', () => {
       'focus',
       'schedule',
       'daily-brief',
+      'meeting-load',
+      'focus-balance',
       'command-rail',
     ]);
     expect(migratedOnce.at(-1)).toEqual({
@@ -256,11 +270,13 @@ describe('Flow Home preference alias migration', () => {
     expect(migrated[1]).toBe(unknownBefore);
     expect(migrated[4]).toBe(unknownAfter);
     expect(migrated.map((widget) => widget.widgetKey)).toEqual([
-      'daily-brief',
+      'focus-balance',
       'future-insight',
+      'meeting-load',
+      'daily-brief',
+      'future-summary',
       'schedule',
       'focus',
-      'future-summary',
       'activity',
       'command-rail',
     ]);

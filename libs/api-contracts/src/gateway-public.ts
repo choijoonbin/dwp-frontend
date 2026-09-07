@@ -1925,6 +1925,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/admin/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_list_1"];
+        put?: never;
+        post: operations["meeting_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/admin/templates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_get_2"];
+        put: operations["meeting_update_2"];
+        post?: never;
+        delete: operations["meeting_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/capabilities": {
         parameters: {
             query?: never;
@@ -1948,7 +1980,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["meeting_history"];
+        get: operations["meeting_history_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1989,6 +2021,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/meeting-series": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_createSeries"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meeting-series/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_previewSeries"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/meetings": {
         parameters: {
             query?: never;
@@ -1998,7 +2062,7 @@ export interface paths {
         };
         get: operations["meeting_meetings"];
         put?: never;
-        post: operations["meeting_schedule"];
+        post: operations["meeting_schedule_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2037,6 +2101,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/meetings/{meetingId}/agenda": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["meeting_replaceAgenda"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/meetings/{meetingId}/artifacts/{artifactId}/access-ticket": {
         parameters: {
             query?: never;
@@ -2046,7 +2126,55 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["meeting_issueAccessTicket"];
+        post: operations["meeting_issueAccessTicket_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/artifacts/{artifactId}/transcript/query": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_query"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/cancel/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_previewCancel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2143,6 +2271,214 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["meeting_end"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_snapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/polls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_createPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/polls/{pollId}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_closePoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/polls/{pollId}/open": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_openPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/polls/{pollId}/vote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_vote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_askQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/questions/{questionId}/answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_answerQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/questions/{questionId}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_dismissQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/questions/{questionId}/upvote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_upvoteQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/timer/advance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_advanceTimer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/timer/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_pauseTimer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/timer/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_resumeTimer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/facilitation/timer/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_startTimer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2287,7 +2623,7 @@ export interface paths {
         get: operations["meeting_report"];
         put?: never;
         post?: never;
-        delete: operations["meeting_delete"];
+        delete: operations["meeting_delete_2"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2405,6 +2741,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/meetings/{meetingId}/invitation-response": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["meeting_respond"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/meetings/{meetingId}/join-requests": {
         parameters: {
             query?: never;
@@ -2501,6 +2853,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/meetings/{meetingId}/materials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_registerMaterial"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/materials/{materialId}/access-ticket": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_issueAccessTicket"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/materials/{materialId}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_removeMaterial"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/my-preparation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["meeting_updateMyPreparation"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/preparation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_preparation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/meetings/{meetingId}/recording/request": {
         parameters: {
             query?: never;
@@ -2527,6 +2959,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["meeting_stopRecording"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_schedule"];
+        put: operations["meeting_reschedule"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/schedule/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_previewReschedule"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2574,6 +3038,230 @@ export interface paths {
         };
         get: operations["meeting_people"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/personal-room": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_get_1"];
+        put: operations["meeting_update_1"];
+        post: operations["meeting_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/personal-room/rotate-invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_rotate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/personal-room/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_history"];
+        put?: never;
+        post: operations["meeting_createSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/personal-rooms/{alias}/invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_resolve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_get"];
+        put: operations["meeting_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/schedule-draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_read"];
+        put: operations["meeting_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/schedule-draft/commit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_commit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/schedule-draft/discard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_discard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/schedule-draft/recurrence-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_preview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_list"];
+        put?: never;
+        post: operations["meeting_create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/templates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_get_3"];
+        put: operations["meeting_update_3"];
+        post?: never;
+        delete: operations["meeting_delete_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/templates/{id}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_apply"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/templates/{id}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["meeting_cloneTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/templates/{id}/favorite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["meeting_favorite"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4796,9 +5484,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_7"];
+        get: operations["platform_list_9"];
         put?: never;
-        post: operations["platform_create_12"];
+        post: operations["platform_create_14"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4813,7 +5501,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_9"];
+        put: operations["platform_update_10"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4830,7 +5518,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_archive"];
+        post: operations["platform_archive_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4860,7 +5548,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_events_3"];
+        get: operations["platform_events_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4876,7 +5564,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_6"];
+        get: operations["platform_detail_7"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5116,7 +5804,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_5"];
+        get: operations["platform_detail_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5132,7 +5820,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_events_2"];
+        get: operations["platform_events_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5420,7 +6108,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_11"];
+        get: operations["platform_list_15"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5756,9 +6444,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_6"];
+        get: operations["platform_list_8"];
         put?: never;
-        post: operations["platform_create_11"];
+        post: operations["platform_create_13"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5772,7 +6460,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_4"];
+        get: operations["platform_detail_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5852,8 +6540,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_4"];
-        put: operations["platform_update_8"];
+        get: operations["platform_get_5"];
+        put: operations["platform_update_9"];
         post?: never;
         delete?: never;
         options?: never;
@@ -5982,7 +6670,7 @@ export interface paths {
         };
         get: operations["platform_connectors"];
         put?: never;
-        post: operations["platform_create_10"];
+        post: operations["platform_create_12"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5997,7 +6685,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_7"];
+        put: operations["platform_update_8"];
         post?: never;
         delete?: never;
         options?: never;
@@ -6348,9 +7036,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_5"];
+        get: operations["platform_list_7"];
         put?: never;
-        post: operations["platform_create_9"];
+        post: operations["platform_create_11"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6430,7 +7118,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_4"];
+        post: operations["platform_cancel_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6477,7 +7165,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_6"];
+        put: operations["platform_update_7"];
         post?: never;
         delete?: never;
         options?: never;
@@ -6556,9 +7244,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_4"];
+        get: operations["platform_list_6"];
         put?: never;
-        post: operations["platform_create_8"];
+        post: operations["platform_create_10"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6578,7 +7266,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch: operations["platform_update_10"];
+        patch: operations["platform_update_11"];
         trace?: never;
     };
     "/api/platform/v1/admin/reference-sets/{setKey}/activate": {
@@ -6604,7 +7292,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_activity_1"];
+        get: operations["platform_activity"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6700,9 +7388,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_3"];
+        get: operations["platform_list_5"];
         put?: never;
-        post: operations["platform_create_7"];
+        post: operations["platform_create_9"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6716,7 +7404,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_3"];
+        get: operations["platform_detail_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7086,7 +7774,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_transition"];
+        post: operations["platform_transition_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7100,8 +7788,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_3"];
-        put: operations["platform_update_5"];
+        get: operations["platform_get_4"];
+        put: operations["platform_update_6"];
         post?: never;
         delete?: never;
         options?: never;
@@ -7180,7 +7868,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_11"];
+        get: operations["platform_get_13"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7820,7 +8508,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_10"];
+        get: operations["platform_list_14"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7982,7 +8670,7 @@ export interface paths {
         };
         get: operations["platform_events"];
         put?: never;
-        post: operations["platform_create_6"];
+        post: operations["platform_create_8"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7997,7 +8685,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update_4"];
+        put: operations["platform_update_5"];
         post?: never;
         delete?: never;
         options?: never;
@@ -8014,7 +8702,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_3"];
+        post: operations["platform_cancel_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8165,6 +8853,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/calendar/team-availability/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read availability of members who share their personal calendar with the caller */
+        get: operations["platform_getCalendarTeamAvailabilitySnapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/calendar/trash": {
         parameters: {
             query?: never;
@@ -8188,7 +8893,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_10"];
+        get: operations["platform_get_12"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8204,7 +8909,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_9"];
+        get: operations["platform_list_13"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8220,7 +8925,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_2"];
+        get: operations["platform_detail_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8252,7 +8957,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_detail_1"];
+        get: operations["platform_detail_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8334,7 +9039,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_create_5"];
+        post: operations["platform_create_7"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8348,7 +9053,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_9"];
+        get: operations["platform_get_11"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8396,7 +9101,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_8"];
+        get: operations["platform_get_10"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8428,8 +9133,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_2"];
-        put: operations["platform_update_3"];
+        get: operations["platform_get_3"];
+        put: operations["platform_update_4"];
         post?: never;
         delete?: never;
         options?: never;
@@ -8492,9 +9197,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_2"];
+        get: operations["platform_list_4"];
         put?: never;
-        post: operations["platform_create_4"];
+        post: operations["platform_create_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8508,8 +9213,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_1"];
-        put: operations["platform_update_2"];
+        get: operations["platform_get_2"];
+        put: operations["platform_update_3"];
         post?: never;
         delete?: never;
         options?: never;
@@ -8588,9 +9293,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_1"];
+        get: operations["platform_list_3"];
         put?: never;
-        post: operations["platform_create_3"];
+        post: operations["platform_create_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8604,8 +9309,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get"];
-        put: operations["platform_update_1"];
+        get: operations["platform_get_1"];
+        put: operations["platform_update_2"];
         post?: never;
         delete: operations["platform_delete_1"];
         options?: never;
@@ -8752,6 +9457,118 @@ export interface paths {
         put?: never;
         post: operations["platform_recordFeedback"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/address-book": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_addressBook"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/contact-groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/contact-groups/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateGroup"];
+        post?: never;
+        delete: operations["platform_deleteGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/contact-groups/{groupId}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_replaceGroupMembers"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/contact-groups/{groupId}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_sendGroupMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createContact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/contacts/{contactId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateContact"];
+        post?: never;
+        delete: operations["platform_deleteContact"];
         options?: never;
         head?: never;
         patch?: never;
@@ -9164,7 +9981,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list_8"];
+        get: operations["platform_list_12"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9212,7 +10029,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_5"];
+        get: operations["platform_get_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9246,7 +10063,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_2"];
+        post: operations["platform_cancel_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9292,7 +10109,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_7"];
+        get: operations["platform_get_9"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9438,7 +10255,7 @@ export interface paths {
         };
         get: operations["platform_requests"];
         put?: never;
-        post: operations["platform_create_2"];
+        post: operations["platform_create_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9470,7 +10287,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_1"];
+        post: operations["platform_cancel_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9516,7 +10333,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_get_6"];
+        get: operations["platform_get_8"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9662,7 +10479,7 @@ export interface paths {
         };
         get: operations["platform_ownedWindows"];
         put?: never;
-        post: operations["platform_create_1"];
+        post: operations["platform_create_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9694,7 +10511,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel"];
+        post: operations["platform_cancel_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9708,7 +10525,39 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_activity"];
+        get: operations["platform_list_11"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/activity/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_detail_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/activity/executions/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_summary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9884,9 +10733,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_list"];
+        get: operations["platform_list_2"];
         put?: never;
-        post: operations["platform_create"];
+        post: operations["platform_create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9901,7 +10750,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["platform_update"];
+        put: operations["platform_update_1"];
         post?: never;
         delete: operations["platform_delete"];
         options?: never;
@@ -9935,6 +10784,358 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_markUsed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_1"];
+        put?: never;
+        post: operations["platform_create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/by-source": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_bySource"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/commands/{commandId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_receipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get_7"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_accept"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_complete_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_decline"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_events_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/reassign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reassign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_start"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/assignments/{assignmentId}/wait": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_waitForResponse"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/calendar-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list_10"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/calendar-links/{linkId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_put"];
+        post?: never;
+        delete: operations["platform_remove"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/day-plans/{date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_dayPlan"];
+        put: operations["platform_replaceDayPlan"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_list"];
+        put?: never;
+        post: operations["platform_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_get"];
+        put: operations["platform_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_archive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_complete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reopen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_transition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_timeline"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -15055,6 +16256,36 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
+        meeting_AgendaItem: {
+            description: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            role: string;
+            title: string;
+        };
+        meeting_AgendaItemInput: {
+            /** Format: uuid */
+            itemId?: string;
+            objective?: string;
+            /** Format: int64 */
+            ownerUserId?: number;
+            /** Format: int32 */
+            plannedMinutes?: number;
+            title: string;
+        };
+        meeting_AgendaItemResponse: {
+            /** Format: uuid */
+            itemId?: string;
+            objective?: string;
+            ownerDisplayName?: string;
+            /** Format: int64 */
+            ownerUserId?: number;
+            /** Format: int32 */
+            plannedMinutes?: number;
+            /** Format: int32 */
+            position?: number;
+            title?: string;
+        };
         meeting_Analysis: {
             actionItems?: components["schemas"]["meeting_CitedText"][];
             conversationClimate?: components["schemas"]["meeting_ConversationClimate"];
@@ -15063,6 +16294,11 @@ export interface components {
             openQuestions?: components["schemas"]["meeting_CitedText"][];
             risks?: components["schemas"]["meeting_CitedText"][];
             topics?: components["schemas"]["meeting_CitedText"][];
+        };
+        meeting_AnswerQuestionCommand: {
+            answer: string;
+            /** Format: int64 */
+            expectedVersion: number;
         };
         meeting_ApiResponseAccessTicketResponse: {
             correlationId?: string;
@@ -15077,6 +16313,16 @@ export interface components {
         meeting_ApiResponseAdminOverviewResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_AdminOverviewResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseCancellationPreviewResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_CancellationPreviewResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15134,6 +16380,56 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseDeleteResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_DeleteResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseDiscardScheduleDraftResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_DiscardScheduleDraftResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseFacilitationCommandResponsePollResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_FacilitationCommandResponsePollResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseFacilitationCommandResponseQuestionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_FacilitationCommandResponseQuestionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseFacilitationCommandResponseTimerResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_FacilitationCommandResponseTimerResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseGrantResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_GrantResponse"];
@@ -15174,6 +16470,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseInvitationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_InvitationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseJoinCodeResolutionResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_JoinCodeResolutionResponse"];
@@ -15207,6 +16513,16 @@ export interface components {
         meeting_ApiResponseLobbyResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_LobbyResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseMaterialAccessTicketResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_MaterialAccessTicketResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15284,9 +16600,49 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponsePersonalRoomResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_PersonalRoomResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponsePolicyResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_PolicyResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponsePreferencesResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_PreferencesResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponsePreparationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_PreparationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseQueryResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_QueryResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15334,9 +16690,109 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseRoomSessionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_RoomSessionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseRoomSessionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_RoomSessionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseRunResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_RunResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseScheduleDraft: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ScheduleDraft"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseScheduleDraftResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ScheduleDraftResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseScheduleDraftSlotResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ScheduleDraftSlotResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseScheduleStateResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ScheduleStateResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseSeriesPreviewResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_SeriesPreviewResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseSnapshotResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_SnapshotResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseTemplatePage: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_TemplatePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseTemplateResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_TemplateResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15368,11 +16824,47 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        meeting_AskQuestionCommand: {
+            text: string;
+        };
         meeting_BlockerResponse: {
             category?: string;
             code?: string;
             description?: string;
             retryable?: boolean;
+        };
+        meeting_CancelPreviewRequest: {
+            /** Format: int64 */
+            expectedSeriesVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            scope: string;
+        };
+        meeting_CancelRequest: {
+            /** Format: int64 */
+            expectedSeriesVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            impactFingerprint: string;
+            scope: string;
+        };
+        meeting_CancellationPreviewResponse: {
+            /** Format: int32 */
+            affectedOccurrenceCount?: number;
+            impactFingerprint?: string;
+            /** Format: int64 */
+            invitationRevision?: number;
+            scope?: string;
+            /** Format: int64 */
+            seriesVersion?: number;
+            /** Format: int32 */
+            skippedImmutableOccurrenceCount?: number;
+        };
+        meeting_CapabilitiesResponse: {
+            canAskQuestion?: boolean;
+            canModerate?: boolean;
+            canVote?: boolean;
+            meetingLive?: boolean;
         };
         meeting_CapabilityResponse: {
             aiNotesConfigured?: boolean;
@@ -15437,6 +16929,16 @@ export interface components {
             /** Format: int64 */
             sequence?: number;
         };
+        meeting_CloneCommand: {
+            /** Format: int64 */
+            expectedVersion: number;
+            name: string;
+        };
+        meeting_CommitScheduleDraftRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            previewFingerprint?: string;
+        };
         meeting_ConsentResponse: {
             complete?: boolean;
             /** Format: int32 */
@@ -15492,6 +16994,11 @@ export interface components {
             label?: "ALIGNED" | "MIXED" | "CONTESTED" | "INSUFFICIENT_EVIDENCE";
             signals?: ("CONSTRUCTIVE_DISAGREEMENT" | "UNRESOLVED_DISAGREEMENT" | "LOW_TRANSCRIPT_EVIDENCE")[];
         };
+        meeting_CreatePollCommand: {
+            anonymous?: boolean;
+            options: string[];
+            question: string;
+        };
         meeting_CreateRunCommand: {
             /** Format: int64 */
             expectedContentPlanVersion: number;
@@ -15499,8 +17006,60 @@ export interface components {
             /** Format: uuid */
             sourceArtifactId: string;
         };
+        meeting_CreateSeriesRequest: {
+            meeting: components["schemas"]["meeting_ScheduleMeetingRequest"];
+            previewFingerprint: string;
+            recurrence: components["schemas"]["meeting_RecurrenceRequest"];
+        };
         meeting_DeleteChatMessageCommand: {
             reason?: string;
+        };
+        meeting_DeleteResponse: {
+            deleted?: boolean;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        meeting_DiscardScheduleDraftResponse: {
+            discarded?: boolean;
+            /** Format: uuid */
+            draftId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        meeting_DraftAgendaItem: {
+            /** Format: uuid */
+            itemId?: string;
+            objective?: string;
+            /** Format: int64 */
+            ownerUserId?: number;
+            /** Format: int32 */
+            plannedMinutes?: number;
+            title?: string;
+        };
+        meeting_DraftAgendaItemResponse: {
+            /** Format: uuid */
+            itemId?: string;
+            objective?: string;
+            /** Format: int64 */
+            ownerUserId?: number;
+            /** Format: int32 */
+            plannedMinutes?: number;
+            /** Format: int32 */
+            position?: number;
+            title?: string;
+        };
+        meeting_DraftRecurrence: {
+            frequency: string;
+            /** Format: int32 */
+            interval?: number;
+            /** Format: int32 */
+            occurrenceCount?: number;
+        };
+        meeting_DraftVersionRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
         };
         meeting_EffectivePermissionsResponse: {
             camera?: boolean;
@@ -15510,6 +17069,38 @@ export interface components {
             participantList?: boolean;
             reactions?: boolean;
             screenShare?: boolean;
+        };
+        meeting_FacilitationCommandResponsePollResponse: {
+            resource?: components["schemas"]["meeting_PollResponse"];
+            /** Format: int64 */
+            sequence?: number;
+            /** Format: date-time */
+            serverTime?: string;
+        };
+        meeting_FacilitationCommandResponseQuestionResponse: {
+            resource?: components["schemas"]["meeting_QuestionResponse"];
+            /** Format: int64 */
+            sequence?: number;
+            /** Format: date-time */
+            serverTime?: string;
+        };
+        meeting_FacilitationCommandResponseTimerResponse: {
+            resource?: components["schemas"]["meeting_TimerResponse"];
+            /** Format: int64 */
+            sequence?: number;
+            /** Format: date-time */
+            serverTime?: string;
+        };
+        meeting_FavoriteCommand: {
+            favorite?: boolean;
+        };
+        meeting_FollowUpCandidateResponse: {
+            /** Format: int32 */
+            actionItemIndex?: number;
+            /** Format: uuid */
+            candidateId?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
         };
         meeting_GrantCommand: {
             /** Format: int64 */
@@ -15608,6 +17199,7 @@ export interface components {
             /** @enum {string} */
             accessScope: "INTERNAL" | "INVITED" | "PUBLIC_CODE";
             agenda?: string;
+            agendaItems?: components["schemas"]["meeting_AgendaItemInput"][];
             allowJoinBeforeHost?: boolean;
             defaultCameraEnabled?: boolean;
             defaultMicrophoneEnabled?: boolean;
@@ -15615,8 +17207,42 @@ export interface components {
             guestAccessEnabled?: boolean;
             guestInvitees?: components["schemas"]["meeting_GuestInvitee"][];
             participantUserIds?: number[];
+            /** Format: uuid */
+            sourceTemplateId?: string;
+            /** Format: int64 */
+            sourceTemplateVersion?: number;
             title: string;
             waitingRoomEnabled?: boolean;
+        };
+        meeting_InvitationCounts: {
+            /** Format: int32 */
+            accepted?: number;
+            /** Format: int32 */
+            declined?: number;
+            /** Format: int32 */
+            pending?: number;
+            /** Format: int32 */
+            tentative?: number;
+        };
+        meeting_InvitationResponse: {
+            displayName?: string;
+            /** Format: int64 */
+            invitationRevision?: number;
+            mine?: boolean;
+            /** Format: uuid */
+            participantId?: string;
+            /** Format: date-time */
+            respondedAt?: string;
+            response?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        meeting_InvitationResponseRequest: {
+            /** Format: int64 */
+            expectedInvitationRevision: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            response: string;
         };
         meeting_IssueTokenCommand: {
             /** Format: uuid */
@@ -15647,6 +17273,41 @@ export interface components {
         meeting_JsonNode: unknown;
         meeting_LobbyResponse: {
             waiting?: components["schemas"]["meeting_JoinRequestResponse"][];
+        };
+        meeting_MaterialAccessRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+        };
+        meeting_MaterialAccessTicketResponse: {
+            accessUrl?: string;
+            contentType?: string;
+            displayName?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: uuid */
+            materialId?: string;
+            /** Format: int64 */
+            materialVersion?: number;
+            /** Format: uuid */
+            meetingId?: string;
+        };
+        meeting_MaterialResponse: {
+            accessVerificationState?: string;
+            classification?: string;
+            contentSha256?: string;
+            contentType?: string;
+            displayName?: string;
+            /** Format: uuid */
+            materialId?: string;
+            opaqueReference?: string;
+            referenceProvider?: string;
+            /** Format: date-time */
+            retentionUntil?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            sourceVersion?: string;
+            /** Format: int64 */
+            version?: number;
         };
         meeting_MeetingCreatedResponse: {
             meeting?: components["schemas"]["meeting_MeetingDetailResponse"];
@@ -15737,6 +17398,15 @@ export interface components {
             version?: number;
             waitingRoomEnabled?: boolean;
         };
+        meeting_MyPreparationResponse: {
+            /** Format: int64 */
+            agendaVersion?: number;
+            preparedAgendaItemIds?: string[];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         meeting_NoticeAcknowledgementResponse: {
             /** Format: date-time */
             acknowledgedAt?: string;
@@ -15748,6 +17418,15 @@ export interface components {
             noticeRevision?: number;
             /** Format: uuid */
             participantId?: string;
+        };
+        meeting_OccurrencePreview: {
+            adjustment?: string;
+            localStart?: string;
+            /** Format: int32 */
+            occurrenceIndex?: number;
+            /** Format: date-time */
+            startsAt?: string;
+            utcOffset?: string;
         };
         meeting_PageResponseHistoryItemResponse: {
             items?: components["schemas"]["meeting_HistoryItemResponse"][];
@@ -15816,6 +17495,20 @@ export interface components {
             serverUrl?: string;
             sessionId?: string;
         };
+        meeting_PersonalRoomResponse: {
+            /** Format: uuid */
+            currentMeetingId?: string;
+            /** Format: int64 */
+            invitationRevision?: number;
+            name?: string;
+            opaqueAlias?: string;
+            /** Format: uuid */
+            roomId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         meeting_PolicyResponse: {
             aiNotesConfigured?: boolean;
             allowJoinBeforeHost?: boolean;
@@ -15839,6 +17532,132 @@ export interface components {
             /** Format: int64 */
             version?: number;
             waitingRoomRequired?: boolean;
+        };
+        meeting_PollOptionResponse: {
+            label?: string;
+            /** Format: uuid */
+            optionId?: string;
+            /** Format: int32 */
+            position?: number;
+            /** Format: int32 */
+            voteCount?: number;
+        };
+        meeting_PollResponse: {
+            anonymous?: boolean;
+            canModerate?: boolean;
+            canVote?: boolean;
+            /** Format: date-time */
+            closedAt?: string;
+            /** Format: int64 */
+            myBallotVersion?: number;
+            /** Format: uuid */
+            myOptionId?: string;
+            /** Format: date-time */
+            openedAt?: string;
+            options?: components["schemas"]["meeting_PollOptionResponse"][];
+            /** Format: uuid */
+            pollId?: string;
+            question?: string;
+            /** Format: int64 */
+            sequence?: number;
+            state?: string;
+            /** Format: int32 */
+            totalVotes?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        meeting_PreferencesInput: {
+            cameraOff?: boolean;
+            displayName: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            microphoneOff?: boolean;
+            prejoinEnabled?: boolean;
+            recapNotifications?: boolean;
+            reminderEnabled?: boolean;
+            /** Format: int32 */
+            reminderMinutes?: number;
+        };
+        meeting_PreferencesResponse: {
+            cameraOff?: boolean;
+            displayName?: string;
+            microphoneOff?: boolean;
+            prejoinEnabled?: boolean;
+            recapNotifications?: boolean;
+            reminderEnabled?: boolean;
+            /** Format: int32 */
+            reminderMinutes?: number;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        meeting_PreparationResponse: {
+            agendaItems?: components["schemas"]["meeting_AgendaItemResponse"][];
+            /** Format: int64 */
+            agendaVersion?: number;
+            canEditAgenda?: boolean;
+            canManageMaterials?: boolean;
+            canPrepare?: boolean;
+            canRespond?: boolean;
+            invitationCounts?: components["schemas"]["meeting_InvitationCounts"];
+            invitationResponses?: components["schemas"]["meeting_InvitationResponse"][];
+            /** Format: int64 */
+            invitationRevision?: number;
+            materials?: components["schemas"]["meeting_MaterialResponse"][];
+            /** Format: int64 */
+            materialsVersion?: number;
+            /** Format: uuid */
+            meetingId?: string;
+            /** Format: int64 */
+            meetingVersion?: number;
+            myPreparation?: components["schemas"]["meeting_MyPreparationResponse"];
+            myResponse?: components["schemas"]["meeting_InvitationResponse"];
+            /** Format: date-time */
+            observedAt?: string;
+        };
+        meeting_QueryCommand: {
+            /** Format: int32 */
+            cursor?: number;
+            /** Format: int64 */
+            expectedArtifactVersion: number;
+            /** Format: int32 */
+            pageSize?: number;
+            query?: string;
+        };
+        meeting_QueryResponse: {
+            /** Format: uuid */
+            artifactId?: string;
+            /** Format: int64 */
+            artifactVersion?: number;
+            hasMore?: boolean;
+            /** Format: int32 */
+            nextCursor?: number;
+            queryApplied?: boolean;
+            /** Format: date-time */
+            retentionUntil?: string;
+            segments?: components["schemas"]["meeting_SegmentResponse"][];
+        };
+        meeting_QuestionResponse: {
+            answer?: string;
+            /** Format: date-time */
+            answeredAt?: string;
+            authorDisplayName?: string;
+            canModerate?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+            mine?: boolean;
+            /** Format: uuid */
+            questionId?: string;
+            /** Format: int64 */
+            sequence?: number;
+            state?: string;
+            text?: string;
+            /** Format: int32 */
+            upvoteCount?: number;
+            upvotedByMe?: boolean;
+            /** Format: int64 */
+            version?: number;
         };
         meeting_ReadinessResponse: {
             capabilities?: {
@@ -15891,12 +17710,44 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        meeting_RecurrenceRequest: {
+            frequency: string;
+            /** Format: int32 */
+            interval?: number;
+            /** Format: int32 */
+            occurrenceCount?: number;
+        };
+        meeting_RegisterMaterialRequest: {
+            classification: string;
+            contentSha256?: string;
+            contentType: string;
+            displayName: string;
+            /** Format: int64 */
+            expectedMaterialsVersion: number;
+            opaqueReference: string;
+            referenceProvider: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            sourceVersion?: string;
+        };
+        meeting_RemoveMaterialRequest: {
+            /** Format: int64 */
+            expectedMaterialsVersion: number;
+            /** Format: int64 */
+            expectedVersion: number;
+        };
+        meeting_ReplaceAgendaRequest: {
+            /** Format: int64 */
+            expectedAgendaVersion: number;
+            items: components["schemas"]["meeting_AgendaItemInput"][];
+        };
         meeting_ReportResponse: {
             analysis?: components["schemas"]["meeting_Analysis"];
             /** Format: date-time */
             approvedAt?: string;
             audience?: string;
             canCurrentViewerReview?: boolean;
+            followUpCandidates?: components["schemas"]["meeting_FollowUpCandidateResponse"][];
             legalHold?: boolean;
             /** Format: uuid */
             meetingId?: string;
@@ -15917,6 +17768,19 @@ export interface components {
         meeting_RequestRecordingCommand: {
             /** Format: int64 */
             expectedPlanVersion: number;
+        };
+        meeting_RescheduleRequest: {
+            calendarFingerprint?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            /** Format: int64 */
+            expectedSeriesVersion?: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            scope: string;
+            /** Format: date-time */
+            startsAt: string;
+            timeZone: string;
         };
         meeting_RetentionReadiness: {
             /** Format: int32 */
@@ -15967,6 +17831,41 @@ export interface components {
             /** Format: int64 */
             userId?: number;
         };
+        meeting_RoomCreate: {
+            name: string;
+        };
+        meeting_RoomSessionCommand: {
+            /** Format: int64 */
+            expectedVersion: number;
+            /** Format: int64 */
+            invitationRevision?: number;
+        };
+        meeting_RoomSessionPage: {
+            items?: components["schemas"]["meeting_RoomSessionResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        meeting_RoomSessionResponse: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            endedAt?: string;
+            /** Format: int64 */
+            invitationRevision?: number;
+            lifecycleState?: string;
+            /** Format: uuid */
+            meetingId?: string;
+            title?: string;
+        };
+        meeting_RoomUpdate: {
+            /** Format: int64 */
+            expectedVersion: number;
+            name: string;
+        };
         meeting_RunResponse: {
             analysisProfile?: string;
             /** Format: date-time */
@@ -15991,10 +17890,89 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        meeting_SaveScheduleDraftRequest: {
+            accessScope?: string;
+            agenda?: string;
+            agendaItems?: components["schemas"]["meeting_DraftAgendaItem"][];
+            allowJoinBeforeHost?: boolean;
+            /** Format: int32 */
+            durationMinutes?: number;
+            /** Format: int64 */
+            expectedVersion?: number;
+            lastStep?: string;
+            participantUserIds?: number[];
+            recurrence?: components["schemas"]["meeting_DraftRecurrence"];
+            /** Format: uuid */
+            sourceTemplateId?: string;
+            /** Format: int64 */
+            sourceTemplateVersion?: number;
+            /** Format: date-time */
+            startsAt?: string;
+            timeZone?: string;
+            title?: string;
+            waitingRoomEnabled?: boolean;
+        };
+        meeting_ScheduleDraft: {
+            accessScope?: string;
+            agendaItems?: components["schemas"]["meeting_AgendaItem"][];
+            defaultCameraEnabled?: boolean;
+            defaultMicrophoneEnabled?: boolean;
+            /** Format: int32 */
+            durationMinutes?: number;
+            purpose?: string;
+            requiresPolicyRevalidation?: boolean;
+            /** Format: uuid */
+            sourceTemplateId?: string;
+            /** Format: int64 */
+            sourceTemplateVersion?: number;
+            title?: string;
+            waitingRoomEnabled?: boolean;
+        };
+        meeting_ScheduleDraftResponse: {
+            accessScope?: string;
+            agenda?: string;
+            agendaItems?: components["schemas"]["meeting_DraftAgendaItemResponse"][];
+            allowJoinBeforeHost?: boolean;
+            /** Format: uuid */
+            draftId?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            lastStep?: string;
+            participants?: components["schemas"]["meeting_MeetingPersonResponse"][];
+            recurrence?: components["schemas"]["meeting_DraftRecurrence"];
+            /** Format: date-time */
+            retentionUntil?: string;
+            /** Format: uuid */
+            sourceTemplateId?: string;
+            /** Format: int64 */
+            sourceTemplateVersion?: number;
+            /** Format: date-time */
+            startsAt?: string;
+            timeZone?: string;
+            title?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+            waitingRoomEnabled?: boolean;
+        };
+        meeting_ScheduleDraftSlotResponse: {
+            discardOnly?: boolean;
+            draft?: components["schemas"]["meeting_ScheduleDraftResponse"];
+            /** Format: uuid */
+            draftId?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            /** Format: date-time */
+            retentionUntil?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         meeting_ScheduleMeetingRequest: {
             /** @enum {string} */
             accessScope: "INTERNAL" | "INVITED" | "PUBLIC_CODE";
             agenda?: string;
+            agendaItems?: components["schemas"]["meeting_AgendaItemInput"][];
             allowJoinBeforeHost?: boolean;
             defaultCameraEnabled?: boolean;
             defaultMicrophoneEnabled?: boolean;
@@ -16004,18 +17982,125 @@ export interface components {
             guestAccessEnabled?: boolean;
             guestInvitees?: components["schemas"]["meeting_GuestInvitee"][];
             participantUserIds?: number[];
+            /** Format: uuid */
+            sourceTemplateId?: string;
+            /** Format: int64 */
+            sourceTemplateVersion?: number;
             /** Format: date-time */
             startsAt: string;
             timeZone: string;
             title: string;
             waitingRoomEnabled?: boolean;
         };
+        meeting_ScheduleStateResponse: {
+            deliveryState?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            exceptionState?: string;
+            frequency?: string;
+            /** Format: int64 */
+            invitationRevision?: number;
+            lifecycleState?: string;
+            /** Format: uuid */
+            meetingId?: string;
+            /** Format: int64 */
+            meetingVersion?: number;
+            /** Format: int32 */
+            occurrenceCount?: number;
+            /** Format: int32 */
+            occurrenceIndex?: number;
+            /** Format: int32 */
+            recurrenceInterval?: number;
+            /** Format: uuid */
+            seriesId?: string;
+            /** Format: int64 */
+            seriesVersion?: number;
+            /** Format: date-time */
+            startsAt?: string;
+            timeZone?: string;
+        };
+        meeting_SegmentResponse: {
+            /** Format: int64 */
+            endMillis?: number;
+            segmentId?: string;
+            /** Format: int64 */
+            startMillis?: number;
+            text?: string;
+        };
         meeting_SendChatMessageCommand: {
             text: string;
+        };
+        meeting_SeriesPreviewRequest: {
+            meeting: components["schemas"]["meeting_ScheduleMeetingRequest"];
+            recurrence: components["schemas"]["meeting_RecurrenceRequest"];
+        };
+        meeting_SeriesPreviewResponse: {
+            hasCalendarAdjustments?: boolean;
+            occurrences?: components["schemas"]["meeting_OccurrencePreview"][];
+            previewFingerprint?: string;
+        };
+        meeting_SnapshotResponse: {
+            capabilities?: components["schemas"]["meeting_CapabilitiesResponse"];
+            /** Format: int32 */
+            pollingIntervalMillis?: number;
+            polls?: components["schemas"]["meeting_PollResponse"][];
+            questions?: components["schemas"]["meeting_QuestionResponse"][];
+            /** Format: int64 */
+            sequence?: number;
+            /** Format: date-time */
+            serverTime?: string;
+            timer?: components["schemas"]["meeting_TimerResponse"];
+            transport?: string;
+        };
+        meeting_StartTimerCommand: {
+            /** Format: uuid */
+            agendaItemId: string;
+            /** Format: int64 */
+            expectedVersion: number;
         };
         meeting_StopRecordingCommand: {
             /** Format: int64 */
             expectedSessionVersion: number;
+        };
+        meeting_TemplateInput: {
+            agendaItems: components["schemas"]["meeting_AgendaItem"][];
+            category: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            name: string;
+            purpose: string;
+        };
+        meeting_TemplatePage: {
+            items?: components["schemas"]["meeting_TemplateResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        meeting_TemplateResponse: {
+            agendaItems?: components["schemas"]["meeting_AgendaItem"][];
+            canEdit?: boolean;
+            category?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            favorite?: boolean;
+            name?: string;
+            purpose?: string;
+            /** @enum {string} */
+            scope?: "PERSONAL" | "ORGANIZATION";
+            /** Format: uuid */
+            templateId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        meeting_TemplateUpdate: {
+            /** Format: int64 */
+            expectedVersion: number;
+            template: components["schemas"]["meeting_TemplateInput"];
         };
         meeting_TenantPolicyUpdateRequest: {
             allowJoinBeforeHost?: boolean;
@@ -16038,6 +18123,22 @@ export interface components {
             screenShareAllowed?: boolean;
             waitingRoomRequired?: boolean;
         };
+        meeting_TimerResponse: {
+            /** Format: uuid */
+            agendaItemId?: string;
+            agendaItemTitle?: string;
+            /** Format: int32 */
+            elapsedSeconds?: number;
+            /** Format: int32 */
+            plannedSeconds?: number;
+            /** Format: int32 */
+            remainingSeconds?: number;
+            /** Format: date-time */
+            runningSince?: string;
+            state?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         meeting_UpdateContentPlanCommand: {
             aiSummaryDependencyValid?: boolean;
             aiSummaryRequested?: boolean;
@@ -16047,6 +18148,13 @@ export interface components {
             recordingRequested?: boolean;
             transcriptionRequested?: boolean;
         };
+        meeting_UpdateMyPreparationRequest: {
+            /** Format: int64 */
+            expectedAgendaVersion: number;
+            /** Format: int64 */
+            expectedVersion: number;
+            preparedAgendaItemIds: string[];
+        };
         meeting_VersionCommand: {
             /** Format: int64 */
             expectedVersion: number;
@@ -16054,6 +18162,12 @@ export interface components {
         meeting_VersionedCommand: {
             /** Format: int64 */
             expectedVersion: number;
+        };
+        meeting_VotePollCommand: {
+            /** Format: int64 */
+            expectedBallotVersion: number;
+            /** Format: uuid */
+            optionId: string;
         };
         messaging_AddConversationMemberRequest: {
             /** Format: int64 */
@@ -18295,10 +20409,32 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        people_ApprovalEvidence: {
+            /** Format: int32 */
+            availableMinutes?: number;
+            /** Format: date-time */
+            endAt?: string;
+            /** Format: int32 */
+            exceptionCount?: number;
+            /** Format: date */
+            periodEnd?: string;
+            /** Format: date */
+            periodStart?: string;
+            reason?: string;
+            /** Format: int32 */
+            recordedMinutes?: number;
+            /** Format: int32 */
+            requestedMinutes?: number;
+            /** Format: int32 */
+            scheduledMinutes?: number;
+            /** Format: date-time */
+            startAt?: string;
+        };
         people_ApprovalItem: {
             domain?: string;
             employeeName?: string;
             employeeTitle?: string;
+            evidence?: components["schemas"]["people_ApprovalEvidence"];
             /** Format: uuid */
             itemId?: string;
             /** Format: uuid */
@@ -19688,29 +21824,74 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_ActivityCoverage: {
+            excludedProvenance?: string[];
+            includesLegacy?: boolean;
+            includesUsage?: boolean;
+            sourceScope?: string;
+            supportedObjectTypes?: string[];
+        };
         platform_ActivityEvent: {
             actor?: string;
             actorName?: string;
+            /** Format: int32 */
+            attempt?: number;
+            auditAccess?: string;
             auditId?: string;
             /** Format: uuid */
+            auditRecordId?: string;
+            auditStatus?: string;
+            correlationId?: string;
+            dataProvenance?: string;
+            eventKind?: string;
+            executionId?: string;
+            /** Format: int64 */
+            executionVersion?: number;
+            /** Format: uuid */
             id?: string;
+            objectId?: string;
             objectLabel?: string;
             objectType?: string;
             /** Format: date-time */
             occurredAt?: string;
             /** Format: int32 */
             progress?: number;
+            resumeCursor?: string;
             source?: string;
+            sourceAccess?: string;
+            sourceEventId?: string;
             sourceRoute?: string;
             state?: string;
             summary?: string;
             title?: string;
             tool?: string;
+            workStatus?: string;
         };
         platform_ActivityFeed: {
+            coverage?: components["schemas"]["platform_ActivityCoverage"];
             events?: components["schemas"]["platform_ActivityEvent"][];
             /** Format: date-time */
             generatedAt?: string;
+            hasMore?: boolean;
+            nextCursor?: string;
+            /** Format: date-time */
+            snapshotAt?: string;
+            startCursor?: string;
+        };
+        platform_AddressBook: {
+            contacts?: components["schemas"]["platform_ContactPage"];
+            /** Format: date-time */
+            generatedAt?: string;
+            groups?: components["schemas"]["platform_ContactGroup"][];
+            summary?: components["schemas"]["platform_AddressBookSummary"];
+        };
+        platform_AddressBookSummary: {
+            /** Format: int64 */
+            contactCount?: number;
+            /** Format: int64 */
+            favoriteCount?: number;
+            /** Format: int64 */
+            groupCount?: number;
         };
         platform_AdminCatalogItem: {
             categoryKey?: string;
@@ -19872,9 +22053,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseActivityEvent: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ActivityEvent"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseActivityFeed: {
             correlationId?: string;
             data?: components["schemas"]["platform_ActivityFeed"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseAddressBook: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_AddressBook"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -20062,6 +22263,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseCalendarTeamAvailabilitySnapshot: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CalendarTeamAvailabilitySnapshot"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseCaseClosureReport: {
             correlationId?: string;
             data?: components["schemas"]["platform_CaseClosureReport"];
@@ -20182,6 +22393,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseContact: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Contact"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseContactGroup: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ContactGroup"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseCorrelationDetail: {
             correlationId?: string;
             data?: components["schemas"]["platform_CorrelationDetail"];
@@ -20285,6 +22516,16 @@ export interface components {
         platform_ApiResponseEventSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_EventSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseExecutionSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ExecutionSummary"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -21092,6 +23333,46 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponsePersonalWorkDayPlan: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PersonalWorkDayPlan"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponsePersonalWorkTask: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PersonalWorkTask"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponsePersonalWorkTaskPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PersonalWorkTaskPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponsePersonalWorkTimelinePage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PersonalWorkTimelinePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponsePolicy: {
             correlationId?: string;
             data?: components["schemas"]["platform_Policy"];
@@ -21455,6 +23736,66 @@ export interface components {
         platform_ApiResponseVoid: {
             correlationId?: string;
             data?: unknown;
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkAssignmentEventPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkAssignmentEventPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkAssignmentMutationResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkAssignmentMutationResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkAssignmentTask: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkAssignmentTask"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkAssignmentTaskPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkAssignmentTaskPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkCalendarLink: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkCalendarLink"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkCalendarLinkPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkCalendarLinkPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -22124,6 +24465,43 @@ export interface components {
             version?: number;
             visibility?: string;
         };
+        platform_CalendarTeamAvailabilityMember: {
+            /** Format: int32 */
+            busyMinutes?: number;
+            /** Format: date-time */
+            busyUntil?: string;
+            busyWindows?: components["schemas"]["platform_CalendarTeamBusyWindow"][];
+            displayName?: string;
+            /** Format: date-time */
+            nextAvailableAt?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            /**
+             * @description Calendar-derived status, not online presence
+             * @enum {string}
+             */
+            status?: "AVAILABLE" | "BUSY" | "FOCUS" | "OUT_OF_OFFICE";
+        };
+        /** @description A short-lived snapshot of schedules stored in DWP Calendar; no upstream live-sync or online-presence claim */
+        platform_CalendarTeamAvailabilitySnapshot: {
+            /** Format: date */
+            date?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            hasMore?: boolean;
+            members?: components["schemas"]["platform_CalendarTeamAvailabilityMember"][];
+            scope?: string;
+            source?: string;
+            timeZone?: string;
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        platform_CalendarTeamBusyWindow: {
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: date-time */
+            startsAt?: string;
+        };
         platform_CampusRequest: {
             code: string;
             nameEn: string;
@@ -22547,6 +24925,80 @@ export interface components {
             safeErrorCode?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_Contact: {
+            /** Format: uuid */
+            contactId?: string;
+            displayName?: string;
+            emailAddress?: string;
+            favorite?: boolean;
+            jobTitle?: string;
+            organizationName?: string;
+            phoneNumber?: string;
+            sourceKind?: string;
+            /** Format: uuid */
+            sourcePersonPublicId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ContactCreateRequest: {
+            displayName: string;
+            /** Format: email */
+            emailAddress: string;
+            favorite?: boolean;
+            /** Format: uuid */
+            idempotencyKey: string;
+            jobTitle?: string;
+            organizationName?: string;
+            phoneNumber?: string;
+            sourceKind: string;
+            /** Format: uuid */
+            sourcePersonPublicId?: string;
+        };
+        platform_ContactGroup: {
+            description?: string;
+            displayName?: string;
+            /** Format: uuid */
+            groupId?: string;
+            members?: components["schemas"]["platform_GroupMember"][];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ContactGroupCreateRequest: {
+            description?: string;
+            displayName: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+        };
+        platform_ContactGroupUpdateRequest: {
+            description?: string;
+            displayName: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ContactPage: {
+            items?: components["schemas"]["platform_Contact"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        platform_ContactUpdateRequest: {
+            displayName: string;
+            /** Format: email */
+            emailAddress: string;
+            favorite?: boolean;
+            jobTitle?: string;
+            organizationName?: string;
+            phoneNumber?: string;
+            /** Format: int64 */
+            version: number;
         };
         platform_Correlation: {
             attentionRequired?: boolean;
@@ -23142,6 +25594,27 @@ export interface components {
             /** @enum {string} */
             visibility?: "DEFAULT" | "PUBLIC" | "PRIVATE" | "CONFIDENTIAL";
         };
+        platform_ExecutionSummary: {
+            /** Format: int64 */
+            cancelled?: number;
+            /** Format: int64 */
+            completed?: number;
+            coverage?: components["schemas"]["platform_ActivityCoverage"];
+            /** Format: int64 */
+            failed?: number;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int64 */
+            needsInput?: number;
+            /** Format: int64 */
+            policyBlocked?: number;
+            /** Format: int64 */
+            running?: number;
+            /** Format: int64 */
+            total?: number;
+            /** Format: int64 */
+            unknown?: number;
+        };
         platform_ExportJob: {
             /** Format: date-time */
             completedAt?: string;
@@ -23373,6 +25846,32 @@ export interface components {
             orphan?: boolean;
             /** Format: int64 */
             outgoingCount?: number;
+        };
+        platform_GroupMember: {
+            /** Format: uuid */
+            contactId?: string;
+            displayName?: string;
+            emailAddress?: string;
+            organizationName?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+        };
+        platform_GroupMembersReplaceRequest: {
+            contactIds: string[];
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_GroupMessageRequest: {
+            body: string;
+            /** @enum {string} */
+            classification: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
+            /** Format: int64 */
+            groupVersion: number;
+            /** Format: uuid */
+            idempotencyKey: string;
+            subject: string;
         };
         platform_HomeAppPlacement: {
             groupKey?: string;
@@ -24080,6 +26579,125 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_PersonalWorkCreateTaskRequest: {
+            description?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            /** @enum {string} */
+            priority: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            sourceReference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            title: string;
+        };
+        platform_PersonalWorkDayPlan: {
+            /** Format: date */
+            date?: string;
+            items?: components["schemas"]["platform_PersonalWorkDayPlanItem"][];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_PersonalWorkDayPlanItem: {
+            /** Format: int32 */
+            position?: number;
+            selectionReference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            source?: components["schemas"]["platform_PersonalWorkSourceLink"];
+        };
+        platform_PersonalWorkReplaceDayPlanRequest: {
+            items: components["schemas"]["platform_PersonalWorkSourceReference"][];
+            /** Format: int64 */
+            version: number;
+        };
+        platform_PersonalWorkSourceLink: {
+            availability?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            reference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            sourceRoute?: string;
+            status?: string;
+            title?: string;
+        };
+        platform_PersonalWorkSourceReference: {
+            obligationKey?: string;
+            sourceReference: string;
+            sourceSystem: string;
+        };
+        platform_PersonalWorkStatusRequest: {
+            /** @enum {string} */
+            status: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "ARCHIVED";
+            /** Format: int64 */
+            version: number;
+        };
+        platform_PersonalWorkTask: {
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            description?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            source?: components["schemas"]["platform_PersonalWorkSourceLink"];
+            /** @enum {string} */
+            status?: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "ARCHIVED";
+            /** Format: uuid */
+            taskId?: string;
+            title?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_PersonalWorkTaskPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_PersonalWorkTask"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_PersonalWorkTimelineEvent: {
+            action?: string;
+            /** Format: uuid */
+            auditRecordId?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            /** @enum {string} */
+            status?: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "ARCHIVED";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_PersonalWorkTimelinePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_PersonalWorkTimelineEvent"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_PersonalWorkUpdateTaskRequest: {
+            clearSourceReference?: boolean;
+            description?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            /** @enum {string} */
+            priority: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            sourceReference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            title: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_PersonalWorkVersionRequest: {
+            /** Format: int64 */
+            version: number;
         };
         platform_PinAppRequest: {
             pinned: boolean;
@@ -25618,7 +28236,183 @@ export interface components {
             visible: boolean;
             widgetKey: string;
         };
+        platform_WorkAssignmentCapabilities: {
+            canAccept?: boolean;
+            canCancel?: boolean;
+            canComplete?: boolean;
+            canDecline?: boolean;
+            canReassign?: boolean;
+            canStart?: boolean;
+            canWait?: boolean;
+        };
+        platform_WorkAssignmentCommandReceipt: {
+            /** Format: int64 */
+            appliedAssignmentRevision?: number;
+            /** Format: date-time */
+            appliedAt?: string;
+            /** Format: int64 */
+            appliedVersion?: number;
+            /** Format: uuid */
+            assignmentId?: string;
+            /** Format: uuid */
+            commandId?: string;
+            operation?: string;
+            replayed?: boolean;
+        };
+        platform_WorkAssignmentCreateRequest: {
+            /** Format: int64 */
+            expectedSourceVersion: number;
+            source: components["schemas"]["platform_WorkAssignmentSourceIdentity"];
+        };
+        platform_WorkAssignmentEvent: {
+            action?: string;
+            /** Format: int64 */
+            actorUserId?: number;
+            /** Format: int64 */
+            assigneeUserId?: number;
+            /** Format: uuid */
+            assignmentId?: string;
+            /** Format: int64 */
+            assignmentRevision?: number;
+            /** @enum {string} */
+            assignmentState?: "PENDING" | "ACCEPTED" | "DECLINED";
+            /** Format: uuid */
+            auditRecordId?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            reasonCode?: string;
+            /** Format: int64 */
+            version?: number;
+            /** @enum {string} */
+            workState?: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "CANCELLED";
+        };
+        platform_WorkAssignmentEventPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_WorkAssignmentEvent"][];
+            /** Format: int64 */
+            nextAfterVersion?: number;
+        };
+        platform_WorkAssignmentMutationResult: {
+            assignment?: components["schemas"]["platform_WorkAssignmentTask"];
+            receipt?: components["schemas"]["platform_WorkAssignmentCommandReceipt"];
+        };
+        platform_WorkAssignmentReassignRequest: {
+            /** Format: int64 */
+            assigneeUserId: number;
+            /** Format: int64 */
+            assignmentRevision: number;
+            reasonCode: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_WorkAssignmentSourceIdentity: {
+            /** Format: uuid */
+            candidateId: string;
+            /** Format: uuid */
+            meetingId: string;
+            /** Format: uuid */
+            reportId: string;
+            /** @enum {string} */
+            sourceSystem: "MEETING_FOLLOWUP";
+        };
+        platform_WorkAssignmentSourceView: {
+            /** @enum {string} */
+            availability?: "AVAILABLE" | "UNAVAILABLE" | "NOT_REQUESTED";
+            reference?: components["schemas"]["platform_WorkAssignmentSourceIdentity"];
+            sourceRoute?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
+        };
+        platform_WorkAssignmentTask: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: int64 */
+            assignedByUserId?: number;
+            /** Format: int64 */
+            assigneeUserId?: number;
+            /** Format: uuid */
+            assignmentId?: string;
+            /** Format: int64 */
+            assignmentRevision?: number;
+            /** @enum {string} */
+            assignmentState?: "PENDING" | "ACCEPTED" | "DECLINED";
+            capabilities?: components["schemas"]["platform_WorkAssignmentCapabilities"];
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdByUserId?: number;
+            description?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            source?: components["schemas"]["platform_WorkAssignmentSourceView"];
+            title?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+            /** @enum {string} */
+            workState?: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "CANCELLED";
+        };
+        platform_WorkAssignmentTaskPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_WorkAssignmentTask"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_WorkAssignmentVersionCommand: {
+            /** Format: int64 */
+            assignmentRevision: number;
+            reasonCode?: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_WorkCalendarLink: {
+            calendarAvailability?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: uuid */
+            linkId?: string;
+            state?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+            work?: components["schemas"]["platform_PersonalWorkSourceReference"];
+        };
+        platform_WorkCalendarLinkPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_WorkCalendarLink"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+        };
+        platform_WorkCalendarLinkRequest: {
+            /** Format: uuid */
+            eventId: string;
+            work: components["schemas"]["platform_PersonalWorkSourceReference"];
+        };
+        platform_WorkCapabilities: {
+            canComplete?: boolean;
+            canStart?: boolean;
+            canWait?: boolean;
+        };
         platform_WorkItem: {
+            capabilities?: components["schemas"]["platform_WorkCapabilities"];
             dataClassification?: string;
             /** Format: date-time */
             dueAt?: string;
@@ -25657,11 +28451,15 @@ export interface components {
         };
         platform_WorkSummary: {
             /** Format: int64 */
+            active?: number;
+            /** Format: int64 */
             completed?: number;
             /** Format: int64 */
             dueSoon?: number;
             /** Format: int64 */
             inProgress?: number;
+            /** Format: int64 */
+            overdue?: number;
             /** Format: int64 */
             total?: number;
             /** Format: int64 */
@@ -32571,6 +35369,138 @@ export interface operations {
             };
         };
     };
+    meeting_list_1: {
+        parameters: {
+            query?: {
+                scope?: "ALL" | "PERSONAL" | "ORGANIZATION";
+                q?: string;
+                category?: string;
+                favoritesOnly?: boolean;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplatePage"];
+                };
+            };
+        };
+    };
+    meeting_create_2: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_TemplateInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_get_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_update_2: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_TemplateUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_delete: {
+        parameters: {
+            query: {
+                expectedVersion: number;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseDeleteResponse"];
+                };
+            };
+        };
+    };
     meeting_capabilities: {
         parameters: {
             query?: never;
@@ -32591,7 +35521,7 @@ export interface operations {
             };
         };
     };
-    meeting_history: {
+    meeting_history_1: {
         parameters: {
             query?: {
                 page?: number;
@@ -32658,6 +35588,57 @@ export interface operations {
             };
         };
     };
+    meeting_createSeries: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_CreateSeriesRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseMeetingCreatedResponse"];
+                };
+            };
+        };
+    };
+    meeting_previewSeries: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_SeriesPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseSeriesPreviewResponse"];
+                };
+            };
+        };
+    };
     meeting_meetings: {
         parameters: {
             query?: {
@@ -32681,7 +35662,7 @@ export interface operations {
             };
         };
     };
-    meeting_schedule: {
+    meeting_schedule_1: {
         parameters: {
             query?: never;
             header: {
@@ -32757,7 +35738,36 @@ export interface operations {
             };
         };
     };
-    meeting_issueAccessTicket: {
+    meeting_replaceAgenda: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_ReplaceAgendaRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
+    meeting_issueAccessTicket_1: {
         parameters: {
             query?: never;
             header?: {
@@ -32782,6 +35792,90 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponseAccessTicketResponse"];
+                };
+            };
+        };
+    };
+    meeting_query: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                artifactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_QueryCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseQueryResponse"];
+                };
+            };
+        };
+    };
+    meeting_cancel: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_CancelRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseScheduleStateResponse"];
+                };
+            };
+        };
+    };
+    meeting_previewCancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_CancelPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseCancellationPreviewResponse"];
                 };
             };
         };
@@ -32996,6 +36090,378 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponseMeetingDetailResponse"];
+                };
+            };
+        };
+    };
+    meeting_snapshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseSnapshotResponse"];
+                };
+            };
+        };
+    };
+    meeting_createPoll: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_CreatePollCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponsePollResponse"];
+                };
+            };
+        };
+    };
+    meeting_closePoll: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponsePollResponse"];
+                };
+            };
+        };
+    };
+    meeting_openPoll: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponsePollResponse"];
+                };
+            };
+        };
+    };
+    meeting_vote: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VotePollCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponsePollResponse"];
+                };
+            };
+        };
+    };
+    meeting_askQuestion: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_AskQuestionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseQuestionResponse"];
+                };
+            };
+        };
+    };
+    meeting_answerQuestion: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                questionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_AnswerQuestionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseQuestionResponse"];
+                };
+            };
+        };
+    };
+    meeting_dismissQuestion: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                questionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseQuestionResponse"];
+                };
+            };
+        };
+    };
+    meeting_upvoteQuestion: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                questionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseQuestionResponse"];
+                };
+            };
+        };
+    };
+    meeting_advanceTimer: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseTimerResponse"];
+                };
+            };
+        };
+    };
+    meeting_pauseTimer: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseTimerResponse"];
+                };
+            };
+        };
+    };
+    meeting_resumeTimer: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseTimerResponse"];
+                };
+            };
+        };
+    };
+    meeting_startTimer: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_StartTimerCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseFacilitationCommandResponseTimerResponse"];
                 };
             };
         };
@@ -33220,7 +36686,7 @@ export interface operations {
             };
         };
     };
-    meeting_delete: {
+    meeting_delete_2: {
         parameters: {
             query: {
                 expectedVersion: number;
@@ -33439,6 +36905,35 @@ export interface operations {
             };
         };
     };
+    meeting_respond: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_InvitationResponseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
     meeting_requestJoin: {
         parameters: {
             query?: never;
@@ -33597,6 +37092,145 @@ export interface operations {
             };
         };
     };
+    meeting_registerMaterial: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RegisterMaterialRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
+    meeting_issueAccessTicket: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                materialId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_MaterialAccessRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseMaterialAccessTicketResponse"];
+                };
+            };
+        };
+    };
+    meeting_removeMaterial: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+                materialId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RemoveMaterialRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
+    meeting_updateMyPreparation: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_UpdateMyPreparationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
+    meeting_preparation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreparationResponse"];
+                };
+            };
+        };
+    };
     meeting_requestRecording: {
         parameters: {
             query?: never;
@@ -33651,6 +37285,83 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponseRecordingCommandResponse"];
+                };
+            };
+        };
+    };
+    meeting_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseScheduleStateResponse"];
+                };
+            };
+        };
+    };
+    meeting_reschedule: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RescheduleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseScheduleStateResponse"];
+                };
+            };
+        };
+    };
+    meeting_previewReschedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RescheduleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseSeriesPreviewResponse"];
                 };
             };
         };
@@ -33731,6 +37442,572 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponseListMeetingPersonResponse"];
+                };
+            };
+        };
+    };
+    meeting_get_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePersonalRoomResponse"];
+                };
+            };
+        };
+    };
+    meeting_update_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RoomUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePersonalRoomResponse"];
+                };
+            };
+        };
+    };
+    meeting_create: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RoomCreate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePersonalRoomResponse"];
+                };
+            };
+        };
+    };
+    meeting_rotate: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePersonalRoomResponse"];
+                };
+            };
+        };
+    };
+    meeting_history: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseRoomSessionPage"];
+                };
+            };
+        };
+    };
+    meeting_createSession: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_RoomSessionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseRoomSessionResponse"];
+                };
+            };
+        };
+    };
+    meeting_resolve: {
+        parameters: {
+            query: {
+                revision: number;
+            };
+            header?: never;
+            path: {
+                alias: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseInvitationResponse"];
+                };
+            };
+        };
+    };
+    meeting_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreferencesResponse"];
+                };
+            };
+        };
+    };
+    meeting_update: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_PreferencesInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponsePreferencesResponse"];
+                };
+            };
+        };
+    };
+    meeting_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseScheduleDraftSlotResponse"];
+                };
+            };
+        };
+    };
+    meeting_save: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_SaveScheduleDraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseScheduleDraftResponse"];
+                };
+            };
+        };
+    };
+    meeting_commit: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_CommitScheduleDraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseMeetingCreatedResponse"];
+                };
+            };
+        };
+    };
+    meeting_discard: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_DraftVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseDiscardScheduleDraftResponse"];
+                };
+            };
+        };
+    };
+    meeting_preview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_DraftVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseSeriesPreviewResponse"];
+                };
+            };
+        };
+    };
+    meeting_list: {
+        parameters: {
+            query?: {
+                scope?: "ALL" | "PERSONAL" | "ORGANIZATION";
+                q?: string;
+                category?: string;
+                favoritesOnly?: boolean;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplatePage"];
+                };
+            };
+        };
+    };
+    meeting_create_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_TemplateInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_get_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_update_3: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_TemplateUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_delete_1: {
+        parameters: {
+            query: {
+                expectedVersion: number;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseDeleteResponse"];
+                };
+            };
+        };
+    };
+    meeting_apply: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_VersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseScheduleDraft"];
+                };
+            };
+        };
+    };
+    meeting_cloneTemplate: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_CloneCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
+                };
+            };
+        };
+    };
+    meeting_favorite: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_FavoriteCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseTemplateResponse"];
                 };
             };
         };
@@ -37866,7 +42143,7 @@ export interface operations {
             };
         };
     };
-    platform_list_7: {
+    platform_list_9: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -37889,7 +42166,7 @@ export interface operations {
             };
         };
     };
-    platform_create_12: {
+    platform_create_14: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -37920,7 +42197,7 @@ export interface operations {
             };
         };
     };
-    platform_update_9: {
+    platform_update_10: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -37953,7 +42230,7 @@ export interface operations {
             };
         };
     };
-    platform_archive: {
+    platform_archive_1: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -38019,7 +42296,7 @@ export interface operations {
             };
         };
     };
-    platform_events_3: {
+    platform_events_4: {
         parameters: {
             query?: {
                 window?: "H1" | "H6" | "H24" | "D7" | "D30";
@@ -38048,7 +42325,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_6: {
+    platform_detail_7: {
         parameters: {
             query?: never;
             header?: never;
@@ -38476,7 +42753,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_5: {
+    platform_detail_6: {
         parameters: {
             query: {
                 correlationId: string;
@@ -38498,7 +42775,7 @@ export interface operations {
             };
         };
     };
-    platform_events_2: {
+    platform_events_3: {
         parameters: {
             query?: {
                 window?: "H24" | "D7" | "D30" | "D90";
@@ -38986,7 +43263,7 @@ export interface operations {
             };
         };
     };
-    platform_list_11: {
+    platform_list_15: {
         parameters: {
             query?: {
                 page?: number;
@@ -39597,7 +43874,7 @@ export interface operations {
             };
         };
     };
-    platform_list_6: {
+    platform_list_8: {
         parameters: {
             query?: {
                 lifecycle?: "DRAFT" | "ACTIVE" | "RETIRED";
@@ -39622,7 +43899,7 @@ export interface operations {
             };
         };
     };
-    platform_create_11: {
+    platform_create_13: {
         parameters: {
             query?: never;
             header?: {
@@ -39648,7 +43925,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_4: {
+    platform_detail_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -39785,7 +44062,7 @@ export interface operations {
             };
         };
     };
-    platform_get_4: {
+    platform_get_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -39805,7 +44082,7 @@ export interface operations {
             };
         };
     };
-    platform_update_8: {
+    platform_update_9: {
         parameters: {
             query?: never;
             header?: {
@@ -40061,7 +44338,7 @@ export interface operations {
             };
         };
     };
-    platform_create_10: {
+    platform_create_12: {
         parameters: {
             query?: never;
             header?: {
@@ -40087,7 +44364,7 @@ export interface operations {
             };
         };
     };
-    platform_update_7: {
+    platform_update_8: {
         parameters: {
             query?: never;
             header?: {
@@ -40661,7 +44938,7 @@ export interface operations {
             };
         };
     };
-    platform_list_5: {
+    platform_list_7: {
         parameters: {
             query?: never;
             header?: never;
@@ -40681,7 +44958,7 @@ export interface operations {
             };
         };
     };
-    platform_create_9: {
+    platform_create_11: {
         parameters: {
             query?: never;
             header?: {
@@ -40807,7 +45084,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_4: {
+    platform_cancel_5: {
         parameters: {
             query?: never;
             header?: {
@@ -40891,7 +45168,7 @@ export interface operations {
             };
         };
     };
-    platform_update_6: {
+    platform_update_7: {
         parameters: {
             query?: never;
             header?: {
@@ -41025,7 +45302,7 @@ export interface operations {
             };
         };
     };
-    platform_list_4: {
+    platform_list_6: {
         parameters: {
             query?: {
                 query?: string;
@@ -41050,7 +45327,7 @@ export interface operations {
             };
         };
     };
-    platform_create_8: {
+    platform_create_10: {
         parameters: {
             query?: never;
             header?: {
@@ -41098,7 +45375,7 @@ export interface operations {
             };
         };
     };
-    platform_update_10: {
+    platform_update_11: {
         parameters: {
             query?: never;
             header?: {
@@ -41154,7 +45431,7 @@ export interface operations {
             };
         };
     };
-    platform_activity_1: {
+    platform_activity: {
         parameters: {
             query?: {
                 page?: number;
@@ -41322,7 +45599,7 @@ export interface operations {
             };
         };
     };
-    platform_list_3: {
+    platform_list_5: {
         parameters: {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
@@ -41348,7 +45625,7 @@ export interface operations {
             };
         };
     };
-    platform_create_7: {
+    platform_create_9: {
         parameters: {
             query?: never;
             header?: {
@@ -41374,7 +45651,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_3: {
+    platform_detail_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -42051,7 +46328,7 @@ export interface operations {
             };
         };
     };
-    platform_transition: {
+    platform_transition_1: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -42084,7 +46361,7 @@ export interface operations {
             };
         };
     };
-    platform_get_3: {
+    platform_get_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -42104,7 +46381,7 @@ export interface operations {
             };
         };
     };
-    platform_update_5: {
+    platform_update_6: {
         parameters: {
             query?: never;
             header?: {
@@ -42257,7 +46534,7 @@ export interface operations {
             };
         };
     };
-    platform_get_11: {
+    platform_get_13: {
         parameters: {
             query?: never;
             header?: never;
@@ -43592,7 +47869,7 @@ export interface operations {
             };
         };
     };
-    platform_list_10: {
+    platform_list_14: {
         parameters: {
             query?: never;
             header?: never;
@@ -43859,7 +48136,7 @@ export interface operations {
             };
         };
     };
-    platform_create_6: {
+    platform_create_8: {
         parameters: {
             query?: never;
             header?: {
@@ -43886,7 +48163,7 @@ export interface operations {
             };
         };
     };
-    platform_update_4: {
+    platform_update_5: {
         parameters: {
             query?: never;
             header?: {
@@ -43915,7 +48192,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_3: {
+    platform_cancel_4: {
         parameters: {
             query?: never;
             header?: {
@@ -44174,6 +48451,64 @@ export interface operations {
             };
         };
     };
+    platform_getCalendarTeamAvailabilitySnapshot: {
+        parameters: {
+            query?: {
+                timeZone?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Short-lived shared-member snapshot; never online presence */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarTeamAvailabilitySnapshot"];
+                };
+            };
+            /** @description Invalid time zone */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarTeamAvailabilitySnapshot"];
+                };
+            };
+            /** @description Trusted tenant session required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarTeamAvailabilitySnapshot"];
+                };
+            };
+            /** @description Calendar and People VIEW, workspace membership, and matching person identity required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarTeamAvailabilitySnapshot"];
+                };
+            };
+            /** @description Snapshot is incomplete, invalid, or expired; discard prior data */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarTeamAvailabilitySnapshot"];
+                };
+            };
+        };
+    };
     platform_trashedEvents: {
         parameters: {
             query?: never;
@@ -44196,7 +48531,7 @@ export interface operations {
             };
         };
     };
-    platform_get_10: {
+    platform_get_12: {
         parameters: {
             query?: {
                 locale?: string;
@@ -44222,7 +48557,7 @@ export interface operations {
             };
         };
     };
-    platform_list_9: {
+    platform_list_13: {
         parameters: {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
@@ -44244,7 +48579,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_2: {
+    platform_detail_3: {
         parameters: {
             query?: never;
             header?: never;
@@ -44296,7 +48631,7 @@ export interface operations {
             };
         };
     };
-    platform_detail_1: {
+    platform_detail_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -44444,7 +48779,7 @@ export interface operations {
             };
         };
     };
-    platform_create_5: {
+    platform_create_7: {
         parameters: {
             query?: never;
             header: {
@@ -44516,7 +48851,7 @@ export interface operations {
             };
         };
     };
-    platform_get_9: {
+    platform_get_11: {
         parameters: {
             query?: never;
             header?: never;
@@ -44722,7 +49057,7 @@ export interface operations {
             };
         };
     };
-    platform_get_8: {
+    platform_get_10: {
         parameters: {
             query?: never;
             header?: never;
@@ -44762,7 +49097,7 @@ export interface operations {
             };
         };
     };
-    platform_get_2: {
+    platform_get_3: {
         parameters: {
             query?: never;
             header?: never;
@@ -44782,7 +49117,7 @@ export interface operations {
             };
         };
     };
-    platform_update_3: {
+    platform_update_4: {
         parameters: {
             query?: never;
             header?: {
@@ -44920,7 +49255,7 @@ export interface operations {
             };
         };
     };
-    platform_list_2: {
+    platform_list_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -44976,7 +49311,7 @@ export interface operations {
             };
         };
     };
-    platform_create_4: {
+    platform_create_6: {
         parameters: {
             query?: never;
             header: {
@@ -45048,7 +49383,7 @@ export interface operations {
             };
         };
     };
-    platform_get_1: {
+    platform_get_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -45106,7 +49441,7 @@ export interface operations {
             };
         };
     };
-    platform_update_2: {
+    platform_update_3: {
         parameters: {
             query?: never;
             header: {
@@ -45460,7 +49795,7 @@ export interface operations {
             };
         };
     };
-    platform_list_1: {
+    platform_list_3: {
         parameters: {
             query?: {
                 surfaceKey?: string;
@@ -45518,7 +49853,7 @@ export interface operations {
             };
         };
     };
-    platform_create_3: {
+    platform_create_5: {
         parameters: {
             query?: never;
             header: {
@@ -45590,7 +49925,7 @@ export interface operations {
             };
         };
     };
-    platform_get: {
+    platform_get_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -45648,7 +49983,7 @@ export interface operations {
             };
         };
     };
-    platform_update_1: {
+    platform_update_2: {
         parameters: {
             query?: never;
             header: {
@@ -46326,6 +50661,242 @@ export interface operations {
             };
         };
     };
+    platform_addressBook: {
+        parameters: {
+            query?: {
+                query?: string;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAddressBook"];
+                };
+            };
+        };
+    };
+    platform_createGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ContactGroupCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseContactGroup"];
+                };
+            };
+        };
+    };
+    platform_updateGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ContactGroupUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseContactGroup"];
+                };
+            };
+        };
+    };
+    platform_deleteGroup: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    platform_replaceGroupMembers: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_GroupMembersReplaceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseContactGroup"];
+                };
+            };
+        };
+    };
+    platform_sendGroupMessage: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_GroupMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_createContact: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ContactCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseContact"];
+                };
+            };
+        };
+    };
+    platform_updateContact: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                contactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ContactUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseContact"];
+                };
+            };
+        };
+    };
+    platform_deleteContact: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                contactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     platform_createDraft: {
         parameters: {
             query?: never;
@@ -46984,7 +51555,7 @@ export interface operations {
             };
         };
     };
-    platform_list_8: {
+    platform_list_12: {
         parameters: {
             query?: {
                 locale?: string;
@@ -47064,7 +51635,7 @@ export interface operations {
             };
         };
     };
-    platform_get_5: {
+    platform_get_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -47156,7 +51727,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_2: {
+    platform_cancel_3: {
         parameters: {
             query?: never;
             header?: {
@@ -47230,7 +51801,7 @@ export interface operations {
             };
         };
     };
-    platform_get_7: {
+    platform_get_9: {
         parameters: {
             query?: {
                 locale?: string;
@@ -47514,7 +52085,7 @@ export interface operations {
             };
         };
     };
-    platform_create_2: {
+    platform_create_4: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -47570,7 +52141,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_1: {
+    platform_cancel_2: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -47669,7 +52240,7 @@ export interface operations {
             };
         };
     };
-    platform_get_6: {
+    platform_get_8: {
         parameters: {
             query?: never;
             header?: never;
@@ -47951,7 +52522,7 @@ export interface operations {
             };
         };
     };
-    platform_create_1: {
+    platform_create_3: {
         parameters: {
             query?: never;
             header: {
@@ -48001,7 +52572,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel: {
+    platform_cancel_1: {
         parameters: {
             query?: never;
             header?: {
@@ -48030,9 +52601,22 @@ export interface operations {
             };
         };
     };
-    platform_activity: {
+    platform_list_11: {
         parameters: {
-            query?: never;
+            query?: {
+                actor?: string;
+                state?: string;
+                query?: string;
+                source?: string;
+                objectType?: string;
+                objectId?: string;
+                executionId?: string;
+                from?: string;
+                to?: string;
+                cursor?: string;
+                limit?: number;
+                includeUsage?: boolean;
+            };
             header?: {
                 "Accept-Language"?: string;
             };
@@ -48048,6 +52632,50 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseActivityFeed"];
+                };
+            };
+        };
+    };
+    platform_detail_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseActivityEvent"];
+                };
+            };
+        };
+    };
+    platform_summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseExecutionSummary"];
                 };
             };
         };
@@ -48306,7 +52934,7 @@ export interface operations {
             };
         };
     };
-    platform_list: {
+    platform_list_2: {
         parameters: {
             query: {
                 surfaceKey: string;
@@ -48328,7 +52956,7 @@ export interface operations {
             };
         };
     };
-    platform_create: {
+    platform_create_2: {
         parameters: {
             query: {
                 surfaceKey: string;
@@ -48356,7 +52984,7 @@ export interface operations {
             };
         };
     };
-    platform_update: {
+    platform_update_1: {
         parameters: {
             query?: never;
             header?: {
@@ -48452,6 +53080,724 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_list_1: {
+        parameters: {
+            query?: {
+                scope?: "ASSIGNED_TO_ME" | "ASSIGNED_BY_ME";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentTaskPage"];
+                };
+            };
+        };
+    };
+    platform_create_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_bySource: {
+        parameters: {
+            query: {
+                meetingId: string;
+                reportId: string;
+                candidateId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentTask"];
+                };
+            };
+        };
+    };
+    platform_receipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_get_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentTask"];
+                };
+            };
+        };
+    };
+    platform_accept: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_cancel: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_complete_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_decline: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_events_2: {
+        parameters: {
+            query?: {
+                afterVersion?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentEventPage"];
+                };
+            };
+        };
+    };
+    platform_reassign: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentReassignRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_start: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_waitForResponse: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkAssignmentVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkAssignmentMutationResult"];
+                };
+            };
+        };
+    };
+    platform_list_10: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkCalendarLinkPage"];
+                };
+            };
+        };
+    };
+    platform_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                linkId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkCalendarLinkRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkCalendarLink"];
+                };
+            };
+        };
+    };
+    platform_remove: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                linkId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkCalendarLink"];
+                };
+            };
+        };
+    };
+    platform_dayPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkDayPlan"];
+                };
+            };
+        };
+    };
+    platform_replaceDayPlan: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkReplaceDayPlanRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkDayPlan"];
+                };
+            };
+        };
+    };
+    platform_list: {
+        parameters: {
+            query?: {
+                status?: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "ARCHIVED";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTaskPage"];
+                };
+            };
+        };
+    };
+    platform_create: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkCreateTaskRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_update: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkUpdateTaskRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_archive: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_complete: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_reopen: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_transition: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_timeline: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTimelinePage"];
                 };
             };
         };

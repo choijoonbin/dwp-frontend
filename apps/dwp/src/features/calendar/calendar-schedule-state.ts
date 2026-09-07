@@ -70,6 +70,41 @@ export function calendarScheduleSearchParams(
   return next;
 }
 
+const CALENDAR_SCHEDULE_QUERY_KEYS = ['view', 'date', 'calendars'] as const;
+
+export function calendarInternalPath(
+  target: string,
+  current: URLSearchParams,
+  options: Readonly<{ preserveScheduleState?: boolean }> = {}
+) {
+  const resolved = new URL(target, 'https://calendar.internal');
+  const next = new URLSearchParams(resolved.search);
+  const preserve = options.preserveScheduleState
+    ? (['scope', ...CALENDAR_SCHEDULE_QUERY_KEYS] as const)
+    : (['scope'] as const);
+
+  preserve.forEach((key) => {
+    if (next.has(key)) return;
+    current.getAll(key).forEach((value) => next.append(key, value));
+  });
+
+  const search = next.toString();
+  return `${resolved.pathname}${search ? `?${search}` : ''}${resolved.hash}`;
+}
+
+export function isCalendarCommandShortcut(event: KeyboardEvent) {
+  const target = event.target as HTMLElement | null;
+  const editing =
+    target?.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName ?? '');
+  return (
+    !editing &&
+    !event.isComposing &&
+    !event.defaultPrevented &&
+    (event.metaKey || event.ctrlKey) &&
+    event.key === '/'
+  );
+}
+
 export function calendarScheduleSavedConfiguration(
   state: Readonly<{
     view: CalendarScheduleView;

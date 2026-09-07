@@ -106,7 +106,7 @@ function RequestJourney({ item }: { item: NormalizedHomeContribution }) {
               color={reached ? 'text.primary' : 'text.secondary'}
               fontWeight={index === activeStage ? 750 : 600}
               noWrap
-              sx={{ maxWidth: 1, fontSize: 10.5 }}
+              sx={{ maxWidth: 1, fontSize: '0.65625rem' }}
             >
               {t(`flow.purpose.request.emptyJourney.${stage}`)}
             </Typography>
@@ -177,7 +177,7 @@ function ResponsePrioritySummary({
           variant="caption"
           color="text.secondary"
           fontWeight={700}
-          sx={{ fontSize: 10.5 }}
+          sx={{ fontSize: '0.65625rem' }}
         >
           {t('flow.purpose.response.priorityLabel')}
         </Typography>
@@ -186,7 +186,7 @@ function ResponsePrioritySummary({
           variant="caption"
           color={partial ? 'warning.main' : 'text.secondary'}
           fontWeight={700}
-          sx={{ ml: 'auto', fontSize: 10.5 }}
+          sx={{ ml: 'auto', fontSize: '0.65625rem' }}
         >
           {totalLabel}
         </Typography>
@@ -270,7 +270,7 @@ function ResponsePrioritySummary({
               variant="caption"
               color="text.secondary"
               fontWeight={650}
-              sx={{ fontSize: 10.5 }}
+              sx={{ fontSize: '0.65625rem' }}
             >
               {t('flow.purpose.response.priorityCount', {
                 label: segment.label,

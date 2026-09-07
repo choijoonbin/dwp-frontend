@@ -13,6 +13,8 @@ const widgets: HomeWidgetPreference[] = [
   { widgetKey: 'schedule', visible: true, size: 'quarter' },
   { widgetKey: 'focus', visible: true, size: 'medium' },
   { widgetKey: 'activity', visible: true, size: 'quarter' },
+  { widgetKey: 'focus-balance', visible: true, size: 'medium' },
+  { widgetKey: 'meeting-load', visible: true, size: 'medium' },
 ];
 
 describe('home device overlay', () => {
@@ -28,6 +30,8 @@ describe('home device overlay', () => {
       { widgetKey: 'schedule', visible: true, size: 'quarter' },
       { widgetKey: 'focus', visible: true, size: 'full' },
       { widgetKey: 'activity', visible: true, size: 'quarter' },
+      { widgetKey: 'focus-balance', visible: true, size: 'medium' },
+      { widgetKey: 'meeting-load', visible: true, size: 'medium' },
     ]);
   });
 
@@ -55,6 +59,18 @@ describe('home device overlay', () => {
         labelKey: 'content.widgetLabels.activity',
         allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
       },
+      {
+        storageKey: 'focus-balance',
+        sourceSize: 'medium',
+        labelKey: 'content.widgetLabels.focus-balance',
+        allowedSizes: ['quarter', 'compact', 'medium'],
+      },
+      {
+        storageKey: 'meeting-load',
+        sourceSize: 'medium',
+        labelKey: 'content.widgetLabels.meeting-load',
+        allowedSizes: ['quarter', 'compact', 'medium'],
+      },
     ]);
   });
 
@@ -68,6 +84,8 @@ describe('home device overlay', () => {
       expect.objectContaining({ storageKey: 'schedule' }),
       expect.objectContaining({ storageKey: 'focus', sourceSize: 'medium' }),
       expect.objectContaining({ storageKey: 'activity', sourceSize: 'quarter' }),
+      expect.objectContaining({ storageKey: 'focus-balance', sourceSize: 'medium' }),
+      expect.objectContaining({ storageKey: 'meeting-load', sourceSize: 'medium' }),
     ]);
   });
 
@@ -79,15 +97,24 @@ describe('home device overlay', () => {
           schedule: 'quarter',
           focus: 'full',
           activity: 'invalid',
+          'focus-balance': 'full',
+          'meeting-load': 'quarter',
           unknown: 'large',
         },
-        { 'command-rail': 'large', schedule: 'medium', activity: 'compact' }
+        {
+          'command-rail': 'large',
+          schedule: 'medium',
+          activity: 'compact',
+          'focus-balance': 'compact',
+        }
       )
     ).toEqual({
       'command-rail': 'large',
       schedule: 'medium',
       focus: 'full',
       activity: 'compact',
+      'focus-balance': 'compact',
+      'meeting-load': 'quarter',
     });
   });
 });

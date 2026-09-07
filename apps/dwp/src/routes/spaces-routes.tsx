@@ -6,9 +6,9 @@ import { SPACE_ADMIN_AUTHORITIES } from '../components/spaces/space-admin-naviga
 import { SPACE_PRODUCT_MANIFEST } from '../features/spaces/space-product-manifest';
 import { SpaceLayout } from '../layouts/space-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
   ProductAnyRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -23,9 +23,9 @@ const page = (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.SPACES">
+  <ProductWorkRouteGuard productId="spaces" surfaceId="spaces.work" resourceKey="APP.SPACES">
     <SpaceLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
 );
 
 const managementLegacyShell = (

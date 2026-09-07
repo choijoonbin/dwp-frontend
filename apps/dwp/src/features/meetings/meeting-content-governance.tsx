@@ -433,8 +433,8 @@ export function MeetingContentPreJoin({
         </Stack>
       ) : (
         <Stack gap={1.25}>
-          <ContentFeatureChips plan={plan} dark />
-          <Typography variant="body2" sx={{ color: 'rgba(244, 247, 251, 0.78)' }}>
+          <ContentFeatureChips plan={plan} />
+          <Typography variant="body2" color="text.secondary">
             {t(`room.content.recordingStates.${recordingState(plan)}`)}
           </Typography>
           {disclosureUnavailable(plan) && (
@@ -444,8 +444,25 @@ export function MeetingContentPreJoin({
           <NoticeAcknowledgement meetingId={meetingId} plan={plan} compact />
           {canHost && (
             <>
-              <Divider sx={{ borderColor: 'rgba(255,255,255,.12)' }} />
-              <ContentPlanEditor meetingId={meetingId} plan={plan} dark />
+              <Divider />
+              <Box
+                component="details"
+                data-testid="meeting-content-plan-disclosure"
+                sx={{
+                  '& > summary': {
+                    minHeight: 44,
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    color: 'primary.main',
+                    fontWeight: 'fontWeightBold',
+                  },
+                  '&[open] > summary': { mb: 1.25 },
+                }}
+              >
+                <Box component="summary">{t('room.content.plan.title')}</Box>
+                <ContentPlanEditor meetingId={meetingId} plan={plan} />
+              </Box>
             </>
           )}
         </Stack>

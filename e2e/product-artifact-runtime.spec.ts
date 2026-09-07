@@ -80,12 +80,15 @@ test('route-prefix lookalikes cannot select a privileged product artifact', asyn
   }
 });
 
-test('built Workspace artifact boots its canonical route', async ({ page }) => {
-  await page.goto('/work/home');
+test('built Workspace artifact converges its legacy home on the unified queue', async ({
+  page,
+}) => {
+  await page.goto('/work/home?source=artifact-smoke');
 
   await expect(page.locator('html')).toHaveAttribute('data-application-id', 'workspace');
+  await expect(page).toHaveURL(/\/work\/queue\?source=artifact-smoke$/u);
   await expect(page.getByTestId('work-header')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Work home', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Unified work queue', level: 1 })).toBeVisible();
 });
 
 test('built Meetings artifact loads its canonical route and media runtime', async ({ page }) => {
@@ -140,7 +143,7 @@ test('built Meetings artifact loads its canonical route and media runtime', asyn
   await expect(page.locator('html')).toHaveAttribute('data-application-id', 'meetings');
   await expect(
     page.getByRole('heading', {
-      name: "Run today's conversations with less friction",
+      name: "Today's meetings and next actions",
       level: 1,
     })
   ).toBeVisible();
@@ -184,6 +187,6 @@ test('unknown deployment route renders a stable local 404 without reloading', as
   expect(accessibility.violations).toEqual([]);
 
   await page.getByRole('button', { name: 'Go to product home' }).click();
-  await expect(page).toHaveURL(/\/work\/home$/u);
-  await expect(page.getByRole('heading', { name: 'Work home', level: 1 })).toBeFocused();
+  await expect(page).toHaveURL(/\/work\/queue$/u);
+  await expect(page.getByRole('heading', { name: 'Unified work queue', level: 1 })).toBeVisible();
 });

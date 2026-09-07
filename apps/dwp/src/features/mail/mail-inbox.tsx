@@ -72,8 +72,9 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const location = useLocation();
   const [params, setParams] = useSearchParams();
   const lane = resolveLane(params.get('lane'), mode);
-  const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const requestedQuery = params.get('query') ?? '';
+  const [search, setSearch] = useState(requestedQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState(requestedQuery.trim());
   const [page, setPage] = useState(0);
   const [commandOpen, setCommandOpen] = useState(false);
   const [snoozeTarget, setSnoozeTarget] = useState<MailThread | null>(null);
@@ -198,11 +199,28 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      setDebouncedSearch(search.trim());
+      const nextQuery = search.trim();
+      setDebouncedSearch(nextQuery);
+      if (nextQuery === requestedQuery) return;
       setPage(0);
+      setParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          if (nextQuery) next.set('query', nextQuery);
+          else next.delete('query');
+          return next;
+        },
+        { replace: true }
+      );
     }, 250);
     return () => window.clearTimeout(timeout);
-  }, [search]);
+  }, [requestedQuery, search, setParams]);
+
+  useEffect(() => {
+    if (requestedQuery === search) return;
+    setSearch(requestedQuery);
+    setDebouncedSearch(requestedQuery.trim());
+  }, [requestedQuery, search]);
 
   useEffect(() => {
     setPage(0);

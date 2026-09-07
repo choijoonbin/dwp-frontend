@@ -1,0 +1,225 @@
+{
+  "date": "2026-09-04",
+  "scope": "Existing Work UI regression with mocked API routes; not new screen design acceptance or end-to-end production source verification",
+  "foundation": {
+    "command": "corepack yarn playwright test e2e/work-hub-foundation.spec.ts --project=chromium --workers=1 --reporter=line,json",
+    "stats": {
+      "startTime": "2026-09-04T02:44:44.586Z",
+      "duration": 50429.293999999994,
+      "expected": 15,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "title": "source-owned approval and service work require their source apps",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 46,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 4207
+          }
+        ]
+      },
+      {
+        "title": "personal start and completion wait for source confirmation with versioned UUID commands",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 77,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3159
+          }
+        ]
+      },
+      {
+        "title": "partial source failure remains visible when the verified subset is empty",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 121,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2316
+          }
+        ]
+      },
+      {
+        "title": "canonical work links and personal task aliases resolve the requested item",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 132,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3255
+          }
+        ]
+      },
+      {
+        "title": "returning from another app adopts the cached queue before a personal command",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 150,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3087
+          }
+        ]
+      },
+      {
+        "title": "view-only access exposes no personal mutation action",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 170,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2000
+          }
+        ]
+      },
+      {
+        "title": "retry after a lost response reuses the original command and receipt",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 183,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2625
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 1440-light",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3556
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 1280-dark",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2611
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 390-light",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2441
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 320-dark",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3456
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 320-long-labels",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 5175
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 1280-forced-colors",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3178
+          }
+        ]
+      },
+      {
+        "title": "existing queue remains usable at 1280-200-percent",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 219,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2950
+          }
+        ]
+      },
+      {
+        "title": "keyboard activation keeps visible focus and completes a personal start",
+        "file": "work-hub-foundation.spec.ts",
+        "line": 257,
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3337
+          }
+        ]
+      }
+    ]
+  },
+  "existingBatchRegression": {
+    "file": "e2e/work-command-center.spec.ts",
+    "project": "chromium",
+    "passed": 2,
+    "failed": 0,
+    "durationSeconds": 8.5,
+    "evidenceOrigin": "Final execution verified by work_implementation_audit agent; keyboard focus after batch completion and axe critical/serious zero"
+  },
+  "totalPassed": 17,
+  "limits": [
+    "CSS 200% is a zoom proxy, not native browser zoom or full assistive technology verification.",
+    "New dedicated personal task, planning, calendar and AI screens await supplied designs."
+  ]
+}

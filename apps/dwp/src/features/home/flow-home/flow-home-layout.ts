@@ -1,18 +1,31 @@
 import { isFlowAdaptiveTemplateEligible } from './flow-home-preference';
+import { HOME_REFERENCE_GRID_PLACEMENTS } from '../../../components/home-loading-layout-policy';
 
 import type { HomeAudienceProfile, HomePresentation } from '@dwp-frontend/shared-utils';
 import type { FlowHomeSectionKey, FlowHomeSectionPreference } from './flow-home-preference';
 
 export const FLOW_HOME_MEDIUM_MIN_WIDTH = 900;
 export const FLOW_HOME_DESKTOP_MIN_WIDTH = 1200;
-export const FLOW_HOME_WIDE_MIN_WIDTH = 1800;
+export const FLOW_HOME_WIDE_MIN_WIDTH = 1200;
 export const FLOW_HOME_WIDE_COMPOSITION = {
   columns: 60,
-  actionColumns: 35,
-  firstColumns: 25,
+  actionColumns: 40,
+  firstColumns: 20,
   supportColumns: 20,
-  label: '7-5/4-4-4',
+  insightColumns: 20,
+  label: '8-4/4-4-4/8-4',
 } as const;
+
+/** Reference composition is read-only; personal preferences and DOM order stay untouched. */
+export const FLOW_HOME_REFERENCE_PLACEMENT = HOME_REFERENCE_GRID_PLACEMENTS satisfies Record<
+  FlowHomeSectionKey,
+  { gridColumn: string; row: number }
+>;
+
+const CALENDAR_INSIGHT_SECTION_KEYS = new Set<FlowHomeSectionKey>([
+  'focus-balance',
+  'meeting-load',
+]);
 
 export type FlowHomeReadTemplate =
   'personalized' | 'editing' | 'single-column' | 'standard' | 'adaptive-medium' | 'adaptive-wide';
@@ -23,6 +36,7 @@ export type FlowHomeReadLayout = Readonly<{
   adaptiveApplied: boolean;
   firstSectionKey: FlowHomeSectionKey | null;
   supportSectionKeys: readonly FlowHomeSectionKey[];
+  insightSectionKeys: readonly FlowHomeSectionKey[];
 }>;
 
 type ResolveFlowHomeReadItemLimitInput = Readonly<{
@@ -50,7 +64,6 @@ type ResolveFlowHomeReadLayoutInput = Readonly<{
 export function resolveFlowHomeReadLayout({
   sections,
   audience,
-  presentation,
   editing,
   largeText,
   mobilePreview,
@@ -61,7 +74,15 @@ export function resolveFlowHomeReadLayout({
   const purposeSections = sections.filter((section) => section.widgetKey !== 'action-queue');
   const firstSectionKey = adaptiveEligible ? (purposeSections[0]?.widgetKey ?? null) : null;
   const supportSectionKeys = adaptiveEligible
-    ? purposeSections.slice(1).map((section) => section.widgetKey)
+    ? purposeSections
+        .slice(1)
+        .map((section) => section.widgetKey)
+        .filter((sectionKey) => !CALENDAR_INSIGHT_SECTION_KEYS.has(sectionKey))
+    : [];
+  const insightSectionKeys = adaptiveEligible
+    ? purposeSections
+        .map((section) => section.widgetKey)
+        .filter((sectionKey) => CALENDAR_INSIGHT_SECTION_KEYS.has(sectionKey))
     : [];
 
   if (editing) {
@@ -71,6 +92,7 @@ export function resolveFlowHomeReadLayout({
       adaptiveApplied: false,
       firstSectionKey,
       supportSectionKeys,
+      insightSectionKeys,
     };
   }
   if (largeText || mobilePreview) {
@@ -80,15 +102,17 @@ export function resolveFlowHomeReadLayout({
       adaptiveApplied: false,
       firstSectionKey,
       supportSectionKeys,
+      insightSectionKeys,
     };
   }
-  if (adaptiveEligible && presentation === 'expressive' && wideViewport) {
+  if (adaptiveEligible && wideViewport) {
     return {
       template: 'adaptive-wide',
       adaptiveEligible: true,
       adaptiveApplied: true,
       firstSectionKey,
       supportSectionKeys,
+      insightSectionKeys,
     };
   }
   if (adaptiveEligible && mediumViewport) {
@@ -98,6 +122,7 @@ export function resolveFlowHomeReadLayout({
       adaptiveApplied: true,
       firstSectionKey,
       supportSectionKeys,
+      insightSectionKeys,
     };
   }
   return {
@@ -106,24 +131,23 @@ export function resolveFlowHomeReadLayout({
     adaptiveApplied: false,
     firstSectionKey,
     supportSectionKeys,
+    insightSectionKeys,
   };
 }
 
 /**
- * Wide support cards default to one representative item, while the primary
- * work and first role section may use four. An explicit saved item limit always
+ * The reference uses four compact priority rows and up to three supporting records.
+ * An explicit saved item limit always
  * wins within the renderer's bounded four-item budget.
  */
 export function resolveFlowHomeReadItemLimit({
   template,
   sectionKey,
-  firstSectionKey,
   configuredItemLimit,
 }: ResolveFlowHomeReadItemLimitInput): number {
   const adaptiveWide = template === 'adaptive-wide';
-  const primary =
-    sectionKey === 'action' || sectionKey === 'action-queue' || sectionKey === firstSectionKey;
-  const fallback = adaptiveWide ? (primary ? 4 : 1) : 3;
+  const primary = sectionKey === 'action' || sectionKey === 'action-queue';
+  const fallback = adaptiveWide && primary ? 4 : 3;
   const requested = typeof configuredItemLimit === 'number' ? configuredItemLimit : fallback;
   return Math.min(4, Math.max(1, Math.trunc(requested)));
 }

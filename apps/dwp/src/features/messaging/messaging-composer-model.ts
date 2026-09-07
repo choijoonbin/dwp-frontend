@@ -1,3 +1,9 @@
+import {
+  messagingFormattedText,
+  messagingMentionAllowedAt,
+  splitMessagingMentionText,
+} from './messaging-formatting-parser';
+
 import type { MessagingMember } from '@dwp-frontend/shared-utils';
 
 export type MessagingMentionDraft = {
@@ -26,10 +32,11 @@ export function resolveMessagingMentionQuery(
   caret: number
 ): MessagingMentionQuery | null {
   const beforeCaret = value.slice(0, Math.max(0, caret));
-  const match = beforeCaret.match(/(?:^|\s)@([^\s@]*)$/u);
+  const match = beforeCaret.match(/(?:^|[\s*_([])@([^\s@*_]*)$/u);
   if (!match || match.index === undefined) return null;
   const prefixLength = match[0].startsWith('@') ? 0 : 1;
   const start = match.index + prefixLength;
+  if (!messagingMentionAllowedAt(value, start)) return null;
   return { start, end: caret, query: match[1] ?? '' };
 }
 
@@ -47,7 +54,16 @@ export function pruneMessagingMentions(
   value: string,
   mentions: MessagingMentionDraft[]
 ): MessagingMentionDraft[] {
-  return mentions.filter((mention) => value.includes(mention.token));
+  const visible = messagingFormattedText(value, true);
+  const active = new Set(
+    splitMessagingMentionText(
+      visible,
+      mentions.map((mention) => mention.token)
+    )
+      .filter((part) => part.mention)
+      .map((part) => part.value)
+  );
+  return mentions.filter((mention) => active.has(mention.token));
 }
 
 export function messagingMentionUserIds(mentions: MessagingMentionDraft[]): number[] {

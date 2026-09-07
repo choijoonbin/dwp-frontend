@@ -136,6 +136,7 @@ export function calendarEventInput(
   draft: CalendarEventDraft,
   attendees: readonly CalendarEditorAttendee[]
 ): Omit<CreateCalendarEventInput, 'idempotencyKey'> {
+  const meeting = draft.type === 'MEETING';
   return {
     title: draft.title.trim(),
     description: draft.description.trim() || null,
@@ -144,16 +145,16 @@ export function calendarEventInput(
     endsAt: draft.endsAt,
     timeZone: draft.timeZone,
     allDay: draft.allDay,
-    location: draft.location.trim() || null,
-    conferenceUrl: draft.conferenceUrl.trim() || null,
+    location: meeting ? draft.location.trim() || null : null,
+    conferenceUrl: meeting ? draft.conferenceUrl.trim() || null : null,
     visibility: draft.visibility,
     importance: draft.importance,
     recurrence: draft.recurrence,
     recurrenceInterval: draft.recurrenceInterval,
     recurrenceUntil: draft.recurrence === 'NONE' ? null : draft.recurrenceUntil || null,
-    responseRequired: draft.responseRequired,
-    attendees: attendeeInput(attendees),
-    resourceId: draft.resourceId || null,
+    responseRequired: meeting && draft.responseRequired,
+    attendees: meeting ? attendeeInput(attendees) : [],
+    resourceId: meeting ? draft.resourceId || null : null,
     calendarId: draft.calendarId || null,
   };
 }

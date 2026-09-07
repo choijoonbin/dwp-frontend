@@ -1,6 +1,6 @@
 import { expect, type Locator } from '@playwright/test';
 
-export async function expectRoleMetricAlignment(insight: Locator) {
+export async function expectRoleMetricAlignment(insight: Locator, expectedCount = 4) {
   await insight.evaluate(async () => {
     // Compact comparisons can wrap differently under fallback glyph metrics.
     // Measure only after the product font and the resulting container layout settle.
@@ -38,15 +38,14 @@ export async function expectRoleMetricAlignment(insight: Locator) {
     })
   );
 
-  expect(geometry).toHaveLength(4);
+  expect(geometry).toHaveLength(expectedCount);
   for (const key of ['width', 'height', 'unitEndInset', 'railWidth', 'railHeight'] as const) {
     const values = geometry.map((item) => item[key]);
     expect(Math.max(...values) - Math.min(...values), `${key} alignment`).toBeLessThanOrEqual(1);
   }
-  for (const [first, second] of [
-    [geometry[0], geometry[1]],
-    [geometry[2], geometry[3]],
-  ]) {
+  for (let index = 0; index + 1 < geometry.length; index += 2) {
+    const first = geometry[index]!;
+    const second = geometry[index + 1]!;
     for (const key of ['valueTop', 'labelTop', 'comparisonCenter', 'railCenter'] as const) {
       expect(Math.abs(first[key] - second[key]), `${key} row alignment`).toBeLessThanOrEqual(1);
     }

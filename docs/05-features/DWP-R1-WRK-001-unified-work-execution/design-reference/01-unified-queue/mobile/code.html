@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-surface": "#213145", "primary-fixed-dim": "#b4c5ff", "on-background": "#0b1c30", "inverse-on-surface": "#eaf1ff", "on-tertiary-fixed": "#002113", "surface-tint": "#0053db", "primary-fixed": "#dbe1ff", "tertiary-fixed": "#6ffbbe", "on-tertiary-fixed-variant": "#005236", "surface": "#f8f9ff", "error": "#ba1a1a", "on-secondary-fixed": "#131b2e", "surface-container-highest": "#d3e4fe", "on-tertiary": "#ffffff", "on-surface-variant": "#434655", "surface-variant": "#d3e4fe", "on-primary-container": "#eeefff", "on-primary-fixed-variant": "#003ea8", "tertiary": "#006242", "primary-container": "#2563eb", "outline": "#737686", "on-surface": "#0b1c30", "on-primary": "#ffffff", "secondary-fixed-dim": "#bec6e0", "surface-container": "#e5eeff", "outline-variant": "#c3c6d7", "on-error": "#ffffff", "surface-bright": "#f8f9ff", "surface-container-lowest": "#ffffff", "on-error-container": "#93000a", "error-container": "#ffdad6", "primary": "#004ac6", "on-primary-fixed": "#00174b", "surface-container-high": "#dce9ff", "on-secondary-fixed-variant": "#3f465c", "secondary-container": "#dae2fd", "inverse-primary": "#b4c5ff", "surface-dim": "#cbdbf5", "on-secondary-container": "#5c647a", "tertiary-container": "#007d55", "secondary": "#565e74", "background": "#f8f9ff", "secondary-fixed": "#dae2fd", "tertiary-fixed-dim": "#4edea3", "surface-container-low": "#eff4ff", "on-secondary": "#ffffff", "on-tertiary-container": "#bdffdb" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-xl": "1.5rem", "grid-slot-15min": "1rem", "time-rail-width": "3.5rem", "space-xxs": "0.125rem", "grid-slot-60min": "4rem", "space-lg": "1rem", "header-height": "3.5rem", "space-md": "0.75rem", "sidebar-width": "16rem", "space-sm": "0.5rem", "space-2xl": "2rem", "space-xs": "0.25rem", "grid-slot-30min": "2rem" }, "fontFamily": { "shortcut-key": ["geist"], "label-sm": ["geist"], "display-lg": ["geist"], "headline-md": ["geist"], "label-md": ["geist"], "mono-time": ["geist"], "body-md": ["geist"], "headline-lg": ["geist"], "body-sm": ["geist"], "body-lg": ["geist"], "headline-sm": ["geist"] }, "fontSize": { "shortcut-key": ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }], "mono-time": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }], "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.025em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }], "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.015em", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex justify-between items-center px-space-lg h-space-lg"><span class="font-mono-time text-mono-time text-on-surface font-semibold">09:30</span><div class="flex items-center gap-space-xs text-on-surface"><span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span><span class="material-symbols-outlined text-[14px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-14 px-space-lg flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-on-primary font-headline-sm text-headline-sm font-bold tracking-tight">D</div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface leading-tight">Integrated Workspace</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Search" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[22px]">search</span></button><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-20 pb-24 bg-surface flex-1 min-h-screen"><div class="flex flex-col w-full">
+<section class="px-space-lg pt-space-xs pb-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">통합업무함</h1>
+<span class="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded-full bg-primary text-on-primary font-shortcut-key text-shortcut-key">5</span>
+</div>
+<button aria-label="새 할 일 추가" class="h-11 min-w-[44px] px-space-md rounded-xl bg-primary text-on-primary font-body-sm text-body-sm font-semibold flex items-center justify-center gap-space-xxs shadow-sm active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>할 일 추가</span>
+</button>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant">
+<p class="font-body-sm text-body-sm">내 조치 및 추적 업무 <span class="font-mono-time text-mono-time font-medium text-secondary">· 김민아 님</span></p>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container font-mono-time text-mono-time text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+<span>동기화 09:30 · 1건 확인 필요</span>
+</div>
+</div>
+</section>
+<!-- Search & Filter Controls -->
+<section class="px-space-lg py-space-xs flex flex-col gap-space-sm">
+<div class="relative w-full flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-[18px] text-outline pointer-events-none">search</span>
+<input aria-label="업무명, 번호 검색" class="w-full h-11 pl-9 pr-3 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:shadow-sm" placeholder="업무명, 번호 검색..." type="search"/>
+</div>
+<!-- Filter chips scrollable rail -->
+<div class="flex items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-xs overflow-x-auto py-0.5 no-scrollbar -mx-space-lg px-space-lg">
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm whitespace-nowrap active:scale-95 transition-transform" type="button">
+          전체 5
+        </button>
+<button aria-pressed="true" class="h-8 px-3 rounded-full bg-primary text-on-primary font-label-sm text-label-sm whitespace-nowrap shadow-sm active:scale-95 transition-transform flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">check</span>
+<span>내 조치 3</span>
+</button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm whitespace-nowrap active:scale-95 transition-transform" type="button">
+          오늘 마감 2
+        </button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm whitespace-nowrap active:scale-95 transition-transform" type="button">
+          오늘 계획 1
+        </button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm whitespace-nowrap active:scale-95 transition-transform" type="button">
+          지연/임박
+        </button>
+</div>
+<button aria-label="정렬 기준" class="flex-shrink-0 h-8 px-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm flex items-center gap-1 whitespace-nowrap ml-1" type="button">
+<span>지연·임박순</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+</div>
+</section>
+<!-- Partial Failure Notice Card -->
+<section class="px-space-lg py-space-xs">
+<div class="w-full p-3 rounded-xl bg-error-container text-on-error-container flex items-start gap-2.5 shadow-sm">
+<span class="material-symbols-outlined text-[20px] text-error flex-shrink-0 mt-0.5">warning</span>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<p class="font-headline-sm text-body-sm font-semibold truncate text-error">일부 외부 원천(SRC-003) 확인 지연</p>
+<span class="font-shortcut-key text-shortcut-key px-1.5 py-0.5 rounded bg-surface-container-lowest text-error font-semibold flex-shrink-0">REFERENCE_ONLY</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-error-container mt-0.5">최신 상태를 직접 보증할 수 없어 원본 대조가 필요합니다.</p>
+<div class="mt-2 flex items-center gap-space-xs">
+<button class="h-7 px-2.5 rounded-lg bg-error text-on-error font-label-sm text-label-sm font-medium flex items-center gap-1 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+<span>원천 재조회</span>
+</button>
+<span class="font-mono-time text-mono-time text-on-error-container opacity-80">09:28 시도 실패</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Work Queue Vertical List -->
+<main class="px-space-lg pt-space-xs pb-space-lg flex flex-col gap-space-sm" role="list">
+<!-- Item 1: APR-031 (Approval, External System) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative" role="listitem">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-medium">전자결재 / 내 결재</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">검토 대기</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error text-on-error font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[13px]">alarm</span>
+<span>오늘 11:00 마감</span>
+</span>
+</div>
+<div class="min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate font-semibold">고객 지원 장비 구매 승인 · 1,850,000원</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-2">
+<span>기안자 박서진 대리</span>
+<span class="text-outline">·</span>
+<span class="inline-flex items-center gap-0.5"><span class="material-symbols-outlined text-[14px]">attach_file</span>2건</span>
+<span class="text-outline">·</span>
+<span class="font-mono-time text-mono-time text-secondary">APR-031</span>
+</p>
+</div>
+<div class="mt-1 pt-2 flex items-center justify-between bg-surface-container-low/60 rounded-lg p-2">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[16px]">lock_reset</span>
+<span class="font-body-sm text-body-sm">체크박스 완료 불가 (외부 결재선)</span>
+</div>
+<a aria-label="APR-031 상세 및 원본 검토" class="h-8 px-2.5 rounded-lg bg-surface-container text-primary font-body-sm text-body-sm font-semibold flex items-center gap-0.5 active:bg-surface-container-high transition-colors" href="#view-apr-031">
+<span>상세 및 원본 검토</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Item 2: IG-014 (Access Review) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative" role="listitem">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-medium">권한 관리 / 내 검토</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">검토 대기</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">schedule</span>
+<span>오늘 17:00 마감</span>
+</span>
+</div>
+<div class="min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate font-semibold">재무 시스템 접근권한 정기 검토</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-2">
+<span>대상 12개 계정 권한 확인</span>
+<span class="text-outline">·</span>
+<span class="font-mono-time text-mono-time text-secondary">IG-014</span>
+</p>
+</div>
+<div class="mt-1 pt-2 flex items-center justify-between">
+<span class="font-mono-time text-mono-time text-outline">보안 감사 대상 업무</span>
+<button aria-label="계정별 권한 검토 열기" class="h-9 min-w-[44px] px-3 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm font-medium flex items-center gap-1 active:scale-95 transition-transform" type="button">
+<span>권한 검토</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- Item 3: SR-088 (IT Service Request) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative" role="listitem">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-medium">IT 서비스 / 내 응답</span>
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">사유 보완 필요</span>
+</div>
+<span class="font-mono-time text-mono-time text-secondary font-medium">9/5 마감 (내일)</span>
+</div>
+<div class="min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate font-semibold">원격접속 신청의 사용 사유 보완</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-2">
+<span>IT 인프라팀 요청</span>
+<span class="text-outline">·</span>
+<span class="font-mono-time text-mono-time text-secondary">SR-088</span>
+</p>
+</div>
+<div class="mt-1 pt-2 flex items-center justify-end gap-2">
+<button class="h-9 min-w-[44px] px-3 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm font-medium active:scale-95 transition-transform" type="button">요청 이력</button>
+<button class="h-9 min-w-[44px] px-3.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-semibold active:scale-95 transition-transform" type="button">보완 내용 입력</button>
+</div>
+</article>
+<!-- Item 4: NAT-001 (DWP Personal Task - Today Plan) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative" role="listitem">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-medium">개인 할 일</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">시작 전</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>오늘 계획</span>
+</span>
+</div>
+<span class="font-mono-time text-mono-time text-outline">기한 없음</span>
+</div>
+<div class="min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate font-semibold">분기 고객 안내 초안 정리</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-2">
+<span>DWP 직접 등록</span>
+<span class="text-outline">·</span>
+<span class="font-mono-time text-mono-time text-secondary">NAT-001</span>
+</p>
+</div>
+<!-- Lifecycle Native Task Actions -->
+<div class="mt-1 pt-2 flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5">
+<button aria-label="업무 시작 처리" class="h-9 min-w-[44px] px-3 rounded-lg bg-primary-container text-on-primary-container font-body-sm text-body-sm font-medium flex items-center gap-1 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+<span>시작</span>
+</button>
+<button aria-label="업무 완료 처리" class="h-9 min-w-[44px] px-3 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm font-medium flex items-center gap-1 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>완료</span>
+</button>
+</div>
+<button aria-label="할 일 수정" class="h-9 min-w-[44px] px-2.5 rounded-lg bg-surface-container-low text-secondary font-body-sm text-body-sm flex items-center gap-1 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>편집</span>
+</button>
+</div>
+</article>
+<!-- Item 5: NAT-002 (DWP Personal Task - In Progress + Due Today) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative" role="listitem">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-medium">개인 할 일</span>
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>진행 중</span>
+</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">schedule</span>
+<span>오늘 17:00 마감</span>
+</span>
+</div>
+<div class="min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate font-semibold">팀 예산 검토 메모 작성</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-2">
+<span>작성 중 (초안)</span>
+<span class="text-outline">·</span>
+<span class="font-mono-time text-mono-time text-secondary">NAT-002</span>
+</p>
+</div>
+<!-- Inline Actions -->
+<div class="mt-1 pt-2 flex items-center justify-between gap-2">
+<button aria-label="오늘 계획에 추가" class="h-9 min-w-[44px] px-3.5 rounded-lg bg-surface-container-high text-on-surface font-body-sm text-body-sm font-semibold flex items-center gap-1 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">add_task</span>
+<span>오늘 계획 추가</span>
+</button>
+<button aria-label="작업 완료 처리" class="h-9 min-w-[44px] px-3.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>완료</span>
+</button>
+</div>
+</article>
+</main>
+<!-- Spec & Context Diagnostic Footer Stamp -->
+<footer class="px-space-lg py-space-md text-center flex flex-col items-center gap-1 text-outline">
+<div class="flex items-center gap-2 font-mono-time text-mono-time">
+<span class="font-semibold text-secondary">화면 ID: WRK-Q01-390-LIGHT-NORMAL</span>
+<span>·</span>
+<span>2026-09-04 09:30 KST</span>
+</div>
+<p class="font-label-sm text-label-sm text-outline">
+      모바일 390px 뷰포트 최적화 · 실시간 업무 동기화 큐
+    </p>
+</footer>
+</div>
+<script>
+  // Simple micro-interaction for filter chip selection & button tactile feel
+  document.querySelectorAll('section button[type="button"]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const chipContainer = btn.closest('.overflow-x-auto');
+      if (chipContainer) {
+        chipContainer.querySelectorAll('button').forEach((b) => {
+          b.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+          b.classList.add('bg-surface-container', 'text-on-surface-variant');
+          const checkIcon = b.querySelector('.material-symbols-outlined');
+          if (checkIcon && checkIcon.textContent === 'check') {
+            checkIcon.remove();
+          }
+          b.removeAttribute('aria-pressed');
+        });
+        btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        btn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+        btn.setAttribute('aria-pressed', 'true');
+      }
+    });
+  });
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-space-xxs min-w-[56px] h-12 transition-colors text-primary font-semibold" data-path="integrated-workspace" href="#"><span class="material-symbols-outlined text-[22px]">inbox</span><span class="font-label-sm text-label-sm">통합업무함</span></a><a class="flex flex-col items-center justify-center gap-space-xxs min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="today-plan" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-label-sm text-label-sm">오늘 계획</span></a><a class="flex flex-col items-center justify-center gap-space-xxs min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="my-actions" href="#"><span class="material-symbols-outlined text-[22px]">check_circle</span><span class="font-label-sm text-label-sm">내 조치</span></a><a class="flex flex-col items-center justify-center gap-space-xxs min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="dwai-on" href="#"><span class="material-symbols-outlined text-[22px]">smart_toy</span><span class="font-label-sm text-label-sm">DWAI·ON</span></a><a class="flex flex-col items-center justify-center gap-space-xxs min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="more-menu" href="#"><span class="material-symbols-outlined text-[22px]">more_horiz</span><span class="font-label-sm text-label-sm">더보기</span></a></div></nav></body></html>

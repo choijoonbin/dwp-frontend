@@ -43,9 +43,6 @@
     "apps/dwp/src/features/dwaion/dwaion-agents.tsx": {
       "koreanTranslationDefaultValue": 7
     },
-    "apps/dwp/src/features/dwaion/dwaion-conversations.tsx": {
-      "koreanTranslationDefaultValue": 14
-    },
     "apps/dwp/src/features/messaging/messaging-composer.tsx": {
       "localeStartsWithKo": 1
     },

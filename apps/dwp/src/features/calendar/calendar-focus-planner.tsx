@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CalendarPlus, Clock3, Focus, ListTodo, Sparkles, Target } from 'lucide-react';
+import {
+  ArrowRight,
+  CalendarPlus,
+  CalendarSearch,
+  Clock3,
+  Focus,
+  ListTodo,
+  Target,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
@@ -518,7 +526,7 @@ export function CalendarFocusPlanner() {
                 })}
               >
                 <CalendarSectionHeader
-                  icon={Sparkles}
+                  icon={CalendarSearch}
                   title={t('focusPlan.smartTitle')}
                   description={t('focusPlan.smartDescription')}
                   padded={false}
@@ -605,7 +613,7 @@ export function CalendarFocusPlanner() {
                     intent="primary"
                     loading={recommendations.isPending}
                     disabled={!writable}
-                    startIcon={<Sparkles size={16} />}
+                    startIcon={<CalendarSearch size={16} />}
                     onClick={() => recommendations.mutate()}
                     sx={{ mt: 2 }}
                   >

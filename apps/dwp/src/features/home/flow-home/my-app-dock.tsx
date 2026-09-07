@@ -92,28 +92,30 @@ export function MyAppDock({
       data-flow-dock-hidden-count={hiddenAppCount}
       data-flow-dock-hidden-tile-count={hiddenItemCount}
       sx={(theme) => ({
+        '--flow-dock-text': theme.palette.text.primary,
+        '--flow-dock-muted': theme.palette.text.secondary,
+        '--flow-dock-border': theme.palette.divider,
+        '--flow-dock-hover': theme.palette.action.hover,
+        '--flow-dock-active': theme.palette.action.selected,
+        '--flow-dock-focus': theme.palette.primary.main,
         minWidth: 0,
         width: 1,
         alignSelf: 'stretch',
         minHeight: editing ? 0 : { xs: 136, sm: 132 },
-        color: '#F8FAFC',
+        color: 'text.primary',
         px: compact ? 1 : { xs: 1.25, sm: 1.5, md: 1.75 },
         pt: compact ? 0.75 : { xs: 1, md: 1.25 },
         pb: compact ? 0.75 : { xs: 1, md: 1.25 },
         containerName: 'flow-dock',
         containerType: 'inline-size',
-        borderRadius: compact ? '14px' : '16px',
-        bgcolor: theme.palette.mode === 'dark' ? 'rgba(5,16,35,0.86)' : 'rgba(8,24,52,0.78)',
+        borderRadius: '12px',
+        bgcolor: 'background.paper',
         border: 1,
-        borderColor: editing ? '#93C5FD' : 'rgba(255,255,255,0.22)',
-        backdropFilter: 'blur(24px) saturate(130%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(130%)',
-        boxShadow:
-          theme.palette.mode === 'dark'
-            ? 'inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 30px rgba(0,0,0,0.42)'
-            : 'inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 30px rgba(1,10,28,0.30)',
-        '& [data-flow-dock-meta] .MuiTypography-root': { color: '#F8FAFC' },
-        '& [data-flow-app-dock-list]': { color: '#F8FAFC' },
+        borderColor: editing ? 'primary.main' : 'divider',
+        boxShadow: '0 1px 3px rgba(15,23,42,0.035)',
+        '& [data-flow-dock-meta] .MuiTypography-root': { color: 'text.primary' },
+        '& [data-flow-app-dock-list]': { color: 'text.primary' },
+        '& [data-launchpad-item-label]': { color: 'text.primary' },
         '& [data-flow-dock-launch]': {
           transition: `transform ${HOME_MOTION_TOKENS.quick} ${HOME_MOTION_TOKENS.easing}, background-color ${HOME_MOTION_TOKENS.quick} ${HOME_MOTION_TOKENS.easing}`,
         },
@@ -138,8 +140,8 @@ export function MyAppDock({
           WebkitBackdropFilter: 'none',
         },
         '@media (prefers-reduced-transparency: reduce)': {
-          bgcolor: theme.palette.mode === 'dark' ? '#071426' : '#10284D',
-          boxShadow: '0 6px 18px rgba(0,0,0,0.24)',
+          bgcolor: 'background.paper',
+          boxShadow: 'none',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
         },
@@ -202,7 +204,7 @@ export function MyAppDock({
             sx={{
               mt: 0.25,
               maxWidth: 720,
-              color: 'rgba(248,250,252,0.72)',
+              color: 'text.secondary',
               lineHeight: 1.35,
               wordBreak: 'keep-all',
               overflowWrap: 'break-word',
@@ -239,10 +241,7 @@ export function MyAppDock({
               onStartEditing={onStartEditing}
             />
           ) : (
-            <Typography
-              variant="body2"
-              sx={{ minHeight: 44, py: 1.25, color: 'rgba(248,250,252,0.72)' }}
-            >
+            <Typography variant="body2" sx={{ minHeight: 44, py: 1.25, color: 'text.secondary' }}>
               {t('flow.dock.empty')}
             </Typography>
           )}
@@ -268,10 +267,14 @@ export function MyAppDock({
             minHeight: 44,
             justifySelf: 'end',
             whiteSpace: 'nowrap',
-            color: '#F8FAFC',
-            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
-            '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
-            '&:focus-visible': { outline: '2px solid #93C5FD', outlineOffset: 2 },
+            color: 'primary.main',
+            '&:hover': { bgcolor: 'action.hover' },
+            '&:active': { bgcolor: 'action.selected' },
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: 2,
+            },
             '[data-flow-large-text="true"] &': {
               maxWidth: '100%',
               flexWrap: 'wrap',
@@ -295,8 +298,8 @@ export function MyAppDock({
                 display: 'inline-grid',
                 placeItems: 'center',
                 borderRadius: 999,
-                color: '#E2E8F0',
-                bgcolor: 'rgba(255,255,255,0.12)',
+                color: 'text.secondary',
+                bgcolor: 'action.hover',
                 fontWeight: 750,
                 fontVariantNumeric: 'tabular-nums',
                 fontSize: '0.65625rem',

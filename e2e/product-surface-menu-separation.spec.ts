@@ -6,6 +6,7 @@ import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-sess
 type CompatibilityProductScenario = {
   id: string;
   areaKey:
+    | 'approvals'
     | 'calendar'
     | 'communications'
     | 'dwaion'
@@ -20,9 +21,14 @@ type CompatibilityProductScenario = {
   managementPath: `/${string}`;
   workItem: string;
   managementItem: string;
+  managementResourceKey: string;
+  legacyManagementIndex?: {
+    path: `/${string}`;
+    expectedPath: `/${string}`;
+  };
 };
 
-const allowView = (resourceType: 'APP' | 'ADMIN', resourceKey: string) => ({
+const allowView = (resourceType: 'APP' | 'ADMIN' | 'ACTION' | 'DATA', resourceKey: string) => ({
   resourceType,
   resourceKey,
   permissionCode: 'VIEW',
@@ -55,12 +61,26 @@ const COMPATIBILITY_ADMIN_PERMISSIONS = [
 
 const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
   {
+    id: 'approvals',
+    areaKey: 'approvals',
+    workPath: '/approvals/home',
+    managementPath: '/approvals/admin/overview',
+    workItem: 'home',
+    managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.APPROVAL_OPERATIONS',
+    legacyManagementIndex: {
+      path: '/approvals/admin',
+      expectedPath: '/approvals/admin/overview',
+    },
+  },
+  {
     id: 'communications',
     areaKey: 'communications',
     workPath: '/communications/home',
     managementPath: '/communications/admin/content',
     workItem: 'home',
     managementItem: 'admin-content',
+    managementResourceKey: 'ADMIN.COMMUNICATIONS',
   },
   {
     id: 'services',
@@ -69,6 +89,11 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/services/admin/catalog',
     workItem: 'home',
     managementItem: 'admin-catalog',
+    managementResourceKey: 'ADMIN.SERVICE_CATALOG',
+    legacyManagementIndex: {
+      path: '/services/admin',
+      expectedPath: '/services/admin/catalog',
+    },
   },
   {
     id: 'meetings',
@@ -77,6 +102,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/meetings/admin/operations',
     workItem: 'home',
     managementItem: 'admin-operations',
+    managementResourceKey: 'ADMIN.MEETINGS',
   },
   {
     id: 'calendar',
@@ -85,6 +111,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/calendar/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.CALENDAR',
   },
   {
     id: 'mail',
@@ -93,6 +120,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/mail/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.MAIL',
   },
   {
     id: 'messaging',
@@ -101,6 +129,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/messages/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.MESSAGING',
   },
   {
     id: 'workplace',
@@ -109,6 +138,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/workplace/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.WORKPLACE',
   },
   {
     id: 'spaces',
@@ -117,6 +147,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/spaces/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.SPACE_GOVERNANCE',
   },
   {
     id: 'notifications',
@@ -125,6 +156,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/notifications/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
   },
   {
     id: 'dwaion',
@@ -133,6 +165,7 @@ const COMPATIBILITY_PRODUCTS: readonly CompatibilityProductScenario[] = [
     managementPath: '/dwaion/admin/overview',
     workItem: 'home',
     managementItem: 'admin-overview',
+    managementResourceKey: 'ADMIN.DWAION_OPERATIONS',
   },
 ] as const;
 
@@ -260,9 +293,133 @@ test.describe('compatibility 제품 Work·Management 메뉴 분리', () => {
   }
 });
 
+test.describe('관리 전용 사용자의 Work·Management 권한 독립성', () => {
+  for (const scenario of COMPATIBILITY_PRODUCTS) {
+    for (const entitlementShape of ['zero-app', 'unrelated-app'] as const) {
+      test(`${scenario.id} ${entitlementShape} 권한은 관리 셸만 허용한다`, async ({ page }) => {
+        await mockShellSession(page, ['WORKSPACE_MEMBER', 'PRODUCT_ADMIN'], {
+          locale: 'ko',
+          permissions: [
+            ...(entitlementShape === 'unrelated-app' ? [allowView('APP', 'APP.WORK')] : []),
+            allowView('ADMIN', scenario.managementResourceKey),
+          ],
+        });
+
+        await page.goto(scenario.managementPath);
+        const shell = page.getByTestId(`${scenario.areaKey}-shell`);
+        await expect(shell).toHaveAttribute('data-product-presentation', 'compatibility-separated');
+        await expect(shell).toHaveAttribute('data-product-plane', 'management');
+        await expect(page).toHaveURL((url) => url.pathname === scenario.managementPath);
+
+        const navigation = await openProductSidebar(page, scenario.areaKey);
+        await expect(
+          navigation.getByTestId(`${scenario.areaKey}-navigation-item-${scenario.managementItem}`)
+        ).toBeVisible();
+        await expect(
+          navigation.getByTestId(`${scenario.areaKey}-navigation-item-${scenario.workItem}`)
+        ).toHaveCount(0);
+        await expect(
+          page.locator('[data-testid="product-surface-work-return"]:visible')
+        ).toHaveCount(0);
+        const catalogReturn = navigation.getByTestId(`${scenario.areaKey}-surface-return`);
+        await expect(catalogReturn).toHaveAttribute('href', '/apps');
+        await expect(catalogReturn).toContainText('앱 목록으로 돌아가기');
+        await closeProductSidebar(page, scenario.areaKey);
+
+        if (scenario.legacyManagementIndex) {
+          await page.goto(`${scenario.legacyManagementIndex.path}?acceptance=legacy-index#entry`);
+          await expect(page).toHaveURL(
+            (url) =>
+              url.pathname === scenario.legacyManagementIndex?.expectedPath &&
+              url.searchParams.get('acceptance') === 'legacy-index' &&
+              url.hash === '#entry'
+          );
+          await expect(shell).toHaveAttribute('data-product-plane', 'management');
+        }
+
+        await page.goto(scenario.workPath);
+        await expect(page).toHaveURL((url) => url.pathname === '/403');
+      });
+    }
+  }
+});
+
+for (const entitlementShape of ['zero-app', 'unrelated-app'] as const) {
+  test(`HCM operations-only ${entitlementShape} 권한은 personal Surface를 열지 않는다`, async ({
+    page,
+  }) => {
+    await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+      locale: 'ko',
+      permissions: [
+        ...(entitlementShape === 'unrelated-app' ? [allowView('APP', 'APP.WORK')] : []),
+        {
+          resourceType: 'DATA',
+          resourceKey: 'DATA.WORKFORCE',
+          permissionCode: 'VIEW',
+          effect: 'ALLOW',
+        },
+      ],
+    });
+
+    await page.goto('/hr/operations');
+    const shell = page.getByTestId('hcm-shell');
+    await expect(shell).toHaveAttribute('data-product-presentation', 'compatibility-separated');
+    await expect(shell).toHaveAttribute('data-product-plane', 'management');
+    const navigation = await openProductSidebar(page, 'hcm');
+    await expect(navigation.getByTestId('hcm-navigation-item-operations')).toBeVisible();
+    await expect(navigation.getByTestId('hcm-navigation-item-home')).toHaveCount(0);
+    await expect(page.locator('[data-testid="product-surface-work-return"]:visible')).toHaveCount(
+      0
+    );
+    await expect(navigation.getByTestId('hcm-surface-return')).toHaveAttribute('href', '/apps');
+    await closeProductSidebar(page, 'hcm');
+
+    await page.goto('/hr/operations/time?acceptance=sibling-deny');
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === '/hr/operations/time' &&
+        url.searchParams.get('acceptance') === 'sibling-deny'
+    );
+    await expect(page.getByTestId('product-surface-access-state')).toHaveAttribute(
+      'data-product-access-state',
+      'route-denied'
+    );
+
+    await page.goto('/hr/home');
+    await expect(page).toHaveURL((url) => url.pathname === '/403');
+  });
+}
+
+for (const entitlementShape of ['zero-app', 'unrelated-app'] as const) {
+  test(`HCM foundation-only ${entitlementShape} 권한은 /hr/manage에서 첫 관리 PAGE로 이동한다`, async ({
+    page,
+  }) => {
+    await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+      locale: 'ko',
+      permissions: [
+        ...(entitlementShape === 'unrelated-app' ? [allowView('APP', 'APP.WORK')] : []),
+        allowView('ACTION', 'ACTION.WORKFORCE_REFERENCE'),
+      ],
+    });
+
+    await page.goto('/hr/manage?acceptance=legacy-index#entry');
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === '/hr/data/reference' &&
+        url.searchParams.get('acceptance') === 'legacy-index' &&
+        url.hash === '#entry'
+    );
+    await expect(page.getByTestId('hcm-shell')).toHaveAttribute('data-product-plane', 'management');
+    await expect(page.locator('[data-testid="product-surface-work-return"]:visible')).toHaveCount(
+      0
+    );
+  });
+}
+
 test('대표 앱의 Work·Management 전환은 1440·1024·600·390·320에서 제품 문맥과 복귀를 보존한다', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(90_000);
   test.skip(testInfo.project.name !== 'chromium', '공통 반응형 Product Surface 계약 전용 검증');
   await mockShellSession(page, ['WORKSPACE_MEMBER', 'PRODUCT_ADMIN'], {
     locale: 'ko',

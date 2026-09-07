@@ -6,6 +6,7 @@ import {
 } from '../features/approvals/approval-navigation';
 import { ProductManagementLayout } from './product-management-layout';
 import { ProductWorkLayout } from './product-work-layout';
+import { renderApprovalNavigationItemChildren } from './approval-layout';
 
 type ApprovalSurfaceLayoutProps = {
   manifest: ProductSurfaceManifest;
@@ -20,6 +21,7 @@ export function ApprovalWorkLayout({ manifest, surface }: ApprovalSurfaceLayoutP
       navigation={APPROVAL_WORK_NAVIGATION}
       translationNamespace="approvals"
       surface={surface}
+      renderNavigationItemChildren={renderApprovalNavigationItemChildren}
     />
   );
 }

@@ -76,6 +76,17 @@ function activityFeed(count: number): WorkspaceActivityFeed {
       auditId: `audit-${String(index + 1)}`,
     })),
     generatedAt: NOW,
+    executionSummary: {
+      total: count,
+      running: 0,
+      needsInput: count,
+      policyBlocked: 0,
+      completed: 0,
+      failed: 0,
+      cancelled: 0,
+      generatedAt: NOW,
+      coverage: { supportedObjectTypes: ['WORK_ITEM'] },
+    },
   };
 }
 

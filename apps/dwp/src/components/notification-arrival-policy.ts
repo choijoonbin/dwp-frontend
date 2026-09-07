@@ -89,14 +89,14 @@ export function isQuietHoursActive(quietHours: NotificationQuietHours, now = new
 }
 
 export function shouldSurfaceNotificationArrival(
-  item: NotificationItem,
+  item: NotificationItem | null | undefined,
   profile?: NotificationDeliveryProfile,
   effectiveSettings?: NotificationEffectiveSettings,
   now = new Date()
 ): boolean {
   // Arrival banners are a passive surface. Do not expose content until both the
   // user's privacy choices and the tenant's effective policy are authoritative.
-  if (!profile || !effectiveSettings || effectiveSettings.partial) return false;
+  if (!item || !profile || !effectiveSettings || effectiveSettings.partial) return false;
   if (item.readAt || item.completedAt || item.snoozedUntil) return false;
   if (!profile.channels.IN_APP) return false;
 

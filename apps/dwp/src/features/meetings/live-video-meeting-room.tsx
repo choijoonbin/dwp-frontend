@@ -5,6 +5,7 @@ import {
   LiveKitRoom,
   useDataChannel,
   useLocalParticipant,
+  useRoomContext,
   type LocalUserChoices,
 } from '@livekit/components-react';
 import type { DisconnectReason } from 'livekit-client';
@@ -24,9 +25,11 @@ import type {
   VideoMeetingSummary,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 
+import { applyMeetingAudioOutput } from './meeting-audio-output';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingConference } from './meeting-conference';
 import { MeetingContentControl } from './meeting-content-governance';
+import { MeetingLiveFacilitationLauncher } from './meeting-live-facilitation';
 import {
   authorizeReceivedMeetingReaction,
   type MeetingReactionInteraction,
@@ -51,20 +54,28 @@ type InteractionOverlay = {
 
 export function LiveVideoMeetingRoom({
   meeting,
+  authorizationScope,
   credential,
   choices,
+  speakerDeviceId,
+  noiseSuppression,
   ending,
   operationError,
   onConnected,
+  onSpeakerDeviceFallback,
   onLeave,
   onEndForEveryone,
 }: {
   meeting: VideoMeetingSummary;
+  authorizationScope: string;
   credential: VideoMeetingJoinCredential;
   choices: LocalUserChoices;
+  speakerDeviceId: string;
+  noiseSuppression: boolean;
   ending: boolean;
   operationError?: string | null;
   onConnected: () => void;
+  onSpeakerDeviceFallback?: () => void;
   onLeave: (reason?: DisconnectReason) => void;
   onEndForEveryone: () => void;
 }) {
@@ -73,6 +84,7 @@ export function LiveVideoMeetingRoom({
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [permissionError, setPermissionError] = useState<string | null>(null);
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false);
+  const handleOutputError = useCallback(() => setPermissionError(t('errors.mediaPermission')), [t]);
 
   return (
     <Modal open hideBackdrop disableEscapeKeyDown aria-label={t('room.liveRegion')}>
@@ -86,6 +98,7 @@ export function LiveVideoMeetingRoom({
           audio={choices.audioEnabled ? { deviceId: choices.audioDeviceId } : false}
           video={choices.videoEnabled ? { deviceId: choices.videoDeviceId } : false}
           connectOptions={{ autoSubscribe: true }}
+          options={{ audioCaptureDefaults: { noiseSuppression } }}
           onConnected={() => {
             setConnected(true);
             setConnectionError(null);
@@ -95,6 +108,11 @@ export function LiveVideoMeetingRoom({
           onError={() => setConnectionError(t('errors.connection'))}
           onMediaDeviceFailure={() => setPermissionError(t('errors.mediaPermission'))}
         >
+          <MeetingAudioOutputSelection
+            deviceId={speakerDeviceId}
+            onFallback={onSpeakerDeviceFallback}
+            onError={handleOutputError}
+          />
           <MeetingRoomChrome
             meeting={meeting}
             connected={connected}
@@ -106,6 +124,7 @@ export function LiveVideoMeetingRoom({
           />
           <MeetingConference
             meetingId={meeting.meetingId}
+            authorizationScope={authorizationScope}
             permissions={credential.effectivePermissions}
             canModerate={meeting.canModerate}
             meetingLive={meeting.lifecycleState === 'LIVE'}
@@ -117,6 +136,31 @@ export function LiveVideoMeetingRoom({
       </Box>
     </Modal>
   );
+}
+
+function MeetingAudioOutputSelection({
+  deviceId,
+  onFallback,
+  onError,
+}: {
+  deviceId: string;
+  onFallback?: () => void;
+  onError: () => void;
+}) {
+  const room = useRoomContext();
+  useEffect(() => {
+    if (!deviceId || deviceId === 'default') return;
+    let current = true;
+    void applyMeetingAudioOutput(room, deviceId).then((result) => {
+      if (!current) return;
+      if (result === 'FALLBACK' || result === 'FAILED') onFallback?.();
+      if (result === 'FAILED') onError();
+    });
+    return () => {
+      current = false;
+    };
+  }, [deviceId, onError, onFallback, room]);
+  return null;
 }
 
 function MeetingRoomChrome({
@@ -216,7 +260,13 @@ function MeetingRoomChrome({
         aria-hidden={overlayPanelOpen || undefined}
         inert={overlayPanelOpen || undefined}
       >
-        <Stack direction="row" spacing={1} alignItems="center" minWidth={0}>
+        <Stack
+          className="dwp-video-meeting-room__identity"
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          minWidth={0}
+        >
           <Chip
             icon={<Radio size={14} />}
             label={connected ? t('room.live') : t('room.connecting')}
@@ -224,10 +274,16 @@ function MeetingRoomChrome({
             size="small"
             sx={{ bgcolor: 'rgba(17, 19, 21, 0.82)', color: 'common.white' }}
           />
-          <Typography color="common.white" fontWeight={700} noWrap>
+          <Typography
+            className="dwp-video-meeting-room__title"
+            color="common.white"
+            fontWeight={700}
+            noWrap
+          >
             {meeting.title}
           </Typography>
           <Stack
+            className="dwp-video-meeting-room__quality"
             direction="row"
             alignItems="center"
             gap={0.5}
@@ -238,12 +294,18 @@ function MeetingRoomChrome({
             <ConnectionQualityIndicator participant={localParticipant} />
           </Stack>
         </Stack>
-        <Stack direction="row" gap={0.75} alignItems="center">
+        <Stack
+          className="dwp-video-meeting-room__actions"
+          direction="row"
+          gap={0.75}
+          alignItems="center"
+        >
           <MeetingContentControl
             meetingId={meeting.meetingId}
             canHost={meeting.canHost}
             meetingLive={meeting.lifecycleState === 'LIVE'}
           />
+          <MeetingLiveFacilitationLauncher meetingId={meeting.meetingId} />
           {meeting.canModerate && (
             <ActionButton
               intent="quiet"

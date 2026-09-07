@@ -3,11 +3,14 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
+import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { ApprovalLayout } from '../layouts/approval-layout';
+import { LegacyProductFirstAllowedIndex } from './legacy-product-first-allowed-index';
 import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductAnyRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -19,6 +22,8 @@ import {
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
 } from './product-surface-canary-routes';
+
+import type { ProductNavigationGroup } from '../components/product-manifest';
 
 const ApprovalsPage = lazy(() => import('../pages/approvals'));
 const ApprovalSurfaceShell = lazy(() =>
@@ -32,9 +37,30 @@ const page = (children: React.ReactNode) => (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.APPROVALS">
+  <ProductWorkRouteGuard
+    productId="approvals"
+    surfaceId="approvals.work"
+    resourceKey="APP.APPROVALS"
+  >
     <ApprovalLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const APPROVAL_ADMIN_AUTHORITIES = [
+  { resourceKey: 'ADMIN.APPROVAL_OPERATIONS', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.APPROVAL_DESIGN', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.APPROVAL_POLICY', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.APPROVAL_SIGNATURE', permissionCode: 'VIEW' },
+] as const;
+
+const approvalManagementLegacyItems = (
+  APPROVAL_NAVIGATION as readonly ProductNavigationGroup[]
+).flatMap((group) => group.items.filter((item) => item.path.startsWith('/approvals/admin/')));
+
+const managementLegacyShell = (
+  <ProductAnyRouteGuard authorities={APPROVAL_ADMIN_AUTHORITIES}>
+    <ApprovalLayout />
+  </ProductAnyRouteGuard>
 );
 
 const approvalManagementIndexCandidates = [
@@ -130,7 +156,7 @@ export const approvalsRoutes: RouteObject[] = [
             productId="approvals"
             surfaceId="approvals.admin"
             indexPath="/approvals/admin"
-            legacy={legacyShell}
+            legacy={managementLegacyShell}
           >
             {page(<ApprovalSurfaceShell surfaceId="approvals.admin" />)}
           </ProductCanaryIndexedSurfaceBoundary>
@@ -143,7 +169,7 @@ export const approvalsRoutes: RouteObject[] = [
                 productId="approvals"
                 surfaceId="approvals.admin"
                 candidates={approvalManagementIndexCandidates}
-                legacy={page(<ApprovalsPage />)}
+                legacy={<LegacyProductFirstAllowedIndex items={approvalManagementLegacyItems} />}
               />
             ),
           },

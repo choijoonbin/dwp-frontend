@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  calendarInternalPath,
   calendarScheduleCalendarIds,
   calendarScheduleDate,
   calendarScheduleDateValue,
@@ -9,6 +10,7 @@ import {
   calendarScheduleStateFromSavedView,
   calendarScheduleView,
   fullCalendarView,
+  isCalendarCommandShortcut,
   scheduleViewFromFullCalendar,
 } from './calendar-schedule-state';
 
@@ -44,6 +46,46 @@ describe('calendar schedule state', () => {
     expect(next.get('view')).toBe('month');
     expect(next.get('date')).toBe('2026-08-27');
     expect(next.get('calendars')).toBe('personal,team');
+  });
+
+  it('preserves every opaque scope value during calendar-internal navigation', () => {
+    const current = new URLSearchParams(
+      'scope=tenant%2Fmember&scope=duplicate&view=week&date=2026-08-27&calendars=personal'
+    );
+
+    const focus = new URL(calendarInternalPath('/calendar/focus', current), 'https://dwp.test');
+    expect(focus.pathname).toBe('/calendar/focus');
+    expect(focus.searchParams.getAll('scope')).toEqual(['tenant/member', 'duplicate']);
+    expect(focus.searchParams.has('view')).toBe(false);
+
+    const schedule = new URL(
+      calendarInternalPath('/calendar/schedule', current, { preserveScheduleState: true }),
+      'https://dwp.test'
+    );
+    expect(schedule.searchParams.getAll('scope')).toEqual(['tenant/member', 'duplicate']);
+    expect(schedule.searchParams.get('view')).toBe('week');
+    expect(schedule.searchParams.get('date')).toBe('2026-08-27');
+    expect(schedule.searchParams.get('calendars')).toBe('personal');
+  });
+
+  it('opens calendar commands only for an unclaimed platform shortcut outside editors', () => {
+    const shortcut = (overrides: Partial<KeyboardEvent> = {}) =>
+      ({
+        target: null,
+        defaultPrevented: false,
+        metaKey: true,
+        ctrlKey: false,
+        key: '/',
+        ...overrides,
+      }) as KeyboardEvent;
+
+    expect(isCalendarCommandShortcut(shortcut())).toBe(true);
+    expect(isCalendarCommandShortcut(shortcut({ metaKey: false, ctrlKey: true }))).toBe(true);
+    expect(isCalendarCommandShortcut(shortcut({ defaultPrevented: true }))).toBe(false);
+    expect(isCalendarCommandShortcut(shortcut({ isComposing: true }))).toBe(false);
+    expect(
+      isCalendarCommandShortcut(shortcut({ target: { tagName: 'INPUT' } as HTMLElement }))
+    ).toBe(false);
   });
 
   it('normalizes governed saved-view configuration and keeps safe fallbacks', () => {

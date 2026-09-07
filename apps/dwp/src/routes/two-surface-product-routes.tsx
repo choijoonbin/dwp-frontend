@@ -24,7 +24,7 @@ type TwoSurfaceProductRouteOptions = {
   managementBasePath: `/${string}`;
   legacyPath: `/${string}`;
   legacyShell: ReactNode;
-  managementLegacyShell?: ReactNode;
+  managementLegacyShell: ReactNode;
   areaKey: ProductAreaLayoutProps['areaKey'];
   translationNamespace: NonNullable<ProductAreaLayoutProps['translationNamespace']>;
   renderPage: (route: ProductPageRouteContractSource) => ReactNode;
@@ -48,7 +48,7 @@ export function buildTwoSurfaceProductChildren({
   managementBasePath,
   legacyPath,
   legacyShell,
-  managementLegacyShell = legacyShell,
+  managementLegacyShell,
   areaKey,
   translationNamespace,
   renderPage,

@@ -4,12 +4,22 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type * as SharedUtils from '@dwp-frontend/shared-utils';
 
 import { MeetingAdminIntelligencePage } from './meeting-admin-intelligence-page';
 
 const api = vi.hoisted(() => ({
+  auth: {
+    isAuthenticated: true,
+    user: { identityPlane: 'TENANT', tenantId: 1, userId: 7 },
+  },
   getPolicy: vi.fn(),
   getReadiness: vi.fn(),
+}));
+
+vi.mock('@dwp-frontend/shared-utils', async (original) => ({
+  ...(await original<typeof SharedUtils>()),
+  useAuth: () => api.auth,
 }));
 
 vi.mock('@dwp-frontend/shared-utils/api/video-meeting-api', () => ({
@@ -121,6 +131,10 @@ async function mountPage() {
 describe('MeetingAdminIntelligencePage source isolation', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    api.auth = {
+      isAuthenticated: true,
+      user: { identityPlane: 'TENANT', tenantId: 1, userId: 7 },
+    };
     api.getPolicy.mockReset().mockResolvedValue(policy);
     api.getReadiness.mockReset().mockResolvedValue(readiness);
     container = document.createElement('div');
@@ -160,5 +174,55 @@ describe('MeetingAdminIntelligencePage source isolation', () => {
     );
     expect(container.querySelector('output')?.dataset.recording).toBe('READY');
     expect(container.querySelector('output')?.dataset.retention).toBe('90');
+  });
+
+  it('isolates both sources in the current identity plane with zero-lived sensitive caches', async () => {
+    await mountPage();
+    await vi.waitFor(() =>
+      expect(container.querySelector('output')?.dataset.recording).toBe('READY')
+    );
+
+    const tenantScope = JSON.stringify([true, 'TENANT', 1, 7]);
+    const tenantQueries = queryClient
+      .getQueryCache()
+      .getAll()
+      .filter((query) => query.queryKey.at(-1) === tenantScope);
+    expect(tenantQueries).toHaveLength(2);
+    tenantQueries.forEach((query) => {
+      expect(query.meta).toMatchObject({ accessSensitive: true });
+      expect(query.gcTime).toBe(0);
+    });
+
+    api.auth = {
+      isAuthenticated: true,
+      user: { identityPlane: 'SUPPORT', tenantId: 2, userId: 9 },
+    };
+    api.getPolicy.mockResolvedValue({ ...policy, retentionDays: 30, version: 8 });
+    api.getReadiness.mockResolvedValue({
+      ...readiness,
+      capabilities: {
+        ...readiness.capabilities,
+        recording: { state: 'BLOCKED', reason: 'PROVIDER_NOT_READY' },
+      },
+      retention: { ...readiness.retention, meetingDays: 30 },
+    });
+    await mountPage();
+
+    await vi.waitFor(() =>
+      expect(container.querySelector('output')?.dataset.recording).toBe('BLOCKED')
+    );
+    expect(container.querySelector('output')?.dataset.retention).toBe('30');
+    expect(api.getPolicy).toHaveBeenCalledTimes(2);
+    expect(api.getReadiness).toHaveBeenCalledTimes(2);
+    const supportScope = JSON.stringify([true, 'SUPPORT', 2, 9]);
+    const activeQueries = queryClient
+      .getQueryCache()
+      .getAll()
+      .filter((query) => query.queryKey.at(-1) === supportScope);
+    expect(activeQueries).toHaveLength(2);
+    activeQueries.forEach((query) => {
+      expect(query.meta).toMatchObject({ accessSensitive: true });
+      expect(query.gcTime).toBe(0);
+    });
   });
 });

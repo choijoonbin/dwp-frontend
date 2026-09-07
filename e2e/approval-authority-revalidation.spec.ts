@@ -91,15 +91,21 @@ test('결재 상세 재검증 실패는 캐시된 증적과 결정 작업을 숨
     return fulfillSuccess(route, APPROVAL_TASK_DETAIL_FIXTURE);
   });
 
-  await page.goto('/approvals/inbox');
+  await page.goto('/approvals/inbox?task=approval-task-001');
   await expect(
     page.getByRole('heading', { name: APPROVAL_TASK_DETAIL_FIXTURE.task.title })
   ).toBeVisible();
   await expect(page.getByText(APPROVAL_TASK_DETAIL_FIXTURE.payload.businessReason)).toBeVisible();
 
   firstDetailAvailable = false;
+  if ((page.viewportSize()?.width ?? 1280) < 900) {
+    await page.getByRole('button', { name: '결재 목록으로 돌아가기' }).click();
+  }
   await page.getByText(secondTask.title, { exact: true }).click();
   await expect(page.getByRole('heading', { name: secondTask.title })).toBeVisible();
+  if ((page.viewportSize()?.width ?? 1280) < 900) {
+    await page.getByRole('button', { name: '결재 목록으로 돌아가기' }).click();
+  }
   await page.getByText(APPROVAL_TASK_DETAIL_FIXTURE.task.title, { exact: true }).click();
 
   const error = page
@@ -107,7 +113,7 @@ test('결재 상세 재검증 실패는 캐시된 증적과 결정 작업을 숨
     .filter({ hasText: '선택한 결재의 최신 권한을 다시 확인하지 못했습니다' });
   await expect(error).toBeVisible();
   await expect(page.getByText(APPROVAL_TASK_DETAIL_FIXTURE.payload.businessReason)).toHaveCount(0);
-  await expect(page.getByRole('button', { name: '승인' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '승인', exact: true })).toHaveCount(0);
   expect(decisionPosts).toBe(0);
 
   firstDetailAvailable = true;

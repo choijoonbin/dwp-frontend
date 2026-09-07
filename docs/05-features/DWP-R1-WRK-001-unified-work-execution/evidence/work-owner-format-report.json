@@ -1,0 +1,77 @@
+{
+  "scope": "/tmp/dwp-work-format-scope.json",
+  "filesChecked": 35,
+  "changedFiles": [
+    "apps/dwp/src/features/work-hub/work-hub-loader.test.ts"
+  ],
+  "prettier": {
+    "beforeExitCode": 1,
+    "afterExitCode": 0,
+    "beforeLog": "/tmp/dwp-work-format-before-check.log",
+    "writeLog": "/tmp/dwp-work-format-write.log",
+    "afterLog": "/tmp/dwp-work-format-after-check.log"
+  },
+  "equivalence": {
+    "sourceAST": true,
+    "runtimeAST": true,
+    "formattingNormalizedTokens": true,
+    "rawTokens": false,
+    "reason": "Only optional trailing object comma differs; no syntax-tree or runtime-tree change.",
+    "report": "/tmp/dwp-work-format-equivalence.json",
+    "diff": "/tmp/dwp-work-format-diff.log"
+  },
+  "eslint": {
+    "files": 35,
+    "exitCode": 0,
+    "log": "/tmp/dwp-work-format-eslint.log"
+  },
+  "tests": {
+    "files": 11,
+    "total": 59,
+    "passed": 59,
+    "failed": 0,
+    "workBase": 48,
+    "assignment": 11,
+    "appJson": "/tmp/dwp-work-format-app-tests.json",
+    "sharedJson": "/tmp/dwp-work-format-shared-tests.json",
+    "appLog": "/tmp/dwp-work-format-app-tests.log",
+    "sharedLog": "/tmp/dwp-work-format-shared-tests.log"
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3"
+  },
+  "commands": {
+    "formatCheck": "node node_modules/prettier/bin/prettier.cjs --check <35 paths from scope JSON>",
+    "formatWrite": "node node_modules/prettier/bin/prettier.cjs --write apps/dwp/src/features/work-hub/work-hub-loader.test.ts",
+    "eslint": "node node_modules/eslint/bin/eslint.js <35 paths from scope JSON>",
+    "appTests": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "apps/dwp/src/features/work/work-queue-dispatcher.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-actions.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-assist.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-controller.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-loader.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-model.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-scheduling.test.ts",
+      "--reporter=json",
+      "--outputFile=/tmp/dwp-work-format-app-tests.json"
+    ],
+    "sharedTests": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "libs/shared-utils/vitest.config.ts",
+      "libs/shared-utils/src/api/personal-work-api.test.ts",
+      "libs/shared-utils/src/api/work-assignment-api.test.ts",
+      "libs/shared-utils/src/api/work-hub-calendar-api.test.ts",
+      "libs/shared-utils/src/api/workspace-work-policy.test.ts",
+      "--reporter=json",
+      "--outputFile=/tmp/dwp-work-format-shared-tests.json"
+    ]
+  }
+}

@@ -185,6 +185,28 @@
         "emptyDescription": "현재 내 역할 범위의 업무 상태가 정상입니다."
       }
     },
+    "calendarInsights": {
+      "focusTitle": "집중 시간",
+      "focusDescription": "이번 주 확보한 집중 시간과 회의 시간을 균형 있게 비교합니다.",
+      "meetingTitle": "오늘 회의 부하",
+      "meetingDescription": "오늘의 부하와 이번 주 회의 분포·충돌을 확인합니다.",
+      "weekBalance": "이번 주 시간 배분",
+      "dailyLimit": "일일 회의 기준 대비",
+      "focusVsMeetings": "집중 {{focus}}분 · 회의 {{meetings}}분",
+      "targetProgress": "주간 집중 목표의 {{percent}}%",
+      "focusRemaining": "집중 목표까지 {{minutes}}분 남음",
+      "focusTargetReached": "주간 집중 목표 달성",
+      "meetingMinutes": "회의 {{minutes}}분",
+      "conflicts": "이번 주 충돌 {{count}}건",
+      "noConflicts": "이번 주 충돌 없음",
+      "weekProfile": "이번 주 부하",
+      "openDetails": "인사이트 보기",
+      "loading": "캘린더 인사이트를 불러오는 중입니다.",
+      "unavailable": "캘린더 인사이트를 일시적으로 불러올 수 없습니다.",
+      "empty": "아직 확인할 수 있는 캘린더 인사이트가 없습니다.",
+      "retry": "다시 시도",
+      "restricted": "현재 권한으로 캘린더 인사이트를 볼 수 없습니다."
+    },
     "contributions": {
       "workspace": {
         "openWorkTitle": "열린 업무",
@@ -391,6 +413,7 @@
       "scheduleLoad": "일정 부하",
       "scheduleLoadToday": "오늘 회의 부하",
       "activityAttention": "확인할 활동",
+      "activityBreakdown": "입력 필요 {{needsInput}}건 · 정책 차단 {{policyBlocked}}건",
       "unit": {
         "items": "건",
         "minutes": "분",
@@ -477,6 +500,8 @@
         "response-hub": "답변·확인 요청",
         "request-tracker": "내 요청 현황",
         "role-pulse": "역할별 업무 현황",
+        "focus-balance": "집중 시간",
+        "meeting-load": "회의 부하",
         "today-flowline": "오늘 일정과 마감",
         "work-signals": "업무 현황",
         "next-actions": "다음에 준비할 일"
@@ -561,7 +586,7 @@
       },
       "dwp-messaging": {
         "name": "메신저",
-        "shortName": "메시지",
+        "shortName": "메신저",
         "description": "구성원, Space, 팀과 정책 기반 대화를 연결합니다"
       },
       "dwp-meetings": {
@@ -906,6 +931,14 @@
       "command-rail": {
         "label": "업무 지휘",
         "description": "현재 업무, 다음 일정 및 추천 후속 조치"
+      },
+      "focus-balance": {
+        "label": "집중 시간",
+        "description": "확보한 집중 시간과 주간 회의의 균형"
+      },
+      "meeting-load": {
+        "label": "회의 부하",
+        "description": "회의량, 주간 부하 및 일정 충돌"
       }
     },
     "announcements": {
@@ -978,6 +1011,7 @@
     }
   },
   "footer": {
+    "dataScope": "접근 권한 내 데이터만 표시됩니다.",
     "privacy": "개인정보 처리방침",
     "terms": "이용약관",
     "help": "헬프 데스크",

@@ -1,5 +1,6 @@
+import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Home, LifeBuoy, Settings2 } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Home, LifeBuoy, Settings2 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
@@ -9,6 +10,7 @@ import {
   resolveProductExperienceTones,
 } from '@dwp-frontend/design-system/foundation/product-experience-tokens';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { isExplicitAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
@@ -54,6 +56,13 @@ import { canAccessProductAreaNavigationItem } from './product-area-permissions';
 
 export type { ProductAreaNavigationGroup, ProductAreaNavigationItem };
 
+export type ProductAreaNavigationItemChildrenContext = Readonly<{
+  item: ProductAreaNavigationItem;
+  selected: boolean;
+  compact: boolean;
+  onNavigate?: () => void;
+}>;
+
 export type ProductAreaLayoutProps = {
   areaKey:
     | 'dwaion'
@@ -87,6 +96,10 @@ export type ProductAreaLayoutProps = {
     | 'notifications'
     | 'spaces';
   surface?: ProductSurfaceLayoutRuntime;
+  canAccessLegacySurface?: (surface: ProductSurfaceManifest['surfaces'][number]) => boolean;
+  renderNavigationItemChildren?: (
+    context: ProductAreaNavigationItemChildrenContext
+  ) => React.ReactNode;
 };
 
 function isSurfaceNavigationItem(
@@ -101,6 +114,8 @@ export function ProductAreaLayout({
   manifest,
   translationNamespace = 'workforce',
   surface,
+  canAccessLegacySurface,
+  renderNavigationItemChildren,
 }: ProductAreaLayoutProps) {
   const { t } = useTranslation(translationNamespace);
   const { t: tCommon } = useTranslation('common');
@@ -114,7 +129,7 @@ export function ProductAreaLayout({
   const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
   const supportSession = providerRole ? (supportContext.data ?? undefined) : undefined;
-  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const { hasPermission, isLoaded: permissionsLoaded, permissions } = usePermissions();
   const canAccessLegacyItem = (item: ProductAreaNavigationItem) =>
     permissionsLoaded &&
     (!providerRole || (!supportContext.isLoading && supportSession !== undefined)) &&
@@ -125,6 +140,11 @@ export function ProductAreaLayout({
     );
   const location = useLocation();
   const { pathname } = location;
+  const navigationDisclosureId = useId();
+  const [collapsedNavigationPath, setCollapsedNavigationPath] = useState<string | null>(null);
+  useEffect(() => {
+    setCollapsedNavigationPath(null);
+  }, [pathname]);
   const mobileNavigation = useShellMobileNavigation({
     headerTestId: `${areaKey}-header`,
   });
@@ -149,6 +169,10 @@ export function ProductAreaLayout({
         pathname,
         navigation,
         canAccessItem: canAccessLegacyItem,
+        canAccessSurface: (candidate) =>
+          canAccessLegacySurface?.(candidate) ??
+          (!candidate.entryAccess.requiresProductEntitlement ||
+            isExplicitAppResourceEntitled(legacyManifest.appKey, permissions)),
       })
     : undefined;
   const navigationSource = legacyManifest ? (legacyPresentation?.navigation ?? []) : navigation;
@@ -274,30 +298,51 @@ export function ProductAreaLayout({
                 const exactNavigationTarget = surface?.compatibilityNavigationTargets?.get(
                   item.path
                 );
+                const itemChildren = !compactNavigation
+                  ? renderNavigationItemChildren?.({
+                      item,
+                      selected,
+                      compact: compactNavigation,
+                      onNavigate,
+                    })
+                  : null;
+                const expanded = Boolean(itemChildren) && collapsedNavigationPath !== item.path;
+                const childrenId = `${navigationDisclosureId}-${onDismiss ? 'mobile' : 'desktop'}-${item.view}`;
+                const DisclosureIcon = expanded ? ChevronDown : ChevronRight;
                 return (
                   <Box component="li" key={item.path} sx={{ display: 'block' }}>
                     <Tooltip title={compactNavigation ? label : ''} placement="right">
                       <ListItemButton
                         data-testid={`${areaKey}-navigation-item-${item.view}`}
-                        component={NavLink}
+                        component={itemChildren ? 'button' : NavLink}
+                        type={itemChildren ? 'button' : undefined}
                         to={
-                          exactNavigationTarget
-                            ? resolveProductCompatibilityNavigationLocation(
-                                item.path,
-                                exactNavigationTarget,
-                                location
-                              )
-                            : {
-                                pathname: item.path,
-                                search: surface ? location.search : '',
-                                hash: surface ? location.hash : '',
-                              }
+                          itemChildren
+                            ? undefined
+                            : exactNavigationTarget
+                              ? resolveProductCompatibilityNavigationLocation(
+                                  item.path,
+                                  exactNavigationTarget,
+                                  location
+                                )
+                              : {
+                                  pathname: item.path,
+                                  search: surface ? location.search : '',
+                                  hash: surface ? location.hash : '',
+                                }
                         }
                         selected={selected}
                         aria-label={compactNavigation ? label : undefined}
                         aria-current={selected ? 'page' : undefined}
-                        onClick={onNavigate}
+                        aria-expanded={itemChildren ? expanded : undefined}
+                        aria-controls={itemChildren ? childrenId : undefined}
+                        onClick={
+                          itemChildren
+                            ? () => setCollapsedNavigationPath(expanded ? item.path : null)
+                            : onNavigate
+                        }
                         sx={{
+                          width: 1,
                           minHeight: 42,
                           justifyContent: compactNavigation ? 'center' : 'flex-start',
                           px: compactNavigation ? 1 : 1.25,
@@ -340,8 +385,16 @@ export function ProductAreaLayout({
                             }}
                           />
                         )}
+                        {itemChildren && (
+                          <DisclosureIcon size={16} strokeWidth={1.8} aria-hidden="true" />
+                        )}
                       </ListItemButton>
                     </Tooltip>
+                    {itemChildren && (
+                      <Box id={childrenId} hidden={!expanded}>
+                        {expanded ? itemChildren : null}
+                      </Box>
+                    )}
                   </Box>
                 );
               })}

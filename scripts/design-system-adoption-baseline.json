@@ -49,10 +49,9 @@
       "RawTypography": 1
     },
     "apps/dwp/src/components/home-loading-skeleton.tsx": {
-      "HardcodedColor": 16,
       "RawRadius": 8,
-      "RawShadow": 1,
-      "RawMotion": 4
+      "RawMotion": 4,
+      "HardcodedColor": 5
     },
     "apps/dwp/src/components/home-surface-tokens.ts": {
       "HardcodedColor": 18
@@ -154,16 +153,11 @@
       "RawRadius": 2,
       "RawShadow": 1
     },
-    "apps/dwp/src/components/workspace-ui.tsx": {
-      "RawMotion": 1,
-      "RawTypography": 1
-    },
     "apps/dwp/src/features/account/my-privileged-access.tsx": {
       "Alert": 2,
       "CircularProgress": 1
     },
     "apps/dwp/src/features/activity/activity-home.tsx": {
-      "RawRadius": 1,
       "RawTypography": 1
     },
     "apps/dwp/src/features/admin/access-manager.tsx": {
@@ -480,12 +474,7 @@
     },
     "apps/dwp/src/features/approvals/approval-home.tsx": {
       "Skeleton": 3,
-      "Alert": 2,
-      "HardcodedColor": 13,
-      "RawRadius": 4,
-      "RawShadow": 2,
-      "RawTypography": 2,
-      "LinearProgress": 1
+      "Alert": 2
     },
     "apps/dwp/src/features/approvals/approval-inbox.tsx": {
       "RawRadius": 1,
@@ -558,7 +547,7 @@
     "apps/dwp/src/features/calendar/calendar-components.tsx": {
       "HardcodedColor": 10,
       "RawRadius": 1,
-      "RawTypography": 19,
+      "RawTypography": 17,
       "Alert": 1
     },
     "apps/dwp/src/features/calendar/calendar-event-dialog.tsx": {
@@ -576,18 +565,11 @@
       "Alert": 3,
       "Skeleton": 6
     },
-    "apps/dwp/src/features/calendar/calendar-home.tsx": {
-      "Alert": 1,
-      "Skeleton": 3,
-      "RawRadius": 4,
-      "RawTypography": 8
-    },
     "apps/dwp/src/features/calendar/calendar-insights.tsx": {
       "Skeleton": 2,
       "RawRadius": 2
     },
     "apps/dwp/src/features/calendar/calendar-interactive-grid.tsx": {
-      "HardcodedColor": 2,
       "RawTypography": 11,
       "RawRadius": 3
     },
@@ -598,7 +580,6 @@
       "Skeleton": 1
     },
     "apps/dwp/src/features/calendar/calendar-schedule.tsx": {
-      "RawRadius": 1,
       "LinearProgress": 1,
       "Alert": 2
     },
@@ -658,7 +639,6 @@
       "RawTypography": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-activity.tsx": {
-      "RawRadius": 1,
       "RawTypography": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-admin-actions.tsx": {
@@ -674,11 +654,11 @@
     "apps/dwp/src/features/dwaion/dwaion-admin-evaluation.tsx": {
       "Alert": 2,
       "Skeleton": 1,
-      "RawTypography": 3
+      "RawTypography": 2
     },
     "apps/dwp/src/features/dwaion/dwaion-admin-gates.tsx": {
       "RawTypography": 3,
-      "Alert": 3,
+      "Alert": 2,
       "LinearProgress": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-admin-safety.tsx": {
@@ -689,10 +669,9 @@
       "Alert": 3
     },
     "apps/dwp/src/features/dwaion/dwaion-admin.tsx": {
-      "Alert": 6,
       "Skeleton": 2,
-      "RawTypography": 3,
-      "LinearProgress": 1
+      "Alert": 5,
+      "RawTypography": 3
     },
     "apps/dwp/src/features/dwaion/dwaion-agents.tsx": {
       "Alert": 1,
@@ -700,17 +679,13 @@
       "RawRadius": 2,
       "RawTypography": 1
     },
-    "apps/dwp/src/features/dwaion/dwaion-conversation-menu.tsx": {
-      "RawTypography": 2
-    },
     "apps/dwp/src/features/dwaion/dwaion-conversation-transcript.tsx": {
       "RawRadius": 1,
       "RawTypography": 2
     },
     "apps/dwp/src/features/dwaion/dwaion-conversations.tsx": {
       "Alert": 1,
-      "Skeleton": 1,
-      "RawTypography": 1
+      "Skeleton": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-evaluation-history.tsx": {
       "RawTypography": 5,
@@ -725,10 +700,7 @@
       "RawTypography": 2
     },
     "apps/dwp/src/features/dwaion/dwaion-home.tsx": {
-      "RawTypography": 5,
-      "Alert": 1,
-      "Skeleton": 2,
-      "RawRadius": 1
+      "RawTypography": 3
     },
     "apps/dwp/src/features/dwaion/dwaion-proposal-controls.tsx": {
       "RawTypography": 2
@@ -748,34 +720,24 @@
       "Alert": 2,
       "RawMotion": 2,
       "RawRadius": 3,
-      "HardcodedColor": 1,
       "CircularProgress": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-workspace-composer.tsx": {
       "RawRadius": 1,
-      "RawShadow": 2,
-      "HardcodedColor": 3,
       "RawTypography": 2,
       "CircularProgress": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-workspace-context.tsx": {
-      "RawRadius": 2,
-      "RawTypography": 10,
-      "HardcodedColor": 1
+      "RawRadius": 1,
+      "RawTypography": 6
     },
     "apps/dwp/src/features/dwaion/dwaion-workspace-start.tsx": {
-      "HardcodedColor": 5,
       "RawRadius": 3,
-      "RawMotion": 2,
-      "RawTypography": 6,
+      "RawTypography": 4,
       "RawShadow": 1,
       "Skeleton": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-workspace.tsx": {
-      "RawRadius": 1,
-      "HardcodedColor": 4,
-      "RawShadow": 1,
-      "RawTypography": 1,
       "Alert": 1
     },
     "apps/dwp/src/features/hcm/hcm-home-visuals.tsx": {
@@ -891,7 +853,7 @@
       "RawShadow": 4
     },
     "apps/dwp/src/features/home/app-launchpad.tsx": {
-      "HardcodedColor": 24,
+      "HardcodedColor": 21,
       "RawRadius": 2,
       "RawShadow": 1,
       "RawTypography": 3
@@ -906,24 +868,20 @@
       "RawTypography": 10
     },
     "apps/dwp/src/features/home/flow-home/flow-app-dock-list.tsx": {
-      "HardcodedColor": 17,
       "RawRadius": 4,
-      "RawShadow": 1,
       "RawTypography": 8
     },
     "apps/dwp/src/features/home/flow-home/flow-home-context.tsx": {
-      "HardcodedColor": 31,
-      "RawShadow": 1,
-      "RawTypography": 14,
-      "RawRadius": 6,
-      "CircularProgress": 2
+      "HardcodedColor": 23,
+      "RawTypography": 13,
+      "CircularProgress": 2,
+      "RawRadius": 5
     },
     "apps/dwp/src/features/home/flow-home/flow-home.tsx": {
-      "HardcodedColor": 5,
+      "HardcodedColor": 4,
       "RawRadius": 1,
       "RawTypography": 1,
-      "RawShadow": 2,
-      "RawMotion": 1
+      "RawShadow": 1
     },
     "apps/dwp/src/features/home/flow-home/flow-updates.tsx": {
       "HardcodedColor": 7,
@@ -945,15 +903,15 @@
       "RawTypography": 1
     },
     "apps/dwp/src/features/home/flow-home/home-purpose-widget.tsx": {
-      "RawTypography": 22,
+      "RawTypography": 20,
       "RawRadius": 3,
       "RawShadow": 1,
       "Skeleton": 2
     },
     "apps/dwp/src/features/home/flow-home/my-app-dock.tsx": {
-      "HardcodedColor": 20,
       "RawRadius": 3,
-      "RawShadow": 2,
+      "RawShadow": 1,
+      "HardcodedColor": 1,
       "RawMotion": 1,
       "RawTypography": 9
     },
@@ -999,11 +957,6 @@
       "RawRadius": 2,
       "RawTypography": 1
     },
-    "apps/dwp/src/features/mail/mail-components.tsx": {
-      "RawTypography": 8,
-      "RawRadius": 3,
-      "HardcodedColor": 3
-    },
     "apps/dwp/src/features/mail/mail-compose-dialog.tsx": {
       "Alert": 2
     },
@@ -1015,17 +968,9 @@
       "LinearProgress": 1,
       "Alert": 1
     },
-    "apps/dwp/src/features/mail/mail-home-journey.tsx": {
-      "HardcodedColor": 6,
-      "RawRadius": 1,
-      "RawTypography": 8,
-      "RawMotion": 1
-    },
     "apps/dwp/src/features/mail/mail-home.tsx": {
-      "Alert": 2,
-      "Skeleton": 3,
-      "RawTypography": 4,
-      "RawRadius": 2
+      "Alert": 1,
+      "Skeleton": 3
     },
     "apps/dwp/src/features/mail/mail-inbox.tsx": {
       "RawRadius": 1,
@@ -1059,11 +1004,11 @@
       "RawRadius": 2
     },
     "apps/dwp/src/features/meetings/live-video-meeting-room.css": {
-      "HardcodedColor": 51,
-      "RawShadow": 4,
+      "HardcodedColor": 45,
       "RawRadius": 8,
       "RawMotion": 2,
-      "RawTypography": 9
+      "RawTypography": 9,
+      "RawShadow": 2
     },
     "apps/dwp/src/features/meetings/live-video-meeting-room.tsx": {
       "HardcodedColor": 1,
@@ -1076,9 +1021,9 @@
       "RawTypography": 10
     },
     "apps/dwp/src/features/meetings/meeting-admin.tsx": {
+      "Alert": 2,
       "HardcodedColor": 8,
-      "Alert": 3,
-      "RawTypography": 2
+      "RawTypography": 1
     },
     "apps/dwp/src/features/meetings/meeting-artifact-playback.tsx": {
       "Alert": 1
@@ -1091,12 +1036,11 @@
       "RawMotion": 2
     },
     "apps/dwp/src/features/meetings/meeting-components.tsx": {
-      "RawTypography": 15,
-      "LinearProgress": 1,
-      "HardcodedColor": 3
+      "RawTypography": 14,
+      "LinearProgress": 1
     },
     "apps/dwp/src/features/meetings/meeting-content-governance.tsx": {
-      "HardcodedColor": 9,
+      "HardcodedColor": 7,
       "Alert": 16,
       "RawTypography": 6
     },
@@ -1107,14 +1051,10 @@
     },
     "apps/dwp/src/features/meetings/meeting-history.tsx": {
       "Alert": 1,
-      "RawRadius": 2,
-      "RawMotion": 1,
-      "RawTypography": 1
+      "RawRadius": 2
     },
     "apps/dwp/src/features/meetings/meeting-home.tsx": {
-      "Alert": 1,
-      "HardcodedColor": 15,
-      "RawTypography": 12
+      "Alert": 1
     },
     "apps/dwp/src/features/meetings/meeting-intelligence-report.tsx": {
       "RawTypography": 12,
@@ -1138,16 +1078,13 @@
       "Alert": 2
     },
     "apps/dwp/src/features/meetings/meeting-prejoin.css": {
-      "HardcodedColor": 50,
-      "RawRadius": 6,
-      "RawShadow": 2,
-      "RawTypography": 30
+      "RawTypography": 30,
+      "RawRadius": 1
     },
     "apps/dwp/src/features/meetings/meeting-prejoin.tsx": {
       "Alert": 2
     },
     "apps/dwp/src/features/meetings/meeting-recap-detail.tsx": {
-      "RawTypography": 11,
       "RawRadius": 3,
       "Alert": 5
     },
@@ -1155,16 +1092,6 @@
       "RawRadius": 1,
       "RawTypography": 6,
       "Alert": 4
-    },
-    "apps/dwp/src/features/meetings/meeting-schedule-dialog.tsx": {
-      "RawRadius": 1,
-      "RawTypography": 1
-    },
-    "apps/dwp/src/features/meetings/meeting-visual-system.ts": {
-      "HardcodedColor": 15,
-      "RawRadius": 3,
-      "RawShadow": 4,
-      "RawMotion": 1
     },
     "apps/dwp/src/features/messaging/meeting/livekit-meeting-room.css": {
       "HardcodedColor": 12,
@@ -1211,9 +1138,6 @@
       "Alert": 1,
       "CircularProgress": 1
     },
-    "apps/dwp/src/features/messaging/messaging-conversation-context.tsx": {
-      "RawTypography": 1
-    },
     "apps/dwp/src/features/messaging/messaging-conversation-header.tsx": {
       "RawTypography": 1
     },
@@ -1225,7 +1149,6 @@
       "Alert": 2
     },
     "apps/dwp/src/features/messaging/messaging-conversation-workspace.tsx": {
-      "RawRadius": 1,
       "Skeleton": 2,
       "Alert": 1
     },
@@ -1246,15 +1169,13 @@
     "apps/dwp/src/features/messaging/messaging-home-continuation-sections.tsx": {
       "HardcodedColor": 2,
       "RawTypography": 5,
-      "RawRadius": 2,
       "Skeleton": 1,
       "Alert": 1
     },
     "apps/dwp/src/features/messaging/messaging-home-sections.tsx": {
       "HardcodedColor": 8,
-      "RawTypography": 9,
-      "RawRadius": 2,
-      "Skeleton": 5
+      "RawTypography": 6,
+      "Skeleton": 4
     },
     "apps/dwp/src/features/messaging/messaging-home.tsx": {
       "Alert": 2
@@ -1321,15 +1242,10 @@
       "Alert": 1
     },
     "apps/dwp/src/features/notifications/notification-center.tsx": {
-      "RawTypography": 4,
-      "Alert": 3,
-      "RawRadius": 1
+      "RawTypography": 1,
+      "Alert": 1
     },
     "apps/dwp/src/features/notifications/notification-header-glance.tsx": {
-      "RawRadius": 1,
-      "RawTypography": 1
-    },
-    "apps/dwp/src/features/notifications/notification-home.tsx": {
       "RawRadius": 1,
       "RawTypography": 1
     },
@@ -1853,10 +1769,6 @@
     "apps/dwp/src/features/work/access-review-work-item.tsx": {
       "Alert": 2
     },
-    "apps/dwp/src/features/work/work-home.tsx": {
-      "RawRadius": 1,
-      "RawTypography": 1
-    },
     "apps/dwp/src/features/workforce/assignment-register.tsx": {
       "RawTypography": 2,
       "RawRadius": 1
@@ -1934,9 +1846,8 @@
       "RawRadius": 3
     },
     "apps/dwp/src/pages/activity.tsx": {
-      "RawRadius": 2,
       "LinearProgress": 1,
-      "RawTypography": 2
+      "RawTypography": 1
     },
     "apps/dwp/src/pages/admin.tsx": {
       "RawRadius": 1

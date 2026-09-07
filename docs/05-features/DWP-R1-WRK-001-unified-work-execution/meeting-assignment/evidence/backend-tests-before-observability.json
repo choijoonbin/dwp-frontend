@@ -1,0 +1,235 @@
+{
+  "command": "./gradlew :dwp-platform-server:test --tests '*workhub.assignment.*'",
+  "scope": "Assignment backend before final outbound observability amendment",
+  "totals": {
+    "tests": 41,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.MeetingFollowupSourceAuthorityTest",
+      "timestampUtc": "2026-09-04T06:14:44",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.065,
+      "cases": [
+        {
+          "name": "duplicateDecisionKeysAndTrailingJsonFailClosed()",
+          "seconds": 0.2
+        },
+        {
+          "name": "removedSourceHidesAllProvenanceAndNewCreateFails()",
+          "seconds": 0.017
+        },
+        {
+          "name": "missingCredentialsAndImplicitHttpFailClosedWithoutNetwork()",
+          "seconds": 0.002
+        },
+        {
+          "name": "reassignRequiresOwnerDecisionForExactNewAssignee()",
+          "seconds": 0.013
+        },
+        {
+          "name": "differentActorOrCandidateResponseNeverBecomesAvailable()",
+          "seconds": 0.014
+        },
+        {
+          "name": "createsOnlyFromConfirmedTermsAndUsesDedicatedBoundAssertion()",
+          "seconds": 0.012
+        },
+        {
+          "name": "timeoutHidesSourceAndDoesNotRetryAutomatically()",
+          "seconds": 0.261
+        },
+        {
+          "name": "overallDeadlineAlsoCancelsAStalledChunkedBodyAfterHeaders()",
+          "seconds": 1.51
+        },
+        {
+          "name": "redirectsAreNotFollowedAndOversizedResponseIsNotExposed()",
+          "seconds": 0.011
+        },
+        {
+          "name": "changedConfirmedVersionReturnsConflictWithoutCreating()",
+          "seconds": 0.012
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.MeetingFollowupWorkloadSignerTest",
+      "timestampUtc": "2026-09-04T06:14:46",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.01,
+      "cases": [
+        {
+          "name": "matchesIndependentlyGeneratedCrossServiceGoldenFixture()",
+          "seconds": 0.006
+        },
+        {
+          "name": "rejectsWeakKeysAndIncompletePrincipalBindings()",
+          "seconds": 0.001
+        },
+        {
+          "name": "generatesFreshNonceAndBindsActorSourceActionAndExactBody()",
+          "seconds": 0.001
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.WorkAssignmentControllerTest",
+      "timestampUtc": "2026-09-04T06:14:47",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.209,
+      "cases": [
+        {
+          "name": "sourceLookupKeepsAllThreeOwnerIdentifiers()",
+          "seconds": 0.062
+        },
+        {
+          "name": "creatingRequiresConfirmedSourceVersionAndStableCommandKey()",
+          "seconds": 0.062
+        },
+        {
+          "name": "acceptCarriesBothVersionAndAssignmentRevisionToTheDistinctAction()",
+          "seconds": 0.017
+        },
+        {
+          "name": "reassignmentRequiresPositiveTargetAndBoundedReasonCode()",
+          "seconds": 0.011
+        },
+        {
+          "name": "queryCannotOverrideTheAuthenticatedActor()",
+          "seconds": 0.016
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.WorkAssignmentPostgresIntegrationTest",
+      "timestampUtc": "2026-09-04T06:14:49",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 7.614,
+      "cases": [
+        {
+          "name": "sourceValidationThatExpiresWhileAcquiringLocksCannotWrite()",
+          "seconds": 0.285
+        },
+        {
+          "name": "concurrentAcceptanceAndReassignmentCannotAcceptAReplacedAssignmentRevision()",
+          "seconds": 0.106
+        },
+        {
+          "name": "reassignmentWhileSourceInspectionIsRunningRevokesTheWaitingView()",
+          "seconds": 0.122
+        },
+        {
+          "name": "aReceiptKeepsItsAppliedVersionWhileReplaysReturnCurrentAuthorizedTask()",
+          "seconds": 0.164
+        },
+        {
+          "name": "concurrentDifferentCreatorsCannotPromoteTheSameCandidate()",
+          "seconds": 0.066
+        },
+        {
+          "name": "auditAndReceiptFailuresRollBackAssignmentEventsAndCommandEvidenceTogether()",
+          "seconds": 0.114
+        },
+        {
+          "name": "reassignmentInvalidatesOldAcceptanceAndOldAssigneeCommandRecovery()",
+          "seconds": 0.21
+        },
+        {
+          "name": "decliningRequiresAReasonAndOnlyCreatorCanReassignOrCancel()",
+          "seconds": 0.2
+        },
+        {
+          "name": "lockWaitIsBoundedAndAConflictingCommandLeavesNoPartialEvidence()",
+          "seconds": 5.173
+        },
+        {
+          "name": "concurrentSameCommandCreatesOneAssignmentAndOneEvidenceSet()",
+          "seconds": 0.107
+        },
+        {
+          "name": "creatorAndCurrentAssigneeAreTheOnlyReadersIncludingListsSourceAndReceipts()",
+          "seconds": 0.264
+        },
+        {
+          "name": "candidateCanOnlyBePromotedOnceEvenAfterCancellationOrReportRebinding()",
+          "seconds": 0.186
+        },
+        {
+          "name": "revokedSourceIsMinimizedWhileConfirmedWorkCanStillProgressAndNewAssignmentFailsClosed()",
+          "seconds": 0.163
+        },
+        {
+          "name": "acceptanceAndWorkProgressAreSeparateOptimisticAuditedTransitions()",
+          "seconds": 0.354
+        },
+        {
+          "name": "databaseRejectsSourceRebindingAndEvidenceMutationAndStoresNoReceiptContent()",
+          "seconds": 0.093
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.WorkAssignmentServiceTest",
+      "timestampUtc": "2026-09-04T06:14:57",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.117,
+      "cases": [
+        {
+          "name": "sourceRevocationAndInvalidOwnerMetadataExposeNoSourceIdentifiersOrLink()",
+          "seconds": 0.047
+        },
+        {
+          "name": "callerCannotSupplyMalformedCommandsOrFreeTextReasons()",
+          "seconds": 0.002
+        },
+        {
+          "name": "allPublicOperationsRequirePositiveIdentityAndExactWorkPermissions()",
+          "seconds": 0.001
+        },
+        {
+          "name": "failedOwnerConfirmationCannotCreateAWorkRecord()",
+          "seconds": 0.002
+        },
+        {
+          "name": "maximumSizedWorkPageNeverWaitsForMeetingSourceInspection()",
+          "seconds": 0.016
+        },
+        {
+          "name": "staleOrMismatchedOwnerConfirmationIsRejectedWithoutPersistence()",
+          "seconds": 0.04
+        },
+        {
+          "name": "replayChecksCurrentParticipantBeforeReturningAnyCommandEvidence()",
+          "seconds": 0.003
+        },
+        {
+          "name": "readOnlyViewerGetsNoMutationCapabilitiesDespiteOwnerEvidence()",
+          "seconds": 0.002
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Meeting owner is a test port/HTTP stub; actual Meeting current-authority integration is not verified.",
+    "Only assignment-specific PostgreSQL migration execution is established by this suite; not a fresh whole-Platform deployment."
+  ]
+}

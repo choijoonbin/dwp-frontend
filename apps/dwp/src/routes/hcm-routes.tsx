@@ -1,16 +1,23 @@
 import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import { isHcmReadEntitled } from '@dwp-frontend/shared-utils/auth/hcm-access';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
 
 import { mapLegacyHrPath } from '../features/hcm/hcm-legacy-paths';
+import {
+  canAccessHcmNavigationAudience,
+  findHcmNavigationItem,
+} from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
+import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
+import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
+import { LegacyProductFirstAllowedIndex } from './legacy-product-first-allowed-index';
 import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 import {
   ProductCanaryRoot,
@@ -27,6 +34,9 @@ import {
   WorkspaceRouteGuard,
 } from './route-support';
 
+import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
+import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
+
 const HcmPage = lazy(() => import('../pages/hcm'));
 const HcmLayout = lazy(() =>
   import('../layouts/hcm-layout').then((module) => ({ default: module.HcmLayout }))
@@ -34,42 +44,79 @@ const HcmLayout = lazy(() =>
 
 export function resolveLegacyHcmShellAccess({
   providerRole,
+  permissionsLoaded = true,
   supportContextLoading,
+  governed = false,
   entitled,
 }: {
   providerRole: boolean;
+  permissionsLoaded?: boolean;
   supportContextLoading: boolean;
   supportScopes?: readonly string[];
+  governed?: boolean;
   entitled: boolean;
 }): 'loading' | 'allowed' | 'denied' {
   if (providerRole) {
     if (supportContextLoading) return 'loading';
     return 'denied';
   }
+  if (governed) return 'allowed';
+  if (!permissionsLoaded) return 'loading';
   return entitled ? 'allowed' : 'denied';
 }
 
-function HcmRouteGuard({ children }: { children: React.ReactNode }) {
+export { canAccessLegacyHcmSurface as resolveLegacyHcmSurfaceAccess };
+
+function HcmRouteGuard({
+  surfaceId,
+  children,
+}: {
+  surfaceId: HcmLegacySurfaceId;
+  children: React.ReactNode;
+}) {
   const auth = useAuth();
-  const { permissions } = usePermissions();
+  const { isLoaded } = usePermissions();
   const governedSurface = useOptionalAllowedProductSurface();
+  const hcmAccess = useHcmAccess();
   const providerRole = isProviderIdentity(auth.user);
   const supportContext = useProviderSupportContext(providerRole);
-  const entitled = isHcmReadEntitled(
-    permissions,
-    auth.user?.roles ?? [],
-    auth.user?.legacyRoleFallbackAllowed === true
-  );
   const access = resolveLegacyHcmShellAccess({
     providerRole,
+    permissionsLoaded: isLoaded,
     supportContextLoading: supportContext.isLoading,
     supportScopes: providerRole ? supportContext.data?.scopes : undefined,
-    entitled,
+    governed: governedSurface !== null,
+    entitled: canAccessLegacyHcmSurface(surfaceId, {
+      canAccessPersonal: hcmAccess.canAccessPersonal,
+      isManager: hcmAccess.isManager,
+      canAccessOperationsOverview: hcmAccess.canAccessOperationsOverview,
+      canAccessOrganizationDesign: hcmAccess.canAccessOrganizationDesign,
+      canAccessReferenceData: hcmAccess.canAccessReferenceData,
+      canAccessDataOperations: hcmAccess.canAccessDataOperations,
+      canAccessExports: hcmAccess.canAccessExports,
+    }),
   });
   if (access === 'loading') return <RouteFallback />;
   if (providerRole) return <Navigate to="/403" replace />;
-  if (governedSurface) return children;
   return access === 'allowed' ? children : <Navigate to="/403" replace />;
+}
+
+function HcmLegacyPageAccessGuard({
+  item,
+  children,
+}: {
+  item: HcmNavigationItem;
+  children: React.ReactNode;
+}) {
+  const access = useHcmAccess();
+  if (!canAccessHcmNavigationAudience(item, access)) {
+    return <ProductSurfaceAccessState decision={{ state: 'route-denied' }} />;
+  }
+  return (
+    <ProductAreaNavigationItemAccessGuard item={item} pending={<RouteFallback />}>
+      {children}
+    </ProductAreaNavigationItemAccessGuard>
+  );
 }
 
 function LegacyPeopleRedirect() {
@@ -93,45 +140,86 @@ const hcmPage = (
   </Suspense>
 );
 
-const legacyHcmShell = (
-  <HcmRouteGuard>
-    <Suspense fallback={routeFallback}>
-      <HcmLayout />
-    </Suspense>
-  </HcmRouteGuard>
-);
+function legacyHcmShell(surfaceId: HcmLegacySurfaceId) {
+  return (
+    <HcmRouteGuard surfaceId={surfaceId}>
+      <Suspense fallback={routeFallback}>
+        <HcmLayout />
+      </Suspense>
+    </HcmRouteGuard>
+  );
+}
+
+const personalLegacyHcmShell = legacyHcmShell('hcm.personal');
+
+const teamLegacyHcmShell = legacyHcmShell('hcm.team');
+
+const operationsLegacyHcmShell = legacyHcmShell('hcm.operations');
+
+const managementLegacyHcmShell = legacyHcmShell('hcm.management');
+
+function legacyShellForSurface(surfaceId: string) {
+  if (surfaceId === 'hcm.personal') return personalLegacyHcmShell;
+  if (surfaceId === 'hcm.team') return teamLegacyHcmShell;
+  if (surfaceId === 'hcm.operations') return operationsLegacyHcmShell;
+  if (surfaceId === 'hcm.management') return managementLegacyHcmShell;
+  throw new Error(`Unknown HCM surface: ${surfaceId}`);
+}
 
 const hcmPageRoutes = OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
   (route) => route.productId === 'hcm'
 );
 
+const hcmManagementLegacyItems = hcmPageRoutes
+  .filter((route) => route.surfaceId === 'hcm.management')
+  .map((route) => {
+    const item = findHcmNavigationItem(route.pattern);
+    if (!item) throw new Error(`Missing HCM management navigation item: ${route.pattern}`);
+    return item;
+  });
+
+function HcmLegacyManagementIndex() {
+  const access = useHcmAccess();
+  return (
+    <LegacyProductFirstAllowedIndex
+      items={hcmManagementLegacyItems}
+      canAccessAudience={(item) =>
+        canAccessHcmNavigationAudience(item as HcmNavigationItem, access)
+      }
+    />
+  );
+}
+
 function hcmSurfaceShell(surfaceId: string) {
+  const legacy = legacyShellForSurface(surfaceId);
   return (
     <ConfiguredProductSurfaceShell
       manifest={HCM_PRODUCT_MANIFEST}
       surfaceId={surfaceId}
       areaKey="hcm"
       translationNamespace="hcm"
-      legacy={legacyHcmShell}
+      legacy={legacy}
     />
   );
 }
 
 function hcmSurfaceBoundary(surfaceId: string) {
+  const legacy = legacyShellForSurface(surfaceId);
   return (
-    <ProductCanarySurfaceBoundary productId="hcm" surfaceId={surfaceId} legacy={legacyHcmShell}>
+    <ProductCanarySurfaceBoundary productId="hcm" surfaceId={surfaceId} legacy={legacy}>
       {hcmSurfaceShell(surfaceId)}
     </ProductCanarySurfaceBoundary>
   );
 }
 
 function hcmIndexedSurfaceBoundary(surfaceId: string, indexPath: `/${string}`) {
+  const legacy = legacyShellForSurface(surfaceId);
   return (
     <ProductCanaryIndexedSurfaceBoundary
       productId="hcm"
       surfaceId={surfaceId}
       indexPath={indexPath}
-      legacy={legacyHcmShell}
+      legacy={legacy}
     >
       {hcmSurfaceShell(surfaceId)}
     </ProductCanaryIndexedSurfaceBoundary>
@@ -141,12 +229,17 @@ function hcmIndexedSurfaceBoundary(surfaceId: string, indexPath: `/${string}`) {
 function hcmGovernedPage(routeContractKey: string) {
   const route = hcmPageRoutes.find((candidate) => candidate.routeContractKey === routeContractKey);
   if (!route) throw new Error(`Unknown HCM route contract: ${routeContractKey}`);
+  const navigationItem = findHcmNavigationItem(route.pattern);
+  if (!navigationItem) throw new Error(`Missing HCM navigation item: ${route.pattern}`);
+  const legacyPage = (
+    <HcmLegacyPageAccessGuard item={navigationItem}>{hcmPage}</HcmLegacyPageAccessGuard>
+  );
   return (
     <ProductCanaryRouteBoundary
       productId="hcm"
       surfaceId={route.surfaceId}
       routeContractKey={route.routeContractKey}
-      legacy={hcmPage}
+      legacy={legacyPage}
     >
       {hcmPage}
     </ProductCanaryRouteBoundary>
@@ -216,7 +309,7 @@ function hcmSurfaceRoutes(): RouteObject[] {
                 routeContractKey: route.routeContractKey,
                 path: route.pattern,
               }))}
-              legacy={hcmPage}
+              legacy={<HcmLegacyManagementIndex />}
             />
           ),
         },

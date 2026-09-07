@@ -8,9 +8,9 @@ import { CommunicationsLayout } from '../layouts/communications-layout';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
-  AppRouteGuard,
   authenticationFallback,
   ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -52,21 +52,22 @@ const page = (children: React.ReactNode) => (
 );
 
 const legacyWorkShell = (
-  <AppRouteGuard
+  <ProductWorkRouteGuard
+    productId="communications"
+    surfaceId="communications.work"
     resourceKey="APP.COMMUNICATIONS"
-    requiredAnySupportScopes={COMMUNICATIONS_SUPPORT_SCOPES}
   >
     <CommunicationsLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
 );
 
 const legacyManagementShell = (
-  <AppRouteGuard
-    resourceKey="APP.COMMUNICATIONS"
+  <ProductRouteGuard
+    resourceKey="ADMIN.COMMUNICATIONS"
     requiredAnySupportScopes={COMMUNICATIONS_SUPPORT_SCOPES}
   >
     <CommunicationsLayout />
-  </AppRouteGuard>
+  </ProductRouteGuard>
 );
 
 const communicationsManagementIndexCandidates = [

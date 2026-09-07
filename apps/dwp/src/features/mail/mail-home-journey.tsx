@@ -1,33 +1,42 @@
 import { useTranslation } from 'react-i18next';
-import type { ReactNode } from 'react';
 import {
   ArrowRight,
+  CheckCircle2,
   CircleAlert,
   Clock3,
   Inbox,
-  ListFilter,
   MessageCircleReply,
   Sparkles,
+  TriangleAlert,
 } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 
-import type { MailHome, MailOrganization } from '@dwp-frontend/shared-utils';
+import type { MailHome } from '@dwp-frontend/shared-utils';
 
-const FLOW_TONES = ['#176B63', '#B4233F', '#B66A0A', '#5267A8', '#7C3AED'] as const;
+const COMPACT_RADIUS = `${foundationTokens.radius.compact}px`;
+
+const FLOW_TONES = ['success', 'error', 'warning', 'info', 'primary'] as const;
 
 export function MailDailyFlow({
   metrics,
+  accounts,
+  generatedAt,
   onNavigate,
 }: {
   metrics: MailHome['metrics'];
+  accounts: MailHome['accounts'];
+  generatedAt: string;
   onNavigate: (path: string) => void;
 }) {
-  const { t } = useTranslation('mail');
+  const { t, i18n } = useTranslation('mail');
+  const theme = useTheme();
   const items = [
     {
       key: 'unread',
@@ -61,241 +70,237 @@ export function MailDailyFlow({
     },
   ] as const;
   const attention = metrics.urgent + metrics.needsReply;
-  const maximum = Math.max(1, ...items.map((item) => item.value));
+  const attentionPath = metrics.needsReply
+    ? '/mail/inbox?lane=NEEDS_REPLY'
+    : '/mail/inbox?lane=PRIORITY';
+  const unhealthyAccounts = accounts.filter(
+    (account) => account.connectionState !== 'ACTIVE' || account.synchronizationState === 'DEGRADED'
+  ).length;
 
   return (
-    <Box
-      component="section"
-      aria-labelledby="mail-daily-flow-title"
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', lg: 'minmax(260px, .8fr) minmax(0, 1.4fr)' },
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-        overflow: 'hidden',
-      }}
-    >
+    <Box component="section" aria-labelledby="mail-daily-flow-title" sx={{ minWidth: 0 }}>
       <Box
-        sx={{
-          p: { xs: 2.25, md: 3 },
-          bgcolor: 'rgba(23, 107, 99, 0.055)',
-          borderRight: { lg: 1 },
-          borderBottom: { xs: 1, lg: 0 },
-          borderColor: 'divider',
-        }}
+        sx={(theme) => ({
+          px: { xs: 1.5, md: 2 },
+          py: { xs: 1.35, md: 1.5 },
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'auto minmax(0, 1fr) auto' },
+          gap: { xs: 1.25, md: 1.5 },
+          alignItems: 'center',
+          border: 1,
+          borderColor: alpha(theme.palette.primary.main, 0.2),
+          borderRadius: COMPACT_RADIUS,
+          bgcolor: alpha(theme.palette.primary.main, 0.045),
+        })}
       >
-        <Chip
-          size="small"
-          icon={<Sparkles size={14} />}
-          label={t('home.journey.badge')}
-          variant="outlined"
-        />
-        <Typography
-          id="mail-daily-flow-title"
-          component="h2"
-          variant="h5"
-          fontWeight={850}
-          sx={{ mt: 1.75, maxWidth: 360, lineHeight: 1.35 }}
+        <Box
+          sx={{
+            width: 34,
+            height: 34,
+            display: 'grid',
+            placeItems: 'center',
+            borderRadius: COMPACT_RADIUS,
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+          }}
         >
-          {attention
-            ? t('home.journey.attentionTitle', { count: attention })
-            : t('home.journey.clearTitle')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1, maxWidth: 420 }}>
-          {t('home.journey.description')}
-        </Typography>
+          <Sparkles size={18} />
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+            <Typography
+              id="mail-daily-flow-title"
+              component="h2"
+              variant="subtitle2"
+              fontWeight="fontWeightBold"
+            >
+              {attention
+                ? t('home.journey.attentionTitle', { count: attention })
+                : t('home.journey.clearTitle')}
+            </Typography>
+            <Chip
+              size="small"
+              icon={unhealthyAccounts ? <TriangleAlert size={13} /> : <CheckCircle2 size={13} />}
+              color={unhealthyAccounts ? 'warning' : 'success'}
+              variant="outlined"
+              label={
+                unhealthyAccounts
+                  ? t('home.journey.accountWarning', { count: unhealthyAccounts })
+                  : t('home.journey.accountHealthy')
+              }
+            />
+          </Stack>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.35 }}>
+            {t('home.journey.description')}{' '}
+            <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+              ·{' '}
+              {t('home.journey.updatedAt', {
+                value: formatDate(
+                  generatedAt,
+                  { dateStyle: 'medium', timeStyle: 'short' },
+                  resolveSupportedLocale(i18n.resolvedLanguage ?? i18n.language)
+                ),
+              })}
+            </Box>
+          </Typography>
+        </Box>
         <ActionButton
           intent="primary"
           size="small"
           endIcon={<ArrowRight size={15} />}
-          sx={{ mt: 2.25 }}
-          onClick={() => onNavigate(attention ? '/mail/inbox?lane=NEEDS_REPLY' : '/mail/inbox')}
+          onClick={() => onNavigate(attention ? attentionPath : '/mail/inbox')}
         >
           {attention ? t('home.journey.start') : t('home.journey.openInbox')}
         </ActionButton>
       </Box>
 
-      <Box sx={{ p: { xs: 2.25, md: 3 }, minWidth: 0 }}>
-        <Typography variant="subtitle2" fontWeight={800}>
-          {t('home.journey.flowTitle')}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {t('home.journey.flowDescription')}
-        </Typography>
-        <Box
-          sx={{
-            mt: 2.25,
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(5, minmax(0, 1fr))' },
-            gap: { xs: 1.5, sm: 0 },
-          }}
-        >
-          {items.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <Box
-                key={item.key}
-                component="button"
-                type="button"
-                onClick={() => onNavigate(item.path)}
-                sx={{
-                  appearance: 'none',
-                  border: 0,
-                  borderLeft: { sm: index ? 1 : 0 },
-                  borderColor: 'divider',
-                  bgcolor: 'transparent',
-                  color: 'text.primary',
-                  textAlign: 'left',
-                  px: { xs: 0, sm: 2 },
-                  py: 0.5,
-                  minWidth: 0,
-                  cursor: 'pointer',
-                  '&:hover .mail-flow-label': { color: 'primary.main' },
-                  '&:focus-visible': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: 3,
-                  },
-                }}
-              >
-                <Stack direction="row" spacing={0.75} alignItems="center">
-                  <Icon size={16} color={FLOW_TONES[index]} />
-                  <Typography className="mail-flow-label" variant="caption" fontWeight={750}>
-                    {t(`home.metrics.${item.key}`)}
-                  </Typography>
-                </Stack>
-                <Typography variant="h4" fontWeight={850} sx={{ mt: 0.75 }}>
-                  {item.value}
-                </Typography>
-                <Box sx={{ height: 5, bgcolor: 'action.hover', mt: 1.25, overflow: 'hidden' }}>
-                  <Box
-                    sx={{
-                      width: `${Math.max(item.value ? 10 : 0, (item.value / maximum) * 100)}%`,
-                      height: 1,
-                      bgcolor: FLOW_TONES[index],
-                      transition: 'width 240ms ease-out',
-                    }}
-                  />
-                </Box>
-              </Box>
-            );
-          })}
-        </Box>
-      </Box>
-    </Box>
-  );
-}
-
-export function MailAutomationRhythm({
-  organization,
-  onOpen,
-}: {
-  organization?: MailOrganization;
-  onOpen: () => void;
-}) {
-  const { t } = useTranslation('mail');
-  const folders = organization?.folders.filter((item) => item.folderType === 'CUSTOM') ?? [];
-  const rules = organization?.rules ?? [];
-  const enabledRules = rules.filter((item) => item.enabled);
-  const latestRun = organization?.recentRuns[0];
-
-  return (
-    <Box component="section" aria-labelledby="mail-automation-rhythm-title">
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-end" mb={1.25}>
-        <Box>
-          <Typography
-            id="mail-automation-rhythm-title"
-            component="h2"
-            variant="h6"
-            fontWeight={800}
-          >
-            {t('home.automation.title')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-            {t('home.automation.description')}
-          </Typography>
-        </Box>
-        <ActionButton
-          intent="quiet"
-          size="small"
-          endIcon={<ArrowRight size={15} />}
-          onClick={onOpen}
-        >
-          {t('home.automation.manage')}
-        </ActionButton>
-      </Stack>
       <Box
+        aria-label={t('home.signalSummary')}
         sx={{
+          mt: 1,
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-          borderTop: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(5, minmax(0, 1fr))' },
+          gap: 0.75,
+          '@media (min-width: 390px) and (max-width: 899.95px)': {
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          },
         }}
       >
-        <RhythmItem
-          icon={<ListFilter size={17} />}
-          label={t('home.automation.activeRules')}
-          value={enabledRules.length}
-          detail={t('home.automation.activeRulesDetail')}
-        />
-        <RhythmItem
-          icon={<Inbox size={17} />}
-          label={t('home.automation.personalFolders')}
-          value={folders.length}
-          detail={t('home.automation.personalFoldersDetail')}
-        />
-        <RhythmItem
-          icon={<Sparkles size={17} />}
-          label={t('home.automation.latestRun')}
-          value={latestRun?.changedCount ?? 0}
-          detail={
-            latestRun
-              ? t('home.automation.latestRunDetail', { count: latestRun.matchedCount })
-              : t('home.automation.neverRun')
-          }
-        />
+        {items.map((item, index) => {
+          const Icon = item.icon;
+          const proposal = item.key === 'assistant';
+          const palette = theme.palette[FLOW_TONES[index]];
+          const tone = theme.palette.mode === 'dark' ? palette.light : palette.dark;
+          return (
+            <Box
+              key={item.key}
+              component="button"
+              type="button"
+              onClick={() => onNavigate(item.path)}
+              sx={(theme) => ({
+                appearance: 'none',
+                border: 1,
+                borderColor: proposal ? alpha(theme.palette.primary.main, 0.22) : alpha(tone, 0.16),
+                borderRadius: COMPACT_RADIUS,
+                bgcolor: proposal
+                  ? alpha(theme.palette.primary.main, 0.055)
+                  : theme.palette.background.paper,
+                color: 'text.primary',
+                textAlign: 'left',
+                px: 1.35,
+                py: 1.05,
+                minHeight: 64,
+                minWidth: 0,
+                cursor: 'pointer',
+                boxShadow: 'none',
+                transition: theme.transitions.create([
+                  'background-color',
+                  'border-color',
+                  'box-shadow',
+                ]),
+                '&:hover': {
+                  bgcolor: proposal
+                    ? alpha(theme.palette.primary.main, 0.085)
+                    : theme.palette.action.hover,
+                  borderColor: proposal ? theme.palette.primary.main : alpha(tone, 0.34),
+                  boxShadow: 'none',
+                },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: 2,
+                },
+                '@media (min-width: 390px) and (max-width: 899.95px)': {
+                  gridColumn: index === items.length - 1 ? '1 / -1' : 'auto',
+                },
+              })}
+            >
+              {proposal ? (
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      display: 'grid',
+                      placeItems: 'center',
+                      borderRadius: COMPACT_RADIUS,
+                      bgcolor: 'primary.main',
+                      color: 'primary.contrastText',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon size={17} />
+                  </Box>
+                  <SignalContent
+                    eyebrow={t(`home.metricEyebrows.${item.key}`)}
+                    label={t(`home.metrics.${item.key}`)}
+                    value={item.value}
+                    tone={tone}
+                  />
+                </Stack>
+              ) : (
+                <SignalContent
+                  eyebrow={t(`home.metricEyebrows.${item.key}`)}
+                  label={t(`home.metrics.${item.key}`)}
+                  value={item.value}
+                  tone={tone}
+                  dot
+                />
+              )}
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   );
 }
 
-function RhythmItem({
-  icon,
+function SignalContent({
+  eyebrow,
   label,
   value,
-  detail,
+  tone,
+  dot = false,
 }: {
-  icon: ReactNode;
+  eyebrow: string;
   label: string;
   value: number;
-  detail: string;
+  tone: string;
+  dot?: boolean;
 }) {
   return (
-    <Box
-      sx={{
-        p: 2,
-        borderLeft: { md: 1 },
-        borderTop: { xs: 1, md: 0 },
-        borderColor: 'divider',
-        '&:first-of-type': { borderLeft: 0, borderTop: 0 },
-      }}
-    >
-      <Stack direction="row" spacing={0.75} alignItems="center" color="text.secondary">
-        {icon}
-        <Typography variant="caption" fontWeight={750}>
-          {label}
+    <Box sx={{ minWidth: 0, flex: 1 }}>
+      <Stack direction="row" spacing={0.55} alignItems="center">
+        {dot && (
+          <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: tone, flexShrink: 0 }} />
+        )}
+        <Typography
+          component="span"
+          sx={{
+            color: tone,
+            fontSize: 'caption.fontSize',
+            lineHeight: 'body2.lineHeight',
+            fontWeight: 'fontWeightBold',
+            textTransform: 'uppercase',
+          }}
+        >
+          {eyebrow}
         </Typography>
       </Stack>
-      <Typography variant="h5" fontWeight={850} sx={{ mt: 0.75 }}>
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {detail}
-      </Typography>
+      <Stack
+        direction="row"
+        spacing={1}
+        justifyContent="space-between"
+        alignItems="baseline"
+        mt={0.45}
+      >
+        <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
+          {label}
+        </Typography>
+        <Typography component="span" variant="subtitle1" fontWeight="fontWeightBold" color={tone}>
+          {value}
+        </Typography>
+      </Stack>
     </Box>
   );
 }

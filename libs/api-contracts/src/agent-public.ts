@@ -85,6 +85,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/activity/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Activity Events */
+        get: operations["list_activity_events_v1_activity_events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/activity/events/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity Event Detail */
+        get: operations["activity_event_detail_v1_activity_events__event_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/activity/executions/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity Execution Summary */
+        get: operations["activity_execution_summary_v1_activity_executions_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/actions": {
         parameters: {
             query?: never;
@@ -411,6 +462,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/personal-data/retention/{domain}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Upsert Retention Policy */
+        put: operations["upsert_retention_policy_v1_admin_personal_data_retention__domain__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/proposals": {
         parameters: {
             query?: never;
@@ -549,6 +617,265 @@ export interface paths {
         patch: operations["update_source_policy_v1_admin_sources__source_key__patch"];
         trace?: never;
     };
+    "/v1/ai-controls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Personal Ai Controls */
+        get: operations["get_personal_ai_controls_v1_ai_controls_get"];
+        /** Update Personal Ai Controls */
+        put: operations["update_personal_ai_controls_v1_ai_controls_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ai-controls/memories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Personal Memories */
+        get: operations["list_personal_memories_v1_ai_controls_memories_get"];
+        put?: never;
+        /** Create Personal Memory */
+        post: operations["create_personal_memory_v1_ai_controls_memories_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ai-controls/memories/{memory_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Personal Memory */
+        put: operations["update_personal_memory_v1_ai_controls_memories__memory_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ai-controls/memories/{memory_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete Personal Memory */
+        post: operations["delete_personal_memory_v1_ai_controls_memories__memory_id__delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ai-controls/memories/{memory_id}/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Personal Memory State */
+        post: operations["change_personal_memory_state_v1_ai_controls_memories__memory_id__state_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ai-controls/sources/{source_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Ai Source Preference */
+        put: operations["update_ai_source_preference_v1_ai_controls_sources__source_key__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Artifacts */
+        get: operations["list_artifacts_v1_artifacts_get"];
+        put?: never;
+        /** Create Artifact */
+        post: operations["create_artifact_v1_artifacts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Artifact */
+        get: operations["get_artifact_v1_artifacts__artifact_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Autosave Artifact */
+        put: operations["autosave_artifact_v1_artifacts__artifact_id__draft_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Export Artifact */
+        post: operations["export_artifact_v1_artifacts__artifact_id__exports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/preflights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run Artifact Preflight */
+        post: operations["run_artifact_preflight_v1_artifacts__artifact_id__preflights_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/preflights/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Current Artifact Preflight */
+        get: operations["get_current_artifact_preflight_v1_artifacts__artifact_id__preflights_current_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish Artifact */
+        post: operations["publish_artifact_v1_artifacts__artifact_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Artifact Versions */
+        get: operations["list_artifact_versions_v1_artifacts__artifact_id__versions_get"];
+        put?: never;
+        /** Create Artifact Version */
+        post: operations["create_artifact_version_v1_artifacts__artifact_id__versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/artifacts/{artifact_id}/versions/{version_number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Artifact Version */
+        get: operations["get_artifact_version_v1_artifacts__artifact_id__versions__version_number__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/ask": {
         parameters: {
             query?: never;
@@ -617,6 +944,74 @@ export interface paths {
         head?: never;
         /** Rename Conversation */
         patch: operations["rename_conversation_v1_conversations__conversation_id__patch"];
+        trace?: never;
+    };
+    "/v1/personal-data/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Personal Data Governance Capabilities */
+        get: operations["get_personal_data_governance_capabilities_v1_personal_data_capabilities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/deletions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Personal Data Deletion */
+        post: operations["request_personal_data_deletion_v1_personal_data_deletions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/deletions/{deletion_job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Personal Data Deletion */
+        get: operations["get_personal_data_deletion_v1_personal_data_deletions__deletion_job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/personal-data/retention": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Retention Policies */
+        get: operations["list_retention_policies_v1_personal_data_retention_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/v1/plans/preview": {
@@ -756,6 +1151,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/routines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Routines */
+        get: operations["list_routines_v1_routines_get"];
+        put?: never;
+        /** Create Routine */
+        post: operations["create_routine_v1_routines_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Routine */
+        get: operations["get_routine_v1_routines__routine_id__get"];
+        /** Update Routine */
+        put: operations["update_routine_v1_routines__routine_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive Routine */
+        post: operations["archive_routine_v1_routines__routine_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Routine Consent */
+        post: operations["change_routine_consent_v1_routines__routine_id__consent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/dry-runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dry Run Routine */
+        post: operations["dry_run_routine_v1_routines__routine_id__dry_runs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/lifecycle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Routine Lifecycle */
+        post: operations["change_routine_lifecycle_v1_routines__routine_id__lifecycle_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/runs": {
         parameters: {
             query?: never;
@@ -765,6 +1264,23 @@ export interface paths {
         };
         /** List User Runs */
         get: operations["list_user_runs_v1_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get User Run */
+        get: operations["get_user_run_v1_runs__run_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -919,6 +1435,192 @@ export interface components {
              */
             success: boolean;
         };
+        /** ActivityCoverage */
+        ActivityCoverage: {
+            /** Excludedprovenance */
+            excludedProvenance?: string[];
+            /**
+             * Includeslegacy
+             * @default false
+             */
+            includesLegacy: boolean;
+            /**
+             * Includesusage
+             * @default false
+             */
+            includesUsage: boolean;
+            /**
+             * Semantics
+             * @default CURRENT_EXECUTION_SNAPSHOTS
+             */
+            semantics: string;
+            /**
+             * Sourcescope
+             * @default DWAI_ON
+             */
+            sourceScope: string;
+            /** Supportedobjecttypes */
+            supportedObjectTypes?: string[];
+        };
+        /** ActivityEvent */
+        ActivityEvent: {
+            /**
+             * Actor
+             * @default AGENT
+             */
+            actor: string;
+            /**
+             * Actorname
+             * @default DWAI·ON
+             */
+            actorName: string;
+            /** Attempt */
+            attempt: number;
+            /**
+             * Auditaccess
+             * @default RESTRICTED
+             */
+            auditAccess: string;
+            /** Auditid */
+            auditId?: string | null;
+            /** Auditrecordid */
+            auditRecordId?: string | null;
+            /**
+             * Auditstatus
+             * @default NOT_LINKED
+             */
+            auditStatus: string;
+            /** Correlationid */
+            correlationId?: string | null;
+            /**
+             * Dataprovenance
+             * @default LIVE
+             */
+            dataProvenance: string;
+            /**
+             * Eventkind
+             * @default EXECUTION_SNAPSHOT
+             */
+            eventKind: string;
+            /** Executionid */
+            executionId: string;
+            /** Executionversion */
+            executionVersion: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Objectid */
+            objectId: string;
+            /** Objectlabel */
+            objectLabel: string;
+            /**
+             * Objecttype
+             * @default AGENT_RUN
+             */
+            objectType: string;
+            /**
+             * Occurredat
+             * Format: date-time
+             */
+            occurredAt: string;
+            /** Progress */
+            progress?: number | null;
+            /** Resumecursor */
+            resumeCursor?: string | null;
+            /**
+             * Source
+             * @default DWAI_ON
+             */
+            source: string;
+            /**
+             * Sourceaccess
+             * @default AVAILABLE
+             */
+            sourceAccess: string;
+            /** Sourceeventid */
+            sourceEventId: string;
+            /**
+             * Sourceobservedat
+             * Format: date-time
+             */
+            sourceObservedAt: string;
+            /** Sourceroute */
+            sourceRoute: string;
+            /** State */
+            state: string;
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
+            /** Tool */
+            tool?: string | null;
+            /** Updatedat */
+            updatedAt?: string | null;
+            /** Workstatus */
+            workStatus?: string | null;
+        };
+        /** ActivityEventEnvelope */
+        ActivityEventEnvelope: {
+            data: components["schemas"]["ActivityEvent"];
+            /**
+             * Message
+             * @default Current Agent execution snapshot loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ActivityPage */
+        ActivityPage: {
+            coverage?: components["schemas"]["ActivityCoverage"];
+            /** Events */
+            events: components["schemas"]["ActivityEvent"][];
+            /**
+             * Generatedat
+             * Format: date-time
+             */
+            generatedAt: string;
+            /** Hasmore */
+            hasMore: boolean;
+            /** Nextcursor */
+            nextCursor?: string | null;
+            /**
+             * Snapshotat
+             * Format: date-time
+             */
+            snapshotAt: string;
+            /** Startcursor */
+            startCursor: string;
+        };
+        /** ActivityPageEnvelope */
+        ActivityPageEnvelope: {
+            data: components["schemas"]["ActivityPage"];
+            /**
+             * Message
+             * @default Current Agent execution snapshots loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /** AdminChangeIntent */
         AdminChangeIntent: {
             /** Commandkey */
@@ -1049,6 +1751,54 @@ export interface components {
          * @enum {string}
          */
         AgentRunState: "RUNNING" | "COMPLETED" | "FAILED";
+        /**
+         * AiSourceKey
+         * @enum {string}
+         */
+        AiSourceKey: "WORK_ITEM" | "MAIL" | "CALENDAR";
+        /** AiSourcePreference */
+        AiSourcePreference: {
+            /** Available */
+            available: boolean;
+            /**
+             * Effectscope
+             * @default PERSONAL_ROUTINE_DRY_RUN_ONLY
+             */
+            effectScope: string;
+            /** Effective */
+            effective: boolean;
+            /** Enabled */
+            enabled: boolean;
+            /**
+             * Proactiveanalysisintegrationavailable
+             * @default false
+             */
+            proactiveAnalysisIntegrationAvailable: boolean;
+            /**
+             * Retention
+             * @default REFERENCE_ONLY_NO_RAW_COPY
+             */
+            retention: string;
+            /** Revision */
+            revision: number;
+            sourceKey: components["schemas"]["AiSourceKey"];
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /** AiSourcePreferenceEnvelope */
+        AiSourcePreferenceEnvelope: {
+            data: components["schemas"]["AiSourcePreference"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
         /** AnalyzeProposalsRequest */
         AnalyzeProposalsRequest: {
             /**
@@ -1074,6 +1824,434 @@ export interface components {
             rating: components["schemas"]["AnswerFeedbackRating"];
             /** Reasoncodes */
             reasonCodes?: string[];
+        };
+        /** ArchiveRoutineRequest */
+        ArchiveRoutineRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
+        /** ArtifactCapabilities */
+        ArtifactCapabilities: {
+            /**
+             * Collaborativeeditingavailable
+             * @default false
+             */
+            collaborativeEditingAvailable: boolean;
+            /**
+             * Deterministicpreflightavailable
+             * @default true
+             */
+            deterministicPreflightAvailable: boolean;
+            /**
+             * Enterprisedlpconnectoravailable
+             * @default false
+             */
+            enterpriseDlpConnectorAvailable: boolean;
+            /**
+             * Exportexecutionavailable
+             * @default false
+             */
+            exportExecutionAvailable: boolean;
+            /**
+             * Exportrequestavailable
+             * @default true
+             */
+            exportRequestAvailable: boolean;
+            /**
+             * Externalsharingavailable
+             * @default false
+             */
+            externalSharingAvailable: boolean;
+            /**
+             * Immutableversionsavailable
+             * @default true
+             */
+            immutableVersionsAvailable: boolean;
+            /**
+             * Personalpublishstateavailable
+             * @default true
+             */
+            personalPublishStateAvailable: boolean;
+            /**
+             * Recipientsharingavailable
+             * @default false
+             */
+            recipientSharingAvailable: boolean;
+            /**
+             * Sourcefreshnessavailable
+             * @default false
+             */
+            sourceFreshnessAvailable: boolean;
+            /**
+             * Sourceverificationavailable
+             * @default false
+             */
+            sourceVerificationAvailable: boolean;
+            /**
+             * Versionrestoreavailable
+             * @default false
+             */
+            versionRestoreAvailable: boolean;
+        };
+        /** ArtifactDraftContent */
+        ArtifactDraftContent: {
+            /** Body */
+            body: string;
+            /**
+             * Format
+             * @default MARKDOWN
+             */
+            format: string;
+            /** Title */
+            title: string;
+        };
+        /** ArtifactEnvelope */
+        ArtifactEnvelope: {
+            data: components["schemas"]["GovernedArtifact"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactExportEnvelope */
+        ArtifactExportEnvelope: {
+            data: components["schemas"]["ArtifactExportReceipt"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactExportReceipt */
+        ArtifactExportReceipt: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            /** Artifactrevision */
+            artifactRevision: number;
+            /**
+             * Executionavailable
+             * @default false
+             */
+            executionAvailable: boolean;
+            exportFormat: components["schemas"]["ExportFormat"];
+            /**
+             * Exportjobid
+             * Format: uuid
+             */
+            exportJobId: string;
+            /**
+             * Externalwriteperformed
+             * @default false
+             */
+            externalWritePerformed: boolean;
+            /**
+             * Fileavailable
+             * @default false
+             */
+            fileAvailable: boolean;
+            /**
+             * State
+             * @default PENDING
+             */
+            state: string;
+            /** Versionnumber */
+            versionNumber: number;
+        };
+        /** ArtifactListEnvelope */
+        ArtifactListEnvelope: {
+            /** Data */
+            data: components["schemas"]["GovernedArtifact"][];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactPreflightEnvelope */
+        ArtifactPreflightEnvelope: {
+            data: components["schemas"]["ArtifactPreflightReceipt"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactPreflightReceipt */
+        ArtifactPreflightReceipt: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            /** Artifactrevision */
+            artifactRevision: number;
+            /**
+             * Current
+             * @default true
+             */
+            current: boolean;
+            /**
+             * Evaluatedat
+             * Format: date-time
+             */
+            evaluatedAt: string;
+            /**
+             * Expiresat
+             * Format: date-time
+             */
+            expiresAt: string;
+            /** Exportallowed */
+            exportAllowed: boolean;
+            /** Findings */
+            findings: components["schemas"]["DlpFinding"][];
+            outcome: components["schemas"]["DlpOutcome"];
+            /**
+             * Policykey
+             * @default DWP_DETERMINISTIC_DLP_V1
+             */
+            policyKey: string;
+            /**
+             * Policyversion
+             * @default 1
+             */
+            policyVersion: number;
+            /**
+             * Preflightid
+             * Format: uuid
+             */
+            preflightId: string;
+            /** Publishallowed */
+            publishAllowed: boolean;
+            /** Versionnumber */
+            versionNumber: number;
+        };
+        /** ArtifactPublicationEnvelope */
+        ArtifactPublicationEnvelope: {
+            data: components["schemas"]["ArtifactPublicationReceipt"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactPublicationReceipt */
+        ArtifactPublicationReceipt: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            /** Artifactrevision */
+            artifactRevision: number;
+            /**
+             * Externalwriteperformed
+             * @default false
+             */
+            externalWritePerformed: boolean;
+            /**
+             * Publicationscope
+             * @default PERSONAL_WORKSPACE_STATE_ONLY
+             */
+            publicationScope: string;
+            /** Publishedversionnumber */
+            publishedVersionNumber: number;
+            /**
+             * Recipientsharingperformed
+             * @default false
+             */
+            recipientSharingPerformed: boolean;
+            /** @default PUBLISHED */
+            state: components["schemas"]["ArtifactState"];
+        };
+        /** ArtifactSourceEvidence */
+        ArtifactSourceEvidence: {
+            /**
+             * Freshness
+             * @default UNKNOWN
+             */
+            freshness: string;
+            source: components["schemas"]["ArtifactSourceReference"];
+            /**
+             * Verificationstate
+             * @default UNVERIFIED
+             */
+            verificationState: string;
+            /** Verifiedat */
+            verifiedAt?: string | null;
+        };
+        /** ArtifactSourceReference */
+        ArtifactSourceReference: {
+            /** Reference */
+            reference: string;
+            sourceType: components["schemas"]["CitationSourceType"];
+        };
+        /**
+         * ArtifactState
+         * @enum {string}
+         */
+        ArtifactState: "DRAFT" | "REVIEW_REQUIRED" | "PUBLISHED" | "ARCHIVED";
+        /**
+         * ArtifactType
+         * @enum {string}
+         */
+        ArtifactType: "DOCUMENT" | "WORK_PLAN" | "COMPARISON";
+        /** ArtifactVersionDetail */
+        ArtifactVersionDetail: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            content: components["schemas"]["ArtifactDraftContent"];
+            /** Contentfingerprint */
+            contentFingerprint: string;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
+             * Immutable
+             * @default true
+             */
+            immutable: boolean;
+            /** Sourcecount */
+            sourceCount: number;
+            /** Sourceevidence */
+            sourceEvidence: components["schemas"]["ArtifactSourceEvidence"][];
+            /** Versionnumber */
+            versionNumber: number;
+        };
+        /** ArtifactVersionDetailEnvelope */
+        ArtifactVersionDetailEnvelope: {
+            data: components["schemas"]["ArtifactVersionDetail"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactVersionEnvelope */
+        ArtifactVersionEnvelope: {
+            data: components["schemas"]["ArtifactVersionReceipt"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ArtifactVersionReceipt */
+        ArtifactVersionReceipt: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            /** Artifactrevision */
+            artifactRevision: number;
+            /** Contentfingerprint */
+            contentFingerprint: string;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
+             * Immutable
+             * @default true
+             */
+            immutable: boolean;
+            /** Sourcecount */
+            sourceCount: number;
+            /** Versionnumber */
+            versionNumber: number;
+        };
+        /** ArtifactVersionSummary */
+        ArtifactVersionSummary: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            /** Contentfingerprint */
+            contentFingerprint: string;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
+             * Immutable
+             * @default true
+             */
+            immutable: boolean;
+            /** Sourcecount */
+            sourceCount: number;
+            /** Versionnumber */
+            versionNumber: number;
+        };
+        /** ArtifactVersionSummaryListEnvelope */
+        ArtifactVersionSummaryListEnvelope: {
+            /** Data */
+            data: components["schemas"]["ArtifactVersionSummary"][];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
         };
         /** AskCitation */
         AskCitation: {
@@ -1229,6 +2407,21 @@ export interface components {
          * @enum {string}
          */
         AskState: "COMPLETED" | "ABSTAINED" | "CONFIGURATION_REQUIRED";
+        /** AutosaveArtifactRequest */
+        AutosaveArtifactRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            content: components["schemas"]["ArtifactDraftContent"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Sources */
+            sources?: components["schemas"]["ArtifactSourceReference"][];
+        };
         /** BootstrapGovernancePoliciesRequest */
         BootstrapGovernancePoliciesRequest: {
             /** Changereason */
@@ -1274,6 +2467,52 @@ export interface components {
              * @default 90
              */
             retentionDays: number;
+        };
+        /** ChangeMemoryStateRequest */
+        ChangeMemoryStateRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            memoryState: components["schemas"]["MemoryState"];
+            /** Reasoncode */
+            reasonCode: string;
+        };
+        /** ChangeRoutineConsentRequest */
+        ChangeRoutineConsentRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            consentState: components["schemas"]["RoutineConsentState"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            scope: components["schemas"]["RoutineConsentScope"];
+        };
+        /** ChangeRoutineLifecycleRequest */
+        ChangeRoutineLifecycleRequest: {
+            action: components["schemas"]["RoutineLifecycleAction"];
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
         };
         /**
          * CitationSourceType
@@ -1474,6 +2713,34 @@ export interface components {
             /** Targetuserid */
             targetUserId: string;
         };
+        /** CreateArtifactRequest */
+        CreateArtifactRequest: {
+            artifactType: components["schemas"]["ArtifactType"];
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            content: components["schemas"]["ArtifactDraftContent"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Sources */
+            sources?: components["schemas"]["ArtifactSourceReference"][];
+        };
+        /** CreateArtifactVersionRequest */
+        CreateArtifactVersionRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** CreateEvaluationCaseRequest */
         CreateEvaluationCaseRequest: {
             /** Expectedterms */
@@ -1497,6 +2764,20 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** CreateMemoryRequest */
+        CreateMemoryRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            kind: components["schemas"]["MemoryKind"];
+            memory: components["schemas"]["ExplicitMemoryValue"];
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** CreateOperationalGateEvidenceRequest */
         CreateOperationalGateEvidenceRequest: {
             /** Changereason */
@@ -1517,6 +2798,19 @@ export interface components {
         CreateQuestionLaunchRequest: {
             /** Question */
             question: string;
+        };
+        /** CreateRoutineRequest */
+        CreateRoutineRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            definition: components["schemas"]["RoutineDefinition"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
         };
         /**
          * DataClassification
@@ -1614,6 +2908,101 @@ export interface components {
              */
             validDays: number;
         };
+        /** DeleteMemoryRequest */
+        DeleteMemoryRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
+        /** DeletionJob */
+        DeletionJob: {
+            /** Blockeddomains */
+            blockedDomains?: components["schemas"]["DomainKey"][];
+            /** Completedat */
+            completedAt?: string | null;
+            /**
+             * Deletionexecutionavailable
+             * @default false
+             */
+            deletionExecutionAvailable: boolean;
+            /**
+             * Deletionjobid
+             * Format: uuid
+             */
+            deletionJobId: string;
+            /**
+             * Deletionperformed
+             * @default false
+             */
+            deletionPerformed: boolean;
+            /** Domains */
+            domains: components["schemas"]["DomainKey"][];
+            /**
+             * Requestedat
+             * Format: date-time
+             */
+            requestedAt: string;
+            state: components["schemas"]["DeletionJobState"];
+        };
+        /** DeletionJobEnvelope */
+        DeletionJobEnvelope: {
+            data: components["schemas"]["DeletionJob"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * DeletionJobState
+         * @enum {string}
+         */
+        DeletionJobState: "REQUESTED" | "RUNNING" | "PARTIAL" | "COMPLETED" | "BLOCKED_LEGAL_HOLD" | "FAILED";
+        /** DlpFinding */
+        DlpFinding: {
+            /** Code */
+            code: string;
+            /** Field */
+            field: string;
+            severity: components["schemas"]["DlpOutcome"];
+        };
+        /**
+         * DlpOutcome
+         * @enum {string}
+         */
+        DlpOutcome: "PASS" | "REVIEW" | "BLOCKED";
+        /**
+         * DomainKey
+         * @enum {string}
+         */
+        DomainKey: "ROUTINE" | "MEMORY" | "ARTIFACT" | "ARTIFACT_EXPORT";
+        /** DryRunRoutineRequest */
+        DryRunRoutineRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Referencetime */
+            referenceTime?: string | null;
+        };
         /** DwaionOperationsOverview */
         DwaionOperationsOverview: {
             /** Abstainedanswercount */
@@ -1649,7 +3038,7 @@ export interface components {
             handedOffRunCount: number;
             /** Perioddays */
             periodDays: number;
-            retention: components["schemas"]["RetentionPolicy"];
+            retention: components["schemas"]["dwp_agent__operations_contracts__RetentionPolicy"];
             /** Runcount */
             runCount: number;
             /** Totaltokens */
@@ -1915,6 +3304,106 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** ExecutionSummary */
+        ExecutionSummary: {
+            /**
+             * Cancelled
+             * @default 0
+             */
+            cancelled: number;
+            /**
+             * Completed
+             * @default 0
+             */
+            completed: number;
+            coverage?: components["schemas"]["ActivityCoverage"];
+            /**
+             * Failed
+             * @default 0
+             */
+            failed: number;
+            /**
+             * Generatedat
+             * Format: date-time
+             */
+            generatedAt: string;
+            /**
+             * Needsinput
+             * @default 0
+             */
+            needsInput: number;
+            /**
+             * Policyblocked
+             * @default 0
+             */
+            policyBlocked: number;
+            /**
+             * Running
+             * @default 0
+             */
+            running: number;
+            /**
+             * Total
+             * @default 0
+             */
+            total: number;
+            /**
+             * Unknown
+             * @default 0
+             */
+            unknown: number;
+        };
+        /** ExecutionSummaryEnvelope */
+        ExecutionSummaryEnvelope: {
+            data: components["schemas"]["ExecutionSummary"];
+            /**
+             * Message
+             * @default Current Agent execution summary loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** ExplicitMemoryValue */
+        ExplicitMemoryValue: {
+            /** Value */
+            value: string;
+        };
+        /** ExportArtifactRequest */
+        ExportArtifactRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            exportFormat: components["schemas"]["ExportFormat"];
+            /**
+             * Preflightid
+             * Format: uuid
+             */
+            preflightId: string;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Versionnumber */
+            versionNumber: number;
+        };
+        /**
+         * ExportFormat
+         * @enum {string}
+         */
+        ExportFormat: "MARKDOWN" | "DOCX" | "PDF";
         /** FeedbackEnvelope */
         FeedbackEnvelope: {
             data: components["schemas"]["FeedbackReceipt"];
@@ -2052,12 +3541,88 @@ export interface components {
             /** Totalpages */
             totalPages: number;
         };
+        /** GovernedArtifact */
+        GovernedArtifact: {
+            /**
+             * Artifactid
+             * Format: uuid
+             */
+            artifactId: string;
+            artifactType: components["schemas"]["ArtifactType"];
+            capabilities?: components["schemas"]["ArtifactCapabilities"];
+            content: components["schemas"]["ArtifactDraftContent"];
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /** Currentversionnumber */
+            currentVersionNumber: number;
+            /** Draftrevision */
+            draftRevision: number;
+            /** Publishedversionnumber */
+            publishedVersionNumber?: number | null;
+            /** Revision */
+            revision: number;
+            /** Sources */
+            sources: components["schemas"]["ArtifactSourceReference"][];
+            state: components["schemas"]["ArtifactState"];
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
         JsonValue: unknown;
+        /** MemoryEnvelope */
+        MemoryEnvelope: {
+            data: components["schemas"]["PersonalMemory"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * MemoryKind
+         * @enum {string}
+         */
+        MemoryKind: "RESPONSE_LENGTH" | "OUTPUT_FORMAT" | "TONE" | "WORKING_STYLE";
+        /** MemoryListEnvelope */
+        MemoryListEnvelope: {
+            /** Data */
+            data: components["schemas"]["PersonalMemory"][];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * MemoryPreferenceState
+         * @enum {string}
+         */
+        MemoryPreferenceState: "UNSET" | "DISABLED" | "ENABLED";
+        /**
+         * MemoryState
+         * @enum {string}
+         */
+        MemoryState: "ACTIVE" | "DISABLED" | "DELETED";
         /**
          * ModelRouteState
          * @enum {string}
@@ -2274,6 +3839,188 @@ export interface components {
             updatedAt: string;
             /** Validationsummary */
             validationSummary?: string | null;
+        };
+        /** PersonalAiControls */
+        PersonalAiControls: {
+            /**
+             * Automaticmemoryinference
+             * @default false
+             */
+            automaticMemoryInference: boolean;
+            /**
+             * Backgroundcredentialstorage
+             * @default false
+             */
+            backgroundCredentialStorage: boolean;
+            /**
+             * Explicitmemorystorageavailable
+             * @default true
+             */
+            explicitMemoryStorageAvailable: boolean;
+            /**
+             * Externalactionwithoutapproval
+             * @default false
+             */
+            externalActionWithoutApproval: boolean;
+            /** Memoryeffective */
+            memoryEffective: boolean;
+            /** Memoryenabled */
+            memoryEnabled: boolean;
+            memoryState: components["schemas"]["MemoryPreferenceState"];
+            /** Revision */
+            revision: number;
+            /**
+             * Runtimeapplicationavailable
+             * @default false
+             */
+            runtimeApplicationAvailable: boolean;
+            /**
+             * Sensitivememoryallowed
+             * @default false
+             */
+            sensitiveMemoryAllowed: boolean;
+            /** Sourcepreferences */
+            sourcePreferences?: components["schemas"]["AiSourcePreference"][];
+            /**
+             * Teammemoryavailable
+             * @default false
+             */
+            teamMemoryAvailable: boolean;
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /** PersonalAiControlsEnvelope */
+        PersonalAiControlsEnvelope: {
+            data: components["schemas"]["PersonalAiControls"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** PersonalDataGovernanceCapabilities */
+        PersonalDataGovernanceCapabilities: {
+            /**
+             * Analysisreceiptclearavailable
+             * @default false
+             */
+            analysisReceiptClearAvailable: boolean;
+            /**
+             * Auditmetadatamayberetained
+             * @default true
+             */
+            auditMetadataMayBeRetained: boolean;
+            /**
+             * Deletioncompletionclaimavailable
+             * @default false
+             */
+            deletionCompletionClaimAvailable: boolean;
+            /**
+             * Deletionexecutionavailable
+             * @default false
+             */
+            deletionExecutionAvailable: boolean;
+            /**
+             * Deletionrequestavailable
+             * @default true
+             */
+            deletionRequestAvailable: boolean;
+            /**
+             * Proposalclearmanagedseparately
+             * @default true
+             */
+            proposalClearManagedSeparately: boolean;
+            /**
+             * Proposalclearroute
+             * @default /v1/proposals/clear
+             */
+            proposalClearRoute: string;
+            /**
+             * Sourcesystemdataaffected
+             * @default false
+             */
+            sourceSystemDataAffected: boolean;
+            /** Supporteddeletiondomains */
+            supportedDeletionDomains?: components["schemas"]["DomainKey"][];
+        };
+        /** PersonalDataGovernanceCapabilitiesEnvelope */
+        PersonalDataGovernanceCapabilitiesEnvelope: {
+            data: components["schemas"]["PersonalDataGovernanceCapabilities"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** PersonalMemory */
+        PersonalMemory: {
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            kind: components["schemas"]["MemoryKind"];
+            memory: components["schemas"]["ExplicitMemoryValue"];
+            /**
+             * Memoryid
+             * Format: uuid
+             */
+            memoryId: string;
+            /** Revision */
+            revision: number;
+            state: components["schemas"]["MemoryState"];
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+        };
+        /** PersonalRoutine */
+        PersonalRoutine: {
+            capabilities?: components["schemas"]["RoutineCapabilities"];
+            consentState: components["schemas"]["RoutineConsentState"];
+            consents: components["schemas"]["RoutineConsentSet"];
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            definition: components["schemas"]["RoutineDefinition"];
+            /**
+             * Executionmode
+             * @default DRY_RUN_ONLY
+             */
+            executionMode: string;
+            lifecycleState: components["schemas"]["RoutineLifecycle"];
+            /** Nextrunat */
+            nextRunAt?: string | null;
+            /** Revision */
+            revision: number;
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+            /**
+             * Schedulingavailable
+             * @default false
+             */
+            schedulingAvailable: boolean;
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
         };
         /** PlanPreviewEnvelope */
         PlanPreviewEnvelope: {
@@ -2548,6 +4295,27 @@ export interface components {
          * @enum {string}
          */
         ProposalState: "PENDING" | "SNOOZED" | "ACCEPTED" | "DISMISSED" | "EXPIRED";
+        /** PublishArtifactRequest */
+        PublishArtifactRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /**
+             * Preflightid
+             * Format: uuid
+             */
+            preflightId: string;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Versionnumber */
+            versionNumber: number;
+        };
         /** QuestionLaunchPayload */
         QuestionLaunchPayload: {
             /** Question */
@@ -2619,28 +4387,26 @@ export interface components {
             /** Title */
             title: string;
         };
-        /** RetentionPolicy */
-        RetentionPolicy: {
-            /** Legalhold */
-            legalHold: boolean;
-            /** Policyversion */
-            policyVersion: number;
-            /** Retentiondays */
-            retentionDays: number;
+        /** RequestDeletionRequest */
+        RequestDeletionRequest: {
+            /** Changereason */
+            changeReason: string;
             /**
-             * Updatedat
-             * Format: date-time
+             * Commandid
+             * Format: uuid
              */
-            updatedAt: string;
+            commandId: string;
+            /** Domains */
+            domains: components["schemas"]["DomainKey"][];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
         };
-        /** RetentionPolicyEnvelope */
-        RetentionPolicyEnvelope: {
-            data: components["schemas"]["RetentionPolicy"];
-            /**
-             * Message
-             * @default DWAI-ON retention policy loaded.
-             */
-            message: string;
+        /** RetentionPoliciesEnvelope */
+        RetentionPoliciesEnvelope: {
+            /** Data */
+            data: components["schemas"]["dwp_agent__governed_domain_contracts__RetentionPolicy"][];
             /**
              * Status
              * @default SUCCESS
@@ -2657,6 +4423,286 @@ export interface components {
          * @enum {string}
          */
         RiskTier: "L0" | "L1" | "L2" | "L3";
+        /**
+         * RoutineCadence
+         * @enum {string}
+         */
+        RoutineCadence: "DAILY" | "WEEKDAYS" | "WEEKLY";
+        /** RoutineCapabilities */
+        RoutineCapabilities: {
+            /**
+             * Activationavailable
+             * @default false
+             */
+            activationAvailable: boolean;
+            /**
+             * Activewindowpreviewavailable
+             * @default true
+             */
+            activeWindowPreviewAvailable: boolean;
+            /**
+             * Backgroundexecutionavailable
+             * @default false
+             */
+            backgroundExecutionAvailable: boolean;
+            /** Consentscopes */
+            consentScopes?: components["schemas"]["RoutineConsentScope"][];
+            /**
+             * Costbudgetavailable
+             * @default false
+             */
+            costBudgetAvailable: boolean;
+            /**
+             * Dryrunavailable
+             * @default true
+             */
+            dryRunAvailable: boolean;
+            /**
+             * Externalwriteavailable
+             * @default false
+             */
+            externalWriteAvailable: boolean;
+            /**
+             * Holidaypolicyavailable
+             * @default false
+             */
+            holidayPolicyAvailable: boolean;
+            /**
+             * Lifecyclemode
+             * @default DRAFT_PREVIEW_ONLY
+             */
+            lifecycleMode: string;
+            /**
+             * Notificationdeliveryavailable
+             * @default false
+             */
+            notificationDeliveryAvailable: boolean;
+            /**
+             * Onetimescheduleavailable
+             * @default false
+             */
+            oneTimeScheduleAvailable: boolean;
+            /**
+             * Pauseresumeavailable
+             * @default true
+             */
+            pauseResumeAvailable: boolean;
+            /**
+             * Proposaldeliveryavailable
+             * @default false
+             */
+            proposalDeliveryAvailable: boolean;
+            /**
+             * Quiethoursdeliveryenforcementavailable
+             * @default false
+             */
+            quietHoursDeliveryEnforcementAvailable: boolean;
+            /**
+             * Quiethourspreviewavailable
+             * @default true
+             */
+            quietHoursPreviewAvailable: boolean;
+            /**
+             * Runtimebudgetavailable
+             * @default false
+             */
+            runtimeBudgetAvailable: boolean;
+            /**
+             * Schedulingavailable
+             * @default false
+             */
+            schedulingAvailable: boolean;
+            /** Supportedcadences */
+            supportedCadences?: components["schemas"]["RoutineCadence"][];
+        };
+        /**
+         * RoutineConsentScope
+         * @enum {string}
+         */
+        RoutineConsentScope: "SOURCE_ACCESS" | "ANALYSIS" | "PROPOSAL_DELIVERY";
+        /** RoutineConsentSet */
+        RoutineConsentSet: {
+            analysis: components["schemas"]["RoutineConsentState"];
+            proposalDelivery: components["schemas"]["RoutineConsentState"];
+            sourceAccess: components["schemas"]["RoutineConsentState"];
+        };
+        /**
+         * RoutineConsentState
+         * @enum {string}
+         */
+        RoutineConsentState: "UNSET" | "DISABLED" | "ENABLED" | "RECONSENT_REQUIRED";
+        /** RoutineDefinition */
+        RoutineDefinition: {
+            /** Activefrom */
+            activeFrom?: string | null;
+            /** Activeuntil */
+            activeUntil?: string | null;
+            cadence: components["schemas"]["RoutineCadence"];
+            /** Localtime */
+            localTime: string;
+            /** Locale */
+            locale: string;
+            /** Name */
+            name: string;
+            /** Objective */
+            objective: string;
+            /** Quiethoursend */
+            quietHoursEnd?: string | null;
+            /** Quiethoursstart */
+            quietHoursStart?: string | null;
+            /** Sources */
+            sources: components["schemas"]["RoutineSource"][];
+            /** Timezone */
+            timeZone: string;
+            /** Weekdays */
+            weekDays?: number[];
+        };
+        /** RoutineDryRunEnvelope */
+        RoutineDryRunEnvelope: {
+            data: components["schemas"]["RoutineDryRunReceipt"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** RoutineDryRunReceipt */
+        RoutineDryRunReceipt: {
+            /**
+             * Businessevidencecount
+             * @default 0
+             */
+            businessEvidenceCount: number;
+            /**
+             * Evaluatedat
+             * Format: date-time
+             */
+            evaluatedAt: string;
+            /** Evidencecount */
+            evidenceCount: number;
+            /**
+             * Evidencescope
+             * @default AUTHORIZED_SOURCE_BINDING
+             */
+            evidenceScope: string;
+            /**
+             * Externalwritesperformed
+             * @default 0
+             */
+            externalWritesPerformed: number;
+            /**
+             * Outcome
+             * @default VALIDATED
+             */
+            outcome: string;
+            /**
+             * Previewnextrunat
+             * Format: date-time
+             */
+            previewNextRunAt: string;
+            /**
+             * Proposalonly
+             * @default true
+             */
+            proposalOnly: boolean;
+            /**
+             * Proposalscreated
+             * @default 0
+             */
+            proposalsCreated: number;
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+            /** Routinerevision */
+            routineRevision: number;
+            /**
+             * Routinerunid
+             * Format: uuid
+             */
+            routineRunId: string;
+            /**
+             * Schedulingavailable
+             * @default false
+             */
+            schedulingAvailable: boolean;
+            /**
+             * State
+             * @default VALIDATED
+             */
+            state: string;
+            /**
+             * Trigger
+             * @default DRY_RUN
+             */
+            trigger: string;
+            /** Validatedsources */
+            validatedSources: components["schemas"]["RoutineSource"][];
+        };
+        /** RoutineEnvelope */
+        RoutineEnvelope: {
+            data: components["schemas"]["PersonalRoutine"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * RoutineLifecycle
+         * @enum {string}
+         */
+        RoutineLifecycle: "DRAFT" | "PAUSED" | "ARCHIVED";
+        /**
+         * RoutineLifecycleAction
+         * @enum {string}
+         */
+        RoutineLifecycleAction: "PAUSE" | "RESUME";
+        /** RoutineListEnvelope */
+        RoutineListEnvelope: {
+            /** Data */
+            data: components["schemas"]["PersonalRoutine"][];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * RoutineSource
+         * @enum {string}
+         */
+        RoutineSource: "WORK_ITEM" | "MAIL" | "CALENDAR";
+        /** RunArtifactPreflightRequest */
+        RunArtifactPreflightRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Versionnumber */
+            versionNumber: number;
+        };
         /** SafetyPolicy */
         SafetyPolicy: {
             /** Maxsourcescopes */
@@ -2717,6 +4763,22 @@ export interface components {
             /** Expectedversion */
             expectedVersion: number;
         };
+        /** UpdateAiSourcePreferenceRequest */
+        UpdateAiSourcePreferenceRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** UpdateDataSourcePolicyRequest */
         UpdateDataSourcePolicyRequest: {
             accessMode: components["schemas"]["SourceAccessMode"];
@@ -2737,6 +4799,34 @@ export interface components {
             /** Expectedversion */
             expectedVersion: number;
             lifecycleState: components["schemas"]["EvaluationLifecycle"];
+        };
+        /** UpdateMemoryPreferenceRequest */
+        UpdateMemoryPreferenceRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            memoryState: components["schemas"]["MemoryPreferenceState"];
+            /** Reasoncode */
+            reasonCode: string;
+        };
+        /** UpdateMemoryRequest */
+        UpdateMemoryRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            memory: components["schemas"]["ExplicitMemoryValue"];
+            /** Reasoncode */
+            reasonCode: string;
         };
         /** UpdateProposalAnalysisPreferenceRequest */
         UpdateProposalAnalysisPreferenceRequest: {
@@ -2761,6 +4851,19 @@ export interface components {
             /** Retentiondays */
             retentionDays?: number | null;
         };
+        /** UpdateRoutineRequest */
+        UpdateRoutineRequest: {
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            definition: components["schemas"]["RoutineDefinition"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** UpdateSafetyPolicyRequest */
         UpdateSafetyPolicyRequest: {
             /** Changereason */
@@ -2778,6 +4881,48 @@ export interface components {
              * @default true
              */
             requireCitations: boolean;
+        };
+        /** UpsertRetentionPolicyRequest */
+        UpsertRetentionPolicyRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Deletiongracedays */
+            deletionGraceDays: number;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /**
+             * Legalhold
+             * @default false
+             */
+            legalHold: boolean;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Retentiondays */
+            retentionDays: number;
+        };
+        /** UserAgentRunEnvelope */
+        UserAgentRunEnvelope: {
+            data: components["schemas"]["UserAgentRunSummary"];
+            /**
+             * Message
+             * @default Agent run loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
         };
         /** UserAgentRunListEnvelope */
         UserAgentRunListEnvelope: {
@@ -2976,6 +5121,70 @@ export interface components {
             /** Sourcereferences */
             sourceReferences?: string[];
         };
+        /** RetentionPolicy */
+        dwp_agent__governed_domain_contracts__RetentionPolicy: {
+            /** Deletiongracedays */
+            deletionGraceDays: number;
+            domain: components["schemas"]["DomainKey"];
+            /** Legalhold */
+            legalHold: boolean;
+            /** Retentiondays */
+            retentionDays: number;
+            /** Revision */
+            revision: number;
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+        };
+        /** RetentionPolicyEnvelope */
+        dwp_agent__governed_domain_contracts__RetentionPolicyEnvelope: {
+            data: components["schemas"]["dwp_agent__governed_domain_contracts__RetentionPolicy"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** RetentionPolicy */
+        dwp_agent__operations_contracts__RetentionPolicy: {
+            /** Legalhold */
+            legalHold: boolean;
+            /** Policyversion */
+            policyVersion: number;
+            /** Retentiondays */
+            retentionDays: number;
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+        };
+        /** RetentionPolicyEnvelope */
+        dwp_agent__operations_contracts__RetentionPolicyEnvelope: {
+            data: components["schemas"]["dwp_agent__operations_contracts__RetentionPolicy"];
+            /**
+             * Message
+             * @default DWAI-ON retention policy loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
     };
     responses: never;
     parameters: never;
@@ -3116,6 +5325,145 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WorkplaceActionPreviewEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_activity_events_v1_activity_events_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                cursor?: string | null;
+                actor?: string;
+                state?: string;
+                query?: string;
+                q?: string;
+                source?: string;
+                objectType?: string;
+                objectId?: string;
+                executionId?: string;
+                from?: string | null;
+                to?: string | null;
+            };
+            header: {
+                "Accept-Language"?: string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityPageEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activity_event_detail_v1_activity_events__event_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "Accept-Language"?: string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityEventEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activity_execution_summary_v1_activity_executions_summary_get: {
+        parameters: {
+            query?: {
+                actor?: string;
+                state?: string;
+                query?: string;
+                q?: string;
+                source?: string;
+                objectType?: string;
+                objectId?: string;
+                executionId?: string;
+                from?: string | null;
+                to?: string | null;
+            };
+            header: {
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExecutionSummaryEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -4224,6 +6572,50 @@ export interface operations {
             };
         };
     };
+    upsert_retention_policy_v1_admin_personal_data_retention__domain__put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                domain: components["schemas"]["DomainKey"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertRetentionPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["dwp_agent__governed_domain_contracts__RetentionPolicyEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_proposal_v1_admin_proposals_post: {
         parameters: {
             query?: never;
@@ -4284,7 +6676,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RetentionPolicyEnvelope"];
+                    "application/json": components["schemas"]["dwp_agent__operations_contracts__RetentionPolicyEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -4322,7 +6714,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RetentionPolicyEnvelope"];
+                    "application/json": components["schemas"]["dwp_agent__operations_contracts__RetentionPolicyEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -4360,7 +6752,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RetentionPolicyEnvelope"];
+                    "application/json": components["schemas"]["dwp_agent__operations_contracts__RetentionPolicyEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -4596,6 +6988,806 @@ export interface operations {
             };
         };
     };
+    get_personal_ai_controls_v1_ai_controls_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonalAiControlsEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_personal_ai_controls_v1_ai_controls_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMemoryPreferenceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonalAiControlsEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_personal_memories_v1_ai_controls_memories_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_personal_memory_v1_ai_controls_memories_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMemoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_personal_memory_v1_ai_controls_memories__memory_id__put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                memory_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMemoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_personal_memory_v1_ai_controls_memories__memory_id__delete_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                memory_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteMemoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_personal_memory_state_v1_ai_controls_memories__memory_id__state_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                memory_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeMemoryStateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_ai_source_preference_v1_ai_controls_sources__source_key__put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                source_key: components["schemas"]["AiSourceKey"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAiSourcePreferenceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiSourcePreferenceEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_artifacts_v1_artifacts_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_artifact_v1_artifacts_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateArtifactRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_artifact_v1_artifacts__artifact_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autosave_artifact_v1_artifacts__artifact_id__draft_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutosaveArtifactRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_artifact_v1_artifacts__artifact_id__exports_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExportArtifactRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactExportEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_artifact_preflight_v1_artifacts__artifact_id__preflights_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunArtifactPreflightRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactPreflightEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_current_artifact_preflight_v1_artifacts__artifact_id__preflights_current_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactPreflightEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_artifact_v1_artifacts__artifact_id__publish_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishArtifactRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactPublicationEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_artifact_versions_v1_artifacts__artifact_id__versions_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                beforeVersion?: number | null;
+            };
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactVersionSummaryListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_artifact_version_v1_artifacts__artifact_id__versions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateArtifactVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactVersionEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_artifact_version_v1_artifacts__artifact_id__versions__version_number__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+                version_number: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactVersionDetailEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     ask_v1_ask_post: {
         parameters: {
             query?: never;
@@ -4807,6 +7999,164 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConversationEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_personal_data_governance_capabilities_v1_personal_data_capabilities_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonalDataGovernanceCapabilitiesEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_personal_data_deletion_v1_personal_data_deletions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestDeletionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionJobEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_personal_data_deletion_v1_personal_data_deletions__deletion_job_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                deletion_job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletionJobEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_retention_policies_v1_personal_data_retention_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RetentionPoliciesEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -5191,6 +8541,346 @@ export interface operations {
             };
         };
     };
+    list_routines_v1_routines_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_routine_v1_routines_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoutineRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_routine_v1_routines__routine_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_routine_v1_routines__routine_id__put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoutineRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_routine_v1_routines__routine_id__archive_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArchiveRoutineRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_routine_consent_v1_routines__routine_id__consent_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeRoutineConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dry_run_routine_v1_routines__routine_id__dry_runs_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DryRunRoutineRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineDryRunEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_routine_lifecycle_v1_routines__routine_id__lifecycle_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeRoutineLifecycleRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_user_runs_v1_runs_get: {
         parameters: {
             query?: {
@@ -5218,6 +8908,45 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserAgentRunListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_user_run_v1_runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserAgentRunEnvelope"];
                 };
             };
             /** @description Validation Error */

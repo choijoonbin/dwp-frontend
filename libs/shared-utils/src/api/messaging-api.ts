@@ -2,6 +2,9 @@ import { axiosInstance, getEventStream } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
+export * from './messaging-privacy-api';
+export * from './messaging-home-api';
+
 export type MessagingConversationType =
   'DIRECT' | 'GROUP' | 'CHANNEL' | 'ANNOUNCEMENT' | 'INCIDENT' | 'MEETING';
 export type MessagingVisibility = 'PRIVATE' | 'SPACE' | 'TENANT_DISCOVERABLE' | 'ANNOUNCEMENT';
@@ -99,6 +102,7 @@ export type MessagingMember = MessagingPerson & {
   lastReadMessageId?: string | null;
   lastReadSequence?: number;
   lastReadAt?: string | null;
+  readReceiptVisibility?: 'SHARED' | 'PRIVATE';
 };
 
 export type MessagingConversation = {

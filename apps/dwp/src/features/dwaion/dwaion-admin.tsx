@@ -12,7 +12,7 @@ import {
   Workflow,
   type LucideIcon,
 } from 'lucide-react';
-import { ActionButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, ErrorState, FormField, PageCanvas } from '@dwp-frontend/design-system';
 import { formatNumber, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   getDwaionOperationsOverview,
@@ -26,11 +26,11 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import LinearProgress from '@mui/material/LinearProgress';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { verifiedPercentageLabel } from './dwaion-admin-metrics';
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
 
 export function DwaionAdminOverview() {
@@ -42,13 +42,32 @@ export function DwaionAdminOverview() {
     staleTime: 30_000,
   });
   const data = query.data;
-  const completionRate = data?.runCount
-    ? Math.round((data.completedRunCount / data.runCount) * 100)
-    : 0;
-  const positiveFeedbackRate =
-    data && data.feedbackUpCount + data.feedbackDownCount > 0
-      ? Math.round((data.feedbackUpCount / (data.feedbackUpCount + data.feedbackDownCount)) * 100)
-      : 0;
+  const completionRate = verifiedPercentageLabel(data?.completedRunCount, data?.runCount);
+  const positiveFeedbackRate = verifiedPercentageLabel(
+    data?.feedbackUpCount,
+    data ? data.feedbackUpCount + data.feedbackDownCount : undefined
+  );
+
+  if (query.isError) {
+    return (
+      <PageCanvas>
+        <DwaionAdminPageHeader
+          title={t('dwaionAdmin.overview.title')}
+          description={t('dwaionAdmin.overview.description')}
+        />
+        <Box sx={{ mt: 3 }}>
+          <ErrorState
+            size="page"
+            title={t('dwaionAdmin.overview.loadError')}
+            description={t('dwaionAdmin.overview.unavailableDescription')}
+            retryLabel={t('dwaionAdmin.shared.retry')}
+            retrying={query.isFetching}
+            onRetry={() => void query.refetch()}
+          />
+        </Box>
+      </PageCanvas>
+    );
+  }
 
   return (
     <PageCanvas>
@@ -56,12 +75,6 @@ export function DwaionAdminOverview() {
         title={t('dwaionAdmin.overview.title')}
         description={t('dwaionAdmin.overview.description')}
       />
-      {query.isError && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {t('dwaionAdmin.overview.loadError')}
-        </Alert>
-      )}
-
       <Box
         component="section"
         aria-label={t('dwaionAdmin.overview.summaryLabel')}
@@ -86,7 +99,7 @@ export function DwaionAdminOverview() {
             <AdminMetric
               icon={ShieldCheck}
               label={t('dwaionAdmin.overview.completionRate')}
-              value={`${completionRate}%`}
+              value={completionRate}
               detail={t('dwaionAdmin.overview.failed', { count: data?.failedRunCount ?? 0 })}
             />
             <AdminMetric
@@ -165,7 +178,7 @@ export function DwaionAdminOverview() {
             signals={[
               {
                 label: t('dwaionAdmin.overview.feedback.positiveRate'),
-                value: `${positiveFeedbackRate}%`,
+                value: positiveFeedbackRate,
               },
               {
                 label: t('dwaionAdmin.overview.feedback.positive'),
@@ -396,12 +409,6 @@ function SignalSection({
           </Box>
         ))}
       </Box>
-      <LinearProgress
-        variant="determinate"
-        value={100}
-        aria-hidden="true"
-        sx={{ height: 2, mt: 1 }}
-      />
     </Box>
   );
 }

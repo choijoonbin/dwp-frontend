@@ -2,12 +2,12 @@
 
 - Owner: Shared Experience Platform
 - Co-owner: Identity & Access, Approvals, HCM
-- 상태: `implementation safe point (DRAFT / default-off / production blocked)`
-- Gate: `공통 IA·Runtime 구현 완료 / 제품별 권한 음성 Matrix·외부 활성화 증거 대기`
+- 상태: `앱 관리자 구현 CLOSED / 운영 활성화 BLOCKED_EXTERNAL`
+- Gate: `12/12 제품 · 60/60 owner-service PEP · 내부 증적 대기 0 / 외부 출시 증적 37건 대기`
 - Roadmap: R1 Common Experience Foundation
 - Pilot: Approvals `W1a`, HCM `W1b`
 - Technical Canary: Communications·Services `W0.5`
-- 기준일: 2026-08-26
+- 마감 재검증일: 2026-09-04 (초기 Pilot 설계: 2026-08-26)
 
 ## 산출물
 
@@ -21,10 +21,38 @@
 - [Pilot 구현 설계](08-Pilot%20구현%20설계.md)
 - [Pilot 권한 Fixture](09-Pilot%20권한%20Fixture.md)
 - [Pilot 권한 Registry Seed](10-Pilot%20권한%20Registry%20Seed.md)
+- [2026-09-04 마감 재검증 및 신규 연동 경계](11-2026-09-04-closeout.md)
+- [Meetings 관리 Surface 후속 Bundle 승격 설계](12-meetings-management-next-bundle-activation-design.md)
 - [공통 ADR](../../03-architecture/R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 - [전체 메뉴 분류표](../../03-architecture/R1%20제품%20Surface%20전체%20메뉴%20분류표.md)
 
-## 현재 판정
+## 현재 마감 판정
+
+앱 관리자 구현은 최신 재검증에서 집중 단위 8 files / 55 tests, Chromium·mobile 브라우저
+85건이 통과했고 의도된 조건부 시나리오 3건은 skip됐다. 전체 단위 검사는 426 files / 2,834
+tests, non-incremental 타입 검사와 소유 파일 ESLint, source-size 검사는 모두 통과했다. 16개
+제품별 production build와 전체 DWP Vite 초기 번들 예산(1,058.3 KiB raw / 308.6 KiB gzip)도
+통과했다. 전체 `corepack yarn build`와 `format:check`를 포함한 전역 정적 Gate도 병행 변경을
+합친 최신 공유 트리에서 재실행해 통과했다. 이 로컬 통과를 외부 운영 출시 PASS로 바꾸어
+기록하지 않는다.
+최신 정적 메뉴는 193개다.
+실행한 공유 트리의 범위·수치와 별도 제품 작업은 [마감 기록](11-2026-09-04-closeout.md)에서 구분한다.
+
+공통 내부 계약은 불변 v4 증적 기준 12/12 제품과 60/60 PEP 셀이 닫혀 있고 내부 대기는 0이다.
+이는 모든 제품의 새 기능이나 운영 출시가 승인됐다는 의미가 아니다. 출시 상태의 정본은
+[Readiness Manifest](../../06-delivery/release-evidence/product-surface-production-readiness.json)와
+`corepack yarn product-surfaces:readiness:check`의 계산 결과이며, 현재 외부 증적 37건은
+`BLOCKED_EXTERNAL`로 남는다. 코드나 이 문서로 승인·staging·수동 AT·침투 테스트를 대신하지 않는다.
+
+Meeting→Work 후속 업무 원천 전환은 이후 요청된 별도 기능이다. 현재 권한 재검증, 정확한
+follow-up capability와 역할 부여, People 대상 적격성 합의·구현 전까지 NO-GO다. 내부 HTTP
+클라이언트의 정적 계약 등록은 해당 기능이나 신규 권한의 활성화 승인이 아니다.
+
+## 설계 불변식과 초기 Pilot 기록
+
+아래는 2026-08-26 초기 설계 이력이다. 당시 Bundle 버전, 메뉴 수, local seed 및 단계별 계획을
+현재 구현·배포 상태로 해석하지 않는다. 최신 메뉴는 공통 메뉴 분류표와 실행형 manifest 검사를,
+현재 정본·검증 결과는 위 마감 기록과 Readiness Manifest를 사용한다.
 
 공통 IA, Route·Shell·Navigation 계약, Effective Product Surface Context, 권한 실패 상태,
 Technical Canary, Approvals W1a와 HCM W1b Runtime, 12개 제품 Manifest·Shell·Flag 및
@@ -72,8 +100,8 @@ HCM은 owner-service PEP, Target Population, 실 Team·Operations API, SoD와 1�
 3단계 `요청 → 승인 → 활성화`를 분리한다. 본 문서와 Surface ADR은 실제
 Product·Security·Privacy의 Production 승인을 의미하지 않으며 Readiness Manifest가 유일한 출시 판정이다.
 
-W1a 운영 활성화 전에는 ADR·187개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
-Owner가 승인한다. W2/W3의 92개 Frontend DRAFT Page 계약(정적 메뉴 87개 + 동적 5개)도 제품별 Exact Capability가 다음
+W1a 운영 활성화 전에는 ADR·193개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
+Owner가 승인한다. W2/W3의 91개 Frontend DRAFT Page 계약(정적 메뉴 86개 + 동적 5개)도 제품별 Exact Capability가 다음
 불변 Bundle에 승인되기 전에는 활성화하지 않는다. 핵심 승인 Package는 다음과 같다.
 
 1. Bound `EffectiveProductSurfaceContext`·Direct Evaluation·Capability Registry

@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const checker = path.join(root, 'scripts/check-official-backend-contracts.mjs');
+const fixtureChecker = path.join(root, 'scripts/sync-product-authorization-fixtures.mjs');
 const temporaryDirectories = [];
 
 afterEach(() => {
@@ -36,6 +37,14 @@ function run(arguments_, environment = cleanEnvironment()) {
     encoding: 'utf8',
     env: environment,
   });
+}
+
+function runFixtureCheck(fixture, authorizationDirectory) {
+  return spawnSync(
+    process.execPath,
+    [fixtureChecker, '--check', fixture, '--authorization', authorizationDirectory],
+    { cwd: root, encoding: 'utf8', env: cleanEnvironment() }
+  );
 }
 
 function canonicalize(value) {
@@ -87,8 +96,9 @@ function createOfficialContracts() {
     path.join(authorizationDirectory, 'product-surface-rollout-inventory.v1.generated.json'),
     `${JSON.stringify(snapshot.rolloutInventory, null, 2)}\n`
   );
+  const latestVersion = snapshot.index.latestVersion;
   fs.copyFileSync(
-    path.join(authorizationDirectory, 'product-surfaces-v1.bundle-v4.json'),
+    path.join(authorizationDirectory, `product-surfaces-v1.bundle-v${latestVersion}.json`),
     path.join(authorizationDirectory, 'product-surfaces-v1.json')
   );
   fs.copyFileSync(
@@ -237,7 +247,7 @@ test('rejects authorization content with a stale canonical checksum', () => {
   const contracts = createOfficialContracts();
   const bundlePath = path.join(
     contracts,
-    'product-authorization/product-surfaces-v1.bundle-v4.json'
+    'product-authorization/product-surfaces-v1.bundle-v5.json'
   );
   const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
   bundle.owner = `${bundle.owner}-drift`;
@@ -277,15 +287,56 @@ test('rejects a non-DRAFT bundle before external activation approval', () => {
   assert.match(result.stderr, /must remain DRAFT until external activation approval/);
 });
 
-test('rejects a stale future immutable bundle even when v1-v4 remain valid', () => {
+test('rejects a stale future immutable bundle even when v1-v5 remain valid', () => {
   const contracts = createOfficialContracts();
   fs.copyFileSync(
-    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v4.json'),
-    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v5.json')
+    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v5.json'),
+    path.join(contracts, 'product-authorization/product-surfaces-v1.bundle-v6.json')
   );
   const result = run(['--backend-contracts', contracts]);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /exactly immutable bundle v1-v4/);
+  assert.match(result.stderr, /exactly immutable bundle v1-v5/);
+});
+
+test('fixture sync independently rejects a re-signed historical authorization bundle', () => {
+  const contracts = createOfficialContracts();
+  const authorizationDirectory = path.join(contracts, 'product-authorization');
+  const fixturePath = path.join(authorizationDirectory, 'pilot-fixtures.v1.generated.json');
+  const bundlePath = path.join(authorizationDirectory, 'product-surfaces-v1.bundle-v4.json');
+  const indexPath = path.join(authorizationDirectory, 'product-surfaces-v1.index.json');
+  const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
+  bundle.owner = `${bundle.owner}-re-signed`;
+  const checksumInput = structuredClone(bundle);
+  delete checksumInput.checksum;
+  delete checksumInput.bundleStatus;
+  bundle.checksum = sha256(checksumInput);
+  fs.writeFileSync(bundlePath, `${JSON.stringify(bundle, null, 2)}\n`);
+
+  const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  index.versions.find(({ version }) => version === 4).checksum = bundle.checksum;
+  const indexChecksumInput = structuredClone(index);
+  delete indexChecksumInput.indexChecksum;
+  index.indexChecksum = sha256(indexChecksumInput);
+  fs.writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
+
+  const fixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
+  fixture.registryLineage.indexSha256 = index.indexChecksum;
+  fixture.registryLineage.versions.find(({ version }) => version === 4).sha256 = bundle.checksum;
+  for (const testCase of fixture.testCases) {
+    if (testCase.requiredRegistryRef.version === 4) {
+      testCase.requiredRegistryRef.sha256 = bundle.checksum;
+    }
+  }
+  for (const challenge of fixture.catalogs.stepUpChallenges) {
+    if (challenge.requiredRegistryRef.version === 4) {
+      challenge.requiredRegistryRef.sha256 = bundle.checksum;
+    }
+  }
+  writeFixture(fixturePath, fixture);
+
+  const result = runFixtureCheck(fixturePath, authorizationDirectory);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /preserved v4 checksum changed/);
 });
 
 test('rejects an active pointer field even when its index checksum is recomputed', () => {

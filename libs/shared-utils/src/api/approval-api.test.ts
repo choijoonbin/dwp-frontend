@@ -6,6 +6,8 @@ import {
   createApprovalDelegation,
   decideApprovalTask,
   getApprovalHome,
+  getApprovalTask,
+  getApprovalTasks,
   getApprovalWorkflows,
   respondToApprovalInformationRequest,
   retryApprovalIntegrationDelivery,
@@ -38,6 +40,26 @@ describe('approval API boundary', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/approvals/v1/home?contextScopeKey=scope-self',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
+    );
+  });
+
+  it('binds task list and detail reads to the selected opaque scope query', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(jsonResponse({ task: { taskId: 'task-1' } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getApprovalTasks('INBOX', 'scope-decision-a')).resolves.toEqual([]);
+    await expect(getApprovalTask('task-1', 'scope-decision-a')).resolves.toEqual({
+      task: { taskId: 'task-1' },
+    });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/approvals/v1/tasks?view=INBOX&contextScopeKey=scope-decision-a'
+    );
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/approvals/v1/tasks/task-1?contextScopeKey=scope-decision-a'
     );
   });
 

@@ -140,15 +140,18 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     setThreadDraftMentions,
   });
 
-  const conversationsQuery = useQuery({
+  const conversationsQuery = useInfiniteQuery({
     queryKey: ['messaging', 'conversations', activeScope, debouncedSearch],
-    queryFn: () =>
+    queryFn: ({ pageParam }) =>
       getMessagingConversations({
         scope: activeScope,
         query: debouncedSearch,
-        page: 0,
-        pageSize: 60,
+        page: pageParam,
+        pageSize: 30,
       }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      (lastPage.page + 1) * lastPage.pageSize < lastPage.total ? lastPage.page + 1 : undefined,
     staleTime: 15_000,
     refetchInterval: 15_000,
     retry: 1,
@@ -283,9 +286,18 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     onError: () => toast.error(t('message.deleteError')),
   });
 
-  const selectedConversation = conversationsQuery.data?.items.find(
-    (item) => item.conversationId === selectedId
+  const conversations = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          (conversationsQuery.data?.pages.flatMap((page) => page.items) ?? []).map(
+            (conversation) => [conversation.conversationId, conversation]
+          )
+        ).values()
+      ),
+    [conversationsQuery.data?.pages]
   );
+  const selectedConversation = conversations.find((item) => item.conversationId === selectedId);
   const detail = detailQuery.data;
   const historyMessages = useMemo(
     () => messageHistoryQuery.data?.pages.flatMap((page) => page.items) ?? [],
@@ -393,11 +405,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   }, [messageHistoryQuery.data?.pages.length]);
 
   useEffect(() => {
-    if (!desktopSplitView || selectedId || !conversationsQuery.data?.items.length) return;
+    if (!desktopSplitView || selectedId || !conversations.length) return;
     const next = new URLSearchParams(params);
-    next.set('conversation', conversationsQuery.data.items[0]!.conversationId);
+    next.set('conversation', conversations[0]!.conversationId);
     setParams(next, { replace: true });
-  }, [conversationsQuery.data?.items, desktopSplitView, params, selectedId, setParams]);
+  }, [conversations, desktopSplitView, params, selectedId, setParams]);
 
   const latestMessage = detail?.messages.at(-1);
   useEffect(() => {
@@ -428,6 +440,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const markVisibleMessagesRead = useCallback(() => {
     if (
       document.visibilityState !== 'visible' ||
+      !document.hasFocus() ||
       !selectedId ||
       !lastMessageId ||
       markReadPending
@@ -465,7 +478,13 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
 
   useEffect(() => {
     const frame = requestAnimationFrame(markVisibleMessagesRead);
-    return () => cancelAnimationFrame(frame);
+    window.addEventListener('focus', markVisibleMessagesRead);
+    document.addEventListener('visibilitychange', markVisibleMessagesRead);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('focus', markVisibleMessagesRead);
+      document.removeEventListener('visibilitychange', markVisibleMessagesRead);
+    };
   }, [markVisibleMessagesRead]);
 
   const openConversation = useCallback(
@@ -545,6 +564,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     searchRef,
     detailScrollRef,
     conversationsQuery,
+    conversations,
     detailQuery,
     messageHistoryQuery,
     threadQuery,

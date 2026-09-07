@@ -1,3 +1,4 @@
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import {
   Activity,
   ArrowRight,
@@ -333,7 +334,7 @@ export function FocusWidget({
                 sx={{ borderTop: index === 0 ? 0 : 1, borderColor: 'divider' }}
               >
                 <ButtonBase
-                  onClick={() => navigate(`/work?item=${encodeURIComponent(item.id)}`)}
+                  onClick={() => navigate(workspaceWorkItemRoute(item))}
                   sx={{
                     width: 1,
                     minHeight: 72,

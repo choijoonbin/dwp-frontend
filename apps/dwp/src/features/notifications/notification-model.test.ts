@@ -77,6 +77,6 @@ describe('notification model', () => {
     expect(completed.completedAt).toBe('2026-08-19T02:00:00Z');
     expect(completed.version).toBe('3');
     expect(notificationMatchesView(completed, 'DONE')).toBe(true);
-    expect(notificationMatchesView(completed, 'SAVED')).toBe(false);
+    expect(notificationMatchesView(completed, 'SAVED')).toBe(true);
   });
 });

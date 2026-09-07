@@ -41,8 +41,8 @@ describe('generated product route authorization contracts', () => {
 
     expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION).toEqual(
       expect.objectContaining({
-        version: 4,
-        checksum: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
+        version: 5,
+        checksum: 'c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f',
       })
     );
     expect(PRODUCT_SURFACE_ROLLOUT_PRODUCTS).toEqual([
@@ -72,13 +72,13 @@ describe('generated product route authorization contracts', () => {
       {}
     );
 
-    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(155);
-    expect(countByKind).toEqual({ ACTION: 67, DATA: 22, PAGE: 66 });
-    expect(nonPages).toHaveLength(89);
+    expect(PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS).toHaveLength(160);
+    expect(countByKind).toEqual({ ACTION: 67, DATA: 27, PAGE: 66 });
+    expect(nonPages).toHaveLength(94);
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(84);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(150);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(150);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(157);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(157);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );
@@ -100,6 +100,69 @@ describe('generated product route authorization contracts', () => {
         routeContractKey: 'route.dwaion.work.activity.page',
       },
     ]);
+    for (const view of ['routines', 'personal-controls', 'artifacts']) {
+      expect(
+        DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+          (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
+        )
+      ).toEqual([
+        {
+          routeId: `dwaion.work.${view}`,
+          pattern: `/dwaion/${view}`,
+          productId: 'dwaion',
+          surfaceId: 'dwaion.work',
+          routeContractKey: `route.dwaion.work.${view}.page`,
+        },
+      ]);
+      expect(
+        PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.some(
+          (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
+        )
+      ).toBe(false);
+    }
+  });
+
+  it('keeps Mail contacts and Meeting follow-ups/templates/preferences DRAFT without registry promotion', () => {
+    for (const [productId, view] of [
+      ['mail', 'contacts'],
+      ['meetings', 'follow-ups'],
+      ['meetings', 'templates'],
+      ['meetings', 'preferences'],
+    ]) {
+      const routeContractKey = `route.${productId}.work.${view}.page`;
+      const expected = {
+        routeId: `${productId}.work.${view}`,
+        pattern: `/${productId}/${view}`,
+        productId,
+        surfaceId: `${productId}.work`,
+        routeContractKey,
+      };
+      expect(
+        DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toEqual([expected]);
+      expect(
+        ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toEqual([expected]);
+      expect(
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toEqual([expect.objectContaining({ ...expected, routeKind: 'PAGE' })]);
+      expect(
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toBe(false);
+      expect(
+        PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.some(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toBe(false);
+    }
   });
 
   it('mounts a representative official PAGE without hiding the remaining product routes', () => {

@@ -2,6 +2,7 @@ import {
   Archive,
   Cable,
   CircleGauge,
+  ContactRound,
   FilePenLine,
   FolderTree,
   House,
@@ -29,6 +30,7 @@ export type MailView =
   | 'trash'
   | 'folders'
   | 'shared'
+  | 'contacts'
   | 'accounts'
   | 'organization'
   | 'admin-overview'
@@ -65,7 +67,10 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
   },
   {
     id: 'collaboration',
-    items: [{ section: 'collaboration', view: 'shared', path: '/mail/shared', icon: UsersRound }],
+    items: [
+      { section: 'collaboration', view: 'contacts', path: '/mail/contacts', icon: ContactRound },
+      { section: 'collaboration', view: 'shared', path: '/mail/shared', icon: UsersRound },
+    ],
   },
   {
     id: 'settings',

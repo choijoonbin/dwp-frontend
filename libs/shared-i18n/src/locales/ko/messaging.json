@@ -1,4 +1,36 @@
 {
+  "privacy": {
+    "tab": "개인정보",
+    "scope": "이 회사의 모든 대화에 적용",
+    "shareReadStatus": "내 읽음 상태 공개",
+    "shareDescription": "내가 확인한 메시지를 보낸 사람에게 읽음 상태를 공개합니다. 상대방의 공개 설정은 변경되지 않습니다.",
+    "enabledDescription": "공개를 끄면 기존 메시지를 포함한 내 읽음 상태가 더 이상 제공되지 않습니다. 다시 켜면 이전 확인 내역도 공개됩니다.",
+    "disabledDescription": "다른 사람에게는 ‘공개 안 함’으로 표시됩니다. 내 안 읽은 대화와 읽던 위치는 그대로 유지됩니다.",
+    "loading": "개인정보 설정을 불러오는 중",
+    "loadError": "개인정보 설정을 불러오지 못했습니다.",
+    "saveError": "설정을 저장하지 못했습니다. 최신 설정을 확인한 후 다시 시도해 주세요.",
+    "saved": "읽음 상태 공개 설정을 저장했습니다.",
+    "retry": "다시 시도"
+  },
+  "receipts": {
+    "open": "읽음 확인: {{status}}",
+    "title": "메시지 확인 내역",
+    "description": "공개된 읽음 상태만 표시합니다.",
+    "readCount": "{{count}}명 읽음",
+    "loading": "확인 내역을 불러오는 중",
+    "loadError": "확인 내역을 불러오지 못했습니다. 읽지 않은 것으로 판단할 수 없습니다.",
+    "empty": "확인 상태를 표시할 수 있는 참여자가 없습니다.",
+    "attachmentMessage": "첨부파일 메시지",
+    "privacyNote": "미확인은 아직 화면에서 읽음이 확인되지 않았다는 뜻입니다. 알림 미리보기, 연결 상태에 따라 실제 확인 여부와 다를 수 있습니다. 공개 안 함은 읽지 않음을 뜻하지 않습니다.",
+    "summary": {
+      "READ": "읽음",
+      "UNREAD": "미확인",
+      "UNAVAILABLE": "공개 안 함",
+      "SENT": "보냄",
+      "UNKNOWN": "확인 내역"
+    },
+    "recipient": { "READ": "읽음", "UNREAD": "미확인", "UNAVAILABLE": "공개 안 함" }
+  },
   "shell": {
     "tenantFallback": "워크스페이스",
     "backToHome": "워크스페이스로 돌아가기",
@@ -42,6 +74,16 @@
     "cancel": "취소",
     "close": "닫기"
   },
+  "formatting": {
+    "toolbar": "메시지 서식",
+    "bold": "굵게",
+    "italic": "기울임",
+    "inlineCode": "인라인 코드",
+    "codeBlock": "코드 블록",
+    "bulletList": "글머리 기호 목록",
+    "numberedList": "번호 목록",
+    "copyFailed": "복사하지 못했습니다. 코드를 선택해 복사해 주세요."
+  },
   "expressions": {
     "open": "이모티콘 열기",
     "search": "이모티콘 또는 업무 표현 검색",
@@ -72,9 +114,32 @@
     "member": "구성원",
     "title": "{{greeting}}, {{name}}님",
     "description": "놓치면 안 될 대화와 이어서 처리할 업무를 한눈에 정리했습니다.",
+    "contextRail": "메신저 컨텍스트",
+    "huddle": {
+      "title": "대화에서 바로, 가볍게 하들",
+      "description": "함께 이야기하던 구성원들과 음성·화상 회의로 이어가세요.",
+      "choose": "대화 선택",
+      "chooseTitle": "하들 시작 또는 참여",
+      "chooseDescription": "함께 회의할 대화를 선택하세요.",
+      "search": "대화 찾기",
+      "emptyTitle": "일치하는 대화가 없습니다",
+      "emptyDescription": "대화를 새로 시작하거나 다른 검색어를 입력하세요."
+    },
+    "sharedAssets": {
+      "title": "최근 공유된 파일 및 링크",
+      "description": "내 대화에서 최근 공유한 자료입니다.",
+      "loading": "공유 파일과 링크를 불러오는 중",
+      "loadError": "공유 파일과 링크를 불러오지 못했습니다.",
+      "emptyTitle": "아직 공유된 파일이나 링크가 없습니다",
+      "emptyDescription": "대화에서 자료를 공유하면 이곳에서 다시 찾을 수 있습니다.",
+      "openConversation": "{{conversation}}에서 {{title}} 열기",
+      "FILE": "파일",
+      "LINK": "링크"
+    },
     "signalSummary": "읽지 않은 대화 {{unread}}개, 멘션 {{mentions}}개, 저장한 항목 {{saved}}개",
     "loadError": "메신저 홈 정보를 불러오지 못했습니다.",
     "sync": {
+      "stale": "새로고침 필요",
       "current": "최신 상태",
       "refreshing": "업데이트 중",
       "updated": "{{time}} 조회"
@@ -122,6 +187,14 @@
       }
     },
     "focus": {
+      "filters": {
+        "label": "대화 필터",
+        "ALL": "전체",
+        "MENTIONS": "멘션",
+        "SPACE": "Space",
+        "DIRECT": "DM"
+      },
+      "mentionsError": "멘션을 갱신하지 못했습니다.",
       "title": "지금 처리할 대화",
       "description": "읽지 않은 DM, Space, 그 밖의 대화 순으로 최대 6개를 보여줍니다.",
       "open": "전체 보기",
@@ -139,6 +212,10 @@
       }
     },
     "spaces": {
+      "scope": "대화 그룹",
+      "openDirect": "모든 DM 보기",
+      "directEmptyTitle": "아직 DM이 없습니다",
+      "directEmptyDescription": "구성원을 찾아 대화를 시작하세요.",
       "title": "내 Space 흐름",
       "description": "내 멤버십으로 접근할 수 있는 Space 대화입니다.",
       "open": "모든 Space 대화 열기",
@@ -157,6 +234,21 @@
       "emptyTitle": "저장한 메시지가 없습니다",
       "emptyDescription": "다시 확인할 메시지를 저장하면 이곳에서 이어볼 수 있습니다.",
       "startDirect": "구성원을 찾아 새 DM 시작"
+    },
+    "people": {
+      "availableSnapshot": "조회 시 연결 가능 상태 {{count}}명",
+      "messagePerson": "{{name}}님에게 메시지 보내기",
+      "presence": {
+        "AVAILABLE": "연결 가능",
+        "BUSY": "다른 업무 중",
+        "AWAY": "자리 비움",
+        "FOCUS": "집중 모드",
+        "OFFLINE": "오프라인",
+        "UNKNOWN": "상태 정보 없음"
+      },
+      "title": "지금 연결 가능한 구성원",
+      "description": "현재 활동 중인 구성원 {{count}}명",
+      "open": "구성원 디렉터리 열기"
     }
   },
   "type": {
@@ -186,7 +278,7 @@
     "noMessagesTitle": "아직 메시지가 없습니다",
     "noMessagesDescription": "첫 메시지를 보내 업무 맥락을 시작하세요.",
     "composerLabel": "메시지 작성",
-    "composerPlaceholder": "메시지를 입력하세요. Shift+Enter로 줄바꿈",
+    "composerPlaceholder": "메시지를 입력하세요",
     "composerHint": "Enter로 전송하고 Shift+Enter로 줄바꿈합니다.",
     "typing": {
       "one": "{{name}}님이 입력 중입니다.",
@@ -318,6 +410,10 @@
   },
   "message": {
     "me": "나",
+    "aiProposal": "DWP AI 제안",
+    "code": "코드",
+    "copyCode": "코드 복사",
+    "codeCopied": "코드 복사됨",
     "deleted": "삭제된 메시지입니다",
     "edited": "수정됨",
     "reaction": "반응",
@@ -326,10 +422,10 @@
     "removeReaction": "{{emoji}} 반응 취소",
     "reply": "스레드 답글",
     "replyCount": "답글 {{count}}개",
+    "moreActions": "메시지 작업 더보기",
     "save": "나중에 저장",
     "edit": "메시지 수정",
     "delete": "메시지 삭제",
-    "connectionRequired": "현재 환경에서는 이 기능을 사용할 수 없습니다.",
     "saveSuccess": "메시지를 나중에 볼 항목에 저장했습니다.",
     "saveError": "메시지를 저장하지 못했습니다.",
     "editTitle": "메시지 수정",
@@ -364,7 +460,7 @@
     "replyCount": "답글 {{count}}개",
     "empty": "아직 답글이 없습니다. 첫 답글을 남겨보세요.",
     "composerLabel": "스레드 답글 작성",
-    "composerPlaceholder": "스레드에 답글을 입력하세요. Shift+Enter로 줄바꿈",
+    "composerPlaceholder": "스레드에 답글을 입력하세요",
     "loadError": "스레드 답글을 불러오지 못했습니다.",
     "loading": "스레드 답글을 불러오는 중입니다."
   },
@@ -469,6 +565,8 @@
     "loadError": "대화 목록을 불러오지 못했습니다.",
     "emptyTitle": "조건에 맞는 대화가 없습니다",
     "emptyDescription": "검색어를 바꾸거나 새 DM을 시작하세요.",
+    "loadMore": "대화 더 보기",
+    "loadingMore": "대화 불러오는 중",
     "ALL": {
       "title": "받은 대화",
       "description": "DM, Space, 공지를 한곳에서 처리합니다."
@@ -495,11 +593,44 @@
       "showAll": "받은 대화 전체 보기"
     }
   },
+  "navigator": {
+    "title": "받은 대화",
+    "count": "불러온 대화 {{count}}개",
+    "filterLabel": "불러온 대화 필터",
+    "filters": { "ALL": "전체", "FAVORITES": "즐겨찾기", "UNREAD": "읽지 않음" },
+    "loadedOnly": "불러온 대화에서 필터링합니다. 아래에서 대화를 더 불러올 수 있습니다.",
+    "filterEmpty": "조건에 맞는 대화가 없습니다",
+    "filterEmptyDescription": "전체를 선택하거나 대화를 더 불러오세요.",
+    "create": "탐색기에서 새 대화 만들기",
+    "sections": {
+      "PINNED": "즐겨찾기",
+      "CHANNELS": "Space 및 채널",
+      "DIRECT": "다이렉트 메시지"
+    }
+  },
   "context": {
     "members": "구성원",
     "governance": "거버넌스",
+    "catchUp": "빠른 따라잡기",
+    "catchUpDescription": "현재 대화의 최근 메시지를 바로 확인하세요.",
+    "toggle": "대화 맥락 보기",
+    "panelTitle": "대화 브리핑",
+    "collapseBrief": "브리핑 접기",
+    "expandBrief": "브리핑 펼치기",
+    "jumpToMessage": "{{name}}의 메시지로 이동",
+    "sharedContent": "공유된 콘텐츠",
+    "noMessages": "아직 메시지가 없습니다.",
+    "allMembers": "구성원 {{count}}명 전체 보기",
+    "unread": "읽지 않음 {{count}}개",
+    "recent": "최근 흐름",
+    "threads": "활성 스레드",
+    "noThreads": "아직 이어진 스레드가 없습니다.",
+    "replies": "답글 {{count}}개",
+    "openThread": "스레드 열기",
+    "activeNow": "활동 상태 {{count}}명",
+    "preview": "“{{message}}”",
     "spaceLinked": "{{space}} Space와 연결된 대화입니다.",
-    "membershipBound": "Space 멤버십에 따라 접근 권한이 제한됩니다.",
+    "membershipBound": "대화에 참여한 구성원만 접근할 수 있습니다.",
     "empty": "대화 맥락을 선택하면 구성원과 정책 정보가 표시됩니다."
   },
   "people": {

@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
@@ -8,14 +7,14 @@ import {
   KeyRound,
   Sparkles,
 } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, ErrorState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 
 import type { WorkspaceWorkItem } from '@dwp-frontend/shared-utils';
 import type { AskCitationSourceType } from '@dwp-frontend/shared-utils';
@@ -37,31 +36,20 @@ type DwaionWorkspaceStartProps = {
   onSubmit: () => void;
   onChooseMode: (mode: DwaionModeKey, prompt: string) => void;
   onOpenWork: (item: WorkspaceWorkItem) => void;
+  onRetryWork: () => void;
   onToggleSource: (source: AskCitationSourceType) => void;
   onCancel: () => void;
 };
 
-const mascotFloat = keyframes`
-  0%, 100% { transform: translate3d(0, 2px, 0) rotate(-1deg); }
-  42% { transform: translate3d(0, -7px, 0) rotate(1.5deg); }
-  72% { transform: translate3d(0, -3px, 0) rotate(-0.4deg); }
-`;
-
-const scanLine = keyframes`
-  0% { transform: translateX(-110%); opacity: 0; }
-  20%, 75% { opacity: 0.8; }
-  100% { transform: translateX(310%); opacity: 0; }
-`;
-
 const modes: ReadonlyArray<{
   key: DwaionModeKey;
   icon: typeof ClipboardList;
-  tone: string;
+  tone: 'primary' | 'error' | 'success' | 'secondary';
 }> = [
-  { key: 'brief', icon: ClipboardList, tone: '#2459D3' },
-  { key: 'blockers', icon: CircleAlert, tone: '#B5474C' },
-  { key: 'meeting', icon: CalendarCheck2, tone: '#087E75' },
-  { key: 'access', icon: KeyRound, tone: '#6B4EB3' },
+  { key: 'brief', icon: ClipboardList, tone: 'primary' },
+  { key: 'blockers', icon: CircleAlert, tone: 'error' },
+  { key: 'meeting', icon: CalendarCheck2, tone: 'success' },
+  { key: 'access', icon: KeyRound, tone: 'secondary' },
 ];
 
 export function DwaionWorkspaceStart({
@@ -78,114 +66,65 @@ export function DwaionWorkspaceStart({
   onSubmit,
   onChooseMode,
   onOpenWork,
+  onRetryWork,
   onToggleSource,
   onCancel,
 }: DwaionWorkspaceStartProps) {
   const { t } = useTranslation('work');
+  const theme = useTheme();
 
   return (
     <Box>
-      <Box
-        sx={{
-          position: 'relative',
-          overflow: 'hidden',
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-          px: { xs: 2, sm: 3, lg: 4 },
-          py: { xs: 3, sm: 4 },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            width: 120,
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.045),
-            transform: 'skewX(-18deg)',
-            animation: `${scanLine} 8s ease-in-out infinite`,
-            pointerEvents: 'none',
-          },
-          '@media (prefers-reduced-motion: reduce)': {
-            '&::after': { animation: 'none', display: 'none' },
-          },
-        }}
+      <Stack
+        direction="row"
+        gap={2}
+        alignItems="center"
+        sx={{ px: { xs: 1.5, sm: 2 }, py: 2, mb: 2, bgcolor: 'action.selected', borderRadius: 1 }}
       >
         <Box
-          sx={{
-            position: 'relative',
-            zIndex: 1,
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '96px minmax(0, 1fr)' },
-            alignItems: 'center',
-            gap: { xs: 1.5, sm: 2.5 },
-            maxWidth: 820,
-            mx: 'auto',
-          }}
-        >
-          <Box
-            sx={{
-              width: { xs: 74, sm: 92 },
-              height: { xs: 74, sm: 92 },
-              justifySelf: { xs: 'center', sm: 'start' },
-              animation: `${mascotFloat} 4.8s ease-in-out infinite`,
-              '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
-            }}
+          component="img"
+          src="/assets/assistants/dwaion-link-v1.png"
+          alt=""
+          sx={{ width: 52, height: 52, objectFit: 'contain', flexShrink: 0 }}
+        />
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            color="primary.main"
+            sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
           >
-            <Box
-              component="img"
-              src="/assets/assistants/dwaion-link-v1.png"
-              alt=""
-              sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </Box>
-          <Box sx={{ textAlign: { xs: 'center', sm: 'left' }, minWidth: 0 }}>
-            <Stack
-              direction="row"
-              spacing={0.75}
-              alignItems="center"
-              justifyContent={{ xs: 'center', sm: 'flex-start' }}
-            >
-              <Sparkles size={16} color="#2459D3" aria-hidden="true" />
-              <Typography variant="overline" color="primary.main">
-                {t(expert ? 'askPage.approvalExpert.welcome.eyebrow' : 'askPage.welcome.eyebrow')}
-              </Typography>
-            </Stack>
-            <Typography component="h2" variant="h4" sx={{ mt: 0.25, letterSpacing: 0 }}>
-              {firstName
-                ? t(expert ? 'askPage.approvalExpert.welcome.title' : 'askPage.welcome.title', {
-                    name: firstName,
-                  })
-                : t(
-                    expert
-                      ? 'askPage.approvalExpert.welcome.titleFallback'
-                      : 'askPage.welcome.titleFallback'
-                  )}
-            </Typography>
-            <Typography color="text.secondary" sx={{ mt: 0.75, lineHeight: 1.65 }}>
-              {t(
-                expert
-                  ? 'askPage.approvalExpert.welcome.description'
-                  : 'askPage.welcome.description'
-              )}
-            </Typography>
-          </Box>
+            <Sparkles size={14} />
+            {t(expert ? 'askPage.approvalExpert.welcome.eyebrow' : 'askPage.welcome.eyebrow')}
+          </Typography>
+          <Typography component="h2" variant="h5" sx={{ mt: 0.5, overflowWrap: 'anywhere' }}>
+            {firstName
+              ? t(expert ? 'askPage.approvalExpert.welcome.title' : 'askPage.welcome.title', {
+                  name: firstName,
+                })
+              : t(
+                  expert
+                    ? 'askPage.approvalExpert.welcome.titleFallback'
+                    : 'askPage.welcome.titleFallback'
+                )}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+            {t(
+              expert ? 'askPage.approvalExpert.welcome.description' : 'askPage.welcome.description'
+            )}
+          </Typography>
         </Box>
-
-        <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 820, mx: 'auto', mt: 3 }}>
-          <DwaionWorkspaceComposer
-            value={query}
-            loading={loading}
-            autoFocus
-            sourceScopes={sourceScopes}
-            availableSources={availableSources}
-            onToggleSource={onToggleSource}
-            onCancel={onCancel}
-            onChange={onQueryChange}
-            onSubmit={onSubmit}
-          />
-        </Box>
-      </Box>
+      </Stack>
+      <DwaionWorkspaceComposer
+        value={query}
+        loading={loading}
+        presentation="home"
+        sourceScopes={sourceScopes}
+        availableSources={availableSources}
+        onToggleSource={onToggleSource}
+        onCancel={onCancel}
+        onChange={onQueryChange}
+        onSubmit={onSubmit}
+      />
 
       <Box component="section" aria-labelledby="dwaion-modes-heading" sx={{ mt: 3.5 }}>
         <Typography id="dwaion-modes-heading" component="h2" variant="subtitle1" fontWeight={800}>
@@ -202,7 +141,8 @@ export function DwaionWorkspaceStart({
             gap: 1,
           }}
         >
-          {modes.map(({ key, icon: Icon, tone }) => {
+          {modes.map(({ key, icon: Icon, tone: paletteKey }) => {
+            const tone = theme.palette[paletteKey].main;
             const itemKey = expert
               ? `askPage.approvalExpert.modes.items.${key}`
               : `askPage.modes.items.${key}`;
@@ -210,6 +150,7 @@ export function DwaionWorkspaceStart({
             return (
               <ButtonBase
                 key={key}
+                aria-label={t(`${itemKey}.title`)}
                 onClick={() => onChooseMode(key, prompt)}
                 sx={{
                   minHeight: 96,
@@ -297,6 +238,13 @@ export function DwaionWorkspaceStart({
                   <Skeleton key={item} variant="rounded" height={44} />
                 ))}
               </Stack>
+            ) : workError ? (
+              <ErrorState
+                size="compact"
+                title={t('askPage.contextUnavailable')}
+                retryLabel={t('dwaionStudio.retry')}
+                onRetry={onRetryWork}
+              />
             ) : workItems.length ? (
               workItems.map((item, index) => (
                 <Box
@@ -312,7 +260,11 @@ export function DwaionWorkspaceStart({
                   }}
                 >
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography component="h3" variant="subtitle2" noWrap>
+                    <Typography
+                      component="h3"
+                      variant="subtitle2"
+                      sx={{ overflowWrap: 'anywhere' }}
+                    >
                       {item.title}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" noWrap display="block">
@@ -339,7 +291,7 @@ export function DwaionWorkspaceStart({
               ))
             ) : (
               <Typography color="text.secondary" sx={{ py: 2.5 }}>
-                {workError ? t('askPage.contextUnavailable') : t('askPage.contextEmpty')}
+                {t('askPage.contextEmpty')}
               </Typography>
             )}
           </Box>

@@ -1,0 +1,71 @@
+{
+  "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.workhub.*' --tests 'com.dwp.services.platform.workspace.WorkspaceWorkPolicyTest' --tests 'com.dwp.services.platform.workspace.WorkspaceServiceTest' --tests 'com.dwp.services.platform.workspace.WorkspaceRepositoryContractTest'",
+  "suites": [
+    {
+      "name": "com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.personal.OwnerWorkSourceResolverTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.personal.PersonalWorkControllerTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workspace.WorkspaceRepositoryContractTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workspace.WorkspaceServiceTest",
+      "tests": "17",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.dwp.services.platform.workspace.WorkspaceWorkPolicyTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "tests": 60,
+  "failures": 0,
+  "skipped": 0
+}

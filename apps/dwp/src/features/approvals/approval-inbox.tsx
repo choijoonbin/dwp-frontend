@@ -38,6 +38,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { ApprovalPayloadData } from './approval-payload-data';
+import { ApprovalCommandCenter } from './approval-command-center';
 import {
   approvalTimelineEventContext,
   approvalTimelineEventDetail,
@@ -47,12 +48,17 @@ import {
   isProductSurfaceOperationCancelledError,
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 import type { ApprovalTask } from '@dwp-frontend/shared-utils';
 
 type Decision = 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
 
 export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED' }) {
+  return view === 'INBOX' ? <ApprovalCommandCenter /> : <ApprovalTaskArchive view={view} />;
+}
+
+function ApprovalTaskArchive({ view }: { view: 'INBOX' | 'COMPLETED' }) {
   const { t, i18n } = useTranslation('approvals');
   const display = useDisplayDictionary();
   const toast = useToast();
@@ -63,11 +69,17 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
   const [decision, setDecision] = useState<Decision>();
   const [comment, setComment] = useState('');
   const queueCopy = view === 'COMPLETED' ? 'completed' : 'inbox';
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'approvals',
+    surfaceKey: 'approvals.work',
+  });
   const tasks = useQuery({
-    queryKey: ['approvals', 'tasks', view],
-    queryFn: () => getApprovalTasks(view),
+    queryKey: ['approvals', 'tasks', view, ...requestScope.cacheKey],
+    queryFn: () => getApprovalTasks(view, requestScope.contextScopeKey),
+    enabled: requestScope.ready,
     staleTime: 20_000,
     retry: 1,
+    meta: requestScope.queryMeta,
   });
   useEffect(() => {
     if (!tasks.isFetching && !tasks.isError) return;
@@ -86,11 +98,12 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     setSelectedId(requested?.taskId ?? tasks.data[0].taskId);
   }, [requestedTaskId, selectedId, tasks.data, tasks.isError]);
   const detail = useQuery({
-    queryKey: ['approvals', 'task', selectedId],
-    queryFn: () => getApprovalTask(selectedId!),
-    enabled: Boolean(selectedId) && !tasks.isError,
+    queryKey: ['approvals', 'task', selectedId, ...requestScope.cacheKey],
+    queryFn: () => getApprovalTask(selectedId!, requestScope.contextScopeKey),
+    enabled: requestScope.ready && Boolean(selectedId) && !tasks.isError,
     staleTime: 0,
     retry: 1,
+    meta: requestScope.queryMeta,
   });
   useEffect(() => {
     if (!decision || (!detail.isFetching && !detail.isError)) return;

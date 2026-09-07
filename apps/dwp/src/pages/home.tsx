@@ -903,7 +903,10 @@ export default function HomePage() {
         />
       )}
 
-      <HomeFooter updatedAt={workspaceUpdatedAt} />
+      <HomeFooter
+        updatedAt={workspaceUpdatedAt}
+        freshnessInHeader={homePageGate.state.kind === 'ready' && editorFlowHomeEnabled}
+      />
 
       {editorActive && editorFlowHomeEnabled && <HomeEditorSafeArea />}
 

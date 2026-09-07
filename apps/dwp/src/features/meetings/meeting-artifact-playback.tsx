@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, Headphones, Video } from 'lucide-react';
+import { Headphones, Play, Video } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { createVideoMeetingArtifactAccessTicket } from '@dwp-frontend/shared-utils/api/video-meeting-artifact-api';
 
@@ -16,11 +16,12 @@ import {
   deriveMeetingArtifactPlaybackAvailability,
   type MeetingArtifactAccessFailure,
 } from './meeting-artifact-playback-model';
+import { useMeetingPlaybackSync } from './meeting-playback-sync';
 
 type AccessState =
   | { state: 'IDLE'; binding: string }
   | { state: 'LOADING'; binding: string }
-  | { state: 'OPENED'; binding: string; expiresAt: string }
+  | { state: 'READY'; binding: string; accessUrl: string; expiresAt: string }
   | { state: 'ERROR'; binding: string; failure: MeetingArtifactAccessFailure };
 
 export function MeetingArtifactPlayback({
@@ -31,14 +32,63 @@ export function MeetingArtifactPlayback({
   artifact: VideoMeetingArtifact;
 }) {
   const { t, i18n } = useTranslation('meetings');
+  const playbackSync = useMeetingPlaybackSync();
+  const registerAccessRequest = playbackSync?.registerAccessRequest;
+  const registerMedia = playbackSync?.registerMedia;
   const binding = `${artifact.artifactId}:${artifact.version}:${artifact.contentType ?? ''}:${artifact.retentionUntil ?? ''}`;
   const bindingRef = useRef(binding);
+  const requestGenerationRef = useRef(0);
   bindingRef.current = binding;
   const [access, setAccess] = useState<AccessState>({ state: 'IDLE', binding });
-  const currentAccess: AccessState =
-    access.binding === binding ? access : { state: 'IDLE', binding };
+  const currentAccess = useMemo<AccessState>(
+    () => (access.binding === binding ? access : { state: 'IDLE', binding }),
+    [access, binding]
+  );
   const [now, setNow] = useState(() => Date.now());
   const availability = deriveMeetingArtifactPlaybackAvailability(artifact, now);
+  const requestRecording = useCallback(async () => {
+    if (currentAccess.state === 'LOADING') return;
+    if (deriveMeetingArtifactPlaybackAvailability(artifact).state !== 'READY') {
+      setAccess({ state: 'ERROR', binding, failure: 'NOT_AVAILABLE' });
+      setNow(Date.now());
+      return;
+    }
+    const requestGeneration = ++requestGenerationRef.current;
+    setAccess({ state: 'LOADING', binding });
+    try {
+      const ticket = await createVideoMeetingArtifactAccessTicket(
+        meetingId,
+        artifact.artifactId,
+        artifact.version,
+        artifact.contentType!,
+        artifact.retentionUntil!
+      );
+      if (bindingRef.current !== binding || requestGenerationRef.current !== requestGeneration) {
+        return;
+      }
+      setAccess({
+        state: 'READY',
+        binding,
+        accessUrl: ticket.accessUrl,
+        expiresAt: ticket.expiresAt,
+      });
+    } catch (error) {
+      if (bindingRef.current === binding && requestGenerationRef.current === requestGeneration) {
+        setAccess({
+          state: 'ERROR',
+          binding,
+          failure: classifyMeetingArtifactAccessFailure(error),
+        });
+      }
+    }
+  }, [artifact, binding, currentAccess.state, meetingId]);
+
+  useEffect(
+    () => () => {
+      requestGenerationRef.current += 1;
+    },
+    [binding]
+  );
 
   useEffect(() => {
     const retentionUntil = artifact.retentionUntil
@@ -51,6 +101,30 @@ export function MeetingArtifactPlayback({
     );
     return () => globalThis.clearTimeout(timer);
   }, [artifact.retentionUntil, now]);
+
+  useEffect(() => {
+    registerAccessRequest?.(() => void requestRecording());
+    return () => registerAccessRequest?.(null);
+  }, [registerAccessRequest, requestRecording]);
+
+  useEffect(() => {
+    if (currentAccess.state !== 'READY') return;
+    const expiresAt = Date.parse(currentAccess.expiresAt);
+    const timeout = expiresAt - Date.now();
+    if (!Number.isFinite(expiresAt) || timeout <= 0) {
+      registerMedia?.(null);
+      setAccess({ state: 'IDLE', binding });
+      return;
+    }
+    const timer = globalThis.setTimeout(
+      () => {
+        registerMedia?.(null);
+        setAccess({ state: 'IDLE', binding });
+      },
+      Math.min(timeout + 50, 2_147_483_647)
+    );
+    return () => globalThis.clearTimeout(timer);
+  }, [binding, currentAccess, registerMedia]);
 
   if (availability.state !== 'READY') {
     if (availability.state === 'RETENTION_EXPIRED') {
@@ -73,46 +147,6 @@ export function MeetingArtifactPlayback({
     return null;
   }
 
-  const openRecording = async () => {
-    if (currentAccess.state === 'LOADING') return;
-    if (deriveMeetingArtifactPlaybackAvailability(artifact).state !== 'READY') {
-      setAccess({ state: 'ERROR', binding, failure: 'NOT_AVAILABLE' });
-      setNow(Date.now());
-      return;
-    }
-    const playbackWindow = globalThis.open('about:blank', '_blank');
-    if (!playbackWindow) {
-      setAccess({ state: 'ERROR', binding, failure: 'UNKNOWN' });
-      return;
-    }
-    playbackWindow.opener = null;
-    setAccess({ state: 'LOADING', binding });
-    try {
-      const ticket = await createVideoMeetingArtifactAccessTicket(
-        meetingId,
-        artifact.artifactId,
-        artifact.version,
-        artifact.contentType!,
-        artifact.retentionUntil!
-      );
-      if (bindingRef.current !== binding) {
-        playbackWindow.close();
-        return;
-      }
-      playbackWindow.location.replace(ticket.accessUrl);
-      setAccess({ state: 'OPENED', binding, expiresAt: ticket.expiresAt });
-    } catch (error) {
-      playbackWindow.close();
-      if (bindingRef.current === binding) {
-        setAccess({
-          state: 'ERROR',
-          binding,
-          failure: classifyMeetingArtifactAccessFailure(error),
-        });
-      }
-    }
-  };
-
   const mediaLabel = availability.mediaKind === 'audio' ? 'audio' : 'video';
   return (
     <Stack gap={1} alignItems={{ xs: 'stretch', sm: 'flex-end' }} sx={{ minWidth: 0 }}>
@@ -126,20 +160,43 @@ export function MeetingArtifactPlayback({
             <Video size={16} aria-hidden="true" />
           )
         }
-        endIcon={<ExternalLink size={15} aria-hidden="true" />}
+        endIcon={<Play size={15} aria-hidden="true" />}
         loading={currentAccess.state === 'LOADING'}
         loadingLabel={t('history.recap.artifacts.access.loading')}
-        onClick={() => void openRecording()}
+        onClick={() => void requestRecording()}
         sx={{ minHeight: 44, minWidth: 44 }}
       >
         {t(`history.recap.artifacts.access.open.${mediaLabel}`)}
       </ActionButton>
-      {currentAccess.state === 'OPENED' && (
-        <Typography variant="caption" color="success.main" role="status" aria-live="polite">
-          {t('history.recap.artifacts.access.opened', {
-            time: formatMeetingDateTime(currentAccess.expiresAt, i18n.language),
-          })}
-        </Typography>
+      {currentAccess.state === 'READY' && (
+        <Stack gap={0.75} sx={{ width: '100%', minWidth: 0 }}>
+          {availability.mediaKind === 'audio' ? (
+            <audio
+              ref={(element) => registerMedia?.(element)}
+              controls
+              preload="metadata"
+              src={currentAccess.accessUrl}
+              aria-label={t('history.recap.artifacts.access.player.audio')}
+              onLoadedMetadata={(event) => registerMedia?.(event.currentTarget)}
+            />
+          ) : (
+            <video
+              ref={(element) => registerMedia?.(element)}
+              controls
+              playsInline
+              preload="metadata"
+              src={currentAccess.accessUrl}
+              aria-label={t('history.recap.artifacts.access.player.video')}
+              onLoadedMetadata={(event) => registerMedia?.(event.currentTarget)}
+              style={{ width: '100%', maxHeight: 280 }}
+            />
+          )}
+          <Typography variant="caption" color="success.main" role="status" aria-live="polite">
+            {t('history.recap.artifacts.access.inlineReady', {
+              time: formatMeetingDateTime(currentAccess.expiresAt, i18n.language),
+            })}
+          </Typography>
+        </Stack>
       )}
       {currentAccess.state === 'ERROR' && (
         <Alert

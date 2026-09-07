@@ -5,7 +5,6 @@ import { CheckCircle2, Play, Plus, ShieldCheck } from 'lucide-react';
 import {
   ActionButton,
   EnterpriseDataGrid,
-  FormDialog,
   FormField,
   GuidedEmptyState,
   PageCanvas,
@@ -21,50 +20,29 @@ import {
   runDwaionEvaluation,
   transitionDwaionEvaluationSet,
   type DwaionEvaluationSetSummary,
-  type DwaionSourceKey,
   usePermissions,
 } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
+import {
+  EMPTY_EVALUATION_CASE,
+  EMPTY_EVALUATION_SET,
+  EvaluationCaseDialog,
+  EvaluationSetDialog,
+  type EvaluationCaseDraft,
+  type EvaluationSetDraft,
+} from './dwaion-evaluation-dialogs';
 import { DwaionEvaluationHistory } from './dwaion-evaluation-history';
 
 import type { GridColDef } from '@mui/x-data-grid';
-
-const SOURCE_KEYS: DwaionSourceKey[] = [
-  'WORK_ITEM',
-  'MAIL',
-  'CALENDAR',
-  'APPROVAL_TASK',
-  'APPROVAL_REQUEST',
-  'APPROVAL_FORM',
-  'APPROVAL_OPERATION',
-];
-
-type SetDraft = { name: string; description: string; locale: string };
-type CaseDraft = {
-  name: string;
-  prompt: string;
-  expectedTerms: string;
-  sourceScopes: DwaionSourceKey[];
-};
-const EMPTY_SET: SetDraft = { name: '', description: '', locale: 'ko-KR' };
-const EMPTY_CASE: CaseDraft = {
-  name: '',
-  prompt: '',
-  expectedTerms: '',
-  sourceScopes: ['WORK_ITEM'],
-};
 
 export function DwaionAdminEvaluation() {
   const { t } = useTranslation('work');
@@ -80,8 +58,8 @@ export function DwaionAdminEvaluation() {
   const canExecute = hasPermission('ADMIN.DWAION_EVALUATION', 'EXECUTE') || canManage;
   const canExport = hasPermission('ADMIN.DWAION_EVALUATION', 'EXPORT') || canManage;
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [setDraft, setSetDraft] = useState<SetDraft | null>(null);
-  const [caseDraft, setCaseDraft] = useState<CaseDraft | null>(null);
+  const [setDraft, setSetDraft] = useState<EvaluationSetDraft | null>(null);
+  const [caseDraft, setCaseDraft] = useState<EvaluationCaseDraft | null>(null);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [reason, setReason] = useState('');
   const sets = useQuery({
@@ -136,7 +114,7 @@ export function DwaionAdminEvaluation() {
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation-runs', id] });
   };
   const createMutation = useMutation({
-    mutationFn: (draft: SetDraft) =>
+    mutationFn: (draft: EvaluationSetDraft) =>
       createDwaionEvaluationSet({
         name: draft.name.trim(),
         description: draft.description.trim() || undefined,
@@ -149,7 +127,7 @@ export function DwaionAdminEvaluation() {
     },
   });
   const caseMutation = useMutation({
-    mutationFn: (draft: CaseDraft) =>
+    mutationFn: (draft: EvaluationCaseDraft) =>
       addDwaionEvaluationCase(selectedId!, {
         name: draft.name.trim(),
         prompt: draft.prompt.trim(),
@@ -269,7 +247,7 @@ export function DwaionAdminEvaluation() {
             <ActionButton
               intent="primary"
               startIcon={<Plus size={16} />}
-              onClick={() => setSetDraft({ ...EMPTY_SET })}
+              onClick={() => setSetDraft({ ...EMPTY_EVALUATION_SET })}
             >
               {t('dwaionAdmin.evaluation.create')}
             </ActionButton>
@@ -345,7 +323,7 @@ export function DwaionAdminEvaluation() {
                         intent="secondary"
                         size="small"
                         startIcon={<Plus size={15} />}
-                        onClick={() => setCaseDraft({ ...EMPTY_CASE })}
+                        onClick={() => setCaseDraft({ ...EMPTY_EVALUATION_CASE })}
                       >
                         {t('dwaionAdmin.evaluation.addCase')}
                       </ActionButton>
@@ -452,108 +430,24 @@ export function DwaionAdminEvaluation() {
         </Box>
       </Box>
 
-      <FormDialog
-        open={Boolean(setDraft)}
-        title={t('dwaionAdmin.evaluation.setDialogTitle')}
-        cancelLabel={t('dwaionAdmin.shared.cancel')}
-        submitLabel={t('dwaionAdmin.shared.create')}
-        submittingLabel={t('dwaionAdmin.shared.saving')}
+      <EvaluationSetDialog
+        draft={setDraft}
         busy={createMutation.isPending}
-        submitDisabled={!setDraft?.name.trim()}
+        onChange={setSetDraft}
         onClose={() => setSetDraft(null)}
         onSubmit={() => {
           if (setDraft) createMutation.mutate(setDraft);
         }}
-      >
-        {setDraft && (
-          <Stack spacing={2}>
-            <FormField
-              label={t('dwaionAdmin.evaluation.fields.name')}
-              value={setDraft.name}
-              onChange={(event) => setSetDraft({ ...setDraft, name: event.target.value })}
-            />
-            <FormField
-              label={t('dwaionAdmin.evaluation.fields.description')}
-              value={setDraft.description}
-              multiline
-              minRows={3}
-              onChange={(event) => setSetDraft({ ...setDraft, description: event.target.value })}
-            />
-            <FormField
-              label={t('dwaionAdmin.evaluation.fields.locale')}
-              value={setDraft.locale}
-              onChange={(event) => setSetDraft({ ...setDraft, locale: event.target.value })}
-            />
-          </Stack>
-        )}
-      </FormDialog>
-      <FormDialog
-        open={Boolean(caseDraft)}
-        title={t('dwaionAdmin.evaluation.caseDialogTitle')}
-        cancelLabel={t('dwaionAdmin.shared.cancel')}
-        submitLabel={t('dwaionAdmin.shared.create')}
-        submittingLabel={t('dwaionAdmin.shared.saving')}
+      />
+      <EvaluationCaseDialog
+        draft={caseDraft}
         busy={caseMutation.isPending}
-        submitDisabled={
-          !caseDraft?.name.trim() || !caseDraft?.prompt.trim() || !caseDraft.sourceScopes.length
-        }
+        onChange={setCaseDraft}
         onClose={() => setCaseDraft(null)}
         onSubmit={() => {
           if (caseDraft) caseMutation.mutate(caseDraft);
         }}
-      >
-        {caseDraft && (
-          <Stack spacing={2}>
-            <FormField
-              label={t('dwaionAdmin.evaluation.fields.caseName')}
-              value={caseDraft.name}
-              onChange={(event) => setCaseDraft({ ...caseDraft, name: event.target.value })}
-            />
-            <FormField
-              label={t('dwaionAdmin.evaluation.fields.prompt')}
-              value={caseDraft.prompt}
-              multiline
-              minRows={4}
-              onChange={(event) => setCaseDraft({ ...caseDraft, prompt: event.target.value })}
-            />
-            <FormField
-              label={t('dwaionAdmin.evaluation.fields.expectedTerms')}
-              supportingText={t('dwaionAdmin.evaluation.fields.expectedTermsHelp')}
-              value={caseDraft.expectedTerms}
-              onChange={(event) =>
-                setCaseDraft({ ...caseDraft, expectedTerms: event.target.value })
-              }
-            />
-            <Box>
-              <Typography variant="body2" fontWeight={750}>
-                {t('dwaionAdmin.evaluation.fields.sources')}
-              </Typography>
-              <FormGroup row>
-                {SOURCE_KEYS.map((source) => (
-                  <FormControlLabel
-                    key={source}
-                    control={
-                      <Checkbox
-                        size="small"
-                        checked={caseDraft.sourceScopes.includes(source)}
-                        onChange={(event) =>
-                          setCaseDraft({
-                            ...caseDraft,
-                            sourceScopes: event.target.checked
-                              ? [...caseDraft.sourceScopes, source]
-                              : caseDraft.sourceScopes.filter((item) => item !== source),
-                          })
-                        }
-                      />
-                    }
-                    label={source}
-                  />
-                ))}
-              </FormGroup>
-            </Box>
-          </Stack>
-        )}
-      </FormDialog>
+      />
     </PageCanvas>
   );
 }

@@ -6,7 +6,14 @@ import type { ApprovalMutationExecution } from './approval-governed-mutation';
 import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 import type { ApiResponse } from '../types';
 
-export type HomeWidgetKey = 'command-rail' | 'daily-brief' | 'focus' | 'schedule' | 'activity';
+export type HomeWidgetKey =
+  | 'command-rail'
+  | 'daily-brief'
+  | 'focus'
+  | 'schedule'
+  | 'activity'
+  | 'focus-balance'
+  | 'meeting-load';
 export type HomeSurfaceKey = 'workspace-home' | 'hcm-home' | 'approval-home' | 'hris-home'; // Compatibility alias accepted by the server during the HCM transition.
 export const APPROVAL_HOME_SURFACE_KEY = 'approval-home' as const;
 export const HCM_HOME_SURFACE_KEY = 'hcm-home' as const;
@@ -29,6 +36,8 @@ export const WORKSPACE_HOME_WIDGET_SIZE_CONTRACT = {
   focus: ['quarter', 'compact', 'medium', 'large', 'full'],
   schedule: ['fifth', 'quarter', 'compact', 'medium'],
   'daily-brief': ['compact', 'large', 'full'],
+  'focus-balance': ['quarter', 'compact', 'medium'],
+  'meeting-load': ['quarter', 'compact', 'medium'],
 } as const satisfies Record<HomeWidgetKey, readonly HomeWidgetSize[]>;
 
 export function isWorkspaceHomeWidgetSizeAllowed(

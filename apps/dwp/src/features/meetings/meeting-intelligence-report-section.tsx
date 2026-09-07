@@ -46,10 +46,12 @@ export function MeetingIntelligenceReportSection({
   meetingId,
   canHost,
   artifacts,
+  reportId,
 }: {
   meetingId: string;
   canHost: boolean;
   artifacts: VideoMeetingArtifact[];
+  reportId?: string;
 }) {
   const { t } = useTranslation('meetings');
   const transcriptArtifact = useMemo(
@@ -71,6 +73,7 @@ export function MeetingIntelligenceReportSection({
   return (
     <MeetingIntelligenceReport
       meetingId={meetingId}
+      reportId={reportId}
       canHost={canHost}
       transcriptArtifact={transcriptArtifact}
       contentPlanVersion={contentPlanQuery.data?.version ?? null}
@@ -114,6 +117,7 @@ function intelligenceLabels(
     sectionEmpty: t(`${root}.sectionEmpty`),
     citationLabel: (value) => t(`${root}.citationLabel`, { value }),
     citationDetail: (segmentId, value) => t(`${root}.citationDetail`, { segmentId, value }),
+    citationSeek: (segmentId, value) => t(`${root}.citationSeek`, { segmentId, value }),
     climateDescription: t(`${root}.climateDescription`),
     climateLabels: translatedRecord(CLIMATE_LABELS, (label) => t(`${root}.climateLabels.${label}`)),
     climateSignals: translatedRecord(CLIMATE_SIGNALS, (signal) =>

@@ -1,0 +1,2 @@
+# Preserve captured Stitch source byte-for-byte and suppress textual whitespace normalization.
+**/code.html -diff -merge -text

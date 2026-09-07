@@ -217,7 +217,7 @@ function ToolDetail({
           size="small"
           endIcon={<ArrowRight size={15} aria-hidden="true" />}
           onClick={target}
-          sx={{ mt: 1.15, px: 0, minHeight: 30 }}
+          sx={{ mt: 1.15, px: 1, minHeight: 44 }}
         >
           {t(`dwaion.tools.${tool}.cta`)}
         </ActionButton>

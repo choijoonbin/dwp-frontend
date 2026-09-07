@@ -1,3 +1,4 @@
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import type {
   CalendarDayLoad,
   HomeOverview,
@@ -38,6 +39,10 @@ export type FlowSignal = Readonly<{
   source: string;
   generatedAt: string;
   route: string;
+  activityBreakdown?: Readonly<{
+    needsInput: number;
+    policyBlocked: number;
+  }>;
   series?: readonly CalendarDayLoad[];
   seriesCurrentDate?: string;
 }>;
@@ -53,6 +58,9 @@ export type FlowHomeViewModel = Readonly<{
 }>;
 
 const statusOrder: Record<WorkspaceWorkItem['status'], number> = {
+  open: 1,
+  cancelled: 4,
+  archived: 5,
   'due-soon': 0,
   'in-progress': 1,
   waiting: 2,
@@ -181,7 +189,7 @@ export function buildTodayFlowline(
       startsAt: item.dueAt!,
       allDay: false,
       source: item.sourceSystem,
-      route: item.sourceRoute || `/work?item=${encodeURIComponent(item.id)}`,
+      route: workspaceWorkItemRoute(item),
       state: item.status === 'due-soon' && item.priority === 'high' ? 'risk' : 'attention',
       detail: item.reason ?? item.summary,
     }));
@@ -277,10 +285,13 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
       });
     }
   }
-  if (overview?.activity.status === 'AVAILABLE' && overview.activity.data) {
-    const needsAttention = overview.activity.data.events.filter(
-      (event) => event.state === 'needs-input' || event.state === 'policy-blocked'
-    ).length;
+  if (
+    overview?.activity.status === 'AVAILABLE' &&
+    overview.activity.data?.executionSummary &&
+    overview.activity.data.executionSummaryStatus !== 'UNAVAILABLE'
+  ) {
+    const executionSummary = overview.activity.data.executionSummary;
+    const needsAttention = executionSummary.needsInput + executionSummary.policyBlocked;
     signals.push({
       key: 'activity-attention',
       label: 'activityAttention',
@@ -289,8 +300,12 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
       tone: needsAttention > 0 ? 'warning' : 'neutral',
       comparison: { kind: 'none' },
       source: overview.activity.source,
-      generatedAt: overview.activity.generatedAt,
-      route: '/activity',
+      generatedAt: executionSummary.generatedAt,
+      route: '/activity/timeline',
+      activityBreakdown: {
+        needsInput: executionSummary.needsInput,
+        policyBlocked: executionSummary.policyBlocked,
+      },
     });
   }
   return signals;

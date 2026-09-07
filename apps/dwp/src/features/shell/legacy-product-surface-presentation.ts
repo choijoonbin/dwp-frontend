@@ -9,6 +9,9 @@ import {
 } from '../../components/product-manifest';
 
 export type LegacyProductSurfaceAccessPredicate = (item: ProductNavigationItem) => boolean;
+export type LegacyProductSurfaceEntryAccessPredicate = (
+  surface: ProductSurfaceDefinition
+) => boolean;
 
 /**
  * Presentation-only entry point for a legacy-authorized product.
@@ -173,12 +176,14 @@ export function buildLegacyProductSurfacePresentation({
   pathname,
   navigation,
   canAccessItem,
+  canAccessSurface,
   catalogPath = '/apps',
 }: {
   manifest: ProductSurfaceManifest;
   pathname: string;
   navigation: readonly ProductNavigationGroup[];
   canAccessItem: LegacyProductSurfaceAccessPredicate;
+  canAccessSurface: LegacyProductSurfaceEntryAccessPredicate;
   catalogPath?: string;
 }): LegacyProductSurfacePresentation | undefined {
   const currentSurface = resolveLegacyPresentationSurface(manifest, pathname);
@@ -187,14 +192,17 @@ export function buildLegacyProductSurfacePresentation({
   const owners = declaredPathOwners(manifest);
   const navigationBySurfaceId = new Map<string, readonly ProductNavigationGroup[]>();
   for (const surface of manifest.surfaces) {
-    const surfaceNavigation = navigation
-      .map((group) => ({
-        ...group,
-        items: group.items.filter(
-          (item) => itemBelongsToSurface(manifest, owners, surface.id, item) && canAccessItem(item)
-        ),
-      }))
-      .filter((group) => group.items.length > 0);
+    const surfaceNavigation = canAccessSurface(surface)
+      ? navigation
+          .map((group) => ({
+            ...group,
+            items: group.items.filter(
+              (item) =>
+                itemBelongsToSurface(manifest, owners, surface.id, item) && canAccessItem(item)
+            ),
+          }))
+          .filter((group) => group.items.length > 0)
+      : [];
     navigationBySurfaceId.set(surface.id, surfaceNavigation);
   }
 

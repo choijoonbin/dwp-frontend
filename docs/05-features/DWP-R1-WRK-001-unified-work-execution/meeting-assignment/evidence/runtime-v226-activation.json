@@ -1,0 +1,141 @@
+{
+  "scope": "Local Platform V226 activation and Work assignment runtime HTTP smoke",
+  "verifiedAtUtc": "2026-09-04T08:26:48Z",
+  "safety": {
+    "databaseBackup": {
+      "path": "/tmp/dwp_platform_before_work_v226_20260904.dump",
+      "format": "PostgreSQL custom",
+      "sizeBytes": 139101731,
+      "sha256": "520231b32723b6dc1285e8b2cc7d84c0a40ebc40cd1f92f595981522e5600344",
+      "durability": "Temporary local recovery artifact; copy to durable storage before treating it as an operational backup."
+    },
+    "migrationDryRun": {
+      "command": "Apply V226 inside BEGIN, then ROLLBACK against the current dwp_platform schema",
+      "result": "PASS",
+      "logPath": "/tmp/dwp-work-v226-current-schema-dry-run.log",
+      "tablesPersistedByDryRun": false
+    },
+    "preflightCompile": {
+      "command": "./gradlew :dwp-platform-server:compileJava :dwp-platform-server:compileTestJava",
+      "result": "BUILD SUCCESSFUL"
+    }
+  },
+  "activation": {
+    "service": "platform",
+    "port": 8002,
+    "method": "Gracefully stop only the previous Platform process, then run python3 scripts/devctl.py up platform",
+    "flyway": {
+      "installedRank": 193,
+      "version": "226",
+      "description": "create work assignments",
+      "type": "SQL",
+      "success": true,
+      "runtimeLog": "Successfully applied 1 migration to schema public, now at version v226",
+      "executionSeconds": 0.089
+    },
+    "health": {
+      "httpStatus": 200,
+      "body": {
+        "status": "UP",
+        "groups": ["liveness", "readiness"]
+      }
+    }
+  },
+  "runtimeOpenApi": {
+    "source": "http://127.0.0.1:8002/v3/api-docs",
+    "assignmentPathCount": 12,
+    "assignmentOperationCount": 13,
+    "operations": [
+      "GET /v1/workspace/work-hub/assignments",
+      "POST /v1/workspace/work-hub/assignments",
+      "GET /v1/workspace/work-hub/assignments/by-source",
+      "GET /v1/workspace/work-hub/assignments/commands/{commandId}",
+      "GET /v1/workspace/work-hub/assignments/{assignmentId}",
+      "GET /v1/workspace/work-hub/assignments/{assignmentId}/events",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/accept",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/decline",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/start",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/wait",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/complete",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/cancel",
+      "POST /v1/workspace/work-hub/assignments/{assignmentId}/reassign"
+    ]
+  },
+  "httpSmoke": {
+    "unauthenticatedList": {
+      "httpStatus": 401,
+      "errorCode": "E2000",
+      "message": "Trusted platform service identity is required."
+    },
+    "trustedList": {
+      "request": {
+        "tenantId": 1,
+        "userId": 900018,
+        "permissions": ["APP.WORK:VIEW"],
+        "scope": "ASSIGNED_TO_ME",
+        "page": 0,
+        "size": 50,
+        "serviceTokenHandling": "Loaded from local devctl configuration in process memory; value not recorded."
+      },
+      "httpStatus": 200,
+      "response": {
+        "success": true,
+        "status": "SUCCESS",
+        "items": [],
+        "page": 0,
+        "size": 50,
+        "totalElements": 0,
+        "hasMore": false
+      }
+    },
+    "unconfiguredSourceCreateProbe": {
+      "purpose": "Verify that CREATE fails before persistence while the Meeting source endpoint and signing key are unconfigured.",
+      "sourceIdentifiers": "Syntactically valid, known-nonexistent probe UUIDs; no Meeting object or Work record was created.",
+      "httpStatus": 502,
+      "errorCode": "E5000",
+      "message": "An external service error occurred.",
+      "rowsBefore": {
+        "workAssignments": 0,
+        "workAssignmentEvents": 0,
+        "workAssignmentCommandReceipts": 0
+      },
+      "rowsAfter": {
+        "workAssignments": 0,
+        "workAssignmentEvents": 0,
+        "workAssignmentCommandReceipts": 0
+      },
+      "result": "PASS_FAIL_CLOSED_NO_PERSISTENCE"
+    }
+  },
+  "databasePostCheck": {
+    "preservedCounts": {
+      "wrkItems": 640,
+      "personalWorkTasks": 0,
+      "personalWorkTimeline": 0,
+      "personalWorkCommandReceipts": 0,
+      "personalWorkDayPlans": 0,
+      "personalWorkDayPlanItems": 0,
+      "personalWorkCalendarLinks": 0,
+      "workAssignments": 0,
+      "workAssignmentEvents": 0,
+      "workAssignmentCommandReceipts": 0
+    },
+    "workAssignmentIndexes": [
+      "idx_work_assignment_assignee",
+      "idx_work_assignment_creator",
+      "uk_work_assignment_candidate",
+      "uk_work_assignment_tenant",
+      "work_assignments_pkey"
+    ],
+    "integrityTriggers": [
+      "trg_work_assignment_receipts_append_only",
+      "trg_work_assignment_events_append_only",
+      "trg_work_assignment_identity"
+    ]
+  },
+  "releaseGates": {
+    "existingAssignmentReadAndTransitionRuntime": "Platform direct API is live; an authenticated Gateway/browser end-to-end run remains unverified.",
+    "createBySourceReassign": "NO-GO: Meeting receiver, stable confirmed candidate model, current Auth action authority, People target eligibility, and runtime source configuration are absent.",
+    "officialOpenApi": "P0 gap: runtime exposes 12 paths/13 operations, while committed backend and frontend official OpenAPI snapshots and generated client expose zero assignment paths. Export and generated sync are separately owned."
+  }
+}

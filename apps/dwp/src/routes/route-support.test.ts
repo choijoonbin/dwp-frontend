@@ -1,9 +1,10 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AllowedProductSurfaceProvider } from '../features/shell/allowed-product-surface-context';
-import { ProductAnyRouteGuard, ProductRouteGuard } from './route-support';
+import { ProductAnyRouteGuard, ProductRouteGuard, ProductWorkRouteGuard } from './route-support';
 
 import type { AllowedProductSurfaceBoundaryKind } from '../features/shell/allowed-product-surface-context';
 import type { AllowedSurfaceDecision } from '../features/shell/product-surface-context';
@@ -87,6 +88,36 @@ function renderProductGuard({
   );
 }
 
+function renderProductWorkGuard({
+  decision,
+  productId = 'sample',
+  resourceKey = 'APP.SAMPLE',
+  surfaceId = 'sample.work',
+}: {
+  decision?: AllowedSurfaceDecision;
+  productId?: string;
+  resourceKey?: string;
+  surfaceId?: string;
+} = {}) {
+  const guardProps = {
+    productId,
+    resourceKey,
+    surfaceId,
+  } as ComponentProps<typeof ProductWorkRouteGuard>;
+  const guard = createElement(
+    ProductWorkRouteGuard,
+    guardProps,
+    createElement('span', { 'data-testid': 'page' }, 'page')
+  );
+  const providerProps = { decision } as ComponentProps<typeof AllowedProductSurfaceProvider>;
+  const content = decision
+    ? createElement(AllowedProductSurfaceProvider, providerProps, guard)
+    : guard;
+  return renderToStaticMarkup(
+    createElement(MemoryRouter, { initialEntries: ['/sample'] }, content)
+  );
+}
+
 describe('legacy product route guards under governed PAGE authority', () => {
   beforeEach(() => {
     guardMocks.useAuth.mockReturnValue({
@@ -137,6 +168,17 @@ describe('legacy product route guards under governed PAGE authority', () => {
     expect(renderProductGuard()).toContain('data-testid="page"');
   });
 
+  it('waits for legacy permissions instead of emitting an early denial', () => {
+    guardMocks.usePermissions.mockReturnValue({
+      isLoaded: false,
+      hasPermission: vi.fn(() => false),
+    });
+
+    const markup = renderProductGuard();
+    expect(markup).toContain('role="progressbar"');
+    expect(markup).not.toContain('data-access-state');
+  });
+
   it('bypasses only an all-ADMIN ProductAny guard for an exact management PAGE', () => {
     const renderAny = (resourceKeys: readonly string[]) => {
       const providerProps = {
@@ -165,5 +207,77 @@ describe('legacy product route guards under governed PAGE authority', () => {
 
     expect(renderAny(['ADMIN.SAMPLE', 'ADMIN.SAMPLE_AUDIT'])).toContain('data-testid="page"');
     expect(renderAny(['ADMIN.SAMPLE', 'APP.SAMPLE'])).toContain('data-access-state="route-denied"');
+  });
+});
+
+describe('governed Work compatibility guard', () => {
+  beforeEach(() => {
+    guardMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'TENANT', roles: [], resourceRoles: [] },
+    });
+    guardMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: true,
+      hasPermission: vi.fn(() => false),
+    });
+  });
+
+  it('does not apply the legacy empty-APP fail-open', () => {
+    expect(renderProductWorkGuard()).not.toContain('data-testid="page"');
+    guardMocks.usePermissions.mockReturnValue({
+      permissions: [
+        {
+          resourceType: 'APP',
+          resourceKey: 'APP.OTHER',
+          permissionCode: 'VIEW',
+          effect: 'ALLOW',
+        },
+      ],
+      isLoaded: true,
+      hasPermission: vi.fn(() => false),
+    });
+    expect(renderProductWorkGuard()).not.toContain('data-testid="page"');
+  });
+
+  it('allows only an explicit matching APP grant before enforcement', () => {
+    guardMocks.usePermissions.mockReturnValue({
+      permissions: [
+        {
+          resourceType: 'APP',
+          resourceKey: 'APP.SAMPLE',
+          permissionCode: 'VIEW',
+          effect: 'ALLOW',
+        },
+      ],
+      isLoaded: true,
+      hasPermission: vi.fn(() => false),
+    });
+    expect(renderProductWorkGuard()).toContain('data-testid="page"');
+  });
+
+  it('uses a matching server Work decision without waiting on the legacy permission snapshot', () => {
+    guardMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: false,
+      hasPermission: vi.fn(() => false),
+    });
+    expect(renderProductWorkGuard({ decision: allowedDecision('work') })).toContain(
+      'data-testid="page"'
+    );
+    expect(renderProductWorkGuard({ decision: allowedDecision('management') })).not.toContain(
+      'data-testid="page"'
+    );
+    expect(
+      renderProductWorkGuard({
+        decision: allowedDecision('work'),
+        productId: 'other',
+      })
+    ).not.toContain('data-testid="page"');
+    expect(
+      renderProductWorkGuard({
+        decision: allowedDecision('work'),
+        surfaceId: 'sample.other',
+      })
+    ).not.toContain('data-testid="page"');
   });
 });

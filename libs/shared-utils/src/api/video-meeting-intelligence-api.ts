@@ -89,6 +89,13 @@ export type VideoMeetingIntelligenceReport = {
   canCurrentViewerReview: boolean;
   analysis?: VideoMeetingIntelligenceAnalysis | null;
   reviews: VideoMeetingIntelligenceReview[];
+  followUpCandidates?: VideoMeetingIntelligenceFollowUpCandidate[];
+};
+
+export type VideoMeetingIntelligenceFollowUpCandidate = {
+  candidateId: string;
+  sourceVersion: number;
+  actionItemIndex: number;
 };
 
 export type CreateVideoMeetingIntelligenceRunInput = {

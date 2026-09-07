@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
+import { filterRolePulseSignals, filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
 
 import type { NormalizedHomeContribution } from '../contributions';
 import type { FlowSignal } from './flow-home-model';
@@ -71,5 +71,30 @@ describe('role pulse text policy', () => {
 
   it('keeps the original projection when no visual signal is available', () => {
     expect(filterRolePulseTextItems(items, [])).toBe(items);
+  });
+
+  it('removes calendar signals represented by visible specialist widgets', () => {
+    const signals = [
+      signal('open-work'),
+      signal('focus-time'),
+      signal('schedule-load'),
+      signal('activity-attention'),
+    ];
+
+    expect(
+      filterRolePulseSignals(signals, { focusBalance: true, meetingLoad: true }).map(
+        (candidate) => candidate.key
+      )
+    ).toEqual(['open-work', 'activity-attention']);
+  });
+
+  it('restores a calendar signal when its specialist widget is hidden', () => {
+    const signals = [signal('focus-time'), signal('schedule-load')];
+
+    expect(
+      filterRolePulseSignals(signals, { focusBalance: false, meetingLoad: true }).map(
+        (candidate) => candidate.key
+      )
+    ).toEqual(['focus-time']);
   });
 });

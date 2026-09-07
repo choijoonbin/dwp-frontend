@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -62,9 +62,34 @@ export function DwaionWorkspaceAnswer({
   const { t, i18n } = useTranslation('work');
   const toast = useToast();
   const [feedback, setFeedback] = useState<'UP' | 'DOWN' | null>(null);
+  const [answerAnnouncement, setAnswerAnnouncement] = useState('');
+  const announcedResponse = useRef<string | null>(null);
   const groundedFallback = response ? isGroundedFallbackResponse(response) : false;
 
+  const announcement =
+    state === 'ready' && response
+      ? response.state === 'COMPLETED' && response.answer
+        ? `${t(
+            groundedFallback ? 'askPage.fallback.answerHeading' : 'askPage.answerHeading'
+          )}. ${response.answer}`
+        : `${outcomeTitle(t, response)}. ${outcomeDescription(t, response)}`
+      : '';
+
   useEffect(() => setFeedback(null), [response?.runId]);
+
+  useEffect(() => {
+    if (state !== 'ready' || !response || !announcement) {
+      announcedResponse.current = null;
+      setAnswerAnnouncement('');
+      return undefined;
+    }
+    const announcementKey = `${response.runId}:${response.state}`;
+    if (announcedResponse.current === announcementKey) return undefined;
+    announcedResponse.current = announcementKey;
+    setAnswerAnnouncement('');
+    const timer = globalThis.setTimeout(() => setAnswerAnnouncement(announcement), 0);
+    return () => globalThis.clearTimeout(timer);
+  }, [announcement, response, state]);
 
   const copyAnswer = async () => {
     if (!response?.answer) return;
@@ -113,7 +138,7 @@ export function DwaionWorkspaceAnswer({
           intent="quiet"
           startIcon={<Plus size={15} aria-hidden="true" />}
           onClick={onReset}
-          sx={{ flex: '0 0 auto' }}
+          sx={{ flex: '0 0 auto', minHeight: 44 }}
         >
           {t('askPage.actions.newQuestion')}
         </ActionButton>
@@ -126,7 +151,7 @@ export function DwaionWorkspaceAnswer({
           severity="error"
           variant="outlined"
           action={
-            <ActionButton size="small" intent="quiet" onClick={onRetry}>
+            <ActionButton size="small" intent="quiet" onClick={onRetry} sx={{ minHeight: 44 }}>
               {t('askPage.retry')}
             </ActionButton>
           }
@@ -182,7 +207,7 @@ export function DwaionWorkspaceAnswer({
                 </Typography>
               </Box>
             </Stack>
-            <Stack direction="row" spacing={0.75} alignItems="center">
+            <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
               <Chip
                 size="small"
                 color={responseTone(response)}
@@ -206,6 +231,7 @@ export function DwaionWorkspaceAnswer({
                   tooltip={t('askPage.actions.copy')}
                   size="small"
                   onClick={() => void copyAnswer()}
+                  sx={{ width: 44, height: 44 }}
                 >
                   <Copy size={16} aria-hidden="true" />
                 </ActionIconButton>
@@ -219,6 +245,7 @@ export function DwaionWorkspaceAnswer({
                     intent={feedback === 'UP' ? 'primary' : 'default'}
                     disabled={Boolean(feedback)}
                     onClick={() => void submitFeedback('UP')}
+                    sx={{ width: 44, height: 44 }}
                   >
                     <ThumbsUp size={16} aria-hidden="true" />
                   </ActionIconButton>
@@ -229,6 +256,7 @@ export function DwaionWorkspaceAnswer({
                     intent={feedback === 'DOWN' ? 'primary' : 'default'}
                     disabled={Boolean(feedback)}
                     onClick={() => void submitFeedback('DOWN')}
+                    sx={{ width: 44, height: 44 }}
                   >
                     <ThumbsDown size={16} aria-hidden="true" />
                   </ActionIconButton>
@@ -239,6 +267,7 @@ export function DwaionWorkspaceAnswer({
                 tooltip={t('askPage.actions.retry')}
                 size="small"
                 onClick={onRetry}
+                sx={{ width: 44, height: 44 }}
               >
                 <RotateCcw size={16} aria-hidden="true" />
               </ActionIconButton>
@@ -249,7 +278,6 @@ export function DwaionWorkspaceAnswer({
 
           {groundedFallback && (
             <Box
-              role="status"
               sx={{
                 mt: 2,
                 px: 1.5,
@@ -333,13 +361,24 @@ export function DwaionWorkspaceAnswer({
               gap: 0.75,
             }}
           >
-            <Check size={15} color="#188464" aria-hidden="true" />
+            <Box sx={{ display: 'flex', color: 'success.main' }}>
+              <Check size={15} color="currentColor" aria-hidden="true" />
+            </Box>
             <Typography variant="caption" color="text.secondary">
               {t('askPage.independentRun')}
             </Typography>
           </Box>
         </Box>
       )}
+      <Box
+        data-testid="dwaion-answer-announcement"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        sx={visuallyHidden}
+      >
+        {answerAnnouncement}
+      </Box>
     </Box>
   );
 }
@@ -406,12 +445,24 @@ function LoadingAnswer({
           </Box>
         ))}
       </Box>
-      <ActionButton intent="quiet" size="small" onClick={onCancel} sx={{ mt: 1.5 }}>
+      <ActionButton intent="quiet" size="small" onClick={onCancel} sx={{ mt: 1.5, minHeight: 44 }}>
         {t('askPage.composer.cancel')}
       </ActionButton>
     </Box>
   );
 }
+
+const visuallyHidden = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  p: 0,
+  m: -1,
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+} as const;
 
 function outcomeTitle(t: TFunction<'work'>, response: AskDwpResponse): string {
   if (response.state === 'CONFIGURATION_REQUIRED') return t('askPage.outcomes.configurationTitle');

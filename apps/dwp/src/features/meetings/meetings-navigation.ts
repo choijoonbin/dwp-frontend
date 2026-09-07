@@ -1,4 +1,15 @@
-import { Bot, CalendarClock, Gauge, History, House, LogIn, Settings2 } from 'lucide-react';
+import {
+  Bot,
+  CalendarClock,
+  ListTodo,
+  Gauge,
+  Library,
+  House,
+  LayoutTemplate,
+  LogIn,
+  Settings2,
+  SlidersHorizontal,
+} from 'lucide-react';
 
 import type { ProductNavigationItem } from '../../components/product-manifest';
 
@@ -7,7 +18,10 @@ export type MeetingsView =
   | 'home'
   | 'mine'
   | 'history'
+  | 'follow-ups'
   | 'join'
+  | 'templates'
+  | 'preferences'
   | 'admin-operations'
   | 'admin-policies'
   | 'admin-intelligence';
@@ -34,7 +48,15 @@ export const MEETINGS_NAVIGATION: readonly MeetingsNavigationGroup[] = [
     id: 'meetings',
     items: [
       { section: 'meetings', view: 'mine', path: '/meetings/mine', icon: CalendarClock },
-      { section: 'meetings', view: 'history', path: '/meetings/history', icon: History },
+      { section: 'meetings', view: 'history', path: '/meetings/history', icon: Library },
+      { section: 'meetings', view: 'follow-ups', path: '/meetings/follow-ups', icon: ListTodo },
+      { section: 'meetings', view: 'templates', path: '/meetings/templates', icon: LayoutTemplate },
+      {
+        section: 'meetings',
+        view: 'preferences',
+        path: '/meetings/preferences',
+        icon: SlidersHorizontal,
+      },
     ],
   },
   {

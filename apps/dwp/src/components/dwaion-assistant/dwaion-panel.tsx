@@ -32,6 +32,7 @@ type DwaionPanelProps = {
   onOpenContacts?: () => void;
   onOpenStatus: () => void;
   onSizeChange?: () => void;
+  fullScreen?: boolean;
 };
 
 const defaultSuggestionKeys = ['priority', 'policy', 'access'] as const;
@@ -46,6 +47,7 @@ export function DwaionPanel({
   onOpenContacts,
   onOpenStatus,
   onSizeChange,
+  fullScreen = false,
 }: DwaionPanelProps) {
   const { t, i18n } = useTranslation('home');
   const navigate = useNavigate();
@@ -181,10 +183,12 @@ export function DwaionPanel({
   return (
     <Box
       role="dialog"
+      aria-modal={fullScreen || undefined}
       aria-label={t('dwaion.panelLabel')}
       data-testid="dwaion-panel"
       sx={{
-        maxHeight: { xs: 'calc(100dvh - 104px)', sm: 620 },
+        height: fullScreen ? '100%' : 'auto',
+        maxHeight: fullScreen ? '100%' : 620,
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -203,7 +207,7 @@ export function DwaionPanel({
         ref={contentRef}
         data-testid="dwaion-conversation"
         sx={{
-          flex: '0 1 auto',
+          flex: fullScreen ? '1 1 auto' : '0 1 auto',
           minHeight: 0,
           overflowY: 'auto',
           overscrollBehavior: 'contain',
@@ -269,7 +273,7 @@ export function DwaionPanel({
                     endIcon={<ArrowRight size={14} aria-hidden="true" />}
                     onClick={() => void runQuestion(suggestion)}
                     sx={{
-                      minHeight: 34,
+                      minHeight: 44,
                       px: 1,
                       justifyContent: 'space-between',
                       border: 1,

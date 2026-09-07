@@ -1,38 +1,50 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.6
-- 기준일: 2026-08-28
-- 기준 Frontend Commit: `9bc909a` + 본 통합 변경 단위
+- 상태: Governed ledger v1.10
+- 기준일: 2026-09-04
+- 기준 Frontend Commit: `7e87ba2174b8f4de6ef69ff91f183191df61359b` + 본 공통 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `c77a266fc9e1320ba4a75d639e4dd8903b7d031610854f793e904174057b85ec`
+- Ledger SHA-256: `a718725494d965dc85f031544c1d04f07824656eb7cef5e6b9bd206b10d4fee6`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **187개 전부**를 분류한다. Detail Route, Query View,
+이 표는 현재 Runtime의 정적 Menu Route **193개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 187개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
-Surface`는 12개 업무 앱 139개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
-48개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
+전체 193개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+Surface`는 12개 업무 앱 146개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
+47개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
 Route Key가 필요할 때는 점을 `__`로 치환한 가역 Token만 사용하며 별도 수기 Token Mapping은
 두지 않는다.
 
+2026-09-04에는 `mail.contacts`, `meetings.follow-ups`, `meetings.templates`,
+`meetings.preferences`에 이어 `dwaion.routines`, `dwaion.personal-controls`,
+`dwaion.artifacts`를 정식 사용자 메뉴로 추가한다. 일곱 메뉴 모두 기존 업무 Surface·Policy의
+`W3`/`DRAFT PAGE`이며 관리 메뉴나 승인 Authorization Bundle을 변경하지 않는다. DWAI·ON의 기존
+15개 메뉴는 계속 `W2`이고 신규 확장 세 메뉴만 항목 단위 `W3`이다. 정적 DRAFT PAGE는 86개,
+기존 동적 Detail 5개를 포함한 DRAFT PAGE는 91개다.
+이는 메뉴 분류이며 운영 권한 승격을 뜻하지 않는다.
+
+같은 날 중복된 Work Home 메뉴 `work.home`을 제거하고 통합업무함 `work.queue`를 업무 앱의
+단일 정적 메뉴로 확정했다. `/work`와 `/work/home`은 검색 조건을 보존해 `/work/queue`로
+이동하는 호환 경로이며 정적 메뉴 수에는 포함하지 않는다.
+
 | 목표 Plane          |    수량 | 의미                                    |
 | ------------------- | ------: | --------------------------------------- |
-| `work`              |      84 | 개인·참여 업무 81 + 관계 기반 팀 업무 3 |
+| `work`              |      90 | 개인·참여 업무 87 + 관계 기반 팀 업무 3 |
 | `management`        |      61 | 제품 운영 33 + 제품 설정 28             |
 | `tenant-governance` |      24 | 회사 공통 운영 8 + 회사 공통 설정 16    |
 | `provider-control`  |      10 | Provider 운영 6 + Provider 설정·통제 4  |
 | `account`           |       8 | 개인 계정·선호                          |
-| **합계**            | **187** |                                         |
+| **합계**            | **193** |                                         |
 
-Task 기준 합계는 `work 89`, `team 3`, `operations 47`, `administration 48`이다. Account의
+Task 기준 합계는 `work 95`, `team 3`, `operations 47`, `administration 48`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -48,49 +60,51 @@ Task 기준 합계는 `work 89`, `team 3`, `operations 47`, `administration 48`�
 
 ### Migration Wave
 
-| Wave     | 정적 메뉴 수량 | 범위                                                     |
-| -------- | -------------: | -------------------------------------------------------- |
-| `W0`     |              0 | 공통 Manifest·Resolver·Guard·Shell·Context API·Telemetry |
-| `W0.5`   |             12 | Communications·Services Technical Canary                 |
-| `W1a`    |             15 | Approvals 대표 Pilot                                     |
-| `W1b`    |             25 | HCM 대표 Pilot                                           |
-| `W2`     |             35 | DWAI·ON, Notifications, Spaces                           |
-| `W3`     |             52 | Calendar, Workplace/Rooms, Mail, Messaging, Meetings     |
-| `Keep`   |             48 | 이미 독립된 Workspace, Tenant, Provider, Account Plane   |
-| **합계** |        **187** |                                                          |
+| Wave     | 정적 메뉴 수량 | 범위                                                               |
+| -------- | -------------: | ------------------------------------------------------------------ |
+| `W0`     |              0 | 공통 Manifest·Resolver·Guard·Shell·Context API·Telemetry           |
+| `W0.5`   |             12 | Communications·Services Technical Canary                           |
+| `W1a`    |             15 | Approvals 대표 Pilot                                               |
+| `W1b`    |             25 | HCM 대표 Pilot                                                     |
+| `W2`     |             35 | DWAI·ON, Notifications, Spaces                                     |
+| `W3`     |             59 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
+| `Keep`   |             47 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
+| **합계** |        **193** |                                                                    |
 
-## 2. Workspace, Work와 Activity — 6
+## 2. Workspace, Work와 Activity — 5
 
 | Menu ID             | 현재 그룹 › 메뉴              | Path                 | Plane/Task | 목표 Surface    | 현재 조건              | 결정 |
 | ------------------- | ----------------------------- | -------------------- | ---------- | --------------- | ---------------------- | ---- |
 | `home.personal`     | Home › 개인 홈                | `/`                  | W/W        | `home`          | Auth + Workspace Guard | Keep |
 | `catalog.apps`      | Catalog › 앱 카탈로그         | `/apps`              | W/W        | `catalog`       | Auth + Workspace Guard | Keep |
-| `work.home`         | 홈 › 업무 홈                  | `/work/home`         | W/W        | `work.work`     | P: `APP.WORK`          | Keep |
 | `work.queue`        | 나의 업무 › 통합 업무함       | `/work/queue`        | W/W        | `work.work`     | P: `APP.WORK`          | Keep |
 | `activity.home`     | 홈 › 활동 홈                  | `/activity/home`     | W/W        | `activity.work` | P: `APP.ACTIVITY`      | Keep |
 | `activity.timeline` | 활동 모니터링 › 활동 타임라인 | `/activity/timeline` | W/W        | `activity.work` | P: `APP.ACTIVITY`      | Keep |
 
-## 3. DWAI·ON — 15 (`W2`)
+## 3. DWAI·ON — 18 (기존 `W2`, 확장 `W3`)
 
 Parent는 현재 `APP.ASK`다. Management Child가 Parent App Guard와 결합된 구조를 분리한다.
 
-| Menu ID                   | 현재 그룹 › 메뉴             | Path                       | Plane/Task | 목표 Surface        | Item 조건                                                       | 결정                                |
-| ------------------------- | ---------------------------- | -------------------------- | ---------- | ------------------- | --------------------------------------------------------------- | ----------------------------------- |
-| `dwaion.home`             | 시작 › DWAI·ON 홈            | `/dwaion/home`             | W/W        | `dwaion.work`       | —                                                               | Work Nav                            |
-| `dwaion.new`              | 대화 › 새 대화               | `/dwaion/new`              | W/W        | `dwaion.work`       | —                                                               | Work Nav                            |
-| `dwaion.activity`         | 실행 › AI 실행 이력          | `/dwaion/activity`         | W/W        | `dwaion.work`       | —                                                               | Work Nav; DRAFT PAGE                |
-| `dwaion.proposals`        | 제안 › AI 제안함             | `/dwaion/proposals`        | W/W        | `dwaion.work`       | —                                                               | Work Nav; DRAFT PAGE                |
-| `dwaion.conversations`    | 대화 › 내 대화               | `/dwaion/conversations`    | W/W        | `dwaion.work`       | —                                                               | Work Nav                            |
-| `dwaion.agents`           | 탐색 › 전문 에이전트         | `/dwaion/agents`           | W/W        | `dwaion.work`       | —                                                               | Work Nav                            |
-| `dwaion.actions`          | 탐색 › 업무 실행 및 연결     | `/dwaion/actions`          | W/W        | `dwaion.work`       | I: 4개 Exact Action 중 하나, 현재 각 Resource `MANAGE` Fallback | Work Nav; Exact Action 정합화       |
-| `dwaion.admin-overview`   | 운영 › 운영 현황             | `/dwaion/admin/overview`   | M/O        | `dwaion.management` | I: `ADMIN.DWAION_OPERATIONS:VIEW+`                              | Management Nav                      |
-| `dwaion.admin-agents`     | 운영 › 에이전트 및 게시 관리 | `/dwaion/admin/agents`     | M/A        | `dwaion.management` | I: `ADMIN.DWAION_AGENTS:VIEW+`                                  | Management Nav                      |
-| `dwaion.admin-sources`    | 운영 › 데이터 소스와 커넥터  | `/dwaion/admin/sources`    | M/A        | `dwaion.management` | I: `ADMIN.DWAION_SOURCES:VIEW+`                                 | Management Nav                      |
-| `dwaion.admin-actions`    | 운영 › 액션과 실행 권한      | `/dwaion/admin/actions`    | M/A        | `dwaion.management` | I: `ADMIN.DWAION_ACTIONS:VIEW+`                                 | Management Nav                      |
-| `dwaion.admin-safety`     | 운영 › 정책 및 안전 제어     | `/dwaion/admin/safety`     | M/A        | `dwaion.management` | I: `ADMIN.DWAION_SAFETY:VIEW+`                                  | Management Nav                      |
-| `dwaion.admin-evaluation` | 운영 › 응답 품질과 평가      | `/dwaion/admin/evaluation` | M/O        | `dwaion.management` | I: `ADMIN.DWAION_EVALUATION:VIEW+`                              | Management Nav                      |
-| `dwaion.admin-gates`      | 운영 › 운영 전환 검증        | `/dwaion/admin/gates`      | M/A        | `dwaion.management` | I: `ADMIN.DWAION_GATES:VIEW+`                                   | Management Nav                      |
-| `dwaion.admin-audit`      | 운영 › 데이터 보존과 감사    | `/dwaion/admin/audit`      | M/A        | `dwaion.management` | I: Retention/Audit `VIEW` 또는 `MANAGE` 중 하나                 | Management Nav; Exact Action 정합화 |
+| Menu ID                    | 현재 그룹 › 메뉴             | Path                        | Plane/Task | 목표 Surface        | Item 조건                                                                              | 결정                                 |
+| -------------------------- | ---------------------------- | --------------------------- | ---------- | ------------------- | -------------------------------------------------------------------------------------- | ------------------------------------ |
+| `dwaion.home`              | 시작 › DWAI·ON 홈            | `/dwaion/home`              | W/W        | `dwaion.work`       | —                                                                                      | Work Nav                             |
+| `dwaion.new`               | 대화 › 새 대화               | `/dwaion/new`               | W/W        | `dwaion.work`       | —                                                                                      | Work Nav                             |
+| `dwaion.activity`          | 실행 › AI 실행 이력          | `/dwaion/activity`          | W/W        | `dwaion.work`       | —                                                                                      | Work Nav; DRAFT PAGE                 |
+| `dwaion.proposals`         | 제안 › AI 제안함             | `/dwaion/proposals`         | W/W        | `dwaion.work`       | —                                                                                      | Work Nav; DRAFT PAGE                 |
+| `dwaion.conversations`     | 대화 › 내 대화               | `/dwaion/conversations`     | W/W        | `dwaion.work`       | —                                                                                      | Work Nav                             |
+| `dwaion.agents`            | 탐색 › 전문 에이전트         | `/dwaion/agents`            | W/W        | `dwaion.work`       | —                                                                                      | Work Nav                             |
+| `dwaion.actions`           | 탐색 › 업무 실행 및 연결     | `/dwaion/actions`           | W/W        | `dwaion.work`       | I: 4개 Exact Action 중 하나, 현재 각 Resource `MANAGE` Fallback                        | Work Nav; Exact Action 정합화        |
+| `dwaion.routines`          | 확장 › 내 AI 루틴            | `/dwaion/routines`          | W/W        | `dwaion.work`       | I: `APP.DWAION_ROUTINES:VIEW`; P: `dwaion.work-access.v1`                              | Work Nav; W3 ACTIVE Menu; DRAFT PAGE |
+| `dwaion.personal-controls` | 확장 › 개인 AI 제어          | `/dwaion/personal-controls` | W/W        | `dwaion.work`       | I: `APP.DWAION_MEMORY:VIEW` 또는 `APP.DWAION_PRIVACY:VIEW`; P: `dwaion.work-access.v1` | Work Nav; W3 ACTIVE Menu; DRAFT PAGE |
+| `dwaion.artifacts`         | 확장 › 결과물 스튜디오       | `/dwaion/artifacts`         | W/W        | `dwaion.work`       | I: `APP.DWAION_ARTIFACTS:VIEW`; P: `dwaion.work-access.v1`                             | Work Nav; W3 ACTIVE Menu; DRAFT PAGE |
+| `dwaion.admin-overview`    | 운영 › 운영 현황             | `/dwaion/admin/overview`    | M/O        | `dwaion.management` | I: `ADMIN.DWAION_OPERATIONS:VIEW+`                                                     | Management Nav                       |
+| `dwaion.admin-agents`      | 운영 › 에이전트 및 게시 관리 | `/dwaion/admin/agents`      | M/A        | `dwaion.management` | I: `ADMIN.DWAION_AGENTS:VIEW+`                                                         | Management Nav                       |
+| `dwaion.admin-sources`     | 운영 › 데이터 소스와 커넥터  | `/dwaion/admin/sources`     | M/A        | `dwaion.management` | I: `ADMIN.DWAION_SOURCES:VIEW+`                                                        | Management Nav                       |
+| `dwaion.admin-actions`     | 운영 › 액션과 실행 권한      | `/dwaion/admin/actions`     | M/A        | `dwaion.management` | I: `ADMIN.DWAION_ACTIONS:VIEW+`                                                        | Management Nav                       |
+| `dwaion.admin-safety`      | 운영 › 정책 및 안전 제어     | `/dwaion/admin/safety`      | M/A        | `dwaion.management` | I: `ADMIN.DWAION_SAFETY:VIEW+`                                                         | Management Nav                       |
+| `dwaion.admin-evaluation`  | 운영 › 응답 품질과 평가      | `/dwaion/admin/evaluation`  | M/O        | `dwaion.management` | I: `ADMIN.DWAION_EVALUATION:VIEW+`                                                     | Management Nav                       |
+| `dwaion.admin-gates`       | 운영 › 운영 전환 검증        | `/dwaion/admin/gates`       | M/A        | `dwaion.management` | I: `ADMIN.DWAION_GATES:VIEW+`                                                          | Management Nav                       |
+| `dwaion.admin-audit`       | 운영 › 데이터 보존과 감사    | `/dwaion/admin/audit`       | M/A        | `dwaion.management` | I: Retention/Audit `VIEW` 또는 `MANAGE` 중 하나                                        | Management Nav; Exact Action 정합화  |
 
 ## 4. Communications — 6 (`W0.5` Canary)
 
@@ -176,29 +190,31 @@ Parent는 `APP.CALENDAR`다.
 | `rooms.admin-room-operations` | 회의실 관리 › 회의 승인 운영     | `/workplace/admin/meeting-operations` | M/O        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
 | `rooms.admin-room-policy`     | 회의실 관리 › 회의 예약 정책     | `/workplace/admin/meeting-policy`     | M/A        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
 
-## 9. Mail — 15 (`W3`)
+## 9. Mail — 16 (`W3`)
 
 Parent는 `APP.MAIL`이다.
 
-| Menu ID                     | 현재 그룹 › 메뉴            | Path                         | Plane/Task | 목표 Surface      | Item 조건             | 결정                              |
-| --------------------------- | --------------------------- | ---------------------------- | ---------- | ----------------- | --------------------- | --------------------------------- |
-| `mail.home`                 | 시작 › 메일 홈              | `/mail/home`                 | W/W        | `mail.work`       | P: App                | Work Nav                          |
-| `mail.inbox`                | 메일함 › 받은 메일          | `/mail/inbox`                | W/W        | `mail.work`       | P: App                | Work Nav                          |
-| `mail.sent`                 | 메일함 › 보낸 메일          | `/mail/sent`                 | W/W        | `mail.work`       | P: App                | Work Nav                          |
-| `mail.drafts`               | 메일함 › 임시 보관함        | `/mail/drafts`               | W/W        | `mail.work`       | P: App                | Work Nav                          |
-| `mail.archive`              | 메일함 › 보관함             | `/mail/archive`              | W/W        | `mail.work`       | P: App                | Work Nav; ACTIVE Menu; DRAFT PAGE |
-| `mail.spam`                 | 메일함 › 스팸               | `/mail/spam`                 | W/W        | `mail.work`       | P: App                | Work Nav; ACTIVE Menu; DRAFT PAGE |
-| `mail.trash`                | 메일함 › 휴지통             | `/mail/trash`                | W/W        | `mail.work`       | P: App                | Work Nav; ACTIVE Menu; DRAFT PAGE |
-| `mail.folders`              | 메일함 › 내 폴더            | `/mail/folders`              | W/W        | `mail.work`       | P: App                | Work Nav; ACTIVE Menu; DRAFT PAGE |
-| `mail.shared`               | 협업 › 공유 메일함          | `/mail/shared`               | W/W        | `mail.work`       | P: App                | Work Nav                          |
-| `mail.organization`         | 개인 설정 › 폴더 및 규칙    | `/mail/organization`         | W/W        | `mail.work`       | P: App                | Work Nav; ACTIVE Menu; DRAFT PAGE |
-| `mail.accounts`             | 개인 설정 › 연결된 계정     | `/mail/accounts`             | W/W        | `mail.work`       | P: App                | Work Nav                          |
-| `mail.admin-overview`       | 메일 운영 › 운영 현황       | `/mail/admin/overview`       | M/O        | `mail.management` | I: `ADMIN.MAIL:VIEW+` | Management Nav; Guard 정합화      |
-| `mail.admin-connections`    | 메일 운영 › 메일 연결       | `/mail/admin/connections`    | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+` | Management Nav; Guard 정합화      |
-| `mail.admin-shared-inboxes` | 메일 운영 › 공유함 운영     | `/mail/admin/shared-inboxes` | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+` | Management Nav; Guard 정합화      |
-| `mail.admin-policies`       | 메일 운영 › 보안 및 AI 정책 | `/mail/admin/policies`       | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+` | Management Nav; Guard 정합화      |
+| Menu ID                     | 현재 그룹 › 메뉴            | Path                         | Plane/Task | 목표 Surface      | Item 조건                     | 결정                              |
+| --------------------------- | --------------------------- | ---------------------------- | ---------- | ----------------- | ----------------------------- | --------------------------------- |
+| `mail.home`                 | 시작 › 메일 홈              | `/mail/home`                 | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.inbox`                | 메일함 › 받은 메일          | `/mail/inbox`                | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.sent`                 | 메일함 › 보낸 메일          | `/mail/sent`                 | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.drafts`               | 메일함 › 임시 보관함        | `/mail/drafts`               | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.archive`              | 메일함 › 보관함             | `/mail/archive`              | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `mail.spam`                 | 메일함 › 스팸               | `/mail/spam`                 | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `mail.trash`                | 메일함 › 휴지통             | `/mail/trash`                | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `mail.folders`              | 메일함 › 내 폴더            | `/mail/folders`              | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `mail.contacts`             | 협업 › 주소록               | `/mail/contacts`             | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `mail.shared`               | 협업 › 공유 메일함          | `/mail/shared`               | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.organization`         | 개인 설정 › 폴더 및 규칙    | `/mail/organization`         | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `mail.accounts`             | 개인 설정 › 연결된 계정     | `/mail/accounts`             | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.admin-overview`       | 메일 운영 › 운영 현황       | `/mail/admin/overview`       | M/O        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
+| `mail.admin-connections`    | 메일 운영 › 메일 연결       | `/mail/admin/connections`    | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
+| `mail.admin-shared-inboxes` | 메일 운영 › 공유함 운영     | `/mail/admin/shared-inboxes` | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
+| `mail.admin-policies`       | 메일 운영 › 보안 및 AI 정책 | `/mail/admin/policies`       | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 
-위 신규 5개 메뉴는 Runtime Navigation에서는 `ACTIVE`이고 `APP.MAIL` Entitlement와
+위 보관함·스팸·휴지통·내 폴더·폴더 및 규칙·주소록 6개 메뉴는 Runtime Navigation에서는
+`ACTIVE`이고 `APP.MAIL` Entitlement와
 `mail.work-access.v1` Policy를 함께 사용한다. 다만 W3 Exact Authority의 PAGE 계약은 제품 Owner가
 승인 Bundle로 승격하기 전까지 `DRAFT`이며 `110/111`에서 Fail Closed한다.
 
@@ -217,20 +233,29 @@ Parent는 `APP.MESSAGING`이다.
 | `messaging.admin-overview` | 관리 › 운영 현황   | `/messages/admin/overview` | M/O        | `messaging.management` | I: `ADMIN.MESSAGING:VIEW+` | Management Nav; Guard 정합화 |
 | `messaging.admin-policy`   | 관리 › 대화 정책   | `/messages/admin/policy`   | M/A        | `messaging.management` | I: `ADMIN.MESSAGING:VIEW+` | Management Nav; Guard 정합화 |
 
-## 11. Video Meetings — 7 (`W3`)
+## 11. Video Meetings — 10 (`W3`)
 
 Parent는 `APP.MEETINGS`이며 운영 정책은 `ADMIN.MEETINGS`로 분리한다. 회의 참가와 호스트 권한은
 테넌트 관리자 권한이 아니라 회의별 참가자 역할로 판정한다.
 
-| Menu ID                       | 현재 그룹 › 메뉴             | Path                           | Plane/Task | 목표 Surface          | Item 조건                 | 결정                         |
-| ----------------------------- | ---------------------------- | ------------------------------ | ---------- | --------------------- | ------------------------- | ---------------------------- |
-| `meetings.home`               | 시작 › 화상회의 홈           | `/meetings/home`               | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.join`               | 시작 › 코드로 참가           | `/meetings/join`               | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.mine`               | 회의 › 내 회의               | `/meetings/mine`               | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.history`            | 회의 › 회의 기록             | `/meetings/history`            | W/W        | `meetings.work`       | P: App                    | Work Nav                     |
-| `meetings.admin-operations`   | 관리 › 운영 현황             | `/meetings/admin/operations`   | M/O        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; Guard 정합화 |
-| `meetings.admin-policies`     | 관리 › 회의 정책             | `/meetings/admin/policies`     | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; Guard 정합화 |
-| `meetings.admin-intelligence` | 관리 › AI 및 데이터 거버넌스 | `/meetings/admin/intelligence` | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+` | Management Nav; DRAFT PAGE   |
+| Menu ID                       | 현재 그룹 › 메뉴             | Path                           | Plane/Task | 목표 Surface          | Item 조건                         | 결정                              |
+| ----------------------------- | ---------------------------- | ------------------------------ | ---------- | --------------------- | --------------------------------- | --------------------------------- |
+| `meetings.home`               | 시작 › 화상회의 홈           | `/meetings/home`               | W/W        | `meetings.work`       | P: App                            | Work Nav                          |
+| `meetings.join`               | 시작 › 코드로 참가           | `/meetings/join`               | W/W        | `meetings.work`       | P: App                            | Work Nav                          |
+| `meetings.mine`               | 회의 › 내 회의               | `/meetings/mine`               | W/W        | `meetings.work`       | P: App                            | Work Nav                          |
+| `meetings.history`            | 회의 › 회의 기록             | `/meetings/history`            | W/W        | `meetings.work`       | P: App                            | Work Nav                          |
+| `meetings.follow-ups`         | 회의 › 후속 업무             | `/meetings/follow-ups`         | W/W        | `meetings.work`       | P: App; `meetings.work-access.v1` | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `meetings.templates`          | 회의 › 회의 템플릿           | `/meetings/templates`          | W/W        | `meetings.work`       | P: App; `meetings.work-access.v1` | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `meetings.preferences`        | 회의 › 내 회의 설정          | `/meetings/preferences`        | W/W        | `meetings.work`       | P: App; `meetings.work-access.v1` | Work Nav; ACTIVE Menu; DRAFT PAGE |
+| `meetings.admin-operations`   | 관리 › 운영 현황             | `/meetings/admin/operations`   | M/O        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+`         | Management Nav; Guard 정합화      |
+| `meetings.admin-policies`     | 관리 › 회의 정책             | `/meetings/admin/policies`     | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+`         | Management Nav; Guard 정합화      |
+| `meetings.admin-intelligence` | 관리 › AI 및 데이터 거버넌스 | `/meetings/admin/intelligence` | M/A        | `meetings.management` | I: `ADMIN.MEETINGS:VIEW+`         | Management Nav; DRAFT PAGE        |
+
+후속 업무·회의 템플릿·내 회의 설정은 `APP.MEETINGS` Entitlement 및 기존
+`meetings.work-access.v1` Policy를 사용한다. 관리 메뉴 3개는 그대로 유지하며, 신규 세 PAGE는
+승인된 Exact Authority로 승격하기 전까지 `DRAFT`이고 `110/111`에서 Fail Closed한다.
+예약·준비·개인 회의실은 `/meetings/mine?view=schedule|preparation|personal-room`의 Contextual
+View이며 정적 메뉴를 추가하지 않는다. 준비 View는 해당 `meetingId`를 함께 검증한다.
 
 ## 12. Approvals — 15 (`W1a` Pilot)
 
@@ -387,7 +412,7 @@ Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Actio
 
 ## 18. 동적 Route와 호환 목록
 
-다음은 정적 187개에 추가하지 않지만 Surface Resolver와 회귀 Test에 포함한다. W0에서는 수기
+다음은 정적 193개에 추가하지 않지만 Surface Resolver와 회귀 Test에 포함한다. W0에서는 수기
 목록을 `Alias/Index/Dynamic Matcher Registry`로 이전하고 문서 Snapshot과 Test를 같은 Registry에서
 생성한다.
 
@@ -397,6 +422,7 @@ Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Actio
 - Services `/services/:view/:requestId`
 - Notifications `/notifications/center/:notificationId`
 - Video Meetings `/meetings/room/:meetingId`
+- Video Meetings `/meetings/mine?view=schedule|preparation|personal-room`
 - Spaces `/spaces/:spaceKey/:tab?`
 - Provider `/provider/tenants/:tenantId`
 - HCM Organization Explorer의 Query/Tab Mode
@@ -415,12 +441,12 @@ Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Su
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 187개이고 중복이 없다.
-2. Plane 합계는 `84 + 61 + 24 + 10 + 8 = 187`다.
-3. Task 합계는 `89 + 3 + 47 + 48 = 187`다.
+1. 정적 Menu ID와 Path는 각각 193개이고 중복이 없다.
+2. Plane 합계는 `90 + 61 + 24 + 10 + 8 = 193`다.
+3. Task 합계는 `95 + 3 + 47 + 48 = 193`다.
 4. `management` 61개가 Work Sidebar에 나타나지 않는다.
-5. 12개 주요 업무 앱의 Work·Team 77개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 187개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 139개는 정확히 한
+5. 12개 주요 업무 앱의 Work·Team 85개가 Product Management Sidebar에 나타나지 않는다.
+6. 전체 193개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 146개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

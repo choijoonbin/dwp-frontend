@@ -4,15 +4,17 @@ import {
   ASK_RUNTIME_FIXTURE,
   DEFAULT_APP_PERMISSIONS,
   mockAskRuntime,
-  mockRuntimeNavigation,
 } from './support/runtime-access';
 import { mockAuthenticatedAdminSession } from './support/authenticated-admin-session';
 import { expectNoAutomaticAccessibilityViolations } from './support/accessibility';
-import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-session';
-import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './support/product-area-fixtures';
+import { fulfillSuccess } from './support/shell-session';
 import { expectDialogViewportInset } from './support/ui-contracts';
 import { readHorizontalWorkspaceSurfaceGaps } from './support/workspace-geometry';
 import { mockPendingBootstrapSignIn } from './support/sign-in-session';
+import {
+  mockShellHomeReadModels,
+  mockShellWorkspaceReadModels,
+} from './support/shell-spec-foundation';
 
 test.beforeEach(async ({ page }) => {
   let personalPreference = {
@@ -61,94 +63,7 @@ test.beforeEach(async ({ page }) => {
     updatedAt: null,
   };
 
-  await mockRuntimeNavigation(page);
-
-  await page.route('**/api/platform/v1/home-experience', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: {
-          headline: null,
-          subheadline: null,
-          backgroundPosition: 'CENTER',
-          overlayOpacity: 18,
-          backgroundUrl: null,
-          compositionPolicy: {
-            schemaVersion: 1,
-            personalCustomizationEnabled: true,
-            governedZones: [
-              {
-                zoneKey: 'announcements',
-                placement: 'CANVAS',
-                visible: true,
-                size: 'compact',
-                sortOrder: 20,
-              },
-            ],
-          },
-          version: 0,
-        },
-      }),
-    })
-  );
-  await page.route('**/api/platform/v1/tenant-branding', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: { organizationName: null, logoUrl: null, version: 0 },
-      }),
-    })
-  );
-  await page.route('**/api/platform/v1/catalog/code-sets/**', (route) => {
-    const codeSetKey = decodeURIComponent(
-      new URL(route.request().url()).pathname.split('/').pop()!
-    );
-    const values: Record<string, string[]> = {
-      'PLATFORM.HOME_WIDGET': ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
-      'PLATFORM.PREFERENCE.COLOR_MODE': ['system', 'light', 'dark'],
-      'PLATFORM.PREFERENCE.DENSITY': ['compact', 'standard', 'comfortable'],
-    };
-    return route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: {
-          codeSetKey,
-          schemaVersion: 1,
-          values: (values[codeSetKey] ?? []).map((code) => ({ code, label: code })),
-        },
-      }),
-    });
-  });
-  await page.route('**/api/platform/v1/announcements', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
-    })
-  );
-  await page.route('**/api/platform/v1/communications**', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: {
-          featured: null,
-          items: [],
-          summary: { total: 0, unread: 0, required: 0, saved: 0 },
-          generatedAt: '2026-08-11T00:20:00Z',
-        },
-      }),
-    })
-  );
-  await page.route('**/api/platform/v1/home/overview**', (route) =>
-    fulfillSuccess(route, createHomeOverviewFixture(['ADMIN']))
-  );
+  await mockShellHomeReadModels(page);
   await page.route('**/api/platform/v1/home-preferences**', async (route) => {
     const request = route.request();
     if (request.method() === 'GET') {
@@ -380,12 +295,7 @@ test.beforeEach(async ({ page }) => {
       body: ': connected\n\n',
     })
   );
-  await page.route('**/api/approvals/v1/home', (route) =>
-    fulfillSuccess(route, APPROVAL_HOME_FIXTURE)
-  );
-  await page.route('**/api/people/v1/hr/home', (route) => fulfillSuccess(route, HR_HOME_FIXTURE));
-  await page.route('**/api/platform/v1/services/requests', (route) => fulfillSuccess(route, []));
-  await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
+  await mockShellWorkspaceReadModels(page);
 });
 
 test('unauthenticated users see the login shell without business navigation', async ({ page }) => {
@@ -917,7 +827,9 @@ test('authenticated users enter a personal home before the business shell', asyn
   } else {
     await page.getByRole('button', { name: '업무 열기', exact: true }).click();
   }
-  await expect(page.getByRole('heading', { name: '업무', level: 1 })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: '통합업무함', level: 1, exact: true })
+  ).toBeVisible();
   await page.goto('/admin/identity/access');
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
 
@@ -1898,9 +1810,24 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await page.getByRole('button', { name: 'Open priority in Work' }).click();
   await expect(page).toHaveURL(/\/work\/queue\?item=WK-1042/);
-  await expect(page.getByRole('heading', { name: 'Work', exact: true })).toBeVisible();
-  await expect(page.getByRole('grid', { name: 'Work queue' })).toBeVisible();
-  await expect(page.getByText('WK-1042 / Approval / Owner: You')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Unified work queue', level: 1, exact: true })
+  ).toBeVisible();
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByRole('list', { name: 'Unified work list' })).toHaveCount(0);
+  } else {
+    await expect(page.getByRole('list', { name: 'Unified work list' })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Open details for Approve software access request' })
+    ).toBeVisible();
+  }
+  await expect(
+    page.getByRole('heading', {
+      name: 'Approve software access request',
+      level: 2,
+      exact: true,
+    })
+  ).toBeVisible();
 
   const workSidebar =
     testInfo.project.name === 'mobile'
@@ -1939,7 +1866,9 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   ).toHaveCount(1);
   await page.getByRole('button', { name: 'All activity' }).click();
   await page.getByRole('button', { name: /External sharing blocked/ }).click();
-  await expect(page.getByText('AUD-WRK-903')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Audit reference', level: 3 })).toBeVisible();
+  await expect(page.getByText('AUD-WRK-903', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Close signal detail' }).click();
 
   await navigateTo('Apps');
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();

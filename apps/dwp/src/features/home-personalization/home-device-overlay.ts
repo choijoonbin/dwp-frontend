@@ -21,6 +21,8 @@ const FLOW_DEVICE_WIDTHS = {
   'daily-brief': ['compact', 'large', 'full'],
   focus: ['quarter', 'compact', 'medium', 'large', 'full'],
   activity: ['fifth', 'quarter', 'compact', 'medium'],
+  'focus-balance': ['quarter', 'compact', 'medium'],
+  'meeting-load': ['quarter', 'compact', 'medium'],
 } as const satisfies Record<string, readonly HomeWidgetSize[]>;
 
 const HOME_WIDGET_SIZES = new Set<HomeWidgetSize>([

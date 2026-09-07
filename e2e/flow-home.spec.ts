@@ -14,15 +14,26 @@ import {
   HR_SERVICE_REQUESTS_FIXTURE,
 } from './support/product-area-fixtures';
 import {
+  expectFiveColumnDockAlignment,
   expectFlowDockDistribution,
   expectLaunchpadEditControlsFit,
+  expectNoHorizontalDocumentOverflow,
   expectReadableDockLabels,
   expectVerticallyStackedDockGroups,
   flowDockRowSizes,
+  readFlowHomeDragBounds,
+  setFlowHomeViewport,
+  waitForFlowHomeNavigation,
 } from './support/flow-home-layout-contracts';
+import { routeEmptyFlowExecutionSummaries } from './support/flow-home-provider-fixtures';
 import { expectRoleMetricAlignment } from './support/flow-home-role-metric-contract';
 import {
+  expectDesktopPurposeComposition,
+  expectFlowWideWidgetContract,
+} from './support/flow-home-wide-widget-contract';
+import {
   positionFlowNewsRelativeToLauncher,
+  positionFlowWidgetAtLauncher,
   readFlowLauncherCollisionContract,
   readFlowNewsLauncherGeometry,
 } from './support/flow-home-launcher-clearance';
@@ -93,6 +104,8 @@ const DEFAULT_HOME_PREFERENCE = {
       { widgetKey: 'daily-brief', visible: true, size: 'compact', height: 'standard' },
       { widgetKey: 'focus', visible: true, size: 'compact', height: 'standard' },
       { widgetKey: 'activity', visible: true, size: 'compact', height: 'standard' },
+      { widgetKey: 'focus-balance', visible: true, size: 'medium', height: 'short' },
+      { widgetKey: 'meeting-load', visible: true, size: 'medium', height: 'short' },
     ],
   },
   version: 0,
@@ -273,66 +286,6 @@ async function expectWheelToReachDocument(page: Page, section: Locator) {
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(beforeUp);
 }
 
-async function expectNoHorizontalDocumentOverflow(page: Page, flowHome: Locator) {
-  const geometry = await flowHome.evaluate((root) => {
-    const viewportWidth = document.documentElement.clientWidth;
-    const rootBounds = root.getBoundingClientRect();
-    const collectOverflow = (nodes: HTMLElement[]) =>
-      nodes
-        .filter((node) => {
-          const style = window.getComputedStyle(node);
-          const bounds = node.getBoundingClientRect();
-          return (
-            style.display !== 'none' &&
-            style.visibility !== 'hidden' &&
-            bounds.width > 0 &&
-            (bounds.left < -1 || bounds.right > viewportWidth + 1)
-          );
-        })
-        .slice(0, 20)
-        .map((node) => ({
-          name:
-            node.getAttribute('data-flow-section') ??
-            node.getAttribute('data-workspace-widget') ??
-            node.getAttribute('aria-label') ??
-            node.tagName,
-          className: node.className,
-          parentClassName: node.parentElement?.className ?? '',
-          html: node.outerHTML.slice(0, 320),
-          bounds: (() => {
-            const bounds = node.getBoundingClientRect();
-            return { left: bounds.left, right: bounds.right, width: bounds.width };
-          })(),
-        }));
-    const offenders = collectOverflow(
-      Array.from(
-        root.querySelectorAll<HTMLElement>(
-          '[data-flow-section], [data-workspace-widget], a[href], button, summary'
-        )
-      )
-    );
-    const diagnosticOffenders = collectOverflow(
-      Array.from(document.body.querySelectorAll<HTMLElement>('*'))
-    );
-    return {
-      viewportWidth,
-      documentWidth: document.documentElement.scrollWidth,
-      rootLeft: rootBounds.left,
-      rootRight: rootBounds.right,
-      offenders,
-      diagnosticOffenders,
-    };
-  });
-
-  expect(
-    geometry.documentWidth,
-    `Horizontal overflow geometry: ${JSON.stringify(geometry)}`
-  ).toBeLessThanOrEqual(geometry.viewportWidth + 1);
-  expect(geometry.rootLeft).toBeGreaterThanOrEqual(-1);
-  expect(geometry.rootRight).toBeLessThanOrEqual(geometry.viewportWidth + 1);
-  expect(geometry.offenders).toEqual([]);
-}
-
 async function expectMinimumTargets(root: Locator, selector: string) {
   const targets = await root.locator(selector).evaluateAll((nodes) =>
     nodes
@@ -371,7 +324,7 @@ async function expectDwaionBottomAnchor(page: Page) {
   expect(bounds).not.toBeNull();
   expect(viewport).not.toBeNull();
   if (!bounds || !viewport) return;
-  if (viewport.width < 900) {
+  if (viewport.width < 900 || bounds.width < 50) {
     expect(bounds.width).toBeCloseTo(44, 0);
     expect(bounds.height).toBeCloseTo(44, 0);
     await expect(launcher).toHaveCSS('position', 'relative');
@@ -437,6 +390,7 @@ async function expectNoInternalVerticalScroll(flowHome: Locator) {
 }
 
 async function expectPurposeDesktopGrid(flowHome: Locator) {
+  await expectDesktopPurposeComposition(flowHome);
   for (const [purposeKey, widgetKey] of Object.entries(PURPOSE_WIDGET_KEYS)) {
     await expect(flowHome.locator(`[data-workspace-widget="${widgetKey}"]`)).toBeVisible();
     await expect(flowHome.locator(`[data-flow-section="purpose-${purposeKey}"]`)).toBeVisible();
@@ -489,17 +443,6 @@ async function expectPurposeDesktopGrid(flowHome: Locator) {
   expect(geometry.pulse).not.toBeNull();
   const { action, timeline, response, request, pulse } = geometry;
   if (!action || !timeline || !response || !request || !pulse) return;
-
-  expect(Math.abs(action.top - timeline.top)).toBeLessThanOrEqual(2);
-  expect(action.width / timeline.width).toBeGreaterThan(1.9);
-  expect(action.width / timeline.width).toBeLessThan(2.1);
-  expect(timeline.left).toBeGreaterThanOrEqual(action.right);
-
-  expect(Math.abs(response.top - request.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(request.top - pulse.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(response.width - request.width)).toBeLessThanOrEqual(2);
-  expect(Math.abs(request.width - pulse.width)).toBeLessThanOrEqual(2);
-  expect(response.top).toBeGreaterThanOrEqual(Math.max(action.bottom, timeline.bottom));
 
   const widgets = [action, timeline, response, request, pulse];
   const maximumWidgetHeight = widgets.some((widget) => widget.launcherEdge) ? 312 : 304;
@@ -665,6 +608,7 @@ test.beforeEach(async ({ page }) => {
   await routeDefaultPreference(page);
   await routeEmptyExternalContributions(page);
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
+  await routeEmptyFlowExecutionSummaries(page, FLOW_FIXTURE_NOW.toISOString());
   await page.route('**/api/notifications/v1/summary/by-app', (route) =>
     fulfillSuccess(route, {
       partial: false,
@@ -780,6 +724,7 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
 
   const flowHome = page.getByTestId('flow-home');
   const workscape = flowHome.locator('[data-flow-workscape]');
+  const launchDeck = flowHome.locator('[data-flow-launch-deck-frame]');
   await expect(flowHome).toBeVisible();
   await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
     'data-flow-layout-contract',
@@ -796,7 +741,7 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
         '[data-workspace-widget="action-queue"] [data-flow-section]'
       )!;
       const timelineSurface = stage.querySelector<HTMLElement>(
-        '[data-workspace-widget="today"] [data-flow-section]'
+        '[data-workspace-widget="role-pulse"] [data-flow-section]'
       )!;
       const gridStyle = window.getComputedStyle(grid);
       const sectionStyle = window.getComputedStyle(section);
@@ -818,21 +763,21 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
   expect(independentSurfaceContract.sectionRadius).toBeGreaterThanOrEqual(12);
   expect(independentSurfaceContract.adjacentSurfaceGap).toBeGreaterThanOrEqual(14);
   expect(independentSurfaceContract.adjacentSurfaceGap).toBeLessThanOrEqual(18);
-  await expect(workscape.locator('[data-flow-dock-shell]')).toHaveAttribute(
+  await expect(launchDeck.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
     '40'
   );
-  await expect(workscape.locator('[data-flow-dock-shell]')).toHaveAttribute(
+  await expect(launchDeck.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-group-item-limit',
     '10'
   );
-  await expectFlowDockDistribution(workscape.locator('[data-flow-dock-group]'), [5, 7, 2, 3], 10);
-  await expectReadableDockLabels(workscape.locator('[data-flow-dock-item-label]'), 'dwp-ask');
+  await expectFlowDockDistribution(launchDeck.locator('[data-flow-dock-group]'), [5, 7, 2, 3], 10);
+  await expectReadableDockLabels(launchDeck.locator('[data-flow-dock-item-label]'), 'dwp-ask');
   const workscapeHeight = (await workscape.boundingBox())?.height ?? Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeGreaterThanOrEqual(240);
-  expect(workscapeHeight).toBeLessThanOrEqual(500);
-  const launchDeckContract = await workscape.evaluate((surface) => {
-    const copy = surface.querySelector<HTMLElement>('[data-flow-context-copy]')!;
+  expect(workscapeHeight).toBeGreaterThanOrEqual(80);
+  expect(workscapeHeight).toBeLessThanOrEqual(160);
+  const launchDeckContract = await launchDeck.evaluate((surface) => {
+    const copy = surface.querySelector<HTMLElement>('[data-flow-workscape]')!;
     const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
     const copyBounds = copy.getBoundingClientRect();
     const dockBounds = dock.getBoundingClientRect();
@@ -843,10 +788,10 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
     };
   });
   expect(launchDeckContract.inlineStartDelta).toBeLessThanOrEqual(2);
-  expect(launchDeckContract.dockBackground).not.toBe('rgba(255, 255, 255, 0.94)');
+  expect(launchDeckContract.dockBackground).toBe('rgb(255, 255, 255)');
   expect(launchDeckContract.horizontalOverflow).toBeLessThanOrEqual(1);
-  await expect(workscape.getByText(/\d+ more$/)).toHaveCount(0);
-  await expect(workscape.getByText(/^\+\d+$/)).toHaveCount(0);
+  await expect(launchDeck.getByText(/\d+ more$/)).toHaveCount(0);
+  await expect(launchDeck.getByText(/^\+\d+$/)).toHaveCount(0);
   await expect(workscape.getByText(/Some sources are unavailable/i)).toHaveCount(0);
 
   const nextActionCue = purpose(flowHome, 'action').locator('[data-home-recommendation-cue]');
@@ -866,7 +811,7 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
     .evaluateAll((sections) =>
       sections.map((section) => section.getAttribute('data-flow-section'))
     );
-  expect(order).toEqual([...FLOW_SECTION_KEYS, 'updates']);
+  expect(order).toEqual([FLOW_SECTION_KEYS[0], 'updates', ...FLOW_SECTION_KEYS.slice(1)]);
 
   await expectPurposeDesktopGrid(flowHome);
   await expectNoInternalVerticalScroll(flowHome);
@@ -904,14 +849,15 @@ test('tenant image focal points remain independent from hero content alignment',
   await expect(workscape).toHaveAttribute('data-tenant-background-focal-y', '28');
   await expect(workscape).toHaveAttribute('data-tenant-content-alignment', 'right');
   const alignment = await workscape.evaluate((surface) => {
-    const frame = surface.querySelector<HTMLElement>('[data-flow-hero-surface]')!;
+    const frame = surface.closest('[data-flow-launch-deck-frame]')!;
+    const hero = surface.querySelector<HTMLElement>('[data-flow-hero-surface]')!;
     const copy = surface.querySelector<HTMLElement>('[data-flow-context-copy]')!;
-    const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
+    const dock = frame.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
     const frameBounds = frame.getBoundingClientRect();
     const copyBounds = copy.getBoundingClientRect();
     const dockBounds = dock.getBoundingClientRect();
     return {
-      copyDockEndDelta: Math.abs(copyBounds.right - dockBounds.right),
+      copyDockEndDelta: Math.abs(copyBounds.right - hero.getBoundingClientRect().right),
       dockFromFrameStart: dockBounds.left - frameBounds.left,
       dockFromFrameEnd: frameBounds.right - dockBounds.right,
     };
@@ -951,7 +897,7 @@ test('Dock lift responds only to pointer intent and is removed for reduced motio
   expect(Number.parseFloat(reduced.duration)).toBeLessThanOrEqual(0.00001);
 });
 
-test('Expressive Wide composes a 7+5 primary tier, 4+4+4 support tier, and 6+3+3 news row', async ({
+test('Expressive Wide composes reference 8+4, 4+4+4, and 8+4 source-backed tiers', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wide geometry runs once in Chromium.');
@@ -977,137 +923,26 @@ test('Expressive Wide composes a 7+5 primary tier, 4+4+4 support tier, and 6+3+3
   await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
   await expect(stage).toHaveAttribute('data-flow-adaptive-applied', 'true');
   await expect(stage).toHaveAttribute('data-flow-adaptive-first-section', 'today');
-  await expect(stage).toHaveAttribute('data-flow-wide-composition', '7-5/4-4-4');
-  for (const key of ['response-hub', 'request-tracker', 'role-pulse']) {
-    await expect(
-      stage.locator(`[data-workspace-widget="${key}"] [data-home-support-stack="true"]`)
-    ).toBeVisible();
-  }
-  const roleInsight = stage.locator(
-    '[data-workspace-widget="role-pulse"] [data-home-role-insight]'
-  );
-  await expect(roleInsight).toBeVisible();
-  await expect(roleInsight).toHaveAttribute('role', 'region');
-  await expect(roleInsight.locator('[data-home-role-lens]')).toHaveCount(4);
-  await expectRoleMetricAlignment(roleInsight);
-  for (const signalKey of ['open-work', 'focus-time', 'schedule-load', 'activity-attention']) {
-    const lens = roleInsight.locator(`[data-home-role-lens="${signalKey}"]`);
-    await expect(lens).toBeVisible();
-    await expect(lens).toHaveAttribute('href', /\/.+/u);
-    await expect(lens.locator('[data-home-role-value]')).not.toHaveText(/NaN|undefined/u);
-  }
-  const scheduleSeries = roleInsight.locator(
-    '[data-home-role-lens="schedule-load"] [data-home-role-series]'
-  );
-  await expect(scheduleSeries).toBeVisible();
-  await expect(scheduleSeries).toHaveAttribute('data-home-role-series-scale', 'daily-limit-100');
-  await expect(
-    roleInsight.locator('[data-home-role-lens="schedule-load"] [data-home-role-label]')
-  ).toContainText(/Today's meeting load|오늘 회의 부하/u);
-  await expect(
-    roleInsight.locator('[data-home-role-lens="schedule-load"] [data-home-role-comparison-full]')
-  ).toContainText(/Daily meeting limit|일일 회의 기준 대비/u);
-  await expect(scheduleSeries.locator('[data-home-role-series-current="true"]')).toHaveCount(1);
-  expect(await scheduleSeries.locator(':scope > *').count()).toBeGreaterThan(0);
-  const scheduleScale = await scheduleSeries.evaluate((series) => {
-    const height = series.getBoundingClientRect().height;
-    return Array.from(series.querySelectorAll<HTMLElement>('[data-home-role-series-point]')).map(
-      (point) => ({
-        load: Number(point.dataset.homeRoleSeriesLoad),
-        ratio: point.getBoundingClientRect().height / height,
-      })
-    );
-  });
-  for (const point of scheduleScale) {
-    expect(Math.abs(point.ratio - Math.min(1, point.load / 100))).toBeLessThanOrEqual(0.08);
-  }
-  const roleHeaderContract = await stage
-    .locator('[data-workspace-widget="role-pulse"] [data-flow-section="purpose-pulse"]')
-    .evaluate((section) => {
-      const heading = section.querySelector<HTMLElement>('#flow-purpose-pulse-heading')!;
-      const insight = section.querySelector<HTMLElement>('[data-home-role-insight]')!;
-      const headingBounds = heading.getBoundingClientRect();
-      const insightBounds = insight.getBoundingClientRect();
-      return {
-        insightAfterHeading: insightBounds.top >= headingBounds.bottom,
-      };
-    });
-  expect(roleHeaderContract.insightAfterHeading).toBe(true);
-  await expect(
-    stage.locator('[data-workspace-widget="request-tracker"] [data-home-request-empty-journey]')
-  ).toBeVisible();
-  const contextualListGaps = await stage
-    .locator('[data-home-purpose-contextual-visual]')
-    .evaluateAll((visuals) =>
-      visuals.flatMap((visual) => {
-        const list = visual.parentElement?.querySelector<HTMLElement>('[data-home-purpose-list]');
-        return list
-          ? [list.getBoundingClientRect().top - visual.getBoundingClientRect().bottom]
-          : [];
-      })
-    );
-  expect(contextualListGaps.length).toBeGreaterThan(0);
-  for (const gap of contextualListGaps) {
-    expect(gap).toBeGreaterThanOrEqual(7);
-    expect(gap).toBeLessThanOrEqual(9);
-  }
+  await expect(stage).toHaveAttribute('data-flow-wide-composition', '8-4/4-4-4/8-4');
+  await expectFlowWideWidgetContract(stage);
 
-  const geometry = await stage.evaluate((root) => {
-    const bounds = (key: string) => {
-      const box = root
-        .querySelector<HTMLElement>(`[data-workspace-widget="${key}"]`)!
+  const workscapeAlignment = await flowHome
+    .locator('[data-flow-launch-deck-frame]')
+    .evaluate((surface) => {
+      const copy = surface
+        .querySelector<HTMLElement>('[data-flow-workscape]')!
+        .getBoundingClientRect();
+      const dock = surface
+        .querySelector<HTMLElement>('[data-flow-dock-shell]')!
+        .getBoundingClientRect();
+      const firstWork = document
+        .querySelector<HTMLElement>('[data-workspace-widget="action-queue"] [data-flow-section]')!
         .getBoundingClientRect();
       return {
-        left: box.left,
-        right: box.right,
-        top: box.top,
-        bottom: box.bottom,
-        width: box.width,
+        copyDockDelta: Math.abs(copy.left - dock.left),
+        heroBodyDelta: Math.abs(copy.left - firstWork.left),
       };
-    };
-    const grid = root.querySelector<HTMLElement>('[data-workspace-presentation]')!;
-    return {
-      gridWidth: grid.getBoundingClientRect().width,
-      action: bounds('action-queue'),
-      first: bounds('today'),
-      support: [bounds('response-hub'), bounds('request-tracker'), bounds('role-pulse')],
-    };
-  });
-  const [supportOne, supportTwo, supportThree] = geometry.support;
-  expect(supportOne).toBeDefined();
-  expect(supportTwo).toBeDefined();
-  expect(supportThree).toBeDefined();
-  if (!supportOne || !supportTwo || !supportThree) return;
-  expect(geometry.action.width / geometry.gridWidth).toBeGreaterThan(0.56);
-  expect(geometry.action.width / geometry.gridWidth).toBeLessThan(0.6);
-  expect(geometry.first.width / geometry.gridWidth).toBeGreaterThan(0.39);
-  expect(geometry.first.width / geometry.gridWidth).toBeLessThan(0.43);
-  expect(supportOne.width / geometry.gridWidth).toBeGreaterThan(0.31);
-  expect(supportOne.width / geometry.gridWidth).toBeLessThan(0.35);
-  expect(Math.abs(geometry.action.top - geometry.first.top)).toBeLessThanOrEqual(2);
-  expect(supportOne.top).toBeGreaterThanOrEqual(
-    Math.max(geometry.action.bottom, geometry.first.bottom)
-  );
-  expect(Math.abs(supportOne.top - supportTwo.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(supportTwo.top - supportThree.top)).toBeLessThanOrEqual(2);
-  expect(supportTwo.left).toBeGreaterThanOrEqual(supportOne.right);
-  expect(supportThree.left).toBeGreaterThanOrEqual(supportTwo.right);
-
-  const workscapeAlignment = await flowHome.locator('[data-flow-workscape]').evaluate((surface) => {
-    const copy = surface
-      .querySelector<HTMLElement>('[data-flow-context-copy]')!
-      .getBoundingClientRect();
-    const dock = surface
-      .querySelector<HTMLElement>('[data-flow-dock-shell]')!
-      .getBoundingClientRect();
-    const firstWork = document
-      .querySelector<HTMLElement>('[data-workspace-widget="action-queue"] [data-flow-section]')!
-      .getBoundingClientRect();
-    return {
-      copyDockDelta: Math.abs(copy.left - dock.left),
-      heroBodyDelta: Math.abs(copy.left - firstWork.left),
-    };
-  });
+    });
   expect(workscapeAlignment.copyDockDelta).toBeLessThanOrEqual(2);
   expect(workscapeAlignment.heroBodyDelta).toBeLessThanOrEqual(64);
 
@@ -1234,7 +1069,7 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   await expect(loadingSkeleton).toHaveAttribute('data-home-loading-read-template', 'adaptive-wide');
   await expect(page.locator('[data-home-loading-widgets]')).toHaveAttribute(
     'data-home-loading-grid-contract',
-    '7-5/4-4-4'
+    '8-4/4-4-4/8-4'
   );
   await expect(page.locator('[data-home-loading-dock-group]')).toHaveCount(4);
   await expect(page.locator('[data-home-loading-dock-item]:visible')).toHaveCount(17);
@@ -1254,12 +1089,13 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
     };
     return {
       action: rect('action-queue'),
-      first: rect('today'),
-      support: [rect('response-hub'), rect('request-tracker'), rect('role-pulse')],
+      first: rect('role-pulse'),
+      support: [rect('today'), rect('response-hub'), rect('focus-balance')],
+      insights: [rect('request-tracker'), rect('meeting-load')],
     };
   });
-  expect(loadingGrid.action.width / loadingGrid.first.width).toBeGreaterThan(1.35);
-  expect(loadingGrid.action.width / loadingGrid.first.width).toBeLessThan(1.45);
+  expect(loadingGrid.action.width / loadingGrid.first.width).toBeGreaterThan(1.9);
+  expect(loadingGrid.action.width / loadingGrid.first.width).toBeLessThan(2.1);
   expect(Math.abs(loadingGrid.action.top - loadingGrid.first.top)).toBeLessThanOrEqual(2);
   expect(
     Math.abs(loadingGrid.support[0]!.width - loadingGrid.support[1]!.width)
@@ -1267,6 +1103,9 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   expect(
     Math.abs(loadingGrid.support[1]!.width - loadingGrid.support[2]!.width)
   ).toBeLessThanOrEqual(2);
+  expect(loadingGrid.insights[0]!.width / loadingGrid.insights[1]!.width).toBeGreaterThan(1.9);
+  expect(loadingGrid.insights[0]!.width / loadingGrid.insights[1]!.width).toBeLessThan(2.1);
+  expect(loadingGrid.insights[0]!.top).toBeGreaterThan(loadingGrid.support[0]!.top);
   const loadingDockBounds = await loadingDock.boundingBox();
   expect(loadingDockBounds).not.toBeNull();
 
@@ -1546,7 +1385,8 @@ test('Expressive Wide keeps a personalized widget order out of the adaptive temp
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wide personalization runs once in Chromium.');
-  const [command, schedule, response, request, pulse] = DEFAULT_HOME_PREFERENCE.layout.widgets;
+  const [command, schedule, response, request, pulse, focusBalance, meetingLoad] =
+    DEFAULT_HOME_PREFERENCE.layout.widgets;
   await page.route('**/api/platform/v1/home-preferences**', (route) => {
     const requestCall = route.request();
     const path = new URL(requestCall.url()).pathname;
@@ -1557,7 +1397,7 @@ test('Expressive Wide keeps a personalized widget order out of the adaptive temp
         layout: {
           ...DEFAULT_HOME_PREFERENCE.layout,
           presentation: 'expressive',
-          widgets: [command!, response!, schedule!, request!, pulse!],
+          widgets: [command!, response!, schedule!, request!, pulse!, focusBalance!, meetingLoad!],
         },
       });
     }
@@ -1580,6 +1420,8 @@ test('Expressive Wide keeps a personalized widget order out of the adaptive temp
     'today',
     'request-tracker',
     'role-pulse',
+    'focus-balance',
+    'meeting-load',
   ]);
 });
 
@@ -1722,8 +1564,8 @@ test('purpose widgets adapt coherently for zero, one, and many items', async ({ 
       expectedCount === 0 ? 'empty' : 'available'
     );
     // Height changes information density, not the set of visible records.
-    // The standard action budget remains three rows with explicit overflow.
-    await expect(action.locator('[role="listitem"]')).toHaveCount(Math.min(expectedCount, 3));
+    // The reference desktop action budget is four rows with explicit overflow.
+    await expect(action.locator('[role="listitem"]')).toHaveCount(Math.min(expectedCount, 4));
 
     if (expectedCount === 0) {
       await expect(action).toContainText('Nothing needs action right now');
@@ -1733,10 +1575,10 @@ test('purpose widgets adapt coherently for zero, one, and many items', async ({ 
     } else if (expectedCount === 1) {
       await expect(action.getByText('Purpose queue item 1', { exact: true })).toBeVisible();
     } else {
-      await expect(action.getByText('Purpose queue item 3', { exact: true })).toBeVisible();
-      await expect(action.getByText('Purpose queue item 4', { exact: true })).toHaveCount(0);
+      await expect(action.getByText('Purpose queue item 4', { exact: true })).toBeVisible();
+      await expect(action.getByText('Purpose queue item 5', { exact: true })).toHaveCount(0);
       await expect(action.getByRole('link', { name: /View all/ })).toContainText(
-        'View all · 2 more'
+        'View all · 1 more'
       );
     }
 
@@ -1758,21 +1600,21 @@ test('mixed-source overflow stays reachable without inventing a unified route', 
   await page.goto('/');
 
   const action = purpose(page.getByTestId('flow-home'), 'action');
-  await expect(action.locator('[role="listitem"]')).toHaveCount(3);
+  await expect(action.locator('[role="listitem"]')).toHaveCount(4);
   await expect(action.getByRole('link', { name: /View all/ })).toHaveCount(0);
 
-  const overflowTrigger = action.getByRole('button', { name: 'View 2 more' });
-  await expect(overflowTrigger).toContainText('View 2 more');
+  const overflowTrigger = action.getByRole('button', { name: 'View 1 more' });
+  await expect(overflowTrigger).toContainText('View 1 more');
   await overflowTrigger.click();
 
-  const dialog = page.getByRole('dialog', { name: 'View 2 more' });
+  const dialog = page.getByRole('dialog', { name: 'View 1 more' });
   await expect(dialog).toBeVisible();
-  await expect(dialog.locator('[role="listitem"]')).toHaveCount(2);
+  await expect(dialog.locator('[role="listitem"]')).toHaveCount(1);
   const safeLinks = dialog.locator('a[href]');
   const routes = await safeLinks.evaluateAll((links) =>
     links.map((link) => link.getAttribute('href'))
   );
-  expect(routes).toHaveLength(2);
+  expect(routes).toHaveLength(1);
   expect(
     routes.every((route) => route?.startsWith('/work/') || route?.startsWith('/approvals/'))
   ).toBe(true);
@@ -1924,7 +1766,7 @@ test('HCM domain fallback zeroes remain partial rather than confirmed pulse data
   await expect(pulse).not.toContainText('No work signals right now');
 });
 
-test('required notices interrupt once while normal News remains the trailing governed zone', async ({
+test('required notices lead directly into News before the personal work widgets', async ({
   page,
 }) => {
   await page.route('**/api/platform/v1/home/overview**', (route) =>
@@ -1948,34 +1790,26 @@ test('required notices interrupt once while normal News remains the trailing gov
       sections.map((section) => section.getAttribute('data-flow-section'))
     );
   expect(order).toEqual([
-    'app-dock',
+    FLOW_SECTION_KEYS[0],
     'required-notice',
-    'purpose-action',
-    'purpose-timeline',
-    'purpose-response',
-    'purpose-request',
-    'purpose-pulse',
     'updates',
+    ...FLOW_SECTION_KEYS.slice(1),
   ]);
 
-  const [requiredBounds, stageBounds, actionBounds, updatesBounds, pulseBounds] = await Promise.all(
-    [
-      required.boundingBox(),
-      flowHome.locator('[data-testid="flow-home-personal-sections"]').boundingBox(),
-      purpose(flowHome, 'action').boundingBox(),
-      updates.boundingBox(),
-      purpose(flowHome, 'pulse').boundingBox(),
-    ]
-  );
+  const [requiredBounds, stageBounds, updatesBounds, actionBounds] = await Promise.all([
+    required.boundingBox(),
+    flowHome.locator('[data-testid="flow-home-personal-sections"]').boundingBox(),
+    updates.boundingBox(),
+    purpose(flowHome, 'action').boundingBox(),
+  ]);
   expect(requiredBounds).not.toBeNull();
   expect(stageBounds).not.toBeNull();
-  expect(actionBounds).not.toBeNull();
   expect(updatesBounds).not.toBeNull();
-  expect(pulseBounds).not.toBeNull();
-  if (requiredBounds && stageBounds && actionBounds && updatesBounds && pulseBounds) {
+  expect(actionBounds).not.toBeNull();
+  if (requiredBounds && stageBounds && updatesBounds && actionBounds) {
     expect(Math.abs(requiredBounds.width - stageBounds.width)).toBeLessThanOrEqual(1);
-    expect(requiredBounds.y + requiredBounds.height).toBeLessThanOrEqual(actionBounds.y + 1);
-    expect(pulseBounds.y + pulseBounds.height).toBeLessThanOrEqual(updatesBounds.y + 1);
+    expect(requiredBounds.y + requiredBounds.height).toBeLessThanOrEqual(updatesBounds.y + 1);
+    expect(updatesBounds.y + updatesBounds.height).toBeLessThanOrEqual(actionBounds.y + 1);
   }
 
   const review = required.getByRole('link', { name: 'Review' });
@@ -2008,7 +1842,9 @@ test('a required notice remains visible when the organization hides general News
   await expect(flowHome.locator('[data-workspace-widget="announcements"]')).toHaveCount(0);
 });
 
-test('tenant imagery remains colourful behind a panelled, readable app Dock', async ({ page }) => {
+test('tenant imagery remains in the greeting banner above an independent bright app Dock', async ({
+  page,
+}) => {
   await routeFlowExperience(page, {
     backgroundUrl: '/media/communications/workplace-improvement.jpg',
     backgroundPosition: 'RIGHT',
@@ -2022,11 +1858,11 @@ test('tenant imagery remains colourful behind a panelled, readable app Dock', as
 
   const flowHome = page.getByTestId('flow-home');
   const workscape = flowHome.locator('[data-flow-workscape]');
-  const dock = workscape.locator('[data-flow-dock-shell]');
+  const dock = flowHome.locator('[data-flow-dock-shell]');
   await expect(workscape).toHaveAttribute('data-tenant-image-opacity', '1');
   const visualContract = await workscape.evaluate((surface) => {
-    const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]');
-    const frame = surface.querySelector<HTMLElement>('[data-flow-launch-deck-frame]');
+    const frame = surface.closest('[data-flow-launch-deck-frame]');
+    const dock = frame?.querySelector<HTMLElement>('[data-flow-dock-shell]');
     const surfaceBounds = surface.getBoundingClientRect();
     const dockBounds = dock?.getBoundingClientRect();
     const frameBounds = frame?.getBoundingClientRect();
@@ -2039,9 +1875,9 @@ test('tenant imagery remains colourful behind a panelled, readable app Dock', as
     };
   });
   expect(visualContract.imageOpacity).toBe('1');
-  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(500);
+  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(160);
   expect(Math.abs(visualContract.dockWidth - visualContract.frameWidth)).toBeLessThanOrEqual(2);
-  expect(visualContract.dockBackground).not.toBe('rgba(0, 0, 0, 0)');
+  expect(visualContract.dockBackground).toBe('rgb(255, 255, 255)');
   await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(17);
 });
 
@@ -2116,7 +1952,7 @@ test('read mode collapses sparse saved footprints while edit mode exposes semant
   expect((await frame.boundingBox())?.height ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(208);
 });
 
-test('role overview keeps all four visual signals across short, standard, and tall heights', async ({
+test('role overview restores calendar signals when specialist widgets are hidden', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Role height geometry runs once in Chromium.');
@@ -2126,6 +1962,25 @@ test('role overview keeps all four visual signals across short, standard, and ta
   await page.route('**/api/people/v1/hr/home', (route) =>
     fulfillSuccess(route, { ...HR_HOME_FIXTURE, generatedAt: FLOW_FIXTURE_NOW.toISOString() })
   );
+  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
+      return fulfillSuccess(route, {
+        ...DEFAULT_HOME_PREFERENCE,
+        customized: true,
+        layout: {
+          ...DEFAULT_HOME_PREFERENCE.layout,
+          widgets: DEFAULT_HOME_PREFERENCE.layout.widgets.map((widget) =>
+            widget.widgetKey === 'focus-balance' || widget.widgetKey === 'meeting-load'
+              ? { ...widget, visible: false }
+              : widget
+          ),
+        },
+      });
+    }
+    return route.fallback();
+  });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
@@ -2169,14 +2024,54 @@ test('role overview keeps all four visual signals across short, standard, and ta
 
 test('the editor keeps the action queue personal while announcements remains governed', async ({
   page,
+  isMobile,
 }) => {
+  await page.route('**/api/auth/me', (route) =>
+    fulfillSuccess(route, {
+      userId: 1,
+      personPublicId: 'person-session-user',
+      displayName: 'Mina Kim',
+      tenantId: 1,
+      tenantCode: 'default',
+      tenantName: 'SKAX',
+      identityPlane: 'TENANT',
+      preferredLocale: 'en',
+      tenantDefaultLocale: 'en',
+      roles: ['WORKSPACE_MEMBER', 'TENANT_ADMIN'],
+      groups: [],
+      resourceRoles: [],
+    })
+  );
   await page.route('**/api/platform/v1/home-preferences**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
     if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
       return fulfillSuccess(route, {
         ...DEFAULT_HOME_PREFERENCE,
-        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'balanced' },
+        customized: true,
+        layout: {
+          ...DEFAULT_HOME_PREFERENCE.layout,
+          presentation: 'balanced',
+          appLayout: {
+            version: 1,
+            groups: {
+              work: ['dwp-work', 'dwp-ask', 'dwp-activity', 'dwp-approvals', 'dwp-notifications'],
+              connect: [
+                'dwp-communications',
+                'dwp-calendar',
+                'ref-app-mail',
+                'dwp-spaces',
+                'dwp-rooms',
+                'dwp-messaging',
+                'dwp-meetings',
+              ],
+              services: ['ref-app-service', 'ref-app-people'],
+              systems: ['ref-app-knowledge', 'ref-app-erp', 'ref-app-legacy', 'dwp-admin'],
+            },
+            folders: {},
+            hiddenAppIds: [],
+          },
+        },
       });
     }
     return route.fallback();
@@ -2266,7 +2161,7 @@ test('the editor keeps the action queue personal while announcements remains gov
       (group) =>
         group.borderStyles.every((style) => style === 'solid') &&
         group.borderWidths.every((width) => width >= 1) &&
-        group.borderRadius >= 10 &&
+        group.borderRadius === 8 &&
         (group.backgroundColor !== 'rgba(0, 0, 0, 0)' || group.backgroundImage !== 'none')
     )
   ).toBe(true);
@@ -2275,8 +2170,26 @@ test('the editor keeps the action queue personal while announcements remains gov
     [5],
     [5, 2],
     [2],
-    [3],
+    [4],
   ]);
+  expect(readGeometry.groups[1]!.items.slice(5).map((item) => item.id)).toEqual([
+    'dwp-messaging',
+    'dwp-meetings',
+  ]);
+  expect(readGeometry.groups[2]!.items.map((item) => item.id)).toEqual([
+    'ref-app-service',
+    'ref-app-people',
+  ]);
+  expect(readGeometry.groups[3]!.items.map((item) => item.id)).toEqual([
+    'ref-app-knowledge',
+    'ref-app-erp',
+    'ref-app-legacy',
+    'dwp-admin',
+  ]);
+  await expectFiveColumnDockAlignment(
+    dock.locator('[data-flow-dock-group] > ul'),
+    'data-flow-dock-item'
+  );
   await expect(dock.locator('[data-flow-dock-group-description]')).toHaveCount(4);
 
   await page.getByRole('button', { name: 'Edit home' }).click();
@@ -2284,6 +2197,7 @@ test('the editor keeps the action queue personal while announcements remains gov
 
   const dockGroupLists = flowHome.locator('[data-launchpad-group-target]');
   await expect(dockGroupLists).toHaveCount(4);
+  await expectFiveColumnDockAlignment(dockGroupLists, 'data-launchpad-item');
   const editGeometry = await dock.evaluate((shell) => {
     const dockBounds = shell.getBoundingClientRect();
     const groups = Array.from(
@@ -2347,9 +2261,9 @@ test('the editor keeps the action queue personal while announcements remains gov
       appColor: appTile ? window.getComputedStyle(appTile).color : '',
     };
   });
-  expect(editTextContract.titleColor).toBe('rgb(248, 250, 252)');
-  expect(editTextContract.appColor).toBe('rgb(248, 250, 252)');
-  expect(editTextContract.descriptionColor).toBe('rgba(226, 232, 240, 0.76)');
+  expect(editTextContract.titleColor).toBe('rgb(15, 21, 29)');
+  expect(editTextContract.appColor).toBe('rgb(15, 21, 29)');
+  expect(editTextContract.descriptionColor).toBe('rgb(75, 86, 99)');
   for (const [index, readGroup] of readGeometry.groups.entries()) {
     const editGroup = editGeometry.groups[index]!;
     expect(Math.abs(editGroup.left - readGroup.left)).toBeLessThanOrEqual(2);
@@ -2360,15 +2274,20 @@ test('the editor keeps the action queue personal while announcements remains gov
     ).toBeLessThanOrEqual(2);
     expect(editGroup.items.map((item) => item.id)).toEqual(readGroup.items.map((item) => item.id));
     expect(flowDockRowSizes(editGroup.items)).toEqual(flowDockRowSizes(readGroup.items));
+    expect(editGroup.items.map((item) => Math.round(item.left))).toEqual(
+      readGroup.items.map((item) => Math.round(item.left))
+    );
   }
   await expectLaunchpadEditControlsFit(page, dockGroupLists, true);
   await page.setViewportSize({ width: 1440, height: 900 });
+  await expectFiveColumnDockAlignment(dockGroupLists, 'data-launchpad-item');
   await expectLaunchpadEditControlsFit(page, dockGroupLists, true);
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 320, height: 800 },
   ]) {
-    await page.setViewportSize(viewport);
+    await setFlowHomeViewport(page, viewport, isMobile);
+    await expect(launchpad).toHaveAttribute('data-launchpad-editing', 'true');
     await expectLaunchpadEditControlsFit(page, dockGroupLists, false);
   }
   await page.setViewportSize({ width: 1280, height: 720 });
@@ -2457,7 +2376,7 @@ test('long-pressing a personal purpose widget enters the existing Home editor', 
   await widget.dispatchEvent('pointerup', { ...pointer, buttons: 0 });
 
   await expect(toolbar).toBeVisible();
-  await expect(page.locator('[data-workspace-widget-motion="settle"]')).toHaveCount(5);
+  await expect(page.locator('[data-workspace-widget-motion="settle"]')).toHaveCount(7);
   await toolbar.getByRole('button', { name: 'Cancel changes' }).click();
   await expect(widget).toHaveAttribute('data-workspace-widget-long-press', 'enabled');
 });
@@ -2489,6 +2408,8 @@ test('keyboard move controls reorder only personal purpose widgets and cancel re
     'response-hub',
     'request-tracker',
     'role-pulse',
+    'focus-balance',
+    'meeting-load',
   ]);
   expect(originalGoverned).toEqual(['announcements']);
   const moveEarlier = flowHome.getByRole('button', {
@@ -2498,7 +2419,15 @@ test('keyboard move controls reorder only personal purpose widgets and cancel re
 
   await moveEarlier.focus();
   await moveEarlier.press('Enter');
-  const movedOrder = ['action-queue', 'today', 'request-tracker', 'response-hub', 'role-pulse'];
+  const movedOrder = [
+    'action-queue',
+    'today',
+    'request-tracker',
+    'response-hub',
+    'role-pulse',
+    'focus-balance',
+    'meeting-load',
+  ];
   await expect.poll(order).toEqual(movedOrder);
   await expect.poll(governedOrder).toEqual(originalGoverned);
 
@@ -2542,6 +2471,8 @@ test('pointer drag reorders only personal purpose widgets and cancel restores th
     'response-hub',
     'request-tracker',
     'role-pulse',
+    'focus-balance',
+    'meeting-load',
   ]);
   expect(originalGoverned).toEqual(['announcements']);
   const sourceFrame = purposeFrame(flowHome, 'timeline');
@@ -2550,13 +2481,11 @@ test('pointer drag reorders only personal purpose widgets and cancel restores th
     exact: true,
   });
   const targetFrame = purposeFrame(flowHome, 'response');
-  const [sourceBounds, targetBounds] = await Promise.all([
-    sourceHandle.boundingBox(),
-    targetFrame.boundingBox(),
-  ]);
-  expect(sourceBounds).not.toBeNull();
-  expect(targetBounds).not.toBeNull();
-  if (!sourceBounds || !targetBounds) return;
+  const { sourceBounds, targetBounds } = await readFlowHomeDragBounds(
+    page,
+    sourceHandle,
+    targetFrame
+  );
 
   const sourceX = sourceBounds.x + sourceBounds.width / 2;
   const sourceY = sourceBounds.y + sourceBounds.height / 2;
@@ -2569,7 +2498,7 @@ test('pointer drag reorders only personal purpose widgets and cancel restores th
     await page.mouse.move(
       targetBounds.x + targetBounds.width / 2,
       targetBounds.y + targetBounds.height / 2,
-      { steps: 16 }
+      { steps: 1 }
     );
     await expect.poll(order).not.toEqual(original);
   } finally {
@@ -2578,7 +2507,15 @@ test('pointer drag reorders only personal purpose widgets and cancel restores th
 
   await expect
     .poll(order)
-    .toEqual(['action-queue', 'response-hub', 'request-tracker', 'today', 'role-pulse']);
+    .toEqual([
+      'action-queue',
+      'response-hub',
+      'today',
+      'request-tracker',
+      'role-pulse',
+      'focus-balance',
+      'meeting-load',
+    ]);
   await expect.poll(governedOrder).toEqual(originalGoverned);
   await expect(sourceFrame.locator('[data-widget-drop-slot]')).toHaveCount(0);
 
@@ -2629,12 +2566,14 @@ test('mobile preview keeps semantic DOM order while rendering every purpose widg
   });
   expect(layout.columns).toBe(1);
   expect(layout.keys).toEqual([
+    'announcements',
     'action-queue',
     'today',
     'response-hub',
     'request-tracker',
     'role-pulse',
-    'announcements',
+    'focus-balance',
+    'meeting-load',
   ]);
   expect(layout.widths.every(({ leftGap, rightGap }) => leftGap <= 2 && rightGap <= 2)).toBe(true);
   await expectNoHorizontalDocumentOverflow(page, flowHome);
@@ -2706,8 +2645,8 @@ test('News enters and leaves the same DWAI·ON clearance contract without a stat
   expect(during.viewAllRight).toBeLessThan(before.viewAllRight);
 
   await positionFlowNewsRelativeToLauncher(page, 'clear');
-  await expect(news).not.toHaveAttribute('data-flow-launcher-edge');
   const after = await readFlowNewsLauncherGeometry(news);
+  expect(after.marked, JSON.stringify(after)).toBe(false);
   expect(after.clearance).toBe(0);
   expect(after.paddingInlineEnd).toBeCloseTo(before.paddingInlineEnd, 0);
   expect(after.viewAllRight).toBeCloseTo(before.viewAllRight, 0);
@@ -2756,7 +2695,15 @@ test('a saved widget reorder recalculates clearance for the new launcher-edge wi
     .click();
   await expect
     .poll(order)
-    .toEqual(['action-queue', 'today', 'response-hub', 'role-pulse', 'request-tracker']);
+    .toEqual([
+      'action-queue',
+      'today',
+      'response-hub',
+      'role-pulse',
+      'request-tracker',
+      'focus-balance',
+      'meeting-load',
+    ]);
   await page
     .locator('[data-workspace-composer-placement="floating"]')
     .getByRole('button', { name: 'Save' })
@@ -2764,22 +2711,14 @@ test('a saved widget reorder recalculates clearance for the new launcher-edge wi
   await expect.poll(() => saved).toBe(true);
 
   const launcher = page.getByTestId('dwaion-launcher');
+  await waitForFlowHomeNavigation(page, false);
   const requestWidget = flowHome.locator('[data-workspace-widget="request-tracker"]');
   const roleWidget = flowHome.locator('[data-workspace-widget="role-pulse"]');
   await expect(launcher).toBeVisible({ timeout: 15_000 });
   await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'floating', {
     timeout: 15_000,
   });
-  await page.evaluate(() => {
-    const widget = document.querySelector<HTMLElement>(
-      '[data-workspace-widget="request-tracker"]'
-    )!;
-    const launcherElement = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
-    const widgetRect = widget.getBoundingClientRect();
-    const launcherRect = launcherElement.getBoundingClientRect();
-    const absoluteTop = window.scrollY + widgetRect.top;
-    window.scrollTo(0, absoluteTop - (launcherRect.top - widgetRect.height / 2));
-  });
+  await positionFlowWidgetAtLauncher(page, 'request-tracker');
   await expect(requestWidget).toHaveAttribute('data-flow-launcher-edge', 'true');
   await expect(roleWidget).not.toHaveAttribute('data-flow-launcher-edge');
   const clearance = await requestWidget.evaluate((widget) => {
@@ -3073,7 +3012,15 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
     .press('Enter');
   await expect
     .poll(personalOrder)
-    .toEqual(['today', 'action-queue', 'response-hub', 'request-tracker', 'role-pulse']);
+    .toEqual([
+      'today',
+      'action-queue',
+      'response-hub',
+      'request-tracker',
+      'role-pulse',
+      'focus-balance',
+      'meeting-load',
+    ]);
 
   await actionQueue.locator('[data-widget-footprint-trigger]').click();
   const picker = page.getByRole('dialog', { name: 'My action queue widget size' });
@@ -3110,7 +3057,15 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
   await expect.poll(() => savedBody).not.toBeNull();
   expect(savedBody!.version).toBe(3);
   const savedWidgetKeys = savedBody!.layout.widgets.map((widget) => widget.widgetKey);
-  expect(savedWidgetKeys).toEqual(['schedule', 'command-rail', 'daily-brief', 'focus', 'activity']);
+  expect(savedWidgetKeys).toEqual([
+    'schedule',
+    'command-rail',
+    'daily-brief',
+    'focus',
+    'activity',
+    'focus-balance',
+    'meeting-load',
+  ]);
   expect(savedWidgetKeys).not.toContain('action-queue');
   expect(
     savedBody!.layout.widgets.find((widget) => widget.widgetKey === 'command-rail')
@@ -3123,7 +3078,15 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
   await expect(actionQueue).toHaveAttribute('data-workspace-widget-height', 'short');
   await expect
     .poll(personalOrder)
-    .toEqual(['today', 'action-queue', 'response-hub', 'request-tracker', 'role-pulse']);
+    .toEqual([
+      'today',
+      'action-queue',
+      'response-hub',
+      'request-tracker',
+      'role-pulse',
+      'focus-balance',
+      'meeting-load',
+    ]);
 });
 
 test('LEGACY editing and save stay available when the inactive VIEWS store fails', async ({
@@ -3401,6 +3364,7 @@ test('an entitlement revoked during editing stays hidden without deleting its pl
 
 test('a multi-item request widget preserves its information hierarchy across height choices', async ({
   page,
+  isMobile,
 }) => {
   const source = HR_SERVICE_REQUESTS_FIXTURE[0]!;
   const services = Array.from({ length: 4 }, (_, index) => ({
@@ -3420,10 +3384,10 @@ test('a multi-item request widget preserves its information hierarchy across hei
   await page.goto('/');
   const section = purpose(page.getByTestId('flow-home'), 'request');
   await expectContextualListRhythm(section);
-  await page.setViewportSize({ width: 390, height: 844 });
+  await setFlowHomeViewport(page, { width: 390, height: 844 }, isMobile);
   await expectContextualListRhythm(section);
   await expectNoHorizontalDocumentOverflow(page, page.getByTestId('flow-home'));
-  await page.setViewportSize({ width: 1440, height: 1000 });
+  await setFlowHomeViewport(page, { width: 1440, height: 1000 }, isMobile);
   await page.getByRole('button', { name: 'Edit home' }).click();
 
   const frame = page.locator('[data-workspace-widget="request-tracker"]');

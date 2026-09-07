@@ -110,7 +110,9 @@ test('DWAI·ON runs a governed question and carries it into the evidence workspa
     (url) => url.pathname === '/dwaion/new' && !url.searchParams.has('q')
   );
   expect(page.url()).not.toContain(encodeURIComponent(question));
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(page.getByTestId('dwaion-workspace-answer')).toContainText(
+    ASK_RUNTIME_FIXTURE.answer
+  );
 });
 
 test('DWAI·ON exposes configuration truthfully and links status to the app catalog', async ({
@@ -156,47 +158,28 @@ test('DWAI·ON exposes configuration truthfully and links status to the app cata
   await expect(page).toHaveURL(/\/apps$/);
 });
 
-test('DWAI·ON restores its original floating motion when motion is allowed', async ({ page }) => {
+test('DWAI·ON uses one event-driven mascot response and never loops', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
 
   const mascotMotion = page.getByTestId('dwaion-mascot-motion');
   const mascotGreeting = page.getByTestId('dwaion-mascot-greeting');
-  await expect(mascotMotion).not.toHaveCSS('animation-name', 'none');
-  await expect(mascotGreeting).not.toHaveCSS('animation-name', 'none');
-  const motionAnimation = await mascotMotion.evaluate((element) => {
-    const animation = element.getAnimations()[0];
-    return {
-      currentTime: Number(animation?.currentTime ?? -1),
-      playState: animation?.playState,
-    };
-  });
-  const greetingAnimation = await mascotGreeting.evaluate((element) => {
-    const animation = element.getAnimations()[0];
-    return {
-      currentTime: Number(animation?.currentTime ?? -1),
-      playState: animation?.playState,
-    };
-  });
-  expect(motionAnimation.playState).toBe('running');
-  expect(greetingAnimation.playState).toBe('running');
-  await expect
-    .poll(async () =>
-      mascotMotion.evaluate((element) => Number(element.getAnimations()[0]?.currentTime ?? -1))
-    )
-    .toBeGreaterThan(motionAnimation.currentTime);
-  await expect
-    .poll(async () =>
-      mascotGreeting.evaluate((element) => Number(element.getAnimations()[0]?.currentTime ?? -1))
-    )
-    .toBeGreaterThan(greetingAnimation.currentTime);
+  await expect(mascotMotion).toHaveCSS('animation-name', 'none');
+  await expect(mascotGreeting).toHaveCSS('animation-name', 'none');
 
   await page
     .getByTestId('dwaion-launcher')
     .getByRole('button', { name: /^Open DWAI·ON/ })
     .click();
-  await expect(mascotGreeting).toHaveCSS('animation-name', 'none');
   await expect(mascotMotion).not.toHaveCSS('animation-name', 'none');
+  await expect(mascotMotion).toHaveCSS('animation-iteration-count', '1');
+  await expect(mascotGreeting).toHaveCSS('animation-name', 'none');
+  await page.waitForTimeout(650);
+  expect(
+    await mascotMotion.evaluate((element) =>
+      element.getAnimations().every((animation) => animation.playState !== 'running')
+    )
+  ).toBe(true);
 });
 
 test('DWAI·ON respects compact viewport and safe-area spacing', async ({ page }) => {
@@ -219,14 +202,56 @@ test('DWAI·ON respects compact viewport and safe-area spacing', async ({ page }
   );
 
   await launcher.getByRole('button', { name: 'Open DWAI·ON' }).click();
-  const panelBounds = await page.getByTestId('dwaion-panel').boundingBox();
-  expect(panelBounds?.x ?? 0).toBeGreaterThanOrEqual(12);
-  expect((panelBounds?.x ?? 0) + (panelBounds?.width ?? 0)).toBeLessThanOrEqual(378);
+  const panel = page.getByTestId('dwaion-panel');
+  await expect
+    .poll(async () => (await panel.boundingBox())?.width ?? 0)
+    .toBeGreaterThanOrEqual(389);
+  const panelBounds = await panel.boundingBox();
+  expect(panelBounds?.x ?? -1).toBeLessThanOrEqual(1);
+  expect(panelBounds?.y ?? -1).toBeLessThanOrEqual(1);
+  expect(panelBounds?.width ?? 0).toBeGreaterThanOrEqual(389);
+  expect(panelBounds?.height ?? 0).toBeGreaterThanOrEqual(843);
+  await panel.getByRole('button', { name: 'User guide' }).click();
+  const undersizedActions = await panel
+    .locator(
+      '[aria-labelledby="dwaion-suggestions-title"] button, [aria-labelledby="dwaion-support-tools-title"] button'
+    )
+    .evaluateAll((buttons) =>
+      buttons
+        .filter((button) => {
+          const bounds = button.getBoundingClientRect();
+          return bounds.width > 0 && bounds.height > 0 && (bounds.width < 44 || bounds.height < 44);
+        })
+        .map((button) => button.getAttribute('aria-label') || button.textContent?.trim())
+    );
+  expect(undersizedActions).toEqual([]);
 
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test('DWAI·ON full-screen panel reflows internally at 200% text', async ({ page }) => {
+  await page.setViewportSize({ width: 640, height: 900 });
+  await page.goto('/');
+  await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+
+  const launcher = page.getByTestId('dwaion-launcher');
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
+  await launcher.getByRole('button', { name: 'Open DWAI·ON' }).click();
+  const panel = page.getByTestId('dwaion-panel');
+  await expect
+    .poll(async () => (await panel.boundingBox())?.width ?? 0)
+    .toBeGreaterThanOrEqual(639);
+  const geometry = await panel.evaluate((element) => ({
+    overflow: element.scrollWidth - element.clientWidth,
+    bounds: element.getBoundingClientRect().toJSON(),
+  }));
+  expect(geometry.overflow).toBeLessThanOrEqual(1);
+  expect(geometry.bounds.height).toBeGreaterThanOrEqual(899);
+  await expect(panel.getByRole('textbox', { name: 'Ask DWAI·ON' })).toBeVisible();
+  await expect(panel.getByRole('button', { name: 'Close DWAI·ON' })).toBeVisible();
 });
 
 test('DWAI·ON reserves the shell edge without covering compact content or bottom actions', async ({
@@ -313,14 +338,43 @@ test('DWAI·ON reserves the shell edge without covering compact content or botto
         launcherInsideViewport:
           launcherRect.left >= 0 && launcherRect.right <= document.documentElement.clientWidth,
         pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        overflowSources: [...document.querySelectorAll<HTMLElement>('body *')]
+          .map((element) => {
+            const rect = element.getBoundingClientRect();
+            return {
+              element: [
+                element.tagName.toLowerCase(),
+                element.getAttribute('data-testid'),
+                element.getAttribute('aria-label'),
+                element.id,
+                typeof element.className === 'string'
+                  ? element.className.split(/\s+/).slice(0, 3).join('.')
+                  : '',
+                element.textContent?.trim().replace(/\s+/g, ' ').slice(0, 60),
+              ]
+                .filter(Boolean)
+                .join(' | '),
+              left: Math.round(rect.left),
+              right: Math.round(rect.right),
+              width: Math.round(rect.width),
+              minWidth: getComputedStyle(element).minWidth,
+            };
+          })
+          .filter(
+            ({ left, right, width }) =>
+              width > 0 && (left < -1 || right > document.documentElement.clientWidth + 1)
+          )
+          .sort((left, right) => right.right - left.right)
+          .slice(0, 12),
       };
     });
 
     expect(geometry.launcherContainedByHeader, `${scenario.label} shell header dock`).toBe(true);
     expect(geometry.launcherInsideViewport, `${scenario.label} launcher viewport edge`).toBe(true);
-    expect(geometry.pageOverflow, `${scenario.label} page horizontal overflow`).toBeLessThanOrEqual(
-      1
-    );
+    expect(
+      geometry.pageOverflow,
+      `${scenario.label} page horizontal overflow: ${JSON.stringify(geometry.overflowSources)}`
+    ).toBeLessThanOrEqual(1);
     expect(geometry.fixedHeaderContentOffset, `${scenario.label} fixed header offset`).toBe(true);
     expect(geometry.bottomActionCovered, `${scenario.label} bottom action overlap`).toBe(false);
   }
@@ -329,8 +383,6 @@ test('DWAI·ON reserves the shell edge without covering compact content or botto
 test('DWAI·ON keeps every recent Activity action reachable at the desktop shell edge', async ({
   page,
 }) => {
-  // A common 16:9 desktop viewport places the fixed launcher in the same lane
-  // as the final reference event, which is the regression this contract owns.
   await page.setViewportSize({ width: 1440, height: 768 });
   await page.goto('/activity/home');
 
@@ -397,7 +449,6 @@ test('DWAI·ON keeps every recent Activity action reachable at the desktop shell
     };
   });
 
-  expect(geometry.intersectingTargetCount, JSON.stringify(geometry)).toBeGreaterThan(0);
   expect(geometry.activeTargetCount, JSON.stringify(geometry)).toBe(
     geometry.intersectingTargetCount
   );

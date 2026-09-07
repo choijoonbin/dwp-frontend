@@ -5,8 +5,9 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 import { MEETINGS_PRODUCT_MANIFEST } from '../features/meetings/meetings-product-manifest';
 import { MeetingsLayout } from '../layouts/meetings-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -21,9 +22,15 @@ const page = (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.MEETINGS">
+  <ProductWorkRouteGuard productId="meetings" surfaceId="meetings.work" resourceKey="APP.MEETINGS">
     <MeetingsLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const managementLegacyShell = (
+  <ProductRouteGuard resourceKey="ADMIN.MEETINGS">
+    <MeetingsLayout />
+  </ProductRouteGuard>
 );
 
 export const meetingsRoutes: RouteObject[] = [
@@ -43,6 +50,7 @@ export const meetingsRoutes: RouteObject[] = [
       managementBasePath: '/meetings/admin',
       legacyPath: '/meetings/home',
       legacyShell,
+      managementLegacyShell,
       areaKey: 'meetings',
       translationNamespace: 'meetings',
       renderPage: () => page,

@@ -1,3 +1,4 @@
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +32,15 @@ import type { WorkspaceWorkItem } from '@dwp-frontend/shared-utils';
 import type { HomeOverviewWidgetProps } from './home-widgets';
 
 function nextWorkItem(items: readonly WorkspaceWorkItem[] = []): WorkspaceWorkItem | undefined {
-  const statusOrder = { 'due-soon': 0, 'in-progress': 1, waiting: 2, completed: 3 };
+  const statusOrder = {
+    open: 1,
+    'due-soon': 0,
+    'in-progress': 1,
+    waiting: 2,
+    completed: 3,
+    cancelled: 4,
+    archived: 5,
+  };
   const priorityOrder = { high: 0, medium: 1, low: 2 };
   return [...items]
     .filter((item) => item.status !== 'completed')
@@ -171,7 +180,7 @@ export function CommandRailWidget({
                 <ActionButton
                   intent="quiet"
                   endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                  onClick={() => navigate(`/work?item=${encodeURIComponent(topWork.id)}`)}
+                  onClick={() => navigate(workspaceWorkItemRoute(topWork))}
                   sx={{ px: 0, ml: 'auto' }}
                 >
                   {t('page.openPriority')}

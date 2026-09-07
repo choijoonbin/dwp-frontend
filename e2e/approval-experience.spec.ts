@@ -3,6 +3,10 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
 import {
+  APPROVAL_HOME_FIXTURE,
+  APPROVAL_MEMBER_PERMISSIONS,
+} from './support/approval-command-center-fixtures';
+import {
   APPROVAL_POLICIES_FIXTURE,
   APPROVAL_REQUEST_DETAIL_FIXTURE,
   APPROVAL_REQUEST_FIXTURE,
@@ -18,127 +22,6 @@ async function mockLegacyApprovalSurface(page: Page) {
   // the shell fixture's final API fallback.
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
 }
-
-const APPROVAL_MEMBER_PERMISSIONS = [
-  {
-    resourceType: 'APP',
-    resourceKey: 'APP.APPROVALS',
-    permissionCode: 'VIEW',
-    effect: 'ALLOW' as const,
-  },
-  ...[
-    ['ACTION.APPROVAL_TASK', 'VIEW'],
-    ['ACTION.APPROVAL_TASK', 'UPDATE'],
-    ['ACTION.APPROVAL_TASK', 'APPROVE'],
-    ['ACTION.APPROVAL_REQUEST', 'VIEW'],
-    ['ACTION.APPROVAL_REQUEST', 'CREATE'],
-    ['ACTION.APPROVAL_REQUEST', 'UPDATE'],
-    ['ACTION.APPROVAL_DELEGATION', 'VIEW'],
-    ['ACTION.APPROVAL_DELEGATION', 'MANAGE'],
-  ].map(([resourceKey, permissionCode]) => ({
-    resourceType: 'ACTION',
-    resourceKey,
-    permissionCode,
-    effect: 'ALLOW' as const,
-  })),
-];
-
-const HOME_FIXTURE = {
-  generatedAt: '2026-08-14T02:30:00Z',
-  metrics: {
-    pending: 4,
-    dueToday: 3,
-    overdue: 1,
-    needsInformation: 1,
-    myRequestsInFlight: 2,
-    averageCycleHours: 5.4,
-    slaCompliancePercent: 96,
-  },
-  focusQueue: [
-    {
-      taskId: 'approval-task-1',
-      requestId: 'approval-request-1',
-      requestNumber: 'APR-20260814-001',
-      title: '고객 분석 환경 접근 연장',
-      summary: '보안 정책 만료 전 접근 권한을 재검토합니다.',
-      workflowNameKo: '시스템 접근 예외',
-      workflowNameEn: 'Access exception',
-      stepKey: 'SECURITY_REVIEW',
-      stepName: '보안 검토',
-      stepSequence: 1,
-      requesterName: '김태현',
-      requesterOrgName: 'AI Platform팀',
-      status: 'PENDING',
-      priority: 'URGENT',
-      dataClassification: 'CONFIDENTIAL',
-      riskScore: 91,
-      submittedAt: '2026-08-14T00:30:00Z',
-      dueAt: '2026-08-14T03:30:00Z',
-      version: 0,
-    },
-    {
-      taskId: 'approval-task-2',
-      requestId: 'approval-request-2',
-      requestNumber: 'APR-20260814-002',
-      title: '신규 협력사 보안 예외',
-      summary: '협력사 온보딩 전에 보안 통제를 검토합니다.',
-      workflowNameKo: '협력사 등록',
-      workflowNameEn: 'Supplier onboarding',
-      stepKey: 'SECURITY_REVIEW',
-      stepName: '보안 검토',
-      stepSequence: 2,
-      requesterName: '박지호',
-      requesterOrgName: '구매혁신팀',
-      status: 'PENDING',
-      priority: 'HIGH',
-      dataClassification: 'INTERNAL',
-      riskScore: 72,
-      submittedAt: '2026-08-13T08:00:00Z',
-      dueAt: '2026-08-14T07:00:00Z',
-      version: 0,
-    },
-  ],
-  recentRequests: [
-    {
-      requestId: 'approval-request-3',
-      requestNumber: 'APR-20260813-003',
-      title: 'GPU 증설 투자 검토',
-      summary: 'AI 개발 환경의 GPU 증설 예산을 검토합니다.',
-      workflowNameKo: '구매·비용 승인',
-      workflowNameEn: 'Capital expenditure',
-      currentStepKey: 'PROCUREMENT_REVIEW',
-      currentStepName: '구매 조건 검토',
-      currentStepSequence: 2,
-      totalSteps: 3,
-      status: 'IN_REVIEW',
-      priority: 'HIGH',
-      dataClassification: 'CONFIDENTIAL',
-      latestInformationRequest: null,
-      submittedAt: '2026-08-13T05:00:00Z',
-      dueAt: '2026-08-15T05:00:00Z',
-      completedAt: null,
-      version: 2,
-    },
-  ],
-  flow: [
-    { stage: 'IN_REVIEW', count: 7, atRisk: 2 },
-    { stage: 'NEEDS_INFO', count: 1, atRisk: 1 },
-    { stage: 'APPROVED', count: 12, atRisk: 0 },
-  ],
-  insights: [
-    {
-      key: 'overdue',
-      tone: 'RISK',
-      titleKo: '기한을 넘긴 결정이 있습니다',
-      titleEn: 'A decision is overdue',
-      detailKo: '위험도가 높은 항목을 먼저 검토하세요.',
-      detailEn: 'Review the highest-risk item first.',
-      route: '/approvals/inbox',
-    },
-  ],
-  administrator: false,
-  adminPulse: null,
-};
 
 function fulfillSuccess(route: Route, data: unknown) {
   return route.fulfill({
@@ -160,7 +43,35 @@ function fulfillUnavailable(route: Route, message: string) {
 }
 
 async function mockApprovalHome(page: Page) {
-  await page.route('**/api/approvals/v1/home', (route) => fulfillSuccess(route, HOME_FIXTURE));
+  await page.route('**/api/approvals/v1/home', (route) =>
+    fulfillSuccess(route, APPROVAL_HOME_FIXTURE)
+  );
+  await page.route(
+    (url) => url.pathname === '/api/approvals/v1/tasks' && url.searchParams.get('view') === 'INBOX',
+    (route) => fulfillSuccess(route, APPROVAL_HOME_FIXTURE.focusQueue)
+  );
+  await page.route(
+    (url) => /^\/api\/approvals\/v1\/tasks\/approval-task-[12]$/u.test(url.pathname),
+    (route) => {
+      const taskId = route.request().url().split('/').at(-1);
+      const task = APPROVAL_HOME_FIXTURE.focusQueue.find(
+        (candidate) => candidate.taskId === taskId
+      );
+      if (!task) return route.abort();
+      return fulfillSuccess(route, {
+        ...APPROVAL_TASK_DETAIL_FIXTURE,
+        task,
+        timeline: [
+          {
+            ...APPROVAL_TASK_DETAIL_FIXTURE.timeline[0],
+            stepName: task.stepSequence === 2 ? '팀장 검토' : undefined,
+            stepSequence: task.stepSequence === 2 ? 1 : undefined,
+          },
+        ],
+        canDecide: task.taskId === 'approval-task-1',
+      });
+    }
+  );
   await page.route('**/api/platform/v1/home-preferences/surfaces/approval-home', (route) =>
     fulfillSuccess(route, {
       schemaVersion: 2,
@@ -204,12 +115,17 @@ test('전자결재 홈은 사용자에게 우선 판단과 개인 결재 흐름�
 
   await page.goto('/approvals/home');
 
-  await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: '이서연님의 결정이 기다리고 있습니다' })
-  ).toBeVisible();
-  await expect(page.getByRole('heading', { name: '우선 결재함' })).toBeVisible();
-  await expect(page.getByText('고객 분석 환경 접근 연장')).toBeVisible();
+  await expect(page.getByRole('heading', { name: '안녕하세요, 이서연님', level: 1 })).toBeVisible();
+  await expect(page.getByTestId('approval-daily-briefing')).toContainText(
+    '오늘의 결재 워크플로 브리핑'
+  );
+  await expect(page.getByRole('heading', { name: '우선 심의 큐' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '의사결정 내비게이터' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '내 기안 진행 추적' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '실시간 결재 흐름' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '우선 결재 검토' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '전자결재 업무 센터' })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: '결재 큐 필터' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: '프로세스 설계' })).toHaveCount(0);
 
   const geometry = await page.evaluate(() => ({
@@ -220,6 +136,205 @@ test('전자결재 홈은 사용자에게 우선 판단과 개인 결재 흐름�
 
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
+});
+
+test('전자결재 홈은 320px와 200% 글자 확대에서도 업무 내용을 잃지 않는다', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '이서연',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+
+  await page.goto('/approvals/home');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+
+  await expect(page.getByRole('heading', { name: '안녕하세요, 이서연님', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '우선 심의 큐' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '의사결정 내비게이터' })).toBeVisible();
+
+  const geometry = await page.evaluate(() => ({
+    viewportWidth: document.documentElement.clientWidth,
+    contentWidth: document.documentElement.scrollWidth,
+  }));
+  expect(geometry.contentWidth).toBeLessThanOrEqual(geometry.viewportWidth);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
+test('홈 기안 추적은 마지막 검토를 완료로 표시하지 않고 해당 상세를 열고 닫는다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+  const request = { ...APPROVAL_HOME_FIXTURE.recentRequests[0], currentStepSequence: 3 };
+  await page.route('**/api/approvals/v1/home', (route) =>
+    fulfillSuccess(route, { ...APPROVAL_HOME_FIXTURE, recentRequests: [request] })
+  );
+  await page.route('**/api/approvals/v1/requests?view=SUBMITTED', (route) =>
+    fulfillSuccess(route, [request])
+  );
+  await page.route(`**/api/approvals/v1/requests/${request.requestId}/detail`, (route) =>
+    fulfillSuccess(route, { ...APPROVAL_REQUEST_DETAIL_FIXTURE, request })
+  );
+
+  await page.goto('/approvals/home');
+  const requestRow = page.getByRole('button', { name: new RegExp(request.title, 'u') });
+  await expect(requestRow.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '66');
+  await requestRow.click();
+  await expect(page).toHaveURL(new RegExp(`request=${request.requestId}`, 'u'));
+  const detail = page.getByRole('dialog', { name: request.title });
+  await expect(detail).toBeVisible();
+  await detail.getByRole('button', { name: '닫기', exact: true }).click();
+  await expect(page).toHaveURL(/\/approvals\/requests\/submitted$/u);
+  await expect(detail).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByText(request.title, { exact: true })).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('결재함 하위 메뉴는 사이드바에서 큐를 전환하고 우측 목록을 갱신한다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '이서연',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+
+  await page.goto('/approvals/inbox');
+  await openApprovalNavigation(page);
+
+  const queueNavigation = page.getByRole('navigation', { name: '결재 큐 필터' });
+  await expect(queueNavigation).toBeVisible();
+  await expect(queueNavigation.getByRole('button')).toHaveCount(4);
+  await queueNavigation.getByRole('button', { name: /^긴급 결재/u }).click();
+
+  await expect(page).toHaveURL(/\/approvals\/inbox\?queue=URGENT/u);
+  const taskList = page.getByLabel('검토 대기 결재 목록');
+  await expect(taskList.getByText('고객 분석 환경 접근 연장')).toBeVisible();
+  await expect(page.getByText('신규 협력사 보안 예외')).toHaveCount(0);
+  if ((page.viewportSize()?.width ?? 1280) < 900) {
+    await taskList.getByRole('button').filter({ hasText: '고객 분석 환경 접근 연장' }).click();
+  }
+  await expect(page.getByRole('heading', { name: '정책 및 위험 브리프' })).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
+test('모바일 결재함은 목록과 상세을 전환하고 원래 결재 행으로 포커스를 복원한다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '이서연',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+
+  await page.goto('/approvals/inbox');
+  const taskButton = page.getByRole('button', { name: /고객 분석 환경 접근 연장/u });
+  await taskButton.click();
+
+  await expect(page.getByRole('heading', { name: '고객 분석 환경 접근 연장' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '정책 및 위험 브리프' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '결재 목록으로 돌아가기' })).toBeVisible();
+  await expect(page.getByLabel('검토 대기 결재 목록')).not.toBeVisible();
+
+  await page.getByRole('button', { name: '결재 목록으로 돌아가기' }).click();
+  await expect(page.getByLabel('검토 대기 결재 목록')).toBeVisible();
+  await expect(taskButton).toBeFocused();
+
+  const geometry = await page.evaluate(() => ({
+    viewportWidth: document.documentElement.clientWidth,
+    contentWidth: document.documentElement.scrollWidth,
+  }));
+  expect(geometry.contentWidth).toBeLessThanOrEqual(geometry.viewportWidth);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
+test('배치 승인은 각 결재를 다시 확인하고 처리 불가 항목을 건너뛴다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+  const decisions: Array<Record<string, unknown>> = [];
+  await page.route('**/api/approvals/v1/tasks/approval-task-1/decisions', async (route) => {
+    decisions.push(route.request().postDataJSON() as Record<string, unknown>);
+    return fulfillSuccess(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: { ...APPROVAL_HOME_FIXTURE.focusQueue[0], status: 'APPROVED', version: 1 },
+      canDecide: false,
+    });
+  });
+
+  await page.goto('/approvals/inbox');
+  await page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택').check();
+  await page.getByLabel('신규 협력사 보안 예외 배치 승인 선택').check();
+  await page.getByRole('button', { name: '선택 항목 승인' }).click();
+  await expect(page.getByRole('dialog')).toContainText('선택한 2건을 각각 다시 검증');
+  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+
+  await expect(
+    page.getByRole('status').filter({ hasText: '승인 1건 · 처리 불가 1건 · 남음 0건' })
+  ).toBeVisible();
+  expect(decisions).toEqual([{ decision: 'APPROVE', expectedVersion: 0 }]);
+});
+
+test('결재함 단건 반려는 감사 사유와 최신 문서 버전을 함께 기록한다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+  const decisions: Array<Record<string, unknown>> = [];
+  await page.route('**/api/approvals/v1/tasks/approval-task-1/decisions', async (route) => {
+    decisions.push(route.request().postDataJSON() as Record<string, unknown>);
+    return fulfillSuccess(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: { ...APPROVAL_HOME_FIXTURE.focusQueue[0], status: 'REJECTED', version: 1 },
+      canDecide: false,
+    });
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-1');
+  await expect(page.getByRole('heading', { name: '고객 분석 환경 접근 연장' })).toBeVisible();
+  await page.getByRole('button', { name: '반려' }).click();
+
+  const dialog = page.getByRole('dialog', { name: '결재를 반려할까요?' });
+  const submit = dialog.getByRole('button', { name: '반려 확정' });
+  await expect(submit).toBeDisabled();
+  await dialog.getByLabel('결정 사유').fill('필수 보안 통제 증적을 먼저 보완해 주세요.');
+  await expect(submit).toBeEnabled();
+  await submit.click();
+
+  await expect.poll(() => decisions.length).toBe(1);
+  expect(decisions).toEqual([
+    {
+      decision: 'REJECT',
+      comment: '필수 보안 통제 증적을 먼저 보완해 주세요.',
+      expectedVersion: 0,
+    },
+  ]);
 });
 
 test('홈 개인화 조회 실패는 기본 버전을 저장하지 않고 명시적 재시도로 복구한다', async ({
@@ -239,7 +354,7 @@ test('홈 개인화 조회 실패는 기본 버전을 저장하지 않고 명시
   );
 
   await page.goto('/approvals/home');
-  await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /안녕하세요/u, level: 1 })).toBeVisible();
   const error = page
     .getByRole('alert')
     .filter({ hasText: '개인화 설정을 확인하지 못해 기본 구성을 표시합니다' });

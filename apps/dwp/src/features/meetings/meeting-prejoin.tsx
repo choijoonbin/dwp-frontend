@@ -1,37 +1,44 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreJoin, type LocalUserChoices } from '@livekit/components-react';
-import { CalendarClock, DoorOpen, LockKeyhole, RefreshCw, ShieldCheck } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { DoorOpen, LockKeyhole, RefreshCw, ShieldCheck, UsersRound } from 'lucide-react';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import type { VideoMeetingSummary } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type { MeetingPreJoinPreferenceDefaults } from './meeting-preferences-model';
 
 import { formatMeetingDateTime, MeetingPageHeading } from './meeting-components';
 import { MeetingContentPreJoin } from './meeting-content-governance';
+import { MeetingPreJoinSpeaker } from './meeting-prejoin-speaker';
 
 import '@livekit/components-styles';
 import './meeting-prejoin.css';
 
 export type MeetingPreJoinProps = {
   meeting: VideoMeetingSummary;
-  defaultDisplayName: string;
+  defaults: MeetingPreJoinPreferenceDefaults;
   busy: boolean;
   onCancel: () => void;
   onError: (error: Error) => void;
+  onSpeakerDeviceChange: (speakerDeviceId: string) => void;
   onSubmit: (choices: LocalUserChoices) => unknown | Promise<unknown>;
 };
 
 export function MeetingPreJoin({
   meeting,
-  defaultDisplayName,
+  defaults,
   busy,
   onCancel,
   onError,
+  onSpeakerDeviceChange,
   onSubmit,
 }: MeetingPreJoinProps) {
   const { t, i18n } = useTranslation('meetings');
@@ -40,12 +47,27 @@ export function MeetingPreJoin({
   const [previewAttempt, setPreviewAttempt] = useState(0);
   const [contentGuarded, setContentGuarded] = useState(true);
   const liveKitRootRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const displayNameInputId = useId();
   const privacyDescriptionId = useId();
   const validateChoices = useCallback(
     (choices: LocalUserChoices) => !busy && !contentGuarded && choices.username.trim().length > 0,
     [busy, contentGuarded]
   );
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.getElementById('dwp-main-content')?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto',
+      });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      headingRef.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     const liveKitRoot = liveKitRootRef.current;
@@ -104,6 +126,8 @@ export function MeetingPreJoin({
         eyebrow={t('room.eyebrow')}
         title={t('room.deviceCheck')}
         description={t('room.deviceDescription')}
+        headingRef={headingRef}
+        headingTabIndex={-1}
         actions={
           <ActionButton intent="quiet" onClick={onCancel}>
             {t('actions.cancel')}
@@ -145,76 +169,182 @@ export function MeetingPreJoin({
 
       <Box
         component="section"
+        aria-labelledby="dwp-meeting-prejoin-context-title"
+        data-testid="meeting-prejoin-context"
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) auto' },
+          alignItems: 'center',
+          gap: { xs: 1.5, md: 3 },
+          pb: 2,
+          borderBottom: 1,
+          borderColor: 'divider',
+          mb: 2,
+        }}
+      >
+        <Box sx={{ minWidth: 0 }}>
+          <Stack direction="row" flexWrap="wrap" alignItems="center" gap={0.75} sx={{ mb: 1 }}>
+            <Chip
+              size="small"
+              color={meeting.lifecycleState === 'LIVE' ? 'success' : 'primary'}
+              variant="outlined"
+              label={t(`status.${meeting.lifecycleState}`)}
+            />
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ fontVariantNumeric: 'tabular-nums' }}
+            >
+              {formatMeetingDateTime(meeting.startsAt, i18n.language)} · {meeting.timeZone}
+            </Typography>
+          </Stack>
+          <Typography
+            id="dwp-meeting-prejoin-context-title"
+            component="h2"
+            variant="h5"
+            sx={{ overflowWrap: 'anywhere' }}
+          >
+            {meeting.title}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" alignItems="center" gap={1.5} sx={{ mt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('room.preJoin.hostedBy', { name: meeting.organizerName })}
+            </Typography>
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              <UsersRound size={15} aria-hidden="true" />
+              <Typography variant="body2" color="text.secondary">
+                {t('units.participants', { count: meeting.attendeeCount })}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Box>
+        <Stack direction="row" flexWrap="wrap" gap={0.75} justifyContent={{ md: 'flex-end' }}>
+          <Chip
+            size="small"
+            icon={<DoorOpen size={14} aria-hidden="true" />}
+            label={t(
+              meeting.waitingRoomEnabled
+                ? 'room.preJoin.waitingRoomEnabled'
+                : 'room.preJoin.waitingRoomDisabled'
+            )}
+          />
+          <Chip
+            size="small"
+            color="success"
+            variant="outlined"
+            icon={<ShieldCheck size={14} aria-hidden="true" />}
+            label={t(`access.${meeting.accessScope}`)}
+          />
+        </Stack>
+      </Box>
+
+      <Box
+        component="section"
         className="dwp-meeting-prejoin"
         aria-label={t('room.preJoin.workspaceLabel')}
+        sx={(theme) => {
+          return {
+            '--dwp-prejoin-border': alpha(theme.palette.common.white, 0.14),
+            '--dwp-prejoin-subtle-border': alpha(theme.palette.common.white, 0.09),
+            '--dwp-prejoin-outer-border': alpha(theme.palette.primary.light, 0.28),
+            '--dwp-prejoin-muted': alpha(theme.palette.common.white, 0.66),
+            '--dwp-prejoin-placeholder': alpha(theme.palette.common.white, 0.54),
+            '--dwp-prejoin-foreground': theme.palette.common.white,
+            '--dwp-prejoin-accent-text': theme.palette.common.white,
+            '--dwp-prejoin-accent-soft': alpha(theme.palette.primary.main, 0.18),
+            '--dwp-prejoin-accent-border': alpha(theme.palette.primary.light, 0.36),
+            '--dwp-prejoin-success-text':
+              theme.palette.mode === 'dark'
+                ? theme.palette.success.light
+                : theme.palette.success.dark,
+            '--dwp-prejoin-success-soft': alpha(theme.palette.success.main, 0.16),
+            '--dwp-prejoin-success-border': alpha(theme.palette.success.light, 0.4),
+            '--dwp-prejoin-canvas': theme.palette.common.black,
+            '--dwp-prejoin-stage': theme.palette.grey[900],
+            '--dwp-prejoin-surface': theme.palette.grey[800],
+            '--dwp-prejoin-raised': theme.palette.grey[700],
+            '--dwp-prejoin-action': theme.palette.primary.main,
+            '--dwp-prejoin-action-contrast': theme.palette.getContrastText(
+              theme.palette.primary.main
+            ),
+            '--dwp-prejoin-action-hover': theme.palette.primary.dark,
+            '--dwp-prejoin-action-hover-contrast': theme.palette.getContrastText(
+              theme.palette.primary.dark
+            ),
+            '--dwp-prejoin-action-border': theme.palette.primary.light,
+            '--dwp-prejoin-focus': theme.palette.primary.light,
+            '--dwp-prejoin-page-surface': theme.palette.background.paper,
+            '--dwp-prejoin-page-text': theme.palette.text.primary,
+            '--dwp-prejoin-page-muted': theme.palette.text.secondary,
+            '--dwp-prejoin-page-divider': theme.palette.divider,
+            '--dwp-prejoin-page-accent': theme.palette.primary.main,
+            '--dwp-prejoin-radius': foundationTokens.radius.control + 'px',
+            '--dwp-prejoin-radius-large': foundationTokens.radius.surface + 'px',
+          };
+        }}
       >
         <div className="dwp-meeting-prejoin__workspace" data-lk-theme="default">
-          <div className="dwp-meeting-prejoin__stage">
-            <div className="dwp-meeting-prejoin__stage-heading">
-              <span className="dwp-meeting-prejoin__private-badge">
-                <ShieldCheck size={15} aria-hidden="true" />
-                {t('room.preJoin.privatePreview')}
-              </span>
-              <span>{t('room.preJoin.localOnly')}</span>
-            </div>
+          <div className="dwp-meeting-prejoin__preview-column">
+            <div className="dwp-meeting-prejoin__stage">
+              <div className="dwp-meeting-prejoin__stage-heading">
+                <span className="dwp-meeting-prejoin__private-badge">
+                  <ShieldCheck size={15} aria-hidden="true" />
+                  {t('room.preJoin.privatePreview')}
+                </span>
+                <span>{t('room.preJoin.localOnly')}</span>
+              </div>
 
-            <div ref={liveKitRootRef} className="dwp-meeting-prejoin__livekit">
-              <label className="dwp-meeting-prejoin__visually-hidden" htmlFor={displayNameInputId}>
-                {t('room.displayName')}
-              </label>
-              <PreJoin
-                key={previewAttempt}
-                defaults={{
-                  username: defaultDisplayName,
-                  audioEnabled: meeting.defaultMicrophoneEnabled,
-                  videoEnabled: meeting.defaultCameraEnabled,
-                }}
-                persistUserChoices={false}
-                joinLabel={busy ? t('room.connecting') : t('room.joinLabel')}
-                micLabel={t('room.microphone')}
-                camLabel={t('room.camera')}
-                userLabel={t('room.displayName')}
-                onValidate={validateChoices}
-                onError={handleMediaError}
-                onSubmit={submitChoices}
-                aria-busy={busy || undefined}
-                aria-describedby={privacyDescriptionId}
-              />
-            </div>
+              <div ref={liveKitRootRef} className="dwp-meeting-prejoin__livekit">
+                <label
+                  className="dwp-meeting-prejoin__visually-hidden"
+                  htmlFor={displayNameInputId}
+                >
+                  {t('room.displayName')}
+                </label>
+                <PreJoin
+                  key={previewAttempt}
+                  defaults={{
+                    username: defaults.username,
+                    audioEnabled: defaults.audioEnabled,
+                    videoEnabled: defaults.videoEnabled,
+                    audioDeviceId: defaults.audioDeviceId,
+                    videoDeviceId: defaults.videoDeviceId,
+                  }}
+                  persistUserChoices={false}
+                  joinLabel={busy ? t('room.connecting') : t('room.joinLabel')}
+                  micLabel={t('room.microphone')}
+                  camLabel={t('room.camera')}
+                  userLabel={t('room.displayName')}
+                  onValidate={validateChoices}
+                  onError={handleMediaError}
+                  onSubmit={submitChoices}
+                  aria-busy={busy || undefined}
+                  aria-describedby={privacyDescriptionId}
+                />
+              </div>
 
-            <p id={privacyDescriptionId} className="dwp-meeting-prejoin__privacy-note">
-              <LockKeyhole size={15} aria-hidden="true" />
-              {t('room.preJoin.privacyNote')}
-            </p>
+              <p id={privacyDescriptionId} className="dwp-meeting-prejoin__privacy-note">
+                <LockKeyhole size={15} aria-hidden="true" />
+                {t('room.preJoin.privacyNote')}
+              </p>
+            </div>
+            <MeetingPreJoinSpeaker
+              speakerDeviceId={defaults.speakerDeviceId}
+              onSpeakerDeviceChange={onSpeakerDeviceChange}
+            />
           </div>
 
           <aside
             className="dwp-meeting-prejoin__rail"
             aria-labelledby="dwp-meeting-prejoin-security-title"
           >
-            <div className="dwp-meeting-prejoin__meeting-summary">
-              <div className="dwp-meeting-prejoin__rail-kicker">
-                <span>{t('room.preJoin.meetingAndSecurity')}</span>
-                <span
-                  className="dwp-meeting-prejoin__lifecycle"
-                  data-state={meeting.lifecycleState}
-                >
-                  {t(`status.${meeting.lifecycleState}`)}
-                </span>
-              </div>
-              <h2 id="dwp-meeting-prejoin-security-title">{meeting.title}</h2>
-              <p>
-                <CalendarClock size={15} aria-hidden="true" />
-                <span>
-                  {formatMeetingDateTime(meeting.startsAt, i18n.language)} · {meeting.timeZone}
-                </span>
-              </p>
-              <p>
-                <span className="dwp-meeting-prejoin__organizer-mark" aria-hidden="true">
-                  {meeting.organizerName.trim().charAt(0).toLocaleUpperCase() || '–'}
-                </span>
-                <span>{t('room.preJoin.hostedBy', { name: meeting.organizerName })}</span>
-              </p>
+            <div className="dwp-meeting-prejoin__rail-kicker">
+              <h2 id="dwp-meeting-prejoin-security-title">
+                {t('room.preJoin.meetingAndSecurity')}
+              </h2>
+              <span className="dwp-meeting-prejoin__lifecycle" data-state={meeting.lifecycleState}>
+                {t(`status.${meeting.lifecycleState}`)}
+              </span>
             </div>
 
             <ul className="dwp-meeting-prejoin__security-list">

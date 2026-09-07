@@ -67,7 +67,9 @@
       "activity": "Work pulse",
       "focus": "My requests",
       "schedule": "Today",
-      "daily-brief": "Needs response"
+      "daily-brief": "Needs response",
+      "focus-balance": "Focus balance",
+      "meeting-load": "Meeting load"
     },
     "fieldLabels": {
       "eventType": "Activity type",

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "maximumEntries": 5,
+  "maximumEntries": 4,
   "entries": [
     {
       "path": "apps/dwp/src/components/workspace-composer/workspace-composer-model.ts",
@@ -22,13 +22,6 @@
       "owner": "Home Experience",
       "reason": "Bootstrap key retained for the Home persistence compatibility boundary.",
       "removalCondition": "Remove after Home persistence no longer needs the compatibility key."
-    },
-    {
-      "path": "apps/dwp/src/features/home/flow-home/flow-home-layout.ts",
-      "name": "FLOW_HOME_DESKTOP_MIN_WIDTH",
-      "owner": "Home Experience",
-      "reason": "Named Home layout contract retained during responsive baseline stabilization.",
-      "removalCondition": "Remove when layout tests consume the canonical breakpoint token directly."
     },
     {
       "path": "apps/dwp/src/features/home/flow-home/next-actions.tsx",

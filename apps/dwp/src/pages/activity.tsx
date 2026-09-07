@@ -1,25 +1,22 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import {
   Activity,
-  ArrowUpRight,
   Bot,
   CheckCircle2,
   CircleAlert,
   CircleDashed,
-  FileClock,
   ShieldX,
   UserRound,
   Wrench,
 } from 'lucide-react';
-import { getWorkspaceActivity } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   EmptyState,
   FilterBar,
+  FormField,
   LiveStatus,
   LocalErrorState,
   LoadingState,
@@ -38,9 +35,25 @@ import LinearProgress from '@mui/material/LinearProgress';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { LiveSignal, SectionHeading } from '../components/workspace-ui';
+import { SectionHeading } from '../components/workspace-ui';
 import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
+import { useActivityData } from '../features/activity/use-activity-data';
+import { ActivityEventDetail } from '../components/activity/activity-event-detail';
+import {
+  ACTIVITY_ACTORS as ACTOR_FILTERS,
+  ACTIVITY_STATES as STATE_FILTERS,
+  activityRefreshState,
+  activitySavedConfiguration,
+  applyActivitySavedConfiguration,
+  readActivityFilters,
+  validActivityTimeRange,
+} from '../features/activity/activity-model';
+import type { ActorFilter, StateFilter } from '../features/activity/activity-model';
+import type { Theme } from '@mui/material/styles';
 
 import type {
   WorkspaceActivityActor as ActivityActor,
@@ -48,32 +61,16 @@ import type {
   WorkspaceActivityState as ActivityState,
 } from '@dwp-frontend/shared-utils';
 
-type ActorFilter = 'all' | ActivityActor;
-type StateFilter = 'all' | ActivityState;
 type ActivityRow = WorkspaceActivityEvent & { time: string };
-
-const ACTOR_FILTERS: ActorFilter[] = ['all', 'agent', 'person', 'system'];
-const STATE_FILTERS: StateFilter[] = [
-  'all',
-  'running',
-  'needs-input',
-  'completed',
-  'policy-blocked',
-];
-
-function isActorFilter(value: string | null): value is ActorFilter {
-  return Boolean(value && ACTOR_FILTERS.includes(value as ActorFilter));
-}
-
-function isStateFilter(value: string | null): value is StateFilter {
-  return Boolean(value && STATE_FILTERS.includes(value as StateFilter));
-}
 
 const stateColor: Record<ActivityState, 'info' | 'warning' | 'success' | 'error'> = {
   running: 'info',
   'needs-input': 'warning',
   completed: 'success',
   'policy-blocked': 'error',
+  failed: 'error',
+  cancelled: 'warning',
+  unknown: 'warning',
 };
 
 function ActorIcon({ actor }: { actor: ActivityActor }) {
@@ -85,26 +82,30 @@ function ActorIcon({ actor }: { actor: ActivityActor }) {
 function StateIcon({ state }: { state: ActivityState }) {
   if (state === 'running') return <CircleDashed size={17} strokeWidth={1.8} />;
   if (state === 'needs-input') return <CircleAlert size={17} strokeWidth={1.8} />;
-  if (state === 'policy-blocked') return <ShieldX size={17} strokeWidth={1.8} />;
+  if (state === 'policy-blocked' || state === 'failed')
+    return <ShieldX size={17} strokeWidth={1.8} />;
+  if (state === 'cancelled' || state === 'unknown')
+    return <CircleAlert size={17} strokeWidth={1.8} />;
   return <CheckCircle2 size={17} strokeWidth={1.8} />;
 }
 
 export default function ActivityPage() {
   const { t } = useTranslation('work');
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const actorParam = searchParams.get('actor');
-  const actorFilter: ActorFilter = isActorFilter(actorParam) ? actorParam : 'all';
-  const stateParam = searchParams.get('state');
-  const stateFilter: StateFilter = isStateFilter(stateParam) ? stateParam : 'all';
-  const query = searchParams.get('q') ?? '';
-  const activityQuery = useQuery({
-    queryKey: ['workspace', 'activity'],
-    queryFn: getWorkspaceActivity,
-    staleTime: 15_000,
-    refetchInterval: 60_000,
-    retry: 1,
-  });
+  const desktopDetail = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+  const compactMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+  const filters = readActivityFilters(searchParams);
+  const actorFilter = filters.actor ?? 'all';
+  const stateFilter = filters.state ?? 'all';
+  const query = filters.query ?? '';
+  const selectedId = searchParams.get('event') ?? '';
+  const {
+    feed: activityQuery,
+    summary,
+    detail,
+    now,
+    refresh,
+  } = useActivityData(filters, selectedId);
   const events = useMemo<ActivityRow[]>(
     () =>
       (activityQuery.data?.events ?? []).map((event) => ({
@@ -113,30 +114,22 @@ export default function ActivityPage() {
       })),
     [activityQuery.data?.events]
   );
-  const selectedId = searchParams.get('event') ?? '';
-  const visibleEvents = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase();
-    return events.filter((event) => {
-      const actorMatches = actorFilter === 'all' || event.actor === actorFilter;
-      const stateMatches = stateFilter === 'all' || event.state === stateFilter;
-      const queryMatches =
-        !normalized ||
-        [event.title, event.summary, event.actorName, event.objectLabel, event.source].some(
-          (value) =>
-            String(value ?? '')
-              .toLocaleLowerCase()
-              .includes(normalized)
-        );
-      return actorMatches && stateMatches && queryMatches;
-    });
-  }, [actorFilter, events, query, stateFilter]);
-  const selected = visibleEvents.find((event) => event.id === selectedId) || visibleEvents[0];
+  const visibleEvents = events;
+  const refreshState = activityRefreshState(activityQuery, now);
+  const changeFilter = (key: string, value: string | null) =>
+    setSearchParams(
+      mergeFilterSearchParams(searchParams, { [key]: value, cursor: null, event: null }),
+      { replace: true }
+    );
+  const closeDetail = () =>
+    setSearchParams(mergeFilterSearchParams(searchParams, { event: null }), { replace: true });
 
   const selectActor = (value: ActorFilter) => {
     setSearchParams(
       mergeFilterSearchParams(searchParams, {
         actor: value === 'all' ? null : value,
         event: null,
+        cursor: null,
       }),
       { replace: true }
     );
@@ -149,121 +142,127 @@ export default function ActivityPage() {
       mergeFilterSearchParams(searchParams, {
         state: value === 'all' ? null : value,
         event: null,
-      }),
-      { replace: true }
-    );
-  };
-  const selectScope = (actor: ActorFilter, state: StateFilter) => {
-    setSearchParams(
-      mergeFilterSearchParams(searchParams, {
-        actor: actor === 'all' ? null : actor,
-        state: state === 'all' ? null : state,
-        event: null,
+        cursor: null,
       }),
       { replace: true }
     );
   };
   const header = (
-    <ResourcePageHeader
-      eyebrow={t('activityPage.header.eyebrow')}
-      title={t('activityPage.header.title')}
-      description={t('activityPage.header.description')}
-      status={
-        <LiveStatus
-          state={activityQuery.isFetching ? 'syncing' : 'live'}
-          label={t('activityPage.header.live')}
-          refreshLabel={t('activityPage.retry')}
-          refreshing={activityQuery.isFetching}
-          onRefresh={() => void activityQuery.refetch()}
-        />
-      }
-    />
+    <Box
+      sx={{
+        '@media (forced-colors: active)': { '& .MuiTypography-overline': { color: 'CanvasText' } },
+      }}
+    >
+      <ResourcePageHeader
+        eyebrow={t('activityPage.header.eyebrow')}
+        title={t('activityPage.header.title')}
+        description={t('activityPage.header.description')}
+        status={
+          <LiveStatus
+            state={refreshState}
+            label={t(`activityFoundation.freshness.${refreshState}`)}
+            detail={
+              activityQuery.dataUpdatedAt
+                ? t('activityFoundation.lastRefresh', {
+                    at: formatDate(activityQuery.dataUpdatedAt, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }),
+                  })
+                : undefined
+            }
+            refreshLabel={t('activityPage.retry')}
+            refreshing={activityQuery.isFetching}
+            onRefresh={() => void refresh()}
+          />
+        }
+      />
+    </Box>
   );
-  if (activityQuery.isLoading) {
-    return (
-      <PageCanvas>
-        {header}
-        <LoadingState label={t('activityPage.loading')} variant="skeleton" size="page" />
-      </PageCanvas>
-    );
-  }
-  if (activityQuery.isError) {
-    return (
-      <PageCanvas>
-        {header}
-        <LocalErrorState
-          title={t('activityPage.loadErrorTitle')}
-          description={t('activityPage.loadErrorDescription')}
-          retryLabel={t('activityPage.retry')}
-          onRetry={() => void activityQuery.refetch()}
-          retrying={activityQuery.isFetching}
-          size="page"
-        />
-      </PageCanvas>
-    );
-  }
-  if (events.length === 0) {
-    return (
-      <PageCanvas>
-        {header}
-        <EmptyState
-          title={t('activityPage.emptyTitle')}
-          description={t('activityPage.emptyDescription')}
-          size="page"
-        />
-      </PageCanvas>
-    );
-  }
-
-  const sourceCount = new Set(events.map((event) => event.source)).size;
+  const current = summary.isError ? undefined : summary.data;
   const summaryValues = {
-    signals: events.length,
-    agent: events.filter((event) => event.actor === 'agent' && event.state === 'running').length,
-    input: events.filter((event) => event.state === 'needs-input').length,
-    blocked: events.filter((event) => event.state === 'policy-blocked').length,
+    signals: current?.total ?? '—',
+    agent: current?.running ?? '—',
+    input: current?.needsInput ?? '—',
+    blocked: current?.policyBlocked ?? '—',
   };
+  const summaryStrip = (
+    <>
+      <OperationalKpiStrip
+        ariaLabel={t('activityPage.summaryLabel')}
+        items={[
+          {
+            key: 'signals',
+            value: summaryValues.signals,
+            label: t('activityPage.summary.signals.label'),
+            detail: t('activityFoundation.summaryScope'),
+          },
+          {
+            key: 'agent',
+            value: summaryValues.agent,
+            label: t('activityPage.summary.agent.label'),
+            detail: t('activityFoundation.summaryScope'),
+            tone: 'info' as const,
+          },
+          {
+            key: 'input',
+            value: summaryValues.input,
+            label: t('activityPage.summary.input.label'),
+            detail: t('activityFoundation.summaryScope'),
+            tone: 'warning' as const,
+          },
+          {
+            key: 'blocked',
+            value: summaryValues.blocked,
+            label: t('activityPage.summary.blocked.label'),
+            detail: t('activityFoundation.summaryScope'),
+            tone: 'critical' as const,
+          },
+        ]}
+      />
+      <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1 }}>
+        {t('activityFoundation.coverageNotice')}{' '}
+        {t(`activityFoundation.freshness.${activityRefreshState(summary, now)}`)}
+      </Typography>
+    </>
+  );
 
   return (
     <PageCanvas>
       {header}
 
       <Box sx={{ mt: 3 }}>
-        <OperationalKpiStrip
-          ariaLabel={t('activityPage.summaryLabel')}
-          items={[
-            {
-              key: 'signals',
-              value: String(summaryValues.signals).padStart(2, '0'),
-              label: t('activityPage.summary.signals.label'),
-              detail: t('activityPage.summary.signals.detail', { count: sourceCount }),
-              onSelect: () => selectScope('all', 'all'),
-            },
-            {
-              key: 'agent',
-              value: String(summaryValues.agent).padStart(2, '0'),
-              label: t('activityPage.summary.agent.label'),
-              detail: t('activityPage.summary.agent.detail', { count: summaryValues.agent }),
-              tone: 'info' as const,
-              onSelect: () => selectScope('agent', 'running'),
-            },
-            {
-              key: 'input',
-              value: String(summaryValues.input).padStart(2, '0'),
-              label: t('activityPage.summary.input.label'),
-              detail: t('activityPage.summary.input.detail', { count: summaryValues.input }),
-              tone: 'warning' as const,
-              onSelect: () => selectScope('all', 'needs-input'),
-            },
-            {
-              key: 'blocked',
-              value: String(summaryValues.blocked).padStart(2, '0'),
-              label: t('activityPage.summary.blocked.label'),
-              detail: t('activityPage.summary.blocked.detail', { count: summaryValues.blocked }),
-              tone: 'critical' as const,
-              onSelect: () => selectScope('all', 'policy-blocked'),
-            },
-          ]}
-        />
+        {compactMobile ? (
+          <Box
+            component="details"
+            sx={{
+              borderBlock: 1,
+              borderColor: 'divider',
+              py: 1,
+              '&[open] > summary': { mb: 1.5 },
+              '& > summary': {
+                minHeight: 40,
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                '&:focus-visible': {
+                  outline: '3px solid var(--dwp-focus-ring, currentColor)',
+                  outlineOffset: 2,
+                },
+              },
+            }}
+          >
+            <Typography component="summary" variant="subtitle2">
+              {t('activityPage.compactSummary', {
+                total: summaryValues.signals,
+                attention: current ? current.needsInput + current.policyBlocked : '—',
+              })}
+            </Typography>
+            {summaryStrip}
+          </Box>
+        ) : (
+          summaryStrip
+        )}
       </Box>
 
       <Box sx={{ mt: 3 }}>
@@ -274,7 +273,11 @@ export default function ActivityPage() {
           searchValue={query}
           onSearchChange={(value) =>
             setSearchParams(
-              mergeFilterSearchParams(searchParams, { q: value || null, event: null }),
+              mergeFilterSearchParams(searchParams, {
+                q: value || null,
+                event: null,
+                cursor: null,
+              }),
               { replace: true }
             )
           }
@@ -316,14 +319,96 @@ export default function ActivityPage() {
                 }))}
                 onValueChange={(value) => value && selectState(value)}
               />
+              <Box
+                component="details"
+                sx={{
+                  minWidth: { xs: 1, md: 180 },
+                  flexBasis: { xs: '100%', md: 'auto' },
+                  '&[open]': { flexBasis: '100%' },
+                  '& > summary': {
+                    minHeight: 40,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    px: 1.5,
+                    border: 1,
+                    borderColor: 'divider',
+                    borderRadius: 'shape.borderRadius',
+                    cursor: 'pointer',
+                    listStyle: 'none',
+                    color: 'text.primary',
+                    '&::-webkit-details-marker': { display: 'none' },
+                    '&:focus-visible': {
+                      outline: '3px solid var(--dwp-focus-ring, currentColor)',
+                      outlineOffset: 2,
+                    },
+                  },
+                }}
+              >
+                <Typography component="summary" variant="body2" fontWeight="fontWeightMedium">
+                  {t('activityFoundation.filters.advanced')}
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: {
+                      xs: 'minmax(0, 1fr)',
+                      sm: 'repeat(2, minmax(0, 1fr))',
+                      lg: 'repeat(3, minmax(0, 1fr))',
+                    },
+                    gap: 1.25,
+                    mt: 1.25,
+                    p: 1.5,
+                    border: 1,
+                    borderColor: 'divider',
+                    bgcolor: 'background.paper',
+                  }}
+                >
+                  {(['source', 'objectType', 'objectId', 'executionId', 'from', 'to'] as const).map(
+                    (key) => (
+                      <FormField
+                        key={key}
+                        label={t(`activityFoundation.filters.${key}`)}
+                        size="small"
+                        value={filters[key] ?? ''}
+                        onChange={(event) => changeFilter(key, event.target.value || null)}
+                        placeholder={
+                          key === 'from' || key === 'to' ? '2026-09-04T00:00:00Z' : undefined
+                        }
+                        fullWidth
+                      />
+                    )
+                  )}
+                  <FormControlLabel
+                    label={t('activityFoundation.filters.includeUsage')}
+                    control={
+                      <Checkbox
+                        checked={filters.includeUsage === true}
+                        onChange={(_, checked) =>
+                          changeFilter('includeUsage', checked ? 'true' : null)
+                        }
+                      />
+                    }
+                  />
+                </Box>
+              </Box>
             </Box>
           }
           savedViews={
             <GovernedSavedViewControl
               surfaceKey="workspace.activity"
-              currentConfiguration={{ q: query, actor: actorFilter, state: stateFilter }}
+              currentConfiguration={activitySavedConfiguration(filters)}
               selectedBuiltInViewId={
-                !query && stateFilter === 'all' ? `builtin-${actorFilter}` : null
+                !query &&
+                stateFilter === 'all' &&
+                !filters.source &&
+                !filters.objectType &&
+                !filters.objectId &&
+                !filters.executionId &&
+                !filters.from &&
+                !filters.to &&
+                !filters.includeUsage
+                  ? `builtin-${actorFilter}`
+                  : null
               }
               builtInViews={ACTOR_FILTERS.map((value) => ({
                 id: `builtin-${value}`,
@@ -332,24 +417,9 @@ export default function ActivityPage() {
                 isDefault: value === 'all',
               }))}
               onApply={(configuration) => {
-                const nextActor =
-                  typeof configuration.actor === 'string' && isActorFilter(configuration.actor)
-                    ? configuration.actor
-                    : 'all';
-                const nextQuery = typeof configuration.q === 'string' ? configuration.q : '';
-                const nextState =
-                  typeof configuration.state === 'string' && isStateFilter(configuration.state)
-                    ? configuration.state
-                    : 'all';
-                setSearchParams(
-                  mergeFilterSearchParams(searchParams, {
-                    q: nextQuery || null,
-                    actor: nextActor === 'all' ? null : nextActor,
-                    state: nextState === 'all' ? null : nextState,
-                    event: null,
-                  }),
-                  { replace: true }
-                );
+                setSearchParams(applyActivitySavedConfiguration(searchParams, configuration), {
+                  replace: true,
+                });
               }}
             />
           }
@@ -372,18 +442,31 @@ export default function ActivityPage() {
                     onRemove: () => selectState('all'),
                   },
                 ]),
+            ...(['source', 'objectType', 'objectId', 'executionId', 'from', 'to'] as const).flatMap(
+              (key) =>
+                filters[key]
+                  ? [
+                      {
+                        key,
+                        label: `${t(`activityFoundation.filters.${key}`)}: ${filters[key]}`,
+                        onRemove: () => changeFilter(key, null),
+                      },
+                    ]
+                  : []
+            ),
+            ...(filters.includeUsage
+              ? [
+                  {
+                    key: 'includeUsage',
+                    label: t('activityFoundation.filters.includeUsage'),
+                    onRemove: () => changeFilter('includeUsage', null),
+                  },
+                ]
+              : []),
           ]}
           resetLabel={t('activityPage.resetFilters')}
           onReset={() =>
-            setSearchParams(
-              mergeFilterSearchParams(searchParams, {
-                q: null,
-                actor: null,
-                state: null,
-                event: null,
-              }),
-              { replace: true }
-            )
+            setSearchParams(applyActivitySavedConfiguration(searchParams, {}), { replace: true })
           }
           resultLabel={t('activityPage.visibleCount', { count: visibleEvents.length })}
         />
@@ -393,7 +476,10 @@ export default function ActivityPage() {
         sx={{
           mt: 2,
           display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1.7fr) minmax(320px, 1fr)' },
+          gridTemplateColumns:
+            desktopDetail && selectedId
+              ? 'minmax(0, 1.65fr) minmax(360px, 0.9fr)'
+              : 'minmax(0, 1fr)',
           borderTop: 1,
           borderBottom: 1,
           borderColor: 'divider',
@@ -405,18 +491,28 @@ export default function ActivityPage() {
               id="activity-timeline-heading"
               icon={Activity}
               title={t('activityPage.timeline')}
-              meta={<LiveSignal />}
             />
           </Box>
           <Divider />
-          {visibleEvents.length > 0 ? (
+          {!validActivityTimeRange(filters) ? (
+            <EmptyState title={t('activityFoundation.invalidTimeRange')} size="compact" />
+          ) : activityQuery.isLoading ? (
+            <LoadingState label={t('activityPage.loading')} size="compact" />
+          ) : activityQuery.isError ? (
+            <LocalErrorState
+              title={t('activityPage.loadErrorTitle')}
+              retryLabel={t('activityPage.retry')}
+              onRetry={() => void activityQuery.refetch()}
+              size="compact"
+            />
+          ) : visibleEvents.length > 0 ? (
             <Box
               component="ol"
               aria-label={t('activityPage.timelineLabel')}
               sx={{ p: 0, m: 0, listStyle: 'none' }}
             >
               {visibleEvents.map((event) => {
-                const active = event.id === selected?.id;
+                const active = event.id === selectedId;
                 return (
                   <Box
                     component="li"
@@ -427,11 +523,10 @@ export default function ActivityPage() {
                       onClick={() =>
                         setSearchParams(
                           mergeFilterSearchParams(searchParams, { event: event.id }),
-                          {
-                            replace: true,
-                          }
+                          { replace: false }
                         )
                       }
+                      aria-pressed={active}
                       sx={{
                         width: 1,
                         display: 'grid',
@@ -464,7 +559,7 @@ export default function ActivityPage() {
                           height: 36,
                           display: { xs: 'none', sm: 'grid' },
                           placeItems: 'center',
-                          borderRadius: 1,
+                          borderRadius: 'shape.borderRadius',
                           color: event.actor === 'agent' ? 'primary.main' : 'text.secondary',
                           bgcolor: event.actor === 'agent' ? 'action.selected' : 'action.hover',
                         }}
@@ -491,7 +586,11 @@ export default function ActivityPage() {
                               variant="determinate"
                               value={event.progress}
                               aria-label={t('activityPage.progressLabel', { title: event.title })}
-                              sx={{ width: { xs: 150, sm: 220 }, height: 5, borderRadius: 1 }}
+                              sx={{
+                                width: { xs: 150, sm: 220 },
+                                height: 5,
+                                borderRadius: 'shape.borderRadius',
+                              }}
                             />
                             <Typography variant="caption" fontWeight={700}>
                               {event.progress}%
@@ -529,99 +628,37 @@ export default function ActivityPage() {
           )}
         </Box>
 
-        {selected && (
-          <Box
-            component="aside"
-            aria-labelledby="activity-detail-heading"
-            sx={{
-              minWidth: 0,
-              p: { xs: 2, md: 3 },
-              borderLeft: { xs: 0, lg: 1 },
-              borderTop: { xs: 1, lg: 0 },
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 2,
-              }}
-            >
-              <Typography id="activity-detail-heading" component="h2" variant="h6">
-                {t('activityPage.detailTitle')}
-              </Typography>
-              <Chip
-                label={t(`activityPage.states.${selected.state}`)}
-                color={stateColor[selected.state]}
-                size="small"
-                sx={(theme) =>
-                  selected.state === 'completed'
-                    ? {
-                        color: theme.palette.success.contrastText,
-                      }
-                    : {}
-                }
-              />
-            </Box>
-            <Typography component="p" variant="subtitle1" sx={{ mt: 3 }}>
-              {selected.title}
-            </Typography>
-            <Typography color="text.secondary" sx={{ mt: 0.75 }}>
-              {selected.summary}
-            </Typography>
-
-            <Box sx={{ display: 'grid', gap: 2, mt: 3 }}>
-              {[
-                ['actor', selected.actorName],
-                ['object', selected.objectLabel],
-                ['source', selected.source],
-                ['tool', selected.tool || t('activityPage.noTool')],
-                ['auditId', selected.auditId],
-              ].map(([key, value]) => (
-                <Box key={key}>
-                  <Typography variant="caption" color="text.secondary">
-                    {t(`activityPage.fields.${key}`)}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                    sx={{ mt: 0.25, overflowWrap: 'anywhere' }}
-                  >
-                    {value}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-
-            <Divider sx={{ my: 3 }} />
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {selected.state === 'needs-input' && (
-                <ActionButton
-                  intent="primary"
-                  startIcon={<FileClock size={17} aria-hidden="true" />}
-                  disabled={!selected.sourceRoute}
-                  onClick={() => selected.sourceRoute && navigate(selected.sourceRoute)}
-                >
-                  {t('activityPage.reviewNow')}
-                </ActionButton>
-              )}
-              <ActionButton
-                intent="secondary"
-                endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                disabled={!selected.sourceRoute}
-                onClick={() => selected.sourceRoute && navigate(selected.sourceRoute)}
-              >
-                {t('activityPage.openSource')}
-              </ActionButton>
-            </Box>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-              {t('activityPage.liveNotice')}
-            </Typography>
-          </Box>
+        <ActivityEventDetail
+          eventId={selectedId}
+          query={detail}
+          variant={desktopDetail ? 'inline' : 'drawer'}
+          onClose={closeDetail}
+        />
+      </Box>
+      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+        {filters.cursor && (
+          <ActionButton intent="secondary" onClick={() => changeFilter('cursor', null)}>
+            {t('activityFoundation.firstPage')}
+          </ActionButton>
         )}
+        <ActionButton
+          intent="secondary"
+          disabled={
+            !activityQuery.data?.hasMore ||
+            !activityQuery.data.nextCursor ||
+            activityQuery.isFetching ||
+            activityQuery.isError
+          }
+          onClick={() =>
+            setSearchParams(
+              mergeFilterSearchParams(searchParams, {
+                cursor: activityQuery.data?.nextCursor ?? null,
+              })
+            )
+          }
+        >
+          {t('activityFoundation.nextPage')}
+        </ActionButton>
       </Box>
     </PageCanvas>
   );

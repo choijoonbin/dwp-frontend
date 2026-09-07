@@ -14,6 +14,7 @@ import {
 } from './meeting-admin-intelligence';
 import {
   MEETING_ADMIN_OPERATION_CAPABILITIES,
+  MEETING_RECORDING_POLICIES,
   createUnavailableMeetingAdminIntelligenceReadiness,
   formatMeetingAdminQualityScore,
   hasMeetingAdminPolicyErrors,
@@ -73,6 +74,10 @@ const labels: MeetingAdminIntelligenceLabels = {
     ADMIN_REQUIRED: 'Administrator-required governed recording',
   },
   unavailable: 'Not reported',
+  readinessTitle: 'Release readiness',
+  readinessProgress: (ready, total) => `${ready} of ${total} ready`,
+  pipelineTitle: 'Governed processing pipeline',
+  pipelineDescription: 'Every step remains independently fail-closed.',
   capabilitiesTitle: 'Content readiness',
   capabilitiesDescription: 'Capabilities stay blocked until their requirements are verified.',
   dependenciesTitle: 'Dependency chain',
@@ -92,6 +97,15 @@ const labels: MeetingAdminIntelligenceLabels = {
     NOT_VERIFIED: 'Not verified',
   },
   reason: (value) => value,
+  pipeline: {
+    consent: item('Consent and plan'),
+    recording: item('Recording provider'),
+    encryption: item('Encryption and storage'),
+    transcript: item('Speech to text'),
+    model: item('Approved AI'),
+    publication: item('Review and publication'),
+    deletion: item('Retention and deletion'),
+  },
   capabilities: {
     recording: item('Recording'),
     transcript: item('Transcript'),
@@ -113,6 +127,8 @@ const labels: MeetingAdminIntelligenceLabels = {
     adminContentAccess: item('JIT administrator access'),
     legalHold: item('Legal hold'),
     deletionEvidence: item('Deletion evidence'),
+    workFollowUpPromotion: item('Work follow-up promotion'),
+    followUpReassignment: item('Follow-up reassignment'),
   },
   retention: {
     meeting: item('Meeting record'),
@@ -182,6 +198,10 @@ const runtimeReadiness: RuntimeMeetingAdminIntelligenceReadiness = {
 };
 
 describe('meeting admin policy validation', () => {
+  it('keeps every supported recording policy available to the administrator UI', () => {
+    expect(MEETING_RECORDING_POLICIES).toEqual(['NEVER', 'HOST_OPT_IN', 'ADMIN_REQUIRED']);
+  });
+
   it('blocks chat and artifact retention beyond the meeting retention window', () => {
     const validation = validateMeetingAdminPolicy({
       retentionDays: 30,
@@ -298,6 +318,8 @@ describe('meeting admin intelligence control center', () => {
     expect(markup).toContain('JIT administrator access');
     expect(markup).toContain('Legal hold');
     expect(markup).toContain('Deletion evidence');
+    expect(markup).toContain('Work follow-up promotion');
+    expect(markup).toContain('Follow-up reassignment');
     expect(markup).toContain('Administrators have no default access to meeting content.');
     expect(markup).toContain('enterprise-model');
     expect(markup).toContain('Retention execution worker');

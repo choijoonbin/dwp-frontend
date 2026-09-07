@@ -18,6 +18,7 @@ export const APPROVAL_PRODUCT_MANIFEST = defineProductManifest({
         { kind: 'exact', path: '/approvals/completed' },
         { kind: 'prefix', path: '/approvals/requests' },
         { kind: 'exact', path: '/approvals/delegations' },
+        { kind: 'prefix', path: '/approvals' },
       ],
       indexPath: '/approvals/home',
       navigation: APPROVAL_WORK_NAVIGATION,

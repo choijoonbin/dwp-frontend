@@ -25,7 +25,13 @@ const EXPECTED_RESERVED_CONTRACTS = new Set([
   'hcm.reference.publish',
   'hcm.integration.rotate-secret',
 ]);
-const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4];
+const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4, 5];
+const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
+  1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
+  2: '5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c',
+  3: 'f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e',
+  4: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
+});
 const EXPECTED_STEP_UP_CHALLENGES = { approval: 4, people: 5 };
 const STEP_UP_CONTEXT_KEYS = Object.freeze({
   STEPUP_HIGH_WORKFLOW_PUBLISH_1: 'approval-management',
@@ -38,36 +44,26 @@ const STEP_UP_CONTEXT_KEYS = Object.freeze({
   STEPUP_CRITICAL_EXPORT_RETRY_1: 'hcm-management',
   STEPUP_CRITICAL_CONSUMED_1: 'hcm-management',
 });
-const EXPECTED_AUTHORIZATION_COUNTS = {
-  1: {
-    capabilities: 10,
-    accessPolicies: 5,
-    entitlementExpressions: 2,
-    predicatePolicies: 6,
-    routes: 35,
-  },
-  2: {
-    capabilities: 34,
-    accessPolicies: 6,
-    entitlementExpressions: 3,
-    predicatePolicies: 13,
-    routes: 76,
-  },
-  3: {
-    capabilities: 62,
-    accessPolicies: 14,
-    entitlementExpressions: 8,
-    predicatePolicies: 25,
-    routes: 129,
-  },
-  4: {
-    capabilities: 71,
-    accessPolicies: 22,
-    entitlementExpressions: 16,
-    predicatePolicies: 33,
-    routes: 155,
-  },
-};
+const authorizationCounts = (
+  capabilities,
+  accessPolicies,
+  entitlementExpressions,
+  predicates,
+  routes
+) => ({
+  capabilities,
+  accessPolicies,
+  entitlementExpressions,
+  predicatePolicies: predicates,
+  routes,
+});
+const EXPECTED_AUTHORIZATION_COUNTS = Object.freeze({
+  1: authorizationCounts(10, 5, 2, 6, 35),
+  2: authorizationCounts(34, 6, 3, 13, 76),
+  3: authorizationCounts(62, 14, 8, 25, 129),
+  4: authorizationCounts(71, 22, 16, 33, 155),
+  5: authorizationCounts(72, 22, 16, 33, 160),
+});
 const STEP_UP_HEADER_FIELDS = ['alg', 'kid', 'typ'];
 const STEP_UP_CLAIM_FIELDS = [
   'acr',
@@ -304,16 +300,21 @@ function readAuthorizationRegistry(sourcePath) {
           .sort();
         if (JSON.stringify(packagedBundles) !== JSON.stringify(expectedBundles)) {
           fail(
-            'authorization registry directory must contain exactly immutable bundle v1-v4 files'
+            `authorization registry directory must contain exactly immutable bundle v1-v${EXPECTED_REGISTRY_VERSIONS.at(-1)} files`
           );
         }
         const aliasPath = path.join(sourcePath, 'product-surfaces-v1.json');
-        const latestPath = path.join(sourcePath, 'product-surfaces-v1.bundle-v4.json');
+        const latestPath = path.join(
+          sourcePath,
+          `product-surfaces-v1.bundle-v${EXPECTED_REGISTRY_VERSIONS.at(-1)}.json`
+        );
         if (
           !fs.statSync(aliasPath, { throwIfNoEntry: false })?.isFile() ||
           !fs.readFileSync(aliasPath).equals(fs.readFileSync(latestPath))
         ) {
-          fail('authorization registry latest alias must be byte-identical to bundle v4');
+          fail(
+            `authorization registry latest alias must be byte-identical to bundle v${EXPECTED_REGISTRY_VERSIONS.at(-1)}`
+          );
         }
         return {
           index: readJson(
@@ -362,13 +363,17 @@ function readAuthorizationRegistry(sourcePath) {
     index.bundleKey !== 'product-surfaces' ||
     index.indexChecksumAlgorithm !== 'SHA-256' ||
     index.latestVersion !== EXPECTED_REGISTRY_VERSIONS.at(-1) ||
-    index.latestArtifact !== 'product-surfaces-v1.bundle-v4.json' ||
-    index.latestAuthSeedArtifact !== 'product-surfaces-v1.bundle-v4.generated.json' ||
+    index.latestArtifact !==
+      `product-surfaces-v1.bundle-v${EXPECTED_REGISTRY_VERSIONS.at(-1)}.json` ||
+    index.latestAuthSeedArtifact !==
+      `product-surfaces-v1.bundle-v${EXPECTED_REGISTRY_VERSIONS.at(-1)}.generated.json` ||
     bundles.length !== EXPECTED_REGISTRY_VERSIONS.length ||
     indexVersions.length !== EXPECTED_REGISTRY_VERSIONS.length ||
     !SHA_256.test(index.indexChecksum)
   ) {
-    fail('authorization registry must close over product-surfaces v1-v4 exactly');
+    fail(
+      `authorization registry must close over product-surfaces v1-v${EXPECTED_REGISTRY_VERSIONS.at(-1)} exactly`
+    );
   }
   const indexChecksumInput = structuredClone(index);
   delete indexChecksumInput.indexChecksum;
@@ -404,10 +409,17 @@ function readAuthorizationRegistry(sourcePath) {
     ) {
       fail(`authorization registry bundle v${version} is not closed over its index`);
     }
+    if (
+      PRESERVED_AUTHORIZATION_CHECKSUMS[version] !== undefined &&
+      bundle.checksum !== PRESERVED_AUTHORIZATION_CHECKSUMS[version]
+    )
+      fail(`preserved v${version} checksum changed`);
     bundlesByVersion.set(version, bundle);
   }
   if (index.latestChecksum !== bundlesByVersion.get(index.latestVersion)?.checksum) {
-    fail('authorization registry latest checksum differs from bundle v4');
+    fail(
+      `authorization registry latest checksum differs from bundle v${EXPECTED_REGISTRY_VERSIONS.at(-1)}`
+    );
   }
   const rolloutInventory = requireRecord(
     source.rolloutInventory,
@@ -438,7 +450,9 @@ function readAuthorizationRegistry(sourcePath) {
     JSON.stringify(canonicalize(source.latestAlias)) !==
     JSON.stringify(canonicalize(bundlesByVersion.get(index.latestVersion)))
   ) {
-    fail('authorization snapshot latest alias differs from bundle v3');
+    fail(
+      `authorization snapshot latest alias differs from bundle v${EXPECTED_REGISTRY_VERSIONS.at(-1)}`
+    );
   }
   return { index, bundlesByVersion };
 }
@@ -569,7 +583,7 @@ function validateRegistryLineage(bundle, authorizationRegistry) {
   }
   const versions = requireArray(lineage.versions, 'registryLineage.versions');
   if (versions.length !== EXPECTED_REGISTRY_VERSIONS.length) {
-    fail('registryLineage must contain v1-v4 exactly');
+    fail(`registryLineage must contain v1-v${EXPECTED_REGISTRY_VERSIONS.at(-1)} exactly`);
   }
   const versionByNumber = new Map();
   for (const [index, expectedVersion] of EXPECTED_REGISTRY_VERSIONS.entries()) {

@@ -185,6 +185,28 @@
         "emptyDescription": "Work in your role scope is currently healthy."
       }
     },
+    "calendarInsights": {
+      "focusTitle": "Focus balance",
+      "focusDescription": "Compare protected focus time with meetings across your week.",
+      "meetingTitle": "Today's meeting load",
+      "meetingDescription": "Review today's load and this week's meeting profile and conflicts.",
+      "weekBalance": "This week's time mix",
+      "dailyLimit": "Against the daily meeting limit",
+      "focusVsMeetings": "Focus {{focus}} min · Meetings {{meetings}} min",
+      "targetProgress": "{{percent}}% of weekly focus target",
+      "focusRemaining": "{{minutes}} min to reach your focus target",
+      "focusTargetReached": "Weekly focus target reached",
+      "meetingMinutes": "Meetings {{minutes}} min",
+      "conflicts": "This week's conflicts: {{count}}",
+      "noConflicts": "No conflicts this week",
+      "weekProfile": "This week's load",
+      "openDetails": "View insights",
+      "loading": "Loading calendar insights.",
+      "unavailable": "Calendar insights are temporarily unavailable.",
+      "empty": "No calendar insight is available yet.",
+      "retry": "Try again",
+      "restricted": "Calendar insights are outside your current access."
+    },
     "contributions": {
       "workspace": {
         "openWorkTitle": "Open work",
@@ -391,6 +413,7 @@
       "scheduleLoad": "Schedule load",
       "scheduleLoadToday": "Today's meeting load",
       "activityAttention": "Activity alerts",
+      "activityBreakdown": "{{needsInput}} need input · {{policyBlocked}} policy blocked",
       "unit": {
         "items": "items",
         "minutes": "min",
@@ -477,6 +500,8 @@
         "response-hub": "Replies & confirmations",
         "request-tracker": "My requests",
         "role-pulse": "Role work status",
+        "focus-balance": "Focus balance",
+        "meeting-load": "Meeting load",
         "today-flowline": "Today's schedule and deadlines",
         "work-signals": "Work overview",
         "next-actions": "Prepare next"
@@ -495,6 +520,7 @@
     }
   },
   "footer": {
+    "dataScope": "Only data within your access permissions is shown.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "help": "Help Desk",
@@ -912,6 +938,14 @@
       "activity": {
         "label": "Live activity",
         "description": "Human, system, and agent events"
+      },
+      "focus-balance": {
+        "label": "Focus balance",
+        "description": "Protected focus time compared with weekly meetings"
+      },
+      "meeting-load": {
+        "label": "Meeting load",
+        "description": "Meeting volume, weekly load, and schedule conflicts"
       }
     },
     "announcements": {

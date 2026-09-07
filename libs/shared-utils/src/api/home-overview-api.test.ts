@@ -118,4 +118,47 @@ describe('home overview API boundary', () => {
       reason: 'MISSING_RECOMMENDATION_CONTRACT',
     });
   });
+
+  it('attaches current execution counts independently from the historical feed', async () => {
+    const current = {
+      total: 2,
+      running: 0,
+      needsInput: 1,
+      policyBlocked: 1,
+      completed: 0,
+      failed: 0,
+      cancelled: 0,
+      unknown: 0,
+      generatedAt,
+      coverage: { supportedObjectTypes: ['WORK_ITEM'] },
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((input) =>
+        Promise.resolve(
+          jsonResponse(String(input).includes('/executions/summary') ? current : overviewResponse())
+        )
+      )
+    );
+    const overview = await getHomeOverview();
+    expect(overview.activity.data?.events).toEqual([]);
+    expect(overview.activity.data?.executionSummary).toMatchObject(current);
+    expect(overview.activity.data?.executionSummaryStatus).toBe('AVAILABLE');
+  });
+
+  it('leaves the current summary unavailable when a source returns an old contract', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(overviewResponse())));
+    const overview = await getHomeOverview();
+    expect(overview.activity.data?.executionSummary).toBeUndefined();
+    expect(overview.activity.data?.executionSummaryStatus).toBe('UNAVAILABLE');
+  });
+
+  it('does not request execution counts for a forbidden activity section', async () => {
+    const response = overviewResponse();
+    response.activity.status = 'FORBIDDEN';
+    const fetch = vi.fn().mockResolvedValue(jsonResponse(response));
+    vi.stubGlobal('fetch', fetch);
+    await getHomeOverview();
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
 });

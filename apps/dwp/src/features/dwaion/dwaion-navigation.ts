@@ -2,6 +2,7 @@ import {
   Activity,
   Bot,
   ChartNoAxesCombined,
+  Clock3,
   DatabaseZap,
   FlaskConical,
   History,
@@ -9,7 +10,9 @@ import {
   Inbox,
   ListChecks,
   MessageSquarePlus,
+  PanelsTopLeft,
   ScrollText,
+  SlidersHorizontal,
   ShieldAlert,
   Workflow,
 } from 'lucide-react';
@@ -50,6 +53,34 @@ export const DWAION_NAVIGATION = [
           { resourceKey: 'APP.EMPLOYEE_SERVICES', permissionCode: 'VIEW' },
           { resourceKey: 'ACTION.APPROVAL_REQUEST', permissionCode: 'CREATE' },
         ],
+      },
+    ],
+  },
+  {
+    id: 'extensions',
+    items: [
+      {
+        path: '/dwaion/routines',
+        view: 'routines',
+        icon: Clock3,
+        requiredResourceKey: 'APP.DWAION_ROUTINES',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        path: '/dwaion/personal-controls',
+        view: 'personal-controls',
+        icon: SlidersHorizontal,
+        requiredAnyAuthorities: [
+          { resourceKey: 'APP.DWAION_MEMORY', permissionCode: 'VIEW' },
+          { resourceKey: 'APP.DWAION_PRIVACY', permissionCode: 'VIEW' },
+        ],
+      },
+      {
+        path: '/dwaion/artifacts',
+        view: 'artifacts',
+        icon: PanelsTopLeft,
+        requiredResourceKey: 'APP.DWAION_ARTIFACTS',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },

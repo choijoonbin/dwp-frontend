@@ -1,10 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, Clock3, Search, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
+import { Building2, CalendarCheck2, Clock3, Search, ShieldCheck, UsersRound } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
-import { evaluateCalendarScheduling, listPeople, usePermissions } from '@dwp-frontend/shared-utils';
+import {
+  evaluateCalendarScheduling,
+  getPerson,
+  listPeople,
+  useAuth,
+  usePermissions,
+} from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   AutocompleteMultiField,
@@ -59,6 +65,15 @@ function isoRange(value: DateRangeValue) {
 export function CalendarAvailability() {
   const { t, i18n } = useTranslation('calendar');
   const { hasPermission } = usePermissions();
+  const auth = useAuth();
+  const canViewPeople = hasPermission('APP.PEOPLE_DIRECTORY', 'VIEW');
+  const [searchParams] = useSearchParams();
+  const requestedPeople = searchParams.getAll('person');
+  const requestedPerson =
+    requestedPeople.length === 1 && /^[A-Za-z0-9_-]{1,128}$/u.test(requestedPeople[0] ?? '')
+      ? requestedPeople[0]!
+      : null;
+  const consumedPerson = useRef<string | null>(null);
   const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const workplacePath = hasPermission('APP.ROOMS', 'VIEW')
     ? '/workplace/rooms'
@@ -74,10 +89,26 @@ export function CalendarAvailability() {
   const language = i18n.resolvedLanguage ?? i18n.language;
   const timeZone = resolveSystemTimeZone('Asia/Seoul');
   const peopleQuery = useQuery({
-    queryKey: ['calendar', 'availability', 'people'],
+    queryKey: ['calendar', 'availability', 'people', auth.user?.tenantId, auth.user?.userId],
     queryFn: () => listPeople({ size: 100, surface: 'directory' }),
+    enabled: canViewPeople,
     staleTime: 5 * 60_000,
     retry: 1,
+  });
+  const sharedPersonQuery = useQuery({
+    queryKey: [
+      'calendar',
+      'availability',
+      'shared-person',
+      auth.user?.tenantId,
+      auth.user?.userId,
+      requestedPerson,
+    ],
+    queryFn: ({ signal }) =>
+      getPerson(requestedPerson!, undefined, 'directory', undefined, signal, 'directory'),
+    enabled: Boolean(requestedPerson && canViewPeople),
+    retry: false,
+    staleTime: 0,
   });
   const availability = useMutation({
     mutationFn: async () => {
@@ -94,6 +125,7 @@ export function CalendarAvailability() {
       });
     },
   });
+  const resetAvailability = availability.reset;
   const evaluationUsable = calendarSchedulingEvaluationIsUsable(availability.data);
   const result = evaluationUsable ? availability.data?.availability : undefined;
   const participantLoadMax = Math.max(
@@ -109,6 +141,39 @@ export function CalendarAvailability() {
     setSearchedPeople([]);
     setSelectedSlot(null);
   };
+
+  useEffect(() => {
+    const person = sharedPersonQuery.data?.person;
+    if (
+      !requestedPerson ||
+      sharedPersonQuery.isError ||
+      sharedPersonQuery.isFetching ||
+      consumedPerson.current === requestedPerson
+    )
+      return;
+    if (!person || person.personId !== requestedPerson || !person.workEmail) return;
+    consumedPerson.current = requestedPerson;
+    resetAvailability();
+    setPeople([person]);
+    setSearchedPeople([]);
+    setSelectedSlot(null);
+  }, [
+    resetAvailability,
+    requestedPerson,
+    sharedPersonQuery.data,
+    sharedPersonQuery.isError,
+    sharedPersonQuery.isFetching,
+  ]);
+
+  useEffect(() => {
+    if (canViewPeople && !sharedPersonQuery.isError) return;
+    resetAvailability();
+    setPeople((current) =>
+      current.filter((person) => canViewPeople && person.personId !== requestedPerson)
+    );
+    setSearchedPeople([]);
+    setSelectedSlot(null);
+  }, [canViewPeople, requestedPerson, resetAvailability, sharedPersonQuery.isError]);
 
   useEffect(() => {
     const validUntil = availability.data?.validUntil;
@@ -166,6 +231,11 @@ export function CalendarAvailability() {
           }}
         >
           <Stack spacing={2}>
+            {requestedPerson && sharedPersonQuery.isError ? (
+              <Typography variant="body2" color="error.main" role="alert">
+                {t('availability.sharedPersonUnavailable')}
+              </Typography>
+            ) : null}
             {peopleQuery.isError && (
               <Alert
                 severity="error"
@@ -408,7 +478,7 @@ export function CalendarAvailability() {
             }}
           >
             <CalendarSectionHeader
-              icon={Sparkles}
+              icon={CalendarCheck2}
               title={t('availability.suggestions')}
               description={t('availability.suggestionsDescription')}
             />

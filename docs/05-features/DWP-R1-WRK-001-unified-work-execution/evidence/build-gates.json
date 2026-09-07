@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-04",
+  "overallBuild": "FAILED_BUNDLE_BUDGET",
+  "passed": [
+    "Package manager policy",
+    "Gateway and Agent OpenAPI contract synchronization",
+    "Product authorization contracts",
+    "Application architecture and route composition",
+    "Feature and API boundaries",
+    "Import cycles and production reachability",
+    "Unused exports and source-size budgets",
+    "Design-system adoption with decreased baseline",
+    "Internationalization and display dictionary",
+    "ESLint",
+    "TypeScript",
+    "Vite production generation"
+  ],
+  "remainingGate": {
+    "name": "Initial production bundle size",
+    "initialRawKiB": 1172.7,
+    "initialRawBudgetKiB": 1074.2,
+    "initialGzipKiB": 333.4,
+    "initialGzipBudgetKiB": 317.4,
+    "initialRequests": 5,
+    "initialRequestBudget": 5,
+    "budgetIncreased": false
+  },
+  "scopeAudit": {
+    "verifiedBy": "work_implementation_audit agent, Vite manifest and Rolldown module audit",
+    "initialWorkHubModules": 0,
+    "initialPersonalWorkApiModules": 0,
+    "initialWorkspaceWorkPolicyModules": 0,
+    "change": "Removed unnecessary personal-work-api re-export from shared-utils barrel; callers use direct API subpath"
+  },
+  "budgetCommandOutput": "DWP production bundle budget\nPASS  entry raw               0.7 KiB / 449.2 KiB  assets/index-CslToH03.js\nPASS  entry gzip              0.4 KiB / 136.7 KiB  assets/index-CslToH03.js\nFAIL  initial raw          1172.7 KiB / 1074.2 KiB 5 requests\nFAIL  initial gzip          333.4 KiB / 317.4 KiB  5 requests\nPASS  initial requests              5 / 5          static import graph\nPASS  largest async raw     482.5 KiB / 537.1 KiB  assets/async-vendor~dwaion-actions~account-activation~sign-in~work-home~spaces~services~messaging~~b0j9hary-CNVCycKv.js\nPASS  largest async gzip    123.2 KiB / 166.0 KiB  assets/async-vendor~dwaion-actions~account-activation~sign-in~work-home~spaces~services~messaging~~b0j9hary-CNVCycKv.js\n\nBundle budget exceeded: initial raw, initial gzip. Inspect the Vite manifest and keep heavy features behind route or component boundaries.",
+  "interpretation": "Functional tests and code compilation pass. The full build does not pass because the shared application shell initial bundle remains above the existing limit."
+}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -549,8 +549,9 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const { t, i18n } = useTranslation('approvals');
   const toast = useToast();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedId = searchParams.get('request');
+  const openedRequestRef = useRef<string | undefined>(undefined);
   const { canUpdateRequests } = useApprovalExperience();
   const queryClient = useQueryClient();
   const [requestAction, setRequestAction] = useState<{
@@ -561,6 +562,19 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const [responsePayload, setResponsePayload] = useState<Record<string, string>>({});
   const [responseHydratedRevision, setResponseHydratedRevision] = useState('');
   const [detailId, setDetailId] = useState<string>();
+  const closeDetail = () => {
+    setDetailId(undefined);
+    if (requestedId) {
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          next.delete('request');
+          return next;
+        },
+        { replace: true }
+      );
+    }
+  };
   const requests = useQuery({
     queryKey: ['approvals', 'requests', viewMap[view]],
     queryFn: () => getApprovalRequests(viewMap[view]),
@@ -568,15 +582,19 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
     retry: 1,
   });
   useEffect(() => {
+    if (!requestedId) {
+      openedRequestRef.current = undefined;
+      return;
+    }
     if (
-      !requestedId ||
-      detailId ||
+      openedRequestRef.current === requestedId ||
       !requests.data?.some((item) => item.requestId === requestedId)
     ) {
       return;
     }
+    openedRequestRef.current = requestedId;
     setDetailId(requestedId);
-  }, [detailId, requestedId, requests.data]);
+  }, [requestedId, requests.data]);
   const informationDetail = useQuery({
     queryKey: ['approvals', 'requests', 'information-response', requestAction?.request.requestId],
     queryFn: () => getApprovalRequestDetail(requestAction!.request.requestId),
@@ -947,13 +965,13 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
       <ApprovalRequestDetailDrawer
         requestId={detailId}
         canUpdateRequests={requestActionsReady}
-        onClose={() => setDetailId(undefined)}
+        onClose={closeDetail}
         onRespond={(request) => {
-          setDetailId(undefined);
+          closeDetail();
           setRequestAction({ kind: 'respond', request });
         }}
         onWithdraw={(request) => {
-          setDetailId(undefined);
+          closeDetail();
           setRequestAction({ kind: 'withdraw', request });
         }}
       />

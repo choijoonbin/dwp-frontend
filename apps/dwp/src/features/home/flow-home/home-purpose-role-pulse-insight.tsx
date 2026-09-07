@@ -81,6 +81,9 @@ function signalAccent(theme: Theme, tone: FlowSignal['tone']): string {
 }
 
 function comparisonLabel(signal: FlowSignal, t: TFunction<'home'>): string {
+  if (signal.key === 'activity-attention' && signal.activityBreakdown) {
+    return t('flow.signals.activityBreakdown', signal.activityBreakdown);
+  }
   if (signal.comparison.kind === 'target') {
     return t('flow.signals.target', {
       value: signal.comparison.value,
@@ -293,10 +296,10 @@ function RolePulseLens({
               : '24px minmax(0, 1fr) var(--home-role-metric-rail-width)',
           gridTemplateRows:
             density === 'tall'
-              ? '24px minmax(14px, auto) auto'
+              ? '1.5rem minmax(0.875rem, auto) auto'
               : density === 'short'
-                ? 'minmax(16px, auto) minmax(11px, auto)'
-                : '24px minmax(14px, auto)',
+                ? 'minmax(1rem, auto) minmax(0.6875rem, auto)'
+                : '1.5rem minmax(0.875rem, auto)',
           columnGap: density === 'short' ? 0.4 : 0.75,
           alignItems: 'center',
           color: 'text.primary',
@@ -329,7 +332,7 @@ function RolePulseLens({
             px: 0.5,
             py: 0.25,
             gridTemplateColumns: '18px minmax(0, 1fr) var(--home-role-metric-rail-width)',
-            gridTemplateRows: 'minmax(16px, auto) minmax(11px, auto)',
+            gridTemplateRows: 'minmax(1rem, auto) minmax(0.6875rem, auto)',
             columnGap: 0.4,
           },
           '@container home-role-pulse (max-width: 460px)': {
@@ -346,9 +349,19 @@ function RolePulseLens({
             gridTemplateColumns: '18px minmax(0, 1fr) var(--home-role-metric-rail-width)',
             gridTemplateRows:
               density === 'tall'
-                ? 'minmax(18px, auto) minmax(12px, auto) auto'
-                : 'minmax(18px, auto) minmax(12px, auto)',
+                ? 'minmax(1.125rem, auto) minmax(0.75rem, auto) auto'
+                : 'minmax(1.125rem, auto) minmax(0.75rem, auto)',
             columnGap: 0.4,
+          },
+          "[data-flow-large-text='true'] &": {
+            '--home-role-metric-rail-width': '4rem',
+            minHeight: 'auto',
+            gridTemplateRows:
+              density === 'tall'
+                ? 'minmax(1.5rem, auto) minmax(0.875rem, auto) auto'
+                : density === 'short'
+                  ? 'minmax(1rem, auto) minmax(0.6875rem, auto)'
+                  : 'minmax(1.5rem, auto) minmax(0.875rem, auto)',
           },
           "[data-workspace-widget-content-state='editing-preview'] &": {
             minHeight: layout.editingRowHeight,
@@ -393,26 +406,31 @@ function RolePulseLens({
         data-home-role-label
         data-home-role-label-layout={density === 'short' ? 'wrapped' : 'responsive'}
         variant="caption"
-        fontWeight={720}
+        fontWeight="fontWeightBold"
         sx={{
           minWidth: 0,
           alignSelf: 'baseline',
-          fontSize: density === 'short' ? 10.5 : undefined,
-          lineHeight: density === 'short' ? 1.1 : 1.2,
+          fontSize: density === 'short' ? '0.65625rem' : undefined,
+          lineHeight: 'caption.lineHeight',
           wordBreak: density === 'short' ? 'keep-all' : undefined,
           whiteSpace: density === 'short' ? 'normal' : 'nowrap',
           overflow: density === 'short' ? 'visible' : 'hidden',
           textOverflow: density === 'short' ? 'clip' : 'ellipsis',
           '@media (max-width: 359.95px)': {
-            fontSize: 10.5,
+            fontSize: '0.65625rem',
             lineHeight: 1.1,
             wordBreak: 'keep-all',
             whiteSpace: 'normal',
             overflow: 'visible',
             textOverflow: 'clip',
           },
+          "[data-flow-large-text='true'] &": {
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
           '@container home-role-pulse (max-width: 460px)': {
-            fontSize: 10.5,
+            fontSize: '0.65625rem',
             lineHeight: 1.1,
             wordBreak: 'keep-all',
             whiteSpace: 'normal',
@@ -432,14 +450,15 @@ function RolePulseLens({
           alignItems: 'baseline',
           alignSelf: 'baseline',
           textAlign: 'end',
-          fontSize: density === 'short' ? { xs: 15, sm: 17 } : 22,
+          fontSize: density === 'short' ? { xs: '0.9375rem', sm: '1.0625rem' } : '1.375rem',
           lineHeight: 1,
           fontWeight: 760,
           letterSpacing: '-0.03em',
           fontVariantNumeric: 'tabular-nums',
           whiteSpace: 'nowrap',
-          '@media (max-width: 359.95px)': { fontSize: 15 },
-          '@container home-role-pulse (max-width: 460px)': { fontSize: 17 },
+          '@media (max-width: 359.95px)': { fontSize: '0.9375rem' },
+          '@container home-role-pulse (max-width: 460px)': { fontSize: '1.0625rem' },
+          "[data-flow-large-text='true'] &": { lineHeight: 1.2 },
         }}
       >
         {signal.value}
@@ -454,9 +473,10 @@ function RolePulseLens({
             lineHeight: 1,
             verticalAlign: 'baseline',
             letterSpacing: 0,
-            fontSize: density === 'short' ? { xs: 8.5, sm: 9.5 } : undefined,
-            '@media (max-width: 359.95px)': { fontSize: 8.5 },
-            '@container home-role-pulse (max-width: 460px)': { fontSize: 9.5 },
+            fontSize: density === 'short' ? { xs: '0.53125rem', sm: '0.59375rem' } : undefined,
+            '@media (max-width: 359.95px)': { fontSize: '0.53125rem' },
+            '@container home-role-pulse (max-width: 460px)': { fontSize: '0.59375rem' },
+            "[data-flow-large-text='true'] &": { lineHeight: 1.2 },
           }}
         >
           {unit}
@@ -469,13 +489,13 @@ function RolePulseLens({
         color="text.secondary"
         sx={{
           minWidth: 0,
-          fontSize: density === 'short' ? 9.5 : undefined,
+          fontSize: density === 'short' ? '0.59375rem' : undefined,
           lineHeight: density === 'short' ? 1.1 : 1.2,
           whiteSpace: density === 'short' ? 'normal' : 'nowrap',
           overflow: density === 'short' ? 'visible' : 'hidden',
           textOverflow: density === 'short' ? 'clip' : 'ellipsis',
           '@media (max-width: 359.95px)': {
-            fontSize: 9.5,
+            fontSize: '0.59375rem',
             lineHeight: 1.1,
             whiteSpace: 'normal',
             wordBreak: 'keep-all',
@@ -483,10 +503,18 @@ function RolePulseLens({
             textOverflow: 'clip',
           },
           '@container home-role-pulse (max-width: 460px)': {
-            fontSize: 9.5,
+            fontSize: '0.59375rem',
             lineHeight: 1.1,
+            minHeight: density === 'short' ? undefined : '2.2em',
+            display: density === 'short' ? undefined : 'flex',
+            alignItems: density === 'short' ? undefined : 'center',
             whiteSpace: 'normal',
             wordBreak: 'keep-all',
+            overflow: 'visible',
+            textOverflow: 'clip',
+          },
+          "[data-flow-large-text='true'] &": {
+            whiteSpace: 'normal',
             overflow: 'visible',
             textOverflow: 'clip',
           },
@@ -576,7 +604,7 @@ function RolePulseLens({
             gridColumn: '1 / -1',
             minWidth: 0,
             pt: 0.2,
-            fontSize: 10.5,
+            fontSize: '0.65625rem',
             lineHeight: 1.2,
           }}
         >

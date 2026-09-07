@@ -53,6 +53,24 @@ describe('workspace widget catalog', () => {
     });
   });
 
+  it.each(['focus-balance', 'meeting-load'] as const)(
+    'registers %s as a fixed calendar insight with bounded geometry',
+    (widgetKey) => {
+      expect(workspaceWidgetCatalogDefinition(widgetKey)).toMatchObject({
+        ownerProduct: 'core.calendar',
+        sourceAppResourceKey: 'APP.CALENDAR',
+        contributorAppResourceKeys: ['APP.CALENDAR'],
+        dataSource: 'DWP_CALENDAR',
+        privacyClass: 'CONFIDENTIAL',
+        defaultSize: 'medium',
+        allowedSizes: ['quarter', 'compact', 'medium'],
+        defaultHeight: 'short',
+        allowedHeights: ['short', 'standard'],
+        configuration: null,
+      });
+    }
+  );
+
   it('resolves effective access as a fail-closed intersection', () => {
     const allowed = {
       lifecycle: 'ACTIVE' as const,

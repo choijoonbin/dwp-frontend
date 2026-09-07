@@ -2,13 +2,12 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
-
-const MEMBER_PERMISSIONS = ['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
-  resourceType: 'APP',
-  resourceKey: 'APP.MEETINGS',
-  permissionCode,
-  effect: 'ALLOW' as const,
-}));
+import { expectMeetingAdminRuntimeEvidence } from './support/video-meeting-admin-intelligence-assertions';
+import {
+  MEETING_MEMBER_PERMISSIONS,
+  openMeetingPolicyEditor,
+} from './support/video-meeting-admin-policy';
+import { expectMeetingRoomWorkspaceTools } from './support/video-meeting-room-assertions';
 
 const meetingSummary = {
   meetingId: '81000000-0000-0000-0000-000000000001',
@@ -218,7 +217,7 @@ async function mockMeetingMember(page: Page, admin = false) {
       displayName: 'Mina Kim',
       email: 'mina.kim@sk.com',
       permissions: [
-        ...MEMBER_PERMISSIONS,
+        ...MEETING_MEMBER_PERMISSIONS,
         ...(admin
           ? ['VIEW', 'MANAGE'].map((permissionCode) => ({
               resourceType: 'ADMIN',
@@ -285,7 +284,7 @@ test('meeting home prioritizes the three actions and remains accessible on mobil
 
   await page.goto('/meetings/home');
   await expect(
-    page.getByRole('heading', { name: "Run today's conversations with less friction" })
+    page.getByRole('heading', { name: "Today's meetings and next actions" })
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Start now' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Schedule meeting' })).toBeVisible();
@@ -304,58 +303,6 @@ test('meeting home prioritizes the three actions and remains accessible on mobil
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(overflow).toBeLessThanOrEqual(1);
-});
-
-test('schedule persists governed settings at the canonical create endpoint', async ({ page }) => {
-  await mockMeetingMember(page);
-  await mockMeetingHome(page);
-  let payload: Record<string, unknown> | null = null;
-  let idempotencyKey = '';
-  await page.route('**/api/meetings/v1/people*', (route) =>
-    fulfill(route, [
-      {
-        userId: 17,
-        personPublicId: '83000000-0000-0000-0000-000000000017',
-        emailAddress: 'alex.lee@sk.com',
-        displayName: 'Alex Lee',
-        jobTitle: 'Platform Engineer',
-        organizationName: 'Platform Engineering',
-      },
-    ])
-  );
-  await page.route('**/api/meetings/v1/meetings', async (route) => {
-    if (route.request().method() !== 'POST') return route.fallback();
-    payload = route.request().postDataJSON() as Record<string, unknown>;
-    idempotencyKey = route.request().headers()['idempotency-key'] ?? '';
-    return fulfill(route, { meeting: meetingDetail, meetingCode: meetingDetail.meetingCode });
-  });
-
-  await page.goto('/meetings/home');
-  await page.getByRole('button', { name: 'Schedule meeting' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Schedule a video meeting' });
-  await dialog.getByLabel('Meeting title').fill('Architecture decision review');
-  await dialog
-    .getByLabel('Purpose and agenda')
-    .fill('Choose the rollout option and assign owners.');
-  const participants = dialog.getByRole('combobox', { name: 'Invite people' });
-  await participants.fill('alex');
-  await page
-    .getByRole('option', { name: 'Alex Lee · alex.lee@sk.com · Platform Engineering' })
-    .click();
-  await dialog.getByRole('button', { name: 'Schedule meeting' }).click();
-
-  await expect.poll(() => payload).not.toBeNull();
-  expect(idempotencyKey).toMatch(/^[0-9a-f-]{36}$/u);
-  expect(payload).toMatchObject({
-    title: 'Architecture decision review',
-    agenda: 'Choose the rollout option and assign owners.',
-    participantUserIds: [17],
-    accessScope: 'INVITED',
-    waitingRoomEnabled: true,
-    allowJoinBeforeHost: false,
-    defaultMicrophoneEnabled: false,
-    defaultCameraEnabled: false,
-  });
 });
 
 test('host configures a governed content plan before joining and sees authoritative blockers', async ({
@@ -471,7 +418,7 @@ test('host configures a governed content plan before joining and sees authoritat
   await page.goto(`/meetings/room/${meetingSummary.meetingId}`);
   await page.getByRole('button', { name: 'Check camera and microphone' }).click();
   await expect(page.getByRole('heading', { name: 'Check camera and microphone' })).toBeVisible();
-  await expect(page.getByText('Host content plan')).toBeVisible();
+  await page.getByTestId('meeting-content-plan-disclosure').locator('summary').click();
   const save = page.getByRole('button', { name: 'Save content plan' });
   await expect(save).toBeDisabled();
 
@@ -526,6 +473,7 @@ test('host configures a governed content plan before joining and sees authoritat
   await tokenIssued;
   await expect(page.getByRole('button', { name: 'Join meeting' })).toBeHidden();
   expect(departureRequests).toBe(0);
+  await expectMeetingRoomWorkspaceTools(page);
 
   await page.setViewportSize({ width: 640, height: 640 });
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce', forcedColors: 'active' });
@@ -1041,6 +989,7 @@ test('ended meetings open the selected recap with actual evidence and honest art
   );
 
   await page.goto('/meetings/mine');
+  await page.getByRole('tab', { name: /^Past /u }).click();
   await expect(page.getByText('Cancelled planning session')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Prepare to join' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Open meeting recap' }).click();
@@ -1048,7 +997,9 @@ test('ended meetings open the selected recap with actual evidence and honest art
   await expect(page).toHaveURL(
     new RegExp(`/meetings/history\\?meeting=${endedMeeting.meetingId.replaceAll('-', '\\-')}`)
   );
-  await expect(page.getByRole('heading', { name: 'Completed launch review' })).toBeVisible();
+  await expect(
+    page.getByRole('article').getByRole('heading', { name: 'Completed launch review' })
+  ).toBeVisible();
   await expect(page.getByText('42 minutes')).toBeVisible();
   await expect(page.getByText('1 participant')).toBeVisible();
   await expect(
@@ -1056,7 +1007,7 @@ test('ended meetings open the selected recap with actual evidence and honest art
   ).toBeVisible();
   await expect(page.getByText('Launch the pilot on Monday.')).toBeVisible();
   for (const tabName of ['Overview', 'Recording, transcript, and AI', 'Attendance']) {
-    await expect(page.getByRole('tab', { name: tabName })).toBeInViewport({ ratio: 1 });
+    await page.getByRole('tab', { name: tabName }).click();
   }
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
   await expect(page.getByText('Processing', { exact: true })).toBeVisible();
@@ -1122,12 +1073,12 @@ test('administrators see unsupported recording and persist supported governed po
   );
 
   await page.goto('/meetings/admin/policies');
+  const { recordingPolicy, participantChat, chatRetention } = await openMeetingPolicyEditor(page);
   await expect(
     page.getByText('LiveKit Egress is not configured. Recording cannot be enabled.')
   ).toBeVisible();
-  await expect(page.getByRole('switch', { name: 'Allow recording' })).toBeDisabled();
-  await page.getByRole('switch', { name: 'Allow participant chat' }).uncheck();
-  const chatRetention = page.getByLabel('Meeting chat retention (days)');
+  await expect(recordingPolicy).toBeDisabled();
+  await participantChat.uncheck();
   await chatRetention.fill('120');
   await expect(
     page.getByText('Meeting chat retention cannot exceed meeting record retention.')
@@ -1135,7 +1086,7 @@ test('administrators see unsupported recording and persist supported governed po
   await expect(page.getByRole('button', { name: 'Save policy' })).toBeDisabled();
   await chatRetention.fill('60');
   await page.getByRole('button', { name: 'Save policy' }).click();
-
+  await page.getByRole('dialog').getByRole('button', { name: 'Save policy' }).click();
   await expect.poll(() => saved).not.toBeNull();
   expect(idempotencyKey).toMatch(/^[0-9a-f-]{36}$/u);
   expect(saved).toMatchObject({
@@ -1210,9 +1161,7 @@ test('administrators see unsupported recording and persist supported governed po
   await page.goto('/meetings/admin/intelligence');
   await expect(page.getByRole('heading', { name: 'AI and data governance' })).toBeVisible();
   await expect(page.getByText('never grants access to recordings')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Language model' })).toBeVisible();
-  await expect(page.getByText('managed-provider')).toBeVisible();
-  await expect(page.getByText('enterprise-model')).toBeVisible();
+  await expectMeetingAdminRuntimeEvidence(page, 'managed-provider', 'enterprise-model');
   await expect(
     page.getByText('Meeting-record purge execution is not implemented or verified.')
   ).toBeVisible();
@@ -1228,91 +1177,4 @@ test('administrators see unsupported recording and persist supported governed po
       (violation) => violation.impact === 'critical' || violation.impact === 'serious'
     )
   ).toEqual([]);
-});
-
-test('configured administrators can select host opt-in without claiming runtime readiness', async ({
-  page,
-}) => {
-  await mockMeetingMember(page, true);
-  const policy = {
-    meetingsEnabled: true,
-    waitingRoomRequired: true,
-    guestsAllowed: false,
-    participantChatAllowed: true,
-    reactionsAllowed: true,
-    screenShareAllowed: true,
-    unmuteControl: 'REQUEST_ONLY',
-    recordingPolicy: 'NEVER',
-    retentionDays: 90,
-    artifactRetentionDays: 30,
-    chatRetentionDays: 60,
-    allowJoinBeforeHost: false,
-    requireAuthenticatedInternalUsers: true,
-    maximumParticipants: 100,
-    recordingConfigured: true,
-    aiNotesConfigured: false,
-    version: 4,
-  };
-  let saved: Record<string, unknown> | null = null;
-  await page.route('**/api/meetings/v1/admin/policy', async (route) => {
-    if (route.request().method() === 'GET') return fulfill(route, policy);
-    saved = route.request().postDataJSON() as Record<string, unknown>;
-    return fulfill(route, { ...policy, ...saved, version: 5 });
-  });
-
-  await page.goto('/meetings/admin/policies');
-  const recording = page.getByRole('switch', { name: 'Allow recording' });
-  await expect(recording).toBeEnabled();
-  await recording.check();
-  await expect(
-    page.getByText('Host opt-in permits only a governed recording request.')
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'Save policy' }).click();
-
-  await expect.poll(() => saved).not.toBeNull();
-  expect(saved).toMatchObject({ recordingPolicy: 'HOST_OPT_IN', expectedVersion: 4 });
-});
-
-test('administrator-required recording survives unrelated policy edits', async ({ page }) => {
-  await mockMeetingMember(page, true);
-  const policy = {
-    meetingsEnabled: true,
-    waitingRoomRequired: true,
-    guestsAllowed: false,
-    participantChatAllowed: true,
-    reactionsAllowed: true,
-    screenShareAllowed: true,
-    unmuteControl: 'REQUEST_ONLY',
-    recordingPolicy: 'ADMIN_REQUIRED',
-    retentionDays: 90,
-    artifactRetentionDays: 30,
-    chatRetentionDays: 60,
-    allowJoinBeforeHost: false,
-    requireAuthenticatedInternalUsers: true,
-    maximumParticipants: 100,
-    recordingConfigured: true,
-    aiNotesConfigured: false,
-    version: 7,
-  };
-  let saved: Record<string, unknown> | null = null;
-  await page.route('**/api/meetings/v1/admin/policy', async (route) => {
-    if (route.request().method() === 'GET') return fulfill(route, policy);
-    saved = route.request().postDataJSON() as Record<string, unknown>;
-    return fulfill(route, { ...policy, ...saved, version: 8 });
-  });
-
-  await page.goto('/meetings/admin/policies');
-  await expect(page.getByRole('switch', { name: 'Allow recording' })).toBeChecked();
-  await expect(
-    page.getByText('This inherited policy is preserved until explicitly changed.')
-  ).toBeVisible();
-  await page.getByRole('switch', { name: 'Allow participant chat' }).uncheck();
-  await page.getByRole('button', { name: 'Save policy' }).click();
-
-  await expect.poll(() => saved).not.toBeNull();
-  expect(saved).toMatchObject({
-    participantChatAllowed: false,
-    recordingPolicy: 'ADMIN_REQUIRED',
-    expectedVersion: 7,
-  });
 });

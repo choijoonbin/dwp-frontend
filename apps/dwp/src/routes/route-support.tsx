@@ -3,7 +3,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 
-import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
+import {
+  appResourceAliasCandidates,
+  isAppResourceEntitled,
+  isExplicitAppResourceEntitled,
+} from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
@@ -12,6 +16,7 @@ import { ShellBootScreen } from '../components/shell-boot-screen';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 import {
   exactProductRouteAllowsLegacyAdminGuard,
+  useOptionalAllowedProductSurface,
   useOptionalAllowedExactProductRoute,
 } from '../features/shell/allowed-product-surface-context';
 
@@ -47,6 +52,45 @@ export function AppRouteGuard({
   if (!isLoaded) return <RouteFallback />;
   if (providerRole) return <Navigate to="/provider" replace />;
   return isAppResourceEntitled(resourceKey, permissions) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+}
+
+/**
+ * Compatibility guard for a governed Work surface.
+ *
+ * A current server Surface decision is authoritative. Before enforcement, the legacy shell still
+ * requires an explicit APP grant instead of the broad empty-permission fallback used by old apps.
+ */
+export function ProductWorkRouteGuard({
+  productId,
+  surfaceId,
+  resourceKey,
+  children,
+}: {
+  productId: string;
+  surfaceId: string;
+  resourceKey: string;
+  children: React.ReactNode;
+}) {
+  const auth = useAuth();
+  const { permissions, isLoaded } = usePermissions();
+  const providerRole = isProviderIdentity(auth.user);
+  const allowedSurface = useOptionalAllowedProductSurface();
+  if (providerRole) return <Navigate to="/provider" replace />;
+  const expectedAppKeys = new Set(appResourceAliasCandidates(resourceKey));
+  if (
+    allowedSurface?.context.plane === 'work' &&
+    allowedSurface.context.productKey === productId &&
+    allowedSurface.context.surfaceKey === surfaceId &&
+    expectedAppKeys.has(allowedSurface.context.appResourceKey.trim().toUpperCase())
+  ) {
+    return children;
+  }
+  if (!isLoaded) return <RouteFallback />;
+  return isExplicitAppResourceEntitled(resourceKey, permissions) ? (
     children
   ) : (
     <Navigate to="/403" replace />

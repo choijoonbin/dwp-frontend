@@ -29,6 +29,7 @@ type DwaionWorkspaceComposerProps = {
   loading: boolean;
   autoFocus?: boolean;
   compact?: boolean;
+  presentation?: 'workspace' | 'home';
   sourceScopes?: AskCitationSourceType[];
   availableSources?: AskCitationSourceType[];
   onToggleSource?: (source: AskCitationSourceType) => void;
@@ -52,6 +53,7 @@ export function DwaionWorkspaceComposer({
   loading,
   autoFocus,
   compact,
+  presentation = 'workspace',
   sourceScopes = ['WORK_ITEM', 'MAIL', 'CALENDAR'],
   availableSources = ['WORK_ITEM', 'MAIL', 'CALENDAR'],
   onToggleSource,
@@ -60,6 +62,26 @@ export function DwaionWorkspaceComposer({
   onSubmit,
 }: DwaionWorkspaceComposerProps) {
   const { t, i18n } = useTranslation('work');
+  const home = presentation === 'home';
+  const sourceControls = availableSources.map((key) => {
+    const Icon = SOURCE_ICONS[key];
+    const selected = sourceScopes.includes(key);
+    return (
+      <Chip
+        key={key}
+        icon={<Icon size={13} aria-hidden="true" />}
+        label={t(`askPage.sourceTypes.${key}`)}
+        size="small"
+        variant={selected && !home ? 'filled' : 'outlined'}
+        color={selected ? 'primary' : 'default'}
+        clickable={Boolean(onToggleSource)}
+        aria-pressed={onToggleSource ? selected : undefined}
+        disabled={Boolean(onToggleSource) && selected && sourceScopes.length === 1}
+        onClick={() => onToggleSource?.(key)}
+        sx={{ height: { xs: 32, md: 24 }, '& .MuiChip-label': { px: 0.75 } }}
+      />
+    );
+  });
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -80,29 +102,29 @@ export function DwaionWorkspaceComposer({
       sx={{
         bgcolor: 'background.paper',
         border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
+        borderColor: home ? 'primary.light' : 'divider',
+        borderRadius: home ? 1.5 : 1,
         px: { xs: 1.5, sm: 2 },
         pt: compact ? 1.25 : 1.75,
         pb: 1.25,
-        boxShadow: compact
-          ? '0 8px 20px rgba(19, 33, 68, 0.06)'
-          : '0 18px 44px rgba(19, 33, 68, 0.09)',
+        boxShadow: (theme) => theme.shadows[home ? 1 : compact ? 1 : 2],
         transition: (theme) =>
           theme.transitions.create(['border-color', 'box-shadow'], {
             duration: theme.transitions.duration.shorter,
           }),
         '&:focus-within': {
           borderColor: 'primary.main',
-          boxShadow: '0 18px 44px rgba(35, 86, 214, 0.13)',
+          boxShadow: (theme) => theme.shadows[2],
         },
+        '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+        '@media (forced-colors: active)': { borderColor: 'CanvasText', boxShadow: 'none' },
       }}
     >
       <FormField
         autoFocus={autoFocus}
         fullWidth
         multiline
-        minRows={compact ? 1 : 2}
+        minRows={compact ? 1 : home ? 3 : 2}
         maxRows={5}
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -120,6 +142,17 @@ export function DwaionWorkspaceComposer({
         }}
       />
 
+      {!compact && (
+        <Stack
+          direction="row"
+          gap={0.75}
+          useFlexGap
+          flexWrap="wrap"
+          sx={{ mt: 1.5, display: { xs: 'flex', md: 'none' } }}
+        >
+          {sourceControls}
+        </Stack>
+      )}
       <Box
         sx={{
           mt: 1,
@@ -143,22 +176,7 @@ export function DwaionWorkspaceComposer({
           </Typography>
           {!compact && (
             <Stack direction="row" spacing={0.4} sx={{ display: { xs: 'none', md: 'flex' } }}>
-              {availableSources.map((key) => {
-                const Icon = SOURCE_ICONS[key];
-                return (
-                  <Chip
-                    key={key}
-                    icon={<Icon size={13} aria-hidden="true" />}
-                    label={t(`askPage.sourceTypes.${key}`)}
-                    size="small"
-                    variant={sourceScopes.includes(key) ? 'filled' : 'outlined'}
-                    color={sourceScopes.includes(key) ? 'primary' : 'default'}
-                    clickable={Boolean(onToggleSource)}
-                    onClick={() => onToggleSource?.(key)}
-                    sx={{ height: 24, '& .MuiChip-label': { px: 0.75 } }}
-                  />
-                );
-              })}
+              {sourceControls}
             </Stack>
           )}
         </Stack>

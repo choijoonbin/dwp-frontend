@@ -27,6 +27,7 @@
         "activity": "Runs",
         "proactive": "Proposals",
         "discover": "Discover",
+        "extensions": "Extensions & outputs",
         "admin": "Operations"
       },
       "work": {
@@ -47,6 +48,9 @@
         "proposals": { "label": "AI proposals" },
         "agents": { "label": "Specialized agents" },
         "actions": { "label": "Work actions and connections" },
+        "routines": { "label": "My AI routines" },
+        "personal-controls": { "label": "Personal AI controls" },
+        "artifacts": { "label": "Artifact studio" },
         "admin-overview": { "label": "Operations overview" },
         "admin-agents": { "label": "Agent and publishing management" },
         "admin-sources": { "label": "Data sources and connectors" },
@@ -90,10 +94,9 @@
     "description": "Get evidence-backed answers from the work and information you can access, with a review before any action.",
     "permissionBoundary": "Current permissions and source policies apply",
     "launchUnavailable": "The secure question handoff could not be prepared. Your question is still here; try again.",
-    "askTitle": "Ask from your work context",
-    "askDescription": "Connect work, mail, calendar, and approval context to get grounded answers.",
+    "askTitle": "AI connected to your work",
+    "askDescription": "Answers grounded in the work, mail, and calendar you can access.",
     "signalSummary": "DWAI·ON work signal summary",
-    "partialLoadError": "Some work signals could not be loaded. The information shown is from sources that were verified successfully.",
     "metrics": {
       "priorityWork": "Due soon",
       "priorityWorkDetail": "From your current work queue",
@@ -108,10 +111,12 @@
     },
     "work": {
       "title": "Work to review first",
-      "description": "Prioritized using deadline and progress signals.",
+      "description": "Open work, ordered by priority and deadline.",
       "open": "Open work queue",
       "emptyTitle": "There is no priority work right now",
-      "emptyDescription": "New work will appear here ordered by impact and deadline."
+      "emptyDescription": "New work will appear here ordered by priority and deadline.",
+      "overdue": "Overdue",
+      "review": "Review work"
     },
     "recent": {
       "title": "Recent conversations",
@@ -125,8 +130,92 @@
       "title": "Specialized agents",
       "description": "Specialized agents allowed for your current role.",
       "open": "View agents",
-      "start": "Start"
+      "start": "Start chat",
+      "startNamed": "Start chat with {{name}}",
+      "emptyTitle": "No specialized agents are available",
+      "emptyDescription": "Check agent publishing status and app access."
+    },
+    "loading": "Loading",
+    "unavailable": "Unavailable",
+    "retry": "Retry",
+    "resourceError": "This information could not be verified. Check your access or connection, then try again.",
+    "prompts": {
+      "brief": "Priorities and deadlines",
+      "blockers": "What needs attention",
+      "meeting": "Context and preparation"
+    },
+    "sync": {
+      "refreshing": "Checking your work signals.",
+      "ready": "{{count}} signal sources checked · Actions require your review.",
+      "partial": "Could not verify: {{sources}}",
+      "verifiedAt": "Checked {{time}}",
+      "refresh": "Refresh"
+    },
+    "priority": {
+      "high": "High priority",
+      "medium": "Medium priority",
+      "low": "Low priority"
+    },
+    "status": {
+      "open": "Open",
+      "cancelled": "Cancelled",
+      "archived": "Archived",
+      "due-soon": "Due soon",
+      "in-progress": "In progress",
+      "waiting": "Waiting",
+      "completed": "Completed"
     }
+  },
+  "dwaionStudio": {
+    "selected": "{{count}} selected",
+    "scopeNote": "These are requested search sources, not a connection status. Access is checked again for every request.",
+    "retry": "Retry",
+    "signalsNote": "Current work queue, within your access scope.",
+    "trustTitle": "Security and evidence",
+    "trust": {
+      "evidence": "Check cited sources and verification results before making a decision.",
+      "approval": "Changes require an explicit review and the source application's authorization.",
+      "privacy": "Search is limited to information available to your current account."
+    },
+    "conversationUnavailable": "This conversation could not be verified. Retry before continuing; saved content has not been displayed."
+  },
+  "dwaionArchive": {
+    "refresh": "Refresh conversations",
+    "clearSearch": "Clear search",
+    "sortLabel": "Sort conversations",
+    "sort": {
+      "recent": "Most recent",
+      "oldest": "Oldest first",
+      "messages": "Most messages"
+    },
+    "periodLabel": "Conversation period",
+    "period": {
+      "all": "Loaded conversations",
+      "day": "Past 24 hours",
+      "week": "Past 7 days",
+      "month": "Past 30 days"
+    },
+    "results": "{{count}} of {{total}} loaded conversations",
+    "window": "Up to 30 recent conversations. Search, filters and statistics apply to this loaded set.",
+    "messageCount": "{{count}} messages",
+    "continue": "Continue conversation",
+    "deleteNamed": "Delete \"{{title}}\"",
+    "insights": "My conversation overview",
+    "stats": {
+      "conversations": "Loaded conversations",
+      "messages": "Saved messages",
+      "activeWeek": "Active in the past 7 days"
+    },
+    "latest": "Last message · {{date}}",
+    "policyTitle": "Conversation privacy",
+    "policyScope": "Conversations are scoped to your account and organization. Access is checked again when a conversation is opened.",
+    "policyEvidence": "An earlier response is a record, not a current approval. Check source evidence and permissions before acting.",
+    "policyRetention": "Organization retention and legal-hold policies apply. A protected conversation cannot be deleted.",
+    "resetFilters": "Reset filters",
+    "noResults": "Try another title or expand the time range.",
+    "deleteHeld": "This conversation is protected by a retention policy or legal hold and cannot be deleted.",
+    "deleteMissing": "This conversation is no longer available. Close this dialog and refresh the list.",
+    "deleteError": "The conversation could not be deleted. Your request was not confirmed; please try again."
   },
   "dwaionConversations": {
     "title": "My conversations",
@@ -152,24 +241,33 @@
     "title": "AI run activity",
     "description": "Review how your requests were handled within policy and evidence boundaries, then return to the related conversation.",
     "privacy": "Question and answer content is not shown in plaintext in this run list.",
-    "status": { "live": "Run ledger connected", "degraded": "Run ledger needs attention" },
+    "status": {
+      "live": "Recent runs retrieved",
+      "syncing": "Retrieving recent runs",
+      "degraded": "Recent run retrieval needs attention",
+      "pending": "Waiting for the first retrieval"
+    },
+    "lastRetrieved": "Last retrieved {{at}} · checked automatically every 60 seconds",
     "refresh": "Refresh AI run activity",
     "loading": "Loading AI run activity.",
     "errorTitle": "AI run activity could not be loaded",
     "errorDescription": "Unverified run state was not displayed. Check the connection and try again.",
     "summaryLabel": "AI run status summary",
     "metrics": {
-      "total": "Recent runs",
-      "totalDetail": "Current filter scope",
+      "total": "Retrieved runs",
+      "totalDetail": "Up to 100 runs in the latest response",
       "running": "In progress",
-      "runningDetail": "Requests awaiting completion",
-      "grounded": "Grounded",
-      "groundedDetail": "Verified responses",
-      "attention": "Needs attention",
-      "attentionDetail": "Failed or configuration required"
+      "runningDetail": "Runs whose state is RUNNING",
+      "completed": "Run completed",
+      "completedDetail": "Runs whose state is COMPLETED",
+      "attention": "Attention signals",
+      "attentionDetail": "Failed, denied, or configuration required; deduplicated"
     },
+    "windowNotice": "Up to {{count}} recent runs are retrieved. The summary and state filter apply only to this response window, not to all run history.",
     "listTitle": "My run timeline",
-    "listDescription": "Review policy outcome, risk level, evidence count, and processing time for each request.",
+    "listDescription": "Review each run's state, policy outcome, risk level, source count, and processing time in the latest response.",
+    "listLabel": "Recently retrieved AI runs",
+    "filteredWindow": "{{visible}} of {{total}} retrieved runs · state filter applied in this browser",
     "filterLabel": "AI run state filter",
     "filters": {
       "ALL": "All",
@@ -178,6 +276,11 @@
       "FAILED": "Failed"
     },
     "states": { "RUNNING": "In progress", "COMPLETED": "Completed", "FAILED": "Failed" },
+    "answerStates": {
+      "COMPLETED": "Answer completed",
+      "ABSTAINED": "Answer withheld",
+      "CONFIGURATION_REQUIRED": "Configuration required"
+    },
     "agents": {
       "DWP_ASSISTANT": "DWAI·ON work agent",
       "DWP_APPROVAL_EXPERT": "Approval expert agent"
@@ -188,10 +291,45 @@
       "DENY": "Blocked by policy"
     },
     "runMeta": "Risk {{risk}} · {{sources}} sources · {{latency}} ms",
+    "selectRun": "Open details for {{agent}} · {{state}}",
     "openConversation": "Open conversation",
     "emptyTitle": "There is no AI run activity to show",
     "emptyDescription": "Start a question to create a privacy-minimized execution record here.",
-    "start": "Start a new conversation"
+    "noResultsTitle": "There are no runs in this state",
+    "noResultsDescription": "No run in the recent response matches this state. View all states to continue.",
+    "resetFilter": "View all states",
+    "start": "Start a new conversation",
+    "details": {
+      "title": "Selected run details",
+      "deepLink": "Run {{id}}…",
+      "outsideWindow": "This run is outside the current recent-response window. The exact run ID is queried through common activity detail and no other row is substituted.",
+      "runLoading": "Loading the exact run record.",
+      "runUnavailableTitle": "This run record cannot be displayed",
+      "runUnavailableDescription": "This run is outside the recent-response window or is not currently accessible. No other run is substituted.",
+      "emptyTitle": "Select a run to inspect",
+      "emptyDescription": "Select a run to see fields from the current response and common activity detail verified for your access.",
+      "receiptTitle": "Recent run response",
+      "receiptDescription": "These values came from the run API. They are not a complete step history or verified audit evidence.",
+      "permissionLoading": "Checking detail access.",
+      "permissionTitle": "Common activity detail is not available",
+      "permissionDescription": "The AI run list and basic fields above remain available, but no common-detail request was sent because APP.ACTIVITY access is missing.",
+      "notRecorded": "Not recorded",
+      "sourceCountValue": "{{count}}",
+      "latencyValue": "{{count}} ms",
+      "fields": {
+        "runId": "Run ID",
+        "agent": "Agent · revision",
+        "runState": "Run state",
+        "policyOutcome": "Policy outcome",
+        "answerState": "Answer state",
+        "riskTier": "Risk tier",
+        "sourceCount": "Source count",
+        "latency": "Processing time",
+        "createdAt": "Started",
+        "completedAt": "Completed",
+        "statusCode": "Status code"
+      }
+    }
   },
   "dwaionProposals": {
     "eyebrow": "Proactive work support",
@@ -361,6 +499,7 @@
       "title": "DWAI·ON operations overview",
       "description": "Review recent execution quality, policy decisions, and adoption signals as tenant aggregates without conversation content.",
       "loadError": "DWAI·ON operations metrics could not be loaded.",
+      "unavailableDescription": "Unverified operational values are not displayed. Check connectivity and access, then try again.",
       "summaryLabel": "DWAI·ON operations summary",
       "runs": "Total runs",
       "period": "Last {{count}} days",
@@ -450,6 +589,7 @@
       "description": "Manage allowed source systems and source-permission synchronization as tenant policy.",
       "saved": "The data source policy was saved.",
       "error": "The data source policy request could not be completed.",
+      "unavailableDescription": "Unverified source configuration and connection state are not displayed. Try loading the data again.",
       "secretBoundary": "Connector credentials are never stored in this screen or policy store. Only a secret-store reference ID may be linked.",
       "tableLabel": "DWAI·ON data source policies",
       "edit": "Edit policy",
@@ -477,6 +617,12 @@
         "APPROVAL_REQUEST": "Approval requests",
         "APPROVAL_FORM": "Approval forms",
         "APPROVAL_OPERATION": "Approval operations"
+      },
+      "connectionStates": {
+        "CONNECTED": "Connection verified",
+        "DEGRADED": "Partially degraded",
+        "NOT_CONFIGURED": "Not configured",
+        "BLOCKED": "Blocked"
       }
     },
     "actions": {
@@ -600,6 +746,8 @@
       "description": "Configure requirements, register evidence, validate, and independently approve each customer environment for go-live.",
       "saved": "The readiness review item was saved and added to the audit trail.",
       "error": "The readiness review item could not be processed.",
+      "loading": "Loading operational readiness evidence.",
+      "unavailableDescription": "Readiness and approval totals could not be verified. Load them again before making an operational decision.",
       "tableLabel": "DWAI·ON operational readiness review items by customer environment",
       "environmentTitle": "Target environment",
       "environmentDescription": "Each environment keeps an independent policy choice and approval record.",
@@ -871,6 +1019,8 @@
       "description": "Review retention policy and DWAI·ON governance changes in a single evidence flow.",
       "export": "Export CSV",
       "error": "Audit history could not be loaded.",
+      "exportError": "The audit export could not be completed. Check the current filters and access, then try again.",
+      "unavailableDescription": "Audit records that could not be loaded are not shown as an empty result. Try loading them again.",
       "searchLabel": "Search audit history",
       "searchPlaceholder": "Event, target, actor, or reason",
       "categoryLabel": "Audit category",
@@ -913,6 +1063,9 @@
     "priority": { "high": "High", "medium": "Medium", "low": "Low" },
     "actor": { "agent": "Agent", "person": "Person", "system": "System" },
     "status": {
+      "open": "Open",
+      "cancelled": "Cancelled",
+      "archived": "Archived",
       "due-soon": "Due soon",
       "in-progress": "In progress",
       "waiting": "Waiting",
@@ -959,34 +1112,451 @@
   "activityHome": {
     "eyebrow": "Workspace observability",
     "title": "Activity home",
-    "description": "Summarize recent signals and exceptions from people, systems, and agents.",
+    "description": "Inspect accessible work changes and the current state of connected execution ledgers.",
     "live": "Receiving activity signals",
     "loading": "Preparing activity home",
     "errorTitle": "Activity home could not be loaded",
     "errorDescription": "Check the activity event service connection and try again.",
     "summaryLabel": "Activity state summary",
     "metrics": {
-      "total": "Recent signals",
-      "totalDetail": "Events within your permission scope",
+      "total": "Connected executions",
+      "totalDetail": "Execution ledgers within your permission scope",
       "running": "Running",
-      "runningDetail": "Activities currently in progress",
+      "runningDetail": "Current ledger state",
       "input": "Needs attention",
       "inputDetail": "Waiting for user input",
       "blocked": "Policy blocked",
-      "blockedDetail": "Exceptions requiring review"
+      "blockedDetail": "Execution stopped by policy enforcement"
     },
     "recentTitle": "Recent activity",
     "recentDescription": "The latest accountable work signals.",
     "openTimeline": "Open full timeline",
     "open": "Open",
     "emptyTitle": "There is no recent activity",
-    "emptyDescription": "Work activity will be recorded safely here when it occurs."
+    "emptyDescription": "Work activity will be recorded safely here when it occurs.",
+    "attention": {
+      "title": "Signals to inspect now",
+      "description": "Current executions that need a user decision or policy review.",
+      "input": "View {{count}} needing input",
+      "blocked": "View {{count}} policy blocked",
+      "clearTitle": "No signal needs immediate review",
+      "clearDescription": "Based on the currently connected execution ledgers.",
+      "loading": "Checking current execution state",
+      "unavailableTitle": "Current attention count is unavailable",
+      "unavailableDescription": "One or more connected ledgers could not be verified. A partial total is not shown as zero.",
+      "notice": "Inspect evidence here. Approve, retry, or cancel only in the app that owns the work."
+    }
+  },
+  "workHub": {
+    "header": {
+      "eyebrow": "Unified work execution",
+      "title": "Unified work queue",
+      "description": "Review responsibilities from your work sources in one place and continue in the correct owner app.",
+      "scope": "Current access scope"
+    },
+    "responsibility": {
+      "ME": "Your action",
+      "OTHERS": "Waiting for others",
+      "UNKNOWN": "Verify in source",
+      "NONE": "No action"
+    },
+    "lifecycle": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "WAITING": "Waiting",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "ARCHIVED": "Archived"
+    },
+    "urgency": {
+      "OVERDUE": "Overdue",
+      "DUE_SOON": "Due today",
+      "SCHEDULED": "Scheduled",
+      "NO_DUE_DATE": "No due date"
+    },
+    "priority": {
+      "LOW": "Low",
+      "NORMAL": "Normal",
+      "HIGH": "High",
+      "URGENT": "Urgent"
+    },
+    "sources": {
+      "WORKSPACE": "DWP work",
+      "PERSONAL_TASK": "Personal task",
+      "IDENTITY_GOVERNANCE": "Access review",
+      "APPROVAL_TASK": "Approval",
+      "APPROVAL_REQUEST": "Approval request",
+      "SERVICE_REQUEST": "Service request",
+      "LEGACY_PROJECTION": "Connected work",
+      "OTHER": "Work source"
+    },
+    "sourceIds": {
+      "workspace": "DWP work",
+      "personal": "Personal tasks",
+      "approval-inbox": "Pending approvals",
+      "approval-completed": "Completed approvals",
+      "approval-needs-info": "Information requests",
+      "services": "Service requests"
+    },
+    "sourceStatuses": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "WAITING": "Waiting",
+      "PENDING": "Pending",
+      "CLAIMED": "Claimed",
+      "NEEDS_INFO": "Needs information",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "COMPLETED": "Completed",
+      "RESOLVED": "Resolved",
+      "CANCELLED": "Cancelled",
+      "ARCHIVED": "Archived",
+      "UNKNOWN": "Verify in source"
+    },
+    "queue": {
+      "label": "Unified work list",
+      "heading": "{{count}} verified work items",
+      "openItem": "Open details for {{title}}",
+      "selectItem": "Select {{title}} for batch processing"
+    },
+    "scopes": {
+      "ACTIONABLE": "Your action",
+      "ALL": "All",
+      "TODAY": "Today plan",
+      "WAITING": "Waiting",
+      "COMPLETED": "Completed"
+    },
+    "filters": {
+      "label": "Unified queue search and filters",
+      "scopeLabel": "Work view",
+      "searchLabel": "Search work",
+      "searchPlaceholder": "Search titles or work details",
+      "sourceLabel": "Source",
+      "urgencyLabel": "Urgency",
+      "allSources": "All sources",
+      "allUrgencies": "All deadlines",
+      "reset": "Reset filters",
+      "results": "{{count}} results"
+    },
+    "actions": {
+      "createTask": "Add personal task",
+      "backToQueue": "Back to work list",
+      "OPEN_SOURCE": "Open in source",
+      "OPEN_ACTIVITY": "Activity for this work",
+      "WORKSPACE_START": "Start work",
+      "WORKSPACE_COMPLETE": "Mark complete",
+      "PERSONAL_START": "Start",
+      "PERSONAL_WAIT": "Set waiting",
+      "PERSONAL_COMPLETE": "Complete",
+      "PERSONAL_REOPEN": "Reopen",
+      "PERSONAL_ARCHIVE": "Archive",
+      "addToPlan": "Add to today plan",
+      "removeFromPlan": "Remove from today plan",
+      "schedule": "Schedule work time",
+      "scheduleNamed": "Schedule work time for {{title}}",
+      "askAi": "Ask DWAI·ON",
+      "processing": "Processing"
+    },
+    "detail": {
+      "verifiedAt": "Source state verified {{date}}",
+      "unknownTime": "Verification time unavailable",
+      "status": "Work status",
+      "priority": "Priority",
+      "due": "Due",
+      "responsibility": "Current responsibility",
+      "whyAssigned": "Why this is your work",
+      "summary": "Work details",
+      "personalOwnerNotice": "Manage personal task details and lifecycle directly here.",
+      "sourceOwnerNotice": "The source app owns the final state. Opening it does not complete the work.",
+      "selectTitle": "Select work to review",
+      "selectDescription": "Choose an item to review its context and available next actions."
+    },
+    "sourceDetail": {
+      "myRole": "Current responsibility",
+      "sourceState": "Source state",
+      "approval": {
+        "title": "Approval decision context",
+        "description": "Review the verified role and deadline here, then check the exact approval step in its source.",
+        "handoffNotice": "Review current evidence and route in Approvals before approving or rejecting."
+      },
+      "service": {
+        "title": "Your input and request progress",
+        "description": "Keep your required input separate from the overall service request resolution.",
+        "handoffNotice": "Opening or returning from the source does not by itself mark input or resolution complete."
+      },
+      "workspace": {
+        "title": "Work execution context",
+        "description": "Review current responsibility and change only states supported on this surface.",
+        "handoffNotice": "Source-owned work is confirmed only after a current owner response."
+      }
+    },
+    "partial": {
+      "title": "Some work sources could not be verified",
+      "description": "The list and count cover successful sources only. A failed source is not treated as zero work.",
+      "failureTitle": "Some work sources could not be verified",
+      "failureDescription": "Only verified work is shown. Review each source to understand what may be missing.",
+      "boundedTitle": "More work exists beyond the verified range",
+      "boundedDescription": "Results are shown up to a source limit. The current list and counts are not complete.",
+      "mixedTitle": "Some sources failed and more results exist",
+      "mixedDescription": "Only the verified range is shown. Review both source failures and result limits.",
+      "inspect": "View source status"
+    },
+    "empty": {
+      "title": "There is no verified work right now",
+      "description": "New assignments will appear here. You can also record a personal task."
+    },
+    "noResults": {
+      "title": "No work matches these conditions",
+      "description": "Change the search, source, or deadline filters and try again."
+    },
+    "unavailable": {
+      "title": "This work can no longer be displayed",
+      "description": "Its details were hidden after deletion, reassignment, or access revocation. Return to the current list."
+    },
+    "results": {
+      "confirmedTitle": "The source confirmed the change",
+      "confirmedDetail": "The latest work state has been loaded.",
+      "CONFLICT": {
+        "title": "The work changed",
+        "detail": "Current details were refreshed. The same command was not resent without review."
+      },
+      "FORBIDDEN": {
+        "title": "This action is no longer available",
+        "detail": "Assignment or access may have changed. Sensitive details will be refreshed."
+      },
+      "UNAVAILABLE": {
+        "title": "The result could not be confirmed",
+        "detail": "Refresh the source state before repeating this action."
+      }
+    },
+    "batch": {
+      "start": "Start selected",
+      "complete": "Complete selected",
+      "startTitle": "Start the selected work?",
+      "completeTitle": "Complete the selected work?",
+      "description": "Verify the latest versions, then update {{count}} eligible DWP work items together.",
+      "selectedCount": "{{count}} selected",
+      "targetCount": "{{count}} to run",
+      "excludedCount": "{{count}} excluded",
+      "atomicNotice": "This batch runs in one source. Success is shown only when every returned receipt matches.",
+      "processing": "Verifying source results",
+      "successTitle": "The batch change was confirmed",
+      "successDetail": "The source confirmed {{count}} work item changes.",
+      "unknownTitle": "The batch result could not be confirmed",
+      "unknownDetail": "Refresh each source result before issuing a new command.",
+      "resultList": "Result for each batch item",
+      "noBlindRetry": "Do not repeat the command until you verify the current results.",
+      "results": {
+        "confirmed": "Change confirmed by the source",
+        "unknown": "Result needs verification"
+      }
+    },
+    "taskForm": {
+      "create": {
+        "title": "Add a personal task",
+        "description": "Record work you want to execute later.",
+        "submit": "Add task"
+      },
+      "edit": {
+        "title": "Edit personal task",
+        "description": "Update the current title, description, priority, and due date.",
+        "submit": "Save changes"
+      },
+      "cancel": "Cancel",
+      "submitting": "Saving",
+      "addToTodayPlan": "Add to today's plan",
+      "sourceLinked": "Linked source: {{source}}",
+      "sourceLinkedReferenceOnly": "A source item is linked to this task.",
+      "sourceUnlinkPending": "Saving will remove the link to the source item.",
+      "unlinkSource": "Remove source link",
+      "unlinkSourceDescription": "The personal task will remain and the source item will not be deleted.",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "priority": "Priority",
+        "dueAt": "Due date"
+      },
+      "priorities": {
+        "LOW": "Low",
+        "NORMAL": "Normal",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "characterCount": "{{count}} / {{max}} characters",
+      "dueOptional": "Optional.",
+      "errors": {
+        "titleRequired": "Enter a title.",
+        "titleTooLong": "The title must be 500 characters or fewer.",
+        "descriptionTooLong": "The description must be 10,000 characters or fewer.",
+        "submitFailed": "The task could not be saved. Your input was preserved; verify the current state and retry."
+      },
+      "discard": {
+        "title": "Discard your draft?",
+        "description": "You have unsaved changes.",
+        "keepEditing": "Keep editing",
+        "confirm": "Discard draft"
+      },
+      "savedTitle": "The personal task was saved",
+      "savedDetail": "Its latest state is available in the unified queue.",
+      "saveFailedTitle": "The personal task could not be saved",
+      "saveFailedDetail": "Your input was preserved. Check for a conflict or connection problem and retry."
+    },
+    "todayPlan": {
+      "open": "Today plan",
+      "loading": "Loading today's plan",
+      "title": "Today's execution plan",
+      "description": "Order the work you will focus on for {{date}}.",
+      "independenceNotice": "Plan order does not automatically change work status, deadlines, or Calendar events.",
+      "loadFailed": "Today's plan could not be loaded. The current work list remains available.",
+      "saveFailed": "The plan could not be saved. Your draft order was preserved.",
+      "conflict": "The plan changed elsewhere, so the latest plan is now shown. Reapply the changes you want before saving.",
+      "limitReached": "A today plan can contain up to 100 items.",
+      "selectedHeading": "{{count}} planned work items",
+      "emptyTitle": "There is no planned work yet",
+      "emptyDescription": "Add work to focus on from the candidates below.",
+      "unavailableTitle": "Work currently unavailable",
+      "unavailableStatus": "Reference preserved",
+      "noDueDate": "No due date",
+      "moveUp": "Move {{title}} up",
+      "moveDown": "Move {{title}} down",
+      "remove": "Remove {{title}} from the plan",
+      "candidateHeading": "Work to add",
+      "searchLabel": "Search plan candidates",
+      "add": "Add",
+      "noSearchResults": "No candidates match your search.",
+      "noCandidates": "There is no more work to add.",
+      "saving": "Saving plan",
+      "save": "Save plan",
+      "savedTitle": "Today's plan was saved",
+      "savedDetail": "The order is stored independently from work state."
+    },
+    "sourcesDialog": {
+      "open": "Source status",
+      "title": "Work source status",
+      "description": "Review each source scope and its last successful response.",
+      "retry": "Refresh all sources",
+      "retrying": "Refreshing sources",
+      "receivedAt": "Response verified {{date}}",
+      "moreResults": "Additional results exist, so the current count is partial.",
+      "states": {
+        "READY": "Verified",
+        "FORBIDDEN": "No access",
+        "UNAVAILABLE": "Unavailable",
+        "NOT_REQUESTED": "Not requested"
+      },
+      "stateHelp": {
+        "READY": "Loaded",
+        "FORBIDDEN": "This source was not loaded with current access.",
+        "UNAVAILABLE": "A source response could not be verified.",
+        "NOT_REQUESTED": "This source is outside the app entitlement scope."
+      }
+    },
+    "schedule": {
+      "title": "Schedule work time",
+      "description": "Create a Calendar event, then verify the work link as a separate result.",
+      "calendar": "Calendar",
+      "chooseCalendar": "Choose a personal Calendar",
+      "eventTitle": "Event title",
+      "startsAt": "Starts",
+      "endsAt": "Ends",
+      "timeZone": "Time zone: {{zone}}",
+      "invalidRange": "The end time must be later than the start time.",
+      "create": "Create focus time",
+      "creating": "Checking Calendar result",
+      "retryLink": "Retry work link",
+      "recheck": "Check the same request",
+      "openCalendar": "Create in Calendar",
+      "calendarUnavailable": "Calendars could not be loaded. You can create the event in Calendar.",
+      "noEditableCalendar": "There is no editable personal Calendar.",
+      "failed": "The scheduling result could not be verified.",
+      "results": {
+        "scheduled": "Both the Calendar event and work link were confirmed.",
+        "linkPending": "The event was created but the work link failed. Retry only the link without creating another event.",
+        "unconfirmed": "No response confirmed whether the event was created. Check the same request.",
+        "rejected": "Calendar rejected the request. Review access and the time range.",
+        "linkRemoved": "The work link was removed without changing the Calendar event."
+      }
+    },
+    "scheduleLinks": {
+      "title": "Scheduled work time",
+      "openCalendar": "Open Calendar",
+      "loading": "Checking linked Calendar events.",
+      "unavailable": "Schedule links could not be checked.",
+      "partial": "The work link was found, but some Calendar event details are unavailable.",
+      "unlinked": "The work link was removed. The Calendar event was not changed.",
+      "unlinkFailed": "The link could not be removed. Check its current state and retry.",
+      "cancelled": "Cancelled event",
+      "detailsUnavailable": "Calendar event details are currently unavailable.",
+      "unlink": "Unlink",
+      "empty": "No scheduled work time is linked to this item.",
+      "confirmTitle": "Unlink this work from the Calendar event?",
+      "confirmDescription": "This removes only the work link. It does not cancel or delete the Calendar event.",
+      "keep": "Keep link",
+      "confirm": "Unlink"
+    },
+    "assist": {
+      "title": "Send selected work to DWAI·ON",
+      "description": "Review the work snapshot and question, then continue in the permission-aware AI workspace.",
+      "verifiedAt": "Snapshot from {{date}}",
+      "verificationRequired": "A current work check is required",
+      "question": "Question",
+      "help": "{{count}} / 2,000 characters · Enter to send, Shift+Enter for a new line",
+      "tooLong": "The question must be 2,000 characters or fewer.",
+      "submit": "Ask in DWAI·ON",
+      "submitting": "Sending",
+      "failed": "The work changed or the handoff failed. Review its current state.",
+      "safety": "AI does not approve, reject, submit source input, or complete work from this handoff.",
+      "prompts": {
+        "risk": "Summarize deadline risk and the evidence I should verify.",
+        "draft": "Prepare a draft for my review before I submit anything to the source.",
+        "evidence": "Tell me what evidence is missing from the current context."
+      }
+    },
+    "personal": {
+      "loading": "Loading personal task details",
+      "unavailableTitle": "The personal task cannot be displayed",
+      "unavailableDescription": "It may have been deleted or access may have changed.",
+      "detailTitle": "Personal task details",
+      "noDescription": "No description was provided.",
+      "edit": "Edit",
+      "linkedSource": "Linked source",
+      "referenceOnly": "Only a source reference is retained; no source content is displayed.",
+      "sourceUnavailable": "The source was deleted or access was revoked.",
+      "timeline": "Change history",
+      "timelineLoading": "Loading change history",
+      "timelineUnavailable": "Change history could not be loaded.",
+      "timelineEmpty": "There are no recorded changes yet.",
+      "timelineActions": {
+        "CREATED": "Task created",
+        "UPDATED": "Details updated",
+        "STATUS_CHANGED": "Status changed",
+        "COMPLETED": "Completed",
+        "REOPENED": "Reopened",
+        "ARCHIVED": "Archived"
+      }
+    }
   },
   "workPage": {
+    "responsibility": {
+      "ME": "You",
+      "OTHERS": "Source app owner",
+      "UNKNOWN": "Check source",
+      "NONE": "Not applicable"
+    },
+    "freshness": {
+      "live": "Snapshot verified",
+      "syncing": "Refreshing work",
+      "stale": "Refresh needed",
+      "degraded": "Work sources unavailable",
+      "generatedAt": "Last verified {{date}}",
+      "unknown": "No verified timestamp"
+    },
+    "sourceOwnedNotice": "Process this work in its source app and verify the result there.",
+    "partialSources": "Some sources are unavailable or have more results. Items and counts cover the verified subset.",
     "header": {
       "eyebrow": "Unified queue",
       "title": "Work",
-      "description": "Decisions, tasks, and service requests ordered by impact"
+      "description": "Review your decisions, tasks and service requests with their source state"
     },
     "liveData": "Live work data",
     "loading": "Loading work",
@@ -1019,12 +1589,15 @@
     },
     "filters": {
       "all": "All",
+      "open": "Open",
+      "cancelled": "Cancelled",
+      "archived": "Archived",
       "due-soon": "Due soon",
       "in-progress": "In progress",
       "waiting": "Waiting",
       "completed": "Completed"
     },
-    "resultSummary": "{{count}} results / impact order",
+    "resultSummary": "{{count}} results",
     "queueLabel": "Work queue",
     "gridToolbar": "Work queue tools",
     "chooseColumns": "Choose columns",
@@ -1051,6 +1624,7 @@
     "continueWork": "Continue work",
     "completeWork": "Mark complete",
     "openSource": "Open source",
+    "openActivityHistory": "Activity for this work",
     "statusUpdated": "{{title}} was updated.",
     "statusUpdateError": "The work status could not be updated. Refresh and try again.",
     "batch": {
@@ -1353,12 +1927,7 @@
       "error": "Your feedback could not be saved."
     },
     "history": {
-      "open": "Open conversation history",
-      "title": "Recent conversations",
-      "encrypted": "Conversation content is encrypted and deleted according to retention policy.",
-      "delete": "Delete conversation",
       "loading": "Loading conversation history.",
-      "empty": "No saved conversations yet.",
       "transcript": "Conversation transcript",
       "assistant": "DWAI·ON",
       "you": "You",
@@ -1453,11 +2022,153 @@
       "privacy": "Question, answer, and source titles are excluded from plaintext execution and audit logs."
     }
   },
+  "activityFoundation": {
+    "freshness": {
+      "live": "Polled every 60 seconds",
+      "syncing": "Refreshing information",
+      "stale": "Refresh delayed · freshness unverified",
+      "degraded": "Some information could not be refreshed"
+    },
+    "lastRefresh": "Last successful fetch {{at}}",
+    "coverageNotice": "Counts include authorized executions in connected ledgers only. Work changes, historical running events, app usage, and samples are not current executions. An unconnected source does not mean zero executions.",
+    "summaryScope": "Current connected-ledger state · independent of list filters",
+    "selectEvent": "Select an event from the list",
+    "unavailableTitle": "This event cannot be displayed",
+    "unavailableDescription": "It may be missing, deleted, or outside your current access. No other event is substituted.",
+    "eventSnapshot": "Event snapshot at {{at}} · may differ from current work status",
+    "executionSnapshot": "Current execution observed at {{at}} · not a complete history of past steps. An unknown state does not mean the run failed.",
+    "executionIdentity": "Execution {{id}} · attempt {{attempt}} · ledger version {{version}}",
+    "closeSelectedRun": "Close selected execution",
+    "auditUnlinked": "No verified audit link",
+    "workStateAtEvent": "Work status at change: {{state}}",
+    "workStatus": {
+      "DUE_SOON": "Due soon",
+      "IN_PROGRESS": "In progress",
+      "WAITING": "Waiting",
+      "COMPLETED": "Completed"
+    },
+    "legacyNotice": "A legacy record bound to its source. Previous arbitrary audit IDs are not represented as verified evidence.",
+    "sourceUnavailable": "No source can be opened at this time. Check current access again.",
+    "sourceActionNotice": "Source access is rechecked before opening. Approve, retry, and cancel in the app that owns the work.",
+    "detail": {
+      "close": "Close signal detail",
+      "refreshInformation": "Refresh information",
+      "executionReferenceNotice": "These identifiers describe the observed execution. They do not create a stage history or retry chain.",
+      "kind": {
+        "CHANGE": {
+          "label": "Change record",
+          "description": "An immutable change record. A completed record does not mean the work itself is complete."
+        },
+        "EXECUTION_SNAPSHOT": {
+          "label": "Current execution snapshot",
+          "description": "The latest state observed in the execution ledger. It is not a history of every stage or retry."
+        },
+        "EXECUTION": {
+          "label": "Execution record",
+          "description": "A source-backed execution record. Only fields provided by the source are shown."
+        },
+        "USAGE": {
+          "label": "App usage record",
+          "description": "An app usage record included by the current filter. It is not a work execution."
+        },
+        "EVENT": {
+          "label": "Activity record",
+          "description": "A source-backed activity record. No unreported lifecycle is inferred."
+        }
+      },
+      "stateDescription": {
+        "running": "The source currently reports this execution as running.",
+        "needs-input": "The current ledger requires user input. Continue only in the source application.",
+        "completed": "The source reports this record or execution as completed. This does not prove another business object completed.",
+        "policy-blocked": "The ledger reports a policy enforcement result. This view cannot bypass or release it.",
+        "failed": "The source reports failure. No cause beyond the provided summary is inferred.",
+        "cancelled": "The source reports this execution as cancelled. No further outcome is inferred.",
+        "unknown": "The latest state could not be confirmed. Refresh information without retrying the execution."
+      },
+      "sections": {
+        "meaning": "Record meaning and state",
+        "time": "Time",
+        "actor": "Actor",
+        "object": "Work object",
+        "source": "Source",
+        "execution": "Execution reference",
+        "audit": "Audit reference",
+        "technical": "Technical references"
+      },
+      "fields": {
+        "actorName": "Actor",
+        "actorType": "Actor type",
+        "objectLabel": "Object",
+        "objectType": "Object type",
+        "objectId": "Object ID",
+        "source": "Source",
+        "tool": "Tool",
+        "sourceAccess": "Source access",
+        "executionId": "Execution ID",
+        "attempt": "Attempt",
+        "executionVersion": "Ledger version",
+        "recordId": "Activity record ID",
+        "sourceEventId": "Source event ID",
+        "correlationId": "Correlation ID",
+        "dataProvenance": "Data provenance",
+        "recordState": "Change record state",
+        "workStatusAtChange": "Work status at the change",
+        "changeOccurredAt": "Change occurred",
+        "occurredAt": "Record time",
+        "sourceObservedAt": "Source observed",
+        "updatedAt": "Source updated",
+        "auditRecordId": "Audit record reference"
+      },
+      "sourceAccess": {
+        "AVAILABLE": "Available after access recheck",
+        "FORBIDDEN": "Access not available",
+        "DELETED": "Source no longer available",
+        "UNAVAILABLE": "Availability cannot be confirmed"
+      },
+      "provenance": {
+        "LIVE": "Live source record",
+        "LEGACY": "Source-bound legacy record",
+        "SAMPLE": "Sample record",
+        "QUARANTINED": "Quarantined record"
+      },
+      "audit": {
+        "VERIFIED": {
+          "title": "Audit reference linked",
+          "description": "An actual audit record reference is linked. This is not an audit-pass or compliance guarantee."
+        },
+        "VERIFIED_RESTRICTED": {
+          "title": "Audit reference linked · access restricted",
+          "description": "The reference is linked, but this view does not grant permission to open audit evidence."
+        },
+        "LEGACY_UNLINKED": {
+          "title": "Legacy record · no verified audit link",
+          "description": "This source-bound legacy record has no verified audit record reference."
+        },
+        "NOT_LINKED": {
+          "title": "No verified audit link",
+          "description": "No actual audit record reference was provided. No audit result is inferred."
+        }
+      }
+    },
+    "firstPage": "Latest page",
+    "invalidTimeRange": "Enter start and end timestamps with a timezone. The end must be after the start.",
+    "nextPage": "Older events",
+    "filters": {
+      "advanced": "Advanced filters",
+      "source": "Source",
+      "objectType": "Object type",
+      "objectId": "Object ID",
+      "executionId": "Execution ID",
+      "from": "From (inclusive · ISO 8601)",
+      "to": "Until (exclusive · ISO 8601)",
+      "includeUsage": "Include app usage records"
+    }
+  },
   "activityPage": {
     "header": {
       "eyebrow": "Workspace signal",
       "title": "Activity",
-      "description": "Human, system, and agent work in one accountable timeline",
+      "description": "Find authorized work changes and execution events, then inspect their sources and verified evidence",
       "live": "Listening for workspace events"
     },
     "loading": "Loading activity",
@@ -1467,12 +2178,13 @@
     "emptyTitle": "There is no activity to show",
     "emptyDescription": "Human, system, and agent events will be recorded here.",
     "summaryLabel": "Activity summary",
+    "compactSummary": "{{total}} current executions · {{attention}} need review",
     "summary": {
       "signals": {
-        "label": "Workspace signals",
+        "label": "Connected executions",
         "detail": "Events from {{count}} sources"
       },
-      "agent": { "label": "Active agent runs", "detail": "{{count}} currently running" },
+      "agent": { "label": "Currently running", "detail": "{{count}} currently running" },
       "input": { "label": "Needs your input", "detail": "{{count}} awaiting review" },
       "blocked": { "label": "Policy blocked", "detail": "{{count}} requiring investigation" }
     },
@@ -1505,7 +2217,10 @@
       "running": "Running",
       "needs-input": "Needs input",
       "completed": "Completed",
-      "policy-blocked": "Policy blocked"
+      "policy-blocked": "Policy blocked",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "unknown": "Current state unverified"
     },
     "detailTitle": "Signal detail",
     "fields": {
@@ -1515,7 +2230,7 @@
       "tool": "Tool",
       "auditId": "Audit ID"
     },
-    "noTool": "No tool invoked",
+    "noTool": "Tool information unavailable",
     "reviewOpened": "Review preview opened.",
     "reviewNow": "Review now",
     "sourceOpened": "{{source}} preview opened.",

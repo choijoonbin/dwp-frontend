@@ -1,7 +1,9 @@
 import { visibleHcmNavigation } from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
-import { useHcmAccess } from '../features/hcm/use-hcm-experience';
+import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
 import { ProductAreaLayout } from './product-area-layout';
+
+import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
 
 export function HcmLayout() {
   const access = useHcmAccess();
@@ -26,6 +28,17 @@ export function HcmLayout() {
       manifest={HCM_PRODUCT_MANIFEST}
       navigation={navigation}
       translationNamespace="hcm"
+      canAccessLegacySurface={(surface) =>
+        canAccessLegacyHcmSurface(surface.id as HcmLegacySurfaceId, {
+          canAccessPersonal: access.canAccessPersonal,
+          isManager: access.isManager,
+          canAccessOperationsOverview: access.canAccessOperationsOverview,
+          canAccessOrganizationDesign: access.canAccessOrganizationDesign,
+          canAccessReferenceData: access.canAccessReferenceData,
+          canAccessDataOperations: access.canAccessDataOperations,
+          canAccessExports: access.canAccessExports,
+        })
+      }
     />
   );
 }

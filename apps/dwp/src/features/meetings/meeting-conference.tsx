@@ -23,8 +23,10 @@ import {
 import { RoomEvent, Track } from 'livekit-client';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {
+  Bot,
   ChevronUp,
   Hand,
+  ListChecks,
   MessageSquare,
   Mic,
   MicOff,
@@ -40,9 +42,15 @@ import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-util
 import { MeetingCollaborationRuntime } from './meeting-collaboration-runtime';
 import { MeetingLeaveControl } from './meeting-leave-control';
 import { MeetingParticipantsPanel } from './meeting-participants-panel';
+import {
+  MeetingRoomContextPanel,
+  MeetingRoomRailNavigation,
+  type MeetingRoomPanel,
+} from './meeting-room-context-panel';
 
 type MeetingConferenceProps = {
   meetingId: string;
+  authorizationScope: string;
   permissions: VideoMeetingEffectivePermissions;
   canModerate: boolean;
   meetingLive: boolean;
@@ -50,8 +58,6 @@ type MeetingConferenceProps = {
   onLeaveError: () => void;
   onOverlayPanelChange: (open: boolean) => void;
 };
-
-type MeetingSidePanel = 'chat' | 'floor' | 'participants' | null;
 
 const LIVEKIT_PROTOCOL_SOURCE = {
   camera: 1,
@@ -75,6 +81,7 @@ function isSameTrack(
 
 export function MeetingConference({
   meetingId,
+  authorizationScope,
   permissions,
   canModerate,
   meetingLive,
@@ -83,12 +90,13 @@ export function MeetingConference({
   onOverlayPanelChange,
 }: MeetingConferenceProps) {
   const { t } = useTranslation('meetings');
-  const [sidePanel, setSidePanel] = useState<MeetingSidePanel>(null);
+  const [sidePanel, setSidePanel] = useState<MeetingRoomPanel>(null);
   const overlayPanel = useMediaQuery('(max-width:899px)');
+  const initialRailResolved = useRef(false);
   const liveKitRootRef = useRef<HTMLDivElement>(null);
   const lastAutoFocusedScreenShare = useRef<string | null>(null);
   const panelTriggerRefs = useRef<
-    Partial<Record<Exclude<MeetingSidePanel, null>, HTMLButtonElement>>
+    Partial<Record<Exclude<MeetingRoomPanel, null>, HTMLButtonElement>>
   >({});
   const layoutContext = useCreateLayoutContext();
   const tracks = useTracks(
@@ -111,6 +119,12 @@ export function MeetingConference({
   useEffect(() => {
     onOverlayPanelChange(overlayPanel && sidePanel !== null);
   }, [onOverlayPanelChange, overlayPanel, sidePanel]);
+
+  useEffect(() => {
+    if (initialRailResolved.current) return;
+    initialRailResolved.current = true;
+    if (!overlayPanel) setSidePanel('agenda');
+  }, [overlayPanel]);
 
   useEffect(() => () => onOverlayPanelChange(false), [onOverlayPanelChange]);
 
@@ -201,16 +215,33 @@ export function MeetingConference({
               onLeaveError={onLeaveError}
             />
           </section>
-          <MeetingCollaborationRuntime
-            meetingId={meetingId}
-            activeTab={sidePanel === 'chat' || sidePanel === 'floor' ? sidePanel : null}
-            meetingLive={meetingLive}
-            canModerate={canModerate}
-            permissions={permissions}
-            onClose={closeSidePanel}
-            onTabChange={setSidePanel}
-          />
-          {sidePanel === 'participants' && <MeetingParticipantsPanel onClose={closeSidePanel} />}
+          {sidePanel && (
+            <div className="dwp-meeting-room-rail">
+              <MeetingRoomRailNavigation activePanel={sidePanel} onSelect={setSidePanel} />
+              {(sidePanel === 'agenda' || sidePanel === 'ai') && (
+                <MeetingRoomContextPanel
+                  meetingId={meetingId}
+                  kind={sidePanel}
+                  onClose={closeSidePanel}
+                />
+              )}
+              {(sidePanel === 'chat' || sidePanel === 'floor') && (
+                <MeetingCollaborationRuntime
+                  meetingId={meetingId}
+                  authorizationScope={authorizationScope}
+                  activeTab={sidePanel}
+                  meetingLive={meetingLive}
+                  canModerate={canModerate}
+                  permissions={permissions}
+                  onClose={closeSidePanel}
+                  onTabChange={setSidePanel}
+                />
+              )}
+              {sidePanel === 'participants' && (
+                <MeetingParticipantsPanel onClose={closeSidePanel} />
+              )}
+            </div>
+          )}
         </div>
       </LayoutContextProvider>
       <RoomAudioRenderer />
@@ -228,12 +259,12 @@ function MeetingControlBar({
   onLeaveError,
 }: {
   permissions: VideoMeetingEffectivePermissions;
-  sidePanel: MeetingSidePanel;
+  sidePanel: MeetingRoomPanel;
   registerPanelTrigger: (
-    panel: Exclude<MeetingSidePanel, null>,
+    panel: Exclude<MeetingRoomPanel, null>,
     element: HTMLButtonElement | null
   ) => void;
-  onPanelToggle: (panel: Exclude<MeetingSidePanel, null>) => void;
+  onPanelToggle: (panel: Exclude<MeetingRoomPanel, null>) => void;
   onDeviceError: (error: Error) => void;
   onLeaveError: () => void;
 }) {
@@ -364,6 +395,23 @@ function MeetingControlBar({
         </button>
       )}
 
+      <button
+        ref={(element) => registerPanelTrigger('agenda', element)}
+        type="button"
+        className="dwp-meeting-control"
+        aria-label={t(
+          sidePanel === 'agenda' ? 'room.controls.agendaClose' : 'room.controls.agendaOpen'
+        )}
+        aria-pressed={sidePanel === 'agenda'}
+        aria-expanded={sidePanel === 'agenda'}
+        aria-controls="meeting-room-agenda-panel"
+        title={t(sidePanel === 'agenda' ? 'room.controls.agendaClose' : 'room.controls.agendaOpen')}
+        onClick={() => onPanelToggle('agenda')}
+      >
+        <ListChecks size={20} aria-hidden="true" />
+        <span>{t('room.controls.agenda')}</span>
+      </button>
+
       {canChat && (
         <button
           ref={(element) => registerPanelTrigger('chat', element)}
@@ -426,6 +474,21 @@ function MeetingControlBar({
           <span>{t('room.controls.participants')}</span>
         </button>
       )}
+
+      <button
+        ref={(element) => registerPanelTrigger('ai', element)}
+        type="button"
+        className="dwp-meeting-control"
+        aria-label={t(sidePanel === 'ai' ? 'room.controls.aiClose' : 'room.controls.aiOpen')}
+        aria-pressed={sidePanel === 'ai'}
+        aria-expanded={sidePanel === 'ai'}
+        aria-controls="meeting-room-ai-panel"
+        title={t(sidePanel === 'ai' ? 'room.controls.aiClose' : 'room.controls.aiOpen')}
+        onClick={() => onPanelToggle('ai')}
+      >
+        <Bot size={20} aria-hidden="true" />
+        <span>{t('room.controls.ai')}</span>
+      </button>
 
       <MeetingLeaveControl onError={onLeaveError} />
 

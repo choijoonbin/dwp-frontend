@@ -36,10 +36,10 @@ const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
   approvals: 15,
   calendar: 10,
   communications: 6,
-  dwaion: 15,
+  dwaion: 18,
   hcm: 25,
-  mail: 15,
-  meetings: 7,
+  mail: 16,
+  meetings: 10,
   messaging: 8,
   notifications: 9,
   services: 6,
@@ -104,7 +104,7 @@ function routeBySurfaceId(
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 12 business apps and exactly the governed 139 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 146 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -119,10 +119,60 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(139);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(146);
   });
 
-  it('keeps the five active Mail work menus bound to APP.MAIL and DRAFT W3 authority', () => {
+  it('keeps the three active DWAI work extensions W3 and PAGE DRAFT', () => {
+    const manifest = GOVERNED_PRODUCT_MANIFESTS.find((product) => product.id === 'dwaion');
+    const workSurface = manifest?.surfaces.find((surface) => surface.id === 'dwaion.work');
+    const expected = [
+      ['routines', '/dwaion/routines'],
+      ['personal-controls', '/dwaion/personal-controls'],
+      ['artifacts', '/dwaion/artifacts'],
+    ] as const;
+
+    expect(workSurface?.entryAccess).toEqual({
+      type: 'policy',
+      accessPolicyKey: 'dwaion.work-access.v1',
+      requiresProductEntitlement: true,
+    });
+    for (const [view, path] of expected) {
+      expect(workSurface?.navigation.flatMap((group) => group.items)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            view,
+            path,
+            taskKind: 'work',
+            access: { type: 'policy', accessPolicyKey: 'dwaion.work-access.v1' },
+          }),
+        ])
+      );
+      expect(PRODUCT_MENU_ROUTES.find((route) => route.id === `dwaion.${view}`)).toMatchObject({
+        path,
+        shell: 'dwaion',
+        plane: 'work',
+        taskKind: 'work',
+        navigationContextId: 'dwaion.work',
+        productSurfaceId: 'dwaion.work',
+        migrationWave: 'W3',
+      });
+      expect(
+        DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+          (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
+        )
+      ).toEqual([
+        {
+          routeId: `dwaion.work.${view}`,
+          pattern: path,
+          productId: 'dwaion',
+          surfaceId: 'dwaion.work',
+          routeContractKey: `route.dwaion.work.${view}.page`,
+        },
+      ]);
+    }
+  });
+
+  it('keeps the six active Mail work menus bound to APP.MAIL and DRAFT W3 authority', () => {
     const mailManifest = GOVERNED_PRODUCT_MANIFESTS.find((manifest) => manifest.id === 'mail');
     const workSurface = mailManifest?.surfaces.find((surface) => surface.id === 'mail.work');
     const expected = [
@@ -130,6 +180,7 @@ describe('all-product surface expansion', () => {
       ['spam', '/mail/spam'],
       ['trash', '/mail/trash'],
       ['folders', '/mail/folders'],
+      ['contacts', '/mail/contacts'],
       ['organization', '/mail/organization'],
     ] as const;
 
@@ -174,12 +225,72 @@ describe('all-product surface expansion', () => {
     }
   });
 
+  it('adds Meeting follow-ups, templates, and preferences as DRAFT work menus without promoting contextual views', () => {
+    const manifest = GOVERNED_PRODUCT_MANIFESTS.find((product) => product.id === 'meetings');
+    const workSurface = manifest?.surfaces.find((surface) => surface.id === 'meetings.work');
+    const managementSurface = manifest?.surfaces.find(
+      (surface) => surface.id === 'meetings.management'
+    );
+    expect(manifest?.appKey).toBe('APP.MEETINGS');
+    expect(workSurface?.plane).toBe('work');
+    expect(workSurface?.entryAccess).toEqual({
+      type: 'policy',
+      accessPolicyKey: 'meetings.work-access.v1',
+      requiresProductEntitlement: true,
+    });
+    expect(managementSurface?.navigation.flatMap((group) => group.items)).toHaveLength(3);
+    expect(
+      workSurface?.navigation.flatMap((group) => group.items.map((item) => item.view))
+    ).toEqual(['home', 'join', 'mine', 'history', 'follow-ups', 'templates', 'preferences']);
+
+    for (const view of ['follow-ups', 'templates', 'preferences']) {
+      const path = `/meetings/${view}`;
+      expect(workSurface?.navigation.flatMap((group) => group.items)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            view,
+            path,
+            taskKind: 'work',
+            access: { type: 'policy', accessPolicyKey: 'meetings.work-access.v1' },
+          }),
+        ])
+      );
+      expect(PRODUCT_MENU_ROUTES.find((route) => route.id === `meetings.${view}`)).toEqual({
+        id: `meetings.${view}`,
+        path,
+        shell: 'meetings',
+        plane: 'work',
+        taskKind: 'work',
+        navigationContextId: 'meetings.work',
+        productSurfaceId: 'meetings.work',
+        migrationWave: 'W3',
+      });
+      expect(
+        DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) => route.pattern === path)
+      ).toEqual([
+        {
+          routeId: `meetings.work.${view}`,
+          pattern: path,
+          productId: 'meetings',
+          surfaceId: 'meetings.work',
+          routeContractKey: `route.meetings.work.${view}.page`,
+        },
+      ]);
+    }
+    for (const view of ['schedule', 'preparation', 'personal-room']) {
+      expect(PRODUCT_MENU_ROUTES.some((route) => route.id === `meetings.${view}`)).toBe(false);
+      expect(
+        PRODUCT_MENU_ROUTES.some((route) => route.path === `/meetings/mine?view=${view}`)
+      ).toBe(false);
+    }
+  });
+
   it('keeps unmatched W2/W3 page contracts DRAFT after representative authority is published', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(79);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(84);
+    expect(menuContracts).toHaveLength(86);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(91);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -310,7 +421,7 @@ describe('all-product surface expansion', () => {
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(139);
+    ).toHaveLength(146);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined

@@ -178,11 +178,13 @@ export function TypeSettingRows({
                         onChange={(event) =>
                           onUpdate(setting, { channel, enabled: event.target.checked })
                         }
-                        inputProps={{
-                          'aria-label': t('preferences.channelToggle', {
-                            type: typeName,
-                            channel: t(`channels.${channel}`),
-                          }),
+                        slotProps={{
+                          input: {
+                            'aria-label': t('preferences.channelToggle', {
+                              type: typeName,
+                              channel: t(`channels.${channel}`),
+                            }),
+                          },
                         }}
                       />
                     }

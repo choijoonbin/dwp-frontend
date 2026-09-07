@@ -76,6 +76,12 @@ const PRODUCT_WAVES: Readonly<Record<string, ProductMigrationWave>> = {
   workplace: 'W3',
 };
 
+const MENU_WAVE_OVERRIDES: Readonly<Record<string, ProductMigrationWave>> = {
+  'dwaion.artifacts': 'W3',
+  'dwaion.personal-controls': 'W3',
+  'dwaion.routines': 'W3',
+};
+
 function productManifest(productId: string): ProductSurfaceManifest {
   const manifest = GOVERNED_PRODUCT_MANIFESTS.find((candidate) => candidate.id === productId);
   if (!manifest) throw new Error(`Menu ledger references an unknown product: ${productId}`);
@@ -90,6 +96,7 @@ function productMenuRoutes(
   const manifest = productManifest(productId);
   return source.flatMap((group) =>
     group.items.map((item) => {
+      const menuId = `${shell}.${item.view}`;
       const matches = manifest.surfaces.flatMap((surface) =>
         surface.navigation.flatMap((surfaceGroup) =>
           surfaceGroup.items
@@ -104,14 +111,14 @@ function productMenuRoutes(
       }
       const match = matches[0]!;
       return {
-        id: `${shell}.${item.view}`,
+        id: menuId,
         path: item.path as `/${string}`,
         shell,
         plane: match.surface.plane,
         taskKind: match.item.taskKind,
         navigationContextId: match.surface.id,
         productSurfaceId: match.surface.id,
-        migrationWave: PRODUCT_WAVES[productId]!,
+        migrationWave: MENU_WAVE_OVERRIDES[menuId] ?? PRODUCT_WAVES[productId]!,
       };
     })
   );

@@ -17,6 +17,8 @@ const widgetLabelKeys: Readonly<Record<string, string>> = {
   focus: 'content.widgetLabels.focus',
   schedule: 'content.widgetLabels.schedule',
   'daily-brief': 'content.widgetLabels.daily-brief',
+  'focus-balance': 'content.widgetLabels.focus-balance',
+  'meeting-load': 'content.widgetLabels.meeting-load',
 };
 
 export function homeRevisionSourceLabel(

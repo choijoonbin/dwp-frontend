@@ -159,7 +159,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     shortName: 'Workplace',
     description: 'Office maps, rooms, desks, lockers, and flexible workplace reservations',
     groupId: 'connect',
-    route: '/workplace/explore',
+    route: '/workplace/home',
     iconKey: 'rooms',
     tone: '#176F6A',
     resourceKey: 'APP.WORKPLACE',

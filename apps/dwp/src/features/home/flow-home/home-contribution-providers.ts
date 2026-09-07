@@ -1,3 +1,4 @@
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import {
   createHomeContributionProvider,
   type HomeContributionInput,
@@ -248,7 +249,7 @@ export const workspaceWorkContributionProvider = createHomeContributionProvider<
           title: item.title,
           description: item.reason ?? item.recommendedNext ?? item.summary,
           dueAt: item.dueAt,
-          deepLink: `/work/queue?item=${encodeURIComponent(item.id)}`,
+          deepLink: workspaceWorkItemRoute(item),
           dedupeKey: `${canonicalHomeSourceNamespace(item.sourceSystem)}:${item.sourceReference ?? item.id}`,
           sourceReference: item.sourceReference ?? item.id,
           generatedAt: data.generatedAt,
@@ -429,16 +430,16 @@ export const activityContributionProvider = createHomeContributionProvider<Works
   authority: homeAppReadAuthority('APP.ACTIVITY'),
   freshnessMs: HOME_SOURCE_FRESHNESS_MS,
   normalize(data, context) {
-    const attentionCount = data.events.filter(
-      (event) => event.state === 'needs-input' || event.state === 'policy-blocked'
-    ).length;
+    const summary = data.executionSummary;
+    if (!summary || data.executionSummaryStatus === 'UNAVAILABLE') return [];
+    const attentionCount = summary.needsInput + summary.policyBlocked;
     if (attentionCount === 0) return [];
     return [
       {
         id: 'activity:attention',
         kind: 'PULSE',
         scope: 'ME',
-        priority: data.events.some((event) => event.state === 'policy-blocked') ? 'HIGH' : 'MEDIUM',
+        priority: summary.policyBlocked > 0 ? 'HIGH' : 'MEDIUM',
         status: 'ATTENTION',
         title: translateContribution(context, 'flow.contributions.activity.attentionTitle'),
         description: translateContribution(
@@ -447,10 +448,10 @@ export const activityContributionProvider = createHomeContributionProvider<Works
           { count: attentionCount }
         ),
         count: attentionCount,
-        deepLink: '/activity',
-        dedupeKey: `activity:attention:${data.generatedAt.slice(0, 10)}`,
-        sourceReference: `attention:${data.generatedAt.slice(0, 10)}`,
-        generatedAt: data.generatedAt,
+        deepLink: '/activity/timeline',
+        dedupeKey: `activity:attention:${summary.generatedAt.slice(0, 10)}`,
+        sourceReference: `attention:${summary.generatedAt.slice(0, 10)}`,
+        generatedAt: summary.generatedAt,
         privacy: { classification: 'INTERNAL' },
       },
     ];

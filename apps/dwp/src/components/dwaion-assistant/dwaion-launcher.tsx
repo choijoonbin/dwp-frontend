@@ -14,15 +14,10 @@ import type { PopoverActions } from '@mui/material/Popover';
 
 import { DwaionPanel } from './dwaion-panel';
 
-const mascotFloat = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-`;
-
-const mascotGreeting = keyframes`
-  0%, 72%, 100% { transform: rotate(0deg) scale(1); }
-  80% { transform: rotate(-2.5deg) scale(1.015); }
-  88% { transform: rotate(2deg) scale(1.015); }
+const mascotAcknowledge = keyframes`
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  35% { transform: translateY(-3px) rotate(-2deg) scale(1.035); }
+  65% { transform: translateY(0) rotate(1.5deg) scale(1.015); }
 `;
 
 type DwaionLauncherProps = {
@@ -47,11 +42,34 @@ export function DwaionLauncher({
   const { t } = useTranslation('home');
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [headerActions, setHeaderActions] = useState<HTMLElement | null>(null);
+  const [largeTextHeaderDock, setLargeTextHeaderDock] = useState(false);
+  const [motionEvent, setMotionEvent] = useState(0);
   const popoverActions = useRef<PopoverActions>(null);
-  const compactHeaderDock = useMediaQuery('(max-width: 899.95px)', { noSsr: true });
+  const compactViewport = useMediaQuery('(max-width: 899.95px)', { noSsr: true });
+  const compactHeaderDock = compactViewport || largeTextHeaderDock;
+  const fullScreenPanel = compactHeaderDock;
   const open = Boolean(anchorEl);
   const panelId = 'dwaion-home-panel';
-  const closePanel = () => setAnchorEl(null);
+  const closePanel = () => {
+    setAnchorEl(null);
+    setMotionEvent((current) => current + 1);
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => {
+      const rootTextSize = Number.parseFloat(window.getComputedStyle(root).fontSize);
+      setLargeTextHeaderDock(Number.isFinite(rootTextSize) && rootTextSize >= 24);
+    };
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { attributes: true, attributeFilter: ['class', 'style'] });
+    window.addEventListener('resize', sync);
+    sync();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', sync);
+    };
+  }, []);
 
   useEffect(() => {
     if (!compactHeaderDock) {
@@ -117,7 +135,10 @@ export function DwaionLauncher({
         aria-expanded={open || undefined}
         aria-haspopup="dialog"
         disableRipple
-        onClick={(event) => setAnchorEl(open ? null : event.currentTarget)}
+        onClick={(event) => {
+          setMotionEvent((current) => current + 1);
+          setAnchorEl(open ? null : event.currentTarget);
+        }}
         sx={(theme) => ({
           width: launcherSize,
           height: launcherSize,
@@ -162,11 +183,12 @@ export function DwaionLauncher({
         })}
       >
         <Box
+          key={motionEvent}
           data-testid="dwaion-mascot-motion"
           sx={{
             width: launcherSize,
             height: launcherSize,
-            animation: `${mascotFloat} 4.8s ease-in-out infinite`,
+            animation: motionEvent > 0 ? `${mascotAcknowledge} 520ms ease-out 1` : 'none',
             '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
           }}
         >
@@ -176,8 +198,6 @@ export function DwaionLauncher({
               width: 1,
               height: 1,
               transformOrigin: '50% 72%',
-              animation: open ? 'none' : `${mascotGreeting} 3.6s ease-in-out infinite`,
-              '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
             }}
           >
             <Box
@@ -213,22 +233,34 @@ export function DwaionLauncher({
         action={popoverActions}
         open={open}
         anchorEl={anchorEl}
+        anchorReference={fullScreenPanel ? 'none' : 'anchorEl'}
         onClose={closePanel}
         anchorOrigin={{ vertical: headerDocked ? 'bottom' : 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: headerDocked ? 'top' : 'bottom', horizontal: 'right' }}
-        marginThreshold={12}
-        disableScrollLock
+        transitionDuration={fullScreenPanel ? 0 : 'auto'}
+        marginThreshold={fullScreenPanel ? 0 : 12}
+        disableScrollLock={!fullScreenPanel}
         slotProps={{
           paper: {
             sx: {
-              width: { xs: 'calc(100vw - 24px)', sm: 420 },
-              maxWidth: 420,
-              mt: headerDocked ? 1.25 : 0,
-              mb: headerDocked ? 0 : 1.25,
+              position: fullScreenPanel ? 'fixed' : 'absolute',
+              inset: fullScreenPanel ? 0 : 'auto',
+              width: fullScreenPanel ? '100vw' : 420,
+              maxWidth: fullScreenPanel ? 'none' : 420,
+              height: fullScreenPanel ? '100dvh' : 'auto',
+              maxHeight: fullScreenPanel ? '100dvh' : 'none',
+              m: 0,
+              mt: fullScreenPanel ? 0 : headerDocked ? 1.25 : 0,
+              mb: fullScreenPanel ? 0 : headerDocked ? 0 : 1.25,
+              pt: fullScreenPanel ? 'env(safe-area-inset-top, 0px)' : 0,
+              pb: fullScreenPanel ? 'env(safe-area-inset-bottom, 0px)' : 0,
+              pl: fullScreenPanel ? 'env(safe-area-inset-left, 0px)' : 0,
+              pr: fullScreenPanel ? 'env(safe-area-inset-right, 0px)' : 0,
+              boxSizing: 'border-box',
               overflow: 'hidden',
-              border: 1,
+              border: fullScreenPanel ? 0 : 1,
               borderColor: 'rgba(102, 132, 171, 0.34)',
-              borderRadius: 2,
+              borderRadius: fullScreenPanel ? 0 : 2,
               bgcolor: (theme) =>
                 theme.palette.mode === 'dark' ? 'rgba(15, 23, 38, 0.98)' : 'rgba(255,255,255,0.98)',
               backgroundImage: 'none',
@@ -259,6 +291,7 @@ export function DwaionLauncher({
           onOpenContacts={onOpenContacts}
           onOpenStatus={onOpenStatus}
           onSizeChange={() => popoverActions.current?.updatePosition()}
+          fullScreen={fullScreenPanel}
         />
       </Popover>
     </Box>

@@ -11,9 +11,6 @@ import {
 } from './route-support';
 
 const WorkPage = lazy(() => import('../pages/work'));
-const WorkHome = lazy(() =>
-  import('../features/work/work-home').then((module) => ({ default: module.WorkHome }))
-);
 
 export const workRoutes: RouteObject[] = [
   {
@@ -28,15 +25,8 @@ export const workRoutes: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <LegacyWorkEntry /> },
-      {
-        path: 'home',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <WorkHome />
-          </Suspense>
-        ),
-      },
+      { index: true, element: <WorkQueueRedirect /> },
+      { path: 'home', element: <WorkQueueRedirect /> },
       {
         path: 'queue',
         element: (
@@ -45,12 +35,12 @@ export const workRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
-      { path: '*', element: <Navigate to="home" replace /> },
+      { path: '*', element: <WorkQueueRedirect /> },
     ],
   },
 ];
 
-function LegacyWorkEntry() {
+function WorkQueueRedirect() {
   const { search } = useLocation();
-  return <Navigate to={{ pathname: search ? '/work/queue' : '/work/home', search }} replace />;
+  return <Navigate to={{ pathname: '/work/queue', search }} replace />;
 }

@@ -160,29 +160,27 @@ export function FlowAppDockList({
             [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
               display: 'flex',
               flexDirection: 'column',
-              gap: 0.75,
+              gap: 0.25,
               minWidth: 0,
               height: '100%',
               boxSizing: 'border-box',
               px: 1.25,
-              py: 1,
-              border: '1px solid rgba(255,255,255,0.15)',
-              borderRadius: '12px',
-              bgcolor: 'rgba(255,255,255,0.035)',
-              backgroundImage:
-                'linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012) 62%, rgba(78,165,255,0.035))',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+              py: 0.75,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '8px',
+              bgcolor: 'background.paper',
               '&:focus-within': {
-                borderColor: 'rgba(147,197,253,0.72)',
-                bgcolor: 'rgba(78,165,255,0.07)',
+                borderColor: 'primary.main',
+                bgcolor: 'action.hover',
               },
             },
             [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]: {
               px: 1.5,
-              py: 1.25,
+              py: 0.75,
             },
             '@media (prefers-reduced-transparency: reduce)': {
-              bgcolor: '#10284D',
+              bgcolor: 'background.paper',
               backgroundImage: 'none',
               boxShadow: 'none',
             },
@@ -205,7 +203,7 @@ export function FlowAppDockList({
               display: 'none',
               minHeight: 18,
               letterSpacing: '0.01em',
-              color: 'rgba(248,250,252,0.72)',
+              color: 'text.secondary',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -223,7 +221,7 @@ export function FlowAppDockList({
             sx={{
               display: 'none',
               minHeight: '1.25em',
-              color: 'rgba(226,232,240,0.62)',
+              color: 'text.secondary',
               lineHeight: 1.25,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -241,7 +239,7 @@ export function FlowAppDockList({
             sx={{
               display: 'contents',
               p: 0,
-              pt: 1,
+              pt: 0,
               m: 0,
               listStyle: 'none',
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
@@ -255,10 +253,12 @@ export function FlowAppDockList({
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
                 {
                   gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+                  justifyContent: 'center',
                 },
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
                 {
-                  gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${LAUNCHPAD_TILE_WIDTH}px)`,
+                  gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
+                  justifyContent: 'center',
                 },
             }}
           >
@@ -415,17 +415,18 @@ export function FlowAppDockList({
                       justifyContent: 'center',
                       gap: 0.5,
                       borderRadius: 2,
-                      color: '#F8FAFC',
+                      color: 'text.primary',
                       [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
                         {
                           height: 1,
                           minHeight: 72,
                           py: 0.25,
                         },
-                      '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
-                      '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
+                      '&:hover': { bgcolor: 'action.hover' },
+                      '&:active': { bgcolor: 'action.selected' },
                       '&:focus-visible': {
-                        outline: '2px solid #93C5FD',
+                        outline: '2px solid',
+                        outlineColor: 'primary.main',
                         outlineOffset: 2,
                       },
                       '@media (forced-colors: active)': {
@@ -434,24 +435,59 @@ export function FlowAppDockList({
                       },
                     }}
                   >
-                    <Box sx={{ position: 'relative', width: 44, height: 44 }}>
+                    <Box
+                      data-flow-dock-glyph-shell
+                      sx={{
+                        position: 'relative',
+                        width: 44,
+                        height: 44,
+                        flex: '0 0 auto',
+                        [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                          {
+                            width: 48,
+                            height: 48,
+                          },
+                      }}
+                    >
                       {folder ? (
                         <Box
                           sx={{
-                            width: 44,
-                            height: 44,
+                            width: 1,
+                            height: 1,
                             display: 'grid',
                             placeItems: 'center',
                             borderRadius: 2,
-                            bgcolor: 'rgba(255,255,255,0.10)',
-                            color: '#BFDBFE',
-                            border: '1px solid rgba(255,255,255,0.16)',
+                            bgcolor: 'action.hover',
+                            color: 'primary.main',
+                            border: '1px solid',
+                            borderColor: 'divider',
                           }}
                         >
                           <Folder size={23} strokeWidth={1.8} aria-hidden="true" />
                         </Box>
                       ) : (
-                        <AppGlyph app={app!} size={44} variant="soft" />
+                        <>
+                          <Box
+                            data-flow-dock-glyph-compact
+                            sx={{
+                              display: 'block',
+                              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                                { display: 'none' },
+                            }}
+                          >
+                            <AppGlyph app={app!} size={44} variant="soft" />
+                          </Box>
+                          <Box
+                            data-flow-dock-glyph-desktop
+                            sx={{
+                              display: 'none',
+                              [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
+                                { display: 'block' },
+                            }}
+                          >
+                            <AppGlyph app={app!} size={48} variant="glass" />
+                          </Box>
+                        </>
                       )}
                       {visibleBadge && (
                         <Box
@@ -483,7 +519,7 @@ export function FlowAppDockList({
                                   ? 'warning.contrastText'
                                   : 'primary.contrastText',
                             border: 2,
-                            borderColor: '#10284D',
+                            borderColor: 'background.paper',
                             fontSize: '0.625rem',
                             lineHeight: 1.15,
                             fontWeight: 800,

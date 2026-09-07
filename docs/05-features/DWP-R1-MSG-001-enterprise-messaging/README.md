@@ -1,7 +1,7 @@
 # DWP-R1-MSG-001 Enterprise Messaging
 
 - 상태: R1 핵심 기능 구현 및 검증 중, 프로덕션 인프라 Gate 별도
-- 기준일: 2026-08-19
+- 기준일: 2026-09-04
 - 제품명: `메신저` / `Messenger`
 - Route: `/messages`
 - App Resource: `APP.MESSAGING`
@@ -14,6 +14,14 @@ Calendar 회의와 대화를 이어가고, 메시지에서 업무·결정·결�
 Tenant 내부 업무 대화 플랫폼이다.
 
 ## 설계 문서
+
+최신 홈·받은 대화 UI 구현과 검증 범위는
+[Home and Inbox Refinement](11-home-inbox-refinement-2026-09-04.md)을 기준으로 확인합니다.
+기존 구조 개편 기록은 [Workspace Redesign](09-workspace-redesign-2026-09-04.md)에 보존합니다.
+초기 문서의 기술 후보와 현재 채택한 런타임을 구분하여 기록했습니다.
+
+읽음 확인과 개인별 공개 설정의 최신 계약 및 검증은
+[Read Receipts and Privacy](10-read-receipts-and-privacy-2026-09-04.md)를 참고합니다.
 
 | 문서                                                             | 내용                                       |
 | ---------------------------------------------------------------- | ------------------------------------------ |
@@ -50,7 +58,8 @@ Tenant 내부 업무 대화 플랫폼이다.
 | 검색                   | R1 구현   | SQL 기반 ACL 재검증 검색; OpenSearch는 규모 Gate 이후         |
 | 회의                   | 구현      | Provider 추상화, LiveKit 사전 점검·참여·전체 종료             |
 | 관리자                 | 구현      | 운영 지표와 Tenant 정책; 본문 열람 기능 없음                  |
-| 파일·Compliance        | 미구현    | Quarantine·AV/DLP·WORM이 준비되기 전 노출 금지                |
+| 파일·최근 공유         | 구현      | CLEAN 파일만 노출, 메시지·멤버십 재검증, 일회 다운로드 Grant  |
+| Compliance 인프라      | 별도 Gate | 운영 Scanner·DLP·WORM 및 보존 정책 검증 필요                  |
 | 전용 WebSocket Gateway | 보류      | 현재 SSE를 운영 계측하고 Presence·Typing 규모 Gate에서 결정   |
 
 `구현`은 개발 환경의 기능·계약 테스트 기준이다. 다중 AZ, 부하, 장애 복구, TURN, TLS/WSS,

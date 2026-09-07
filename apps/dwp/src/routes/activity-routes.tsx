@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
+import { Navigate, useLocation, useParams, type RouteObject } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 
 import { ActivityLayout } from '../layouts/activity-layout';
@@ -38,6 +38,10 @@ export const activityRoutes: RouteObject[] = [
         ),
       },
       {
+        path: 'events/:eventId',
+        element: <ActivityEventEntry />,
+      },
+      {
         path: 'timeline',
         element: (
           <Suspense fallback={routeFallback}>
@@ -49,6 +53,15 @@ export const activityRoutes: RouteObject[] = [
     ],
   },
 ];
+
+// Shared inspection entry preserves APP.ACTIVITY access without requiring APP.WORK.
+function ActivityEventEntry() {
+  const { eventId } = useParams();
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  if (eventId) params.set('event', eventId);
+  return <Navigate to={{ pathname: '/activity/timeline', search: params.toString() }} replace />;
+}
 
 function LegacyActivityEntry() {
   const { search } = useLocation();

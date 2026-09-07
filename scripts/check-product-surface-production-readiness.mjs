@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { inflateRawSync } from 'node:zlib';
 
+import { getAuthorizationClosureReleaseBlocker } from './product-surface-readiness-authorization.mjs';
+
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const arguments_ = parseArguments(process.argv.slice(2));
 const root = resolve(arguments_.root ?? repositoryRoot);
@@ -27,8 +29,7 @@ const releaseTrustPolicyPath = resolve(
     resolve(root, 'architecture/product-surface-release-trust-policy.v1.json')
 );
 const authorizationSnapshotPath = resolve(
-  root,
-  'architecture/product-surface-authorization.v1.json'
+  arguments_.authorization ?? resolve(root, 'architecture/product-surface-authorization.v1.json')
 );
 const trustedEvidenceCheckout = resolve(
   arguments_.evidenceCheckout ?? process.env.DWP_BACKEND_CHECKOUT ?? resolve(root, '../dwp-backend')
@@ -329,9 +330,23 @@ const items = [
   ...manifest.exitCriteria,
 ];
 const incomplete = items.filter((item) => item.releaseRequired && item.state !== 'COMPLETE');
+/*
+ * Integrity validation accepts an attested immutable bundle even when a newer
+ * draft is registered. Release authorization is stricter: registry head,
+ * latest alias, and the attested closure must resolve to the same bytes.
+ * That moving-head check stays separate from manifest integrity validation.
+ */
+const authorizationClosureBlocker = arguments_.release
+  ? getAuthorizationClosureReleaseBlocker(
+      internalClosure,
+      authorizationSnapshot,
+      canonicalJsonForChecksum
+    )
+  : null;
 printSummary(manifest, incomplete, internalClosure);
-if (arguments_.release && incomplete.length > 0) {
+if (arguments_.release && (authorizationClosureBlocker || incomplete.length > 0)) {
   console.error('\nProduct Surface production release is blocked by incomplete evidence:');
+  if (authorizationClosureBlocker) console.error(`- ${authorizationClosureBlocker}`);
   incomplete.forEach((item) =>
     console.error(`- ${item.id} ${item.state}: ${item.blockers.join(', ')}`)
   );
@@ -657,15 +672,26 @@ function validateInternalClosureHandoff(manifestValue, closure, authorization) {
     errors.push('internal closure attack vectors must match the fixed five-vector matrix.');
   }
   validateClosedFields(closure.summary, summaryFields, 'internal closure summary');
-
   const inventoryProducts = authorization?.rolloutInventory?.products ?? [];
+  const closureBundleReference = closure.generatedFrom?.authorizationBundle;
+  const closureVersion = closureBundleReference?.version;
+  const closureBundles = (authorization?.bundles ?? []).filter(
+    (item) => item?.version === closureVersion
+  );
+  const closureIndexEntries = (authorization?.index?.versions ?? []).filter(
+    (item) => item?.version === closureVersion
+  );
+  const closureBundle = closureBundles.length === 1 ? closureBundles[0] : undefined;
+  const closureIndexEntry = closureIndexEntries.length === 1 ? closureIndexEntries[0] : undefined;
   if (
-    authorization?.index?.latestVersion !== 4 ||
-    authorization?.latestAlias?.version !== 4 ||
-    closure.generatedFrom?.authorizationBundle?.checksum !== authorization?.latestAlias?.checksum ||
+    !closureBundle ||
+    !closureIndexEntry ||
+    closureIndexEntry.artifact !== closureBundleReference?.artifact ||
+    closureIndexEntry.checksum !== closureBundleReference?.checksum ||
+    closureBundle?.checksum !== closureBundleReference?.checksum ||
     closure.generatedFrom?.rolloutInventory?.checksum !== authorization?.rolloutInventory?.checksum
   ) {
-    errors.push('internal closure snapshot is not bound to the synced v4 authorization snapshot.');
+    errors.push('internal closure snapshot is not bound to its immutable authorization bundle.');
   }
   validateExactIds(
     closure.products,
@@ -673,9 +699,8 @@ function validateInternalClosureHandoff(manifestValue, closure, authorization) {
     'internal closure products',
     (item) => item?.productId
   );
-
   const routeKindsByProduct = new Map(inventoryProducts.map((productId) => [productId, new Set()]));
-  for (const route of authorization?.latestAlias?.routes ?? []) {
+  for (const route of closureBundle?.routes ?? []) {
     if (route?.subject?.type !== 'PRODUCT') continue;
     if (!routeKindsByProduct.has(route.subject.productKey)) {
       errors.push(
@@ -786,7 +811,7 @@ function validateInternalClosureHandoff(manifestValue, closure, authorization) {
       checksum: closure.generatedFrom?.rolloutInventory?.checksum,
     },
     exactContract: {
-      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      reference: `contracts/product-authorization/${closureBundleReference?.artifact}`,
       checksum: closure.generatedFrom?.authorizationBundle?.checksum,
       products: inventoryProducts,
     },
@@ -2053,6 +2078,7 @@ function parseArguments(argv) {
       '--manifest': 'manifest',
       '--schema': 'schema',
       '--closure': 'closure',
+      '--authorization': 'authorization',
       '--trust-policy': 'trustPolicy',
       '--root': 'root',
       '--evidence-checkout': 'evidenceCheckout',
@@ -2069,6 +2095,7 @@ function usage() {
   console.error(
     'usage: node scripts/check-product-surface-production-readiness.mjs ' +
       '[--manifest <path>] [--schema <path>] [--closure <path>] ' +
+      '[--authorization <path>] ' +
       '[--trust-policy <path>] ' +
       '[--root <repository-root>] [--evidence-checkout <path>] ' +
       '[--evidence-revision <40-hex-sha>] [--release]'

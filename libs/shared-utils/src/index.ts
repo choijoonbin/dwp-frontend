@@ -14,6 +14,9 @@ export * from './api/agent-admin-api';
 export * from './api/agent-question-launch-api';
 export * from './api/agent-run-api';
 export * from './api/agent-voice-api';
+export * from './api/agent-routine-api';
+export * from './api/agent-personal-ai-api';
+export * from './api/agent-artifact-api';
 export * from './api/identity-admin-api';
 export * from './api/directory-admin-api';
 export * from './api/platform-admin-api';
@@ -34,6 +37,7 @@ export * from './api/rooms-api';
 export * from './api/workplace-api';
 export * from './api/workplace-governance-api';
 export * from './api/mail-api';
+export * from './api/mail-address-book-api';
 export * from './api/video-meeting-api';
 export * from './api/video-meeting-content-api';
 export * from './api/messaging-api';
@@ -61,6 +65,12 @@ export * from './api/api-history-api';
 export * from './api/audit-control-api';
 export * from './api/system-code-catalog-api';
 export * from './api/workspace-api';
+export {
+  getActivityPage,
+  getActivityEvent,
+  getActivityExecutionSummary,
+} from './api/activity-source-api';
+export * from './api/workspace-work-policy';
 export * from './api/saved-view-api';
 export * from './api/productivity-connector-api';
 export * from './api/catalog-api';

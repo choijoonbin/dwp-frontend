@@ -8,9 +8,10 @@ import { Navigate, Outlet, useLocation, useParams, useRouteError } from 'react-r
 import { NOTIFICATION_PRODUCT_MANIFEST } from '../features/notifications/notification-product-manifest';
 import { NotificationLayout } from '../layouts/notification-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductAnyRouteGuard,
   ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -60,6 +61,13 @@ const NotificationAdminSuppressions = lazy(() =>
     default: module.NotificationAdminSuppressions,
   }))
 );
+
+const NOTIFICATION_ADMIN_AUTHORITIES = [
+  { resourceKey: 'ADMIN.NOTIFICATION_OPERATIONS', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.NOTIFICATION_CONTRACT', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.NOTIFICATION_POLICY', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.NOTIFICATION_TEMPLATE', permissionCode: 'VIEW' },
+] as const;
 
 function NotificationPageRoute() {
   return (
@@ -126,9 +134,18 @@ export const notificationRoutes: RouteObject[] = [
         managementBasePath: '/notifications/admin',
         legacyPath: '/notifications/home',
         legacyShell: (
-          <AppRouteGuard resourceKey="APP.NOTIFICATIONS">
+          <ProductWorkRouteGuard
+            productId="notifications"
+            surfaceId="notifications.work"
+            resourceKey="APP.NOTIFICATIONS"
+          >
             <NotificationLayout />
-          </AppRouteGuard>
+          </ProductWorkRouteGuard>
+        ),
+        managementLegacyShell: (
+          <ProductAnyRouteGuard authorities={NOTIFICATION_ADMIN_AUTHORITIES}>
+            <NotificationLayout />
+          </ProductAnyRouteGuard>
         ),
         areaKey: 'notifications',
         translationNamespace: 'notifications',

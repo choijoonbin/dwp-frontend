@@ -43,7 +43,7 @@ export type NotificationCapabilities = {
 export type NotificationTriageAction =
   'READ' | 'UNREAD' | 'SAVE' | 'UNSAVE' | 'COMPLETE' | 'RESTORE' | 'SNOOZE';
 export type NotificationReasonKind =
-  'DIRECT' | 'MENTION' | 'ROLE' | 'ORGANIZATION' | 'SUBSCRIPTION' | 'MANDATORY_POLICY';
+  'DIRECT' | 'MENTION' | 'ROLE' | 'ORGANIZATION' | 'SUBSCRIPTION' | 'MANDATORY_POLICY' | 'UNKNOWN';
 
 export type NotificationSource = {
   appKey: string;

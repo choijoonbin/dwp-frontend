@@ -6,6 +6,7 @@ import {
   flowUpdatesResponsiveItemLimit,
   flowUpdatesVisibleStories,
   orderedFlowStories,
+  shouldShowFlowUpdates,
   visibleFlowUnreadCount,
 } from './flow-updates';
 
@@ -102,6 +103,34 @@ describe('Flow Home responsive update budget', () => {
     expect(flowUpdatesResponsiveItemLimit(419, 'short', 0)).toBe(0);
     expect(flowUpdatesResponsiveItemLimit(419, 'standard', 1)).toBe(1);
     expect(flowUpdatesResponsiveItemLimit(720, 'standard', 7)).toBe(7);
+  });
+});
+
+describe('Flow Home update visibility', () => {
+  const available = {
+    policyVisible: true,
+    communicationsForbidden: false,
+    editing: false,
+    loading: false,
+    requiredNoticeUnavailable: false,
+    hasGeneralUpdates: true,
+  } as const;
+
+  it('shows loading, editing, or available general updates', () => {
+    expect(shouldShowFlowUpdates(available)).toBe(true);
+    expect(shouldShowFlowUpdates({ ...available, hasGeneralUpdates: false, loading: true })).toBe(
+      true
+    );
+    expect(shouldShowFlowUpdates({ ...available, hasGeneralUpdates: false, editing: true })).toBe(
+      true
+    );
+  });
+
+  it('suppresses the duplicate News error when the required channel is unavailable', () => {
+    expect(shouldShowFlowUpdates({ ...available, requiredNoticeUnavailable: true })).toBe(false);
+    expect(
+      shouldShowFlowUpdates({ ...available, editing: true, requiredNoticeUnavailable: true })
+    ).toBe(false);
   });
 });
 

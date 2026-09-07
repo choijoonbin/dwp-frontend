@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DWP Workspace - 접근권한 검토 상세 (IG-014)</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "dwp-blue": "#285C9E",
+            "dwp-blue-dark": "#1d4577",
+            "dwp-blue-light": "#e9f1fa",
+            "primary": "#285C9E",
+            "primary-container": "#2563eb",
+            "on-primary": "#ffffff",
+            "surface": "#f8f9ff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#434655",
+            "secondary": "#565e74",
+            "secondary-container": "#dae2fd",
+            "tertiary": "#006242",
+            "tertiary-container": "#e6f8f0",
+            "on-tertiary-container": "#005236",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "outline": "#737686",
+            "outline-variant": "#c3c6d7",
+          },
+          fontFamily: {
+            sans: ["geist", "sans-serif"],
+            mono: ["geist", "monospace"],
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      font-family: 'geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f4f6fa;
+      color: #0b1c30;
+      margin: 0;
+      padding: 0;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-[#f4f6fa]">
+<!-- 1. Top Global DWP Header (64px high, 100% width) -->
+<header class="h-16 w-full bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-50 select-none shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+<!-- Left Logo & App Switcher -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-[#285C9E] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          D
+        </div>
+<span class="font-bold text-slate-800 text-base tracking-tight">DWP Workspace</span>
+</div>
+<div class="h-4 w-px bg-slate-200"></div>
+<button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-slate-700 font-medium text-sm transition-colors">
+<span class="material-symbols-outlined text-[18px] text-[#285C9E]">work</span>
+<span>업무 (통합업무함)</span>
+<span class="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
+</button>
+</div>
+<!-- Center Omnibox Search -->
+<div class="flex-1 max-w-xl mx-8">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-9 pl-10 pr-12 rounded-lg bg-slate-100/90 border border-transparent focus:border-[#285C9E] focus:bg-white text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none transition-all" placeholder="[⌘K] 업무, 결재, 티켓 검색..." type="text"/>
+<span class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white border border-slate-200 text-slate-400 shadow-2xs">⌘K</span>
+</div>
+</div>
+<!-- Right User Status & Actions -->
+<div class="flex items-center gap-3">
+<button class="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+</button>
+<div class="h-4 w-px bg-slate-200"></div>
+<div class="flex items-center gap-2 pl-1">
+<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          AVAILABLE
+        </span>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-[#285C9E]/10 border border-[#285C9E]/20 text-[#285C9E] font-semibold text-xs flex items-center justify-center">
+            김
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-slate-800 leading-tight">김민아</span>
+<span class="text-[10px] text-slate-500 leading-tight">업무/검토자</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Body Layout: Sidebar (248px) + Workspace Container -->
+<div class="flex flex-1 w-full max-w-[1440px] mx-auto min-h-[calc(100vh-64px)]">
+<!-- 2. Left Primary Navigation Sidebar (248px width) -->
+<aside class="w-[248px] bg-white border-r border-slate-200 flex flex-col justify-between p-4 shrink-0">
+<div class="flex flex-col gap-5">
+<!-- Sidebar Section Header -->
+<div class="flex items-center justify-between px-2 pt-1">
+<span class="text-xs font-bold text-slate-500 uppercase tracking-wider">업무 실행 허브</span>
+<span class="material-symbols-outlined text-slate-400 text-[16px] cursor-pointer hover:text-slate-600">tune</span>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1">
+<!-- Active: 통합업무함 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#285C9E]/10 text-[#285C9E] font-semibold text-sm transition-all shadow-xs" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[19px]">inbox</span>
+<span>통합업무함</span>
+</div>
+<span class="px-2 py-0.5 text-xs font-bold rounded-full bg-[#285C9E] text-white">5</span>
+</a>
+<!-- 내 조치 대기 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium text-sm transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[19px] text-slate-400">pending_actions</span>
+<span>내 조치 대기</span>
+</div>
+<span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">3</span>
+</a>
+<!-- 오늘 계획 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium text-sm transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[19px] text-slate-400">today</span>
+<span>오늘 계획</span>
+</div>
+<span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">1</span>
+</a>
+<!-- 진행 중 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium text-sm transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[19px] text-slate-400">sync</span>
+<span>진행 중</span>
+</div>
+</a>
+<!-- 응답 대기 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium text-sm transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[19px] text-slate-400">schedule_send</span>
+<span>응답 대기</span>
+</div>
+</a>
+<!-- 완료된 업무 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium text-sm transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[19px] text-slate-400">task_alt</span>
+<span>완료된 업무</span>
+</div>
+</a>
+</nav>
+</div>
+<!-- Bottom Status & Actions -->
+<div class="flex flex-col gap-3 pt-4 border-t border-slate-100">
+<button class="w-full py-2 px-3 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all shadow-2xs">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>개인 할 일 추가</span>
+</button>
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex flex-col gap-1.5">
+<div class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-700">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>동기화 상태</span>
+</div>
+<p class="text-[11px] text-slate-500 leading-snug">
+            정상 4개 원천, <span class="text-amber-600 font-medium">1개 확인 필요</span>
+</p>
+</div>
+<a class="flex items-center justify-between px-2 py-1 text-[11px] text-slate-500 hover:text-[#285C9E] transition-colors" href="#">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#285C9E]">auto_awesome</span>
+<span>DWAI·ON 도우미</span>
+</div>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</a>
+</div>
+</aside>
+<!-- 3. Main Content Area (1440px desktop structure) -->
+<main class="flex-1 flex flex-col p-6 overflow-y-auto">
+<!-- Top Context & Header Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-5 border-b border-slate-200/80 mb-5">
+<div class="flex flex-col gap-1.5">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+<span class="hover:text-[#285C9E] cursor-pointer">통합업무함</span>
+<span class="material-symbols-outlined text-[13px] text-slate-400">chevron_right</span>
+<span class="hover:text-[#285C9E] cursor-pointer">접근권한 검토</span>
+<span class="material-symbols-outlined text-[13px] text-slate-400">chevron_right</span>
+<span class="text-[#285C9E] font-semibold">IG-014 상세</span>
+</nav>
+<!-- Title & Core Tags -->
+<div class="flex items-center gap-3 flex-wrap">
+<h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              재무 시스템 접근권한 정기 검토
+              <span class="text-slate-500 text-base font-normal">(김현수 선임매니저)</span>
+</h1>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">권한 관리 / 내 검토</span>
+<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+                검토 대기
+              </span>
+<span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">alarm</span>
+                오늘 17:00 마감 (임박)
+              </span>
+</div>
+</div>
+</div>
+<!-- Top Right Actions -->
+<div class="flex items-center gap-2">
+<div class="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-mono text-xs border border-slate-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>REPO v3.8.1 (AVAILABLE)</span>
+</div>
+<button class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all">
+<span class="material-symbols-outlined text-[16px] text-slate-500">history</span>
+<span>이전 검토 이력</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all">
+<span class="material-symbols-outlined text-[16px] text-slate-500">share</span>
+<span>인쇄/공유</span>
+</button>
+</div>
+</div>
+<!-- Split Layout: Left Task Queue (~340px) & Right Detailed Workbench (~810px) -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- Left Task Queue (4 cols / ~350px) -->
+<aside class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+<!-- Queue Header -->
+<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-sm font-bold text-slate-900">접근권한 검토 큐</span>
+<span class="px-2 py-0.5 rounded-full bg-[#285C9E]/10 text-[#285C9E] text-xs font-bold">잔여 3건</span>
+</div>
+<p class="text-xs text-slate-500">2026년 3분기 정기 캠페인 대상 권한 항목입니다.</p>
+</div>
+<!-- Queue Items List -->
+<div class="flex flex-col gap-2.5">
+<!-- Active Selected Task: IG-014 -->
+<div class="p-3.5 rounded-xl bg-white border-2 border-[#285C9E] shadow-sm relative cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-2 mb-1.5">
+<span class="text-[11px] font-bold text-[#285C9E] tracking-wider uppercase">IG-014 · 감사 요청</span>
+<span class="text-[11px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">오늘 17:00</span>
+</div>
+<h3 class="text-sm font-bold text-slate-900 mb-1">재무 보고 조회 권한</h3>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
+<span class="font-semibold text-slate-800">김현수 선임</span>
+<span>·</span>
+<span>재무회계팀</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-100">
+<span class="font-mono text-[11px] text-slate-600">ERP_FIN_REPORT_READ</span>
+<span class="text-xs font-bold text-[#285C9E] flex items-center gap-0.5">
+                  검토 중
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Task IG-015 -->
+<div class="p-3.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 shadow-2xs cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-2 mb-1.5">
+<span class="text-[11px] font-medium text-slate-500 uppercase">IG-015 · 정기 캠페인</span>
+<span class="text-[11px] font-medium text-slate-500">내일 12:00</span>
+</div>
+<h3 class="text-sm font-semibold text-slate-800 mb-1">고객 DB 접근 (CRM Master)</h3>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
+<span class="text-slate-700">박지훈 책임</span>
+<span>·</span>
+<span>데이터플랫폼팀</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded bg-slate-50">
+<span class="font-mono text-[11px] text-slate-500">DB_CRM_PII_RO</span>
+<span class="text-xs font-medium text-slate-400">대기</span>
+</div>
+</div>
+<!-- Task IG-016 -->
+<div class="p-3.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 shadow-2xs cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-2 mb-1.5">
+<span class="text-[11px] font-medium text-slate-500 uppercase">IG-016 · 부서 이동 건</span>
+<span class="text-[11px] font-medium text-slate-500">9/6 마감</span>
+</div>
+<h3 class="text-sm font-semibold text-slate-800 mb-1">인사평가 관리자 권한</h3>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
+<span class="text-slate-700">이서윤 수석</span>
+<span>·</span>
+<span>인재경영실</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded bg-slate-50">
+<span class="font-mono text-[11px] text-slate-500">HRM_ADMIN_EVAL</span>
+<span class="text-xs font-medium text-slate-400">대기</span>
+</div>
+</div>
+</div>
+<!-- Bottom Metric Widget -->
+<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-800">권한 거버넌스 달성률</span>
+<span class="text-xs font-extrabold text-[#285C9E]">88.4%</span>
+</div>
+<div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-[#285C9E] h-2 rounded-full transition-all duration-500" style="width: 88.4%;"></div>
+</div>
+<span class="text-[11px] text-slate-500">캠페인 완료율 기준 24시간 내 마감 필요</span>
+</div>
+</aside>
+<!-- Right Detailed Decision Workbench (8 cols / ~810px) -->
+<section class="col-span-12 lg:col-span-8 flex flex-col gap-5">
+<!-- Core Inspection Banner -->
+<div class="p-5 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col gap-4">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#285C9E] flex items-center justify-center text-white shrink-0 shadow-xs">
+<span class="material-symbols-outlined text-[24px]">verified</span>
+</div>
+<div>
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">검토 핵심 질문</span>
+<h2 class="text-lg font-bold text-slate-900 tracking-tight">이 사람의 이 권한을 유지할 근거가 있는가?</h2>
+</div>
+</div>
+<span class="font-mono text-xs px-2.5 py-1 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                ID: IG-014-AUDIT
+              </span>
+</div>
+<!-- Reason Box -->
+<div class="p-3.5 rounded-lg bg-amber-50/70 border border-amber-200 flex items-start gap-3">
+<span class="material-symbols-outlined text-amber-600 text-[20px] mt-0.5 shrink-0">priority_high</span>
+<div class="flex flex-col gap-1 text-xs">
+<div class="flex items-center gap-2">
+<span class="font-bold text-amber-900">감사원 검토 요청 사유</span>
+<span class="px-1.5 py-0.2 rounded bg-amber-200/70 text-amber-900 font-semibold text-[10px]">High Priority</span>
+</div>
+<p class="text-amber-800 leading-relaxed">
+                  "최근 90일간 부서 이동 또는 프로젝트 변경 이력 확인 필요 (감사 요청 건). 2023년 상반기 분기 결산 TF 파견 당시 부여되었던 재무 리포트 조회 권한이 원소속 복귀 후에도 잔류하고 있는지 여부를 최종 확인하십시오."
+                </p>
+</div>
+</div>
+</div>
+<!-- Target Person & Permission Detailed Profiles (Grid 2-column) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Target User Profile Card -->
+<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between gap-4">
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-wider">대상자 정보</span>
+<span class="font-mono text-xs text-slate-500">SK-2021-0842</span>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 rounded-xl bg-[#285C9E]/10 border border-[#285C9E]/20 text-[#285C9E] font-bold text-lg flex items-center justify-center">
+                    김
+                  </div>
+<div>
+<h4 class="text-base font-bold text-slate-900">김현수 선임매니저</h4>
+<span class="text-xs text-slate-500">재무회계팀 (Financial Accounting)</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-0.5">
+<span class="text-[11px] text-slate-400">입사일자</span>
+<span class="font-mono font-medium text-slate-800">2021-04-01 (5년차)</span>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-0.5">
+<span class="text-[11px] text-slate-400">직속 관리자</span>
+<span class="font-medium text-slate-800">송민규 팀장</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
+<span class="material-symbols-outlined text-emerald-600 text-[17px]">check_circle</span>
+<span>재직 상태: <strong class="text-slate-800 font-semibold">정상 재직</strong> (계약형태: 정규직)</span>
+</div>
+</div>
+<!-- Target Permission Specification Card -->
+<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between gap-4">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-wider">검토 대상 권한</span>
+<span class="px-2 py-0.5 rounded bg-blue-50 text-[#285C9E] border border-blue-200 text-[11px] font-semibold">전사 차세대 SAP ERP (v4.2)</span>
+</div>
+<div class="flex flex-col gap-0.5 mb-2">
+<h4 class="text-sm font-bold text-slate-900">재무 보고서 및 전표 상세 조회 권한</h4>
+<span class="font-mono text-xs font-bold text-[#285C9E]">ERP_FIN_REPORT_READ</span>
+</div>
+<p class="text-xs text-slate-600 leading-relaxed mb-3">
+                  전사 결산 재무제표 원천 데이터 및 비공개 IR 보고서 데이터셋 전체 접근 권한.
+                </p>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-0.5">
+<span class="text-[11px] text-slate-400">최초 부여일자</span>
+<span class="font-mono font-medium text-slate-800">2023-01-15</span>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-0.5">
+<span class="text-[11px] text-slate-400">최근 사용 이력</span>
+<span class="font-mono font-medium text-blue-700">2026-08-28 14:20</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+<span class="text-slate-500 font-mono">최근 7일 전 사용 감지됨</span>
+<span class="text-emerald-700 font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">shield</span>
+                  활성 권한
+                </span>
+</div>
+</div>
+</div>
+<!-- Evidence & Audit Context Card -->
+<div class="p-5 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500 text-[20px]">folder_shared</span>
+<h3 class="text-sm font-bold text-slate-900">권한 부여 근거 및 감사 정황 자료</h3>
+</div>
+<span class="text-xs text-slate-500">2건의 참조 문서 첨부됨</span>
+</div>
+<!-- Documents Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<a class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 hover:bg-slate-100 hover:border-slate-300 transition-all flex items-center justify-between group" href="#">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded bg-blue-100/70 text-[#285C9E] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[18px]">description</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-semibold text-slate-800 truncate">[기안문] 2023 결산 TF 파견 건</span>
+<span class="font-mono text-[10px] text-slate-500">APPROVAL-2023-0104 · 승인완료</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-slate-600 text-[18px]">open_in_new</span>
+</a>
+<a class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 hover:bg-slate-100 hover:border-slate-300 transition-all flex items-center justify-between group" href="#">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded bg-emerald-100/70 text-emerald-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[18px]">policy</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-semibold text-slate-800 truncate">2026 보안 거버넌스 지침서</span>
+<span class="font-mono text-[10px] text-slate-500">2026-SEC-STD-v2.8 · 내부감사팀</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-slate-600 text-[18px]">open_in_new</span>
+</a>
+</div>
+<!-- Auditor Note -->
+<div class="p-3 rounded-lg bg-slate-50 border border-slate-200/60 text-xs text-slate-600 flex flex-col gap-1">
+<span class="font-semibold text-slate-800 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-slate-500">edit_note</span>
+                감사관 주석:
+              </span>
+<p class="leading-relaxed pl-5">
+                "대상자는 2023-01-15 파견 종료 이후에도 매달 정기 손익 조회를 실행하고 있습니다. 현재 부서의 공식 업무 분장(R&amp;R)상 본 권한이 필수 항목인지 명확한 근거 제출이 요구됩니다."
+              </p>
+</div>
+</div>
+<!-- Decision Workbench (Decision Workflow) -->
+<div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#285C9E] text-[22px]">how_to_reg</span>
+<h3 class="text-base font-bold text-slate-900">검토 결정 워크벤치 (Decision Workbench)</h3>
+</div>
+<span class="text-xs font-semibold text-rose-600">* 필수 결정 영역</span>
+</div>
+<!-- Decision Options: Radio / Segmented Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<!-- Option 1: 권한 유지 (Keep) -->
+<label class="relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all select-none border-[#285C9E] bg-[#285C9E]/5" id="labelKeep">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<input checked="" class="text-[#285C9E] focus:ring-[#285C9E] h-4 w-4" name="decisionPath" onchange="handlePathChange('keep')" type="radio" value="keep"/>
+<span class="text-sm font-bold text-slate-900">권한 유지 (Keep)</span>
+</div>
+<span class="material-symbols-outlined text-[#285C9E] text-[20px]">verified_user</span>
+</div>
+<p class="text-xs text-slate-600 pl-6 leading-relaxed">
+                  상시 직무 필수 근거 보유 시. 유지 근거 및 직무 연관성 기재 필요.
+                </p>
+</label>
+<!-- Option 2: 권한 회수 (Revoke) -->
+<label class="relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all select-none border-slate-200 hover:border-slate-300 bg-white" id="labelRevoke">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<input class="text-rose-600 focus:ring-rose-500 h-4 w-4" name="decisionPath" onchange="handlePathChange('revoke')" type="radio" value="revoke"/>
+<div class="flex items-center gap-1.5">
+<span class="text-sm font-bold text-slate-900">권한 회수 (Revoke)</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700">권장</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-rose-600 text-[20px]">remove_moderator</span>
+</div>
+<p class="text-xs text-slate-600 pl-6 leading-relaxed">
+                  프로젝트 종료 및 현 R&amp;R 불일치로 회수 권장. 비동기 큐에 회수 작업 등록.
+                </p>
+</label>
+</div>
+<!-- Impact Notice -->
+<div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs text-slate-600" id="impactNoticeBox">
+<span class="material-symbols-outlined text-[#285C9E] text-[18px] shrink-0 mt-0.5" id="impactIcon">info</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-bold text-slate-800" id="impactTitle">유지 결정 시 영향</span>
+<p class="leading-relaxed" id="impactDesc">
+                  유지 결정 시 대상자는 기존 재무 결산 조회 권한을 지속 유지하며, 다음 정기 감사 주기(2026-4Q)에 재검토 대상으로 편성됩니다.
+                </p>
+</div>
+</div>
+<!-- Required Justification Textarea -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="text-xs font-bold text-slate-800 flex items-center gap-1" for="justificationComment">
+<span>판단 사유 입력</span>
+<span class="text-rose-600">*</span>
+<span class="font-normal text-slate-400 text-[11px]">(필수, 최소 15자 이상)</span>
+</label>
+<span class="font-mono text-xs text-slate-400" id="justificationCounter">0 / 500자</span>
+</div>
+<textarea class="w-full p-3 rounded-lg border border-slate-300 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#285C9E] focus:ring-1 focus:ring-[#285C9E] transition-all resize-none" id="justificationComment" maxlength="500" oninput="onCommentInput(this)" placeholder="유지 또는 회수 사유를 구체적으로 입력하세요 (예: 2026 하반기 IFRS 결산 실무 담당자 지정 공문 결재 확인 완료 등)" rows="3"></textarea>
+<span class="text-[11px] text-slate-500" id="inputHint">
+                유지 근거 입력 시 공식 업무 연관성 또는 기안 문서 번호를 명시해야 결재 감사에서 승인됩니다.
+              </span>
+</div>
+<!-- Action Footer -->
+<div class="flex items-center justify-between pt-2 border-t border-slate-200">
+<button class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors" type="button">
+                검토 취소
+              </button>
+<div class="flex items-center gap-2">
+<button class="px-5 py-2.5 rounded-lg bg-[#285C9E] hover:bg-[#1d4577] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5" id="submitDecisionBtn" onclick="submitDecision()" type="button">
+<span class="material-symbols-outlined text-[17px]">task_alt</span>
+<span id="submitBtnText">[권한 유지 결정 제출]</span>
+</button>
+</div>
+</div>
+<!-- Critical Disclaimer Banner -->
+<div class="p-3 rounded-lg bg-blue-50/50 border border-blue-200/60 flex items-start gap-2">
+<span class="material-symbols-outlined text-[#285C9E] text-[16px] mt-0.5 shrink-0">info</span>
+<p class="text-[11px] text-slate-600 leading-tight">
+<strong>중요 안내:</strong> 검토 결정 저장과 권한 부여 시스템의 실제 반영은 분리되어 비동기로 처리되며, 최종 회수 완료 전까지는 회수 진행 상태로 표시됩니다.
+              </p>
+</div>
+</div>
+<!-- Bottom Footer Boundary Info -->
+<div class="pt-3 pb-6 flex flex-col sm:flex-row items-center justify-between text-slate-400 text-xs font-mono gap-2">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-slate-200/80 text-slate-600 font-semibold text-[11px]">Screen ID: WRK-D02-1440-DESKTOP</span>
+<span>·</span>
+<span>2026-09-04 09:30 KST Fixture</span>
+</div>
+<div class="text-slate-500 text-[11px]">
+              DWP Governance Async Event Engine v3.8.1
+            </div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script>
+    let currentMode = 'keep';
+
+    function handlePathChange(mode) {
+      currentMode = mode;
+      const labelKeep = document.getElementById('labelKeep');
+      const labelRevoke = document.getElementById('labelRevoke');
+      const impactTitle = document.getElementById('impactTitle');
+      const impactDesc = document.getElementById('impactDesc');
+      const impactIcon = document.getElementById('impactIcon');
+      const submitBtn = document.getElementById('submitDecisionBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+      const inputHint = document.getElementById('inputHint');
+
+      if (mode === 'keep') {
+        labelKeep.className = 'relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all select-none border-[#285C9E] bg-[#285C9E]/5';
+        labelRevoke.className = 'relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all select-none border-slate-200 hover:border-slate-300 bg-white';
+        
+        impactTitle.textContent = '유지 결정 시 영향';
+        impactDesc.textContent = '유지 결정 시 대상자는 기존 재무 결산 조회 권한을 지속 유지하며, 다음 정기 감사 주기(2026-4Q)에 재검토 대상으로 편성됩니다.';
+        impactIcon.textContent = 'info';
+        impactIcon.className = 'material-symbols-outlined text-[#285C9E] text-[18px] shrink-0 mt-0.5';
+
+        submitBtn.className = 'px-5 py-2.5 rounded-lg bg-[#285C9E] hover:bg-[#1d4577] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5';
+        submitBtnText.textContent = '[권한 유지 결정 제출]';
+        inputHint.textContent = '유지 근거 입력 시 공식 업무 연관성 또는 기안 문서 번호를 명시해야 결재 감사에서 승인됩니다.';
+      } else {
+        labelRevoke.className = 'relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all select-none border-rose-500 bg-rose-50/20';
+        labelKeep.className = 'relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all select-none border-slate-200 hover:border-slate-300 bg-white';
+
+        impactTitle.textContent = '회수 결정 시 영향';
+        impactDesc.textContent = '최종 승인 즉시 ERP 결산 레포트 조회가 제한되며, 사용자에게 세션 만료 안내 알림이 비동기로 발송됩니다.';
+        impactIcon.textContent = 'warning';
+        impactIcon.className = 'material-symbols-outlined text-rose-600 text-[18px] shrink-0 mt-0.5';
+
+        submitBtn.className = 'px-5 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5';
+        submitBtnText.textContent = '[권한 회수 결정 제출]';
+        inputHint.textContent = '회수 시 대상자의 기존 작업 세션이 즉시 차단되지 않으며 비동기 회수 작업 큐(Async Revoke Job)에 등록됩니다.';
+      }
+    }
+
+    function onCommentInput(el) {
+      const len = el.value.length;
+      const counter = document.getElementById('justificationCounter');
+      counter.textContent = `${len} / 500자`;
+      if (len >= 15) {
+        counter.classList.remove('text-slate-400', 'text-rose-600');
+        counter.classList.add('text-[#285C9E]', 'font-semibold');
+      } else {
+        counter.classList.remove('text-[#285C9E]', 'font-semibold');
+        counter.classList.add('text-slate-400');
+      }
+    }
+
+    function submitDecision() {
+      const comment = document.getElementById('justificationComment').value.trim();
+      if (comment.length < 15) {
+        alert('검토 및 판단 사유를 구체적으로 최소 15자 이상 입력해 주십시오.');
+        document.getElementById('justificationComment').focus();
+        return;
+      }
+      const actionKorean = currentMode === 'keep' ? '권한 유지' : '권한 회수';
+      if (confirm(`김현수 선임매니저의 [ERP_FIN_REPORT_READ] ${actionKorean} 결정을 제출하시겠습니까?`)) {
+        alert(`[결정 제출 완료] ${actionKorean} 결정이 저장되었습니다.\n실제 권한 반영은 프로비저닝 엔진(Async Event Engine)을 통해 비동기로 처리됩니다.`);
+      }
+    }
+  </script>
+</body></html>

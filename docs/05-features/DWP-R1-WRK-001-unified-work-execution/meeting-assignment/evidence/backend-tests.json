@@ -1,0 +1,258 @@
+{
+  "command": "./gradlew :dwp-platform-server:test --tests '*workhub.assignment.*'",
+  "runtime": "Corretto 23.0.2; Gradle; Testcontainers PostgreSQL 16-alpine",
+  "scope": "Assignment backend including final outbound observability amendment",
+  "totals": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.MeetingFollowupSourceAuthorityTest",
+      "timestampUtc": "2026-09-04T06:33:21",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.152,
+      "cases": [
+        {
+          "name": "propagatesObservabilityWithoutForwardingCallerCredentialsOrIdentityHeaders()",
+          "seconds": 0.281
+        },
+        {
+          "name": "duplicateDecisionKeysAndTrailingJsonFailClosed()",
+          "seconds": 0.018
+        },
+        {
+          "name": "removedSourceHidesAllProvenanceAndNewCreateFails()",
+          "seconds": 0.013
+        },
+        {
+          "name": "missingCredentialsAndImplicitHttpFailClosedWithoutNetwork()",
+          "seconds": 0.002
+        },
+        {
+          "name": "reassignRequiresOwnerDecisionForExactNewAssignee()",
+          "seconds": 0.013
+        },
+        {
+          "name": "differentActorOrCandidateResponseNeverBecomesAvailable()",
+          "seconds": 0.014
+        },
+        {
+          "name": "createsOnlyFromConfirmedTermsAndUsesDedicatedBoundAssertion()",
+          "seconds": 0.009
+        },
+        {
+          "name": "timeoutHidesSourceAndDoesNotRetryAutomatically()",
+          "seconds": 0.261
+        },
+        {
+          "name": "overallDeadlineAlsoCancelsAStalledChunkedBodyAfterHeaders()",
+          "seconds": 1.511
+        },
+        {
+          "name": "redirectsAreNotFollowedAndOversizedResponseIsNotExposed()",
+          "seconds": 0.009
+        },
+        {
+          "name": "changedConfirmedVersionReturnsConflictWithoutCreating()",
+          "seconds": 0.007
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.MeetingFollowupWorkloadSignerTest",
+      "timestampUtc": "2026-09-04T06:33:23",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.009,
+      "cases": [
+        {
+          "name": "matchesIndependentlyGeneratedCrossServiceGoldenFixture()",
+          "seconds": 0.005
+        },
+        {
+          "name": "rejectsWeakKeysAndIncompletePrincipalBindings()",
+          "seconds": 0.001
+        },
+        {
+          "name": "generatesFreshNonceAndBindsActorSourceActionAndExactBody()",
+          "seconds": 0.002
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.WorkAssignmentControllerTest",
+      "timestampUtc": "2026-09-04T06:33:24",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.175,
+      "cases": [
+        {
+          "name": "sourceLookupKeepsAllThreeOwnerIdentifiers()",
+          "seconds": 0.046
+        },
+        {
+          "name": "creatingRequiresConfirmedSourceVersionAndStableCommandKey()",
+          "seconds": 0.056
+        },
+        {
+          "name": "acceptCarriesBothVersionAndAssignmentRevisionToTheDistinctAction()",
+          "seconds": 0.015
+        },
+        {
+          "name": "reassignmentRequiresPositiveTargetAndBoundedReasonCode()",
+          "seconds": 0.01
+        },
+        {
+          "name": "queryCannotOverrideTheAuthenticatedActor()",
+          "seconds": 0.014
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.WorkAssignmentPostgresIntegrationTest",
+      "timestampUtc": "2026-09-04T06:33:26",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 8.07,
+      "cases": [
+        {
+          "name": "sourceValidationThatExpiresWhileAcquiringLocksCannotWrite()",
+          "seconds": 0.337
+        },
+        {
+          "name": "concurrentAcceptanceAndReassignmentCannotAcceptAReplacedAssignmentRevision()",
+          "seconds": 0.134
+        },
+        {
+          "name": "reassignmentWhileSourceInspectionIsRunningRevokesTheWaitingView()",
+          "seconds": 0.142
+        },
+        {
+          "name": "aReceiptKeepsItsAppliedVersionWhileReplaysReturnCurrentAuthorizedTask()",
+          "seconds": 0.182
+        },
+        {
+          "name": "concurrentDifferentCreatorsCannotPromoteTheSameCandidate()",
+          "seconds": 0.075
+        },
+        {
+          "name": "auditAndReceiptFailuresRollBackAssignmentEventsAndCommandEvidenceTogether()",
+          "seconds": 0.131
+        },
+        {
+          "name": "reassignmentInvalidatesOldAcceptanceAndOldAssigneeCommandRecovery()",
+          "seconds": 0.202
+        },
+        {
+          "name": "decliningRequiresAReasonAndOnlyCreatorCanReassignOrCancel()",
+          "seconds": 0.243
+        },
+        {
+          "name": "lockWaitIsBoundedAndAConflictingCommandLeavesNoPartialEvidence()",
+          "seconds": 5.138
+        },
+        {
+          "name": "concurrentSameCommandCreatesOneAssignmentAndOneEvidenceSet()",
+          "seconds": 0.091
+        },
+        {
+          "name": "creatorAndCurrentAssigneeAreTheOnlyReadersIncludingListsSourceAndReceipts()",
+          "seconds": 0.215
+        },
+        {
+          "name": "candidateCanOnlyBePromotedOnceEvenAfterCancellationOrReportRebinding()",
+          "seconds": 0.263
+        },
+        {
+          "name": "revokedSourceIsMinimizedWhileConfirmedWorkCanStillProgressAndNewAssignmentFailsClosed()",
+          "seconds": 0.274
+        },
+        {
+          "name": "acceptanceAndWorkProgressAreSeparateOptimisticAuditedTransitions()",
+          "seconds": 0.518
+        },
+        {
+          "name": "databaseRejectsSourceRebindingAndEvidenceMutationAndStoresNoReceiptContent()",
+          "seconds": 0.121
+        }
+      ]
+    },
+    {
+      "name": "com.dwp.services.platform.workhub.assignment.WorkAssignmentServiceTest",
+      "timestampUtc": "2026-09-04T06:33:35",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.1,
+      "cases": [
+        {
+          "name": "sourceRevocationAndInvalidOwnerMetadataExposeNoSourceIdentifiersOrLink()",
+          "seconds": 0.065
+        },
+        {
+          "name": "callerCannotSupplyMalformedCommandsOrFreeTextReasons()",
+          "seconds": 0.004
+        },
+        {
+          "name": "allPublicOperationsRequirePositiveIdentityAndExactWorkPermissions()",
+          "seconds": 0.004
+        },
+        {
+          "name": "failedOwnerConfirmationCannotCreateAWorkRecord()",
+          "seconds": 0.005
+        },
+        {
+          "name": "maximumSizedWorkPageNeverWaitsForMeetingSourceInspection()",
+          "seconds": 0.014
+        },
+        {
+          "name": "staleOrMismatchedOwnerConfirmationIsRejectedWithoutPersistence()",
+          "seconds": 0.003
+        },
+        {
+          "name": "replayChecksCurrentParticipantBeforeReturningAnyCommandEvidence()",
+          "seconds": 0.001
+        },
+        {
+          "name": "readOnlyViewerGetsNoMutationCapabilitiesDespiteOwnerEvidence()",
+          "seconds": 0.001
+        }
+      ]
+    }
+  ],
+  "sourceSha256": {
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/MeetingFollowupProtocol.java": "f648e1c83fc48dc7e6f1eed30892dbadcfcda123849920a078857baa9395aec8",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/MeetingFollowupSourceAuthority.java": "17fcb91d4c27915fd99374cc106d93593d5aeb8116fbb898bac6680109d9e9eb",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/MeetingFollowupWorkloadSigner.java": "ce1eb643a513d437c6b67bb66f62d1e9fb5c0c06514deae0dcd578e4376bfd8b",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentController.java": "5b699a1197c98017454eab6c24ecb1fcc0b92ea3eca285cde522de2a781d7ee5",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentDtos.java": "605b1f8fba04098f60540527eca93ee91d84f801094a0c7c4661993368716db2",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentRepository.java": "8fb1fa95cb5d62807c4a0f23bd0968932d8753d94faf4d8a5179c5c2045ca7d4",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentService.java": "8c4ee6f3db8a8869e5d9fbd1885cbe2e065f3dd83af0ee06a1a34da4bb28fbb4",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentSourceAuthority.java": "c9477c5542f3b7cc416a60718aa315224e64261c40c2eb45dfd92481248d93e0",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/workhub/assignment/WorkSourceBodySubscriber.java": "6ba1dec165ea5f17059dd6e71345089385ed37798f577753adff1010fa4e89fd",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/workhub/assignment/MeetingFollowupSourceAuthorityTest.java": "0469b6d5aa9e77faf2c204dcbcfb4560ef7de93b7a7c299c4e34ffa7789b2e5d",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/workhub/assignment/MeetingFollowupWorkloadSignerTest.java": "1f95b3ed5fac42f8c856eb71f436c15388a4d3d914e7aee94e448636e7b6a069",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentControllerTest.java": "b52b69ceddaaab1b74f07ff967702d8ae6fb344219f68237c21b985cfd471647",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentPostgresIntegrationTest.java": "afce01f9534448fa89bd375c2c4acc04e7dca2cdfc77b07e47d3528bd93e6368",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/workhub/assignment/WorkAssignmentServiceTest.java": "f619d0ee8e46f33a2bf9fd867f23311d742668a119db1df11ece9330767cb9d8",
+    "dwp-platform-server/src/main/resources/db/migration/V226__create_work_assignments.sql": "cfa0acd67653c31edb3458c567c394eeb171a2cdd93403a73a608048dba4f8db"
+  },
+  "limitations": [
+    "Meeting owner is a test port/local HTTP stub; actual Meeting current-authority and eligibility integration is not verified.",
+    "Only V226 migration is executed by the PostgreSQL suite, not all Platform migrations.",
+    "Controller MockMvc tests do not establish Gateway route/PEP behavior."
+  ]
+}

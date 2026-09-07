@@ -12,7 +12,12 @@ import {
   Star,
 } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
-import { ActionButton, GlyphSurface, GuidedEmptyState } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ErrorState,
+  GlyphSurface,
+  GuidedEmptyState,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -20,14 +25,19 @@ import Chip from '@mui/material/Chip';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import { alpha } from '@mui/material/styles';
 
 import {
   messagingFocusReason,
   type MessagingAttentionState,
   type MessagingFocusReason,
+  type MessagingHomeFilter,
 } from './messaging-home-model';
 import { messagingRelativeTime } from './messaging-components';
+import { messagingPlainTextPreview } from './messaging-message-body';
+import { messagingVisualTokens } from './messaging-visual-model';
 
 import type { MessagingConversation, MessagingHome } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
@@ -71,14 +81,14 @@ function AttentionSignal({ signal }: { signal: Signal }) {
       aria-label={t(`home.signals.${signal.key}.action`, { count: signal.value })}
       sx={(theme) => ({
         minWidth: 0,
-        minHeight: 94,
-        px: 2,
-        py: 1.6,
-        display: 'grid',
-        gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-        gap: 1.1,
-        alignItems: 'center',
-        textAlign: 'left',
+        minHeight: 126,
+        px: 1,
+        py: 1.5,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 0.65,
+        justifyContent: 'center',
+        textAlign: 'center',
         color: 'text.primary',
         transition: theme.transitions.create(['background-color', 'color'], {
           duration: theme.transitions.duration.shortest,
@@ -91,21 +101,25 @@ function AttentionSignal({ signal }: { signal: Signal }) {
         '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
       })}
     >
-      <GlyphSurface size={34} variant="soft" tone={signal.tone}>
-        <Icon size={17} aria-hidden="true" />
+      <GlyphSurface size={30} variant="soft" tone={signal.tone}>
+        <Icon size={15} aria-hidden="true" />
       </GlyphSurface>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-          {t(`home.signals.${signal.key}.label`)}
-        </Typography>
+      <Box sx={{ minWidth: 0, width: 1 }}>
         <Typography
           component="p"
-          sx={{ mt: 0.15, fontSize: 22, lineHeight: 1.25, fontWeight: 800, letterSpacing: 0 }}
+          variant="h5"
+          sx={{ fontWeight: 800, color: signal.value ? 'primary.main' : 'text.primary' }}
         >
           {signal.value}
         </Typography>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', mt: 0.5, overflowWrap: 'anywhere' }}
+        >
+          {t(`home.signals.${signal.key}.label`)}
+        </Typography>
       </Box>
-      <ArrowRight size={16} color="currentColor" aria-hidden="true" />
     </ButtonBase>
   );
 }
@@ -163,45 +177,46 @@ export function MessagingAttentionOverview({
         saved: metrics.savedItems,
       })}
       data-testid="messaging-attention-overview"
-      sx={{
+      sx={(theme) => ({
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', lg: 'minmax(360px, 1.12fr) minmax(0, 1fr)' },
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        '@container messaging-home-main (min-width: 600px)': {
+          gridTemplateColumns: 'minmax(0, 1.2fr) minmax(250px, 1fr)',
+        },
         border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
+        borderColor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.28 : 0.14),
+        borderRadius: messagingVisualTokens.radius.surface,
         bgcolor: 'background.paper',
         overflow: 'hidden',
-      }}
+      })}
     >
       <Box
         sx={(theme) => ({
           minWidth: 0,
-          p: { xs: 2.25, md: 3 },
+          p: { xs: 1.5, md: 1.75 },
           display: 'grid',
-          gridTemplateColumns: 'auto minmax(0, 1fr)',
-          gap: 1.6,
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gap: 1,
           alignContent: 'center',
-          bgcolor: alpha(attentionTones[state], theme.palette.mode === 'dark' ? 0.11 : 0.045),
-          borderRight: { xs: 0, lg: 1 },
-          borderBottom: { xs: 1, lg: 0 },
-          borderColor: 'divider',
+          bgcolor: alpha(attentionTones[state], theme.palette.mode === 'dark' ? 0.08 : 0.025),
         })}
       >
-        <GlyphSurface size={46} variant="soft" tone={attentionTones[state]}>
-          <StateIcon size={22} aria-hidden="true" />
-        </GlyphSurface>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="overline" color="text.secondary">
+        <Stack direction="row" gap={0.7} alignItems="center" color="success.main">
+          <StateIcon size={15} aria-hidden="true" />
+          <Typography variant="caption" fontWeight={700}>
             {t('home.attention.eyebrow')}
           </Typography>
+        </Stack>
+        <Box sx={{ minWidth: 0 }}>
           <Typography
             id="messaging-attention-title"
             component="h2"
-            sx={{ mt: 0.3, fontSize: { xs: 20, md: 23 }, lineHeight: 1.3, fontWeight: 800 }}
+            variant="h6"
+            sx={{ lineHeight: 1.45, fontWeight: 800, overflowWrap: 'anywhere' }}
           >
             {t(`home.attention.states.${stateKey}.title`, { count })}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.65, maxWidth: 560 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4, maxWidth: 560 }}>
             {t(`home.attention.states.${stateKey}.description`, {
               unread: metrics.unreadConversations,
               mentions: metrics.mentions,
@@ -209,11 +224,11 @@ export function MessagingAttentionOverview({
             })}
           </Typography>
           <ActionButton
-            intent={state === 'CLEAR' ? 'quiet' : 'secondary'}
+            intent={state === 'CLEAR' ? 'quiet' : 'primary'}
             size="small"
             endIcon={<ArrowRight size={15} />}
             onClick={primaryAction}
-            sx={{ mt: 1.5 }}
+            sx={{ mt: 1.25 }}
           >
             {t(`home.attention.actions.${stateKey}`)}
           </ActionButton>
@@ -223,10 +238,12 @@ export function MessagingAttentionOverview({
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          alignSelf: 'center',
+          p: 1,
           '& > * + *': {
-            borderTop: { xs: 1, sm: 0 },
-            borderLeft: { xs: 0, sm: 1 },
+            borderLeftStyle: 'solid',
+            borderLeftWidth: 1,
             borderColor: 'divider',
           },
         }}
@@ -281,6 +298,7 @@ function MessagingFocusConversation({ conversation }: { conversation: MessagingC
   const protectedConversation =
     conversation.dataClassification === 'CONFIDENTIAL' ||
     conversation.dataClassification === 'RESTRICTED';
+  const tone = conversationTone(conversation);
 
   return (
     <Box
@@ -289,22 +307,31 @@ function MessagingFocusConversation({ conversation }: { conversation: MessagingC
       data-testid="messaging-focus-conversation"
       sx={(theme) => ({
         minWidth: 0,
-        minHeight: 96,
-        px: { xs: 1.5, md: 2 },
-        py: 1.5,
+        minHeight: 72,
+        px: 1.5,
+        py: 1,
         display: 'grid',
-        gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-        gap: 1.35,
-        alignItems: 'start',
+        gridTemplateColumns: 'auto minmax(0, 1fr)',
+        '@container messaging-home-main (min-width: 520px)': {
+          gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+        },
+        gap: 1.15,
+        alignItems: 'center',
         position: 'relative',
         color: 'text.primary',
         textDecoration: 'none',
-        bgcolor:
-          conversation.unreadCount > 0 ? alpha(theme.palette.primary.main, 0.025) : 'transparent',
-        transition: theme.transitions.create(['background-color', 'transform'], {
+        border: 1,
+        borderColor: alpha(tone, conversation.unreadCount > 0 ? 0.24 : 0.14),
+        borderRadius: messagingVisualTokens.radius.surface,
+        bgcolor: 'background.paper',
+        transition: theme.transitions.create(['background-color', 'border-color', 'transform'], {
           duration: theme.transitions.duration.shortest,
         }),
-        '&:hover': { bgcolor: 'action.hover', transform: 'translateY(-1px)' },
+        '&:hover': {
+          bgcolor: alpha(tone, 0.045),
+          borderColor: alpha(tone, 0.34),
+          transform: 'translateX(2px)',
+        },
         '&:focus-visible': {
           outline: `2px solid ${theme.palette.primary.main}`,
           outlineOffset: -2,
@@ -315,12 +342,16 @@ function MessagingFocusConversation({ conversation }: { conversation: MessagingC
         },
       })}
     >
-      <GlyphSurface size={40} variant="soft" tone={conversationTone(conversation)}>
-        <Icon size={19} aria-hidden="true" />
+      <GlyphSurface size={36} variant="soft" tone={tone}>
+        <Icon size={17} aria-hidden="true" />
       </GlyphSurface>
       <Box sx={{ minWidth: 0 }}>
         <Stack direction="row" gap={0.65} alignItems="center" flexWrap="wrap">
-          <Typography variant="body2" fontWeight={conversation.unreadCount > 0 ? 800 : 700}>
+          <Typography
+            variant="body2"
+            fontWeight={conversation.unreadCount > 0 ? 800 : 700}
+            sx={{ overflowWrap: 'anywhere' }}
+          >
             {conversation.name ?? t('conversation.untitled')}
           </Typography>
           {conversation.pinned && <Pin size={13} aria-label={t('conversation.settings.pinned')} />}
@@ -344,7 +375,7 @@ function MessagingFocusConversation({ conversation }: { conversation: MessagingC
           )}
         </Stack>
         <Typography
-          variant="body2"
+          variant="caption"
           color="text.secondary"
           sx={{
             mt: 0.45,
@@ -356,27 +387,37 @@ function MessagingFocusConversation({ conversation }: { conversation: MessagingC
           {protectedConversation
             ? t('home.focus.protectedPreview')
             : `${conversation.lastMessage?.senderName ? `${conversation.lastMessage.senderName}: ` : ''}${
-                conversation.lastMessage?.body || conversation.topic || t('home.focus.noPreview')
+                (conversation.lastMessage?.body
+                  ? messagingPlainTextPreview(conversation.lastMessage.body)
+                  : conversation.topic) || t('home.focus.noPreview')
               }`}
         </Typography>
-        <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap" sx={{ mt: 0.85 }}>
-          <FocusReasonChip reason={reason} unreadCount={conversation.unreadCount} />
+        <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap" sx={{ mt: 0.55 }}>
           <Typography variant="caption" color="text.secondary">
             {t(`type.${conversation.conversationType}`)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {t('conversation.members', { count: conversation.memberCount })}
           </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {messagingRelativeTime(
+              conversation.lastMessageAt,
+              i18n.resolvedLanguage ?? i18n.language
+            )}
+          </Typography>
         </Stack>
       </Box>
-      <Stack alignItems="flex-end" spacing={1} sx={{ minWidth: 52 }}>
-        <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
-          {messagingRelativeTime(
-            conversation.lastMessageAt,
-            i18n.resolvedLanguage ?? i18n.language
-          )}
-        </Typography>
-        <ArrowRight size={16} aria-hidden="true" />
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={0.75}
+        sx={{
+          gridColumn: '2',
+          '@container messaging-home-main (min-width: 520px)': { gridColumn: 'auto' },
+        }}
+      >
+        <FocusReasonChip reason={reason} unreadCount={conversation.unreadCount} />
+        <ArrowRight size={15} aria-hidden="true" />
       </Stack>
     </Box>
   );
@@ -385,10 +426,20 @@ function MessagingFocusConversation({ conversation }: { conversation: MessagingC
 export function MessagingFocusQueue({
   conversations,
   loading,
+  filter,
+  onFilterChange,
+  filterCounts,
+  error,
+  onRetry,
   onOpenAll,
 }: {
   conversations: MessagingConversation[];
   loading: boolean;
+  filter: MessagingHomeFilter;
+  onFilterChange: (filter: MessagingHomeFilter) => void;
+  filterCounts: Partial<Record<MessagingHomeFilter, number>>;
+  error: boolean;
+  onRetry: () => void;
   onOpenAll: () => void;
 }) {
   const { t } = useTranslation('messaging');
@@ -398,15 +449,20 @@ export function MessagingFocusQueue({
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
-        alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
         gap={1}
         mb={1.25}
       >
         <Box>
-          <Typography id="messaging-focus-title" component="h2" variant="h6" fontWeight={800}>
+          <Typography
+            id="messaging-focus-title"
+            component="h2"
+            variant="subtitle1"
+            fontWeight={800}
+          >
             {t('home.focus.title')}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.35, display: 'block' }}>
             {t('home.focus.description')}
           </Typography>
         </Box>
@@ -420,31 +476,78 @@ export function MessagingFocusQueue({
           {t('home.focus.open')}
         </ActionButton>
       </Stack>
-      <Box
+      <Tabs
+        value={filter}
+        onChange={(_, next: MessagingHomeFilter) => onFilterChange(next)}
+        variant="scrollable"
+        scrollButtons={false}
+        aria-label={t('home.focus.filters.label')}
         sx={{
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-          overflow: 'hidden',
-          '& > * + *': { borderTop: 1, borderColor: 'divider' },
+          minHeight: 36,
+          mb: 1.1,
+          '& .MuiTab-root': {
+            minWidth: 0,
+            minHeight: 36,
+            px: 1.35,
+            py: 0.75,
+            textTransform: 'none',
+          },
+          '& .MuiTabs-indicator': { height: 2 },
         }}
       >
-        {loading ? (
-          <Stack spacing={1} sx={{ p: 1.5 }} aria-label={t('home.focus.loading')}>
+        {(['ALL', 'MENTIONS', 'SPACE', 'DIRECT'] as const).map((value) => (
+          <Tab
+            key={value}
+            value={value}
+            label={
+              <Stack direction="row" alignItems="center" spacing={0.65}>
+                <span>{t(`home.focus.filters.${value}`)}</span>
+                {filterCounts[value] !== undefined && (
+                  <Typography component="span" variant="caption" color="text.secondary">
+                    {filterCounts[value]}
+                  </Typography>
+                )}
+              </Stack>
+            }
+          />
+        ))}
+      </Tabs>
+      <Box>
+        {error ? (
+          <ErrorState
+            title={t('home.focus.mentionsError')}
+            onRetry={onRetry}
+            retryLabel={t('actions.retry')}
+            size="compact"
+          />
+        ) : loading ? (
+          <Stack spacing={1} aria-label={t('home.focus.loading')}>
             {[0, 1, 2, 3].map((item) => (
               <Skeleton key={item} variant="rounded" height={78} />
             ))}
           </Stack>
         ) : conversations.length ? (
-          conversations.map((conversation) => (
-            <MessagingFocusConversation
-              key={conversation.conversationId}
-              conversation={conversation}
-            />
-          ))
+          <Stack spacing={0.9}>
+            {conversations.map((conversation) => (
+              <MessagingFocusConversation
+                key={conversation.conversationId}
+                conversation={conversation}
+              />
+            ))}
+          </Stack>
         ) : (
-          <Box sx={{ minHeight: 260, display: 'grid', placeItems: 'center', p: 2 }}>
+          <Box
+            sx={{
+              minHeight: 176,
+              display: 'grid',
+              placeItems: 'center',
+              p: 2,
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: messagingVisualTokens.radius.surface,
+              bgcolor: 'background.paper',
+            }}
+          >
             <GuidedEmptyState
               kind="empty"
               title={t('home.focus.emptyTitle')}
@@ -459,24 +562,26 @@ export function MessagingFocusQueue({
 
 export function MessagingHomeSkeleton() {
   return (
-    <Stack spacing={3} aria-hidden="true">
-      <Skeleton variant="rounded" height={190} />
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr)',
-          gap: 3,
-          '@media (min-width: 1280px)': {
-            gridTemplateColumns: 'minmax(0, 1.65fr) minmax(320px, 0.75fr)',
-          },
-        }}
-      >
-        <Skeleton variant="rounded" height={520} />
-        <Stack spacing={2.5}>
-          <Skeleton variant="rounded" height={280} />
-          <Skeleton variant="rounded" height={270} />
-        </Stack>
-      </Box>
-    </Stack>
+    <Box
+      aria-hidden="true"
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        gap: 1.5,
+        '@media (min-width: 1280px)': {
+          gridTemplateColumns: 'minmax(0, 1.58fr) minmax(308px, 0.76fr)',
+        },
+      }}
+    >
+      <Stack spacing={1.5}>
+        <Skeleton variant="rounded" height={180} />
+        <Skeleton variant="rounded" height={450} />
+      </Stack>
+      <Stack spacing={1.25}>
+        {[210, 220, 210].map((height, index) => (
+          <Skeleton key={index} variant="rounded" height={height} />
+        ))}
+      </Stack>
+    </Box>
   );
 }

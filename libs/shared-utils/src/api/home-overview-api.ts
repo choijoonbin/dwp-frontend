@@ -1,5 +1,6 @@
 import { axiosInstance } from '../axios-instance';
 import { normalizeWorkspaceActivityFeed, normalizeWorkspaceWorkQueue } from './workspace-api';
+import { getActivityExecutionSummary } from './activity-source-api';
 
 import type { ApiResponse } from '../types';
 import type { CalendarHome } from './calendar-api';
@@ -89,6 +90,17 @@ export async function getHomeOverview(timeZone = 'Asia/Seoul'): Promise<HomeOver
   );
   const overview = response.data.data;
   const { recommendationSection, recommendations, ...rest } = overview;
+  const activity = normalizeSection(overview.activity, normalizeWorkspaceActivityFeed);
+  if (activity.status === 'AVAILABLE' && activity.data) {
+    try {
+      activity.data.executionSummary = await getActivityExecutionSummary();
+      activity.data.executionSummaryStatus = 'AVAILABLE';
+    } catch {
+      // Historical events remain readable, but never stand in for a failed current-state query.
+      delete activity.data.executionSummary;
+      activity.data.executionSummaryStatus = 'UNAVAILABLE';
+    }
+  }
   const normalizedRecommendations = recommendationSection ??
     (Array.isArray(recommendations)
       ? {
@@ -108,7 +120,7 @@ export async function getHomeOverview(timeZone = 'Asia/Seoul'): Promise<HomeOver
   return {
     ...rest,
     work: normalizeSection(overview.work, normalizeWorkspaceWorkQueue),
-    activity: normalizeSection(overview.activity, normalizeWorkspaceActivityFeed),
+    activity,
     recommendations: normalizedRecommendations,
   };
 }

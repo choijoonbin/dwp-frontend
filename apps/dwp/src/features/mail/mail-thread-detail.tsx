@@ -29,7 +29,6 @@ import {
 import {
   ActionButton,
   ActionIconButton,
-  ConfirmDialog,
   FormField,
   GuidedEmptyState,
   LoadingState,
@@ -44,8 +43,9 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { mailRelativeTime, MailProposalCard } from './mail-components';
+import { mailRelativeTime } from './mail-components';
 import { MailDraftEditor } from './mail-draft-editor';
+import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
 import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadLifecycleActions } from './mail-thread-lifecycle-actions';
 
@@ -558,15 +558,8 @@ export function MailThreadDetailPane({
         </Box>
       </Box>
 
-      <ConfirmDialog
-        open={Boolean(proposalToAccept)}
-        title={proposalToAccept?.title ?? t('proposal.confirmTitle')}
-        description={t('proposal.confirmDescription', {
-          summary: proposalToAccept?.summary ?? '',
-        })}
-        cancelLabel={t('actions.cancel')}
-        confirmLabel={t('proposal.confirm')}
-        confirmingLabel={t('proposal.confirming')}
+      <MailProposalReviewDialog
+        proposal={proposalToAccept}
         busy={proposalMutation.isPending}
         onClose={() => setProposalToAccept(null)}
         onConfirm={() => {

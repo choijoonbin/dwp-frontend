@@ -37,13 +37,17 @@ function createFixture() {
   git(backend, 'remote', 'add', 'origin', 'https://github.com/choijoonbin/dwp-backend.git');
   const authorization = JSON.parse(fs.readFileSync(authorizationSource, 'utf8'));
   const closure = JSON.parse(fs.readFileSync(closureSource, 'utf8'));
+  const closureBundle = authorization.bundles.find(
+    (bundle) => bundle.version === closure.generatedFrom.authorizationBundle.version
+  );
+  assert.ok(closureBundle, 'the attested closure bundle must remain in the registry lineage');
   fs.writeFileSync(
     path.join(architecture, 'product-surface-authorization.v1.json'),
     `${JSON.stringify(authorization, null, 2)}\n`
   );
   fs.writeFileSync(
     path.join(official, 'product-surfaces-v1.bundle-v4.json'),
-    `${JSON.stringify(authorization.latestAlias, null, 2)}\n`
+    `${JSON.stringify(closureBundle, null, 2)}\n`
   );
   fs.writeFileSync(
     path.join(official, 'product-surface-rollout-inventory.v1.generated.json'),
@@ -226,4 +230,21 @@ test('fails closed when the official matrix artifact is absent', () => {
   const result = run(fixture, '--sync', fixture.official);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /authorization negative matrix is missing/);
+});
+
+test('rejects a closure bundle checksum outside its immutable registry lineage', () => {
+  const fixture = createFixture();
+  const sync = run(fixture, '--sync', fixture.official);
+  assert.equal(sync.status, 0, `${sync.stdout}\n${sync.stderr}`);
+  const closurePath = path.join(
+    fixture.workspace,
+    'architecture/product-surface-internal-closure.v1.generated.json'
+  );
+  const closure = JSON.parse(fs.readFileSync(closurePath, 'utf8'));
+  closure.generatedFrom.authorizationBundle.checksum = 'f'.repeat(64);
+  fs.writeFileSync(closurePath, `${JSON.stringify(closure, null, 2)}\n`);
+
+  const result = run(fixture, '--check');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /outside or differs from its immutable authorization bundle/);
 });

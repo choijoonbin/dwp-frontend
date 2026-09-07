@@ -1,5 +1,16 @@
-import { expect, test, type Locator, type Page, type Route } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
+import {
+  captureMessagingWorkspaceModes,
+  clickResponsiveMessageAction as clickMessageAction,
+  conversationDisplayPreference,
+  expectCompactComposer,
+  expectInsideViewport,
+  fulfillMessagingRoute as fulfill,
+  messagingMessage as message,
+  messagingMessageRow as messageRow,
+  openMessagingConversation as openConversation,
+} from './support/messaging-ui-contracts';
 import { mockShellSession } from './support/shell-session';
 
 import type {
@@ -89,36 +100,6 @@ type MessagingFixtureState = {
   nextAttachment: number;
   nextConversation: number;
 };
-
-function success(data: unknown) {
-  return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
-}
-
-function fulfill(route: Route, data: unknown, status = 200) {
-  return route.fulfill({ status, contentType: 'application/json', body: success(data) });
-}
-
-function message(input: Partial<MessagingMessage> & Pick<MessagingMessage, 'messageId' | 'body'>) {
-  return {
-    conversationId: CONVERSATION_ID,
-    senderUserId: 42,
-    senderPersonPublicId: CURRENT_MEMBER.personPublicId,
-    senderName: CURRENT_MEMBER.displayName,
-    contentType: 'TEXT' as const,
-    messageKind: 'USER' as const,
-    replyToMessageId: null,
-    editedAt: null,
-    deletedAt: null,
-    createdAt: '2026-08-19T08:30:00Z',
-    sequence: 1,
-    version: 1,
-    reactions: [],
-    attachments: [],
-    replyCount: 0,
-    rootPreview: null,
-    ...input,
-  } satisfies MessagingMessage;
-}
 
 function createFixtureState(): MessagingFixtureState {
   const ownerMessage = message({
@@ -310,11 +291,13 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
     const path = url.pathname;
 
     if (path === '/api/messaging/v1/conversations' && method === 'GET') {
+      const page = Number(url.searchParams.get('page') ?? 0);
+      const pageSize = Number(url.searchParams.get('pageSize') ?? 30);
       return fulfill(route, {
-        items: state.conversations,
+        items: state.conversations.slice(page * pageSize, (page + 1) * pageSize),
         total: state.conversations.length,
-        page: 0,
-        pageSize: 60,
+        page,
+        pageSize,
       });
     }
 
@@ -836,64 +819,21 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
   return state;
 }
 
-async function openConversation(page: Page) {
-  await page.goto(`/messages/inbox?conversation=${CONVERSATION_ID}`);
-  await expect(page.getByRole('heading', { name: 'Launch coordination' })).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Compose message' })).toBeVisible();
-}
-
-function conversationDisplayPreference(
-  state: MessagingFixtureState,
-  conversationId: string
-): MessagingConversationDisplayPreference {
-  return (
-    state.conversationDisplayPreferences.get(conversationId) ?? {
-      conversationId,
-      layoutMode: 'INHERIT',
-      density: 'INHERIT',
-      theme: 'INHERIT',
-      effectiveLayoutMode: 'COLLABORATIVE',
-      effectiveDensity: state.displayPreference.density,
-      effectiveTheme: state.displayPreference.theme,
-      showAvatars: state.displayPreference.showAvatars,
-      timestampMode: state.displayPreference.timestampMode,
-      messagePreview: state.displayPreference.messagePreview,
-      policyLocked: false,
-      policyReason: null,
-      version: 0,
-    }
-  );
-}
-
-function messageRow(page: Page, body: string): Locator {
-  return page
-    .getByText(body, { exact: true })
-    .locator('xpath=ancestor::*[.//button[@aria-label="Add reaction"]][1]');
-}
-
-async function expectInsideViewport(locator: Locator, page: Page) {
-  await locator.scrollIntoViewIfNeeded();
-  const viewport = page.viewportSize();
-  const box = await locator.boundingBox();
-  expect(viewport).not.toBeNull();
-  expect(box).not.toBeNull();
-  expect(box!.x).toBeGreaterThanOrEqual(-1);
-  expect(box!.y).toBeGreaterThanOrEqual(-1);
-  expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1);
-  expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height + 1);
-}
-
 test('composer sends with Enter, preserves Shift+Enter, and ignores Enter during IME composition', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   const state = await mockMessaging(page);
   await openConversation(page);
+  await expect(page.getByRole('heading', { name: 'Conversations', exact: true })).toBeVisible();
+  await expect(page.getByTestId('messaging-context-rail')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Quick catch-up' })).toBeVisible();
   const composer = page.getByRole('textbox', { name: 'Compose message' });
 
   await composer.fill('Sent with Enter');
   await composer.press('Enter');
   await expect.poll(() => state.sentRequests.at(-1)?.body).toBe('Sent with Enter');
-  await expect(page.getByText('Sent with Enter', { exact: true })).toBeVisible();
+  await expect(messageRow(page, 'Sent with Enter')).toBeVisible();
 
   const sentBeforeMultiline = state.sentRequests.length;
   await composer.fill('Line one');
@@ -913,6 +853,7 @@ test('composer sends with Enter, preserves Shift+Enter, and ignores Enter during
   await composer.fill('Korean composition complete');
   await composer.press('Enter');
   await expect.poll(() => state.sentRequests.at(-1)?.body).toBe('Korean composition complete');
+  await captureMessagingWorkspaceModes(page, test.info());
 });
 
 test('a failed send remains isolated from the next conversation', async ({ page }) => {
@@ -961,6 +902,30 @@ test('a failed send remains isolated from the next conversation', async ({ page 
     .poll(() => attempts.at(-1))
     .toEqual({ conversationId: SECOND_CONVERSATION_ID, body: 'Incident room update' });
   expect(attempts.filter((attempt) => attempt.body === 'Launch room only')).toHaveLength(1);
+});
+
+test('conversation navigator progressively loads beyond the first page', async ({ page }) => {
+  const state = await mockMessaging(page);
+  const template = state.conversations[0]!;
+  for (let index = 1; index <= 34; index += 1) {
+    const conversationId = `71000000-0000-0000-0000-${String(index).padStart(12, '0')}`;
+    state.conversations.push({
+      ...template,
+      conversationId,
+      conversationKey: `navigator-${index}`,
+      name: `Navigator channel ${index}`,
+      unreadCount: 0,
+      lastMessage: null,
+      lastMessageAt: null,
+    });
+  }
+
+  await page.goto('/messages/inbox');
+  await expect(page.getByTestId('messaging-conversation-navigator')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Load more conversations' })).toBeVisible();
+  await expect(page.getByText('Navigator channel 34', { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Load more conversations' }).click();
+  await expect(page.getByText('Navigator channel 34', { exact: true })).toBeVisible();
 });
 
 test('composer offers searchable expressions, structured mentions, and conversation meeting history', async ({
@@ -1108,7 +1073,7 @@ test('message actions expose labelled reactions, thread replies, save, edit, del
 
   let ownerRow = messageRow(page, 'Confirm the launch checklist before noon.');
   await ownerRow.hover();
-  await ownerRow.getByRole('button', { name: 'Add reaction' }).click();
+  await clickMessageAction(page, ownerRow, 'Add reaction');
   await expect(
     page.getByRole('textbox', { name: 'Search emoji or work expression' })
   ).toBeVisible();
@@ -1129,14 +1094,14 @@ test('message actions expose labelled reactions, thread replies, save, edit, del
 
   ownerRow = messageRow(page, 'Confirm the launch checklist before noon.');
   await ownerRow.hover();
-  await ownerRow.getByRole('button', { name: 'Save for later' }).click();
+  await clickMessageAction(page, ownerRow, 'Save for later');
   await expect.poll(() => state.savedMessageIds).toContain(OWNER_MESSAGE_ID);
   await expect(page.getByText('Message saved for later.')).toBeVisible();
 
   ownerRow = messageRow(page, 'Confirm the launch checklist before noon.');
   await ownerRow.hover();
-  await ownerRow.getByRole('button', { name: 'Reply in thread' }).click();
-  const thread = page.getByRole('region', { name: 'Thread' });
+  await clickMessageAction(page, ownerRow, 'Reply in thread');
+  const thread = page.getByRole('region', { name: 'Thread', exact: true });
   await expect(thread).toBeVisible();
   await expect(thread.getByText('I checked the rollout and security sections.')).toBeVisible();
   const threadComposer = thread.getByRole('textbox', { name: 'Compose thread reply' });
@@ -1149,17 +1114,17 @@ test('message actions expose labelled reactions, thread replies, save, edit, del
 
   ownerRow = messageRow(page, 'Confirm the launch checklist before noon.');
   await ownerRow.hover();
-  await ownerRow.getByRole('button', { name: 'Edit message' }).click();
+  await clickMessageAction(page, ownerRow, 'Edit message');
   const editDialog = page.getByRole('dialog', { name: 'Edit message' });
   await expect(editDialog).toBeVisible();
   await editDialog.getByRole('textbox', { name: 'Message' }).fill('Launch checklist confirmed.');
   await editDialog.getByRole('button', { name: 'Save changes' }).click();
   await expect.poll(() => state.editedBodies.at(-1)).toBe('Launch checklist confirmed.');
-  await expect(page.getByText('Launch checklist confirmed.', { exact: true })).toBeVisible();
+  await expect(messageRow(page, 'Launch checklist confirmed.')).toBeVisible();
 
   ownerRow = messageRow(page, 'Launch checklist confirmed.');
   await ownerRow.hover();
-  await ownerRow.getByRole('button', { name: 'Delete message' }).click();
+  await clickMessageAction(page, ownerRow, 'Delete message');
   const deleteDialog = page.getByRole('alertdialog', { name: 'Delete this message?' });
   await expect(deleteDialog).toBeVisible();
   await deleteDialog.getByRole('button', { name: 'Delete message' }).click();
@@ -1177,7 +1142,7 @@ test('message actions expose labelled reactions, thread replies, save, edit, del
 
 test('new conversation dialog supports group and channel modes and command search opens with Ctrl or Cmd K', async ({
   page,
-}) => {
+}, testInfo) => {
   const state = await mockMessaging(page);
   await openConversation(page);
 
@@ -1191,9 +1156,9 @@ test('new conversation dialog supports group and channel modes and command searc
   await expect(searchDialog.getByText('Messages', { exact: true })).toBeVisible();
   await expect(searchDialog.getByText('People', { exact: true })).toBeVisible();
   await searchDialog.getByText('Launch coordination', { exact: true }).click();
-  await expect(searchDialog).toBeHidden();
   await expect(page).toHaveURL(new RegExp(`conversation=${CONVERSATION_ID}`, 'u'));
 
+  if (testInfo.project.name === 'mobile') await page.getByRole('button', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'New conversation' }).click();
   const createDialog = page.getByRole('dialog', { name: 'New group or channel' });
   await expect(createDialog).toBeVisible();
@@ -1357,17 +1322,17 @@ test('long conversations load earlier history without replacing the current time
 
   await openConversation(page);
   const timeline = page.getByRole('feed', { name: 'Messages' });
-  await expect(page.getByText('History 105', { exact: true })).toBeAttached();
-  await expect(page.getByText('History 006', { exact: true })).toHaveCount(0);
+  await expect(timeline.getByText('History 105', { exact: true })).toBeAttached();
+  await expect(timeline.getByText('History 006', { exact: true })).toHaveCount(0);
   await timeline.evaluate((element) => {
     element.scrollTop = 0;
   });
-  const retainedMessage = page.getByText('History 026', { exact: true });
+  const retainedMessage = timeline.getByText('History 026', { exact: true });
   const retainedTopBefore = (await retainedMessage.boundingBox())?.y;
   expect(retainedTopBefore).toBeDefined();
   await page.getByRole('button', { name: 'Load earlier messages' }).click();
-  await expect(page.getByText('History 006', { exact: true })).toBeAttached();
-  await expect(page.getByText('History 105', { exact: true })).toBeAttached();
+  await expect(timeline.getByText('History 006', { exact: true })).toBeAttached();
+  await expect(timeline.getByText('History 105', { exact: true })).toBeAttached();
   const retainedTopAfter = (await retainedMessage.boundingBox())?.y;
   expect(retainedTopAfter).toBeDefined();
   expect(Math.abs(retainedTopAfter! - retainedTopBefore!)).toBeLessThanOrEqual(2);
@@ -1377,25 +1342,57 @@ test('narrow viewport keeps the main composer and thread composer reachable with
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'Mobile geometry contract');
+  await page.setViewportSize({ width: 320, height: 800 });
   await mockMessaging(page);
   await openConversation(page);
 
   const mainComposer = page.getByRole('textbox', { name: 'Compose message' });
   await expectInsideViewport(mainComposer, page);
+  await expectCompactComposer(page.getByTestId('messaging-composer'));
+  await page.screenshot({
+    path: testInfo.outputPath('messaging-mobile-conversation.png'),
+  });
   const ownerRow = messageRow(page, 'Confirm the launch checklist before noon.');
-  await ownerRow.getByRole('button', { name: 'Reply in thread' }).click();
+  await clickMessageAction(page, ownerRow, 'Reply in thread');
 
-  const thread = page.getByRole('region', { name: 'Thread' });
+  const thread = page.getByRole('region', { name: 'Thread', exact: true });
   const threadComposer = thread.getByRole('textbox', { name: 'Compose thread reply' });
   await expectInsideViewport(thread, page);
   await expectInsideViewport(thread.getByRole('button', { name: 'Close thread' }), page);
   await expectInsideViewport(threadComposer, page);
+  await page.screenshot({
+    path: testInfo.outputPath('messaging-mobile-thread.png'),
+  });
 
-  const geometry = await page.evaluate(() => ({
-    viewportWidth: document.documentElement.clientWidth,
-    documentWidth: document.documentElement.scrollWidth,
-  }));
-  expect(geometry.documentWidth - geometry.viewportWidth).toBeLessThanOrEqual(1);
+  const geometry = await page.evaluate(() => {
+    const viewportWidth = document.documentElement.clientWidth;
+    const overflowers = Array.from(document.querySelectorAll<HTMLElement>('body *'))
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          tag: element.tagName.toLowerCase(),
+          role: element.getAttribute('role'),
+          label: element.getAttribute('aria-label'),
+          text: (element.innerText ?? element.textContent ?? '').slice(0, 80),
+          className: element.className,
+          parentClassName: element.parentElement?.className ?? null,
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+        };
+      })
+      .filter((item) => item.right > viewportWidth + 1 || item.left < -1)
+      .slice(0, 12);
+    return {
+      viewportWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      overflowers,
+    };
+  });
+  expect(
+    geometry.documentWidth - geometry.viewportWidth,
+    `Horizontal overflowers: ${JSON.stringify(geometry.overflowers)}`
+  ).toBeLessThanOrEqual(1);
 
   const composerBox = await threadComposer.boundingBox();
   expect(composerBox).not.toBeNull();

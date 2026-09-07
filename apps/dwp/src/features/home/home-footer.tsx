@@ -12,7 +12,13 @@ const HOME_FOOTER_LINKS = [
   ['status', '/apps'],
 ] as const;
 
-export function HomeFooter({ updatedAt }: { updatedAt: string }) {
+export function HomeFooter({
+  updatedAt,
+  freshnessInHeader = false,
+}: {
+  updatedAt: string;
+  freshnessInHeader?: boolean;
+}) {
   const { t } = useTranslation('home');
 
   return (
@@ -42,9 +48,11 @@ export function HomeFooter({ updatedAt }: { updatedAt: string }) {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
-          <Clock3 size={15} aria-hidden="true" />
+          {!freshnessInHeader && <Clock3 size={15} aria-hidden="true" />}
           <Typography variant="caption" color="text.secondary">
-            {t('page.lastRefreshed', { time: updatedAt })}
+            {freshnessInHeader
+              ? t('footer.dataScope')
+              : t('page.lastRefreshed', { time: updatedAt })}
           </Typography>
         </Box>
         <Box

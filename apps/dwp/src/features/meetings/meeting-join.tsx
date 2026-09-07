@@ -196,8 +196,9 @@ export function MeetingJoin() {
           component="form"
           sx={{
             p: { xs: 2, sm: 3 },
-            background: (theme) =>
-              `linear-gradient(180deg, transparent, ${theme.palette.action.hover})`,
+            bgcolor: 'background.paper',
+            borderTop: 1,
+            borderColor: 'divider',
           }}
           onSubmit={(event) => {
             event.preventDefault();

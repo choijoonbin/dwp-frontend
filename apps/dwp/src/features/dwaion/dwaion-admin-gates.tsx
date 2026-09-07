@@ -2,7 +2,13 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { ActionButton, EnterpriseDataGrid, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EnterpriseDataGrid,
+  ErrorState,
+  LoadingState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import {
   getDwaionOperationalGatePortfolio,
   type DwaionGateEnvironment,
@@ -222,6 +228,41 @@ export function DwaionAdminGates() {
     : (portfolio?.blockedCount ?? 0) + (portfolio?.expiredCount ?? 0) > 0
       ? 'warning'
       : 'info';
+
+  if (query.isError) {
+    return (
+      <PageCanvas>
+        <DwaionAdminPageHeader
+          eyebrow={t('dwaionAdmin.shared.governance')}
+          title={t('dwaionAdmin.gates.title')}
+          description={t('dwaionAdmin.gates.description')}
+        />
+        <Box sx={{ mt: 3 }}>
+          <ErrorState
+            size="page"
+            title={t('dwaionAdmin.gates.error')}
+            description={t('dwaionAdmin.gates.unavailableDescription')}
+            retryLabel={t('dwaionAdmin.shared.retry')}
+            retrying={query.isFetching}
+            onRetry={() => void query.refetch()}
+          />
+        </Box>
+      </PageCanvas>
+    );
+  }
+
+  if (query.isLoading || !portfolio) {
+    return (
+      <PageCanvas>
+        <DwaionAdminPageHeader
+          eyebrow={t('dwaionAdmin.shared.governance')}
+          title={t('dwaionAdmin.gates.title')}
+          description={t('dwaionAdmin.gates.description')}
+        />
+        <LoadingState size="page" variant="skeleton" label={t('dwaionAdmin.gates.loading')} />
+      </PageCanvas>
+    );
+  }
   return (
     <PageCanvas>
       <DwaionAdminPageHeader
@@ -232,11 +273,6 @@ export function DwaionAdminGates() {
       {saved && (
         <Alert severity="success" sx={{ mt: 2 }} onClose={() => setSaved(false)}>
           {t('dwaionAdmin.gates.saved')}
-        </Alert>
-      )}
-      {query.isError && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {t('dwaionAdmin.gates.error')}
         </Alert>
       )}
       <Stack
@@ -281,31 +317,31 @@ export function DwaionAdminGates() {
       >
         <GateMetric
           label={t('dwaionAdmin.gates.metrics.readiness')}
-          value={`${portfolio?.completionPercent ?? 0}%`}
+          value={`${portfolio.completionPercent}%`}
         />
         <GateMetric
           label={t('dwaionAdmin.gates.metrics.approved')}
-          value={`${portfolio?.approvedCount ?? 0} / ${portfolio?.requiredCount ?? 0}`}
+          value={`${portfolio.approvedCount} / ${portfolio.requiredCount}`}
         />
         <GateMetric
           label={t('dwaionAdmin.gates.metrics.review')}
-          value={String(portfolio?.readyForApprovalCount ?? 0)}
+          value={String(portfolio.readyForApprovalCount)}
         />
         <GateMetric
           label={t('dwaionAdmin.gates.metrics.attention')}
-          value={String((portfolio?.blockedCount ?? 0) + (portfolio?.expiredCount ?? 0))}
+          value={String(portfolio.blockedCount + portfolio.expiredCount)}
           last
         />
       </Box>
       <LinearProgress
         variant="determinate"
-        value={portfolio?.completionPercent ?? 0}
-        color={portfolio?.deliveryReady ? 'success' : 'primary'}
+        value={portfolio.completionPercent}
+        color={portfolio.deliveryReady ? 'success' : 'primary'}
         aria-label={t('dwaionAdmin.gates.metrics.readiness')}
         sx={{ height: 3, borderRadius: 0 }}
       />
       <Alert severity={readinessSeverity} sx={{ mt: 2 }}>
-        {portfolio?.deliveryReady ? t('dwaionAdmin.gates.ready') : t('dwaionAdmin.gates.notReady')}
+        {portfolio.deliveryReady ? t('dwaionAdmin.gates.ready') : t('dwaionAdmin.gates.notReady')}
       </Alert>
       <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 2 }}>
         {(
@@ -322,14 +358,14 @@ export function DwaionAdminGates() {
             key={category}
             size="small"
             variant="outlined"
-            label={`${gateCategoryLabel(t, category)} ${portfolio?.gates.filter((gate) => gate.category === category && gate.status === 'APPROVED').length ?? 0}/${portfolio?.gates.filter((gate) => gate.category === category).length ?? 0}`}
+            label={`${gateCategoryLabel(t, category)} ${portfolio.gates.filter((gate) => gate.category === category && gate.status === 'APPROVED').length}/${portfolio.gates.filter((gate) => gate.category === category).length}`}
           />
         ))}
       </Stack>
       <Box sx={{ mt: 2, borderBlock: 1, borderColor: 'divider' }}>
         <EnterpriseDataGrid
           ariaLabel={t('dwaionAdmin.gates.tableLabel')}
-          rows={portfolio?.gates ?? []}
+          rows={portfolio.gates}
           columns={columns}
           getRowId={(row) => row.gateKey}
           loading={query.isLoading}

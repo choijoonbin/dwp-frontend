@@ -22,6 +22,7 @@ import type { FlowSignal } from './flow-home-model';
 import { RolePulseInsight } from './home-purpose-role-pulse-insight';
 import { HomePurposeContextualVisual } from './home-purpose-contextual-visual';
 import { HomePurposeStatus } from './home-purpose-status';
+import { RequestEmptyJourney } from './home-purpose-request-empty-journey';
 
 type HomePurposeWidgetProps = Readonly<{
   sectionKey: 'action' | 'timeline' | 'response' | 'request' | 'pulse';
@@ -37,6 +38,7 @@ type HomePurposeWidgetProps = Readonly<{
   featuredFirst?: boolean;
   wideFeatured?: boolean;
   supportStack?: boolean;
+  referenceLayout?: boolean;
   timeline?: boolean;
   roleSignals?: readonly FlowSignal[];
   headerAccessory?: ReactNode;
@@ -113,6 +115,7 @@ function ContributionMeta({
   });
   return (
     <Stack
+      data-home-purpose-meta
       direction="row"
       alignItems="center"
       gap={policy.density === 'short' ? 0.5 : 0.75}
@@ -125,9 +128,14 @@ function ContributionMeta({
           flexWrap: 'nowrap',
         },
         '& .MuiTypography-root': {
-          fontSize: policy.density === 'short' ? 11.5 : 12,
+          fontSize: policy.density === 'short' ? '0.71875rem' : '0.75rem',
           lineHeight: policy.density === 'tall' ? 1.3 : 1.25,
           whiteSpace: 'nowrap',
+        },
+        "[data-flow-large-text='true'] &": {
+          overflow: 'visible',
+          flexWrap: 'wrap',
+          '& .MuiTypography-root': { whiteSpace: 'normal' },
         },
       }}
     >
@@ -182,6 +190,7 @@ function ContributionRow({
     <>
       {timeline && (
         <Box
+          data-home-purpose-time
           aria-hidden="true"
           sx={{
             width: 38,
@@ -189,9 +198,16 @@ function ContributionRow({
             pt: 0.15,
             textAlign: 'end',
             color: 'text.secondary',
-            fontSize: 12,
+            fontSize: '0.75rem',
             fontWeight: 750,
             fontVariantNumeric: 'tabular-nums',
+            "[data-flow-large-text='true'] &": {
+              width: 'max-content',
+              minWidth: '2.375rem',
+              flex: '0 0 auto',
+              textAlign: 'start',
+              whiteSpace: 'nowrap',
+            },
           }}
         >
           {item.dueAt ? formatDate(item.dueAt, { timeStyle: 'short' }) : t('flow.purpose.allDay')}
@@ -225,7 +241,7 @@ function ContributionRow({
             borderRadius: '8px',
             color: 'text.secondary',
             bgcolor: 'action.hover',
-            fontSize: 10.5,
+            fontSize: '0.65625rem',
             fontWeight: 800,
             fontVariantNumeric: 'tabular-nums',
             letterSpacing: '0.02em',
@@ -243,6 +259,7 @@ function ContributionRow({
             sx={{ minWidth: 0, overflow: 'hidden' }}
           >
             <Typography
+              data-home-purpose-title
               component="h3"
               variant="subtitle2"
               fontWeight={featured ? 750 : 700}
@@ -254,7 +271,11 @@ function ContributionRow({
                 WebkitLineClamp: { xs: featured ? 2 : 1, sm: 1 },
                 overflow: 'hidden',
                 fontSize:
-                  policy.density === 'short' ? 12.5 : policy.density === 'standard' ? 13 : 14,
+                  policy.density === 'short'
+                    ? '0.78125rem'
+                    : policy.density === 'standard'
+                      ? '0.8125rem'
+                      : '0.875rem',
                 lineHeight: policy.density === 'short' ? 1.3 : 1.35,
                 wordBreak: 'keep-all',
                 overflowWrap: 'break-word',
@@ -263,6 +284,11 @@ function ContributionRow({
                       minHeight: '2.6em',
                     }
                   : undefined,
+                "[data-flow-large-text='true'] &": {
+                  display: 'block',
+                  WebkitLineClamp: 'unset',
+                  overflow: 'visible',
+                },
               }}
             >
               {item.title}
@@ -272,7 +298,12 @@ function ContributionRow({
             <Chip
               size="small"
               label={t('flow.purpose.count', { count: item.count })}
-              sx={{ height: 22, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
+              sx={{
+                height: 22,
+                flexShrink: 0,
+                fontVariantNumeric: 'tabular-nums',
+                "[data-flow-large-text='true'] &": { height: 'auto', minHeight: '1.375rem' },
+              }}
             />
           )}
         </Stack>
@@ -287,8 +318,13 @@ function ContributionRow({
               WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              fontSize: 12.5,
+              fontSize: '0.78125rem',
               lineHeight: 1.35,
+              "[data-flow-large-text='true'] &": {
+                display: 'block',
+                WebkitLineClamp: 'unset',
+                overflow: 'visible',
+              },
             }}
           >
             {item.description}
@@ -355,6 +391,11 @@ function ContributionRow({
                   ? 56
                   : 52,
           py: 0,
+        },
+        "[data-flow-large-text='true'] &": {
+          minHeight: 'auto',
+          py: 0.75,
+          alignItems: 'flex-start',
         },
         '&:hover': interactive ? { bgcolor: 'action.hover' } : undefined,
         '&:focus-visible': interactive
@@ -424,7 +465,7 @@ function RoleExceptionSummary({ item }: { item: NormalizedHomeContribution }) {
         fontWeight={700}
         title={item.title}
         noWrap
-        sx={{ minWidth: 0, flex: 1, fontSize: 11.5 }}
+        sx={{ minWidth: 0, flex: 1, fontSize: '0.71875rem' }}
       >
         {item.title}
       </Typography>
@@ -434,7 +475,7 @@ function RoleExceptionSummary({ item }: { item: NormalizedHomeContribution }) {
         color={toneColor(item)}
         fontWeight={750}
         noWrap
-        sx={{ fontSize: 10.5 }}
+        sx={{ fontSize: '0.65625rem' }}
       >
         {statusLabel}
       </Typography>
@@ -442,7 +483,12 @@ function RoleExceptionSummary({ item }: { item: NormalizedHomeContribution }) {
         <Chip
           size="small"
           label={t('flow.purpose.count', { count: item.count })}
-          sx={{ height: 20, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
+          sx={{
+            height: 20,
+            flexShrink: 0,
+            fontVariantNumeric: 'tabular-nums',
+            "[data-flow-large-text='true'] &": { height: 'auto', minHeight: '1.25rem' },
+          }}
         />
       )}
       {interactive && <ArrowRight size={14} aria-hidden="true" style={{ flex: '0 0 auto' }} />}
@@ -467,78 +513,6 @@ function PurposeLoading({ rows, density }: { rows: number; density: HomePurposeC
           />
         </Box>
       ))}
-    </Stack>
-  );
-}
-
-function RequestEmptyJourney() {
-  const { t } = useTranslation('home');
-  const stages = ['submitted', 'review', 'complete'] as const;
-  return (
-    <Stack
-      data-home-request-empty-journey
-      gap={0.55}
-      sx={{
-        mt: 1,
-        display: { xs: 'none', sm: 'flex' },
-      }}
-    >
-      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10.5 }}>
-        {t('flow.purpose.request.emptyJourneyLabel')}
-      </Typography>
-      <Box
-        component="ol"
-        aria-label={t('flow.purpose.request.emptyJourneyLabel')}
-        sx={{
-          p: 0,
-          m: 0,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-          listStyle: 'none',
-        }}
-      >
-        {stages.map((stage, index) => (
-          <Box
-            component="li"
-            key={stage}
-            sx={{
-              position: 'relative',
-              minWidth: 0,
-              display: 'grid',
-              justifyItems: 'center',
-              gap: 0.4,
-              '&::after':
-                index < stages.length - 1
-                  ? {
-                      content: '""',
-                      position: 'absolute',
-                      top: 5,
-                      insetInlineStart: 'calc(50% + 7px)',
-                      width: 'calc(100% - 14px)',
-                      borderBlockStart: 1,
-                      borderColor: 'divider',
-                    }
-                  : undefined,
-            }}
-          >
-            <Box
-              aria-hidden="true"
-              sx={{
-                zIndex: 1,
-                width: 11,
-                height: 11,
-                borderRadius: '50%',
-                bgcolor: 'action.disabledBackground',
-                border: 2,
-                borderColor: 'background.paper',
-              }}
-            />
-            <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: 10.5 }}>
-              {t(`flow.purpose.request.emptyJourney.${stage}`)}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
     </Stack>
   );
 }
@@ -569,6 +543,7 @@ export function HomePurposeWidget({
   featuredFirst = false,
   wideFeatured = false,
   supportStack = false,
+  referenceLayout = false,
   timeline = false,
   roleSignals = [],
   headerAccessory,
@@ -582,11 +557,13 @@ export function HomePurposeWidget({
   const degraded = resolvedState === 'PARTIAL' || resolvedState === 'UNAVAILABLE';
   const visibleLimit = homePurposeVisibleLimit(maxItems, footprintHeight, supportStack);
   const resolvedVisibleLimit =
-    sectionKey === 'pulse' && roleSignals.length > 0 ? Math.min(1, visibleLimit) : visibleLimit;
+    sectionKey === 'pulse' && roleSignals.length > 0 && !referenceLayout
+      ? Math.min(1, visibleLimit)
+      : visibleLimit;
   const visible = items.slice(0, resolvedVisibleLimit);
   const overflow = Math.max(0, items.length - visible.length);
   const overflowItems = items.slice(visible.length);
-  const wideFeaturedLayout = wideFeatured && featuredFirst && visible.length > 1;
+  const compactActionGrid = featuredFirst && wideFeatured && visible.length > 1;
   const showRoleInsight = sectionKey === 'pulse' && roleSignals.length > 0;
   const roleVisualOnly = showRoleInsight && items.length === 0;
   const compactRoleException =
@@ -615,10 +592,15 @@ export function HomePurposeWidget({
       data-home-role-visual-only={roleVisualOnly ? 'true' : undefined}
       data-home-role-compact-exception={compactRoleException ? 'true' : undefined}
       data-home-content-state={loading ? 'loading' : resolvedState.toLocaleLowerCase('en-US')}
+      data-home-purpose-sparse-timeline={
+        referenceLayout && timeline && !loading && visible.length < 3 ? 'true' : undefined
+      }
       aria-busy={loading || undefined}
       sx={{
         minWidth: 0,
         scrollMarginTop: 88,
+        containerName: 'home-purpose-widget',
+        containerType: 'inline-size',
         px: 2,
         py: supportStack ? 0.5 : contentPolicy.density === 'short' ? 0.75 : compact ? 1.25 : 1,
         display: 'flex',
@@ -669,6 +651,7 @@ export function HomePurposeWidget({
               {t(`flow.purpose.${sectionKey}.title`)}
             </Typography>
             <Typography
+              data-home-purpose-description
               variant="body2"
               color="text.secondary"
               sx={{
@@ -679,6 +662,11 @@ export function HomePurposeWidget({
                 overflow: 'hidden',
                 wordBreak: 'keep-all',
                 overflowWrap: 'break-word',
+                "[data-flow-large-text='true'] &": {
+                  display: 'block',
+                  WebkitLineClamp: 'unset',
+                  overflow: 'visible',
+                },
               }}
             >
               {t(`flow.purpose.${sectionKey}.description`)}
@@ -808,7 +796,7 @@ export function HomePurposeWidget({
         <Box
           sx={{
             mt: showContextualVisual ? 1 : defaultListMarginTop,
-            flex: '1 1 auto',
+            flex: referenceLayout ? '0 0 auto' : '1 1 auto',
             display: 'flex',
             "[data-workspace-widget-content-state='editing-preview'] &": {
               mt: defaultListMarginTop,
@@ -821,7 +809,9 @@ export function HomePurposeWidget({
             <Box
               role="list"
               aria-label={t(`flow.purpose.${sectionKey}.listLabel`)}
-              data-home-purpose-list={wideFeaturedLayout ? 'featured-queue' : 'stack'}
+              data-home-purpose-list={compactActionGrid ? 'compact-grid' : 'stack'}
+              data-home-purpose-visible-count={visible.length}
+              data-home-purpose-wide-featured={wideFeatured ? 'true' : undefined}
               data-home-purpose-timeline={timeline ? 'true' : undefined}
               sx={{
                 width: 1,
@@ -847,7 +837,7 @@ export function HomePurposeWidget({
                   // over the following record even when the section itself is
                   // content-adaptive.
                   minHeight: featuredFirst ? 52 : contentPolicy.density === 'tall' ? 58 : 44,
-                  flex: '1 1 0',
+                  flex: referenceLayout ? '0 0 auto' : '1 1 0',
                   position: 'relative',
                   zIndex: 1,
                 },
@@ -865,6 +855,50 @@ export function HomePurposeWidget({
                 '& > [role="listitem"] > [data-home-contribution]': {
                   height: 1,
                   justifyContent: 'center',
+                },
+                ...(compactActionGrid
+                  ? {
+                      '@container home-purpose-widget (min-width: 720px)': {
+                        display: 'grid',
+                        gridTemplateColumns: `repeat(${Math.min(4, visible.length)}, minmax(0, 1fr))`,
+                        alignItems: 'stretch',
+                        gap: 1,
+                        '& > [role="listitem"]': {
+                          minHeight: 88,
+                          flex: 'none',
+                          overflow: 'visible',
+                          border: '1px solid',
+                          borderColor: 'divider',
+                          borderRadius: 'var(--home-radius-item)',
+                          bgcolor: 'var(--home-surface-subtle)',
+                        },
+                        '& > [role="listitem"] > [data-home-contribution]': {
+                          minHeight: 88,
+                          height: 1,
+                          px: 1,
+                          py: 0.75,
+                          alignItems: 'center',
+                          borderBlockStart: 0,
+                          borderRadius: 'inherit',
+                        },
+                      },
+                    }
+                  : {}),
+                "[data-flow-large-text='true'] &": {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'auto',
+                  gap: 0.75,
+                  '&::before': { display: 'none' },
+                  '& > [role="listitem"]': {
+                    minHeight: 'auto',
+                    flex: '0 0 auto',
+                  },
+                  '& > [role="listitem"] > [data-home-contribution]': {
+                    minHeight: 'auto',
+                    height: 'auto',
+                    justifyContent: 'flex-start',
+                  },
                 },
               }}
             >

@@ -1,11 +1,16 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { chmodSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { afterEach, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+
+import {
+  cleanupReadinessFixtures,
+  createReadinessFixtureDirectory,
+  run,
+} from './check-product-surface-production-readiness.test-support.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const checker = resolve(root, 'scripts/check-product-surface-production-readiness.mjs');
@@ -18,6 +23,7 @@ const closureSource = resolve(
   root,
   'architecture/product-surface-internal-closure.v1.generated.json'
 );
+const authorizationSource = resolve(root, 'architecture/product-surface-authorization.v1.json');
 const trustPolicySource = resolve(
   root,
   'architecture/product-surface-release-trust-policy.v1.json'
@@ -50,7 +56,6 @@ const provenanceKindByEvidenceType = new Map([
   ['USABILITY_STUDY', 'INDEPENDENT_REVIEW_ATTESTATION'],
   ['PENETRATION_TEST', 'INDEPENDENT_REVIEW_ATTESTATION'],
 ]);
-const temporaryDirectories = [];
 const attackVectorIds = [
   'CROSS_TENANT',
   'SCOPE_ESCAPE',
@@ -64,54 +69,21 @@ const productExternalBlockers = (productId) => [
   `EXTERNAL_${productId.toUpperCase()}_IMMUTABLE_RELEASE_ATTESTATION`,
 ];
 
-afterEach(() => {
-  for (const directory of temporaryDirectories.splice(0)) {
-    rmSync(directory, { recursive: true, force: true });
-  }
-});
+afterEach(cleanupReadinessFixtures);
 
 function fixture() {
-  const directory = mkdtempSync(join(tmpdir(), 'dwp-product-surface-readiness-'));
-  temporaryDirectories.push(directory);
+  const directory = createReadinessFixtureDirectory();
   return {
     directory,
     path: join(directory, 'manifest.json'),
     closurePath: join(directory, 'internal-closure.json'),
+    authorizationPath: join(directory, 'authorization.json'),
     trustPolicyPath: join(directory, 'release-trust-policy.json'),
     manifest: JSON.parse(readFileSync(manifestSource, 'utf8')),
     closure: JSON.parse(readFileSync(closureSource, 'utf8')),
+    authorization: JSON.parse(readFileSync(authorizationSource, 'utf8')),
     trustPolicy: JSON.parse(readFileSync(trustPolicySource, 'utf8')),
   };
-}
-
-function run(value, arguments_ = [], environment = {}) {
-  writeFileSync(value.path, `${JSON.stringify(value.manifest, null, 2)}\n`);
-  writeFileSync(value.closurePath, `${JSON.stringify(value.closure, null, 2)}\n`);
-  writeFileSync(value.trustPolicyPath, `${JSON.stringify(value.trustPolicy, null, 2)}\n`);
-  const evidenceArguments = [];
-  if (value.evidenceCheckout) {
-    evidenceArguments.push('--evidence-checkout', value.evidenceCheckout);
-  }
-  if (value.evidenceRevision) {
-    evidenceArguments.push('--evidence-revision', value.evidenceRevision);
-  }
-  return spawnSync(
-    process.execPath,
-    [
-      checker,
-      '--manifest',
-      value.path,
-      '--closure',
-      value.closurePath,
-      '--trust-policy',
-      value.trustPolicyPath,
-      '--root',
-      root,
-      ...evidenceArguments,
-      ...arguments_,
-    ],
-    { cwd: root, encoding: 'utf8', env: { ...process.env, ...environment } }
-  );
 }
 
 function runWithSchema(value, schema) {
@@ -646,13 +618,41 @@ function canonicalChecksum(value) {
     .digest('hex');
 }
 
-test('integrity mode accepts the explicitly blocked production manifest', () => {
+test('integrity mode accepts the attested v4 closure while latest v5 remains draft', () => {
   const value = fixture();
   const result = run(value);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /exact product contracts: 12\/12/);
   assert.match(result.stdout, /release-approved product closure: 0\/12/);
   assert.match(result.stdout, /schema and integrity only/);
+});
+
+test('integrity mode rejects duplicate immutable bundles for the attested closure version', () => {
+  const value = fixture();
+  const v4 = value.authorization.bundles.find((bundle) => bundle.version === 4);
+  assert.ok(v4);
+  value.authorization.bundles.push(structuredClone(v4));
+
+  const result = run(value);
+  assert.equal(result.status, 1);
+  assert.match(
+    result.stderr,
+    /internal closure snapshot is not bound to its immutable authorization bundle/
+  );
+});
+
+test('integrity mode rejects an index entry that is not bound to the attested bundle', () => {
+  const value = fixture();
+  const v4Index = value.authorization.index.versions.find((entry) => entry.version === 4);
+  assert.ok(v4Index);
+  v4Index.artifact = 'product-surfaces-v1.bundle-v4-tampered.json';
+
+  const result = run(value);
+  assert.equal(result.status, 1);
+  assert.match(
+    result.stderr,
+    /internal closure snapshot is not bound to its immutable authorization bundle/
+  );
 });
 
 test('keeps X-03 internal while the calculated five-vector matrix is partial', () => {
@@ -673,6 +673,11 @@ test('release mode fails closed without converting pending approvals to completi
   const value = fixture();
   const result = run(value, ['--release']);
   assert.equal(result.status, 2);
+  assert.match(
+    result.stderr,
+    /AUTHORIZATION_CLOSURE_ATTESTATION: latest authorization registry v5/
+  );
+  assert.match(result.stderr, /does not match attested closure v4/);
   assert.match(result.stderr, /G-02 BLOCKED_EXTERNAL/);
   assert.match(
     result.stderr,

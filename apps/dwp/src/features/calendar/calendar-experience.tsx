@@ -17,12 +17,14 @@ export type CalendarCanvasArchetype =
 export function CalendarCanvas({
   archetype,
   children,
+  topInset = 'standard',
 }: {
   archetype: CalendarCanvasArchetype;
   children: ReactNode;
+  topInset?: 'standard' | 'compact';
 }) {
   return (
-    <PageCanvas>
+    <PageCanvas topInset={topInset}>
       <Box data-calendar-canvas={archetype} sx={{ width: 1, minWidth: 0 }}>
         {children}
       </Box>
@@ -181,11 +183,6 @@ export function CalendarSignal({
   );
   const surfaceSx = (theme: Theme) => {
     const color = toneColor(theme, tone);
-    const wash = alpha(
-      color,
-      theme.palette.mode === 'dark' ? (isSelected ? 0.2 : 0.1) : isSelected ? 0.11 : 0.045
-    );
-    const base = alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.95 : 0.98);
     return {
       width: 1,
       minWidth: 0,
@@ -197,10 +194,11 @@ export function CalendarSignal({
       borderColor: isSelected ? alpha(color, 0.52) : alpha(theme.palette.divider, 0.72),
       borderRadius: 1.25,
       color: 'text.primary',
-      bgcolor: 'background.paper',
-      backgroundImage: `linear-gradient(145deg, ${wash} 0%, ${base} 68%)`,
-      boxShadow: onClick ? theme.shadows[1] : 'none',
-      transition: theme.transitions.create(['background-color', 'border-color', 'transform'], {
+      bgcolor: isSelected
+        ? alpha(color, theme.palette.mode === 'dark' ? 0.12 : 0.055)
+        : 'background.paper',
+      boxShadow: 'none',
+      transition: theme.transitions.create(['background-color', 'border-color'], {
         duration: theme.transitions.duration.shorter,
       }),
       '&::before': {
@@ -235,11 +233,7 @@ export function CalendarSignal({
         ...surfaceSx(theme),
         '&:hover': {
           borderColor: alpha(toneColor(theme, tone), 0.62),
-          backgroundImage: `linear-gradient(145deg, ${alpha(
-            toneColor(theme, tone),
-            theme.palette.mode === 'dark' ? 0.18 : 0.08
-          )} 0%, ${alpha(theme.palette.background.paper, 0.96)} 72%)`,
-          transform: 'translateY(-1px)',
+          bgcolor: alpha(toneColor(theme, tone), theme.palette.mode === 'dark' ? 0.1 : 0.045),
         },
         '&:focus-visible': {
           outline: `2px solid ${theme.palette.primary.main}`,

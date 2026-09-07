@@ -1,0 +1,172 @@
+{
+  "snapshotAtUtc": "2026-09-04T07:50:06.853142+00:00",
+  "scope": "Work owner format/document closeout; not a release attestation",
+  "ownedCodeChanges": [
+    "apps/dwp/src/features/work-hub/work-hub-loader.test.ts",
+    "libs/shared-utils/src/api/workspace-api.ts:WorkspaceWorkStatus declaration only"
+  ],
+  "behaviorChange": false,
+  "codeFormat": {
+    "scope": [
+      "apps/dwp/src/features/work-hub/use-work-hub-runtime.ts",
+      "apps/dwp/src/features/work-hub/work-hub-actions.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-actions.ts",
+      "apps/dwp/src/features/work-hub/work-hub-assist.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-assist.ts",
+      "apps/dwp/src/features/work-hub/work-hub-contracts.ts",
+      "apps/dwp/src/features/work-hub/work-hub-controller.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-controller.ts",
+      "apps/dwp/src/features/work-hub/work-hub-loader.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-loader.ts",
+      "apps/dwp/src/features/work-hub/work-hub-model.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-model.ts",
+      "apps/dwp/src/features/work-hub/work-hub-scheduling.test.ts",
+      "apps/dwp/src/features/work-hub/work-hub-scheduling.ts",
+      "apps/dwp/src/features/work-hub/work-hub-source-adapters.ts",
+      "apps/dwp/src/features/work-hub/work-hub-source-hydration.ts",
+      "apps/dwp/src/features/work-hub/work-hub.test-support.ts",
+      "apps/dwp/src/features/work/use-work-clock.ts",
+      "apps/dwp/src/features/work/work-home.tsx",
+      "apps/dwp/src/features/work/work-queue-dispatcher.ts",
+      "apps/dwp/src/pages/work-home.tsx",
+      "apps/dwp/src/pages/work.tsx",
+      "apps/dwp/src/routes/work-routes.tsx",
+      "e2e/support/work-hub-foundation-fixtures.ts",
+      "e2e/work-hub-foundation.spec.ts",
+      "libs/shared-utils/src/api/personal-work-api.test.ts",
+      "libs/shared-utils/src/api/personal-work-api.ts",
+      "libs/shared-utils/src/api/personal-work-contracts.ts",
+      "libs/shared-utils/src/api/work-assignment-api.test.ts",
+      "libs/shared-utils/src/api/work-assignment-api.ts",
+      "libs/shared-utils/src/api/work-assignment-contracts.ts",
+      "libs/shared-utils/src/api/work-hub-calendar-api.test.ts",
+      "libs/shared-utils/src/api/work-hub-calendar-api.ts",
+      "libs/shared-utils/src/api/workspace-work-policy.test.ts",
+      "libs/shared-utils/src/api/workspace-work-policy.ts"
+    ],
+    "checked": 35,
+    "passed": 35,
+    "eslintExitCode": 0,
+    "originalReport": "work-owner-format-report.json",
+    "equivalence": "work-owner-format-equivalence.json",
+    "optionalTrailingCommaRawTokenDifference": 1
+  },
+  "sharedDeclarations": {
+    "workspaceWorkStatus": {
+      "path": "libs/shared-utils/src/api/workspace-api.ts",
+      "changed": true,
+      "astPrinterEquivalent": true,
+      "nonWorkBytesPreserved": true
+    },
+    "workPolicyExport": {
+      "path": "libs/shared-utils/src/index.ts",
+      "formatPass": true,
+      "changed": false
+    },
+    "scope": "Only Work-owned declarations in shared mixed-ownership files; Activity-owned formatting is not modified."
+  },
+  "sharedFilePrettier": {
+    "files": [
+      "libs/shared-utils/src/api/workspace-api.ts",
+      "libs/shared-utils/src/index.ts"
+    ],
+    "exitCode": 0,
+    "indexActivityChangeOwner": "Activity task 01a06a14-9db0-7ff0-990b-28e32f0c1034"
+  },
+  "tests": {
+    "files": 11,
+    "tests": 59,
+    "passed": 59,
+    "failed": 0,
+    "skipped": 0,
+    "app": "work-owner-app-tests.json",
+    "shared": "work-owner-shared-tests.json",
+    "overlap": "Includes original Work 48 and assignment SDK 11; do not add to prior or global totals."
+  },
+  "sourceSha256": {
+    "apps/dwp/src/features/work-hub/use-work-hub-runtime.ts": "938d6af002f422ac02d5180c94e4b14d756499000483870aeede24294240cbe3",
+    "apps/dwp/src/features/work-hub/work-hub-actions.test.ts": "68b139ae4316f2e89fa319c6640f8271f7fd33e59f2798b87e4b61f80151915d",
+    "apps/dwp/src/features/work-hub/work-hub-actions.ts": "7977a376a4706e7a8509ba253133a1fc595cb32bad4d9331b99adcb54344f836",
+    "apps/dwp/src/features/work-hub/work-hub-assist.test.ts": "878ab77e194cfd1c1d121e1794cd96f123dee92dd9743f8e4f773e65f4f175b9",
+    "apps/dwp/src/features/work-hub/work-hub-assist.ts": "bd795fbb8bea20a625db5db3dec85ba23c7ff7d1a9b95a7b3640641065d5bbd2",
+    "apps/dwp/src/features/work-hub/work-hub-contracts.ts": "f7b50720468f768b53f82eeb5fc158febbd1511537b4b79e49eba444110b4466",
+    "apps/dwp/src/features/work-hub/work-hub-controller.test.ts": "f4dce3baf5c54cfe63b39031cf4b03d78f00fcea6509a6a295c1d64fa1e3717e",
+    "apps/dwp/src/features/work-hub/work-hub-controller.ts": "264da0f73702019055221ebf65d9758e5b17140d7f547e3429115d465fbb676c",
+    "apps/dwp/src/features/work-hub/work-hub-loader.test.ts": "344a2fccb538a158540c7c6a0f96a8e12020d26b05836aaa76225d31eedd8e3c",
+    "apps/dwp/src/features/work-hub/work-hub-loader.ts": "b63176c8c77eaf98b7b74eda651cab30751f7719910c348d3fdd4d27e4d056a3",
+    "apps/dwp/src/features/work-hub/work-hub-model.test.ts": "4b8d36e193df384d482d27a58aabd7c792c475a10fb30f1e37677aba8123d05b",
+    "apps/dwp/src/features/work-hub/work-hub-model.ts": "16600ac1c1e479d66acd022fcd1bfd1b15f2e6777af04d535bf6afe46da167f0",
+    "apps/dwp/src/features/work-hub/work-hub-scheduling.test.ts": "f87ae305620f76656838bb29ad9a9d9d2e393d753195e356afc0831e66e05972",
+    "apps/dwp/src/features/work-hub/work-hub-scheduling.ts": "0d9131915dfcd36bcafb2ad69334153e70f0d5002bc32369ce5459faf593f694",
+    "apps/dwp/src/features/work-hub/work-hub-source-adapters.ts": "c72fddd92c5eeb339cc8e064f63c80cae01b1ad9e353d63145a8108be5fc7cae",
+    "apps/dwp/src/features/work-hub/work-hub-source-hydration.ts": "16eb1c5dd0a07a608538170f8d3c42f6aa81872e4d594eb33634b5468b6e6a26",
+    "apps/dwp/src/features/work-hub/work-hub.test-support.ts": "8061819c118661bf1c1ceb46e07462568cfb6b2ee1e4f4cdc0c8f5c2b6b4e752",
+    "apps/dwp/src/features/work/use-work-clock.ts": "dd49020bf579ff573d25eb8560c8e48acdd03ab3758f271082e1b6f978eb2a7b",
+    "apps/dwp/src/features/work/work-home.tsx": "fd4b437a20ffa0aa9c8afe1f151417d6c0dd7a904e77d777b1b4077a6999eb30",
+    "apps/dwp/src/features/work/work-queue-dispatcher.ts": "a1bfd277cf182f1adfff5656bb08430ec2f2da94b70c9b9991f65ba3c8f15ed4",
+    "apps/dwp/src/pages/work-home.tsx": "f95cd047c001b30f6f22d925cd66c3bff17983961657055b188d25d10c88e332",
+    "apps/dwp/src/pages/work.tsx": "6f80034f083dbaf9660017933d36bd34ba0867eb5de013c58b31ce9a02fef375",
+    "apps/dwp/src/routes/work-routes.tsx": "146d0329c8561619a937c27fe742e9b7ee1a06c2d9941c62df0202c95237fd6d",
+    "e2e/support/work-hub-foundation-fixtures.ts": "948ce2738adaae61ff74b793e5736499928393ce775f68f6cb1b794a1b02a523",
+    "e2e/work-hub-foundation.spec.ts": "9d83388554b9f5dd4d0c7c863c15dd9351567e1f0be88c67aad7f16915d2f37f",
+    "libs/shared-utils/src/api/personal-work-api.test.ts": "327a0c3d2e3b37282bab131493dbbda682c6bde6ce684df721b741ae97a294c5",
+    "libs/shared-utils/src/api/personal-work-api.ts": "bff1e7354e7df5aa09d72db29938cbbe1d1f7118f85230bab3ed18ed45952e51",
+    "libs/shared-utils/src/api/personal-work-contracts.ts": "7f0794dde258dab27166917f3bf421071fade971bfb03fcd06daa92c2e2f8ce3",
+    "libs/shared-utils/src/api/work-assignment-api.test.ts": "95665b4e005664aff8f661307593cb9ce065b7e964fccecb2cf462748bcb8e8c",
+    "libs/shared-utils/src/api/work-assignment-api.ts": "58b941da2f98d4742fbf075531a22c956fddbb4f5537a0e389e74048a8f1901f",
+    "libs/shared-utils/src/api/work-assignment-contracts.ts": "946c2d6944f55611da9f8c0729c7b4f3901351c89ec081ba292b1fd992a2d8fe",
+    "libs/shared-utils/src/api/work-hub-calendar-api.test.ts": "baf4960f7b9d643aaef4ccd76302bd7b1a7bf0af68614d40e16d48cf7219480c",
+    "libs/shared-utils/src/api/work-hub-calendar-api.ts": "5067093521b2565dbb07fcf9b427cbb0801b999159a578471fc34d5ff177523b",
+    "libs/shared-utils/src/api/workspace-work-policy.test.ts": "40bbbdcb81fd70e9e387e9b599cb82f75529c71b2a2ce697eee73d3f8b8040d0",
+    "libs/shared-utils/src/api/workspace-work-policy.ts": "f889ed7e97c2871fbd5d9ca4d71a7121c44e7b26b4eea4d8a21fcbbc4526dbd9",
+    "libs/shared-utils/src/api/workspace-api.ts": "133c360e8ae98a7eec4bda9d1e4a35c6d519b952acf46152affdafef298e562f",
+    "libs/shared-utils/src/index.ts": "1ee6244e36536cdb02c472b05bc9280a753406315438c75e8a46225c19c0bde1"
+  },
+  "ownerReports": [
+    {
+      "path": "docs/05-features/DWP-R1-CORE-006-product-surface-separation/11-2026-09-04-closeout.md",
+      "sha256": "f924ae5f16661cd753768c9d872af6477e34cb71a8aec23c0ce9b34ef2ad04b7",
+      "scope": "Common owner reported whole frontend 385 files/2606 tests, architecture/build PASS; raw1050.5/gzip306.8 KiB; external37 BLOCKED"
+    },
+    {
+      "path": "docs/05-features/DWP-R1-MTG-001-enterprise-video-meetings/08-menu-connection-checkpoint.md",
+      "sha256": "e0ed3e8b94f86f47b9542a5f03299d741c82b2d8a76ee3f07728c7b2062e16c7",
+      "scope": "Meeting owner reported U09 model/runtime/SDK52 and fixture browser12 PASS; source exact-report40 and wholeMeeting526 are overlapping, not additive."
+    }
+  ],
+  "frozenCommonFiles": {
+    "frontend": {
+      "apps/dwp/src/components/product-surface-capability-access.ts": "097e9bea654f4ee73b50ac3a1b3f331b1c55553cb5806c54be85564de60d9876",
+      "apps/dwp/src/components/use-product-surface-request-scope.ts": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+      "apps/dwp/src/components/use-product-surface-request-scope.test.ts": "295b9d09094362a1dc861980990b6ec083e0d574638cacab72960a40130e2b31",
+      "apps/dwp/src/routes/product-menu-manifest.test.ts": "cdf2980dec44dc58f8b16f926a2ce61b7047fbb4de41d8d799c1da4396340fbe",
+      "apps/dwp/src/routes/product-surface-expansion.test.ts": "1cd3dd2bb48aedb689f2c03a834d0e9f7b5544354acd75b2ad6c9e98f4e73f33",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts": "5ce7ffeb0eba3ced5fd0fb68c8e1c229986597e975b4d4dda4db9313fcdfef52",
+      "scripts/maintenance-source-size-baseline.json": "f1334640e01db97bad478fd6703c1ffdaf527007f1e1988601243dee7e6d0e20",
+      "docs/03-architecture/R1 제품 Surface 전체 메뉴 분류표.md": "b77eaefc19b5271d7257b45ffa855e0df84a6f192890fdd4c35764d80d67e912",
+      "docs/05-features/DWP-R1-CORE-006-product-surface-separation/README.md": "febe662ceea7816112458162a7d736b55424529327c70e921f458109bf44cd1e",
+      "docs/05-features/DWP-R1-CORE-006-product-surface-separation/11-2026-09-04-closeout.md": "f924ae5f16661cd753768c9d872af6477e34cb71a8aec23c0ce9b34ef2ad04b7"
+    },
+    "backend": {
+      "scripts/check-service-boundaries.py": "2dae222e03c8452c641d1d19116c38e9986c449815a5f2f0b30635c9a2f8028b",
+      "scripts/tests/test_service_boundaries.py": "631bd8cc8380d17b43443d310311a89116d751397b2cf3efa38bceba919dc15f",
+      "docs/architecture/service-interface-contracts.json": "230d48c73ba1bb9e1358a710fb6de1e06d4e027b6fed5dea24dfe46ec019ab32",
+      "docs/architecture/service-interface-boundary-and-gateway-policy.md": "eae857abd3e6284ae4a2f09de7c99eb0bc960bd9ab14f42d23b245323c499d24"
+    }
+  },
+  "sourcePromotion": "NO-GO pending approved Auth/People/exact additive authority, target eligibility and source receiver integration. Static signing and SDK reachability do not activate this.",
+  "uiStatus": "New Work screens await user-provided design; existing Meeting U09 consumption is separately owned.",
+  "runtime": "No Work runtime restart, DB mutation, common/Gateway/generated write, commit or push in this closeout.",
+  "finalChecks": {
+    "markdownFiles": 25,
+    "localLinks": 99,
+    "missing": 0,
+    "commonFrozenFilesUnchanged": 14,
+    "finalWorkSourceHashMatch": "PASS",
+    "markdownPrettierExitCode": 0,
+    "sharedWorkspaceAndIndexEslintExitCode": 0,
+    "frontendDiffCheckExitCode": 0,
+    "backendDiffCheckExitCode": 0
+  },
+  "status": "WORK_OWNED_FOUNDATION_FORMAT_DOCUMENTATION_CLOSED_DESIGN_AND_SOURCE_AUTHORITY_PENDING"
+}

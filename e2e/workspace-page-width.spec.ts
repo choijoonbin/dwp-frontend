@@ -34,7 +34,7 @@ const desktopScenarios: readonly WidthScenario[] = [
     name: 'meetings',
     path: '/meetings/home',
     roles: ['WORKSPACE_MEMBER'],
-    root: '[data-testid="meeting-command-deck"]',
+    root: '[data-testid="meeting-command-primary"]',
   },
   {
     name: 'communications',
@@ -45,6 +45,12 @@ const desktopScenarios: readonly WidthScenario[] = [
   {
     name: 'mail',
     path: '/mail/home',
+    roles: ['WORKSPACE_MEMBER'],
+    root: '[data-dwp-page-canvas="workspace"] > :first-child',
+  },
+  {
+    name: 'notifications',
+    path: '/notifications/home',
     roles: ['WORKSPACE_MEMBER'],
     root: '[data-dwp-page-canvas="workspace"] > :first-child',
   },

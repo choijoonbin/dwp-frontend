@@ -5,8 +5,9 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
 import { MessagingLayout } from '../layouts/messaging-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -21,9 +22,19 @@ const page = (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.MESSAGING">
+  <ProductWorkRouteGuard
+    productId="messaging"
+    surfaceId="messaging.work"
+    resourceKey="APP.MESSAGING"
+  >
     <MessagingLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const managementLegacyShell = (
+  <ProductRouteGuard resourceKey="ADMIN.MESSAGING">
+    <MessagingLayout />
+  </ProductRouteGuard>
 );
 
 export const messagingRoutes: RouteObject[] = [
@@ -43,6 +54,7 @@ export const messagingRoutes: RouteObject[] = [
       managementBasePath: '/messages/admin',
       legacyPath: '/messages/home',
       legacyShell,
+      managementLegacyShell,
       areaKey: 'messaging',
       translationNamespace: 'messaging',
       renderPage: () => page,

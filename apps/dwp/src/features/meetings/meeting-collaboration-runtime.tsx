@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 
+import { HttpError } from '@dwp-frontend/shared-utils';
 import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import {
   acknowledgeVideoMeetingHand,
@@ -29,6 +30,8 @@ import { formatMeetingTime } from './meeting-components';
 const COLLABORATION_POLL_INTERVAL_MS = 2_000;
 const COLLABORATION_PAGE_SIZE = 100;
 const MAX_CHAT_MESSAGE_LENGTH = 4_000;
+const collaborationAuthorizationDenied = (error: unknown) =>
+  error instanceof HttpError && [401, 403, 404].includes(error.status);
 
 function mergeById<T>(
   current: readonly T[],
@@ -95,6 +98,7 @@ function initials(name: string): string {
 
 export function MeetingCollaborationRuntime({
   meetingId,
+  authorizationScope,
   activeTab,
   meetingLive,
   canModerate,
@@ -103,6 +107,7 @@ export function MeetingCollaborationRuntime({
   onTabChange,
 }: {
   meetingId: string;
+  authorizationScope: string;
   activeTab: MeetingCollaborationTab | null;
   meetingLive: boolean;
   canModerate: boolean;
@@ -111,6 +116,8 @@ export function MeetingCollaborationRuntime({
   onTabChange: (tab: MeetingCollaborationTab) => void;
 }) {
   const { t, i18n } = useTranslation('meetings');
+  const translation = useRef(t);
+  translation.current = t;
   const [chatMessages, setChatMessages] = useState<MeetingChatMessage[]>([]);
   const [handRequests, setHandRequests] = useState<VideoMeetingHandRequest[]>([]);
   const [chatError, setChatError] = useState<string | null>(null);
@@ -122,36 +129,74 @@ export function MeetingCollaborationRuntime({
   const [busyMessageIds, setBusyMessageIds] = useState<ReadonlySet<string>>(new Set());
   const [busyRequestIds, setBusyRequestIds] = useState<ReadonlySet<string>>(new Set());
   const [lastReadSequence, setLastReadSequence] = useState(0);
+  const [chatRevoked, setChatRevoked] = useState(false);
+  const [floorRevoked, setFloorRevoked] = useState(false);
+  const [accessGeneration, setAccessGeneration] = useState(0);
   const chatCursor = useRef(0);
   const floorCursor = useRef(0);
+  const authorizationGeneration = useRef(0);
 
   useEffect(() => {
+    authorizationGeneration.current += 1;
     chatCursor.current = 0;
     floorCursor.current = 0;
     setChatMessages([]);
     setHandRequests([]);
     setLastReadSequence(0);
-  }, [meetingId]);
+    setChatError(null);
+    setFloorError(null);
+    setChatRevoked(false);
+    setFloorRevoked(false);
+    setAccessGeneration((current) => current + 1);
+  }, [authorizationScope, meetingId]);
+
+  const revokeChat = useCallback(() => {
+    authorizationGeneration.current += 1;
+    chatCursor.current = 0;
+    setChatMessages([]);
+    setChatHasMore(false);
+    setSending(false);
+    setBusyMessageIds(new Set());
+    setLastReadSequence(0);
+    setChatRevoked(true);
+    setChatError(null);
+    setAccessGeneration((current) => current + 1);
+  }, []);
+  const revokeFloor = useCallback(() => {
+    authorizationGeneration.current += 1;
+    floorCursor.current = 0;
+    setHandRequests([]);
+    setFloorHasMore(false);
+    setFloorMutating(false);
+    setBusyRequestIds(new Set());
+    setFloorRevoked(true);
+    setFloorError(null);
+    setAccessGeneration((current) => current + 1);
+  }, []);
 
   const chatQuery = useQuery({
-    queryKey: ['meetings', meetingId, 'collaboration', 'chat'],
+    queryKey: ['meetings', meetingId, 'collaboration', authorizationScope, 'chat'],
     queryFn: () =>
       getVideoMeetingChatMessages(meetingId, chatCursor.current, COLLABORATION_PAGE_SIZE),
-    enabled: effectivePermissions.chat,
+    enabled: effectivePermissions.chat && !chatRevoked,
     refetchInterval: meetingLive ? COLLABORATION_POLL_INTERVAL_MS : false,
-    retry: 1,
+    retry: (failureCount, error) => !collaborationAuthorizationDenied(error) && failureCount < 1,
+    gcTime: 0,
+    meta: { accessSensitive: true },
   });
   const floorQuery = useQuery({
-    queryKey: ['meetings', meetingId, 'collaboration', 'floor'],
+    queryKey: ['meetings', meetingId, 'collaboration', authorizationScope, 'floor'],
     queryFn: () =>
       getVideoMeetingHandRequests(meetingId, floorCursor.current, COLLABORATION_PAGE_SIZE),
-    enabled: effectivePermissions.handRaise,
+    enabled: effectivePermissions.handRaise && !floorRevoked,
     refetchInterval: meetingLive ? COLLABORATION_POLL_INTERVAL_MS : false,
-    retry: 1,
+    retry: (failureCount, error) => !collaborationAuthorizationDenied(error) && failureCount < 1,
+    gcTime: 0,
+    meta: { accessSensitive: true },
   });
 
   useEffect(() => {
-    if (!chatQuery.data) return;
+    if (!chatQuery.data || chatRevoked) return;
     const incoming = chatQuery.data.items.map(toChatMessage);
     setChatMessages((current) => {
       const optimistic = current.filter((message) => message.messageId.startsWith('pending:'));
@@ -166,10 +211,10 @@ export function MeetingCollaborationRuntime({
     chatCursor.current = Math.max(chatCursor.current, chatQuery.data.nextSequence);
     setChatHasMore(chatQuery.data.hasMore);
     setChatError(null);
-  }, [chatQuery.data]);
+  }, [chatQuery.data, chatRevoked]);
 
   useEffect(() => {
-    if (!floorQuery.data) return;
+    if (!floorQuery.data || floorRevoked) return;
     setHandRequests((current) =>
       mergeById(
         current,
@@ -181,14 +226,18 @@ export function MeetingCollaborationRuntime({
     floorCursor.current = Math.max(floorCursor.current, floorQuery.data.nextSequence);
     setFloorHasMore(floorQuery.data.hasMore);
     setFloorError(null);
-  }, [floorQuery.data]);
+  }, [floorQuery.data, floorRevoked]);
 
   useEffect(() => {
-    if (chatQuery.isError) setChatError(t('room.collaboration.loadError'));
-  }, [chatQuery.isError, t]);
+    if (!chatQuery.isError) return;
+    if (collaborationAuthorizationDenied(chatQuery.error)) revokeChat();
+    else setChatError(translation.current('room.collaboration.loadError'));
+  }, [chatQuery.error, chatQuery.isError, revokeChat]);
   useEffect(() => {
-    if (floorQuery.isError) setFloorError(t('room.collaboration.loadError'));
-  }, [floorQuery.isError, t]);
+    if (!floorQuery.isError) return;
+    if (collaborationAuthorizationDenied(floorQuery.error)) revokeFloor();
+    else setFloorError(translation.current('room.collaboration.loadError'));
+  }, [floorQuery.error, floorQuery.isError, revokeFloor]);
 
   const maxChatSequence = chatMessages.reduce(
     (maximum, message) => Math.max(maximum, message.sequence),
@@ -202,6 +251,8 @@ export function MeetingCollaborationRuntime({
 
   const sendChat = useCallback(
     async (body: string, clientMessageId: string) => {
+      if (chatRevoked) return;
+      const captured = authorizationGeneration.current;
       const pendingId = `pending:${clientMessageId}`;
       const optimistic: MeetingChatMessage = {
         messageId: pendingId,
@@ -227,6 +278,7 @@ export function MeetingCollaborationRuntime({
             idempotencyKey: clientMessageId,
           })
         );
+        if (captured !== authorizationGeneration.current || chatRevoked) return;
         setChatMessages((current) =>
           mergeById(
             current.filter((message) => message.messageId !== pendingId),
@@ -236,6 +288,11 @@ export function MeetingCollaborationRuntime({
           )
         );
       } catch (error) {
+        if (collaborationAuthorizationDenied(error)) {
+          revokeChat();
+          return;
+        }
+        if (captured !== authorizationGeneration.current) return;
         setChatMessages((current) =>
           current.map((message) =>
             message.messageId === pendingId ? { ...message, deliveryState: 'FAILED' } : message
@@ -244,10 +301,10 @@ export function MeetingCollaborationRuntime({
         setChatError(t('room.collaboration.sendError'));
         throw error;
       } finally {
-        setSending(false);
+        if (captured === authorizationGeneration.current) setSending(false);
       }
     },
-    [maxChatSequence, meetingId, t]
+    [chatRevoked, maxChatSequence, meetingId, revokeChat, t]
   );
 
   const retryMessage = useCallback(
@@ -264,6 +321,8 @@ export function MeetingCollaborationRuntime({
 
   const deleteMessage = useCallback(
     async (messageId: string) => {
+      if (chatRevoked) return;
+      const captured = authorizationGeneration.current;
       setBusyMessageIds((current) => new Set(current).add(messageId));
       setChatError(null);
       try {
@@ -272,6 +331,7 @@ export function MeetingCollaborationRuntime({
             idempotencyKey: crypto.randomUUID(),
           })
         );
+        if (captured !== authorizationGeneration.current || chatRevoked) return;
         setChatMessages((current) =>
           mergeById(
             current,
@@ -280,17 +340,21 @@ export function MeetingCollaborationRuntime({
             (message) => message.sequence
           )
         );
-      } catch {
-        setChatError(t('room.collaboration.deleteError'));
+      } catch (error) {
+        if (collaborationAuthorizationDenied(error)) revokeChat();
+        else if (captured === authorizationGeneration.current)
+          setChatError(t('room.collaboration.deleteError'));
       } finally {
-        setBusyMessageIds((current) => {
-          const next = new Set(current);
-          next.delete(messageId);
-          return next;
-        });
+        if (captured === authorizationGeneration.current) {
+          setBusyMessageIds((current) => {
+            const next = new Set(current);
+            next.delete(messageId);
+            return next;
+          });
+        }
       }
     },
-    [meetingId, t]
+    [chatRevoked, meetingId, revokeChat, t]
   );
 
   const runFloorAction = useCallback(
@@ -302,11 +366,14 @@ export function MeetingCollaborationRuntime({
         key: string
       ) => Promise<VideoMeetingHandRequest>
     ) => {
+      if (floorRevoked) return;
+      const captured = authorizationGeneration.current;
       setBusyRequestIds((current) => new Set(current).add(requestId));
       setFloorMutating(true);
       setFloorError(null);
       try {
         const updated = await action(meetingId, requestId, crypto.randomUUID());
+        if (captured !== authorizationGeneration.current || floorRevoked) return;
         setHandRequests((current) =>
           mergeById(
             current,
@@ -315,18 +382,22 @@ export function MeetingCollaborationRuntime({
             (request) => request.sequence
           )
         );
-      } catch {
-        setFloorError(t('room.collaboration.floorMutationError'));
+      } catch (error) {
+        if (collaborationAuthorizationDenied(error)) revokeFloor();
+        else if (captured === authorizationGeneration.current)
+          setFloorError(t('room.collaboration.floorMutationError'));
       } finally {
-        setFloorMutating(false);
-        setBusyRequestIds((current) => {
-          const next = new Set(current);
-          next.delete(requestId);
-          return next;
-        });
+        if (captured === authorizationGeneration.current) {
+          setFloorMutating(false);
+          setBusyRequestIds((current) => {
+            const next = new Set(current);
+            next.delete(requestId);
+            return next;
+          });
+        }
       }
     },
-    [meetingId, t]
+    [floorRevoked, meetingId, revokeFloor, t]
   );
 
   const labels = useMemo<MeetingCollaborationLabels>(() => {
@@ -393,12 +464,14 @@ export function MeetingCollaborationRuntime({
 
   if (!activeTab) return null;
 
-  const chatDisabledReason = effectivePermissions.chat
+  const chatAvailable = effectivePermissions.chat && !chatRevoked;
+  const floorAvailable = effectivePermissions.handRaise && !floorRevoked;
+  const chatDisabledReason = chatAvailable
     ? !meetingLive
       ? t('room.collaboration.meetingEnded')
       : null
     : t('room.collaboration.chatDisabled');
-  const floorDisabledReason = effectivePermissions.handRaise
+  const floorDisabledReason = floorAvailable
     ? !meetingLive
       ? t('room.collaboration.meetingEnded')
       : null
@@ -410,6 +483,7 @@ export function MeetingCollaborationRuntime({
       className="dwp-meeting-side-panel dwp-meeting-side-panel--collaboration"
     >
       <MeetingCollaborationPanel
+        key={`${authorizationScope}:${accessGeneration}`}
         activeTab={activeTab}
         maxMessageLength={MAX_CHAT_MESSAGE_LENGTH}
         disabled={!meetingLive}
@@ -438,11 +512,11 @@ export function MeetingCollaborationRuntime({
           busyRequestIds,
         }}
         permissions={{
-          canReadChat: effectivePermissions.chat,
-          canSendChat: effectivePermissions.chat && meetingLive,
+          canReadChat: chatAvailable,
+          canSendChat: chatAvailable && meetingLive,
           canModerateChat: canModerate,
-          canViewFloorQueue: effectivePermissions.handRaise,
-          canRequestFloor: effectivePermissions.handRaise && meetingLive,
+          canViewFloorQueue: floorAvailable,
+          canRequestFloor: floorAvailable && meetingLive,
           canModerateFloor: canModerate,
         }}
         labels={labels}
@@ -458,33 +532,53 @@ export function MeetingCollaborationRuntime({
           onRetryFloor: () => void floorQuery.refetch(),
           onLoadMoreFloorRequests: () => void floorQuery.refetch(),
           onRequestFloor: () => {
+            if (floorRevoked) return;
+            const captured = authorizationGeneration.current;
             setFloorMutating(true);
             setFloorError(null);
             void raiseVideoMeetingHand(meetingId, crypto.randomUUID())
-              .then((raised) =>
-                setHandRequests((current) =>
-                  mergeById(
-                    current,
-                    [raised],
-                    (request) => request.requestId,
-                    (request) => request.sequence
-                  )
-                )
-              )
-              .catch(() => setFloorError(t('room.collaboration.floorMutationError')))
-              .finally(() => setFloorMutating(false));
+              .then((raised) => {
+                if (captured === authorizationGeneration.current && !floorRevoked)
+                  setHandRequests((current) =>
+                    mergeById(
+                      current,
+                      [raised],
+                      (request) => request.requestId,
+                      (request) => request.sequence
+                    )
+                  );
+              })
+              .catch((error) => {
+                if (collaborationAuthorizationDenied(error)) revokeFloor();
+                else if (captured === authorizationGeneration.current)
+                  setFloorError(t('room.collaboration.floorMutationError'));
+              })
+              .finally(() => {
+                if (captured === authorizationGeneration.current) setFloorMutating(false);
+              });
           },
           onLowerHand: (requestId) => void runFloorAction(requestId, lowerVideoMeetingHand),
           onAcknowledgeFloor: (requestId) =>
             void runFloorAction(requestId, acknowledgeVideoMeetingHand),
           onDismissFloor: (requestId) => void runFloorAction(requestId, dismissVideoMeetingHand),
           onClearFloorQueue: () => {
+            if (floorRevoked) return;
+            const captured = authorizationGeneration.current;
             setFloorMutating(true);
             setFloorError(null);
             void clearVideoMeetingHandRequests(meetingId, crypto.randomUUID())
-              .then(() => floorQuery.refetch())
-              .catch(() => setFloorError(t('room.collaboration.floorMutationError')))
-              .finally(() => setFloorMutating(false));
+              .then(() => {
+                if (captured === authorizationGeneration.current && !floorRevoked)
+                  return floorQuery.refetch();
+              })
+              .catch((error) => {
+                if (collaborationAuthorizationDenied(error)) revokeFloor();
+                else if (captured === authorizationGeneration.current)
+                  setFloorError(t('room.collaboration.floorMutationError'));
+              })
+              .finally(() => {
+                if (captured === authorizationGeneration.current) setFloorMutating(false);
+              });
           },
         }}
       />

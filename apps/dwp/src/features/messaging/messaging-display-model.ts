@@ -53,7 +53,7 @@ export function messagingTimelineSurfaceSx(
 ): SystemStyleObject<Theme> {
   const dark = theme.palette.mode === 'dark';
   const canvas = {
-    DEFAULT: theme.palette.background.default,
+    DEFAULT: theme.palette.background.paper,
     MIST: alpha(theme.palette.info.main, dark ? 0.1 : 0.055),
     SAGE: alpha(theme.palette.success.main, dark ? 0.09 : 0.05),
     ROSE: alpha(theme.palette.error.main, dark ? 0.075 : 0.035),

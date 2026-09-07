@@ -29,16 +29,31 @@ export function ProgressMeter({
 }: ProgressMeterProps) {
   const normalizedValue = normalizedProgress(value);
   return (
-    <Box sx={sx}>
-      <Stack direction="row" alignItems="baseline" justifyContent="space-between" gap={1}>
-        <Typography variant="caption" color="text.secondary">
+    <Box sx={[{ minWidth: 0 }, ...(Array.isArray(sx) ? sx : [sx])]}>
+      <Stack
+        direction="row"
+        alignItems="baseline"
+        justifyContent="space-between"
+        gap={1}
+        flexWrap="wrap"
+      >
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ minWidth: 0, flex: '1 1 90px', overflowWrap: 'anywhere' }}
+        >
           {label}
         </Typography>
         {valueLabel ? (
           <Typography
             variant="caption"
             color="text.secondary"
-            sx={{ fontVariantNumeric: 'tabular-nums' }}
+            sx={{
+              fontVariantNumeric: 'tabular-nums',
+              minWidth: 0,
+              maxWidth: 1,
+              overflowWrap: 'anywhere',
+            }}
           >
             {valueLabel}
           </Typography>
@@ -51,7 +66,18 @@ export function ProgressMeter({
         aria-label={label}
         aria-valuenow={normalizedValue}
         aria-valuetext={valueLabel}
-        sx={{ mt: 0.5, height: size === 'compact' ? 4 : 6, borderRadius: 999 }}
+        sx={{
+          mt: 0.5,
+          height: size === 'compact' ? 4 : 6,
+          borderRadius: 999,
+          '@media (forced-colors: active)': {
+            forcedColorAdjust: 'none',
+            bgcolor: 'Canvas',
+            outline: '1px solid CanvasText',
+            outlineOffset: -1,
+            '& .MuiLinearProgress-bar': { bgcolor: 'Highlight' },
+          },
+        }}
       />
     </Box>
   );

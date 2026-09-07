@@ -29,6 +29,7 @@
         "spam": { "label": "Spam" },
         "trash": { "label": "Trash" },
         "folders": { "label": "My folders" },
+        "contacts": { "label": "Contacts" },
         "shared": { "label": "Shared inboxes" },
         "organization": { "label": "Folders and rules" },
         "accounts": { "label": "Connected accounts" },
@@ -56,8 +57,18 @@
     "member": "Member",
     "title": "{{name}}, {{greeting}}",
     "description": "Mail is organized by business impact and next action rather than arrival order.",
+    "searchLabel": "Search my mail",
+    "searchPlaceholder": "Search sender, subject, or message content",
+    "searchAction": "Search",
     "signalSummary": "Mail signal summary",
     "loadError": "Mail work signals could not be loaded.",
+    "metricEyebrows": {
+      "unread": "UNREAD",
+      "urgent": "URGENT",
+      "needsReply": "NEEDS REPLY",
+      "snoozed": "LATER / READ",
+      "assistant": "PROPOSALS"
+    },
     "metrics": {
       "unread": "Unread",
       "unreadDetail": "Conversations not yet reviewed",
@@ -74,6 +85,9 @@
       "attentionTitle": "{{count}} important signals are waiting for a decision",
       "clearTitle": "Your priority mail is under control",
       "description": "The shortest path through your mail is organized by business impact and next action, not arrival time.",
+      "accountWarning": "{{count}} connections need attention",
+      "accountHealthy": "All accounts are syncing normally",
+      "updatedAt": "Updated {{value}}",
       "start": "Start focused triage",
       "openInbox": "Open inbox",
       "flowTitle": "Processing rhythm",
@@ -90,7 +104,11 @@
       "title": "Work action proposals",
       "description": "Review evidence and required access before approving an action.",
       "emptyTitle": "No action proposals to review",
-      "emptyDescription": "AI never changes a business system before user approval."
+      "emptyDescription": "AI never changes a business system before user approval.",
+      "showMore_one": "Show {{count}} more proposal",
+      "showMore_other": "Show {{count}} more proposals",
+      "showLess": "Show fewer proposals",
+      "previewCount": "{{shown}} recent proposals shown from {{total}} pending proposals."
     },
     "shared": {
       "title": "Shared inbox flow",
@@ -98,6 +116,26 @@
       "openInbox": "Open shared inboxes",
       "open": "{{count}} open",
       "overdue": "{{count}} overdue"
+    },
+    "addressBook": {
+      "title": "Contacts and mail groups",
+      "description": "Manage frequent contacts and groups used for recurring messages.",
+      "open": "Open contacts",
+      "openContacts": "View contacts",
+      "openGroups": "Mail groups",
+      "contacts": "Saved contacts",
+      "groups": "Mail groups",
+      "unavailable": "The summary is unavailable. You can retry from Contacts."
+    },
+    "tools": {
+      "title": "Mail work tools",
+      "description": "Continue shared processing, contact groups, and personal organization in the right workspace.",
+      "sharedEyebrow": "TEAM MAIL",
+      "contactsEyebrow": "CONTACTS",
+      "organizeEyebrow": "ORGANIZE",
+      "mailboxes": "Mailboxes",
+      "open": "Open",
+      "overdue": "Overdue"
     },
     "automation": {
       "title": "Automatic organization rhythm",
@@ -111,6 +149,103 @@
       "latestRun": "Latest automatic organization",
       "latestRunDetail": "{{count}} messages matched",
       "neverRun": "No rule run yet"
+    }
+  },
+  "addressBook": {
+    "eyebrow": "Personal communication",
+    "title": "Contacts and mail groups",
+    "description": "Organize frequent contacts and send to a reviewed group of recipients in one step.",
+    "loadError": "We could not load your address book.",
+    "saveError": "We could not save the change. Check the input and latest state.",
+    "conflictError": "The address book changed. Refresh and try again.",
+    "summaryLabel": "Address book summary",
+    "summary": {
+      "contacts": "Saved contacts",
+      "favorites": "Favorites",
+      "groups": "My mail groups"
+    },
+    "search": "Search by name, email, or organization",
+    "searchContacts": "Search contacts to add",
+    "searchDirectory": "Search the company directory",
+    "tabsLabel": "Address book views",
+    "tabs": {
+      "contacts": "My contacts",
+      "groups": "My mail groups",
+      "directory": "Company directory"
+    },
+    "archive": "Archive",
+    "archived": "The item was archived from your address book.",
+    "archiving": "Archiving",
+    "archiveTitle": "Archive this address book item?",
+    "archiveDescription": "{{name}} will be hidden from the current list and mail groups.",
+    "updating": "Updating the address book.",
+    "contact": {
+      "new": "Add contact",
+      "createTitle": "New contact",
+      "editTitle": "Edit contact",
+      "listTitle": "My contacts",
+      "name": "Name",
+      "email": "Email",
+      "organization": "Company or organization",
+      "jobTitle": "Job title",
+      "phone": "Phone",
+      "favorite": "Add to favorites",
+      "edit": "Edit contact",
+      "saved": "Contact saved.",
+      "emptyTitle": "No saved contacts",
+      "emptyDescription": "Add a contact directly or find someone in the company directory."
+    },
+    "group": {
+      "new": "Create mail group",
+      "createTitle": "New mail group",
+      "editTitle": "Edit mail group",
+      "listTitle": "My mail groups",
+      "name": "Group name",
+      "description": "Group description",
+      "noDescription": "Manage people you regularly email together.",
+      "memberCount": "{{count}} members",
+      "members": "Members",
+      "edit": "Edit",
+      "send": "Send mail",
+      "saved": "Mail group saved.",
+      "emptyTitle": "No mail groups yet",
+      "emptyDescription": "Create a group for recurring projects or workflows to avoid entering recipients repeatedly."
+    },
+    "members": {
+      "title": "Members of {{name}}",
+      "available": "Contacts available to add",
+      "selected": "{{count}} selected",
+      "save": "Save members",
+      "saved": "Group members saved."
+    },
+    "send": {
+      "title": "Send mail to {{name}}",
+      "recipients": "Review the {{count}} recipients in the current group version before sending.",
+      "recipientList": "Recipients of this group message",
+      "confirmRecipients": "I have reviewed every recipient name and email address.",
+      "retry": "Retry the same message",
+      "retryNotice": "The delivery result is not confirmed. The reviewed recipients and message are locked; retrying uses the same request and will not queue a duplicate.",
+      "conflictNotice": "The group or request has changed. Review the latest recipients before continuing. This does not confirm that the original message was unsent; its original request remains available for verification.",
+      "reviewLatest": "Review latest recipients",
+      "checkOriginal": "Check original request",
+      "refreshError": "The latest recipient list is unavailable. The message and original request are preserved.",
+      "classification": "Message classification",
+      "submit": "Send to group",
+      "sending": "Queuing message",
+      "sent": "The group message was safely added to the delivery queue.",
+      "error": "The group changed or cannot be sent. Review the recipients and try again."
+    },
+    "directory": {
+      "title": "Company directory results",
+      "startTitle": "Find someone in your company",
+      "startDescription": "Enter at least two characters to search within your current directory access.",
+      "loading": "Searching the company directory",
+      "error": "We could not search the company directory.",
+      "emptyTitle": "No matching people",
+      "emptyDescription": "Try another search or add an external contact directly.",
+      "noEmail": "No visible work email",
+      "add": "Add to my contacts",
+      "saved": "Saved"
     }
   },
   "mailbox": {
@@ -442,10 +577,86 @@
   "proposal": {
     "assistant": "DWP action proposal",
     "confidence": "{{value}}% confidence",
+    "match": "{{value}}% match",
+    "source": "Source message: {{source}}",
     "risk": {
       "LOW": "Low risk",
       "MEDIUM": "Review needed",
       "HIGH": "Important check"
+    },
+    "types": {
+      "replyDraft": {
+        "label": "Email reply draft",
+        "confirm": "Approve and open draft"
+      },
+      "calendarEvent": {
+        "label": "Calendar event",
+        "confirm": "Approve and open calendar"
+      },
+      "leaveRequest": {
+        "label": "Leave request",
+        "confirm": "Approve and open HR"
+      },
+      "task": {
+        "label": "Work item",
+        "confirm": "Approve and open work"
+      },
+      "notification": {
+        "label": "Urgent notification",
+        "confirm": "Approve and open notifications"
+      }
+    },
+    "targets": {
+      "calendar": "Calendar",
+      "hr": "HR",
+      "mail": "Mail drafts",
+      "notifications": "Notifications",
+      "work": "Work"
+    },
+    "fields": {
+      "assignee": "Assignee",
+      "attendees": "Attendees",
+      "channel": "Channel",
+      "dateRange": "Dates",
+      "durationDays": "Duration",
+      "durationMinutes": "Estimated time",
+      "language": "Language",
+      "location": "Location",
+      "priority": "Priority",
+      "project": "Project",
+      "provider": "Requested tool",
+      "schedule": "Schedule",
+      "timeZone": "Time zone",
+      "tone": "Tone",
+      "urgency": "Urgency"
+    },
+    "values": {
+      "concise": "Concise",
+      "durationDays": "{{count}} days",
+      "durationMinutes": "About {{count}} minutes",
+      "email": "Email",
+      "english": "English",
+      "formal": "Formal",
+      "high": "High",
+      "inApp": "In-app notification",
+      "korean": "Korean",
+      "low": "Low",
+      "medium": "Medium",
+      "professional": "Professional"
+    },
+    "blocked": {
+      "expired": "The review window has passed. A new proposal is required.",
+      "handled": "This proposal has already been handled.",
+      "policyMismatch": "The policy and action scope must be checked again.",
+      "unsupportedType": "This proposal type is not supported.",
+      "unsupportedVersion": "Regenerate this proposal with the current contract."
+    },
+    "reviewDialog": {
+      "description": "Review the evidence and destination. This step does not create or send business data.",
+      "target": "Open after review",
+      "evidence": "Evidence items reviewed: {{count}}",
+      "expires": "Review by {{value}}",
+      "safety": "Accepting opens the target app for a final review. Any save, send, or publish action still follows that app's permissions and confirmation flow."
     },
     "review": "Review and continue",
     "dismiss": "Dismiss",

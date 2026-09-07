@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-primary-container":"#eeefff","surface-bright":"#f8f9ff","surface-container-highest":"#d3e4fe","on-tertiary-fixed-variant":"#005236","inverse-on-surface":"#eaf1ff","tertiary-container":"#007d55","surface-variant":"#d3e4fe","surface-container-lowest":"#ffffff","primary-fixed":"#dbe1ff","outline-variant":"#c3c6d7","secondary-fixed-dim":"#bec6e0","secondary-fixed":"#dae2fd","surface-container-low":"#eff4ff","on-primary":"#ffffff","tertiary-fixed":"#6ffbbe","surface-dim":"#cbdbf5","on-secondary":"#ffffff","background":"#f8f9ff","outline":"#737686","on-surface-variant":"#434655","tertiary":"#006242","on-primary-fixed-variant":"#003ea8","error-container":"#ffdad6","surface-tint":"#0053db","on-secondary-fixed":"#131b2e","primary":"#004ac6","surface-container":"#e5eeff","on-tertiary":"#ffffff","primary-fixed-dim":"#b4c5ff","on-primary-fixed":"#00174b","on-background":"#0b1c30","surface-container-high":"#dce9ff","on-secondary-container":"#5c647a","on-error-container":"#93000a","tertiary-fixed-dim":"#4edea3","inverse-surface":"#213145","primary-container":"#2563eb","secondary":"#565e74","error":"#ba1a1a","on-surface":"#0b1c30","on-error":"#ffffff","on-tertiary-fixed":"#002113","on-secondary-fixed-variant":"#3f465c","surface":"#f8f9ff","inverse-primary":"#b4c5ff","on-tertiary-container":"#bdffdb","secondary-container":"#dae2fd"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"sidebar-width":"16rem","time-rail-width":"3.5rem","space-2xl":"2rem","grid-slot-60min":"4rem","header-height":"3.5rem","space-xs":"0.25rem","space-lg":"1rem","space-sm":"0.5rem","grid-slot-15min":"1rem","space-xxs":"0.125rem","space-md":"0.75rem","space-xl":"1.5rem","grid-slot-30min":"2rem"},fontFamily:{"display-lg":["geist"],"headline-lg":["geist"],"label-md":["geist"],"mono-time":["geist"],"shortcut-key":["geist"],"body-md":["geist"],"headline-md":["geist"],"headline-sm":["geist"],"body-sm":["geist"],"body-lg":["geist"],"label-sm":["geist"]},fontSize:{"display-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.03em",fontWeight:"600"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"mono-time":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"500"}],"shortcut-key":["10px",{lineHeight:"12px",letterSpacing:"0.05em",fontWeight:"600"}],"body-md":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}],"body-lg":["15px",{lineHeight:"22px",letterSpacing:"-0.01em",fontWeight:"400"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased"><div class="max-w-[390px] mx-auto min-h-screen relative flex flex-col bg-surface shadow-[0_0_24px_rgba(0,0,0,0.04)]"><header class="fixed top-0 w-full max-w-[390px] z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="px-space-md h-header-height flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[20px]">admin_panel_settings</span><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[150px]">Ai Data Governance</h1><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant font-label-sm text-label-sm">ADMIN</span></div><div class="flex items-center gap-space-xs"><button aria-label="Search" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">search</span></button><button aria-label="Filter" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">tune</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-0.5"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col w-full px-space-md pt-header-height pb-20 bg-surface"><div class="flex flex-col w-full pb-6 space-y-space-md text-on-surface overflow-x-hidden">
+<!-- Top Context Navigation Bar -->
+<section class="flex items-center justify-between bg-surface-container-low px-space-md py-space-sm rounded-xl shadow-sm">
+<a class="flex items-center gap-1.5 text-primary min-h-[44px] min-w-[44px] font-label-md text-label-md active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>통합업무함</span>
+</a>
+<div class="flex items-center gap-1">
+<button aria-label="업무 공유" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button aria-label="추가 옵션" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</section>
+<!-- Task Header Bento Card -->
+<section class="relative bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="px-2 py-0.5 rounded-lg bg-surface-container font-mono-time text-mono-time text-on-surface-variant font-semibold">APR-031</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">전자결재 / 내 결재</span>
+</div>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">alarm</span>
+<span>오늘 11:00 마감</span>
+</span>
+</div>
+<div class="space-y-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-snug">고객 지원 장비 구매 승인 · 1,850,000원</h2>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">검토 대기 상태</span>
+<span class="text-outline-variant font-mono-time text-mono-time">·</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">소모품·장비 구매 결재</span>
+</div>
+</div>
+<!-- Origin App Link Badge -->
+<div class="flex items-center justify-between pt-space-xs bg-surface-container-low px-3 py-2 rounded-lg">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-md bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">fact_check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">전자결재 e-Sign Hub 원본 연동</span>
+</div>
+<span class="font-mono-time text-mono-time text-primary font-medium">동기화 완료</span>
+</div>
+</section>
+<!-- Requestor & Assignment Reason Section -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-11 h-11 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-headline-sm text-headline-sm font-semibold">
+            박
+          </div>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-tertiary-container border-2 border-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-[9px] text-on-tertiary">done</span>
+</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-body-lg text-body-lg font-semibold text-on-surface">박서진 대리</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">고객지원본부</span>
+</div>
+<span class="font-mono-time text-mono-time text-on-surface-variant">오늘 09:12 상신 완료</span>
+</div>
+</div>
+<button aria-label="기안자에게 1:1 메시지" class="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-primary hover:bg-surface-container-low active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+</button>
+</div>
+<!-- Reason Callout -->
+<div class="bg-surface-container-high rounded-lg p-3 space-y-1">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[16px]">assignment_turned_in</span>
+<span class="font-label-sm text-label-sm font-semibold">배정 사유 및 조치 필요 항목</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface font-medium leading-relaxed">
+        "고객지원본부 부서장 결재 차례"
+      </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        부서 내 장비 교체 예산 적정성 및 수량 일치 여부 확인 후 승인 처리가 요구됩니다.
+      </p>
+</div>
+</section>
+<!-- Core Summary Bento -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+<span>상신 주요 내용</span>
+</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">요약본</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 space-y-2">
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+        2026년 3분기 고객센터 상담 인입량 증가에 따른 노후 장비(헤드셋 10대) 교체 건입니다.
+      </p>
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div class="bg-surface-container-lowest p-2.5 rounded-lg shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">신청 품목</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">노이즈캔슬링 헤드셋 10대</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-lg shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">집행 예정액</span>
+<span class="font-body-md text-body-md font-semibold text-primary">1,850,000원</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Approval Line Visualizer -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">linear_scale</span>
+<span>결재선 진행 상태</span>
+</h3>
+<span class="font-mono-time text-mono-time text-primary font-semibold">Step 3 of 4</span>
+</div>
+<!-- Compact Horizontal Visualizer -->
+<div class="pt-2 pb-1">
+<div class="flex items-center justify-between relative">
+<!-- Connecting Line Background -->
+<div class="absolute top-4 left-4 right-4 h-0.5 bg-surface-container-highest z-0"></div>
+<div class="absolute top-4 left-4 w-2/3 h-0.5 bg-primary z-0"></div>
+<!-- Node 1: 기안 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px]">done</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium">기안</span>
+<span class="font-mono-time text-mono-time text-on-surface-variant">박서진</span>
+</div>
+<!-- Node 2: 검토 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px]">done</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium">검토</span>
+<span class="font-mono-time text-mono-time text-on-surface-variant">김운영</span>
+</div>
+<!-- Node 3: 내 결재 대기 (Current) -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md ring-4 ring-primary-fixed">
+<span class="material-symbols-outlined text-[16px]">hourglass_top</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">내 결재</span>
+<span class="font-mono-time text-mono-time text-primary font-semibold">대기중</span>
+</div>
+<!-- Node 4: 재무 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">pending</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">재무</span>
+<span class="font-mono-time text-mono-time text-on-surface-variant">이재경</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Attachments Section -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">attachment</span>
+<span>첨부 증빙 문서</span>
+</h3>
+<span class="font-mono-time text-mono-time text-on-surface-variant font-medium">2건</span>
+</div>
+<div class="space-y-2">
+<!-- File 1 -->
+<a class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors min-h-[44px]" href="#">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">견적서_2026Q3_공식.pdf</span>
+<span class="font-mono-time text-mono-time text-on-surface-variant">1.2 MB · 공식 인감 날인본</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] shrink-0">download</span>
+</a>
+<!-- File 2 -->
+<a class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors min-h-[44px]" href="#">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded bg-tertiary-container text-on-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">table_view</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">비교견적표.xlsx</span>
+<span class="font-mono-time text-mono-time text-on-surface-variant">340 KB · 3사 최저가 비교</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] shrink-0">download</span>
+</a>
+</div>
+</section>
+<!-- Governance Notice Box -->
+<section class="bg-surface-container rounded-xl p-3.5 flex items-start gap-2.5 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">shield</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+      공식 결재선과 법적 전자서명은 <span class="text-on-surface font-semibold">원본 전자결재 앱</span>에서 안전하게 처리됩니다. 본 허브 화면은 빠른 의사결정과 요약 맥락을 제공합니다.
+    </p>
+</section>
+<!-- Interactive Decision Trigger Area -->
+<section class="space-y-2 pt-1">
+<!-- Primary CTA: High contrast blue #285C9E (Mapped via primary-container) -->
+<a class="w-full min-h-[48px] px-space-md py-3 rounded-xl bg-primary-container text-on-primary hover:opacity-95 active:scale-[0.99] flex items-center justify-center gap-2 shadow-md transition-all font-body-lg text-body-lg font-semibold" href="#">
+<span>전자결재 원본에서 검토 (새 창)</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+<!-- Secondary CTA: Add to Today Plan -->
+<button class="w-full min-h-[44px] px-space-md py-2.5 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-1.5 shadow-sm transition-colors font-body-md text-body-md font-semibold" id="today-plan-toggle" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary-container" id="star-icon">star_border</span>
+<span id="plan-btn-label">오늘 계획에 추가</span>
+</button>
+</section>
+<!-- Meta Fixture Identifier Footer -->
+<footer class="pt-2 text-center">
+<p class="font-mono-time text-mono-time text-on-surface-variant opacity-80">
+      Screen ID WRK-D01-390-LIGHT · 2026-09-04 09:30 KST Fixture
+    </p>
+</footer>
+</div>
+<script>
+  (function() {
+    const planBtn = document.getElementById('today-plan-toggle');
+    const starIcon = document.getElementById('star-icon');
+    const label = document.getElementById('plan-btn-label');
+    let isAdded = false;
+
+    if (planBtn && starIcon && label) {
+      planBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        isAdded = !isAdded;
+        if (isAdded) {
+          starIcon.textContent = 'star';
+          starIcon.style.fontVariationSettings = "'FILL' 1";
+          label.textContent = '오늘 계획에 담김';
+          planBtn.classList.add('bg-secondary-container');
+        } else {
+          starIcon.textContent = 'star_border';
+          starIcon.style.fontVariationSettings = "'FILL' 0";
+          label.textContent = '오늘 계획에 추가';
+          planBtn.classList.remove('bg-secondary-container');
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full max-w-[390px] z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-label-sm"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center w-16 h-11 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="meeting-operations" href="#"><span class="material-symbols-outlined text-[20px]">videocam</span><span class="font-label-sm text-label-sm mt-0.5">운영</span></a><a class="flex flex-col items-center justify-center w-16 h-11 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="policy-settings" href="#"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-sm text-label-sm mt-0.5">정책</span></a><a aria-current="page" class="flex flex-col items-center justify-center w-16 h-11 rounded-xl transition-all text-primary font-label-sm" data-path="ai-data-governance" href="#"><span class="material-symbols-outlined text-[20px]">hub</span><span class="font-label-sm text-label-sm mt-0.5">AI·데이터</span></a><a class="flex flex-col items-center justify-center w-16 h-11 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="audit-logs" href="#"><span class="material-symbols-outlined text-[20px]">verified_user</span><span class="font-label-sm text-label-sm mt-0.5">감사</span></a></div></nav></div></body></html>

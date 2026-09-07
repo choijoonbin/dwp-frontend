@@ -1,0 +1,434 @@
+{
+  "runtime": "http://127.0.0.1:18022",
+  "temporaryDatabase": true,
+  "startedAt": "2026-09-04T02:27:36.404321+00:00",
+  "syntheticOwner": {
+    "tenantId": 9550223,
+    "userId": 9550224
+  },
+  "credentialsIncluded": false,
+  "checks": [
+    {
+      "name": "header_only_initial_list",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "create_personal_task",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "create_replay",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "create_replay_returns_same_task_and_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "create_key_payload_conflict",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks",
+      "status": 409,
+      "expectedStatus": 409,
+      "passed": true
+    },
+    {
+      "name": "create_with_verified_native_capture",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "native_capture_is_available",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "update_personal_task",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "update_increments_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "initial_day_plan",
+      "kind": "http",
+      "method": "GET",
+      "path": "/day-plans/2026-09-04",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "select_day_plan",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/day-plans/2026-09-04",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "plan_selection_is_separate_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "wait_personal_task",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/status",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "waiting_preserves_due_date",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "complete_personal_task",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/complete",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "completion_has_timestamp",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "completion_replay",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/complete",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "completion_replay_does_not_increment_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "stale_version_conflict",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/reopen",
+      "status": 409,
+      "expectedStatus": 409,
+      "passed": true
+    },
+    {
+      "name": "day_plan_after_completion",
+      "kind": "http",
+      "method": "GET",
+      "path": "/day-plans/2026-09-04",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "completion_does_not_remove_plan_selection_or_change_plan_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "reorder_day_plan",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/day-plans/2026-09-04",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "reorder_changes_selection_order",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "task_after_plan_reorder",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "plan_mutation_preserves_task_lifecycle_due_date_and_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "next_day_plan",
+      "kind": "http",
+      "method": "GET",
+      "path": "/day-plans/2026-09-05",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "next_day_does_not_rewrite_prior_day",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "cross_tenant_task_denial",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8",
+      "status": 404,
+      "expectedStatus": 404,
+      "passed": true
+    },
+    {
+      "name": "cross_user_task_denial",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8",
+      "status": 404,
+      "expectedStatus": 404,
+      "passed": true
+    },
+    {
+      "name": "query_context_cannot_override_headers",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8?tenantId=9550223&userId=9550224",
+      "status": 404,
+      "expectedStatus": 404,
+      "passed": true
+    },
+    {
+      "name": "cross_user_source_capture_denial",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks",
+      "status": 404,
+      "expectedStatus": 404,
+      "passed": true
+    },
+    {
+      "name": "cross_user_day_selection_denial",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/day-plans/2026-09-04",
+      "status": 404,
+      "expectedStatus": 404,
+      "passed": true
+    },
+    {
+      "name": "read_only_actor_mutation_denial",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/reopen",
+      "status": 403,
+      "expectedStatus": 403,
+      "passed": true
+    },
+    {
+      "name": "missing_work_view_denial",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks",
+      "status": 403,
+      "expectedStatus": 403,
+      "passed": true
+    },
+    {
+      "name": "calendar_link_requires_calendar_view",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05",
+      "status": 403,
+      "expectedStatus": 403,
+      "passed": true
+    },
+    {
+      "name": "create_calendar_reference",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "calendar_link_makes_no_event_access_assertion",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "calendar_reference_replay",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "calendar_reference_replay_keeps_version",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "calendar_reference_payload_conflict",
+      "kind": "http",
+      "method": "PUT",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05",
+      "status": 409,
+      "expectedStatus": 409,
+      "passed": true
+    },
+    {
+      "name": "cross_user_calendar_unlink_denial",
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05?version=0",
+      "status": 404,
+      "expectedStatus": 404,
+      "passed": true
+    },
+    {
+      "name": "remove_calendar_reference",
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05?version=0",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "unlink_is_tombstone",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "calendar_unlink_retry",
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/calendar-links/b7ebde7a-3410-4c3d-ab1a-7d793c740d05?version=0",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "unlink_retry_is_stable",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "task_after_calendar_link_unlink",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "calendar_link_does_not_complete_reopen_or_reschedule_task",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "read_personal_timeline",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/timeline",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "timeline_has_actions_versions_and_audit_ids",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "archive_task",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/archive",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "list_hides_archived_task",
+      "kind": "http",
+      "method": "GET",
+      "path": "/personal-tasks",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "archived_task_excluded_from_default_list",
+      "kind": "assertion",
+      "passed": true
+    },
+    {
+      "name": "reopen_archived_task",
+      "kind": "http",
+      "method": "POST",
+      "path": "/personal-tasks/24fbf96e-333e-4e70-ac56-43ab3ba329c8/reopen",
+      "status": 200,
+      "expectedStatus": 200,
+      "passed": true
+    },
+    {
+      "name": "reopen_clears_completion_timestamp",
+      "kind": "assertion",
+      "passed": true
+    }
+  ],
+  "generatedTaskIds": [
+    "24fbf96e-333e-4e70-ac56-43ab3ba329c8",
+    "9edfefb1-fec6-44b2-a14b-79a141b8bd8e"
+  ],
+  "completedAt": "2026-09-04T02:27:37.475285+00:00",
+  "passed": true,
+  "checkCount": 54,
+  "httpCount": 35,
+  "failures": [],
+  "runtimeSnapshotScope": "Runtime started before the final native deep-link and unique OpenAPI schema annotations; operational payload shapes are unchanged.",
+  "openapiReviewFile": "/tmp/dwp-workhub-openapi-comparison.json",
+  "calendarReferenceScope": "Calendar references were tested as REFERENCE_ONLY personal bookmarks; no event existence/access or scheduling mutation is asserted."
+}

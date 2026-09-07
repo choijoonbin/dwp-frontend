@@ -52,4 +52,13 @@ describe('approval product surface manifest', () => {
     expect(management.entryAccess.requiredCapabilityContractKeys).toHaveLength(10);
     expect(management.routeMatchers).toEqual([{ kind: 'prefix', path: '/approvals/admin' }]);
   });
+
+  it('keeps unknown Work descendants in Work while the longer admin prefix wins', () => {
+    const [work, management] = APPROVAL_PRODUCT_MANIFEST.surfaces;
+    expect(work.routeMatchers).toContainEqual({ kind: 'prefix', path: '/approvals' });
+    expect(management.routeMatchers).toContainEqual({
+      kind: 'prefix',
+      path: '/approvals/admin',
+    });
+  });
 });

@@ -115,8 +115,9 @@
   },
   "governance": { "evidence": "Decision evidence retained" },
   "home": {
-    "eyebrow": "My decision hub",
+    "eyebrow": "Approval home",
     "title": "Approvals",
+    "greeting": "Hello, {{name}}",
     "subtitle": "See the decisions that need you and the health of every approval flow.",
     "personFallback": "Member",
     "customize": "Customize approval home",
@@ -131,23 +132,47 @@
       "title": "Decisions are waiting for {{name}}",
       "description": "{{pending}} reviews are pending and {{overdue}} are overdue. Work by risk and due time."
     },
+    "briefing": {
+      "eyebrow": "Today's approval workflow brief",
+      "title": "Make the highest-priority decisions first",
+      "description": "Pending reviews: {{pending}} · Due today: {{dueToday}} · Overdue: {{overdue}}",
+      "clear": "There are no priority approvals to review right now.",
+      "reviewUrgent": "View urgent approvals"
+    },
+    "focusQueue": {
+      "dueAt": "Due {{date}}",
+      "open": "Open review"
+    },
+    "flow": { "empty": "There is no approval flow to display." },
+    "myRequests": {
+      "empty": "You have no recent submitted requests.",
+      "awaitingStart": "Waiting for the approval flow to start",
+      "progressLabel": "Approval progress for {{title}}"
+    },
+    "insights": {
+      "askExpert": "Expert",
+      "empty": "There are no policy or SLA signals to review.",
+      "open": "Review related work"
+    },
     "widgets": {
       "decision-pulse": {
-        "label": "Decision pulse",
-        "description": "A governed summary of priority and SLA"
+        "label": "Today's approval brief",
+        "description": "An actionable summary of priority and SLA"
       },
       "focus-queue": {
-        "label": "Focus queue",
+        "label": "Priority review queue",
         "description": "Reviews ordered by risk and due time",
-        "meta": "{{count}} priority reviews"
+        "meta": "{{count}} priority reviews",
+        "meta_one": "{{count}} priority review",
+        "meta_other": "{{count}} priority reviews"
       },
-      "flow": { "label": "Approval flow", "description": "Volume and risk by stage" },
+      "flow": { "label": "Live approval flow", "description": "Volume and risk by stage" },
       "my-requests": {
-        "label": "My requests",
+        "label": "My request tracker",
         "description": "Current state of recent submissions"
       },
       "insights": {
-        "label": "Decision insights",
+        "label": "Decision navigator",
         "description": "Policy and SLA signals to address"
       },
       "admin-health": {
@@ -155,12 +180,100 @@
         "description": "Process and integration delivery health",
         "metricDetail": "Current tenant scope"
       }
+    },
+    "commandCenter": {
+      "title": "Decision command center",
+      "description": "Review, verify, and decide without leaving this workspace.",
+      "metricsLabel": "Approval decision metrics",
+      "metricPendingDetail": "Waiting for your review",
+      "metricDueDetail": "Due before day end",
+      "metricOverdueDetail": "Needs immediate attention",
+      "metricInFlightDetail": "Submitted by you and still in progress",
+      "metricCycleDetail": "{{percent}}% SLA compliance",
+      "queueNavigation": "Decision queue filters",
+      "queueTitle": "Approval workflow",
+      "queueDescription": "Work by urgency and risk",
+      "filterCount_one": "{{count}} approval",
+      "filterCount_other": "{{count}} approvals",
+      "countUnavailable": "Count is loading",
+      "filters": {
+        "ALL": "All pending",
+        "URGENT": "Urgent",
+        "DUE_TODAY": "Due today",
+        "HIGH_RISK": "High risk"
+      },
+      "searchLabel": "Search approvals",
+      "searchPlaceholder": "Request, title, requester, or stage",
+      "resultCount_one": "{{count}} request",
+      "resultCount_other": "{{count}} requests",
+      "taskList": "Pending approval requests",
+      "noResults": "No approvals match this view",
+      "noResultsDescription": "Change the queue filter or search term.",
+      "noDueDate": "No due date",
+      "riskCompact": "Risk {{score}}",
+      "selectForBatch": "Select {{title}} for batch approval",
+      "selectedCount_one": "{{count}} selected",
+      "selectedCount_other": "{{count}} selected",
+      "batchLimit": "Up to {{count}} at a time",
+      "batchLimitReached": "You can approve up to 20 requests in one batch.",
+      "batchApprove": "Approve selected",
+      "batchDialogTitle": "Approve selected requests?",
+      "batchDialogDescription": "{{count}} requests will be reverified and approved one at a time.",
+      "batchDialogEvidence": "Each request is loaded again before approval. Ineligible work is skipped, and processing stops safely on an authority or write failure.",
+      "batchDialogConfirm": "Start batch approval",
+      "batchCompleted": "Batch approval completed.",
+      "batchStopped": "Batch approval stopped safely. Review the remaining requests.",
+      "batchFailed": "Batch approval could not start.",
+      "batchResult": "Approved {{approved}} · Ineligible {{ineligible}} · Remaining {{remaining}}",
+      "queueFailClosed": "Cached requests and decision actions stay hidden until current authority is confirmed.",
+      "detailTitle": "Approval detail",
+      "backToQueue": "Back to approval queue",
+      "selectTitle": "Select an approval to review",
+      "selectDescription": "The verified request, policy signals, workflow evidence, and actions will appear here.",
+      "decisionBrief": "Policy and risk brief",
+      "decisionBriefDescription": "Derived only from the current approval record and decision authority.",
+      "workflowEvidence": "Live approval progress",
+      "workflowEvidenceDescription": "Recorded stages and the actual current stage. Future stages are not inferred.",
+      "stepNumber": "Step {{sequence}}",
+      "signals": {
+        "SELF_APPROVAL_BLOCKED": {
+          "title": "Self-approval is blocked",
+          "description": "Requester and decision maker must remain separate."
+        },
+        "DECISION_AUTHORITY_UNAVAILABLE": {
+          "title": "Decision authority is unavailable",
+          "description": "This request remains read-only until current authority is verified."
+        },
+        "OVERDUE": {
+          "title": "The decision is overdue",
+          "description": "Review the business impact and record an accountable outcome."
+        },
+        "DUE_TODAY": {
+          "title": "Due today",
+          "description": "Complete the review before the current SLA window closes."
+        },
+        "HIGH_RISK": {
+          "title": "Elevated risk score",
+          "description": "Verify scope, duration, and compensating controls before deciding."
+        },
+        "RESTRICTED_DATA": {
+          "title": "Sensitive data is in scope",
+          "description": "Handle the request according to its recorded classification."
+        },
+        "STANDARD_REVIEW": {
+          "title": "No elevated signal is recorded",
+          "description": "Continue with the standard evidence review."
+        }
+      }
     }
   },
   "metrics": {
     "pending": "Pending",
     "dueToday": "Due today",
     "overdue": "Overdue",
+    "inFlight": "My requests in flight",
+    "averageCycle": "Average decision time",
+    "hours": "{{value}}h",
     "sla": "SLA compliance",
     "atRisk": "{{count}} at risk"
   },

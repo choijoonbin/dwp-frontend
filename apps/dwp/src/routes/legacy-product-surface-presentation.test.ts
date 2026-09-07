@@ -79,6 +79,7 @@ const CONTRACTLESS_PRODUCT_CASES = [
 ] as const;
 
 const allowAll = () => true;
+const allowAllSurfaces = () => true;
 
 function navigationPaths(navigation: readonly ProductNavigationGroup[]): readonly string[] {
   return navigation.flatMap((group) => group.items.map((item) => item.path));
@@ -114,6 +115,7 @@ describe('legacy product surface presentation', () => {
         pathname: current!.indexPath,
         navigation: NAVIGATION_BY_PRODUCT[candidate.id]!,
         canAccessItem: allowAll,
+        canAccessSurface: allowAllSurfaces,
       });
 
       expect(presentation?.currentSurface.id, candidate.id).toBe(current!.id);
@@ -159,6 +161,7 @@ describe('legacy product surface presentation', () => {
           pathname: current.indexPath,
           navigation: NAVIGATION_BY_PRODUCT[candidate.id]!,
           canAccessItem: allowAll,
+          canAccessSurface: allowAllSurfaces,
         });
 
         expect(navigationPaths(presentation!.navigation), current.id).toEqual(
@@ -209,6 +212,7 @@ describe('legacy product surface presentation', () => {
         pathname: workPath,
         navigation: NAVIGATION_BY_PRODUCT[productId]!,
         canAccessItem: legacyAccess((resourceKey) => !resourceKey.startsWith('ADMIN.')),
+        canAccessSurface: allowAllSurfaces,
       });
 
       expect(
@@ -238,6 +242,7 @@ describe('legacy product surface presentation', () => {
       pathname: '/dwaion/home',
       navigation: DWAION_NAVIGATION,
       canAccessItem,
+      canAccessSurface: allowAllSurfaces,
     });
     const managementTransition = workPresentation!.headerEntryPoints.find(
       (entry) => entry.entryKind === 'management-entry'
@@ -249,12 +254,40 @@ describe('legacy product surface presentation', () => {
       pathname: '/dwaion/admin/agents',
       navigation: DWAION_NAVIGATION,
       canAccessItem,
+      canAccessSurface: allowAllSurfaces,
     });
     expect(navigationPaths(managementPresentation!.navigation)).toEqual(['/dwaion/admin/agents']);
     expect(managementPresentation!.returnTarget).toEqual({
       path: '/dwaion/home',
       kind: 'work',
     });
+  });
+
+  it('returns a management-only actor to the catalog instead of an inaccessible Work surface', () => {
+    const candidate = manifest('meetings');
+    const presentation = buildLegacyProductSurfacePresentation({
+      manifest: candidate,
+      pathname: '/meetings/admin/operations',
+      navigation: MEETINGS_NAVIGATION,
+      canAccessItem: legacyAccess(
+        (resourceKey, permissionCode) =>
+          resourceKey === 'ADMIN.MEETINGS' && permissionCode === 'VIEW'
+      ),
+      canAccessSurface: (surface) => !surface.entryAccess.requiresProductEntitlement,
+    });
+
+    expect(navigationPaths(presentation!.navigation)).toEqual([
+      '/meetings/admin/operations',
+      '/meetings/admin/policies',
+      '/meetings/admin/intelligence',
+    ]);
+    expect(
+      presentation!.headerEntryPoints.filter((entry) => entry.entryKind === 'work-return')
+    ).toEqual([]);
+    expect(presentation!.accessibleEntryPoints.map((entry) => entry.surfaceId)).toEqual([
+      'meetings.management',
+    ]);
+    expect(presentation!.returnTarget).toEqual({ path: '/apps', kind: 'catalog' });
   });
 
   it('fails closed for undeclared legacy menu paths before evaluating their access predicate', () => {
@@ -281,6 +314,7 @@ describe('legacy product surface presentation', () => {
         if (item.path === injectedPath) throw new Error('undeclared item must not be evaluated');
         return true;
       },
+      canAccessSurface: allowAllSurfaces,
     });
 
     expect(
@@ -312,16 +346,24 @@ describe('legacy product surface presentation', () => {
     ).toBeUndefined();
   });
 
-  it('returns no presentation for a path not claimed by the manifest', () => {
+  it('keeps an Approvals Work catch-all in its local Surface context', () => {
     const candidate = manifest('approvals');
-    expect(resolveLegacyPresentationSurface(candidate, '/approvals/unknown')).toBeUndefined();
+    expect(resolveLegacyPresentationSurface(candidate, '/approvals/unknown')?.id).toBe(
+      'approvals.work'
+    );
     expect(
       buildLegacyProductSurfacePresentation({
         manifest: candidate,
         pathname: '/approvals/unknown',
         navigation: APPROVAL_NAVIGATION,
         canAccessItem: allowAll,
-      })
-    ).toBeUndefined();
+        canAccessSurface: allowAllSurfaces,
+      })?.currentSurface.id
+    ).toBe('approvals.work');
+  });
+
+  it('returns no presentation for a path outside the manifest', () => {
+    const candidate = manifest('approvals');
+    expect(resolveLegacyPresentationSurface(candidate, '/outside/approvals')).toBeUndefined();
   });
 });

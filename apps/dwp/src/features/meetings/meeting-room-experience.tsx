@@ -6,7 +6,7 @@ import { CalendarClock, ShieldCheck, UsersRound, Video } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ActionButton, ErrorState, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { HttpError, useAuth } from '@dwp-frontend/shared-utils';
 import {
   confirmVideoMeetingConnected,
   endVideoMeeting,
@@ -18,6 +18,7 @@ import {
   type VideoMeetingJoinCredential,
   type VideoMeetingSummary,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { getVideoMeetingPreferences } from '@dwp-frontend/shared-utils/api/video-meeting-preferences-api';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -33,13 +34,30 @@ import { createMeetingDepartureSynchronizer } from './meeting-departure-sync';
 import { createMeetingEndSynchronizer } from './meeting-end-sync';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingPreJoin } from './meeting-prejoin';
+import {
+  meetingPreferenceScope,
+  meetingDevicePreferencesEqual,
+  meetingPreferenceValues,
+  readBrowserMeetingDevicePreferences,
+  reconcileMeetingDevicesFromBrowserInventory,
+  resolveMeetingPreJoinPreferenceDefaults,
+  writeBrowserMeetingDevicePreferences,
+} from './meeting-preferences-model';
 import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
 
 const LazyLiveVideoMeetingRoom = lazy(() => import('./live-video-meeting-room'));
+const meetingAuthorizationDenied = (error: unknown) =>
+  error instanceof HttpError && [401, 403, 404].includes(error.status);
 
 export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const { t, i18n } = useTranslation('meetings');
   const auth = useAuth();
+  const preferenceScope = meetingPreferenceScope({
+    isAuthenticated: auth.isAuthenticated,
+    identityPlane: auth.user?.identityPlane,
+    tenantId: auth.user?.tenantId,
+    userId: auth.user?.userId,
+  });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -48,17 +66,46 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   const [choices, setChoices] = useState<LocalUserChoices | null>(null);
   const [credential, setCredential] = useState<VideoMeetingJoinCredential | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [accessRevoked, setAccessRevoked] = useState(false);
   const [ended, setEnded] = useState(false);
   const [departure, setDeparture] = useState<MeetingDepartureKind | null>(null);
+  const [preparingDevices, setPreparingDevices] = useState(false);
+  const [browserDevicePreferences, setBrowserDevicePreferences] = useState(() =>
+    readBrowserMeetingDevicePreferences(preferenceScope)
+  );
   const departureEffectGeneration = useRef({ value: 0 });
+  const deviceInventoryGeneration = useRef(0);
+  const activeDevicePreferenceContext = useRef({
+    scope: preferenceScope,
+    sessionId: credential?.sessionId ?? null,
+  });
+  activeDevicePreferenceContext.current = {
+    scope: preferenceScope,
+    sessionId: credential?.sessionId ?? null,
+  };
   const lastDepartureRequest = useRef<Promise<void> | null>(null);
-  const queryKey = ['meetings', meetingId, 'detail'] as const;
+  const queryKey = useMemo(
+    () => ['meetings', meetingId, 'detail', preferenceScope] as const,
+    [meetingId, preferenceScope]
+  );
   const query = useQuery({
     queryKey,
     queryFn: () => getVideoMeeting(meetingId),
+    enabled: !accessRevoked,
     staleTime: 15_000,
     refetchInterval: credential ? 4_000 : 5_000,
-    retry: 1,
+    retry: (failureCount, error) => !meetingAuthorizationDenied(error) && failureCount < 1,
+    gcTime: 0,
+    meta: { accessSensitive: true },
+  });
+  const preferenceQuery = useQuery({
+    queryKey: ['meetings', 'preferences', preferenceScope],
+    queryFn: getVideoMeetingPreferences,
+    enabled: auth.isAuthenticated && Boolean(auth.user),
+    staleTime: 30_000,
+    retry: false,
+    gcTime: 0,
+    meta: { accessSensitive: true },
   });
   const connectionSynchronizer = useMemo(
     () => createMeetingConnectionSynchronizer(() => confirmVideoMeetingConnected(meetingId)),
@@ -79,6 +126,24 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       ),
     [connectionSynchronizer, meetingId]
   );
+  useEffect(() => {
+    setAccessRevoked(false);
+    setCredential(null);
+    setChoices(null);
+    setPreJoin(false);
+    setLocalError(null);
+  }, [meetingId, preferenceScope]);
+  useEffect(() => {
+    if (!meetingAuthorizationDenied(query.error)) return;
+    setAccessRevoked(true);
+    setCredential(null);
+    setChoices(null);
+    setPreJoin(false);
+    setLocalError(null);
+    if (credential) connectionSynchronizer.end(credential.sessionId);
+    void queryClient.cancelQueries({ queryKey });
+    queryClient.removeQueries({ queryKey, exact: true });
+  }, [connectionSynchronizer, credential, query.error, queryClient, queryKey]);
   const admissionMutation = useMutation({
     mutationFn: () =>
       requestVideoMeetingJoin(meetingId, {
@@ -89,7 +154,10 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       setLocalError(null);
       await queryClient.invalidateQueries({ queryKey });
     },
-    onError: () => setLocalError(t('join.requestError')),
+    onError: (error) => {
+      if (meetingAuthorizationDenied(error)) setAccessRevoked(true);
+      else setLocalError(t('join.requestError'));
+    },
   });
   const joinMutation = useMutation({
     mutationFn: async ({
@@ -119,7 +187,13 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       setDeparture(null);
       setLocalError(null);
     },
-    onError: () => setLocalError(t('errors.operation')),
+    onError: (error) => {
+      if (meetingAuthorizationDenied(error)) {
+        setAccessRevoked(true);
+        setCredential(null);
+        setChoices(null);
+      } else setLocalError(t('errors.operation'));
+    },
   });
   const endMutation = useMutation({
     mutationFn: (input: { sessionId: string; expectedVersion: number }) =>
@@ -132,7 +206,13 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       setEnded(true);
       void queryClient.invalidateQueries({ queryKey: ['meetings'] });
     },
-    onError: () => setLocalError(t('errors.operation')),
+    onError: (error) => {
+      if (meetingAuthorizationDenied(error)) {
+        setAccessRevoked(true);
+        setCredential(null);
+        setChoices(null);
+      } else setLocalError(t('errors.operation'));
+    },
   });
 
   useEffect(() => {
@@ -155,6 +235,76 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     };
   }, [connectionSynchronizer, credential, departureSynchronizer]);
 
+  useEffect(() => {
+    const generation = ++deviceInventoryGeneration.current;
+    setBrowserDevicePreferences(readBrowserMeetingDevicePreferences(preferenceScope));
+    setPreparingDevices(false);
+    return () => {
+      if (deviceInventoryGeneration.current === generation) deviceInventoryGeneration.current += 1;
+    };
+  }, [preferenceScope]);
+
+  const openDevicePreview = async () => {
+    if (preparingDevices) return;
+    const generation = ++deviceInventoryGeneration.current;
+    const saved = readBrowserMeetingDevicePreferences(preferenceScope);
+    setPreparingDevices(true);
+    let effective = saved;
+    try {
+      const inventory = await navigator.mediaDevices?.enumerateDevices();
+      if (inventory) effective = reconcileMeetingDevicesFromBrowserInventory(saved, inventory);
+    } catch {
+      // Enumeration may be policy-gated. Preserve the saved choice and let PreJoin request access.
+    }
+    if (deviceInventoryGeneration.current !== generation) return;
+    if (!meetingDevicePreferencesEqual(saved, effective))
+      writeBrowserMeetingDevicePreferences(preferenceScope, effective);
+    setBrowserDevicePreferences(effective);
+    setPreparingDevices(false);
+    setPreJoin(true);
+  };
+
+  const joinWithChoices = (nextChoices: LocalUserChoices) => {
+    const selected = {
+      ...browserDevicePreferences,
+      microphoneId: nextChoices.audioDeviceId || 'default',
+      cameraId: nextChoices.videoDeviceId || 'default',
+    };
+    writeBrowserMeetingDevicePreferences(preferenceScope, selected);
+    setBrowserDevicePreferences(selected);
+    return joinMutation.mutateAsync({ meeting: query.data!, nextChoices });
+  };
+
+  const selectPreJoinSpeaker = (speakerId: string) => {
+    setBrowserDevicePreferences((current) => {
+      const selected = { ...current, speakerId };
+      writeBrowserMeetingDevicePreferences(preferenceScope, selected);
+      return selected;
+    });
+  };
+
+  const clearUnavailableSpeakerPreference = (expectedScope: string, expectedSessionId: string) => {
+    const active = activeDevicePreferenceContext.current;
+    if (active.scope !== expectedScope || active.sessionId !== expectedSessionId) return;
+    setBrowserDevicePreferences((current) => {
+      if (current.speakerId === 'default') return current;
+      const fallback = { ...current, speakerId: 'default' };
+      writeBrowserMeetingDevicePreferences(expectedScope, fallback);
+      return fallback;
+    });
+  };
+
+  if (accessRevoked) {
+    return (
+      <PageCanvas mode="focus">
+        <ErrorState
+          title={t('room.accessRevokedTitle')}
+          description={t('room.accessRevokedDescription')}
+        />
+      </PageCanvas>
+    );
+  }
+
   if (query.isLoading) {
     return (
       <PageCanvas mode="focus">
@@ -176,6 +326,14 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
   }
 
   const meeting = query.data;
+  const preferenceResolutionPending =
+    auth.isAuthenticated && Boolean(auth.user) && preferenceQuery.isPending;
+  const preJoinDefaults = resolveMeetingPreJoinPreferenceDefaults(
+    meeting,
+    auth.user?.displayName ?? '',
+    preferenceQuery.data ? meetingPreferenceValues(preferenceQuery.data) : null,
+    browserDevicePreferences
+  );
   const authenticatedUserId = Number(auth.user?.userId);
   const currentParticipant = Number.isFinite(authenticatedUserId)
     ? meeting.participants.find((participant) => participant.userId === authenticatedUserId)
@@ -282,8 +440,14 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
       <Suspense fallback={<LoadingState label={t('room.connecting')} />}>
         <LazyLiveVideoMeetingRoom
           meeting={meeting}
+          authorizationScope={preferenceScope}
           credential={credential}
           choices={choices}
+          speakerDeviceId={preJoinDefaults.speakerDeviceId}
+          noiseSuppression={preJoinDefaults.noiseSuppression}
+          onSpeakerDeviceFallback={() =>
+            clearUnavailableSpeakerPreference(preferenceScope, credential.sessionId)
+          }
           ending={endMutation.isPending}
           operationError={localError ?? (query.isError ? t('errors.lifecycleSync') : null)}
           onConnected={() => {
@@ -324,19 +488,28 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     );
   }
 
+  if (preJoin && preferenceResolutionPending) {
+    return (
+      <PageCanvas mode="focus" topInset="compact">
+        <LoadingState label={t('preferences.loading')} />
+      </PageCanvas>
+    );
+  }
+
   if (preJoin) {
     return (
       <PageCanvas mode="focus" topInset="compact">
         <MeetingPreJoin
           meeting={meeting}
-          defaultDisplayName={auth.user?.displayName ?? ''}
+          defaults={preJoinDefaults}
           busy={joinMutation.isPending}
           onCancel={() => {
             setLocalError(null);
             setPreJoin(false);
           }}
           onError={() => setLocalError(t('errors.mediaPermission'))}
-          onSubmit={(nextChoices) => joinMutation.mutateAsync({ meeting, nextChoices })}
+          onSpeakerDeviceChange={selectPreJoinSpeaker}
+          onSubmit={joinWithChoices}
         />
       </PageCanvas>
     );
@@ -392,8 +565,8 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           <Box
             sx={{
               p: { xs: 2.25, md: 3.5 },
-              background: (theme) =>
-                `linear-gradient(145deg, ${theme.palette.action.hover}, transparent 72%)`,
+              borderBottom: 1,
+              borderColor: 'divider',
             }}
           >
             <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
@@ -463,8 +636,15 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
               <ActionButton
                 intent="primary"
                 startIcon={<Video size={18} />}
-                disabled={waitingForAdmission || admissionDenied || waitingForHost}
-                onClick={() => setPreJoin(true)}
+                loading={preparingDevices || preferenceResolutionPending}
+                loadingLabel={t('preferences.loading')}
+                disabled={
+                  waitingForAdmission ||
+                  admissionDenied ||
+                  waitingForHost ||
+                  preferenceResolutionPending
+                }
+                onClick={() => void openDevicePreview()}
               >
                 {waitingForAdmission
                   ? t('join.waitingTitle')

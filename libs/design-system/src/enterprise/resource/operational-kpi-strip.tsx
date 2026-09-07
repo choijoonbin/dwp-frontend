@@ -2,6 +2,8 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
+import type { SxProps, Theme } from '@mui/material/styles';
+
 export type OperationalKpiTone = 'neutral' | 'info' | 'success' | 'warning' | 'critical';
 
 const TONE_COLOR: Record<OperationalKpiTone, string> = {
@@ -25,28 +27,44 @@ export type OperationalKpi = {
 export function OperationalKpiStrip({
   ariaLabel,
   items,
+  sx,
 }: {
   ariaLabel: string;
   items: OperationalKpi[];
+  sx?: SxProps<Theme>;
 }) {
   return (
     <Box
       component="section"
       aria-label={ariaLabel}
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: {
-          xs: 'repeat(2, minmax(0, 1fr))',
-          lg: `repeat(${Math.min(items.length, 6)}, minmax(0, 1fr))`,
+      sx={[
+        {
+          display: 'grid',
+          containerType: 'inline-size',
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            lg: `repeat(${Math.min(items.length, 6)}, minmax(0, 1fr))`,
+          },
+          borderTop: 1,
+          borderBottom: 1,
+          borderColor: 'divider',
         },
-        borderTop: 1,
-        borderBottom: 1,
-        borderColor: 'divider',
-      }}
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     >
       {items.map((item, index) => {
         const body = (
-          <Box sx={{ width: 1, px: { xs: 1.5, md: 2.25 }, py: 1.75, textAlign: 'left' }}>
+          <Box
+            sx={{
+              width: 1,
+              minWidth: 0,
+              px: { xs: 1.5, md: 2.25 },
+              py: 1.75,
+              textAlign: 'left',
+              wordBreak: 'keep-all',
+              overflowWrap: 'anywhere',
+            }}
+          >
             <Typography
               component="p"
               variant="h5"
@@ -69,15 +87,28 @@ export function OperationalKpiStrip({
             key={item.key}
             sx={{
               minWidth: 0,
-              borderLeft: { xs: index % 2 === 0 ? 0 : 1, lg: index === 0 ? 0 : 1 },
-              borderTop: { xs: index > 1 ? 1 : 0, lg: 0 },
+              borderStyle: 'solid',
+              borderWidth: 0,
+              borderLeftWidth: { xs: index % 2 === 0 ? 0 : 1, lg: index === 0 ? 0 : 1 },
+              borderTopWidth: { xs: index > 1 ? 1 : 0, lg: 0 },
               borderColor: 'divider',
+              '@container (max-width: 17rem)': {
+                gridColumn: '1 / -1',
+                borderLeftWidth: 0,
+                borderTopWidth: index === 0 ? 0 : 1,
+              },
             }}
           >
             {item.onSelect ? (
               <ButtonBase
                 onClick={item.onSelect}
-                sx={{ width: 1, '&:hover': { bgcolor: 'action.hover' } }}
+                sx={{
+                  width: 1,
+                  height: 1,
+                  alignItems: 'flex-start',
+                  '&:hover': { bgcolor: 'action.hover' },
+                  '&.Mui-focusVisible, &:focus-visible': { outlineOffset: -3 },
+                }}
               >
                 {body}
               </ButtonBase>

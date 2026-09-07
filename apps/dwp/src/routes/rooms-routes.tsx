@@ -8,8 +8,9 @@ import { RoomsLayout } from '../layouts/rooms-layout';
 import { buildProductPageRouteContractSource } from './draft-product-page-route-contract-source';
 import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './official-product-page-route-contracts';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductAnyRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -25,9 +26,24 @@ const page = (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.WORKPLACE">
+  <ProductWorkRouteGuard
+    productId="workplace"
+    surfaceId="workplace.work"
+    resourceKey="APP.WORKPLACE"
+  >
     <RoomsLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const WORKPLACE_ADMIN_AUTHORITIES = [
+  { resourceKey: 'ADMIN.WORKPLACE', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.ROOMS', permissionCode: 'VIEW' },
+] as const;
+
+const managementLegacyShell = (
+  <ProductAnyRouteGuard authorities={WORKPLACE_ADMIN_AUTHORITIES}>
+    <RoomsLayout />
+  </ProductAnyRouteGuard>
 );
 
 const workplaceCanonicalPaths = new Map(
@@ -75,6 +91,7 @@ export const roomsRoutes: RouteObject[] = [
       managementBasePath: '/workplace/admin',
       legacyPath: '/workplace/home',
       legacyShell,
+      managementLegacyShell,
       areaKey: 'rooms',
       translationNamespace: 'rooms',
       renderPage: () => page,

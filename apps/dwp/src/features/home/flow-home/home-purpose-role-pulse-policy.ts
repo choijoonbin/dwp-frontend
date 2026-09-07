@@ -1,6 +1,11 @@
 import type { NormalizedHomeContribution } from '../contributions';
 import type { FlowSignal } from './flow-home-model';
 
+export type DedicatedCalendarSignalVisibility = Readonly<{
+  focusBalance: boolean;
+  meetingLoad: boolean;
+}>;
+
 const SIGNAL_KEYS_BY_PROVIDER: Readonly<Record<string, readonly FlowSignal['key'][] | undefined>> =
   {
     'workspace-work': ['open-work'],
@@ -24,4 +29,20 @@ export function filterRolePulseTextItems(
     const coveredSignals = SIGNAL_KEYS_BY_PROVIDER[item.providerKey];
     return !coveredSignals?.some((signalKey) => availableSignals.has(signalKey));
   });
+}
+
+/**
+ * A calendar signal belongs either to its independent widget or to the compact
+ * role overview, never both. Hiding a specialist widget restores its signal in
+ * role pulse so personalization cannot remove the underlying information.
+ */
+export function filterRolePulseSignals(
+  signals: readonly FlowSignal[],
+  dedicated: DedicatedCalendarSignalVisibility
+): FlowSignal[] {
+  return signals.filter(
+    (signal) =>
+      (signal.key !== 'focus-time' || !dedicated.focusBalance) &&
+      (signal.key !== 'schedule-load' || !dedicated.meetingLoad)
+  );
 }

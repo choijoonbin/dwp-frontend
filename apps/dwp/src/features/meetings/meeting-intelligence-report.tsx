@@ -24,11 +24,11 @@ import type { VideoMeetingArtifact } from '@dwp-frontend/shared-utils/api/video-
 import {
   createVideoMeetingIntelligenceRun,
   getLatestVisibleVideoMeetingIntelligenceReport,
+  getVideoMeetingIntelligenceReport,
   getVideoMeetingIntelligenceRun,
   publishVideoMeetingIntelligenceReport,
   reviewVideoMeetingIntelligenceReport,
   type VideoMeetingIntelligenceAnalysis,
-  type VideoMeetingIntelligenceCitation,
   type VideoMeetingIntelligenceCitedText,
   type VideoMeetingIntelligenceClimateLabel,
   type VideoMeetingIntelligenceClimateSignal,
@@ -49,8 +49,6 @@ import { alpha } from '@mui/material/styles';
 import {
   deriveMeetingIntelligenceActions,
   deriveMeetingIntelligenceSurfaceState,
-  formatMeetingIntelligenceCitation,
-  meetingIntelligenceTimestampDuration,
   selectFreshlyAuthorizedMeetingIntelligenceReport,
   selectMeetingIntelligenceReportForViewer,
   type MeetingIntelligenceGenerateBlocker,
@@ -77,6 +75,7 @@ import {
   type StoredIntelligenceIntent,
 } from './meeting-intelligence-intent';
 import { MeetingIntelligenceReviewerAccess } from './meeting-intelligence-reviewer-access';
+import { MeetingIntelligenceCitationList } from './meeting-intelligence-citations';
 
 export type MeetingIntelligenceReviewReason = {
   code: string;
@@ -112,6 +111,7 @@ export type MeetingIntelligenceReportLabels = {
   sectionEmpty: string;
   citationLabel: (value: string) => string;
   citationDetail: (segmentId: string, value: string) => string;
+  citationSeek: (segmentId: string, value: string) => string;
   climateDescription: string;
   climateLabels: Record<VideoMeetingIntelligenceClimateLabel, string>;
   climateSignals: Record<VideoMeetingIntelligenceClimateSignal, string>;
@@ -133,6 +133,7 @@ export type MeetingIntelligenceReportLabels = {
 
 export type MeetingIntelligenceReportProps = {
   meetingId: string;
+  reportId?: string;
   canHost: boolean;
   transcriptArtifact?: VideoMeetingArtifact | null;
   contentPlanVersion?: number | null;
@@ -160,6 +161,7 @@ const STATUS_COLORS: Record<MeetingIntelligenceSurfaceState, ChipProps['color']>
 
 export function MeetingIntelligenceReport({
   meetingId,
+  reportId,
   canHost,
   transcriptArtifact,
   contentPlanVersion,
@@ -167,15 +169,16 @@ export function MeetingIntelligenceReport({
 }: MeetingIntelligenceReportProps) {
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
+  const reportScope = `${meetingId}:${reportId ?? 'latest'}`;
   const queryKey = useMemo(
-    () => ['meetings', meetingId, 'intelligence', 'reports', 'latest'] as const,
-    [meetingId]
+    () => ['meetings', meetingId, 'intelligence', 'reports', reportId ?? 'latest'] as const,
+    [meetingId, reportId]
   );
   const authorizationFenceRef = useRef<ReturnType<
     typeof createMeetingIntelligenceAuthorizationFence
   > | null>(null);
-  if (!authorizationFenceRef.current || authorizationFenceRef.current.scope !== meetingId) {
-    authorizationFenceRef.current = createMeetingIntelligenceAuthorizationFence(meetingId);
+  if (!authorizationFenceRef.current || authorizationFenceRef.current.scope !== reportScope) {
+    authorizationFenceRef.current = createMeetingIntelligenceAuthorizationFence(reportScope);
   }
   const authorizationFence = authorizationFenceRef.current;
   const [authorizationFailureScope, setAuthorizationFailureScope] = useState<string | null>(null);
@@ -185,11 +188,11 @@ export function MeetingIntelligenceReport({
 
   const denyAuthorization = (validation?: MeetingIntelligenceAuthorizationValidation) => {
     const currentFence = authorizationFenceRef.current;
-    if (!currentFence || currentFence.scope !== meetingId) return;
+    if (!currentFence || currentFence.scope !== reportScope) return;
     const generation = validation ? currentFence.deny(validation) : currentFence.revoke();
     if (generation === null) return;
     queryClient.setQueryData<VideoMeetingIntelligenceReport | null>(queryKey, null);
-    setAuthorizationFailureScope(meetingId);
+    setAuthorizationFailureScope(reportScope);
   };
 
   const latestQuery = useQuery({
@@ -198,13 +201,21 @@ export function MeetingIntelligenceReport({
       const validation = authorizationFenceRef.current?.beginValidation();
       if (!validation) throw new MeetingIntelligenceAuthorizationSupersededError();
       try {
-        const report = await getLatestVisibleVideoMeetingIntelligenceReport(meetingId);
+        const candidate = reportId
+          ? await getVideoMeetingIntelligenceReport(meetingId, reportId)
+          : await getLatestVisibleVideoMeetingIntelligenceReport(meetingId);
+        if (
+          candidate &&
+          (candidate.meetingId !== meetingId || (reportId && candidate.reportId !== reportId))
+        ) {
+          throw new Error('Meeting intelligence report binding mismatch.');
+        }
         const currentFence = authorizationFenceRef.current;
         if (!currentFence || !currentFence.authorize(validation)) {
           throw new MeetingIntelligenceAuthorizationSupersededError();
         }
-        setAuthorizationFailureScope((scope) => (scope === meetingId ? null : scope));
-        return report;
+        setAuthorizationFailureScope((scope) => (scope === reportScope ? null : scope));
+        return candidate;
       } catch (error) {
         if (!(error instanceof MeetingIntelligenceAuthorizationSupersededError)) {
           denyAuthorization(validation);
@@ -219,7 +230,7 @@ export function MeetingIntelligenceReport({
       failureCount < 1,
   });
   const latestAuthorizationFailed =
-    authorizationFailureScope === meetingId || latestQuery.isError || latestQuery.isRefetchError;
+    authorizationFailureScope === reportScope || latestQuery.isError || latestQuery.isRefetchError;
   const latestReport = selectFreshlyAuthorizedMeetingIntelligenceReport(
     latestQuery.data,
     latestAuthorizationFailed
@@ -741,7 +752,10 @@ function IntelligenceAnalysis({
         <Typography variant="body1" sx={{ mt: 1.25, whiteSpace: 'pre-wrap' }}>
           {analysis.executiveSummary.text}
         </Typography>
-        <CitationList citations={analysis.executiveSummary.citations} labels={labels} />
+        <MeetingIntelligenceCitationList
+          citations={analysis.executiveSummary.citations}
+          labels={labels}
+        />
       </Box>
 
       <Box
@@ -820,7 +834,7 @@ function CitedTextCollection({
               <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
                 {item.text}
               </Typography>
-              <CitationList citations={item.citations} labels={labels} />
+              <MeetingIntelligenceCitationList citations={item.citations} labels={labels} />
             </Box>
           ))}
         </Stack>
@@ -830,37 +844,6 @@ function CitedTextCollection({
         </Typography>
       )}
     </Box>
-  );
-}
-
-function CitationList({
-  citations,
-  labels,
-}: {
-  citations: VideoMeetingIntelligenceCitation[];
-  labels: MeetingIntelligenceReportLabels;
-}) {
-  if (!citations.length) return null;
-  return (
-    <Stack role="list" direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
-      {citations.map((citation, index) => {
-        const range = formatMeetingIntelligenceCitation(citation);
-        return (
-          <Chip
-            key={`${citation.segmentId}-${citation.startMillis}-${index}`}
-            role="listitem"
-            size="small"
-            variant="outlined"
-            label={
-              <time dateTime={meetingIntelligenceTimestampDuration(citation.startMillis)}>
-                {labels.citationLabel(range)}
-              </time>
-            }
-            aria-label={labels.citationDetail(citation.segmentId, range)}
-          />
-        );
-      })}
-    </Stack>
   );
 }
 
@@ -914,7 +897,7 @@ function ConversationClimate({
           ))}
         </Stack>
       )}
-      <CitationList citations={climate.citations} labels={labels} />
+      <MeetingIntelligenceCitationList citations={climate.citations} labels={labels} />
     </Box>
   );
 }

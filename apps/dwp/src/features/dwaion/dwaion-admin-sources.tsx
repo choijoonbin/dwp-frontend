@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, ShieldCheck } from 'lucide-react';
 import {
   ActionIconButton,
+  ErrorState,
   EnterpriseDataGrid,
   FormDialog,
   FormField,
@@ -99,14 +100,10 @@ export function DwaionAdminSources() {
           <Chip
             size="small"
             variant="outlined"
-            color={
-              row.connectionState === 'CONNECTED'
-                ? 'success'
-                : row.connectionState === 'BLOCKED'
-                  ? 'default'
-                  : 'warning'
-            }
-            label={row.connectionState}
+            color={row.connectionState === 'CONNECTED' ? 'info' : 'default'}
+            label={t(`dwaionAdmin.sources.connectionStates.${row.connectionState}`, {
+              defaultValue: row.connectionState,
+            })}
           />
         ),
       },
@@ -161,7 +158,7 @@ export function DwaionAdminSources() {
           {t('dwaionAdmin.sources.saved')}
         </Alert>
       )}
-      {(query.isError || mutation.isError) && (
+      {mutation.isError && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {t('dwaionAdmin.sources.error')}
         </Alert>
@@ -169,17 +166,30 @@ export function DwaionAdminSources() {
       <Alert severity="info" icon={<ShieldCheck size={19} />} sx={{ mt: 2 }}>
         {t('dwaionAdmin.sources.secretBoundary')}
       </Alert>
-      <Box sx={{ mt: 3, borderBlock: 1, borderColor: 'divider' }}>
-        <EnterpriseDataGrid
-          ariaLabel={t('dwaionAdmin.sources.tableLabel')}
-          rows={query.data ?? []}
-          columns={columns}
-          getRowId={(row) => row.sourceKey}
-          loading={query.isLoading}
-          hideFooter
-          sx={{ border: 0, borderRadius: 0 }}
-        />
-      </Box>
+      {query.isError ? (
+        <Box sx={{ mt: 3 }}>
+          <ErrorState
+            size="page"
+            title={t('dwaionAdmin.sources.error')}
+            description={t('dwaionAdmin.sources.unavailableDescription')}
+            retryLabel={t('dwaionAdmin.shared.retry')}
+            retrying={query.isFetching}
+            onRetry={() => void query.refetch()}
+          />
+        </Box>
+      ) : (
+        <Box sx={{ mt: 3, borderBlock: 1, borderColor: 'divider' }}>
+          <EnterpriseDataGrid
+            ariaLabel={t('dwaionAdmin.sources.tableLabel')}
+            rows={query.data ?? []}
+            columns={columns}
+            getRowId={(row) => row.sourceKey}
+            loading={query.isLoading}
+            hideFooter
+            sx={{ border: 0, borderRadius: 0 }}
+          />
+        </Box>
+      )}
       <FormDialog
         open={Boolean(editor)}
         title={t('dwaionAdmin.sources.dialogTitle')}

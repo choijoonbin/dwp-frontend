@@ -116,6 +116,9 @@ export function useMessagingRealtime({
         void queryClient.invalidateQueries({
           queryKey: ['messaging', 'thread', conversationId],
         });
+        void queryClient.invalidateQueries({
+          queryKey: ['messaging', 'read-receipts', conversationId],
+        });
       }
     };
 
@@ -135,6 +138,11 @@ export function useMessagingRealtime({
               if (signal.kind === 'TYPING_CHANGED') {
                 applyTypingSignal(signal);
                 return;
+              }
+              if (signal.kind === 'messaging.privacy-preferences.updated') {
+                void queryClient.invalidateQueries({
+                  queryKey: ['messaging', 'privacy-preferences'],
+                });
               }
               if (!['connected', 'messaging.connected', 'heartbeat'].includes(signal.kind)) {
                 refresh(signal.conversationId);

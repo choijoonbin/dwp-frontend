@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { isAppReadEntitled, isAppResourceEntitled } from './app-entitlements';
+import {
+  isAppReadEntitled,
+  isAppResourceEntitled,
+  isExplicitAppResourceEntitled,
+} from './app-entitlements';
 
 const permission = (resourceKey: string, effect = 'ALLOW') => ({
   resourceType: 'APP',
@@ -30,5 +34,12 @@ describe('application entitlement aliases', () => {
       isAppReadEntitled('APP.WORK', [{ ...permission('APP.WORK'), permissionCode: 'USE' }])
     ).toBe(false);
     expect(isAppReadEntitled('APP.WORK', [permission('APP.WORK')])).toBe(true);
+  });
+
+  it('keeps legacy empty-list compatibility out of governed Product work surfaces', () => {
+    expect(isAppResourceEntitled('APP.WORK', [])).toBe(true);
+    expect(isExplicitAppResourceEntitled('APP.WORK', [])).toBe(false);
+    expect(isExplicitAppResourceEntitled('APP.WORK', [permission('APP.CALENDAR')])).toBe(false);
+    expect(isExplicitAppResourceEntitled('APP.WORK', [permission('APP.WORK')])).toBe(true);
   });
 });

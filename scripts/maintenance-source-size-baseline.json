@@ -2,18 +2,18 @@
   "version": 1,
   "files": {
     "e2e/admin.spec.ts": 1653,
-    "e2e/flow-home-visual.spec.ts": 1474,
-    "e2e/flow-home.spec.ts": 3481,
+    "e2e/flow-home-visual.spec.ts": 1308,
+    "e2e/flow-home.spec.ts": 3445,
     "e2e/home-command-center.spec.ts": 1047,
-    "e2e/mail.spec.ts": 1214,
-    "e2e/messaging.spec.ts": 1413,
+    "e2e/mail.spec.ts": 1031,
+    "e2e/messaging.spec.ts": 1410,
     "e2e/product-surface-approvals-pilot.spec.ts": 1318,
     "e2e/rooms.spec.ts": 3842,
-    "e2e/shell.spec.ts": 2075,
+    "e2e/shell.spec.ts": 2004,
     "e2e/support/shell-session.ts": 4259,
-    "e2e/video-meetings.spec.ts": 1318,
-    "scripts/check-product-surface-production-readiness.mjs": 2132,
-    "scripts/check-product-surface-production-readiness.test.mjs": 1194,
-    "scripts/sync-product-authorization-fixtures.mjs": 1340
+    "e2e/video-meetings.spec.ts": 1180,
+    "scripts/check-product-surface-production-readiness.mjs": 2159,
+    "scripts/check-product-surface-production-readiness.test.mjs": 1199,
+    "scripts/sync-product-authorization-fixtures.mjs": 1354
   }
 }

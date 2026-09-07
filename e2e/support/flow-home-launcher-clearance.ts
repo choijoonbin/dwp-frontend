@@ -65,13 +65,15 @@ async function readLauncherCollisions(page: Page) {
           rect.top >= launcherRect.bottom + clearance
         );
       })
-      .map(
-        (element) =>
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        const label =
           element.getAttribute('aria-label') ||
           element.getAttribute('data-home-contribution') ||
           element.textContent?.trim().slice(0, 60) ||
-          element.tagName
-      );
+          element.tagName;
+        return `${label} [${Math.round(rect.left)},${Math.round(rect.top)}–${Math.round(rect.right)},${Math.round(rect.bottom)}]`;
+      });
     return { launcher: launcherRect.toJSON(), collisions };
   });
 }
@@ -127,7 +129,8 @@ export async function positionFlowNewsRelativeToLauncher(
   page: Page,
   position: 'clear' | 'near-miss' | 'overlap'
 ) {
-  await page.evaluate((nextPosition) => {
+  const previousClearance = await readLauncherClearanceState(page);
+  const appliedScrollTop = await page.evaluate((nextPosition) => {
     const widget = document.querySelector<HTMLElement>('[data-workspace-widget="announcements"]')!;
     const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
     const widgetRect = widget.getBoundingClientRect();
@@ -135,18 +138,14 @@ export async function positionFlowNewsRelativeToLauncher(
     const absoluteTop = window.scrollY + widgetRect.top;
     const desiredTop =
       nextPosition === 'clear'
-        ? launcherRect.bottom + 32
+        ? launcherRect.top - widgetRect.height - 32
         : nextPosition === 'near-miss'
           ? launcherRect.top - widgetRect.height - 0.5
-          : launcherRect.top - Math.min(widgetRect.height - 32, widgetRect.height / 2);
+          : launcherRect.top - widgetRect.height + 1;
     window.scrollTo(0, Math.max(0, absoluteTop - desiredTop));
+    return String(window.scrollY);
   }, position);
-  await page.evaluate(
-    () =>
-      new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-      )
-  );
+  await waitForLauncherClearance(page, appliedScrollTop, previousClearance);
 }
 
 export async function readFlowNewsLauncherGeometry(news: Locator) {
@@ -168,6 +167,21 @@ export async function readFlowNewsLauncherGeometry(news: Locator) {
       launcherTop: launcherRect.top,
     };
   });
+}
+
+export async function positionFlowWidgetAtLauncher(page: Page, widgetKey: string) {
+  const previous = await readLauncherClearanceState(page);
+  const scrollY = await page.evaluate((key) => {
+    const widget = document.querySelector<HTMLElement>(`[data-workspace-widget="${key}"]`)!;
+    const section = widget.querySelector<HTMLElement>('[data-workspace-widget-content] > section')!;
+    const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
+    const bounds = section.getBoundingClientRect();
+    const launcherBounds = launcher.getBoundingClientRect();
+    const absoluteTop = window.scrollY + bounds.top;
+    window.scrollTo(0, absoluteTop - (launcherBounds.top - bounds.height / 2));
+    return String(window.scrollY);
+  }, widgetKey);
+  await waitForLauncherClearance(page, scrollY, previous);
 }
 
 export async function expectDwaionClearOfHomeActions(page: Page) {

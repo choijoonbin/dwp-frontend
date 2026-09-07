@@ -54,6 +54,10 @@ import Typography from '@mui/material/Typography';
 import { notificationQueryKeys } from './integration-contract';
 import { USER_CHANNELS } from './notification-model';
 import {
+  NOTIFICATION_PREFERENCE_SECTION_IDS,
+  NotificationPreferenceNavigation,
+} from './notification-preference-navigation';
+import {
   buildNotificationSubscriptionRuleInput,
   findNotificationTypeSetting,
   isNotificationPreferenceConflict,
@@ -84,16 +88,18 @@ const CHANNEL_ICON: Record<NotificationChannel, LucideIcon> = {
 };
 
 function PreferenceSection({
+  id,
   title,
   description,
   children,
 }: {
+  id: string;
   title: string;
   description: string;
   children: ReactNode;
 }) {
   return (
-    <Box component="section" sx={{ mt: 3.5 }}>
+    <Box component="section" id={id} tabIndex={-1} sx={{ mt: 3.5, scrollMarginTop: 128 }}>
       <Typography component="h2" variant="h6">
         {title}
       </Typography>
@@ -480,8 +486,10 @@ export function NotificationPreferences() {
           {t('preferences.apps.effectivePolicyUnavailable')}
         </Alert>
       )}
+      <NotificationPreferenceNavigation />
 
       <PreferenceSection
+        id={NOTIFICATION_PREFERENCE_SECTION_IDS.presentation}
         title={t('preferences.presentation.title')}
         description={t('preferences.presentation.description')}
       >
@@ -550,6 +558,7 @@ export function NotificationPreferences() {
       </PreferenceSection>
 
       <PreferenceSection
+        id={NOTIFICATION_PREFERENCE_SECTION_IDS.global}
         title={t('preferences.global.title')}
         description={t('preferences.global.description')}
       >
@@ -587,10 +596,12 @@ export function NotificationPreferences() {
                       channels: { ...draft.channels, [channel]: event.target.checked },
                     })
                   }
-                  inputProps={{
-                    'aria-label': t('preferences.global.channelToggle', {
-                      channel: t(`channels.${channel}`),
-                    }),
+                  slotProps={{
+                    input: {
+                      'aria-label': t('preferences.global.channelToggle', {
+                        channel: t(`channels.${channel}`),
+                      }),
+                    },
                   }}
                 />
               </PreferenceRow>
@@ -600,6 +611,7 @@ export function NotificationPreferences() {
       </PreferenceSection>
 
       <PreferenceSection
+        id={NOTIFICATION_PREFERENCE_SECTION_IDS.quiet}
         title={t('preferences.quiet.title')}
         description={t('preferences.quiet.description')}
       >
@@ -618,7 +630,7 @@ export function NotificationPreferences() {
                   quietHours: { ...draft.quietHours, enabled: event.target.checked },
                 })
               }
-              inputProps={{ 'aria-label': t('preferences.quiet.enabled') }}
+              slotProps={{ input: { 'aria-label': t('preferences.quiet.enabled') } }}
             />
           </PreferenceRow>
           <PreferenceRow
@@ -695,13 +707,14 @@ export function NotificationPreferences() {
                   },
                 })
               }
-              inputProps={{ 'aria-label': t('preferences.quiet.urgentBypass') }}
+              slotProps={{ input: { 'aria-label': t('preferences.quiet.urgentBypass') } }}
             />
           </PreferenceRow>
         </Stack>
       </PreferenceSection>
 
       <PreferenceSection
+        id={NOTIFICATION_PREFERENCE_SECTION_IDS.digest}
         title={t('preferences.digest.title')}
         description={t('preferences.digest.description')}
       >
@@ -781,6 +794,7 @@ export function NotificationPreferences() {
       </PreferenceSection>
 
       <PreferenceSection
+        id={NOTIFICATION_PREFERENCE_SECTION_IDS.apps}
         title={t('preferences.apps.title')}
         description={t('preferences.apps.description')}
       >
@@ -839,7 +853,7 @@ export function NotificationPreferences() {
                       bgcolor: app.appKey === selectedAppKey ? 'action.selected' : undefined,
                     }}
                   >
-                    {app.appName}
+                    {t(`sources.${app.appKey.toLowerCase()}`, { defaultValue: app.appName })}
                   </ActionButton>
                 ))}
               </Box>

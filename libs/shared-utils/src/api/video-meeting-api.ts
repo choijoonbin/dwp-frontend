@@ -3,6 +3,10 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 import { VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
 import type { VideoMeetingParticipant, VideoMeetingRole } from './video-meeting-lifecycle-contract';
+import {
+  serializeVideoMeetingPreparationSource,
+  type VideoMeetingPreparationSource,
+} from './video-meeting-preparation-api';
 
 export { leaveVideoMeeting, VIDEO_MEETING_API_BASE } from './video-meeting-lifecycle-api';
 export type {
@@ -143,7 +147,7 @@ export type VideoMeetingPage<T> = {
   total: number;
 };
 
-export type ScheduleVideoMeetingInput = {
+export type ScheduleVideoMeetingInput = VideoMeetingPreparationSource & {
   title: string;
   agenda?: string | null;
   startsAt: string;
@@ -801,6 +805,7 @@ export async function scheduleVideoMeeting(
       defaultCameraEnabled: input.defaultCameraEnabled,
       participantUserIds: input.participantUserIds,
       guestInvitees: [],
+      ...serializeVideoMeetingPreparationSource(input),
     },
     idempotencyConfig(input.idempotencyKey)
   );

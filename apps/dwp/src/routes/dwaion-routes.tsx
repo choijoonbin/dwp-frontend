@@ -5,9 +5,9 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { DWAION_SURFACE_MANIFEST } from '../features/dwaion/dwaion-product-manifest';
 import { DwaionLayout } from '../layouts/dwaion-layout';
 import {
-  AppRouteGuard,
   ProductAnyRouteGuard,
   ProductRouteGuard,
+  ProductWorkRouteGuard,
   WorkspaceRouteGuard,
   authenticationFallback,
   routeFallback,
@@ -39,6 +39,21 @@ const DwaionAgents = lazy(() =>
 );
 const DwaionActions = lazy(() =>
   import('../features/dwaion/dwaion-actions').then((module) => ({ default: module.DwaionActions }))
+);
+const DwaionRoutines = lazy(() =>
+  import('../features/dwaion/dwaion-routines').then((module) => ({
+    default: module.DwaionRoutines,
+  }))
+);
+const DwaionPersonalControls = lazy(() =>
+  import('../features/dwaion/dwaion-personal-controls').then((module) => ({
+    default: module.DwaionPersonalControls,
+  }))
+);
+const DwaionArtifacts = lazy(() =>
+  import('../features/dwaion/dwaion-artifacts').then((module) => ({
+    default: module.DwaionArtifacts,
+  }))
 );
 const DwaionAdminOverview = lazy(() =>
   import('../features/dwaion/dwaion-admin').then((module) => ({
@@ -88,10 +103,32 @@ const ACTION_AUTHORITIES = [
   { resourceKey: 'ACTION.APPROVAL_REQUEST', permissionCode: 'CREATE' },
 ] as const;
 
+const DWAION_ADMIN_AUTHORITIES = [
+  { resourceKey: 'ADMIN.DWAION_OPERATIONS', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_AGENTS', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_SOURCES', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_ACTIONS', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_SAFETY', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_EVALUATION', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_GATES', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_RETENTION', permissionCode: 'VIEW' },
+  { resourceKey: 'ADMIN.DWAION_AUDIT', permissionCode: 'VIEW' },
+] as const;
+
 const legacyShell = (
-  <AppRouteGuard resourceKey={DWAION_SURFACE_MANIFEST.appKey}>
+  <ProductWorkRouteGuard
+    productId="dwaion"
+    surfaceId="dwaion.work"
+    resourceKey={DWAION_SURFACE_MANIFEST.appKey}
+  >
     <DwaionLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const managementLegacyShell = (
+  <ProductAnyRouteGuard authorities={DWAION_ADMIN_AUTHORITIES}>
+    <DwaionLayout />
+  </ProductAnyRouteGuard>
 );
 
 export const dwaionRoutes: RouteObject[] = [
@@ -112,6 +149,7 @@ export const dwaionRoutes: RouteObject[] = [
         managementBasePath: '/dwaion/admin',
         legacyPath: '/dwaion/home',
         legacyShell,
+        managementLegacyShell,
         areaKey: 'dwaion',
         translationNamespace: 'work',
         renderPage: (route) => dwaionRoutePage(route.pattern),
@@ -126,9 +164,13 @@ export const dwaionRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey={DWAION_SURFACE_MANIFEST.appKey}>
+          <ProductWorkRouteGuard
+            productId="dwaion"
+            surfaceId="dwaion.work"
+            resourceKey={DWAION_SURFACE_MANIFEST.appKey}
+          >
             <LegacyDwaionEntry />
-          </AppRouteGuard>
+          </ProductWorkRouteGuard>
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
@@ -192,6 +234,12 @@ function dwaionRoutePage(pattern: string) {
       <DwaionAgents />
     ) : pattern === '/dwaion/actions' ? (
       <DwaionActions />
+    ) : pattern === '/dwaion/routines' ? (
+      <DwaionRoutines />
+    ) : pattern === '/dwaion/personal-controls' ? (
+      <DwaionPersonalControls />
+    ) : pattern === '/dwaion/artifacts' ? (
+      <DwaionArtifacts />
     ) : pattern === '/dwaion/admin/overview' ? (
       <DwaionAdminOverview />
     ) : pattern === '/dwaion/admin/agents' ? (
@@ -221,6 +269,32 @@ function dwaionLegacyRoutePage(pattern: string) {
       <ProductAnyRouteGuard authorities={ACTION_AUTHORITIES} localDeny>
         {current}
       </ProductAnyRouteGuard>
+    );
+  }
+  if (pattern === '/dwaion/personal-controls') {
+    return (
+      <ProductAnyRouteGuard
+        localDeny
+        authorities={[
+          { resourceKey: 'APP.DWAION_MEMORY', permissionCode: 'VIEW' },
+          { resourceKey: 'APP.DWAION_PRIVACY', permissionCode: 'VIEW' },
+        ]}
+      >
+        {current}
+      </ProductAnyRouteGuard>
+    );
+  }
+  const workResourceKey =
+    pattern === '/dwaion/routines'
+      ? 'APP.DWAION_ROUTINES'
+      : pattern === '/dwaion/artifacts'
+        ? 'APP.DWAION_ARTIFACTS'
+        : undefined;
+  if (workResourceKey) {
+    return (
+      <ProductRouteGuard resourceKey={workResourceKey} localDeny>
+        {current}
+      </ProductRouteGuard>
     );
   }
   const resourceKey =

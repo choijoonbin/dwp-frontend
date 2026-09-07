@@ -8,6 +8,12 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
+
+import { messagingVisualTokens } from './messaging-visual-model';
+import { applyMessagingFormat } from './messaging-formatting-model';
+import { MessagingFormattingToolbar } from './messaging-formatting-toolbar';
+import { messagingMentionAllowedAt } from './messaging-formatting-parser';
 
 import {
   buildMessagingMentionOptions,
@@ -25,6 +31,7 @@ import { MESSAGING_ATTACHMENT_ACCEPT } from './use-messaging-attachment-queue';
 
 import type { MessagingMember } from '@dwp-frontend/shared-utils';
 import type { MessagingAttachmentDraft } from './use-messaging-attachment-queue';
+import type { MessagingFormatAction } from './messaging-formatting-model';
 
 export function MessagingComposer({
   value,
@@ -118,6 +125,23 @@ export function MessagingComposer({
       inputRef.current?.setSelectionRange(caret, caret);
     });
   };
+  const format = (action: MessagingFormatAction) => {
+    if (composingRef.current || isSending) return;
+    const input = inputRef.current;
+    const edit = applyMessagingFormat(
+      value,
+      input?.selectionStart ?? value.length,
+      input?.selectionEnd ?? value.length,
+      action
+    );
+    onChange(edit.value);
+    onMentionsChange?.(pruneMessagingMentions(edit.value, mentions));
+    setMentionQuery(null);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(edit.selectionStart, edit.selectionEnd);
+    });
+  };
   const updateMentionState = (nextValue: string, caret: number) => {
     const nextMentions = pruneMessagingMentions(nextValue, mentions);
     if (nextMentions.length !== mentions.length) onMentionsChange?.(nextMentions);
@@ -142,6 +166,10 @@ export function MessagingComposer({
   };
   const startMention = () => {
     const caret = inputRef.current?.selectionStart ?? value.length;
+    if (!messagingMentionAllowedAt(value, caret)) {
+      focusAt(caret);
+      return;
+    }
     const needsSpace = caret > 0 && !/\s/u.test(value.charAt(caret - 1));
     const insertion = `${needsSpace ? ' ' : ''}@`;
     const replacement = replaceMessagingComposerRange(value, caret, caret, insertion);
@@ -169,7 +197,27 @@ export function MessagingComposer({
   };
 
   return (
-    <Stack spacing={1} sx={{ minWidth: 0 }}>
+    <Stack
+      data-testid="messaging-composer"
+      spacing={{ xs: 0.35, sm: 0.65 }}
+      sx={(theme) => ({
+        minWidth: 0,
+        p: { xs: 0.5, sm: 0.75 },
+        border: 1,
+        borderColor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.3 : 0.16),
+        borderRadius: messagingVisualTokens.radius.surface,
+        bgcolor: 'background.paper',
+        transition: theme.transitions.create(['border-color', 'box-shadow'], {
+          duration: theme.transitions.duration.shortest,
+        }),
+        '&:focus-within': {
+          borderColor: theme.palette.primary.main,
+          outline: `2px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+          outlineOffset: 1,
+        },
+        '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+      })}
+    >
       {hasError && (
         <Alert
           severity="error"
@@ -189,6 +237,7 @@ export function MessagingComposer({
           {t('conversation.sendError')}
         </Alert>
       )}
+      <MessagingFormattingToolbar disabled={isSending} onFormat={format} />
       <Box ref={composerRef} sx={{ minWidth: 0 }}>
         <FormField
           fullWidth
@@ -215,6 +264,21 @@ export function MessagingComposer({
             updateMentionState(input?.value ?? value, input?.selectionStart ?? value.length);
           }}
           onKeyDown={(event) => {
+            if (composingRef.current || event.nativeEvent.isComposing || event.keyCode === 229)
+              return;
+            if ((event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey) {
+              const action =
+                event.key.toLowerCase() === 'b'
+                  ? 'bold'
+                  : event.key.toLowerCase() === 'i'
+                    ? 'italic'
+                    : null;
+              if (action) {
+                event.preventDefault();
+                format(action);
+                return;
+              }
+            }
             if (mentionQuery) {
               if (event.key === 'Escape') {
                 event.preventDefault();
@@ -261,7 +325,25 @@ export function MessagingComposer({
                   : undefined,
             },
           }}
-          sx={{ maxWidth: '100%' }}
+          sx={{
+            maxWidth: '100%',
+            '& .MuiOutlinedInput-root': {
+              bgcolor: 'transparent',
+              p: { xs: '7px 9px', sm: '10px 12px' },
+            },
+            '& .MuiInputBase-inputMultiline': {
+              p: '0 !important',
+              fontSize: { xs: 'body2.fontSize', sm: 'body1.fontSize' },
+              lineHeight: 'body2.lineHeight',
+            },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
+            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'transparent',
+            },
+            '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'transparent',
+            },
+          }}
         />
         <MessagingMentionMenu
           anchorEl={composerRef.current}
@@ -306,7 +388,7 @@ export function MessagingComposer({
           alignItems="center"
           flexWrap="wrap"
           useFlexGap
-          sx={{ minWidth: 0, flex: '1 1 240px' }}
+          sx={{ minWidth: 0, flex: { xs: '1 1 0', sm: '1 1 240px' } }}
         >
           <input
             ref={fileInputRef}
@@ -352,7 +434,17 @@ export function MessagingComposer({
             spacing={0.7}
             alignItems="center"
             aria-live="polite"
-            sx={{ minWidth: 0, ml: 0.75 }}
+            sx={{
+              minWidth: 0,
+              ml: { xs: 0, sm: 0.75 },
+              position: { xs: 'absolute', sm: 'static' },
+              width: { xs: '1px', sm: 'auto' },
+              height: { xs: '1px', sm: 'auto' },
+              m: { xs: -1, sm: 0 },
+              overflow: { xs: 'hidden', sm: 'visible' },
+              clip: { xs: 'rect(0 0 0 0)', sm: 'auto' },
+              whiteSpace: { xs: 'nowrap', sm: 'normal' },
+            }}
           >
             <Box
               aria-hidden="true"
@@ -376,17 +468,28 @@ export function MessagingComposer({
             </Typography>
           </Stack>
         </Stack>
-        <ActionButton
+        <ActionIconButton
+          label={isSending ? t('conversation.sending') : t('conversation.send')}
           intent="primary"
-          endIcon={
-            isSending ? <CircularProgress size={15} aria-hidden="true" /> : <Send size={16} />
-          }
           disabled={!drafting || isSending || attachmentBusy || attachmentFailed}
           onClick={onSend}
-          sx={{ minWidth: compact ? 92 : 108, flexShrink: 0, whiteSpace: 'nowrap' }}
+          sx={(theme) => ({
+            width: { xs: 34, sm: 36 },
+            height: { xs: 34, sm: 36 },
+            flexShrink: 0,
+            borderRadius: messagingVisualTokens.radius.control,
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': { bgcolor: theme.palette.primary.dark },
+            '&.Mui-disabled': {
+              bgcolor: alpha(theme.palette.text.primary, 0.08),
+              color: theme.palette.text.disabled,
+              boxShadow: 'none',
+            },
+          })}
         >
-          {isSending ? t('conversation.sending') : t('conversation.send')}
-        </ActionButton>
+          {isSending ? <CircularProgress size={15} aria-hidden="true" /> : <Send size={17} />}
+        </ActionIconButton>
       </Stack>
       <MessagingExpressionPicker
         anchorEl={expressionAnchor}

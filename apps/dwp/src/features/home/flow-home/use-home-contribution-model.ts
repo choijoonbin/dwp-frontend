@@ -252,13 +252,25 @@ export function useHomeContributionModel({
       resolveHomeContributionProvider(
         activityContributionProvider,
         {
-          state:
+          state: promoteHomeProviderPartialState(
             overview?.activity && overviewRefreshFailed && overview.activity.status === 'AVAILABLE'
               ? 'PARTIAL'
               : sectionState(overview?.activity),
+            Boolean(
+              overview?.activity.status === 'AVAILABLE' &&
+              overview.activity.data?.executionSummaryStatus === 'UNAVAILABLE'
+            )
+          ),
           generatedAt: trustedHomeSourceTimestamp(overview?.activity.generatedAt),
           data: overview?.activity.data ?? undefined,
-          reason: overview?.activity.reason ?? (overviewLoading ? 'LOADING' : undefined),
+          reason:
+            overview?.activity.data?.executionSummaryStatus === 'UNAVAILABLE'
+              ? 'EXECUTION_SUMMARY_UNAVAILABLE'
+              : (overview?.activity.reason ?? (overviewLoading ? 'LOADING' : undefined)),
+          unavailableSources:
+            overview?.activity.data?.executionSummaryStatus === 'UNAVAILABLE'
+              ? ['DWP_ACTIVITY:EXECUTION_SUMMARY']
+              : [],
         },
         context
       ),

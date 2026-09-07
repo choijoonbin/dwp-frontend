@@ -4,6 +4,8 @@ import {
   NOTIFICATION_CENTER_VIEW_LINKS,
   NOTIFICATION_NAVIGATION,
   findNotificationNavigationItem,
+  notificationCenterPath,
+  notificationCenterSearchParams,
 } from './notification-navigation';
 
 describe('notification navigation contract', () => {
@@ -61,5 +63,27 @@ describe('notification navigation contract', () => {
     );
     expect(findNotificationNavigationItem('/account/settings/notifications')).toBeUndefined();
     expect(findNotificationNavigationItem('/admin/notifications/overview')).toBeUndefined();
+  });
+
+  it('preserves server-backed search and read scope in a shareable center URL', () => {
+    expect(
+      notificationCenterPath({
+        view: 'ALL',
+        readState: 'UNREAD',
+        query: '  SLA breach  ',
+      })
+    ).toBe('/notifications/center?view=all&read=unread&q=SLA+breach');
+    expect(notificationCenterPath({ view: 'PRIORITY', query: '   ' })).toBe(
+      '/notifications/center?view=priority'
+    );
+    expect(
+      notificationCenterSearchParams({
+        view: 'ALL',
+        readState: 'READ',
+        query: 'policy',
+        appKey: 'security',
+        priority: 'URGENT',
+      }).toString()
+    ).toBe('view=all&read=read&q=policy&app=security&priority=urgent');
   });
 });

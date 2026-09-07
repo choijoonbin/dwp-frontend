@@ -8,6 +8,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { WorkspaceWidgetCanvas } from '../../../components/workspace-composer/workspace-widget-canvas';
 import {
+  HOME_PRESENTATION_MAX_WIDTH,
   writeHomeLaunchpadGroupItemCounts,
   writeHomePresentationHint,
 } from '../../../components/home-loading-layout-policy';
@@ -21,6 +22,7 @@ import { resolveFlowHomeHealth } from './flow-home-health';
 import { FLOW_HOME_SECTION_REGISTRY, FLOW_HOME_STORAGE_ALIAS } from './flow-home-preference';
 import {
   FLOW_HOME_MEDIUM_MIN_WIDTH,
+  FLOW_HOME_REFERENCE_PLACEMENT,
   FLOW_HOME_WIDE_COMPOSITION,
   FLOW_HOME_WIDE_MIN_WIDTH,
   resolveFlowHomeReadItemLimit,
@@ -31,13 +33,15 @@ import {
   FlowUpdates,
   hasFlowGeneralUpdates,
   hasFlowRequiredNotice,
+  shouldShowFlowUpdates,
 } from './flow-updates';
-import { resolveFlowTrailingGovernedPlacement } from './flow-governed-placement';
+import { resolveFlowGovernedPlacement } from './flow-governed-placement';
 import { homePurposeAllRoute } from './home-purpose-route-policy';
 import { buildFlowSignals } from './flow-home-model';
 import { FlowHomeHeroSurface } from './flow-home-hero-surface';
-import { filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
+import { filterRolePulseSignals, filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
 import { NextActionCue } from './next-actions';
+import { CalendarInsightHomeWidget } from '../calendar-insight-home-widget';
 
 import type {
   HomeAudienceProfile,
@@ -217,17 +221,6 @@ export function FlowHome({
     mediumViewport,
     wideViewport,
   });
-  const adaptiveFirstWidgetSelector = `&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="${
-    readLayout.firstSectionKey ?? '__none__'
-  }"]`;
-  const adaptiveSupportWidgetSelector =
-    readLayout.supportSectionKeys
-      .map(
-        (sectionKey) =>
-          `&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="${sectionKey}"]`
-      )
-      .join(', ') ||
-    '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="__none__"]';
   const purposeStageRef = useRef<HTMLDivElement | null>(null);
   const communicationsForbidden = overview?.communications.status === 'FORBIDDEN';
   const requiredNoticeUnavailable =
@@ -235,14 +228,14 @@ export function FlowHome({
     (overviewFailed || overview?.communications.status === 'UNAVAILABLE' || !overview);
   const requiredNoticeVisible =
     (!overviewLoading && hasFlowRequiredNotice(overview)) || requiredNoticeUnavailable;
-  const showUpdates =
-    !communicationsForbidden &&
-    announcementsPolicy.visible &&
-    (editing ||
-      overviewLoading ||
-      overviewFailed ||
-      overview?.communications.status === 'UNAVAILABLE' ||
-      hasFlowGeneralUpdates(overview));
+  const showUpdates = shouldShowFlowUpdates({
+    policyVisible: announcementsPolicy.visible,
+    communicationsForbidden,
+    editing,
+    loading: overviewLoading,
+    requiredNoticeUnavailable,
+    hasGeneralUpdates: hasFlowGeneralUpdates(overview),
+  });
   const health = resolveFlowHomeHealth({
     now,
     overview,
@@ -265,8 +258,15 @@ export function FlowHome({
     timeline: contributionCount(contributionModel.buckets.timeline),
     response: contributionCount(contributionModel.buckets.response),
   };
-  const roleSignals = buildFlowSignals(overview);
-  const rolePulseItems = filterRolePulseTextItems(contributionModel.buckets.pulse, roleSignals);
+  const flowSignals = buildFlowSignals(overview);
+  const visibleSectionKeys = new Set(
+    sections.filter((section) => section.visible).map((section) => section.widgetKey)
+  );
+  const roleSignals = filterRolePulseSignals(flowSignals, {
+    focusBalance: visibleSectionKeys.has('focus-balance'),
+    meetingLoad: visibleSectionKeys.has('meeting-load'),
+  });
+  const rolePulseItems = filterRolePulseTextItems(contributionModel.buckets.pulse, flowSignals);
   const sectionItemLimit = (sectionKey: FlowHomeSectionKey) => {
     const storageKey = FLOW_HOME_STORAGE_ALIAS[sectionKey];
     return resolveFlowHomeReadItemLimit({
@@ -276,9 +276,7 @@ export function FlowHome({
       configuredItemLimit: widgetConfigurations[storageKey]?.itemLimit,
     });
   };
-  const sectionUsesSupportStack = (sectionKey: FlowHomeSectionKey) =>
-    readLayout.template === 'adaptive-wide' && readLayout.supportSectionKeys.includes(sectionKey);
-  const announcementsPlacement = resolveFlowTrailingGovernedPlacement(announcementsPolicy.size);
+  const announcementsPlacement = resolveFlowGovernedPlacement(announcementsPolicy.size);
 
   useEffect(() => {
     if (editing || typeof window === 'undefined') return;
@@ -399,7 +397,7 @@ export function FlowHome({
       data-flow-large-text={largeTextReflow ? 'true' : 'false'}
       data-preview-device={editing ? previewDevice : undefined}
       sx={(theme) => ({
-        '--flow-shell-width': '1680px',
+        '--flow-shell-width': `${HOME_PRESENTATION_MAX_WIDTH[presentation]}px`,
         '--flow-stack-space': compactDensity ? '12px' : '16px',
         '--flow-section-space': compactDensity ? '14px' : '18px',
         '--flow-surface-radius': 'var(--home-radius-section)',
@@ -422,16 +420,13 @@ export function FlowHome({
         borderRadius: compactPreview ? 4 : 0,
         bgcolor: compactPreview ? 'background.default' : 'transparent',
         '&[data-flow-home-presentation="focused"]': {
-          '--flow-shell-width': '1280px',
           '--flow-title-size': 'clamp(1.45rem, 1.8vw, 1.8rem)',
         },
         '&[data-flow-home-presentation="expressive"]': {
-          '--flow-shell-width': '2560px',
           px: compactPreview ? 2 : { xs: 2, sm: 3, lg: '20px' },
         },
         '@media (min-width:1800px)': {
           '&:not([data-flow-home-presentation="focused"])': {
-            '--flow-shell-width': '2560px',
             px: compactPreview ? 2 : '20px',
           },
         },
@@ -463,8 +458,8 @@ export function FlowHome({
           gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
         },
         '&[data-flow-large-text="true"]': {
-          '--launchpad-tile-height': 'calc(44px + 2.25rem)',
-          '--launchpad-label-height': '3em',
+          '--launchpad-tile-height': 'calc(44px + 3rem)',
+          '--launchpad-label-height': '3.5em',
           '--launchpad-label-line-height': (theme) => theme.typography.caption.lineHeight ?? 1.5,
         },
         '@media (forced-colors: active)': {
@@ -566,14 +561,11 @@ export function FlowHome({
             border: 1,
             borderColor: 'divider',
             borderRadius: 'var(--flow-surface-radius)',
-            boxShadow: '0 8px 24px rgba(15,23,42,0.045)',
-            transition: 'transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease',
+            boxShadow: '0 1px 3px rgba(15,23,42,0.035)',
           },
           '&:not([data-flow-read-template="editing"]) [data-workspace-widget]:hover [data-workspace-widget-content] > section':
             {
-              transform: 'translateY(-2px)',
               borderColor: 'rgba(49,95,213,0.28)',
-              boxShadow: '0 14px 34px rgba(15,23,42,0.085)',
             },
           '& [data-flow-launcher-edge="true"] [data-workspace-widget-content] > section': {
             '@media (min-width: 900px)': {
@@ -590,15 +582,18 @@ export function FlowHome({
           '&[data-flow-read-template="adaptive-wide"] [data-workspace-presentation]': {
             rowGap: compactDensity ? 1.5 : 2,
           },
-          '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="action-queue"]': {
-            gridColumn: `span ${FLOW_HOME_WIDE_COMPOSITION.actionColumns}`,
-          },
-          [adaptiveFirstWidgetSelector]: {
-            gridColumn: `span ${FLOW_HOME_WIDE_COMPOSITION.firstColumns}`,
-          },
-          [adaptiveSupportWidgetSelector]: {
-            gridColumn: `span ${FLOW_HOME_WIDE_COMPOSITION.supportColumns}`,
-          },
+          ...Object.fromEntries(
+            Object.entries(FLOW_HOME_REFERENCE_PLACEMENT).map(([key, placement]) => [
+              `&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="${key}"]`,
+              { gridColumn: placement.gridColumn, gridRow: placement.row + (showUpdates ? 1 : 0) },
+            ])
+          ),
+          '&[data-flow-read-template="adaptive-wide"] [data-workspace-widget="request-tracker"]:has([data-home-content-state="empty"]), &[data-flow-read-template="adaptive-wide"] [data-workspace-widget="today"]:has([data-home-purpose-sparse-timeline="true"])':
+            {
+              alignSelf: 'start',
+              '& [data-workspace-widget-content]': { height: 'auto' },
+              '& [data-workspace-widget-content] > section': { height: 'auto !important' },
+            },
           '&:not([data-flow-read-template="editing"]) [data-workspace-presentation]': {
             mx: '-7px',
             rowGap: 2,
@@ -635,7 +630,7 @@ export function FlowHome({
         <WorkspaceWidgetCanvas<FlowHomeSectionKey>
           registry={FLOW_HOME_SECTION_REGISTRY}
           widgets={sections}
-          trailingGovernedWidgets={
+          governedWidgets={
             showUpdates
               ? [
                   {
@@ -655,7 +650,7 @@ export function FlowHome({
                         wide={presentation === 'expressive'}
                         size={announcementsPlacement.renderSize}
                         height={announcementsPolicy.height}
-                        itemLimit={3}
+                        itemLimit={compactContent ? 1 : 3}
                         onRetry={onRetryOverview}
                       />
                     ),
@@ -676,6 +671,7 @@ export function FlowHome({
               fetching: contributionFetching,
               compact: compactContent,
               footprintHeight: height,
+              referenceLayout: readLayout.template === 'adaptive-wide',
               onRetry: onRetryContributions,
             };
             if (sectionKey === 'action-queue') {
@@ -693,7 +689,7 @@ export function FlowHome({
                   })}
                   allRoute={homePurposeAllRoute('action', contributionModel.buckets.action)}
                   featuredFirst
-                  wideFeatured={readLayout.template === 'adaptive-wide'}
+                  wideFeatured={readLayout.template !== 'adaptive-wide'}
                   headerAccessory={
                     !editing ? (
                       <NextActionCue
@@ -716,7 +712,6 @@ export function FlowHome({
                   state={contributionModel.bucketStates.timeline}
                   maxItems={sectionItemLimit('today')}
                   allRoute={homePurposeAllRoute('timeline', contributionModel.buckets.timeline)}
-                  supportStack={sectionUsesSupportStack('today')}
                   timeline
                 />
               );
@@ -731,7 +726,6 @@ export function FlowHome({
                   state={contributionModel.bucketStates.response}
                   maxItems={sectionItemLimit('response-hub')}
                   allRoute={homePurposeAllRoute('response', contributionModel.buckets.response)}
-                  supportStack={sectionUsesSupportStack('response-hub')}
                 />
               );
             }
@@ -745,21 +739,33 @@ export function FlowHome({
                   state={contributionModel.bucketStates.request}
                   maxItems={sectionItemLimit('request-tracker')}
                   allRoute={homePurposeAllRoute('request', contributionModel.buckets.request)}
-                  supportStack={sectionUsesSupportStack('request-tracker')}
+                />
+              );
+            }
+            if (sectionKey === 'role-pulse') {
+              return (
+                <HomePurposeWidget
+                  {...common}
+                  sectionKey="pulse"
+                  icon={Activity}
+                  items={rolePulseItems}
+                  state={contributionModel.bucketStates.pulse}
+                  maxItems={sectionItemLimit('role-pulse')}
+                  allRoute={homePurposeAllRoute('pulse', rolePulseItems)}
+                  roleSignals={roleSignals}
                 />
               );
             }
             return (
-              <HomePurposeWidget
-                {...common}
-                sectionKey="pulse"
-                icon={Activity}
-                items={rolePulseItems}
-                state={contributionModel.bucketStates.pulse}
-                maxItems={sectionItemLimit('role-pulse')}
-                allRoute={homePurposeAllRoute('pulse', rolePulseItems)}
-                supportStack={sectionUsesSupportStack('role-pulse')}
-                roleSignals={roleSignals}
+              <CalendarInsightHomeWidget
+                widgetKey={sectionKey}
+                overview={overview}
+                loading={overviewLoading}
+                fetching={overviewFetching}
+                requestFailed={overviewFailed}
+                compact={compactContent}
+                height={height}
+                onRetry={onRetryOverview}
               />
             );
           }}

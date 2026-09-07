@@ -3,12 +3,15 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
+import { SERVICES_NAVIGATION } from '../features/services/services-navigation';
 import { ServicesLayout } from '../layouts/services-layout';
+import { LegacyProductFirstAllowedIndex } from './legacy-product-first-allowed-index';
 import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductAnyRouteGuard,
   ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -20,6 +23,8 @@ import {
   ProductCanarySurfaceBoundary,
   ProductCanaryUnknownRoute,
 } from './product-surface-canary-routes';
+
+import type { ProductNavigationGroup } from '../components/product-manifest';
 
 const ServicesPage = lazy(() => import('../pages/services'));
 const ServicesHome = lazy(() =>
@@ -48,15 +53,24 @@ const page = (children: React.ReactNode) => (
 );
 
 const legacyWorkShell = (
-  <AppRouteGuard resourceKey="APP.EMPLOYEE_SERVICES">
+  <ProductWorkRouteGuard
+    productId="services"
+    surfaceId="services.work"
+    resourceKey="APP.EMPLOYEE_SERVICES"
+  >
     <ServicesLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
 );
 
 const legacyManagementShell = (
-  <AppRouteGuard resourceKey="APP.EMPLOYEE_SERVICES">
+  <ProductAnyRouteGuard
+    authorities={[
+      { resourceKey: 'ADMIN.SERVICE_CATALOG', permissionCode: 'VIEW' },
+      { resourceKey: 'ADMIN.SERVICE_OPERATIONS', permissionCode: 'VIEW' },
+    ]}
+  >
     <ServicesLayout />
-  </AppRouteGuard>
+  </ProductAnyRouteGuard>
 );
 
 const servicesManagementIndexCandidates = [
@@ -69,6 +83,10 @@ const servicesManagementIndexCandidates = [
     path: '/services/admin/operations',
   },
 ] as const;
+
+const servicesManagementLegacyItems = (
+  SERVICES_NAVIGATION as readonly ProductNavigationGroup[]
+).flatMap((group) => group.items.filter((item) => item.path.startsWith('/services/admin/')));
 
 function servicesWorkRoute(routeContractKey: string, element: React.ReactNode): RouteObject {
   return {
@@ -148,7 +166,7 @@ export const servicesRoutes: RouteObject[] = [
                 productId="services"
                 surfaceId="services.management"
                 candidates={servicesManagementIndexCandidates}
-                legacy={page(<ServicesPage />)}
+                legacy={<LegacyProductFirstAllowedIndex items={servicesManagementLegacyItems} />}
               />
             ),
           },

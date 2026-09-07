@@ -1,0 +1,74 @@
+{
+  "nodeRuntime": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin",
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false",
+      "exitCode": 0,
+      "scope": "whole frontend typecheck"
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js libs/shared-utils/src/api/work-assignment-contracts.ts libs/shared-utils/src/api/work-assignment-api.ts libs/shared-utils/src/api/work-assignment-api.test.ts",
+      "exitCode": 0,
+      "scope": "assignment API only"
+    }
+  ],
+  "sourceSha256": {
+    "libs/shared-utils/src/api/work-assignment-contracts.ts": "946c2d6944f55611da9f8c0729c7b4f3901351c89ec081ba292b1fd992a2d8fe",
+    "libs/shared-utils/src/api/work-assignment-api.ts": "58b941da2f98d4742fbf075531a22c956fddbb4f5537a0e389e74048a8f1901f",
+    "libs/shared-utils/src/api/work-assignment-api.test.ts": "95665b4e005664aff8f661307593cb9ce065b7e964fccecb2cf462748bcb8e8c"
+  },
+  "limitations": [
+    "The checks do not establish actual U09 production consumption, Gateway authorization, or new Work UI completion."
+  ],
+  "productionConsumerClosure": {
+    "status": "PASS_ACTUAL_U09_CODE_REACHABILITY",
+    "verifiedAtUtc": "2026-09-04T07:13:08.183373+00:00",
+    "consumerOwner": "Meeting U09 task 01a04243-d1e4-70b2-aadf-a3ce826c2d4d",
+    "route": "/meetings/follow-ups",
+    "importChain": [
+      "apps/dwp/src/pages/meetings.tsx",
+      "apps/dwp/src/features/meetings/meeting-follow-ups.tsx",
+      "libs/shared-utils/src/api/work-assignment-api.ts"
+    ],
+    "runtimeFunctions": [
+      "getWorkAssignments",
+      "getWorkAssignment",
+      "getWorkAssignmentCommand",
+      "transitionWorkAssignment"
+    ],
+    "enabledTransitionCode": [
+      "accept",
+      "decline",
+      "start",
+      "wait",
+      "complete",
+      "cancel"
+    ],
+    "checks": [
+      {
+        "command": "node scripts/check-production-reachability.mjs",
+        "exitCode": 0,
+        "output": "PASS production reachability: 1152/1155 modules reachable from 42 roots; 3 governed verification root(s)."
+      },
+      {
+        "command": "node scripts/check-unused-internal-exports.mjs",
+        "exitCode": 0,
+        "output": "PASS internal exports: 2430 declarations checked; 4 exact documented exception(s)."
+      }
+    ],
+    "consumerSourceSha256": {
+      "apps/dwp/src/pages/meetings.tsx": "23aa1a1b017dab91372b07f752e57b9e283ec686e6cead680fa6e910f983dde9",
+      "apps/dwp/src/features/meetings/meetings-navigation.ts": "51398036d46fb1965001a7afde659af3046378df8004b916494a36b2cca531a2",
+      "apps/dwp/src/features/meetings/meeting-follow-ups.tsx": "caace3c993438db8084aa138b422f9f49c41b0264ad5a90ea0e3c8373e37f807",
+      "apps/dwp/src/features/meetings/meeting-follow-ups-state.tsx": "8b38425594a2231d4fe16e795cb00a9025b5f346aec39e16361102157ecc3206",
+      "apps/dwp/src/features/meetings/meeting-follow-ups-detail.tsx": "962dd2593fb42eaa9813e12f12a1b9f65d1f218a3b30c7c6a9efc240f9c90ee3",
+      "apps/dwp/src/features/meetings/meeting-follow-ups-model.ts": "965d5fb9a7ef2973bed3fa3ba55f214d3cb1ae85c9556ba1f13ee865f497e4c6"
+    },
+    "decision": "Keep SDK in original production location with actual approved U09 consumer. No dummy import, allowlist change, or preparation relocation by Work.",
+    "candidatePromotion": "NO-GO: no production createWorkAssignment or reassignWorkAssignment calls in U09; authority/eligibility/source integration remain pending.",
+    "limitations": [
+      "Code consumption and graph closure do not establish successful live Gateway/browser/source integration.",
+      "Common full architecture/menu coherence validation is separately owned; only the listed two checks are independently executed here."
+    ]
+  }
+}

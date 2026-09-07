@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 import { resolveProductSurfaceRequestScope } from './use-product-surface-request-scope';
@@ -82,6 +84,38 @@ const identity = {
   productKey: 'communications',
   surfaceKey: 'communications.management',
 };
+
+describe('initial product authority dependencies', () => {
+  it.each(['product-surface-capability-access.ts', 'use-product-surface-request-scope.ts'])(
+    '%s does not load the aggregate product API barrel into the initial shell',
+    (file) => {
+      const source = ts.createSourceFile(
+        file,
+        readFileSync(new URL(file, import.meta.url), 'utf8'),
+        ts.ScriptTarget.Latest,
+        true
+      );
+      const runtimeBarrelImports = source.statements.filter((statement) => {
+        if (
+          !ts.isImportDeclaration(statement) ||
+          !ts.isStringLiteral(statement.moduleSpecifier) ||
+          statement.moduleSpecifier.text !== '@dwp-frontend/shared-utils'
+        ) {
+          return false;
+        }
+        const clause = statement.importClause;
+        if (clause?.isTypeOnly) return false;
+        if (!clause || clause.name || !clause.namedBindings) return true;
+        return (
+          ts.isNamespaceImport(clause.namedBindings) ||
+          clause.namedBindings.elements.some((element) => !element.isTypeOnly)
+        );
+      });
+
+      expect(runtimeBarrelImports).toHaveLength(0);
+    }
+  );
+});
 
 describe('resolveProductSurfaceRequestScope', () => {
   it('binds a non-default selected scope and every cache identity dimension', () => {

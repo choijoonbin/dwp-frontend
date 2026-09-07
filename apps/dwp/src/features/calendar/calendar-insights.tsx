@@ -8,7 +8,7 @@ import {
   Clock3,
   Focus,
   Gauge,
-  Sparkles,
+  ListChecks,
   UsersRound,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -159,7 +159,7 @@ export function CalendarInsights() {
               }}
             >
               <CalendarSectionHeader
-                icon={Sparkles}
+                icon={ListChecks}
                 title={t('insights.recommendations')}
                 description={t('insights.recommendationsDescription')}
               />

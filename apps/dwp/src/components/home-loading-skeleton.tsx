@@ -14,6 +14,7 @@ import {
   HOME_LAUNCHPAD_VISIBLE_COLUMNS,
 } from './workspace-composer/home-launchpad-layout-contract';
 import {
+  HOME_REFERENCE_GRID_PLACEMENTS,
   readHomeLaunchpadGroupItemCounts,
   readOptionalHomePresentationHint,
   resolveHomeLoadingLayout,
@@ -31,7 +32,7 @@ type BrowserHomeLoadingLayout = HomeLoadingLayout &
   }>;
 
 const skeletonLine = {
-  bgcolor: 'rgba(226,232,240,0.22)',
+  bgcolor: 'var(--home-loading-line)',
   borderRadius: 999,
 } as const;
 
@@ -105,11 +106,11 @@ function NeutralDockSkeleton() {
       sx={{
         width: 1,
         minHeight: { xs: 138, sm: 132 },
-        mt: { xs: 3, md: 2 },
         p: { xs: 1.5, md: 2 },
-        border: '1px solid rgba(255,255,255,0.20)',
+        border: 1,
+        borderColor: 'divider',
         borderRadius: '16px',
-        bgcolor: 'rgba(4,18,43,0.72)',
+        bgcolor: 'background.paper',
         display: 'grid',
         alignContent: 'center',
         gap: 2,
@@ -152,26 +153,23 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
       data-home-loading-dock-stacked={layout.dockStacked ? 'true' : 'false'}
       sx={{
         width: 1,
-        maxWidth: layout.presentation === 'focused' ? 1280 : { md: 1280, xl: 1520 },
+        maxWidth: 'none',
         mx: 'auto',
-        minHeight: layout.dockStacked ? (largeText ? 540 : { xs: 315, sm: 540, lg: 315 }) : 138,
-        mt: { xs: 3, md: 2 },
+        minHeight: layout.dockStacked ? (largeText ? 540 : { xs: 272, sm: 480, lg: 272 }) : 138,
         p: { xs: 1.5, md: 2 },
-        border: '1px solid rgba(255,255,255,0.20)',
+        border: 1,
+        borderColor: 'divider',
         borderRadius: '16px',
-        bgcolor: 'rgba(4,18,43,0.72)',
+        bgcolor: 'background.paper',
         display: 'grid',
         containerName: 'flow-dock',
         containerType: 'inline-size',
         gridTemplateRows: 'auto minmax(0, 1fr)',
         alignContent: 'stretch',
         gap: 1.5,
-        '@media (min-width:1800px)': {
-          maxWidth: layout.presentation === 'focused' ? 1280 : 'none',
-        },
       }}
     >
-      <Box sx={{ ...skeletonLine, width: 42, height: 12 }} />
+      <Box sx={{ ...skeletonLine, width: 42, height: 16 }} />
       <Box
         data-home-loading-dock-groups
         sx={{
@@ -201,20 +199,18 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 0.75,
+                gap: 0.25,
                 px: 1.25,
-                py: 1,
-                border: '1px solid rgba(255,255,255,0.15)',
+                py: 0.75,
+                border: 1,
+                borderColor: 'divider',
                 borderRadius: '12px',
-                bgcolor: 'rgba(255,255,255,0.035)',
-                backgroundImage:
-                  'linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012) 62%, rgba(78,165,255,0.035))',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+                bgcolor: 'background.paper',
               },
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH}px)`]:
                 {
                   px: 1.5,
-                  py: 1.25,
+                  py: 0.75,
                 },
               '@media (forced-colors: active)': {
                 borderColor: 'CanvasText',
@@ -254,7 +250,7 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
               sx={{
                 display: 'contents',
                 gap: 0.75,
-                pt: 1,
+                pt: 0,
                 [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]:
                   {
                     display: 'grid',
@@ -267,7 +263,7 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
                   },
                 [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH}px)`]:
                   {
-                    gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, ${HOME_LAUNCHPAD_TILE_WIDTH}px)`,
+                    gridTemplateColumns: `repeat(${HOME_LAUNCHPAD_VISIBLE_COLUMNS}, minmax(0, 1fr))`,
                   },
               }}
             >
@@ -288,8 +284,9 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
                       width: 40,
                       height: 40,
                       borderRadius: '12px',
-                      bgcolor: 'rgba(226,232,240,0.14)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      bgcolor: 'action.hover',
+                      border: 1,
+                      borderColor: 'divider',
                     }}
                   />
                   <Box sx={{ ...skeletonLine, width: 34, height: 7 }} />
@@ -311,13 +308,18 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
     { key: 'response-hub', height: 196 },
     { key: 'request-tracker', height: 196 },
     { key: 'role-pulse', height: 196 },
+    { key: 'focus-balance', height: 154 },
+    { key: 'meeting-load', height: 154 },
   ] as const;
   const gridColumns = layout.template === 'single-column' ? 1 : 60;
-  const widgetColumn = (index: number) => {
+  const widgetColumn = (widgetKey: (typeof loadingWidgets)[number]['key']) => {
     if (layout.template === 'single-column') return '1 / -1';
-    if (layout.template === 'adaptive-wide')
-      return `span ${index === 0 ? 35 : index === 1 ? 25 : 20}`;
-    return `span ${index === 0 ? 40 : 20}`;
+    if (layout.template === 'adaptive-wide') {
+      return HOME_REFERENCE_GRID_PLACEMENTS[widgetKey].gridColumn;
+    }
+    if (widgetKey === 'action-queue') return 'span 40';
+    if (widgetKey === 'focus-balance' || widgetKey === 'meeting-load') return 'span 30';
+    return 'span 20';
   };
 
   return (
@@ -332,9 +334,19 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
       data-home-loading-read-template={layout.presentationResolved ? layout.template : 'neutral'}
       sx={{
         width: 1,
-        maxWidth: 2560,
+        '--home-loading-line': (theme) => theme.palette.action.selected,
+        maxWidth: layout.maxWidth,
+        // Keep the page footer below the loading viewport while the saved layout is unknown.
+        minHeight: `calc(100svh - ${reserveHeader ? 0 : shellHeaderHeight}px)`,
         mx: 'auto',
-        px: { xs: 2, sm: 3, lg: '20px' },
+        px: {
+          xs: 2,
+          sm: 3,
+          lg: layout.presentation === 'expressive' ? '20px' : 'clamp(20px, 2vw, 36px)',
+        },
+        '@media (min-width:1800px)': {
+          ...(layout.presentation !== 'focused' ? { px: '20px' } : {}),
+        },
         pt: reserveHeader ? `calc(${shellHeaderHeight}px + 16px)` : 2,
         pb: 2,
         display: 'grid',
@@ -353,15 +365,13 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
       <Box
         sx={{
           position: 'relative',
-          minHeight: { xs: 328, sm: 343, lg: 308 },
-          p: { xs: 2, sm: 3, xl: 3.5 },
+          '--home-loading-line': 'rgba(226,232,240,0.22)',
+          minHeight: { xs: 156, md: 104 },
+          p: { xs: 2, md: 2.5 },
           overflow: 'hidden',
           borderRadius: '16px',
           bgcolor: '#061630',
-          backgroundImage:
-            'radial-gradient(circle at 82% 36%, rgba(66,153,225,0.30), transparent 28%), linear-gradient(120deg, #061630 0%, #0A2B63 56%, #0D4E9B 100%)',
           color: '#F8FAFC',
-          '@media (min-width: 1800px)': { minHeight: 339 },
         }}
       >
         <Box sx={{ ...skeletonLine, width: 132, height: 10 }} />
@@ -369,8 +379,11 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
         <Box sx={{ ...skeletonLine, mt: 1, width: { xs: '92%', sm: 520 }, height: 12 }} />
         <Box
           sx={{
-            mt: 1.5,
-            width: { xs: 1, sm: 620 },
+            mt: { xs: 1.5, md: 0 },
+            position: { xs: 'relative', md: 'absolute' },
+            right: { md: 24 },
+            top: { md: 28 },
+            width: { xs: 1, md: 390 },
             display: 'grid',
             gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
             border: '1px solid rgba(255,255,255,0.18)',
@@ -388,8 +401,8 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
             />
           ))}
         </Box>
-        {layout.presentationResolved ? <DockSkeleton layout={layout} /> : <NeutralDockSkeleton />}
       </Box>
+      {layout.presentationResolved ? <DockSkeleton layout={layout} /> : <NeutralDockSkeleton />}
 
       <Box sx={{ ...canvasSkeleton, height: 56, bgcolor: 'action.hover' }} />
       <Box
@@ -398,10 +411,10 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
           !layout.presentationResolved
             ? 'neutral'
             : layout.template === 'adaptive-wide'
-              ? '7-5/4-4-4'
+              ? '8-4/4-4-4/8-4'
               : layout.template === 'single-column'
                 ? 'single-column'
-                : '8-4/4-4-4'
+                : '8-4/4-4-4/6-6'
         }
         sx={{
           display: 'grid',
@@ -411,17 +424,25 @@ export function HomeLoadingSkeleton({ reserveHeader = false }: HomeLoadingSkelet
       >
         {layout.presentationResolved ? (
           <>
-            {loadingWidgets.map((widget, index) => (
+            <Box
+              data-home-loading-widget="announcements"
+              sx={{ ...canvasSkeleton, height: 224, gridColumn: '1 / -1' }}
+            />
+            {loadingWidgets.map((widget) => (
               <Box
                 key={widget.key}
                 data-home-loading-widget={widget.key}
-                sx={{ ...canvasSkeleton, height: widget.height, gridColumn: widgetColumn(index) }}
+                sx={{
+                  ...canvasSkeleton,
+                  height: widget.height,
+                  gridColumn: widgetColumn(widget.key),
+                  gridRow:
+                    layout.template === 'adaptive-wide'
+                      ? HOME_REFERENCE_GRID_PLACEMENTS[widget.key].row + 1
+                      : undefined,
+                }}
               />
             ))}
-            <Box
-              data-home-loading-widget="announcements"
-              sx={{ ...canvasSkeleton, height: 224, gridColumn: { md: '1 / -1' } }}
-            />
           </>
         ) : (
           <Box

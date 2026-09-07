@@ -29,6 +29,7 @@
         "spam": { "label": "스팸" },
         "trash": { "label": "휴지통" },
         "folders": { "label": "내 폴더" },
+        "contacts": { "label": "주소록" },
         "shared": { "label": "공유 메일함" },
         "organization": { "label": "폴더 및 규칙" },
         "accounts": { "label": "연결된 계정" },
@@ -56,8 +57,18 @@
     "member": "구성원",
     "title": "{{name}}님, {{greeting}}",
     "description": "도착 순서가 아니라 업무 영향과 다음 행동을 기준으로 메일을 정리했습니다.",
+    "searchLabel": "내 메일 검색",
+    "searchPlaceholder": "보낸 사람, 제목 또는 메일 내용 검색",
+    "searchAction": "검색",
     "signalSummary": "메일 신호 요약",
     "loadError": "메일 업무 신호를 불러오지 못했습니다.",
+    "metricEyebrows": {
+      "unread": "UNREAD",
+      "urgent": "URGENT",
+      "needsReply": "NEEDS REPLY",
+      "snoozed": "LATER / READ",
+      "assistant": "PROPOSALS"
+    },
     "metrics": {
       "unread": "읽지 않음",
       "unreadDetail": "아직 확인하지 않은 대화",
@@ -74,6 +85,9 @@
       "attentionTitle": "지금 {{count}}개의 중요 신호가 판단을 기다립니다",
       "clearTitle": "중요한 메일을 모두 정리했습니다",
       "description": "도착 순서보다 업무 영향과 다음 행동을 기준으로 가장 짧은 처리 경로를 제안합니다.",
+      "accountWarning": "연결 확인 {{count}}개",
+      "accountHealthy": "모든 계정 동기화 정상",
+      "updatedAt": "{{value}} 기준",
       "start": "집중 처리 시작",
       "openInbox": "받은 메일 보기",
       "flowTitle": "처리 리듬",
@@ -90,7 +104,11 @@
       "title": "업무 실행 제안",
       "description": "메일 근거와 필요한 권한을 확인한 뒤 직접 승인합니다.",
       "emptyTitle": "검토할 실행 제안이 없습니다",
-      "emptyDescription": "AI가 업무 행동을 발견해도 사용자 승인 전에는 어떤 시스템도 변경하지 않습니다."
+      "emptyDescription": "AI가 업무 행동을 발견해도 사용자 승인 전에는 어떤 시스템도 변경하지 않습니다.",
+      "showMore_one": "제안 {{count}}건 더 보기",
+      "showMore_other": "제안 {{count}}건 더 보기",
+      "showLess": "핵심 제안만 보기",
+      "previewCount": "전체 대기 제안 {{total}}건 중 최근 {{shown}}건을 표시합니다."
     },
     "shared": {
       "title": "공유 메일함 흐름",
@@ -98,6 +116,26 @@
       "openInbox": "공유 메일함 열기",
       "open": "처리 중 {{count}}건",
       "overdue": "기한 초과 {{count}}건"
+    },
+    "addressBook": {
+      "title": "주소록과 메일 그룹",
+      "description": "자주 연락하는 사람과 반복 발송 그룹을 관리합니다.",
+      "open": "주소록 열기",
+      "openContacts": "연락처 보기",
+      "openGroups": "메일 그룹",
+      "contacts": "저장한 연락처",
+      "groups": "메일 그룹",
+      "unavailable": "요약을 불러오지 못했습니다. 주소록에서 다시 확인할 수 있습니다."
+    },
+    "tools": {
+      "title": "메일 업무 도구",
+      "description": "공유 처리, 연락처 그룹, 개인 정리 규칙을 목적에 맞게 이어갑니다.",
+      "sharedEyebrow": "TEAM MAIL",
+      "contactsEyebrow": "CONTACTS",
+      "organizeEyebrow": "ORGANIZE",
+      "mailboxes": "메일함",
+      "open": "처리 중",
+      "overdue": "기한 초과"
     },
     "automation": {
       "title": "자동 정리 리듬",
@@ -111,6 +149,103 @@
       "latestRun": "최근 자동 정리",
       "latestRunDetail": "{{count}}건의 조건 일치",
       "neverRun": "아직 실행 이력 없음"
+    }
+  },
+  "addressBook": {
+    "eyebrow": "개인 커뮤니케이션",
+    "title": "주소록과 메일 그룹",
+    "description": "자주 연락하는 사람을 정리하고, 검토한 구성원에게 한 번에 메일을 보냅니다.",
+    "loadError": "주소록을 불러오지 못했습니다.",
+    "saveError": "변경 내용을 저장하지 못했습니다. 입력과 최신 상태를 확인해 주세요.",
+    "conflictError": "주소록이 변경되었습니다. 새로고침한 뒤 다시 시도해 주세요.",
+    "summaryLabel": "주소록 요약",
+    "summary": {
+      "contacts": "저장한 연락처",
+      "favorites": "즐겨찾기",
+      "groups": "내 메일 그룹"
+    },
+    "search": "이름, 이메일 또는 회사 검색",
+    "searchContacts": "그룹에 추가할 연락처 검색",
+    "searchDirectory": "회사 구성원 검색",
+    "tabsLabel": "주소록 보기",
+    "tabs": {
+      "contacts": "내 연락처",
+      "groups": "내 메일 그룹",
+      "directory": "회사 구성원"
+    },
+    "archive": "보관",
+    "archived": "주소록에서 보관했습니다.",
+    "archiving": "보관 중",
+    "archiveTitle": "주소록에서 보관할까요?",
+    "archiveDescription": "{{name}}은 현재 목록과 메일 그룹에서 숨겨집니다.",
+    "updating": "주소록을 업데이트하고 있습니다.",
+    "contact": {
+      "new": "연락처 추가",
+      "createTitle": "새 연락처",
+      "editTitle": "연락처 편집",
+      "listTitle": "내 연락처",
+      "name": "이름",
+      "email": "이메일",
+      "organization": "회사 또는 조직",
+      "jobTitle": "직책",
+      "phone": "전화번호",
+      "favorite": "즐겨찾기에 추가",
+      "edit": "연락처 편집",
+      "saved": "연락처를 저장했습니다.",
+      "emptyTitle": "저장한 연락처가 없습니다",
+      "emptyDescription": "연락처를 직접 추가하거나 회사 구성원에서 찾아 저장하세요."
+    },
+    "group": {
+      "new": "메일 그룹 만들기",
+      "createTitle": "새 메일 그룹",
+      "editTitle": "메일 그룹 편집",
+      "listTitle": "내 메일 그룹",
+      "name": "그룹 이름",
+      "description": "그룹 설명",
+      "noDescription": "함께 메일을 보낼 구성원을 관리합니다.",
+      "memberCount": "{{count}}명",
+      "members": "구성원",
+      "edit": "편집",
+      "send": "메일 보내기",
+      "saved": "메일 그룹을 저장했습니다.",
+      "emptyTitle": "만든 메일 그룹이 없습니다",
+      "emptyDescription": "프로젝트나 반복 업무별 그룹을 만들어 수신자를 다시 입력하는 일을 줄이세요."
+    },
+    "members": {
+      "title": "{{name}} 구성원",
+      "available": "추가할 수 있는 연락처",
+      "selected": "{{count}}명 선택",
+      "save": "구성원 저장",
+      "saved": "그룹 구성원을 저장했습니다."
+    },
+    "send": {
+      "title": "{{name}}에 메일 보내기",
+      "recipients": "현재 그룹 버전의 수신자 {{count}}명을 확인한 뒤 발송합니다.",
+      "recipientList": "이번 그룹 메일의 수신자",
+      "confirmRecipients": "모든 수신자의 이름과 이메일 주소를 확인했습니다.",
+      "retry": "동일 메일로 재시도",
+      "retryNotice": "발송 결과를 확인하지 못했습니다. 검토한 수신자와 내용은 유지되며, 재시도해도 동일 요청으로 처리되어 중복 등록되지 않습니다.",
+      "conflictNotice": "그룹 또는 요청이 변경되었습니다. 계속하려면 최신 수신자를 다시 확인하세요. 원래 메일이 미발송되었다는 의미는 아니며, 원본 요청으로 결과를 확인할 수 있습니다.",
+      "reviewLatest": "최신 수신자 다시 검토",
+      "checkOriginal": "원본 요청 결과 확인",
+      "refreshError": "최신 수신자를 조회하지 못했습니다. 메일 내용과 원본 요청은 유지됩니다.",
+      "classification": "메일 보안 등급",
+      "submit": "그룹에 보내기",
+      "sending": "발송 등록 중",
+      "sent": "그룹 메일을 발송 대기열에 안전하게 등록했습니다.",
+      "error": "그룹이 변경됐거나 발송할 수 없습니다. 수신자를 다시 확인해 주세요."
+    },
+    "directory": {
+      "title": "회사 구성원 검색 결과",
+      "startTitle": "회사 구성원을 찾아보세요",
+      "startDescription": "이름이나 이메일을 두 글자 이상 입력하면 현재 조회 권한 안에서 검색합니다.",
+      "loading": "회사 구성원 검색 중",
+      "error": "회사 구성원을 검색하지 못했습니다.",
+      "emptyTitle": "일치하는 구성원이 없습니다",
+      "emptyDescription": "검색어를 바꾸거나 외부 연락처로 직접 추가하세요.",
+      "noEmail": "공개된 업무 이메일 없음",
+      "add": "내 연락처에 추가",
+      "saved": "저장됨"
     }
   },
   "mailbox": {
@@ -442,10 +577,86 @@
   "proposal": {
     "assistant": "DWP 실행 제안",
     "confidence": "신뢰도 {{value}}%",
+    "match": "{{value}}% 일치",
+    "source": "근거 메일: {{source}}",
     "risk": {
       "LOW": "낮은 위험",
       "MEDIUM": "주의 필요",
       "HIGH": "중요 확인"
+    },
+    "types": {
+      "replyDraft": {
+        "label": "메일 답장 초안",
+        "confirm": "승인하고 초안 열기"
+      },
+      "calendarEvent": {
+        "label": "캘린더 일정 생성",
+        "confirm": "승인하고 일정 열기"
+      },
+      "leaveRequest": {
+        "label": "휴가 요청 준비",
+        "confirm": "승인하고 인사 앱 열기"
+      },
+      "task": {
+        "label": "업무 항목 생성",
+        "confirm": "승인하고 업무 열기"
+      },
+      "notification": {
+        "label": "긴급 알림 제안",
+        "confirm": "승인하고 알림 설정 열기"
+      }
+    },
+    "targets": {
+      "calendar": "캘린더",
+      "hr": "인사",
+      "mail": "메일 임시 보관함",
+      "notifications": "알림",
+      "work": "업무"
+    },
+    "fields": {
+      "assignee": "담당자",
+      "attendees": "참석자",
+      "channel": "알림 채널",
+      "dateRange": "기간",
+      "durationDays": "사용 일수",
+      "durationMinutes": "예상 시간",
+      "language": "작성 언어",
+      "location": "장소",
+      "priority": "우선순위",
+      "project": "프로젝트",
+      "provider": "요청된 도구",
+      "schedule": "일정",
+      "timeZone": "시간대",
+      "tone": "문체",
+      "urgency": "긴급도"
+    },
+    "values": {
+      "concise": "간결하게",
+      "durationDays": "{{count}}일",
+      "durationMinutes": "약 {{count}}분",
+      "email": "이메일",
+      "english": "영어",
+      "formal": "격식 있게",
+      "high": "높음",
+      "inApp": "앱 알림",
+      "korean": "한국어",
+      "low": "낮음",
+      "medium": "보통",
+      "professional": "업무용 문체"
+    },
+    "blocked": {
+      "expired": "검토 기한이 지나 새 제안이 필요합니다.",
+      "handled": "이미 처리된 제안입니다.",
+      "policyMismatch": "현재 정책과 실행 범위를 다시 확인해야 합니다.",
+      "unsupportedType": "지원하지 않는 제안 유형입니다.",
+      "unsupportedVersion": "최신 계약으로 제안을 다시 생성해야 합니다."
+    },
+    "reviewDialog": {
+      "description": "제안 근거와 이동할 앱을 확인하세요. 이 단계에서는 업무 데이터가 생성되거나 발송되지 않습니다.",
+      "target": "검토 후 이동",
+      "evidence": "확인한 근거: {{count}}건",
+      "expires": "검토 기한 {{value}}",
+      "safety": "제안을 승인하면 대상 앱에서 최종 내용을 다시 확인합니다. 저장·발송·게시 같은 실제 변경은 해당 앱의 권한과 확인 절차를 따릅니다."
     },
     "review": "검토하고 진행",
     "dismiss": "숨기기",

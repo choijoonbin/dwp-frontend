@@ -139,6 +139,7 @@ function AuthorizedAccessReviewWorkItem({ workItemRef }: { workItemRef: string }
       setReason('');
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['workspace', 'work-queue'] }),
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-hub'] }),
         queryClient.invalidateQueries({ queryKey: detailQueryKey }),
       ]);
       toast.success(t('workPage.accessReview.decisionSaved'));

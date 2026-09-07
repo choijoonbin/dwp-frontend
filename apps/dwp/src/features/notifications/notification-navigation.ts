@@ -1,8 +1,8 @@
 import {
-  BellRing,
   CircleStop,
   FileCode2,
   House,
+  ListChecks,
   RadioTower,
   Settings2,
   Languages,
@@ -14,7 +14,11 @@ import type {
   ProductAreaNavigationGroup,
   ProductAreaNavigationItem,
 } from '../../layouts/product-area-layout';
-import type { NotificationView } from '@dwp-frontend/shared-utils/api/notification-api';
+import type {
+  NotificationPriority,
+  NotificationReasonKind,
+  NotificationView,
+} from '@dwp-frontend/shared-utils/api/notification-api';
 
 export type NotificationNavigationView =
   | 'home'
@@ -43,18 +47,61 @@ export type NotificationCenterViewLink = {
   path: string;
 };
 
+export type NotificationCenterReadState = 'ALL' | 'UNREAD' | 'READ';
+export type NotificationCenterPathScope = {
+  view: NotificationView;
+  readState?: NotificationCenterReadState;
+  query?: string;
+  appKey?: string;
+  priority?: NotificationPriority | 'ALL';
+  reason?: NotificationReasonKind | 'ALL';
+};
+
 export const NOTIFICATION_HOME_PATH = '/notifications/home';
 export const NOTIFICATION_CENTER_PATH = '/notifications/center';
 export const NOTIFICATION_SETTINGS_PATH = '/notifications/settings';
 export const NOTIFICATION_ADMIN_BASE_PATH = '/notifications/admin';
 
+const QUERY_BY_CENTER_VIEW: Readonly<Record<NotificationView, string>> = {
+  PRIORITY: 'priority',
+  ALL: 'all',
+  MENTIONS: 'mentions',
+  SAVED: 'saved',
+  SNOOZED: 'later',
+  DONE: 'done',
+};
+
+export function notificationCenterSearchParams({
+  view,
+  readState = 'ALL',
+  query,
+  appKey,
+  priority = 'ALL',
+  reason = 'ALL',
+}: NotificationCenterPathScope): URLSearchParams {
+  const parameters = new URLSearchParams({ view: QUERY_BY_CENTER_VIEW[view] });
+  if (readState !== 'ALL') parameters.set('read', readState.toLocaleLowerCase('en-US'));
+  const normalizedQuery = query?.trim();
+  if (normalizedQuery) parameters.set('q', normalizedQuery);
+  const normalizedAppKey = appKey?.trim();
+  if (normalizedAppKey) parameters.set('app', normalizedAppKey);
+  if (priority !== 'ALL') parameters.set('priority', priority.toLocaleLowerCase('en-US'));
+  if (reason !== 'ALL' && view !== 'MENTIONS')
+    parameters.set('reason', reason.toLocaleLowerCase('en-US'));
+  return parameters;
+}
+
+export function notificationCenterPath(scope: NotificationCenterPathScope): string {
+  return `${NOTIFICATION_CENTER_PATH}?${notificationCenterSearchParams(scope).toString()}`;
+}
+
 export const NOTIFICATION_CENTER_VIEW_LINKS: readonly NotificationCenterViewLink[] = [
-  { view: 'PRIORITY', path: `${NOTIFICATION_CENTER_PATH}?view=priority` },
-  { view: 'ALL', path: `${NOTIFICATION_CENTER_PATH}?view=all` },
-  { view: 'MENTIONS', path: `${NOTIFICATION_CENTER_PATH}?view=mentions` },
-  { view: 'SAVED', path: `${NOTIFICATION_CENTER_PATH}?view=saved` },
-  { view: 'SNOOZED', path: `${NOTIFICATION_CENTER_PATH}?view=later` },
-  { view: 'DONE', path: `${NOTIFICATION_CENTER_PATH}?view=done` },
+  { view: 'PRIORITY', path: notificationCenterPath({ view: 'PRIORITY' }) },
+  { view: 'ALL', path: notificationCenterPath({ view: 'ALL' }) },
+  { view: 'MENTIONS', path: notificationCenterPath({ view: 'MENTIONS' }) },
+  { view: 'SAVED', path: notificationCenterPath({ view: 'SAVED' }) },
+  { view: 'SNOOZED', path: notificationCenterPath({ view: 'SNOOZED' }) },
+  { view: 'DONE', path: notificationCenterPath({ view: 'DONE' }) },
 ] as const;
 
 export const NOTIFICATION_NAVIGATION: readonly NotificationNavigationGroup[] = [
@@ -68,7 +115,7 @@ export const NOTIFICATION_NAVIGATION: readonly NotificationNavigationGroup[] = [
       {
         view: 'center',
         path: NOTIFICATION_CENTER_PATH,
-        icon: BellRing,
+        icon: ListChecks,
         requiredResourceKey: 'APP.NOTIFICATIONS',
         requiredPermissionCode: 'VIEW',
       },

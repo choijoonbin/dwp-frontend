@@ -26,6 +26,8 @@ describe('home widget content contract', () => {
 
   it('does not expose fixed or derived zones as configurable widgets', () => {
     expect(homeWidgetContentContract('command-rail')).toBeNull();
+    expect(homeWidgetContentContract('focus-balance')).toBeNull();
+    expect(homeWidgetContentContract('meeting-load')).toBeNull();
     expect(homeWidgetContentContract('today-flowline')).toBeNull();
   });
 });

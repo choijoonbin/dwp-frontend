@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import {
   Bot,
   Captions,
@@ -28,6 +28,8 @@ import Chip, { type ChipProps } from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import {
   MEETING_ADMIN_INTELLIGENCE_CAPABILITIES,
@@ -53,6 +55,9 @@ type IntelligenceLabel = {
   description: string;
 };
 
+type IntelligencePipelineKey =
+  'consent' | 'recording' | 'encryption' | 'transcript' | 'model' | 'publication' | 'deletion';
+
 export type MeetingAdminIntelligenceLabels = {
   eyebrow: string;
   title: string;
@@ -68,6 +73,10 @@ export type MeetingAdminIntelligenceLabels = {
   };
   recordingPolicies: Record<'NEVER' | 'HOST_OPT_IN' | 'ADMIN_REQUIRED', string>;
   unavailable: string;
+  readinessTitle: string;
+  readinessProgress: (ready: number, total: number) => string;
+  pipelineTitle: string;
+  pipelineDescription: string;
   capabilitiesTitle: string;
   capabilitiesDescription: string;
   dependenciesTitle: string;
@@ -82,6 +91,7 @@ export type MeetingAdminIntelligenceLabels = {
   days: (value: number | null) => string;
   states: Record<MeetingAdminReadinessState, string>;
   reason: (value: string) => string;
+  pipeline: Record<IntelligencePipelineKey, IntelligenceLabel>;
   capabilities: Record<MeetingAdminIntelligenceCapabilityKey, IntelligenceLabel>;
   dependencies: Record<MeetingAdminIntelligenceDependencyKey, IntelligenceLabel>;
   governance: Record<MeetingAdminIntelligenceGovernanceKey, IntelligenceLabel>;
@@ -128,6 +138,8 @@ const GOVERNANCE_ICONS: Record<MeetingAdminIntelligenceGovernanceKey, LucideIcon
   humanReview: UserCheck,
   explicitPublish: FileCheck2,
   adminContentAccess: LockKeyhole,
+  workFollowUpPromotion: FileCheck2,
+  followUpReassignment: UserCheck,
   legalHold: ShieldCheck,
   deletionEvidence: ScrollText,
 };
@@ -155,9 +167,15 @@ export function MeetingAdminIntelligence({
   sourceFailures = [],
 }: MeetingAdminIntelligenceProps) {
   const id = useId();
+  const theme = useTheme();
+  const compact = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const pipeline = intelligencePipeline(readiness);
+  const readySteps = pipeline.filter(({ signal }) => signal.state === 'READY').length;
+  const overallSignal = aggregateReadiness(pipeline.map(({ signal }) => signal));
 
   return (
-    <PageCanvas mode="focus">
+    <PageCanvas mode="workspace" topInset="compact">
       <MeetingPageHeading
         eyebrow={labels.eyebrow}
         title={labels.title}
@@ -200,88 +218,132 @@ export function MeetingAdminIntelligence({
           </Alert>
         ))}
 
-        <RuntimeEvidencePanel readiness={readiness} labels={labels} />
+        {!compact && <RuntimeEvidencePanel readiness={readiness} labels={labels} />}
 
-        <section aria-labelledby={`${id}-capabilities`}>
-          <MeetingSectionHeading
-            id={`${id}-capabilities`}
-            title={labels.capabilitiesTitle}
-            description={labels.capabilitiesDescription}
-          />
-          <Box
-            role="list"
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-              gap: 1.5,
-            }}
-          >
-            {MEETING_ADMIN_INTELLIGENCE_CAPABILITIES.map((key) => (
-              <ReadinessCard
-                key={key}
-                icon={CAPABILITY_ICONS[key]}
-                item={labels.capabilities[key]}
-                signal={readiness.capabilities[key]}
-                labels={labels}
-              />
-            ))}
+        <Box
+          component="section"
+          aria-labelledby={`${id}-readiness`}
+          sx={(theme) => ({
+            ...meetingSurface(theme, { tone: readinessTone(overallSignal.state) }),
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            justifyContent: 'space-between',
+            gap: 2,
+            p: { xs: 2, md: 2.5 },
+            borderLeft: 4,
+            borderLeftColor: STATE_PRESENTATION[overallSignal.state].tone,
+          })}
+        >
+          <Box>
+            <Typography
+              id={`${id}-readiness`}
+              component="h2"
+              variant="h6"
+              fontWeight="fontWeightBold"
+            >
+              {labels.readinessTitle}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {labels.readinessProgress(readySteps, pipeline.length)}
+            </Typography>
           </Box>
-        </section>
+          <ReadinessChip signal={overallSignal} labels={labels} />
+        </Box>
 
-        <section aria-labelledby={`${id}-dependencies`}>
+        <section aria-labelledby={`${id}-pipeline`}>
           <MeetingSectionHeading
-            id={`${id}-dependencies`}
-            title={labels.dependenciesTitle}
-            description={labels.dependenciesDescription}
+            id={`${id}-pipeline`}
+            title={labels.pipelineTitle}
+            description={labels.pipelineDescription}
           />
           <Box
-            role="list"
+            component="ol"
             sx={(theme) => ({
               ...meetingSurface(theme),
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              gap: 1,
-              p: 1,
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, minmax(0, 1fr))',
+                lg: 'repeat(7, minmax(0, 1fr))',
+              },
+              m: 0,
+              p: 0,
+              listStyle: 'none',
+              overflow: 'hidden',
             })}
           >
-            {MEETING_ADMIN_INTELLIGENCE_DEPENDENCIES.map((key) => (
-              <DependencyRow
+            {pipeline.map(({ key, signal }, index) => (
+              <Box
                 key={key}
-                icon={DEPENDENCY_ICONS[key]}
-                item={labels.dependencies[key]}
-                signal={readiness.dependencies[key]}
-                labels={labels}
-              />
+                component="li"
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: {
+                    xs: '32px minmax(0, 1fr) auto',
+                    lg: 'minmax(0, 1fr) auto',
+                  },
+                  columnGap: { xs: 1, lg: 0.5 },
+                  alignItems: 'start',
+                  minWidth: 0,
+                  p: { xs: 1.5, lg: 2 },
+                  borderTop: { xs: index ? 1 : 0, sm: index > 1 ? 1 : 0, lg: 0 },
+                  borderLeft: {
+                    xs: 0,
+                    sm: index % 2 ? 1 : 0,
+                    lg: index ? 1 : 0,
+                  },
+                  borderColor: 'divider',
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight="fontWeightBold"
+                  sx={{ gridColumn: { lg: 1 } }}
+                >
+                  {String(index + 1).padStart(2, '0')}
+                </Typography>
+                <Box sx={{ minWidth: 0, gridColumn: { xs: 2, lg: '1 / -1' } }}>
+                  <Typography
+                    component="h3"
+                    variant="body2"
+                    fontWeight="fontWeightBold"
+                    sx={{ mt: { lg: 1.25 } }}
+                  >
+                    {labels.pipeline[key].label}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mt: 0.35 }}
+                  >
+                    {labels.pipeline[key].description}
+                  </Typography>
+                  {signal.reason && signal.state !== 'READY' && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: 'block',
+                        mt: 0.5,
+                        color: STATE_PRESENTATION[signal.state].tone,
+                        fontWeight: 'fontWeightMedium',
+                        overflowWrap: 'anywhere',
+                      }}
+                    >
+                      {labels.reason(signal.reason)}
+                    </Typography>
+                  )}
+                </Box>
+                <Box sx={{ gridColumn: { xs: 3, lg: 2 }, gridRow: 1, justifySelf: 'end' }}>
+                  <ReadinessChip signal={signal} labels={labels} />
+                </Box>
+              </Box>
             ))}
           </Box>
         </section>
 
-        <section aria-labelledby={`${id}-workflow`}>
-          <MeetingSectionHeading
-            id={`${id}-workflow`}
-            title={labels.workflowTitle}
-            description={labels.workflowDescription}
-          />
-          <Box
-            role="list"
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: 'repeat(3, minmax(0, 1fr))' },
-              gap: 1.5,
-            }}
-          >
-            {MEETING_ADMIN_INTELLIGENCE_WORKFLOW_CONTROLS.map((key) => (
-              <ReadinessCard
-                key={key}
-                icon={GOVERNANCE_ICONS[key]}
-                item={labels.governance[key]}
-                signal={readiness.governance[key]}
-                labels={labels}
-                compact
-              />
-            ))}
-          </Box>
-        </section>
+        {!compact && <IntelligenceDetailSections id={id} readiness={readiness} labels={labels} />}
 
         <section aria-labelledby={`${id}-lifecycle`}>
           <MeetingSectionHeading
@@ -292,28 +354,236 @@ export function MeetingAdminIntelligence({
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.4fr) minmax(300px, 0.6fr)' },
+              gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 7fr) minmax(300px, 5fr)' },
               gap: 1.5,
               alignItems: 'stretch',
             }}
           >
             <RetentionPanel readiness={readiness} labels={labels} />
-            <Stack role="list" gap={1.5}>
-              {MEETING_ADMIN_INTELLIGENCE_EVIDENCE_CONTROLS.map((key) => (
-                <ReadinessCard
-                  key={key}
-                  icon={GOVERNANCE_ICONS[key]}
-                  item={labels.governance[key]}
-                  signal={readiness.governance[key]}
-                  labels={labels}
-                  compact
-                />
-              ))}
-            </Stack>
+            {!compact && <EvidenceControlList readiness={readiness} labels={labels} />}
           </Box>
         </section>
+
+        {compact && (
+          <Box
+            component="details"
+            data-testid="meeting-intelligence-mobile-details"
+            open={detailsOpen}
+            onToggle={(event) => setDetailsOpen(event.currentTarget.open)}
+            sx={(theme) => ({
+              ...meetingSurface(theme, { elevated: false }),
+              overflow: 'hidden',
+              '&[open] > summary': { borderBottom: 1, borderColor: 'divider' },
+            })}
+          >
+            <Box
+              component="summary"
+              sx={{
+                minHeight: 48,
+                px: 2,
+                py: 1.5,
+                cursor: 'pointer',
+                color: 'text.primary',
+                '&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
+              }}
+            >
+              <Typography component="span" variant="subtitle2" fontWeight="fontWeightBold">
+                {labels.runtimeEvidenceTitle}
+              </Typography>
+              <Typography component="span" variant="caption" color="text.secondary" display="block">
+                {labels.dependenciesDescription}
+              </Typography>
+            </Box>
+            <Stack gap={2} sx={{ p: 1.5 }}>
+              <RuntimeEvidencePanel readiness={readiness} labels={labels} />
+              <IntelligenceDetailSections
+                id={`${id}-mobile`}
+                readiness={readiness}
+                labels={labels}
+              />
+              <EvidenceControlList readiness={readiness} labels={labels} />
+            </Stack>
+          </Box>
+        )}
       </Stack>
     </PageCanvas>
+  );
+}
+
+function IntelligenceDetailSections({
+  id,
+  readiness,
+  labels,
+}: {
+  id: string;
+  readiness: MeetingAdminIntelligenceReadiness;
+  labels: MeetingAdminIntelligenceLabels;
+}) {
+  return (
+    <>
+      <section aria-labelledby={`${id}-capabilities`}>
+        <MeetingSectionHeading
+          id={`${id}-capabilities`}
+          title={labels.capabilitiesTitle}
+          description={labels.capabilitiesDescription}
+        />
+        <Box
+          role="list"
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+            gap: 1.5,
+          }}
+        >
+          {MEETING_ADMIN_INTELLIGENCE_CAPABILITIES.map((key) => (
+            <ReadinessCard
+              key={key}
+              icon={CAPABILITY_ICONS[key]}
+              item={labels.capabilities[key]}
+              signal={readiness.capabilities[key]}
+              labels={labels}
+            />
+          ))}
+        </Box>
+      </section>
+
+      <section aria-labelledby={`${id}-dependencies`}>
+        <MeetingSectionHeading
+          id={`${id}-dependencies`}
+          title={labels.dependenciesTitle}
+          description={labels.dependenciesDescription}
+        />
+        <Box
+          role="list"
+          sx={(theme) => ({
+            ...meetingSurface(theme),
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+            gap: 1,
+            p: 1,
+          })}
+        >
+          {MEETING_ADMIN_INTELLIGENCE_DEPENDENCIES.map((key) => (
+            <DependencyRow
+              key={key}
+              icon={DEPENDENCY_ICONS[key]}
+              item={labels.dependencies[key]}
+              signal={readiness.dependencies[key]}
+              labels={labels}
+            />
+          ))}
+        </Box>
+      </section>
+
+      <section aria-labelledby={`${id}-workflow`}>
+        <MeetingSectionHeading
+          id={`${id}-workflow`}
+          title={labels.workflowTitle}
+          description={labels.workflowDescription}
+        />
+        <Box
+          role="list"
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: 'repeat(3, minmax(0, 1fr))' },
+            gap: 1.5,
+          }}
+        >
+          {MEETING_ADMIN_INTELLIGENCE_WORKFLOW_CONTROLS.map((key) => (
+            <ReadinessCard
+              key={key}
+              icon={GOVERNANCE_ICONS[key]}
+              item={labels.governance[key]}
+              signal={readiness.governance[key]}
+              labels={labels}
+              compact
+            />
+          ))}
+        </Box>
+      </section>
+    </>
+  );
+}
+
+function EvidenceControlList({
+  readiness,
+  labels,
+}: {
+  readiness: MeetingAdminIntelligenceReadiness;
+  labels: MeetingAdminIntelligenceLabels;
+}) {
+  return (
+    <Stack role="list" gap={1.5}>
+      {MEETING_ADMIN_INTELLIGENCE_EVIDENCE_CONTROLS.map((key) => (
+        <ReadinessCard
+          key={key}
+          icon={GOVERNANCE_ICONS[key]}
+          item={labels.governance[key]}
+          signal={readiness.governance[key]}
+          labels={labels}
+          compact
+        />
+      ))}
+    </Stack>
+  );
+}
+
+function intelligencePipeline(readiness: MeetingAdminIntelligenceReadiness) {
+  return [
+    {
+      key: 'consent' as const,
+      signal: {
+        state: 'NOT_VERIFIED' as const,
+        reason: 'PER_MEETING_CONSENT_REQUIRED',
+      },
+    },
+    {
+      key: 'recording' as const,
+      signal: aggregateReadiness([readiness.dependencies.provider, readiness.dependencies.egress]),
+    },
+    {
+      key: 'encryption' as const,
+      signal: aggregateReadiness([
+        readiness.dependencies.kms,
+        readiness.dependencies.storage,
+        readiness.dependencies.audit,
+      ]),
+    },
+    { key: 'transcript' as const, signal: readiness.dependencies.stt },
+    {
+      key: 'model' as const,
+      signal: aggregateReadiness([readiness.dependencies.region, readiness.dependencies.llm]),
+    },
+    {
+      key: 'publication' as const,
+      signal: aggregateReadiness([
+        readiness.governance.humanReview,
+        readiness.governance.explicitPublish,
+      ]),
+    },
+    {
+      key: 'deletion' as const,
+      signal: aggregateReadiness([
+        readiness.governance.deletionEvidence,
+        readiness.retention.signals.intelligenceReports,
+        readiness.retention.signals.meetingRecords,
+        readiness.retention.signals.artifacts,
+        readiness.retention.signals.chat,
+      ]),
+    },
+  ];
+}
+
+function aggregateReadiness(signals: readonly MeetingAdminReadinessSignal[]) {
+  const priority: Record<MeetingAdminReadinessState, number> = {
+    READY: 0,
+    NOT_VERIFIED: 1,
+    CONNECTION_REQUIRED: 2,
+    BLOCKED: 3,
+  };
+  return signals.reduce<MeetingAdminReadinessSignal>(
+    (current, signal) => (priority[signal.state] > priority[current.state] ? signal : current),
+    { state: 'READY' }
   );
 }
 
@@ -485,7 +755,7 @@ function RetentionPanel({
         role="list"
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
         }}
       >
         {retention.map(({ key, value, signal }, index) => (
@@ -494,9 +764,9 @@ function RetentionPanel({
             role="listitem"
             sx={{
               minWidth: 0,
-              p: 2,
-              borderTop: { xs: index ? 1 : 0, sm: index > 1 ? 1 : 0 },
-              borderLeft: { sm: index % 2 ? 1 : 0 },
+              p: { xs: 1.25, sm: 2 },
+              borderTop: index > 1 ? 1 : 0,
+              borderLeft: index % 2 ? 1 : 0,
               borderColor: 'divider',
             }}
           >
@@ -509,7 +779,11 @@ function RetentionPanel({
             <Typography component="p" variant="h6" fontWeight={850} sx={{ mt: 0.35 }}>
               {labels.days(value)}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+            >
               {labels.retention[key].description}
             </Typography>
             {signal.reason && signal.state !== 'READY' && (

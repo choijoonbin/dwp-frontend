@@ -13,7 +13,7 @@
     "groups": {
       "notifications": {
         "overview": "개요",
-        "center": "내 알림",
+        "center": "알림 정리",
         "settings": "개인 설정",
         "administration": "테넌트 운영"
       }
@@ -34,13 +34,17 @@
   },
   "home": {
     "eyebrow": "주의 집중 허브",
-    "title": "지금 반응해야 할 변화에 집중하세요",
+    "title": "알림 홈",
     "description": "업무 앱의 알림을 우선순위, 멘션과 조치 필요 여부로 정리해 다음 행동을 빠르게 결정합니다.",
     "live": "실시간 동기화",
+    "searchLabel": "알림 검색",
+    "searchPlaceholder": "알림, 보낸 사람 또는 업무 앱 검색",
+    "searchAction": "검색",
     "loading": "우선 알림을 정리하는 중",
     "errorTitle": "알림 홈을 불러오지 못했습니다",
     "errorDescription": "연결을 확인한 뒤 다시 시도해 주세요. 기존 알림 상태는 변경되지 않았습니다.",
     "summaryLabel": "알림 요약",
+    "appDistribution": "앱별 읽지 않은 알림",
     "metrics": {
       "actionable": "조치 필요",
       "actionableDetail": "읽지 않은 실행 항목",
@@ -52,11 +56,75 @@
       "laterDetail": "다시 알릴 항목"
     },
     "priorityTitle": "먼저 확인할 알림",
-    "priorityDescription": "기한, 직접 지정과 업무 영향도를 기준으로 정렬했습니다.",
+    "priorityDescription": "조치가 필요한 알림을 최근 활동 순으로 확인합니다.",
     "openCenter": "알림 센터 열기",
     "open": "확인",
     "emptyTitle": "지금 확인할 우선 알림이 없습니다",
     "emptyDescription": "새로운 조치 항목이 도착하면 이곳에 표시됩니다."
+  },
+  "workbench": {
+    "title": "알림 센터",
+    "description": "업무 앱에서 도착한 알림을 중요도와 맥락에 따라 확인하고 바로 처리합니다.",
+    "live": "실시간 동기화",
+    "syncedAt": "최근 동기화 {{time}}",
+    "kpis": {
+      "ACTIONABLE": "조치 필요",
+      "UNREAD": "읽지 않음",
+      "MENTIONS": "나를 멘션",
+      "SNOOZED": "나중에",
+      "INBOX": "받은 알림",
+      "UNREAD_SHARE": "받은 알림 중 읽지 않은 비율",
+      "UNREAD_SHARE_VALUE": "읽지 않은 알림 {{value}}%"
+    },
+    "digest": {
+      "title": "DWP 업무 브리핑",
+      "withLead": "처리할 알림 {{count}}건 중 ‘{{title}}’을 먼저 확인해 보세요.",
+      "withoutLead": "현재 보기 밖에 처리할 알림 {{count}}건이 남아 있습니다.",
+      "clear": "지금 바로 처리할 알림이 없습니다.",
+      "review": "우선 알림 검토",
+      "dismiss": "브리핑 닫기"
+    },
+    "groups": {
+      "ACTION_REQUIRED": {
+        "title": "조치 필요",
+        "description": "최근 활동 순"
+      },
+      "CONVERSATIONS": {
+        "title": "멘션 및 대화",
+        "description": "답글과 직접 언급을 한곳에서 확인합니다."
+      },
+      "UPDATES": {
+        "title": "업무 업데이트",
+        "description": "앱에서 도착한 상태 변경과 안내입니다."
+      }
+    },
+    "shortcuts": {
+      "label": "빠른 정리",
+      "move": "이동",
+      "complete": "완료",
+      "snooze": "나중에"
+    },
+    "card": {
+      "actionRequired": "조치 필요",
+      "due": "{{time}}까지",
+      "reply": "바로 답장",
+      "replyLabel": "답장 내용",
+      "replyPlaceholder": "메시지를 입력하세요",
+      "replyError": "메시지를 보내지 못했습니다. 내용을 유지한 채 다시 시도해 주세요.",
+      "replyCompletionPending": "답장은 전송됐지만 알림을 정리하지 못했습니다. 남아 있는 알림을 다시 정리해 주세요.",
+      "send": "보내기",
+      "replySent": "답장을 보냈습니다.",
+      "unread": "읽지 않은 알림",
+      "read": "읽은 알림"
+    },
+    "filters": {
+      "label": "알림 보기 및 필터"
+    },
+    "announcements": {
+      "pending": "‘{{title}}’ 상태를 변경하는 중입니다.",
+      "completed": "‘{{title}}’ 상태를 변경했습니다.",
+      "failed": "‘{{title}}’ 상태를 변경하지 못했습니다."
+    }
   },
   "settings": {
     "eyebrow": "개인 알림 설정",
@@ -65,10 +133,12 @@
   },
   "actions": {
     "back": "뒤로",
-    "complete": "완료로 이동",
+    "complete": "알림 정리",
+    "detail": "상세 보기",
     "loadMore": "더 불러오기",
     "markRead": "읽음으로 표시",
     "markUnread": "안 읽음으로 표시",
+    "more": "추가 작업",
     "refresh": "새로 고침",
     "resynchronize": "전체 다시 동기화",
     "restore": "받은 알림으로 복원",
@@ -99,7 +169,8 @@
     "LOW": "낮음"
   },
   "reason": {
-    "DIRECT": "나에게 직접 지정됨",
+    "UNKNOWN": "수신 이유 미확인",
+    "DIRECT": "직접 수신",
     "MENTION": "나를 멘션함",
     "ROLE": "담당 역할에 포함됨",
     "ORGANIZATION": "소속 조직에 전달됨",
@@ -107,6 +178,7 @@
     "MANDATORY_POLICY": "필수 정책 알림"
   },
   "reasonExplanation": {
+    "UNKNOWN": "원천 앱의 수신 이유를 아직 분류하지 못했습니다.",
     "DIRECT": "원천 앱이 회원님의 계정을 직접 수신 대상으로 지정했습니다.",
     "MENTION": "동료가 관련 업무에서 회원님을 직접 언급했습니다.",
     "ROLE": "회원님에게 부여된 업무 역할을 기준으로 전달되었습니다.",
@@ -124,12 +196,12 @@
     "security": "보안"
   },
   "views": {
-    "PRIORITY": "우선",
-    "ALL": "전체",
-    "MENTIONS": "멘션",
+    "PRIORITY": "조치 필요",
+    "ALL": "받은 알림",
+    "MENTIONS": "나를 멘션",
     "SAVED": "저장됨",
     "SNOOZED": "나중에",
-    "DONE": "완료"
+    "DONE": "정리됨"
   },
   "states": {
     "live": "실시간 연결됨",
@@ -138,6 +210,7 @@
     "degraded": "일부 전달 경로가 지연되고 있습니다.",
     "partial": "일부 소스 {{count}}곳의 정보를 가져오지 못했습니다.",
     "loading": "알림을 불러오는 중",
+    "loadingSummary": "알림 요약을 불러오는 중",
     "loadingMore": "추가 알림을 불러오는 중",
     "loadingDetail": "알림 상세를 불러오는 중",
     "loadingPreferences": "알림 설정을 불러오는 중",
@@ -221,6 +294,14 @@
     "listLabel": "알림 목록"
   },
   "filters": {
+    "reason": "수신 이유",
+    "allReasons": "모든 수신 이유",
+    "reset": "필터 초기화",
+    "open": "상세 필터",
+    "close": "필터 닫기",
+    "viewCount": "추가 필터 적용 전 {{count}}건",
+    "emptyTitle": "조건에 맞는 알림이 없습니다",
+    "emptyDescription": "검색어나 수신 이유 등 조회 조건을 변경해 주세요.",
     "priority": "우선순위 필터",
     "allPriorities": "모든 우선순위",
     "app": "앱 필터",
@@ -280,6 +361,7 @@
   "preferences": {
     "title": "알림 설정",
     "description": "전역 설정을 기준으로 앱, 알림 유형, 전달 채널별 예외를 관리합니다.",
+    "sectionNavigation": "알림 설정 바로가기",
     "offline": "오프라인에서는 설정을 변경할 수 없습니다. 연결되면 다시 시도해 주세요.",
     "managed": "관리됨",
     "managedBy": "{{owner}}에서 관리",
@@ -500,7 +582,15 @@
       "baseline": "기준 {{value}}",
       "trendTitle": "발생과 사용자 영향",
       "trendDescription": "생성량과 함께 조치 필요, 실패, 음소거 추이를 비교합니다.",
+      "trendChartLabel": "최근 알림 발생과 사용자 영향 차트",
+      "trendChartScrollLabel": "알림 추이 차트 가로 스크롤 영역",
+      "legendLabel": "알림 추이 범례",
+      "trendPointLabel": "{{time}}: 생성 {{created}}, 조치 필요 {{actionable}}, 실패 {{failed}}, 음소거 {{muted}}",
       "trendTableLabel": "알림 발생과 사용자 영향 추이",
+      "trendTableScrollLabel": "알림 추이 정확한 수치 가로 스크롤 영역",
+      "exactData": "정확한 수치 보기",
+      "emptyTrendTitle": "표시할 추이 데이터가 없습니다",
+      "emptyTrendDescription": "알림이 발생하면 생성량과 사용자 영향 추이가 여기에 표시됩니다.",
       "columns": {
         "time": "시간",
         "created": "생성",

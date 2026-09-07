@@ -1,0 +1,61 @@
+{
+  "scope": "Work assignment final local checks on shared working directory",
+  "checks": [
+    {
+      "command": "python3 scripts/check-source-size.py",
+      "exitCode": 0,
+      "detail": "1382 production files; new files <=700 lines"
+    },
+    {
+      "command": "python3 scripts/check-unused-private-methods.py",
+      "exitCode": 0
+    },
+    {
+      "command": "python3 scripts/check-java-dependency-cycles.py",
+      "exitCode": 0,
+      "detail": "1382 classes; 10 exact legacy SCCs; 0 Spring constructor cycles"
+    },
+    {
+      "command": "python3 scripts/check-service-boundaries.py",
+      "exitCode": 0,
+      "status": "PASS",
+      "verifiedAtUtc": "2026-09-04T06:45:07.336434+00:00",
+      "output": "PASS service boundaries: backend modules, HTTP/application/persistence layering, direct service HTTP clients, and cross-database metadata exceptions match docs/architecture/service-interface-contracts.json.",
+      "changeOwner": "Common architecture task; Work production code unchanged by common owner",
+      "contractProfile": "signedWorkload: dwp1-hmac-sha256",
+      "policySourceSha256": {
+        "docs/architecture/service-interface-contracts.json": "230d48c73ba1bb9e1358a710fb6de1e06d4e027b6fed5dea24dfe46ec019ab32",
+        "scripts/check-service-boundaries.py": "2dae222e03c8452c641d1d19116c38e9986c449815a5f2f0b30635c9a2f8028b",
+        "scripts/tests/test_service_boundaries.py": "631bd8cc8380d17b43443d310311a89116d751397b2cf3efa38bceba919dc15f",
+        "docs/architecture/service-interface-boundary-and-gateway-policy.md": "eae857abd3e6284ae4a2f09de7c99eb0bc960bd9ab14f42d23b245323c499d24"
+      }
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "scope": "frontend and backend at prior final check"
+    },
+    {
+      "check": "meeting-assignment markdown local links",
+      "missing": 0
+    },
+    {
+      "check": "final backend/frontend evidence source SHA256 versus current files",
+      "status": "PASS"
+    }
+  ],
+  "authorityIntegration": "NO-GO until approved Meeting current-authority/target-eligibility and source receiver path are verified. Static registration does not activate authority.",
+  "commonOwnerReportedVerification": {
+    "threadId": "01a021c3-45ad-75c3-b270-56398567eea7",
+    "command": "./gradlew checkServiceBoundaries --no-daemon --max-workers=1",
+    "result": "BUILD SUCCESSFUL",
+    "checkerTestsPassed": 18,
+    "otherChecks": [
+      "py_compile PASS",
+      "diff-check PASS"
+    ],
+    "provenance": "Reported by common architecture owner; Work independently reran the Python service-boundary check recorded above.",
+    "staticRegistryGate": "CLOSED",
+    "workProductionEditedByCommonOwner": false
+  }
+}

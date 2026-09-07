@@ -305,6 +305,7 @@ test('host retries one intelligence intent and stale review or publish cannot re
   );
 
   await page.goto('/meetings/mine');
+  await page.getByRole('tab', { name: /^Past /u }).click();
   await page.getByRole('button', { name: 'Open meeting recap' }).click();
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
   await expect(page.getByRole('heading', { name: 'AI meeting intelligence' })).toBeVisible();
@@ -576,6 +577,7 @@ test('draft host assigns an independent reviewer and revokes existing review aut
   );
 
   await page.goto('/meetings/mine');
+  await page.getByRole('tab', { name: /^Past /u }).click();
   await page.getByRole('button', { name: 'Open meeting recap' }).click();
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
 

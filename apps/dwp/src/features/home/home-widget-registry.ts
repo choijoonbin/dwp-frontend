@@ -1,4 +1,12 @@
-import { Activity, CalendarDays, CheckCircle2, ListChecks, Sparkles } from 'lucide-react';
+import {
+  Activity,
+  CalendarClock,
+  CalendarDays,
+  CheckCircle2,
+  ListChecks,
+  Sparkles,
+  TimerReset,
+} from 'lucide-react';
 
 import {
   defaultWorkspaceWidgets,
@@ -26,6 +34,8 @@ const widgetIcons = {
   focus: CheckCircle2,
   schedule: CalendarDays,
   activity: Activity,
+  'focus-balance': TimerReset,
+  'meeting-load': CalendarClock,
 } as const;
 
 export type HomeWidgetLifecyclePolicy = Readonly<{
@@ -76,11 +86,35 @@ export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.m
 
 export const HOME_WIDGET_ROLE_ORDER: Record<HomeAudienceProfile, readonly HomeWidgetKey[]> = {
   // Personal alias order: action-queue, today, response-hub,
-  // request-tracker, role-pulse.
-  MEMBER: ['command-rail', 'schedule', 'daily-brief', 'focus', 'activity'],
-  MANAGER: ['command-rail', 'schedule', 'daily-brief', 'focus', 'activity'],
+  // request-tracker, role-pulse, focus-balance, meeting-load.
+  MEMBER: [
+    'command-rail',
+    'schedule',
+    'daily-brief',
+    'focus',
+    'activity',
+    'focus-balance',
+    'meeting-load',
+  ],
+  MANAGER: [
+    'command-rail',
+    'schedule',
+    'daily-brief',
+    'focus',
+    'activity',
+    'focus-balance',
+    'meeting-load',
+  ],
   // Operators keep the action queue first and then start with role-pulse.
-  OPERATOR: ['command-rail', 'activity', 'schedule', 'daily-brief', 'focus'],
+  OPERATOR: [
+    'command-rail',
+    'activity',
+    'schedule',
+    'daily-brief',
+    'focus',
+    'meeting-load',
+    'focus-balance',
+  ],
 };
 
 function orderedRegistry(

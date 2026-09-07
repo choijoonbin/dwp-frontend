@@ -1,3 +1,4 @@
+import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import type { HomeAppDefinition } from '../../components/workspace-composer/app-launchpad-model';
 import type {
   WorkspacePriority,
@@ -13,6 +14,7 @@ export type SearchableWorkItem = {
   status: WorkspaceWorkStatus;
   due: string;
   sourceSystem: string;
+  sourceReference?: string | null;
   owner: string;
 };
 
@@ -131,7 +133,7 @@ export function createGlobalSearchItems(
     kind: 'work',
     title: item.title,
     description: `${translated(translate, `search.workTypes.${item.type}`, item.type)} / ${item.due} / ${item.sourceSystem}`,
-    route: `/work?item=${encodeURIComponent(item.id)}`,
+    route: workspaceWorkItemRoute(item),
     keywords: [item.id, item.type, item.priority, item.status, item.sourceSystem, item.owner],
     source: translated(translate, 'search.sources.work', 'Work'),
   }));

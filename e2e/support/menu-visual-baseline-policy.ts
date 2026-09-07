@@ -36,14 +36,7 @@ export const MENU_VISUAL_BASELINE_EXCEPTIONS: readonly MenuVisualBaselineExcepti
         'The domain team owns dedicated experience coverage and must approve deterministic menu snapshots before this temporary structural-only coverage can be retired.',
       reviewBy: POLICY_REVIEW_BY,
     },
-    [
-      'home.personal',
-      'catalog.apps',
-      'work.home',
-      'work.queue',
-      'activity.home',
-      'activity.timeline',
-    ]
+    ['home.personal', 'catalog.apps', 'work.queue', 'activity.home', 'activity.timeline']
   ),
   ...defineExceptions(
     {

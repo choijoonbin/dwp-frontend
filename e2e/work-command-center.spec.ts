@@ -6,7 +6,11 @@ import { fulfillSuccess, mockShellSession } from './support/shell-session';
 
 import type { Page, Route } from '@playwright/test';
 
-type QueueItem = (typeof WORKSPACE_QUEUE_FIXTURE.items)[number];
+type QueueItem = Omit<(typeof WORKSPACE_QUEUE_FIXTURE.items)[number], 'type' | 'sourceSystem'> & {
+  type: string;
+  sourceSystem: string;
+  capabilities: { canStart: boolean; canComplete: boolean; canWait: boolean };
+};
 
 function summary(items: QueueItem[]) {
   return {
@@ -19,7 +23,22 @@ function summary(items: QueueItem[]) {
 }
 
 async function mockWorkQueue(page: Page, conflict = false) {
-  let items: QueueItem[] = WORKSPACE_QUEUE_FIXTURE.items.map((item) => ({ ...item }));
+  let items: QueueItem[] = WORKSPACE_QUEUE_FIXTURE.items.map((item) => ({
+    ...item,
+    type: 'TASK',
+    sourceSystem: 'WORKSPACE',
+    capabilities: {
+      canStart: item.status !== 'IN_PROGRESS' && item.status !== 'COMPLETED',
+      canComplete: item.status !== 'COMPLETED',
+      canWait: item.status !== 'COMPLETED',
+    },
+  }));
+  await page.route('**/api/platform/v1/workspace/work-hub/personal-tasks?*', (route) =>
+    fulfillSuccess(route, { items: [], page: 0, size: 100, totalElements: 0, hasMore: false })
+  );
+  await page.route('**/api/approvals/v1/tasks?*', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/approvals/v1/requests?*', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/platform/v1/services/requests?*', (route) => fulfillSuccess(route, []));
 
   await page.route('**/api/platform/v1/workspace/work-items', (route) =>
     fulfillSuccess(route, {
@@ -64,30 +83,37 @@ test.beforeEach(async ({ page }) => {
 
 test('work operators review and complete a governed multi-item selection', async ({ page }) => {
   await mockWorkQueue(page);
-  await page.goto('/work');
+  await page.goto('/work/queue');
 
-  await expect(page.getByText('4 active sources')).toBeVisible();
-  await page
-    .getByRole('row', { name: /WK-1042/ })
-    .getByRole('checkbox')
-    .check();
-  await page
-    .getByRole('row', { name: /WK-1043/ })
-    .getByRole('checkbox')
-    .check();
-  await expect(page.getByText('2 work items selected')).toBeVisible();
+  await expect(page.getByRole('heading', { name: '2 verified work items' })).toBeVisible();
+  const accessRequest = page.getByRole('checkbox', {
+    name: 'Select Approve software access request for batch processing',
+    exact: true,
+  });
+  const briefingNotes = page.getByRole('checkbox', {
+    name: 'Select Review customer briefing notes for batch processing',
+    exact: true,
+  });
+  await accessRequest.check();
+  await briefingNotes.check();
+  await expect(accessRequest).toBeChecked();
+  await expect(briefingNotes).toBeChecked();
 
-  await page.getByRole('button', { name: 'Complete selected' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Complete selected work?' });
-  await expect(dialog).toContainText(
-    'Mark 2 selected work items complete. Completed work cannot be reopened from this queue.'
-  );
-  await dialog.getByRole('button', { name: 'Complete selected' }).click();
+  await page.getByRole('button', { name: 'Complete selected', exact: true }).click();
+  const review = page.getByRole('dialog', { name: 'Complete the selected work?' });
+  await expect(review).toContainText('2 selected');
+  await expect(review).toContainText('2 to run');
+  await expect(review).toContainText('This batch runs in one source.');
+  await expect(review).toContainText('Approve software access request');
+  await expect(review).toContainText('Review customer briefing notes');
+  await review.getByRole('button', { name: 'Complete selected', exact: true }).click();
 
-  await expect(page.getByText('2 work items were updated.')).toBeVisible();
-  await expect(page.getByText('2 work items selected')).toHaveCount(0);
-  await expect(page.getByRole('row', { name: /WK-1042/ })).toContainText('Completed');
-  await expect(page.getByRole('row', { name: /WK-1043/ })).toContainText('Completed');
+  const result = page.getByRole('dialog', { name: 'The batch change was confirmed' });
+  await expect(result).toContainText('The source confirmed 2 work item changes.');
+  await expect(result).toContainText('Approve software access request');
+  await expect(result).toContainText('Review customer briefing notes');
+  await expect(result.getByText('Change confirmed by the source', { exact: true })).toHaveCount(2);
+  await result.getByRole('button', { name: 'Close', exact: true }).last().click();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -97,25 +123,25 @@ test('work operators review and complete a governed multi-item selection', async
   ).toEqual([]);
 });
 
-test('work batch updates preserve the selection when an optimistic version conflicts', async ({
+test('work batch conflicts surface an unknown result and clear stale selection', async ({
   page,
 }) => {
   await mockWorkQueue(page, true);
-  await page.goto('/work');
+  await page.goto('/work/queue');
 
-  await page
-    .getByRole('row', { name: /WK-1042/ })
-    .getByRole('checkbox')
-    .check();
-  await page.getByRole('button', { name: 'Start selected' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Start selected work?' });
-  await dialog.getByRole('button', { name: 'Start selected' }).click();
+  const accessRequest = page.getByRole('checkbox', {
+    name: 'Select Approve software access request for batch processing',
+    exact: true,
+  });
+  await accessRequest.check();
+  await page.getByRole('button', { name: 'Start selected', exact: true }).click();
+  const review = page.getByRole('dialog', { name: 'Start the selected work?' });
+  await review.getByRole('button', { name: 'Start selected', exact: true }).click();
 
-  await expect(
-    page.getByText(
-      'The selected work could not be updated. Refresh the queue and review any version conflicts.'
-    )
-  ).toBeVisible();
-  await expect(dialog).toBeVisible();
-  await expect(page.getByText('1 work items selected')).toBeVisible();
+  const result = page.getByRole('dialog', { name: 'The batch result could not be confirmed' });
+  await expect(result).toContainText('Refresh each source result before issuing a new command.');
+  await expect(result).toContainText('Approve software access request');
+  await expect(result).toContainText('Result needs verification');
+  await result.getByRole('button', { name: 'Close', exact: true }).last().click();
+  await expect(accessRequest).not.toBeChecked();
 });

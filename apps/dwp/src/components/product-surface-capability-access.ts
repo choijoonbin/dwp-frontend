@@ -1,8 +1,9 @@
-import { productSurfaceServerNow, useProductSurfaceAuthority } from '@dwp-frontend/shared-utils';
+import { productSurfaceServerNow } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
+import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
 import { useOptionalAllowedProductSurface } from './allowed-product-surface-context';
 
-import type { ProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils';
+import type { ProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
 import type { AllowedSurfaceDecision } from '../features/shell/product-surface-context';
 
 const WRITABLE_ACTIVATION_STATES = new Set(['ACTIVE', 'ELIGIBLE']);

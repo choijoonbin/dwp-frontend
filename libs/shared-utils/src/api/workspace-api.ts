@@ -3,7 +3,8 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type WorkspacePriority = 'high' | 'medium' | 'low';
-export type WorkspaceWorkStatus = 'due-soon' | 'in-progress' | 'waiting' | 'completed';
+export type WorkspaceWorkStatus =
+  'open' | 'due-soon' | 'in-progress' | 'waiting' | 'completed' | 'cancelled' | 'archived';
 export type WorkspaceWorkType = 'Approval' | 'Task' | 'Service' | 'Required' | 'Review';
 
 export type WorkspaceWorkItem = {
@@ -19,12 +20,19 @@ export type WorkspaceWorkItem = {
   dueAt?: string | null;
   sourceSystem: string;
   sourceReference?: string | null;
+  obligationKey?: string | null;
   sourceRoute?: string | null;
   reason?: string | null;
   recommendedNext?: string | null;
   latestActivity?: string | null;
   version: number;
   updatedAt: string;
+  /** Server-authorized local transitions; absence never grants mutation authority. */
+  capabilities?: {
+    canStart: boolean;
+    canComplete: boolean;
+    canWait?: boolean;
+  };
 };
 
 export type WorkspaceWorkSummary = {
@@ -42,7 +50,8 @@ export type WorkspaceWorkQueue = {
 };
 
 export type WorkspaceActivityActor = 'agent' | 'person' | 'system';
-export type WorkspaceActivityState = 'running' | 'needs-input' | 'completed' | 'policy-blocked';
+export type WorkspaceActivityState =
+  'running' | 'needs-input' | 'completed' | 'policy-blocked' | 'failed' | 'cancelled' | 'unknown';
 
 export type WorkspaceActivityEvent = {
   id: string;
@@ -56,14 +65,74 @@ export type WorkspaceActivityEvent = {
   objectLabel: string;
   source: string;
   tool?: string | null;
-  auditId: string;
+  auditId: string | null;
   progress?: number | null;
   sourceRoute?: string | null;
+  eventKind?: 'CHANGE' | 'EXECUTION' | 'EXECUTION_SNAPSHOT' | 'USAGE';
+  resumeCursor?: string | null;
+  sourceObservedAt?: string | null;
+  updatedAt?: string | null;
+  sourceEventId?: string | null;
+  objectId?: string | null;
+  executionId?: string | null;
+  executionVersion?: number | null;
+  attempt?: number | null;
+  workStatus?: string | null;
+  correlationId?: string | null;
+  auditRecordId?: string | null;
+  auditStatus?: 'VERIFIED' | 'LEGACY_UNLINKED' | 'NOT_LINKED';
+  auditAccess?: 'RESTRICTED';
+  dataProvenance?: 'LIVE' | 'LEGACY' | 'SAMPLE' | 'QUARANTINED';
+  sourceAccess?: 'AVAILABLE' | 'FORBIDDEN' | 'DELETED' | 'UNAVAILABLE';
+};
+
+export type WorkspaceActivityCoverage = {
+  supportedObjectTypes: string[];
+  sourceScope?: string;
+  semantics?: string;
+  excludedProvenance?: string[];
+  includesUsage?: boolean;
 };
 
 export type WorkspaceActivityFeed = {
   events: WorkspaceActivityEvent[];
   generatedAt: string;
+  snapshotAt?: string;
+  startCursor?: string | null;
+  nextCursor?: string | null;
+  hasMore?: boolean;
+  coverage?: WorkspaceActivityCoverage;
+  executionSummary?: WorkspaceActivityExecutionSummary;
+  executionSummaryStatus?: 'AVAILABLE' | 'UNAVAILABLE';
+};
+
+export type WorkspaceActivityFilters = {
+  actor?: WorkspaceActivityActor;
+  state?: WorkspaceActivityState;
+  query?: string;
+  source?: string;
+  objectType?: string;
+  objectId?: string;
+  executionId?: string;
+  from?: string;
+  to?: string;
+  cursor?: string;
+  limit?: number;
+  includeUsage?: boolean;
+};
+
+// These counts come from the execution read model, never from historical event rows.
+export type WorkspaceActivityExecutionSummary = {
+  total: number;
+  running: number;
+  needsInput: number;
+  policyBlocked: number;
+  completed: number;
+  failed: number;
+  cancelled: number;
+  unknown?: number;
+  generatedAt: string;
+  coverage: WorkspaceActivityCoverage;
 };
 
 export type WorkspaceAppCategory =
@@ -149,7 +218,8 @@ export type RawWorkspaceWorkQueue = Omit<WorkspaceWorkQueue, 'items'> & {
 
 export type RawWorkspaceActivityEvent = Omit<WorkspaceActivityEvent, 'actor' | 'state'> & {
   actor: 'AGENT' | 'PERSON' | 'SYSTEM';
-  state: 'RUNNING' | 'NEEDS_INPUT' | 'COMPLETED' | 'POLICY_BLOCKED';
+  state:
+    'RUNNING' | 'NEEDS_INPUT' | 'COMPLETED' | 'POLICY_BLOCKED' | 'FAILED' | 'CANCELLED' | 'UNKNOWN';
 };
 
 export type RawWorkspaceActivityFeed = Omit<WorkspaceActivityFeed, 'events'> & {
@@ -194,6 +264,9 @@ const activityStateMap: Record<RawWorkspaceActivityEvent['state'], WorkspaceActi
   NEEDS_INPUT: 'needs-input',
   COMPLETED: 'completed',
   POLICY_BLOCKED: 'policy-blocked',
+  FAILED: 'failed',
+  CANCELLED: 'cancelled',
+  UNKNOWN: 'unknown',
 };
 
 const launchModeMap: Record<RawWorkspaceApp['launchMode'], WorkspaceAppLaunchMode> = {
@@ -273,12 +346,55 @@ export async function updateWorkspaceWorkStatuses(
   return response.data.data.map(mapWorkItem);
 }
 
-export async function getWorkspaceActivity(): Promise<WorkspaceActivityFeed> {
+export async function getWorkspaceActivity(
+  filters: WorkspaceActivityFilters = {},
+  signal?: AbortSignal
+): Promise<WorkspaceActivityFeed> {
+  const params = new URLSearchParams();
+  for (const key of [
+    'query',
+    'source',
+    'objectType',
+    'objectId',
+    'executionId',
+    'from',
+    'to',
+    'cursor',
+  ] as const) {
+    const value = filters[key];
+    if (value) params.set(key, value);
+  }
+  if (filters.actor) params.set('actor', filters.actor.toUpperCase());
+  if (filters.state) params.set('state', filters.state.toUpperCase().replaceAll('-', '_'));
+  if (filters.limit) params.set('limit', String(Math.max(1, Math.min(100, filters.limit))));
+  if (filters.includeUsage) params.set('includeUsage', 'true');
+  const search = params.size ? `?${params}` : '';
   const response = await axiosInstance.get<ApiResponse<RawWorkspaceActivityFeed>>(
-    '/api/platform/v1/workspace/activity',
-    { timeoutMs: 8000 }
+    `/api/platform/v1/workspace/activity${search}`,
+    { timeoutMs: 8000, signal }
   );
   return normalizeWorkspaceActivityFeed(response.data.data);
+}
+
+export async function getWorkspaceActivityEvent(
+  eventId: string,
+  signal?: AbortSignal
+): Promise<WorkspaceActivityEvent> {
+  const response = await axiosInstance.get<ApiResponse<RawWorkspaceActivityEvent>>(
+    `/api/platform/v1/workspace/activity/events/${encodeURIComponent(eventId)}`,
+    { timeoutMs: 8000, signal }
+  );
+  return mapActivityEvent(response.data.data);
+}
+
+export async function getWorkspaceActivityExecutionSummary(
+  signal?: AbortSignal
+): Promise<WorkspaceActivityExecutionSummary> {
+  const response = await axiosInstance.get<ApiResponse<WorkspaceActivityExecutionSummary>>(
+    '/api/platform/v1/workspace/activity/executions/summary',
+    { timeoutMs: 8000, signal }
+  );
+  return response.data.data;
 }
 
 export function normalizeWorkspaceActivityFeed(

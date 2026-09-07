@@ -89,6 +89,29 @@ export function hasFlowGeneralUpdates(overview?: HomeOverview): boolean {
   return orderedFlowStories(overview).some((story) => !isRequired(story));
 }
 
+export function shouldShowFlowUpdates({
+  policyVisible,
+  communicationsForbidden,
+  editing,
+  loading,
+  requiredNoticeUnavailable,
+  hasGeneralUpdates,
+}: Readonly<{
+  policyVisible: boolean;
+  communicationsForbidden: boolean;
+  editing: boolean;
+  loading: boolean;
+  requiredNoticeUnavailable: boolean;
+  hasGeneralUpdates: boolean;
+}>): boolean {
+  return (
+    policyVisible &&
+    !communicationsForbidden &&
+    !requiredNoticeUnavailable &&
+    (editing || loading || hasGeneralUpdates)
+  );
+}
+
 export function visibleFlowUnreadCount(
   stories: readonly CommunicationItem[],
   itemLimit: number
@@ -612,10 +635,13 @@ export function FlowUpdates({
             sx={{
               minWidth: 0,
               width: 1,
-              minHeight: compact ? 200 : bodyHeight,
+              minHeight: compact ? (secondary.length === 0 ? 132 : 200) : bodyHeight,
               height: 'auto',
               display: 'grid',
-              gridTemplateColumns: 'minmax(0, 1fr)',
+              gridTemplateColumns:
+                compact && secondary.length === 0 && featured.coverImageUrl
+                  ? 'minmax(104px, 34%) minmax(0, 1fr)'
+                  : 'minmax(0, 1fr)',
               alignItems: 'stretch',
               overflow: 'hidden',
               color: 'text.primary',
@@ -668,6 +694,9 @@ export function FlowUpdates({
                   backgroundRepeat: 'no-repeat',
                   backgroundSize: 'cover',
                   alignSelf: 'start',
+                  ...(compact && secondary.length === 0
+                    ? { aspectRatio: '4 / 3', alignSelf: 'stretch' }
+                    : {}),
                   '@container flow-updates (min-width: 420px)': {
                     aspectRatio: compact ? '4 / 3' : 'auto',
                   },

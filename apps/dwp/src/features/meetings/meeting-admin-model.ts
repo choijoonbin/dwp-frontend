@@ -11,6 +11,12 @@ export type MeetingAdminPolicyValidation = {
   artifactRetention: MeetingAdminPolicyValidationCode | null;
 };
 
+export const MEETING_RECORDING_POLICIES = [
+  'NEVER',
+  'HOST_OPT_IN',
+  'ADMIN_REQUIRED',
+] as const satisfies ReadonlyArray<VideoMeetingAdminPolicy['recordingPolicy']>;
+
 export function validateMeetingAdminPolicy(
   policy: Pick<
     VideoMeetingAdminPolicy,
@@ -74,7 +80,13 @@ export type MeetingAdminIntelligenceCapabilityKey = 'recording' | 'transcript' |
 export type MeetingAdminIntelligenceDependencyKey =
   'provider' | 'region' | 'kms' | 'audit' | 'egress' | 'storage' | 'stt' | 'llm';
 export type MeetingAdminIntelligenceGovernanceKey =
-  'humanReview' | 'explicitPublish' | 'adminContentAccess' | 'legalHold' | 'deletionEvidence';
+  | 'humanReview'
+  | 'explicitPublish'
+  | 'adminContentAccess'
+  | 'workFollowUpPromotion'
+  | 'followUpReassignment'
+  | 'legalHold'
+  | 'deletionEvidence';
 export type MeetingAdminRetentionSignalKey =
   'intelligenceReports' | 'meetingRecords' | 'artifacts' | 'chat';
 
@@ -85,7 +97,13 @@ export const MEETING_ADMIN_INTELLIGENCE_DEPENDENCIES: readonly MeetingAdminIntel
   ['provider', 'region', 'kms', 'audit', 'egress', 'storage', 'stt', 'llm'];
 
 export const MEETING_ADMIN_INTELLIGENCE_WORKFLOW_CONTROLS: readonly MeetingAdminIntelligenceGovernanceKey[] =
-  ['humanReview', 'explicitPublish', 'adminContentAccess'];
+  [
+    'humanReview',
+    'explicitPublish',
+    'adminContentAccess',
+    'workFollowUpPromotion',
+    'followUpReassignment',
+  ];
 
 export const MEETING_ADMIN_INTELLIGENCE_EVIDENCE_CONTROLS: readonly MeetingAdminIntelligenceGovernanceKey[] =
   ['legalHold', 'deletionEvidence'];

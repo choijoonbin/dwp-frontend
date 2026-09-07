@@ -1,8 +1,9 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findHcmNavigationItem } from '../features/hcm/hcm-navigation';
 import { resolveProductAreaNavigationItemAccess } from '../layouts/product-area-navigation-access-decision';
-import { resolveLegacyHcmShellAccess } from './hcm-routes';
+import { resolveLegacyHcmShellAccess, resolveLegacyHcmSurfaceAccess } from './hcm-routes';
 
 function hcmItem(path: string) {
   const item = findHcmNavigationItem(path);
@@ -11,6 +12,20 @@ function hcmItem(path: string) {
 }
 
 describe('HCM legacy shell and PAGE access', () => {
+  it('keeps the initial HCM shell authority resolver off the shared-utils root barrel', () => {
+    const source = readFileSync(
+      new URL('../features/hcm/hcm-surface-access.ts', import.meta.url),
+      'utf8'
+    );
+    const routes = readFileSync(new URL('./hcm-routes.tsx', import.meta.url), 'utf8');
+
+    expect(source).not.toMatch(/from ['"]@dwp-frontend\/shared-utils['"]/);
+    expect(source).not.toContain('/api/people-admin-api');
+    expect(source).toContain("from '@dwp-frontend/shared-utils/auth/hcm-access'");
+    expect(routes).toContain("from '../features/hcm/hcm-surface-access'");
+    expect(routes).not.toContain("from '../features/hcm/use-hcm-experience'");
+  });
+
   it('never falls from provider support into normal entitlement authorization', () => {
     expect(
       resolveLegacyHcmShellAccess({
@@ -36,6 +51,56 @@ describe('HCM legacy shell and PAGE access', () => {
         entitled: false,
       })
     ).toBe('denied');
+  });
+
+  it('waits for legacy permissions instead of redirecting early', () => {
+    expect(
+      resolveLegacyHcmShellAccess({
+        providerRole: false,
+        permissionsLoaded: false,
+        supportContextLoading: false,
+        entitled: false,
+      })
+    ).toBe('loading');
+    expect(
+      resolveLegacyHcmShellAccess({
+        providerRole: false,
+        permissionsLoaded: false,
+        supportContextLoading: false,
+        governed: true,
+        entitled: false,
+      })
+    ).toBe('allowed');
+  });
+
+  it('separates HCM personal, team, operations, and foundation audiences', () => {
+    const denied = {
+      canAccessPersonal: false,
+      isManager: false,
+      canAccessOperationsOverview: false,
+      canAccessOrganizationDesign: false,
+      canAccessReferenceData: false,
+      canAccessDataOperations: false,
+      canAccessExports: false,
+    };
+
+    expect(
+      resolveLegacyHcmSurfaceAccess('hcm.personal', { ...denied, canAccessPersonal: true })
+    ).toBe(true);
+    expect(resolveLegacyHcmSurfaceAccess('hcm.team', { ...denied, isManager: true })).toBe(true);
+    expect(
+      resolveLegacyHcmSurfaceAccess('hcm.operations', {
+        ...denied,
+        canAccessOperationsOverview: true,
+      })
+    ).toBe(true);
+    expect(
+      resolveLegacyHcmSurfaceAccess('hcm.management', {
+        ...denied,
+        canAccessReferenceData: true,
+      })
+    ).toBe(true);
+    expect(resolveLegacyHcmSurfaceAccess('hcm.management', denied)).toBe(false);
   });
 
   it('rejects retired workforce scopes for every HCM PAGE item', () => {

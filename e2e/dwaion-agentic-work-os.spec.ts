@@ -26,7 +26,7 @@ test.beforeEach(async ({ page }) => {
 
 test('home work brief uses an opaque launch and renders the grounded availability fallback', async ({
   page,
-}) => {
+}, testInfo) => {
   const fallbackAnswer =
     'AI reasoning is temporarily unavailable. Here are the highest-ranked work items verified within your current access scope.';
   let submittedQuery = '';
@@ -93,7 +93,13 @@ test('home work brief uses an opaque launch and renders the grounded availabilit
   await page.getByRole('button', { name: 'Today’s work brief', exact: true }).click();
 
   await expect(page).toHaveURL(/\/dwaion\/new$/);
-  await expect(page.getByText(fallbackAnswer)).toBeVisible();
+  await expect(page.getByTestId('dwaion-workspace-answer')).toContainText(fallbackAnswer);
+  await expect(
+    page.getByRole('heading', { name: 'Work evidence within your access', exact: true })
+  ).toBeVisible();
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: /Verification panel/ }).click();
+  }
   await expect(page.getByText('Evidence-only fallback')).toHaveCount(2);
   await expect(page.getByText('This response is a direct evidence summary')).toBeVisible();
   await expect(page.getByText('Verified source evidence only')).toBeVisible();
@@ -188,12 +194,14 @@ test('voice input requires transcript review and never submits automatically', a
   });
 
   let askRequests = 0;
+  let transcriptionRequests = 0;
   await page.route('**/api/agent/v1/ask/stream', (route) => {
     askRequests += 1;
     return fulfillAskStream(route, ASK_RUNTIME_FIXTURE);
   });
-  await page.route('**/api/agent/v1/voice/transcriptions', (route) =>
-    route.fulfill({
+  await page.route('**/api/agent/v1/voice/transcriptions', (route) => {
+    transcriptionRequests += 1;
+    return route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
@@ -202,18 +210,39 @@ test('voice input requires transcript review and never submits automatically', a
         message: 'Voice transcription completed.',
         data: { text: 'Review my schedule for tomorrow', language: 'en' },
       }),
-    })
-  );
+    });
+  });
 
   await page.goto('/dwaion/new');
   const composer = page.getByRole('textbox', { name: 'Ask a work question' });
   await page.getByRole('button', { name: 'Enter by voice' }).click();
   await page.getByRole('button', { name: 'Listening · press to stop' }).click();
 
+  const review = page.getByTestId('dwaion-voice-review');
+  await expect(review).toBeVisible();
+  await expect(review.locator('audio')).toHaveAttribute('src', /^blob:/);
+  expect(await review.locator('audio').evaluate((audio: HTMLAudioElement) => audio.controls)).toBe(
+    true
+  );
+  await expect(review.getByRole('button', { name: 'Continue' })).toBeFocused();
+  await expect(composer).toHaveValue('');
+  expect(transcriptionRequests).toBe(0);
+  expect(askRequests).toBe(0);
+
+  await review.getByRole('button', { name: 'Delete' }).click();
+  await expect(review).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Enter by voice' })).toBeFocused();
+  expect(transcriptionRequests).toBe(0);
+
+  await page.getByRole('button', { name: 'Enter by voice' }).click();
+  await page.getByRole('button', { name: 'Listening · press to stop' }).click();
+  await expect(page.getByTestId('dwaion-voice-review')).toBeVisible();
+  await page.getByTestId('dwaion-voice-review').getByRole('button', { name: 'Continue' }).click();
   await expect(composer).toHaveValue('Review my schedule for tomorrow');
   await expect(
     page.getByRole('button', { name: 'Transcript ready · review before sending' })
   ).toBeVisible();
+  expect(transcriptionRequests).toBe(1);
   expect(askRequests).toBe(0);
 });
 
@@ -338,7 +367,9 @@ test('spoken answers are generated only after an explicit user request', async (
   await page.goto('/dwaion/new');
   await page.getByRole('textbox', { name: 'Ask a work question' }).fill('Summarize my schedule');
   await page.getByRole('button', { name: 'Send question' }).click();
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(page.getByTestId('dwaion-workspace-answer')).toContainText(
+    ASK_RUNTIME_FIXTURE.answer
+  );
   expect(speechRequests).toBe(0);
 
   const speechRequest = page.waitForRequest('**/api/agent/v1/voice/speech');
@@ -397,7 +428,9 @@ test('failed speech playback releases its temporary audio resource before retry'
   await page.goto('/dwaion/new');
   await page.getByRole('textbox', { name: 'Ask a work question' }).fill('Read this answer');
   await page.getByRole('button', { name: 'Send question' }).click();
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(page.getByTestId('dwaion-workspace-answer')).toContainText(
+    ASK_RUNTIME_FIXTURE.answer
+  );
   await page.getByRole('button', { name: 'Listen to answer' }).click();
 
   await expect(page.getByRole('button', { name: 'Try spoken answer again' })).toBeVisible();
@@ -455,7 +488,7 @@ test('run activity presents privacy-minimized, policy-aware execution evidence',
   await page.goto('/dwaion/activity');
   await expect(page.getByRole('heading', { name: 'AI run activity', exact: true })).toBeVisible();
   await expect(page.getByRole('region', { name: 'AI run status summary' })).toContainText(
-    'Recent runs'
+    'Retrieved runs'
   );
   await expect(page.getByText('DWAI·ON work agent')).toBeVisible();
   await expect(page.getByText('Risk L0 · 4 sources · 820 ms')).toBeVisible();

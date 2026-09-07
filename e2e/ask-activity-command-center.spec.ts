@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import type { Route } from '@playwright/test';
 
-import { ASK_RUNTIME_FIXTURE } from './support/runtime-access';
+import { ASK_RUNTIME_FIXTURE, WORKSPACE_ACTIVITY_FIXTURE } from './support/runtime-access';
 import { mockQuestionLaunches } from './support/question-launch';
 import { mockShellSession } from './support/shell-session';
 
@@ -44,7 +44,9 @@ test('DWAI·ON keeps the governed question out of the URL and never replays it o
   );
   expect(page.url()).not.toContain(encodeURIComponent(prompt));
   await expect(page.getByRole('heading', { name: 'DWAI·ON response' })).toBeVisible();
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(
+    page.getByTestId('dwaion-workspace-answer').getByText(ASK_RUNTIME_FIXTURE.answer)
+  ).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole('textbox', { name: 'Ask a work question' })).toBeVisible();
@@ -88,7 +90,9 @@ test('global search hands an Ask question to DWAI·ON without URL disclosure', a
     (url) => url.pathname === '/dwaion/new' && !url.searchParams.has('q')
   );
   expect(page.url()).not.toContain(encodeURIComponent(prompt));
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(
+    page.getByTestId('dwaion-workspace-answer').getByText(ASK_RUNTIME_FIXTURE.answer)
+  ).toBeVisible();
   expect(questions).toEqual([prompt]);
 });
 
@@ -121,7 +125,9 @@ test('an opaque question ticket survives an independent DWAI·ON document reload
 
   await page.reload();
 
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(
+    page.getByTestId('dwaion-workspace-answer').getByText(ASK_RUNTIME_FIXTURE.answer)
+  ).toBeVisible();
   await expect(page).toHaveURL(
     (url) => url.pathname === '/dwaion/new' && !url.searchParams.has('q')
   );
@@ -146,22 +152,74 @@ test('DWAI·ON consumes a new ticket when global search navigates to the current
   await page.getByRole('combobox', { name: 'Search DWP' }).fill(prompt);
   await page.getByRole('option', { name: new RegExp(`Ask DWAI·ON: ${prompt}`) }).click();
 
-  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(
+    page.getByTestId('dwaion-workspace-answer').getByText(ASK_RUNTIME_FIXTURE.answer)
+  ).toBeVisible();
   expect(questions).toEqual([prompt]);
 });
 
 test('Activity exposes truthful operational counts and actionable state filters', async ({
   page,
 }) => {
+  const coverage = { supportedObjectTypes: ['WORK_ITEM'], includesUsage: false };
+  const executionSummary = {
+    total: 1,
+    running: 0,
+    needsInput: 0,
+    policyBlocked: 1,
+    completed: 0,
+    failed: 0,
+    cancelled: 0,
+    generatedAt: new Date().toISOString(),
+    coverage,
+  };
+  await page.route('**/api/agent/v1/activity/**', (route) =>
+    route.fulfill({
+      json: {
+        data: new URL(route.request().url()).pathname.endsWith('/executions/summary')
+          ? { ...executionSummary, total: 0, policyBlocked: 0 }
+          : {
+              events: [],
+              generatedAt: new Date().toISOString(),
+              hasMore: false,
+              nextCursor: null,
+              coverage,
+            },
+      },
+    })
+  );
+  await page.route('**/api/platform/v1/workspace/activity**', (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith('/executions/summary'))
+      return route.fulfill({ json: { data: executionSummary } });
+    const state = url.searchParams.get('state');
+    const query = url.searchParams.get('query')?.toLowerCase();
+    const events = WORKSPACE_ACTIVITY_FIXTURE.events.filter(
+      (event) =>
+        (!state || event.state === state) && (!query || event.title.toLowerCase().includes(query))
+    );
+    return route.fulfill({
+      json: {
+        data: {
+          events,
+          generatedAt: new Date().toISOString(),
+          hasMore: false,
+          nextCursor: null,
+          coverage,
+        },
+      },
+    });
+  });
   await page.goto('/activity/timeline');
 
   const summary = page.getByRole('region', { name: 'Activity summary' });
-  await expect(summary).toContainText('Events from 4 sources');
-  await expect(summary).toContainText('0 currently running');
-  await expect(summary).toContainText('1 awaiting review');
-  await expect(summary).toContainText('1 requiring investigation');
+  await expect(summary).toContainText('Connected executions');
+  await expect(summary.getByText('Currently running').locator('..')).toContainText('0');
+  await expect(summary.getByText('Policy blocked').locator('..')).toContainText('1');
 
-  await summary.getByRole('button', { name: /Policy blocked/ }).click();
+  // Current ledger counts are not controls for filtering historical event rows.
+  await page.getByRole('combobox', { name: 'Activity state' }).click();
+  await page.getByRole('option', { name: 'Policy blocked', exact: true }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'policy-blocked');
   await expect(
     page.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')

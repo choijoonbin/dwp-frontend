@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarSearch, Check, LockKeyhole, Sparkles, UsersRound } from 'lucide-react';
+import { Building2, CalendarSearch, Check, LockKeyhole, UsersRound } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system';
 import { evaluateCalendarScheduling } from '@dwp-frontend/shared-utils';
@@ -224,7 +224,7 @@ export function CalendarSchedulingAssistant({
                 flex: '0 0 auto',
               }}
             >
-              <Sparkles size={18} aria-hidden="true" />
+              <CalendarSearch size={18} aria-hidden="true" />
             </Box>
             <Box sx={{ minWidth: 0 }}>
               <Typography id={titleId} variant="subtitle1" fontWeight={800}>

@@ -1,0 +1,63 @@
+{
+  "success": true,
+  "numTotalTestSuites": 19,
+  "numPassedTestSuites": 19,
+  "numFailedTestSuites": 0,
+  "numTotalTests": 48,
+  "numPassedTests": 48,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "files": [
+    {
+      "name": "libs/shared-utils/src/api/personal-work-api.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "libs/shared-utils/src/api/work-hub-calendar-api.test.ts",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "libs/shared-utils/src/api/workspace-work-policy.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "apps/dwp/src/features/work/work-queue-dispatcher.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "apps/dwp/src/features/work-hub/work-hub-actions.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "apps/dwp/src/features/work-hub/work-hub-assist.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "name": "apps/dwp/src/features/work-hub/work-hub-controller.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "name": "apps/dwp/src/features/work-hub/work-hub-loader.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "name": "apps/dwp/src/features/work-hub/work-hub-model.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "name": "apps/dwp/src/features/work-hub/work-hub-scheduling.test.ts",
+      "status": "passed",
+      "tests": 5
+    }
+  ],
+  "command": "corepack yarn vitest run apps/dwp/src/features/work-hub apps/dwp/src/features/work/work-queue-dispatcher.test.ts libs/shared-utils/src/api/personal-work-api.test.ts libs/shared-utils/src/api/workspace-work-policy.test.ts libs/shared-utils/src/api/work-hub-calendar-api.test.ts"
+}

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { LoadingState, PageCanvas } from '@dwp-frontend/design-system';
+import { useAuth } from '@dwp-frontend/shared-utils';
 import { getVideoMeetingAdminPolicy } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import { getVideoMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
 
@@ -43,23 +44,36 @@ const GOVERNANCE: readonly MeetingAdminIntelligenceGovernanceKey[] = [
   'humanReview',
   'explicitPublish',
   'adminContentAccess',
+  'workFollowUpPromotion',
+  'followUpReassignment',
   'legalHold',
   'deletionEvidence',
 ];
 
 export function MeetingAdminIntelligencePage() {
   const { t } = useTranslation('meetings');
+  const { user, isAuthenticated } = useAuth();
+  const identityScope = JSON.stringify([
+    isAuthenticated,
+    user?.identityPlane ?? null,
+    user?.tenantId ?? null,
+    user?.userId ?? null,
+  ]);
   const readinessQuery = useQuery({
-    queryKey: ['meetings', 'admin', 'intelligence', 'readiness'],
+    queryKey: ['meetings', 'admin', 'intelligence', 'readiness', identityScope],
     queryFn: getVideoMeetingAdminIntelligenceReadiness,
     staleTime: 20_000,
     retry: 1,
+    gcTime: 0,
+    meta: { accessSensitive: true },
   });
   const policyQuery = useQuery({
-    queryKey: ['meetings', 'admin', 'policy'],
+    queryKey: ['meetings', 'admin', 'policy', identityScope],
     queryFn: getVideoMeetingAdminPolicy,
     staleTime: 30_000,
     retry: 1,
+    gcTime: 0,
+    meta: { accessSensitive: true },
   });
 
   if (readinessQuery.isLoading && !readinessQuery.data) {
@@ -124,6 +138,11 @@ function labels(t: (key: string, options?: Record<string, unknown>) => string) {
       ADMIN_REQUIRED: t('admin.intelligence.recordingPolicies.ADMIN_REQUIRED'),
     },
     unavailable: t('admin.intelligence.unavailable'),
+    readinessTitle: t('admin.intelligence.readinessTitle'),
+    readinessProgress: (ready: number, total: number) =>
+      t('admin.intelligence.readinessProgress', { ready, total }),
+    pipelineTitle: t('admin.intelligence.pipelineTitle'),
+    pipelineDescription: t('admin.intelligence.pipelineDescription'),
     capabilitiesTitle: t('admin.intelligence.capabilitiesTitle'),
     capabilitiesDescription: t('admin.intelligence.capabilitiesDescription'),
     dependenciesTitle: t('admin.intelligence.dependenciesTitle'),
@@ -145,6 +164,11 @@ function labels(t: (key: string, options?: Record<string, unknown>) => string) {
         defaultValue: t('admin.intelligence.reasons.UNKNOWN', { value }),
         value,
       }),
+    pipeline: Object.fromEntries(
+      ['consent', 'recording', 'encryption', 'transcript', 'model', 'publication', 'deletion'].map(
+        (key) => [key, item('pipeline', key)]
+      )
+    ),
     capabilities: Object.fromEntries(CAPABILITIES.map((key) => [key, item('capabilities', key)])),
     dependencies: Object.fromEntries(DEPENDENCIES.map((key) => [key, item('dependencies', key)])),
     governance: Object.fromEntries(GOVERNANCE.map((key) => [key, item('governance', key)])),

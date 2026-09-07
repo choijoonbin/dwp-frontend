@@ -1,20 +1,19 @@
 import type { HomeWidgetSize } from '@dwp-frontend/shared-utils';
 
-export type FlowTrailingGovernedPlacement = Readonly<{
+export type FlowGovernedPlacement = Readonly<{
   preferredSize: HomeWidgetSize;
   renderSize: HomeWidgetSize;
   orphanProtected: boolean;
 }>;
 
 /**
- * Flow Home renders its governed news zone after the personal canvas and has
- * no paired command rail. A partial-width trailing item would therefore
- * create a permanent orphan gap. Preserve the tenant preference as metadata,
- * but normalize the unpaired presentation footprint to a full row.
+ * Flow Home renders its governed news zone as an editorial row between the
+ * required notice and the personal work canvas. The row has no paired widget,
+ * so a partial-width footprint would create an accidental empty region.
+ * Preserve the tenant preference as metadata, but normalize the unpaired
+ * presentation footprint to a full row.
  */
-export function resolveFlowTrailingGovernedPlacement(
-  preferredSize: HomeWidgetSize
-): FlowTrailingGovernedPlacement {
+export function resolveFlowGovernedPlacement(preferredSize: HomeWidgetSize): FlowGovernedPlacement {
   return {
     preferredSize,
     renderSize: 'full',

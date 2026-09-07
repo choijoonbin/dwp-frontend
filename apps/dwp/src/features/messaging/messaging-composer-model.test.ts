@@ -57,6 +57,18 @@ describe('messaging composer model', () => {
     expect(messagingMentionUserIds(retained)).toEqual([2, 3]);
   });
 
+  it('keeps mentions in formatted prose and excludes protected code and link labels', () => {
+    const mentions = [{ token: '@Kim', userIds: [2] }];
+    expect(pruneMessagingMentions('**@Kim**', mentions)).toEqual(mentions);
+    expect(pruneMessagingMentions('`@Kim`', mentions)).toEqual([]);
+    expect(pruneMessagingMentions('```\n@Kim\n```', mentions)).toEqual([]);
+    expect(pruneMessagingMentions('[@Kim](https://example.com)', mentions)).toEqual([]);
+    expect(pruneMessagingMentions('`@Kim` @Kimberly person@Kim', mentions)).toEqual([]);
+    expect(resolveMessagingMentionQuery('**@Ki', 5)).toMatchObject({ start: 2, query: 'Ki' });
+    expect(resolveMessagingMentionQuery('`@Ki', 4)).toBeNull();
+    expect(resolveMessagingMentionQuery('```\n@Ki', 7)).toBeNull();
+  });
+
   it('searches member context and exposes mass mention only to moderators', () => {
     const members = [
       member(1, 'Owner', 'OWNER'),

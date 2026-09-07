@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Download, ScrollText, Search } from 'lucide-react';
 import {
   ActionButton,
+  ErrorState,
   EnterpriseDataGrid,
   FormField,
   PageCanvas,
@@ -50,6 +51,7 @@ export function DwaionAdminAudit() {
   const [queryText, setQueryText] = useState('');
   const [pagination, setPagination] = useState<GridPaginationModel>({ page: 0, pageSize: 25 });
   const [exporting, setExporting] = useState(false);
+  const [exportFailed, setExportFailed] = useState(false);
   const query = useQuery({
     queryKey: ['dwaion', 'admin', 'audit', category, queryText, pagination],
     queryFn: () =>
@@ -109,6 +111,7 @@ export function DwaionAdminAudit() {
   );
   const exportAudit = async () => {
     setExporting(true);
+    setExportFailed(false);
     try {
       const blob = await exportDwaionGovernanceAudit({
         category: category === 'ALL' ? undefined : category,
@@ -120,6 +123,8 @@ export function DwaionAdminAudit() {
       anchor.download = 'dwaion-governance-audit.csv';
       anchor.click();
       URL.revokeObjectURL(url);
+    } catch {
+      setExportFailed(true);
     } finally {
       setExporting(false);
     }
@@ -147,9 +152,9 @@ export function DwaionAdminAudit() {
               ) : undefined
             }
           />
-          {query.isError && (
+          {exportFailed && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              {t('dwaionAdmin.audit.error')}
+              {t('dwaionAdmin.audit.exportError')}
             </Alert>
           )}
           <Stack
@@ -192,21 +197,34 @@ export function DwaionAdminAudit() {
               {t('dwaionAdmin.audit.search')}
             </ActionButton>
           </Stack>
-          <Box sx={{ mt: 2, borderBlock: 1, borderColor: 'divider' }}>
-            <EnterpriseDataGrid
-              ariaLabel={t('dwaionAdmin.audit.tableLabel')}
-              mode="server"
-              rows={query.data?.content ?? []}
-              columns={columns}
-              getRowId={(row) => row.eventId}
-              loading={query.isLoading}
-              rowCount={query.data?.totalElements ?? 0}
-              paginationModel={pagination}
-              onPaginationModelChange={setPagination}
-              pageSizeOptions={[25, 50, 100]}
-              sx={{ border: 0, borderRadius: 0 }}
-            />
-          </Box>
+          {query.isError ? (
+            <Box sx={{ mt: 2 }}>
+              <ErrorState
+                size="page"
+                title={t('dwaionAdmin.audit.error')}
+                description={t('dwaionAdmin.audit.unavailableDescription')}
+                retryLabel={t('dwaionAdmin.shared.retry')}
+                retrying={query.isFetching}
+                onRetry={() => void query.refetch()}
+              />
+            </Box>
+          ) : (
+            <Box sx={{ mt: 2, borderBlock: 1, borderColor: 'divider' }}>
+              <EnterpriseDataGrid
+                ariaLabel={t('dwaionAdmin.audit.tableLabel')}
+                mode="server"
+                rows={query.data?.content ?? []}
+                columns={columns}
+                getRowId={(row) => row.eventId}
+                loading={query.isLoading}
+                rowCount={query.data?.totalElements ?? 0}
+                paginationModel={pagination}
+                onPaginationModelChange={setPagination}
+                pageSizeOptions={[25, 50, 100]}
+                sx={{ border: 0, borderRadius: 0 }}
+              />
+            </Box>
+          )}
           <Alert severity="info" icon={<ScrollText size={19} />} sx={{ mt: 2 }}>
             {t('dwaionAdmin.audit.appendOnly')}
           </Alert>

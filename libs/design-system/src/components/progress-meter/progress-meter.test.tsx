@@ -4,6 +4,15 @@ import { describe, expect, it } from 'vitest';
 import { ProgressMeter } from './progress-meter';
 
 describe('ProgressMeter', () => {
+  it.each([Number.NaN, Number.POSITIVE_INFINITY, -10])(
+    'does not expose invalid progress %s to assistive technology',
+    (value) => {
+      const markup = renderToStaticMarkup(
+        <ProgressMeter label="ProcurementApprovalStageWithAnUnbrokenIdentifier" value={value} />
+      );
+      expect(markup).toContain('aria-valuenow="0"');
+    }
+  );
   it('provides visible and accessible meaning while clamping the value', () => {
     const markup = renderToStaticMarkup(
       <ProgressMeter label="Campaign review progress" value={140} valueLabel="8 of 8" />

@@ -1,19 +1,9 @@
 import type {
   NotificationInboxPage,
   NotificationItem,
-  NotificationPriority,
   NotificationTriageAction,
   NotificationView,
 } from '@dwp-frontend/shared-utils/api/notification-api';
-
-export const NOTIFICATION_VIEWS: readonly NotificationView[] = [
-  'PRIORITY',
-  'ALL',
-  'MENTIONS',
-  'SAVED',
-  'SNOOZED',
-  'DONE',
-];
 
 export const USER_CHANNELS = [
   'IN_APP',
@@ -82,13 +72,6 @@ export function moveNotificationSelection(
   return Math.max(0, currentIndex <= 0 ? 0 : currentIndex - 1);
 }
 
-export function priorityWeight(priority: NotificationPriority): number {
-  if (priority === 'URGENT') return 4;
-  if (priority === 'HIGH') return 3;
-  if (priority === 'NORMAL') return 2;
-  return 1;
-}
-
 export function optimisticTriageItem(
   item: NotificationItem,
   action: NotificationTriageAction,
@@ -108,11 +91,11 @@ export function optimisticTriageItem(
 
 export function notificationMatchesView(item: NotificationItem, view: NotificationView): boolean {
   if (view === 'DONE') return Boolean(item.completedAt);
-  if (view === 'SAVED') return Boolean(item.savedAt) && !item.completedAt;
+  if (view === 'SAVED') return Boolean(item.savedAt);
   if (view === 'SNOOZED') return Boolean(item.snoozedUntil) && !item.completedAt;
   if (item.completedAt || item.snoozedUntil) return false;
   if (view === 'MENTIONS') return item.reason.kind === 'MENTION';
-  if (view === 'PRIORITY') return item.actionable || priorityWeight(item.priority) >= 3;
+  if (view === 'PRIORITY') return item.actionable;
   return true;
 }
 

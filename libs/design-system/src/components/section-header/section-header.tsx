@@ -21,6 +21,14 @@ export const SECTION_HEADER_META_METRICS = Object.freeze({
   fontWeight: 500,
 });
 
+/** Compact workspace headings keep the same baseline without a decorative icon plate. */
+export const SECTION_HEADER_COMPACT_METRICS = Object.freeze({
+  icon: 18,
+  title: 16,
+  lineHeight: 24,
+  minHeight: 24,
+});
+
 export function SectionHeaderMetaText({ children, sx, ...props }: TypographyProps) {
   return (
     <Typography
@@ -51,6 +59,8 @@ export type SectionHeaderProps = {
   meta?: ReactNode;
   headingComponent?: 'h2' | 'h3';
   divider?: boolean;
+  density?: 'standard' | 'compact';
+  glyph?: 'surface' | 'plain';
 };
 
 /**
@@ -64,7 +74,10 @@ export function SectionHeader({
   meta,
   headingComponent = 'h2',
   divider = false,
+  density = 'standard',
+  glyph = 'surface',
 }: SectionHeaderProps) {
+  const compact = density === 'compact';
   const resolvedMeta =
     typeof meta === 'string' || typeof meta === 'number' ? (
       <SectionHeaderMetaText>{meta}</SectionHeaderMetaText>
@@ -75,9 +88,10 @@ export function SectionHeader({
   return (
     <Box
       data-dwp-section-header
+      data-density={density === 'compact' ? density : undefined}
       sx={{
         minWidth: 0,
-        minHeight: 30,
+        minHeight: compact ? SECTION_HEADER_COMPACT_METRICS.minHeight : 30,
         pb: divider ? 1.5 : 0,
         display: 'flex',
         flexWrap: 'wrap',
@@ -91,35 +105,48 @@ export function SectionHeader({
       <Box
         sx={{
           minWidth: 0,
-          flex: resolvedMeta ? '1 1 220px' : '1 1 auto',
+          flex: resolvedMeta ? (compact ? '1 1 auto' : '1 1 220px') : '1 1 auto',
           display: 'flex',
           alignItems: 'center',
           gap: 1,
         }}
       >
-        <GlyphSurface
-          data-dwp-section-header-icon
-          size={SECTION_HEADER_METRICS.iconPlate}
-          variant="soft"
-          sx={{
-            border: 0,
-            backgroundImage: 'none',
-            boxShadow: 'none',
-            '&::after': { display: 'none' },
-          }}
-        >
-          <Icon
-            size={SECTION_HEADER_METRICS.icon}
-            strokeWidth={SECTION_HEADER_METRICS.iconStroke}
-            aria-hidden="true"
-          />
-        </GlyphSurface>
+        {glyph === 'plain' ? (
+          <Box
+            data-dwp-section-header-icon
+            sx={{ display: 'inline-flex', color: 'primary.main', flexShrink: 0 }}
+          >
+            <Icon
+              size={compact ? SECTION_HEADER_COMPACT_METRICS.icon : SECTION_HEADER_METRICS.icon}
+              strokeWidth={SECTION_HEADER_METRICS.iconStroke}
+              aria-hidden="true"
+            />
+          </Box>
+        ) : (
+          <GlyphSurface
+            data-dwp-section-header-icon
+            size={SECTION_HEADER_METRICS.iconPlate}
+            variant="soft"
+            sx={{
+              border: 0,
+              backgroundImage: 'none',
+              boxShadow: 'none',
+              '&::after': { display: 'none' },
+            }}
+          >
+            <Icon
+              size={SECTION_HEADER_METRICS.icon}
+              strokeWidth={SECTION_HEADER_METRICS.iconStroke}
+              aria-hidden="true"
+            />
+          </GlyphSurface>
+        )}
         <Typography
           id={id}
           component={headingComponent}
           sx={{
             minWidth: 0,
-            fontSize: SECTION_HEADER_METRICS.title,
+            fontSize: compact ? SECTION_HEADER_COMPACT_METRICS.title : SECTION_HEADER_METRICS.title,
             fontWeight: 600,
             lineHeight: `${SECTION_HEADER_METRICS.titleLineHeight}px`,
             letterSpacing: 0,

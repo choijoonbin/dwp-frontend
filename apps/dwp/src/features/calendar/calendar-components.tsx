@@ -2,14 +2,11 @@ import { useTranslation } from 'react-i18next';
 import {
   CalendarClock,
   CalendarDays,
-  Check,
-  ChevronRight,
   Clock3,
   Focus,
   ListTodo,
   MapPin,
   Pencil,
-  Repeat2,
   Star,
   Trash2,
   UsersRound,
@@ -33,6 +30,7 @@ import type { CalendarEvent, CalendarEventType } from '@dwp-frontend/shared-util
 import type { LucideIcon } from 'lucide-react';
 
 import { CalendarSignal, type CalendarExperienceTone } from './calendar-experience';
+import { calendarDisplayDateValue } from './calendar-regional-time';
 
 export const CALENDAR_EVENT_TONES: Record<
   CalendarEventType,
@@ -58,7 +56,7 @@ export function calendarTime(value: string, language: string) {
 
 export function calendarDate(value: string | Date, language: string, includeWeekday = true) {
   return formatDate(
-    value,
+    calendarDisplayDateValue(value),
     {
       month: 'long',
       day: 'numeric',
@@ -81,12 +79,14 @@ export function CalendarPageHeading({
   description,
   actions,
   icon: HeadingIcon = CalendarDays,
+  compact = false,
 }: {
   eyebrow?: string;
   title: string;
   description: string;
   actions?: React.ReactNode;
   icon?: LucideIcon;
+  compact?: boolean;
 }) {
   return (
     <Box
@@ -96,9 +96,9 @@ export function CalendarPageHeading({
         gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) auto' },
         alignItems: { xs: 'stretch', md: 'center' },
         justifyContent: 'space-between',
-        gap: { xs: 2, md: 3 },
-        mb: { xs: 3, md: 3.5 },
-        pb: { xs: 2.25, md: 2.75 },
+        gap: compact ? { xs: 1.5, md: 2 } : { xs: 2, md: 3 },
+        mb: compact ? { xs: 1.5, md: 1.75 } : { xs: 3, md: 3.5 },
+        pb: compact ? { xs: 1.5, md: 1.75 } : { xs: 2.25, md: 2.75 },
         borderBottom: 1,
         borderColor: (theme) => alpha(theme.palette.divider, 0.72),
       }}
@@ -112,9 +112,9 @@ export function CalendarPageHeading({
         <Box
           aria-hidden="true"
           sx={(theme) => ({
-            width: { xs: 40, sm: 44 },
-            height: { xs: 40, sm: 44 },
-            flex: { xs: '0 0 40px', sm: '0 0 44px' },
+            width: compact ? { xs: 36, sm: 40 } : { xs: 40, sm: 44 },
+            height: compact ? { xs: 36, sm: 40 } : { xs: 40, sm: 44 },
+            flex: compact ? { xs: '0 0 36px', sm: '0 0 40px' } : { xs: '0 0 40px', sm: '0 0 44px' },
             mt: 0.2,
             display: 'grid',
             placeItems: 'center',
@@ -128,7 +128,7 @@ export function CalendarPageHeading({
             },
           })}
         >
-          <HeadingIcon size={21} strokeWidth={1.9} />
+          <HeadingIcon size={compact ? 19 : 21} strokeWidth={1.9} />
         </Box>
         <Box sx={{ minWidth: 0 }}>
           {eyebrow && (
@@ -144,7 +144,9 @@ export function CalendarPageHeading({
           <Typography
             component="h1"
             sx={{
-              fontSize: { xs: '1.65rem', sm: '1.9rem' },
+              fontSize: compact
+                ? { xs: '1.35rem', sm: '1.55rem' }
+                : { xs: '1.65rem', sm: '1.9rem' },
               lineHeight: 1.18,
               fontWeight: 700,
               letterSpacing: '-0.035em',
@@ -155,10 +157,12 @@ export function CalendarPageHeading({
           <Typography
             color="text.secondary"
             sx={{
-              mt: 0.6,
+              mt: compact ? 0.35 : 0.6,
               maxWidth: 780,
-              fontSize: { xs: '0.875rem', sm: '0.925rem' },
-              lineHeight: 1.6,
+              fontSize: compact
+                ? { xs: '0.825rem', sm: '0.875rem' }
+                : { xs: '0.875rem', sm: '0.925rem' },
+              lineHeight: compact ? 1.45 : 1.6,
             }}
           >
             {description}
@@ -226,159 +230,6 @@ export function CalendarMetric({
       onClick={onClick}
       actionLabel={actionLabel}
     />
-  );
-}
-
-export function CalendarAgendaItem({
-  event,
-  selected = false,
-  onOpen,
-  onRespond,
-}: {
-  event: CalendarEvent;
-  selected?: boolean;
-  onOpen?: () => void;
-  onRespond?: (response: 'ACCEPTED' | 'DECLINED') => void;
-}) {
-  const { t, i18n } = useTranslation('calendar');
-  const tone = CALENDAR_EVENT_TONES[event.type];
-  const Icon = tone.icon;
-  const language = i18n.resolvedLanguage ?? i18n.language;
-  return (
-    <Box
-      component="article"
-      sx={{
-        width: 1,
-        minHeight: 72,
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) auto',
-        gap: 1,
-        alignItems: 'center',
-        borderBottom: 1,
-        borderColor: 'divider',
-        bgcolor: (theme) =>
-          selected ? alpha(tone.main, theme.palette.mode === 'dark' ? 0.22 : 0.1) : 'transparent',
-        color: 'text.primary',
-        '@media (forced-colors: active)': {
-          backgroundColor: 'Canvas',
-          borderColor: 'CanvasText',
-          outline: selected ? '2px solid Highlight' : 'none',
-          outlineOffset: -2,
-        },
-      }}
-    >
-      <Box
-        component={onOpen ? 'button' : 'div'}
-        type={onOpen ? 'button' : undefined}
-        aria-label={onOpen ? t('event.openDetailsFor', { title: event.title }) : undefined}
-        onClick={onOpen}
-        sx={{
-          minWidth: 0,
-          minHeight: 72,
-          p: 1.5,
-          display: 'grid',
-          gridTemplateColumns: '52px minmax(0, 1fr)',
-          gap: 1.5,
-          alignItems: 'center',
-          border: 0,
-          bgcolor: 'transparent',
-          color: 'text.primary',
-          textAlign: 'left',
-          cursor: onOpen ? 'pointer' : 'default',
-          '&:hover': onOpen ? { bgcolor: 'action.hover' } : undefined,
-          '&:focus-visible': {
-            outline: '2px solid',
-            outlineColor: 'primary.main',
-            outlineOffset: -2,
-          },
-          '@media (forced-colors: active)': {
-            '&:focus-visible': { outlineColor: 'Highlight' },
-          },
-        }}
-      >
-        <Box>
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            sx={(theme) => ({
-              color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.42) : tone.main,
-              '@media (forced-colors: active)': { color: 'CanvasText' },
-            })}
-          >
-            {calendarTime(event.startsAt, language)}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('units.minutes', { count: calendarDuration(event) })}
-          </Typography>
-        </Box>
-        <Box sx={{ minWidth: 0 }}>
-          <Stack direction="row" spacing={0.75} alignItems="center">
-            <Avatar
-              sx={(theme) => ({
-                width: 26,
-                height: 26,
-                bgcolor: alpha(tone.main, theme.palette.mode === 'dark' ? 0.25 : 0.12),
-                color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.48) : tone.main,
-                '@media (forced-colors: active)': {
-                  border: '1px solid CanvasText',
-                  backgroundColor: 'Canvas',
-                  color: 'CanvasText',
-                },
-              })}
-            >
-              <Icon size={14} aria-hidden="true" />
-            </Avatar>
-            <Typography fontWeight={600} noWrap>
-              {event.title}
-            </Typography>
-            {event.recurrence !== 'NONE' && <Repeat2 size={14} color="currentColor" />}
-            {event.conflict && (
-              <Chip size="small" color="error" variant="outlined" label={t('event.conflict')} />
-            )}
-          </Stack>
-          <Stack direction="row" spacing={1.25} sx={{ mt: 0.5 }} color="text.secondary">
-            {event.location && (
-              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 0 }}>
-                <MapPin size={13} />
-                <Typography variant="caption" noWrap>
-                  {event.location}
-                </Typography>
-              </Stack>
-            )}
-            {event.conferenceUrl && (
-              <Stack direction="row" spacing={0.5} alignItems="center">
-                <Video size={13} />
-                <Typography variant="caption">{t('event.online')}</Typography>
-              </Stack>
-            )}
-          </Stack>
-        </Box>
-      </Box>
-      {event.myResponse === 'NEEDS_ACTION' && onRespond ? (
-        <Stack direction="row" spacing={0.5} sx={{ pr: 1.5 }}>
-          <ActionIconButton
-            label={t('event.acceptFor', { title: event.title })}
-            intent="primary"
-            size="small"
-            onClick={() => onRespond('ACCEPTED')}
-          >
-            <Check size={16} />
-          </ActionIconButton>
-          <ActionIconButton
-            label={t('event.declineFor', { title: event.title })}
-            intent="default"
-            size="small"
-            onClick={() => onRespond('DECLINED')}
-          >
-            <X size={16} />
-          </ActionIconButton>
-        </Stack>
-      ) : onOpen ? (
-        <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', pr: 1.5 }}>
-          <ChevronRight size={17} />
-        </Box>
-      ) : null}
-    </Box>
   );
 }
 

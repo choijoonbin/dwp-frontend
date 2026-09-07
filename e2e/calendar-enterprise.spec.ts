@@ -93,7 +93,7 @@ test('calendar supports governed range creation and drag rescheduling', async ({
   ).toEqual([]);
 });
 
-test('calendar purges cached schedules on authority denial and keeps transient data read-only', async ({
+test('calendar isolates transient briefing failures but purges every surface on authority denial', async ({
   page,
 }, testInfo) => {
   test.setTimeout(60_000);
@@ -119,45 +119,229 @@ test('calendar purges cached schedules on authority denial and keeps transient d
     });
   });
   await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/calendar/home');
-  await expect(
-    page.getByRole('heading', { name: 'Digital workplace operating review' })
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'View details', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Your day' })).toBeVisible();
+  const todayWorkspace = page.getByTestId('calendar-today-workspace');
+  await expect(todayWorkspace).toBeVisible();
+  await expect(page.getByTestId('interactive-calendar')).toHaveCount(0);
+  const operatingReview = todayWorkspace.getByRole('button', {
+    name: /Digital workplace operating review/u,
+  });
+  await operatingReview.focus();
+  await operatingReview.press('Enter');
   const staleEvent = page.getByRole('dialog', { name: 'Digital workplace operating review' });
   await expect(staleEvent).toBeVisible();
 
   mode = 'transient';
   await staleEvent.getByRole('button', { name: 'Tentative', exact: true }).click();
 
-  const readState = page.getByTestId('calendar-read-state');
-  await expect(readState).toHaveAttribute('data-calendar-read-state', 'STALE');
-  await expect(readState).toContainText(/last known schedule is shown in read-only mode/iu);
   await expect.poll(() => transientRequests).toBe(2);
-  await expect(
-    page.getByRole('heading', { name: 'Digital workplace operating review' })
-  ).toBeVisible();
-  await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(0);
+  await expect(page.getByTestId('calendar-read-state')).toHaveAttribute(
+    'data-calendar-read-state',
+    'STALE'
+  );
+  await expect(todayWorkspace).toBeVisible();
   await expect(staleEvent).toBeVisible();
-  await expect(staleEvent.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
-  await expect(staleEvent.getByRole('button', { name: 'Tentative', exact: true })).toHaveCount(0);
 
   await staleEvent.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(staleEvent).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(0);
+  const briefingRail = page.getByTestId('calendar-workspace-rail');
+  await expect(briefingRail).toHaveAttribute('data-calendar-rail-state', 'STALE');
+  await expect(briefingRail).toContainText(/Current week.*all visible calendars/iu);
   mode = 'denied';
-  await page.getByRole('link', { name: 'Schedule', exact: true }).click();
-  await expect(page).toHaveURL(/\/calendar\/schedule/u);
-  await expect(page.getByRole('heading', { level: 1, name: 'Schedule' })).toBeVisible();
-  await page.getByRole('link', { name: 'Today', exact: true }).click();
-  await expect(page).toHaveURL(/\/calendar\/home/u);
+  await page.getByTestId('calendar-read-state').getByRole('button', { name: 'Try again' }).click();
+  const readState = page.getByTestId('calendar-read-state');
   await expect(readState).toHaveAttribute('data-calendar-read-state', 'DENIED');
   await expect(readState).toContainText(/Previously loaded calendar data was cleared/iu);
-  await expect(
-    page.getByRole('heading', { name: 'Digital workplace operating review' })
-  ).toHaveCount(0);
+  await expect(page.getByTestId('calendar-today-workspace')).toHaveCount(0);
+  await expect(page.getByTestId('calendar-workspace-rail')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(0);
   await expect(staleEvent).toHaveCount(0);
   expect(deniedRequests).toBeGreaterThanOrEqual(1);
 
+  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+});
+
+test('calendar quick actions preserve opaque scope and schedule context', async ({ page }) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  const createAttempts: Record<string, unknown>[] = [];
+  await page.route('**/api/platform/v1/calendar/events', async (route) => {
+    if (route.request().method() !== 'POST') return route.fallback();
+    createAttempts.push(route.request().postDataJSON() as Record<string, unknown>);
+    if (createAttempts.length === 1) {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', errorCode: 'SERVICE_UNAVAILABLE' }),
+      });
+    }
+    return route.fallback();
+  });
+  await page.goto(
+    '/calendar/home?scope=tenant%2Fmember&view=week&date=2026-08-11&calendars=calendar-personal'
+  );
+
+  await expect(
+    page
+      .getByRole('button', { name: 'Quick actions', exact: true })
+      .and(page.locator('[aria-expanded]'))
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Your day' })).toBeVisible();
+  await expect(page.getByTestId('calendar-today-workspace')).toBeVisible();
+  await expect(page.getByTestId('calendar-today-workspace')).toContainText(
+    '2 events · 45m meetings · 1h 30m focus'
+  );
+  const weekOutlook = page.getByTestId('calendar-today-week-outlook');
+  await expect(weekOutlook).toBeVisible();
+  await expect(weekOutlook.getByRole('heading', { level: 2, name: 'Weekly rhythm' })).toBeVisible();
+  await expect(
+    page.getByTestId('calendar-workspace-rail').getByRole('heading', { name: 'Weekly rhythm' })
+  ).toHaveCount(0);
+  await expect(page.getByTestId('calendar-today-open-window')).toHaveCount(3);
+  await expect(page.getByTestId('calendar-today-open-window').last()).toContainText(
+    'within your working hours'
+  );
+  await expect(page.getByTestId('interactive-calendar')).toHaveCount(0);
+  await page.evaluate(() => {
+    window.dispatchEvent(
+      new KeyboardEvent('keydown', { key: '/', code: 'Slash', ctrlKey: true, bubbles: true })
+    );
+  });
+  const commands = page.getByRole('dialog', { name: 'Calendar quick actions' });
+  await expect(commands).toBeVisible();
+  await expect(commands.getByRole('option', { name: 'Create a new event' })).toBeVisible();
+  await expect(commands.getByRole('option', { name: 'Create focus time' })).toBeVisible();
+  await expect(commands.getByRole('option', { name: 'Create a task time block' })).toBeVisible();
+  await expect(commands.getByRole('option', { name: 'Create a time-away block' })).toBeVisible();
+  await commands.getByRole('option', { name: 'Create a task time block' }).click();
+  const taskComposer = page.getByRole('dialog', { name: 'Create a new event' });
+  await expect(taskComposer).toBeVisible();
+  await expect(taskComposer.getByRole('button', { name: 'Task', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await expect(taskComposer.getByLabel('Room or resource')).toHaveCount(0);
+  await expect(taskComposer.getByTestId('calendar-scheduling-assistant')).toHaveCount(0);
+  await taskComposer.getByLabel('Title').fill('Prepare launch checklist');
+  await taskComposer.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect.poll(() => createAttempts.length).toBe(1);
+  const retryCreate = taskComposer.getByRole('button', { name: 'Create', exact: true });
+  await retryCreate.focus();
+  await retryCreate.press('Enter');
+  await expect(taskComposer).toHaveCount(0);
+  expect(createAttempts).toHaveLength(2);
+  expect(createAttempts[0]).toMatchObject({
+    type: 'TASK',
+    resourceId: null,
+    location: null,
+    conferenceUrl: null,
+    responseRequired: false,
+    attendees: [],
+  });
+  expect(createAttempts[0]?.idempotencyKey).toBeTruthy();
+  expect(createAttempts[1]?.idempotencyKey).toBe(createAttempts[0]?.idempotencyKey);
+
+  await page
+    .getByRole('button', { name: 'Quick actions', exact: true })
+    .and(page.locator('[aria-expanded]'))
+    .click();
+  await commands.getByRole('option', { name: 'Create a time-away block' }).click();
+  const awayComposer = page.getByRole('dialog', { name: 'Create a new event' });
+  await expect(
+    awayComposer.getByRole('button', { name: 'Out of office', exact: true })
+  ).toHaveAttribute('aria-pressed', 'true');
+  await expect(awayComposer.getByLabel('Required attendees')).toHaveCount(0);
+  await expect(awayComposer.getByLabel('Room or resource')).toHaveCount(0);
+  await awayComposer.getByLabel('Title').fill('Customer visit travel');
+  await awayComposer.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(awayComposer).toHaveCount(0);
+
+  await page
+    .getByRole('button', { name: 'Quick actions', exact: true })
+    .and(page.locator('[aria-expanded]'))
+    .click();
+  await commands.getByRole('option', { name: 'Create focus time' }).click();
+  const focusComposer = page.getByRole('dialog', { name: 'Create a new event' });
+  await expect(focusComposer.getByRole('button', { name: 'Focus', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await expect(focusComposer.getByLabel('Required attendees')).toHaveCount(0);
+  await expect(focusComposer.getByLabel('Room or resource')).toHaveCount(0);
+  await focusComposer.getByLabel('Title').fill('Write launch narrative');
+  await focusComposer.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(focusComposer).toHaveCount(0);
+
+  await page
+    .getByRole('button', { name: 'Quick actions', exact: true })
+    .and(page.locator('[aria-expanded]'))
+    .click();
+  await commands.getByRole('option', { name: 'Create a new event' }).click();
+  const meetingComposer = page.getByRole('dialog', { name: 'Create a new event' });
+  await expect(
+    meetingComposer.getByRole('button', { name: 'Meeting', exact: true })
+  ).toHaveAttribute('aria-pressed', 'true');
+  await meetingComposer.getByLabel('Title').fill('Launch readiness review');
+  await meetingComposer.getByRole('button', { name: /People, place, and more options/u }).click();
+  await expect(meetingComposer.getByLabel('Required attendees')).toBeVisible();
+  await meetingComposer.getByLabel('Location').fill('Seoul HQ');
+  await meetingComposer.getByLabel('Video meeting link').fill('https://meet.example/launch');
+  await expect(meetingComposer.getByLabel('Request attendance responses')).toBeChecked();
+  await meetingComposer.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(meetingComposer).toHaveCount(0);
+
+  expect(createAttempts).toHaveLength(5);
+  expect(createAttempts[2]).toMatchObject({
+    type: 'OUT_OF_OFFICE',
+    resourceId: null,
+    location: null,
+    conferenceUrl: null,
+    responseRequired: false,
+    attendees: [],
+  });
+  expect(createAttempts[3]).toMatchObject({
+    type: 'FOCUS',
+    resourceId: null,
+    location: null,
+    conferenceUrl: null,
+    responseRequired: false,
+    attendees: [],
+  });
+  expect(createAttempts[4]).toMatchObject({
+    type: 'MEETING',
+    location: 'Seoul HQ',
+    conferenceUrl: 'https://meet.example/launch',
+    responseRequired: true,
+    attendees: [],
+  });
+  expect(new Set(createAttempts.slice(1).map((attempt) => attempt.idempotencyKey)).size).toBe(4);
+
+  await page
+    .getByRole('button', { name: 'Quick actions', exact: true })
+    .and(page.locator('[aria-expanded]'))
+    .click();
+  await commands.getByLabel('Create an event or find a calendar action').fill('Open full schedule');
+  await commands.getByLabel('Create an event or find a calendar action').press('Enter');
+
+  await expect(page).toHaveURL(/\/calendar\/schedule/u);
+  const destination = new URL(page.url());
+  expect(destination.searchParams.get('scope')).toBe('tenant/member');
+  expect(destination.searchParams.get('view')).toBe('week');
+  expect(destination.searchParams.get('date')).toBe('2026-08-11');
+  expect(destination.searchParams.get('calendars')).toBe('calendar-personal');
+  await expect(page.getByRole('heading', { level: 1, name: 'Schedule' })).toBeVisible();
+  await expect(page.getByTestId('interactive-calendar')).toBeVisible();
   const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
   expect(
     accessibility.violations.filter(
@@ -688,6 +872,23 @@ test('calendar remains read-only when Home deep-links a viewer without mutation 
 
   await page.goto('/calendar/home');
   await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Protect for focus' })).toHaveCount(0);
+  await page
+    .getByRole('button', { name: 'Quick actions', exact: true })
+    .and(page.locator('[aria-expanded]'))
+    .click();
+  const readOnlyCommands = page.getByRole('dialog', { name: 'Calendar quick actions' });
+  await expect(readOnlyCommands).toBeVisible();
+  for (const command of [
+    'Create a new event',
+    'Create focus time',
+    'Create a task time block',
+    'Create a time-away block',
+  ]) {
+    await expect(readOnlyCommands.getByRole('option', { name: command })).toHaveCount(0);
+  }
+  await page.keyboard.press('Escape');
+  await expect(readOnlyCommands).toHaveCount(0);
 
   await page.goto('/calendar/insights');
   await expect(page.getByRole('button', { name: 'Protect focus time', exact: true })).toHaveCount(

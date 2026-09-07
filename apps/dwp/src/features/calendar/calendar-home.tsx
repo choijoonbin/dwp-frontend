@@ -1,26 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowRight,
-  BarChart3,
-  CalendarDays,
-  CalendarPlus,
-  Clock3,
-  DoorOpen,
-  Focus,
-  Inbox,
-  MapPin,
-  ShieldAlert,
-  Sparkles,
-  UsersRound,
-  Video,
-} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  getCalendarHome,
   cancelCalendarEvent,
+  dwaionHandoffStrings,
+  dwaionHandoffText,
+  getCalendarPolicy,
+  parseDwaionHandoff,
   respondToCalendarEvent,
   trashCalendarEvent,
   updateCalendarEventPreference,
@@ -28,72 +15,228 @@ import {
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, ConfirmDialog, GuidedEmptyState } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ConfirmDialog,
+  LiveStatus,
+  LoadingState,
+  OperationalContextBar,
+} from '@dwp-frontend/design-system';
+import { CalendarDays, CalendarPlus, Command, PanelRightClose, PanelRightOpen } from 'lucide-react';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { alpha, lighten } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
+import { CalendarEventDrawer, calendarDate } from './calendar-components';
+import { CalendarHomeHeader } from './calendar-home-header';
+import { calendarReconcileHomeEvent } from './calendar-home-selection';
+import { CalendarCanvas } from './calendar-experience';
 import {
-  calendarReadSourceData,
+  calendarGreetingPeriod,
+  calendarTodayHasCurrentEvent,
+  calendarWorkdayPhase,
+} from './calendar-today-model';
+import { CalendarTodayWorkspace } from './calendar-today-workspace';
+import { CalendarWorkspaceOverlays } from './calendar-workspace-overlays';
+import { useCalendarWorkspaceSummary } from './calendar-workspace-summary';
+import {
   calendarReadSourceState,
   retryRecoverableCalendarRead,
 } from './calendar-read-source-state';
 import { eventCapability } from './calendar-source-model';
-import {
-  CALENDAR_EVENT_TONES,
-  CalendarAgendaItem,
-  CalendarEventDrawer,
-  CalendarMetric,
-  CalendarPageHeading,
-  calendarDate,
-  calendarTime,
-} from './calendar-components';
-import {
-  CalendarCanvas,
-  CalendarSectionHeader,
-  CalendarWeekBalanceRail,
-} from './calendar-experience';
+import { calendarInternalPath, isCalendarCommandShortcut } from './calendar-schedule-state';
 
-import type { CalendarEvent, CalendarResponseStatus } from '@dwp-frontend/shared-utils';
+import type {
+  CalendarEvent,
+  CalendarEventType,
+  CalendarResponseStatus,
+} from '@dwp-frontend/shared-utils';
 
-function minutesLabel(value: number, hour: string, minute: string) {
-  const hours = Math.floor(value / 60);
-  const minutes = value % 60;
-  if (!hours) return `${minutes}${minute}`;
-  if (!minutes) return `${hours}${hour}`;
-  return `${hours}${hour} ${minutes}${minute}`;
+type CalendarHomeCreateState = Readonly<{
+  start: string;
+  end?: string;
+  type: CalendarEventType;
+  title?: string;
+  attendeeEmails?: string[];
+  fromDwaion?: boolean;
+}>;
+
+function requestedCalendarType(value: string | null): CalendarEventType {
+  if (value === 'focus') return 'FOCUS';
+  if (value === 'task') return 'TASK';
+  if (value === 'out-of-office') return 'OUT_OF_OFFICE';
+  return 'MEETING';
+}
+
+function roundedStart(value: string) {
+  const start = new Date(value);
+  if (Number.isNaN(start.getTime())) return new Date().toISOString();
+  start.setSeconds(0, 0);
+  start.setMinutes(start.getMinutes() < 30 ? 30 : 60);
+  return start.toISOString();
+}
+
+function useCalendarLiveClock(anchor?: string) {
+  const [currentTime, setCurrentTime] = useState(() => anchor ?? new Date().toISOString());
+
+  useEffect(() => {
+    const anchorTime = Date.parse(anchor ?? '');
+    const baseTime = Number.isFinite(anchorTime) ? anchorTime : Date.now();
+    const baseMonotonicTime = performance.now();
+    const update = () =>
+      setCurrentTime(new Date(baseTime + (performance.now() - baseMonotonicTime)).toISOString());
+    update();
+    const interval = window.setInterval(update, 15_000);
+    return () => window.clearInterval(interval);
+  }, [anchor]);
+
+  return currentTime;
 }
 
 export function CalendarHome() {
   const { t, i18n } = useTranslation('calendar');
   const auth = useAuth();
-  const navigate = useNavigate();
   const { hasPermission } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [createOpen, setCreateOpen] = useState(false);
-  const [createType, setCreateType] = useState<'MEETING' | 'FOCUS'>('MEETING');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [, setSearchParams] = useSearchParams();
+  const desktopRail = useMediaQuery('(min-width:1280px)', { noSsr: true });
+  const [railCollapsed, setRailCollapsed] = useState(false);
+  const [railDrawerOpen, setRailDrawerOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const [selected, setSelected] = useState<CalendarEvent | null>(null);
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [cancelling, setCancelling] = useState<CalendarEvent | null>(null);
   const [trashing, setTrashing] = useState<CalendarEvent | null>(null);
-  const timeZone = resolveSystemTimeZone('Asia/Seoul');
+  const [createState, setCreateState] = useState<CalendarHomeCreateState | null>(null);
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const currentSearch = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const summary = useCalendarWorkspaceSummary(true, language);
+  const policyQuery = useQuery({
+    queryKey: ['calendar', 'policy'],
+    queryFn: getCalendarPolicy,
+    enabled: summary.state !== 'DENIED',
+    staleTime: 5 * 60_000,
+    retry: retryRecoverableCalendarRead,
+  });
+  const policyState = calendarReadSourceState({
+    data: policyQuery.data,
+    error: policyQuery.error,
+    failureCount: policyQuery.failureCount,
+    failureReason: policyQuery.failureReason,
+    isError: policyQuery.isError,
+    isPending: policyQuery.isPending,
+  });
+  const policyData = policyState === 'READY' ? policyQuery.data : undefined;
+  const currentTime = useCalendarLiveClock(summary.data?.generatedAt);
   const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
   const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
   const roomsPath = hasPermission('APP.ROOMS', 'VIEW') ? '/workplace/rooms' : null;
-  const query = useQuery({
-    queryKey: ['calendar', 'home', timeZone],
-    queryFn: () => getCalendarHome(timeZone),
-    staleTime: 30_000,
-    retry: retryRecoverableCalendarRead,
-  });
+  const writable = summary.state === 'READY';
+  const canCreate = canCreateGranted && writable;
+  const canUpdate = canUpdateGranted && writable;
+  const railVisible = Boolean(summary.data) && desktopRail && !railCollapsed;
+  const railOpen = railVisible || railDrawerOpen;
+  const requestedEventId = currentSearch.get('event');
+  const dwaionHandoff = useMemo(
+    () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
+    [location.state]
+  );
+
+  useEffect(() => {
+    const openCommands = (event: KeyboardEvent) => {
+      if (!isCalendarCommandShortcut(event)) return;
+      event.preventDefault();
+      setCommandOpen(true);
+    };
+    window.addEventListener('keydown', openCommands);
+    return () => window.removeEventListener('keydown', openCommands);
+  }, []);
+
+  useEffect(() => {
+    if (desktopRail) setRailDrawerOpen(false);
+  }, [desktopRail]);
+
+  useEffect(() => {
+    const requestedType = currentSearch.get('create');
+    if (!requestedType && !dwaionHandoff) return;
+    if (canCreateGranted && !writable) return;
+    if (canCreate) {
+      setCreateState({
+        start:
+          dwaionHandoffText(dwaionHandoff, 'startsAt') ??
+          roundedStart(summary.data?.generatedAt ?? new Date().toISOString()),
+        end: dwaionHandoffText(dwaionHandoff, 'endsAt') ?? undefined,
+        type: requestedCalendarType(requestedType),
+        title: dwaionHandoffText(dwaionHandoff, 'title') ?? undefined,
+        attendeeEmails: dwaionHandoffStrings(dwaionHandoff, 'attendees'),
+        fromDwaion: Boolean(dwaionHandoff),
+      });
+    }
+    const next = new URLSearchParams(location.search);
+    next.delete('create');
+    const search = next.toString();
+    navigate(
+      { pathname: location.pathname, search: search ? `?${search}` : '' },
+      { replace: true, state: null }
+    );
+  }, [
+    canCreate,
+    canCreateGranted,
+    currentSearch,
+    dwaionHandoff,
+    location.pathname,
+    location.search,
+    navigate,
+    summary.data?.generatedAt,
+    writable,
+  ]);
+
+  useEffect(() => {
+    if (summary.state !== 'READY' || !summary.data) return;
+    const home = summary.data;
+    const events = home.nextEvent ? [...home.today, home.nextEvent] : home.today;
+    const requested = events.find((event) => event.eventId === requestedEventId) ?? null;
+    setSelected((current) => calendarReconcileHomeEvent(current ?? requested, home));
+    // Preserve an authorized draft, but never retain its sensitive fields or
+    // destructive intent after a successful authority/version change.
+    const reconcileIntent = (
+      current: CalendarEvent | null,
+      capability: 'canEdit' | 'canDelete'
+    ) => {
+      const next = calendarReconcileHomeEvent(current, home);
+      return next && next.version === current?.version && eventCapability(next, capability)
+        ? current
+        : null;
+    };
+    setEditing((current) => reconcileIntent(current, 'canEdit'));
+    setCancelling((current) => reconcileIntent(current, 'canDelete'));
+    setTrashing((current) => reconcileIntent(current, 'canDelete'));
+  }, [requestedEventId, summary.data, summary.state]);
+
+  useEffect(() => {
+    if (writable) return;
+    setCreateState(null);
+    setEditing(null);
+    setCancelling(null);
+    setTrashing(null);
+    if (summary.state !== 'DENIED') return;
+    setSelected(null);
+    setRailDrawerOpen(false);
+    setCommandOpen(false);
+  }, [summary.state, writable]);
+
+  const clearEventSelection = () => {
+    setSelected(null);
+    if (!requestedEventId) return;
+    const next = new URLSearchParams(location.search);
+    next.delete('event');
+    setSearchParams(next, { replace: true });
+  };
+
   const respondMutation = useMutation({
     mutationFn: ({
       eventId,
@@ -112,7 +255,7 @@ export function CalendarHome() {
   const cancelMutation = useMutation({
     mutationFn: (event: CalendarEvent) => cancelCalendarEvent(event.eventId, event.version),
     onSuccess: async () => {
-      setSelected(null);
+      clearEventSelection();
       setCancelling(null);
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('event.cancelled'));
@@ -123,7 +266,7 @@ export function CalendarHome() {
     mutationFn: (event: CalendarEvent) =>
       trashCalendarEvent(event.eventId, event.version, t('event.userDeletionReason')),
     onSuccess: async () => {
-      setSelected(null);
+      clearEventSelection();
       setTrashing(null);
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('event.trashed'));
@@ -148,544 +291,258 @@ export function CalendarHome() {
     },
     onError: () => toast.error(t('event.starError')),
   });
-  const readState = calendarReadSourceState({
-    data: query.data,
-    error: query.error,
-    failureCount: query.failureCount,
-    failureReason: query.failureReason,
-    isError: query.isError,
-    isPending: query.isPending,
-  });
-  const data = calendarReadSourceData(readState, query.data);
-  const writable = readState === 'READY';
-  const canCreate = canCreateGranted && writable;
-  const canUpdate = canUpdateGranted && writable;
-  const canRespond = canUpdate;
 
-  useEffect(() => {
-    if (writable) return;
-    setCreateOpen(false);
-    setEditing(null);
-    setCancelling(null);
-    setTrashing(null);
-    if (readState === 'DENIED') setSelected(null);
-  }, [readState, writable]);
-
-  const metrics = data?.metrics;
-  const next = data?.nextEvent;
-  const nextTone = next ? CALENDAR_EVENT_TONES[next.type] : CALENDAR_EVENT_TONES.MEETING;
-  const nextStart = next ? new Date(next.startsAt) : null;
-  const timeUntil = nextStart
-    ? Math.max(0, Math.round((nextStart.getTime() - Date.now()) / 60_000))
-    : 0;
-  const focusProgress = metrics
-    ? Math.min(
-        100,
-        Math.round((metrics.focusMinutes / Math.max(1, metrics.focusTargetMinutes)) * 100)
-      )
-    : 0;
-  const greeting = useMemo(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return t('home.greetingMorning');
-    if (hour < 18) return t('home.greetingAfternoon');
-    return t('home.greetingEvening');
-  }, [t]);
-
-  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') => {
+  const canManage = (event: CalendarEvent) =>
+    canUpdate && event.status !== 'CANCELLED' && eventCapability(event, 'canEdit');
+  const canDelete = (event: CalendarEvent) =>
+    canUpdate && event.status !== 'CANCELLED' && eventCapability(event, 'canDelete');
+  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') =>
     respondMutation.mutate({ eventId: event.eventId, response });
+  const openNow = (type: CalendarEventType) => {
+    if (!canCreate) return;
+    setCreateState({
+      start: roundedStart(currentTime),
+      type,
+    });
   };
+  const openFocusWindow = (start: string, end: string) => {
+    if (!canCreate) return;
+    setCreateState({ start, end, type: 'FOCUS' });
+  };
+  const navigateWithinCalendar = (path: string, preserveScheduleState = false) =>
+    navigate(calendarInternalPath(path, currentSearch, { preserveScheduleState }));
+  const openScheduleDate = (date: string) =>
+    navigateWithinCalendar(`/calendar/schedule?view=day&date=${encodeURIComponent(date)}`, true);
+  const greetingPeriod = summary.data
+    ? calendarGreetingPeriod(currentTime, summary.data.timeZone)
+    : 'morning';
+  const greeting = t(
+    {
+      morning: 'home.greetingMorning',
+      afternoon: 'home.greetingAfternoon',
+      evening: 'home.greetingEvening',
+    }[greetingPeriod]
+  );
+  const workdayPhase = summary.data
+    ? calendarWorkdayPhase(currentTime, {
+        date: summary.data.date,
+        timeZone: summary.data.timeZone,
+        workingDayStart: policyData?.workingDayStart,
+        workingDayEnd: policyData?.workingDayEnd,
+      })
+    : 'UNKNOWN';
+  const afterWorkWithoutCurrentEvent = Boolean(
+    summary.data &&
+    workdayPhase === 'AFTER' &&
+    !calendarTodayHasCurrentEvent(summary.data.today, currentTime)
+  );
 
   return (
-    <CalendarCanvas archetype="command">
-      <CalendarPageHeading
-        icon={CalendarDays}
-        eyebrow={data ? calendarDate(data.date, language) : t('home.today')}
-        title={`${greeting}, ${auth.user?.displayName ?? t('home.member')}`}
-        description={t('home.description')}
+    <CalendarCanvas archetype="command" topInset="compact">
+      <CalendarHomeHeader
+        state={summary.state}
+        refreshing={summary.isFetching}
+        timeZone={summary.data?.timeZone}
+        eyebrow={
+          summary.data
+            ? t('home.commandEyebrow', { date: calendarDate(summary.data.date, language) })
+            : t('home.today')
+        }
+        title={t('home.commandTitle')}
+        description={t(
+          afterWorkWithoutCurrentEvent
+            ? 'home.commandDescriptionAfterWork'
+            : 'home.commandDescription',
+          {
+            greeting,
+            name: auth.user?.displayName ?? t('home.member'),
+          }
+        )}
         actions={
-          canCreate ? (
+          <>
             <ActionButton
-              intent="primary"
-              startIcon={<CalendarPlus size={18} />}
-              onClick={() => {
-                setCreateType('MEETING');
-                setCreateOpen(true);
-              }}
+              intent="quiet"
+              startIcon={<CalendarDays size={17} />}
+              onClick={() => navigateWithinCalendar('/calendar/schedule', true)}
             >
-              {t('actions.newEvent')}
+              {t('actions.openCalendar')}
             </ActionButton>
-          ) : undefined
+            {summary.data ? (
+              <ActionButton
+                intent="secondary"
+                startIcon={railOpen ? <PanelRightClose size={17} /> : <PanelRightOpen size={17} />}
+                aria-controls={railVisible ? 'calendar-workspace-rail' : undefined}
+                aria-expanded={railOpen}
+                onClick={() => {
+                  if (desktopRail) setRailCollapsed((current) => !current);
+                  else setRailDrawerOpen(true);
+                }}
+              >
+                {t(railOpen ? 'workspace.hideRail' : 'workspace.showRail')}
+              </ActionButton>
+            ) : null}
+            <ActionButton
+              intent="secondary"
+              startIcon={<Command size={17} />}
+              aria-haspopup="dialog"
+              aria-expanded={commandOpen}
+              onClick={() => setCommandOpen(true)}
+            >
+              {t('command.trigger')}
+            </ActionButton>
+            {canCreate ? (
+              <ActionButton
+                intent="primary"
+                startIcon={<CalendarPlus size={17} />}
+                onClick={() => openNow('MEETING')}
+              >
+                {t('actions.newEvent')}
+              </ActionButton>
+            ) : null}
+          </>
         }
       />
 
-      {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
-        <Alert
+      {(summary.state === 'STALE' ||
+        summary.state === 'DENIED' ||
+        summary.state === 'UNAVAILABLE') && (
+        <Box
           data-testid="calendar-read-state"
-          data-calendar-read-state={readState}
-          severity={readState === 'STALE' ? 'warning' : 'error'}
-          action={
-            <ActionButton intent="quiet" onClick={() => void query.refetch()}>
-              {t('actions.retry')}
-            </ActionButton>
-          }
+          data-calendar-read-state={summary.state}
+          sx={{ mb: 1.5 }}
         >
-          {t(
-            readState === 'STALE'
-              ? 'readState.stale'
-              : readState === 'DENIED'
-                ? 'readState.denied'
-                : 'readState.unavailable'
-          )}
-        </Alert>
+          <OperationalContextBar
+            label={t('shell.calendar.name')}
+            items={[]}
+            status={
+              <LiveStatus
+                state={summary.state === 'STALE' ? 'stale' : 'degraded'}
+                label={t('shell.calendar.name')}
+                detail={t(
+                  summary.state === 'STALE'
+                    ? 'readState.stale'
+                    : summary.state === 'DENIED'
+                      ? 'readState.denied'
+                      : 'readState.unavailable'
+                )}
+              />
+            }
+            actions={
+              <ActionButton intent="quiet" onClick={() => void summary.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          />
+        </Box>
       )}
 
-      {readState === 'LOADING' ? (
-        <Stack spacing={2}>
-          <Skeleton variant="rounded" height={188} />
-          <Skeleton variant="rounded" height={118} />
-          <Skeleton variant="rounded" height={360} />
-        </Stack>
-      ) : data ? (
-        <Stack spacing={3}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 2fr) minmax(320px, 1fr)' },
-              gap: 2,
-              alignItems: 'stretch',
-            }}
-          >
-            <Box
-              component="section"
-              aria-label={t('home.nextEvent')}
-              sx={{
-                minHeight: 190,
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) auto' },
-                gap: 3,
-                alignItems: 'center',
-                px: { xs: 2.5, md: 3.5 },
-                py: 3,
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                bgcolor: 'background.paper',
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  inset: '0 auto 0 0',
-                  width: 4,
-                  bgcolor: nextTone.main,
-                },
-              }}
-            >
-              {next ? (
-                <Box sx={{ minWidth: 0 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography
-                      variant="overline"
-                      sx={(theme) => ({
-                        color:
-                          theme.palette.mode === 'dark'
-                            ? lighten(nextTone.main, 0.42)
-                            : nextTone.main,
-                      })}
-                    >
-                      {timeUntil > 0
-                        ? t('home.startsIn', { count: timeUntil })
-                        : t('home.inProgress')}
-                    </Typography>
-                    {next.conflict && (
-                      <Stack direction="row" spacing={0.5} alignItems="center" color="error.main">
-                        <ShieldAlert size={14} />
-                        <Typography variant="caption" fontWeight={600}>
-                          {t('event.conflict')}
-                        </Typography>
-                      </Stack>
-                    )}
-                  </Stack>
-                  <Typography
-                    component="h2"
-                    sx={{
-                      mt: 0.75,
-                      fontSize: { xs: 24, sm: 28 },
-                      lineHeight: 1.2,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {next.title}
-                  </Typography>
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={{ xs: 0.75, sm: 2 }}
-                    sx={{ mt: 1.25 }}
-                    color="text.secondary"
-                  >
-                    <Stack direction="row" spacing={0.75} alignItems="center">
-                      <Clock3 size={16} />
-                      <Typography variant="body2">
-                        {calendarTime(next.startsAt, language)} –{' '}
-                        {calendarTime(next.endsAt, language)}
-                      </Typography>
-                    </Stack>
-                    {next.location && (
-                      <Stack direction="row" spacing={0.75} alignItems="center">
-                        <MapPin size={16} />
-                        <Typography variant="body2">{next.location}</Typography>
-                      </Stack>
-                    )}
-                    {next.attendees.length > 0 && (
-                      <Stack direction="row" spacing={0.75} alignItems="center">
-                        <UsersRound size={16} />
-                        <Typography variant="body2">
-                          {t('home.attendeeShort', { count: next.attendees.length })}
-                        </Typography>
-                      </Stack>
-                    )}
-                  </Stack>
-                </Box>
-              ) : (
-                <Box>
-                  <Typography variant="overline" color="success.main">
-                    {t('home.clearSchedule')}
-                  </Typography>
-                  <Typography
-                    component="h2"
-                    sx={{
-                      mt: 0.75,
-                      fontSize: { xs: 24, sm: 28 },
-                      lineHeight: 1.2,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {t('home.noNextEvent')}
-                  </Typography>
-                  <Typography color="text.secondary" sx={{ mt: 0.75 }}>
-                    {t('home.noNextEventDescription')}
-                  </Typography>
-                </Box>
-              )}
-              <Stack
-                direction="row"
-                spacing={1}
-                justifyContent={{ xs: 'flex-start', md: 'flex-end' }}
-              >
-                {next?.conferenceUrl && (
-                  <ActionButton
-                    intent="primary"
-                    onClick={() =>
-                      window.open(next.conferenceUrl!, '_blank', 'noopener,noreferrer')
-                    }
-                    startIcon={<Video size={17} />}
-                  >
-                    {t('event.join')}
-                  </ActionButton>
-                )}
-                {next && (
-                  <ActionButton intent="secondary" onClick={() => setSelected(next)}>
-                    {t('actions.details')}
-                  </ActionButton>
-                )}
-              </Stack>
-            </Box>
-
-            <Box
-              component="section"
-              sx={(theme) => ({
-                minHeight: 190,
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                bgcolor: alpha(
-                  theme.palette.primary.main,
-                  theme.palette.mode === 'dark' ? 0.08 : 0.025
-                ),
-                overflow: 'hidden',
-              })}
-            >
-              <CalendarSectionHeader
-                icon={Sparkles}
-                title={t('home.attentionTitle')}
-                description={t('home.attentionDescription')}
-              />
-              <Divider />
-              {data.attention.length ? (
-                <Stack>
-                  {data.attention.slice(0, 3).map((item) => (
-                    <Box
-                      component={Link}
-                      to={
-                        item.eventId
-                          ? `${item.actionPath}?event=${encodeURIComponent(item.eventId)}`
-                          : item.actionPath
-                      }
-                      key={item.key}
-                      sx={{
-                        px: 2.25,
-                        py: 1.45,
-                        color: 'text.primary',
-                        textDecoration: 'none',
-                        borderBottom: 1,
-                        borderColor: 'divider',
-                        '&:last-of-type': { borderBottom: 0 },
-                        '&:hover': { bgcolor: 'action.hover' },
-                        '&:focus-visible': {
-                          outline: '2px solid',
-                          outlineColor: 'primary.main',
-                          outlineOffset: -2,
-                        },
-                      }}
-                    >
-                      <Stack direction="row" spacing={1} alignItems="flex-start">
-                        <Box
-                          aria-hidden="true"
-                          sx={{
-                            width: 7,
-                            height: 7,
-                            flex: '0 0 7px',
-                            mt: 0.75,
-                            borderRadius: '50%',
-                            bgcolor:
-                              item.severity === 'HIGH'
-                                ? 'error.main'
-                                : item.severity === 'MEDIUM'
-                                  ? 'warning.main'
-                                  : 'primary.main',
-                          }}
-                        />
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography variant="body2" fontWeight={600}>
-                            {item.title}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {item.description}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                    </Box>
-                  ))}
-                </Stack>
-              ) : (
-                <Typography color="text.secondary" sx={{ px: 2.25, py: 2.5 }}>
-                  {t('home.noAttention')}
-                </Typography>
-              )}
-            </Box>
-          </Box>
-
-          <Box
-            component="section"
-            aria-label={t('home.weekSnapshot')}
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
-              gap: 1.25,
-            }}
-          >
-            <CalendarMetric
-              label={t('home.metrics.meetings')}
-              value={minutesLabel(metrics!.meetingMinutes, t('units.hour'), t('units.minute'))}
-              hint={t('home.metrics.meetingsHint', { count: metrics!.eventCount })}
-              icon={UsersRound}
-              tone="primary"
-              onClick={() => navigate('/calendar/schedule')}
-              actionLabel={t('actions.openCalendar')}
-            />
-            <CalendarMetric
-              label={t('home.metrics.focus')}
-              value={minutesLabel(metrics!.focusMinutes, t('units.hour'), t('units.minute'))}
-              hint={t('home.metrics.focusHint', { progress: focusProgress })}
-              icon={Focus}
-              tone="success"
-              progress={focusProgress}
-              progressLabel={t('home.metrics.focusHint', { progress: focusProgress })}
-              onClick={() => navigate('/calendar/focus')}
-            />
-            {metrics!.awaitingResponseCount > 0 && (
-              <CalendarMetric
-                label={t('home.metrics.responses')}
-                value={metrics!.awaitingResponseCount}
-                hint={t('home.metrics.responsesHint')}
-                icon={Inbox}
-                tone="warning"
-                onClick={() => navigate('/calendar/invitations')}
-              />
-            )}
-            {roomsPath && metrics!.availableRoomCount > 0 && (
-              <CalendarMetric
-                label={t('home.metrics.rooms')}
-                value={metrics!.availableRoomCount}
-                hint={t('home.metrics.roomsHint')}
-                icon={DoorOpen}
-                tone="info"
-                onClick={() => navigate(roomsPath)}
-              />
-            )}
-          </Box>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.7fr) minmax(320px, 1fr)' },
-              gap: 3,
-            }}
-          >
-            <Box
-              component="section"
-              sx={{
-                bgcolor: 'background.paper',
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                overflow: 'hidden',
-              }}
-            >
-              <CalendarSectionHeader
-                icon={CalendarDays}
-                title={t('home.todayAgenda')}
-                description={t('home.todayAgendaDescription')}
-                action={
-                  <ActionButton
-                    component={Link}
-                    to="/calendar/schedule"
-                    intent="quiet"
-                    endIcon={<ArrowRight size={16} />}
-                  >
-                    {t('actions.openCalendar')}
-                  </ActionButton>
-                }
-              />
-              <Divider />
-              {data.today.length ? (
-                data.today.map((event) => (
-                  <CalendarAgendaItem
-                    key={`${event.eventId}-${event.startsAt}`}
-                    event={event}
-                    onOpen={() => setSelected(event)}
-                    onRespond={
-                      canRespond && eventCapability(event, 'canRespond')
-                        ? (response) => respond(event, response)
-                        : undefined
-                    }
-                  />
-                ))
-              ) : (
-                <GuidedEmptyState
-                  kind="empty"
-                  title={t('home.emptyToday')}
-                  description={t('home.emptyTodayDescription')}
-                  actionLabel={canCreate ? t('actions.addFocus') : undefined}
-                  onAction={
-                    canCreate
-                      ? () => {
-                          setCreateType('FOCUS');
-                          setCreateOpen(true);
-                        }
-                      : undefined
-                  }
-                />
-              )}
-            </Box>
-
-            <Box
-              component="section"
-              sx={{
-                bgcolor: 'background.paper',
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                overflow: 'hidden',
-              }}
-            >
-              <CalendarSectionHeader
-                icon={BarChart3}
-                title={t('home.weekPulse')}
-                description={t('home.weekPulseDescription')}
-              />
-              <Divider />
-              <Box sx={{ p: 2.5 }}>
-                <CalendarWeekBalanceRail
-                  days={data.weekLoad.map((day) => ({
-                    key: day.date,
-                    label: calendarDate(day.date, language, false),
-                    meetingMinutes: day.meetingMinutes,
-                    focusMinutes: day.focusMinutes,
-                    loadPercent: day.loadPercent,
-                  }))}
-                  meetingLabel={`${t('home.metrics.meetings')} (${t('units.minute')})`}
-                  focusLabel={`${t('home.metrics.focus')} (${t('units.minute')})`}
-                  utilizationLabel={(day) =>
-                    day.loadPercent > 100
-                      ? `${t('insights.utilization', { value: day.loadPercent })} · ${t('event.conflict')}`
-                      : t('insights.utilization', { value: day.loadPercent })
-                  }
-                />
-              </Box>
-            </Box>
-          </Box>
-
-          <Typography variant="caption" color="text.secondary" textAlign="right">
-            {t('home.updatedAt', { time: calendarTime(data.generatedAt, language) })}
-          </Typography>
-        </Stack>
+      {summary.state === 'LOADING' ? (
+        <LoadingState
+          label={t('schedule.loading')}
+          variant="skeleton"
+          embedded
+          skeletonHeights={[124, 420]}
+          skeletonGap={1}
+        />
+      ) : summary.data ? (
+        <CalendarTodayWorkspace
+          data={summary.data}
+          currentTime={currentTime}
+          workingDayStart={policyData?.workingDayStart}
+          workingDayEnd={policyData?.workingDayEnd}
+          railState={summary.state}
+          railFetching={summary.isFetching}
+          language={language}
+          currentSearch={location.search}
+          roomsPath={roomsPath}
+          railVisible={railVisible}
+          canCreate={canCreate}
+          canRespond={canUpdate}
+          onRetryRail={() => void summary.refetch()}
+          onOpenEvent={setSelected}
+          onRespond={(event, response) => respond(event, response)}
+          onProtect={openFocusWindow}
+          onCreateFocus={() => openNow('FOCUS')}
+          onOpenSchedule={() => navigateWithinCalendar('/calendar/schedule', true)}
+          onOpenScheduleDate={openScheduleDate}
+          onOpenInsights={() => navigateWithinCalendar('/calendar/insights')}
+          onOpenCommands={() => setCommandOpen(true)}
+        />
       ) : null}
 
-      {canCreate && (
+      <CalendarWorkspaceOverlays
+        workspace
+        desktopRail={desktopRail}
+        railOpen={railDrawerOpen}
+        railLabel={t('workspace.railTitle')}
+        commandOpen={commandOpen}
+        canCreate={canCreate}
+        rail={{
+          data: summary.data,
+          state: summary.state,
+          isFetching: summary.isFetching,
+          language,
+          currentSearch: location.search,
+          roomsPath,
+          onRetry: () => void summary.refetch(),
+          canCreate,
+          onCreateFocus: () => openNow('FOCUS'),
+          onOpenCommands: () => setCommandOpen(true),
+        }}
+        onCloseRail={() => setRailDrawerOpen(false)}
+        onCloseCommand={() => setCommandOpen(false)}
+        onCreate={openNow}
+        onNavigate={(path) => navigateWithinCalendar(path, path === '/calendar/schedule')}
+      />
+
+      {canCreate ? (
         <CalendarEventDialog
-          open={createOpen}
-          initialType={createType}
-          onClose={() => setCreateOpen(false)}
+          open={Boolean(createState)}
+          initialStart={createState?.start}
+          initialEnd={createState?.end}
+          initialType={createState?.type}
+          initialTitle={createState?.title}
+          initialTimeZone={summary.data?.timeZone}
+          initialAttendeeEmails={createState?.attendeeEmails}
+          fromDwaion={createState?.fromDwaion}
+          onClose={() => setCreateState(null)}
         />
-      )}
-      {canUpdate && (
+      ) : null}
+      {canUpdate ? (
         <CalendarEventDialog
           open={Boolean(editing)}
           event={editing}
           onClose={() => setEditing(null)}
-          onSaved={(event) => setSelected(event)}
+          onSaved={setSelected}
         />
-      )}
+      ) : null}
       <CalendarEventDrawer
         event={selected}
         open={Boolean(selected)}
-        canEdit={Boolean(selected && canUpdate && eventCapability(selected, 'canEdit'))}
-        canDelete={Boolean(selected && canUpdate && eventCapability(selected, 'canDelete'))}
+        canEdit={Boolean(selected && canManage(selected))}
+        canDelete={Boolean(selected && canDelete(selected))}
         canStar={Boolean(selected && canUpdate && eventCapability(selected, 'canStar'))}
         starBusy={preferenceMutation.isPending}
-        onClose={() => setSelected(null)}
+        onClose={clearEventSelection}
         onEdit={
           canUpdate
             ? () => {
                 setEditing(selected);
-                setSelected(null);
+                clearEventSelection();
               }
             : undefined
         }
-        onCancel={
-          selected && canUpdate && eventCapability(selected, 'canDelete')
-            ? () => setCancelling(selected)
-            : undefined
-        }
-        onTrash={
-          selected && canUpdate && eventCapability(selected, 'canDelete')
-            ? () => setTrashing(selected)
-            : undefined
-        }
-        onToggleStar={
-          selected && canUpdate && eventCapability(selected, 'canStar')
-            ? () => preferenceMutation.mutate(selected)
-            : undefined
-        }
+        onCancel={() => selected && canDelete(selected) && setCancelling(selected)}
+        onTrash={() => selected && canDelete(selected) && setTrashing(selected)}
+        onToggleStar={() => selected && preferenceMutation.mutate(selected)}
         onRespond={
-          selected && canRespond && eventCapability(selected, 'canRespond')
+          selected && canUpdate && eventCapability(selected, 'canRespond')
             ? (response) => respond(selected, response)
             : undefined
         }
       />
       <ConfirmDialog
-        open={Boolean(cancelling && canUpdate && eventCapability(cancelling, 'canDelete'))}
+        open={canUpdate && Boolean(cancelling)}
         title={t('event.cancelTitle')}
         description={t('event.cancelDescription', { title: cancelling?.title })}
         cancelLabel={t('actions.close')}
@@ -695,13 +552,11 @@ export function CalendarHome() {
         busy={cancelMutation.isPending}
         onClose={() => setCancelling(null)}
         onConfirm={() => {
-          if (canUpdate && cancelling && eventCapability(cancelling, 'canDelete')) {
-            cancelMutation.mutate(cancelling);
-          }
+          if (canUpdate && cancelling) cancelMutation.mutate(cancelling);
         }}
       />
       <ConfirmDialog
-        open={Boolean(trashing && canUpdate && eventCapability(trashing, 'canDelete'))}
+        open={Boolean(trashing)}
         title={t('event.trashTitle')}
         description={t('event.trashDescription', { title: trashing?.title })}
         cancelLabel={t('actions.close')}
@@ -711,9 +566,7 @@ export function CalendarHome() {
         busy={trashMutation.isPending}
         onClose={() => setTrashing(null)}
         onConfirm={() => {
-          if (canUpdate && trashing && eventCapability(trashing, 'canDelete')) {
-            trashMutation.mutate(trashing);
-          }
+          if (trashing && canDelete(trashing)) trashMutation.mutate(trashing);
         }}
       />
     </CalendarCanvas>

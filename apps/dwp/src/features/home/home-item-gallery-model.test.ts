@@ -121,7 +121,30 @@ describe('home item gallery model', () => {
       ['focus', 'ADDED'],
       ['schedule', 'RESTORE'],
       ['activity', 'ADDED'],
+      ['focus-balance', 'ADDED'],
+      ['meeting-load', 'ADDED'],
     ]);
+  });
+
+  it('discovers both calendar insight widgets only with Calendar entitlement', () => {
+    const withCalendar = resolveHomeWidgetGalleryItems(
+      ['focus-balance', 'meeting-load'],
+      [],
+      APPS,
+      true
+    );
+    const withoutCalendar = resolveHomeWidgetGalleryItems(
+      ['focus-balance', 'meeting-load'],
+      [],
+      APPS.filter((app) => app.resourceKey !== 'APP.CALENDAR'),
+      true
+    );
+
+    expect(withCalendar.map(({ widget, state }) => [widget.key, state])).toEqual([
+      ['focus-balance', 'ADD'],
+      ['meeting-load', 'ADD'],
+    ]);
+    expect(withoutCalendar).toEqual([]);
   });
 
   it('restores the personal Flow action queue after the user hides it', () => {

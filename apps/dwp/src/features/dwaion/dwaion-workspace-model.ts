@@ -1,4 +1,5 @@
 import type { AskDwpResponse, WorkspaceWorkItem } from '@dwp-frontend/shared-utils';
+import { rankWorkspaceWorkItems } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 
 export const DWAION_MODE_KEYS = ['brief', 'blockers', 'meeting', 'access'] as const;
 
@@ -19,14 +20,7 @@ export function verifiedConversationId(
 }
 
 export function visibleWorkItems(items: readonly WorkspaceWorkItem[]): WorkspaceWorkItem[] {
-  return [...items]
-    .sort((left, right) => {
-      const priority = { high: 0, medium: 1, low: 2 } as const;
-      const priorityDelta = priority[left.priority] - priority[right.priority];
-      if (priorityDelta !== 0) return priorityDelta;
-      return Date.parse(right.updatedAt) - Date.parse(left.updatedAt);
-    })
-    .slice(0, 4);
+  return rankWorkspaceWorkItems(items).slice(0, 4);
 }
 
 export function responseTone(response: AskDwpResponse): 'success' | 'warning' | 'info' {

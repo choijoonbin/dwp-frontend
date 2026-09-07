@@ -84,6 +84,7 @@
     "ALL": "전체 결과",
     "APPLIED": "적용됨",
     "BLOCK": "차단됨",
+    "BLOCKED": "차단됨",
     "CONFIGURATION_REQUIRED": "구성 필요",
     "CONFLICT": "변경 충돌",
     "DENY": "거부됨",
@@ -99,6 +100,7 @@
     "REJECTED": "거절됨",
     "SUCCEEDED": "성공",
     "SUCCESS": "성공",
+    "VALIDATED": "검증 완료",
     "WARN": "경고와 함께 통과"
   },
   "severities": {

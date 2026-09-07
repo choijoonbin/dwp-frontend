@@ -1,13 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CalendarDays,
-  CalendarPlus,
-  Focus,
-  Layers3,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -29,6 +21,7 @@ import {
 import {
   ActionButton,
   ConfirmDialog,
+  foundationTokens,
   LiveStatus,
   OperationalContextBar,
 } from '@dwp-frontend/design-system';
@@ -36,11 +29,11 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
-import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { alpha } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
-import { CalendarEventDrawer, CalendarPageHeading } from './calendar-components';
+import { CalendarEventDrawer } from './calendar-components';
 import { CalendarCanvas } from './calendar-experience';
 import { CalendarInteractiveGrid, type CalendarRange } from './calendar-interactive-grid';
 import {
@@ -51,6 +44,8 @@ import {
 } from './calendar-read-source-state';
 import { CalendarShareDialog } from './calendar-share-dialog';
 import { CalendarSourcePanel, CalendarSourcePicker } from './calendar-source-rail';
+import { CalendarScheduleChrome } from './calendar-schedule-chrome';
+import { CalendarCommandPaletteOverlay } from './calendar-workspace-overlays';
 import {
   calendarCanChangeSelection,
   eventCapability,
@@ -60,13 +55,14 @@ import {
   calendarScheduleCalendarIds,
   calendarScheduleDate,
   calendarScheduleDateValue,
+  calendarInternalPath,
   calendarScheduleSavedConfiguration,
   calendarScheduleSearchParams,
   calendarScheduleStateFromSavedView,
   calendarScheduleView,
+  isCalendarCommandShortcut,
   type CalendarScheduleView,
 } from './calendar-schedule-state';
-import { GovernedSavedViewControl } from '../../components/governed-saved-view-control';
 
 import type {
   CalendarEvent,
@@ -75,6 +71,8 @@ import type {
   CalendarSummary,
   UpdateCalendarEventInput,
 } from '@dwp-frontend/shared-utils';
+
+const CALENDAR_SURFACE_RADIUS = `${foundationTokens.radius.surface}px`;
 
 type CreateState = Readonly<{
   start: string;
@@ -137,7 +135,7 @@ export function CalendarSchedule() {
   const queryClient = useQueryClient();
   const compact = useMediaQuery('(max-width:899.95px)', { noSsr: true });
   const mobileSourcePicker = useMediaQuery('(max-width:599.95px)', { noSsr: true });
-  const desktopSources = useMediaQuery('(min-width:1200px)', { noSsr: true });
+  const desktopSources = useMediaQuery('(min-width:1280px)', { noSsr: true });
   const location = useLocation();
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
@@ -158,6 +156,7 @@ export function CalendarSchedule() {
   const [createState, setCreateState] = useState<CreateState | null>(null);
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
   const [sourcesCollapsed, setSourcesCollapsed] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [sharingCalendar, setSharingCalendar] = useState<CalendarSummary | null>(null);
   const requestedEventId = routeSearchParams.get('event');
   const hasExplicitScheduleState =
@@ -220,7 +219,9 @@ export function CalendarSchedule() {
     isError: policyQuery.isError,
     isPending: policyQuery.isPending,
   });
-  const readState = combineCalendarReadSourceStates([eventsState, calendarsState, policyState]);
+  const coreReadState = combineCalendarReadSourceStates([eventsState, calendarsState, policyState]);
+  const authorityDenied = coreReadState === 'DENIED';
+  const readState = coreReadState;
   const eventsData =
     readState === 'DENIED' ? undefined : calendarReadSourceData(eventsState, eventsQuery.data);
   const calendarsData =
@@ -320,8 +321,22 @@ export function CalendarSchedule() {
     setEditing(null);
     setCancelling(null);
     setTrashing(null);
-    if (readState === 'DENIED') setSelected(null);
-  }, [readState, scheduleWritable]);
+    if (!authorityDenied) return;
+    setSelected(null);
+    setSourcePickerOpen(false);
+    setSharingCalendar(null);
+    setCommandPaletteOpen(false);
+  }, [authorityDenied, scheduleWritable]);
+
+  useEffect(() => {
+    const openCommands = (event: KeyboardEvent) => {
+      if (!isCalendarCommandShortcut(event)) return;
+      event.preventDefault();
+      setCommandPaletteOpen(true);
+    };
+    window.addEventListener('keydown', openCommands);
+    return () => window.removeEventListener('keydown', openCommands);
+  }, []);
 
   const clearEventSelection = () => {
     setSelected(null);
@@ -590,78 +605,23 @@ export function CalendarSchedule() {
   };
   const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') =>
     respondMutation.mutate({ eventId: event.eventId, response });
-
   return (
     <CalendarCanvas archetype="temporal">
-      <CalendarPageHeading
-        icon={CalendarDays}
-        eyebrow={t('schedule.eyebrow')}
-        title={t('schedule.title')}
-        description={t('schedule.description')}
-        actions={
-          canCreate ? (
-            <ActionButton
-              intent="primary"
-              startIcon={<CalendarPlus size={18} />}
-              onClick={() => openNow('MEETING')}
-            >
-              {t('actions.newEvent')}
-            </ActionButton>
-          ) : undefined
-        }
+      <CalendarScheduleChrome
+        canCreate={canCreate}
+        sourcesAvailable={Boolean(calendarsData)}
+        commandPaletteOpen={commandPaletteOpen}
+        desktopSources={desktopSources}
+        sourcesCollapsed={sourcesCollapsed}
+        hasExplicitScheduleState={hasExplicitScheduleState}
+        view={view}
+        savedViewConfiguration={savedViewConfiguration}
+        onOpenCommands={() => setCommandPaletteOpen(true)}
+        onCreate={openNow}
+        onToggleSources={() => setSourcesCollapsed((current) => !current)}
+        onOpenSources={() => setSourcePickerOpen(true)}
+        onApplySavedView={applySavedView}
       />
-
-      <Stack
-        direction="row"
-        spacing={1}
-        flexWrap="wrap"
-        useFlexGap
-        justifyContent="flex-end"
-        sx={{ mb: 1.5 }}
-      >
-        {desktopSources ? (
-          <ActionButton
-            intent="quiet"
-            startIcon={
-              sourcesCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />
-            }
-            aria-controls="calendar-source-panel"
-            aria-expanded={!sourcesCollapsed}
-            onClick={() => setSourcesCollapsed((current) => !current)}
-          >
-            {t(sourcesCollapsed ? 'sources.showPanel' : 'sources.hidePanel')}
-          </ActionButton>
-        ) : (
-          <ActionButton
-            intent="secondary"
-            startIcon={<Layers3 size={17} />}
-            onClick={() => setSourcePickerOpen(true)}
-          >
-            {t('sources.openPicker')}
-          </ActionButton>
-        )}
-        <GovernedSavedViewControl
-          surfaceKey="calendar.schedule"
-          currentConfiguration={savedViewConfiguration}
-          selectedBuiltInViewId={hasExplicitScheduleState ? null : `builtin-${view}`}
-          builtInViews={(['week', 'month', 'agenda'] as const).map((savedView) => ({
-            id: `builtin-${savedView}`,
-            name: t(`schedule.views.${savedView}`),
-            configuration: { view: savedView },
-            isDefault: savedView === 'week',
-          }))}
-          onApply={applySavedView}
-        />
-        {canCreate && (
-          <ActionButton
-            intent="secondary"
-            startIcon={<Focus size={17} />}
-            onClick={() => openNow('FOCUS')}
-          >
-            {t('actions.addFocus')}
-          </ActionButton>
-        )}
-      </Stack>
 
       {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
         <Box
@@ -703,14 +663,20 @@ export function CalendarSchedule() {
 
       <Box
         data-testid="calendar-schedule-surface"
+        data-calendar-experience="schedule"
         data-location-search={location.search}
-        sx={{
+        sx={(theme) => ({
           bgcolor: 'background.paper',
           border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
+          borderColor: alpha(theme.palette.divider, 0.78),
+          borderRadius: CALENDAR_SURFACE_RADIUS,
           overflow: 'hidden',
-        }}
+          boxShadow: 'none',
+          '@media (forced-colors: active)': {
+            borderColor: 'CanvasText',
+            boxShadow: 'none',
+          },
+        })}
       >
         {(eventsQuery.isFetching || calendarsQuery.isFetching || moveMutation.isPending) && (
           <LinearProgress aria-label={t('schedule.loading')} />
@@ -735,10 +701,8 @@ export function CalendarSchedule() {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: {
-                xs: 'minmax(0, 1fr)',
-                lg: sourcesCollapsed ? 'minmax(0, 1fr)' : '264px minmax(0, 1fr)',
-              },
+              gridTemplateColumns:
+                desktopSources && !sourcesCollapsed ? '264px minmax(0, 1fr)' : 'minmax(0, 1fr)',
             }}
           >
             <Box
@@ -746,7 +710,7 @@ export function CalendarSchedule() {
               data-testid="calendar-source-panel"
               component="aside"
               sx={{
-                display: { xs: 'none', lg: sourcesCollapsed ? 'none' : 'block' },
+                display: desktopSources && !sourcesCollapsed ? 'block' : 'none',
                 borderRight: 1,
                 borderColor: 'divider',
                 minHeight: 0,
@@ -818,6 +782,20 @@ export function CalendarSchedule() {
           </Box>
         )}
       </Box>
+
+      <CalendarCommandPaletteOverlay
+        open={commandPaletteOpen}
+        canCreate={canCreate}
+        onClose={() => setCommandPaletteOpen(false)}
+        onCreate={openNow}
+        onNavigate={(path) =>
+          navigate(
+            calendarInternalPath(path, routeSearchParams, {
+              preserveScheduleState: path === '/calendar/schedule',
+            })
+          )
+        }
+      />
 
       <CalendarSourcePicker
         open={sourcePickerOpen}

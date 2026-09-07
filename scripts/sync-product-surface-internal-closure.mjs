@@ -466,19 +466,36 @@ function validateSnapshot(value, authorizationSnapshot) {
     fail('internal closure Agent evidence provenance is invalid');
   }
   const authorization = requireRecord(authorizationSnapshot, 'frontend authorization snapshot');
-  const latestBundle = requireRecord(authorization.latestAlias, 'frontend latest authorization');
+  const authorizationBundles = requireArray(
+    authorization.bundles,
+    'frontend authorization bundles'
+  );
+  const closureReference = value.generatedFrom.authorizationBundle;
+  const closureBundles = authorizationBundles.filter(
+    (bundle) => bundle?.version === closureReference.version
+  );
+  const indexEntries = requireArray(
+    authorization.index?.versions,
+    'frontend authorization index versions'
+  ).filter((entry) => entry?.version === closureReference.version);
+  const closureBundle = closureBundles.length === 1 ? closureBundles[0] : undefined;
+  const indexEntry = indexEntries.length === 1 ? indexEntries[0] : undefined;
   const inventory = requireRecord(authorization.rolloutInventory, 'frontend rollout inventory');
   if (
-    value.generatedFrom.authorizationBundle.artifact !== BUNDLE_FILE ||
-    value.generatedFrom.authorizationBundle.version !== 4 ||
-    value.generatedFrom.authorizationBundle.checksum !== latestBundle.checksum ||
+    closureReference.artifact !== BUNDLE_FILE ||
+    closureReference.version !== 4 ||
+    !closureBundle ||
+    !indexEntry ||
+    indexEntry.artifact !== closureReference.artifact ||
+    indexEntry.checksum !== closureReference.checksum ||
+    closureBundle.checksum !== closureReference.checksum ||
     value.generatedFrom.rolloutInventory.artifact !== INVENTORY_FILE ||
     value.generatedFrom.rolloutInventory.checksum !== inventory.checksum
   ) {
-    fail('internal closure snapshot differs from the frontend authorization snapshot');
+    fail('internal closure snapshot is outside or differs from its immutable authorization bundle');
   }
   const expected = buildSnapshot(
-    latestBundle,
+    closureBundle,
     inventory,
     {
       schemaVersion: 1,
@@ -490,7 +507,7 @@ function validateSnapshot(value, authorizationSnapshot) {
       },
       exactContract: {
         reference: `contracts/product-authorization/${BUNDLE_FILE}`,
-        checksum: latestBundle.checksum,
+        checksum: closureBundle.checksum,
         products: inventory.products,
       },
       attackVectors: value.attackVectors?.map((id) => ({ id })),

@@ -5,8 +5,9 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 import { MAIL_PRODUCT_MANIFEST } from '../features/mail/mail-product-manifest';
 import { MailLayout } from '../layouts/mail-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
+  ProductWorkRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -21,9 +22,15 @@ const page = (
 );
 
 const legacyShell = (
-  <AppRouteGuard resourceKey="APP.MAIL">
+  <ProductWorkRouteGuard productId="mail" surfaceId="mail.work" resourceKey="APP.MAIL">
     <MailLayout />
-  </AppRouteGuard>
+  </ProductWorkRouteGuard>
+);
+
+const managementLegacyShell = (
+  <ProductRouteGuard resourceKey="ADMIN.MAIL">
+    <MailLayout />
+  </ProductRouteGuard>
 );
 
 export const mailRoutes: RouteObject[] = [
@@ -43,6 +50,7 @@ export const mailRoutes: RouteObject[] = [
       managementBasePath: '/mail/admin',
       legacyPath: '/mail/home',
       legacyShell,
+      managementLegacyShell,
       areaKey: 'mail',
       translationNamespace: 'mail',
       renderPage: () => page,

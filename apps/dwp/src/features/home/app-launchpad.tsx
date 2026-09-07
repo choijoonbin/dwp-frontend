@@ -511,7 +511,7 @@ export function AppLaunchpad({
           : flow
             ? {
                 width: 1,
-                color: '#F8FAFC',
+                color: 'var(--flow-dock-text)',
                 '@media (forced-colors: active)': { color: 'CanvasText' },
               }
             : {
@@ -642,22 +642,22 @@ export function AppLaunchpad({
                     minWidth: 0,
                     display: flow ? 'flex' : 'block',
                     flexDirection: flow ? 'column' : undefined,
-                    gap: flow ? 0.75 : 0,
+                    gap: flow ? 0.25 : 0,
                     minHeight: flow
                       ? 'auto'
                       : immersive
                         ? LAUNCHPAD_GROUP_MIN_HEIGHT
                         : { xs: 170, lg: 228 },
-                    color: flow || immersive ? '#F8FAFC' : 'text.primary',
+                    color: flow ? 'var(--flow-dock-text)' : immersive ? '#F8FAFC' : 'text.primary',
                     px: flow ? 1.5 : immersive ? 1 : { xs: 1.25, lg: 2.25 },
-                    py: flow ? 1.25 : immersive ? 1.5 : { xs: 1.25, lg: 2 },
+                    py: flow ? 0.75 : immersive ? 1.5 : { xs: 1.25, lg: 2 },
                     border: flow
                       ? '1px dashed'
                       : immersive
                         ? '1px solid rgba(255,255,255,0.16)'
                         : 1,
                     borderColor: flow
-                      ? 'rgba(226,232,240,0.56)'
+                      ? 'var(--flow-dock-border)'
                       : immersive
                         ? 'rgba(255,255,255,0.16)'
                         : onImageBackground
@@ -722,7 +722,7 @@ export function AppLaunchpad({
                     variant="caption"
                     color={
                       flow
-                        ? 'rgba(226,232,240,0.76)'
+                        ? 'var(--flow-dock-muted)'
                         : immersive
                           ? 'rgba(255,255,255,0.68)'
                           : 'text.secondary'

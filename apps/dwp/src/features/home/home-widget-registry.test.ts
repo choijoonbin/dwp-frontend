@@ -35,7 +35,7 @@ describe('home widget registry', () => {
       { widgetKey: 'unknown', visible: true },
     ]);
 
-    expect(widgets).toHaveLength(5);
+    expect(widgets).toHaveLength(7);
     expect(widgets[0]).toEqual({
       widgetKey: 'activity',
       visible: false,
@@ -60,6 +60,8 @@ describe('home widget registry', () => {
       'daily-brief',
       'focus',
       'activity',
+      'focus-balance',
+      'meeting-load',
     ]);
     expect(defaultHomeWidgets(undefined, 'MANAGER').map((widget) => widget.widgetKey)).toEqual([
       'command-rail',
@@ -67,6 +69,8 @@ describe('home widget registry', () => {
       'daily-brief',
       'focus',
       'activity',
+      'focus-balance',
+      'meeting-load',
     ]);
     expect(defaultHomeWidgets(undefined, 'OPERATOR').map((widget) => widget.widgetKey)).toEqual([
       'command-rail',
@@ -74,6 +78,8 @@ describe('home widget registry', () => {
       'schedule',
       'daily-brief',
       'focus',
+      'meeting-load',
+      'focus-balance',
     ]);
   });
 
@@ -123,6 +129,20 @@ describe('home widget registry', () => {
         allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
         defaultHeight: 'tall',
         allowedHeights: ['short', 'standard', 'tall'],
+      },
+      {
+        key: 'focus-balance',
+        defaultSize: 'medium',
+        allowedSizes: ['quarter', 'compact', 'medium'],
+        defaultHeight: 'short',
+        allowedHeights: ['short', 'standard'],
+      },
+      {
+        key: 'meeting-load',
+        defaultSize: 'medium',
+        allowedSizes: ['quarter', 'compact', 'medium'],
+        defaultHeight: 'short',
+        allowedHeights: ['short', 'standard'],
       },
     ]);
   });

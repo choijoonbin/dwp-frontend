@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 4,
-  checksum: 'a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137',
-  indexChecksum: 'bd9184a0d57d3ddadac8459091f8a1b9b1a2ccd19c2de60e130bcfda30176398',
+  version: 5,
+  checksum: 'c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f',
+  indexChecksum: '69c2667773026fd4e1e8cad054cb9865592c7c2866b7c20907a14623a2a6e997',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -1113,6 +1113,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.dwaion.work.activity-event.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/activity/events/{eventId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.activity-events.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/activity/events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.activity-summary.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/activity/executions/summary',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.dwaion.work.ask.action',
     routeKind: 'ACTION',
     navigationContextId: 'dwaion.work',
@@ -1157,6 +1205,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/agent/v1/conversations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.run-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/runs/{runId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.work.runs.data',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.work',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/runs',
       },
     ],
   },

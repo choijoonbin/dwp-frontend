@@ -7,7 +7,7 @@ import listPlugin from '@fullcalendar/react/list';
 import timeGridPlugin from '@fullcalendar/react/timegrid';
 import formaThemePlugin from '@fullcalendar/react/themes/forma';
 import koLocale from '@fullcalendar/react/locales/ko';
-import { LockKeyhole, MapPin } from 'lucide-react';
+import { LockKeyhole, MapPin, TriangleAlert } from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -36,6 +36,7 @@ import type {
   EventResizeDoneInfo,
 } from '@fullcalendar/react';
 import type { CalendarEvent } from '@dwp-frontend/shared-utils';
+import type { Theme } from '@mui/material/styles';
 
 export type CalendarRange = Readonly<{ from: string; to: string }>;
 
@@ -81,15 +82,26 @@ function eventInputs(
       start: event.startsAt,
       end: event.endsAt,
       allDay: event.allDay,
-      backgroundColor: tone.soft,
-      borderColor: event.conflict ? '#C62828' : event.calendarColor || tone.main,
-      textColor: '#172033',
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+      textColor: 'inherit',
       editable,
       startEditable: editable,
       durationEditable: editable,
       extendedProps: { source: event, tone: tone.main, editable },
     };
   });
+}
+
+function eventSurfaceColor(theme: Theme, event: CalendarEvent) {
+  const color = {
+    MEETING: theme.palette.primary.main,
+    FOCUS: theme.palette.success.main,
+    TASK: theme.palette.warning.main,
+    OUT_OF_OFFICE: theme.palette.secondary.main,
+    REMINDER: theme.palette.info.main,
+  }[event.type];
+  return alpha(color, theme.palette.mode === 'dark' ? 0.24 : 0.1);
 }
 
 function mutationRange(info: EventDropInfo | EventResizeDoneInfo) {
@@ -220,7 +232,7 @@ export function CalendarInteractiveGrid({
         '& .fc-button': {
           minHeight: 34,
           border: '0 !important',
-          borderRadius: '9px !important',
+          borderRadius: `${theme.shape.borderRadius}px !important`,
           boxShadow: 'none !important',
           bgcolor: 'transparent !important',
           color: `${theme.palette.text.secondary} !important`,
@@ -245,7 +257,8 @@ export function CalendarInteractiveGrid({
         '& .fc-timegrid-slot': { height: '2.8rem' },
         '& .fc-timegrid-slot-label-cushion': { color: 'text.secondary', fontSize: '0.72rem' },
         '& .fc-event': {
-          borderRadius: '7px',
+          borderRadius: `${theme.shape.borderRadius}px`,
+          bgcolor: 'transparent !important',
           boxShadow: 'none',
           cursor: 'pointer',
           transition: theme.transitions.create('filter', {
@@ -271,7 +284,12 @@ export function CalendarInteractiveGrid({
           bgcolor: 'primary.main',
           color: 'primary.contrastText',
         },
-        '& .fc-popover': { borderRadius: 2, boxShadow: theme.shadows[8] },
+        '& .fc-popover': {
+          borderRadius: `${theme.shape.borderRadius}px`,
+          border: 1,
+          borderColor: 'divider',
+          boxShadow: 'none',
+        },
         '@media (prefers-reduced-motion: reduce)': {
           '& .fc-event': { transition: 'none' },
         },
@@ -281,6 +299,9 @@ export function CalendarInteractiveGrid({
             border: '1px solid CanvasText !important',
           },
           '& .fc-event:focus': { outlineColor: 'Highlight' },
+          '& [data-calendar-event-conflict="true"]': {
+            outline: '2px double CanvasText',
+          },
           '& .fc-day-today .fc-daygrid-day-number': {
             border: '1px solid CanvasText',
           },
@@ -359,6 +380,7 @@ export function CalendarInteractiveGrid({
                   {event.title}
                 </Typography>
                 {!editable && <LockKeyhole size={11} aria-hidden="true" />}
+                {event.conflict && <TriangleAlert size={11} aria-hidden="true" />}
               </Stack>
               <Typography
                 component="span"
@@ -382,6 +404,7 @@ export function CalendarInteractiveGrid({
                   {event.title}
                 </Typography>
                 {!editable && <LockKeyhole size={11} aria-hidden="true" />}
+                {event.conflict && <TriangleAlert size={11} aria-hidden="true" />}
               </Stack>
               {event.location && info.view.type.startsWith('timeGrid') && (
                 <Stack direction="row" spacing={0.35} alignItems="center" sx={{ opacity: 0.76 }}>
@@ -395,10 +418,16 @@ export function CalendarInteractiveGrid({
           );
           const contentSx = {
             minWidth: 0,
+            height: listView ? 'auto' : '100%',
             px: listView ? 1 : 0.75,
             py: listView ? 0.75 : 0.4,
             borderLeft: '3px solid',
             borderLeftColor: event.calendarColor || 'primary.main',
+            bgcolor: listView ? 'transparent' : (theme: Theme) => eventSurfaceColor(theme, event),
+            color: 'text.primary',
+            outline: event.conflict ? '1px solid' : 'none',
+            outlineColor: event.conflict ? 'error.main' : 'transparent',
+            outlineOffset: event.conflict ? -1 : 0,
           } as const;
 
           if (listView) {
@@ -438,7 +467,11 @@ export function CalendarInteractiveGrid({
             );
           }
 
-          return <Box sx={contentSx}>{content}</Box>;
+          return (
+            <Box data-calendar-event-conflict={event.conflict || undefined} sx={contentSx}>
+              {content}
+            </Box>
+          );
         }}
         eventDidMount={(info) => {
           const event = info.event.extendedProps.source as CalendarEvent;

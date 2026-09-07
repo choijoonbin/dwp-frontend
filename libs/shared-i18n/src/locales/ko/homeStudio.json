@@ -67,7 +67,9 @@
       "activity": "업무 점검",
       "focus": "내 요청 현황",
       "schedule": "오늘",
-      "daily-brief": "응답할 일"
+      "daily-brief": "응답할 일",
+      "focus-balance": "집중 시간",
+      "meeting-load": "회의 부하"
     },
     "fieldLabels": {
       "eventType": "활동 유형",
