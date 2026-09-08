@@ -4,8 +4,8 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 
 import { ActivityLayout } from '../layouts/activity-layout';
 import {
-  AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -21,9 +21,9 @@ export const activityRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.ACTIVITY">
+          <ProductRouteGuard resourceKey="APP.ACTIVITY" permissionCode="VIEW">
             <ActivityLayout />
-          </AppRouteGuard>
+          </ProductRouteGuard>
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),

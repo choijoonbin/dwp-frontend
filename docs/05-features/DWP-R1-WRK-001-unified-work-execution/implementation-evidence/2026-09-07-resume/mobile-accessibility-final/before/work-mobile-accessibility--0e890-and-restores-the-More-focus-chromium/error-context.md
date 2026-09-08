@@ -1,0 +1,86 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - button "Search DWP" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "Open DWAI·ON" [ref=e29]:
+                        - button "Open DWAI·ON" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - generic [ref=e34]:
+                - generic [ref=e35]:
+                    - generic [ref=e37]:
+                        - heading "In progress" [active] [level=1] [ref=e38]
+                        - generic [ref=e40]: 0 results
+                    - generic [ref=e41]:
+                        - status [ref=e42]:
+                            - generic [ref=e44]:
+                                - generic [ref=e45]: Snapshot verified
+                                - generic [ref=e46]: Last verified 9/7/26, 6:32 PM
+                            - generic "Try again" [ref=e47]:
+                                - button "Try again" [ref=e48] [cursor=pointer]:
+                                    - img [ref=e49]
+                        - button "Add personal task" [ref=e54] [cursor=pointer]:
+                            - img [ref=e56]
+                            - text: Add personal task
+                - region "Unified queue search and filters" [ref=e58]:
+                    - generic [ref=e59]:
+                        - generic [ref=e60]:
+                            - generic [ref=e61]: Search work
+                            - generic [ref=e62]:
+                                - img [ref=e64]
+                                - textbox "Search work" [ref=e67]:
+                                    - /placeholder: Search titles or work details
+                                - group:
+                                    - generic: Search work
+                        - group "Work view" [ref=e68]:
+                            - button "All (4)" [ref=e69] [cursor=pointer]
+                            - button "Your action (4)" [ref=e70] [cursor=pointer]
+                            - button "In progress (0)" [pressed] [ref=e71] [cursor=pointer]
+                            - button "Waiting (0)" [ref=e72] [cursor=pointer]
+                            - button "Completed (0)" [ref=e73] [cursor=pointer]
+                        - button "Today plan (0)" [ref=e74] [cursor=pointer]:
+                            - img [ref=e76]
+                            - text: Today plan (0)
+                        - button "Filter and sort" [ref=e78] [cursor=pointer]:
+                            - img [ref=e80]
+                            - text: Filter and sort
+                - status [ref=e81]:
+                    - img [ref=e83]
+                    - heading "No work matches these conditions" [level=2] [ref=e88]
+                    - paragraph [ref=e89]: Change the search, source, or deadline filters and try again.
+                    - generic [ref=e91]:
+                        - button "Reset filters" [ref=e92] [cursor=pointer]
+                        - button "Add personal task" [ref=e93] [cursor=pointer]
+        - navigation "Work quick navigation" [ref=e94]:
+            - button "Inbox" [ref=e95] [cursor=pointer]:
+                - img [ref=e96]
+                - generic [ref=e99]: Inbox
+            - button "Today" [ref=e100] [cursor=pointer]:
+                - img [ref=e101]
+                - generic [ref=e106]: Today
+            - button "My actions" [ref=e107] [cursor=pointer]:
+                - img [ref=e108]
+                - generic [ref=e111]: My actions
+            - button "DWAI·ON" [ref=e112] [cursor=pointer]:
+                - img [ref=e113]
+                - generic [ref=e116]: DWAI·ON
+            - button "More" [ref=e117] [cursor=pointer]:
+                - img [ref=e118]
+                - generic [ref=e122]: More
+```

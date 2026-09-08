@@ -231,6 +231,7 @@ export function MeetingScheduleMobileFooter({
   const { t } = useTranslation('meetings');
   return (
     <Box
+      data-testid="meeting-schedule-action-dock"
       sx={{
         display: { xs: 'block', md: 'none' },
         position: 'fixed',

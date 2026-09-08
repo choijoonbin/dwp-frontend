@@ -10,6 +10,25 @@ let container: HTMLDivElement;
 let opener: HTMLButtonElement;
 let root: Root;
 let openDeferredDialog: () => void;
+const originalMatchMedia = window.matchMedia;
+
+function setPointerEnvironment(compact: boolean, coarsePointer = false) {
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches:
+        (compact && query === '(max-width:599.95px)') ||
+        (coarsePointer && query === '(pointer: coarse)'),
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+}
 
 function DialogHarness({ onClose }: { onClose: () => void }) {
   const [open, setOpen] = useState(true);
@@ -77,7 +96,54 @@ describe('FormDialog keyboard contract', () => {
     await act(async () => root.unmount());
     opener.remove();
     container.remove();
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: originalMatchMedia,
+    });
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = false;
+  });
+
+  it('provides 44px mobile footer targets without changing desktop density', async () => {
+    setPointerEnvironment(true);
+    const mobileDialog = await renderDialog();
+    const mobileCancel = Array.from(
+      mobileDialog.querySelectorAll<HTMLButtonElement>('button')
+    ).find((button) => button.textContent === 'Keep editing');
+    const mobileSecondary = Array.from(
+      mobileDialog.querySelectorAll<HTMLButtonElement>('button')
+    ).find((button) => button.textContent === 'Reload latest');
+    const mobileSubmit = mobileDialog.querySelector<HTMLButtonElement>('button[type="submit"]');
+    expect(mobileCancel).toBeDefined();
+    expect(mobileSecondary).toBeDefined();
+    expect(mobileSubmit).not.toBeNull();
+    expect(getComputedStyle(mobileSecondary!).minHeight).toBe('44px');
+    expect(getComputedStyle(mobileSecondary!).minWidth).toBe('44px');
+    expect(getComputedStyle(mobileCancel!).minHeight).toBe('44px');
+    expect(getComputedStyle(mobileCancel!).minWidth).toBe('44px');
+    expect(getComputedStyle(mobileSubmit!).minHeight).toBe('44px');
+    expect(getComputedStyle(mobileSubmit!).minWidth).toBe('44px');
+
+    await act(async () => root.unmount());
+    root = createRoot(container);
+    setPointerEnvironment(false, true);
+    const coarseDialog = await renderDialog();
+    for (const action of coarseDialog.querySelectorAll<HTMLButtonElement>('button')) {
+      expect(getComputedStyle(action).minHeight).toBe('44px');
+      expect(getComputedStyle(action).minWidth).toBe('44px');
+    }
+
+    await act(async () => root.unmount());
+    root = createRoot(container);
+    setPointerEnvironment(false);
+    const desktopDialog = await renderDialog();
+    const desktopSecondary = Array.from(
+      desktopDialog.querySelectorAll<HTMLButtonElement>('button')
+    ).find((button) => button.textContent === 'Reload latest');
+    const desktopSubmit = desktopDialog.querySelector<HTMLButtonElement>('button[type="submit"]');
+    expect(desktopSecondary).toBeDefined();
+    expect(desktopSubmit).not.toBeNull();
+    expect(getComputedStyle(desktopSecondary!).minHeight).not.toBe('44px');
+    expect(getComputedStyle(desktopSubmit!).minHeight).not.toBe('44px');
   });
 
   it('makes the scroll region keyboard reachable before the ordered actions', async () => {

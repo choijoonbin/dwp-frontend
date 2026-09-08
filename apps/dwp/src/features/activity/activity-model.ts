@@ -87,17 +87,28 @@ export const activityQueryKeys = {
   feed: (identity: string, filters: WorkspaceActivityFilters) =>
     [...activityQueryKeys.root, 'feed', identity, filters] as const,
   summary: (identity: string) => [...activityQueryKeys.root, 'summary', identity] as const,
+  sources: (identity: string) => [...activityQueryKeys.root, 'sources', identity] as const,
 };
 
+function validActivityTimestamp(value: string): boolean {
+  const parts =
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/u.exec(
+      value
+    );
+  if (!parts || !Number.isFinite(Date.parse(value))) return false;
+  const [year, month, day, hour, minute, second] = parts.slice(1).map((part) => Number(part ?? 0));
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+  // Date.parse rolls values such as February 30 and 24:00 into another day. The filter
+  // must represent exactly what the user entered, not a silently normalized interval.
+  return Boolean(
+    daysInMonth && day >= 1 && day <= daysInMonth && hour < 24 && minute < 60 && second < 60
+  );
+}
+
 export function validActivityTimeRange(filters: WorkspaceActivityFilters): boolean {
-  for (const value of [filters.from, filters.to]) {
-    if (
-      value &&
-      (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/u.test(value) ||
-        !Number.isFinite(Date.parse(value)))
-    )
-      return false;
-  }
+  if ([filters.from, filters.to].some((value) => value && !validActivityTimestamp(value)))
+    return false;
   return !filters.from || !filters.to || Date.parse(filters.from) < Date.parse(filters.to);
 }
 

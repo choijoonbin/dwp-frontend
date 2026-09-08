@@ -1,0 +1,127 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - button "Search DWP" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "Open DWAI·ON" [ref=e29]:
+                        - button "Open DWAI·ON" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - article "Prepare the customer handover notes" [ref=e37]:
+                - generic [ref=e38]:
+                    - button "Back to work list" [ref=e39] [cursor=pointer]:
+                        - img [ref=e41]
+                        - text: Back to work list
+                    - generic [ref=e43]:
+                        - generic [ref=e44]:
+                            - generic [ref=e45]: b1111111Personal task
+                            - heading "Prepare the customer handover notes" [active] [level=2] [ref=e46]
+                            - paragraph [ref=e47]: Source state verified Sep 4, 2026 at 9:00 AM
+                        - generic [ref=e48]:
+                            - generic [ref=e50]: Open
+                            - generic [ref=e52]: No due date
+                - generic [ref=e53]:
+                    - generic [ref=e54]:
+                        - generic [ref=e55]:
+                            - term [ref=e56]: Priority
+                            - definition [ref=e57]: High
+                        - generic [ref=e58]:
+                            - term [ref=e59]: Due
+                            - definition [ref=e60]: No due date
+                    - generic [ref=e63]:
+                        - group "Personal task progress" [ref=e64]:
+                            - button "Open" [disabled] [pressed]
+                            - button "In progress" [ref=e65] [cursor=pointer]
+                            - button "Waiting" [ref=e66] [cursor=pointer]
+                            - button "Completed" [ref=e67] [cursor=pointer]
+                        - generic [ref=e68]:
+                            - generic [ref=e69]:
+                                - generic [ref=e70]:
+                                    - heading "Personal task details" [level=3] [ref=e71]
+                                    - text: 'Last updated: Sep 4, 2026 at 9:00 AM'
+                                - generic [ref=e72]:
+                                    - button "Edit" [ref=e73] [cursor=pointer]:
+                                        - img [ref=e75]
+                                        - text: Edit
+                                    - button "Delete task" [ref=e78] [cursor=pointer]:
+                                        - img [ref=e80]
+                                        - text: Delete task
+                            - paragraph [ref=e83]: Summarize the three open customer questions before the handover.
+                        - region "Linked source" [ref=e84]:
+                            - generic [ref=e85]:
+                                - img [ref=e86]
+                                - heading "Linked source" [level=3] [ref=e90]
+                            - generic [ref=e91]:
+                                - paragraph [ref=e92]: No source work is linked.
+                                - button "Edit source links" [ref=e93] [cursor=pointer]:
+                                    - img [ref=e95]
+                                    - text: Edit source links
+                        - region "Checklist" [ref=e98]:
+                            - generic [ref=e99]:
+                                - img [ref=e100]
+                                - heading "Checklist" [level=3] [ref=e104]
+                            - generic [ref=e107]:
+                                - generic [ref=e108]:
+                                    - generic [ref=e109]:
+                                        - generic [ref=e110]: 0 of 0 complete
+                                        - generic [ref=e111]: 0%
+                                    - progressbar "0 of 0 complete" [ref=e112]
+                                - list
+                                - paragraph [ref=e114]: Break this task into smaller steps.
+                                - generic [ref=e115]:
+                                    - generic [ref=e116]:
+                                        - generic: New checklist item
+                                        - generic [ref=e117]:
+                                            - textbox "New checklist item" [ref=e118]
+                                            - group:
+                                                - generic: New checklist item
+                                    - button "Add item" [disabled]:
+                                        - generic:
+                                            - img
+                                        - text: Add item
+                        - group [ref=e119]:
+                            - generic "Change history" [ref=e120] [cursor=pointer]:
+                                - img [ref=e121]
+                                - paragraph [ref=e126]: Change history
+                                - img [ref=e127]
+                    - separator [ref=e129]
+                    - generic [ref=e130]:
+                        - button "Complete" [ref=e131] [cursor=pointer]
+                        - button "Archive" [ref=e132] [cursor=pointer]
+                        - button "Add to today plan" [ref=e133] [cursor=pointer]
+                        - button "Ask DWAI·ON" [ref=e134] [cursor=pointer]:
+                            - img [ref=e136]
+                            - text: Ask DWAI·ON
+                    - generic [ref=e139]: Manage personal task details and lifecycle directly here.
+        - navigation "Work quick navigation" [ref=e140]:
+            - button "Inbox" [ref=e141] [cursor=pointer]:
+                - img [ref=e142]
+                - generic [ref=e145]: Inbox
+            - button "Today" [ref=e146] [cursor=pointer]:
+                - img [ref=e147]
+                - generic [ref=e152]: Today
+            - button "My actions" [ref=e153] [cursor=pointer]:
+                - img [ref=e154]
+                - generic [ref=e157]: My actions
+            - button "DWAI·ON" [ref=e158] [cursor=pointer]:
+                - img [ref=e159]
+                - generic [ref=e162]: DWAI·ON
+            - button "More" [ref=e163] [cursor=pointer]:
+                - img [ref=e164]
+                - generic [ref=e168]: More
+```

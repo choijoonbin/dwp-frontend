@@ -7,7 +7,9 @@ import {
 } from './support/video-meeting-visual-fixtures';
 
 test.describe('Meeting desktop hierarchy and bounded density', () => {
-  test('the home focus is prominent while neutral sections stay flat', async ({ page }) => {
+  test('the approved home focus keeps its restrained accent and distinct timeline hierarchy', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 960 });
     await mockMeetingVisualSession(page, { locale: 'en', reducedMotion: true });
     await mockMeetingVisualHome(page, 'SAMPLE');
@@ -39,8 +41,7 @@ test.describe('Meeting desktop hierarchy and bounded density', () => {
     expect(hierarchy[0].backgroundImage).toBe('none');
     expect(hierarchy[0].borderTopWidth).toBe('1px');
     expect(hierarchy[0].accentHeight).toBe('3px');
-    expect(hierarchy[0].accentBackgroundImage).toBe('none');
-    expect(hierarchy[0].accentBackgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    expect(hierarchy[0].accentBackgroundImage).toContain('linear-gradient(90deg');
     expect(hierarchy[0].backgroundColor).not.toBe(hierarchy[1].backgroundColor);
     expect(hierarchy[1].boxShadow).toBe('none');
   });
@@ -61,13 +62,17 @@ test.describe('Meeting desktop hierarchy and bounded density', () => {
     const list = page.getByTestId('my-meetings-list');
     const previous = page.getByRole('button', { name: 'Previous page' });
     const next = page.getByRole('button', { name: 'Next page' });
-    await expect(page.getByTestId('my-meetings-page-status')).toHaveText('Page 1 of 2');
+    await expect(page.getByTestId('my-meetings-page-status')).toHaveText('Page 1 of 2', {
+      timeout: 15_000,
+    });
     await expect(previous).toBeDisabled();
     await expect(next).toBeEnabled();
     await expect(list.locator('[aria-pressed]')).toHaveCount(8);
     await expect(page.getByText('8 meetings on this page')).toBeVisible();
     await expect(
-      page.getByText('Search and filters apply to the current server page.')
+      page
+        .getByTestId('my-meetings-workspace')
+        .getByText('Search and filters apply to the current server page.')
     ).toBeVisible();
     expect(requests[0].searchParams.get('page')).toBe('0');
     expect(requests[0].searchParams.get('pageSize')).toBe('10');

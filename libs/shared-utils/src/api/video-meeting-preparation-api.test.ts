@@ -81,6 +81,106 @@ function last(fetch: ReturnType<typeof transport>) {
   ];
 }
 describe('V29 preparation and scheduling public contract', () => {
+  it.each(['NEEDS_RESPONSE', 'RECONFIRM_REQUIRED'])(
+    'consumes actual V29 %s state without flattening its meaning',
+    async (response) => {
+      const mine = {
+        participantId,
+        displayName: 'Joon',
+        response,
+        invitationRevision: 4,
+        respondedAt: null,
+        version: 0,
+        mine: true,
+      };
+      transport(
+        preparation({
+          myResponse: mine,
+          invitationResponses: [mine],
+          invitationCounts: { accepted: 5, tentative: 1, declined: 0, pending: 1 },
+          canEditAgenda: false,
+          canManageMaterials: false,
+          canRespond: true,
+        })
+      );
+      expect((await getVideoMeetingPreparation(id)).myResponse?.response).toBe(response);
+    }
+  );
+  it('accepts an organizer policy acceptance without inventing a response timestamp', async () => {
+    const mine = {
+      participantId,
+      displayName: 'Host',
+      response: 'ACCEPTED',
+      invitationRevision: 4,
+      respondedAt: null,
+      version: 1,
+      mine: true,
+    };
+    transport(
+      preparation({
+        myResponse: mine,
+        invitationResponses: [mine],
+        invitationCounts: { accepted: 1, tentative: 0, declined: 0, pending: 0 },
+      })
+    );
+    expect((await getVideoMeetingPreparation(id)).myResponse?.respondedAt).toBeNull();
+  });
+  it('accepts the owner service SELF roster with whole-meeting aggregates without inventing identities', async () => {
+    const mine = {
+      participantId,
+      displayName: 'Joon',
+      response: 'PENDING',
+      invitationRevision: 4,
+      respondedAt: null,
+      version: 0,
+      mine: true,
+    };
+    transport(
+      preparation({
+        myResponse: mine,
+        invitationResponses: [mine],
+        invitationCounts: { accepted: 5, tentative: 1, declined: 0, pending: 1 },
+        canEditAgenda: false,
+        canManageMaterials: false,
+        canRespond: true,
+      })
+    );
+    const result = await getVideoMeetingPreparation(id);
+    expect(result.invitationResponses).toEqual([mine]);
+    expect(result.invitationCounts.accepted).toBe(5);
+  });
+  it('rejects SELF response counts that cannot contain the visible response', async () => {
+    const mine = {
+      participantId,
+      displayName: 'Joon',
+      response: 'PENDING',
+      invitationRevision: 4,
+      respondedAt: null,
+      version: 0,
+      mine: true,
+    };
+    transport(
+      preparation({
+        myResponse: mine,
+        invitationResponses: [mine],
+        invitationCounts: { accepted: 7, tentative: 0, declined: 0, pending: 0 },
+        canEditAgenda: false,
+        canManageMaterials: false,
+        canRespond: true,
+      })
+    );
+    await expect(getVideoMeetingPreparation(id)).rejects.toThrow(
+      'Invalid preparation invitation counts'
+    );
+  });
+  it('does not relax complete host roster count validation', async () => {
+    transport(
+      preparation({ invitationCounts: { accepted: 5, tentative: 1, declined: 0, pending: 1 } })
+    );
+    await expect(getVideoMeetingPreparation(id)).rejects.toThrow(
+      'Invalid preparation invitation counts'
+    );
+  });
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();

@@ -93,9 +93,21 @@ not coordinate product business workflows.
 ## Ingress and failure isolation
 
 `deploy/nginx/dwp-product-routes.conf` is generated from the architecture manifest. HTML is served
-with `no-store`; content-hashed product assets use immutable caching under
-`/assets/dwp/{applicationId}/`. Route ownership can be deployed or rolled back one product at a
-time without rebuilding sibling products.
+with `no-store`; product assets use immutable caching only under
+`/assets/dwp/{applicationId}/assets/**`. The exact product `theme-bootstrap.js` and
+`site.webmanifest` mappings remain `no-store`, while the namespace root, `index.html`, `.vite`
+metadata, and missing paths fail closed with a `no-store` 404. Route ownership can be deployed or
+rolled back one product at a time without rebuilding sibling products. The product build removes
+the Meeting-only MediaPipe runtime from every non-Meeting artifact and fails if the Meeting
+artifact does not contain its approved local runtime files. Every generated location that adds a
+cache header uses Nginx `add_header_inherit merge` so it does not discard security headers defined
+by the HTTPS server block. This directive requires Nginx 1.29.3 or newer; CI runs the generated
+configuration and route/header matrix on the pinned Nginx 1.31.4 image. Proving that the externally
+managed production ingress uses a compatible image remains deployment evidence, not a
+repository-only assertion. The deployment CSP must permit only
+`script-src 'self' 'wasm-unsafe-eval'` for local WebAssembly execution and must name the exact
+configured LiveKit `wss://` origin in `connect-src`; scheme-wide or wildcard realtime origins are
+not accepted.
 
 Only `/api/**` and `/scim/v2/**` are proxied to the Gateway. Browser source checks reject direct
 service ports, internal service routes, ad hoc Axios clients, `fetch`, WebSocket, EventSource, and

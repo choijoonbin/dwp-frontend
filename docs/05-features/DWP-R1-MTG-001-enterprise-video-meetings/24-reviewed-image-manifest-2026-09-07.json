@@ -1,0 +1,282 @@
+{
+  "kind": "reviewed-implementation-regression",
+  "userDesignApproval": false,
+  "sourceZipSha256": "0a2fc4d7881a01f9b3ba0e6f164f3b9f980f8aa8afc53c29ea53afecb5d22787",
+  "sourceAndPixelThresholdsChanged": false,
+  "excluded": "U14 and other owners; approved-size source comparison images",
+  "files": [
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-chromium-darwin.png",
+      "sha256": "94a39d9d4435f91779215796fd187333ec245b4af1fd6d253132c83a9a71a89d",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--d676d--unsupported-success-claims-chromium/meeting-u04-preparation-actual.png",
+      "project": "chromium",
+      "test": "preparation RSVP uses current revision and exposes no unsupported success claims"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-complete-chromium-darwin.png",
+      "sha256": "57684d7917d1fa3ac8ec1d93bb4da41c15dab3b0c17a5951778235014dbdf0ef",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--71f2e-h-compact-optional-guidance-chromium/meeting-u04-preparation-complete-actual.png",
+      "project": "chromium",
+      "test": "private agenda checklist persists self-only state with compact optional guidance"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-complete-mobile-darwin.png",
+      "sha256": "1d706150690a7c9d46a2910cc9133b924427478a53fc08b256fc521340e070fe",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--71f2e-h-compact-optional-guidance-mobile/meeting-u04-preparation-complete-actual.png",
+      "project": "mobile",
+      "test": "private agenda checklist persists self-only state with compact optional guidance"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-conflict-chromium-darwin.png",
+      "sha256": "abf10c3e1f7a870cbd68ad4979fe262ed2cbdbc699c6b0d42d3f5b560c548bad",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--d5bfc-reserves-no-aggregate-state-chromium/meeting-u04-preparation-conflict-actual.png",
+      "project": "chromium",
+      "test": "private checklist conflict requires review and preserves no aggregate state"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-conflict-mobile-darwin.png",
+      "sha256": "ebe9b5ad8723f1c6b5cdc6120f61374670d1b4697bbb49ed6cc1e91e59857c93",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--d5bfc-reserves-no-aggregate-state-mobile/meeting-u04-preparation-conflict-actual.png",
+      "project": "mobile",
+      "test": "private checklist conflict requires review and preserves no aggregate state"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-forced-colors-320-chromium-darwin.png",
+      "sha256": "efc5f98fa91fb828ba542a5d858e0a4300111c7115844b1fa5e3dbb48a22d4bb",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--28aaa-without-horizontal-overflow-chromium/meeting-u04-preparation-forced-colors-320-actual.png",
+      "project": "chromium",
+      "test": "320px forced-colors checklist remains keyboard operable without horizontal overflow"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-forced-colors-320-mobile-darwin.png",
+      "sha256": "b5f65628a484fdc395c2e1e3fdc4ffdb2a191b83f632f5a3a7bf329ddcf971ce",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--28aaa-without-horizontal-overflow-mobile/meeting-u04-preparation-forced-colors-320-actual.png",
+      "project": "mobile",
+      "test": "320px forced-colors checklist remains keyboard operable without horizontal overflow"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-mobile-darwin.png",
+      "sha256": "7a572e887759644176a43ada2b8aff07744ef08dd154bde330efdf4ca3e3295b",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--d676d--unsupported-success-claims-mobile/meeting-u04-preparation-actual.png",
+      "project": "mobile",
+      "test": "preparation RSVP uses current revision and exposes no unsupported success claims"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-text-200-chromium-darwin.png",
+      "sha256": "4df065d39b026c84dead193a2432ae5d9643db2c9f72740b484c4d7432a77275",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--a6e01-without-horizontal-overflow-chromium/meeting-u04-preparation-text-200-actual.png",
+      "project": "chromium",
+      "test": "200 percent text keeps personal preparation operable without horizontal overflow"
+    },
+    {
+      "file": "e2e/video-meeting-preparation.spec.ts-snapshots/meeting-u04-preparation-text-200-mobile-darwin.png",
+      "sha256": "5ba2701f31dfdc8560f55d7c6f1e5e76c58674c5d02cb8e61bb68aa8bb19b6cd",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-preparation--a6e01-without-horizontal-overflow-mobile/meeting-u04-preparation-text-200-actual.png",
+      "project": "mobile",
+      "test": "200 percent text keeps personal preparation operable without horizontal overflow"
+    },
+    {
+      "file": "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-first-step-chromium-darwin.png",
+      "sha256": "d6275801df0792cb348a2476208bf75cb1792d34ed1f843eb49a782b468c8213",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-schedule-fir-5be47-ion-visible-at-1440-and-390-chromium/meeting-u03-schedule-first-step-actual.png",
+      "project": "chromium",
+      "test": "first scheduling step keeps the approved manual draft action visible at 1440 and 390"
+    },
+    {
+      "file": "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-first-step-mobile-darwin.png",
+      "sha256": "d48715d43e547ad2460983fd2947c8406a04f0477b1b93e9d403d6db5057ba6d",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-schedule-fir-5be47-ion-visible-at-1440-and-390-mobile/meeting-u03-schedule-first-step-actual.png",
+      "project": "mobile",
+      "test": "first scheduling step keeps the approved manual draft action visible at 1440 and 390"
+    },
+    {
+      "file": "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-review-chromium-darwin.png",
+      "sha256": "2a591a8383e97afc45cc66314526f5fddba8db25f59203966949e3a680129db4",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-schedule-sin-d1633-e-steps-to-real-preparation-chromium/meeting-u03-schedule-review-actual.png",
+      "project": "chromium",
+      "test": "single scheduling connects five sections / four mobile steps to real preparation"
+    },
+    {
+      "file": "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-review-mobile-darwin.png",
+      "sha256": "0e53ace41e086c30f4ba14c17b74ad96b6a69a65428dcee625d6fb7419e81be8",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-schedule-sin-d1633-e-steps-to-real-preparation-mobile/meeting-u03-schedule-review-actual.png",
+      "project": "mobile",
+      "test": "single scheduling connects five sections / four mobile steps to real preparation"
+    },
+    {
+      "file": "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-text-200-chromium-darwin.png",
+      "sha256": "022767f70ea84396ea290fe682f35e52cf8d5f5655d253b0738b32ccb562e9d9",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-schedule-req-c96a7-xt-keep-the-workflow-usable-chromium/meeting-u03-schedule-text-200-actual.png",
+      "project": "chromium",
+      "test": "required viewport sizes and 200 percent text keep the workflow usable"
+    },
+    {
+      "file": "e2e/video-meeting-schedule.spec.ts-snapshots/meeting-u03-schedule-text-200-mobile-darwin.png",
+      "sha256": "0f6d945a3984f9f3535deb8421dc3dc19124a1c22297034ee2268ce7e00500cc",
+      "reviewedEvidence": "/tmp/meeting-resume-visual-r3/video-meeting-schedule-req-c96a7-xt-keep-the-workflow-usable-mobile/meeting-u03-schedule-text-200-actual.png",
+      "project": "mobile",
+      "test": "required viewport sizes and 200 percent text keep the workflow usable"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-blocked-en-320-forced-colors-chromium-darwin.png",
+      "sha256": "6b87907a2d4465adb52cd6e0813780369f537c75a95b1d48e3de7abd9a3a73a0",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-bb9c1-lish-forced-colors-boundary-chromium/meeting-home-blocked-en-320-forced-colors-actual.png",
+      "project": "chromium",
+      "test": "home service blocker stays explicit at the 320px English forced-colors boundary"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-blocked-en-320-forced-colors-viewport-chromium-darwin.png",
+      "sha256": "0800240f14488126be3dd11d28501f4833591939ebb8ca97328e060cefbc7e1e",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-bb9c1-lish-forced-colors-boundary-chromium/meeting-home-blocked-en-320-forced-colors-viewport-actual.png",
+      "project": "chromium",
+      "test": "home service blocker stays explicit at the 320px English forced-colors boundary"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-empty-ko-1440-light-chromium-darwin.png",
+      "sha256": "d0fd015037cbf2a61adfde4f82a6be4da22a0d786cba71ac76a4acb1cdd93a7a",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-866f4-empty-work-at-1440px-Korean-chromium/meeting-home-empty-ko-1440-light-actual.png",
+      "project": "chromium",
+      "test": "home EMPTY keeps real actions and honest empty work at 1440px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-live-ko-390-dark-chromium-darwin.png",
+      "sha256": "b474136957f4f6f6dd2714a47b41c0aae10e682da1978649e165156e60feae62",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-75dc5-s-at-390px-Korean-dark-mode-chromium/meeting-home-live-ko-390-dark-actual.png",
+      "project": "chromium",
+      "test": "home LIVE preserves hierarchy and touch targets at 390px Korean dark mode"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-live-ko-390-dark-viewport-chromium-darwin.png",
+      "sha256": "eff9e827c57ea520e449b1feafccabacc7336c384467c6864c825dca90ff5330",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-75dc5-s-at-390px-Korean-dark-mode-chromium/meeting-home-live-ko-390-dark-viewport-actual.png",
+      "project": "chromium",
+      "test": "home LIVE preserves hierarchy and touch targets at 390px Korean dark mode"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-next-en-768-text-200-chromium-darwin.png",
+      "sha256": "fafec6916085ac805b493d0128f37b570162ed3604885ee6dc5e52b788ed5e4f",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-807be-nd-200-percent-English-text-chromium/meeting-home-next-en-768-text-200-actual.png",
+      "project": "chromium",
+      "test": "home NEXT remains usable at 768px and 200 percent English text"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-sample-en-1280-light-chromium-darwin.png",
+      "sha256": "63638d3ab71fd7e687243f0cf17bc40a17f9cbc49395d5abb9c3527f6aa13164",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-62671-ult-links-at-1280px-English-chromium/meeting-home-sample-en-1280-light-actual.png",
+      "project": "chromium",
+      "test": "home SAMPLE presents contract-backed schedule and result links at 1280px English"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-sample-ko-390-light-chromium-darwin.png",
+      "sha256": "67fb66194e14edd18e684e2f3529184415e2ce715fa4bc873b616757881b0adc",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-5428c-k-hierarchy-at-390px-Korean-chromium/meeting-home-sample-ko-390-light-actual.png",
+      "project": "chromium",
+      "test": "home SAMPLE preserves the approved full work hierarchy at 390px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-home-sample-ko-390-light-viewport-chromium-darwin.png",
+      "sha256": "48efaf59a701444cfb8d1e87e712483a5df182cb7d3a8625e4eab675f40d85ce",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-5428c-k-hierarchy-at-390px-Korean-chromium/meeting-home-sample-ko-390-light-viewport-actual.png",
+      "project": "chromium",
+      "test": "home SAMPLE preserves the approved full work hierarchy at 390px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-library-en-1280-light-chromium-darwin.png",
+      "sha256": "b0cc513aa2090ab69f2196b9439e4f5ee2540ee3ec3ce63bd1d62775f7f625df",
+      "reviewedEvidence": "/tmp/meeting-narrow-layout-r12/video-meeting-visual-quali-b6c8e-e-preview-at-1280px-English-chromium/meeting-library-en-1280-light-actual.png",
+      "project": "chromium",
+      "test": "Meeting library uses a 7 to 5 result and evidence preview at 1280px English"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-library-ko-390-light-chromium-darwin.png",
+      "sha256": "ec34ad5c6396ed54041342d709295fb1b80871d9912613e3aed188204320a2ce",
+      "reviewedEvidence": "/tmp/meeting-narrow-layout-r12/video-meeting-visual-quali-1e9a7-onable-list-at-390px-Korean-chromium/meeting-library-ko-390-light-actual.png",
+      "project": "chromium",
+      "test": "Meeting library becomes a single actionable list at 390px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-library-ko-390-light-viewport-chromium-darwin.png",
+      "sha256": "0d99f7e9dc7d3b5e06eacd72c0868b05db52cf5a82fcf23538fca035bd3cfa0d",
+      "reviewedEvidence": "/tmp/meeting-narrow-layout-r12/video-meeting-visual-quali-1e9a7-onable-list-at-390px-Korean-chromium/meeting-library-ko-390-light-viewport-actual.png",
+      "project": "chromium",
+      "test": "Meeting library becomes a single actionable list at 390px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-mine-en-1280-light-chromium-darwin.png",
+      "sha256": "25396febd802c4b2be982f97279ef44db6964617399d996bdb3864fdef214a88",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-3d49f-inspector-at-1280px-English-chromium/meeting-mine-en-1280-light-actual.png",
+      "project": "chromium",
+      "test": "My meetings uses a bounded list and inspector at 1280px English"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-mine-ko-390-dark-chromium-darwin.png",
+      "sha256": "6602e40374ef2b2b1beb94d258d11a2c81d742b4184f8045ac0276e3a88fa502",
+      "reviewedEvidence": "/tmp/meeting-resume-owned-final-r14/video-meeting-visual-quali-01365-gation-at-390px-Korean-dark-chromium/meeting-mine-ko-390-dark-actual.png",
+      "project": "chromium",
+      "test": "My meetings keeps the selected preparation and stable navigation at 390px Korean dark"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-mine-ko-390-dark-viewport-chromium-darwin.png",
+      "sha256": "d261f0cc531a36b9d0a4762b984152d325367e521eb7697e91e6863d16200b84",
+      "reviewedEvidence": "/tmp/meeting-resume-owned-final-r14/video-meeting-visual-quali-01365-gation-at-390px-Korean-dark-chromium/meeting-mine-ko-390-dark-viewport-actual.png",
+      "project": "chromium",
+      "test": "My meetings keeps the selected preparation and stable navigation at 390px Korean dark"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-prejoin-en-1280-light-chromium-darwin.png",
+      "sha256": "80079fc98a27383ed79e7b01c775217a4af48affb83d698cb109e53226dd11a6",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-92529-e-by-side-at-1280px-English-chromium/meeting-prejoin-en-1280-light-actual.png",
+      "project": "chromium",
+      "test": "prejoin keeps the private preview and security rail side by side at 1280px English"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-prejoin-ko-390-dark-chromium-darwin.png",
+      "sha256": "7bf49a27fd3602cbecec15ef0f254cd8a4c10f73120ae627e6c880aaecb9f214",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-fa536-y-at-390px-Korean-dark-mode-chromium/meeting-prejoin-ko-390-dark-actual.png",
+      "project": "chromium",
+      "test": "prejoin stacks preview before policy at 390px Korean dark mode"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-prejoin-ko-390-dark-viewport-chromium-darwin.png",
+      "sha256": "f2c7ac10abec3fc52400a8777f29e23aebecd3c85a4b010adba05fafec1e766b",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-fa536-y-at-390px-Korean-dark-mode-chromium/meeting-prejoin-ko-390-dark-viewport-actual.png",
+      "project": "chromium",
+      "test": "prejoin stacks preview before policy at 390px Korean dark mode"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-recap-published-en-1440-dark-chromium-darwin.png",
+      "sha256": "bac8e9f2de57871503dca4ae2f6cc2642beef734ca55bc5d8379cec1d8468a36",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-0a14e-at-1440px-English-dark-mode-chromium/meeting-recap-published-en-1440-dark-actual.png",
+      "project": "chromium",
+      "test": "published AI recap remains evidence-led at 1440px English dark mode"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-recap-published-ko-390-light-chromium-darwin.png",
+      "sha256": "35f0554917412061d47686bc3b1b0bce734dfdb9307af83514b8c2b08cb1b614",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-8ebde--navigation-at-390px-Korean-chromium/meeting-recap-published-ko-390-light-actual.png",
+      "project": "chromium",
+      "test": "published AI recap preserves the evidence rail and library navigation at 390px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-visual-quality.spec.ts-snapshots/meeting-recap-published-ko-390-light-viewport-chromium-darwin.png",
+      "sha256": "a4b4dab1e27324b979366b0e027bca0141904f5e4c94a6618077c79f2d849897",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-visual-quali-8ebde--navigation-at-390px-Korean-chromium/meeting-recap-published-ko-390-light-viewport-actual.png",
+      "project": "chromium",
+      "test": "published AI recap preserves the evidence rail and library navigation at 390px Korean"
+    },
+    {
+      "file": "e2e/video-meeting-workspace-menus.spec.ts-snapshots/meeting-u10-templates-mobile-mobile-darwin.png",
+      "sha256": "0e68013f25fd9a429682947599d697ff5516bbd6ade3a7f2e45e8ead3a51c93b",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-workspace-me-a5f30--responsive-product-actions-mobile/meeting-u10-templates-mobile-actual.png",
+      "project": "mobile",
+      "test": "U10 and U12 retain reviewed source blocks and responsive product actions"
+    },
+    {
+      "file": "e2e/video-meeting-workspace-menus.spec.ts-snapshots/meeting-u12-preferences-mobile-mobile-darwin.png",
+      "sha256": "6f2eda1f7849cfc4c31f522ef9bd355cbec2325bcaadac3856f03cbac92d85e7",
+      "reviewedEvidence": "/tmp/meeting-resume-legacy-evidence-r5/video-meeting-workspace-me-a5f30--responsive-product-actions-mobile/meeting-u12-preferences-mobile-actual.png",
+      "project": "mobile",
+      "test": "U10 and U12 retain reviewed source blocks and responsive product actions"
+    }
+  ]
+}

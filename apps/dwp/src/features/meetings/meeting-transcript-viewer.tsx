@@ -24,7 +24,7 @@ import { useMeetingPlaybackSync } from './meeting-playback-sync';
 
 const PAGE_SIZE = 25;
 const transcriptAuthorizationDenied = (error: unknown) =>
-  error instanceof HttpError && [401, 403, 404].includes(error.status);
+  error instanceof HttpError && [401, 403, 404, 410].includes(error.status);
 
 function formatTimestamp(millis: number) {
   const totalSeconds = Math.max(0, Math.floor(millis / 1_000));
@@ -53,6 +53,7 @@ export function MeetingTranscriptViewer({
   ]);
   const playback = useMeetingPlaybackSync();
   const generation = useRef(0);
+  const activeRequest = useRef<AbortController | null>(null);
   const [opened, setOpened] = useState(false);
   const [input, setInput] = useState('');
   const [query, setQuery] = useState('');
@@ -75,6 +76,9 @@ export function MeetingTranscriptViewer({
 
   const load = async (cursor: number, requestedQuery: string, append: boolean) => {
     const requestGeneration = ++generation.current;
+    activeRequest.current?.abort();
+    const controller = new AbortController();
+    activeRequest.current = controller;
     setLoading(true);
     setError(false);
     try {
@@ -82,12 +86,13 @@ export function MeetingTranscriptViewer({
         cursor,
         pageSize: PAGE_SIZE,
         query: requestedQuery || undefined,
+        signal: controller.signal,
       });
-      if (generation.current !== requestGeneration) return;
+      if (generation.current !== requestGeneration || controller.signal.aborted) return;
       setSegments((current) => (append ? [...current, ...page.segments] : page.segments));
       setNextCursor(page.nextCursor);
     } catch (loadError) {
-      if (generation.current !== requestGeneration) return;
+      if (generation.current !== requestGeneration || controller.signal.aborted) return;
       if (transcriptAuthorizationDenied(loadError)) {
         setSegments([]);
         setNextCursor(null);
@@ -99,21 +104,27 @@ export function MeetingTranscriptViewer({
         setError(true);
       }
     } finally {
+      if (activeRequest.current === controller) activeRequest.current = null;
       if (generation.current === requestGeneration) setLoading(false);
     }
   };
 
   useEffect(() => {
     generation.current += 1;
+    activeRequest.current?.abort();
+    activeRequest.current = null;
     setOpened(false);
     setInput('');
     setQuery('');
     setSegments([]);
     setNextCursor(null);
+    setLoading(false);
     setError(false);
     setAccessRevoked(false);
     return () => {
       generation.current += 1;
+      activeRequest.current?.abort();
+      activeRequest.current = null;
     };
   }, [authorizationScope, meetingId, artifact.artifactId, artifact.version]);
 

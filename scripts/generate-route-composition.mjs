@@ -28,24 +28,78 @@ const lines = [
   '  proxy_pass http://dwp-gateway:8080;',
   '}',
   '',
+  '# Fail closed before Nginx normalizes encoded separators or dot segments into another asset location.',
+  'error_page 418 = @dwp_asset_not_found;',
+  'if ($request_uri ~* "^/assets/dwp/[a-z][a-z0-9-]*/[^?]*(%2e|%2f|%5c)") {',
+  '  return 418;',
+  '}',
+  '',
 ];
 
 for (const application of applications) {
-  lines.push(`location ^~ /assets/dwp/${application.id}/ {`);
+  lines.push(`location = /assets/dwp/${application.id}/assets/ {`);
+  lines.push('  add_header Cache-Control "no-store" always;');
+  lines.push('  add_header_inherit merge;');
+  lines.push('  return 404;');
+  lines.push('}', '');
+  lines.push(`location ^~ /assets/dwp/${application.id}/assets/ {`);
   lines.push(`  alias /srv/dwp/${application.id}/assets/;`);
   lines.push('  add_header Cache-Control "public, max-age=31536000, immutable";');
+  lines.push('  add_header_inherit merge;');
+  lines.push('  error_page 404 = @dwp_asset_not_found;');
+  lines.push('}', '');
+  lines.push(`location = /assets/dwp/${application.id}/theme-bootstrap.js {`);
+  lines.push(`  alias /srv/dwp/${application.id}/theme-bootstrap.js;`);
+  lines.push('  add_header Cache-Control "no-store" always;');
+  lines.push('  add_header_inherit merge;');
+  lines.push('}', '');
+  lines.push(`location = /assets/dwp/${application.id}/site.webmanifest {`);
+  lines.push(`  alias /srv/dwp/${application.id}/site.webmanifest;`);
+  lines.push('  default_type application/manifest+json;');
+  lines.push('  add_header Cache-Control "no-store" always;');
+  lines.push('  add_header_inherit merge;');
+  lines.push('}', '');
+  lines.push(`location ^~ /assets/dwp/${application.id}/ {`);
+  lines.push('  add_header Cache-Control "no-store" always;');
+  lines.push('  add_header_inherit merge;');
+  lines.push('  return 404;');
   lines.push('}', '');
   lines.push(`location = /__dwp/${application.id}/index.html {`);
   lines.push('  internal;');
   lines.push(`  alias /srv/dwp/${application.id}/index.html;`);
   lines.push('  add_header Cache-Control "no-store";');
+  lines.push('  add_header_inherit merge;');
   lines.push('}', '');
 }
 
 lines.push(
-  'location = /theme-bootstrap.js { alias /srv/dwp/platform-shell/theme-bootstrap.js; }',
-  'location = /site.webmanifest { alias /srv/dwp/platform-shell/site.webmanifest; }',
+  'location @dwp_asset_not_found {',
+  '  default_type text/plain;',
+  '  add_header Cache-Control "no-store" always;',
+  '  add_header_inherit merge;',
+  '  return 404 "Artifact asset not found\\n";',
+  '}',
+  '',
+  'location = /theme-bootstrap.js {',
+  '  alias /srv/dwp/platform-shell/theme-bootstrap.js;',
+  '  add_header Cache-Control "no-store" always;',
+  '  add_header_inherit merge;',
+  '}',
+  '',
+  'location = /site.webmanifest {',
+  '  alias /srv/dwp/platform-shell/site.webmanifest;',
+  '  default_type application/manifest+json;',
+  '  add_header Cache-Control "no-store" always;',
+  '  add_header_inherit merge;',
+  '}',
+  '',
   'location ^~ /assets/brand/ { alias /srv/dwp/platform-shell/assets/brand/; }',
+  '',
+  'location ^~ /assets/ {',
+  '  add_header Cache-Control "no-store" always;',
+  '  add_header_inherit merge;',
+  '  return 404;',
+  '}',
   ''
 );
 

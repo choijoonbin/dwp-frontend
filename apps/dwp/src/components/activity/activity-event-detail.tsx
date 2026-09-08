@@ -2,7 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { UseQueryResult } from '@tanstack/react-query';
-import { ArrowUpRight, RefreshCw } from 'lucide-react';
+import {
+  ArrowUpRight,
+  RefreshCw,
+  Activity,
+  Clock3,
+  UserRound,
+  Layers,
+  Link2,
+  Bot,
+  ShieldCheck,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import {
   ActionButton,
   DetailInspector,
@@ -10,26 +21,37 @@ import {
   InlineFeedback,
   LoadingState,
   LocalErrorState,
+  SectionHeader,
 } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
-import type { WorkspaceActivityEvent, WorkspaceActivityState } from '@dwp-frontend/shared-utils';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import type {
+  DwaionUserRun,
+  WorkspaceActivityEvent,
+  WorkspaceActivityEvidence,
+  WorkspaceActivityState,
+} from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import {
   activityEventDetailModel,
   availableActivitySourceRoute,
   selectedActivityEvent,
 } from './activity-detail-model';
+import { ActivityIntegrityEvidence } from './activity-integrity-evidence';
+import { ActivityRunObservability } from './activity-run-observability';
 
 import type { ActivityDetailField } from './activity-detail-model';
 
 type ActivityEventDetailProps = {
   eventId: string;
   query: UseQueryResult<WorkspaceActivityEvent, Error>;
+  evidenceQuery?: UseQueryResult<WorkspaceActivityEvidence, Error>;
+  executionRun?: DwaionUserRun;
   showSourceAction?: boolean;
   variant?: 'inline' | 'drawer';
   onClose?: () => void;
@@ -49,7 +71,7 @@ function detailStateSeverity(
   state: WorkspaceActivityState
 ): 'info' | 'success' | 'warning' | 'error' {
   if (state === 'completed') return 'success';
-  if (state === 'failed') return 'error';
+  if (state === 'failed' || state === 'policy-blocked') return 'error';
   if (state === 'needs-input' || state === 'unknown') return 'warning';
   return 'info';
 }
@@ -60,13 +82,32 @@ function DetailFields({ fields }: { fields: LabeledField[] }) {
       component="dl"
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' },
-        gap: 1.5,
+        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        gap: 1,
         m: 0,
       }}
     >
       {fields.map((field) => (
-        <Box key={field.key} sx={{ minWidth: 0 }}>
+        <Box
+          key={field.key}
+          sx={{
+            minWidth: 0,
+            p: 1.25,
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.06),
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            gridColumn: [
+              'objectLabel',
+              'objectId',
+              'executionId',
+              'recordId',
+              'sourceEventId',
+              'correlationId',
+              'auditRecordId',
+            ].includes(field.key)
+              ? '1 / -1'
+              : undefined,
+          }}
+        >
           <Typography component="dt" variant="caption" color="text.secondary">
             {field.label}
           </Typography>
@@ -84,12 +125,26 @@ function DetailFields({ fields }: { fields: LabeledField[] }) {
   );
 }
 
-function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
+function DetailSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: LucideIcon;
+  children: React.ReactNode;
+}) {
   return (
     <Box component="section">
-      <Typography component="h3" variant="subtitle2" sx={{ mb: 1.25 }}>
-        {title}
-      </Typography>
+      <Box sx={{ mb: 1.25 }}>
+        <SectionHeader
+          title={title}
+          icon={icon}
+          headingComponent="h3"
+          density="compact"
+          glyph="plain"
+        />
+      </Box>
       {children}
     </Box>
   );
@@ -98,15 +153,26 @@ function DetailSection({ title, children }: { title: string; children: React.Rea
 export function ActivityEventDetail({
   eventId,
   query,
+  evidenceQuery,
+  executionRun,
   showSourceAction = true,
   variant = 'inline',
   onClose,
 }: ActivityEventDetailProps) {
-  const { t } = useTranslation('work');
+  const { t, i18n } = useTranslation('work');
+  const locale = resolveSupportedLocale(i18n?.resolvedLanguage, i18n?.language);
   const navigate = useNavigate();
   const [sourceUnavailable, setSourceUnavailable] = useState<string | null>(null);
   const drawerContentRef = useRef<HTMLDivElement | null>(null);
-  const selected = selectedActivityEvent(eventId, query.data);
+  const activeEventRef = useRef<string | null>(eventId);
+  activeEventRef.current = eventId;
+  useEffect(() => {
+    activeEventRef.current = eventId;
+    return () => {
+      activeEventRef.current = null;
+    };
+  }, [eventId]);
+  const selected = query.isError ? undefined : selectedActivityEvent(eventId, query.data);
   const model = selected ? activityEventDetailModel(selected) : null;
   const kindLabel = model
     ? t(`activityFoundation.detail.kind.${model.kind}.label`)
@@ -124,6 +190,8 @@ export function ActivityEventDetail({
     setSourceUnavailable(null);
     // Revalidate source ACL at the moment of navigation, including after a stale snapshot.
     const latest = await query.refetch();
+    // A late permission check must not navigate away from a newly selected/closed event.
+    if (activeEventRef.current !== eventId) return;
     const event = !latest.isError ? selectedActivityEvent(eventId, latest.data) : undefined;
     const route = event ? availableActivitySourceRoute(event) : null;
     if (route) navigate(route);
@@ -179,6 +247,15 @@ export function ActivityEventDetail({
   ) : (
     <Stack gap={2.5} divider={<Divider flexItem />}>
       <Box>
+        {selected.dataProvenance === 'SAMPLE' && (
+          <Chip
+            size="small"
+            color="warning"
+            variant="outlined"
+            label={t('activityFoundation.sample.title')}
+            sx={{ mb: 1, color: 'text.primary' }}
+          />
+        )}
         <Typography component="h3" variant="h6">
           {selected.title}
         </Typography>
@@ -189,11 +266,16 @@ export function ActivityEventDetail({
         )}
       </Box>
 
-      <DetailSection title={t('activityFoundation.detail.sections.meaning')}>
+      <DetailSection icon={Activity} title={t('activityFoundation.detail.sections.meaning')}>
         <InlineFeedback
           severity={detailStateSeverity(selected.state)}
           title={t(`activityPage.states.${selected.state}`)}
-          sx={accessibleFeedbackSx}
+          sx={{
+            ...accessibleFeedbackSx,
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.06),
+            borderLeft: 3,
+            borderLeftColor: `${detailStateSeverity(selected.state)}.main`,
+          }}
         >
           <Stack gap={0.5}>
             <Typography component="span" variant="body2">
@@ -228,9 +310,50 @@ export function ActivityEventDetail({
             />
           </Box>
         )}
+        {(model.canRefreshUnknownState || showSourceAction) && (
+          <Box sx={{ mt: 1.5 }}>
+            <Stack gap={1}>
+              {model.canRefreshUnknownState && (
+                <ActionButton
+                  intent="secondary"
+                  fullWidth
+                  startIcon={<RefreshCw size={16} aria-hidden="true" />}
+                  disabled={query.isFetching}
+                  onClick={() => void query.refetch()}
+                  sx={{ minHeight: { xs: 44, sm: 38 } }}
+                >
+                  {t('activityFoundation.detail.refreshInformation')}
+                </ActionButton>
+              )}
+              {showSourceAction && availableActivitySourceRoute(selected) && (
+                <ActionButton
+                  intent="primary"
+                  fullWidth
+                  endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
+                  disabled={query.isFetching}
+                  onClick={() => void openSource()}
+                  sx={{ minHeight: { xs: 44, sm: 38 } }}
+                >
+                  {t('activityPage.openSource')}
+                </ActionButton>
+              )}
+            </Stack>
+            {showSourceAction &&
+              (!availableActivitySourceRoute(selected) || sourceUnavailable === eventId) && (
+                <Typography role="status" variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  {t('activityFoundation.sourceUnavailable')}
+                </Typography>
+              )}
+            {showSourceAction && (
+              <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1.5 }}>
+                {t('activityFoundation.sourceActionNotice')}
+              </Typography>
+            )}
+          </Box>
+        )}
       </DetailSection>
 
-      <DetailSection title={t('activityFoundation.detail.sections.time')}>
+      <DetailSection icon={Clock3} title={t('activityFoundation.detail.sections.time')}>
         <DetailFields
           fields={[
             {
@@ -264,20 +387,20 @@ export function ActivityEventDetail({
         />
       </DetailSection>
 
-      <DetailSection title={t('activityFoundation.detail.sections.actor')}>
+      <DetailSection icon={UserRound} title={t('activityFoundation.detail.sections.actor')}>
         <DetailFields fields={labelFields(model.actorFields)} />
       </DetailSection>
 
-      <DetailSection title={t('activityFoundation.detail.sections.object')}>
+      <DetailSection icon={Layers} title={t('activityFoundation.detail.sections.object')}>
         <DetailFields fields={labelFields(model.objectFields)} />
       </DetailSection>
 
-      <DetailSection title={t('activityFoundation.detail.sections.source')}>
+      <DetailSection icon={Link2} title={t('activityFoundation.detail.sections.source')}>
         <DetailFields fields={labelFields(model.sourceFields)} />
       </DetailSection>
 
       {model.executionFields.length > 0 && (
-        <DetailSection title={t('activityFoundation.detail.sections.execution')}>
+        <DetailSection icon={Bot} title={t('activityFoundation.detail.sections.execution')}>
           <DetailFields fields={labelFields(model.executionFields)} />
           {model.kind === 'EXECUTION_SNAPSHOT' && (
             <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1 }}>
@@ -287,7 +410,9 @@ export function ActivityEventDetail({
         </DetailSection>
       )}
 
-      <DetailSection title={t('activityFoundation.detail.sections.audit')}>
+      {executionRun && <ActivityRunObservability run={executionRun} locale={locale} />}
+
+      <DetailSection icon={ShieldCheck} title={t('activityFoundation.detail.sections.audit')}>
         <InlineFeedback
           severity={model.audit.recordId ? 'info' : 'warning'}
           title={t(`activityFoundation.detail.audit.${model.audit.presentation}.title`)}
@@ -313,6 +438,14 @@ export function ActivityEventDetail({
             {t('activityFoundation.legacyNotice')}
           </Typography>
         )}
+        {evidenceQuery && (
+          <Box sx={{ mt: 1.5 }}>
+            <Typography component="h4" variant="subtitle2" sx={{ mb: 1 }}>
+              {t('activityFoundation.detail.integrity.title')}
+            </Typography>
+            <ActivityIntegrityEvidence query={evidenceQuery} />
+          </Box>
+        )}
       </DetailSection>
 
       <Box
@@ -320,6 +453,9 @@ export function ActivityEventDetail({
         sx={{
           '&[open] > summary': { mb: 1.5 },
           '& > summary': {
+            minHeight: 44,
+            display: 'list-item',
+            alignContent: 'center',
             cursor: 'pointer',
             fontWeight: 'fontWeightMedium',
             '&:focus-visible': {
@@ -334,44 +470,6 @@ export function ActivityEventDetail({
         </Typography>
         <DetailFields fields={labelFields(model.traceFields)} />
       </Box>
-
-      {(model.canRefreshUnknownState || showSourceAction) && (
-        <Box>
-          <Stack direction="row" gap={1} flexWrap="wrap">
-            {model.canRefreshUnknownState && (
-              <ActionButton
-                intent="secondary"
-                startIcon={<RefreshCw size={16} aria-hidden="true" />}
-                disabled={query.isFetching}
-                onClick={() => void query.refetch()}
-              >
-                {t('activityFoundation.detail.refreshInformation')}
-              </ActionButton>
-            )}
-            {showSourceAction && availableActivitySourceRoute(selected) && (
-              <ActionButton
-                intent="secondary"
-                endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                disabled={query.isFetching}
-                onClick={() => void openSource()}
-              >
-                {t('activityPage.openSource')}
-              </ActionButton>
-            )}
-          </Stack>
-          {showSourceAction &&
-            (!availableActivitySourceRoute(selected) || sourceUnavailable === eventId) && (
-              <Typography role="status" variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                {t('activityFoundation.sourceUnavailable')}
-              </Typography>
-            )}
-          {showSourceAction && (
-            <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1.5 }}>
-              {t('activityFoundation.sourceActionNotice')}
-            </Typography>
-          )}
-        </Box>
-      )}
     </Stack>
   );
 

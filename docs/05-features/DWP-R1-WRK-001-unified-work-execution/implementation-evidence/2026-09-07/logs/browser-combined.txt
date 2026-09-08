@@ -1,0 +1,109 @@
+
+Running 54 tests using 2 workers
+
+[1A[2K(node:21629) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:21630) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:21629) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:21630) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/54] [chromium] › e2e/work-hub-foundation.spec.ts:66:1 › source-owned approval and service detail preserve source ownership
+[1A[2K[2/54] [chromium] › e2e/work-hub-foundation.spec.ts:96:1 › personal start and completion wait for source confirmation with versioned UUID commands
+[1A[2K[3/54] [chromium] › e2e/work-hub-foundation.spec.ts:132:1 › partial source failure remains visible when the verified subset is empty
+[1A[2K[4/54] [chromium] › e2e/work-hub-foundation.spec.ts:145:1 › an all-source outage cannot masquerade as an empty queue and retains recovery controls
+[1A[2K[5/54] [chromium] › e2e/work-hub-foundation.spec.ts:171:1 › a background refresh outage keeps the verified scope visible as degraded
+[1A[2K[6/54] [chromium] › e2e/work-hub-foundation.spec.ts:198:1 › canonical work links and personal task aliases resolve the requested item
+[1A[2K[7/54] [chromium] › e2e/work-hub-foundation.spec.ts:216:1 › returning from another app adopts the cached queue before a personal command
+[1A[2K[8/54] [chromium] › e2e/work-hub-foundation.spec.ts:234:1 › view-only access exposes no personal mutation action
+[1A[2K[9/54] [chromium] › e2e/work-hub-foundation.spec.ts:248:1 › atomic batch review shows targets and item-level confirmed receipts
+[1A[2K[10/54] [chromium] › e2e/work-hub-foundation.spec.ts:279:1 › retry after a lost response reuses the original command and receipt
+[1A[2K[11/54] [chromium] › e2e/work-hub-foundation.spec.ts:292:1 › desktop legacy entries converge on the unified queue and retain compatibility state
+[1A[2K[12/54] [chromium] › e2e/work-hub-foundation.spec.ts:322:1 › 390px source-owned decision returns to the filtered list with focus and state intact
+[1A[2K[13/54] [chromium] › e2e/work-hub-foundation.spec.ts:370:1 › 390px today plan has its own route and returns to the queue
+[1A[2K[14/54] [chromium] › e2e/work-hub-foundation.spec.ts:386:1 › 320px personal task capture stays operable when the input viewport contracts
+[1A[2K[15/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 1440-light
+[1A[2K[16/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 1280-dark
+[1A[2K[17/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 390-light
+[1A[2K[18/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 320-dark
+[1A[2K[19/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 320-long-labels
+[1A[2K[20/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 1280-forced-colors
+[1A[2K[21/54] [chromium] › e2e/work-hub-foundation.spec.ts:450:3 › unified queue remains usable at 1280-200-percent
+[1A[2K[22/54] [chromium] › e2e/work-hub-foundation.spec.ts:484:1 › keyboard activation keeps visible focus and completes a personal start
+[1A[2K[23/54] [chromium] › e2e/work-personal-design-actions.spec.ts:9:1 › 05 a concurrent checklist update requires explicit review before a new version can be saved
+[1A[2K[24/54] [chromium] › e2e/work-personal-design-actions.spec.ts:72:3 › 05 detail and 06 edit design evidence at 1440px
+[1A[2K[25/54] [chromium] › e2e/work-personal-design-actions.spec.ts:72:3 › 05 detail and 06 edit design evidence at 1280px
+[1A[2K[26/54] [chromium] › e2e/work-personal-design-actions.spec.ts:72:3 › 05 detail and 06 edit design evidence at 390px
+[1A[2K[27/54] [chromium] › e2e/work-personal-design-actions.spec.ts:72:3 › 05 detail and 06 edit design evidence at 320px
+[1A[2K[28/54] [chromium] › e2e/work-personal-design-actions.spec.ts:96:1 › 05 checklist and 06 multiple-source edits persist through actual task APIs; deletion is confirmed
+[1A[2K[29/54] [chromium] › e2e/work-personal-design-actions.spec.ts:157:3 › 06 and M2 personal task keyboard capture at 390px
+[1A[2K[30/54] [chromium] › e2e/work-personal-design-actions.spec.ts:157:3 › 06 and M2 personal task keyboard capture at 320px
+[1A[2K[31/54] [chromium] › e2e/work-personal-design-actions.spec.ts:196:1 › 05 read-only task disables status/checklist edits and hides task deletion
+[1A[2K[32/54] [chromium] › e2e/work-source-decisions.spec.ts:55:3 › 02 approval APPROVE previews the target, validates reason and records source version
+[1A[2K[33/54] [chromium] › e2e/work-source-decisions.spec.ts:55:3 › 02 approval REJECT previews the target, validates reason and records source version
+[1A[2K[34/54] [chromium] › e2e/work-source-decisions.spec.ts:55:3 › 02 approval REQUEST_INFO previews the target, validates reason and records source version
+[1A[2K[35/54] [chromium] › e2e/work-source-decisions.spec.ts:99:1 › 02 a source version conflict keeps the rationale and requires a new review
+[1A[2K[36/54] [chromium] › e2e/work-source-decisions.spec.ts:126:1 › 04 required source values and explanation precede preview and actual source receipt
+[1A[2K[37/54] [chromium] › e2e/work-source-decisions.spec.ts:194:3 › 03 M1 access APPROVE separates the decision from source remediation
+[1A[2K[38/54] [chromium] › e2e/work-source-decisions.spec.ts:194:3 › 03 M1 access REVOKE separates the decision from source remediation
+[1A[2K[39/54] [chromium] › e2e/work-source-decisions.spec.ts:256:1 › 03 denied source decision authority never exposes an executable decision
+[1A[2K[40/54] [chromium] › e2e/work-source-decisions.spec.ts:276:1 › 03 a newer source version after preview blocks submission and preserves the rationale
+[1A[2K[41/54] [chromium] › e2e/work-source-decisions.spec.ts:299:1 › 03 authority lost after preview is checked again before any source decision
+[1A[2K[42/54] [chromium] › e2e/work-source-decisions.spec.ts:324:1 › 04 changing source version after preview sends no response and preserves all input
+[1A[2K[43/54] [chromium] › e2e/work-source-decisions.spec.ts:358:1 › 04 a denied source response preserves the form and never reports success
+[1A[2K  1) [chromium] › e2e/work-personal-design-actions.spec.ts:96:1 › 05 checklist and 06 multiple-source edits persist through actual task APIs; deletion is confirmed 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('dialog', { name: 'Edit personal task' }).getByRole('button', { name: 'Provide the laptop delivery address', exact: true })[22m
+
+
+      124 |   );
+      125 |   await editor.getByRole('button', { name: WORK_HUB_FIXTURE.approvalTitle, exact: true }).click();
+    > 126 |   await editor.getByRole('button', { name: WORK_HUB_FIXTURE.serviceTitle, exact: true }).click();
+          |                                                                                          ^
+      127 |   await editor.getByRole('button', { name: 'Save changes', exact: true }).click();
+      128 |   await expect(editor).not.toBeVisible();
+      129 |   expect(runtime.mutations[1]?.body).toMatchObject({
+        at /Users/a10697/Work/DWP/dwp-frontend/e2e/work-personal-design-actions.spec.ts:126:90
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../tmp/work-release-verification-20260907/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../tmp/work-release-verification-20260907/work-personal-design-actio-cfc23--APIs-deletion-is-confirmed-chromium/error-context.md
+
+
+[1A[2K(node:22132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:22132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[44/54] [chromium] › e2e/work-source-design-evidence.spec.ts:18:1 › 02 03 04 and M1 Korean source design evidence at 1440 and 390
+[1A[2K[45/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:155:5 › desktop-1440 › 01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI
+[1A[2K[46/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:155:5 › desktop-1280 › 01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI
+[1A[2K[47/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:155:5 › mobile-390 › 01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI
+[1A[2K[48/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:155:5 › mobile-320 › 01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI
+[1A[2K[49/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:155:5 › zoom-200-reflow › 01 queue, 07 independent plan, 08 calendar, 09 source status, 11 inline AI
+[1A[2K[50/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:256:1 › six destinations retain their own URL and mobile More reaches the remaining states
+[1A[2K[51/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:281:1 › CSS page zoom at 200 percent preserves the selected source and drawer navigation
+[1A[2K[52/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:306:1 › 10 Flow receives personal Work and today-plan contributions with canonical return links
+[1A[2K[53/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:372:3 › dark mobile navigation and keyboard dialog return
+[1A[2K[54/54] [chromium] › e2e/work-stitch-design-sync.spec.ts:372:3 › high-contrast mobile navigation and keyboard dialog return
+[1A[2K  1 failed
+    [chromium] › e2e/work-personal-design-actions.spec.ts:96:1 › 05 checklist and 06 multiple-source edits persist through actual task APIs; deletion is confirmed 
+  53 passed (1.6m)

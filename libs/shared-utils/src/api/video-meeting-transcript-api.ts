@@ -95,7 +95,7 @@ export function normalizeVideoMeetingTranscriptPage(
 export async function queryVideoMeetingTranscript(
   meetingId: string,
   artifact: VideoMeetingArtifact,
-  options: { cursor?: number; pageSize?: number; query?: string } = {}
+  options: { cursor?: number; pageSize?: number; query?: string; signal?: AbortSignal } = {}
 ): Promise<VideoMeetingTranscriptPage> {
   const response = await axiosInstance.post<ApiResponse<WireTranscriptPage>, object>(
     `${VIDEO_MEETING_API_BASE}/meetings/${encodeURIComponent(meetingId)}/artifacts/${encodeURIComponent(artifact.artifactId)}/transcript/query`,
@@ -104,7 +104,8 @@ export async function queryVideoMeetingTranscript(
       cursor: options.cursor ?? 0,
       pageSize: options.pageSize ?? 25,
       query: options.query?.trim() || null,
-    }
+    },
+    { signal: options.signal }
   );
   return normalizeVideoMeetingTranscriptPage(response.data.data, artifact);
 }

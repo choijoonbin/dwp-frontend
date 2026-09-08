@@ -1,0 +1,120 @@
+{
+  "en": {
+    "mine": {
+      "design": {
+        "copy": {
+          "copied": "Invitation link copied.",
+          "failed": "The invitation link could not be copied."
+        },
+        "acceptance": "{{accepted}} of {{total}} invitation responses accepted",
+        "evidenceFailed": "Some preparation details could not be refreshed. No previous permission-sensitive details are shown.",
+        "evidencePending": "Current source details are not yet verified.",
+        "seriesOverview": "Meeting overview and recurrence",
+        "accessPolicy": "Security and access policy",
+        "waitingOn": "Waiting room admission is required.",
+        "waitingOff": "No waiting room; meeting access restrictions still apply.",
+        "contentPlan": "Recording, transcript and AI plan",
+        "contentState": "{{state}} · Recording: {{recording}} · Transcript: {{transcript}} · AI summary: {{summary}}",
+        "requested": "requested",
+        "notRequested": "not requested",
+        "planStates": {
+          "READY": "Ready under current policy",
+          "BLOCKED": "Blocked by current dependencies or consent",
+          "DISABLED": "Capture not requested"
+        },
+        "manageMaterials": "Manage",
+        "noMaterials": "No preparation material is linked yet.",
+        "pendingTab": "Invitation responses",
+        "pendingCount": "{{count}} invitations awaiting your response",
+        "previousDate": "Previous date",
+        "nextDate": "Next date",
+        "date": "Meeting date",
+        "allDates": "Show all dates on this page",
+        "seriesFilter": "Recurrence",
+        "series": {
+          "ALL": "Recurring and one-off",
+          "RECURRING": "Recurring meetings",
+          "ONCE": "One-off meetings"
+        },
+        "compact": "Compact agenda",
+        "partialEvidence": "Some schedule or preparation data is unavailable. Recurrence and invitation filters include only verified current records.",
+        "loadedDuration": "Meeting time in this view"
+      }
+    },
+    "scheduleWorkspace": {
+      "design": {
+        "editAgenda": "Edit agenda item {{number}}",
+        "finishAgenda": "Done",
+        "chooseTemplate": "Choose an operating template",
+        "copyRecent": "Copy a recent meeting",
+        "replaceStructureHint": "Apply the selected title, purpose, duration and ordered agenda to this draft. Your current time, attendees and access settings stay unchanged. Previous invitation links, consent and participant assignments are never copied.",
+        "applyStructure": "Apply to this draft",
+        "sourceFailed": "The current source could not be verified. Your draft was not changed; refresh the available sources and retry.",
+        "sourceEmpty": "There are no authorized sources on this page.",
+        "titleCount": "{{count}} / {{maximum}} characters",
+        "stepProgress": "Step {{step}} of {{total}}",
+        "availability": "Calendar availability",
+        "nextPreview": "Next: {{time}} · {{count}} invited attendees",
+        "agendaCoverage": "Timebox coverage",
+        "agendaCoverageHint": "{{planned}} of {{duration}} meeting minutes allocated. This is an agenda calculation, not an AI productivity score."
+      }
+    }
+  },
+  "ko": {
+    "mine": {
+      "design": {
+        "copy": {
+          "copied": "초대 링크를 복사했습니다.",
+          "failed": "초대 링크를 복사하지 못했습니다."
+        },
+        "acceptance": "초대 응답 {{total}}명 중 {{accepted}}명 수락",
+        "evidenceFailed": "일부 준비 정보를 다시 확인하지 못했습니다. 이전 권한 민감 정보는 표시하지 않습니다.",
+        "evidencePending": "현재 원본 정보를 아직 확인하지 못했습니다.",
+        "seriesOverview": "회의 개요 및 반복 시리즈",
+        "accessPolicy": "보안 정책 및 접근 제어",
+        "waitingOn": "대기실에서 입장 승인이 필요합니다.",
+        "waitingOff": "대기실을 사용하지 않지만 회의 접근 제한은 유지됩니다.",
+        "contentPlan": "녹화·전사·AI 처리 계획",
+        "contentState": "{{state}} · 녹화: {{recording}} · 전사: {{transcript}} · AI 요약: {{summary}}",
+        "requested": "요청됨",
+        "notRequested": "요청 안 함",
+        "planStates": {
+          "READY": "현재 정책상 준비됨",
+          "BLOCKED": "현재 연결 조건 또는 동의로 차단됨",
+          "DISABLED": "캡처 요청 없음"
+        },
+        "manageMaterials": "관리",
+        "noMaterials": "아직 연결된 사전 자료가 없습니다.",
+        "pendingTab": "초대 응답",
+        "pendingCount": "내 응답을 기다리는 초대 {{count}}건",
+        "previousDate": "이전 날짜",
+        "nextDate": "다음 날짜",
+        "date": "회의 날짜",
+        "allDates": "현재 페이지의 전체 날짜 보기",
+        "seriesFilter": "반복 여부",
+        "series": { "ALL": "반복 및 단건 전체", "RECURRING": "반복 회의", "ONCE": "단건 회의" },
+        "compact": "일정 압축 보기",
+        "partialEvidence": "일부 일정 또는 준비 정보를 확인할 수 없습니다. 반복·초대 필터에는 현재 확인된 기록만 포함합니다.",
+        "loadedDuration": "현재 보기의 회의 시간"
+      }
+    },
+    "scheduleWorkspace": {
+      "design": {
+        "editAgenda": "의제 {{number}}번 편집",
+        "finishAgenda": "편집 완료",
+        "chooseTemplate": "운영 템플릿 선택",
+        "copyRecent": "최근 예약 복사",
+        "replaceStructureHint": "선택한 제목·목적·진행 시간·순서 있는 의제를 현재 초안에 적용합니다. 현재 일정 시각·참석자·접근 설정은 유지합니다. 이전 초대 링크·동의·참석자 배정은 복사하지 않습니다.",
+        "applyStructure": "현재 초안에 적용",
+        "sourceFailed": "현재 원본을 확인하지 못해 초안은 변경하지 않았습니다. 목록을 새로 확인한 후 다시 시도하세요.",
+        "sourceEmpty": "현재 페이지에 사용할 수 있는 원본이 없습니다.",
+        "titleCount": "{{count}} / {{maximum}}자",
+        "stepProgress": "단계 {{step}} / {{total}}",
+        "availability": "캘린더 일정 가용성",
+        "nextPreview": "다음: {{time}} · {{count}}명 초대 예정",
+        "agendaCoverage": "타임박스 배정 현황",
+        "agendaCoverageHint": "회의 {{duration}}분 중 {{planned}}분을 배정했습니다. 의제 시간 계산이며 AI 생산성 점수가 아닙니다."
+      }
+    }
+  }
+}

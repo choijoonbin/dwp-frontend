@@ -1,0 +1,92 @@
+{
+  "recordedAt": "2026-09-07T18:58:23+09:00",
+  "scope": "Work-owned completion after the 18-frame implementation closeout",
+  "referenceFrames": 18,
+  "sidebarViews": 6,
+  "implementationStatus": "CLOSED_FROZEN",
+  "repositoryReleaseStatus": "PENDING_SHARED_CONTRACT_SYNC_AND_EXTERNAL_RELEASE_EVIDENCE",
+  "checks": [
+    {
+      "name": "Work unit suite",
+      "result": "PASS",
+      "files": 30,
+      "passed": 159,
+      "log": "logs/unit.log"
+    },
+    {
+      "name": "Core Work browser regression and edit conflict",
+      "result": "PASS",
+      "projects": ["chromium", "mobile"],
+      "passed": 51,
+      "skipped": 5,
+      "skipReason": "Intentional project-specific duplicate viewport cases",
+      "log": "logs/browser-core.log"
+    },
+    {
+      "name": "Mobile accessibility audit",
+      "result": "PASS",
+      "passed": 16,
+      "affectedRegressionPassed": 14,
+      "nativeZoomScreensPassed": 6,
+      "evidence": "../mobile-accessibility-final/README.md"
+    },
+    {
+      "name": "Personal task edit conflict audit",
+      "result": "PASS",
+      "matrixPassedBeforeFix": 9,
+      "focusedRerunPassed": 1,
+      "note": "The one WebKit 200% viewport-focus failure was fixed and its failing case passed; the root final browser run subsequently passed all ten conflict cases.",
+      "evidence": "../../2026-09-07-owned-scope-audit/edit-conflict-audit.md"
+    },
+    {
+      "name": "Repository TypeScript",
+      "result": "PASS",
+      "log": "logs/typecheck.log"
+    },
+    {
+      "name": "Work scoped ESLint",
+      "result": "PASS",
+      "errors": 0,
+      "log": "logs/eslint.log"
+    },
+    {
+      "name": "Source size, design-system adoption, localization and maintenance size",
+      "result": "PASS",
+      "log": "logs/static-quality-final.log"
+    },
+    {
+      "name": "Workspace independent production build and budget",
+      "result": "PASS",
+      "initialRawKiB": 883.4,
+      "initialRawLimitKiB": 900,
+      "initialGzipKiB": 271.8,
+      "initialGzipLimitKiB": 280,
+      "initialRequests": 5,
+      "initialRequestLimit": 5,
+      "log": "logs/workspace-build.log"
+    },
+    {
+      "name": "Repository display dictionary after Meetings owner handoff",
+      "result": "PASS",
+      "ownerRequest": "화상회의 앱 완성형 고도화",
+      "log": "logs/display-after-owner.log"
+    },
+    {
+      "name": "Full repository build",
+      "result": "BLOCKED_SHARED_CONTRACT_CHANGE",
+      "stage": "Frontend Gateway OpenAPI snapshot check",
+      "backendSha256": "2a4138b275d9ee1e66a8c55671eb947acf24dbd5ad41ee45c4fcb1941cdb2c16",
+      "frontendSha256": "76ea4641f2172d972ff4cb0639687d7772516d1f41b23c6354234cd28e980274",
+      "note": "Path keys match; the shared schema snapshot changed after the earlier central sync. Resync and final gate were requested from the central integration owner.",
+      "log": "logs/repository-build.log"
+    }
+  ],
+  "externalConditions": {
+    "servicesV6": "DRAFT/BLOCKED_EXTERNAL",
+    "dwaionSelectedWorkContract": "OWNER_TASK_IN_PROGRESS",
+    "liveOwnerIntegrationEvidence": "REQUESTED",
+    "approvalDirectRequest": "QUEUED_VIA_CENTRAL_INTEGRATION_BECAUSE_DESTINATION_TURN_WAS_ACTIVE"
+  },
+  "evidencePolicy": "Actual React components and clients with controlled fixtures. Live tenant submissions, calendar writes, source approvals and AI responses require owner credentials and are tracked as external conditions.",
+  "closeoutReport": "../../../2026-09-07-owned-scope-closeout.md"
+}

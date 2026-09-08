@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 5,
-  checksum: 'c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f',
-  indexChecksum: '69c2667773026fd4e1e8cad054cb9865592c7c2866b7c20907a14623a2a6e997',
+  version: 6,
+  checksum: 'e966b7340da431481bb9f577724224645be45ac50e169c75da1a521f2cde925a',
+  indexChecksum: '3739a68b8cf8c23c2bfd8bafd5ccffd662d78cc63b9aac46714058d1b3ed4767',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -2657,6 +2657,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/platform/v1/services/requests/{requestId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.services.work.request-information-response.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'services.work',
+    subjectType: 'PRODUCT',
+    productId: 'services',
+    surfaceId: 'services.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/services/requests/{requestId}/information-response',
       },
     ],
   },

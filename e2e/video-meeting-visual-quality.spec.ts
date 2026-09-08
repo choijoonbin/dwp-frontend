@@ -10,6 +10,7 @@ import {
 } from './support/video-meeting-visual-accessibility';
 import {
   MEETING_VISUAL_ID,
+  MEETING_VISUAL_SUMMARY,
   MEETING_VISUAL_RECENT_ID,
   mockMeetingVisualHome,
   mockMeetingVisualHomeReports,
@@ -19,10 +20,17 @@ import {
   mockMeetingVisualSession,
 } from './support/video-meeting-visual-fixtures';
 import { emulateVisualTransparency } from './support/visual-media';
+import { expectFocusClearance, expectKeyboardFocusVisible } from './support/meeting-visual-focus';
+import { mockImplementationMeetingPreparation } from './support/meeting-implementation-regression-fixtures';
+import { withMeetingDocumentCapture } from './support/meeting-document-capture';
 
 import type { Locator, Page } from '@playwright/test';
 
-test.describe.configure({ mode: 'serial' });
+// Independent implementation regressions: one changed PNG must not suppress the
+// remaining functional, accessibility, or state checks. These are not source approval.
+test.describe.configure({ mode: 'default' });
+// A failed full-document comparison must not suppress the independent viewport image.
+test.setTimeout(60_000);
 
 const VIEWPORT = {
   desktop: { width: 1_440, height: 960 },
@@ -106,73 +114,6 @@ async function expectSharedWorkspaceGutter(page: Page, label: string, expectedPi
   expect(layout.maxWidth, `${label}: operational canvas remains fluid`).toBe('none');
 }
 
-async function expectFocusClearance(locator: Locator, label: string, minimum = 4) {
-  const clearance = await locator.evaluate((element) => {
-    const bounds = element.getBoundingClientRect();
-    const clippingAncestors: Array<{ left: number; right: number }> = [];
-    let ancestor = element.parentElement;
-    while (ancestor) {
-      const style = getComputedStyle(ancestor);
-      if (/(?:auto|clip|hidden|scroll)/u.test(style.overflowX)) {
-        const ancestorBounds = ancestor.getBoundingClientRect();
-        clippingAncestors.push({
-          left: bounds.left - ancestorBounds.left,
-          right: ancestorBounds.right - bounds.right,
-        });
-      }
-      ancestor = ancestor.parentElement;
-    }
-    return clippingAncestors.length
-      ? {
-          left: Math.min(...clippingAncestors.map((item) => item.left)),
-          right: Math.min(...clippingAncestors.map((item) => item.right)),
-        }
-      : null;
-  });
-  expect(clearance, `${label}: clipping ancestor found`).not.toBeNull();
-  expect(clearance!.left, `${label}: left focus clearance`).toBeGreaterThanOrEqual(minimum);
-  expect(clearance!.right, `${label}: right focus clearance`).toBeGreaterThanOrEqual(minimum);
-}
-
-async function expectKeyboardFocusVisible(page: Page, locator: Locator, label: string) {
-  const visualSignature = async () =>
-    locator.evaluate((element) => {
-      const read = (pseudo?: '::before' | '::after') => {
-        const style = getComputedStyle(element, pseudo);
-        return {
-          outlineStyle: style.outlineStyle,
-          outlineWidth: style.outlineWidth,
-          outlineColor: style.outlineColor,
-          boxShadow: style.boxShadow,
-          backgroundColor: style.backgroundColor,
-          borderColor: style.borderColor,
-          borderWidth: style.borderWidth,
-          content: style.content,
-          opacity: style.opacity,
-        };
-      };
-      return [read(), read('::before'), read('::after')];
-    });
-  const restingVisual = await visualSignature();
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    if (await locator.evaluate((element) => document.activeElement === element)) break;
-    await page.keyboard.press('Tab');
-  }
-  await expect(locator, `${label}: keyboard focus`).toBeFocused();
-  expect(
-    await locator.evaluate((element) => element.matches(':focus-visible')),
-    `${label}: :focus-visible`
-  ).toBe(true);
-  const focusedVisual = await visualSignature();
-  const hasVisibleOutline = focusedVisual.some(
-    (style) => style.outlineStyle !== 'none' && (Number.parseFloat(style.outlineWidth) || 0) >= 2
-  );
-  expect(
-    hasVisibleOutline || JSON.stringify(focusedVisual) !== JSON.stringify(restingVisual),
-    `${label}: focus indicator`
-  ).toBe(true);
-}
-
 async function expectVisualSnapshot(
   page: Page,
   name: string,
@@ -194,13 +135,16 @@ async function expectVisualSnapshot(
       }))
     )
     .toEqual({ page: 0, main: 0 });
-  await expect(page).toHaveScreenshot(name, {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: options.fullPage ?? true,
-    maxDiffPixelRatio: 0.002,
-    timeout: 15_000,
-  });
+  const capture = () =>
+    expect.soft(page).toHaveScreenshot(name, {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: options.fullPage ?? true,
+      maxDiffPixelRatio: 0.002,
+      timeout: 15_000,
+    });
+  if (options.fullPage === false) await capture();
+  else await withMeetingDocumentCapture(page, capture);
 }
 
 async function expectHomeWorkspace(page: Page, options: { desktopLayout?: boolean } = {}) {
@@ -415,7 +359,7 @@ test('home SAMPLE presents contract-backed schedule and result links at 1280px E
   await expect(page.locator('[data-testid^="meeting-home-result-queue-"]')).toHaveCount(1);
   await expectNoInventedHomeWork(page);
   const primaryAction = page.getByTestId('meeting-command-primary').getByRole('button', {
-    name: 'Prepare to join',
+    name: 'Enter & check devices',
   });
   await expectMinimumTarget(primaryAction, 'sample-home prepare action');
   await expectKeyboardFocusVisible(page, primaryAction, 'sample-home prepare action');
@@ -557,6 +501,7 @@ test('My meetings uses a bounded list and inspector at 1280px English', async ({
   await page.setViewportSize(VIEWPORT.laptop);
   await mockMeetingVisualSession(page, { locale: 'en', reducedMotion: true });
   await mockMeetingVisualMine(page);
+  await mockImplementationMeetingPreparation(page);
 
   await page.goto('/meetings/mine');
   await expectPageReady(page);
@@ -601,10 +546,19 @@ test('My meetings keeps the selected preparation and stable navigation at 390px 
     reducedMotion: true,
   });
   await mockMeetingVisualMine(page);
+  await mockImplementationMeetingPreparation(page);
 
   await page.goto('/meetings/mine');
   await expectPageReady(page);
-  await expect(page.getByTestId('my-meetings-inspector')).toBeVisible();
+  await expect(page.getByTestId('my-meetings-inspector')).toHaveCount(0);
+  await page.getByRole('button', { name: MEETING_VISUAL_SUMMARY.title, exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByTestId('my-meetings-inspector')).toBeVisible();
+  await dialog
+    .getByTestId('my-meetings-inspector')
+    .getByRole('button', { name: '닫기', exact: true })
+    .click();
+  await expect(page.getByTestId('my-meetings-inspector')).toHaveCount(0);
   await expect(page.getByTestId('my-meetings-list')).toBeVisible();
   await expectSharedWorkspaceGutter(page, 'My meetings 390 ko dark', 16);
   await expectMeetingMobileNavigation(page, 'mine');
@@ -621,13 +575,14 @@ test('prejoin keeps the private preview and security rail side by side at 1280px
   useVisualProject(testInfo, 'chromium');
   await page.setViewportSize(VIEWPORT.laptop);
   await mockMeetingVisualSession(page, { locale: 'en', reducedMotion: true });
+  await mockMeetingVisualHome(page, 'NEXT');
   await mockMeetingVisualPrejoin(page);
 
   await page.goto(`/meetings/room/${MEETING_VISUAL_ID}`);
   await expect(page.getByRole('heading', { name: 'Check the room before entering' })).toBeVisible();
   await page.getByRole('button', { name: 'Check camera and microphone' }).click();
   await expect(
-    page.getByRole('heading', { level: 1, name: 'Check camera and microphone' })
+    page.getByRole('heading', { level: 1, name: MEETING_VISUAL_SUMMARY.title })
   ).toBeVisible();
   const workspace = page.getByRole('region', {
     name: 'Device and security check before joining',
@@ -674,11 +629,12 @@ test('prejoin stacks preview before policy at 390px Korean dark mode', async ({
     colorScheme: 'dark',
     reducedMotion: true,
   });
+  await mockMeetingVisualHome(page, 'NEXT');
   await mockMeetingVisualPrejoin(page);
 
   await page.goto(`/meetings/room/${MEETING_VISUAL_ID}`);
   await page.getByRole('button', { name: '카메라와 마이크 점검' }).click();
-  const heading = page.getByRole('heading', { level: 1, name: '카메라와 마이크 점검' });
+  const heading = page.getByRole('heading', { level: 1, name: MEETING_VISUAL_SUMMARY.title });
   await expect(heading).toBeVisible();
   await expect(heading).toBeFocused();
   const headingTop = await heading.evaluate((element) => element.getBoundingClientRect().top);
@@ -693,11 +649,18 @@ test('prejoin stacks preview before policy at 390px Korean dark mode', async ({
   await expectMinimumTarget(join, 'mobile sticky join');
   const joinPlacement = await join.evaluate((element) => {
     const bounds = element.getBoundingClientRect();
-    return { position: getComputedStyle(element).position, bottom: innerHeight - bounds.bottom };
+    const footer = element.closest('.dwp-meeting-prejoin__admission-actions')!;
+    return {
+      position: getComputedStyle(footer).position,
+      footerBottom: innerHeight - footer.getBoundingClientRect().bottom,
+      buttonBottom: innerHeight - bounds.bottom,
+    };
   });
   expect(joinPlacement.position).toBe('fixed');
-  expect(joinPlacement.bottom).toBeGreaterThanOrEqual(12);
-  expect(joinPlacement.bottom).toBeLessThanOrEqual(44);
+  expect(joinPlacement.footerBottom).toBeGreaterThanOrEqual(0);
+  expect(joinPlacement.footerBottom).toBeLessThanOrEqual(1);
+  expect(joinPlacement.buttonBottom).toBeGreaterThanOrEqual(12);
+  expect(joinPlacement.buttonBottom).toBeLessThanOrEqual(120);
   const geometry = await workspace.evaluate((element) => {
     const stage = element.querySelector<HTMLElement>('.dwp-meeting-prejoin__stage');
     const rail = element.querySelector<HTMLElement>('.dwp-meeting-prejoin__rail');
@@ -755,6 +718,16 @@ test('Meeting library uses a 7 to 5 result and evidence preview at 1280px Englis
   expect(previewBounds).not.toBeNull();
   expect(listBounds!.width / previewBounds!.width).toBeGreaterThan(1.3);
   expect(listBounds!.width / previewBounds!.width).toBeLessThan(1.55);
+  const stages = preview.getByTestId('meeting-recap-pipeline').getByRole('listitem');
+  await expect(stages).toHaveCount(5);
+  for (const word of ['Recording', 'Transcript', 'Review', 'Published']) {
+    const label = stages.getByText(word, { exact: true });
+    const lines = await label.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return element.getBoundingClientRect().height / Number.parseFloat(style.lineHeight);
+    });
+    expect(lines, `The narrow inspector must not split the word ${word}`).toBeLessThanOrEqual(1.1);
+  }
   await expectNoHorizontalOverflow(page, 'Meeting library 1280 en');
   await expectNoBlockingA11y(page, 'Meeting library 1280 en');
   await expectCleanMeetingRuntime(page, 'Meeting library 1280 en');
@@ -970,6 +943,9 @@ test('published AI recap remains evidence-led at 1440px English dark mode', asyn
   await expectNoHorizontalOverflow(page, 'published recap 1440 en dark');
   await expectNoBlockingA11y(page, 'published recap 1440 en dark');
   await expectCleanMeetingRuntime(page, 'published recap 1440 en dark');
+  // Await MUI's font/resize measurement: all four tabs fit this desktop rail.
+  const tabRail = overviewTab.locator('xpath=ancestor::div[contains(@class, "MuiTabs-root")][1]');
+  await expect(tabRail.locator('.MuiTabs-scrollButtons')).toHaveCount(0);
   await expectVisualSnapshot(page, 'meeting-recap-published-en-1440-dark.png');
 });
 

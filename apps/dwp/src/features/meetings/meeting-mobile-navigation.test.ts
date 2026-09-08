@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { meetingMobileNavigationVisible } from './meeting-mobile-navigation';
 
 describe('meeting mobile navigation visibility', () => {
-  it.each(['home', 'history', 'follow-ups', 'preferences'] as const)(
+  it.each(['home', 'history', 'follow-ups', 'templates'] as const)(
     'keeps the stable destinations visible on %s',
     (view) => {
       expect(meetingMobileNavigationVisible(view, '')).toBe(true);
@@ -16,12 +16,12 @@ describe('meeting mobile navigation visibility', () => {
       false
     );
     expect(meetingMobileNavigationVisible('mine', '?view=schedule')).toBe(false);
-    expect(meetingMobileNavigationVisible('mine', '?view=personal-room')).toBe(false);
+    expect(meetingMobileNavigationVisible('mine', '?view=personal-room')).toBe(true);
   });
 
   it.each([
     'join',
-    'templates',
+    'preferences',
     'admin-operations',
     'admin-policies',
     'admin-intelligence',

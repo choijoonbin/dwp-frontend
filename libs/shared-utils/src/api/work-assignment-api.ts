@@ -62,7 +62,8 @@ function commandConfig(commandId: string) {
 }
 
 export async function getWorkAssignments(
-  options: { scope?: WorkAssignmentScope; page?: number; size?: number } = {}
+  options: { scope?: WorkAssignmentScope; page?: number; size?: number } = {},
+  signal?: AbortSignal
 ): Promise<WorkAssignmentTaskPage> {
   const scope = options.scope ?? 'ASSIGNED_TO_ME';
   if (!['ASSIGNED_TO_ME', 'ASSIGNED_BY_ME'].includes(scope))
@@ -72,8 +73,9 @@ export async function getWorkAssignments(
     page: String(requireInteger(options.page ?? 0, 0, 10_000)),
     size: String(requireInteger(options.size ?? 50, 1, 100)),
   });
-  return (await axiosInstance.get<ApiResponse<WorkAssignmentTaskPage>>(`${base}?${params}`)).data
-    .data;
+  return (
+    await axiosInstance.get<ApiResponse<WorkAssignmentTaskPage>>(`${base}?${params}`, { signal })
+  ).data.data;
 }
 
 export async function getWorkAssignment(assignmentId: string): Promise<WorkAssignmentTask> {

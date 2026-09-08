@@ -1,0 +1,79 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - button "Search DWP" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "Open DWAI·ON" [ref=e29]:
+                        - button "Open DWAI·ON" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - article "Review finance system access" [ref=e37]:
+                - generic [ref=e38]:
+                    - button "Back to work list" [ref=e39] [cursor=pointer]:
+                        - img [ref=e41]
+                        - text: Back to work list
+                    - generic [ref=e43]:
+                        - generic [ref=e44]:
+                            - generic [ref=e45]: IG-014Access review
+                            - heading "Review finance system access" [level=2] [ref=e46]
+                            - paragraph [ref=e47]: Source state verified Sep 4, 2026 at 9:00 AM
+                        - generic [ref=e48]:
+                            - generic [ref=e50]: Review pending
+                            - generic [ref=e52]: No due date
+                - generic [ref=e53]:
+                    - generic [ref=e55]:
+                        - status [ref=e56]:
+                            - generic [ref=e58]:
+                                - img [ref=e59]
+                                - progressbar [ref=e61]:
+                                    - img [ref=e62]
+                            - heading "Checking your current reviewer assignment" [level=2] [ref=e64]
+                        - region "Scheduled work time" [ref=e65]:
+                            - generic [ref=e66]:
+                                - generic [ref=e67]:
+                                    - img [ref=e68]
+                                    - heading "Scheduled work time" [level=3] [ref=e72]
+                                - button "Open Calendar" [ref=e73] [cursor=pointer]
+                            - paragraph [ref=e75]: No scheduled work time is linked to this item.
+                    - separator [ref=e76]
+                    - generic [ref=e77]:
+                        - button "Open in source" [ref=e78] [cursor=pointer]:
+                            - text: Open in source
+                            - img [ref=e80]
+                        - button "Add to today plan" [ref=e83] [cursor=pointer]
+                        - button "Schedule work time" [ref=e84] [cursor=pointer]:
+                            - img [ref=e86]
+                            - text: Schedule work time
+                    - generic [ref=e90]: The source app owns the final state. Opening it does not complete the work.
+        - navigation "Work quick navigation" [ref=e91]:
+            - button "Inbox" [ref=e92] [cursor=pointer]:
+                - img [ref=e93]
+                - generic [ref=e96]: Inbox
+            - button "Today" [ref=e97] [cursor=pointer]:
+                - img [ref=e98]
+                - generic [ref=e103]: Today
+            - button "My actions" [ref=e104] [cursor=pointer]:
+                - img [ref=e105]
+                - generic [ref=e108]: My actions
+            - button "DWAI·ON" [ref=e109] [cursor=pointer]:
+                - img [ref=e110]
+                - generic [ref=e113]: DWAI·ON
+            - button "More" [ref=e114] [cursor=pointer]:
+                - img [ref=e115]
+                - generic [ref=e119]: More
+```

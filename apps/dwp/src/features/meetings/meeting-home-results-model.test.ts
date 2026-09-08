@@ -133,8 +133,8 @@ describe('meeting home result contracts', () => {
     expect(queue.entries[0].summary).toBeNull();
     expect(recent.entries[0].reportId).toBe('published-1');
     expect(recent.entries[0].summary).toBe('Published evidence-linked summary.');
-    expect(api.latest).toHaveBeenCalledWith('meeting-1');
-    expect(api.published).toHaveBeenCalledWith('meeting-1');
+    expect(api.latest).toHaveBeenCalledWith('meeting-1', undefined);
+    expect(api.published).toHaveBeenCalledWith('meeting-1', undefined);
   });
 
   it.each([

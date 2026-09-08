@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -10,6 +10,7 @@ import {
   ShieldX,
   UserRound,
   Wrench,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
@@ -43,6 +44,7 @@ import { SectionHeading } from '../components/workspace-ui';
 import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
 import { useActivityData } from '../features/activity/use-activity-data';
 import { ActivityEventDetail } from '../components/activity/activity-event-detail';
+import { ActivitySourceStatus } from '../components/activity/activity-source-status';
 import {
   ACTIVITY_ACTORS as ACTOR_FILTERS,
   ACTIVITY_STATES as STATE_FILTERS,
@@ -61,7 +63,7 @@ import type {
   WorkspaceActivityState as ActivityState,
 } from '@dwp-frontend/shared-utils';
 
-type ActivityRow = WorkspaceActivityEvent & { time: string };
+type ActivityRow = WorkspaceActivityEvent & { time: string; date: string };
 
 const stateColor: Record<ActivityState, 'info' | 'warning' | 'success' | 'error'> = {
   running: 'info',
@@ -94,15 +96,30 @@ export default function ActivityPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const desktopDetail = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const compactMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
   const filters = readActivityFilters(searchParams);
   const actorFilter = filters.actor ?? 'all';
   const stateFilter = filters.state ?? 'all';
   const query = filters.query ?? '';
+  const activeFilterCount = [
+    filters.actor,
+    filters.state,
+    filters.query,
+    filters.source,
+    filters.objectType,
+    filters.objectId,
+    filters.executionId,
+    filters.from,
+    filters.to,
+    filters.includeUsage,
+  ].filter(Boolean).length;
   const selectedId = searchParams.get('event') ?? '';
   const {
     feed: activityQuery,
     summary,
     detail,
+    executionRun,
+    evidence,
     now,
     refresh,
   } = useActivityData(filters, selectedId);
@@ -111,6 +128,7 @@ export default function ActivityPage() {
       (activityQuery.data?.events ?? []).map((event) => ({
         ...event,
         time: formatDate(new Date(event.occurredAt), { hour: '2-digit', minute: '2-digit' }),
+        date: formatDate(event.occurredAt, { year: 'numeric', month: 'short', day: 'numeric' }),
       })),
     [activityQuery.data?.events]
   );
@@ -156,7 +174,9 @@ export default function ActivityPage() {
       <ResourcePageHeader
         eyebrow={t('activityPage.header.eyebrow')}
         title={t('activityPage.header.title')}
-        description={t('activityPage.header.description')}
+        description={t(
+          compactMobile ? 'activityPage.mobileDescription' : 'activityPage.header.description'
+        )}
         status={
           <LiveStatus
             state={refreshState}
@@ -190,12 +210,19 @@ export default function ActivityPage() {
     <>
       <OperationalKpiStrip
         ariaLabel={t('activityPage.summaryLabel')}
+        sx={{
+          bgcolor: 'background.paper',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        }}
         items={[
           {
             key: 'signals',
             value: summaryValues.signals,
             label: t('activityPage.summary.signals.label'),
             detail: t('activityFoundation.summaryScope'),
+            onSelect: () => selectState('all'),
           },
           {
             key: 'agent',
@@ -203,6 +230,7 @@ export default function ActivityPage() {
             label: t('activityPage.summary.agent.label'),
             detail: t('activityFoundation.summaryScope'),
             tone: 'info' as const,
+            onSelect: () => selectState('running'),
           },
           {
             key: 'input',
@@ -210,6 +238,7 @@ export default function ActivityPage() {
             label: t('activityPage.summary.input.label'),
             detail: t('activityFoundation.summaryScope'),
             tone: 'warning' as const,
+            onSelect: () => selectState('needs-input'),
           },
           {
             key: 'blocked',
@@ -217,6 +246,15 @@ export default function ActivityPage() {
             label: t('activityPage.summary.blocked.label'),
             detail: t('activityFoundation.summaryScope'),
             tone: 'critical' as const,
+            onSelect: () => selectState('policy-blocked'),
+          },
+          {
+            key: 'completed',
+            value: current?.completed ?? '—',
+            label: t('dwaionActivity.metrics.completed'),
+            detail: t('activityFoundation.summaryScope'),
+            tone: 'success' as const,
+            onSelect: () => selectState('completed'),
           },
         ]}
       />
@@ -224,6 +262,10 @@ export default function ActivityPage() {
         {t('activityFoundation.coverageNotice')}{' '}
         {t(`activityFoundation.freshness.${activityRefreshState(summary, now)}`)}
       </Typography>
+      <ActivitySourceStatus
+        sources={activityQuery.isError ? undefined : activityQuery.data?.sourceStates}
+        partial={activityQuery.data?.partial}
+      />
     </>
   );
 
@@ -231,7 +273,7 @@ export default function ActivityPage() {
     <PageCanvas>
       {header}
 
-      <Box sx={{ mt: 3 }}>
+      <Box sx={{ mt: { xs: 1.5, sm: 3 } }}>
         {compactMobile ? (
           <Box
             component="details"
@@ -241,7 +283,7 @@ export default function ActivityPage() {
               py: 1,
               '&[open] > summary': { mb: 1.5 },
               '& > summary': {
-                minHeight: 40,
+                minHeight: 44,
                 display: 'flex',
                 alignItems: 'center',
                 cursor: 'pointer',
@@ -265,7 +307,37 @@ export default function ActivityPage() {
         )}
       </Box>
 
-      <Box sx={{ mt: 3 }}>
+      {compactMobile && (
+        <Box sx={{ mt: 1.5, display: 'flex', gap: 1, alignItems: 'center' }}>
+          {!filtersExpanded && (
+            <FormField
+              label={t('activityPage.searchLabel')}
+              placeholder={t('activityPage.searchPlaceholder')}
+              size="small"
+              fullWidth
+              value={query}
+              onChange={(event) => changeFilter('q', event.target.value || null)}
+            />
+          )}
+          <ActionButton
+            intent="secondary"
+            size="small"
+            startIcon={<SlidersHorizontal size={16} aria-hidden="true" />}
+            aria-label={t('activityPage.mobileFilters')}
+            aria-expanded={filtersExpanded}
+            aria-controls="activity-filter-controls"
+            onClick={() => setFiltersExpanded((value) => !value)}
+            sx={{ minHeight: 44, flexShrink: 0, ml: 'auto' }}
+          >
+            {t(filtersExpanded ? 'activityPage.hideFilters' : 'activityPage.showFilters')}
+            {activeFilterCount > 0 ? ` · ${activeFilterCount}` : ''}
+          </ActionButton>
+        </Box>
+      )}
+      <Box
+        id="activity-filter-controls"
+        sx={{ mt: { xs: 1, sm: 3 }, display: compactMobile && !filtersExpanded ? 'none' : 'block' }}
+      >
         <FilterBar
           ariaLabel={t('activityPage.actorFilter')}
           searchLabel={t('activityPage.searchLabel')}
@@ -326,13 +398,13 @@ export default function ActivityPage() {
                   flexBasis: { xs: '100%', md: 'auto' },
                   '&[open]': { flexBasis: '100%' },
                   '& > summary': {
-                    minHeight: 40,
+                    minHeight: 44,
                     display: 'inline-flex',
                     alignItems: 'center',
                     px: 1.5,
                     border: 1,
                     borderColor: 'divider',
-                    borderRadius: 'shape.borderRadius',
+                    borderRadius: (theme) => `${theme.shape.borderRadius}px`,
                     cursor: 'pointer',
                     listStyle: 'none',
                     color: 'text.primary',
@@ -480,13 +552,12 @@ export default function ActivityPage() {
             desktopDetail && selectedId
               ? 'minmax(0, 1.65fr) minmax(360px, 0.9fr)'
               : 'minmax(0, 1fr)',
-          borderTop: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
+          gap: 2.5,
+          alignItems: 'start',
         }}
       >
         <Box component="section" aria-labelledby="activity-timeline-heading" sx={{ minWidth: 0 }}>
-          <Box sx={{ py: 2, pr: { lg: 3 } }}>
+          <Box sx={{ py: { xs: 1, sm: 2 }, pr: { lg: 3 } }}>
             <SectionHeading
               id="activity-timeline-heading"
               icon={Activity}
@@ -517,7 +588,14 @@ export default function ActivityPage() {
                   <Box
                     component="li"
                     key={event.id}
-                    sx={{ borderBottom: 1, borderColor: 'divider' }}
+                    sx={{
+                      mt: 1.25,
+                      border: 1,
+                      borderColor: active ? 'primary.main' : 'divider',
+                      borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                      overflow: 'hidden',
+                      bgcolor: 'background.paper',
+                    }}
                   >
                     <ButtonBase
                       onClick={() =>
@@ -531,8 +609,8 @@ export default function ActivityPage() {
                         width: 1,
                         display: 'grid',
                         gridTemplateColumns: {
-                          xs: '44px minmax(0, 1fr)',
-                          sm: '58px 40px minmax(0, 1fr) auto',
+                          xs: 'minmax(0, 1fr)',
+                          sm: '64px minmax(0, 1fr)',
                         },
                         gap: { xs: 1, sm: 1.5 },
                         alignItems: 'start',
@@ -541,15 +619,40 @@ export default function ActivityPage() {
                         textAlign: 'left',
                         bgcolor: active ? 'action.selected' : 'transparent',
                         borderLeft: 3,
-                        borderLeftColor: active ? 'primary.main' : 'transparent',
+                        borderLeftColor: active
+                          ? 'primary.main'
+                          : `${stateColor[event.state]}.main`,
+                        overflowWrap: 'anywhere',
                         transition: (theme) =>
                           theme.transitions.create(['background-color', 'border-color']),
                         '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
-                      <Typography variant="caption" color="text.secondary" sx={{ pt: 0.75 }}>
-                        {event.time}
-                      </Typography>
+                      <Box
+                        component="time"
+                        dateTime={event.occurredAt}
+                        title={`${event.date} ${event.time}`}
+                        sx={{
+                          pt: { xs: 0, sm: 0.5 },
+                          display: { xs: 'flex', sm: 'block' },
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          flexWrap: 'wrap',
+                          gap: 1,
+                        }}
+                      >
+                        <Typography component="span" variant="caption" fontWeight="fontWeightBold">
+                          {event.time}
+                        </Typography>
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: 'block', mt: { xs: 0, sm: 0.25 } }}
+                        >
+                          {event.date}
+                        </Typography>
+                      </Box>
                       <Box
                         aria-label={t('activityPage.actorLabel', {
                           actor: t(`labels.actor.${event.actor}`),
@@ -557,9 +660,9 @@ export default function ActivityPage() {
                         sx={{
                           width: 36,
                           height: 36,
-                          display: { xs: 'none', sm: 'grid' },
+                          display: 'none',
                           placeItems: 'center',
-                          borderRadius: 'shape.borderRadius',
+                          borderRadius: (theme) => `${theme.shape.borderRadius}px`,
                           color: event.actor === 'agent' ? 'primary.main' : 'text.secondary',
                           bgcolor: event.actor === 'agent' ? 'action.selected' : 'action.hover',
                         }}
@@ -570,9 +673,25 @@ export default function ActivityPage() {
                         <Box
                           sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}
                         >
+                          <Typography
+                            variant="caption"
+                            color="primary.main"
+                            fontWeight="fontWeightBold"
+                          >
+                            {t(
+                              `activityFoundation.detail.kind.${event.eventKind ?? 'EVENT'}.label`
+                            )}
+                          </Typography>
                           <Typography component="h3" variant="subtitle2">
                             {event.title}
                           </Typography>
+                          {event.dataProvenance === 'SAMPLE' && (
+                            <Chip
+                              size="small"
+                              color="warning"
+                              label={t('activityFoundation.sample.title')}
+                            />
+                          )}
                           <Typography variant="caption" color="text.secondary">
                             {event.actorName}
                           </Typography>
@@ -580,6 +699,37 @@ export default function ActivityPage() {
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
                           {event.summary}
                         </Typography>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 1,
+                            mt: 1.25,
+                            p: 1,
+                            bgcolor: 'var(--dwp-product-soft)',
+                            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                          }}
+                        >
+                          <Typography variant="caption">{event.source}</Typography>
+                          <Typography variant="caption">
+                            {t(`labels.actor.${event.actor}`)} · {event.actorName}
+                          </Typography>
+                          {event.eventKind === 'CHANGE' && event.workStatus && (
+                            <Typography variant="caption" fontWeight="subtitle2.fontWeight">
+                              {t('activityFoundation.workStateAtEvent', {
+                                state: t(`activityFoundation.workStatus.${event.workStatus}`, {
+                                  defaultValue: event.workStatus,
+                                }),
+                              })}
+                            </Typography>
+                          )}
+                          {event.executionId && (
+                            <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
+                              {t('activityFoundation.detail.fields.executionId')}:{' '}
+                              {event.executionId}
+                            </Typography>
+                          )}
+                        </Box>
                         {event.progress != null && (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mt: 1.25 }}>
                             <LinearProgress
@@ -589,10 +739,10 @@ export default function ActivityPage() {
                               sx={{
                                 width: { xs: 150, sm: 220 },
                                 height: 5,
-                                borderRadius: 'shape.borderRadius',
+                                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
                               }}
                             />
-                            <Typography variant="caption" fontWeight={700}>
+                            <Typography variant="caption" fontWeight="fontWeightBold">
                               {event.progress}%
                             </Typography>
                           </Box>
@@ -605,7 +755,7 @@ export default function ActivityPage() {
                         size="small"
                         variant="outlined"
                         sx={(theme) => ({
-                          gridColumn: { xs: '2', sm: 'auto' },
+                          gridColumn: { xs: '1', sm: '2' },
                           justifySelf: 'start',
                           ...(event.state === 'completed' && {
                             color:
@@ -631,6 +781,12 @@ export default function ActivityPage() {
         <ActivityEventDetail
           eventId={selectedId}
           query={detail}
+          executionRun={executionRun.isError ? undefined : executionRun.data}
+          evidenceQuery={
+            detail.data && (detail.data.source !== 'DWAI_ON' || Boolean(detail.data.auditRecordId))
+              ? evidence
+              : undefined
+          }
           variant={desktopDetail ? 'inline' : 'drawer'}
           onClose={closeDetail}
         />

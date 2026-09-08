@@ -1,3 +1,4 @@
+import { meetingShape, meetingSoftShadow } from './meeting-visual-system';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -5,12 +6,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft,
   ArrowRight,
-  LayoutTemplate,
   Plus,
   RefreshCw,
   Search,
   Sparkles,
   Star,
+  Upload,
 } from 'lucide-react';
 import {
   ActionButton,
@@ -43,10 +44,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Chip from '@mui/material/Chip';
 import { alpha } from '@mui/material/styles';
 import { MeetingTemplateEditor } from './meeting-template-editor';
 import { MeetingTemplatePreview } from './meeting-template-preview';
+import { MeetingTemplateCatalogCard } from './meeting-template-catalog-card';
+import { MeetingTemplateImport } from './meeting-template-import';
 import {
   MEETING_TEMPLATE_CATEGORIES,
   editableMeetingTemplate,
@@ -98,6 +100,7 @@ function MeetingTemplatesContent({
   const [cloneName, setCloneName] = useState('');
   const [deleting, setDeleting] = useState<VideoMeetingTemplate | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const mounted = useRef(false);
   const authority = useRef(0);
   const inFlight = useRef(false);
@@ -310,23 +313,34 @@ function MeetingTemplatesContent({
               {t('templates.title')}
             </Typography>
           </Box>
-          <ActionButton
-            intent="primary"
-            startIcon={<Plus size={18} aria-hidden="true" />}
-            aria-label={t('templates.create')}
-            disabled={busy || revoked || query.isError}
-            onClick={() => setEditor({ initial: emptyMeetingTemplate() })}
-            sx={{
-              flexShrink: 0,
-              minHeight: { xs: 44, lg: 32 },
-              minWidth: { xs: 44, lg: 'auto' },
-              '& .MuiButton-startIcon': { mr: { xs: 0, lg: 1 }, ml: { xs: 0, lg: -0.5 } },
-            }}
-          >
-            <Box component="span" sx={{ display: { xs: 'none', lg: 'inline' } }}>
-              {t('templates.create')}
-            </Box>
-          </ActionButton>
+          <Stack direction="row" gap={1}>
+            <ActionButton
+              intent="secondary"
+              startIcon={<Upload size={16} />}
+              disabled={busy || revoked || query.isError}
+              onClick={() => setImportOpen(true)}
+              sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
+            >
+              {t('stitch.templates.import')}
+            </ActionButton>
+            <ActionButton
+              intent="primary"
+              startIcon={<Plus size={18} aria-hidden="true" />}
+              aria-label={t('templates.create')}
+              disabled={busy || revoked || query.isError}
+              onClick={() => setEditor({ initial: emptyMeetingTemplate() })}
+              sx={{
+                flexShrink: 0,
+                minHeight: { xs: 44, lg: 32 },
+                minWidth: { xs: 44, lg: 'auto' },
+                '& .MuiButton-startIcon': { mr: { xs: 0, lg: 1 }, ml: { xs: 0, lg: -0.5 } },
+              }}
+            >
+              <Box component="span" sx={{ display: { xs: 'none', lg: 'inline' } }}>
+                {t('templates.create')}
+              </Box>
+            </ActionButton>
+          </Stack>
         </Stack>
         <Stack
           direction="row"
@@ -344,10 +358,9 @@ function MeetingTemplatesContent({
             color: theme.palette.primary.contrastText,
             backgroundColor: theme.palette.primary.main,
             border: `1px solid ${alpha(theme.palette.primary.contrastText, 0.18)}`,
-            borderLeftWidth: 4,
-            borderLeftColor: theme.palette.primary.light,
-            borderRadius: foundationTokens.radius.surface + 'px',
-            boxShadow: 'none',
+            backgroundImage: `linear-gradient(110deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark} 70%, ${theme.palette.primary.light})`,
+            borderRadius: meetingShape.card,
+            boxShadow: theme.shadows[1],
             '@media (forced-colors: active)': {
               color: 'CanvasText',
               backgroundColor: 'Canvas',
@@ -369,9 +382,15 @@ function MeetingTemplatesContent({
           >
             <Sparkles size={23} aria-hidden="true" />
           </Box>
-          <Typography variant="body2" fontWeight="fontWeightBold" sx={{ maxWidth: 260 }}>
-            {t('templates.subtitle')}
-          </Typography>
+          <Box>
+            <Typography variant="caption" sx={{ letterSpacing: 'overline.letterSpacing' }}>
+              {t('stitch.templates.structureLabel')}
+            </Typography>
+            <Typography variant="subtitle1" fontWeight="fontWeightBold">
+              {t('stitch.templates.bannerTitle')}
+            </Typography>
+            <Typography variant="caption">{t('stitch.templates.bannerHint')}</Typography>
+          </Box>
         </Stack>
         <Box
           data-testid="template-search-scope"
@@ -381,6 +400,10 @@ function MeetingTemplatesContent({
             alignItems: 'center',
             gap: { xs: 1.5, lg: 1 },
             mb: 1.5,
+            p: { xs: 0, lg: 0.75 },
+            bgcolor: { lg: 'background.paper' },
+            borderRadius: meetingShape.control,
+            boxShadow: (theme) => ({ lg: meetingSoftShadow(theme) }),
           }}
         >
           <Box
@@ -430,6 +453,8 @@ function MeetingTemplatesContent({
               bgcolor: 'action.hover',
               borderRadius: foundationTokens.radius.surface + 'px',
               '& .MuiTab-root': { minHeight: { xs: 44, lg: 32 }, py: 0.5, px: 1.5, minWidth: 0 },
+              '& .Mui-selected': { bgcolor: 'background.paper', borderRadius: meetingShape.inset },
+              '& .MuiTabs-indicator': { display: 'none' },
             }}
           >
             {(['PERSONAL', 'ORGANIZATION'] as const).map((value) => (
@@ -445,7 +470,7 @@ function MeetingTemplatesContent({
             pb: 1,
             mb: 1,
             px: 0.5,
-            '& > .MuiButton-root': { flexShrink: 0 },
+            '& > .MuiButton-root': { flexShrink: 0, borderRadius: meetingShape.spotlight },
           }}
           aria-label={t('templates.categoryLabel')}
         >
@@ -513,7 +538,7 @@ function MeetingTemplatesContent({
                 }}
               >
                 <Stack
-                  gap={1}
+                  gap={1.5}
                   component="section"
                   aria-label={t('templates.listLabel')}
                   data-testid="template-list"
@@ -521,106 +546,14 @@ function MeetingTemplatesContent({
                   {visible.map((template) => {
                     const active = selectedId === template.templateId;
                     return (
-                      <Box
+                      <MeetingTemplateCatalogCard
                         key={template.templateId}
-                        component="article"
-                        sx={(theme) => ({
-                          p: 1.5,
-                          bgcolor: active
-                            ? alpha(theme.palette.primary.main, 0.055)
-                            : 'background.paper',
-                          border: 1,
-                          borderColor: active ? 'primary.main' : 'divider',
-                          borderRadius: foundationTokens.radius.surface + 'px',
-                          minWidth: 0,
-                        })}
+                        template={template}
+                        active={active}
+                        busy={busy}
+                        onSelect={() => changeParams({ template: template.templateId })}
+                        onFavorite={() => toggleFavorite(template)}
                       >
-                        <Stack direction="row" alignItems="start" gap={1}>
-                          <Box sx={{ color: 'primary.main', mt: 1 }}>
-                            <LayoutTemplate size={20} aria-hidden="true" />
-                          </Box>
-                          <ActionButton
-                            intent="quiet"
-                            disabled={busy}
-                            onClick={() => changeParams({ template: template.templateId })}
-                            aria-pressed={active}
-                            sx={{
-                              p: 0,
-                              textAlign: 'left',
-                              justifyContent: 'start',
-                              flex: 1,
-                              minWidth: 0,
-                              color: 'text.primary',
-                            }}
-                          >
-                            <Box sx={{ minWidth: 0, py: 0.5 }}>
-                              <Typography
-                                variant="h6"
-                                component="h2"
-                                sx={(theme) => ({
-                                  typography: { xs: active ? 'subtitle1' : 'subtitle2', lg: 'h6' },
-                                  fontWeight: theme.typography.subtitle1.fontWeight,
-                                  overflowWrap: 'anywhere',
-                                })}
-                              >
-                                {template.name}
-                              </Typography>
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{ display: 'block', mt: 0.5 }}
-                              >
-                                {t('templates.scopes.' + template.scope)} ·{' '}
-                                {t('units.minutes', { count: template.durationMinutes })}
-                              </Typography>
-                            </Box>
-                          </ActionButton>
-                          <ActionIconButton
-                            label={t(
-                              template.favorite ? 'templates.unfavorite' : 'templates.favorite'
-                            )}
-                            aria-pressed={template.favorite}
-                            disabled={busy}
-                            onClick={() => toggleFavorite(template)}
-                          >
-                            <Star
-                              size={18}
-                              fill={template.favorite ? 'currentColor' : 'none'}
-                              aria-hidden="true"
-                            />
-                          </ActionIconButton>
-                        </Stack>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            mt: 1,
-                            overflowWrap: 'anywhere',
-                            display: '-webkit-box',
-                            WebkitBoxOrient: 'vertical',
-                            WebkitLineClamp: 2,
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {template.purpose}
-                        </Typography>
-                        <Stack
-                          direction="row"
-                          gap={1}
-                          alignItems="center"
-                          flexWrap="wrap"
-                          sx={{ mt: 1 }}
-                        >
-                          <Chip
-                            size="small"
-                            label={t('templates.agendaCount', {
-                              count: template.agendaItems.length,
-                            })}
-                          />
-                          <Typography variant="caption" color="text.secondary">
-                            {t('templates.version', { version: template.version })}
-                          </Typography>
-                        </Stack>
                         {active && (
                           <Box sx={{ display: { xs: 'block', lg: 'none' }, mt: 2 }}>
                             {detail.isError ? (
@@ -641,7 +574,7 @@ function MeetingTemplatesContent({
                             )}
                           </Box>
                         )}
-                      </Box>
+                      </MeetingTemplateCatalogCard>
                     );
                   })}
                 </Stack>
@@ -656,7 +589,8 @@ function MeetingTemplatesContent({
                     p: 3,
                     border: 1,
                     borderColor: 'divider',
-                    borderRadius: foundationTokens.radius.surface + 'px',
+                    borderRadius: meetingShape.card,
+                    boxShadow: (theme) => meetingSoftShadow(theme),
                   }}
                 >
                   {detail.isError ? (
@@ -677,6 +611,29 @@ function MeetingTemplatesContent({
                 </Box>
               </Box>
             )}
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap={1.5}
+              data-testid="template-ai-recommendation"
+              sx={(theme) => ({
+                p: 2,
+                mt: 2,
+                borderRadius: meetingShape.card,
+                bgcolor: alpha(theme.palette.primary.main, 0.055),
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+              })}
+            >
+              <Sparkles size={24} aria-hidden="true" />
+              <Box>
+                <Typography variant="subtitle2">
+                  {t('stitch.templates.recommendationTitle')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('stitch.templates.recommendationUnavailable')}
+                </Typography>
+              </Box>
+            </Stack>
             <Stack
               direction="row"
               alignItems="center"
@@ -716,6 +673,15 @@ function MeetingTemplatesContent({
         >
           {selected && <MeetingTemplatePreview {...previewProps(selected)} />}
         </FormDialog>
+        {importOpen && !revoked && (
+          <MeetingTemplateImport
+            onClose={() => setImportOpen(false)}
+            onImport={(initial) => {
+              setImportOpen(false);
+              setEditor({ initial });
+            }}
+          />
+        )}
         {editor && !revoked && (
           <MeetingTemplateEditor
             key={editor.template?.templateId ?? 'new'}

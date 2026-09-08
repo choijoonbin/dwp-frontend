@@ -1,9 +1,5 @@
-import {
-  fullDocumentEvidence,
-  immersiveEvidence,
-} from './meeting-approved-frame-evidence-builders';
-
-import type { ImplementationCaptureEvidence } from './meeting-approved-frame-evidence-builders';
+import { implementationCaptureEvidence } from './meeting-reviewed-implementation-captures';
+import { MEETING_STITCH_SOURCE_OVERRIDES } from './meeting-approved-source-revisions';
 
 export type MeetingApprovedFrameMode = 'desktop' | 'mobile';
 export type MeetingApprovedFrameScreen =
@@ -46,6 +42,9 @@ export type MeetingApprovedFrame = {
   proofSpec: string;
   proofTokens: readonly string[];
   sourceArtifact: MeetingApprovedFrameSourceArtifact;
+  /** Earlier immutable source metadata stays available when the same Stitch node changes. */
+  sourceArtifactHistory?: readonly MeetingApprovedFrameSourceArtifact[];
+  sourceRevision?: (typeof MEETING_STITCH_SOURCE_OVERRIDES)['U14-M'];
   implementationGolden: MeetingApprovedFrameImplementationGolden;
 };
 
@@ -331,275 +330,6 @@ function sourceArtifact(id: keyof typeof sourceArtifacts): MeetingApprovedFrameS
   return { exportDirectory, screenSha256, codeSha256, raster: { width, height } };
 }
 
-const implementationCaptureEvidence = {
-  'U01-D': fullDocumentEvidence(
-    1380,
-    '092122759028b5350b5be4ae8d137032ff7e60ca0e0ac614deabb0b71ce49947',
-    [
-      '[data-testid="meeting-home-context"]',
-      '[data-testid="meeting-command-primary"]',
-      '[data-testid="meeting-day-lists"]',
-      '[data-testid="meeting-home-continuation"]',
-    ],
-    '[data-testid="meeting-home-continuation"]'
-  ),
-  'U01-M': fullDocumentEvidence(
-    2522,
-    '73c642eea704aa0a0812af263699135d5c3438b3093a07005dcb4dc8b788a0bc',
-    [
-      '#dwp-main-content h1',
-      '[data-testid="meeting-day-lists"]',
-      '[data-testid="meeting-home-continuation"]',
-    ],
-    '[data-testid="meeting-home-continuation"]',
-    true
-  ),
-  'U02-D': fullDocumentEvidence(
-    1166,
-    '8acb97f44ce512a134803cd2745a947a78282dc3c10f44733bf6600cffe4d4eb',
-    ['#dwp-main-content h1', '[data-testid="my-meetings-workspace"]'],
-    '[data-testid="my-meetings-workspace"]'
-  ),
-  'U02-M': fullDocumentEvidence(
-    1579,
-    'b933b568ca738a57147477b18a91c6d6925324332a913da53ca2b663b54b7326',
-    ['#dwp-main-content h1', '[data-testid="my-meetings-workspace"]'],
-    '[data-testid="my-meetings-workspace"]',
-    true
-  ),
-  'U03-D': fullDocumentEvidence(
-    2376,
-    '7ac9514d2d9dccfb4c61106a667ee54e3b634d01989410c14b49774e04523434',
-    [
-      '[data-testid="meeting-schedule-workspace"] h1',
-      '[data-testid="meeting-schedule-workspace"] aside',
-    ],
-    '[data-testid="meeting-schedule-workspace"]'
-  ),
-  'U03-M': fullDocumentEvidence(
-    1442,
-    '38f6e5c9f548d5c9c13795599d55b066014de89c9d6355269c701868d0eb9005',
-    [
-      '[data-testid="meeting-schedule-workspace"] h1',
-      '[data-testid="meeting-schedule-workspace"] nav',
-    ],
-    '[data-testid="meeting-schedule-workspace"]'
-  ),
-  'U04-D': fullDocumentEvidence(
-    1372,
-    '33e8735750b9f27e73dabc16d61d8abf547afb38b7f873d231ab146a14276bb9',
-    ['#preparation-title', '#preparation-agenda'],
-    '[data-testid="meeting-preparation"]'
-  ),
-  'U04-M': fullDocumentEvidence(
-    2367,
-    '79dcc9b27f63f54a1e0af1eafb47e4a00be751cbb3c6834aee07b8ea174032b2',
-    ['#preparation-title', '#preparation-agenda'],
-    '[data-testid="meeting-preparation"]'
-  ),
-  'U05-D': fullDocumentEvidence(
-    1164,
-    '25bc248af89035616747781e5e19b9c6f6a002e7ad51ac4ec5c4b4d67ede3e2e',
-    ['[data-testid="meeting-prejoin-context"]', '.dwp-meeting-prejoin'],
-    '.dwp-meeting-prejoin'
-  ),
-  'U05-M': fullDocumentEvidence(
-    1590,
-    '7013325780346b3aefda2a5488e56ce752c42417d38721df60c6dbe420079a05',
-    [
-      '#dwp-main-content h1',
-      '[data-testid="meeting-prejoin-context"]',
-      '.dwp-meeting-prejoin__stage',
-      '.dwp-meeting-prejoin__rail',
-    ],
-    '.dwp-meeting-prejoin'
-  ),
-  'U06-D': immersiveEvidence(
-    960,
-    '1428935296cfda6fcdaf91c382c882bb7415377de95ac30b8cac6941b7df29c1',
-    ['.dwp-video-meeting-room__header', '.dwp-video-meeting-room__interactions']
-  ),
-  'U06-M': immersiveEvidence(
-    844,
-    'b45154a2ce97d1ef3aec59b902e69425e6de29fae91b15a091b6e54b8f4042e3',
-    ['.dwp-video-meeting-room__header', '.dwp-video-meeting-room__interactions']
-  ),
-  'U07-D': fullDocumentEvidence(
-    1199,
-    '1693f678f0f20304a90d884e82752ce70257ffa738cdb90187c1ba9302be051b',
-    ['#dwp-main-content h1', '[data-testid="meeting-library-workspace"]'],
-    '[data-testid="meeting-library-workspace"]'
-  ),
-  'U07-M': fullDocumentEvidence(
-    1171,
-    'e5265cb92102038eac824a90c3ecbad76a2d80f55595e1cb6758fd46cc48782b',
-    ['#dwp-main-content h1', '[data-testid="meeting-library-workspace"]'],
-    '[data-testid="meeting-library-workspace"]',
-    true
-  ),
-  'U08-D': fullDocumentEvidence(
-    1400,
-    'ffdc46dc9f5aedba230fc1592817bd5456003fd8cd0b92e737cadafda338e2c0',
-    ['#meeting-recap-title', '[data-testid="meeting-recap-overview"]'],
-    '[data-testid="meeting-recap-overview"]'
-  ),
-  'U08-M': fullDocumentEvidence(
-    2076,
-    '5686b803fbea9f7497709271d6954a6a95e3c23e921a62811f40ec228235985f',
-    [
-      '#meeting-recap-title',
-      '[data-testid="meeting-recap-overview"]',
-      '[data-testid="meeting-recap-evidence-rail"]',
-      '[data-testid="meeting-recap-analysis"]',
-    ],
-    '[data-testid="meeting-recap-overview"]',
-    true
-  ),
-  'U09-D': fullDocumentEvidence(
-    960,
-    'ac6baad3cd1cf99c9151781dd2823c47505a273623dba3717da803c147f17c3d',
-    ['#dwp-main-content h1', '[data-testid="meeting-follow-ups"]'],
-    '[data-testid="meeting-follow-ups"]'
-  ),
-  'U09-M': fullDocumentEvidence(
-    933,
-    '06c53cf58061661c3703d66e625b9cf41f3d25a8bada686fe84eab441d9a0619',
-    [
-      '#dwp-main-content h1',
-      '[data-testid="meeting-follow-ups"]',
-      '[data-testid^="follow-up-row-"]',
-    ],
-    '[data-testid="meeting-follow-ups"]',
-    true
-  ),
-  'U10-D': fullDocumentEvidence(
-    980,
-    '78c87a9e3e82838ec82b9c06a3723c433fafbc6351631ccdab2cbbbf1529ffd1',
-    [
-      '[data-testid="meeting-templates"] h1',
-      '[data-testid="template-search-scope"]',
-      '[data-testid="template-list"]',
-    ],
-    '[data-testid="meeting-templates"]'
-  ),
-  'U10-M': fullDocumentEvidence(
-    902,
-    'd9818f6fb990e234eb469f4da2a1c3b1519fd8afc640589a15e03a2751850a46',
-    [
-      '#dwp-main-content h1',
-      '[data-testid="template-mobile-intro"]',
-      '[data-testid="template-search-scope"]',
-      '[data-testid="template-list"]',
-    ],
-    '[data-testid="meeting-templates"]'
-  ),
-  'U11-D': fullDocumentEvidence(
-    1330,
-    '6c686d91a5d5a7c2d244111241e045456e5ac049eb2d9ad5d71957eeab3c77f5',
-    ['[data-testid="meeting-personal-room"] h1', '#personal-room-current'],
-    '[data-testid="meeting-personal-room"]'
-  ),
-  'U11-M': fullDocumentEvidence(
-    1951,
-    'd6db90541a68b65165d498afbf20264ec8772ac81ba2d1a439fde2e5e1ddfc19',
-    [
-      '#dwp-main-content h1',
-      '#personal-room-current',
-      '#personal-room-policy',
-      '#personal-room-history',
-      '[data-testid="personal-room-supplemental-settings"]',
-    ],
-    '[data-testid="meeting-personal-room"]'
-  ),
-  'U12-D': fullDocumentEvidence(
-    2165,
-    '4680565b511f3057eef34faba2b0e8b93fe1f7b96b82f1c295cef2920fb3d9aa',
-    [
-      '[data-testid="meeting-preferences-workspace"] h1',
-      '#meeting-preferences-join',
-      '#meeting-preferences-advanced',
-    ],
-    '[data-testid="meeting-preferences-workspace"]'
-  ),
-  'U12-M': fullDocumentEvidence(
-    2068,
-    'f7ccc14a25a74f4a3031ddb29b993ab49ff35901ab042cc67d43aa1ca1c683a3',
-    [
-      '#dwp-main-content h1',
-      '#meeting-preferences-join',
-      '#meeting-preferences-advanced',
-      '#dwp-main-content aside',
-    ],
-    '[data-testid="meeting-preferences-workspace"]',
-    true
-  ),
-  'U13-D': fullDocumentEvidence(
-    960,
-    '9b2fc6bbe24dbab184e5d5c3d643e39a7d726c367ecc05bc857e47fef0be11c7',
-    [
-      '#dwp-main-content h1',
-      '[data-testid="meeting-admin-impact-primary"]',
-      'section[aria-labelledby="meeting-exceptions-title"]',
-    ],
-    'section[aria-labelledby="meeting-exceptions-title"]'
-  ),
-  'U13-M': fullDocumentEvidence(
-    1843,
-    '53655de4dd592c9c2d73a36048a422144aaa856f693d42fd8191acc50b1b2f18',
-    [
-      '#dwp-main-content h1',
-      '[data-testid="meeting-admin-impact-primary"]',
-      '[data-testid="meeting-admin-service-readiness"]',
-      'section[aria-labelledby="meeting-exceptions-title"]',
-    ],
-    'section[aria-labelledby="meeting-exceptions-title"]'
-  ),
-  'U14-D': fullDocumentEvidence(
-    1486,
-    '73bf44282797d576fbba9df2d9f616ca131065b378a1479cfe611ec54911300d',
-    [
-      '#dwp-main-content h1',
-      '[data-dwp-page-canvas="workspace"] details[role="region"]:first-of-type',
-      '[data-dwp-page-canvas="workspace"] details[role="region"]:last-of-type',
-    ],
-    '[data-dwp-page-canvas="workspace"] details[role="region"]:last-of-type'
-  ),
-  'U14-M': fullDocumentEvidence(
-    1147,
-    'f1fcb454bbf97aadcfbe4c0def6d8b8a0f669b1959e4b21cfc07d61fa83d75c2',
-    [
-      '#dwp-main-content h1',
-      '#dwp-main-content aside',
-      '#dwp-main-content details[role="region"]',
-      '#dwp-main-content section[aria-label]',
-    ],
-    '#dwp-main-content section[aria-label]'
-  ),
-  'U15-D': fullDocumentEvidence(
-    2630,
-    '8edbee607f8e2e487a549d492935fcee985ec9a173c3a6a784996b434539e59c',
-    [
-      '#dwp-main-content h1',
-      'section[aria-labelledby$="-readiness"]',
-      'section[aria-labelledby$="-pipeline"]',
-      'section[aria-labelledby$="-lifecycle"]',
-    ],
-    'section[aria-labelledby$="-lifecycle"]'
-  ),
-  'U15-M': fullDocumentEvidence(
-    2067,
-    '858d239f53381c81a0ec04fa4f7835620031a382f939fe2129f9cb366edb6490',
-    [
-      '#dwp-main-content h1',
-      'section[aria-labelledby$="-readiness"]',
-      'section[aria-labelledby$="-pipeline"]',
-      'section[aria-labelledby$="-lifecycle"]',
-      '[data-testid="meeting-intelligence-mobile-details"]',
-    ],
-    '[data-testid="meeting-intelligence-mobile-details"]'
-  ),
-} as const satisfies Record<MeetingApprovedFrameId, ImplementationCaptureEvidence>;
-
 const screens: readonly ScreenContract[] = [
   {
     screen: 'U01',
@@ -640,7 +370,10 @@ const screens: readonly ScreenContract[] = [
     },
     route: '/meetings/mine',
     state: 'MINE_SELECTED_UPCOMING',
-    sourceFiles: ['apps/dwp/src/features/meetings/my-meetings.tsx'],
+    sourceFiles: [
+      'apps/dwp/src/features/meetings/my-meetings.tsx',
+      'apps/dwp/src/features/meetings/my-meetings-inspector.tsx',
+    ],
     sourceTokens: ['data-testid="my-meetings-list"', 'data-testid="my-meetings-inspector"'],
     proofSpec: 'e2e/video-meeting-visual-quality.spec.ts',
     proofTokens: ['My meetings uses a bounded list', 'My meetings keeps the selected preparation'],
@@ -723,7 +456,10 @@ const screens: readonly ScreenContract[] = [
     },
     route: '/meetings/room/:meetingId',
     state: 'PREJOIN_PRIVATE_DEVICE_CHECK',
-    sourceFiles: ['apps/dwp/src/features/meetings/meeting-prejoin.tsx'],
+    sourceFiles: [
+      'apps/dwp/src/features/meetings/meeting-prejoin.tsx',
+      'apps/dwp/src/features/meetings/meeting-prejoin-devices.tsx',
+    ],
     sourceTokens: ['dwp-meeting-prejoin__stage', 'dwp-meeting-prejoin__rail'],
     proofSpec: 'e2e/video-meeting-visual-quality.spec.ts',
     proofTokens: ['prejoin keeps the private preview', 'prejoin stacks preview before policy'],
@@ -786,7 +522,10 @@ const screens: readonly ScreenContract[] = [
     },
     route: '/meetings/history?meeting=:meetingId',
     state: 'RECAP_PUBLISHED_WITH_EVIDENCE',
-    sourceFiles: ['apps/dwp/src/features/meetings/meeting-recap-detail.tsx'],
+    sourceFiles: [
+      'apps/dwp/src/features/meetings/meeting-recap-detail.tsx',
+      'apps/dwp/src/features/meetings/meeting-recap-outcome.tsx',
+    ],
     sourceTokens: [
       'data-testid="meeting-recap-overview"',
       'data-testid="meeting-recap-evidence-rail"',
@@ -814,7 +553,7 @@ const screens: readonly ScreenContract[] = [
     sourceFiles: ['apps/dwp/src/features/meetings/meeting-follow-ups.tsx'],
     sourceTokens: [
       'data-testid="meeting-follow-ups"',
-      'OperationalKpiStrip',
+      'MeetingFollowUpsSummary',
       "data-testid={'follow-up-row-'",
     ],
     proofSpec: 'e2e/video-meeting-follow-ups.spec.ts',
@@ -900,8 +639,11 @@ const screens: readonly ScreenContract[] = [
     },
     route: '/meetings/admin/operations',
     state: 'OPERATIONS_EXCEPTION_SELECTED',
-    sourceFiles: ['apps/dwp/src/features/meetings/meeting-admin.tsx'],
-    sourceTokens: ['MeetingAdminOperations', 'operationalExceptions'],
+    sourceFiles: [
+      'apps/dwp/src/features/meetings/meeting-admin.tsx',
+      'apps/dwp/src/features/meetings/meeting-admin-operations.tsx',
+    ],
+    sourceTokens: ['MeetingAdminOperations', 'meeting-admin-telemetry-inspector'],
     proofSpec: 'e2e/video-meeting-admin-surfaces.spec.ts',
     proofTokens: ['U13 presents user impact', 'expectResponsiveAndAccessible'],
   },
@@ -961,8 +703,8 @@ const screens: readonly ScreenContract[] = [
   },
 ];
 
-export const MEETING_APPROVED_FRAMES: readonly MeetingApprovedFrame[] = screens.flatMap(
-  ({ desktop, mobile, ...screen }) => [
+export const MEETING_APPROVED_FRAMES: readonly MeetingApprovedFrame[] = screens
+  .flatMap(({ desktop, mobile, ...screen }) => [
     {
       ...screen,
       id: `${screen.screen}-D` as const,
@@ -989,5 +731,15 @@ export const MEETING_APPROVED_FRAMES: readonly MeetingApprovedFrame[] = screens.
         ...implementationCaptureEvidence[`${screen.screen}-M`],
       },
     },
-  ]
-);
+  ])
+  .map((frame) => {
+    if (frame.id !== 'U14-M') return frame;
+    const sourceRevision = MEETING_STITCH_SOURCE_OVERRIDES['U14-M'];
+    return {
+      ...frame,
+      sourceArtifactHistory: [frame.sourceArtifact],
+      sourceArtifact: sourceRevision.sourceArtifact,
+      approvedViewport: sourceRevision.approvedViewport,
+      sourceRevision,
+    };
+  });

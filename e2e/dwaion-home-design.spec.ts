@@ -235,6 +235,8 @@ test('successful empty sources present empty states instead of invented recommen
 });
 
 for (const view of [
+  { width: 2560, height: 1440, locale: 'ko', name: 'ultrawide' },
+  { width: 1920, height: 1080, locale: 'ko', name: 'wide-desktop' },
   { width: 1440, height: 1000, locale: 'ko', name: 'desktop' },
   { width: 1280, height: 900, locale: 'en', name: 'desktop-en' },
   { width: 768, height: 1024, locale: 'ko', name: 'tablet' },
@@ -267,6 +269,27 @@ for (const view of [
           .map((element) => element.textContent)
       );
     expect(overflow).toEqual([]);
+    const gutters = await home.evaluate((element) => {
+      const canvas = element.closest('[data-dwp-page-canvas="workspace"]');
+      if (!canvas) throw new Error('Home must use the shared workspace canvas.');
+      const contentBounds = element.getBoundingClientRect();
+      const canvasBounds = canvas.getBoundingClientRect();
+      const style = getComputedStyle(canvas);
+      return {
+        left: contentBounds.left - canvasBounds.left,
+        right: canvasBounds.right - contentBounds.right,
+        expectedLeft: Number.parseFloat(style.paddingLeft),
+        expectedRight: Number.parseFloat(style.paddingRight),
+      };
+    });
+    expect(gutters.left, 'Home follows the shared left workspace gutter').toBeCloseTo(
+      gutters.expectedLeft,
+      1
+    );
+    expect(gutters.right, 'Home follows the shared right workspace gutter').toBeCloseTo(
+      gutters.expectedRight,
+      1
+    );
     const motionDuration = await home
       .locator('form')
       .evaluate((form) => Number.parseFloat(getComputedStyle(form).transitionDuration));

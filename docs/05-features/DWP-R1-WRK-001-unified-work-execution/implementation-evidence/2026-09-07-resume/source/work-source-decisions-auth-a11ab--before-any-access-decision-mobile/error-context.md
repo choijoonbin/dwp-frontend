@@ -1,0 +1,122 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - button "Search DWP" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "Open DWAI·ON" [ref=e29]:
+                        - button "Open DWAI·ON" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - article "Review finance system access" [ref=e37]:
+                - generic [ref=e38]:
+                    - button "Back to work list" [ref=e39] [cursor=pointer]:
+                        - img [ref=e41]
+                        - text: Back to work list
+                    - generic [ref=e43]:
+                        - generic [ref=e44]:
+                            - generic [ref=e45]: IG-014Access review
+                            - heading "Review finance system access" [active] [level=2] [ref=e46]
+                            - paragraph [ref=e47]: Source state verified Sep 4, 2026 at 9:00 AM
+                        - generic [ref=e48]:
+                            - generic [ref=e50]: Review pending
+                            - generic [ref=e52]: No due date
+                - generic [ref=e53]:
+                    - generic [ref=e55]:
+                        - generic [ref=e56]:
+                            - generic [ref=e57]:
+                                - generic [ref=e58]:
+                                    - heading "Access review" [level=3] [ref=e59]
+                                    - paragraph [ref=e60]: Quarterly access review
+                                - generic [ref=e61]:
+                                    - img [ref=e62]
+                                    - generic [ref=e65]: Decision pending
+                            - generic [ref=e66]:
+                                - term [ref=e67]: Person
+                                - definition [ref=e68]:
+                                    - paragraph [ref=e69]: Hyunsu Kim
+                                    - text: reviewer@example.test
+                                - term [ref=e70]: Access under review
+                                - definition [ref=e71]:
+                                    - paragraph [ref=e72]: Finance report access · ROLE_FINANCE_READ
+                                    - generic [ref=e73]: Privileged access · review carefully
+                            - heading "Campaign and access evidence" [level=3] [ref=e75]:
+                                - button "Campaign and access evidence" [ref=e76] [cursor=pointer]:
+                                    - generic [ref=e78]: Campaign and access evidence
+                                    - img [ref=e80]
+                            - status [ref=e82]:
+                                - img [ref=e84]
+                                - generic [ref=e87]: After saving a decision, check the source access update.
+                            - separator [ref=e88]
+                            - status [ref=e89]:
+                                - img [ref=e91]
+                                - generic [ref=e93]: Checking decision permission
+                            - heading "Decision and rationale" [level=4] [ref=e94]
+                            - group "Choose whether to retain or revoke access" [ref=e95]:
+                                - button "Keep access" [disabled]:
+                                    - generic:
+                                        - img
+                                    - text: Keep access
+                                - button "Revoke access" [disabled]:
+                                    - generic:
+                                        - img
+                                    - text: Revoke access
+                            - generic [ref=e96]:
+                                - generic:
+                                    - text: Decision reason
+                                    - generic: '*'
+                                - generic [ref=e97]:
+                                    - textbox "Decision reason" [disabled] [ref=e98]
+                                    - group:
+                                        - generic: Decision reason *
+                                - paragraph [ref=e99]: 10–1,000 characters · 0 / 1,000
+                            - generic [ref=e100]:
+                                - button "Review decision before submitting" [disabled]
+                        - region "Scheduled work time" [ref=e101]:
+                            - generic [ref=e102]:
+                                - generic [ref=e103]:
+                                    - img [ref=e104]
+                                    - heading "Scheduled work time" [level=3] [ref=e108]
+                                - button "Open Calendar" [ref=e109] [cursor=pointer]
+                            - paragraph [ref=e111]: No scheduled work time is linked to this item.
+                    - separator [ref=e112]
+                    - generic [ref=e113]:
+                        - button "Open in source" [ref=e114] [cursor=pointer]:
+                            - text: Open in source
+                            - img [ref=e116]
+                        - button "Add to today plan" [ref=e119] [cursor=pointer]
+                        - button "Schedule work time" [ref=e120] [cursor=pointer]:
+                            - img [ref=e122]
+                            - text: Schedule work time
+                    - generic [ref=e126]: The source app owns the final state. Opening it does not complete the work.
+        - navigation "Work quick navigation" [ref=e127]:
+            - button "Inbox" [ref=e128] [cursor=pointer]:
+                - img [ref=e129]
+                - generic [ref=e132]: Inbox
+            - button "Today" [ref=e133] [cursor=pointer]:
+                - img [ref=e134]
+                - generic [ref=e139]: Today
+            - button "My actions" [ref=e140] [cursor=pointer]:
+                - img [ref=e141]
+                - generic [ref=e144]: My actions
+            - button "DWAI·ON" [ref=e145] [cursor=pointer]:
+                - img [ref=e146]
+                - generic [ref=e149]: DWAI·ON
+            - button "More" [ref=e150] [cursor=pointer]:
+                - img [ref=e151]
+                - generic [ref=e155]: More
+```

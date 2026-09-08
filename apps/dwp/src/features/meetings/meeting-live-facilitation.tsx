@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -117,9 +117,13 @@ export function MeetingLiveFacilitationLauncher({
 export function MeetingLiveFacilitation({
   meetingId,
   onClose,
+  embedded = false,
+  children,
 }: {
   meetingId: string;
   onClose: () => void;
+  embedded?: boolean;
+  children?: ReactNode;
 }) {
   const { t, i18n } = useTranslation('meetings');
   const client = useQueryClient();
@@ -167,37 +171,56 @@ export function MeetingLiveFacilitation({
   );
 
   return (
-    <Stack sx={{ minHeight: '100%', maxHeight: '100dvh' }}>
-      <Stack
-        component="header"
-        direction="row"
-        alignItems="flex-start"
-        justifyContent="space-between"
-        gap={2}
-        sx={{ px: { xs: 2, sm: 2.5 }, py: 2, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Box>
-          <Stack direction="row" alignItems="center" gap={1}>
-            <ListChecks size={20} aria-hidden="true" />
-            <Typography
-              id="meeting-live-facilitation-title"
-              component="h2"
-              variant="h5"
-              fontWeight="fontWeightBold"
-            >
-              {t('liveFacilitation.title')}
+    <Stack
+      data-testid={embedded ? 'meeting-live-tools-embedded' : 'meeting-live-tools-drawer'}
+      sx={{
+        minHeight: 0,
+        height: embedded ? 'auto' : '100%',
+        maxHeight: embedded ? 'none' : '100dvh',
+        color: 'text.primary',
+      }}
+    >
+      {!embedded && (
+        <Stack
+          component="header"
+          direction="row"
+          alignItems="flex-start"
+          justifyContent="space-between"
+          gap={2}
+          sx={{ px: { xs: 2, sm: 2.5 }, py: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Box>
+            <Stack direction="row" alignItems="center" gap={1}>
+              <ListChecks size={20} aria-hidden="true" />
+              <Typography
+                id="meeting-live-facilitation-title"
+                component="h2"
+                variant="h5"
+                fontWeight="fontWeightBold"
+              >
+                {t('liveFacilitation.title')}
+              </Typography>
+            </Stack>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {t('liveFacilitation.description')}
             </Typography>
-          </Stack>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t('liveFacilitation.description')}
-          </Typography>
-        </Box>
-        <ActionIconButton label={t('actions.close')} onClick={onClose}>
-          <X size={18} aria-hidden="true" />
-        </ActionIconButton>
-      </Stack>
+          </Box>
+          <ActionIconButton label={t('actions.close')} onClick={onClose}>
+            <X size={18} aria-hidden="true" />
+          </ActionIconButton>
+        </Stack>
+      )}
 
-      <Box sx={{ minHeight: 0, flex: 1, overflowY: 'auto', px: { xs: 2, sm: 2.5 }, py: 2 }}>
+      <Box
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          overflowY: embedded ? 'visible' : 'auto',
+          px: embedded ? 0 : { xs: 2, sm: 2.5 },
+          py: embedded ? 0 : 2,
+        }}
+      >
+        {children}
         {snapshot.isLoading ? (
           <LoadingState label={t('liveFacilitation.loading')} variant="skeleton" skeletonRows={6} />
         ) : snapshot.isError || !data ? (
@@ -321,24 +344,20 @@ function TimerSection({
 }) {
   const { t } = useTranslation('meetings');
   const timer = data.timer;
+  const titleId = `meeting-facilitation-timer-title-${useId()}`;
   const countdown = countdownParts(timer.remainingSeconds);
   const idle = timer.state === 'IDLE' || timer.state === 'COMPLETED';
   return (
     <Box
       component="section"
-      aria-labelledby="meeting-facilitation-timer-title"
+      aria-labelledby={titleId}
       sx={(theme) => ({ ...meetingSurface(theme, { tone: 'primary' }), p: 2 })}
     >
       <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={2}>
         <Box>
           <Stack direction="row" alignItems="center" gap={0.75}>
             <Clock3 size={17} aria-hidden="true" />
-            <Typography
-              id="meeting-facilitation-timer-title"
-              component="h3"
-              variant="subtitle1"
-              fontWeight="fontWeightBold"
-            >
+            <Typography id={titleId} component="h3" variant="subtitle1" fontWeight="fontWeightBold">
               {t('liveFacilitation.timer.title')}
             </Typography>
           </Stack>
@@ -463,8 +482,9 @@ function PollSection({
   onAction: (action: FacilitationAction) => void;
 }) {
   const { t } = useTranslation('meetings');
+  const titleId = `meeting-facilitation-poll-title-${useId()}`;
   return (
-    <Box component="section" aria-labelledby="meeting-facilitation-poll-title">
+    <Box component="section" aria-labelledby={titleId}>
       <Stack
         direction="row"
         alignItems="center"
@@ -474,12 +494,7 @@ function PollSection({
       >
         <Stack direction="row" alignItems="center" gap={0.75}>
           <Vote size={17} aria-hidden="true" />
-          <Typography
-            id="meeting-facilitation-poll-title"
-            component="h3"
-            variant="subtitle1"
-            fontWeight="fontWeightBold"
-          >
+          <Typography id={titleId} component="h3" variant="subtitle1" fontWeight="fontWeightBold">
             {t('liveFacilitation.poll.title')}
           </Typography>
         </Stack>
@@ -630,16 +645,12 @@ function QuestionsSection({
   onAction: (action: FacilitationAction) => void;
 }) {
   const { t } = useTranslation('meetings');
+  const titleId = `meeting-facilitation-question-title-${useId()}`;
   return (
-    <Box component="section" aria-labelledby="meeting-facilitation-question-title">
+    <Box component="section" aria-labelledby={titleId}>
       <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1 }}>
         <MessageCircleQuestion size={17} aria-hidden="true" />
-        <Typography
-          id="meeting-facilitation-question-title"
-          component="h3"
-          variant="subtitle1"
-          fontWeight="fontWeightBold"
-        >
+        <Typography id={titleId} component="h3" variant="subtitle1" fontWeight="fontWeightBold">
           {t('liveFacilitation.questions.title')}
         </Typography>
         <Chip size="small" label={data.questions.length} />

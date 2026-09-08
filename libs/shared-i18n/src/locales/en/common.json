@@ -72,7 +72,10 @@
   },
   "productSurface": {
     "contextBar": {
+      "label": "Product access context",
       "loadError": "The management context could not be loaded.",
+      "recovered": "The product access context has been restored.",
+      "retry": "Try again",
       "reloadPage": "Reload page"
     },
     "notFound": {
@@ -136,8 +139,16 @@
         "description": "Your current account does not have the application access required for this work area."
       },
       "surfaceDenied": {
-        "title": "This management area is not assigned",
-        "description": "A product responsibility and its exact management capability are required."
+        "title": "This product area is not assigned",
+        "description": "The exact access required for this product area is not available.",
+        "work": {
+          "title": "This work area is not assigned",
+          "description": "Your current account needs access to this product's work area."
+        },
+        "management": {
+          "title": "This management area is not assigned",
+          "description": "A product responsibility and its exact management capability are required."
+        }
       },
       "routeDenied": {
         "title": "This page is outside your access",

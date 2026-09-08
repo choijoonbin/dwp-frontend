@@ -1,4 +1,13 @@
-import type { WorkHubActionKind, WorkHubItem } from './work-hub-contracts';
+import type {
+  AskDwpOptions,
+  AskDwpResponse,
+} from '@dwp-frontend/shared-utils/api/agent-runtime-api';
+import {
+  askWorkHubAssist,
+  isWorkHubAssistSourceSystem,
+  workHubAssistDisposition,
+} from './work-hub-assist';
+import type { WorkHubActionKind, WorkHubItem, WorkHubSnapshot } from './work-hub-contracts';
 
 export type WorkHubOperationFeedback = {
   severity: 'success' | 'warning' | 'error' | 'info';
@@ -38,7 +47,53 @@ export function uniqueWorkSourceSystems(items: readonly WorkHubItem[]) {
 }
 
 export function canUseWorkAssist(item: WorkHubItem, entitled: boolean) {
-  return (
-    entitled && !['IDENTITY_GOVERNANCE', 'LEGACY_PROJECTION'].includes(item.reference.sourceSystem)
+  return entitled && isWorkHubAssistSourceSystem(item.reference.sourceSystem);
+}
+
+export async function submitWorkHubAssist({
+  item,
+  question,
+  options,
+  locale,
+  route,
+  refresh,
+  refetch,
+  resetSelection,
+}: {
+  item: WorkHubItem;
+  question: string;
+  options: AskDwpOptions & { conversationId?: string };
+  locale: string;
+  route: string;
+  refresh: () => Promise<WorkHubSnapshot>;
+  refetch: () => Promise<unknown>;
+  resetSelection: () => void;
+}): Promise<AskDwpResponse> {
+  options.signal?.throwIfAborted();
+  const fresh = await refresh();
+  options.signal?.throwIfAborted();
+  const current = fresh.items.find((candidate) => candidate.key === item.key);
+  if (!current || current.version !== item.version) {
+    const source = fresh.sources.find((candidate) => candidate.sourceId === item.sourceId);
+    if (
+      current ||
+      source?.state === 'READY' ||
+      source?.state === 'FORBIDDEN' ||
+      source?.failureStatus === 404
+    )
+      resetSelection();
+    await refetch();
+    throw new Error('Work context changed');
+  }
+  const response = await askWorkHubAssist(
+    current,
+    { question, expectedKey: item.key, expectedVersion: item.version },
+    fresh.receivedAt,
+    { ...options, locale, route }
   );
+  if (['PURGE', 'REFRESH'].includes(workHubAssistDisposition(response))) {
+    resetSelection();
+    await refetch();
+  }
+  return response;
 }

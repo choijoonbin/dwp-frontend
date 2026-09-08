@@ -34,6 +34,13 @@ export type PersonalWorkSource =
       dueAt: null;
     };
 
+export type PersonalWorkChecklistItem = {
+  itemId: string;
+  title: string;
+  completed: boolean;
+};
+export type PersonalWorkDeleteResult = { taskId: string; version: number; deletedAt: string };
+
 export type PersonalWorkTask = {
   taskId: string;
   title: string;
@@ -42,6 +49,9 @@ export type PersonalWorkTask = {
   priority: PersonalWorkPriority;
   dueAt: string | null;
   source: PersonalWorkSource | null;
+  /** Optional while older task receipts/servers are read during rollout. */
+  sources?: PersonalWorkSource[];
+  checklist?: PersonalWorkChecklistItem[];
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -63,6 +73,10 @@ export type PersonalWorkTaskInput = {
   sourceReference?: WorkSourceReference | null;
   /** Update only: explicit unlink. A null reference otherwise retains the saved relationship. */
   clearSourceReference?: boolean;
+  /** Ordered full replacement; omission preserves current checklist on update. */
+  checklist?: PersonalWorkChecklistItem[] | null;
+  /** Ordered full replacement; [] clears all sources. Do not combine with singular/clear input. */
+  sourceReferences?: WorkSourceReference[] | null;
 };
 export type PersonalWorkTimelineEvent = {
   eventId: string;

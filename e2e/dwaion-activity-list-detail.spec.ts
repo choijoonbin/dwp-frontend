@@ -6,8 +6,11 @@ import { mockShellSession } from './support/shell-session';
 const COMPLETED_RUN = '41000000-0000-4000-8000-000000000001';
 const RUNNING_RUN = '41000000-0000-4000-8000-000000000002';
 const FAILED_RUN = '41000000-0000-4000-8000-000000000003';
+const POLICY_BLOCKED_RUN = '41000000-0000-4000-8000-000000000004';
+const CONFIGURATION_RUN = '41000000-0000-4000-8000-000000000005';
 const OUTSIDE_WINDOW_RUN = '41000000-0000-4000-8000-000000000099';
 const CONVERSATION = '51000000-0000-4000-8000-000000000001';
+const AUDIT_RECORD = '61000000-0000-5000-8000-000000000001';
 
 const runs = [
   run(COMPLETED_RUN, 'COMPLETED', 'ALLOW', 'COMPLETED', CONVERSATION),
@@ -21,11 +24,17 @@ test('one recent-window request powers URL-preserved client filtering and exact 
   const requests = await mockActivity(page);
   await page.goto('/dwaion/activity');
 
-  await expect(page.getByText(/Up to 100 recent runs are retrieved/)).toBeVisible();
+  await expect(
+    page.getByText(
+      /(?:Up to 100 recent runs are retrieved|Counts and filters use up to 100 recently retrieved runs)/
+    )
+  ).toBeVisible();
   await expect(page.getByText(/3 of 3 retrieved runs/)).toBeVisible();
-  await expect(page.getByRole('region', { name: 'AI run status summary' })).toContainText(
-    'Retrieved runs'
-  );
+  await expect(
+    page
+      .getByRole('region', { name: 'AI run status summary' })
+      .getByRole('button', { name: /Retrieved runs:/ })
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'In progress', exact: true }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'RUNNING');
@@ -51,6 +60,30 @@ test('one recent-window request powers URL-preserved client filtering and exact 
   ).toBeVisible();
   expect(requests.detailRequests.length).toBeGreaterThan(0);
   expect(new Set(requests.detailRequests)).toEqual(new Set([COMPLETED_RUN]));
+  const receipt = inspector.getByRole('region', { name: 'Recent run response' });
+  const metadata = receipt.getByRole('button', { name: 'Additional run metadata' });
+  await expect(metadata).toHaveAttribute('aria-expanded', 'false');
+  await metadata.click();
+  await expect(metadata).toHaveAttribute('aria-expanded', 'true');
+  await expect(receipt.getByText('Risk tier', { exact: true })).toBeVisible();
+  await expect(receipt.getByText('Started', { exact: true })).toBeVisible();
+  await metadata.click();
+  await expect(
+    inspector.getByRole('heading', { name: 'Run stages and processing time' })
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole('progressbar', { name: 'Server-reported progress' })
+  ).toHaveAttribute('aria-valuenow', '100');
+  await expect(inspector.locator('[data-stage-key="RETRIEVING"]')).toContainText(
+    'Retrieving evidence'
+  );
+  await expect(inspector.getByRole('heading', { name: 'Run source status' })).toBeVisible();
+  await expect(inspector.getByText('WORK_ITEM', { exact: true })).toBeVisible();
+  await expect(inspector.getByText('Linked to a Platform audit record')).toBeVisible();
+  await expect(inspector.getByRole('heading', { name: 'Audit integrity evidence' })).toBeVisible();
+  await expect(inspector.getByText('Matches the reported daily checkpoint')).toBeVisible();
+  expect(requests.evidenceRequests.length).toBeGreaterThan(0);
+  expect(new Set(requests.evidenceRequests)).toEqual(new Set([AUDIT_RECORD]));
 
   const audit = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -65,6 +98,36 @@ test('390 and 320 layouts use a drawer that closes with Escape and restores row 
   await mockActivity(page);
   await page.goto('/dwaion/activity');
   const selected = page.getByTestId(`dwaion-run-${COMPLETED_RUN}`);
+  await expect(selected).toBeVisible();
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    const metrics = page.getByRole('region', { name: 'AI run status summary' }).getByRole('button');
+    await expect(metrics).toHaveCount(4);
+    const metricBounds = await metrics.evaluateAll((buttons) =>
+      buttons.map((button) => {
+        const rect = button.getBoundingClientRect();
+        return { top: rect.top, width: rect.width, height: rect.height };
+      })
+    );
+    expect(new Set(metricBounds.map((rect) => Math.round(rect.top))).size).toBe(1);
+    expect(metricBounds.every((rect) => rect.width >= 44 && rect.height >= 44)).toBe(true);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)
+    ).toBe(true);
+    await expect(selected.getByText('DWAI·ON work agent', { exact: true })).toBeInViewport({
+      ratio: 1,
+    });
+    await expect(selected).toHaveAttribute('aria-label', new RegExp(COMPLETED_RUN));
+    await page.screenshot({
+      path: testInfo.outputPath(`dwaion-activity-list-${width}.png`),
+      fullPage: false,
+    });
+    const listAudit = await new AxeBuilder({ page }).include('main').analyze();
+    expect(
+      listAudit.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? ''))
+    ).toEqual([]);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
   await selected.focus();
   await selected.press('Enter');
   await expect(page.getByRole('complementary', { name: 'Selected run details' })).toBeVisible();
@@ -74,16 +137,104 @@ test('390 and 320 layouts use a drawer that closes with Escape and restores row 
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)
     ).toBe(true);
+    const receipt = page.getByRole('region', { name: 'Recent run response' });
+    const runIdLabel = receipt.getByText('Run ID', { exact: true });
+    const runIdValue = receipt.getByText(COMPLETED_RUN, { exact: true });
+    expect(
+      Math.abs((await runIdLabel.boundingBox())!.y - (await runIdValue.boundingBox())!.y)
+    ).toBeLessThan(1);
     await page.screenshot({
       path: testInfo.outputPath(`dwaion-activity-detail-${width}.png`),
       fullPage: false,
     });
+    const detailAudit = await new AxeBuilder({ page }).analyze();
+    expect(
+      detailAudit.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? ''))
+    ).toEqual([]);
   }
 
   await page.keyboard.press('Escape');
   await expect(page.getByRole('complementary', { name: 'Selected run details' })).toHaveCount(0);
   await expect(page).toHaveURL((url) => !url.searchParams.has('run'));
   await expect(selected).toBeFocused();
+});
+
+test('summary metrics drill into the exact attention evidence set and preserve inline selection', async ({
+  page,
+}) => {
+  const requests = await mockActivity(page, { attentionEvidence: true });
+  await page.goto(`/dwaion/activity?run=${COMPLETED_RUN}`);
+  await expect(page.getByRole('complementary', { name: 'Selected run details' })).toBeVisible();
+  const drawerOpen = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (drawerOpen) {
+    await page.getByRole('button', { name: 'Close selected execution' }).click();
+    await expect(page.getByRole('dialog', { name: 'Selected run details' })).toHaveCount(0);
+  }
+  const summary = page.getByRole('region', { name: 'AI run status summary' });
+  const compactSummaryToggle = summary.getByRole('button', { name: /^AI run status summary:/ });
+  if (
+    (await compactSummaryToggle.isVisible()) &&
+    (await compactSummaryToggle.getAttribute('aria-expanded')) === 'false'
+  ) {
+    await compactSummaryToggle.click();
+  }
+  await summary.getByRole('button', { name: /Attention signals/ }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.searchParams.get('state') === 'ATTENTION' &&
+      (drawerOpen ? !url.searchParams.has('run') : url.searchParams.get('run') === COMPLETED_RUN)
+  );
+  await expect(page.getByText(/3 of 5 retrieved runs/)).toBeVisible();
+  const list = page.getByRole('list', { name: 'Recently retrieved AI runs' });
+  await expect(list.getByTestId(`dwaion-run-${FAILED_RUN}`)).toBeVisible();
+  await expect(list.getByTestId(`dwaion-run-${POLICY_BLOCKED_RUN}`)).toBeVisible();
+  await expect(list.getByTestId(`dwaion-run-${POLICY_BLOCKED_RUN}`)).toHaveAttribute(
+    'aria-label',
+    /Blocked by policy/
+  );
+  await expect(list.getByTestId(`dwaion-run-${CONFIGURATION_RUN}`)).toBeVisible();
+  await expect(list.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveCount(0);
+  await expect(list.getByTestId(`dwaion-run-${RUNNING_RUN}`)).toHaveCount(0);
+  expect(requests.runRequests).toHaveLength(1);
+
+  await summary.getByRole('button', { name: /Retrieved runs/ }).click();
+  await expect(page).toHaveURL((url) => !url.searchParams.has('state'));
+  if (!drawerOpen) {
+    await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveAttribute(
+      'aria-current',
+      'true'
+    );
+  }
+});
+
+test('a short mobile viewport keeps the first run visible and preserves expandable summary filters', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await mockActivity(page);
+  await page.goto('/dwaion/activity');
+  const summary = page.getByRole('region', { name: 'AI run status summary' });
+  const toggle = summary.getByRole('button', { name: /^AI run status summary:/ });
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  expect((await toggle.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  await expect(
+    page
+      .getByTestId(`dwaion-run-${COMPLETED_RUN}`)
+      .getByRole('heading', { name: 'Governed answer execution' })
+  ).toBeInViewport({ ratio: 1 });
+  await page.screenshot({
+    path: testInfo.outputPath('dwaion-activity-list-320x568.png'),
+    fullPage: false,
+  });
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await summary.getByRole('button', { name: /Attention signals:/ }).click();
+  await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'ATTENTION');
+  await expect(page.getByText(/1 of 3 retrieved runs/)).toBeVisible();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(summary.getByRole('button', { name: /Attention signals:/ })).toHaveCount(0);
 });
 
 test('APP.ASK-only access shows list receipt but never requests common activity detail', async ({
@@ -146,6 +297,7 @@ test('a failed exact-run revalidation removes the stale receipt and conversation
   await expect(inspector.getByRole('button', { name: 'Open conversation' })).toHaveCount(0);
   expect(requests.exactRunRequests.length).toBeGreaterThan(initialRequestCount);
   expect(new Set(requests.exactRunRequests)).toEqual(new Set([OUTSIDE_WINDOW_RUN]));
+  await expect(inspector.getByText('Verified run detail')).toHaveCount(0);
 });
 
 test('a failed recent-window access revalidation removes cached run metadata', async ({ page }) => {
@@ -160,6 +312,13 @@ test('a failed recent-window access revalidation removes cached run metadata', a
   await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveCount(0);
   await expect(inspector.getByText('Recent run response')).toHaveCount(0);
   await expect(inspector.getByRole('button', { name: 'Open conversation' })).toHaveCount(0);
+  await expect(inspector.getByText('Verified run detail')).toHaveCount(0);
+  await expect(page.getByText('Run activity is not available', { exact: true })).toBeVisible();
+  await expect(page.getByText(/0 of 0 retrieved runs/)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'All', exact: true })).toBeDisabled();
+  await expect(page.getByText('There is no AI run activity to show', { exact: true })).toHaveCount(
+    0
+  );
 });
 
 async function mockActivity(
@@ -169,6 +328,7 @@ async function mockActivity(
     blockList?: boolean;
     missingDetail?: boolean;
     missingRun?: boolean;
+    attentionEvidence?: boolean;
   } = {}
 ) {
   const askPermission = {
@@ -184,6 +344,7 @@ async function mockActivity(
   const runRequests: URL[] = [];
   const exactRunRequests: string[] = [];
   const detailRequests: string[] = [];
+  const evidenceRequests: string[] = [];
   let exactRunRevoked = false;
   let runListRevoked = false;
   let releaseList: () => void = () => undefined;
@@ -198,7 +359,17 @@ async function mockActivity(
     if (runListRevoked) {
       return route.fulfill({ status: 403, json: { data: null } });
     }
-    return route.fulfill({ json: { data: runs } });
+    return route.fulfill({
+      json: {
+        data: options.attentionEvidence
+          ? [
+              ...runs,
+              run(POLICY_BLOCKED_RUN, 'COMPLETED', 'DENY', 'COMPLETED', null),
+              run(CONFIGURATION_RUN, 'COMPLETED', 'ALLOW', 'CONFIGURATION_REQUIRED', null),
+            ]
+          : runs,
+      },
+    });
   });
   await page.route('**/api/agent/v1/runs/*', (route) => {
     const runId = new URL(route.request().url()).pathname.split('/').at(-1) ?? '';
@@ -218,10 +389,31 @@ async function mockActivity(
     }
     return route.fulfill({ json: { data: activityEvent(runId) } });
   });
+  await page.route('**/api/platform/v1/workspace/activity/audit/evidence/*', (route) => {
+    const auditRecordId = new URL(route.request().url()).pathname.split('/').at(-1) ?? '';
+    evidenceRequests.push(auditRecordId);
+    return route.fulfill({
+      json: {
+        data: {
+          eventId: COMPLETED_RUN,
+          auditRecordId,
+          linkStatus: 'LINKED',
+          auditAccess: 'AVAILABLE',
+          recordHash: 'a'.repeat(64),
+          hashAlgorithm: 'SHA-256',
+          integrityStatus: 'VERIFIED',
+          integrityScope: 'DAILY_CHECKPOINT_REPORTED',
+          verifiedAt: '2026-09-04T00:01:00Z',
+          observedAt: '2026-09-04T00:02:00Z',
+        },
+      },
+    });
+  });
   return {
     runRequests,
     exactRunRequests,
     detailRequests,
+    evidenceRequests,
     releaseList,
     revokeExactRun: () => {
       exactRunRevoked = true;
@@ -253,6 +445,56 @@ function run(
     conversationId,
     createdAt: '2026-09-04T00:00:00Z',
     completedAt: runState === 'RUNNING' ? null : '2026-09-04T00:00:01Z',
+    dataProvenance: 'LIVE',
+    activityTitle:
+      runState === 'RUNNING' ? 'Evidence retrieval in progress' : 'Governed answer execution',
+    attempt: 1,
+    lease: {
+      status: runState === 'RUNNING' ? 'ACTIVE' : 'RELEASED',
+      expiresAt: runState === 'RUNNING' ? '2026-09-04T00:02:00Z' : null,
+    },
+    currentStage:
+      runState === 'RUNNING' ? 'RETRIEVING' : runState === 'FAILED' ? 'FAILED' : 'COMPLETED',
+    progressPercent: runState === 'RUNNING' ? 40 : 100,
+    measurementStatus: runState === 'RUNNING' ? 'PARTIAL' : 'MEASURED',
+    stages:
+      runState === 'COMPLETED'
+        ? [
+            stage('AUTHORIZING', 'COMPLETED', 10, 40),
+            stage('RETRIEVING', 'COMPLETED', 20, 100),
+            stage('REASONING', 'COMPLETED', 30, 200),
+            stage('VERIFYING', 'COMPLETED', 40, 60),
+            stage('PERSISTING', 'COMPLETED', 50, 20),
+            stage('COMPLETED', 'COMPLETED', 60, 0),
+          ]
+        : runState === 'RUNNING'
+          ? [stage('AUTHORIZING', 'COMPLETED', 10, 40), stage('RETRIEVING', 'ACTIVE', 20, null)]
+          : [stage('AUTHORIZING', 'COMPLETED', 10, 40), stage('FAILED', 'FAILED', 60, 0)],
+    auditEvidence: {
+      auditId: '61000000-0000-4000-8000-000000000002',
+      auditRecordId: AUDIT_RECORD,
+      status: 'LINKED',
+    },
+    sourceHealth: [
+      {
+        sourceType: 'WORK_ITEM',
+        status: runState === 'FAILED' ? 'UNAVAILABLE' : 'SUCCESS',
+        latencyMs: runState === 'FAILED' ? null : 100,
+        lastAttemptAt: '2026-09-04T00:00:00.040Z',
+        lastSuccessAt: runState === 'FAILED' ? null : '2026-09-04T00:00:00.040Z',
+      },
+    ],
+  };
+}
+
+function stage(key: string, state: string, sequence: number, durationMs: number | null) {
+  return {
+    key,
+    state,
+    sequence,
+    startedAt: '2026-09-04T00:00:00Z',
+    completedAt: state === 'ACTIVE' ? null : '2026-09-04T00:00:01Z',
+    durationMs,
   };
 }
 
@@ -278,8 +520,8 @@ function activityEvent(runId: string) {
     attempt: 1,
     workStatus: null,
     dataProvenance: 'LIVE',
-    auditStatus: 'NOT_LINKED',
-    auditRecordId: null,
-    auditId: null,
+    auditStatus: 'VERIFIED',
+    auditRecordId: AUDIT_RECORD,
+    auditId: '61000000-0000-4000-8000-000000000002',
   };
 }

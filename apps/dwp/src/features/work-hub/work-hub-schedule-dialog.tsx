@@ -19,6 +19,8 @@ import {
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 
 import type { WorkHubItem } from './work-hub-contracts';
 import type { WorkScheduleCommand, WorkScheduleResult } from './work-hub-scheduling';
@@ -91,6 +93,15 @@ export function WorkHubScheduleDialog({
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<WorkScheduleResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const currentSelection = useRef<string | null>(null);
+  currentSelection.current = open && item ? `${item.key}:${item.version}` : null;
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!open || !item) return;
@@ -143,6 +154,7 @@ export function WorkHubScheduleDialog({
 
   const submit = async () => {
     if (invalid || busy || (result && !retryable)) return;
+    const submittedSelection = `${item.key}:${item.version}`;
     setBusy(true);
     setError(null);
     try {
@@ -162,11 +174,19 @@ export function WorkHubScheduleDialog({
       );
       if (retainsCalendarReceipt(next)) recoveries.current.set(item.key, next);
       else recoveries.current.delete(item.key);
-      setResult(next);
+      if (mounted.current && currentSelection.current === submittedSelection) {
+        const input = next.command.eventInput;
+        setCalendarId(input.calendarId ?? '');
+        setTitle(input.title);
+        setStartsAt(input.startsAt);
+        setEndsAt(input.endsAt);
+        setResult(next);
+      }
     } catch {
-      setError(t('work:workHub.schedule.failed'));
+      if (mounted.current && currentSelection.current === submittedSelection)
+        setError(t('work:workHub.schedule.failed'));
     } finally {
-      setBusy(false);
+      if (mounted.current) setBusy(false);
     }
   };
 
@@ -209,6 +229,36 @@ export function WorkHubScheduleDialog({
       }
     >
       <Stack gap={2}>
+        <Box
+          sx={{
+            p: 2,
+            bgcolor: 'action.hover',
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            borderInlineStart: 3,
+            borderColor: 'primary.main',
+          }}
+        >
+          <Stack direction="row" gap={1} alignItems="center" sx={{ mb: 0.75 }}>
+            <CalendarDays size={18} />
+            <Typography variant="caption" color="text.secondary">
+              {t('work:workHub.schedule.selectedWork')}
+            </Typography>
+          </Stack>
+          <Typography variant="subtitle2">{item.title}</Typography>
+          <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+            <Chip
+              size="small"
+              label={t(`work:workHub.sources.${item.reference.sourceSystem}`, {
+                defaultValue: t('work:workHub.sources.OTHER'),
+              })}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(`work:workHub.lifecycle.${item.lifecycle}`)}
+            />
+          </Stack>
+        </Box>
         {calendars.isError && (
           <InlineFeedback severity="warning">
             {t('work:workHub.schedule.calendarUnavailable')}
@@ -247,6 +297,7 @@ export function WorkHubScheduleDialog({
             setResult(null);
           }}
           inputProps={{ maxLength: 300 }}
+          supportingText={t('work:workHub.schedule.titleLength', { count: title.length })}
           disabled={busy || draftLocked}
         />
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
@@ -278,6 +329,12 @@ export function WorkHubScheduleDialog({
             })}
           </Typography>
         </Stack>
+        <InlineFeedback severity="info">
+          {t('work:workHub.schedule.independenceNotice')}
+        </InlineFeedback>
+        <Typography variant="caption" color="text.secondary">
+          {t('work:workHub.schedule.privateScope')}
+        </Typography>
       </Stack>
     </FormDialog>
   );

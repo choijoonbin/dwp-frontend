@@ -54,6 +54,19 @@ describe('Work Hub source aggregation', () => {
       'PARTIAL'
     );
   });
+  it.each([404, 409, 503])(
+    'retains the HTTP %s reason for safe stale-content recovery',
+    async (status) => {
+      const api = readers();
+      api.personal = vi.fn().mockRejectedValue(new HttpError('Read failed', status));
+      const result = await loadWorkHub({ enabledSources: ['personal'], readers: api });
+      expect(result.sources.find((source) => source.sourceId === 'personal')).toMatchObject({
+        state: 'UNAVAILABLE',
+        failureStatus: status,
+        items: [],
+      });
+    }
+  );
   it('deduplicates only exact obligation identity and prefers owner data over a projection version', async () => {
     const api = readers();
     api.workspace = vi

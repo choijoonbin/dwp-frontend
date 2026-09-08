@@ -136,6 +136,12 @@ describe('template workspace runtime boundaries', () => {
     expect(actions.compareDocumentPosition(agenda) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(actions.textContent).toContain('templates.clone');
   });
+  it('shows an owner-defined purpose as text instead of an untranslated locale key', async () => {
+    runtime.detail.mockResolvedValue({ ...template, category: 'Security review' });
+    await render();
+    expect(mount.textContent).toContain('Security review');
+    expect(mount.textContent).not.toContain('templates.categories.Security review');
+  });
   it('keeps compact agenda before apply and full preview without duplicating management actions', async () => {
     await render();
     const preview = mount.querySelector('[data-testid="template-mobile-preview"]')!;
@@ -151,7 +157,8 @@ describe('template workspace runtime boundaries', () => {
     await render();
     const intro = mount.querySelector('[data-testid="template-mobile-intro"]')!;
     const searchScope = mount.querySelector('[data-testid="template-search-scope"]')!;
-    expect(intro.textContent).toBe('templates.subtitle');
+    expect(intro.textContent).toContain('stitch.templates.bannerTitle');
+    expect(intro.textContent).toContain('stitch.templates.bannerHint');
     expect(
       intro.compareDocumentPosition(searchScope) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();

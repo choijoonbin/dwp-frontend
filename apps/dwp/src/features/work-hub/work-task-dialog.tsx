@@ -1,22 +1,33 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CheckSquare2, Link2 } from 'lucide-react';
 import {
   ConfirmDialog,
   DateTimePickerField,
   FormDialog,
   FormField,
   InlineFeedback,
-  SelectField,
+  useDateTimePolicy,
 } from '@dwp-frontend/design-system';
 
+import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { WorkTaskChecklistEditor } from './work-task-checklist-editor';
+import { WorkTaskConflictReview } from './work-task-conflict-review';
+import { WorkTaskSourceEditor, type WorkTaskSourceOption } from './work-task-source-editor';
+import { WorkSourceDetailSection } from './work-hub-source-detail-section';
+
 import type {
   PersonalWorkPriority,
   PersonalWorkTaskInput,
+  PersonalWorkChecklistItem,
+  PersonalWorkSource,
   WorkSourceReference,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 
@@ -29,6 +40,9 @@ export type WorkTaskDialogInitialValue = {
   dueAt?: string | null;
   sourceReference?: WorkSourceReference | null;
   version?: number;
+  checklist?: PersonalWorkChecklistItem[];
+  sources?: PersonalWorkSource[];
+  sourceReferences?: WorkSourceReference[];
 };
 
 export type WorkTaskDialogSubmission = PersonalWorkTaskInput & {
@@ -49,6 +63,7 @@ export type WorkTaskDialogProps = {
   initialValue?: WorkTaskDialogInitialValue;
   /** A user-safe label only. The opaque source reference is never rendered. */
   sourceLabel?: string | null;
+  sourceOptions?: readonly WorkTaskSourceOption[];
   disabled?: boolean;
   onClose: () => void;
   onSubmit: (
@@ -63,9 +78,14 @@ type Draft = {
   description: string;
   priority: PersonalWorkPriority;
   dueAt: string | null;
+  checklist?: PersonalWorkChecklistItem[];
 };
 
-type Validation = { title?: 'required' | 'tooLong'; description?: 'tooLong' };
+type Validation = {
+  title?: 'required' | 'tooLong';
+  description?: 'tooLong';
+  checklist?: 'invalid';
+};
 
 const TITLE_LIMIT = 500;
 const DESCRIPTION_LIMIT = 10_000;
@@ -76,6 +96,7 @@ function initialDraft(value?: WorkTaskDialogInitialValue): Draft {
     description: value?.description ?? '',
     priority: value?.priority ?? 'NORMAL',
     dueAt: value?.dueAt ?? null,
+    ...(value?.checklist ? { checklist: value.checklist.map((entry) => ({ ...entry })) } : {}),
   };
 }
 
@@ -84,6 +105,12 @@ export function validateWorkTaskDraft(draft: Draft): Validation {
   if (!draft.title.trim()) validation.title = 'required';
   else if (draft.title.length > TITLE_LIMIT) validation.title = 'tooLong';
   if (draft.description.length > DESCRIPTION_LIMIT) validation.description = 'tooLong';
+  if (
+    draft.checklist &&
+    (draft.checklist.length > 100 ||
+      draft.checklist.some((entry) => !entry.title.trim() || entry.title.length > 500))
+  )
+    validation.checklist = 'invalid';
   return validation;
 }
 
@@ -94,16 +121,22 @@ export function workTaskSubmission(
 ): WorkTaskDialogSubmission {
   const description = draft.description.trim();
   const clearLinkedSource = clearSourceReference && Boolean(initial?.sourceReference);
+  const multipleSources = initial?.sources !== undefined || initial?.sourceReferences !== undefined;
   return {
     title: draft.title.trim(),
     description: description || null,
     priority: draft.priority,
     dueAt: draft.dueAt,
-    ...(clearLinkedSource
-      ? { clearSourceReference: true }
-      : initial?.sourceReference
-        ? { sourceReference: initial.sourceReference }
-        : {}),
+    ...(multipleSources
+      ? {}
+      : clearLinkedSource
+        ? { clearSourceReference: true }
+        : initial?.sourceReference
+          ? { sourceReference: initial.sourceReference }
+          : {}),
+    ...(draft.checklist === undefined
+      ? {}
+      : { checklist: draft.checklist.map((entry) => ({ ...entry, title: entry.title.trim() })) }),
     ...(initial?.version === undefined ? {} : { version: initial.version }),
   };
 }
@@ -112,24 +145,41 @@ function requestKey() {
   return crypto.randomUUID();
 }
 
+function initialSourceReferences(value?: WorkTaskDialogInitialValue): WorkSourceReference[] {
+  if (value?.sourceReferences) return [...value.sourceReferences];
+  if (value?.sources)
+    return value.sources.flatMap((source) =>
+      source.availability === 'UNAVAILABLE' ? [] : [source.reference]
+    );
+  return value?.sourceReference ? [value.sourceReference] : [];
+}
+
 export function WorkTaskDialog({
   open,
   mode,
   initialValue,
   sourceLabel,
+  sourceOptions = [],
   disabled = false,
   onClose,
   onSubmit,
   onSubmitted,
 }: WorkTaskDialogProps) {
   const { t } = useTranslation('work');
+  const dateTimePolicy = useDateTimePolicy();
   const titleCountId = useId();
   const descriptionCountId = useId();
   const sourceUnlinkDescriptionId = useId();
   const [draft, setDraft] = useState<Draft>(() => initialDraft(initialValue));
+  const [draftVersion, setDraftVersion] = useState(initialValue?.version);
   const [validationVisible, setValidationVisible] = useState(false);
   const [addToTodayPlan, setAddToTodayPlan] = useState(false);
   const [clearSourceReference, setClearSourceReference] = useState(false);
+  const [sources, setSources] = useState<WorkSourceReference[]>(() =>
+    initialSourceReferences(initialValue)
+  );
+  const [sourcesEdited, setSourcesEdited] = useState(false);
+  const [clearUnavailable, setClearUnavailable] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitFailed, setSubmitFailed] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -143,9 +193,13 @@ export function WorkTaskDialog({
     previousOpen.current = open;
     if (!opening) return;
     setDraft(initialDraft(initialValue));
+    setDraftVersion(initialValue?.version);
     setValidationVisible(false);
     setAddToTodayPlan(false);
     setClearSourceReference(false);
+    setSources(initialSourceReferences(initialValue));
+    setSourcesEdited(false);
+    setClearUnavailable(false);
     setSubmitting(false);
     setSubmitFailed(false);
     setDiscardOpen(false);
@@ -159,14 +213,19 @@ export function WorkTaskDialog({
   }, [open]);
 
   const initial = useMemo(() => initialDraft(initialValue), [initialValue]);
-  const sourceLinked = Boolean(initialValue?.sourceReference);
-  const clearLinkedSource = mode === 'edit' && sourceLinked && clearSourceReference;
+  const sourceLinked =
+    Boolean(initialValue?.sourceReference) &&
+    initialValue?.sources === undefined &&
+    initialValue?.sourceReferences === undefined;
+  const clearLinkedSource = sourceLinked && clearSourceReference;
   const validation = validateWorkTaskDraft(draft);
   const valid = Object.keys(validation).length === 0;
+  const conflict = mode === 'edit' && initialValue?.version !== draftVersion;
   const dirty =
     JSON.stringify(draft) !== JSON.stringify(initial) ||
     (mode === 'create' && addToTodayPlan) ||
-    clearLinkedSource;
+    clearLinkedSource ||
+    sourcesEdited;
   const priorityOptions = useMemo(
     () =>
       (['LOW', 'NORMAL', 'HIGH', 'URGENT'] as const).map((value) => ({
@@ -187,8 +246,25 @@ export function WorkTaskDialog({
   };
   const submit = async () => {
     setValidationVisible(true);
-    if (!valid || submitting || disabled) return;
-    const value = workTaskSubmission(draft, initialValue, clearLinkedSource);
+    if (!valid || submitting || disabled || conflict) return;
+    const base = workTaskSubmission(
+      draft,
+      mode === 'create' && clearLinkedSource
+        ? { ...initialValue, sourceReference: null }
+        : mode === 'edit'
+          ? { ...initialValue, version: draftVersion }
+          : initialValue,
+      mode === 'edit' && clearLinkedSource
+    );
+    const value: WorkTaskDialogSubmission =
+      sourcesEdited || (mode === 'create' && sources.length > 0 && !sourceLinked)
+        ? {
+            ...base,
+            sourceReference: undefined,
+            clearSourceReference: undefined,
+            sourceReferences: sources,
+          }
+        : base;
     const fingerprint = JSON.stringify(value);
     if (intent.current?.fingerprint !== fingerprint) {
       intent.current = { fingerprint, idempotencyKey: requestKey() };
@@ -230,7 +306,7 @@ export function WorkTaskDialog({
         submitLabel={t(`workHub.taskForm.${mode}.submit`)}
         submittingLabel={t('workHub.taskForm.submitting')}
         busy={submitting}
-        submitDisabled={disabled}
+        submitDisabled={disabled || conflict}
         mobileFullScreen
         onClose={requestClose}
         onSubmit={submit}
@@ -246,60 +322,43 @@ export function WorkTaskDialog({
           onKeyDownCapture={(event) => {
             if (
               event.key === 'Enter' &&
-              (composing.current || (event.nativeEvent as KeyboardEvent).isComposing)
+              (composing.current ||
+                (event.nativeEvent as KeyboardEvent).isComposing ||
+                (event.nativeEvent as KeyboardEvent).keyCode === 229)
             ) {
               event.preventDefault();
               event.stopPropagation();
             }
           }}
         >
-          {submitFailed && (
+          {conflict && initialValue && (
+            <WorkTaskConflictReview
+              latest={initialValue}
+              sourceLabel={sourceLabel}
+              disabled={submitting || disabled}
+              onUseLatest={() => {
+                setDraft(initialDraft(initialValue));
+                setDraftVersion(initialValue.version);
+                setSources(initialSourceReferences(initialValue));
+                setSourcesEdited(false);
+                setClearSourceReference(false);
+                setClearUnavailable(false);
+                setSubmitFailed(false);
+                intent.current = null;
+                requestAnimationFrame(() => titleInput.current?.focus());
+              }}
+              onKeepDraft={() => {
+                setDraftVersion(initialValue.version);
+                setSubmitFailed(false);
+                intent.current = null;
+                requestAnimationFrame(() => titleInput.current?.focus());
+              }}
+            />
+          )}
+          {submitFailed && !conflict && (
             <InlineFeedback severity="error">
               {t('workHub.taskForm.errors.submitFailed')}
             </InlineFeedback>
-          )}
-          {sourceLinked && (
-            <>
-              <InlineFeedback severity={clearLinkedSource ? 'warning' : 'info'}>
-                {clearLinkedSource
-                  ? t('workHub.taskForm.sourceUnlinkPending')
-                  : sourceLabel
-                    ? t('workHub.taskForm.sourceLinked', { source: sourceLabel })
-                    : t('workHub.taskForm.sourceLinkedReferenceOnly')}
-              </InlineFeedback>
-              {mode === 'edit' && (
-                <Stack spacing={0.25}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={clearSourceReference}
-                        disabled={submitting || disabled}
-                        inputProps={{ 'aria-describedby': sourceUnlinkDescriptionId }}
-                        onChange={(event) => {
-                          setClearSourceReference(event.target.checked);
-                          setSubmitFailed(false);
-                        }}
-                        sx={{ minWidth: 44, minHeight: 44 }}
-                      />
-                    }
-                    label={
-                      <Typography component="span" variant="subtitle2">
-                        {t('workHub.taskForm.unlinkSource')}
-                      </Typography>
-                    }
-                    sx={{ alignItems: 'center', m: 0 }}
-                  />
-                  <Typography
-                    id={sourceUnlinkDescriptionId}
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ pl: 5.5 }}
-                  >
-                    {t('workHub.taskForm.unlinkSourceDescription')}
-                  </Typography>
-                </Stack>
-              )}
-            </>
           )}
           <FormField
             autoFocus
@@ -320,9 +379,54 @@ export function WorkTaskDialog({
             }
             onChange={(event) => change({ ...draft, title: event.target.value })}
           />
+          {sourceLinked && (
+            <WorkSourceDetailSection
+              title={t('workHub.taskSources.title')}
+              icon={Link2}
+              tone="primary"
+            >
+              <InlineFeedback severity={clearLinkedSource ? 'warning' : 'info'}>
+                {clearLinkedSource
+                  ? t('workHub.taskForm.sourceUnlinkPending')
+                  : sourceLabel
+                    ? t('workHub.taskForm.sourceLinked', { source: sourceLabel })
+                    : t('workHub.taskForm.sourceLinkedReferenceOnly')}
+              </InlineFeedback>
+              <Stack spacing={0.25}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={clearSourceReference}
+                      disabled={submitting || disabled}
+                      inputProps={{ 'aria-describedby': sourceUnlinkDescriptionId }}
+                      onChange={(event) => {
+                        setClearSourceReference(event.target.checked);
+                        setSubmitFailed(false);
+                      }}
+                      sx={{ minWidth: 44, minHeight: 44 }}
+                    />
+                  }
+                  label={
+                    <Typography component="span" variant="subtitle2">
+                      {t('workHub.taskForm.unlinkSource')}
+                    </Typography>
+                  }
+                  sx={{ alignItems: 'center', m: 0 }}
+                />
+                <Typography
+                  id={sourceUnlinkDescriptionId}
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ pl: 5.5 }}
+                >
+                  {t('workHub.taskForm.unlinkSourceDescription')}
+                </Typography>
+              </Stack>
+            </WorkSourceDetailSection>
+          )}
           <FormField
             multiline
-            minRows={4}
+            minRows={3}
             maxRows={10}
             label={t('workHub.taskForm.fields.description')}
             value={draft.description}
@@ -342,35 +446,106 @@ export function WorkTaskDialog({
             }
             onChange={(event) => change({ ...draft, description: event.target.value })}
           />
-          <SelectField
-            label={t('workHub.taskForm.fields.priority')}
-            value={draft.priority}
-            options={priorityOptions}
-            disabled={submitting || disabled}
-            onValueChange={(value) => {
-              if (value) change({ ...draft, priority: value });
-            }}
-          />
           <DateTimePickerField
             label={t('workHub.taskForm.fields.dueAt')}
             value={draft.dueAt}
             disabled={submitting || disabled}
-            supportingText={t('workHub.taskForm.dueOptional')}
+            supportingText={
+              <Stack component="span">
+                <span>{t('workHub.taskForm.dueOptional')}</span>
+                <span>{t('workHub.schedule.timeZone', { zone: dateTimePolicy.timeZone })}</span>
+              </Stack>
+            }
             onValueChange={(dueAt) => change({ ...draft, dueAt })}
           />
+          <Stack gap={0.5}>
+            <Typography variant="caption" color="text.secondary">
+              {t('workHub.taskForm.fields.priority')}
+            </Typography>
+            <ToggleButtonGroup
+              value={draft.priority}
+              exclusive
+              aria-label={t('workHub.taskForm.fields.priority')}
+              disabled={submitting || disabled}
+              onChange={(_event, priority: PersonalWorkPriority | null) => {
+                if (priority) change({ ...draft, priority });
+              }}
+              sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}
+            >
+              {priorityOptions.map((option) => (
+                <ToggleButton
+                  key={option.value}
+                  value={option.value}
+                  sx={{ minHeight: 44, minWidth: 0, px: 0.5 }}
+                >
+                  {option.label}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Stack>
           {mode === 'create' && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={addToTodayPlan}
-                  disabled={submitting || disabled}
-                  onChange={(event) => setAddToTodayPlan(event.target.checked)}
-                  sx={{ minWidth: 44, minHeight: 44 }}
-                />
-              }
-              label={t('workHub.taskForm.addToTodayPlan')}
-              sx={{ alignItems: 'flex-start', m: 0 }}
+            <Box
+              sx={{
+                p: 1.5,
+                bgcolor: 'action.selected',
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={addToTodayPlan}
+                    disabled={submitting || disabled}
+                    onChange={(event) => setAddToTodayPlan(event.target.checked)}
+                    sx={{ minWidth: 44, minHeight: 44 }}
+                  />
+                }
+                label={
+                  <Stack gap={0.5}>
+                    <Typography variant="subtitle2">
+                      {t('workHub.taskForm.addToTodayPlan')}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('workHub.todayPlan.independenceNotice')}
+                    </Typography>
+                  </Stack>
+                }
+                sx={{ alignItems: 'flex-start', m: 0 }}
+              />
+            </Box>
+          )}
+          <WorkSourceDetailSection title={t('workHub.checklist.title')} icon={CheckSquare2}>
+            <WorkTaskChecklistEditor
+              value={draft.checklist ?? []}
+              disabled={submitting || disabled}
+              onChange={(checklist) => change({ ...draft, checklist })}
             />
+            {validationVisible && validation.checklist && (
+              <InlineFeedback severity="error" sx={{ mt: 1 }}>
+                {t('workHub.checklist.invalid')}
+              </InlineFeedback>
+            )}
+          </WorkSourceDetailSection>
+          {!sourceLinked && (
+            <WorkSourceDetailSection title={t('workHub.taskSources.title')} icon={Link2}>
+              <WorkTaskSourceEditor
+                sources={initialValue?.sources ?? []}
+                selected={sources}
+                options={sourceOptions}
+                disabled={submitting || disabled}
+                clearUnavailable={clearUnavailable}
+                onClearUnavailable={(clear) => {
+                  setClearUnavailable(clear);
+                  setSourcesEdited(clear);
+                  if (!clear) setSources(initialSourceReferences(initialValue));
+                }}
+                onChange={(next) => {
+                  setSources(next);
+                  setSourcesEdited(true);
+                  setSubmitFailed(false);
+                }}
+              />
+            </WorkSourceDetailSection>
           )}
         </Stack>
       </FormDialog>

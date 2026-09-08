@@ -113,6 +113,16 @@ export function ShellHeader({
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
           containerType: 'inline-size',
           containerName: 'dwp-shell-header',
+          // Density preferences may reduce controls to 32/38px on desktop, but
+          // compact/reflowed headers are touch surfaces. Keep every header
+          // ButtonBase target at the 44px mobile minimum without changing the
+          // fine-pointer desktop density selected by the user.
+          '@media (max-width: 899.95px), (pointer: coarse)': {
+            '& .MuiButtonBase-root': {
+              minWidth: 44,
+              minHeight: 44,
+            },
+          },
           '@media (prefers-reduced-transparency: reduce), (forced-colors: active)': glass
             ? {
                 bgcolor: 'background.paper',
@@ -198,6 +208,9 @@ export function ShellHeader({
                 border: 1,
                 borderColor: 'divider',
                 borderRadius: 1,
+                '@container dwp-shell-header (max-width: 360px)': {
+                  display: 'none',
+                },
               }}
             >
               <ContextIcon size={18} strokeWidth={1.8} />
@@ -281,11 +294,9 @@ export function ShellHeader({
               data-shell-global-action="search"
               sx={{
                 display: 'flex',
-                // At the narrowest supported width, preserve the primary
-                // notification, account, and assistant actions without making
-                // the header horizontally scrollable. The search command
-                // remains available through its global keyboard shortcut.
-                '@container dwp-shell-header (max-width: 359px)': { display: 'none' },
+                // Search remains a direct touch command at the 320px minimum.
+                // Only collapse it below the supported viewport contract.
+                '@container dwp-shell-header (max-width: 319px)': { display: 'none' },
               }}
             >
               <SearchControl compact={compactSearch} />

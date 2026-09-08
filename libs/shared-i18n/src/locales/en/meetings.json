@@ -1,4 +1,143 @@
 {
+  "stitch": {
+    "templates": {
+      "import": "Import template",
+      "importHint": "Paste template JSON, then review before saving. Only the name, purpose and agenda are imported; participants, permissions and recording consent are excluded.",
+      "importReview": "Review imported template",
+      "importJson": "Template JSON",
+      "importInvalid": "Enter valid template JSON with a name, purpose, category, duration and agenda array. The maximum size is 128KB.",
+      "bannerTitle": "A clear structure for focused meetings",
+      "bannerHint": "Review the agenda and timeboxes before you begin.",
+      "recommendationTitle": "AI template recommendations",
+      "recommendationUnavailable": "Meeting-pattern recommendations are not available yet. Use the purpose filters to find a suitable template.",
+      "share": "Copy sharing link",
+      "linkCopied": "Template link copied. The recipient's access is checked separately.",
+      "copyFailed": "Could not copy the link. Check browser clipboard permissions.",
+      "readOnlyHint": "Organization templates are read-only. Clone to your templates before changing the agenda or facilitator roles.",
+      "overview": "01. Template overview",
+      "access": "Attendance access",
+      "invited": "Invited members",
+      "waitingRoom": "Waiting room",
+      "required": "Enabled when scheduling",
+      "timebox": "Timebox structure",
+      "governance": "03. Security and AI governance",
+      "encryption": "Meeting security policy",
+      "retention": "AI record retention",
+      "policyAtBooking": "Current policy checked at scheduling",
+      "usageUnavailable": "Usage and outcome metrics are not available yet.",
+      "selectPreview": "Select and preview",
+      "structureLabel": "SMART STRUCTURE"
+    },
+    "personal": {
+      "qr": "QR code",
+      "qrTitle": "Personal room invitation QR",
+      "qrHint": "The QR contains only the current invitation URL. Sign in to the same organization and pass meeting access checks. Rotating the invitation also updates the QR.",
+      "qrClose": "Done",
+      "invitationHint": "The permanent address is an entry link. It contains no media credentials or access to previous meeting materials.",
+      "internalOnly": "Internal",
+      "blocked": "External blocked",
+      "waitingUnavailable": "Check waiting participants in the meeting entry view",
+      "preferenceUnavailable": "Saved settings need verification",
+      "waitingMobile": "View waiting participants when joining",
+      "policyMobile": {
+        "waiting": "Host approval required by organization policy",
+        "scope": "Authenticated organization members only",
+        "external": "Direct external guest access is blocked"
+      }
+    },
+    "devices": {
+      "diagnostics": "System readiness diagnostics",
+      "checkFailed": "Device check required",
+      "localChecked": "Local devices checked",
+      "checkRequired": "Not tested",
+      "latency": "Network latency",
+      "loss": "Packet loss",
+      "unmeasured": "Not measured",
+      "mediaQuality": "Meeting connection quality",
+      "diagnosticsHint": "Shows local device test status. Actual latency, packet loss and media quality are measured after joining a meeting and cannot be guaranteed by this local test.",
+      "background": "Virtual background and privacy blur",
+      "none": "No effect",
+      "blur": "Soft blur",
+      "office": "Office",
+      "image": "Add image",
+      "hd": "HD video (1080p)",
+      "hdHint": "The current provider connection does not support a quality preference. Actual meeting quality depends on the device and network.",
+      "storageTitle": "Separate device and account settings",
+      "storageMobile": "Device choices stay in this browser; meeting defaults are saved to your account.",
+      "saveShort": "Save"
+    }
+  },
+  "designReview": {
+    "pipeline": {
+      "title": "Meeting evidence and publication flow",
+      "mobile": {
+        "recording": "Record",
+        "transcript": "Text",
+        "analysis": "AI",
+        "review": "Review",
+        "published": "Publish"
+      },
+      "recording": "Recording",
+      "transcript": "Transcript",
+      "analysis": "AI analysis",
+      "review": "Review",
+      "published": "Published",
+      "verified": "Verified",
+      "unavailable": "Not verified"
+    },
+    "recap": {
+      "candidateUnavailable": "No valid candidate is bound to this action item.",
+      "candidateMetadataPending": "The assignee and due date are not confirmed yet.",
+      "candidateSourceVersion": "Candidate from published source version {{version}}",
+      "candidateLocked": "Work creation stays locked until current Meeting authority verification is connected.",
+      "candidateReferenceUnavailable": "This candidate is not available in the current source. Another candidate is not substituted.",
+      "showDetailedAnalysis": "Show detailed analysis",
+      "hideDetailedAnalysis": "Hide detailed analysis",
+      "showEvidenceDetails": "Show transcript and evidence details",
+      "citationHint": "Select a cited timestamp to verify each decision against its source.",
+      "manageFollowUps": "Manage all",
+      "decisionNumber": "Decision {{index}}"
+    },
+    "library": {
+      "navigationLabel": "Meeting library navigation",
+      "navigation": {
+        "ALL": "All",
+        "PARTICIPATING": "I participate",
+        "SHARED": "Shared with me",
+        "REVIEW": "Needs review",
+        "FAVORITES": "Favorites"
+      },
+      "projectionUnavailable": "Sharing, review, publication and retention filters await server integration. Unverified counts are not shown.",
+      "membershipHint": "Meetings on this page with a confirmed participation role. This does not confirm actual attendance.",
+      "publicationLabel": "Publication status",
+      "retentionLabel": "Retention status",
+      "projectionPending": "Server integration pending",
+      "advancedFilters": "Role and order",
+      "reset": "Reset filters",
+      "period": "Date range",
+      "allPeriods": "All dates",
+      "recentDays": "Last {{count}} days",
+      "organizer": "Organizer",
+      "allOrganizers": "All organizers",
+      "order": "Sort order",
+      "NEWEST": "Newest meetings",
+      "OLDEST": "Oldest meetings"
+    },
+    "followUps": {
+      "eyebrow": "From meeting decisions to work",
+      "sourceEvidence": "Meeting decision and action evidence",
+      "sourceEvidenceHint": "Verify current access to load the action and cited timestamps from the exact published version linked to this task.",
+      "sourceUnavailable": "Evidence from the linked published version is not currently available. Work permissions remain independent.",
+      "loadEvidence": "Preview evidence",
+      "sourceScope": "This is the published AI action item. Open its meeting report to inspect the original transcript.",
+      "metrics": {
+        "scopeTotal": "Total",
+        "pageVisible": "Shown",
+        "pageActive": "Active",
+        "pageUrgent": "Priority"
+      }
+    }
+  },
   "followUps": {
     "title": "My follow-up work",
     "description": "Turn meeting commitments into real work. Acceptance and progress come from the authoritative Work record.",
@@ -66,6 +205,7 @@
     "noMatches": "No matching tasks on this page",
     "noMatchesHint": "Change the search or status filter, or check another page.",
     "inspectTask": "Inspect task: {{title}}",
+    "inspectEvidence": "View task and evidence",
     "noDue": "No due date",
     "previous": "Previous",
     "next": "Next",
@@ -167,6 +307,7 @@
     },
     "categories": {
       "ALL": "All purposes",
+      "GENERAL": "General",
       "TEAM": "Team meeting",
       "DECISION": "Decision",
       "ONE_ON_ONE": "One-to-one",
@@ -275,7 +416,10 @@
       "preview": "My camera preview",
       "localOnly": "Preview on this device only",
       "start": "Preview camera",
-      "backgroundHint": "Virtual backgrounds and enhanced quality require support from the connected meeting provider. This preview shows the actual camera input."
+      "backgroundHint": "Background blur is processed in this browser and applies to your meeting video. If processing fails, the camera stops; it never falls back to the original video. Blur is not a guarantee that sensitive details are hidden. Office backgrounds are not available yet.",
+      "backgroundUnsupported": "This browser does not support local background processing.",
+      "backgroundProcessing": "Preparing local background blur. No original video is sent.",
+      "backgroundFailed": "Background processing stopped. The camera has been turned off; no original-video fallback was used."
     },
     "join": {
       "title": "Joining defaults",
@@ -316,7 +460,11 @@
       "permissionHint": "Device names appear after the browser permits device access.",
       "stop": "Stop test",
       "unsupportedFeature": "This browser does not support this feature.",
-      "states": { "idle": "Off", "requesting": "Checking permission", "active": "Testing" },
+      "states": {
+        "idle": "Off",
+        "requesting": "Checking permission",
+        "active": "Testing"
+      },
       "errors": {
         "permission": "Device access was not granted. Check browser permissions and try again.",
         "notFound": "The selected device was not found. Check its connection and your selection.",
@@ -347,16 +495,36 @@
     },
     "items": {
       "meetings": {
-        "home": { "label": "Meeting home" },
-        "mine": { "label": "My meetings" },
-        "history": { "label": "Meeting library" },
-        "follow-ups": { "label": "My follow-ups" },
-        "templates": { "label": "Meeting templates" },
-        "preferences": { "label": "Meeting preferences" },
-        "join": { "label": "Join with code" },
-        "admin-operations": { "label": "Meeting operations" },
-        "admin-policies": { "label": "Meeting policy" },
-        "admin-intelligence": { "label": "AI and data governance" }
+        "home": {
+          "label": "Meeting home"
+        },
+        "mine": {
+          "label": "My meetings"
+        },
+        "history": {
+          "label": "Meeting library"
+        },
+        "follow-ups": {
+          "label": "My follow-ups"
+        },
+        "templates": {
+          "label": "Meeting templates"
+        },
+        "preferences": {
+          "label": "Meeting preferences"
+        },
+        "join": {
+          "label": "Join with code"
+        },
+        "admin-operations": {
+          "label": "Meeting operations"
+        },
+        "admin-policies": {
+          "label": "Meeting policy"
+        },
+        "admin-intelligence": {
+          "label": "AI and data governance"
+        }
       }
     }
   },
@@ -367,6 +535,7 @@
       "mine": "Meetings",
       "history": "Library",
       "follow-ups": "Follow-ups",
+      "templates": "Templates",
       "preferences": "Settings"
     }
   },
@@ -485,6 +654,22 @@
       "recurrenceReview": "Review and confirm every recurring date and calendar adjustment before creating the meeting.",
       "recurrenceChanged": "The recurring schedule changed while the draft was saved. Review the latest dates and confirm them again.",
       "source": "Check the template source and agenda entries."
+    },
+    "design": {
+      "editAgenda": "Edit agenda item {{number}}",
+      "finishAgenda": "Done",
+      "chooseTemplate": "Choose an operating template",
+      "copyRecent": "Copy a recent meeting",
+      "replaceStructureHint": "Apply the selected title, purpose, duration and ordered agenda to this draft. Your current time, attendees and access settings stay unchanged. Previous invitation links, consent and participant assignments are never copied.",
+      "applyStructure": "Apply to this draft",
+      "sourceFailed": "The current source could not be verified. Your draft was not changed; refresh the available sources and retry.",
+      "sourceEmpty": "There are no authorized sources on this page.",
+      "titleCount": "{{count}} / {{maximum}} characters",
+      "stepProgress": "Step {{step}} of {{total}}",
+      "availability": "Calendar availability",
+      "nextPreview": "Next: {{time}} · {{count}} invited attendees",
+      "agendaCoverage": "Timebox coverage",
+      "agendaCoverageHint": "{{planned}} of {{duration}} meeting minutes allocated. This is an agenda calculation, not an AI productivity score."
     }
   },
   "scheduleManagement": {
@@ -711,7 +896,9 @@
       "PENDING": "Pending",
       "ACCEPTED": "Accepted",
       "TENTATIVE": "Tentative",
-      "DECLINED": "Declined"
+      "DECLINED": "Declined",
+      "NEEDS_RESPONSE": "Response needed",
+      "RECONFIRM_REQUIRED": "Reconfirm changed schedule"
     },
     "responseActions": {
       "ACCEPTED": "Accept invitation",
@@ -769,7 +956,17 @@
     "discardTitle": "Discard agenda changes?",
     "discardDescription": "Your unsaved agenda changes will be lost.",
     "discard": "Discard changes",
-    "keepEditing": "Keep editing"
+    "keepEditing": "Keep editing",
+    "design": {
+      "briefing": "Smart briefing",
+      "briefingEvidence": "A briefing will appear here only after the approved material sources and analysis consent are connected.",
+      "chatBoundary": "Pre-meeting questions need a meeting-bound conversation with current participant access. Room chat is available after joining.",
+      "deviceUnchecked": "Check before entry",
+      "materialTicketReady": "Temporary access verified",
+      "moreInformation": "More information",
+      "entrySafety": "Entry and content safeguards",
+      "responseChange": "Change my response"
+    }
   },
   "personalRoomInvitation": {
     "title": "Personal room invitation",
@@ -898,6 +1095,7 @@
       "overdue": "Overdue",
       "dueAt": "Due {{date}}",
       "openTask": "Open follow-up task: {{title}}",
+      "checkTask": "View task",
       "emptyTitle": "No unfinished follow-up work",
       "emptyDescription": "Meeting-origin Work assignments appear here after you confirm them."
     },
@@ -967,6 +1165,28 @@
       "configuration": "Ask an administrator to finish the secure meeting setup.",
       "policy": "Your organization's meeting policy currently disables this feature.",
       "temporary": "The secure media service is temporarily unavailable. Try again later."
+    },
+    "design": {
+      "responses": "{{accepted}} accepted · {{pending}} pending",
+      "prepared": "My preparation {{completed}}/{{total}}",
+      "preparationUnavailable": "Preparation could not be verified. Open the preparation workspace to retry.",
+      "allAgenda": "View all {{count}} agenda items",
+      "enterAndCheck": "Enter & check devices",
+      "materials": "Materials",
+      "materialCount": "{{count}} materials",
+      "copyLink": "Copy link",
+      "queueTitle": "My action queue",
+      "queueDescription": "AI recap reviews and meeting follow-up work",
+      "details": "Details",
+      "allMeetings": "View all {{count}} meetings"
+    },
+    "homePolish": {
+      "privateInvitation": "Owner-controlled meeting invitation",
+      "personalRoomOpen": "Manage your meeting room",
+      "copySecureLink": "Copy secure link",
+      "copied": "Current invitation link copied.",
+      "copyFailed": "Check access and clipboard availability, then retry.",
+      "changed": "The room or invitation changed. Check it and copy again."
     }
   },
   "schedule": {
@@ -1039,9 +1259,54 @@
       "agenda": "Purpose and agenda",
       "emptyTitle": "Select a meeting",
       "emptyDescription": "Select a meeting on this page to review its verified details and available next action."
+    },
+    "design": {
+      "copy": {
+        "copied": "Invitation link copied.",
+        "failed": "The invitation link could not be copied."
+      },
+      "acceptance": "{{accepted}} of {{total}} invitation responses accepted",
+      "evidenceFailed": "Some preparation details could not be refreshed. No previous permission-sensitive details are shown.",
+      "evidencePending": "Current source details are not yet verified.",
+      "seriesOverview": "Meeting overview and recurrence",
+      "accessPolicy": "Security and access policy",
+      "waitingOn": "Waiting room admission is required.",
+      "waitingOff": "No waiting room; meeting access restrictions still apply.",
+      "contentPlan": "Recording, transcript and AI plan",
+      "contentState": "{{state}} · Recording: {{recording}} · Transcript: {{transcript}} · AI summary: {{summary}}",
+      "requested": "requested",
+      "notRequested": "not requested",
+      "planStates": {
+        "READY": "Ready under current policy",
+        "BLOCKED": "Blocked by current dependencies or consent",
+        "DISABLED": "Capture not requested"
+      },
+      "manageMaterials": "Manage",
+      "noMaterials": "No preparation material is linked yet.",
+      "pendingTab": "Invitation responses",
+      "pendingCount": "{{count}} invitations awaiting your response",
+      "previousDate": "Previous date",
+      "nextDate": "Next date",
+      "date": "Meeting date",
+      "allDates": "Show all dates on this page",
+      "seriesFilter": "Recurrence",
+      "series": {
+        "ALL": "Recurring and one-off",
+        "RECURRING": "Recurring meetings",
+        "ONCE": "One-off meetings"
+      },
+      "compact": "Compact agenda",
+      "partialEvidence": "Some schedule or preparation data is unavailable. Recurrence and invitation filters include only verified current records.",
+      "loadedDuration": "Meeting time in this view"
     }
   },
   "history": {
+    "bookmarks": {
+      "add": "Add {{title}} to favorites",
+      "remove": "Remove {{title}} from favorites",
+      "hint": "Only your saved records that you can currently access appear here. Favorites and totals are loaded across pages from the server.",
+      "unavailable": "Favorites could not be verified. The previous state is not used; refresh before trying again."
+    },
     "eyebrow": "Meetings / Records",
     "title": "Meeting library",
     "description": "Find completed meetings and open only the recordings, transcripts, and reviewed results you can currently access.",
@@ -1120,6 +1385,7 @@
         "label": "Meeting recap views",
         "overview": "Overview and outcomes",
         "artifacts": "Recording, transcript, and AI",
+        "followUps": "Follow-up work",
         "attendance": "Attendance evidence"
       },
       "evidenceRail": {
@@ -1430,6 +1696,15 @@
     }
   },
   "room": {
+    "design": {
+      "stage": "Shared screen · presentation stage",
+      "waitingTitle": "Ready for your shared screen",
+      "waitingDescription": "Turn on your camera or share your screen to bring it onto the stage.",
+      "mediaBoundary": "Only connected, authorized media is shown",
+      "votes": "{{count}} votes received",
+      "openToolsHint": "Agenda · timebox · questions · polls",
+      "openPoll": "Open poll"
+    },
     "loading": "Preparing the meeting",
     "accessRevokedTitle": "Meeting access changed",
     "accessRevokedDescription": "Current access can no longer be verified. The media room, participant details, chat, and floor requests were removed from this device.",
@@ -1483,7 +1758,21 @@
       "permissionDescription": "Restore device permission in the browser, then restart the real preview.",
       "permissionStepOne": "Allow camera and microphone access in the site controls beside the address bar.",
       "permissionStepTwo": "If another app is holding the device, close it before trying again.",
-      "retryDevices": "Check devices again"
+      "retryDevices": "Check devices again",
+      "design": {
+        "cameraOff": "Your camera is off",
+        "deviceDeck": "Audio and video device check",
+        "noiseEnabled": "Saved browser noise suppression: enabled",
+        "noiseDisabled": "Saved browser noise suppression: disabled",
+        "background": "Background and privacy",
+        "backgroundOriginal": "Original camera input",
+        "backgroundBlur": "Background blur",
+        "backgroundOffice": "Office background",
+        "joiningState": "My entry settings",
+        "entryBoundary": "Your current device choices apply on entry. Host approval and recording consent are checked separately.",
+        "deviceFailure": "A device that could not be checked remains off. Select a device and turn it on to retry, or join with it off.",
+        "agenda": "Meeting agenda at a glance"
+      }
     },
     "starting": "Starting meeting",
     "connecting": "Connecting securely",
@@ -1762,6 +2051,171 @@
     }
   },
   "admin": {
+    "recordRetention": {
+      "title": "Meeting record disposition",
+      "scope": "Look up one meeting by reference. No meeting content or recordings are loaded here. Controls apply only to the parent meeting record.",
+      "reference": "Meeting reference (UUID)",
+      "lookup": "Look up current record",
+      "loading": "Checking authoritative record state",
+      "error": "Record state could not be verified",
+      "denied": "Access to this record is no longer available",
+      "conflict": "The record or policy changed",
+      "retryRead": "Look up the current record again before making a change. Previous metadata has been cleared.",
+      "uncertain": "The command outcome is not yet confirmed",
+      "uncertainHint": "Do not issue another approval. Retry the identical command to retrieve its current outcome.",
+      "retryCommand": "Resolve the same command",
+      "worker": "Retention worker",
+      "enabled": "Enabled",
+      "disabled": "Disabled — no automatic deletion",
+      "audit": "Approval audit delivery",
+      "published": "Published",
+      "pending": "Not yet published",
+      "deadline": "Retention deadline",
+      "versions": "Meeting v{{meeting}} · policy v{{policy}} · control v{{control}}",
+      "purgedAt": "Deletion completed",
+      "reasons": {
+        "RECORD_NOT_TERMINAL": "The meeting has not ended or been cancelled.",
+        "MEDIA_NOT_CLOSED": "The media session is not closed.",
+        "PROVIDER_ROOM_DELETION_UNPROVEN": "Provider room deletion has not been proven.",
+        "RECORD_RETENTION_NOT_EXPIRED": "The record retention deadline has not passed.",
+        "RECORD_LEGAL_HOLD": "Parent record deletion is on hold.",
+        "AUTHORIZATION_SNAPSHOT_CHANGED": "The approved record or policy version changed.",
+        "REPORT_LEGAL_HOLD": "An AI report has an active hold.",
+        "REPORT_DELETION_UNPROVEN": "AI report payload deletion has not been proven.",
+        "EXTERNAL_ARTIFACT_DELETION_UNPROVEN": "External recording or transcript deletion has not been proven.",
+        "CHAT_DELETION_UNPROVEN": "Chat deletion has not been proven.",
+        "CHILD_RETENTION_NOT_EXPIRED": "A related record has not reached its retention deadline.",
+        "CONTENT_PROCESSING_ACTIVE_OR_UNRESOLVED": "Content processing is active or has an unresolved outcome.",
+        "AUTHORIZATION_AUDIT_NOT_PUBLISHED": "Approval audit delivery is not complete.",
+        "RELATED_AUDIT_NOT_PUBLISHED": "Related audit delivery is not complete."
+      },
+      "unknownReason": "An authoritative retention condition requires verification.",
+      "holdBoundary": "A record hold stops deletion of the parent meeting record only. It is not a legal hold for recordings, transcripts, AI reports or chat; those retain their own policies and controls.",
+      "readOnly": "You have view access. Changing disposition requires Meeting administration manage permission.",
+      "hold": "Hold record deletion",
+      "release": "Release record hold",
+      "authorize": "Approve eligible record deletion",
+      "revoke": "Revoke deletion approval",
+      "confirm": "Apply this disposition",
+      "confirmHint": "This updates the version-bound retention control and creates audit evidence. Approval does not delete immediately: the worker must verify all retention, hold, external deletion and audit conditions.",
+      "acknowledge": "I have checked this meeting reference and understand the limited scope and deletion conditions.",
+      "states": {
+        "UNCONFIGURED": "Record retention worker is disabled",
+        "HELD": "Record deletion is on hold",
+        "AWAITING_AUTHORIZATION": "Explicit deletion approval required",
+        "BLOCKED": "Deletion is blocked by safeguards",
+        "ELIGIBLE": "Eligible after worker verification",
+        "PURGED": "Record deletion evidence available"
+      }
+    },
+    "design": {
+      "sourceConnection": "Connection required · The source is not available yet.",
+      "policyConnectionDetails": "Policy connections and authority",
+      "approvalConnection": "Connection required · Authorization, impact review and audit must be connected before execution.",
+      "notMeasured": "Not measured",
+      "tenantScope": "Current tenant · Meeting administration",
+      "exportReport": "Export operations report",
+      "currentSnapshot": "Current snapshot",
+      "serviceSummary": "{{ready}} of {{total}} services confirmed ready",
+      "serviceMatrixDescription": "Inspect connectivity and user impact across the four core services.",
+      "capabilityConfirmed": "Product capability available · Media quality requires separate measurement.",
+      "serviceMetrics": {
+        "media": "Availability · p95 RTT",
+        "recording": "Concurrent recording slots",
+        "transcript": "STT workers · Processing latency",
+        "aiNotes": "Inference queue · p95 latency"
+      },
+      "showAllServices": "Show all services",
+      "attentionOnly": "Services needing attention",
+      "needsAttention": "Needs attention",
+      "metadataOnly": "Operations diagnostics without content access",
+      "latency": "Latency",
+      "packetLoss": "Packet loss",
+      "jitter": "Jitter",
+      "telemetryConnection": "Session diagnostics appear after the anonymized telemetry source is connected.",
+      "recheckDiagnostics": "Refresh diagnostic status",
+      "failover": "Network edge failover",
+      "auditTicket": "Create an operations audit ticket",
+      "overridesTitle": "Department policy exceptions",
+      "auditTitle": "Policy audit trail",
+      "auditConnection": "The audit ledger API must be connected to inspect actors, timestamps and evidence.",
+      "enforcementTitle": "Policy enforcement boundary",
+      "policyAuthority": "Policy concurrency and change authority",
+      "policyAuthorityDescription": "Review changes against your management permission and the current version before saving.",
+      "savePolicy": "Review and save policy changes",
+      "policyControlConnection": "Policy read/write integration required · This control cannot be changed here yet.",
+      "aiPolicyTitle": "AI meeting analysis data governance",
+      "templatePolicyTitle": "Organization meeting template distribution",
+      "policyControls": {
+        "reviewer": {
+          "label": "Independent reviewer approval policy",
+          "description": "Manage approval requirements for AI review and explicit publication."
+        },
+        "masking": {
+          "label": "Personal data masking and filtering",
+          "description": "Manage masking levels and exceptions for meeting data sent to models."
+        },
+        "modelRouting": {
+          "label": "Approved models and processing regions",
+          "description": "Connect approved model and processing location policies to AI governance."
+        },
+        "templateApproval": {
+          "label": "Organization template approval",
+          "description": "Manage approval scopes for creating, changing and publishing shared templates."
+        },
+        "departmentTemplates": {
+          "label": "Department template creation and duplication",
+          "description": "Manage template ownership and publishing authority per organization scope."
+        },
+        "legalHold": {
+          "label": "Legal hold exceptions",
+          "description": "Change hold targets and deletion exceptions only through approved and audited workflows."
+        },
+        "guestDomains": {
+          "label": "External guest domain allowlist",
+          "description": "Manage allowed external email domains and scoped exceptions. Allowed domains appear after the policy source is connected."
+        },
+        "hostAbsenceTimeout": {
+          "label": "Host absence timeout",
+          "description": "The termination threshold for sessions without a host or co-host. The applied duration requires authoritative policy evidence."
+        },
+        "recordingConsent": {
+          "label": "Participant recording consent policy",
+          "description": "Manage participant notice and explicit consent requirements. Handling non-consenting participants requires a separate policy query contract."
+        },
+        "recordingNotice": {
+          "label": "Recording notice and watermark",
+          "description": "Manage the scope of recording notices and watermarks. Do not infer activation before the actual recording policy is available."
+        }
+      },
+      "modelGovernanceTitle": "Approved AI models and inference engines",
+      "modelFacts": {
+        "training": "Training use restriction",
+        "memory": "Inference data retention",
+        "attestation": "Model operational evidence"
+      },
+      "modelAssuranceTitle": "Data retention and training restriction evidence",
+      "integrityTitle": "Encrypted pipeline integrity metrics",
+      "validationLatency": "Validation response time",
+      "decryptAttempts": "Unauthorized decryption attempts",
+      "integrityConnection": "Time-series telemetry is not connected. Availability and trends are not calculated.",
+      "destructionTitle": "Data lifecycle and deletion evidence",
+      "pendingDeletion": "Pending deletion",
+      "latestDeletionEvidence": "Latest deletion evidence ledger",
+      "deletionLedgerConnection": "Evidence and processing times appear after the deletion and key-destruction ledger is connected.",
+      "legalHoldTitle": "Legal hold targets and deletion exceptions",
+      "contentBoundaryTitle": "Operator content access boundary",
+      "actionsTitle": "Governance operational actions",
+      "actionsDescription": "Inspect readiness and review the requirements for approved, audited high-impact actions.",
+      "routineActions": "Status and evidence",
+      "revalidateChain": "Refresh chain readiness",
+      "exportEvidence": "Export governance audit evidence",
+      "syncLegalHold": "Synchronize legal hold targets",
+      "highRiskActions": "High-impact actions · Approval and reason required",
+      "forceCryptoShred": "Destroy expired keys",
+      "emergencyStop": "Stop AI pipeline",
+      "highRiskBoundary": "Execution requires management authority, impact preview, approval, audit and recovery integration."
+    },
     "eyebrow": "Meetings / Administration",
     "capabilities": {
       "video": "Camera and microphone",
@@ -1814,6 +2268,16 @@
     },
     "policy": {
       "title": "Meeting policy",
+      "mobileSections": {
+        "label": "Policy sections",
+        "01": "Access",
+        "02": "Recording",
+        "03": "AI governance",
+        "04": "Retention",
+        "accessHint": "Authentication, lobby and invitation safeguards",
+        "aiHint": "Review governance capabilities and dependencies",
+        "retentionHint": "Meeting record retention · {{days}} days"
+      },
       "description": "Apply tenant defaults for access, content, capacity, and retention.",
       "loading": "Loading meeting policy",
       "impactTitle": "Review change impact",

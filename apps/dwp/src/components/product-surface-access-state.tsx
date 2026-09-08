@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   GuidedEmptyState,
@@ -8,7 +9,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { getProductSurfaceAccessPresentation } from './product-surface-access-state-model';
+import { consumeRemovedProductSurfaceFocus } from './product-surface-focus-handoff';
 
+import type { ProductPlane } from './product-manifest';
 import type { ProductSurfaceAccessAction } from './product-surface-access-state-model';
 import type { SurfaceDecision } from '../features/shell/product-surface-context';
 
@@ -28,12 +31,19 @@ const ACTION_LABEL_KEYS: Record<ProductSurfaceAccessAction, string> = {
 export function ProductSurfaceAccessState({
   decision,
   actions = {},
+  plane,
+  focusIdentityKey,
+  pageLevel = false,
 }: {
   decision: Exclude<SurfaceDecision, { state: 'allowed' }>;
   actions?: ProductSurfaceAccessStateActions;
+  plane?: ProductPlane;
+  focusIdentityKey?: string;
+  pageLevel?: boolean;
 }) {
   const { t } = useTranslation('common');
-  const presentation = getProductSurfaceAccessPresentation(decision.state);
+  const stateRef = useRef<HTMLDivElement>(null);
+  const presentation = getProductSurfaceAccessPresentation(decision.state, plane);
   const primaryAction = presentation.primaryAction;
   const secondaryAction = presentation.secondaryAction;
   const primaryHandler = primaryAction ? actions[primaryAction] : undefined;
@@ -44,11 +54,24 @@ export function ProductSurfaceAccessState({
       })
     : undefined;
 
-  if (presentation.tone === 'error') {
-    return (
-      <Stack data-testid="product-surface-access-state" data-product-access-state={decision.state}>
+  useLayoutEffect(() => {
+    if (!consumeRemovedProductSurfaceFocus(plane, focusIdentityKey) || !stateRef.current) return;
+
+    const focusTarget = stateRef.current.querySelector<HTMLElement>('h1, h2') ?? stateRef.current;
+    focusTarget.tabIndex = -1;
+    focusTarget.focus({ preventScroll: true });
+  }, [focusIdentityKey, plane]);
+
+  const state =
+    presentation.tone === 'error' ? (
+      <Stack
+        ref={stateRef}
+        data-testid="product-surface-access-state"
+        data-product-access-state={decision.state}
+      >
         <LocalErrorState
           title={t(presentation.titleKey)}
+          titleComponent={pageLevel ? 'h1' : undefined}
           description={t(presentation.descriptionKey)}
           retryLabel={
             primaryAction && primaryHandler ? t(ACTION_LABEL_KEYS[primaryAction]) : undefined
@@ -62,38 +85,45 @@ export function ProductSurfaceAccessState({
           size="page"
         />
       </Stack>
+    ) : (
+      <Stack
+        ref={stateRef}
+        data-testid="product-surface-access-state"
+        data-product-access-state={decision.state}
+        alignItems="center"
+      >
+        <GuidedEmptyState
+          kind={presentation.tone === 'permission' ? 'permission' : 'empty'}
+          title={t(presentation.titleKey)}
+          description={t(presentation.descriptionKey)}
+          titleComponent={pageLevel ? 'h1' : 'h2'}
+          actionLabel={
+            primaryAction && primaryHandler ? t(ACTION_LABEL_KEYS[primaryAction]) : undefined
+          }
+          onAction={primaryHandler}
+          secondaryActionLabel={
+            secondaryAction && secondaryHandler ? t(ACTION_LABEL_KEYS[secondaryAction]) : undefined
+          }
+          onSecondaryAction={secondaryHandler}
+          size="page"
+        />
+        {correlationLabel && (
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ mt: -4, mb: 4, px: 3, fontFamily: 'monospace', overflowWrap: 'anywhere' }}
+          >
+            {correlationLabel}
+          </Typography>
+        )}
+      </Stack>
     );
-  }
 
-  return (
-    <Stack
-      data-testid="product-surface-access-state"
-      data-product-access-state={decision.state}
-      alignItems="center"
-    >
-      <GuidedEmptyState
-        kind={presentation.tone === 'permission' ? 'permission' : 'empty'}
-        title={t(presentation.titleKey)}
-        description={t(presentation.descriptionKey)}
-        actionLabel={
-          primaryAction && primaryHandler ? t(ACTION_LABEL_KEYS[primaryAction]) : undefined
-        }
-        onAction={primaryHandler}
-        secondaryActionLabel={
-          secondaryAction && secondaryHandler ? t(ACTION_LABEL_KEYS[secondaryAction]) : undefined
-        }
-        onSecondaryAction={secondaryHandler}
-        size="page"
-      />
-      {correlationLabel && (
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ mt: -4, mb: 4, px: 3, fontFamily: 'monospace', overflowWrap: 'anywhere' }}
-        >
-          {correlationLabel}
-        </Typography>
-      )}
-    </Stack>
+  return pageLevel ? (
+    <main id="dwp-main-content" tabIndex={-1} style={{ outline: 'none' }}>
+      {state}
+    </main>
+  ) : (
+    state
   );
 }

@@ -283,6 +283,14 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
     });
   };
 
+  const selectPreJoinBackgroundBlur = (backgroundBlur: boolean) => {
+    setBrowserDevicePreferences((current) => {
+      const selected = { ...current, backgroundBlur };
+      writeBrowserMeetingDevicePreferences(preferenceScope, selected);
+      return selected;
+    });
+  };
+
   const clearUnavailableSpeakerPreference = (expectedScope: string, expectedSessionId: string) => {
     const active = activeDevicePreferenceContext.current;
     if (active.scope !== expectedScope || active.sessionId !== expectedSessionId) return;
@@ -445,6 +453,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           choices={choices}
           speakerDeviceId={preJoinDefaults.speakerDeviceId}
           noiseSuppression={preJoinDefaults.noiseSuppression}
+          backgroundBlur={preJoinDefaults.backgroundBlur === true}
           onSpeakerDeviceFallback={() =>
             clearUnavailableSpeakerPreference(preferenceScope, credential.sessionId)
           }
@@ -509,6 +518,7 @@ export function MeetingRoomExperience({ meetingId }: { meetingId: string }) {
           }}
           onError={() => setLocalError(t('errors.mediaPermission'))}
           onSpeakerDeviceChange={selectPreJoinSpeaker}
+          onBackgroundBlurChange={selectPreJoinBackgroundBlur}
           onSubmit={joinWithChoices}
         />
       </PageCanvas>

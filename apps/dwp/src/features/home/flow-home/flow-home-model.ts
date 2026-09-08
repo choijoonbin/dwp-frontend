@@ -3,9 +3,11 @@ import type {
   CalendarDayLoad,
   HomeOverview,
   HomeRecommendation,
+  WorkspaceActivityExecutionSummary,
   WorkspaceWorkItem,
 } from '@dwp-frontend/shared-utils';
 import { resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
+import { validFlowActivitySummary } from './flow-activity-signal-model';
 
 export type FlowTone = 'neutral' | 'info' | 'success' | 'warning' | 'risk';
 
@@ -43,6 +45,7 @@ export type FlowSignal = Readonly<{
     needsInput: number;
     policyBlocked: number;
   }>;
+  activityExecutionSummary?: WorkspaceActivityExecutionSummary;
   series?: readonly CalendarDayLoad[];
   seriesCurrentDate?: string;
 }>;
@@ -288,7 +291,8 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
   if (
     overview?.activity.status === 'AVAILABLE' &&
     overview.activity.data?.executionSummary &&
-    overview.activity.data.executionSummaryStatus !== 'UNAVAILABLE'
+    overview.activity.data.executionSummaryStatus !== 'UNAVAILABLE' &&
+    validFlowActivitySummary(overview.activity.data.executionSummary)
   ) {
     const executionSummary = overview.activity.data.executionSummary;
     const needsAttention = executionSummary.needsInput + executionSummary.policyBlocked;
@@ -306,6 +310,7 @@ export function buildFlowSignals(overview: HomeOverview | undefined): FlowSignal
         needsInput: executionSummary.needsInput,
         policyBlocked: executionSummary.policyBlocked,
       },
+      activityExecutionSummary: executionSummary,
     });
   }
   return signals;

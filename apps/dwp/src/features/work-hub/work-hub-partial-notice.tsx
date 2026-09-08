@@ -35,7 +35,12 @@ export function WorkHubPartialNotice({
         justifyContent="space-between"
       >
         <span>{t(copy.description)}</span>
-        <ActionButton intent="quiet" size="small" onClick={onInspect}>
+        <ActionButton
+          intent="quiet"
+          size="small"
+          onClick={onInspect}
+          sx={{ '@media (max-width:899.95px)': { minHeight: 44 } }}
+        >
           {t('workHub.partial.inspect')}
         </ActionButton>
       </Stack>

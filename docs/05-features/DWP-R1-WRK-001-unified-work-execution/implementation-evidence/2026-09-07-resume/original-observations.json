@@ -1,0 +1,245 @@
+{
+  "projectUrl": "https://stitch.withgoogle.com/projects/13391261371843159731",
+  "observedDate": "2026-09-07",
+  "frameCount": 18,
+  "desktopCount": 11,
+  "mobileCount": 7,
+  "sidebarViews": 6,
+  "frames": [
+    {
+      "key": "01-D",
+      "title": "DWP 통합업무함 (01. Unified Queue 1440px - WRK-Q01)",
+      "currentNodeId": "f2666a9b9262439cad5f2eb122cd7dff",
+      "archivedNodeId": "f2666a9b9262439cad5f2eb122cd7dff",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=f2666a9b9262439cad5f2eb122cd7dff",
+      "observedCanvasSize": [
+        1280,
+        1024
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "01-M",
+      "title": "DWP 통합업무함 (01. Unified Queue 모바일 390px - WRK-Q01)",
+      "currentNodeId": "063df120026a45ae936b6613f706d64b",
+      "archivedNodeId": "063df120026a45ae936b6613f706d64b",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=063df120026a45ae936b6613f706d64b",
+      "observedCanvasSize": [
+        390,
+        1294
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "02-D",
+      "title": "DWP 통합업무함 (02. 결재 업무 상세 1440px - WRK-D01)",
+      "currentNodeId": "e80ba5ed05ff4965bad14dadf5474890",
+      "archivedNodeId": "e80ba5ed05ff4965bad14dadf5474890",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=e80ba5ed05ff4965bad14dadf5474890",
+      "observedCanvasSize": [
+        1280,
+        1618
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "02-M",
+      "title": "DWP 통합업무함 (02. 결재 업무 상세 모바일 390px - WRK-D01)",
+      "currentNodeId": "22191fe61bef415dbe21969b6cefd185",
+      "archivedNodeId": "22191fe61bef415dbe21969b6cefd185",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=22191fe61bef415dbe21969b6cefd185",
+      "observedCanvasSize": [
+        390,
+        1349.88
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "03-D",
+      "title": "DWP 통합업무함 (03. 접근권한 검토 상세 1440px - WRK-D02) - Restored",
+      "currentNodeId": "56760cf188524664980aecc5768f0dac",
+      "archivedNodeId": "56760cf188524664980aecc5768f0dac",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=56760cf188524664980aecc5768f0dac",
+      "observedCanvasSize": [
+        1280,
+        1639.5
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "03-M",
+      "title": "DWP 통합업무함 (03. 접근권한 검토 상세 모바일 390px - WRK-D02)",
+      "currentNodeId": "508b6f597f7340929ef9975e798d22e1",
+      "archivedNodeId": "508b6f597f7340929ef9975e798d22e1",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=508b6f597f7340929ef9975e798d22e1",
+      "observedCanvasSize": [
+        390,
+        1194.5
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "04-D",
+      "title": "DWP 통합업무함 (04. 서비스 요청 상세 1440px - WRK-D03)",
+      "currentNodeId": "cdc190616dcc475e95704abffd161cfb",
+      "archivedNodeId": "cdc190616dcc475e95704abffd161cfb",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=cdc190616dcc475e95704abffd161cfb",
+      "observedCanvasSize": [
+        1280,
+        1170.88
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "04-M",
+      "title": "DWP 통합업무함 (04. 서비스 요청 상세 모바일 390px - WRK-D03)",
+      "currentNodeId": "b1f433ceee9b4d1a9fb19a6d28851553",
+      "archivedNodeId": "b1f433ceee9b4d1a9fb19a6d28851553",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=b1f433ceee9b4d1a9fb19a6d28851553",
+      "observedCanvasSize": [
+        390,
+        994.75
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "05-D",
+      "title": "DWP 통합업무함 (05. 개인 할 일 상세 1440px - WRK-D04)",
+      "currentNodeId": "147c9f3bef474835b2607cb1eeaa955e",
+      "archivedNodeId": "147c9f3bef474835b2607cb1eeaa955e",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=147c9f3bef474835b2607cb1eeaa955e",
+      "observedCanvasSize": [
+        1280,
+        1060.25
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "05-M",
+      "title": "DWP 통합업무함 (05. 개인 할 일 상세 모바일 390px - WRK-D04)",
+      "currentNodeId": "d77b26f438c342e9bceacbcf9f675adf",
+      "archivedNodeId": "d77b26f438c342e9bceacbcf9f675adf",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=d77b26f438c342e9bceacbcf9f675adf",
+      "observedCanvasSize": [
+        390,
+        817.25
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "06-D",
+      "title": "DWP 통합업무함 (06. 개인 할 일 생성·캡처·편집 1440px - WRK-F01)",
+      "currentNodeId": "db0b89c861f14e3b916c9e084ed46fde",
+      "archivedNodeId": "db0b89c861f14e3b916c9e084ed46fde",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=db0b89c861f14e3b916c9e084ed46fde",
+      "observedCanvasSize": [
+        1280,
+        1024
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "07-D",
+      "title": "DWP 통합업무함 (07. 오늘 계획 1440px - WRK-P01)",
+      "currentNodeId": "1b1133dcf79043298a823eae2274e073",
+      "archivedNodeId": "1b1133dcf79043298a823eae2274e073",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=1b1133dcf79043298a823eae2274e073",
+      "observedCanvasSize": [
+        1280,
+        1024
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "08-D",
+      "title": "DWP 통합업무함 (08. 수행 시간 잡기·Calendar 연결 1440px - WRK-C01)",
+      "currentNodeId": "d6d32fb8b9c74cb38981680eaefdb1d0",
+      "archivedNodeId": "d6d32fb8b9c74cb38981680eaefdb1d0",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=d6d32fb8b9c74cb38981680eaefdb1d0",
+      "observedCanvasSize": [
+        1280,
+        1024
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "09-D",
+      "title": "DWP 통합업무함 (09. 원천 확인·처리 복구·일괄 결과 1440px - WRK-R01)",
+      "currentNodeId": "166e08cc9fb24866a88b1684346b53ba",
+      "archivedNodeId": "166e08cc9fb24866a88b1684346b53ba",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=166e08cc9fb24866a88b1684346b53ba",
+      "observedCanvasSize": [
+        1280,
+        1024
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "10-D",
+      "title": "DWP 통합업무함 (10. Flow 홈의 업무 요약 1440px - WRK-H01)",
+      "currentNodeId": "dd34ee457b1e44cbb339c1a005886ef3",
+      "archivedNodeId": "dd34ee457b1e44cbb339c1a005886ef3",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=dd34ee457b1e44cbb339c1a005886ef3",
+      "observedCanvasSize": [
+        1280,
+        1030
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "11-D",
+      "title": "DWP 통합업무함 (11. 선택 업무의 DWAI·ON 지원 1440px - WRK-A01)",
+      "currentNodeId": "941feb59256e4dc79f0586cd40f80618",
+      "archivedNodeId": "941feb59256e4dc79f0586cd40f80618",
+      "archiveMatchesCurrentNode": true,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=941feb59256e4dc79f0586cd40f80618",
+      "observedCanvasSize": [
+        1280,
+        1024
+      ],
+      "review": "Live project node identity checked; archived original used for visual review"
+    },
+    {
+      "key": "12-M1",
+      "title": "DWP 통합업무함 (12. 모바일 원천 검토 여정 M1 390px - Polished)",
+      "currentNodeId": "bd6232c66d2e43f783e92b8603a291b3",
+      "archivedNodeId": "fcf4bcb954aa425e81cd611b24f410fb",
+      "archiveMatchesCurrentNode": false,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=bd6232c66d2e43f783e92b8603a291b3",
+      "observedCanvasSize": [
+        390,
+        884
+      ],
+      "review": "Current preview screenshot inspected with CUA on 2026-09-07"
+    },
+    {
+      "key": "12-M2",
+      "title": "DWP 통합업무함 (12. 모바일 개인 할 일·계획 M2 320px - Polished)",
+      "currentNodeId": "83bce81c3d3748229ba72f9fa38852bf",
+      "archivedNodeId": "6953f797f9ef4baeb2967a1aef0a777d",
+      "archiveMatchesCurrentNode": false,
+      "previewUrl": "https://stitch.withgoogle.com/preview/13391261371843159731?node-id=83bce81c3d3748229ba72f9fa38852bf",
+      "observedCanvasSize": [
+        390,
+        884
+      ],
+      "review": "Current preview screenshot inspected with CUA on 2026-09-07"
+    }
+  ],
+  "note": "M1 and M2 Polished replaced the older nodes. Preview screenshots were inspected in this conversation; old archived images must not be presented as these current revisions. Source ownership boundaries and missing source data remain explicit adaptations."
+}

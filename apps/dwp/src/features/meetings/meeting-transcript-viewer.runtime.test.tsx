@@ -111,6 +111,7 @@ describe('bounded synchronized meeting transcript', () => {
       cursor: 0,
       pageSize: 25,
       query: undefined,
+      signal: expect.any(AbortSignal),
     });
   });
 
@@ -144,52 +145,57 @@ describe('bounded synchronized meeting transcript', () => {
     expect(mount.textContent).toContain('history.recap.transcript.searchMinimum');
   });
 
-  it('removes a previously displayed transcript when a later page is no longer authorized', async () => {
-    runtime.query
-      .mockResolvedValueOnce({
-        artifactId: artifact.artifactId,
-        artifactVersion: artifact.version,
-        segments: [
-          {
-            segmentId: 'sensitive-segment',
-            startMillis: 1_000,
-            endMillis: 2_000,
-            text: 'Confidential transcript evidence',
-          },
-        ],
-        nextCursor: 25,
-        hasMore: true,
-        queryApplied: false,
-        retentionUntil: artifact.retentionUntil,
-      })
-      .mockRejectedValueOnce(new HttpError('Forbidden', 403));
+  it.each([401, 403, 404, 410])(
+    'removes previously displayed transcript content after HTTP %s',
+    async (status) => {
+      runtime.query
+        .mockResolvedValueOnce({
+          artifactId: artifact.artifactId,
+          artifactVersion: artifact.version,
+          segments: [
+            {
+              segmentId: 'sensitive-segment',
+              startMillis: 1_000,
+              endMillis: 2_000,
+              text: 'Confidential transcript evidence',
+            },
+          ],
+          nextCursor: 25,
+          hasMore: true,
+          queryApplied: false,
+          retentionUntil: artifact.retentionUntil,
+        })
+        .mockRejectedValueOnce(new HttpError('Source unavailable', status));
 
-    await act(async () =>
-      root.render(
-        createElement(
-          MeetingPlaybackSyncProvider,
-          null,
-          createElement(MeetingTranscriptViewer, { meetingId: 'meeting-1', artifact })
+      await act(async () =>
+        root.render(
+          createElement(
+            MeetingPlaybackSyncProvider,
+            null,
+            createElement(MeetingTranscriptViewer, { meetingId: 'meeting-1', artifact })
+          )
         )
-      )
-    );
-    const open = [...mount.querySelectorAll('button')].find((button) =>
-      button.textContent?.includes('history.recap.transcript.open')
-    );
-    await act(async () => open?.click());
-    await vi.waitFor(() => expect(mount.textContent).toContain('Confidential transcript evidence'));
-    const loadMore = [...mount.querySelectorAll('button')].find((button) =>
-      button.textContent?.includes('history.recap.transcript.loadMore')
-    );
-    await act(async () => loadMore?.click());
+      );
+      const open = [...mount.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('history.recap.transcript.open')
+      );
+      await act(async () => open?.click());
+      await vi.waitFor(() =>
+        expect(mount.textContent).toContain('Confidential transcript evidence')
+      );
+      const loadMore = [...mount.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('history.recap.transcript.loadMore')
+      );
+      await act(async () => loadMore?.click());
 
-    await vi.waitFor(() =>
-      expect(mount.textContent).toContain('history.recap.transcript.accessRevoked')
-    );
-    expect(mount.textContent).not.toContain('Confidential transcript evidence');
-    expect(mount.querySelector('form')).toBeNull();
-    expect(mount.querySelector('ol')).toBeNull();
-  });
+      await vi.waitFor(() =>
+        expect(mount.textContent).toContain('history.recap.transcript.accessRevoked')
+      );
+      expect(mount.textContent).not.toContain('Confidential transcript evidence');
+      expect(mount.querySelector('form')).toBeNull();
+      expect(mount.querySelector('ol')).toBeNull();
+    }
+  );
 
   it('ignores a late transcript page after the authenticated identity changes', async () => {
     let resolveLate!: (value: Awaited<ReturnType<typeof runtime.query>>) => void;
@@ -228,11 +234,15 @@ describe('bounded synchronized meeting transcript', () => {
     );
     await act(async () => loadMore?.click());
 
+    const activeSignal = runtime.query.mock.calls[1]?.[2]?.signal as AbortSignal;
+    expect(activeSignal).toBeInstanceOf(AbortSignal);
+    expect(activeSignal.aborted).toBe(false);
     runtime.auth = {
       isAuthenticated: true,
       user: { identityPlane: 'TENANT', tenantId: 1, userId: 43 },
     };
     await act(async () => renderViewer());
+    expect(activeSignal.aborted).toBe(true);
     await act(async () =>
       resolveLate({
         artifactId: artifact.artifactId,
@@ -255,5 +265,32 @@ describe('bounded synchronized meeting transcript', () => {
     expect(mount.textContent).not.toContain('Old identity');
     expect(mount.textContent).not.toContain('Late prior identity transcript');
     expect(mount.textContent).toContain('history.recap.transcript.open');
+  });
+
+  it('aborts a pending transcript request when the evidence viewer closes', async () => {
+    let resolveLate!: (value: unknown) => void;
+    runtime.query.mockReturnValueOnce(new Promise((resolve) => (resolveLate = resolve)));
+    const renderViewer = () =>
+      root.render(createElement(MeetingTranscriptViewer, { meetingId: 'meeting-1', artifact }));
+    await act(async () => renderViewer());
+    const open = [...mount.querySelectorAll('button')].find((button) =>
+      button.textContent?.includes('history.recap.transcript.open')
+    );
+    await act(async () => open?.click());
+    const signal = runtime.query.mock.calls[0]?.[2]?.signal as AbortSignal;
+    expect(signal.aborted).toBe(false);
+    await act(async () => root.render(null));
+    expect(signal.aborted).toBe(true);
+    await act(async () =>
+      resolveLate({
+        segments: [{ segmentId: 'late', startMillis: 0, endMillis: 1_000, text: 'Closed source' }],
+        nextCursor: null,
+      })
+    );
+    await act(async () => renderViewer());
+    expect(runtime.query).toHaveBeenCalledOnce();
+    expect(mount.textContent).not.toContain('Closed source');
+    expect(mount.textContent).toContain('history.recap.transcript.open');
+    expect(mount.textContent).not.toContain('history.recap.transcript.loading');
   });
 });

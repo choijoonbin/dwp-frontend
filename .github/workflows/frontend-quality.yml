@@ -106,6 +106,9 @@ jobs:
       - name: Build isolated product artifacts
         run: corepack yarn build:products
 
+      - name: Validate pinned Nginx route and security-header matrix
+        run: corepack yarn nginx:check
+
       - name: Smoke test isolated product artifact routing
         run: corepack yarn test:product-artifacts
 

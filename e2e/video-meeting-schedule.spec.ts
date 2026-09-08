@@ -6,6 +6,12 @@ import {
   SCHEDULE_TEMPLATE_ID,
 } from './support/meeting-schedule-fixtures';
 import { mockMeetingVisualHome } from './support/video-meeting-visual-fixtures';
+import { withMeetingDocumentCapture } from './support/meeting-document-capture';
+
+test.beforeEach(async ({ page }) => {
+  // Stable draft defaults for all workflow captures, not only the approved-size frame.
+  await page.clock.setFixedTime(new Date('2026-09-04T04:00:00.000Z'));
+});
 
 async function review(page: Page, mobile: boolean) {
   if (mobile)
@@ -152,12 +158,14 @@ test('single scheduling connects five sections / four mobile steps to real prepa
     page.getByRole('button', { name: 'Create scheduled meeting', exact: true })
   ).toBeEnabled();
   await page.evaluate(() => window.scrollTo(0, 0));
-  await expect(page).toHaveScreenshot('meeting-u03-schedule-review.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    maxDiffPixelRatio: 0.002,
-  });
+  await withMeetingDocumentCapture(page, () =>
+    expect(page).toHaveScreenshot('meeting-u03-schedule-review.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: true,
+      maxDiffPixelRatio: 0.002,
+    })
+  );
   await page.getByRole('button', { name: 'Create scheduled meeting', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`view=preparation.*meetingId=${SCHEDULE_MEETING_ID}`));
   await expect(
@@ -188,12 +196,14 @@ test('first scheduling step keeps the approved manual draft action visible at 14
   await expect(visibleStatus(page, 'Unsaved changes')).toBeVisible();
   await assertReadableLayout(page);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await expect(page).toHaveScreenshot('meeting-u03-schedule-first-step.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    maxDiffPixelRatio: 0.002,
-  });
+  await withMeetingDocumentCapture(page, () =>
+    expect(page).toHaveScreenshot('meeting-u03-schedule-first-step.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: true,
+      maxDiffPixelRatio: 0.002,
+    })
+  );
 });
 
 test('manual draft survives reload and is discarded only after explicit confirmation', async ({
@@ -302,6 +312,8 @@ test('template handoff carries only opaque reference and revalidates the revisio
   await expect(page.getByRole('textbox', { name: 'Meeting title', exact: true })).toHaveValue(
     'Release decision template'
   );
+  // The approved U03 timebox card is compact until explicitly edited.
+  await page.getByRole('button', { name: 'Edit agenda item 1', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Agenda title', exact: true })).toHaveValue(
     'Review risks'
   );
@@ -407,6 +419,10 @@ test('keyboard workflow, layout and accessibility retain the approved structure'
   );
   await page.getByRole('textbox', { name: 'Meeting title', exact: true }).focus();
   await page.keyboard.press('Tab');
+  await expect(
+    page.getByRole('button', { name: 'Choose an operating template', exact: true })
+  ).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.getByLabel('Purpose and preparation notes')).toBeFocused();
   if (isMobile) {
     const next = page.getByRole('button', { name: 'Next step', exact: true });
@@ -430,13 +446,13 @@ test('required viewport sizes and 200 percent text keep the workflow usable', as
   await expect(page.getByRole('textbox', { name: 'Meeting title', exact: true })).toHaveValue(
     'Release decision template'
   );
-  await page
-    .getByRole('textbox', { name: 'Meeting title', exact: true })
-    .fill(
-      'Cross-organization architecture review with a long decision title and a detailed rollout agenda'
-    );
+  const longTitle =
+    'Cross-organization architecture review with a long decision title and a detailed rollout agenda';
+  const title = page.getByRole('textbox', { name: 'Meeting title', exact: true });
+  await title.fill(longTitle);
   for (const width of isMobile ? [390, 320] : [1440, 1280]) {
     await page.setViewportSize({ width, height: 900 });
+    await expect(title).toHaveValue(longTitle);
     await assertReadableLayout(page);
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({
@@ -446,15 +462,18 @@ test('required viewport sizes and 200 percent text keep the workflow usable', as
   }
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+  await expect(title).toHaveValue(longTitle);
   await expect(page.getByRole('button', { name: 'Next step', exact: true })).toBeInViewport();
   await expect(visibleButton(page, 'Save draft')).toBeInViewport();
   await assertReadableLayout(page);
-  await expect(page).toHaveScreenshot('meeting-u03-schedule-text-200.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    maxDiffPixelRatio: 0.002,
-  });
+  await withMeetingDocumentCapture(page, () =>
+    expect(page).toHaveScreenshot('meeting-u03-schedule-text-200.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: true,
+      maxDiffPixelRatio: 0.002,
+    })
+  );
 });
 
 test('Korean long content remains readable in dark and forced-colors reduced-motion modes', async ({
@@ -493,6 +512,7 @@ test('U03 approved-size Korean light baseline keeps manual draft action in the f
   page,
   isMobile,
 }) => {
+  // Stable implementation fixture time; this is not a new approval of the original design.
   await mockScheduleWorkspace(page, { locale: 'ko' });
   await page.setViewportSize({ width: isMobile ? 390 : 1440, height: 960 });
   await page.goto(templatePath);
@@ -500,10 +520,26 @@ test('U03 approved-size Korean light baseline keeps manual draft action in the f
   await expect(page.getByRole('textbox', { name: '회의 제목', exact: true })).toHaveValue(
     'Release decision template'
   );
+  await expect(page.getByTestId('schedule-template-selection')).toContainText(
+    'Release decision template'
+  );
   await expect(visibleButton(page, '초안 임시저장')).toBeVisible();
   await expect(visibleStatus(page, '저장하지 않은 변경사항')).toBeVisible();
   await assertReadableLayout(page);
   await page.evaluate(() => window.scrollTo(0, 0));
+  if (isMobile) {
+    // Whole-document implementation capture keeps the fixed action dock at the document end,
+    // while the first-fold assertions above still execute at the real 390px viewport.
+    const height = await page.evaluate(() =>
+      Math.ceil(Math.max(document.documentElement.scrollHeight, document.body.scrollHeight))
+    );
+    await page.setViewportSize({ width: 390, height });
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    });
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(height);
+  }
   await expect(page).toHaveScreenshot('meeting-u03-ko-light-approved-size.png', {
     animations: 'disabled',
     caret: 'hide',

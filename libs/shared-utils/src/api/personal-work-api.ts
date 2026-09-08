@@ -3,6 +3,7 @@ import type { ApiResponse } from '../types';
 import type {
   PersonalDayPlan,
   PersonalWorkPage,
+  PersonalWorkDeleteResult,
   PersonalWorkStatus,
   PersonalWorkTask,
   PersonalWorkTaskInput,
@@ -30,7 +31,12 @@ function datePath(date: string) {
 }
 
 export async function getPersonalWorkTasks(
-  options: { page?: number; size?: number; status?: PersonalWorkStatus } = {}
+  options: {
+    page?: number;
+    size?: number;
+    status?: PersonalWorkStatus;
+    signal?: AbortSignal;
+  } = {}
 ): Promise<PersonalWorkPage<PersonalWorkTask>> {
   const params = new URLSearchParams({
     page: String(options.page ?? 0),
@@ -39,7 +45,7 @@ export async function getPersonalWorkTasks(
   if (options.status) params.set('status', options.status);
   const response = await axiosInstance.get<ApiResponse<PersonalWorkPage<PersonalWorkTask>>>(
     `${base}/personal-tasks?${params}`,
-    { timeoutMs: 8_000 }
+    { timeoutMs: 8_000, ...(options.signal ? { signal: options.signal } : {}) }
   );
   return response.data.data;
 }
@@ -83,7 +89,8 @@ export async function transitionPersonalWorkTask(
   taskId: string,
   command: 'status' | 'complete' | 'reopen' | 'archive',
   input: { version: number; status?: PersonalWorkStatus },
-  idempotencyKey: string
+  idempotencyKey: string,
+  signal?: AbortSignal
 ): Promise<PersonalWorkTask> {
   if (command === 'status' && !['OPEN', 'IN_PROGRESS', 'WAITING'].includes(input.status ?? ''))
     throw new Error('Use the lifecycle command for completion, reopening or archive');
@@ -92,6 +99,21 @@ export async function transitionPersonalWorkTask(
     await axiosInstance.post<ApiResponse<PersonalWorkTask>, typeof payload>(
       `${base}/personal-tasks/${encodeURIComponent(taskId)}/${command}`,
       payload,
+      { ...mutationConfig(idempotencyKey), ...(signal ? { signal } : {}) }
+    )
+  ).data.data;
+}
+
+/** Deletes the owned task from active work and plans while retaining audit and Calendar records. */
+export async function deletePersonalWorkTask(
+  taskId: string,
+  input: { version: number },
+  idempotencyKey: string
+): Promise<PersonalWorkDeleteResult> {
+  return (
+    await axiosInstance.post<ApiResponse<PersonalWorkDeleteResult>, typeof input>(
+      `${base}/personal-tasks/${encodeURIComponent(taskId)}/delete`,
+      input,
       mutationConfig(idempotencyKey)
     )
   ).data.data;
@@ -109,8 +131,16 @@ export async function getPersonalWorkTimeline(
   ).data.data;
 }
 
-export async function getPersonalDayPlan(date: string): Promise<PersonalDayPlan> {
-  return (await axiosInstance.get<ApiResponse<PersonalDayPlan>>(datePath(date))).data.data;
+export async function getPersonalDayPlan(
+  date: string,
+  signal?: AbortSignal
+): Promise<PersonalDayPlan> {
+  return (
+    await axiosInstance.get<ApiResponse<PersonalDayPlan>>(
+      datePath(date),
+      signal ? { signal } : undefined
+    )
+  ).data.data;
 }
 
 export async function replacePersonalDayPlan(

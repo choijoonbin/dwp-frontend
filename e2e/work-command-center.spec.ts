@@ -85,7 +85,10 @@ test('work operators review and complete a governed multi-item selection', async
   await mockWorkQueue(page);
   await page.goto('/work/queue');
 
-  await expect(page.getByRole('heading', { name: '2 verified work items' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Unified work inbox', exact: true })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Select work', exact: true }).click();
   const accessRequest = page.getByRole('checkbox', {
     name: 'Select Approve software access request for batch processing',
     exact: true,
@@ -103,16 +106,19 @@ test('work operators review and complete a governed multi-item selection', async
   const review = page.getByRole('dialog', { name: 'Complete the selected work?' });
   await expect(review).toContainText('2 selected');
   await expect(review).toContainText('2 to run');
-  await expect(review).toContainText('This batch runs in one source.');
+  await expect(review).toContainText('Workspace work follows its atomic batch policy.');
   await expect(review).toContainText('Approve software access request');
   await expect(review).toContainText('Review customer briefing notes');
   await review.getByRole('button', { name: 'Complete selected', exact: true }).click();
 
-  const result = page.getByRole('dialog', { name: 'The batch change was confirmed' });
+  const result = page.getByRole('dialog', { name: 'Batch results', exact: true });
   await expect(result).toContainText('The source confirmed 2 work item changes.');
   await expect(result).toContainText('Approve software access request');
   await expect(result).toContainText('Review customer briefing notes');
-  await expect(result.getByText('Change confirmed by the source', { exact: true })).toHaveCount(2);
+  await expect(result.getByText('Confirmed 2', { exact: true })).toBeVisible();
+  await expect(
+    result.getByText('The source confirmed the update and new version.', { exact: true })
+  ).toHaveCount(2);
   await result.getByRole('button', { name: 'Close', exact: true }).last().click();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
@@ -123,11 +129,12 @@ test('work operators review and complete a governed multi-item selection', async
   ).toEqual([]);
 });
 
-test('work batch conflicts surface an unknown result and clear stale selection', async ({
+test('work batch conflicts identify the changed version and clear stale selection', async ({
   page,
 }) => {
   await mockWorkQueue(page, true);
   await page.goto('/work/queue');
+  await page.getByRole('button', { name: 'Select work', exact: true }).click();
 
   const accessRequest = page.getByRole('checkbox', {
     name: 'Select Approve software access request for batch processing',
@@ -138,10 +145,13 @@ test('work batch conflicts surface an unknown result and clear stale selection',
   const review = page.getByRole('dialog', { name: 'Start the selected work?' });
   await review.getByRole('button', { name: 'Start selected', exact: true }).click();
 
-  const result = page.getByRole('dialog', { name: 'The batch result could not be confirmed' });
+  const result = page.getByRole('dialog', { name: 'Batch results', exact: true });
   await expect(result).toContainText('Refresh each source result before issuing a new command.');
   await expect(result).toContainText('Approve software access request');
-  await expect(result).toContainText('Result needs verification');
+  await expect(result.getByText('Version conflict 1', { exact: true })).toBeVisible();
+  await expect(result).toContainText(
+    'Another update was applied first. Review the latest item before selecting it again.'
+  );
   await result.getByRole('button', { name: 'Close', exact: true }).last().click();
   await expect(accessRequest).not.toBeChecked();
 });

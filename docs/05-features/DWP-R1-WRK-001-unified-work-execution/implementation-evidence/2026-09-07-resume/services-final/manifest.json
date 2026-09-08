@@ -1,0 +1,138 @@
+{
+  "date": "2026-09-07",
+  "status": "CLOSED_FROZEN",
+  "unit": {
+    "passed": 14,
+    "failed": 0,
+    "log": "unit-final.log"
+  },
+  "e2e": {
+    "passed": 24,
+    "failed": 0,
+    "projects": [
+      "chromium",
+      "mobile"
+    ],
+    "log": "e2e-final.log"
+  },
+  "eslint": "PASS",
+  "liveActivation": "BLOCKED_EXTERNAL; v6 DRAFT remains unchanged",
+  "screenshots": [
+    {
+      "path": "results/services-information-respo-34f5e-s-the-requested-information-chromium/04-owner-390-ko-form.png",
+      "bytes": 105322,
+      "sha256": "6074635ab437eeb991485df56b47f477c2f0b18d83aba0a858add793740712c1"
+    },
+    {
+      "path": "results/services-information-respo-34f5e-s-the-requested-information-chromium/04-owner-390-ko-preview.png",
+      "bytes": 74861,
+      "sha256": "a38813baaa3abee03f5864e25986fe5eb2dcfacd80fccf4554e80989db788149"
+    },
+    {
+      "path": "results/services-information-respo-34f5e-s-the-requested-information-chromium/04-owner-390-ko-receipt.png",
+      "bytes": 68496,
+      "sha256": "46caa236d75ecac63ebfae108a8a683a32263527372f1105b435bc849114f6c0"
+    },
+    {
+      "path": "results/services-information-respo-34f5e-s-the-requested-information-mobile/04-owner-390-ko-form.png",
+      "bytes": 459802,
+      "sha256": "2fae59b1b976a8e2c12e343eadecb2edc38d4125712728870596caf556f6c1b8"
+    },
+    {
+      "path": "results/services-information-respo-34f5e-s-the-requested-information-mobile/04-owner-390-ko-preview.png",
+      "bytes": 326775,
+      "sha256": "9611aad2b9af16fc5ee7b03da9f1ff9338de668750817b513aa1b6939db6f6b2"
+    },
+    {
+      "path": "results/services-information-respo-34f5e-s-the-requested-information-mobile/04-owner-390-ko-receipt.png",
+      "bytes": 316679,
+      "sha256": "219facc5e5adcf30da0f010f0f88ae7a66faac407a37331c34c5e55abab612f4"
+    },
+    {
+      "path": "results/services-information-respo-59d13-s-the-requested-information-chromium/04-owner-320-ko-form.png",
+      "bytes": 99449,
+      "sha256": "a8236c32338b49e316cb5e761db5fd76f7899bd15985c921a9ffad3b4c07aefc"
+    },
+    {
+      "path": "results/services-information-respo-59d13-s-the-requested-information-chromium/04-owner-320-ko-preview.png",
+      "bytes": 66356,
+      "sha256": "8159e26b8875431016e9612017121a7cd0d3aafa49dd4e111b60e2e690caa0ec"
+    },
+    {
+      "path": "results/services-information-respo-59d13-s-the-requested-information-chromium/04-owner-320-ko-receipt.png",
+      "bytes": 64523,
+      "sha256": "447cfaef141a1ff435c63930ba30297eb31f31299023fc212e691b8f46113478"
+    },
+    {
+      "path": "results/services-information-respo-59d13-s-the-requested-information-mobile/04-owner-320-ko-form.png",
+      "bytes": 425069,
+      "sha256": "618ee0b42963cb685ff3d57739507d1617e4e5e9b2312622fa0b01ca350d3b02"
+    },
+    {
+      "path": "results/services-information-respo-59d13-s-the-requested-information-mobile/04-owner-320-ko-preview.png",
+      "bytes": 299799,
+      "sha256": "eb1024f4f9b6184d22b7bad13df6fc78535fcad834c5b3e86c70753118464b02"
+    },
+    {
+      "path": "results/services-information-respo-59d13-s-the-requested-information-mobile/04-owner-320-ko-receipt.png",
+      "bytes": 288170,
+      "sha256": "b2a36d3b1d110a4fb9ab2c884d21aa56b5f239006efca65e5706d2d386146522"
+    },
+    {
+      "path": "results/services-information-respo-a833a-tinguishes-service-progress-chromium/04-owner-service-response-form.png",
+      "bytes": 129270,
+      "sha256": "28f40eb5769444b92d494632c4071009ad7717c9b63f4cb979e34c5d7ab4c28f"
+    },
+    {
+      "path": "results/services-information-respo-a833a-tinguishes-service-progress-chromium/04-owner-service-response-receipt.png",
+      "bytes": 99849,
+      "sha256": "d91cbf8ee7774c02c6d8cfd32c21fdefbf684831c5fdd361998f7aab1bf6f2a5"
+    },
+    {
+      "path": "results/services-information-respo-a833a-tinguishes-service-progress-mobile/04-owner-service-response-form.png",
+      "bytes": 451908,
+      "sha256": "d88d9d8c406fbb115dcb376eaf26d51a68ee25182c726a7069ee3d45626d1a66"
+    },
+    {
+      "path": "results/services-information-respo-a833a-tinguishes-service-progress-mobile/04-owner-service-response-receipt.png",
+      "bytes": 321115,
+      "sha256": "e020d341fcb779188b279c4d7d6b56f07bec54462cc3b44665838c9ccb7952a9"
+    },
+    {
+      "path": "results/services-information-respo-c90d6-ard-action-without-overflow-chromium/04-owner-service-response-320.png",
+      "bytes": 99374,
+      "sha256": "62a5b1758d8a4ebbcf40253fd14e1d2c81483964b1233f90e830559c871005d0"
+    },
+    {
+      "path": "results/services-information-respo-c90d6-ard-action-without-overflow-mobile/04-owner-service-response-320.png",
+      "bytes": 443100,
+      "sha256": "1b34f47e4c6fcd428b900f9761e75c7fad150ba9138210244e63a18705e55a01"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "apps/dwp/src/features/services/service-information-response.tsx",
+      "sha256": "6646e3a88371689a156931873dd0f92bd798cc91be96af088ccc8df918779436"
+    },
+    {
+      "path": "apps/dwp/src/pages/services.tsx",
+      "sha256": "09ad5bd58db3730c665919d79ee61321a90d36b045f0b821748b21ee16e65972"
+    },
+    {
+      "path": "libs/shared-i18n/src/locales/ko/services.json",
+      "sha256": "fc1670ae6716efa454b817b389805ba8e24db7447635545a86ce171204d9110e"
+    },
+    {
+      "path": "libs/shared-i18n/src/locales/en/services.json",
+      "sha256": "c3843199816058e616e3f59bfe75cd5f2c48b6ae5274cb61ea741743f00e117f"
+    },
+    {
+      "path": "apps/dwp/src/features/services/service-information-response-identity.test.tsx",
+      "sha256": "522956451cd4432bd394fd4a1a51847dceda9d0b5c5b2d94af5e6b16cd748f7a"
+    },
+    {
+      "path": "e2e/services-information-response.spec.ts",
+      "sha256": "1896308e5c757cca282d52f5ae393677a4e34d02c21beb026596a17e933d7dc6"
+    }
+  ]
+}

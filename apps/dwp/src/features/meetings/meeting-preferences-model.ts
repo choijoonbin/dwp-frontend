@@ -35,6 +35,8 @@ export type MeetingDevicePreferences = {
   cameraId: string;
   speakerId: string;
   noiseSuppression: boolean;
+  /** Legacy browser records omit this; only literal true enables local processing. */
+  backgroundBlur?: boolean;
 };
 
 export type MeetingPreJoinPreferenceDefaults = {
@@ -45,6 +47,7 @@ export type MeetingPreJoinPreferenceDefaults = {
   videoDeviceId: string;
   speakerDeviceId: string;
   noiseSuppression: boolean;
+  backgroundBlur?: boolean;
 };
 
 export function meetingPreferenceScope(input: {
@@ -75,6 +78,7 @@ export function resolveMeetingPreJoinPreferenceDefaults(
     videoDeviceId: devices.cameraId,
     speakerDeviceId: devices.speakerId,
     noiseSuppression: devices.noiseSuppression,
+    backgroundBlur: devices.backgroundBlur === true,
   };
 }
 
@@ -84,6 +88,7 @@ export const DEFAULT_MEETING_DEVICE_PREFERENCES: Readonly<MeetingDevicePreferenc
     cameraId: 'default',
     speakerId: 'default',
     noiseSuppression: true,
+    backgroundBlur: false,
   }
 );
 
@@ -109,6 +114,7 @@ export function readMeetingDevicePreferences(
       cameraId: deviceId('cameraId'),
       speakerId: deviceId('speakerId'),
       noiseSuppression: record.noiseSuppression !== false,
+      backgroundBlur: record.backgroundBlur === true,
     };
   } catch {
     return { ...DEFAULT_MEETING_DEVICE_PREFERENCES };
@@ -136,6 +142,7 @@ export function writeMeetingDevicePreferences(
       cameraId: value.cameraId,
       speakerId: value.speakerId,
       noiseSuppression: value.noiseSuppression,
+      backgroundBlur: value.backgroundBlur === true,
     })
   );
 }
@@ -203,6 +210,7 @@ export function meetingDevicePreferencesEqual(
     left.microphoneId === right.microphoneId &&
     left.cameraId === right.cameraId &&
     left.speakerId === right.speakerId &&
-    left.noiseSuppression === right.noiseSuppression
+    left.noiseSuppression === right.noiseSuppression &&
+    (left.backgroundBlur === true) === (right.backgroundBlur === true)
   );
 }

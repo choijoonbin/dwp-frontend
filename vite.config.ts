@@ -5,6 +5,12 @@ import react from '@vitejs/plugin-react-swc';
 import checker from 'vite-plugin-checker';
 import { defineConfig, loadEnv } from 'vite';
 
+import {
+  securityHeaders,
+  trustedHttpOrigin,
+  trustedWebSocketOrigin,
+} from './scripts/frontend-security-headers.mjs';
+
 const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.join(workspaceRoot, 'apps/dwp');
 const configuredDevelopmentPort = Number(process.env.DWP_FRONTEND_DEV_PORT ?? 4200);
@@ -14,32 +20,6 @@ const developmentPort =
   configuredDevelopmentPort <= 65_535
     ? configuredDevelopmentPort
     : 4200;
-const trustedHttpOrigin = (value: string) => {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'http:' || url.protocol === 'https:' ? url.origin : '';
-  } catch {
-    return '';
-  }
-};
-
-const securityHeaders = (development = false, apiOrigin = '') => {
-  const trustedApiSource = apiOrigin ? ` ${apiOrigin}` : '';
-  return {
-    'Content-Security-Policy':
-      `default-src 'self'; script-src 'self'${development ? " 'unsafe-inline'" : ''}; ` +
-      "style-src 'self' 'unsafe-inline'; " +
-      `img-src 'self' data: blob:${trustedApiSource}; font-src 'self' data:; ` +
-      `connect-src 'self' ws:${trustedApiSource}; ` +
-      "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
-    'Permissions-Policy':
-      'camera=(self), microphone=(self), display-capture=(self), geolocation=(), payment=(), usb=()',
-    'Referrer-Policy': 'no-referrer',
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
-  };
-};
-
 const packagePath = (moduleId: string, packageName: string) =>
   moduleId.includes(`/node_modules/${packageName}/`) ||
   moduleId.includes(`/node_modules/.pnpm/${packageName.replace('/', '+')}@`);
@@ -48,6 +28,10 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, workspaceRoot, '');
   const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
   const apiOrigin = trustedHttpOrigin(process.env.VITE_API_URL || env.VITE_API_URL || proxyTarget);
+  const liveKitUrl =
+    process.env.DWP_LIVEKIT_CLIENT_URL || env.VITE_LIVEKIT_URL || env.LIVEKIT_URL || '';
+  const developmentLiveKitOrigin = trustedWebSocketOrigin(liveKitUrl, true);
+  const productionLiveKitOrigin = trustedWebSocketOrigin(liveKitUrl);
   const runningTests = mode === 'test' || Boolean(process.env.VITEST);
 
   return {
@@ -81,14 +65,14 @@ export default defineConfig(({ command, mode }) => {
     server: {
       host: true,
       port: developmentPort,
-      headers: securityHeaders(true, apiOrigin),
+      headers: securityHeaders(true, apiOrigin, developmentLiveKitOrigin),
       fs: { allow: [workspaceRoot] },
       proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
     },
     preview: {
       host: true,
       port: developmentPort,
-      headers: securityHeaders(false, apiOrigin),
+      headers: securityHeaders(false, apiOrigin, productionLiveKitOrigin),
       proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
     },
     build: {
@@ -145,10 +129,8 @@ export default defineConfig(({ command, mode }) => {
                   moduleId.includes('dynamic-import-helper'),
                 tags: ['$initial'],
                 includeDependenciesRecursively: false,
-                // Keep the eagerly matched route table in one application chunk. The governed
-                // 169-route ledger stays below the bundle byte budget; splitting it only adds a
-                // blocking request without creating a lazy execution boundary.
-                maxSize: 576 * 1024,
+                // These modules are already in the static entry graph. Size-based splitting
+                // adds blocking requests, not lazy boundaries; the build enforces total bytes.
                 priority: 10,
               },
             ],

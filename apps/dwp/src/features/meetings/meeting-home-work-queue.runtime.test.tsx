@@ -125,6 +125,32 @@ describe('Meeting home Work queue runtime', () => {
     expect(mount.textContent).toContain('home.workQueue.loading');
   });
 
+  it('passes cancellation to the transport and discards a late response after leaving home', async () => {
+    let finish!: (value: ReturnType<typeof page>) => void;
+    runtime.list.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        })
+    );
+    await render();
+    await settle();
+    const signal = runtime.list.mock.calls[0][1] as AbortSignal;
+    expect(signal).toBeInstanceOf(AbortSignal);
+    expect(signal.aborted).toBe(false);
+    await act(async () => {
+      await router.navigate('/meetings/follow-ups');
+    });
+    expect(signal.aborted).toBe(true);
+    await act(async () => {
+      finish(page([task(1)]));
+    });
+    expect(mount.textContent).toBe('Follow-up destination');
+    expect(
+      client.getQueryData(['meetings', 'home', 'work-queue', 'tenant-1:user-7'])
+    ).toBeUndefined();
+  });
+
   it('shows at most six overdue unfinished items and excludes terminal work', async () => {
     runtime.list.mockResolvedValue(
       page([
@@ -139,6 +165,9 @@ describe('Meeting home Work queue runtime', () => {
       await vi.waitFor(() => expect(mount.textContent).toContain('Follow-up 1'));
     });
     expect(mount.querySelectorAll('article')).toHaveLength(6);
+    expect(mount.querySelector('article button')?.textContent).toContain(
+      'home.workQueue.checkTask'
+    );
     expect(mount.textContent).toContain('home.workQueue.overdue');
     expect(mount.textContent).not.toContain('Follow-up 20');
     expect(mount.textContent).not.toContain('Follow-up 21');

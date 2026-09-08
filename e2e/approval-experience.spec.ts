@@ -120,9 +120,12 @@ test('전자결재 홈은 사용자에게 우선 판단과 개인 결재 흐름�
     '오늘의 결재 워크플로 브리핑'
   );
   await expect(page.getByRole('heading', { name: '우선 심의 큐' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '신속 실행' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '의사결정 내비게이터' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '내 기안 진행 추적' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '실시간 결재 흐름' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '최근 결재 활동' })).toBeVisible();
+  await expect(page.getByTestId('approval-quick-actions').getByRole('button')).toHaveCount(4);
   await expect(page.getByRole('button', { name: '우선 결재 검토' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '전자결재 업무 센터' })).toHaveCount(0);
   await expect(page.getByRole('navigation', { name: '결재 큐 필터' })).toHaveCount(0);
@@ -136,6 +139,28 @@ test('전자결재 홈은 사용자에게 우선 판단과 개인 결재 흐름�
 
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
+});
+
+test('홈 신속 실행은 권한이 확인된 실제 결재 경로만 연다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await mockLegacyApprovalSurface(page);
+  await mockApprovalHome(page);
+
+  const actions = [
+    ['새 결재 기안', '/approvals/requests/new'],
+    ['결재함 열기', '/approvals/inbox'],
+    ['임시 저장', '/approvals/requests/drafts'],
+    ['대결 설정', '/approvals/delegations'],
+  ] as const;
+  for (const [name, pathname] of actions) {
+    await page.goto('/approvals/home');
+    const quickActions = page.getByTestId('approval-quick-actions');
+    await quickActions.getByRole('button', { name: new RegExp(`^${name}`, 'u') }).click();
+    await expect(page).toHaveURL(new RegExp(`${pathname}$`, 'u'));
+  }
 });
 
 test('전자결재 홈은 320px와 200% 글자 확대에서도 업무 내용을 잃지 않는다', async ({ page }) => {
@@ -188,7 +213,12 @@ test('홈 기안 추적은 마지막 검토를 완료로 표시하지 않고 해
   );
 
   await page.goto('/approvals/home');
-  const requestRow = page.getByRole('button', { name: new RegExp(request.title, 'u') });
+  const requestTracker = page.locator('section').filter({
+    has: page.getByRole('heading', { name: '내 기안 진행 추적', exact: true }),
+  });
+  const requestRow = requestTracker.getByRole('button', {
+    name: new RegExp(request.title, 'u'),
+  });
   await expect(requestRow.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '66');
   await requestRow.click();
   await expect(page).toHaveURL(new RegExp(`request=${request.requestId}`, 'u'));

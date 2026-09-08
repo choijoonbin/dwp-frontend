@@ -91,7 +91,7 @@ test('U14 lets an authorized administrator explicitly select and persist all rec
         contentType: 'image/png',
       });
     }
-    await page.getByRole('button', { name: 'Save policy' }).click();
+    await page.getByRole('button', { name: 'Save policy', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Apply these policy changes?' });
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Save policy' }).click();

@@ -1,4 +1,143 @@
 {
+  "stitch": {
+    "templates": {
+      "import": "템플릿 가져오기",
+      "importHint": "템플릿 JSON을 붙여 넣으세요. 이름·목적·진행 순서만 가져오며 저장 전에 내용을 검토합니다. 참가자·접근 권한·녹화 동의는 가져오지 않습니다.",
+      "importReview": "가져온 템플릿 검토",
+      "importJson": "템플릿 JSON",
+      "importInvalid": "유효한 이름, 목적, 분류, 회의 시간과 안건 배열이 있는 템플릿 JSON을 입력하세요. 최대 128KB까지 지원합니다.",
+      "bannerTitle": "시간 낭비 없는 고효율 회의",
+      "bannerHint": "검증할 의제와 타임박스를 한눈에 확인하고 시작하세요.",
+      "recommendationTitle": "AI 맞춤 템플릿 추천",
+      "recommendationUnavailable": "회의 패턴 분석 기반 추천은 아직 제공되지 않습니다. 목적별 필터로 적합한 템플릿을 선택하세요.",
+      "share": "공유 링크 복사",
+      "linkCopied": "템플릿 링크를 복사했습니다. 받는 사람의 접근 권한은 별도로 확인됩니다.",
+      "copyFailed": "링크를 복사하지 못했습니다. 브라우저 클립보드 권한을 확인하세요.",
+      "readOnlyHint": "조직 템플릿은 읽기 전용입니다. 안건이나 진행 역할을 변경하려면 내 템플릿으로 복제하세요.",
+      "overview": "01. 템플릿 개요",
+      "access": "참석 권한",
+      "invited": "초대된 구성원",
+      "waitingRoom": "대기실 제어",
+      "required": "예약 시 대기실 사용",
+      "timebox": "타임박스 구성",
+      "governance": "03. 기본 보안 및 AI 거버넌스 정책",
+      "encryption": "회의 보안 정책",
+      "retention": "AI 기록 보존 기간",
+      "policyAtBooking": "예약 시 현재 정책 확인",
+      "usageUnavailable": "사용 횟수·성과 통계는 아직 제공되지 않습니다.",
+      "selectPreview": "선택 및 미리보기",
+      "structureLabel": "SMART STRUCTURE"
+    },
+    "personal": {
+      "qr": "QR 코드",
+      "qrTitle": "개인 회의실 초대 QR",
+      "qrHint": "QR은 현재 초대 주소만 포함합니다. 같은 조직으로 로그인한 뒤 회의별 입장 권한을 확인합니다. 초대 링크를 재발급하면 QR도 갱신됩니다.",
+      "qrClose": "확인",
+      "invitationHint": "고정 주소는 입장 안내 링크입니다. 미디어 접속 권한과 이전 회의의 자료 접근 권한은 포함하지 않습니다.",
+      "internalOnly": "조직 내부",
+      "blocked": "외부 차단",
+      "waitingUnavailable": "대기 인원은 회의 입장 화면에서 확인",
+      "preferenceUnavailable": "저장된 설정 확인 필요",
+      "waitingMobile": "대기 인원은 입장 화면에서 확인",
+      "policyMobile": {
+        "waiting": "호스트 승인 후 입장 · 조직 정책",
+        "scope": "조직에 인증된 구성원 전용",
+        "external": "외부 게스트 직접 입장 차단"
+      }
+    },
+    "devices": {
+      "diagnostics": "시스템 준비 진단",
+      "checkFailed": "장치 확인 필요",
+      "localChecked": "로컬 장치 확인됨",
+      "checkRequired": "테스트 전",
+      "latency": "네트워크 지연",
+      "loss": "패킷 손실",
+      "unmeasured": "측정 전",
+      "mediaQuality": "회의 연결 품질",
+      "diagnosticsHint": "로컬 장치 테스트 상태를 표시합니다. 실제 회의 연결의 지연·패킷 손실·전송 품질은 회의 입장 후 측정되며, 이 화면의 장치 테스트로 보장되지 않습니다.",
+      "background": "가상 배경 및 프라이버시 블러",
+      "none": "효과 없음",
+      "blur": "은은한 블러",
+      "office": "오피스 배경",
+      "image": "이미지 추가",
+      "hd": "HD 고화질 전송 (1080p)",
+      "hdHint": "현재 제공자 연결에서 고화질 선호 설정을 지원하지 않습니다. 실제 회의 품질은 장치와 네트워크 상태에 따라 결정됩니다.",
+      "storageTitle": "장치와 계정 설정의 분리 저장",
+      "storageMobile": "장치 선택은 이 브라우저에, 회의 기본값은 계정에 저장됩니다.",
+      "saveShort": "저장"
+    }
+  },
+  "designReview": {
+    "pipeline": {
+      "title": "회의록 근거 및 게시 흐름",
+      "mobile": {
+        "recording": "녹화",
+        "transcript": "전사",
+        "analysis": "AI",
+        "review": "검토",
+        "published": "게시"
+      },
+      "recording": "녹화 수집",
+      "transcript": "타임코드 전사",
+      "analysis": "AI 분석",
+      "review": "검토 승인",
+      "published": "공식 게시",
+      "verified": "확인됨",
+      "unavailable": "확인 전"
+    },
+    "recap": {
+      "candidateUnavailable": "이 실행 항목에 연결된 유효한 후보를 확인하지 못했습니다.",
+      "candidateMetadataPending": "담당자·기한은 아직 확정되지 않았습니다.",
+      "candidateSourceVersion": "게시된 원본 버전 {{version}}의 후보",
+      "candidateLocked": "현재 회의 권한 검증을 연결하기 전에는 업무를 만들 수 없습니다.",
+      "candidateReferenceUnavailable": "연결된 후보를 현재 원본에서 확인할 수 없습니다. 다른 후보로 대체하지 않습니다.",
+      "showDetailedAnalysis": "상세 분석 펼치기",
+      "hideDetailedAnalysis": "상세 분석 접기",
+      "showEvidenceDetails": "전사 및 증거 상세 보기",
+      "citationHint": "결정에 연결된 전사 시점을 선택해 원본 근거를 확인하세요.",
+      "manageFollowUps": "전체 관리",
+      "decisionNumber": "결정 {{index}}"
+    },
+    "library": {
+      "navigationLabel": "회의 라이브러리 탐색",
+      "navigation": {
+        "ALL": "전체",
+        "PARTICIPATING": "내가 참여",
+        "SHARED": "공유받음",
+        "REVIEW": "검토 필요",
+        "FAVORITES": "즐겨찾기"
+      },
+      "projectionUnavailable": "공유·검토와 게시·보존 필터는 서버 연결을 준비 중입니다. 확인되지 않은 건수는 표시하지 않습니다.",
+      "membershipHint": "현재 페이지에서 내 참여 역할이 확인된 회의입니다. 실제 입장 여부를 의미하지 않습니다.",
+      "publicationLabel": "게시 상태",
+      "retentionLabel": "보관 만료 상태",
+      "projectionPending": "서버 연결 준비 중",
+      "advancedFilters": "역할 · 정렬",
+      "reset": "필터 초기화",
+      "period": "기간 범위",
+      "allPeriods": "전체 기간",
+      "recentDays": "최근 {{count}}일",
+      "organizer": "주최자",
+      "allOrganizers": "전체 주최자",
+      "order": "정렬",
+      "NEWEST": "최근 회의순",
+      "OLDEST": "오래된 회의순"
+    },
+    "followUps": {
+      "eyebrow": "회의에서 결정한 일을 실제 업무로",
+      "sourceEvidence": "회의 결정 및 실행 근거",
+      "sourceEvidenceHint": "현재 접근 권한을 확인한 뒤 이 업무에 연결된 정확한 게시 버전의 실행 항목과 인용 시점을 불러옵니다.",
+      "sourceUnavailable": "연결된 게시 버전의 근거를 현재 확인할 수 없습니다. 업무 수행 권한은 별도로 유지됩니다.",
+      "loadEvidence": "근거 미리보기",
+      "sourceScope": "표시하는 내용은 게시된 AI 실행 항목입니다. 전사 원문은 연결된 회의 보고서에서 확인합니다.",
+      "metrics": {
+        "scopeTotal": "전체",
+        "pageVisible": "현재 표시",
+        "pageActive": "진행",
+        "pageUrgent": "중요"
+      }
+    }
+  },
   "followUps": {
     "title": "내 후속 업무",
     "description": "회의 이후의 약속을 실제 업무로 이어갑니다. 수락·진행 상태는 업무 원장에서 확인합니다.",
@@ -66,6 +205,7 @@
     "noMatches": "이 페이지에 일치하는 업무가 없습니다",
     "noMatchesHint": "검색어나 상태 필터를 바꾸거나 다른 페이지를 확인하세요.",
     "inspectTask": "업무 상세 보기: {{title}}",
+    "inspectEvidence": "업무 상세·근거 보기",
     "noDue": "기한 미지정",
     "previous": "이전",
     "next": "다음",
@@ -167,6 +307,7 @@
     },
     "categories": {
       "ALL": "모든 목적",
+      "GENERAL": "일반",
       "TEAM": "팀 정례",
       "DECISION": "의사결정",
       "ONE_ON_ONE": "1:1 대화",
@@ -275,7 +416,10 @@
       "preview": "내 카메라 미리보기",
       "localOnly": "내 기기에서만 미리보기",
       "start": "카메라 미리보기",
-      "backgroundHint": "가상 배경과 고화질 처리는 연결된 회의 제공자가 지원할 때 별도로 제공됩니다. 여기서는 카메라의 실제 입력을 확인합니다."
+      "backgroundHint": "배경 흐림은 이 브라우저에서 처리하며 실제 회의 영상에도 적용됩니다. 처리 실패 시 카메라를 끄며 원본 영상으로 전환하지 않습니다. 흐림 효과가 민감한 배경의 가림을 보장하지는 않습니다. 오피스 배경은 아직 제공하지 않습니다.",
+      "backgroundUnsupported": "이 브라우저는 로컬 배경 처리를 지원하지 않습니다.",
+      "backgroundProcessing": "로컬 배경 흐림을 준비하고 있습니다. 원본 영상은 전송하지 않습니다.",
+      "backgroundFailed": "배경 처리가 중단되어 카메라를 껐습니다. 원본 영상으로 전환하지 않았습니다."
     },
     "join": {
       "title": "입장 기본 설정",
@@ -316,7 +460,11 @@
       "permissionHint": "브라우저가 장치 접근을 허용한 뒤 장치 이름이 표시됩니다.",
       "stop": "테스트 종료",
       "unsupportedFeature": "이 브라우저에서는 해당 기능을 지원하지 않습니다.",
-      "states": { "idle": "꺼짐", "requesting": "권한 확인 중", "active": "테스트 중" },
+      "states": {
+        "idle": "꺼짐",
+        "requesting": "권한 확인 중",
+        "active": "테스트 중"
+      },
       "errors": {
         "permission": "장치 접근이 허용되지 않았습니다. 브라우저 권한을 확인한 뒤 다시 테스트하세요.",
         "notFound": "선택한 장치를 찾을 수 없습니다. 연결 상태와 장치 선택을 확인하세요.",
@@ -347,16 +495,36 @@
     },
     "items": {
       "meetings": {
-        "home": { "label": "회의 홈" },
-        "mine": { "label": "내 회의" },
-        "history": { "label": "회의 라이브러리" },
-        "follow-ups": { "label": "내 후속 업무" },
-        "templates": { "label": "회의 템플릿" },
-        "preferences": { "label": "내 회의 설정" },
-        "join": { "label": "코드로 참여" },
-        "admin-operations": { "label": "회의 운영" },
-        "admin-policies": { "label": "회의 정책" },
-        "admin-intelligence": { "label": "AI 및 데이터 거버넌스" }
+        "home": {
+          "label": "회의 홈"
+        },
+        "mine": {
+          "label": "내 회의"
+        },
+        "history": {
+          "label": "회의 라이브러리"
+        },
+        "follow-ups": {
+          "label": "내 후속 업무"
+        },
+        "templates": {
+          "label": "회의 템플릿"
+        },
+        "preferences": {
+          "label": "내 회의 설정"
+        },
+        "join": {
+          "label": "코드로 참여"
+        },
+        "admin-operations": {
+          "label": "회의 운영"
+        },
+        "admin-policies": {
+          "label": "회의 정책"
+        },
+        "admin-intelligence": {
+          "label": "AI 및 데이터 거버넌스"
+        }
       }
     }
   },
@@ -367,6 +535,7 @@
       "mine": "내 회의",
       "history": "라이브러리",
       "follow-ups": "후속 업무",
+      "templates": "템플릿",
       "preferences": "설정"
     }
   },
@@ -485,6 +654,22 @@
       "recurrenceReview": "회의 생성 전에 모든 반복 날짜와 달력 보정을 검토하고 확인하세요.",
       "recurrenceChanged": "초안을 저장하는 동안 반복 일정이 변경되었습니다. 최신 날짜를 검토하고 다시 확인하세요.",
       "source": "템플릿 출처 또는 안건 입력을 확인하세요."
+    },
+    "design": {
+      "editAgenda": "의제 {{number}}번 편집",
+      "finishAgenda": "편집 완료",
+      "chooseTemplate": "운영 템플릿 선택",
+      "copyRecent": "최근 예약 복사",
+      "replaceStructureHint": "선택한 제목·목적·진행 시간·순서 있는 의제를 현재 초안에 적용합니다. 현재 일정 시각·참석자·접근 설정은 유지합니다. 이전 초대 링크·동의·참석자 배정은 복사하지 않습니다.",
+      "applyStructure": "현재 초안에 적용",
+      "sourceFailed": "현재 원본을 확인하지 못해 초안은 변경하지 않았습니다. 목록을 새로 확인한 후 다시 시도하세요.",
+      "sourceEmpty": "현재 페이지에 사용할 수 있는 원본이 없습니다.",
+      "titleCount": "{{count}} / {{maximum}}자",
+      "stepProgress": "단계 {{step}} / {{total}}",
+      "availability": "캘린더 일정 가용성",
+      "nextPreview": "다음: {{time}} · {{count}}명 초대 예정",
+      "agendaCoverage": "타임박스 배정 현황",
+      "agendaCoverageHint": "회의 {{duration}}분 중 {{planned}}분을 배정했습니다. 의제 시간 계산이며 AI 생산성 점수가 아닙니다."
     }
   },
   "scheduleManagement": {
@@ -711,7 +896,9 @@
       "PENDING": "응답 대기",
       "ACCEPTED": "수락",
       "TENTATIVE": "미정",
-      "DECLINED": "거절"
+      "DECLINED": "거절",
+      "NEEDS_RESPONSE": "응답 필요",
+      "RECONFIRM_REQUIRED": "변경 일정 재확인 필요"
     },
     "responseActions": {
       "ACCEPTED": "참석 수락",
@@ -769,7 +956,17 @@
     "discardTitle": "작성한 안건 변경을 버릴까요?",
     "discardDescription": "저장하지 않은 안건 변경 내용이 사라집니다.",
     "discard": "변경 버리기",
-    "keepEditing": "계속 편집"
+    "keepEditing": "계속 편집",
+    "design": {
+      "briefing": "스마트 브리핑",
+      "briefingEvidence": "승인된 사전 자료 출처와 분석 동의가 연결된 뒤에만 이 영역에 브리핑을 제공합니다.",
+      "chatBoundary": "사전 질문은 현재 참석자 권한이 적용되는 회의별 대화 연결이 필요합니다. 회의 중 채팅은 입장 후 이용할 수 있습니다.",
+      "deviceUnchecked": "입장 전 점검",
+      "materialTicketReady": "임시 열람 권한 확인",
+      "moreInformation": "자세한 안내",
+      "entrySafety": "입장 및 콘텐츠 처리 안내",
+      "responseChange": "내 응답 변경"
+    }
   },
   "personalRoomInvitation": {
     "title": "개인 회의실 초대",
@@ -898,6 +1095,7 @@
       "overdue": "기한 초과",
       "dueAt": "{{date}}까지",
       "openTask": "후속 업무 열기: {{title}}",
+      "checkTask": "업무 확인",
       "emptyTitle": "미완료 후속 업무가 없습니다",
       "emptyDescription": "회의 후보를 확인해 생성한 업무가 여기에 표시됩니다."
     },
@@ -967,6 +1165,28 @@
       "configuration": "관리자에게 안전한 회의 설정을 완료하도록 요청하세요.",
       "policy": "조직의 회의 정책에서 현재 이 기능을 비활성화했습니다.",
       "temporary": "안전한 미디어 서비스를 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도하세요."
+    },
+    "design": {
+      "responses": "{{accepted}}명 수락 · {{pending}}명 미응답",
+      "prepared": "내 준비 {{completed}}/{{total}}",
+      "preparationUnavailable": "사전 준비 정보를 확인하지 못했습니다. 준비 화면에서 다시 확인하세요.",
+      "allAgenda": "전체 안건 {{count}}건 보기",
+      "enterAndCheck": "입장 및 장치 점검",
+      "materials": "사전 자료",
+      "materialCount": "사전 자료 {{count}}건",
+      "copyLink": "링크 복사",
+      "queueTitle": "내 처리할 일",
+      "queueDescription": "AI 회의록 검토 및 후속 업무 처리",
+      "details": "상세",
+      "allMeetings": "오늘 일정 전체보기 {{count}}건"
+    },
+    "homePolish": {
+      "privateInvitation": "본인 전용 회의 초대",
+      "personalRoomOpen": "개인 회의실 열기",
+      "copySecureLink": "보안 링크 복사",
+      "copied": "현재 초대 링크를 복사했습니다.",
+      "copyFailed": "접근 권한 또는 클립보드를 확인한 뒤 다시 시도하세요.",
+      "changed": "회의실 또는 초대가 변경됐습니다. 확인 후 다시 복사하세요."
     }
   },
   "schedule": {
@@ -1039,9 +1259,54 @@
       "agenda": "목적 및 안건",
       "emptyTitle": "회의를 선택하세요",
       "emptyDescription": "현재 페이지에서 회의를 선택하면 확인된 상세 정보와 가능한 다음 행동을 볼 수 있습니다."
+    },
+    "design": {
+      "copy": {
+        "copied": "초대 링크를 복사했습니다.",
+        "failed": "초대 링크를 복사하지 못했습니다."
+      },
+      "acceptance": "초대 응답 {{total}}명 중 {{accepted}}명 수락",
+      "evidenceFailed": "일부 준비 정보를 다시 확인하지 못했습니다. 이전 권한 민감 정보는 표시하지 않습니다.",
+      "evidencePending": "현재 원본 정보를 아직 확인하지 못했습니다.",
+      "seriesOverview": "회의 개요 및 반복 시리즈",
+      "accessPolicy": "보안 정책 및 접근 제어",
+      "waitingOn": "대기실에서 입장 승인이 필요합니다.",
+      "waitingOff": "대기실을 사용하지 않지만 회의 접근 제한은 유지됩니다.",
+      "contentPlan": "녹화·전사·AI 처리 계획",
+      "contentState": "{{state}} · 녹화: {{recording}} · 전사: {{transcript}} · AI 요약: {{summary}}",
+      "requested": "요청됨",
+      "notRequested": "요청 안 함",
+      "planStates": {
+        "READY": "현재 정책상 준비됨",
+        "BLOCKED": "현재 연결 조건 또는 동의로 차단됨",
+        "DISABLED": "캡처 요청 없음"
+      },
+      "manageMaterials": "관리",
+      "noMaterials": "아직 연결된 사전 자료가 없습니다.",
+      "pendingTab": "초대 응답",
+      "pendingCount": "내 응답을 기다리는 초대 {{count}}건",
+      "previousDate": "이전 날짜",
+      "nextDate": "다음 날짜",
+      "date": "회의 날짜",
+      "allDates": "현재 페이지의 전체 날짜 보기",
+      "seriesFilter": "반복 여부",
+      "series": {
+        "ALL": "반복 및 단건 전체",
+        "RECURRING": "반복 회의",
+        "ONCE": "단건 회의"
+      },
+      "compact": "일정 압축 보기",
+      "partialEvidence": "일부 일정 또는 준비 정보를 확인할 수 없습니다. 반복·초대 필터에는 현재 확인된 기록만 포함합니다.",
+      "loadedDuration": "현재 보기의 회의 시간"
     }
   },
   "history": {
+    "bookmarks": {
+      "add": "{{title}} 즐겨찾기 추가",
+      "remove": "{{title}} 즐겨찾기 해제",
+      "hint": "내가 저장한 기록 중 현재 열람 가능한 회의만 표시합니다. 즐겨찾기 목록과 전체 건수는 서버에서 페이지 단위로 불러옵니다.",
+      "unavailable": "즐겨찾기 상태를 확인하지 못했습니다. 이전 상태는 사용하지 않으며, 새로 확인한 뒤 다시 시도해 주세요."
+    },
     "eyebrow": "화상회의 / 기록",
     "title": "회의 라이브러리",
     "description": "완료된 회의를 찾고 현재 열람할 수 있는 녹화·전사·검토 결과만 안전하게 확인합니다.",
@@ -1120,6 +1385,7 @@
         "label": "회의 회고 보기",
         "overview": "개요 및 결과",
         "artifacts": "녹화·전사·AI",
+        "followUps": "후속 업무",
         "attendance": "참석 근거"
       },
       "evidenceRail": {
@@ -1430,6 +1696,15 @@
     }
   },
   "room": {
+    "design": {
+      "stage": "공유 화면 · 발표 무대",
+      "waitingTitle": "함께 볼 화면을 기다리고 있습니다",
+      "waitingDescription": "카메라를 켜거나 화면을 공유하면 이 무대에서 함께 볼 수 있습니다.",
+      "mediaBoundary": "연결되고 허용된 미디어만 표시합니다",
+      "votes": "{{count}}명 투표 참여",
+      "openToolsHint": "안건 · 타임박스 · 질문 · 투표",
+      "openPoll": "투표 참여"
+    },
     "loading": "회의 준비 중",
     "accessRevokedTitle": "회의 접근 권한이 변경되었습니다",
     "accessRevokedDescription": "현재 접근 권한을 더 이상 확인할 수 없습니다. 이 장치에서 미디어 회의실, 참가자 정보, 채팅과 발언 요청을 모두 제거했습니다.",
@@ -1483,7 +1758,21 @@
       "permissionDescription": "브라우저에서 장치 권한을 복구한 뒤 실제 미리보기를 다시 시작하세요.",
       "permissionStepOne": "주소 표시줄의 사이트 설정에서 카메라와 마이크를 허용합니다.",
       "permissionStepTwo": "다른 앱이 장치를 독점하고 있다면 해당 앱을 닫은 뒤 다시 시도합니다.",
-      "retryDevices": "장치 다시 확인"
+      "retryDevices": "장치 다시 확인",
+      "design": {
+        "cameraOff": "카메라가 꺼져 있습니다",
+        "deviceDeck": "오디오 및 비디오 장치 점검",
+        "noiseEnabled": "저장된 브라우저 소음 억제: 사용",
+        "noiseDisabled": "저장된 브라우저 소음 억제: 사용 안 함",
+        "background": "배경 및 프라이버시",
+        "backgroundOriginal": "실제 카메라 입력",
+        "backgroundBlur": "배경 흐림",
+        "backgroundOffice": "오피스 배경",
+        "joiningState": "내 입장 기본 상태",
+        "entryBoundary": "현재 장치 선택을 입장에 적용합니다. 주최자 승인과 녹화 동의는 별도로 확인합니다.",
+        "deviceFailure": "점검하지 못한 장치는 꺼진 상태를 유지합니다. 장치를 선택하고 켜서 다시 점검하거나, 꺼진 상태로 참여할 수 있습니다.",
+        "agenda": "회의 의제 요약"
+      }
     },
     "starting": "회의 시작 중",
     "connecting": "안전하게 연결 중",
@@ -1762,6 +2051,171 @@
     }
   },
   "admin": {
+    "recordRetention": {
+      "title": "회의 기록 보존·삭제 제어",
+      "scope": "회의 참조 ID로 단일 기록을 조회합니다. 회의 내용이나 녹화는 불러오지 않으며, 제어 범위는 상위 회의 기록에 한정됩니다.",
+      "reference": "회의 참조 ID (UUID)",
+      "lookup": "현재 기록 조회",
+      "loading": "정본 기록 상태 확인 중",
+      "error": "기록 상태를 확인하지 못했습니다",
+      "denied": "이 기록에 더 이상 접근할 수 없습니다",
+      "conflict": "회의 기록 또는 정책이 변경되었습니다",
+      "retryRead": "변경 전 현재 기록을 다시 조회하세요. 이전 메타데이터는 화면에서 지웠습니다.",
+      "uncertain": "명령 처리 결과가 아직 확인되지 않았습니다",
+      "uncertainHint": "새 승인 명령을 보내지 마세요. 동일 명령을 재확인하여 현재 처리 결과를 받으세요.",
+      "retryCommand": "동일 명령 결과 확인",
+      "worker": "보존·삭제 작업자",
+      "enabled": "활성화",
+      "disabled": "비활성화 · 자동 삭제하지 않음",
+      "audit": "승인 감사 전달",
+      "published": "전달 완료",
+      "pending": "전달 미완료",
+      "deadline": "보존 만료 시각",
+      "versions": "회의 v{{meeting}} · 정책 v{{policy}} · 제어 v{{control}}",
+      "purgedAt": "삭제 완료 시각",
+      "reasons": {
+        "RECORD_NOT_TERMINAL": "회의가 종료 또는 취소되지 않았습니다.",
+        "MEDIA_NOT_CLOSED": "미디어 세션이 닫히지 않았습니다.",
+        "PROVIDER_ROOM_DELETION_UNPROVEN": "외부 미디어 회의실 삭제 증적이 없습니다.",
+        "RECORD_RETENTION_NOT_EXPIRED": "회의 기록 보존 기한이 남아 있습니다.",
+        "RECORD_LEGAL_HOLD": "상위 회의 기록의 삭제가 보류되었습니다.",
+        "AUTHORIZATION_SNAPSHOT_CHANGED": "승인한 회의 또는 정책 버전이 변경되었습니다.",
+        "REPORT_LEGAL_HOLD": "AI 보고서에 보존 보류가 적용 중입니다.",
+        "REPORT_DELETION_UNPROVEN": "AI 보고서 원문 삭제 증적이 없습니다.",
+        "EXTERNAL_ARTIFACT_DELETION_UNPROVEN": "외부 녹화 또는 전사 자료의 삭제 증적이 없습니다.",
+        "CHAT_DELETION_UNPROVEN": "채팅 삭제 증적이 없습니다.",
+        "CHILD_RETENTION_NOT_EXPIRED": "연관 기록의 보존 기한이 남아 있습니다.",
+        "CONTENT_PROCESSING_ACTIVE_OR_UNRESOLVED": "콘텐츠 처리 중이거나 처리 결과가 미확정입니다.",
+        "AUTHORIZATION_AUDIT_NOT_PUBLISHED": "삭제 승인 감사 전달이 완료되지 않았습니다.",
+        "RELATED_AUDIT_NOT_PUBLISHED": "연관 감사 전달이 완료되지 않았습니다."
+      },
+      "unknownReason": "정본 보존 조건의 확인이 필요합니다.",
+      "holdBoundary": "기록 보류는 상위 회의 기록의 삭제만 중단합니다. 녹화·전사·AI 보고서·채팅 전체에 대한 법적 보존 명령이 아니며, 각 자료에는 별도 정책과 제어가 적용됩니다.",
+      "readOnly": "조회 권한으로 열었습니다. 제어 변경에는 화상회의 관리자 관리 권한이 필요합니다.",
+      "hold": "회의 기록 삭제 보류",
+      "release": "회의 기록 보류 해제",
+      "authorize": "조건 충족 시 기록 삭제 승인",
+      "revoke": "기록 삭제 승인 철회",
+      "confirm": "보존·삭제 제어 적용",
+      "confirmHint": "확인한 버전에 결속된 제어와 감사 증적을 저장합니다. 승인은 즉시 삭제가 아니며, 작업자가 보존 만료·보류·외부 자료 삭제·감사 전달 조건을 모두 검증해야 합니다.",
+      "acknowledge": "회의 참조 ID를 확인했고, 제한된 제어 범위와 삭제 조건을 이해했습니다.",
+      "states": {
+        "UNCONFIGURED": "회의 기록 보존·삭제 작업자 비활성",
+        "HELD": "회의 기록 삭제 보류 중",
+        "AWAITING_AUTHORIZATION": "명시적 삭제 승인 필요",
+        "BLOCKED": "보호 조건으로 삭제 차단",
+        "ELIGIBLE": "작업자 최종 검증 후 처리 가능",
+        "PURGED": "회의 기록 삭제 증적 확인됨"
+      }
+    },
+    "design": {
+      "sourceConnection": "연결 필요 · 집계 원본이 아직 제공되지 않습니다.",
+      "policyConnectionDetails": "정책 연결 및 권한 안내",
+      "approvalConnection": "연결 필요 · 권한, 영향도 검토 및 감사가 연결되어야 실행할 수 있습니다.",
+      "notMeasured": "측정 전",
+      "tenantScope": "현재 테넌트 · 회의 관리 범위",
+      "exportReport": "운영 보고서 내보내기",
+      "currentSnapshot": "현재 스냅샷",
+      "serviceSummary": "서비스 {{total}}개 중 {{ready}}개 준비 확인",
+      "serviceMatrixDescription": "4대 서비스의 연결 상태와 사용자 영향을 함께 확인합니다.",
+      "capabilityConfirmed": "제품 기능 사용 가능 · 미디어 품질 측정은 별도 확인이 필요합니다.",
+      "serviceMetrics": {
+        "media": "가용률 · p95 RTT",
+        "recording": "동시 녹화 슬롯",
+        "transcript": "STT 워커 · 처리 지연",
+        "aiNotes": "추론 대기열 · p95 지연"
+      },
+      "showAllServices": "전체 서비스 표시",
+      "attentionOnly": "확인 필요 서비스만",
+      "needsAttention": "확인 필요",
+      "metadataOnly": "원문을 노출하지 않는 운영 진단",
+      "latency": "레이턴시",
+      "packetLoss": "패킷 손실",
+      "jitter": "지터",
+      "telemetryConnection": "세션별 익명 텔레메트리 원본이 연결되면 진단 지표를 표시합니다.",
+      "recheckDiagnostics": "진단 상태 다시 조회",
+      "failover": "네트워크 엣지 페일오버",
+      "auditTicket": "운영 감사 티켓 발행",
+      "overridesTitle": "하위 부서 정책 예외",
+      "auditTitle": "정책 감사 추적",
+      "auditConnection": "감사 원장 조회 API 연결 후 변경 주체·시각·증적을 확인할 수 있습니다.",
+      "enforcementTitle": "정책 집행 경계",
+      "policyAuthority": "정책 동시성 및 변경 권한",
+      "policyAuthorityDescription": "관리 권한과 현재 버전을 확인한 뒤 변경 내용을 검토하여 저장합니다.",
+      "savePolicy": "정책 변경사항 검토 및 저장",
+      "policyControlConnection": "정책 조회·변경 계약 연결 필요 · 현재 화면에서 변경할 수 없습니다.",
+      "aiPolicyTitle": "AI 회의록 분석 데이터 거버넌스",
+      "templatePolicyTitle": "조직 공용 회의 템플릿 배포 권한",
+      "policyControls": {
+        "reviewer": {
+          "label": "독립 검토자 승인 정책",
+          "description": "AI 회의록 검토와 명시적 게시 단계의 승인 요건을 관리합니다."
+        },
+        "masking": {
+          "label": "개인정보 마스킹 및 필터링",
+          "description": "모델에 전달되는 회의 데이터의 마스킹 수준과 예외를 관리합니다."
+        },
+        "modelRouting": {
+          "label": "승인 모델 및 처리 리전",
+          "description": "승인된 모델과 처리 위치의 정책을 AI 거버넌스와 연결합니다."
+        },
+        "templateApproval": {
+          "label": "조직 공용 템플릿 승인",
+          "description": "공용 템플릿 생성·수정·배포에 필요한 승인 범위를 관리합니다."
+        },
+        "departmentTemplates": {
+          "label": "부서별 템플릿 생성 및 복제",
+          "description": "조직 범위별 템플릿 소유권과 배포 권한을 관리합니다."
+        },
+        "legalHold": {
+          "label": "법적 보존 예외",
+          "description": "보존 대상과 만료·삭제 예외는 승인 및 감사가 연결된 경우에만 변경합니다."
+        },
+        "guestDomains": {
+          "label": "외부 게스트 도메인 허용 목록",
+          "description": "회의에 초대할 수 있는 외부 이메일 도메인과 예외 범위를 관리합니다. 허용 도메인은 정책 조회 연결 후 표시합니다."
+        },
+        "hostAbsenceTimeout": {
+          "label": "호스트 부재 시 자동 종료 제한",
+          "description": "호스트 또는 공동 호스트 부재가 지속되는 세션의 종료 기준입니다. 실제 적용 시간은 정책 원본 확인이 필요합니다."
+        },
+        "recordingConsent": {
+          "label": "참가자 녹화 동의 정책",
+          "description": "참가자 고지와 명시적 동의 요건을 관리합니다. 동의하지 않은 참가자에 대한 처리 정책은 별도 조회 계약이 필요합니다."
+        },
+        "recordingNotice": {
+          "label": "녹화 중 고지 및 워터마크",
+          "description": "녹화 상태 고지와 워터마크의 적용 범위를 관리합니다. 실제 녹화 설정을 확인하기 전에는 활성 여부를 추정하지 않습니다."
+        }
+      },
+      "modelGovernanceTitle": "승인 AI 모델 및 추론 엔진",
+      "modelFacts": {
+        "training": "학습 사용 제한",
+        "memory": "추론 데이터 보관",
+        "attestation": "모델 운영 증적"
+      },
+      "modelAssuranceTitle": "데이터 비보관 및 학습 사용 제한 증적",
+      "integrityTitle": "암호화 파이프라인 무결성 지표",
+      "validationLatency": "검증 응답 시간",
+      "decryptAttempts": "비인가 복호화 시도",
+      "integrityConnection": "시계열 텔레메트리 연결 전입니다. 가용률과 추세를 산출하지 않습니다.",
+      "destructionTitle": "데이터 수명주기 및 파기 증적",
+      "pendingDeletion": "파기 예정",
+      "latestDeletionEvidence": "최근 파기 증적 원장",
+      "deletionLedgerConnection": "실제 삭제·키 폐기 원장 연결 후 증적과 처리 시각을 표시합니다.",
+      "legalHoldTitle": "법적 보존 대상 및 소멸 예외",
+      "contentBoundaryTitle": "운영자 원문 열람 제한",
+      "actionsTitle": "거버넌스 운영 조치",
+      "actionsDescription": "상태 조회와 승인·감사가 필요한 고위험 조치를 구분하여 제공합니다.",
+      "routineActions": "상태 조회 및 증적 확인",
+      "revalidateChain": "체인 준비 상태 다시 조회",
+      "exportEvidence": "거버넌스 감사 증적 내보내기",
+      "syncLegalHold": "법적 보존 목록 동기화",
+      "highRiskActions": "고위험 조치 · 승인 및 사유 필요",
+      "forceCryptoShred": "만료 키 즉시 파기",
+      "emergencyStop": "AI 파이프라인 긴급 차단",
+      "highRiskBoundary": "관리 권한, 영향도 미리보기, 승인, 감사 및 복구 계약이 연결되기 전에는 실행할 수 없습니다."
+    },
     "eyebrow": "화상회의 / 관리",
     "capabilities": {
       "video": "카메라 및 마이크",
@@ -1814,6 +2268,16 @@
     },
     "policy": {
       "title": "회의 정책",
+      "mobileSections": {
+        "label": "정책 섹션 선택",
+        "01": "접근·보안",
+        "02": "녹화·STT",
+        "03": "AI 거버넌스",
+        "04": "보존·파기",
+        "accessHint": "인증·대기실·초대 보호 조건",
+        "aiHint": "독립 검토와 분석 정책의 제공 상태 확인",
+        "retentionHint": "회의 기록 보존 · {{days}}일"
+      },
       "description": "접근, 콘텐츠, 수용 인원과 보존에 대한 테넌트 기본값을 적용합니다.",
       "loading": "회의 정책을 불러오는 중",
       "impactTitle": "변경 영향 검토",
@@ -2067,7 +2531,10 @@
           "label": "산출물",
           "description": "녹화, 전사 및 AI 보고서 보존 범위입니다."
         },
-        "chat": { "label": "회의 채팅", "description": "회의 대화 메시지 보존 범위입니다." },
+        "chat": {
+          "label": "회의 채팅",
+          "description": "회의 대화 메시지 보존 범위입니다."
+        },
         "intelligence": {
           "label": "AI 인텔리전스 보고서",
           "description": "산출물 보존 기간이 적용되는 근거 연결 보고서입니다."

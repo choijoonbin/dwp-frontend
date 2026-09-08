@@ -56,6 +56,38 @@ describe('Approvals product surface routes', () => {
     expect(fixtures.map((fixture) => fixture.testCase.expected)).toContain('SOD_CONFLICT');
   });
 
+  it('binds PS-A002 design-only evidence to exact allowed and denied PAGE contracts', () => {
+    const fixture = toPilotRouteFixture({ testId: 'PS-A002' });
+    const capabilities = fixture.composition.flatMap((source) =>
+      source.source === 'COMPONENT' ? (source.value.capabilityContractKeys ?? []) : []
+    );
+    const page = (routeContractKey: string) => {
+      const matches = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter(
+        (route) => route.routeContractKey === routeContractKey
+      );
+      expect(matches, routeContractKey).toHaveLength(1);
+      return matches[0]!;
+    };
+
+    expect(fixture.expectedOutcome).toBe('DESIGN_DRAFT_ONLY');
+    expect(capabilities).toContain('approvals.design.read');
+    expect(capabilities).not.toContain('approvals.operations.read');
+    expect(page('route.approvals.admin.workflows.page')).toEqual({
+      routeContractKey: 'route.approvals.admin.workflows.page',
+      routeKind: 'PAGE',
+      routeId: 'approvals.admin.workflows',
+      pattern: '/approvals/admin/workflows',
+      productId: 'approvals',
+      surfaceId: 'approvals.admin',
+    });
+    expect(page('route.approvals.admin.operations.page')).toMatchObject({
+      routeKind: 'PAGE',
+      routeId: 'approvals.admin.operations',
+      pattern: '/approvals/admin/operations',
+      surfaceId: 'approvals.admin',
+    });
+  });
+
   it('owns exactly nine Work and six Management PAGE routes', () => {
     expect(flattenSurfaceItems(APPROVAL_WORK_NAVIGATION)).toHaveLength(9);
     expect(flattenSurfaceItems(APPROVAL_MANAGEMENT_NAVIGATION)).toHaveLength(6);

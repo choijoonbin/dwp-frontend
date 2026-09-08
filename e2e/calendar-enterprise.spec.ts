@@ -350,6 +350,36 @@ test('calendar quick actions preserve opaque scope and schedule context', async 
   ).toEqual([]);
 });
 
+test('calendar preserves a canonical Work handoff and offers an explicit return action', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  const returnTarget = '/work/queue?view=mine#task-task-42';
+  const query = new URLSearchParams({
+    date: '2026-08-11',
+    returnTo: returnTarget,
+  });
+
+  await page.goto(`/calendar/schedule?${query.toString()}`);
+  const returnAction = page.getByRole('button', { name: 'Return to work', exact: true });
+  await expect(returnAction).toBeVisible();
+
+  if ((page.viewportSize()?.width ?? 0) >= 900) {
+    await page
+      .getByTestId('interactive-calendar')
+      .getByRole('tab', { name: 'Month view', exact: true })
+      .click();
+  }
+  expect(new URL(page.url()).searchParams.get('returnTo')).toBe(returnTarget);
+
+  await returnAction.click();
+  await expect(page).toHaveURL(new RegExp(`/work/queue\\?view=mine#task-task-42$`, 'u'));
+});
+
 test('calendar coordinates attendee time, room choice, and durable schedule state in one flow', async ({
   page,
 }) => {

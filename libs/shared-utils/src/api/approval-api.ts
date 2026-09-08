@@ -370,9 +370,13 @@ export async function getApprovalRequest(requestId: string): Promise<ApprovalReq
   );
   return response.data.data;
 }
-export async function getApprovalRequestDetail(requestId: string): Promise<ApprovalRequestDetail> {
+export async function getApprovalRequestDetail(
+  requestId: string,
+  contextScopeKey?: string
+): Promise<ApprovalRequestDetail> {
   const response = await axiosInstance.get<ApiResponse<ApprovalRequestDetail>>(
-    `${base}/requests/${requestId}/detail`
+    `${base}/requests/${requestId}/detail`,
+    { contextScopeKey }
   );
   return response.data.data;
 }

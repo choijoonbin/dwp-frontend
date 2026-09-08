@@ -7,7 +7,10 @@ import process from 'node:process';
 const root = process.cwd();
 const sourceRoots = ['apps', 'libs'].map((segment) => path.join(root, segment));
 const sourceExtensions = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs']);
-const allowedFetchFiles = new Set(['libs/shared-utils/src/axios-instance.ts']);
+const allowedFetchFiles = new Set([
+  'libs/shared-utils/src/axios-instance.ts',
+  'libs/shared-utils/src/browser-static-asset.ts',
+]);
 
 const checks = [
   {

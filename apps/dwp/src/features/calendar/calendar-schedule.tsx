@@ -56,6 +56,7 @@ import {
   calendarScheduleDate,
   calendarScheduleDateValue,
   calendarInternalPath,
+  calendarScheduleReturnTarget,
   calendarScheduleSavedConfiguration,
   calendarScheduleSearchParams,
   calendarScheduleStateFromSavedView,
@@ -159,6 +160,7 @@ export function CalendarSchedule() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [sharingCalendar, setSharingCalendar] = useState<CalendarSummary | null>(null);
   const requestedEventId = routeSearchParams.get('event');
+  const returnTarget = calendarScheduleReturnTarget(routeSearchParams.get('returnTo'));
   const hasExplicitScheduleState =
     routeSearchParams.has('view') ||
     routeSearchParams.has('date') ||
@@ -616,11 +618,15 @@ export function CalendarSchedule() {
         hasExplicitScheduleState={hasExplicitScheduleState}
         view={view}
         savedViewConfiguration={savedViewConfiguration}
+        returnTarget={returnTarget}
         onOpenCommands={() => setCommandPaletteOpen(true)}
         onCreate={openNow}
         onToggleSources={() => setSourcesCollapsed((current) => !current)}
         onOpenSources={() => setSourcePickerOpen(true)}
         onApplySavedView={applySavedView}
+        onReturn={() => {
+          if (returnTarget) navigate(returnTarget);
+        }}
       />
 
       {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (

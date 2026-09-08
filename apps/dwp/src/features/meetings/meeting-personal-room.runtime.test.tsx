@@ -19,9 +19,11 @@ const runtime = vi.hoisted(() => ({
   rotate: vi.fn(),
   start: vi.fn(),
   enter: vi.fn(),
+  open: vi.fn(),
   devices: vi.fn(),
   back: vi.fn(),
   clipboard: vi.fn(),
+  preferences: vi.fn(),
 }));
 vi.mock('@dwp-frontend/shared-utils', async (original) => ({
   ...(await original<typeof SharedUtils>()),
@@ -39,6 +41,9 @@ vi.mock('@dwp-frontend/shared-utils/api/video-meeting-personal-room-api', () => 
   updateVideoMeetingPersonalRoom: runtime.update,
   rotateVideoMeetingPersonalRoomInvitation: runtime.rotate,
   createVideoMeetingPersonalRoomSession: runtime.start,
+}));
+vi.mock('@dwp-frontend/shared-utils/api/video-meeting-preferences-api', () => ({
+  getVideoMeetingPreferences: runtime.preferences,
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -90,6 +95,7 @@ async function render() {
           { client },
           createElement(MeetingPersonalRoom, {
             onEnterMeeting: runtime.enter,
+            onOpenMeeting: runtime.open,
             onCheckDevices: runtime.devices,
             onBack: runtime.back,
           })
@@ -136,6 +142,17 @@ describe('personal-room actual component commands and authority', () => {
     runtime.read.mockResolvedValue(room);
     runtime.history.mockResolvedValue({ items: [], total: 0, page: 0, pageSize: 5 });
     runtime.clipboard.mockResolvedValue(undefined);
+    runtime.preferences.mockResolvedValue({
+      displayName: '',
+      microphoneOff: true,
+      cameraOff: true,
+      prejoinEnabled: true,
+      reminderEnabled: true,
+      reminderMinutes: 10,
+      recapNotifications: true,
+      version: 1,
+      updatedAt: '2026-09-04T00:00:00Z',
+    });
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText: runtime.clipboard },
@@ -154,6 +171,37 @@ describe('personal-room actual component commands and authority', () => {
     if (clipboardDescriptor) Object.defineProperty(navigator, 'clipboard', clipboardDescriptor);
     else Reflect.deleteProperty(navigator, 'clipboard');
     vi.restoreAllMocks();
+  });
+  it('opens authorized history in meeting detail and the full list without creating a session', async () => {
+    runtime.history.mockResolvedValue({
+      items: [{ ...session, title: 'Prior release', lifecycleState: 'ENDED' }],
+      total: 1,
+      page: 0,
+      pageSize: 5,
+    });
+    await render();
+    await shown('Prior release');
+    await click('Prior release');
+    expect(runtime.open).toHaveBeenCalledWith(session.meetingId);
+    expect(runtime.enter).not.toHaveBeenCalled();
+    expect(runtime.start).not.toHaveBeenCalled();
+    await click('mine.title · actions.viewAll');
+    expect(runtime.back).toHaveBeenCalledOnce();
+  });
+  it('removes prior history navigation immediately after view permission is revoked', async () => {
+    runtime.history.mockResolvedValue({
+      items: [{ ...session, title: 'Protected history' }],
+      total: 1,
+      page: 0,
+      pageSize: 5,
+    });
+    await render();
+    await shown('Protected history');
+    runtime.permissions = [];
+    await render();
+    expect(mount.textContent).not.toContain('Protected history');
+    expect(mount.textContent).not.toContain('mine.title · actions.viewAll');
+    expect(runtime.open).not.toHaveBeenCalled();
   });
   it('keeps provisioning and device checks separate from meeting creation', async () => {
     runtime.read.mockResolvedValue(null);
@@ -181,6 +229,55 @@ describe('personal-room actual component commands and authority', () => {
     runtime.clipboard.mockRejectedValue(new Error('Clipboard denied'));
     await click('personalRoom.copyLink');
     await shown('personalRoom.notices.copyFailed');
+  });
+  it('removes stale saved device defaults after preferences access is denied', async () => {
+    await render();
+    await shown(room.name);
+    await act(async () => {
+      await vi.waitFor(() =>
+        expect(
+          document.querySelector<HTMLInputElement>(
+            'input[aria-label="preferences.join.microphoneOff"]'
+          )?.checked
+        ).toBe(true)
+      );
+    });
+    runtime.preferences.mockRejectedValue({ status: 403 });
+    await act(async () => {
+      await client.refetchQueries({ queryKey: ['meetings', 'personal-room-preferences'] });
+    });
+    await shown('stitch.personal.preferenceUnavailable');
+    expect(document.querySelector('input[aria-label="preferences.join.microphoneOff"]')).toBeNull();
+    expect(document.querySelector('input[aria-label="preferences.join.cameraOff"]')).toBeNull();
+  });
+  it('encodes the current invitation in a local QR and removes it on authority revocation', async () => {
+    await render();
+    await shown(room.name);
+    await click('stitch.personal.qr');
+    const qr = () => document.querySelector('[data-testid="personal-room-qr"]');
+    const first = qr()?.querySelector('svg path:last-child')?.getAttribute('d');
+    expect(first).toBeTruthy();
+    expect(qr()?.textContent).toContain('&revision=3');
+    runtime.read.mockResolvedValue({ ...room, invitationRevision: 4, version: 5 });
+    await act(async () => {
+      await client.refetchQueries({
+        queryKey: ['meetings', 'personal-room'],
+        predicate: (query) => query.queryKey.length === 3,
+      });
+    });
+    await shown('&revision=4');
+    expect(qr()?.textContent).toContain('&revision=4');
+    expect(qr()?.querySelector('svg path:last-child')?.getAttribute('d')).not.toBe(first);
+    runtime.read.mockRejectedValue({ status: 403 });
+    await act(async () => {
+      await client.refetchQueries({
+        queryKey: ['meetings', 'personal-room'],
+        predicate: (query) => query.queryKey.length === 3,
+      });
+    });
+    await shown('personalRoom.forbidden');
+    expect(qr()).toBeNull();
+    expect(document.body.textContent).not.toContain(room.opaqueAlias);
   });
   it('requires confirmation before rotation and renders the new revision with the stable alias', async () => {
     runtime.rotate.mockResolvedValue({ ...room, invitationRevision: 4, version: 5 });

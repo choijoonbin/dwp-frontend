@@ -8,6 +8,14 @@ const runtime = vi.hoisted(() => ({ preparation: vi.fn() }));
 vi.mock('@dwp-frontend/shared-utils/api/video-meeting-preparation-api', () => ({
   getVideoMeetingPreparation: runtime.preparation,
 }));
+vi.mock('./meeting-live-facilitation', () => ({
+  MeetingLiveFacilitation: ({ meetingId, embedded }: { meetingId: string; embedded: boolean }) =>
+    createElement('div', {
+      'data-testid': 'embedded-facilitation',
+      'data-meeting-id': meetingId,
+      'data-embedded': embedded,
+    }),
+}));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, values?: Record<string, unknown>) =>
@@ -15,9 +23,22 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-import { MeetingRoomContextPanel, MeetingRoomRailNavigation } from './meeting-room-context-panel';
+import {
+  canOpenMeetingRoomPanel,
+  MeetingRoomContextPanel,
+  MeetingRoomRailNavigation,
+} from './meeting-room-context-panel';
 
 const meetingId = '90000000-0000-4000-8000-000000000101';
+const permissions = {
+  microphone: true,
+  camera: true,
+  screenShare: true,
+  participantList: true,
+  chat: true,
+  reactions: true,
+  handRaise: true,
+};
 let root: Root;
 let mount: HTMLDivElement;
 let client: QueryClient;
@@ -85,10 +106,9 @@ describe('meeting room governed context rail', () => {
     expect(runtime.preparation).toHaveBeenCalledOnce();
     expect(runtime.preparation.mock.calls[0]?.[0]).toBe(meetingId);
     expect(runtime.preparation.mock.calls[0]?.[1]).toBeInstanceOf(AbortSignal);
-    expect(mount.textContent).toContain('room.rail.agenda.capabilities.facilitation.label');
-    expect(mount.textContent).toContain('room.rail.agenda.capabilities.qa.label');
-    expect(mount.textContent).toContain('room.rail.agenda.capabilities.polls.label');
-    expect(mount.textContent).toContain('room.rail.agenda.openFacilitation');
+    const liveTools = mount.querySelector('[data-testid="embedded-facilitation"]');
+    expect(liveTools?.getAttribute('data-meeting-id')).toBe(meetingId);
+    expect(liveTools?.getAttribute('data-embedded')).toBe('true');
     expect(mount.textContent).not.toContain('must-not-enter-room-rail');
   });
 
@@ -108,7 +128,9 @@ describe('meeting room governed context rail', () => {
 
   it('supports roving keyboard navigation across all five rail destinations', async () => {
     const onSelect = vi.fn();
-    await render(createElement(MeetingRoomRailNavigation, { activePanel: 'agenda', onSelect }));
+    await render(
+      createElement(MeetingRoomRailNavigation, { activePanel: 'agenda', permissions, onSelect })
+    );
     const tabs = [...mount.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
     expect(tabs).toHaveLength(5);
 
@@ -117,5 +139,22 @@ describe('meeting room governed context rail', () => {
     );
     expect(onSelect).toHaveBeenCalledWith('chat');
     expect(document.activeElement).toBe(tabs[1]);
+  });
+
+  it('does not render credential-denied tabs and invalidates a revoked selection', async () => {
+    const denied = { ...permissions, participantList: false, chat: false, handRaise: false };
+    await render(
+      createElement(MeetingRoomRailNavigation, {
+        activePanel: 'agenda',
+        permissions: denied,
+        onSelect: vi.fn(),
+      })
+    );
+    expect(mount.querySelectorAll('[role="tab"]')).toHaveLength(2);
+    for (const panel of ['participants', 'chat', 'floor'] as const) {
+      expect(canOpenMeetingRoomPanel(panel, permissions)).toBe(true);
+      expect(canOpenMeetingRoomPanel(panel, denied)).toBe(false);
+      expect(mount.textContent).not.toContain(`room.rail.tabs.${panel}`);
+    }
   });
 });

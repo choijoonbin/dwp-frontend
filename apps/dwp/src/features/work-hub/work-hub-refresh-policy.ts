@@ -11,6 +11,11 @@ export function reconcileWorkHubRefresh(
   if (!previous || refreshed.completeness !== 'UNAVAILABLE') return refreshed;
   const requested = refreshed.sources.filter((source) => source.state !== 'NOT_REQUESTED');
   const transportOutage =
-    requested.length > 0 && requested.every((source) => source.state === 'UNAVAILABLE');
+    requested.length > 0 &&
+    requested.every(
+      (source) =>
+        source.state === 'UNAVAILABLE' &&
+        (source.failureStatus === undefined || source.failureStatus >= 500)
+    );
   return transportOutage ? { ...refreshed, items: previous.items } : refreshed;
 }

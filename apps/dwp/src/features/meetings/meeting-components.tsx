@@ -3,7 +3,6 @@ import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { VideoMeetingLifecycleState } from '@dwp-frontend/shared-utils/api/video-meeting-api';
@@ -172,59 +171,5 @@ export function MeetingStatusChip({ state }: { state: VideoMeetingLifecycleState
       label={t(`status.${state}`)}
       sx={{ fontWeight: 700 }}
     />
-  );
-}
-
-export function MeetingMetric({
-  label,
-  value,
-  detail,
-  progress,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  detail?: string;
-  progress?: number;
-  tone: string;
-}) {
-  return (
-    <Box sx={{ p: 2, minWidth: 0, position: 'relative' }}>
-      <Stack direction="row" alignItems="center" gap={0.75}>
-        <Box
-          aria-hidden="true"
-          sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: tone, flex: '0 0 auto' }}
-        />
-        <Typography variant="caption" color="text.secondary">
-          {label}
-        </Typography>
-      </Stack>
-      <Typography
-        component="p"
-        variant="h6"
-        fontWeight={760}
-        sx={{ mt: 0.45, fontVariantNumeric: 'tabular-nums' }}
-      >
-        {value}
-      </Typography>
-      {detail && (
-        <Typography variant="caption" color="text.secondary">
-          {detail}
-        </Typography>
-      )}
-      {progress !== undefined && (
-        <LinearProgress
-          variant="determinate"
-          value={Math.max(0, Math.min(100, progress))}
-          aria-label={label}
-          sx={{
-            mt: 1,
-            height: 4,
-            bgcolor: 'action.hover',
-            '& .MuiLinearProgress-bar': { bgcolor: tone },
-          }}
-        />
-      )}
-    </Box>
   );
 }

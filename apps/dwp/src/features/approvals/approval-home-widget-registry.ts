@@ -1,9 +1,15 @@
-import { Activity, Gauge, Lightbulb, ListChecks, Send } from 'lucide-react';
+import { Activity, Gauge, History, Lightbulb, ListChecks, Rocket, Send } from 'lucide-react';
 
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
 export type ApprovalHomeWidgetKey =
-  'decision-pulse' | 'focus-queue' | 'flow' | 'my-requests' | 'insights';
+  | 'decision-pulse'
+  | 'focus-queue'
+  | 'quick-actions'
+  | 'my-requests'
+  | 'insights'
+  | 'flow'
+  | 'recent-activity';
 
 export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<ApprovalHomeWidgetKey>[] =
   [
@@ -26,13 +32,13 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       allowedHeights: ['standard', 'tall', 'expanded'],
     },
     {
-      key: 'insights',
-      icon: Lightbulb,
+      key: 'quick-actions',
+      icon: Rocket,
       canHide: true,
       defaultSize: 'compact',
       allowedSizes: ['compact', 'medium', 'large'],
       defaultHeight: 'tall',
-      allowedHeights: ['tall'],
+      allowedHeights: ['standard', 'tall'],
     },
     {
       key: 'my-requests',
@@ -44,12 +50,30 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       allowedHeights: ['short', 'standard', 'tall'],
     },
     {
+      key: 'insights',
+      icon: Lightbulb,
+      canHide: true,
+      defaultSize: 'compact',
+      allowedSizes: ['compact', 'medium', 'large'],
+      defaultHeight: 'tall',
+      allowedHeights: ['tall'],
+    },
+    {
       key: 'flow',
       icon: Activity,
+      canHide: true,
+      defaultSize: 'large',
+      allowedSizes: ['medium', 'large', 'full'],
+      defaultHeight: 'standard',
+      allowedHeights: ['standard'],
+    },
+    {
+      key: 'recent-activity',
+      icon: History,
       canHide: true,
       defaultSize: 'compact',
       allowedSizes: ['compact', 'medium', 'large'],
       defaultHeight: 'standard',
-      allowedHeights: ['standard'],
+      allowedHeights: ['short', 'standard', 'tall'],
     },
   ];

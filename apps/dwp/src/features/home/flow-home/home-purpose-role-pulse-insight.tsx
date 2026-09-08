@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { Link } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { alpha, type Theme } from '@mui/material/styles';
 
 import type { FlowSignal } from './flow-home-model';
 import { flowSourceLabel } from './flow-source-label';
+import { FlowActivityDistribution, FlowActivitySignalPanel } from './flow-activity-signal-panel';
 
 const signalOrder: readonly FlowSignal['key'][] = [
   'open-work',
@@ -248,9 +250,11 @@ function ScheduleMiniBars({
 function RolePulseLens({
   signal,
   density,
+  onInspectActivity,
 }: {
   signal: FlowSignal;
   density: RolePulseInsightDensity;
+  onInspectActivity?: () => void;
 }) {
   const { t } = useTranslation('home');
   const Icon = signalIcon[signal.key];
@@ -260,6 +264,7 @@ function RolePulseLens({
   const compactComparison = roleComparisonLabel(signal, t, true);
   const progress = focusProgress(signal);
   const layout = rolePulseLayoutPolicy[density];
+  const inspectActivity = Boolean(signal.activityExecutionSummary && onInspectActivity);
   const sourceDetail =
     density === 'tall'
       ? t('flow.next.sourceUpdated', {
@@ -270,8 +275,11 @@ function RolePulseLens({
 
   return (
     <Box
-      component={Link}
-      to={signal.route}
+      component={inspectActivity ? 'button' : Link}
+      {...(inspectActivity
+        ? { type: 'button', onClick: onInspectActivity, 'aria-haspopup': 'dialog' as const }
+        : { to: signal.route })}
+      data-testid={inspectActivity ? 'flow-activity-signal-trigger' : undefined}
       data-home-role-lens={signal.key}
       data-home-role-lens-density={density}
       aria-label={t('flow.signals.openSummary', {
@@ -286,6 +294,9 @@ function RolePulseLens({
           '--home-role-metric-rail-width': `${layout.metricRailWidth}px`,
           '--home-role-metric-rail-height': `${layout.metricRailHeight}px`,
           minWidth: 0,
+          font: 'inherit',
+          cursor: 'pointer',
+          textAlign: 'start',
           minHeight: layout.readRowHeight,
           px: density === 'short' ? 0.5 : 1,
           py: density === 'short' ? 0.25 : 0.65,
@@ -590,6 +601,8 @@ function RolePulseLens({
               }}
             />
           </Box>
+        ) : signal.activityExecutionSummary ? (
+          <FlowActivityDistribution summary={signal.activityExecutionSummary} compact />
         ) : (
           <ScheduleMiniBars signal={signal} density={density} />
         )}
@@ -618,11 +631,18 @@ function RolePulseLens({
 export function RolePulseInsight({
   signals,
   density = 'standard',
+  fetching = false,
+  failed = false,
+  onRefresh,
 }: {
   signals: readonly FlowSignal[];
   density?: RolePulseInsightDensity;
+  fetching?: boolean;
+  failed?: boolean;
+  onRefresh?: () => void;
 }) {
   const { t } = useTranslation('home');
+  const [activityOpen, setActivityOpen] = useState(false);
   const layout = rolePulseLayoutPolicy[density];
   const visible = signalOrder
     .map((key) => signals.find((signal) => signal.key === key))
@@ -638,37 +658,52 @@ export function RolePulseInsight({
     .join('; ');
 
   return (
-    <Box
-      data-home-role-insight
-      data-home-role-density={density}
-      data-home-role-layout="2x2"
-      data-home-role-tall-detail={density === 'tall' ? 'true' : 'false'}
-      data-home-role-edit-row-height={layout.editingRowHeight}
-      data-home-role-metric-rail-width={layout.metricRailWidth}
-      data-home-role-metric-rail-height={layout.metricRailHeight}
-      role="region"
-      aria-label={t('flow.signals.title')}
-      sx={{
-        width: 1,
-        minWidth: 0,
-        containerName: 'home-role-pulse',
-        containerType: 'inline-size',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-        gridAutoRows: `minmax(${layout.readRowHeight}px, auto)`,
-        gap: layout.gap,
-        "[data-workspace-widget-content-state='editing-preview'] &": {
-          gridAutoRows: `${layout.editingRowHeight}px`,
-        },
-        '@media (forced-colors: active)': { gap: 1 },
-      }}
-    >
-      <Typography component="p" sx={visuallyHidden}>
-        {accessibleSummary}
-      </Typography>
-      {visible.map((signal) => (
-        <RolePulseLens key={signal.key} signal={signal} density={density} />
-      ))}
-    </Box>
+    <>
+      <Box
+        data-home-role-insight
+        data-home-role-density={density}
+        data-home-role-layout="2x2"
+        data-home-role-tall-detail={density === 'tall' ? 'true' : 'false'}
+        data-home-role-edit-row-height={layout.editingRowHeight}
+        data-home-role-metric-rail-width={layout.metricRailWidth}
+        data-home-role-metric-rail-height={layout.metricRailHeight}
+        role="region"
+        aria-label={t('flow.signals.title')}
+        sx={{
+          width: 1,
+          minWidth: 0,
+          containerName: 'home-role-pulse',
+          containerType: 'inline-size',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gridAutoRows: `minmax(${layout.readRowHeight}px, auto)`,
+          gap: layout.gap,
+          "[data-workspace-widget-content-state='editing-preview'] &": {
+            gridAutoRows: `${layout.editingRowHeight}px`,
+          },
+          '@media (forced-colors: active)': { gap: 1 },
+        }}
+      >
+        <Typography component="p" sx={visuallyHidden}>
+          {accessibleSummary}
+        </Typography>
+        {visible.map((signal) => (
+          <RolePulseLens
+            key={signal.key}
+            signal={signal}
+            density={density}
+            onInspectActivity={() => setActivityOpen(true)}
+          />
+        ))}
+      </Box>
+      <FlowActivitySignalPanel
+        open={activityOpen}
+        signal={signals.find((signal) => signal.key === 'activity-attention')}
+        fetching={fetching}
+        failed={failed}
+        onRefresh={onRefresh}
+        onClose={() => setActivityOpen(false)}
+      />
+    </>
   );
 }

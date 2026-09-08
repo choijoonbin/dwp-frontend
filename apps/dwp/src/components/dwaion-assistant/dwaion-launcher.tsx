@@ -42,11 +42,11 @@ export function DwaionLauncher({
   const { t } = useTranslation('home');
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [headerActions, setHeaderActions] = useState<HTMLElement | null>(null);
-  const [largeTextHeaderDock, setLargeTextHeaderDock] = useState(false);
+  const [reflowHeaderDock, setReflowHeaderDock] = useState(false);
   const [motionEvent, setMotionEvent] = useState(0);
   const popoverActions = useRef<PopoverActions>(null);
   const compactViewport = useMediaQuery('(max-width: 899.95px)', { noSsr: true });
-  const compactHeaderDock = compactViewport || largeTextHeaderDock;
+  const compactHeaderDock = compactViewport || reflowHeaderDock;
   const fullScreenPanel = compactHeaderDock;
   const open = Boolean(anchorEl);
   const panelId = 'dwaion-home-panel';
@@ -59,14 +59,21 @@ export function DwaionLauncher({
     const root = document.documentElement;
     const sync = () => {
       const rootTextSize = Number.parseFloat(window.getComputedStyle(root).fontSize);
-      setLargeTextHeaderDock(Number.isFinite(rootTextSize) && rootTextSize >= 24);
+      const reflowWidth = document.body.clientWidth;
+      setReflowHeaderDock(
+        (Number.isFinite(rootTextSize) && rootTextSize >= 24) ||
+          (reflowWidth > 0 && reflowWidth < 900)
+      );
     };
-    const observer = new MutationObserver(sync);
-    observer.observe(root, { attributes: true, attributeFilter: ['class', 'style'] });
+    const mutationObserver = new MutationObserver(sync);
+    const resizeObserver = new ResizeObserver(sync);
+    mutationObserver.observe(root, { attributes: true, attributeFilter: ['class', 'style'] });
+    resizeObserver.observe(document.body);
     window.addEventListener('resize', sync);
     sync();
     return () => {
-      observer.disconnect();
+      mutationObserver.disconnect();
+      resizeObserver.disconnect();
       window.removeEventListener('resize', sync);
     };
   }, []);

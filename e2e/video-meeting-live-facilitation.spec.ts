@@ -485,7 +485,7 @@ test('live facilitation connects verified Q&A, voting and server-clock agenda to
   );
   await page
     .getByRole('button', {
-      name: mobile ? 'Facilitate' : 'Open verified facilitation tools',
+      name: 'Facilitate',
       exact: true,
     })
     .click();

@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, type FocusEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ChevronDown, ChevronRight, Home, LifeBuoy, Settings2 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -31,6 +31,13 @@ import { ShellHeader, shellMobileContextRailHeight } from '../components/shell-h
 import { productSurfaceContentInstanceKey } from '../components/product-surface-content-instance-key';
 import ProductSurfaceHeaderControls from '../components/product-surface-header-controls';
 import { ProductSurfaceContextBarSlot } from '../components/product-surface-context-bar-slot';
+import {
+  clearProductSurfaceFocusAfterNavigation,
+  clearProductSurfaceFocus,
+  deferProductSurfaceFocusClear,
+  recordProductSurfaceFocus,
+  synchronizeProductSurfaceFocus,
+} from '../components/product-surface-focus-handoff';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
 import { buildLegacyProductSurfacePresentation } from '../features/shell/legacy-product-surface-presentation';
@@ -218,6 +225,50 @@ export function ProductAreaLayout({
   const presentationEntries = surface?.entryPoints ?? legacyPresentation?.headerEntryPoints;
   const currentSurfaceId =
     surface?.decision.context.surfaceKey ?? legacyPresentation?.currentSurface.id;
+  const focusLocation = `${location.pathname}${location.search}${location.hash}`;
+  const focusIdentityKey = `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`;
+  const shellRef = useRef<HTMLDivElement>(null);
+  const focusLocationRef = useRef(focusLocation);
+  const focusIdentityRef = useRef(focusIdentityKey);
+  focusLocationRef.current = focusLocation;
+  useLayoutEffect(() => {
+    const shell = shellRef.current;
+    if (focusIdentityRef.current !== focusIdentityKey) {
+      clearProductSurfaceFocus();
+      focusIdentityRef.current = focusIdentityKey;
+    } else if (shell && (presentationPlane === 'work' || presentationPlane === 'management')) {
+      synchronizeProductSurfaceFocus(shell, presentationPlane, focusIdentityKey, focusLocation);
+    }
+  }, [focusIdentityKey, focusLocation, presentationPlane]);
+  useLayoutEffect(
+    () => () => clearProductSurfaceFocusAfterNavigation(focusLocationRef.current),
+    []
+  );
+  const recordSurfaceFocus = (event: FocusEvent<HTMLElement>) => {
+    if (presentationPlane !== 'work' && presentationPlane !== 'management') return;
+    if (event.target instanceof HTMLElement) {
+      recordProductSurfaceFocus(
+        event.currentTarget,
+        event.target,
+        presentationPlane,
+        focusIdentityKey,
+        focusLocation
+      );
+    }
+  };
+  const deferSurfaceFocusClear = (event: FocusEvent<HTMLElement>) => {
+    if (event.target instanceof HTMLElement) {
+      deferProductSurfaceFocusClear(event.currentTarget, event.target, event.relatedTarget);
+    }
+  };
+  const dismissMobileNavigation = () => {
+    clearProductSurfaceFocus();
+    mobileNavigation.dismiss();
+  };
+  const navigateMobileNavigation = () => {
+    clearProductSurfaceFocus();
+    mobileNavigation.navigate();
+  };
   const productLabel = t(`shell.${areaKey}.name`);
   const headerContextLabel =
     presentationPlane === 'management'
@@ -452,6 +503,9 @@ export function ProductAreaLayout({
 
   return (
     <Box
+      ref={shellRef}
+      onFocusCapture={recordSurfaceFocus}
+      onBlurCapture={deferSurfaceFocusClear}
       data-testid={`${areaKey}-shell`}
       data-product-surface={surface?.decision.context.surfaceKey}
       data-product-surface-label={surface?.label}
@@ -523,12 +577,14 @@ export function ProductAreaLayout({
       <ShellMobileNavigationDrawer
         controlsId={mobileNavigationId}
         label={t(`shell.${areaKey}.navigationLabel`)}
-        onDismiss={mobileNavigation.dismiss}
+        onDismiss={dismissMobileNavigation}
         open={mobileNavigation.open}
         testId={`${areaKey}-mobile-sidebar`}
         width={shell.desktopNavigationWidth}
       >
         <Box
+          onFocusCapture={recordSurfaceFocus}
+          onBlurCapture={deferSurfaceFocusClear}
           sx={(theme) => {
             const dark = theme.palette.mode === 'dark';
             const canvas =
@@ -557,7 +613,7 @@ export function ProductAreaLayout({
             };
           }}
         >
-          {navigationContent(false, mobileNavigation.navigate, mobileNavigation.dismiss)}
+          {navigationContent(false, navigateMobileNavigation, dismissMobileNavigation)}
         </Box>
       </ShellMobileNavigationDrawer>
       <ShellHeader

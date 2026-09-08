@@ -5,6 +5,7 @@ import {
   getWorkspaceActivity,
   getWorkspaceActivityEvent,
   getWorkspaceActivityExecutionSummary,
+  normalizeWorkspaceActivityEvent,
   normalizeWorkspaceActivityFeed,
 } from './workspace-api';
 import {
@@ -159,7 +160,15 @@ export async function getActivityEvent(
   eventId: string,
   signal?: AbortSignal
 ): Promise<WorkspaceActivityEvent> {
-  if (!eventId.startsWith('dwaion:')) return getWorkspaceActivityEvent(eventId, signal);
+  if (!eventId.startsWith('dwaion:')) {
+    const event = await getWorkspaceActivityEvent(eventId, signal);
+    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
+    const matches = uuid.test(eventId)
+      ? event?.id?.toLowerCase() === eventId.toLowerCase()
+      : event?.id === eventId;
+    if (!matches) throw new HttpError('Activity event is unavailable.', 404);
+    return event;
+  }
   if (!canRequestAgentActivity()) throw new HttpError('Activity event is unavailable.', 403);
   const id = eventId.slice('dwaion:'.length);
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu.test(id)) {
@@ -169,9 +178,8 @@ export async function getActivityEvent(
     `/api/agent/v1/activity/events/${encodeURIComponent(id)}`,
     { timeoutMs: 8000, signal }
   );
-  const event = normalizeWorkspaceActivityFeed({ events: [response.data.data], generatedAt: '' })
-    .events[0];
-  if (!event || event.id.toLowerCase() !== id.toLowerCase()) {
+  const event = normalizeWorkspaceActivityEvent(response.data.data);
+  if (event.id.toLowerCase() !== id.toLowerCase()) {
     throw new HttpError('Activity event is unavailable.', 404);
   }
   return withActivitySourceId('DWAI_ON', { ...event, id: id.toLowerCase() });

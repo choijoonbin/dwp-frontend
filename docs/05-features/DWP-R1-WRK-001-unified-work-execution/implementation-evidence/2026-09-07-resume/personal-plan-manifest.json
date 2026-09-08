@@ -1,0 +1,1294 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-07T08:59:37.010147+00:00",
+  "source": "Playwright real product components with synthetic API receipts",
+  "validation": {
+    "command": "playwright test e2e/work-personal-design-actions.spec.ts e2e/work-stitch-design-sync.spec.ts --project=chromium --project=mobile --workers=1",
+    "result": "PASS",
+    "passed": 42,
+    "projects": [
+      "chromium",
+      "mobile"
+    ],
+    "duration": "3.1m",
+    "log": "personal-plan-e2e-final.log"
+  },
+  "files": [
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-5d687-ogress-and-keyboard-editing-chromium/05-dark-high-contrast.png",
+      "name": "05-dark-high-contrast.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "cf465ffda7070d115bad494dcf6101df99ee782f71f9d8e6f340580c37f4a0c1"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-5d687-ogress-and-keyboard-editing-chromium/06-dark-high-contrast.png",
+      "name": "06-dark-high-contrast.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "552ebca18c87eef0d255e28744874884d8612096783edd75028360eca4f84c42"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-5d687-ogress-and-keyboard-editing-mobile/05-dark-high-contrast.png",
+      "name": "05-dark-high-contrast.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 2532,
+      "sha256": "b84d055c3c1341578a4b8a84dcb1162183099b0b01bb0a603cde22adb4dcfe8e"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-5d687-ogress-and-keyboard-editing-mobile/06-dark-high-contrast.png",
+      "name": "06-dark-high-contrast.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 2532,
+      "sha256": "bb7800b80110a9367006d622d59f739dcc68443ee4625809d58ae55dc01965c5"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-chromium/05-zoom-200.png",
+      "name": "05-zoom-200.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1000,
+      "sha256": "e228a7ce6dac6d0af76f2a4bed6cf930ddd5b1bb4f6e8245e732f173505024d0"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-chromium/06-zoom-200.png",
+      "name": "06-zoom-200.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1000,
+      "sha256": "a3363b495f891ea30f7ae603a6e2ce8805ac11be5fefd6a5061ab224a95eb17e"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-mobile/05-zoom-200.png",
+      "name": "05-zoom-200.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 3000,
+      "sha256": "da32a1e0ece1b57ffbf867276da2731c1179216295f8ec98f2b637405a104ddd"
+    },
+    {
+      "path": "checklist-confirmed-final/work-personal-design-actio-b7d82-ogress-and-keyboard-editing-mobile/06-zoom-200.png",
+      "name": "06-zoom-200.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 3000,
+      "sha256": "09caca997a4565f30ca2787524239d367d442df1cda1efbdbcd95732e114f88f"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png",
+      "name": "05-personal-detail-390.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1577,
+      "sha256": "0ffc1ef92057310d5c4a1f4159cb652c827ea0f8acc4f195f733df206a6562a9"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-progress-390.png",
+      "name": "05-personal-progress-390.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "3efd628ee65e538ffec7e81e7c49d13bfca0a6425bf268641f76ccf30e4b33a8"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/06-personal-edit-390.png",
+      "name": "06-personal-edit-390.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "d4097aa1a53750b72988828306e85026aaac7cb5f7daf29b5c9ccdb7e9965018"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-mobile/05-personal-detail-390.png",
+      "name": "05-personal-detail-390.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 4716,
+      "sha256": "4260762945a2ba058f17c74c73ffc67dd11fd76da822a9579888611a98b6be6a"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-mobile/05-personal-progress-390.png",
+      "name": "05-personal-progress-390.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 2532,
+      "sha256": "0fb97340351e646267fdc3cd2c457741771c71fa46853d9eedc195b038ea2b76"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-03836-it-design-evidence-at-390px-mobile/06-personal-edit-390.png",
+      "name": "06-personal-edit-390.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 2532,
+      "sha256": "538cf81b8f2bfc541004e9d0d99c1766f2a5a6910016c3583b62001c4037d3f3"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-93fe3-it-design-evidence-at-320px-chromium/05-personal-detail-320.png",
+      "name": "05-personal-detail-320.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 1694,
+      "sha256": "de6f7570cf346e99a1b0143caae50e902ea89d637926bbf9fdd140ff7e0ac5a7"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-93fe3-it-design-evidence-at-320px-chromium/05-personal-progress-320.png",
+      "name": "05-personal-progress-320.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 844,
+      "sha256": "6137b7881880579fc53f74ba87ce848675d41d9e228541301b4716784a2f45cb"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-93fe3-it-design-evidence-at-320px-chromium/06-personal-edit-320.png",
+      "name": "06-personal-edit-320.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 844,
+      "sha256": "18710c89449ce877d0d436286488ebf07bda02cc6dd92d7c870e80912b720026"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-93fe3-it-design-evidence-at-320px-mobile/05-personal-detail-320.png",
+      "name": "05-personal-detail-320.png",
+      "project": "mobile",
+      "pixelWidth": 960,
+      "pixelHeight": 5064,
+      "sha256": "1ea1cf12c9eb8c65c1c9581cd7d431184dbb8c62edd80b57793e4ebce1f18e11"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-93fe3-it-design-evidence-at-320px-mobile/05-personal-progress-320.png",
+      "name": "05-personal-progress-320.png",
+      "project": "mobile",
+      "pixelWidth": 960,
+      "pixelHeight": 2532,
+      "sha256": "504aab526c5bbb4ceb0de780fea36757c05fcabf3ecece545147360b303e853d"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-93fe3-it-design-evidence-at-320px-mobile/06-personal-edit-320.png",
+      "name": "06-personal-edit-320.png",
+      "project": "mobile",
+      "pixelWidth": 960,
+      "pixelHeight": 2532,
+      "sha256": "b73d94f9894c7e033a61f5c78a25b782c07a9a665e3c60a2c51c2256578639d8"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-chromium/05-personal-detail-1280.png",
+      "name": "05-personal-detail-1280.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1408,
+      "sha256": "42a48004c7fffd128b268c69d485bb74fa820702e137df4b9235ba5a4d6e2a03"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-chromium/05-personal-progress-1280.png",
+      "name": "05-personal-progress-1280.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1000,
+      "sha256": "46ea92db54eaeded5948eaa8e7494e68e4056423ed4983ef060c87d7a95052c2"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-chromium/06-personal-edit-1280.png",
+      "name": "06-personal-edit-1280.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1000,
+      "sha256": "ab0e1dbb2d742d9d8d2cd82d44dc83edfebb3d870f71ecc7e9af7e0ad294ab48"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-mobile/05-personal-detail-1280.png",
+      "name": "05-personal-detail-1280.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 4209,
+      "sha256": "747d9a8fd9ab90b6f17ff2758b57cae24ed310b4fea3b53b02e1283261168caf"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-mobile/05-personal-progress-1280.png",
+      "name": "05-personal-progress-1280.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 3000,
+      "sha256": "1b7a96ee09fd5440c979834064becd12943b84a17ffed039160af29beb28424a"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e52e3-t-design-evidence-at-1280px-mobile/06-personal-edit-1280.png",
+      "name": "06-personal-edit-1280.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 3000,
+      "sha256": "17eb995b1d5ca5ca2b750bb93278ce5cd973497b27b8a3b05c6a517bb9352c4a"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png",
+      "name": "05-personal-detail-1440.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1408,
+      "sha256": "936b39e13969fb35e3c2b4519d7336ca52e5cec50b47568e6bb7b1365b4999db"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-progress-1440.png",
+      "name": "05-personal-progress-1440.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "4c50104419499d812667aa52502d3a080f0ba22dbee15d6cb15c445a4c22517a"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png",
+      "name": "06-personal-edit-1440.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "f38751e38e585d792bb4d3a02b735da534ad32cc7b5f6e8e9bf7920659fd1751"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-mobile/05-personal-detail-1440.png",
+      "name": "05-personal-detail-1440.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 4209,
+      "sha256": "a7ebbf26d93412c1b0c7670011037272c43f8a29a968ea1a2aa90b7929ac2331"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-mobile/05-personal-progress-1440.png",
+      "name": "05-personal-progress-1440.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 3000,
+      "sha256": "51fb4f52f9962d41eb5c02b4e52af94ca771e9f88fc88da6df8b9006b5646786"
+    },
+    {
+      "path": "checklist-progress-captures/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-mobile/06-personal-edit-1440.png",
+      "name": "06-personal-edit-1440.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 3000,
+      "sha256": "856e1a9f3f1ef339239597740c98048f7bebb3956d44ace93c7ec87265b20e14"
+    },
+    {
+      "path": "personal-plan-final/work-personal-design-actio-48c77-k-keyboard-capture-at-390px-chromium/personal-capture-390-keyboard-reflow.png",
+      "name": "personal-capture-390-keyboard-reflow.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 440,
+      "sha256": "14d33d77305f36abe3c7367def82ecd0966b02a4edfc5055c9c456fb384f5f0b"
+    },
+    {
+      "path": "personal-plan-final/work-personal-design-actio-48c77-k-keyboard-capture-at-390px-mobile/personal-capture-390-keyboard-reflow.png",
+      "name": "personal-capture-390-keyboard-reflow.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 1320,
+      "sha256": "2c5e9555ce644626ef8a8515b5bbbf0574568cb734d6f7d816c56e4968a30e86"
+    },
+    {
+      "path": "personal-plan-final/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png",
+      "name": "personal-capture-320-keyboard-reflow.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 440,
+      "sha256": "19a3740479cc21a6187e0927fe6b0ee56f2235e26701fd14185ccdcb47ffe51b"
+    },
+    {
+      "path": "personal-plan-final/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-mobile/personal-capture-320-keyboard-reflow.png",
+      "name": "personal-capture-320-keyboard-reflow.png",
+      "project": "mobile",
+      "pixelWidth": 960,
+      "pixelHeight": 1320,
+      "sha256": "a74d63079c752ff985a2fc7ecb5dac34faf99a3af911365b426e4a8e7a897a26"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png",
+      "name": "10-flow-work-contribution-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1415,
+      "sha256": "29f0990b5daee6c4fa025b77c50ba588184483b019e6eac109632a4655efb336"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution.png",
+      "name": "10-flow-work-contribution.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "31505442de4a9747760058b51c0f587a2d57b1539654d2403efd62fea56bcbaa"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-service-response-entry-full.png",
+      "name": "10-service-response-entry-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1009,
+      "sha256": "9f8a45268d7681bebc13fec559c6c204ec47da7fc24a502d2030e3df03dc91db"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-service-response-entry.png",
+      "name": "10-service-response-entry.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "e8efe98bed66e5cd6882278d8d37df4d777de386703d34a3ef0786aff6793249"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-flow-work-contribution-full.png",
+      "name": "10-flow-work-contribution-full.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 4236,
+      "sha256": "eafceee2f9052103a65f8bc0c46d1dc619fbdf311609d54e6673f47402dbbce0"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-flow-work-contribution.png",
+      "name": "10-flow-work-contribution.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 3000,
+      "sha256": "4e078fbe3de299a82f58626caf82bd22badb99cbcaf5719d3a73f8c7f3830ceb"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-service-response-entry-full.png",
+      "name": "10-service-response-entry-full.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 3003,
+      "sha256": "856cf5087f15a0841410149611e4db19627d85787e95f2b8cd6a5b1813590a38"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-mobile/10-service-response-entry.png",
+      "name": "10-service-response-entry.png",
+      "project": "mobile",
+      "pixelWidth": 4320,
+      "pixelHeight": 3000,
+      "sha256": "e17169d84886e17a997824e698fac813bb81d9515f1ddb4bb28cc6c803da5bd0"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-chromium/05-personal-task-css-zoom-200-full.png",
+      "name": "05-personal-task-css-zoom-200-full.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 2872,
+      "sha256": "f60f53a1434560a732752392292d90fc4831492744188adda5fc544d987469f9"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-chromium/05-personal-task-css-zoom-200.png",
+      "name": "05-personal-task-css-zoom-200.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 800,
+      "sha256": "d028576b5e50e603cc922d88ae154fa556f56594bffc6c05f2dfb09e93836fe2"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-mobile/05-personal-task-css-zoom-200-full.png",
+      "name": "05-personal-task-css-zoom-200-full.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 8610,
+      "sha256": "95d1e51ee05f5cc1296d79b6cca8ed171d6905e6c38d8f1ba92866cec693d3de"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-CS-e6c23-ource-and-drawer-navigation-mobile/05-personal-task-css-zoom-200.png",
+      "name": "05-personal-task-css-zoom-200.png",
+      "project": "mobile",
+      "pixelWidth": 3840,
+      "pixelHeight": 2400,
+      "sha256": "b27bb63bb8009f53e19219a76430052472bab50dc87247296a639b6b2c242cc4"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-chromium/01-queue-dark-full.png",
+      "name": "01-queue-dark-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1149,
+      "sha256": "bc7090b47daa358641420c5fba4b7bba904aa69f1596f7d2ad0cd31630d28903"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-chromium/01-queue-dark.png",
+      "name": "01-queue-dark.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "68702eef4fae211ca7ee87a8b0fa54e96d6d95ed038813ab78bab50a3a752e9a"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-mobile/01-queue-dark-full.png",
+      "name": "01-queue-dark-full.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 3585,
+      "sha256": "f3bafb1760e27fe4d6ac1bacc0d5214855c77461211dca88265f4537b94ff452"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-da-f3ed8--and-keyboard-dialog-return-mobile/01-queue-dark.png",
+      "name": "01-queue-dark.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 2532,
+      "sha256": "ef52fdf5149fa8f846a9c0bf93006c6a05743c6104cfb30eea5600ac7587fc1a"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1130,
+      "sha256": "c860aec5910d8bab60601929999087c0cf69f8aba324b030b2415be2b21b42f9"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "189c8053d11998baa5b405160c8575642e54ea2c4165b49cd365eb201e1dd064"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1008,
+      "sha256": "13191e99c244a0f546379a46af805a61a8f825b00067048375843d9d8a9c265d"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "b570fc7fc0f7e921c13db27e8f51b05470c51217833da569b4826e20b4da212f"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1408,
+      "sha256": "e906203b40f32cb6ef2c8188deb1ae7d70f3016ba556a9bc5f6af0d4c1e33938"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "817f9fdeb105e4c07f2aff241b7d14c3cd5043746e6245ed13eddf85429875a3"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1130,
+      "sha256": "b4283e4919accfdfa92b9f4b630c6779c4be8648d1169a9b89590ce765cd073e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "b607cea81080fb7d39f399c04fdc14681ffda9162a47a0e2af767400956c7eb6"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 1152,
+      "sha256": "8eda3a4a211ada40199be534a8a5006984850fcaa6a831b3fb47404fa8db70a2"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "chromium",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "7f00608d2c2759adb1bf79c423d130fe90ed005a7a170c8b11dbbb686c7dd6e4"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 1121,
+      "sha256": "ec8d449d5eb76d0e6f71f5f331af301881b203fd78047f42c3166b3cb693f20d"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "dcea750cdd4b813924036fbb4310027766a89288c787a73a4ff1c6811b2e61ce"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 1004,
+      "sha256": "39fb15ace06041b299af7c809485208f1b72d86ff26de4a27ea828767364b086"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "6aa5e5e7185b11a3eb82e13f5fa68412f4799f87bc2762d5a51bb255f8b62671"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 1403,
+      "sha256": "75ed763c674e7fd4c2b1895510d668240e0305e7355e4cdbac2d877b5339d3c5"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "05b2f96707e349b015b7017da950be09cf19c2a05ea5a496e8568896d3ea91e5"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 1121,
+      "sha256": "393bb3b15f232e4a781b2adf6c0e04caceed321af6f71b048efaafdbc73983ef"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "a33908eeed65986452c3ae8c62b603a569e9ae4f7dfd01c7d3d88c7b126590e9"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 1146,
+      "sha256": "f87d87ec75dfeb0b336f5de420d955277a47a77895eb5e62211e08503971c63f"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-b7f9c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "mobile",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "sha256": "590a66ed94d48dd21d8907b4cef5331f7bae7b1ce4a8a861d6039b7152ed5e57"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1082,
+      "sha256": "ef56c71934d7fdce470a3d1dccd4183bcf9bd1851f1fc3dbc7754cb91efa69e3"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "099ab2479aa9cc303df1d8efb4689cad51e71aa1208eeb9d4a8f0fbb457caf63"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1008,
+      "sha256": "db213083b132af72763b9a5eff202ed22e8332300027759576ac7c3032e256a1"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "9b78a87de21c46f1bbaba36cf73333bd77914147f0eb7847ced36d61a782c2d0"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1408,
+      "sha256": "b8f26e1faa6d0d3a9539971593b1a8fee536e70041bae36aa514132daca8afdf"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "086cecc24b67942ad0214c3f03c9fb2b339dc75c11a0af0533c50666de98499d"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1082,
+      "sha256": "42be7e8308b482627a3502afd4c2f44c1a27a4ecd72c92b2145ea0e549323508"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "b65d7568295a1665a37c445f9f6060b923284b5ce70db6c6ad6a86fe9c40faa4"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1134,
+      "sha256": "32dba740fda9138164f9866ad2057a328e45687a3e770132e28fdab59b6180e3"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "c364556b1ba04e90ad08c1da5de0970fcea1484ffb971e77997d952b57a29c51"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1074,
+      "sha256": "0746df72bcb46d29da4282a8b67f62b81feb816ef5ed06dc49785eef78297370"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "f5a218bcac245d2879f44f7bff2e597adf6c946e92e3ce01a9c43e4bbaa303b2"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1004,
+      "sha256": "d212e396d93d3254d0fd16dc877fabe0135676f9633f9b62f96eeaec5a779b3e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "b757a61ac1b6883bb72a6aa03e6ac25b2aa319dc8d32e412a6765da503ec0a7c"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1403,
+      "sha256": "8b360d6ce099c8c15f881e7ff93e406931b628ee51114c88f17449af8f85a579"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "26830f4c5aae6ed3b5bbbabf76dd82b37a59c6e00c7acd533f376e8919ff640e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1074,
+      "sha256": "f1f21734b345f00ea83a2530a6d1d8eb56ab5e95f02baf99728477121db5277e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "5245e658a1c92182388a71bdfb92164aa67ce4d3304e282c2a59b6014f99b19e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1128,
+      "sha256": "80ec0a7641371bd7892b27b8d274e0b00da768d6b984cbf5c9bb6ef126c96fe8"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "3696606f3ab7758d5c1a9c0fac794c52dba3d10e7e40d1837a36a070bdc314b3"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-chromium/01-queue-high-contrast-full.png",
+      "name": "01-queue-high-contrast-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1149,
+      "sha256": "39b793a125f7bfe327bc2367de8e19fec01738385d417768a15d25d1a92d5e4a"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-chromium/01-queue-high-contrast.png",
+      "name": "01-queue-high-contrast.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "c4efff323ac32a627f43c29161c77d3f5a36b6677d1c5ad0c74b7f869a4d27bc"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-mobile/01-queue-high-contrast-full.png",
+      "name": "01-queue-high-contrast-full.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 3585,
+      "sha256": "d24e24c5e4a3e80f46a03c1764e98e633c59d611e788494f343dfbcb80548d8c"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-hi-e1e1d--and-keyboard-dialog-return-mobile/01-queue-high-contrast.png",
+      "name": "01-queue-high-contrast.png",
+      "project": "mobile",
+      "pixelWidth": 1170,
+      "pixelHeight": 2532,
+      "sha256": "a8d81bbd2aac481264f32cb7be6ed429ba3008f089d10b7f966af1563580a737"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 1255,
+      "sha256": "b43d8532f9ff935db40f2fb7c89f5c1ddfa550f1c2b3e69badeeb3e248e302e1"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "6863736a5eb3b33a1591735e104032ad73d00b02b2e9d66ede96c7c37170127d"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 1992,
+      "sha256": "c4131b695b31ff4188cf29de88a62cfbdd59304a6dd52c4096141bad28a3b743"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "184f1da7858ee637a713b4c3a10306a284f71b7f8e4fdfbedb68fd436df0ef35"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 1694,
+      "sha256": "a49fbba7194315a2181a8ebab3e7f6cc8f6c4de9888867a877a3bce073afaa74"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "4525c1d1f8de3193166de300dfb2a768e277f1c7d37509acce6b9e85aae7f4d4"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 1255,
+      "sha256": "c6029909ca5ef474ee0534add24c6b3edc6141d778aa4626f8cb4d988872729b"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "adc149f8c1190e1a5fc36784c8516c3ba2990e4fd66a17b6d0cff4d8ed72b07e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 2360,
+      "sha256": "063c77d621e3d7ea1e08e281f20dcde21318de0efa05ec9df9142a367e3553b7"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "chromium",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "7ccd3598f6486258a76b209f82fe07addb9456db7e13cd11ce2a5847359d7237"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 1255,
+      "sha256": "2776fb8cd3cc0d9ca9dc4980dba5e168b53cbc97a21049b261dcee5880147e31"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "f4450956070605f2cb74fb2089a698bc6924f9fa15c66a02bafaeef9a8157347"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 1986,
+      "sha256": "c26189f9f87d80f58637afc40dcaffcd4f4b506a7ab96e9bf9c116344b68944d"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "60664ddca89a21bfc091f0eeb86b0cf01a5febae9a415ca0776cc1955aaa81c1"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 1688,
+      "sha256": "f44a87b2cd7259f70968e88200701c5489e4b7212776cb3a2ccd8a96f0d0a1a9"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "0caf56821c6e8b9c0f751af758ed085fe41bdb72af5e1fd021dfb4748b866cf1"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 1255,
+      "sha256": "79bd6fe2c6f7958ae59f62e0ea2800d4b144473ab1726c998288513298da28f7"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "403ab105ada91989b911b6b6804b8f0f41b3b110fd80e8a610be0fc9887768bd"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 2342,
+      "sha256": "3b330ffdef065c6b8d5197c06a37da1ef3a625bff6ef09017d380248514a54ad"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-1649f--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "mobile",
+      "pixelWidth": 320,
+      "pixelHeight": 740,
+      "sha256": "375d4dfae933e19dfe10b2189e570c9bcaef779b2dc74a6ad94d9ab7af5c8420"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1149,
+      "sha256": "cb2ccef16796564a0426b4f2022c5e0493ce866849be4a4a3363027d39994d1a"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "b6fa260010fdafda86a78d9d80952a1f63d3f5dc4fda405ee08e591f824de89c"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1796,
+      "sha256": "14f0fe96c2dfb09c9fdda196627d2f75cb3bdb5e052a20f6272896ef589ee609"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "0cfba36ed97248099d35bb47110f1aec39f794b79265bbf2eb3deb56f654387b"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1577,
+      "sha256": "2d9de34e6947e924171769998b34737511aa82334469474f729757801c8653ec"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "1a67bdb48bb4f34a5d752ef097ee0d9cfa96dd4c47aa9208f72684da6b8bd9ea"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 1149,
+      "sha256": "deeebf819346a4505ddfdbe2d080b3e628bdf69948c6099457b34abe56a12f37"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "9ffe4d2d2677586acf6f322c746a8edcb3d380053a0c57639e06c0991d3aac61"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 2140,
+      "sha256": "b33dc9c06c76644a2ace01f430bb86f0c8a2a6847402f072891bff0d48b52259"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "chromium",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "8258b9a0b8fedcde9bf8f0750cd39e7d06cac589804e5ea3c95670bc9b921b19"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 1195,
+      "sha256": "0ee9f5e9bf77eec20e2c5b7430f645431fca2daead8d907b3bb787520bec4e65"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "ad09c248134230494688220d61ee3dde21b5a1a63734772f4466620eafefd5c8"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 1838,
+      "sha256": "87399b61cb328334ab8b7d2fc5f00900d909ab26e988438cb7efa1a6e45c2b19"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "bd9dedf08205661bbc9a71b8968b87bbc44cd4dabecb4ab6dfd6bce68928d772"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 1572,
+      "sha256": "70c0204404ac0d34417a3b8211b89a2269a0d3b8e2729414e7e940864cd94bfe"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "28cb9cdb44ad2d69ab7985190ed32ebe4d1ccd5f75bf47e7e3123e976f1ba8b2"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 1195,
+      "sha256": "206e8bccff3c621a3b6a154d0dec6642fbb6b169b67903a7850216f4f7d883d9"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "cf3ec61f0abee11ad24b5bdbf85f087175ae94b9dd293bec44effa33edaa46be"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 2126,
+      "sha256": "aca4f506e22d1d816bdd3cf0c859d76394d9cb8dbff8c0ea7e9e044c748a51f9"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "mobile",
+      "pixelWidth": 390,
+      "pixelHeight": 844,
+      "sha256": "b88c7174b52260bab3c62ee24cdb9a0a5fe270f48f8392216964343ed239c40b"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 2054,
+      "sha256": "d23560947f26bc5d007b50b244651816c779ecf91899d472d96510b8d1f39380"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "a221acbc003db61f2ee53345d9d34018613bbd262675d658f99d0f7cdd1dd93f"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 3182,
+      "sha256": "a57e648fae330ff36b2b8e19be1abd93996c83e2693124afe17eab75206c18d4"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "1ec9ed00af96cc9b82593c7b0f2d79e26ddfe3319f8c49fff971b9ee8345683a"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 2834,
+      "sha256": "3fe22a4820466dc95b2c7e7c93ead91d63314051c4848301945afee781fc46a4"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "d2c4b96ec514b473690f63c34303b2f9f7c1f97ee1427cb42c19e36052cd6fbe"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 2054,
+      "sha256": "132146f074643ec0d3a2c8290d9425139a9d5a8ec62f3f796e6f0373c9356416"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "c34ab06d7e67a5ca1badacf95e3c48c255c1b67ec604f759133a83623aa1aa5b"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 3838,
+      "sha256": "7cbd00a019bb499d52a4394e006134d6b3ba3813fe377002634b66e10cae529e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "chromium",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "66a3bb1ecc1c8021bac5ca8159c8ac877fb11db52ce09fad87ec1b399536c281"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/01-unified-queue-full.png",
+      "name": "01-unified-queue-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 2054,
+      "sha256": "7cb06d04aaf2897fc9a26177c869c7efdd9099fde9ca76435e5486298a749532"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/01-unified-queue.png",
+      "name": "01-unified-queue.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "8a41538ab825be4fad3a7009f934bb97540f7235e85ab196a9ba11930df87d4e"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/07-today-plan-full.png",
+      "name": "07-today-plan-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 3174,
+      "sha256": "7732ff9c98b911e570bdcf4462c08f236fe12e7a9e00e430eb0db5f3dec9eb0c"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/07-today-plan.png",
+      "name": "07-today-plan.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "9a3eceaaec5f412262e29af6bbe1425bd23e2f0d483866aa39a035591b85941d"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/08-calendar-handoff-full.png",
+      "name": "08-calendar-handoff-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 2826,
+      "sha256": "e3973f58474d36d8ca1640ae524338e79769a0c52ef3688e82011bd7a4be0e66"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/08-calendar-handoff.png",
+      "name": "08-calendar-handoff.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "e8216583589e3d569d2abc8422894f6c2e5a3054beb6b34bf60b2aad9499fccc"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/09-source-status-full.png",
+      "name": "09-source-status-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 2054,
+      "sha256": "d133bfff74bd5951249f1f1d085ad6c437a1c3ab472458329080320d04c38243"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/09-source-status.png",
+      "name": "09-source-status.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "d14978c0f993a6431201bdcf821043f3fb5279de26af5cf46a7966990912519b"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/11-selected-work-ai-assist-full.png",
+      "name": "11-selected-work-ai-assist-full.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 3814,
+      "sha256": "ffe29576fe2f3d6dba9fb20fde8a2cd0753bb02bc8cdfbb0aa9e772f5eefd946"
+    },
+    {
+      "path": "personal-plan-final/work-stitch-design-sync-zo-ff3b8--source-status-11-inline-AI-mobile/11-selected-work-ai-assist.png",
+      "name": "11-selected-work-ai-assist.png",
+      "project": "mobile",
+      "pixelWidth": 1440,
+      "pixelHeight": 1000,
+      "sha256": "d5b2cfd69c8e1f1c668b7a1646a8c5ca2c492dbad8944fb77f30e3f1f44a7e52"
+    }
+  ],
+  "captureCount": 156,
+  "limitations": [
+    "Pixel dimensions may differ from CSS viewport dimensions because of device scale factor.",
+    "Full-page screenshots retain fixed mobile navigation at its viewport position.",
+    "Latest M2 source content was verified by the root reviewer through the live accessibility tree; these are implementation captures, not a new Stitch PNG export."
+  ],
+  "updatedAt": "2026-09-07T09:06:26.756954+00:00",
+  "followUpValidation": [
+    {
+      "reason": "Confirmed checklist progress preserves server status before save and after transport failure",
+      "result": "PASS",
+      "passed": 14,
+      "duration": "48.1s",
+      "log": "checklist-confirmed-e2e.log"
+    },
+    {
+      "reason": "Capture confirmed progress clear of fixed mobile navigation",
+      "result": "PASS",
+      "passed": 8,
+      "log": "checklist-progress-captures.log"
+    },
+    {
+      "reason": "Checklist and task dialog unit checks",
+      "result": "PASS",
+      "passed": 22,
+      "log": "checklist-confirmed-unit.log"
+    }
+  ]
+}

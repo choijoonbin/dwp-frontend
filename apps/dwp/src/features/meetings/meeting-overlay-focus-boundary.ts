@@ -13,13 +13,39 @@ type FocusBoundaryEvent = {
   preventDefault: () => void;
 };
 
+function isTabbable(element: HTMLElement): boolean {
+  if (
+    element.tabIndex < 0 ||
+    element.matches(':disabled') ||
+    element.closest('[hidden], [aria-hidden="true"], [inert]')
+  )
+    return false;
+  let current: HTMLElement | null = element;
+  while (current) {
+    const style = getComputedStyle(current);
+    if (
+      style.display === 'none' ||
+      style.visibility === 'hidden' ||
+      style.visibility === 'collapse' ||
+      style.opacity === '0'
+    )
+      return false;
+    current = current.parentElement;
+  }
+  return true;
+}
+
 export function containMeetingOverlayTab(
   event: FocusBoundaryEvent,
   container: HTMLElement | null
 ): boolean {
   if (event.key !== 'Tab' || !container) return false;
+  const rail = container.closest<HTMLElement>('[data-meeting-focus-overlay]');
+  if (rail?.dataset.meetingFocusOverlay === 'false') return false;
+  // The mobile rail is one overlay, including its roving navigation tabs.
+  if (rail) container = rail;
   const focusable = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-    (element) => !element.closest('[hidden], [aria-hidden="true"], [inert]')
+    isTabbable
   );
   if (!focusable.length) return false;
   const first = focusable[0];

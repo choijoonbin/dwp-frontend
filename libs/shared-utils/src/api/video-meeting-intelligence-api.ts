@@ -206,11 +206,13 @@ export async function getVideoMeetingIntelligenceRun(
 }
 
 export async function getLatestVisibleVideoMeetingIntelligenceReport(
-  meetingId: string
+  meetingId: string,
+  signal?: AbortSignal
 ): Promise<VideoMeetingIntelligenceReport | null> {
   try {
     const response = await axiosInstance.get<ApiResponse<VideoMeetingIntelligenceReport>>(
-      intelligencePath(meetingId, 'reports/latest')
+      intelligencePath(meetingId, 'reports/latest'),
+      { signal }
     );
     return response.data.data;
   } catch (error) {
@@ -220,11 +222,13 @@ export async function getLatestVisibleVideoMeetingIntelligenceReport(
 }
 
 export async function getLatestPublishedVideoMeetingIntelligenceReport(
-  meetingId: string
+  meetingId: string,
+  signal?: AbortSignal
 ): Promise<VideoMeetingIntelligenceReport | null> {
   try {
     const response = await axiosInstance.get<ApiResponse<VideoMeetingIntelligenceReport>>(
-      intelligencePath(meetingId, 'reports/latest-published')
+      intelligencePath(meetingId, 'reports/latest-published'),
+      { signal }
     );
     return response.data.data;
   } catch (error) {

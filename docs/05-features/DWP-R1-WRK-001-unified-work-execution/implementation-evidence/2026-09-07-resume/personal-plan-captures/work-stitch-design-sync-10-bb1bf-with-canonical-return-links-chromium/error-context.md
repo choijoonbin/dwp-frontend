@@ -1,0 +1,427 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - link "SKAX Digital Workplace 홈" [ref=e7] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e9]: DWP
+                    - generic [ref=e12]: Digital Workplace
+                    - generic "SKAX" [ref=e16]
+                - generic "현재 워크스페이스" [ref=e18]:
+                    - generic [ref=e20]: D
+                    - generic [ref=e21]:
+                        - generic [ref=e22]: DWP Workspace
+                        - generic [ref=e23]: 현재 워크스페이스
+                - generic [ref=e24]:
+                    - button "DWP 검색" [ref=e26] [cursor=pointer]:
+                        - img [ref=e27]
+                        - generic [ref=e30]: ⌘K
+                    - button "전체 화면" [ref=e32] [cursor=pointer]:
+                        - img [ref=e33]
+                    - 'button "계정: Mina Kim, Tenant administrator" [ref=e39] [cursor=pointer]':
+                        - generic [ref=e40]: M
+                        - generic [ref=e41]:
+                            - generic [ref=e42]: Mina Kim
+                            - generic [ref=e43]: Tenant administrator
+                        - img [ref=e44]
+        - main [ref=e46]:
+            - generic [ref=e47]:
+                - generic [ref=e48]:
+                    - generic [ref=e49]:
+                        - region "테넌트 업무 시작 영역" [ref=e50]:
+                            - generic [ref=e52]:
+                                - generic [ref=e53]:
+                                    - generic [ref=e54]:
+                                        - generic [ref=e55]: 2026년 9월 7일 월요일
+                                        - generic [ref=e56]:
+                                            - img [ref=e57]
+                                            - generic [ref=e60]: 개인 업무
+                                    - heading "Mina님, 다시 오신 것을 환영합니다" [level=1] [ref=e61]
+                                    - paragraph [ref=e62]: 실제 업무 신호를 기준으로 지금 처리할 일과 다음 행동을 한눈에 확인합니다.
+                                - list "오늘의 업무 요약" [ref=e64]:
+                                    - listitem [ref=e65]:
+                                        - link "처리할 업무 4건" [ref=e66] [cursor=pointer]:
+                                            - /url: '#flow-purpose-action'
+                                            - generic [ref=e68]: 처리할 업무
+                                            - generic [ref=e69]: '4'
+                                    - listitem [ref=e70]:
+                                        - link "오늘 일정 0건" [ref=e71] [cursor=pointer]:
+                                            - /url: '#flow-purpose-timeline'
+                                            - img [ref=e73]
+                                            - generic [ref=e75]: 오늘 일정
+                                            - generic [ref=e76]: '0'
+                                    - listitem [ref=e77]:
+                                        - link "답변 필요 1건" [ref=e78] [cursor=pointer]:
+                                            - /url: '#flow-purpose-response'
+                                            - img [ref=e80]
+                                            - generic [ref=e83]: 답변 필요
+                                            - generic [ref=e84]: '1'
+                                - generic [ref=e85]:
+                                    - status [ref=e86]:
+                                        - img [ref=e87]
+                                        - generic [ref=e90]: 오후 05:47 업데이트
+                                    - button "홈 편집" [ref=e92] [cursor=pointer]:
+                                        - img [ref=e94]
+                                - status [ref=e97]:
+                                    - button "업무 정보 상태 상세 보기" [ref=e98] [cursor=pointer]:
+                                        - img [ref=e99]
+                                        - generic [ref=e101]: 활동·결재 외 3개 정보를 불러오지 못했어요. 앱은 정상적으로 실행할 수 있습니다.
+                                        - img [ref=e102]
+                                    - button "업무 데이터 다시 불러오기" [ref=e104] [cursor=pointer]:
+                                        - img [ref=e106]
+                                        - generic [ref=e111]: 업무 데이터 다시 불러오기
+                        - region "내 앱" [ref=e112]:
+                            - generic [ref=e113]:
+                                - heading "내 앱" [level=2] [ref=e116]
+                                - generic [ref=e118]:
+                                    - group "홈에 고정된 업무 앱과 폴더" [ref=e119]:
+                                        - region "업무 시작" [ref=e120]:
+                                            - heading "업무 시작" [level=3] [ref=e121]
+                                            - paragraph [ref=e122]: 우선순위와 통제된 워크스페이스 작업
+                                            - list [ref=e123]:
+                                                - listitem [ref=e124]:
+                                                    - button "업무 열기 · 읽지 않은 항목 0개" [ref=e125] [cursor=pointer]:
+                                                        - img [ref=e129]
+                                                        - generic [ref=e133]: 업무
+                                                - listitem [ref=e134]:
+                                                    - button "DWAI·ON 워크스페이스 열기 · 읽지 않은 항목 0개" [ref=e135] [cursor=pointer]:
+                                                        - img [ref=e139]
+                                                        - generic [ref=e142]: DWAI·ON
+                                                - listitem [ref=e143]:
+                                                    - button "활동 열기 · 읽지 않은 항목 0개" [ref=e144] [cursor=pointer]:
+                                                        - img [ref=e148]
+                                                        - generic [ref=e150]: 활동
+                                                - listitem [ref=e151]:
+                                                    - button "전자결재 열기 · 읽지 않은 항목 0개" [ref=e152] [cursor=pointer]:
+                                                        - img [ref=e156]
+                                                        - generic [ref=e160]: 전자결재
+                                        - region "소통과 협업" [ref=e161]:
+                                            - heading "소통과 협업" [level=3] [ref=e162]
+                                            - paragraph [ref=e163]: 커뮤니케이션 및 공동 작업
+                                            - list [ref=e164]:
+                                                - listitem [ref=e165]:
+                                                    - button "소식 열기 · 읽지 않은 항목 0개" [ref=e166] [cursor=pointer]:
+                                                        - img [ref=e170]
+                                                        - generic [ref=e173]: 소식
+                                                - listitem [ref=e174]:
+                                                    - button "캘린더 열기 · 읽지 않은 항목 0개" [ref=e175] [cursor=pointer]:
+                                                        - img [ref=e179]
+                                                        - generic [ref=e181]: 캘린더
+                                                - listitem [ref=e182]:
+                                                    - button "메일 열기 · 읽지 않은 항목 0개" [ref=e183] [cursor=pointer]:
+                                                        - img [ref=e187]
+                                                        - generic [ref=e190]: 메일
+                                                - listitem [ref=e191]:
+                                                    - button "Space 열기 · 읽지 않은 항목 0개" [ref=e192] [cursor=pointer]:
+                                                        - img [ref=e196]
+                                                        - generic [ref=e200]: Space
+                                        - region "구성원과 서비스" [ref=e201]:
+                                            - heading "구성원과 서비스" [level=3] [ref=e202]
+                                            - paragraph [ref=e203]: 임직원 지원 및 인물 정보
+                                            - list [ref=e204]:
+                                                - listitem [ref=e205]:
+                                                    - button "서비스 센터 열기 · 읽지 않은 항목 0개" [ref=e206] [cursor=pointer]:
+                                                        - img [ref=e210]
+                                                        - generic [ref=e217]: 서비스
+                                                - listitem [ref=e218]:
+                                                    - button "인사 열기 · 읽지 않은 항목 0개" [ref=e219] [cursor=pointer]:
+                                                        - img [ref=e223]
+                                                        - generic [ref=e227]: 인사
+                                        - region "시스템과 통제" [ref=e228]:
+                                            - heading "시스템과 통제" [level=3] [ref=e229]
+                                            - paragraph [ref=e230]: 지식, 업무 도구 및 거버넌스
+                                            - list [ref=e231]:
+                                                - listitem [ref=e232]:
+                                                    - button "지식 열기 · 읽지 않은 항목 0개" [ref=e233] [cursor=pointer]:
+                                                        - img [ref=e237]
+                                                        - generic [ref=e239]: 지식
+                                                - listitem [ref=e240]:
+                                                    - button "비즈니스 ERP 열기 · 읽지 않은 항목 0개" [ref=e241] [cursor=pointer]:
+                                                        - img [ref=e245]
+                                                        - generic [ref=e249]: ERP
+                                                - listitem [ref=e250]:
+                                                    - button "레거시 업무 열기 · 읽지 않은 항목 0개" [ref=e251] [cursor=pointer]:
+                                                        - img [ref=e255]
+                                                        - generic [ref=e266]: 레거시
+                                    - status [ref=e267]
+                                - button "모든 앱" [ref=e268] [cursor=pointer]:
+                                    - img [ref=e270]
+                                    - text: 모든 앱
+                    - generic [ref=e275]:
+                        - generic [ref=e276]:
+                            - region "우선 업무" [ref=e279]:
+                                - generic [ref=e280]:
+                                    - generic [ref=e281]:
+                                        - img [ref=e283]
+                                        - generic [ref=e285]:
+                                            - heading "우선 업무" [level=2] [ref=e286]
+                                            - paragraph [ref=e287]: 여러 앱의 처리할 일을 마감과 위험도 순으로 모아봅니다.
+                                    - button "추천" [ref=e289] [cursor=pointer]:
+                                        - img [ref=e291]
+                                        - generic [ref=e294]: 추천
+                                - list "우선 처리할 업무" [ref=e296]:
+                                    - listitem [ref=e297]:
+                                        - link "Customer data access exception 전자결재 기한 지남 26. 8. 11. 업데이트 지연" [ref=e298] [cursor=pointer]:
+                                            - /url: /approvals/inbox?task=approval-task-001
+                                            - generic [ref=e300]: '01'
+                                            - generic [ref=e301]:
+                                                - heading "Customer data access exception" [level=3] [ref=e304]
+                                                - generic [ref=e306]:
+                                                    - generic [ref=e307]: 전자결재
+                                                    - generic [ref=e308]: 기한 지남
+                                                    - generic [ref=e309]:
+                                                        - img [ref=e310]
+                                                        - generic [ref=e313]: 26. 8. 11.
+                                                    - generic [ref=e314]: 업데이트 지연
+                                            - img [ref=e315]
+                                    - listitem [ref=e317]:
+                                        - link "근무 기록을 확인하세요 인사 확인 필요 26. 8. 16. 업데이트 지연" [ref=e318] [cursor=pointer]:
+                                            - /url: /hr/time
+                                            - generic [ref=e320]: '02'
+                                            - generic [ref=e321]:
+                                                - heading "근무 기록을 확인하세요" [level=3] [ref=e324]
+                                                - generic [ref=e326]:
+                                                    - generic [ref=e327]: 인사
+                                                    - generic [ref=e328]: 확인 필요
+                                                    - generic [ref=e329]:
+                                                        - img [ref=e330]
+                                                        - generic [ref=e333]: 26. 8. 16.
+                                                    - generic [ref=e334]: 업데이트 지연
+                                            - img [ref=e335]
+                                    - listitem [ref=e337]:
+                                        - link "분기 고객 안내 초안 정리 업무 시작 전" [ref=e338] [cursor=pointer]:
+                                            - /url: /work/queue?work=PERSONAL_TASK%3Ab1111111-1111-4111-8111-111111111111%3A
+                                            - generic [ref=e340]: '03'
+                                            - generic [ref=e341]:
+                                                - heading "분기 고객 안내 초안 정리" [level=3] [ref=e344]
+                                                - generic [ref=e346]:
+                                                    - generic [ref=e347]: 업무
+                                                    - generic [ref=e348]: 시작 전
+                                            - img [ref=e349]
+                                    - listitem [ref=e351]:
+                                        - link "팀 예산 검토 메모 작성 업무 진행 중" [ref=e352] [cursor=pointer]:
+                                            - /url: /work/queue?work=PERSONAL_TASK%3Ab2222222-2222-4222-8222-222222222222%3A
+                                            - generic [ref=e354]: '04'
+                                            - generic [ref=e355]:
+                                                - heading "팀 예산 검토 메모 작성" [level=3] [ref=e358]
+                                                - generic [ref=e360]:
+                                                    - generic [ref=e361]: 업무
+                                                    - generic [ref=e362]: 진행 중
+                                            - img [ref=e363]
+                            - region "오늘 일정" [ref=e367]:
+                                - generic [ref=e368]:
+                                    - generic [ref=e369]:
+                                        - img [ref=e371]
+                                        - generic [ref=e373]:
+                                            - heading "오늘 일정" [level=2] [ref=e374]
+                                            - paragraph [ref=e375]: 오늘 일정과 마감, Workplace 예약을 시간순으로 봅니다.
+                                    - generic [ref=e377]:
+                                        - img [ref=e378]
+                                        - generic [ref=e380]: 일부 데이터 지연
+                                - status [ref=e382]:
+                                    - img [ref=e383]
+                                    - generic [ref=e385]:
+                                        - heading "일부 항목을 확인할 수 없습니다" [level=6] [ref=e386]
+                                        - paragraph [ref=e387]: 확인 가능한 데이터가 도착하지 않았습니다. 잠시 후 다시 시도해 주세요.
+                                    - button "다시 시도" [ref=e388] [cursor=pointer]:
+                                        - img [ref=e390]
+                                        - text: 다시 시도
+                            - region "답변·확인 요청" [ref=e397]:
+                                - generic [ref=e398]:
+                                    - generic [ref=e399]:
+                                        - img [ref=e401]
+                                        - generic [ref=e404]:
+                                            - heading "답변·확인 요청" [level=2] [ref=e405]
+                                            - paragraph [ref=e406]: 초대, 알림, 요청처럼 내 답변을 기다리는 항목입니다.
+                                    - link "전체 보기" [ref=e408] [cursor=pointer]:
+                                        - /url: /services/my
+                                        - generic [ref=e409]: 전체 보기
+                                        - img [ref=e411]
+                                - 'group "처리 우선순위: 우선 확인 1건. 현재 확인된 응답 대기 1건 · 일부 소스 미반영" [ref=e414]':
+                                    - generic [ref=e415]:
+                                        - generic [ref=e416]: 처리 우선순위
+                                        - generic [ref=e417]: 현재 확인된 응답 대기 1건 · 일부 소스 미반영
+                                    - generic [ref=e421]: 우선 확인 1건
+                                - list "내 응답을 기다리는 항목" [ref=e423]:
+                                    - listitem [ref=e424]:
+                                        - link "원격접속(VPN) 신청의 사용 사유 보완 요청 서비스 내 응답 대기" [ref=e425] [cursor=pointer]:
+                                            - /url: /work/queue?work=SERVICE_REQUEST%3Ad1111111-1111-4111-8111-111111111111%3A
+                                            - generic [ref=e427]:
+                                                - heading "원격접속(VPN) 신청의 사용 사유 보완 요청" [level=3] [ref=e430]
+                                                - generic [ref=e432]:
+                                                    - generic [ref=e433]: 서비스
+                                                    - generic [ref=e434]: 내 응답 대기
+                                            - img [ref=e435]
+                            - region "내 요청 현황" [ref=e439]:
+                                - generic [ref=e440]:
+                                    - generic [ref=e441]:
+                                        - img [ref=e443]
+                                        - generic [ref=e446]:
+                                            - heading "내 요청 현황" [level=2] [ref=e447]
+                                            - paragraph [ref=e448]: 내가 제출한 결재와 서비스 요청의 현재 단계입니다.
+                                    - generic [ref=e450]:
+                                        - img [ref=e451]
+                                        - generic [ref=e453]: 일부 데이터 지연
+                                - status [ref=e455]:
+                                    - img [ref=e456]
+                                    - generic [ref=e458]:
+                                        - heading "일부 항목을 확인할 수 없습니다" [level=6] [ref=e459]
+                                        - paragraph [ref=e460]: 확인 가능한 데이터가 도착하지 않았습니다. 잠시 후 다시 시도해 주세요.
+                                    - button "다시 시도" [ref=e461] [cursor=pointer]:
+                                        - img [ref=e463]
+                                        - text: 다시 시도
+                            - region "역할별 업무 현황" [ref=e470]:
+                                - generic [ref=e472]:
+                                    - img [ref=e474]
+                                    - generic [ref=e476]:
+                                        - heading "역할별 업무 현황" [level=2] [ref=e477]
+                                        - paragraph [ref=e478]: 내 역할의 업무와 예외를 한눈에 요약합니다.
+                                - region "업무 현황" [ref=e480]:
+                                    - paragraph [ref=e481]: 열린 업무 3건, 마감 임박 1건
+                                    - link "열린 업무 3건, 마감 임박 1건, 상세 열기" [ref=e482] [cursor=pointer]:
+                                        - /url: /work
+                                        - img [ref=e484]
+                                        - generic [ref=e488]: 열린 업무
+                                        - paragraph [ref=e489]:
+                                            - text: '3'
+                                            - generic [ref=e490]: 건
+                                        - generic [ref=e491]: 마감 임박 1건
+                                - list "역할 범위의 업무 상태" [ref=e494]:
+                                    - listitem [ref=e495]:
+                                        - link "진행 중인 복리후생 신청 인사 진행 중 업데이트 지연" [ref=e496] [cursor=pointer]:
+                                            - /url: /hr/benefits
+                                            - generic [ref=e498]:
+                                                - heading "진행 중인 복리후생 신청" [level=3] [ref=e501]
+                                                - generic [ref=e503]:
+                                                    - generic [ref=e504]: 인사
+                                                    - generic [ref=e505]: 진행 중
+                                                    - generic [ref=e506]: 업데이트 지연
+                                            - img [ref=e507]
+                                    - listitem [ref=e509]:
+                                        - link "필수 학습 인사 필수 업데이트 지연" [ref=e510] [cursor=pointer]:
+                                            - /url: /hr/talent
+                                            - generic [ref=e512]:
+                                                - heading "필수 학습" [level=3] [ref=e515]
+                                                - generic [ref=e517]:
+                                                    - generic [ref=e518]: 인사
+                                                    - generic [ref=e519]: 필수
+                                                    - generic [ref=e520]: 업데이트 지연
+                                            - img [ref=e521]
+                                    - listitem [ref=e523]:
+                                        - link "오늘 계획 2건 업무 오늘 계획" [ref=e524] [cursor=pointer]:
+                                            - /url: /work/day-plan
+                                            - generic [ref=e526]:
+                                                - generic [ref=e527]:
+                                                    - heading "오늘 계획" [level=3] [ref=e529]
+                                                    - generic [ref=e531]: 2건
+                                                - generic [ref=e533]:
+                                                    - generic [ref=e534]: 업무
+                                                    - generic [ref=e535]: 오늘 계획
+                                            - img [ref=e536]
+                            - region "집중 시간" [ref=e540]:
+                                - generic [ref=e541]:
+                                    - img [ref=e543]
+                                    - generic [ref=e546]:
+                                        - heading "집중 시간" [level=2] [ref=e547]
+                                        - generic [ref=e548]: 이번 주 확보한 집중 시간과 회의 시간을 균형 있게 비교합니다.
+                                - link "집중 시간 150분, 목표 240분, 상세 열기" [ref=e549] [cursor=pointer]:
+                                    - /url: /calendar/insights
+                                    - generic [ref=e550]:
+                                        - generic [ref=e551]:
+                                            - paragraph [ref=e552]: '150'
+                                            - generic [ref=e553]: 분
+                                        - generic [ref=e554]: 목표 240분
+                                        - generic [ref=e555]:
+                                            - generic [ref=e556]: 인사이트 보기
+                                            - img [ref=e557]
+                                    - generic [ref=e560]:
+                                        - generic [ref=e561]:
+                                            - generic [ref=e562]: 이번 주 시간 배분
+                                            - generic [ref=e563]: 53%
+                                        - img "집중 150분 · 회의 135분" [ref=e564]
+                                        - generic [ref=e567]:
+                                            - generic [ref=e568]:
+                                                - text: 집중 시간
+                                                - generic [ref=e569]: 150분
+                                            - generic [ref=e570]: 회의 135분
+                                        - generic [ref=e571]: 집중 목표까지 90분 남음
+                            - region "오늘 회의 부하" [ref=e574]:
+                                - generic [ref=e575]:
+                                    - img [ref=e577]
+                                    - generic [ref=e581]:
+                                        - heading "오늘 회의 부하" [level=2] [ref=e582]
+                                        - generic [ref=e583]: 오늘의 부하와 이번 주 회의 분포·충돌을 확인합니다.
+                                - link "오늘 회의 부하 55%, 일일 회의 기준 대비, 상세 열기" [ref=e584] [cursor=pointer]:
+                                    - /url: /calendar/insights
+                                    - generic [ref=e585]:
+                                        - generic [ref=e586]:
+                                            - paragraph [ref=e587]: '55'
+                                            - generic [ref=e588]: '%'
+                                        - generic [ref=e589]: 일일 회의 기준 대비
+                                        - generic [ref=e590]:
+                                            - generic [ref=e591]: 인사이트 보기
+                                            - img [ref=e592]
+                                    - generic [ref=e595]:
+                                        - generic [ref=e596]:
+                                            - generic [ref=e597]: 이번 주 부하
+                                            - generic [ref=e598]: 이번 주 충돌 없음
+                                        - img "이번 주 일별 회의 부하입니다. 외곽선은 오늘, 점선은 충돌, 이중선은 일일 기준 초과를 뜻합니다." [ref=e599]:
+                                            - generic "8월 10일 · 회의 부하 62% · 충돌 0건" [ref=e600]
+                                            - generic "8월 11일 · 회의 부하 55% · 충돌 0건" [ref=e601]
+                                            - generic "8월 12일 · 회의 부하 78% · 충돌 1건" [ref=e602]
+                                            - generic "8월 13일 · 회의 부하 50% · 충돌 0건" [ref=e603]
+                                            - generic "8월 14일 · 회의 부하 38% · 충돌 0건" [ref=e604]
+                                        - generic [ref=e605]:
+                                            - generic [ref=e606]: '10'
+                                            - generic [ref=e607]: '11'
+                                            - generic [ref=e608]: '12'
+                                            - generic [ref=e609]: '13'
+                                            - generic [ref=e610]: '14'
+                                        - table "이번 주 부하" [ref=e612]:
+                                            - caption [ref=e613]: 이번 주 부하
+                                            - rowgroup [ref=e614]:
+                                                - row "날짜 업무량 충돌" [ref=e615]:
+                                                    - columnheader "날짜" [ref=e616]
+                                                    - columnheader "업무량" [ref=e617]
+                                                    - columnheader "충돌" [ref=e618]
+                                            - rowgroup [ref=e619]:
+                                                - row "2026-08-10 62% 0" [ref=e620]:
+                                                    - cell "2026-08-10" [ref=e621]
+                                                    - cell "62%" [ref=e622]
+                                                    - cell "0" [ref=e623]
+                                                - row "2026-08-11 55% 0" [ref=e624]:
+                                                    - cell "2026-08-11" [ref=e625]
+                                                    - cell "55%" [ref=e626]
+                                                    - cell "0" [ref=e627]
+                                                - row "2026-08-12 78% 1" [ref=e628]:
+                                                    - cell "2026-08-12" [ref=e629]
+                                                    - cell "78%" [ref=e630]
+                                                    - cell "1" [ref=e631]
+                                                - row "2026-08-13 50% 0" [ref=e632]:
+                                                    - cell "2026-08-13" [ref=e633]
+                                                    - cell "50%" [ref=e634]
+                                                    - cell "0" [ref=e635]
+                                                - row "2026-08-14 38% 0" [ref=e636]:
+                                                    - cell "2026-08-14" [ref=e637]
+                                                    - cell "38%" [ref=e638]
+                                                    - cell "0" [ref=e639]
+                        - status [ref=e640]
+                - generic [ref=e642]:
+                    - generic [ref=e644]: 접근 권한 내 데이터만 표시됩니다.
+                    - generic [ref=e645]:
+                        - link "개인정보 처리방침" [ref=e646] [cursor=pointer]:
+                            - /url: /account/settings?view=privacy
+                        - link "이용약관" [ref=e647] [cursor=pointer]:
+                            - /url: /account/settings?view=terms
+                        - link "헬프 데스크" [ref=e648] [cursor=pointer]:
+                            - /url: /services
+                        - link "시스템 상태" [ref=e649] [cursor=pointer]:
+                            - /url: /apps
+    - generic "DWAI·ON 열기" [ref=e651]:
+        - button "DWAI·ON 열기" [ref=e652] [cursor=pointer]
+```

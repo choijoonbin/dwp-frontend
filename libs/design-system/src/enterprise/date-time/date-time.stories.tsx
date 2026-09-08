@@ -20,7 +20,7 @@ function DatePolicyStory() {
   });
 
   return (
-    <Box sx={{ width: { xs: 340, sm: 620 }, p: 3 }}>
+    <Box sx={{ width: { xs: 'min(340px, calc(100vw - 32px))', sm: 620 }, p: 3 }}>
       <Typography component="h1" variant="h6" sx={{ mb: 2 }}>
         Date and time policy
       </Typography>

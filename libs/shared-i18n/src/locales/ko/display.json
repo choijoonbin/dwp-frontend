@@ -250,6 +250,7 @@
     "PERSONAL_PREFERENCE_EXCEPTION_REQUESTED": "관리형 설정 예외 요청",
     "ROLE_ASSIGNMENT_DENIED": "역할 할당 거부",
     "REQUEST_CANCELLED": "서비스 요청 취소",
+    "REQUESTER_RESPONDED": "서비스 요청 보완 응답",
     "REQUEST_SUBMITTED": "서비스 요청 제출",
     "REQUEST_DRAFTED": "결재 초안 생성",
     "TASK_CLAIMED": "결재 작업 담당",

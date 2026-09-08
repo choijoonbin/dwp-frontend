@@ -753,6 +753,13 @@ export function FlowHome({
                   maxItems={sectionItemLimit('role-pulse')}
                   allRoute={homePurposeAllRoute('pulse', rolePulseItems)}
                   roleSignals={roleSignals}
+                  signalsFetching={overviewFetching}
+                  signalsFailed={
+                    overviewFailed ||
+                    overview?.activity.status === 'UNAVAILABLE' ||
+                    overview?.activity.data?.executionSummaryStatus === 'UNAVAILABLE'
+                  }
+                  onRefreshSignals={onRetryOverview}
                 />
               );
             }

@@ -48,7 +48,7 @@ describe('WorkHubBatchDialog', () => {
       )
     );
     expect(document.body.textContent).toContain('Verify the source result');
-    expect(document.body.textContent).toContain('work:workHub.batch.atomicNotice');
+    expect(document.body.textContent).toContain('work:workHub.batch.executionNotice');
 
     await act(async () =>
       root.render(
@@ -66,5 +66,25 @@ describe('WorkHubBatchDialog', () => {
     expect(document.querySelector('[aria-label="work:workHub.batch.resultList"]')).not.toBeNull();
     expect(document.body.textContent).toContain('work:workHub.batch.results.unknown');
     expect(document.body.textContent).toContain('work:workHub.batch.noBlindRetry');
+  });
+
+  it('explains a cancelled request separately and offers no retry of its old intent', async () => {
+    await act(async () =>
+      root.render(
+        <WorkHubBatchDialog
+          target="COMPLETED"
+          selectedCount={1}
+          items={[item]}
+          outcome="UNKNOWN"
+          busy={false}
+          receipts={[{ item, state: 'UNKNOWN', reason: 'CANCELLED', idempotencyKey: 'original' }]}
+          onRetryUnconfirmed={vi.fn()}
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
+        />
+      )
+    );
+    expect(document.body.textContent).toContain('work:workHub.batch.cancelledUnknown');
+    expect(document.body.textContent).not.toContain('work:workHub.batch.retryUnconfirmed');
   });
 });

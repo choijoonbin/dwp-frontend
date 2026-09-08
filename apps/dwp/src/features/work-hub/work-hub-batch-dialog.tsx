@@ -2,7 +2,7 @@ import { CheckCircle2, CircleHelp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
-  ConfirmDialog,
+  FormDialog,
   ContentDialog,
   InlineFeedback,
 } from '@dwp-frontend/design-system';
@@ -18,8 +18,13 @@ import Typography from '@mui/material/Typography';
 
 import type { WorkspaceWorkItem } from '@dwp-frontend/shared-utils/api/workspace-api';
 import type { WorkHubItem } from './work-hub-contracts';
+import {
+  workHubBatchEligible,
+  canRetryWorkHubBatchReceipt,
+  type WorkHubBatchReceipt,
+  type WorkHubBatchTarget,
+} from './work-hub-batch-execution';
 
-export type WorkHubBatchTarget = 'IN_PROGRESS' | 'COMPLETED';
 export type WorkHubBatchOutcome = 'CONFIRMED' | 'UNKNOWN';
 
 export function isConfirmedBatchResult(
@@ -47,6 +52,8 @@ export function WorkHubBatchDialog({
   busy,
   onClose,
   onConfirm,
+  receipts = [],
+  onRetryUnconfirmed,
 }: {
   target: WorkHubBatchTarget | null;
   selectedCount: number;
@@ -55,11 +62,14 @@ export function WorkHubBatchDialog({
   busy: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  receipts?: readonly WorkHubBatchReceipt[];
+  onRetryUnconfirmed?: () => void;
 }) {
   const { t } = useTranslation(['work', 'common']);
   if (!target) return null;
 
   const action = target === 'COMPLETED' ? 'complete' : 'start';
+  const eligible = items.filter((item) => workHubBatchEligible(item, target));
   const details = (
     <Stack gap={1.5}>
       <Stack direction="row" gap={1} flexWrap="wrap">
@@ -67,26 +77,33 @@ export function WorkHubBatchDialog({
           size="small"
           label={t('work:workHub.batch.selectedCount', { count: selectedCount })}
         />
-        <Chip size="small" label={t('work:workHub.batch.targetCount', { count: items.length })} />
-        {selectedCount > items.length && (
+        <Chip
+          size="small"
+          label={t('work:workHub.batch.targetCount', { count: eligible.length })}
+        />
+        {selectedCount > eligible.length && (
           <Chip
             size="small"
             color="warning"
             label={t('work:workHub.batch.excludedCount', {
-              count: selectedCount - items.length,
+              count: selectedCount - eligible.length,
             })}
           />
         )}
       </Stack>
       <Typography variant="caption" color="text.secondary">
-        {t('work:workHub.batch.atomicNotice')}
+        {t('work:workHub.batch.executionNotice')}
       </Typography>
       <List dense disablePadding sx={{ maxHeight: 240, overflowY: 'auto' }}>
         {items.map((item) => (
           <ListItem key={item.key} disableGutters>
             <ListItemText
               primary={item.title}
-              secondary={t(`work:workHub.lifecycle.${item.lifecycle}`)}
+              secondary={t(
+                workHubBatchEligible(item, target)
+                  ? `work:workHub.lifecycle.${item.lifecycle}`
+                  : 'work:workHub.batch.receiptStates.EXCLUDED'
+              )}
               slotProps={{ primary: { noWrap: true } }}
             />
           </ListItem>
@@ -97,18 +114,20 @@ export function WorkHubBatchDialog({
 
   if (!outcome) {
     return (
-      <ConfirmDialog
+      <FormDialog
         open
         title={t(`work:workHub.batch.${action}Title`)}
         description={t('work:workHub.batch.description', { count: items.length })}
         cancelLabel={t('common:actions.cancel')}
-        confirmLabel={t(`work:workHub.batch.${action}`)}
-        confirmingLabel={t('work:workHub.batch.processing')}
+        submitLabel={t(`work:workHub.batch.${action}`)}
+        submittingLabel={t('work:workHub.batch.processing')}
         busy={busy}
-        details={details}
         onClose={onClose}
-        onConfirm={onConfirm}
-      />
+        submitDisabled={!eligible.length || items.length > 50}
+        onSubmit={onConfirm}
+      >
+        {details}
+      </FormDialog>
     );
   }
 
@@ -117,13 +136,34 @@ export function WorkHubBatchDialog({
     <ContentDialog
       open
       maxWidth="sm"
-      title={t(`work:workHub.batch.${confirmed ? 'successTitle' : 'unknownTitle'}`)}
+      title={t('work:workHub.batch.reportTitle')}
       closeLabel={t('common:actions.close')}
       onClose={onClose}
+      closeButtonSx={{
+        '@media (max-width:599.95px)': { minWidth: 44, minHeight: 44 },
+      }}
       footerContent={
-        <ActionButton autoFocus intent="primary" onClick={onClose}>
-          {t('common:actions.close')}
-        </ActionButton>
+        <Stack direction="row" gap={1} flexWrap="wrap">
+          {onRetryUnconfirmed && receipts.some(canRetryWorkHubBatchReceipt) && (
+            <ActionButton
+              intent="secondary"
+              loading={busy}
+              onClick={onRetryUnconfirmed}
+              sx={{ '@media (max-width:599.95px)': { minHeight: 44 } }}
+            >
+              {t('work:workHub.batch.retryUnconfirmed')}
+            </ActionButton>
+          )}
+          <ActionButton
+            autoFocus
+            intent="primary"
+            onClick={onClose}
+            disabled={busy}
+            sx={{ '@media (max-width:599.95px)': { minHeight: 44 } }}
+          >
+            {t('common:actions.close')}
+          </ActionButton>
+        </Stack>
       }
     >
       <InlineFeedback severity={confirmed ? 'success' : 'warning'}>
@@ -131,22 +171,45 @@ export function WorkHubBatchDialog({
           count: items.length,
         })}
       </InlineFeedback>
-      <List aria-label={t('work:workHub.batch.resultList')} sx={{ mt: 1 }}>
-        {items.map((item) => (
-          <ListItem key={item.key} disableGutters>
-            <ListItemIcon sx={{ minWidth: 36, color: confirmed ? 'success.main' : 'warning.main' }}>
-              {confirmed ? (
-                <CheckCircle2 size={18} aria-hidden="true" />
-              ) : (
-                <CircleHelp size={18} aria-hidden="true" />
-              )}
-            </ListItemIcon>
-            <ListItemText
-              primary={item.title}
-              secondary={t(`work:workHub.batch.results.${confirmed ? 'confirmed' : 'unknown'}`)}
+      {receipts.length > 0 && (
+        <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 2 }}>
+          {(['CONFIRMED', 'CONFLICT', 'FORBIDDEN', 'UNKNOWN', 'EXCLUDED'] as const).map((state) => (
+            <Chip
+              key={state}
+              size="small"
+              label={`${t(`work:workHub.batch.receiptStates.${state}`)} ${receipts.filter((receipt) => receipt.state === state).length}`}
             />
-          </ListItem>
-        ))}
+          ))}
+        </Stack>
+      )}
+      <List aria-label={t('work:workHub.batch.resultList')} sx={{ mt: 1 }}>
+        {items.map((item) => {
+          const receipt = receipts.find((row) => row.item.key === item.key);
+          const success = receipt ? receipt.state === 'CONFIRMED' : confirmed;
+          return (
+            <ListItem key={item.key} disableGutters>
+              <ListItemIcon sx={{ minWidth: 36, color: success ? 'success.main' : 'warning.main' }}>
+                {success ? (
+                  <CheckCircle2 size={18} aria-hidden="true" />
+                ) : (
+                  <CircleHelp size={18} aria-hidden="true" />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.title}
+                secondary={
+                  receipt
+                    ? t(
+                        receipt.reason === 'CANCELLED'
+                          ? `work:workHub.batch.${receipt.state === 'UNKNOWN' ? 'cancelledUnknown' : 'cancelledBeforeSend'}`
+                          : `work:workHub.batch.receiptHelp.${receipt.state}`
+                      )
+                    : t(`work:workHub.batch.results.${confirmed ? 'confirmed' : 'unknown'}`)
+                }
+              />
+            </ListItem>
+          );
+        })}
       </List>
       {!confirmed && (
         <Box sx={{ mt: 1 }}>

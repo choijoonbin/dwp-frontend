@@ -18,6 +18,48 @@ const run = {
   completedAt: '2026-08-27T01:00:01Z',
 };
 
+const observableRun = {
+  ...run,
+  activityTitle: 'Policy-grounded answer execution',
+  attempt: 2,
+  lease: { status: 'RELEASED', expiresAt: null },
+  currentStage: 'COMPLETED',
+  progressPercent: 100,
+  measurementStatus: 'MEASURED',
+  stages: [
+    {
+      key: 'AUTHORIZING',
+      state: 'COMPLETED',
+      sequence: 10,
+      startedAt: '2026-08-27T01:00:00Z',
+      completedAt: '2026-08-27T01:00:00.040Z',
+      durationMs: 40,
+    },
+    {
+      key: 'COMPLETED',
+      state: 'COMPLETED',
+      sequence: 60,
+      startedAt: '2026-08-27T01:00:00.240Z',
+      completedAt: '2026-08-27T01:00:00.240Z',
+      durationMs: 0,
+    },
+  ],
+  auditEvidence: {
+    auditId: 'agent-audit:tenant-1:run-101',
+    auditRecordId: 'aaaaaaaa-0000-5000-8000-000000000202',
+    status: 'LINKED',
+  },
+  sourceHealth: [
+    {
+      sourceType: 'WORK_ITEM',
+      status: 'SUCCESS',
+      latencyMs: 65,
+      lastAttemptAt: '2026-08-27T01:00:00.100Z',
+      lastSuccessAt: '2026-08-27T01:00:00.100Z',
+    },
+  ],
+};
+
 function response(payload: unknown): Response {
   return {
     ok: true,
@@ -46,6 +88,81 @@ describe('Agent run API', () => {
     await expect(getDwaionUserRuns()).rejects.toMatchObject({ status: 502 });
   });
 
+  it('accepts measured run evidence without deriving or inventing telemetry', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(response({ success: true, data: [observableRun] }))
+    );
+
+    await expect(getDwaionUserRuns()).resolves.toEqual([observableRun]);
+  });
+
+  it('accepts the canonical 160-character title and opaque bounded audit ID', async () => {
+    const boundaryRun = {
+      ...observableRun,
+      activityTitle: 'a'.repeat(160),
+      auditEvidence: { ...observableRun.auditEvidence, auditId: 'opaque-audit-id' },
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(response({ success: true, data: [boundaryRun] }))
+    );
+
+    await expect(getDwaionUserRuns()).resolves.toEqual([boundaryRun]);
+  });
+
+  it.each([
+    { progressPercent: 101 },
+    { activityTitle: 'a'.repeat(161) },
+    { statusCode: 's'.repeat(129) },
+    { stages: [{ ...observableRun.stages[0], sequence: 9 }] },
+    { stages: [{ ...observableRun.stages[0], sequence: 20 }] },
+    { stages: [{ ...observableRun.stages[0], durationMs: -1 }] },
+    { stages: [{ ...observableRun.stages[0], state: 'ACTIVE' }] },
+    {
+      stages: [
+        {
+          ...observableRun.stages[0],
+          completedAt: '2026-08-26T01:00:00Z',
+        },
+      ],
+    },
+    { lease: { status: 'ACTIVE', expiresAt: 'not-a-date' } },
+    { auditEvidence: { ...observableRun.auditEvidence, status: 'VERIFIED' } },
+    { auditEvidence: { ...observableRun.auditEvidence, auditId: 'a'.repeat(129) } },
+    { auditEvidence: { ...observableRun.auditEvidence, auditId: null } },
+    {
+      auditEvidence: {
+        auditId: 'orphan-audit-id',
+        auditRecordId: null,
+        status: 'NOT_AVAILABLE',
+      },
+    },
+    { sourceHealth: [{ ...observableRun.sourceHealth[0], sourceType: 'UNMODELED_SOURCE' }] },
+    { sourceHealth: [{ ...observableRun.sourceHealth[0], latencyMs: -1 }] },
+    {
+      sourceHealth: [
+        {
+          ...observableRun.sourceHealth[0],
+          lastSuccessAt: '2026-08-27T01:00:00.165Z',
+        },
+      ],
+    },
+    {
+      sourceHealth: [{ ...observableRun.sourceHealth[0], status: 'UNAVAILABLE' }],
+    },
+    { prompt: 'must never enter the Activity cache' },
+  ])('fails closed for malformed measured evidence %#', async (override) => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue(response({ success: true, data: [{ ...observableRun, ...override }] }))
+    );
+
+    await expect(getDwaionUserRuns()).rejects.toMatchObject({ status: 502 });
+  });
+
   it('resolves an exact run outside the recent response window', async () => {
     const fetchMock = vi.fn().mockResolvedValue(response({ success: true, data: run }));
     vi.stubGlobal('fetch', fetchMock);
@@ -55,6 +172,23 @@ describe('Agent run API', () => {
       `/api/agent/v1/runs/${run.runId}`,
       expect.objectContaining({ method: 'GET', credentials: 'include' })
     );
+  });
+
+  it('accepts canonical PostgreSQL UUID text without assuming RFC version or variant bits', async () => {
+    const postgresRun = {
+      ...run,
+      runId: 'aaaaaaaa-0000-0000-0000-000000000101',
+      conversationId: 'aaaaaaaa-0000-f000-0000-000000000102',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ success: true, data: [postgresRun] }))
+      .mockResolvedValueOnce(response({ success: true, data: postgresRun }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getDwaionUserRuns()).resolves.toEqual([postgresRun]);
+    await expect(getDwaionUserRun(postgresRun.runId.toUpperCase())).resolves.toEqual(postgresRun);
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(`/api/agent/v1/runs/${postgresRun.runId}`);
   });
 
   it('rejects invalid IDs and mismatched run detail without substituting a response', async () => {

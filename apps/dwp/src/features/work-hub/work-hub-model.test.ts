@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  approvalRequestToHub,
+  approvalTaskToHub,
   personalWorkToHub,
   serviceRequestToHub,
   workspaceWorkToHub,
@@ -18,12 +20,32 @@ import { workHubReferenceKey, workHubUrgency } from './work-hub-contracts';
 import { hydrateWorkSource } from './work-hub-source-hydration';
 import { hubItem, KEY, NOW, personal, snapshot, workspace } from './work-hub.test-support';
 import type { ServiceRequestSummary } from '@dwp-frontend/shared-utils/api/service-center-api';
+import type { ApprovalRequest, ApprovalTask } from '@dwp-frontend/shared-utils/api/approval-api';
 import type {
   PersonalDayPlan,
   WorkSourceReference,
 } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 
 describe('Work Hub canonical model', () => {
+  it('defaults the unified inbox to all work and isolates the in-progress view', () => {
+    const state = snapshot([
+      hubItem({ key: 'open', lifecycle: 'OPEN' }),
+      hubItem({ key: 'progress', lifecycle: 'IN_PROGRESS' }),
+      hubItem({ key: 'waiting', lifecycle: 'WAITING', waitingFor: 'OTHERS' }),
+      hubItem({ key: 'done', lifecycle: 'COMPLETED', waitingFor: 'NONE' }),
+    ]);
+    expect(parseWorkHubFilters(new URLSearchParams()).scope).toBe('ALL');
+    expect(selectWorkHubItems(state, parseWorkHubFilters(new URLSearchParams()), NOW)).toHaveLength(
+      4
+    );
+    expect(
+      selectWorkHubItems(
+        state,
+        parseWorkHubFilters(new URLSearchParams({ scope: 'IN_PROGRESS' })),
+        NOW
+      ).map((item) => item.key)
+    ).toEqual(['progress']);
+  });
   it('does not launder an unknown source into native work or advertise generic completion', () => {
     const projected = workspaceWorkToHub(
       workspace({ sourceSystem: 'HR', capabilities: { canStart: true, canComplete: true } })
@@ -47,6 +69,30 @@ describe('Work Hub canonical model', () => {
     expect(personalWorkToHub(personal(), true).actions.map((action) => action.kind)).toContain(
       'PERSONAL_COMPLETE'
     );
+  });
+  it('keeps an approval task as a source-app handoff instead of lending Work its commands', () => {
+    const task: ApprovalTask = {
+      taskId: 'approval-1',
+      requestId: 'request-1',
+      requestNumber: 'APR-001',
+      title: 'Review access',
+      summary: 'Verify the requested access',
+      workflowNameKo: '접근 검토',
+      workflowNameEn: 'Access review',
+      stepKey: 'manager',
+      stepName: 'Manager review',
+      stepSequence: 1,
+      status: 'PENDING',
+      priority: 'HIGH',
+      dataClassification: 'INTERNAL',
+      riskScore: 30,
+      version: 2,
+    };
+
+    expect(approvalTaskToHub(task, 'approval-inbox')).toMatchObject({
+      sourceRoute: '/approvals/inbox?task=approval-1',
+      actions: [{ kind: 'OPEN_SOURCE', availability: 'AVAILABLE' }],
+    });
   });
   it('permits only restore for an archived personal task', () => {
     expect(personalWorkToHub(personal({ status: 'ARCHIVED' }), true).actions).toEqual([
@@ -103,11 +149,24 @@ describe('Work Hub canonical model', () => {
       version: 1,
       updatedAt: new Date(NOW).toISOString(),
     } as ServiceRequestSummary;
-    expect(serviceRequestToHub(request)).toMatchObject({ lifecycle: 'OPEN', waitingFor: 'ME' });
+    expect(serviceRequestToHub(request)).toMatchObject({
+      lifecycle: 'OPEN',
+      waitingFor: 'ME',
+      sourceRoute: '/services/my/s-1',
+    });
+    expect(serviceRequestToHub({ ...request, status: 'DRAFT' }).sourceRoute).toBe(
+      '/services/drafts/s-1'
+    );
     expect(serviceRequestToHub({ ...request, status: 'IN_PROGRESS' })).toMatchObject({
-      lifecycle: 'WAITING',
+      lifecycle: 'IN_PROGRESS',
       waitingFor: 'OTHERS',
     });
+  });
+  it('opens requester information in the official approval list with its detail selected', () => {
+    const request = { requestId: 'request/1', status: 'NEEDS_INFO' } as ApprovalRequest;
+    expect(approvalRequestToHub(request).sourceRoute).toBe(
+      '/approvals/requests/needs-info?request=request%2F1'
+    );
   });
   it('never hydrates a reference-only source from missing or denied evidence', () => {
     const source = {

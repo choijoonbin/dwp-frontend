@@ -1,3 +1,4 @@
+import type { ProductPlane } from './product-manifest';
 import type { SurfaceDeniedState } from '../features/shell/product-surface-context';
 
 export type ProductSurfaceAccessAction =
@@ -27,8 +28,7 @@ const ACCESS_PRESENTATIONS = {
   'surface-denied': {
     titleKey: 'productSurface.access.surfaceDenied.title',
     descriptionKey: 'productSurface.access.surfaceDenied.description',
-    primaryAction: 'request-responsibility',
-    secondaryAction: 'return',
+    primaryAction: 'return',
     tone: 'permission',
   },
   'route-denied': {
@@ -94,8 +94,26 @@ const ACCESS_PRESENTATIONS = {
   },
 } as const satisfies Record<SurfaceDeniedState, ProductSurfaceAccessPresentation>;
 
+const SURFACE_DENIED_PRESENTATIONS = {
+  work: {
+    titleKey: 'productSurface.access.surfaceDenied.work.title',
+    descriptionKey: 'productSurface.access.surfaceDenied.work.description',
+    primaryAction: 'return',
+    tone: 'permission',
+  },
+  management: {
+    titleKey: 'productSurface.access.surfaceDenied.management.title',
+    descriptionKey: 'productSurface.access.surfaceDenied.management.description',
+    primaryAction: 'request-responsibility',
+    secondaryAction: 'return',
+    tone: 'permission',
+  },
+} as const satisfies Record<ProductPlane, ProductSurfaceAccessPresentation>;
+
 export function getProductSurfaceAccessPresentation(
-  state: SurfaceDeniedState
+  state: SurfaceDeniedState,
+  plane?: ProductPlane
 ): ProductSurfaceAccessPresentation {
+  if (state === 'surface-denied' && plane) return SURFACE_DENIED_PRESENTATIONS[plane];
   return ACCESS_PRESENTATIONS[state];
 }

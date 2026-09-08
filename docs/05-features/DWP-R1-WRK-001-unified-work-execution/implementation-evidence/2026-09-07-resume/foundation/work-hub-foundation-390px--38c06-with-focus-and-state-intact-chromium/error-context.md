@@ -1,0 +1,103 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - button "Search DWP" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "Open DWAI·ON" [ref=e29]:
+                        - button "Open DWAI·ON" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - generic [ref=e34]:
+                - generic [ref=e35]:
+                    - generic [ref=e37]:
+                        - heading "Unified work inbox" [level=1] [ref=e38]
+                        - generic [ref=e40]: 1 results
+                    - generic [ref=e41]:
+                        - status [ref=e42]:
+                            - generic [ref=e44]:
+                                - generic [ref=e45]: Snapshot verified
+                                - generic [ref=e46]: Last verified 9/7/26, 5:51 PM
+                            - generic "Try again" [ref=e47]:
+                                - button "Try again" [ref=e48] [cursor=pointer]:
+                                    - img [ref=e49]
+                        - button "Add personal task" [ref=e54] [cursor=pointer]:
+                            - img [ref=e56]
+                            - text: Add personal task
+                - region "Unified queue search and filters" [ref=e58]:
+                    - generic [ref=e59]:
+                        - generic [ref=e60]:
+                            - generic [ref=e61]: Search work
+                            - generic [ref=e62]:
+                                - img [ref=e64]
+                                - textbox "Search work" [ref=e67]:
+                                    - /placeholder: Search titles or work details
+                                    - text: project
+                                - group:
+                                    - generic: Search work
+                        - group "Work view" [ref=e68]:
+                            - button "All (4)" [pressed] [ref=e69] [cursor=pointer]
+                            - button "Your action (4)" [ref=e70] [cursor=pointer]
+                            - button "In progress (0)" [ref=e71] [cursor=pointer]
+                            - button "Waiting (0)" [ref=e72] [cursor=pointer]
+                            - button "Completed (0)" [ref=e73] [cursor=pointer]
+                        - button "Today plan (0)" [ref=e74] [cursor=pointer]:
+                            - img [ref=e76]
+                            - text: Today plan (0)
+                        - button "Filter and sort" [ref=e78] [cursor=pointer]:
+                            - img [ref=e80]
+                            - text: Filter and sort
+                - generic [ref=e82]:
+                    - generic [ref=e83]:
+                        - heading "1 verified work items" [level=6] [ref=e84]
+                        - button "Select work" [ref=e85] [cursor=pointer]
+                    - list "Unified work list" [ref=e86]:
+                        - listitem [ref=e87]:
+                            - generic [ref=e88]:
+                                - generic "Add to today plan" [ref=e90]:
+                                    - 'button "Add to today plan: Review project data access" [ref=e91] [cursor=pointer]':
+                                        - img [ref=e92]
+                                - button "Open details for Review project data access" [ref=e94] [cursor=pointer]:
+                                    - generic [ref=e96]:
+                                        - generic [ref=e97]: APR-2026-0904-001
+                                        - text: Review project data access
+                                        - generic [ref=e98]:
+                                            - generic [ref=e99]: Approval ·
+                                            - text: Your action
+                                        - generic [ref=e100]:
+                                            - generic [ref=e102]: Review pending
+                                            - generic [ref=e103]: No due date
+                                - button "Review" [ref=e105] [cursor=pointer]:
+                                    - text: Review
+                                    - img [ref=e107]
+        - navigation "Work quick navigation" [ref=e110]:
+            - button "Inbox" [ref=e111] [cursor=pointer]:
+                - img [ref=e112]
+                - generic [ref=e115]: Inbox
+            - button "Today" [ref=e116] [cursor=pointer]:
+                - img [ref=e117]
+                - generic [ref=e122]: Today
+            - button "My actions" [ref=e123] [cursor=pointer]:
+                - img [ref=e124]
+                - generic [ref=e127]: My actions
+            - button "DWAI·ON" [ref=e128] [cursor=pointer]:
+                - img [ref=e129]
+                - generic [ref=e132]: DWAI·ON
+            - button "More" [ref=e133] [cursor=pointer]:
+                - img [ref=e134]
+                - generic [ref=e138]: More
+```

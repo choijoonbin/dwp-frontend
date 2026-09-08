@@ -1,19 +1,27 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, DoorOpen, LayoutTemplate, Settings2 } from 'lucide-react';
+import {
+  ArrowRight,
+  Gavel,
+  LayoutTemplate,
+  MessageSquare,
+  Settings2,
+  UsersRound,
+} from 'lucide-react';
 import {
   ActionButton,
+  ActionIconButton,
   ErrorState,
   LoadingState,
-  SectionHeader,
-  foundationTokens,
 } from '@dwp-frontend/design-system';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import { getVideoMeetingTemplates } from '@dwp-frontend/shared-utils/api/video-meeting-templates-api';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { meetingHomeCard, meetingHomeInset } from './meeting-home-presentation';
+import { MeetingHomePersonalRoom } from './meeting-home-personal-room';
 
 /** The home is a gateway to real workspaces; previews never create a meeting or copy consent. */
 export function MeetingHomeResources() {
@@ -60,13 +68,14 @@ function MeetingHomeResourcesContent({ scope, enabled }: { scope: string; enable
       data-testid="meeting-home-resources"
       sx={{ minWidth: 0 }}
     >
-      <SectionHeader
-        density="compact"
-        glyph="plain"
-        id="meeting-home-resources-title"
-        icon={LayoutTemplate}
-        title={t('home.resources.title')}
-        meta={
+      <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+        <Stack direction="row" alignItems="center" gap={0.75} sx={{ minWidth: 0 }}>
+          <LayoutTemplate size={17} aria-hidden="true" />
+          <Typography id="meeting-home-resources-title" component="h2" variant="subtitle2">
+            {t('home.resources.title')}
+          </Typography>
+        </Stack>
+        <Stack direction="row" alignItems="center" gap={0.25}>
           <ActionButton
             size="small"
             intent="quiet"
@@ -75,19 +84,29 @@ function MeetingHomeResourcesContent({ scope, enabled }: { scope: string; enable
           >
             {t('actions.viewAll')}
           </ActionButton>
-        }
-      />
+          <ActionIconButton
+            label={t('context.preferences')}
+            onClick={() => navigate('/meetings/preferences')}
+            size="small"
+            sx={{ minWidth: 44, minHeight: 44 }}
+          >
+            <Settings2 size={16} aria-hidden="true" />
+          </ActionIconButton>
+        </Stack>
+      </Stack>
       <Box
-        sx={{
-          mt: 1.5,
-          p: 2,
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: foundationTokens.radius.surface + 'px',
-          bgcolor: 'background.paper',
-        }}
+        sx={(theme) => ({
+          ...meetingHomeCard(theme),
+          mt: 1,
+          p: { xs: 0, md: 2 },
+          [theme.breakpoints.down('md')]: {
+            border: 0,
+            boxShadow: 'none',
+            backgroundColor: 'transparent',
+          },
+        })}
       >
-        {query.isLoading ? (
+        {query.isLoading || query.isFetching ? (
           <LoadingState label={t('templates.loading')} />
         ) : query.isError || !query.data ? (
           <ErrorState
@@ -107,46 +126,67 @@ function MeetingHomeResourcesContent({ scope, enabled }: { scope: string; enable
               gap: 1,
             }}
           >
-            {query.data.items.map((template) => (
-              <Box component="li" key={template.templateId} sx={{ minWidth: 0 }}>
-                <ActionButton
-                  intent="quiet"
-                  onClick={() =>
-                    navigate(
-                      '/meetings/templates?' +
-                        new URLSearchParams({
-                          scope: template.scope,
-                          template: template.templateId,
-                        })
-                    )
-                  }
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    height: '100%',
-                    gap: 1,
-                    p: 1.5,
-                    minHeight: 100,
-                    border: 1,
-                    borderColor: 'divider',
-                    whiteSpace: 'normal',
-                  }}
-                >
-                  <LayoutTemplate size={18} aria-hidden="true" />
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    sx={{ overflowWrap: 'anywhere', textAlign: 'center' }}
+            {query.data.items.map((template) => {
+              const Icon =
+                template.category === 'DECISION'
+                  ? Gavel
+                  : template.category === 'ONE_ON_ONE'
+                    ? MessageSquare
+                    : template.category === 'GENERAL' || template.category === 'WEEKLY'
+                      ? UsersRound
+                      : LayoutTemplate;
+              return (
+                <Box component="li" key={template.templateId} sx={{ minWidth: 0 }}>
+                  <ActionButton
+                    intent="quiet"
+                    onClick={() =>
+                      navigate(
+                        '/meetings/templates?' +
+                          new URLSearchParams({
+                            scope: template.scope,
+                            template: template.templateId,
+                          })
+                      )
+                    }
+                    sx={(theme) => ({
+                      ...meetingHomeInset(theme),
+                      display: 'flex',
+                      flexDirection: 'column',
+                      width: '100%',
+                      height: '100%',
+                      gap: { xs: 0.5, md: 1 },
+                      p: { xs: 0.75, md: 1 },
+                      minHeight: { xs: 90, md: 100 },
+                      whiteSpace: 'normal',
+                    })}
                   >
-                    {template.name}
-                  </Typography>
-                  <Typography component="span" variant="caption" color="text.secondary">
-                    {t('units.minutes', { count: template.durationMinutes })}
-                  </Typography>
-                </ActionButton>
-              </Box>
-            ))}
+                    <Box
+                      component="span"
+                      sx={(theme) => ({
+                        ...meetingHomeInset(theme),
+                        display: { xs: 'contents', md: 'grid' },
+                        p: { md: 0.75 },
+                        bgcolor: 'background.paper',
+                        color: 'primary.main',
+                      })}
+                    >
+                      <Icon size={18} aria-hidden="true" />
+                    </Box>
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      fontWeight="fontWeightBold"
+                      sx={{ overflowWrap: 'anywhere', textAlign: 'center' }}
+                    >
+                      {template.name}
+                    </Typography>
+                    <Typography component="span" variant="caption" color="text.secondary">
+                      {t('units.minutes', { count: template.durationMinutes })}
+                    </Typography>
+                  </ActionButton>
+                </Box>
+              );
+            })}
           </Box>
         ) : (
           <Stack gap={1}>
@@ -158,24 +198,17 @@ function MeetingHomeResourcesContent({ scope, enabled }: { scope: string; enable
             </ActionButton>
           </Stack>
         )}
-        <Stack sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }} gap={0.5}>
-          <ActionButton
-            intent="quiet"
-            startIcon={<DoorOpen size={17} aria-hidden="true" />}
-            endIcon={<ArrowRight size={14} aria-hidden="true" />}
-            onClick={() => navigate('/meetings/mine?view=personal-room')}
-            sx={{ justifyContent: 'flex-start', minHeight: 44 }}
-          >
-            {t('personalRoom.title')}
-          </ActionButton>
-          <ActionButton
-            intent="quiet"
-            startIcon={<Settings2 size={17} aria-hidden="true" />}
-            onClick={() => navigate('/meetings/preferences')}
-            sx={{ justifyContent: 'flex-start', minHeight: 44 }}
-          >
-            {t('context.preferences')}
-          </ActionButton>
+        <Stack
+          sx={{
+            mt: { xs: 1, md: 2 },
+            pt: { xs: 0, md: 1.5 },
+            borderTopWidth: { xs: 0, md: 1 },
+            borderTopStyle: 'solid',
+            borderTopColor: 'divider',
+          }}
+          gap={0.5}
+        >
+          <MeetingHomePersonalRoom key={scope} scope={scope} enabled={enabled} />
         </Stack>
       </Box>
     </Box>

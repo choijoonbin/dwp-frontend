@@ -7,6 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
+import { visuallyHidden } from '@mui/utils';
 
 import { ActionIconButton } from '../actions';
 
@@ -65,14 +66,21 @@ export function ContentDialog({
       fullScreen={fullScreen}
       fullWidth
       maxWidth={maxWidth}
-      aria-label={hideHeader ? title : undefined}
-      aria-labelledby={hideHeader ? undefined : titleId}
+      aria-labelledby={titleId}
       aria-describedby={!hideHeader && description ? descriptionId : undefined}
       onClose={busy ? undefined : onClose}
       slotProps={slotProps}
     >
-      {!hideHeader && (
-        <DialogTitle sx={{ minHeight: 72, display: 'flex', alignItems: 'center', gap: 2, pr: 1.5 }}>
+      {hideHeader ? (
+        <Box component="span" id={titleId} sx={visuallyHidden}>
+          {title}
+        </Box>
+      ) : (
+        <DialogTitle
+          component="div"
+          id={`${titleId}-container`}
+          sx={{ minHeight: 72, display: 'flex', alignItems: 'center', gap: 2, pr: 1.5 }}
+        >
           {titleStart}
           <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography id={titleId} component="h2" variant="h6">

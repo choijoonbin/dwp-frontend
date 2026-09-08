@@ -2,15 +2,25 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Bot, CheckCircle2, ChevronRight, CircleAlert, Clock3, ShieldCheck } from 'lucide-react';
 import {
+  Bot,
+  CheckCircle2,
+  ChevronRight,
+  CircleAlert,
+  Clock3,
+  ListFilter,
+  ShieldCheck,
+  ShieldX,
+} from 'lucide-react';
+import {
+  foundationTokens,
   GuidedEmptyState,
   LiveStatus,
   LoadingState,
   LocalErrorState,
-  OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
+  SectionHeader,
 } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
@@ -41,6 +51,7 @@ import {
   updateDwaionActivitySelection,
 } from './dwaion-activity-model';
 import { DwaionActivitySelection } from './dwaion-activity-selection';
+import { DwaionActivitySummary } from './dwaion-activity-summary';
 
 import type { DwaionActivityFilter } from './dwaion-activity-model';
 
@@ -80,7 +91,7 @@ export function DwaionActivity() {
   const selectedRunDetail = useQuery({
     queryKey: ['dwaion', 'user-run', 'detail', identity, selectedRunId],
     queryFn: ({ signal }) => getDwaionUserRun(selectedRunId, signal),
-    enabled: canLoadRuns && Boolean(selectedRunId) && !selectedWindowRun,
+    enabled: runDataUsable && Boolean(selectedRunId) && !selectedWindowRun,
     staleTime: 15_000,
     refetchInterval: 60_000,
     retry: (count, error) =>
@@ -93,13 +104,24 @@ export function DwaionActivity() {
     ? (selectedWindowRun ?? (selectedRunDetail.isError ? undefined : selectedRunDetail.data))
     : undefined;
   const selectedRunLoading =
-    !selectedRun && canLoadRuns && selectedRunDetail.isPending && Boolean(selectedRunId);
+    !selectedRun && runDataUsable && selectedRunDetail.isPending && Boolean(selectedRunId);
   const exactSelectionActive = Boolean(selectedRunId) && !selectedWindowRun;
+  const selectionAccessDenied =
+    !runDataUsable ||
+    (exactSelectionActive &&
+      selectedRunDetail.isError &&
+      selectedRunDetail.error instanceof HttpError &&
+      [401, 403].includes(selectedRunDetail.error.status));
   const retrievalError = runs.isError || (exactSelectionActive && selectedRunDetail.isError);
   const retrievalPending =
     runs.isPending || runs.isFetching || (exactSelectionActive && selectedRunDetail.isFetching);
   const refreshRuns = () =>
-    Promise.all([runs.refetch(), ...(exactSelectionActive ? [selectedRunDetail.refetch()] : [])]);
+    canLoadRuns
+      ? Promise.all([
+          runs.refetch(),
+          ...(exactSelectionActive ? [selectedRunDetail.refetch()] : []),
+        ])
+      : Promise.resolve([]);
   const closeSelection = () =>
     setParams(updateDwaionActivitySelection(params, null), { replace: true });
   const selectRun = (runId: string) => setParams(updateDwaionActivitySelection(params, runId));
@@ -118,7 +140,9 @@ export function DwaionActivity() {
       <ResourcePageHeader
         eyebrow={t('dwaionActivity.eyebrow')}
         title={t('dwaionActivity.title')}
-        description={t('dwaionActivity.description')}
+        description={t(
+          mobileInspector ? 'dwaionActivity.mobileDescription' : 'dwaionActivity.description'
+        )}
         scope={
           <Stack direction="row" spacing={0.65} alignItems="center">
             <ShieldCheck size={15} color="var(--dwp-product-secondary)" aria-hidden="true" />
@@ -144,49 +168,13 @@ export function DwaionActivity() {
             }
             refreshLabel={t('dwaionActivity.refresh')}
             refreshing={retrievalPending}
-            onRefresh={() => void refreshRuns()}
+            onRefresh={canLoadRuns ? () => void refreshRuns() : undefined}
           />
         }
       />
 
       {runs.data && runDataUsable && (
-        <Box sx={{ mt: 3 }}>
-          <OperationalKpiStrip
-            ariaLabel={t('dwaionActivity.summaryLabel')}
-            items={[
-              {
-                key: 'total',
-                value: metrics.total,
-                label: t('dwaionActivity.metrics.total'),
-                detail: t('dwaionActivity.metrics.totalDetail'),
-              },
-              {
-                key: 'running',
-                value: metrics.running,
-                label: t('dwaionActivity.metrics.running'),
-                detail: t('dwaionActivity.metrics.runningDetail'),
-                tone: 'info',
-              },
-              {
-                key: 'completed',
-                value: metrics.completed,
-                label: t('dwaionActivity.metrics.completed'),
-                detail: t('dwaionActivity.metrics.completedDetail'),
-                tone: 'success',
-              },
-              {
-                key: 'attention',
-                value: metrics.attention,
-                label: t('dwaionActivity.metrics.attention'),
-                detail: t('dwaionActivity.metrics.attentionDetail'),
-                tone: metrics.attention ? 'warning' : 'neutral',
-              },
-            ]}
-          />
-          <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1 }}>
-            {t('dwaionActivity.windowNotice', { count: DWAION_ACTIVITY_WINDOW_LIMIT })}
-          </Typography>
-        </Box>
+        <DwaionActivitySummary metrics={metrics} filter={filter} onFilter={selectFilter} />
       )}
 
       <Box
@@ -194,7 +182,7 @@ export function DwaionActivity() {
           display: 'grid',
           gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 7fr) minmax(20rem, 5fr)' },
           gap: { xs: 2.5, lg: 3 },
-          mt: 3.5,
+          mt: { xs: 2, md: 3.5 },
           alignItems: 'start',
         }}
       >
@@ -204,6 +192,8 @@ export function DwaionActivity() {
             total={allRuns.length}
             visible={visibleRuns.length}
             onFilter={selectFilter}
+            showCounts={runDataUsable && Boolean(runs.data)}
+            disabled={!runDataUsable}
           />
           <ActivityListBody
             runs={runs}
@@ -214,6 +204,8 @@ export function DwaionActivity() {
             onSelect={selectRun}
             onResetFilter={() => selectFilter('ALL')}
             onStart={() => navigate('/dwaion/new')}
+            accessDenied={accessResponseDenied || (isLoaded && !canLoadRuns)}
+            onRefresh={canLoadRuns ? () => void refreshRuns() : undefined}
           />
         </Box>
 
@@ -226,6 +218,7 @@ export function DwaionActivity() {
               locale={locale}
               variant="inline"
               refreshing={retrievalPending}
+              accessDenied={selectionAccessDenied}
               onRefresh={() => void refreshRuns()}
               onClose={closeSelection}
             />
@@ -243,6 +236,7 @@ export function DwaionActivity() {
           locale={locale}
           variant="drawer"
           refreshing={retrievalPending}
+          accessDenied={selectionAccessDenied}
           onRefresh={() => void refreshRuns()}
           onClose={closeSelection}
         />
@@ -256,20 +250,30 @@ function ActivityListHeader({
   total,
   visible,
   onFilter,
+  showCounts,
+  disabled,
 }: {
   filter: DwaionActivityFilter;
   total: number;
   visible: number;
   onFilter: (value: DwaionActivityFilter) => void;
+  showCounts: boolean;
+  disabled: boolean;
 }) {
   const { t } = useTranslation('work');
   return (
     <Stack gap={1.5}>
       <Box>
-        <Typography id="dwaion-activity-list" component="h2" variant="h6">
-          {t('dwaionActivity.listTitle')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+        <SectionHeader
+          id="dwaion-activity-list"
+          icon={ListFilter}
+          title={t('dwaionActivity.listTitle')}
+        />
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mt: 0.35, display: { xs: 'none', md: 'block' } }}
+        >
           {t('dwaionActivity.listDescription')}
         </Typography>
       </Box>
@@ -278,13 +282,21 @@ function ActivityListHeader({
           exclusive
           size="small"
           value={filter}
+          disabled={disabled}
           onChange={(_, value: DwaionActivityFilter | null) => value && onFilter(value)}
           aria-label={t('dwaionActivity.filterLabel')}
-          sx={{
+          sx={(theme) => ({
             minWidth: 'max-content',
-            '& .MuiToggleButton-root': { minHeight: 40, color: 'text.primary' },
-            '& .MuiToggleButton-root.Mui-selected': { color: 'text.primary' },
-          }}
+            '& .MuiToggleButton-root': {
+              minHeight: { xs: 44, sm: 40 },
+              color: 'text.primary',
+            },
+            '& .MuiToggleButton-root.Mui-selected': {
+              bgcolor: theme.palette.primary.main,
+              color: theme.palette.getContrastText(theme.palette.primary.main),
+              '&:hover': { bgcolor: theme.palette.primary.main },
+            },
+          })}
         >
           {DWAION_ACTIVITY_FILTERS.map((state) => (
             <ToggleButton key={state} value={state}>
@@ -293,9 +305,11 @@ function ActivityListHeader({
           ))}
         </ToggleButtonGroup>
       </Box>
-      <Typography variant="caption" color="text.secondary" role="status">
-        {t('dwaionActivity.filteredWindow', { visible, total })}
-      </Typography>
+      {showCounts && (
+        <Typography variant="caption" color="text.secondary" role="status">
+          {t('dwaionActivity.filteredWindow', { visible, total })}
+        </Typography>
+      )}
     </Stack>
   );
 }
@@ -309,6 +323,8 @@ function ActivityListBody({
   onSelect,
   onResetFilter,
   onStart,
+  accessDenied,
+  onRefresh,
 }: {
   runs: ReturnType<typeof useQuery<DwaionUserRun[]>>;
   visibleRuns: DwaionUserRun[];
@@ -318,8 +334,23 @@ function ActivityListBody({
   onSelect: (runId: string) => void;
   onResetFilter: () => void;
   onStart: () => void;
+  accessDenied: boolean;
+  onRefresh?: () => void;
 }) {
   const { t } = useTranslation('work');
+  if (accessDenied) {
+    return (
+      <Box sx={{ mt: 2 }}>
+        <GuidedEmptyState
+          kind="permission"
+          title={t('dwaionActivity.accessTitle')}
+          description={t('dwaionActivity.accessDescription')}
+          actionLabel={onRefresh ? t('dwaionActivity.refresh') : undefined}
+          onAction={onRefresh}
+        />
+      </Box>
+    );
+  }
   if (runs.isPending) {
     return (
       <Box sx={{ mt: 2 }}>
@@ -333,6 +364,9 @@ function ActivityListBody({
         <LocalErrorState
           title={t('dwaionActivity.errorTitle')}
           description={t('dwaionActivity.errorDescription')}
+          retryLabel={t('dwaionActivity.refresh')}
+          onRetry={onRefresh}
+          retrying={runs.isFetching}
           size="page"
         />
       </Box>
@@ -358,10 +392,10 @@ function ActivityListBody({
     <Box
       component="ul"
       aria-label={t('dwaionActivity.listLabel')}
-      sx={{ listStyle: 'none', p: 0, m: 0, mt: 2, borderBlock: 1, borderColor: 'divider' }}
+      sx={{ display: 'grid', gap: 1, listStyle: 'none', p: 0, m: 0, mt: 2 }}
     >
       {visibleRuns.map((run) => (
-        <Box component="li" key={run.runId} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box component="li" key={run.runId} sx={{ minWidth: 0 }}>
           <RunRow
             run={run}
             locale={locale}
@@ -394,25 +428,34 @@ function RunRow({
       component="button"
       type="button"
       aria-current={selected ? 'true' : undefined}
-      aria-label={t('dwaionActivity.selectRun', {
-        agent: agentName,
-        state: t(`dwaionActivity.states.${run.runState}`),
-      })}
+      aria-label={[
+        t('dwaionActivity.selectRun', {
+          agent: agentName,
+          state: t(`dwaionActivity.states.${run.runState}`),
+        }),
+        ...(run.dataProvenance === 'SAMPLE'
+          ? [t('dwaionActivity.observability.sample.title')]
+          : []),
+        t(`dwaionActivity.outcomes.${run.policyOutcome}`),
+        run.runId,
+      ].join(' · ')}
       data-testid={`dwaion-run-${run.runId}`}
+      data-run-provenance={run.dataProvenance ?? 'LIVE'}
       onClick={onSelect}
       sx={{
         width: 1,
-        minHeight: 72,
+        minHeight: 112,
         display: 'flex',
         alignItems: 'center',
         gap: 1.25,
-        px: 1.5,
-        py: 1.25,
-        border: 0,
+        px: 1.75,
+        py: 1.5,
+        border: 1,
+        borderColor: selected ? 'primary.main' : 'divider',
         borderInlineStart: 3,
-        borderInlineStartColor: selected ? 'var(--dwp-product-accent)' : 'transparent',
-        borderRadius: 0,
-        bgcolor: selected ? 'action.selected' : 'transparent',
+        borderInlineStartColor: selected ? 'var(--dwp-product-accent)' : 'divider',
+        borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+        bgcolor: selected ? 'var(--dwp-product-soft)' : 'background.paper',
         color: 'text.primary',
         font: 'inherit',
         textAlign: 'left',
@@ -425,30 +468,32 @@ function RunRow({
         },
       }}
     >
-      <Box
-        aria-hidden="true"
-        sx={{
-          width: 38,
-          height: 38,
-          display: 'grid',
-          placeItems: 'center',
-          borderRadius: 'shape.borderRadius',
-          bgcolor: 'var(--dwp-product-soft)',
-          color: run.runState === 'FAILED' ? 'error.main' : 'var(--dwp-product-accent)',
-          flex: '0 0 auto',
-        }}
-      >
-        <Icon size={18} />
-      </Box>
       <Box sx={{ minWidth: 0, flex: 1 }}>
-        <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
-          <Typography variant="body2" fontWeight={800} sx={{ overflowWrap: 'anywhere' }}>
-            {agentName}
-          </Typography>
+        <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
+          {run.dataProvenance === 'SAMPLE' && (
+            <Chip
+              size="small"
+              variant="outlined"
+              color="warning"
+              label={t('dwaionActivity.observability.sample.title')}
+              sx={{ height: 23, color: 'text.primary' }}
+            />
+          )}
+          {run.policyOutcome === 'DENY' && (
+            <Chip
+              size="small"
+              variant="outlined"
+              color="error"
+              icon={<ShieldX size={14} aria-hidden="true" />}
+              label={t('dwaionActivity.outcomes.DENY')}
+              sx={{ height: 23, color: 'text.primary' }}
+            />
+          )}
           <Chip
             size="small"
             variant="outlined"
             color={runStateColor(run.runState)}
+            icon={<Icon size={14} aria-hidden="true" />}
             label={t(`dwaionActivity.states.${run.runState}`)}
             sx={{ height: 23, color: 'text.primary' }}
           />
@@ -459,6 +504,76 @@ function RunRow({
               sx={{ height: 23 }}
             />
           )}
+          <Typography
+            component="time"
+            dateTime={run.completedAt ?? run.createdAt}
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              ml: 'auto',
+              fontVariantNumeric: 'tabular-nums',
+            }}
+          >
+            {formatDate(
+              run.completedAt ?? run.createdAt,
+              { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
+              locale
+            )}
+          </Typography>
+        </Stack>
+        <Typography
+          variant="subtitle1"
+          fontWeight="fontWeightBold"
+          sx={{ mt: 0.75, overflowWrap: 'anywhere' }}
+        >
+          {run.activityTitle ?? agentName}
+        </Typography>
+        {run.activityTitle && (
+          <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.15 }}>
+            {agentName}
+          </Typography>
+        )}
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          component="p"
+          sx={{
+            mt: 0.2,
+            overflowWrap: 'anywhere',
+            fontFamily: foundationTokens.font.mono,
+            display: { xs: 'none', sm: 'block' },
+          }}
+        >
+          {run.runId}
+        </Typography>
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          gap={0.75}
+          sx={{ mt: 0.2, display: { xs: 'flex', sm: 'none' } }}
+        >
+          <Typography
+            component="span"
+            variant="caption"
+            color="text.secondary"
+            title={run.runId}
+            sx={{ fontFamily: foundationTokens.font.mono }}
+          >
+            {run.runId.slice(0, 8)}…
+          </Typography>
+          <Typography
+            component="time"
+            dateTime={run.completedAt ?? run.createdAt}
+            variant="caption"
+            color="text.secondary"
+          >
+            {formatDate(
+              run.completedAt ?? run.createdAt,
+              { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
+              locale
+            )}
+          </Typography>
         </Stack>
         <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.35 }}>
           {t('dwaionActivity.runMeta', {
@@ -467,25 +582,14 @@ function RunRow({
             latency: run.latencyMs,
           })}
         </Typography>
-        <Stack direction="row" spacing={0.6} alignItems="center" sx={{ mt: 0.35 }}>
+        <Stack direction="row" spacing={0.6} alignItems="center" flexWrap="wrap" sx={{ mt: 0.35 }}>
           <Bot size={13} aria-hidden="true" />
           <Typography variant="caption" color="text.secondary">
             {t(`dwaionActivity.outcomes.${run.policyOutcome}`)}
           </Typography>
         </Stack>
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flex: '0 0 auto' }}>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: { xs: 'none', sm: 'block' }, whiteSpace: 'nowrap' }}
-        >
-          {formatDate(
-            run.completedAt ?? run.createdAt,
-            { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
-            locale
-          )}
-        </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', flex: '0 0 auto' }}>
         <ChevronRight size={16} aria-hidden="true" />
       </Box>
     </Box>

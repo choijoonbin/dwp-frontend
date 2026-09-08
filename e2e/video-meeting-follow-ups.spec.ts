@@ -2,11 +2,63 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import type { WorkAssignmentTask } from '../libs/shared-utils/src/api/work-assignment-contracts';
 import { mockShellSession } from './support/shell-session';
+import { withMeetingDocumentCapture } from './support/meeting-document-capture';
 
 const id = '99000000-0000-4000-8000-000000000901';
 const reportId = '99000000-0000-4000-8000-000000000902';
 const path = '/meetings/follow-ups';
 const base = '/api/platform/v1/workspace/work-hub/assignments';
+
+async function expectPageReady(page: Page) {
+  await expect(
+    page.getByRole('progressbar', { name: /Loading page|페이지 불러오는 중/u })
+  ).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.locator('#dwp-main-content')).toBeVisible({ timeout: 15_000 });
+}
+
+async function expectFollowUpImage(page: Page, name: string) {
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+  const navigation = page.getByTestId('meeting-mobile-navigation');
+  if (await navigation.isVisible()) {
+    const bounds = await navigation.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(Math.abs(bounds!.y + bounds!.height - page.viewportSize()!.height)).toBeLessThanOrEqual(
+      1
+    );
+  }
+  // Real viewport evidence precedes document-only fixed-dock normalization.
+  await page.screenshot({
+    path: test.info().outputPath(name.replace('.png', '-viewport.png')),
+    animations: 'disabled',
+    caret: 'hide',
+  });
+  await withMeetingDocumentCapture(page, async () => {
+    // A visual difference must not suppress subsequent behavior or viewport checks.
+    await expect.soft(page).toHaveScreenshot(name, {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: true,
+      maxDiffPixelRatio: 0.002,
+    });
+  });
+}
+
+async function expectScopeTabVisible(page: Page, name: string) {
+  await expect
+    .poll(async () => {
+      const activeTab = await page.getByRole('tab', { name, exact: true }).boundingBox();
+      const tabViewport = await page.locator('.MuiTabs-scroller').boundingBox();
+      if (!activeTab || !tabViewport) return Number.POSITIVE_INFINITY;
+      return Math.max(
+        tabViewport.x - activeTab.x,
+        activeTab.x + activeTab.width - tabViewport.x - tabViewport.width
+      );
+    })
+    .toBeLessThanOrEqual(1);
+}
 const task: WorkAssignmentTask = {
   assignmentId: id,
   createdByUserId: 42,
@@ -325,6 +377,7 @@ async function setup(
     return fulfill(route, null, 501);
   });
   await page.goto(path);
+  await expectPageReady(page);
   const korean = options.locale === 'ko';
   await expect(
     page.getByRole('heading', {
@@ -373,12 +426,6 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
         .getByTestId('meeting-follow-up-detail')
         .getByRole('button', { name: 'Start', exact: true })
     ).toHaveCount(0);
-    await expect(page).toHaveScreenshot('meeting-u09-follow-ups.png', {
-      animations: 'disabled',
-      caret: 'hide',
-      fullPage: true,
-      maxDiffPixelRatio: 0.002,
-    });
     await command(page, 'Accept');
     await expect(page.getByText('Command application confirmed')).toBeVisible();
     expect(state.current.workState).toBe('OPEN');
@@ -463,7 +510,9 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     await expect(
       page.getByRole('heading', { name: 'Candidate review', exact: true })
     ).toBeVisible();
-    await expect(page.getByText('Published source', { exact: true })).toBeVisible();
+    await expect(
+      page.getByText('Meeting decision and action evidence', { exact: true })
+    ).toBeVisible();
     await expect(page.getByText('Expected impact', { exact: true })).toBeVisible();
     expect(state.createCommands).toHaveLength(0);
     expect(state.listCalls).toHaveLength(reads);
@@ -485,18 +534,10 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
 
     for (const width of widths) {
       await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+      await page.evaluate(() => document.fonts.ready);
       await expect(page.getByTestId('meeting-follow-up-candidates')).toBeVisible();
       if (width === 320) {
-        const activeTab = await page
-          .getByRole('tab', { name: 'AI candidates', exact: true })
-          .boundingBox();
-        const tabViewport = await page.locator('.MuiTabs-scroller').boundingBox();
-        expect(activeTab).not.toBeNull();
-        expect(tabViewport).not.toBeNull();
-        expect(activeTab!.x).toBeGreaterThanOrEqual(tabViewport!.x - 1);
-        expect(activeTab!.x + activeTab!.width).toBeLessThanOrEqual(
-          tabViewport!.x + tabViewport!.width + 1
-        );
+        await expectScopeTabVisible(page, 'AI candidates');
       }
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(
         false
@@ -511,17 +552,21 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
         window.scrollTo(0, 0);
         if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
       });
-      await expect(page).toHaveScreenshot(`meeting-u09-candidates-authority-blocked-${width}.png`, {
-        animations: 'disabled',
-        caret: 'hide',
-        fullPage: true,
-        maxDiffPixelRatio: 0.002,
-      });
+      await expectFollowUpImage(page, `meeting-u09-candidates-authority-blocked-${width}.png`);
       await page.getByRole('button', { name: 'Review candidate', exact: true }).click();
       await expect(
         page.getByRole('heading', { name: 'Candidate review', exact: true })
       ).toBeVisible();
-      await expect(page.getByText('Published source', { exact: true })).toBeVisible();
+      const review = page.getByTestId('meeting-follow-up-candidate-review');
+      await expect(
+        review.getByRole('heading', { name: 'Meeting decision and action evidence', exact: true })
+      ).toBeVisible();
+      await expect(
+        review.getByRole('button', { name: 'Preview evidence', exact: true })
+      ).toBeEnabled();
+      await expect(
+        review.getByRole('button', { name: 'View linked report', exact: true })
+      ).toBeEnabled();
       await expect(page.getByText('Expected impact', { exact: true })).toBeVisible();
       const reviewIssues = await new AxeBuilder({ page })
         .include('[data-testid="meeting-follow-up-candidate-review"]')
@@ -531,18 +576,30 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
           ({ impact }) => impact === 'critical' || impact === 'serious'
         )
       ).toEqual([]);
-      await expect(page).toHaveScreenshot(
-        `meeting-u09-candidate-review-authority-blocked-${width}.png`,
-        {
-          animations: 'disabled',
-          caret: 'hide',
-          fullPage: true,
-          maxDiffPixelRatio: 0.002,
-        }
+      await expectFollowUpImage(
+        page,
+        `meeting-u09-candidate-review-authority-blocked-${width}.png`
       );
       await page.getByRole('button', { name: 'Close review', exact: true }).click();
       await expect(page.getByTestId('meeting-follow-up-candidate-review')).toHaveCount(0);
     }
+    // Switching both ends of the strip must preserve the selected tab and keyboard focus.
+    const candidates = page.getByRole('tab', { name: 'AI candidates', exact: true });
+    const assigned = page.getByRole('tab', { name: 'Assigned to me', exact: true });
+    await candidates.focus();
+    await page.keyboard.press('Home');
+    await expect(assigned).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(assigned).toHaveAttribute('aria-selected', 'true');
+    await expectScopeTabVisible(page, 'Assigned to me');
+    await assigned.focus();
+    await page.keyboard.press('End');
+    await expect(candidates).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(candidates).toHaveAttribute('aria-selected', 'true');
+    await expectScopeTabVisible(page, 'AI candidates');
+    await expect(page.getByTestId('meeting-follow-up-candidates')).toBeVisible();
+    expect(state.commands).toHaveLength(0);
     expect(state.createCommands).toHaveLength(0);
   });
   test('preserves the approved Korean candidate hierarchy without implying creation authority', async ({
@@ -564,15 +621,7 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     expect(
       issues.violations.filter(({ impact }) => impact === 'critical' || impact === 'serious')
     ).toEqual([]);
-    await expect(page).toHaveScreenshot(
-      `meeting-u09-candidates-authority-blocked-ko-${width}.png`,
-      {
-        animations: 'disabled',
-        caret: 'hide',
-        fullPage: true,
-        maxDiffPixelRatio: 0.002,
-      }
-    );
+    await expectFollowUpImage(page, `meeting-u09-candidates-authority-blocked-ko-${width}.png`);
     expect(state.createCommands).toHaveLength(0);
   });
   test('keeps 320px dark mode readable with keyboard focus, no overflow, and no serious accessibility violations', async ({
@@ -604,5 +653,90 @@ test.describe('Meeting follow-up canonical Work consumer', () => {
     ).toEqual([]);
     await page.evaluate(() => scrollTo(0, 0));
     await page.screenshot({ path: testInfo.outputPath('follow-ups-320-dark.png'), fullPage: true });
+  });
+
+  test('previews exact published action evidence and removes it when source access is revoked', async ({
+    page,
+  }) => {
+    await setup(page);
+    const exactSource = `${id}/intelligence/reports/${reportId}`;
+    const evidenceText = 'Verify release capacity before the external announcement.';
+    let denied = false;
+    const sourceCalls: string[] = [];
+    await page.route(`**/api/meetings/v1/meetings/${exactSource}`, (route) => {
+      sourceCalls.push(new URL(route.request().url()).pathname);
+      return fulfill(
+        route,
+        denied
+          ? null
+          : {
+              reportId,
+              meetingId: id,
+              runId: '99000000-0000-4000-8000-000000000904',
+              state: 'PUBLISHED',
+              audience: 'MEETING_PARTICIPANTS',
+              schemaVersion: 'meeting-intelligence-v1',
+              retentionUntil: '2100-10-04T00:00:00Z',
+              legalHold: false,
+              publishedAt: '2026-09-04T01:30:00Z',
+              version: 7,
+              canCurrentViewerReview: false,
+              reviews: [],
+              analysis: {
+                executiveSummary: { text: 'Reviewed release outcome', citations: [] },
+                topics: [],
+                decisions: [],
+                openQuestions: [],
+                risks: [],
+                actionItems: [
+                  {
+                    text: evidenceText,
+                    citations: [
+                      { segmentId: 'segment-source-7', startMillis: 840000, endMillis: 858000 },
+                    ],
+                  },
+                ],
+                conversationClimate: { label: 'ALIGNED', signals: [], citations: [] },
+              },
+              followUpCandidates: [
+                {
+                  candidateId: '99000000-0000-4000-8000-000000000903',
+                  sourceVersion: 7,
+                  actionItemIndex: 0,
+                },
+              ],
+            },
+        denied ? 403 : 200
+      );
+    });
+    await page.goto(path);
+    await expectPageReady(page);
+    await page.getByTestId(`follow-up-row-${id}`).click();
+    const source = page.getByTestId('meeting-follow-up-source-evidence');
+    await expect(source).toBeVisible();
+    expect(sourceCalls).toEqual([]);
+    await source.getByRole('button', { name: 'Preview evidence', exact: true }).click();
+    await expect(source.getByText(evidenceText)).toBeVisible();
+    await expect(source.getByText('Transcript 14:00–14:18')).toBeVisible();
+    expect(sourceCalls).toEqual([`/api/meetings/v1/meetings/${exactSource}`]);
+    denied = true;
+    await source.getByRole('button', { name: 'Preview evidence', exact: true }).click();
+    await expect(source.getByText(evidenceText)).toHaveCount(0);
+    await expect(
+      source.getByText(
+        'Evidence from the linked published version is not currently available. Work permissions remain independent.'
+      )
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Accept', exact: true })).toBeEnabled();
+    expect(sourceCalls).toHaveLength(2);
+  });
+
+  test('legacy visual reference remains separate from the version-bound work journey', async ({
+    page,
+  }) => {
+    await setup(page, { sourceUnavailable: true });
+    await detail(page);
+    // A changed image requires review against Stitch; do not update it to make behavior tests pass.
+    await expectFollowUpImage(page, 'meeting-u09-follow-ups.png');
   });
 });

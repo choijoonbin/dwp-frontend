@@ -1,13 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import {
-  BriefcaseBusiness,
-  CalendarClock,
-  CheckSquare2,
-  FileCheck2,
-  Headphones,
-  ShieldCheck,
-} from 'lucide-react';
-import { ActionIconButton } from '@dwp-frontend/design-system';
+import { CalendarClock, Star, ArrowUpRight } from 'lucide-react';
+import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -17,18 +10,10 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { workHubUrgency, type WorkHubItem } from './work-hub-contracts';
+import { workHubUrgency, type WorkHubItem, type WorkHubActionKind } from './work-hub-contracts';
+import { workHubStatusLabelKey, workHubDisplayId } from './work-hub-presentation';
 
 const terminalLifecycle = new Set(['COMPLETED', 'CANCELLED', 'ARCHIVED']);
-
-function WorkSourceIcon({ item }: { item: WorkHubItem }) {
-  const common = { size: 18, strokeWidth: 1.8, 'aria-hidden': true } as const;
-  if (item.reference.sourceSystem === 'PERSONAL_TASK') return <CheckSquare2 {...common} />;
-  if (item.reference.sourceSystem === 'IDENTITY_GOVERNANCE') return <ShieldCheck {...common} />;
-  if (item.reference.sourceSystem.startsWith('APPROVAL')) return <FileCheck2 {...common} />;
-  if (item.reference.sourceSystem === 'SERVICE_REQUEST') return <Headphones {...common} />;
-  return <BriefcaseBusiness {...common} />;
-}
 
 export type WorkHubListProps = {
   items: readonly WorkHubItem[];
@@ -39,6 +24,12 @@ export type WorkHubListProps = {
   onCheck: (item: WorkHubItem, checked: boolean) => void;
   onOpen: (item: WorkHubItem) => void;
   onSchedule?: (item: WorkHubItem) => void;
+  inTodayPlan?: (item: WorkHubItem) => boolean;
+  onTogglePlan?: (item: WorkHubItem) => void;
+  onAction?: (item: WorkHubItem, kind: WorkHubActionKind) => void;
+  busy?: boolean;
+  density?: 'comfortable' | 'compact';
+  selectionMode?: boolean;
 };
 
 export function WorkHubList({
@@ -50,19 +41,42 @@ export function WorkHubList({
   onCheck,
   onOpen,
   onSchedule,
+  inTodayPlan,
+  onTogglePlan,
+  onAction,
+  busy = false,
+  density = 'comfortable',
+  selectionMode = true,
 }: WorkHubListProps) {
   const { t } = useTranslation('work');
   return (
     <Box
       component="ul"
       aria-label={t('workHub.queue.label')}
-      sx={{ m: 0, p: 0, listStyle: 'none' }}
+      sx={{
+        m: 0,
+        p: 0,
+        listStyle: 'none',
+        containerType: 'inline-size',
+        containerName: 'work-queue',
+      }}
     >
       {items.map((item) => {
         const selected = item.key === selectedKey;
         const urgency = workHubUrgency(item, now);
         const checkable = canCheck(item);
         const active = !terminalLifecycle.has(item.lifecycle);
+        const planned = inTodayPlan?.(item) ?? false;
+        const primaryAction = item.actions.find(
+          (action) =>
+            action.availability === 'AVAILABLE' &&
+            [
+              'PERSONAL_START',
+              'PERSONAL_COMPLETE',
+              'WORKSPACE_START',
+              'WORKSPACE_COMPLETE',
+            ].includes(action.kind)
+        );
         return (
           <Box
             component="li"
@@ -70,8 +84,10 @@ export function WorkHubList({
             data-work-key={item.key}
             sx={{
               position: 'relative',
-              borderBottom: 1,
+              border: 1,
               borderColor: 'divider',
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              mb: 0.75,
               bgcolor: selected ? 'action.selected' : 'background.paper',
               '&:hover': { bgcolor: selected ? 'action.selected' : 'action.hover' },
               '&::before': selected
@@ -90,15 +106,49 @@ export function WorkHubList({
               direction="row"
               gap={0.5}
               alignItems="flex-start"
-              sx={{ width: 1, minHeight: 104, pl: { xs: 0.75, sm: 1.25 }, pr: 1, py: 1.5 }}
+              sx={{
+                width: 1,
+                minHeight: density === 'compact' ? 76 : 92,
+                pl: { xs: 0.5, sm: 1 },
+                pr: 1,
+                py: density === 'compact' ? 0.75 : 1.25,
+              }}
             >
-              <Checkbox
-                checked={checkedKeys.has(item.key)}
-                disabled={!checkable}
-                inputProps={{ 'aria-label': t('workHub.queue.selectItem', { title: item.title }) }}
-                onChange={(event) => onCheck(item, event.target.checked)}
-                sx={{ mt: -0.75, minWidth: 44, minHeight: 44 }}
-              />
+              <Stack alignItems="center" sx={{ flexShrink: 0 }}>
+                {onTogglePlan && active && !selectionMode && (
+                  <ActionIconButton
+                    label={
+                      t(planned ? 'workHub.actions.removeFromPlan' : 'workHub.actions.addToPlan') +
+                      ': ' +
+                      item.title
+                    }
+                    tooltip={t(
+                      planned ? 'workHub.actions.removeFromPlan' : 'workHub.actions.addToPlan'
+                    )}
+                    aria-pressed={planned}
+                    onClick={() => onTogglePlan(item)}
+                    disabled={busy}
+                    sx={{
+                      color: planned ? 'primary.main' : 'text.secondary',
+                      width: 44,
+                      height: 44,
+                    }}
+                  >
+                    <Star size={18} fill={planned ? 'currentColor' : 'none'} />
+                  </ActionIconButton>
+                )}
+                {checkable && selectionMode && (
+                  <Checkbox
+                    checked={checkedKeys.has(item.key)}
+                    disabled={busy}
+                    inputProps={{
+                      'aria-label': t('workHub.queue.selectItem', { title: item.title }),
+                    }}
+                    onChange={(event) => onCheck(item, event.target.checked)}
+                    sx={{ mt: -0.75, minWidth: 44, minHeight: 44 }}
+                  />
+                )}
+              </Stack>
               <ButtonBase
                 data-work-open
                 aria-current={selected ? 'true' : undefined}
@@ -108,7 +158,7 @@ export function WorkHubList({
                   flex: 1,
                   minWidth: 0,
                   textAlign: 'left',
-                  borderRadius: 'shape.borderRadius',
+                  borderRadius: (theme) => `${theme.shape.borderRadius}px`,
                   p: 0.25,
                 }}
               >
@@ -119,40 +169,97 @@ export function WorkHubList({
                   sx={{ width: 1, minWidth: 0 }}
                 >
                   <Box
-                    aria-hidden="true"
                     sx={{
-                      width: 36,
-                      height: 36,
-                      flex: '0 0 auto',
-                      display: 'grid',
-                      placeItems: 'center',
-                      borderRadius: 'shape.borderRadius',
-                      bgcolor: 'var(--dwp-product-soft)',
-                      color: 'var(--dwp-product-accent)',
+                      minWidth: 0,
+                      flex: 1,
+                      ...(density === 'compact'
+                        ? {
+                            '@container work-queue (min-width: 540px)': {
+                              display: 'grid',
+                              gridTemplateColumns: '76px minmax(0,1fr) 100px',
+                              gap: '0 12px',
+                              alignItems: 'center',
+                              '& .work-row-identity': { gridColumn: 1, gridRow: '1 / 3', m: 0 },
+                              '& .work-row-title': { gridColumn: 2, gridRow: 1 },
+                              '& .work-row-responsibility': { gridColumn: 2, gridRow: 2 },
+                              '& .work-row-state': {
+                                gridColumn: 3,
+                                gridRow: '1 / 3',
+                                m: 0,
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                              },
+                              '& .work-source-inline': { display: 'none' },
+                              '& .work-source-column': { display: 'block' },
+                            },
+                          }
+                        : {}),
                     }}
                   >
-                    <WorkSourceIcon item={item} />
-                  </Box>
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Typography
+                      className="work-row-identity"
+                      variant="caption"
+                      color={selected ? 'primary.main' : 'text.secondary'}
+                      sx={{
+                        display: 'block',
+                        fontWeight: 'fontWeightBold',
+                        mb: 0.25,
+                        overflowWrap: 'anywhere',
+                      }}
+                    >
+                      <Box component="span" title={item.reference.sourceReference}>
+                        {workHubDisplayId(item)}
+                      </Box>
+                      <Box
+                        component="span"
+                        className="work-source-column"
+                        sx={{
+                          display: 'none',
+                          color: 'text.secondary',
+                          fontWeight: 'fontWeightRegular',
+                        }}
+                      >
+                        {t(`workHub.sources.${item.reference.sourceSystem}`, {
+                          defaultValue: t('workHub.sources.OTHER'),
+                        })}
+                      </Box>
+                    </Typography>
                     <Typography
                       component="span"
+                      className="work-row-title"
                       variant="subtitle2"
-                      sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
+                      sx={{
+                        minWidth: 0,
+                        overflowWrap: 'anywhere',
+                        fontWeight: selected ? 'fontWeightBold' : 'fontWeightMedium',
+                      }}
                     >
                       {item.title}
                     </Typography>
                     <Typography
                       variant="caption"
+                      className="work-row-responsibility"
                       color="text.secondary"
                       sx={{ display: 'block', mt: 0.25 }}
                     >
-                      {t(`workHub.sources.${item.reference.sourceSystem}`, {
-                        defaultValue: t('workHub.sources.OTHER'),
-                      })}
-                      {' · '}
+                      <Box component="span" className="work-source-inline">
+                        {t(`workHub.sources.${item.reference.sourceSystem}`, {
+                          defaultValue: t('workHub.sources.OTHER'),
+                        })}
+                        {' · '}
+                      </Box>
                       {t(`workHub.responsibility.${item.waitingFor}`)}
+                      {planned && (
+                        <Box
+                          component="span"
+                          sx={{ ml: 1, color: 'primary.main', fontWeight: 'fontWeightBold' }}
+                        >
+                          {t('workHub.scopes.TODAY')}
+                        </Box>
+                      )}
                     </Typography>
                     <Stack
+                      className="work-row-state"
                       direction="row"
                       gap={0.75}
                       alignItems="center"
@@ -162,7 +269,17 @@ export function WorkHubList({
                       <Chip
                         size="small"
                         variant="outlined"
-                        label={t(`workHub.lifecycle.${item.lifecycle}`)}
+                        label={t(workHubStatusLabelKey(item))}
+                        sx={
+                          item.lifecycle === 'COMPLETED'
+                            ? (theme) => ({
+                                color:
+                                  theme.palette.mode === 'dark'
+                                    ? theme.palette.success.light
+                                    : theme.palette.success.dark,
+                              })
+                            : undefined
+                        }
                         color={
                           item.lifecycle === 'COMPLETED'
                             ? 'success'
@@ -173,7 +290,7 @@ export function WorkHubList({
                                 : 'info'
                         }
                       />
-                      {active && (
+                      {active && ['OVERDUE', 'DUE_SOON'].includes(urgency) && (
                         <Chip
                           size="small"
                           variant="outlined"
@@ -196,17 +313,48 @@ export function WorkHubList({
                   </Box>
                 </Stack>
               </ButtonBase>
-              {onSchedule && !terminalLifecycle.has(item.lifecycle) && (
-                <ActionIconButton
-                  label={t('workHub.actions.scheduleNamed', { title: item.title })}
-                  tooltip={t('workHub.actions.schedule')}
-                  size="small"
-                  onClick={() => onSchedule(item)}
-                  sx={{ minWidth: 44, minHeight: 44, mt: -0.75 }}
-                >
-                  <CalendarClock size={17} aria-hidden="true" />
-                </ActionIconButton>
-              )}
+              <Stack
+                gap={0.5}
+                alignItems="flex-end"
+                sx={{ flexShrink: 0, maxWidth: { xs: 92, sm: 110 } }}
+              >
+                {primaryAction && onAction ? (
+                  <ActionButton
+                    size="small"
+                    intent={selected ? 'primary' : 'secondary'}
+                    disabled={busy}
+                    onClick={() => onAction(item, primaryAction.kind)}
+                    sx={{ minHeight: 44, minWidth: 64 }}
+                  >
+                    {t(`workHub.actions.${primaryAction.kind}`)}
+                  </ActionButton>
+                ) : (
+                  <ActionButton
+                    size="small"
+                    intent={selected ? 'primary' : 'quiet'}
+                    onClick={() => onOpen(item)}
+                    endIcon={item.sourceRoute ? <ArrowUpRight size={14} /> : undefined}
+                    sx={{ minHeight: 44, minWidth: 64 }}
+                  >
+                    {t(
+                      item.reference.sourceSystem === 'SERVICE_REQUEST' && item.waitingFor === 'ME'
+                        ? 'workHub.queue.respond'
+                        : 'workHub.queue.review'
+                    )}
+                  </ActionButton>
+                )}
+                {onSchedule && density !== 'compact' && !terminalLifecycle.has(item.lifecycle) && (
+                  <ActionIconButton
+                    label={t('workHub.actions.scheduleNamed', { title: item.title })}
+                    tooltip={t('workHub.actions.schedule')}
+                    size="small"
+                    onClick={() => onSchedule(item)}
+                    sx={{ minWidth: 44, minHeight: 44, mt: -0.75 }}
+                  >
+                    <CalendarClock size={17} aria-hidden="true" />
+                  </ActionIconButton>
+                )}
+              </Stack>
             </Stack>
           </Box>
         );

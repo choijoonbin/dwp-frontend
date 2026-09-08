@@ -1,18 +1,30 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { Bot, CircleHelp, Hand, ListChecks, MessageSquareText, UsersRound, X } from 'lucide-react';
+import { Bot, Hand, ListChecks, MessageSquareText, UsersRound, X } from 'lucide-react';
 import { InlineFeedback } from '@dwp-frontend/design-system';
 import { getVideoMeetingPreparation } from '@dwp-frontend/shared-utils/api/video-meeting-preparation-api';
+import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { MeetingLiveFacilitationLauncher } from './meeting-live-facilitation';
+import { MeetingLiveFacilitation } from './meeting-live-facilitation';
 import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
+import { meetingInsetSurface } from './meeting-visual-system';
 
 export type MeetingRoomPanel = 'agenda' | 'chat' | 'floor' | 'participants' | 'ai' | null;
+
+export function canOpenMeetingRoomPanel(
+  panel: MeetingRoomPanel,
+  permissions: VideoMeetingEffectivePermissions
+): boolean {
+  if (panel === 'participants') return permissions.participantList;
+  if (panel === 'chat') return permissions.chat;
+  if (panel === 'floor') return permissions.handRaise;
+  return panel === 'agenda' || panel === 'ai';
+}
 
 const RAIL_TABS = [
   { key: 'agenda', icon: ListChecks },
@@ -24,55 +36,59 @@ const RAIL_TABS = [
 
 export function MeetingRoomRailNavigation({
   activePanel,
+  permissions,
   onSelect,
 }: {
   activePanel: Exclude<MeetingRoomPanel, null>;
+  permissions: VideoMeetingEffectivePermissions;
   onSelect: (panel: Exclude<MeetingRoomPanel, null>) => void;
 }) {
   const { t } = useTranslation('meetings');
   return (
     <div className="dwp-meeting-room-rail__tabs" role="tablist" aria-label={t('room.rail.label')}>
-      {RAIL_TABS.map(({ key, icon: Icon }) => (
-        <button
-          key={key}
-          type="button"
-          role="tab"
-          aria-selected={activePanel === key}
-          aria-controls={
-            key === 'chat' || key === 'floor'
-              ? 'meeting-collaboration-panel'
-              : key === 'participants'
-                ? 'meeting-participants-panel'
-                : `meeting-room-${key}-panel`
-          }
-          tabIndex={activePanel === key ? 0 : -1}
-          onClick={() => onSelect(key)}
-          onKeyDown={(event) => {
-            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-            event.preventDefault();
-            const tabs = Array.from(
-              event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
-                '[role="tab"]'
-              ) ?? []
-            );
-            const currentIndex = tabs.indexOf(event.currentTarget);
-            const nextIndex =
-              event.key === 'Home'
-                ? 0
-                : event.key === 'End'
-                  ? tabs.length - 1
-                  : (currentIndex + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) %
-                    tabs.length;
-            tabs[nextIndex]?.focus();
-            tabs[nextIndex]?.click();
-          }}
-        >
-          <Icon size={16} aria-hidden="true" />
-          <Typography component="span" variant="caption" fontWeight="fontWeightBold">
-            {t(`room.rail.tabs.${key}`)}
-          </Typography>
-        </button>
-      ))}
+      {RAIL_TABS.filter(({ key }) => canOpenMeetingRoomPanel(key, permissions)).map(
+        ({ key, icon: Icon }) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={activePanel === key}
+            aria-controls={
+              key === 'chat' || key === 'floor'
+                ? 'meeting-collaboration-panel'
+                : key === 'participants'
+                  ? 'meeting-participants-panel'
+                  : `meeting-room-${key}-panel`
+            }
+            tabIndex={activePanel === key ? 0 : -1}
+            onClick={() => onSelect(key)}
+            onKeyDown={(event) => {
+              if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+              event.preventDefault();
+              const tabs = Array.from(
+                event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                  '[role="tab"]'
+                ) ?? []
+              );
+              const currentIndex = tabs.indexOf(event.currentTarget);
+              const nextIndex =
+                event.key === 'Home'
+                  ? 0
+                  : event.key === 'End'
+                    ? tabs.length - 1
+                    : (currentIndex + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) %
+                      tabs.length;
+              tabs[nextIndex]?.focus();
+              tabs[nextIndex]?.click();
+            }}
+          >
+            <Icon size={16} aria-hidden="true" />
+            <Typography component="span" variant="caption" fontWeight="fontWeightBold">
+              {t(`room.rail.tabs.${key}`)}
+            </Typography>
+          </button>
+        )
+      )}
     </div>
   );
 }
@@ -90,7 +106,7 @@ export function MeetingRoomContextPanel({
   const panelRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const preparation = useQuery({
-    queryKey: ['meetings', meetingId, 'preparation', 'room-rail'],
+    queryKey: ['meetings', meetingId, 'preparation', 'facilitation'],
     queryFn: ({ signal }) => getVideoMeetingPreparation(meetingId, signal),
     enabled: kind === 'agenda',
     staleTime: 15_000,
@@ -136,29 +152,33 @@ export function MeetingRoomContextPanel({
       {kind === 'agenda' ? (
         <Box className="dwp-meeting-room-context__body">
           {preparation.isLoading ? (
-            <Typography role="status" variant="body2" color="grey.300">
+            <Typography role="status" variant="body2" color="text.secondary">
               {t('room.rail.agenda.loading')}
             </Typography>
           ) : preparation.isError || !preparation.data ? (
             <InlineFeedback severity="warning">{t('room.rail.agenda.unavailable')}</InlineFeedback>
           ) : preparation.data.agendaItems.length === 0 ? (
-            <Typography variant="body2" color="grey.300">
+            <Typography variant="body2" color="text.secondary">
               {t('room.rail.agenda.empty')}
             </Typography>
           ) : (
-            <Stack component="ol" gap={0} sx={{ m: 0, p: 0, listStyle: 'none' }}>
+            <Stack component="ol" gap={1} sx={{ m: 0, mb: 2, p: 0, listStyle: 'none' }}>
               {preparation.data.agendaItems.map((item, index) => (
                 <Box
                   component="li"
                   key={item.itemId}
-                  sx={{ py: 1.5, borderTop: index ? 1 : 0, borderColor: 'divider' }}
+                  sx={(theme) => ({ ...meetingInsetSurface(theme), p: 1.5 })}
                 >
                   <Stack direction="row" justifyContent="space-between" gap={1}>
                     <Typography variant="body2" fontWeight="fontWeightBold">
                       {String(index + 1).padStart(2, '0')} · {item.title}
                     </Typography>
                     {item.plannedMinutes != null && (
-                      <Typography variant="caption" color="grey.300" sx={{ flex: '0 0 auto' }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ flex: '0 0 auto' }}
+                      >
                         {t('units.minutes', { count: item.plannedMinutes })}
                       </Typography>
                     )}
@@ -166,7 +186,7 @@ export function MeetingRoomContextPanel({
                   {item.objective && (
                     <Typography
                       variant="caption"
-                      color="grey.300"
+                      color="text.secondary"
                       sx={{ display: 'block', mt: 0.5 }}
                     >
                       {item.objective}
@@ -175,7 +195,7 @@ export function MeetingRoomContextPanel({
                   {item.ownerDisplayName && (
                     <Typography
                       variant="caption"
-                      color="grey.300"
+                      color="text.secondary"
                       sx={{ display: 'block', mt: 0.5 }}
                     >
                       {t('room.rail.agenda.owner', { name: item.ownerDisplayName })}
@@ -185,50 +205,18 @@ export function MeetingRoomContextPanel({
               ))}
             </Stack>
           )}
-          <CapabilityBoundary meetingId={meetingId} />
+          <MeetingLiveFacilitation meetingId={meetingId} onClose={onClose} embedded />
         </Box>
       ) : (
         <Box className="dwp-meeting-room-context__body">
           <InlineFeedback severity="info" title={t('room.rail.ai.unavailableTitle')}>
             <Typography variant="body2">{t('room.rail.ai.unavailableDescription')}</Typography>
           </InlineFeedback>
-          <Typography variant="caption" color="grey.300" sx={{ display: 'block', mt: 2 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
             {t('room.rail.ai.boundary')}
           </Typography>
         </Box>
       )}
     </aside>
-  );
-}
-
-function CapabilityBoundary({ meetingId }: { meetingId: string }) {
-  const { t } = useTranslation('meetings');
-  return (
-    <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
-      <Typography variant="subtitle2" fontWeight="fontWeightBold">
-        {t('room.rail.agenda.interactiveTitle')}
-      </Typography>
-      <Stack gap={1} sx={{ mt: 1 }}>
-        {(['facilitation', 'qa', 'polls'] as const).map((key) => (
-          <Stack key={key} direction="row" alignItems="flex-start" gap={1}>
-            <CircleHelp size={16} aria-hidden="true" style={{ marginTop: 2, flex: '0 0 auto' }} />
-            <Box>
-              <Typography variant="body2" fontWeight="fontWeightMedium">
-                {t(`room.rail.agenda.capabilities.${key}.label`)}
-              </Typography>
-              <Typography variant="caption" color="grey.300">
-                {t(`room.rail.agenda.capabilities.${key}.description`)}
-              </Typography>
-            </Box>
-          </Stack>
-        ))}
-      </Stack>
-      <Box sx={{ mt: 1.5, '& .MuiButton-root': { width: '100%', justifyContent: 'center' } }}>
-        <MeetingLiveFacilitationLauncher
-          meetingId={meetingId}
-          label={t('room.rail.agenda.openFacilitation')}
-        />
-      </Box>
-    </Box>
   );
 }

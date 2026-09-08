@@ -1,0 +1,336 @@
+{
+  "date": "2026-09-07",
+  "source": "Work final mobile accessibility audit",
+  "captures": [
+    {
+      "path": "quality-final/work-mobile-accessibility--0e890-and-restores-the-More-focus-chromium/navigation-390-en.png",
+      "bytes": 54476,
+      "sha256": "ff92c4e9b9ccd25913e0c6b3f04c281980038afdc47884df4e01518a66c87e66"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--0e890-and-restores-the-More-focus-mobile/navigation-390-en.png",
+      "bytes": 252750,
+      "sha256": "bbc353dc209bb260cf24f1b25b2bb6614e67dab3c58bdc7b8b081aea4dbd4939"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--2130c-tore-the-triggering-control-chromium/M1-preview-focus-return.png",
+      "bytes": 62485,
+      "sha256": "e2a818dcf1596eb3e7cf6f44a9d342b688cebf1b2bad8dd998e25adb46d7e0f7"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--2130c-tore-the-triggering-control-mobile/M1-preview-focus-return.png",
+      "bytes": 280977,
+      "sha256": "5ffccd36e63560a8dc63f66a711718d0130fab6ecd23e58b510d6ebbf2b84654"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--21bc4-and-restores-the-More-focus-chromium/navigation-320-ko.png",
+      "bytes": 50971,
+      "sha256": "92e6c225d24db0714a153d12ec407530495367c051f3936eb2d4c7a314efe8a1"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--21bc4-and-restores-the-More-focus-mobile/navigation-320-ko.png",
+      "bytes": 226818,
+      "sha256": "33502a324edf577f57d58f11dba9a83a1e74288817a5a99261ba3f4139467ef8"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-chromium/work-200-reflow-forced-colors.png",
+      "bytes": 95925,
+      "sha256": "fedc94e5f7aaf8f4b1ce557d5b1f82bbcadbd6c9c292af16f06cd1594e17f1ff"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-mobile/work-200-text-forced-colors.png",
+      "bytes": 301054,
+      "sha256": "048ef860df68dca1e5168daebc78853db1d94bf06ba7b58376cd5759f9fe2ee6"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-mobile/work-200-text-last-action.png",
+      "bytes": 261732,
+      "sha256": "2d0896e16ec2e8793df12a26932a5d7a033bf6bbf5b57731aebff7d202632d50"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--59d4e-and-restores-the-More-focus-chromium/navigation-320-en.png",
+      "bytes": 52443,
+      "sha256": "6ca0139ecc52f91376141e8afe419cea84dc6cf1fb89d2189503fedf508b4b68"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--59d4e-and-restores-the-More-focus-mobile/navigation-320-en.png",
+      "bytes": 237879,
+      "sha256": "25ae91cf205b1cb02a1b4f599e6fd82c15bbd3ef8e81821a3a53db5e876b13ee"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--6bcba-and-restores-the-More-focus-chromium/navigation-390-ko.png",
+      "bytes": 53532,
+      "sha256": "9b883329c50a390c19eff3a5a0acf5bc110c15500d4def291c1dac6812c1faf1"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--6bcba-and-restores-the-More-focus-mobile/navigation-390-ko.png",
+      "bytes": 243685,
+      "sha256": "05759130122395d292b7ae8c695acb4a06d939443ac56ce250732959f5d72b15"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--bfe49--the-resulting-work-control-chromium/today-plan-keyboard-focus.png",
+      "bytes": 48648,
+      "sha256": "4e16ddc43246c783f9952a76e9d79b1a1e6b0f9db9c407c6288cb9d13ebb274e"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--bfe49--the-resulting-work-control-mobile/today-plan-keyboard-focus.png",
+      "bytes": 227010,
+      "sha256": "27d1da68a36acdada419c96e5d8e45f31609de6fbeccb88eeaf4d660307487a8"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--e78d2-ithout-losing-the-M1-reason-chromium/M1-keyboard-navigation-restored.png",
+      "bytes": 58260,
+      "sha256": "66222a3315b8d9aead81b0e26bed61d7fbae8e3690a4a08cc38a753e8ddd04a8"
+    },
+    {
+      "path": "quality-final/work-mobile-accessibility--e78d2-ithout-losing-the-M1-reason-mobile/M1-keyboard-navigation-restored.png",
+      "bytes": 257986,
+      "sha256": "6cc54f83dbfb765d37f7b0f4b2da1eb378547780a95cdddcb4c9c97537da9b1b"
+    },
+    {
+      "path": "regression/work-access-review-respons-00719-dence-in-dark-high-contrast-chromium/03-1280-dark-contrast.png",
+      "bytes": 228113,
+      "sha256": "eddccd9c06ebd71b9dac25d03b12b39c190169f1543847a86f51369f6d14e396"
+    },
+    {
+      "path": "regression/work-access-review-respons-500d3-ins-operable-at-200-percent-chromium/M1-390-text-200-preview.png",
+      "bytes": 166661,
+      "sha256": "46ce1a6aff6db438f30e614512ff59754904410ab48037e85f480c5920d8c6ec"
+    },
+    {
+      "path": "regression/work-access-review-respons-64a27-dence-in-dark-high-contrast-chromium/03-1440-dark-contrast.png",
+      "bytes": 233027,
+      "sha256": "2e5c452fd55bbe3027bf834c16594f2b45380e4d94bf9ca5324e10711c957e84"
+    },
+    {
+      "path": "regression/work-access-review-respons-cb979-idence-and-keyboard-changes-chromium/M1-390-compact.png",
+      "bytes": 95318,
+      "sha256": "ded46f37169bebba91c303f0ade1055a18826d69bb298920222a48af270c7b7f"
+    },
+    {
+      "path": "regression/work-access-review-respons-cb979-idence-and-keyboard-changes-chromium/M1-390-keyboard.png",
+      "bytes": 35149,
+      "sha256": "5c96421d45b4bf1b221282011fc37340dfd431d1e88a527f84aa0cf1e70dc8a0"
+    },
+    {
+      "path": "regression/work-access-review-respons-f8f84-idence-and-keyboard-changes-chromium/M1-320-compact.png",
+      "bytes": 87705,
+      "sha256": "c872955969b59fc34290c13d3e1ca643af38fe23bca3a0f11ebf5c257c429e47"
+    },
+    {
+      "path": "regression/work-access-review-respons-f8f84-idence-and-keyboard-changes-chromium/M1-320-keyboard.png",
+      "bytes": 34141,
+      "sha256": "ff815a05163ab9e6b99e3c3495bda6cab75615b36302b381b5ae81cf03104b1d"
+    },
+    {
+      "path": "regression/work-hub-foundation-320px--1bc22-he-input-viewport-contracts-chromium/attachments/personal-task-keyboard-320-2defaada41a90073f4853112ca57b724e5e684c3.png",
+      "bytes": 23879,
+      "sha256": "4fc193a655387528d812d894180a27008f7857223c228d7ba3a5e062bebfce7c"
+    },
+    {
+      "path": "regression/work-hub-foundation-320px--1bc22-he-input-viewport-contracts-chromium/personal-task-keyboard-320.png",
+      "bytes": 23879,
+      "sha256": "4fc193a655387528d812d894180a27008f7857223c228d7ba3a5e062bebfce7c"
+    },
+    {
+      "path": "regression/work-hub-foundation-keyboa-bcbba--completes-a-personal-start-chromium/attachments/keyboard-visible-focus-fb76150fc8703b31b60d3328ab42efec37dd7ded.png",
+      "bytes": 168147,
+      "sha256": "03af009de3462ce23f714e0a190a89906459606ab0c2c4348b32bdc3067b85ef"
+    },
+    {
+      "path": "regression/work-hub-foundation-keyboa-bcbba--completes-a-personal-start-chromium/keyboard-visible-focus.png",
+      "bytes": 168147,
+      "sha256": "03af009de3462ce23f714e0a190a89906459606ab0c2c4348b32bdc3067b85ef"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/320-long-labels-full.png",
+      "bytes": 88401,
+      "sha256": "d07a8ffd3d0e3d3d6f05f09cac92ff64d7cccae78e9a09fd0c076f9b514e1e58"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/320-long-labels.png",
+      "bytes": 47527,
+      "sha256": "86c2ee35c7c44a1877c910782d9a36fe206cc1ee45d5ec58ec666ef15a2d4dcb"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/attachments/320-long-labels-8570d99f5100a084058be02d9d26d61b7b4ad9bb.png",
+      "bytes": 47527,
+      "sha256": "86c2ee35c7c44a1877c910782d9a36fe206cc1ee45d5ec58ec666ef15a2d4dcb"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-31fbf-s-usable-at-320-long-labels-chromium/attachments/320-long-labels-full-f4eca3dc74d7d72d7127ba5f570ff7fef1589400.png",
+      "bytes": 88401,
+      "sha256": "d07a8ffd3d0e3d3d6f05f09cac92ff64d7cccae78e9a09fd0c076f9b514e1e58"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/1440-light-full.png",
+      "bytes": 206384,
+      "sha256": "6f8a5dc2726f29fcea17cee73bd437ad71789030d0cb17d83d3babfe9f8b285b"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/1440-light.png",
+      "bytes": 186329,
+      "sha256": "24e19a027a6147060b694c6161040c2eaf3cffc716328f80b809abbeebadb224"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/attachments/1440-light-ef53e476704053390f25e1880738af478216e97b.png",
+      "bytes": 186329,
+      "sha256": "24e19a027a6147060b694c6161040c2eaf3cffc716328f80b809abbeebadb224"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-6e3e2-emains-usable-at-1440-light-chromium/attachments/1440-light-full-94f667223c82157faebdec775ac0f019bba8829e.png",
+      "bytes": 206384,
+      "sha256": "6f8a5dc2726f29fcea17cee73bd437ad71789030d0cb17d83d3babfe9f8b285b"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/390-light-full.png",
+      "bytes": 79030,
+      "sha256": "a9d06bbeb5b072a4b351d3dddc2d8b546f44e3013985b39487793711e4550277"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/390-light.png",
+      "bytes": 58836,
+      "sha256": "a109bb7922f51949953ee1b01e1920b549c9de17cb1d7374e269d88743b53dc8"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/attachments/390-light-6220db00a47928434dba497f5ff520e4d5a1c263.png",
+      "bytes": 58836,
+      "sha256": "a109bb7922f51949953ee1b01e1920b549c9de17cb1d7374e269d88743b53dc8"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-98927-remains-usable-at-390-light-chromium/attachments/390-light-full-11820d78773d9c5bc232a946c20669553c609407.png",
+      "bytes": 79030,
+      "sha256": "a9d06bbeb5b072a4b351d3dddc2d8b546f44e3013985b39487793711e4550277"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/1280-dark-full.png",
+      "bytes": 202959,
+      "sha256": "f97516df05b53511c0775b5c120cb88d5b95f3d2c7a81f1987b61485a134496c"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/1280-dark.png",
+      "bytes": 172643,
+      "sha256": "fcaffe56ac25aa2ef1e38f5ecf4329207b61c8884084bbef138f8f4137553cfc"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/attachments/1280-dark-bffaa94750101827a7b42beb7dab2687ddf1899b.png",
+      "bytes": 172643,
+      "sha256": "fcaffe56ac25aa2ef1e38f5ecf4329207b61c8884084bbef138f8f4137553cfc"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-9f80c-remains-usable-at-1280-dark-chromium/attachments/1280-dark-full-5c03551bdc83846453a5566fa41b4e783c99a366.png",
+      "bytes": 202959,
+      "sha256": "f97516df05b53511c0775b5c120cb88d5b95f3d2c7a81f1987b61485a134496c"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/1280-forced-colors-full.png",
+      "bytes": 166857,
+      "sha256": "4165a3f12e28d79d7472781e720b6ea69c4dff1ad725d2c8938e2fb17ac86b8b"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/1280-forced-colors.png",
+      "bytes": 140860,
+      "sha256": "d0a7aca16e7e5edbc00467740bfc751880df899e4a6e7c8b95d8b915a7655c2e"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/attachments/1280-forced-colors-e88a6841ab775ccee6d89038b7db44e896bc4208.png",
+      "bytes": 140860,
+      "sha256": "d0a7aca16e7e5edbc00467740bfc751880df899e4a6e7c8b95d8b915a7655c2e"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-fa324-sable-at-1280-forced-colors-chromium/attachments/1280-forced-colors-full-2747e1294d2fb9d7a9e325ee74508b5cc77f39ab.png",
+      "bytes": 166857,
+      "sha256": "4165a3f12e28d79d7472781e720b6ea69c4dff1ad725d2c8938e2fb17ac86b8b"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/1280-200-percent-full.png",
+      "bytes": 192328,
+      "sha256": "4d12baf02cb218ede1d108e371c39338c51213a4de5245a4c12ed32179ad8e2a"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/1280-200-percent.png",
+      "bytes": 88130,
+      "sha256": "ec9a50dff7c216274c3c4bb84e796281ac78f97e859670cf426b3348def8a46e"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/attachments/1280-200-percent-488688200a49777b31247262ed64a6fb2e733117.png",
+      "bytes": 88130,
+      "sha256": "ec9a50dff7c216274c3c4bb84e796281ac78f97e859670cf426b3348def8a46e"
+    },
+    {
+      "path": "regression/work-hub-foundation-unifie-ff32e--usable-at-1280-200-percent-chromium/attachments/1280-200-percent-full-e2b75801193ead5eac7b97452567bd632f55f822.png",
+      "bytes": 192328,
+      "sha256": "4d12baf02cb218ede1d108e371c39338c51213a4de5245a4c12ed32179ad8e2a"
+    },
+    {
+      "path": "regression/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/320-dark-full.png",
+      "bytes": 80938,
+      "sha256": "8a94b62434414ceecad3b6b94588f29ef5a222d4447e160455076ee9e1c915e7"
+    },
+    {
+      "path": "regression/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/320-dark.png",
+      "bytes": 42468,
+      "sha256": "bdf766cec594df099bdbbf30a05d11f9ebdef3ae534addd14dc5628e2d967104"
+    },
+    {
+      "path": "regression/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/attachments/320-dark-28ebfd339fee4e07b746ae7b90d48de0aa321e5f.png",
+      "bytes": 42468,
+      "sha256": "bdf766cec594df099bdbbf30a05d11f9ebdef3ae534addd14dc5628e2d967104"
+    },
+    {
+      "path": "regression/work-hub-foundation-unified-queue-remains-usable-at-320-dark-chromium/attachments/320-dark-full-a074836dd63098b67506f601d93d446654c87435.png",
+      "bytes": 80938,
+      "sha256": "8a94b62434414ceecad3b6b94588f29ef5a222d4447e160455076ee9e1c915e7"
+    },
+    {
+      "path": "last-zoom/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-chromium/work-200-reflow-forced-colors.png",
+      "bytes": 95925,
+      "sha256": "fedc94e5f7aaf8f4b1ce557d5b1f82bbcadbd6c9c292af16f06cd1594e17f1ff"
+    },
+    {
+      "path": "last-zoom/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-chromium/work-200-reflow-last-action.png",
+      "bytes": 76433,
+      "sha256": "983034b11933f94916fb7cc13a4d98b42aa81061f1c96a5deafe1ac0547e95ff"
+    },
+    {
+      "path": "last-zoom/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-mobile/work-200-text-forced-colors.png",
+      "bytes": 301054,
+      "sha256": "048ef860df68dca1e5168daebc78853db1d94bf06ba7b58376cd5759f9fe2ee6"
+    },
+    {
+      "path": "last-zoom/work-mobile-accessibility--2f09b-in-visible-keyboard-actions-mobile/work-200-text-last-action.png",
+      "bytes": 261732,
+      "sha256": "2d0896e16ec2e8793df12a26932a5d7a033bf6bbf5b57731aebff7d202632d50"
+    },
+    {
+      "path": "last-zoom/work-native-zoom-accessibi-7a4f3-s-clear-of-fixed-navigation-chromium/native-zoom200-M1-1280.png",
+      "bytes": 91830,
+      "sha256": "a9e9e881fbd623dafda55c23a17bc78a508a4eeb3798bb99eafa4fa9b548a74c"
+    },
+    {
+      "path": "last-zoom/work-native-zoom-accessibi-7a4f3-s-clear-of-fixed-navigation-chromium/native-zoom200-M1-640.png",
+      "bytes": 85534,
+      "sha256": "8c2c470de007b00add89c6d0bb6021fb98a1034f752b6d39e16cb5ef46398551"
+    },
+    {
+      "path": "last-zoom/work-native-zoom-accessibi-7a4f3-s-clear-of-fixed-navigation-chromium/native-zoom200-personal-1280.png",
+      "bytes": 106180,
+      "sha256": "fc7766c3321ca8e6b96c4d17a7401545c273f1886bf18b22957c6abc1b3f650b"
+    },
+    {
+      "path": "last-zoom/work-native-zoom-accessibi-7a4f3-s-clear-of-fixed-navigation-chromium/native-zoom200-personal-640.png",
+      "bytes": 87417,
+      "sha256": "470e883069c4507ff1dc91bcc177d95c7ddf537fde95fee2546f921e104c9951"
+    },
+    {
+      "path": "last-zoom/work-native-zoom-accessibi-7a4f3-s-clear-of-fixed-navigation-chromium/native-zoom200-today-plan-1280.png",
+      "bytes": 118731,
+      "sha256": "ca53878d3c7ac54318ab9113d5564c1fbce03000cbb4d0d28e5a5839412b4bc6"
+    },
+    {
+      "path": "last-zoom/work-native-zoom-accessibi-7a4f3-s-clear-of-fixed-navigation-chromium/native-zoom200-today-plan-640.png",
+      "bytes": 84928,
+      "sha256": "bda478fa56cfde255c848ad3fd109ee771508f4875c26bcb2995d46bb26c2d58"
+    }
+  ]
+}

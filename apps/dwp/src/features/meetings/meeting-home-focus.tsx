@@ -1,33 +1,27 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  ClipboardList,
-  Circle,
-  Copy,
-  LockKeyhole,
-  MicOff,
-  ShieldCheck,
-  UsersRound,
-  Video,
-  VideoOff,
-} from 'lucide-react';
-import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
-import { useToast } from '@dwp-frontend/shared-utils';
+import { useQuery } from '@tanstack/react-query';
+import { Copy, FileText, LockKeyhole, MicOff, ShieldCheck, Video, VideoOff } from 'lucide-react';
+import { ActionButton } from '@dwp-frontend/design-system';
+import { useAuth, useToast } from '@dwp-frontend/shared-utils';
 import type { VideoMeetingSummary } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { getVideoMeetingPreparation } from '@dwp-frontend/shared-utils/api/video-meeting-preparation-api';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import {
   homeAgendaItems,
-  homeMeetingDate,
   homeMeetingMinutesUntil,
   homeMeetingPath,
+  homeMeetingTime,
 } from './meeting-home-model';
 import { meetingPreparationPath } from './meeting-context-routing';
-import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
+import { meetingShape } from './meeting-visual-system';
+import { meetingHomeCard, meetingHomeInset } from './meeting-home-presentation';
 
 export function MeetingHomeFocus({
   meeting,
@@ -43,16 +37,54 @@ export function MeetingHomeFocus({
   onStart: () => void;
 }) {
   const { t, i18n } = useTranslation('meetings');
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
+  const preparation = useQuery({
+    queryKey: [
+      'meetings',
+      'home',
+      'preparation',
+      user?.identityPlane,
+      user?.tenantId,
+      user?.userId,
+      meeting?.meetingId,
+    ],
+    queryFn: ({ signal }) => getVideoMeetingPreparation(meeting!.meetingId, signal),
+    enabled:
+      isAuthenticated &&
+      user?.identityPlane === 'TENANT' &&
+      Boolean(user?.userId && meeting?.meetingId),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: false,
+    gcTime: 0,
+    meta: { accessSensitive: true },
+  });
+  const current = preparation.isError || preparation.isRefetchError ? undefined : preparation.data;
+  const agenda =
+    current?.agendaItems ??
+    (preparation.isError
+      ? []
+      : homeAgendaItems(meeting?.agenda).map((title, index) => ({
+          itemId: String(index),
+          title,
+          plannedMinutes: null,
+          ownerDisplayName: null,
+        })));
+  const responses = current?.invitationResponses ?? [];
+  const participants = responses.length ? responses : (meeting?.participants ?? []);
   const minutes = meeting ? homeMeetingMinutesUntil(meeting, now) : null;
   const live = meeting?.lifecycleState === 'LIVE';
-  const agendaItems = homeAgendaItems(meeting?.agenda);
-  const visibleParticipants = (meeting?.participants ?? []).slice(0, 3);
-  const remainingParticipants = Math.max(
-    0,
-    (meeting?.attendeeCount ?? 0) - visibleParticipants.length
-  );
+  const materialCount = current?.materials.filter(
+    (item) => Date.parse(item.retentionUntil) > now
+  ).length;
+  const prepared =
+    current && current.myPreparation.agendaVersion === current.agendaVersion
+      ? current.myPreparation.preparedAgendaItemIds.filter((id) =>
+          agenda.some((item) => item.itemId === id)
+        ).length
+      : 0;
   const copyLink = async () => {
     if (!meeting) return;
     try {
@@ -70,45 +102,56 @@ export function MeetingHomeFocus({
       aria-label={t('home.command.label')}
       data-testid="meeting-command-primary"
       sx={(theme) => ({
-        ...meetingSurface(theme, {
-          tone: live ? 'success' : 'primary',
-          elevated: true,
-        }),
+        ...meetingHomeCard(theme),
         position: 'relative',
         overflow: 'hidden',
         minWidth: 0,
-        borderTopWidth: 1,
-        p: { xs: 1.5, md: 2.5 },
+        p: { xs: 1.75, md: 3 },
+        borderRadius: meetingShape.spotlight,
         '&::before': {
           content: '""',
           position: 'absolute',
-          inset: 0,
-          bottom: 'auto',
+          top: 0,
+          left: 0,
+          right: 0,
           height: 3,
-          backgroundColor: live ? theme.palette.success.main : theme.palette.primary.main,
-          pointerEvents: 'none',
+          background:
+            'linear-gradient(90deg, ' +
+            theme.palette.primary.main +
+            ', ' +
+            theme.palette.success.main +
+            ')',
         },
         '@media (forced-colors: active)': {
           border: '1px solid CanvasText',
-          background: 'Canvas',
-          boxShadow: 'none',
-          '&::before': { backgroundColor: 'CanvasText' },
+          '&::before': { background: 'CanvasText' },
         },
       })}
     >
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 264px' },
-          gap: { xs: 2, lg: 3 },
-          alignItems: 'stretch',
+          gridTemplateColumns: { xs: 'minmax(0,1fr)', md: 'minmax(0,1fr) 260px' },
+          gap: { xs: 1.5, md: 3 },
+          alignItems: 'center',
         }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: { xs: 1, sm: 1.5 } }}>
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            gap={0.75}
+            sx={(theme) => ({
+              mb: 1.5,
+              '& .MuiChip-root': { borderRadius: meetingShape.spotlight },
+              '& .MuiChip-colorPrimary': { bgcolor: alpha(theme.palette.primary.main, 0.055) },
+              '& .MuiChip-colorSuccess': { bgcolor: alpha(theme.palette.success.main, 0.055) },
+              '& .MuiChip-colorError': { bgcolor: alpha(theme.palette.error.main, 0.055) },
+            })}
+          >
             <Chip
               size="small"
-              color={live ? 'success' : 'primary'}
+              color={live ? 'success' : minutes !== null && minutes <= 15 ? 'error' : 'primary'}
               variant="outlined"
               label={
                 meeting
@@ -121,6 +164,8 @@ export function MeetingHomeFocus({
             {meeting && (
               <Chip
                 size="small"
+                color="primary"
+                variant="outlined"
                 label={t(
                   meeting.canHost ? 'home.workspace.hostRole' : 'home.workspace.participantRole'
                 )}
@@ -135,280 +180,283 @@ export function MeetingHomeFocus({
               />
             )}
             {meeting?.aiNotesAvailable && (
-              <Chip size="small" color="success" label={t('home.workspace.aiNotesAvailable')} />
+              <Chip
+                size="small"
+                color="success"
+                variant="outlined"
+                label={t('home.workspace.aiNotesAvailable')}
+              />
             )}
           </Stack>
-          <Typography component="h2" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
+          <Typography
+            component="h2"
+            variant="h5"
+            sx={{
+              fontSize: { xs: 'h5.fontSize', md: 'h3.fontSize' },
+              fontWeight: 'fontWeightBold',
+              overflowWrap: 'anywhere',
+            }}
+          >
             {meeting?.title ?? t('home.command.clearTitle')}
           </Typography>
           {meeting ? (
             <>
-              <Stack
-                direction="row"
-                flexWrap="wrap"
-                columnGap={2}
-                rowGap={1}
-                alignItems="center"
-                sx={{ mt: 1.5 }}
-              >
+              <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1} sx={{ mt: 1.5 }}>
+                {participants.length > 0 && (
+                  <AvatarGroup
+                    total={Math.max(meeting.attendeeCount, participants.length)}
+                    max={4}
+                    aria-hidden="true"
+                    sx={{
+                      '& .MuiAvatar-root': {
+                        width: 28,
+                        height: 28,
+                        fontSize: 'caption.fontSize',
+                        borderColor: 'background.paper',
+                      },
+                    }}
+                  >
+                    {participants.slice(0, 3).map((person, index) => (
+                      <Avatar
+                        key={person.participantId}
+                        alt={person.displayName}
+                        sx={{
+                          bgcolor:
+                            index === 2
+                              ? 'success.main'
+                              : index === 1
+                                ? 'primary.dark'
+                                : 'primary.main',
+                          color: 'primary.contrastText',
+                        }}
+                      >
+                        {person.displayName.trim().slice(0, 1)}
+                      </Avatar>
+                    ))}
+                  </AvatarGroup>
+                )}
+                <Typography variant="caption" color="text.secondary">
+                  {t('units.participants', { count: meeting.attendeeCount })}
+                  {current &&
+                    ' · ' +
+                      t('home.design.responses', {
+                        accepted: current.invitationCounts.accepted,
+                        pending: current.invitationCounts.pending,
+                      })}
+                </Typography>
+                <Stack direction="row" alignItems="center" gap={0.5} sx={{ color: 'success.main' }}>
+                  <ShieldCheck size={13} aria-hidden="true" />
+                  <Typography variant="caption" color="text.secondary">
+                    {t('home.focus.hostedBy', { name: meeting.organizerName })}
+                    {meeting.waitingRoomEnabled && ' · ' + t('home.workspace.waitingRoom')}
+                  </Typography>
+                </Stack>
                 <Typography
-                  variant="body2"
+                  variant="caption"
                   color="text.secondary"
                   sx={{ fontVariantNumeric: 'tabular-nums' }}
                 >
-                  {meeting.durationMinutes > 0 ? (
-                    <>
-                      {homeMeetingDate(meeting.startsAt, i18n.language, timeZone, true)} –{' '}
-                      {homeMeetingDate(meeting.endsAt, i18n.language, timeZone, true)}
-                      {' · '}
-                      {t('units.minutes', { count: meeting.durationMinutes })}
-                    </>
-                  ) : (
-                    t('home.workspace.noScheduledTime')
-                  )}
+                  {meeting.durationMinutes > 0
+                    ? homeMeetingTime(meeting.startsAt, i18n.language, timeZone) +
+                      ' – ' +
+                      homeMeetingTime(meeting.endsAt, i18n.language, timeZone)
+                    : t('home.workspace.noScheduledTime')}
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
-                  {visibleParticipants.length > 0 ? (
-                    <AvatarGroup
-                      max={4}
-                      aria-hidden="true"
-                      sx={(theme) => ({
-                        mr: 1,
-                        '& .MuiAvatar-root': {
-                          width: 28,
-                          height: 28,
-                          bgcolor: 'primary.main',
-                          color: 'primary.contrastText',
-                          borderColor: 'background.paper',
-                          fontSize: theme.typography.caption.fontSize,
-                          fontWeight: theme.typography.fontWeightBold,
-                        },
-                      })}
-                    >
-                      {visibleParticipants.map((participant) => (
-                        <Avatar key={participant.participantId} alt={participant.displayName}>
-                          {participant.displayName.trim().slice(0, 1).toLocaleUpperCase() || '?'}
-                        </Avatar>
-                      ))}
-                      {remainingParticipants > 0 && (
-                        <Avatar
-                          alt={t('home.workspace.moreParticipants', {
-                            count: remainingParticipants,
-                          })}
-                        >
-                          +{remainingParticipants}
-                        </Avatar>
-                      )}
-                    </AvatarGroup>
-                  ) : (
-                    <UsersRound size={15} aria-hidden="true" />
-                  )}
-                  <Typography variant="body2" sx={{ ml: visibleParticipants.length ? 0 : 0.75 }}>
-                    {t('units.participants', { count: meeting.attendeeCount })}
-                  </Typography>
-                </Box>
-              </Stack>
-              <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
-                <ShieldCheck size={14} aria-hidden="true" />
-                <Typography variant="caption" color="text.secondary">
-                  {t('home.focus.hostedBy', { name: meeting.organizerName })}
-                </Typography>
-                {meeting.waitingRoomEnabled && (
-                  <Typography variant="caption" color="text.secondary">
-                    {t('home.workspace.waitingRoom')}
-                  </Typography>
-                )}
               </Stack>
               <Box
-                sx={(theme) => ({
-                  ...meetingInsetSurface(theme, 'primary'),
-                  mt: 2,
-                  p: { xs: 1.25, sm: 1.5 },
-                })}
+                data-testid="meeting-home-agenda"
+                sx={(theme) => ({ ...meetingHomeInset(theme), mt: 2, p: { xs: 1.25, md: 1.75 } })}
               >
                 <Stack
                   direction="row"
-                  gap={0.75}
-                  alignItems="center"
                   justifyContent="space-between"
-                  flexWrap="wrap"
+                  alignItems="center"
+                  gap={1}
                   sx={{ mb: 1 }}
                 >
-                  <Stack direction="row" gap={0.75} alignItems="center">
-                    <ClipboardList size={15} aria-hidden="true" />
-                    <Typography variant="subtitle2">{t('home.workspace.agenda')}</Typography>
-                  </Stack>
                   <Typography variant="caption" color="text.secondary">
-                    {agendaItems.length
-                      ? t('home.workspace.agendaSummary', {
-                          count: agendaItems.length,
-                          minutes: meeting.durationMinutes,
-                        })
-                      : t('home.workspace.agendaCount', { count: 0 })}
+                    {t('home.workspace.agenda')} ·{' '}
+                    {t('units.minutes', { count: meeting.durationMinutes })}
+                  </Typography>
+                  <Typography variant="caption" color="primary.main">
+                    {current
+                      ? t('home.design.prepared', { completed: prepared, total: agenda.length })
+                      : t('home.workspace.agendaCount', { count: agenda.length })}
                   </Typography>
                 </Stack>
-                {agendaItems.length ? (
+                {agenda.length ? (
                   <Box
                     component="ol"
-                    tabIndex={0}
                     aria-label={t('home.workspace.agenda')}
                     sx={{
                       display: 'grid',
-                      gridTemplateColumns: {
-                        xs: 'minmax(0, 1fr)',
-                        sm: 'repeat(auto-fit, minmax(180px, 1fr))',
-                      },
+                      gridTemplateColumns: { xs: 'minmax(0,1fr)', md: 'repeat(3,minmax(0,1fr))' },
                       gap: 1,
                       p: 0,
                       m: 0,
                       listStyle: 'none',
                     }}
                   >
-                    {agendaItems.map((item, index) => (
+                    {agenda.slice(0, 3).map((item, index) => (
                       <Box
                         component="li"
-                        key={`${index}-${item}`}
+                        key={item.itemId}
                         sx={(theme) => ({
-                          display: 'grid',
-                          gridTemplateColumns: 'auto minmax(0, 1fr)',
-                          gap: 1,
-                          alignItems: 'start',
+                          ...meetingHomeCard(theme),
+                          borderRadius: meetingShape.inset,
+                          boxShadow: 'none',
+                          p: 1,
                           minWidth: 0,
-                          p: { xs: 0.75, sm: 1 },
-                          border: 1,
-                          borderColor: 'divider',
-                          borderRadius: foundationTokens.radius.control + 'px',
-                          bgcolor: 'background.paper',
-                          '&::before': {
-                            content: `'${String(index + 1).padStart(2, '0')}'`,
-                            display: 'grid',
-                            placeItems: 'center',
-                            minWidth: 26,
-                            minHeight: 22,
-                            px: 0.5,
-                            borderRadius: foundationTokens.radius.compact + 'px',
-                            bgcolor: 'action.selected',
-                            color: 'primary.main',
-                            fontSize: theme.typography.caption.fontSize,
-                            fontWeight: theme.typography.fontWeightBold,
-                            fontVariantNumeric: 'tabular-nums',
-                          },
                         })}
                       >
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            typography: { xs: 'caption', sm: 'body2' },
-                            overflowWrap: 'anywhere',
-                          }}
-                        >
-                          {item}
-                        </Typography>
+                        <Stack direction="row" alignItems="flex-start" gap={0.75}>
+                          <Box
+                            component="span"
+                            sx={{
+                              px: 0.5,
+                              borderRadius: meetingShape.inset,
+                              bgcolor: 'action.selected',
+                              color: 'primary.main',
+                              typography: 'caption',
+                              fontWeight: 'fontWeightBold',
+                            }}
+                          >
+                            {String(index + 1).padStart(2, '0')}
+                          </Box>
+                          <Box
+                            sx={{
+                              minWidth: 0,
+                              flex: 1,
+                              display: { xs: 'flex', md: 'block' },
+                              justifyContent: 'space-between',
+                              gap: 0.75,
+                            }}
+                          >
+                            <Typography
+                              variant="caption"
+                              sx={{ fontWeight: 'fontWeightBold', overflowWrap: 'anywhere' }}
+                            >
+                              {item.title}
+                            </Typography>
+                            {(item.plannedMinutes || item.ownerDisplayName) && (
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                component="p"
+                                sx={{ flexShrink: 0 }}
+                              >
+                                {item.plannedMinutes &&
+                                  t('units.minutes', { count: item.plannedMinutes })}
+                                {item.ownerDisplayName && (
+                                  <Box
+                                    component="span"
+                                    sx={{ display: { xs: 'none', md: 'inline' } }}
+                                  >
+                                    {' · ' + item.ownerDisplayName}
+                                  </Box>
+                                )}
+                              </Typography>
+                            )}
+                          </Box>
+                        </Stack>
                       </Box>
                     ))}
                   </Box>
                 ) : (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ overflowWrap: 'anywhere' }}
-                  >
-                    {t('home.workspace.noAgenda')}
+                  <Typography variant="caption" color="text.secondary">
+                    {t(
+                      preparation.isError
+                        ? 'home.design.preparationUnavailable'
+                        : 'home.workspace.noAgenda'
+                    )}
                   </Typography>
+                )}
+                {agenda.length > 3 && (
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    onClick={() => navigate(meetingPreparationPath(meeting.meetingId))}
+                  >
+                    {t('home.design.allAgenda', { count: agenda.length })}
+                  </ActionButton>
                 )}
               </Box>
             </>
           ) : (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5, maxWidth: 600 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
               {t('home.command.clearDescription')}
             </Typography>
           )}
         </Box>
         <Stack
           gap={1.25}
-          sx={{
+          sx={(theme) => ({
             minWidth: 0,
-            alignSelf: 'stretch',
-            justifyContent: 'center',
-            borderLeft: { xs: 0, lg: 1 },
-            borderTop: { xs: 1, lg: 0 },
-            borderColor: 'divider',
-            pt: { xs: 2, lg: 0 },
-            pl: { xs: 0, lg: 3 },
-            '@media (forced-colors: active)': {
-              borderColor: 'CanvasText',
-            },
-          }}
+            pl: { md: 3 },
+            borderLeft: { md: '1px solid ' + alpha(theme.palette.primary.main, 0.1) },
+          })}
         >
-          <Box
-            sx={(theme) => ({
-              ...meetingInsetSurface(theme, live ? 'success' : 'neutral'),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 1,
-              px: 1.25,
-              py: 1,
-            })}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1}
+            sx={(theme) => ({ ...meetingHomeInset(theme), px: 1.25, py: 0.75 })}
           >
-            <Stack direction="row" alignItems="center" gap={0.75} sx={{ color: 'success.main' }}>
-              <Circle size={8} fill="currentColor" aria-hidden="true" />
-              <Typography variant="caption" color="text.secondary">
-                {t('home.workspace.privatePreview')}
-              </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('home.workspace.privatePreview')}
+            </Typography>
+            <Stack direction="row" gap={0.5} color="text.secondary">
+              <MicOff size={14} aria-hidden="true" />
+              <VideoOff size={14} aria-hidden="true" />
             </Stack>
-            <Stack direction="row" alignItems="center" gap={0.75} color="text.secondary">
-              <MicOff size={15} aria-hidden="true" />
-              <VideoOff size={15} aria-hidden="true" />
-            </Stack>
-          </Box>
+          </Stack>
           <ActionButton
             intent="primary"
             startIcon={<Video size={17} aria-hidden="true" />}
             disabled={disabled}
-            sx={{ minHeight: 48 }}
+            sx={{ minHeight: 48, borderRadius: meetingShape.card }}
             onClick={() => (meeting ? navigate(homeMeetingPath(meeting)) : onStart())}
           >
-            {meeting
-              ? live
-                ? t('actions.join')
-                : t('home.focus.prepare')
-              : t('home.instant.action')}
+            {meeting ? t('home.design.enterAndCheck') : t('home.instant.action')}
           </ActionButton>
           {meeting && (
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', lg: '1fr' },
-                gap: 1,
-              }}
-            >
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 1 }}>
               <ActionButton
-                intent="quiet"
-                startIcon={<ClipboardList size={15} aria-hidden="true" />}
+                intent="secondary"
+                size="small"
+                startIcon={<FileText size={14} aria-hidden="true" />}
                 onClick={() => navigate(meetingPreparationPath(meeting.meetingId))}
-                sx={{ minHeight: 44, minWidth: 0, whiteSpace: 'normal' }}
+                sx={{
+                  minHeight: 40,
+                  px: 0.75,
+                  minWidth: 0,
+                  whiteSpace: 'normal',
+                  borderRadius: meetingShape.control,
+                }}
               >
-                {t('context.openPreparation')}
+                {materialCount === undefined
+                  ? t('home.design.materials')
+                  : t('home.design.materialCount', { count: materialCount })}
               </ActionButton>
               <ActionButton
                 intent="secondary"
+                size="small"
                 disabled={disabled || !meeting.meetingCode}
-                startIcon={<Copy size={15} aria-hidden="true" />}
+                startIcon={<Copy size={14} aria-hidden="true" />}
                 onClick={() => void copyLink()}
-                sx={{ minHeight: 44, minWidth: 0, whiteSpace: 'normal' }}
+                sx={{
+                  minHeight: 40,
+                  px: 0.75,
+                  minWidth: 0,
+                  whiteSpace: 'normal',
+                  borderRadius: meetingShape.control,
+                }}
               >
-                {t('home.workspace.copyLink')}
+                {t('home.design.copyLink')}
               </ActionButton>
             </Box>
           )}
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            {t('home.workspace.entryHint')}
-          </Typography>
         </Stack>
       </Box>
     </Box>

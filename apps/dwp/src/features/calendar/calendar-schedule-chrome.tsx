@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {
+  ArrowLeft,
   CalendarDays,
   CalendarPlus,
   Command,
@@ -28,11 +29,13 @@ export function CalendarScheduleChrome({
   hasExplicitScheduleState,
   view,
   savedViewConfiguration,
+  returnTarget,
   onOpenCommands,
   onCreate,
   onToggleSources,
   onOpenSources,
   onApplySavedView,
+  onReturn,
 }: {
   canCreate: boolean;
   sourcesAvailable: boolean;
@@ -42,11 +45,13 @@ export function CalendarScheduleChrome({
   hasExplicitScheduleState: boolean;
   view: CalendarScheduleView;
   savedViewConfiguration: Record<string, unknown>;
+  returnTarget: string | null;
   onOpenCommands: () => void;
   onCreate: (type: 'MEETING' | 'FOCUS') => void;
   onToggleSources: () => void;
   onOpenSources: () => void;
   onApplySavedView: (configuration: Record<string, unknown>) => void;
+  onReturn: () => void;
 }) {
   const { t } = useTranslation('calendar');
   const commandShortcut =
@@ -106,6 +111,11 @@ export function CalendarScheduleChrome({
       {t('actions.newEvent')}
     </ActionButton>
   ) : null;
+  const returnControl = returnTarget ? (
+    <ActionButton intent="quiet" startIcon={<ArrowLeft size={17} />} onClick={onReturn}>
+      {t('actions.returnToWork')}
+    </ActionButton>
+  ) : null;
 
   return (
     <>
@@ -116,6 +126,7 @@ export function CalendarScheduleChrome({
         description={t('schedule.description')}
         actions={
           <>
+            {returnControl}
             {commandControl}
             {createControl}
           </>

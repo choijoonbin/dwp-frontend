@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, extname, relative, resolve } from 'node:path';
@@ -8,6 +7,11 @@ import {
   MEETING_APPROVED_FRAMES,
   MEETING_STITCH_EXPORT,
 } from './support/meeting-approved-frame-contract';
+import { MEETING_STITCH_SOURCE_OVERRIDES } from './support/meeting-approved-source-revisions';
+import {
+  meetingSourceBinding,
+  readVerifiedMeetingSource,
+} from './support/meeting-approved-source-loader';
 
 const repositoryRoot = process.cwd();
 const evidenceRoot = resolve(repositoryRoot, 'e2e');
@@ -16,7 +20,20 @@ const runtimeMetadataOwners = new Set([
   'e2e/video-meeting-approved-frame-regression.spec.ts',
   'e2e/video-meeting-admin-intelligence-visual.spec.ts',
 ]);
-const fixedMobileNavigationFrames = new Set(['U01-M', 'U02-M', 'U07-M', 'U08-M', 'U09-M', 'U12-M']);
+const fixedMobileNavigationFrames = new Set([
+  'U01-M',
+  'U02-M',
+  'U07-M',
+  'U08-M',
+  'U09-M',
+  'U10-M',
+  'U11-M',
+]);
+const fixedMobileSaveDockFrames = new Set(['U12-M']);
+const fixedMobileOverlayFrames = new Set([
+  ...fixedMobileNavigationFrames,
+  ...fixedMobileSaveDockFrames,
+]);
 const implementationSnapshots = readdirSync(evidenceRoot, { recursive: true }).filter(
   (name): name is string => typeof name === 'string' && name.endsWith('.png')
 );
@@ -39,6 +56,92 @@ function snapshotCallStem(screenshotName: string) {
 }
 
 test.describe('approved Stitch frame traceability', () => {
+  test('the latest U14-M version replaces only its active source and preserves the immutable earlier export', () => {
+    const revised = MEETING_APPROVED_FRAMES.filter((frame) => frame.sourceRevision);
+    expect(revised.map((frame) => frame.id)).toEqual(['U14-M']);
+    const frame = revised[0];
+    const revision = MEETING_STITCH_SOURCE_OVERRIDES['U14-M'];
+    expect(frame.stitchNodeId).toBe(revision.stitchNodeId);
+    expect(frame.sourceArtifact).toEqual(revision.sourceArtifact);
+    expect(frame.approvedViewport).toEqual({ width: 390, height: 942 });
+    expect(frame.sourceArtifactHistory).toHaveLength(1);
+    expect(frame.sourceArtifactHistory?.[0]).toMatchObject({
+      screenSha256: revision.supersedes.screenSha256,
+      codeSha256: revision.supersedes.codeSha256,
+      raster: revision.supersedes.raster,
+    });
+    expect(MEETING_STITCH_EXPORT.sha256).toBe(revision.supersedes.archiveSha256);
+    expect(revision.layout).toEqual({
+      sectionSelectors: ['01', '02', '03', '04'],
+      initiallyExpanded: ['01'],
+      initiallyCollapsed: ['02', '03', '04'],
+    });
+    expect(frame.implementationGolden.path).not.toContain('source');
+    expect(frame.implementationGolden.sha256).not.toBe(frame.sourceArtifact.screenSha256);
+  });
+
+  test('the current U14-M ZIP verifies exact code, PNG raster and selected-section source structure', () => {
+    const frame = MEETING_APPROVED_FRAMES.find(({ id }) => id === 'U14-M')!;
+    const binding = meetingSourceBinding(frame);
+    const path = process.env[binding.archiveEnvironmentVariable];
+    test.skip(
+      !path,
+      'Explicit latest U14-M source archive was not supplied; provenance is not claimed verified.'
+    );
+    const source = readVerifiedMeetingSource(binding, path!);
+    expect(source.raster).toEqual({ width: 390, height: 942 });
+    const code = source.code.toString('utf8');
+    expect(code).toContain('Section Tabs Navigation');
+    expect(code.match(/Active Expanded Card/gu)).toHaveLength(1);
+    expect(code.match(/Compact Accordion Card/gu)).toHaveLength(3);
+    for (const label of ['01. 접근·보안', '02. 녹화·STT', '03. AI 거버넌스', '04. 보존·파기'])
+      expect(code).toContain(label);
+  });
+
+  test('source verification rejects altered code, raster and substituted older U14-M archive', () => {
+    const frame = MEETING_APPROVED_FRAMES.find(({ id }) => id === 'U14-M')!;
+    const binding = meetingSourceBinding(frame);
+    const path = process.env[binding.archiveEnvironmentVariable];
+    test.skip(
+      !path || !localStitchExport,
+      'Both immutable source versions are required for substitution regression.'
+    );
+    expect(() => readVerifiedMeetingSource(binding, localStitchExport!)).toThrow(
+      /archive checksum mismatch/u
+    );
+    expect(() =>
+      readVerifiedMeetingSource(
+        { ...binding, sourceArtifact: { ...binding.sourceArtifact, codeSha256: '0'.repeat(64) } },
+        path!
+      )
+    ).toThrow(/code checksum mismatch/u);
+    expect(() =>
+      readVerifiedMeetingSource(
+        { ...binding, sourceArtifact: { ...binding.sourceArtifact, screenSha256: '0'.repeat(64) } },
+        path!
+      )
+    ).toThrow(/screen checksum mismatch/u);
+    expect(() =>
+      readVerifiedMeetingSource(
+        {
+          ...binding,
+          sourceArtifact: { ...binding.sourceArtifact, raster: { width: 390, height: 943 } },
+        },
+        path!
+      )
+    ).toThrow(/raster mismatch/u);
+    const previous = frame.sourceArtifactHistory![0];
+    const priorBinding = meetingSourceBinding({
+      ...frame,
+      sourceRevision: undefined,
+      sourceArtifact: previous,
+    });
+    expect(readVerifiedMeetingSource(priorBinding, localStitchExport!).raster).toEqual({
+      width: 498,
+      height: 1600,
+    });
+  });
+
   test('the contract contains exactly one desktop and mobile entry for every U01-U15 screen', () => {
     expect(MEETING_APPROVED_FRAMES).toHaveLength(30);
     expect(new Set(MEETING_APPROVED_FRAMES.map(({ id }) => id)).size).toBe(30);
@@ -61,7 +164,7 @@ test.describe('approved Stitch frame traceability', () => {
     const actualFixedOverlayFrames = MEETING_APPROVED_FRAMES.filter(
       ({ implementationGolden }) => implementationGolden.clearance.fixedOverlaySelector
     ).map(({ id }) => id);
-    expect(actualFixedOverlayFrames.sort()).toEqual([...fixedMobileNavigationFrames].sort());
+    expect(actualFixedOverlayFrames.sort()).toEqual([...fixedMobileOverlayFrames].sort());
     const goldenPaths = MEETING_APPROVED_FRAMES.map(({ implementationGolden }) =>
       implementationGolden.path.slice('e2e/'.length)
     );
@@ -155,13 +258,19 @@ test.describe('approved Stitch frame traceability', () => {
       expect(Boolean(clearance.fixedOverlaySelector)).toBe(
         Boolean(clearance.fixedOverlayContentSelector)
       );
-      expect(Boolean(clearance.fixedOverlaySelector)).toBe(
-        fixedMobileNavigationFrames.has(frame.id)
-      );
-      if (clearance.fixedOverlaySelector) {
+      expect(Boolean(clearance.fixedOverlaySelector)).toBe(fixedMobileOverlayFrames.has(frame.id));
+      if (fixedMobileNavigationFrames.has(frame.id)) {
         expect(clearance.fixedOverlaySelector).toBe('[data-testid="meeting-mobile-navigation"]');
         expect(clearance.fixedOverlayContentSelector).toBe(
           '[data-testid="meeting-mobile-navigation-content"]'
+        );
+      }
+      if (fixedMobileSaveDockFrames.has(frame.id)) {
+        expect(clearance.fixedOverlaySelector).toBe(
+          '[data-testid="meeting-preferences-save-dock"]'
+        );
+        expect(clearance.fixedOverlayContentSelector).toBe(
+          '[data-testid="meeting-preferences-workspace"]'
         );
       }
       if (frame.screen === 'U06') {
@@ -176,23 +285,15 @@ test.describe('approved Stitch frame traceability', () => {
       }
 
       let approvedSourceVerified = false;
-      if (localStitchExport) {
-        const entryRoot =
-          'stitch_enterprise_grid_calendar_application/' + frame.sourceArtifact.exportDirectory;
-        const approvedScreen = execFileSync('unzip', [
-          '-p',
-          localStitchExport,
-          `${entryRoot}/screen.png`,
-        ]);
-        const approvedCode = execFileSync('unzip', [
-          '-p',
-          localStitchExport,
-          `${entryRoot}/code.html`,
-        ]);
-        expect(sha256(approvedScreen)).toBe(frame.sourceArtifact.screenSha256);
-        expect(sha256(approvedCode)).toBe(frame.sourceArtifact.codeSha256);
-        expect(approvedScreen.readUInt32BE(16)).toBe(frame.sourceArtifact.raster.width);
-        expect(approvedScreen.readUInt32BE(20)).toBe(frame.sourceArtifact.raster.height);
+      const sourceBinding = meetingSourceBinding(frame);
+      const sourceArchivePath = process.env[sourceBinding.archiveEnvironmentVariable];
+      if (localStitchExport && frame.sourceRevision)
+        expect(
+          sourceArchivePath,
+          `${frame.id}: current revision requires ${sourceBinding.archiveEnvironmentVariable}`
+        ).toBeTruthy();
+      if (sourceArchivePath) {
+        readVerifiedMeetingSource(sourceBinding, sourceArchivePath);
         approvedSourceVerified = true;
       }
 
@@ -251,7 +352,12 @@ test.describe('approved Stitch frame traceability', () => {
             {
               ...frame,
               approvedSource: {
-                archive: MEETING_STITCH_EXPORT,
+                archive: sourceBinding.archive,
+                archivePath: sourceArchivePath ?? null,
+                archiveEntries: {
+                  screen: sourceBinding.screenEntry,
+                  code: sourceBinding.codeEntry,
+                },
                 classification: 'USER_PROVIDED_STITCH_EXPORT',
                 locallyVerifiedFromImmutableArchive: approvedSourceVerified,
                 screenSha256: frame.sourceArtifact.screenSha256,

@@ -1,0 +1,194 @@
+{
+  "recordedAt": "2026-09-07T03:30:16.553451+00:00",
+  "scope": {
+    "approvedReferenceFrames": 18,
+    "desktop": 11,
+    "mobile": 7,
+    "workMenuDestinations": 6
+  },
+  "frontendUnit": {
+    "status": "PASS",
+    "tests": 153,
+    "files": 31,
+    "log": "logs/frontend-unit.txt"
+  },
+  "additionalSourceAuthorityUnit": {
+    "status": "PASS",
+    "tests": 9,
+    "files": 1,
+    "rollout": "111",
+    "log": "logs/source-authority-111-unit.txt"
+  },
+  "browser": {
+    "status": "PASS_AFTER_TARGETED_FIX",
+    "selectedChromiumCases": 54,
+    "firstCombinedRun": {
+      "passed": 53,
+      "failed": 1,
+      "log": "logs/browser-combined.txt"
+    },
+    "resolvedFailure": {
+      "cause": "Personal edit spec still selected the previous service fixture title after the design fixture changed to VPN.",
+      "fix": "Shared serviceDesignTitle is used in both fixture and selector.",
+      "recheckPassed": 1,
+      "log": "logs/browser-personal-recheck.txt"
+    },
+    "afterFinalPlanLayoutChange": {
+      "passed": 1,
+      "log": "logs/browser-plan-layout-recheck.txt"
+    },
+    "separateSourceDecisionsRun": {
+      "passed": 24,
+      "desktopCases": 12,
+      "mobileCases": 12,
+      "overlap": "The 12 desktop cases also belong to the combined 54."
+    },
+    "legacyCommandCenter": {
+      "passed": 2,
+      "artifactDirectory": "/tmp/work-command-center-current"
+    },
+    "widths": [
+      1440,
+      1280,
+      390,
+      320
+    ],
+    "cssZoomPercent": 200,
+    "accessibility": {
+      "automatedSeriousCriticalViolations": 0,
+      "scope": "Covered journeys only; keyboard, dark and forced-colors checks. Not a claim covering every assistive device."
+    },
+    "data": "Controlled API and AI fixtures in the real React application, including serialized source commands and authorization failures."
+  },
+  "backend": {
+    "status": "PASS",
+    "tests": 143,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "../../2026-09-07-service-response-activation.md",
+    "scope": "Service response domain/security/PostgreSQL, personal Work, Calendar regression, Auth immutable contracts and Gateway route generation."
+  },
+  "staticChecks": {
+    "typescript": {
+      "status": "PASS",
+      "log": "logs/final-typecheck.txt",
+      "exitCode": 0,
+      "lastRecheck": "After final Flow service-entry change. First check observed two concurrent Meetings issues. The nullable ticket check was already corrected by its owner; root removed only an unused Clock3 import and the complete typecheck passed."
+    },
+    "scopedEslint": {
+      "status": "PASS",
+      "log": "logs/eslint.txt"
+    },
+    "sourceSize": {
+      "status": "PASS",
+      "productionFiles": 1720,
+      "log": "logs/source-size.txt"
+    },
+    "featureApiBoundariesAndRouteComposition": {
+      "status": "PASS",
+      "log": "logs/initial-static-gates.txt"
+    },
+    "canonicalAuthorizationAndClosureAndFixturesAndI18nAndDisplayDictionary": {
+      "status": "PASS",
+      "log": "logs/static-contract-gates.txt"
+    },
+    "designSystemRepositoryGate": {
+      "status": "FAIL_UNRATCHETED_REMOVALS_OUTSIDE_WORK",
+      "remainingMessage": "25 grandfathered JSX uses were removed; baseline needs ratcheting in concurrently edited Activity/DWAION/Meetings.",
+      "workNewViolations": 0,
+      "log": "logs/design-system-gate.txt"
+    }
+  },
+  "productionCompilation": {
+    "status": "PASS",
+    "log": "logs/final-production-build.txt",
+    "output": "/tmp/dwp-work-production-build-20260907",
+    "warning": "Vite initial-vendor chunk exceeds 700 kB. This is not a claim that the full repository build/release or bundle-budget gates passed.",
+    "timing": "Final production compilation includes the final Flow service-entry and display-dictionary changes.",
+    "exitCode": 0,
+    "durationSeconds": 1.98
+  },
+  "liveReadOnlyCheck": {
+    "origin": "http://localhost:4200",
+    "status": "PASS",
+    "observed": [
+      "Six Work sidebar destinations visible in the signed-in application.",
+      "Fresh tab renders source approval document, workflow, schema and timeline.",
+      "An actionable approval displays enabled decision buttons."
+    ],
+    "writesPerformed": false,
+    "note": "An older shared tab showed stale source authority; the same item in a new tab loaded correctly. Added 9 enforced111 boundary/recovery regressions without weakening policy.",
+    "serverHealth": {
+      "4200": 200,
+      "4211": 200,
+      "8001": 200,
+      "8002": 200,
+      "8080": 200
+    }
+  },
+  "remainingConditions": [
+    {
+      "kind": "GOVERNED_ACTIVATION",
+      "status": "PENDING",
+      "description": "Tenant 1 product-surfaces remains v3 ACTIVE; new service response action requires independently approved v6 activation.",
+      "review": "../../2026-09-07-service-response-activation.md"
+    },
+    {
+      "kind": "DESIGN_DIFFERENCE",
+      "description": "10 Flow provides Work/plan contributions within the existing shared Flow layout; the whole original dashboard layout is not reproduced."
+    },
+    {
+      "kind": "SOURCE_DATA_CONTRACT",
+      "description": "Attachments/downloads, ERP balance and device-security verdicts are not supplied by source APIs. The app provides original-evidence navigation and unavailable states."
+    },
+    {
+      "kind": "VISUAL_ACCEPTANCE",
+      "description": "18 references are mapped to implementation captures; zero pixel difference and every real OS virtual keyboard are not certified."
+    }
+  ],
+  "overall": "Implemented and verified Work screen/function remediation with declared remaining activation and design differences; not unconditional 100% live or pixel-identical acceptance.",
+  "galleryIntegrity": {
+    "status": "PASS",
+    "cards": 18,
+    "comparisonImages": 36,
+    "localLinksChecked": 108,
+    "sourceAndCaptureHashesVerified": 36,
+    "browserFilterVisibleMobileFrames": 7,
+    "jumpResetsFilterAndPreservesTargetPosition": true,
+    "preview": "http://127.0.0.1:8427/implementation-evidence/2026-09-07/index.html",
+    "additionalStateImages": 15
+  },
+  "additionalFlowServiceRegression": {
+    "status": "PASS",
+    "unitTests": 33,
+    "unitFiles": 3,
+    "chromiumCases": 1,
+    "overlap": "Existing provider/model cases are rechecks; do not add all 33 to the previous unit total. The Flow browser case belongs to the combined 54 and now also checks service response entry.",
+    "review": "independent-flow-service-review.md",
+    "source": "Independent route/architecture agent verification"
+  },
+  "integrationFollowUp": {
+    "recordedAt": "2026-09-07T04:34:36.023398+00:00",
+    "initialShellImports": "PASS: WorkLayout and WorkMobileNavigation use supported focused design-system component entry points. check-app-architecture exit 0.",
+    "format": "PASS: Work source, E2E and Markdown scope. Eight reported files formatted.",
+    "navigationAndRouteTests": {
+      "status": "PASS",
+      "tests": 6,
+      "files": 2,
+      "log": "logs/integration-navigation-tests.txt"
+    },
+    "assignmentAbortSupport": {
+      "status": "PASS",
+      "tests": 12,
+      "signature": "getWorkAssignments(options = {}, signal?: AbortSignal)",
+      "compatibility": "Existing options and no-argument calls retained. Signal reaches the actual fetch adapter.",
+      "testLog": "logs/assignment-abort-tests.txt"
+    },
+    "typescript": {
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "logs/assignment-abort-typecheck.txt"
+    },
+    "commitCreated": false
+  }
+}

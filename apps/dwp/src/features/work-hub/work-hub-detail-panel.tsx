@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { workHubUrgency, type WorkHubActionKind, type WorkHubItem } from './work-hub-contracts';
+import { workHubStatusLabelKey } from './work-hub-presentation';
 
 export type WorkHubDetailPanelProps = {
   item: WorkHubItem;
@@ -70,6 +71,8 @@ export function WorkHubDetailPanel({
   );
   const active = !['COMPLETED', 'CANCELLED', 'ARCHIVED'].includes(item.lifecycle);
   const commandBusy = Boolean(busyAction) || commandsDisabled;
+  const personalDetail =
+    item.reference.sourceSystem === 'PERSONAL_TASK' && Boolean(specializedContent);
 
   useEffect(() => {
     if (!mobile) return;
@@ -87,21 +90,40 @@ export function WorkHubDetailPanel({
         minHeight: { xs: 'calc(100dvh - 150px)', lg: 560 },
       }}
     >
-      <Box sx={{ px: { xs: 2, md: 3 }, py: 2.5, borderBottom: 1, borderColor: 'divider' }}>
+      <Box
+        sx={{
+          px: { xs: 1.5, md: 2.5 },
+          py: { xs: 1.5, md: 2 },
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
         {mobile && (
           <ActionButton
             intent="quiet"
             size="small"
             startIcon={<ArrowLeft size={17} />}
             onClick={onBack}
-            sx={{ mb: 1.5, minHeight: 44 }}
+            sx={{ mb: 0.5, minHeight: 44 }}
           >
             {t('workHub.actions.backToQueue')}
           </ActionButton>
         )}
-        <Stack direction="row" justifyContent="space-between" gap={2} alignItems="flex-start">
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          gap={{ xs: 1, sm: 2 }}
+          alignItems="flex-start"
+        >
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="overline" color="primary.main">
+              <Box
+                component="span"
+                title={item.reference.sourceReference}
+                sx={{ fontWeight: 'fontWeightBold', mr: 1 }}
+              >
+                {item.displayId ?? item.reference.sourceReference.slice(0, 8)}
+              </Box>
               {t(`workHub.sources.${item.reference.sourceSystem}`, {
                 defaultValue: t('workHub.sources.OTHER'),
               })}
@@ -112,7 +134,14 @@ export function WorkHubDetailPanel({
               component="h2"
               variant="h5"
               tabIndex={mobile ? -1 : undefined}
-              sx={{ overflowWrap: 'anywhere' }}
+              sx={{
+                overflowWrap: 'anywhere',
+                mt: 0.75,
+                fontWeight: 'fontWeightBold',
+                fontSize: { xs: 'h6.fontSize', md: 'h5.fontSize' },
+                letterSpacing: 'h5.letterSpacing',
+                lineHeight: 'h5.lineHeight',
+              }}
             >
               {item.title}
             </Typography>
@@ -124,10 +153,16 @@ export function WorkHubDetailPanel({
               })}
             </Typography>
           </Box>
-          <Stack direction="row" gap={0.75} flexWrap="wrap" justifyContent="flex-end">
+          <Stack
+            direction="row"
+            gap={0.75}
+            flexWrap="wrap"
+            justifyContent="flex-end"
+            sx={{ flexShrink: 0 }}
+          >
             <Chip
               size="small"
-              label={t(`workHub.lifecycle.${item.lifecycle}`)}
+              label={t(workHubStatusLabelKey(item))}
               color={
                 item.lifecycle === 'COMPLETED'
                   ? 'success'
@@ -150,87 +185,96 @@ export function WorkHubDetailPanel({
         </Stack>
       </Box>
 
-      <Box sx={{ px: { xs: 2, md: 3 }, py: 2.5 }}>
+      <Box sx={{ px: { xs: 2, md: 2.5 }, py: 2 }}>
         {outcome}
-        <Box
-          component="dl"
-          sx={{
-            m: 0,
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(4, minmax(0, 1fr))' },
-            gap: 2,
-          }}
-        >
-          {[
-            [t('workHub.detail.status'), t(`workHub.lifecycle.${item.lifecycle}`)],
-            [t('workHub.detail.priority'), t(`workHub.priority.${item.priority}`)],
-            [
-              t('workHub.detail.due'),
-              item.dueAt
-                ? formatDate(item.dueAt, { dateStyle: 'medium', timeStyle: 'short' })
-                : t('workHub.urgency.NO_DUE_DATE'),
-            ],
-            [t('workHub.detail.responsibility'), t(`workHub.responsibility.${item.waitingFor}`)],
-          ].map(([label, value]) => (
-            <Box key={label} sx={{ minWidth: 0 }}>
-              <Typography component="dt" variant="caption" color="text.secondary">
-                {label}
-              </Typography>
-              <Typography
-                component="dd"
-                variant="body2"
-                sx={{ m: 0, mt: 0.35, fontWeight: 'fontWeightBold', overflowWrap: 'anywhere' }}
-              >
-                {value}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-
-        {(item.summary || item.reason) && (
+        {['WORKSPACE', 'LEGACY_PROJECTION', 'PERSONAL_TASK'].includes(
+          item.reference.sourceSystem
+        ) && (
           <Box
+            component="dl"
             sx={{
-              mt: 3,
-              p: 2,
-              bgcolor: 'action.hover',
-              borderInlineStart: 3,
-              borderColor: 'primary.main',
-              borderRadius: 'shape.borderRadius',
+              m: 0,
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, minmax(0, 1fr))',
+                sm: `repeat(${personalDetail ? 2 : 4}, minmax(0, 1fr))`,
+              },
+              gap: 2,
             }}
           >
-            {item.reason && (
-              <>
-                <Typography variant="caption" color="text.secondary">
-                  {t('workHub.detail.whyAssigned')}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 0.35 }}>
-                  {item.reason}
-                </Typography>
-              </>
-            )}
-            {item.summary && (
-              <>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ display: 'block', mt: item.reason ? 1.5 : 0 }}
-                >
-                  {t('workHub.detail.summary')}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ mt: 0.35, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
-                >
-                  {item.summary}
-                </Typography>
-              </>
-            )}
+            {[
+              [t('workHub.detail.status'), t(`workHub.lifecycle.${item.lifecycle}`)],
+              [t('workHub.detail.priority'), t(`workHub.priority.${item.priority}`)],
+              [
+                t('workHub.detail.due'),
+                item.dueAt
+                  ? formatDate(item.dueAt, { dateStyle: 'medium', timeStyle: 'short' })
+                  : t('workHub.urgency.NO_DUE_DATE'),
+              ],
+              [t('workHub.detail.responsibility'), t(`workHub.responsibility.${item.waitingFor}`)],
+            ]
+              .filter((_, index) => !personalDetail || index === 1 || index === 2)
+              .map(([label, value]) => (
+                <Box key={label} sx={{ minWidth: 0 }}>
+                  <Typography component="dt" variant="caption" color="text.secondary">
+                    {label}
+                  </Typography>
+                  <Typography
+                    component="dd"
+                    variant="body2"
+                    sx={{ m: 0, mt: 0.35, fontWeight: 'fontWeightBold', overflowWrap: 'anywhere' }}
+                  >
+                    {value}
+                  </Typography>
+                </Box>
+              ))}
           </Box>
         )}
 
+        {['WORKSPACE', 'LEGACY_PROJECTION'].includes(item.reference.sourceSystem) &&
+          (item.summary || item.reason) && (
+            <Box
+              sx={{
+                mt: 3,
+                p: 2,
+                bgcolor: 'action.hover',
+                borderInlineStart: 3,
+                borderColor: 'primary.main',
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              }}
+            >
+              {item.reason && (
+                <>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('workHub.detail.whyAssigned')}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 0.35 }}>
+                    {item.reason}
+                  </Typography>
+                </>
+              )}
+              {item.summary && (
+                <>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mt: item.reason ? 1.5 : 0 }}
+                  >
+                    {t('workHub.detail.summary')}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 0.35, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+                  >
+                    {item.summary}
+                  </Typography>
+                </>
+              )}
+            </Box>
+          )}
+
         {specializedContent && (
-          <Box sx={{ mt: 3 }}>
-            <Divider sx={{ mb: 3 }} />
+          <Box sx={{ mt: item.reference.sourceSystem === 'PERSONAL_TASK' ? 2.5 : 0 }}>
             {specializedContent}
           </Box>
         )}
@@ -240,10 +284,18 @@ export function WorkHubDetailPanel({
           direction="row"
           gap={1}
           flexWrap="wrap"
-          sx={{ '& .MuiButton-root': { minHeight: 44 } }}
+          sx={{
+            position: 'sticky',
+            bottom: { xs: 'calc(70px + env(safe-area-inset-bottom, 0px))', md: 0 },
+            bgcolor: 'background.paper',
+            py: 1.25,
+            zIndex: 1,
+            '& .MuiButton-root': { minHeight: 44 },
+          }}
         >
           {personalActionKinds.map((kind) =>
-            available.has(kind) ? (
+            available.has(kind) &&
+            !(personalDetail && ['PERSONAL_START', 'PERSONAL_WAIT'].includes(kind)) ? (
               <ActionButton
                 key={kind}
                 intent={
@@ -257,6 +309,11 @@ export function WorkHubDetailPanel({
                 loadingLabel={t('workHub.actions.processing')}
                 disabled={commandBusy && busyAction !== kind}
                 onClick={() => onAction(kind)}
+                sx={
+                  personalDetail && kind === 'PERSONAL_COMPLETE'
+                    ? { width: { xs: '100%', md: 'auto' } }
+                    : undefined
+                }
               >
                 {t(`workHub.actions.${kind}`)}
               </ActionButton>
@@ -284,6 +341,8 @@ export function WorkHubDetailPanel({
           )}
           {available.has('OPEN_SOURCE') && (
             <ActionButton
+              data-work-source-trigger
+              data-work-item-key={item.key}
               intent="secondary"
               disabled={commandBusy}
               endIcon={<ArrowUpRight size={16} />}
@@ -294,6 +353,7 @@ export function WorkHubDetailPanel({
           )}
           {onOpenActivity && (
             <ActionButton
+              data-work-activity-trigger={item.key}
               intent="secondary"
               disabled={commandBusy}
               startIcon={<History size={16} aria-hidden="true" />}
@@ -327,6 +387,8 @@ export function WorkHubDetailPanel({
               )}
               {canAskAi && (
                 <ActionButton
+                  data-work-ai-trigger
+                  data-work-item-key={item.key}
                   intent="quiet"
                   startIcon={<Sparkles size={16} />}
                   disabled={commandBusy}

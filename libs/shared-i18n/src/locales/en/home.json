@@ -127,7 +127,9 @@
         "paused": "Paused",
         "active": "Active",
         "redacted": "Protected status",
-        "unknown": "Status unavailable"
+        "unknown": "Status unavailable",
+        "not_started": "Not started",
+        "planned": "Today plan"
       },
       "action": {
         "title": "My Action Queue",
@@ -265,6 +267,10 @@
         "actionableDescription_other": "{{count}} actionable notifications",
         "urgentDescription": "{{count}} urgent notification",
         "urgentDescription_other": "{{count}} urgent notifications"
+      },
+      "personalPlan": {
+        "title": "Today plan",
+        "description": "Review {{count}} items selected for today and adjust their order."
       }
     },
     "apps": {
@@ -444,7 +450,51 @@
       "conflicts": "Conflicts",
       "open": "Open details for {{signal}}",
       "openSummary": "{{signal}}, {{value}} {{unit}}, {{comparison}}. Open details",
-      "recentActivity": "Recent activity"
+      "recentActivity": "Recent activity",
+      "execution": {
+        "title": "Execution signals",
+        "scope": "Connected execution ledgers available to me",
+        "close": "Close execution signals",
+        "snapshot": "Current execution snapshot",
+        "definition": "Counts reflect the latest state of each execution. Attention is the sum of needs input and policy blocked.",
+        "attention": "Flow needs attention",
+        "distribution": "Current execution counts by state",
+        "total": "All executions",
+        "count": "{{count}} items",
+        "reviewTitle": "Executions to review",
+        "viewHistory": "View related history",
+        "openTimeline": "Full activity timeline",
+        "historyNotice": "These are current execution counts. Related history filters past events recorded in that state, so the list count may differ.",
+        "clearTitle": "No current attention items",
+        "clearDescription": "No visible execution currently needs input or is policy blocked. This is not a guarantee of overall system health.",
+        "attentionTitle": "Review execution states",
+        "unknownTitle": "Some execution states are unknown",
+        "staleTitle": "Check the latest state again",
+        "attentionDescription": "Review the ledger state and observation time, then use related history to reach the original work.",
+        "observed": "Last observed · {{at}}",
+        "scopeTitle": "Scope and data evidence",
+        "scopeDescription": "Only executions in connected ledgers permitted for the current user are counted. This is separate from unread notifications or historical event counts. Unverified connected systems are excluded.",
+        "coverage": "Supported objects · {{types}}",
+        "noCoverage": "No scope supplied",
+        "freshness": {
+          "refreshing": "Checking again",
+          "stale": "Earlier observation",
+          "current": "Recent observation"
+        },
+        "review": {
+          "needs-input": "Review the context of the input or confirmation request.",
+          "policy-blocked": "Review the blocking reason. This screen does not bypass policy or approve exceptions."
+        },
+        "states": {
+          "running": "Running",
+          "needs-input": "Needs input",
+          "policy-blocked": "Policy blocked",
+          "completed": "Completed",
+          "failed": "Failed",
+          "cancelled": "Cancelled",
+          "unknown": "Unknown"
+        }
+      }
     },
     "updates": {
       "title": "Updates",
@@ -979,9 +1029,18 @@
       "emptySummary": "There is no priority work right now.",
       "loadError": "Workday insights could not be loaded. Other home sections remain available.",
       "signals": {
-        "deadline": { "label": "Due soon", "detail": "Work requiring action" },
-        "focus": { "label": "Focus time", "detail": "Minutes this week" },
-        "meeting": { "label": "Invitations", "detail": "Awaiting your response" }
+        "deadline": {
+          "label": "Due soon",
+          "detail": "Work requiring action"
+        },
+        "focus": {
+          "label": "Focus time",
+          "detail": "Minutes this week"
+        },
+        "meeting": {
+          "label": "Invitations",
+          "detail": "Awaiting your response"
+        }
       },
       "reviewPriority": "Review priority",
       "askToday": "Prepare request plan",

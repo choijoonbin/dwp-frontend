@@ -1,0 +1,2 @@
+Design-system adoption failed with 1 regression(s):
+- 25 grandfathered JSX use(s) were removed; run `yarn design-system:baseline` to ratchet the allowance down

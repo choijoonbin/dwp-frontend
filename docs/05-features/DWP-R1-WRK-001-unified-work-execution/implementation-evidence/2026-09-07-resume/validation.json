@@ -1,0 +1,175 @@
+{
+  "recordedAt": "2026-09-07T09:21:14.270754+00:00",
+  "scope": "Work app and Services information-response owner handoff",
+  "referenceFrames": 18,
+  "sidebarViews": 6,
+  "liveActivation": "BLOCKED_EXTERNAL",
+  "liveActivationReason": "v6 DRAFT; no completed independent provider approval/platform activation or staging attestation evidence. Confirmed by integration coordinator 2026-09-07.",
+  "checks": [
+    {
+      "name": "Work model and UI unit tests",
+      "result": "PASS",
+      "tests": 130,
+      "files": 26,
+      "log": "logs/work-unit-final.log"
+    },
+    {
+      "name": "Foundation, command center, source decisions and source design",
+      "result": "PASS",
+      "passed": 60,
+      "skipped": 4,
+      "note": "Four intentional duplicate desktop-only/viewport cases are skipped in mobile project; no failed cases.",
+      "log": "logs/work-journeys-final.log"
+    },
+    {
+      "name": "Personal, plan, calendar, source status, Flow and AI journeys",
+      "result": "PASS",
+      "passed": 42,
+      "log": "personal-plan-e2e-final.log"
+    },
+    {
+      "name": "Confirmed checklist progress follow-up",
+      "result": "PASS",
+      "passed": 14,
+      "captureVerification": 8,
+      "evidence": "personal-plan-manifest.json"
+    },
+    {
+      "name": "Current M1 compact review and keyboard journeys",
+      "result": "PASS",
+      "passed": 10,
+      "additionalLayoutChecks": 3,
+      "evidence": "../2026-09-07-final/mobile-review-handoff.md"
+    },
+    {
+      "name": "Actual source app detail handoff",
+      "result": "PASS",
+      "passed": 4,
+      "log": "logs/owner-handoff-final.log"
+    },
+    {
+      "name": "Workspace independent production build and budgets",
+      "result": "PASS",
+      "initialRawKiB": 880.8,
+      "initialRawLimitKiB": 900,
+      "initialGzipKiB": 271.1,
+      "initialGzipLimitKiB": 280,
+      "initialRequests": 5,
+      "log": "logs/workspace-build-closeout.log"
+    },
+    {
+      "name": "Work scoped ESLint",
+      "result": "PASS",
+      "log": "logs/work-eslint-final.log"
+    },
+    {
+      "name": "Localization",
+      "result": "PASS",
+      "log": "logs/i18n-closeout.log"
+    },
+    {
+      "name": "Repository typecheck",
+      "result": "PASS",
+      "log": "logs/typecheck-closeout.log"
+    },
+    {
+      "name": "Repository architecture",
+      "result": "BLOCKED_OTHER_ACTIVE_CHANGE",
+      "note": "Work ownership/API/cycle/reachability/source-size checks passed; other product maintenance file changes remain.",
+      "log": "logs/architecture.log"
+    },
+    {
+      "name": "Services information response unit and browser journeys",
+      "result": "PASS",
+      "unitPassed": 14,
+      "e2ePassed": 24,
+      "unitLog": "services-final/unit-final.log",
+      "e2eLog": "services-final/e2e-final.log",
+      "evidence": "services-final/manifest.json"
+    },
+    {
+      "name": "Services independent production build and budgets",
+      "result": "PASS",
+      "initialRawKiB": 849.4,
+      "initialRawLimitKiB": 900,
+      "initialGzipKiB": 262.1,
+      "initialGzipLimitKiB": 280,
+      "initialRequests": 5,
+      "log": "logs/services-build-closeout.log"
+    },
+    {
+      "name": "Services scoped ESLint",
+      "result": "PASS",
+      "log": "services-final/eslint.log"
+    },
+    {
+      "name": "Repository design-system adoption",
+      "result": "BLOCKED_OTHER_ACTIVE_CHANGE",
+      "details": [
+        "Approvals executive widgets: HardcodedColor 1 and RawRadius 2",
+        "Meetings admin policy mobile sections: RawRadius 1"
+      ],
+      "note": "Work and Services no new design-system debt in this run.",
+      "log": "logs/design-system-closeout.log"
+    },
+    {
+      "name": "Repository display dictionary",
+      "result": "BLOCKED_OTHER_ACTIVE_CHANGE",
+      "details": [
+        "Meetings prejoin states.STATUS is missing from ko/en display dictionary"
+      ],
+      "log": "logs/display-closeout.log"
+    },
+    {
+      "name": "Repository maintenance source-size",
+      "result": "BLOCKED_OTHER_ACTIVE_CHANGE",
+      "details": [
+        "Approvals pilot spec 1356 exceeds 1318 lines",
+        "Meetings video spec 1180 -> 1178 improvement needs to be locked in"
+      ],
+      "log": "logs/maintenance-closeout.log"
+    },
+    {
+      "name": "Work evidence Markdown formatting",
+      "result": "PASS",
+      "files": 73,
+      "log": "logs/evidence-format.log"
+    },
+    {
+      "name": "Independent final evidence integrity review",
+      "result": "PASS",
+      "frames": 18,
+      "checks": [
+        "PNG SHA-256",
+        "pixel dimensions",
+        "source capture bytes",
+        "relative links and anchors",
+        "current M1/M2 IDs",
+        "latest confirmed checklist captures",
+        "no pixel100 or activation overclaim"
+      ],
+      "note": "Full-page 05-M has bottom navigation across progress; gallery includes the separate current 390px progress capture."
+    },
+    {
+      "name": "Final Work and Services scoped ESLint",
+      "result": "PASS",
+      "log": "logs/scoped-eslint-closeout.log"
+    },
+    {
+      "name": "Final Work and Services scoped source formatting",
+      "result": "PASS",
+      "log": "logs/scoped-format-closeout.log"
+    }
+  ],
+  "evidencePolicy": "Actual components and clients with fictional fixture data. Development-server cold-load readiness is separated from 5-second interaction assertions. Earlier interrupted/overloaded runs are retained separately and are not counted as passing.",
+  "designAdaptations": [
+    "Current M1/M2 Polished previews inspected directly; old images are not presented as current revisions.",
+    "Approvals and Services forms run in their owning products after full document navigation.",
+    "Flow remains the cross-product home; Work contributes personal queue and plan.",
+    "Missing evidence fields and sample predictive metrics are not fabricated.",
+    "No claim of zero pixel difference or production authorization activation."
+  ],
+  "implementationStatus": "CLOSED_FROZEN",
+  "repositoryReleaseStatus": "BLOCKED_OTHER_ACTIVE_CHANGE",
+  "closeoutReport": "../../2026-09-07-resume-closeout.md"
+}

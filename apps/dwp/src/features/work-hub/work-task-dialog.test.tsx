@@ -45,6 +45,154 @@ async function render(props: Partial<ComponentProps<typeof WorkTaskDialog>> = {}
 }
 
 describe('WorkTaskDialog', () => {
+  it('requires explicit review before a preserved edit draft can use a refreshed server version', async () => {
+    const onSubmit = vi.fn();
+    const initialValue = { title: 'Original title', description: 'Original detail', version: 4 };
+    await render({ mode: 'edit', initialValue, onSubmit });
+    const title = document.querySelector<HTMLInputElement>('input[required]')!;
+    const valueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+    await act(async () => {
+      valueSetter.call(title, 'My preserved draft');
+      title.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await render({
+      mode: 'edit',
+      initialValue: { ...initialValue, description: 'Concurrent server update', version: 5 },
+      onSubmit,
+    });
+    expect(title.value).toBe('My preserved draft');
+    expect(button('workHub.taskForm.edit.submit').disabled).toBe(true);
+    await act(async () => button('workHub.taskForm.edit.submit').click());
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(document.body.textContent).toContain('Concurrent server update');
+    await act(async () => button('workHub.taskForm.conflict.keepDraft').click());
+    expect(onSubmit).not.toHaveBeenCalled();
+    await act(async () => button('workHub.taskForm.edit.submit').click());
+    expect(onSubmit.mock.calls[0]?.[0]).toMatchObject({
+      title: 'My preserved draft',
+      description: 'Original detail',
+      version: 5,
+    });
+  });
+
+  it('requires another review when the task changes again before the reviewed draft is saved', async () => {
+    const onSubmit = vi.fn();
+    await render({ mode: 'edit', initialValue: { title: 'Original title', version: 4 }, onSubmit });
+    await render({ mode: 'edit', initialValue: { title: 'Changed title', version: 5 }, onSubmit });
+    await act(async () => button('workHub.taskForm.conflict.keepDraft').click());
+    expect(button('workHub.taskForm.edit.submit').disabled).toBe(false);
+    await render({ mode: 'edit', initialValue: { title: 'Changed again', version: 6 }, onSubmit });
+    expect(button('workHub.taskForm.edit.submit').disabled).toBe(true);
+    await act(async () => button('workHub.taskForm.edit.submit').click());
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('explicitly adopts the complete latest edit content without replacing its source links', async () => {
+    const onSubmit = vi.fn();
+    await render({ mode: 'edit', initialValue: { title: 'Old title', version: 4 }, onSubmit });
+    const latest = {
+      title: 'Concurrent title',
+      description: 'Concurrent description',
+      priority: 'LOW' as const,
+      version: 5,
+      sources: [
+        {
+          availability: 'UNAVAILABLE' as const,
+          reference: null,
+          title: null,
+          sourceRoute: null,
+          status: null,
+          dueAt: null,
+        },
+      ],
+      checklist: [{ itemId: 'new-step', title: 'Concurrent checklist item', completed: true }],
+    };
+    await render({ mode: 'edit', initialValue: latest, onSubmit });
+    await act(async () => button('workHub.taskForm.conflict.useLatest').click());
+    expect(document.querySelector<HTMLInputElement>('input[required]')?.value).toBe(
+      'Concurrent title'
+    );
+    expect(button('workHub.taskForm.edit.submit').disabled).toBe(false);
+    expect(onSubmit).not.toHaveBeenCalled();
+    await act(async () => button('workHub.taskForm.edit.submit').click());
+    const input = onSubmit.mock.calls[0]?.[0];
+    expect(input).toMatchObject({
+      title: latest.title,
+      description: latest.description,
+      priority: 'LOW',
+      version: 5,
+      checklist: latest.checklist,
+    });
+    expect(input).not.toHaveProperty('sourceReferences');
+    expect(input).not.toHaveProperty('clearSourceReference');
+  });
+
+  it('preserves unavailable and multiple source connections during unrelated edits', async () => {
+    const onSubmit = vi.fn();
+    await render({
+      mode: 'edit',
+      initialValue: {
+        title: 'Prepare customer note',
+        version: 9,
+        sources: [
+          {
+            availability: 'UNAVAILABLE',
+            reference: null,
+            title: null,
+            sourceRoute: null,
+            status: null,
+            dueAt: null,
+          },
+        ],
+        sourceReference: { sourceSystem: 'APPROVAL_TASK', sourceReference: 'legacy-first-source' },
+        checklist: [{ itemId: 'item-one', title: 'Check the request', completed: false }],
+      },
+      onSubmit,
+    });
+    await act(async () => button('workHub.taskForm.edit.submit').click());
+    const value = onSubmit.mock.calls[0]?.[0];
+    expect(value).toMatchObject({ version: 9, checklist: [{ title: 'Check the request' }] });
+    expect(value).not.toHaveProperty('sourceReference');
+    expect(value).not.toHaveProperty('sourceReferences');
+    expect(value).not.toHaveProperty('clearSourceReference');
+    expect(document.body.textContent).not.toContain('legacy-first-source');
+  });
+
+  it('requires an explicit choice to replace unavailable source connections', async () => {
+    const reference = { sourceSystem: 'SERVICE_REQUEST', sourceReference: 'opaque-service-source' };
+    const onSubmit = vi.fn();
+    await render({
+      mode: 'edit',
+      initialValue: {
+        title: 'Prepare customer note',
+        version: 9,
+        sources: [
+          {
+            availability: 'UNAVAILABLE',
+            reference: null,
+            title: null,
+            sourceRoute: null,
+            status: null,
+            dueAt: null,
+          },
+        ],
+      },
+      sourceOptions: [{ reference, label: 'Allowed service request' }],
+      onSubmit,
+    });
+    expect(button('Allowed service request').disabled).toBe(true);
+    await act(async () =>
+      document.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click()
+    );
+    await act(async () => button('Allowed service request').click());
+    await act(async () => button('workHub.taskForm.edit.submit').click());
+    expect(onSubmit.mock.calls[0]?.[0]).toMatchObject({
+      sourceReferences: [reference],
+      version: 9,
+    });
+    expect(document.body.textContent).not.toContain('opaque-service-source');
+  });
+
   beforeEach(() => {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
     host = document.createElement('div');
@@ -165,6 +313,33 @@ describe('WorkTaskDialog', () => {
     expect(submitted).not.toHaveProperty('sourceReference');
   });
 
+  it('lets capture creation detach its reference without sending an edit-only unlink command', async () => {
+    const onSubmit = vi.fn().mockRejectedValue(new Error('unknown outcome'));
+    const sourceReference = { sourceSystem: 'MAIL_THREAD', sourceReference: 'private-captured-id' };
+    await render({
+      mode: 'create',
+      sourceLabel: 'Allowed source title',
+      initialValue: { title: 'Follow up on a captured request', sourceReference },
+      onSubmit,
+    });
+    const unlink = [...document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')].find(
+      (input) => input.hasAttribute('aria-describedby')
+    )!;
+    await act(async () => unlink.click());
+    await act(async () => button('workHub.taskForm.create.submit').click());
+    const unlinked = onSubmit.mock.calls[0];
+    expect(unlinked?.[0]).not.toHaveProperty('sourceReference');
+    expect(unlinked?.[0]).not.toHaveProperty('clearSourceReference');
+    expect(unlinked?.[0]).not.toHaveProperty('sourceReferences');
+    expect(unlinked?.[0]).toHaveProperty('title', 'Follow up on a captured request');
+    expect(document.body.textContent).not.toContain('private-captured-id');
+
+    await act(async () => unlink.click());
+    await act(async () => button('workHub.taskForm.create.submit').click());
+    expect(onSubmit.mock.calls[1]?.[0]).toHaveProperty('sourceReference', sourceReference);
+    expect(onSubmit.mock.calls[1]?.[1].idempotencyKey).not.toBe(unlinked?.[1].idempotencyKey);
+  });
+
   it('treats unlink as a dirty, identity-changing edit intent', async () => {
     const onSubmit = vi.fn().mockRejectedValue(new Error('unknown outcome'));
     const onClose = vi.fn();
@@ -253,6 +428,17 @@ describe('WorkTaskDialog', () => {
 
     await act(async () => title.dispatchEvent(event));
 
+    expect(event.defaultPrevented).toBe(true);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('prevents Safari IME confirmation from submitting after compositionend', async () => {
+    const onSubmit = vi.fn();
+    await render({ onSubmit });
+    const title = document.querySelector<HTMLInputElement>('input[required]')!;
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    Object.defineProperty(event, 'keyCode', { value: 229 });
+    await act(async () => title.dispatchEvent(event));
     expect(event.defaultPrevented).toBe(true);
     expect(onSubmit).not.toHaveBeenCalled();
   });

@@ -13,6 +13,24 @@ const i18nChecker = resolve(repositoryRoot, 'scripts/check-i18n.mjs');
 const importCycleChecker = resolve(repositoryRoot, 'scripts/check-relative-import-cycles.mjs');
 const temporaryDirectories = [];
 
+test('initial shell stays coalesced without capturing lazy application modules', async () => {
+  const { loadConfigFromFile } = await import('vite');
+  const resolved = await loadConfigFromFile(
+    { command: 'build', mode: 'production' },
+    join(repositoryRoot, 'vite.config.ts')
+  );
+  const groups = resolved.config.build.rollupOptions.output.codeSplitting.groups;
+  const shell = groups.find((group) => group.name === 'application-shell');
+  assert.deepEqual(shell.tags, ['$initial']);
+  assert.equal(shell.includeDependenciesRecursively, false);
+  assert.equal(shell.maxSize, undefined);
+  assert.equal(shell.test('/workspace/apps/dwp/src/app.tsx'), true);
+  assert.equal(shell.test('/workspace/node_modules/large-editor/index.js'), false);
+  const asynchronous = groups.find((group) => group.name === 'async-vendor');
+  assert.equal(asynchronous.maxSize, 430 * 1024);
+  assert.equal(asynchronous.includeDependenciesRecursively, false);
+});
+
 afterEach(() => {
   for (const directory of temporaryDirectories.splice(0)) {
     rmSync(directory, { recursive: true, force: true });

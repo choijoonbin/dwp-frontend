@@ -1,10 +1,21 @@
-import { Component, lazy, Suspense, type ErrorInfo, type ReactNode } from 'react';
+import {
+  Component,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 
 import Box from '@mui/material/Box';
 
 import type {
+  ProductSurfaceContextBar as ProductSurfaceContextBarComponent,
   ProductSurfaceContextBarVariant,
   ProductSurfaceLayoutRuntime,
 } from './product-surface-controls';
@@ -14,6 +25,15 @@ const loadProductSurfaceContextBar = () =>
     default: module.ProductSurfaceContextBar,
   }));
 const ProductSurfaceContextBar = lazy(loadProductSurfaceContextBar);
+const retryProductSurfaceControlModules = import.meta.glob<{
+  ProductSurfaceContextBar: typeof ProductSurfaceContextBarComponent;
+}>('./product-surface-controls.tsx', { query: { retry: 'context-bar' } });
+const RetryProductSurfaceContextBar = lazy(() => {
+  const load = retryProductSurfaceControlModules['./product-surface-controls.tsx'];
+  if (!load) return Promise.reject(new Error('Product surface context retry module is missing.'));
+  return load().then((module) => ({ default: module.ProductSurfaceContextBar }));
+});
+const PRODUCT_SURFACE_CONTEXT_RETRY_EVENT = 'dwp:product-surface-context-retry';
 
 function ProductSurfaceContextBarPlaceholder({
   loadingLabel,
@@ -25,7 +45,7 @@ function ProductSurfaceContextBarPlaceholder({
   loadingLabel: string;
   failureLabel?: string;
   recoveryLabel?: string;
-  onRecover?: () => void;
+  onRecover?: (trigger: HTMLButtonElement) => void;
   variant: ProductSurfaceContextBarVariant;
 }) {
   const mobileRail = variant === 'mobile-rail';
@@ -72,7 +92,7 @@ function ProductSurfaceContextBarPlaceholder({
           <ActionButton
             intent="quiet"
             size="small"
-            onClick={onRecover}
+            onClick={(event) => onRecover?.(event.currentTarget)}
             sx={{ minWidth: 44, minHeight: 44, px: 1 }}
           >
             {recoveryLabel}
@@ -123,12 +143,23 @@ class ProductSurfaceContextBarErrorBoundary extends Component<
   }
 
   componentDidCatch(_error: Error, _info: ErrorInfo): void {
-    // The shell remains usable. Reload is required because failed module imports may be cached.
+    // The shell stays usable: first load a distinct retry chunk, then offer a full reload if it fails.
   }
 
   render() {
     return this.state.failed ? this.props.fallback : this.props.children;
   }
+}
+
+function ProductSurfaceContextBarResolved({
+  children,
+  onResolved,
+}: {
+  children: ReactNode;
+  onResolved: () => void;
+}) {
+  useEffect(() => onResolved(), [onResolved]);
+  return children;
 }
 
 export function ProductSurfaceContextBarSlot({
@@ -141,29 +172,109 @@ export function ProductSurfaceContextBarSlot({
   tenantLabel?: string;
 }) {
   const { t } = useTranslation('common');
+  const [attempt, setAttempt] = useState<'primary' | 'retry'>('primary');
+  const [recoveryAnnouncement, setRecoveryAnnouncement] = useState('');
+  const slotRootRef = useRef<HTMLDivElement | null>(null);
+  const recoveryRequestedRef = useRef(false);
+  const recoveryFocusRequestedRef = useRef(false);
+  const recoveryTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const ContextBar =
+    attempt === 'primary' ? ProductSurfaceContextBar : RetryProductSurfaceContextBar;
+  const handleResolved = useCallback(() => {
+    if (attempt !== 'retry' || !recoveryRequestedRef.current) return;
+    recoveryRequestedRef.current = false;
+    setRecoveryAnnouncement(t('productSurface.contextBar.recovered'));
+    const trigger = recoveryTriggerRef.current;
+    const focusWasRequested = recoveryFocusRequestedRef.current;
+    recoveryFocusRequestedRef.current = false;
+    recoveryTriggerRef.current = null;
+    if (!focusWasRequested) return;
+    const focusNeedsRestoring = () => {
+      const activeElement = document.activeElement;
+      return (
+        activeElement === null ||
+        activeElement === document.body ||
+        activeElement === document.documentElement ||
+        activeElement === trigger ||
+        (activeElement instanceof HTMLElement && !activeElement.isConnected)
+      );
+    };
+    if (!focusNeedsRestoring()) return;
+    window.requestAnimationFrame(() => {
+      if (!focusNeedsRestoring()) return;
+      const target = slotRootRef.current?.querySelector<HTMLElement>(
+        '[data-testid="product-surface-context-bar"]'
+      );
+      if (target?.isConnected) target.focus({ preventScroll: true });
+    });
+  }, [attempt, t]);
+  useEffect(() => {
+    const retry = () => setAttempt('retry');
+    window.addEventListener(PRODUCT_SURFACE_CONTEXT_RETRY_EVENT, retry);
+    return () => window.removeEventListener(PRODUCT_SURFACE_CONTEXT_RETRY_EVENT, retry);
+  }, []);
 
   return (
-    <ProductSurfaceContextBarErrorBoundary
-      fallback={
-        <ProductSurfaceContextBarPlaceholder
-          loadingLabel={t('labels.loading')}
-          failureLabel={t('productSurface.contextBar.loadError')}
-          recoveryLabel={t('productSurface.contextBar.reloadPage')}
-          onRecover={() => window.location.reload()}
-          variant={variant}
-        />
-      }
-    >
-      <Suspense
+    <Box ref={slotRootRef} sx={{ display: 'contents' }}>
+      <ProductSurfaceContextBarErrorBoundary
+        key={attempt}
         fallback={
           <ProductSurfaceContextBarPlaceholder
             loadingLabel={t('labels.loading')}
+            failureLabel={t('productSurface.contextBar.loadError')}
+            recoveryLabel={t(
+              attempt === 'primary'
+                ? 'productSurface.contextBar.retry'
+                : 'productSurface.contextBar.reloadPage'
+            )}
+            onRecover={(trigger) => {
+              if (attempt === 'retry') {
+                window.location.reload();
+                return;
+              }
+              recoveryRequestedRef.current = true;
+              recoveryFocusRequestedRef.current = document.activeElement === trigger;
+              recoveryTriggerRef.current = trigger;
+              setRecoveryAnnouncement('');
+              window.dispatchEvent(new Event(PRODUCT_SURFACE_CONTEXT_RETRY_EVENT));
+            }}
             variant={variant}
           />
         }
       >
-        <ProductSurfaceContextBar runtime={runtime} variant={variant} tenantLabel={tenantLabel} />
-      </Suspense>
-    </ProductSurfaceContextBarErrorBoundary>
+        <Suspense
+          fallback={
+            <ProductSurfaceContextBarPlaceholder
+              loadingLabel={t('labels.loading')}
+              variant={variant}
+            />
+          }
+        >
+          <ProductSurfaceContextBarResolved onResolved={handleResolved}>
+            <ContextBar runtime={runtime} variant={variant} tenantLabel={tenantLabel} />
+          </ProductSurfaceContextBarResolved>
+        </Suspense>
+      </ProductSurfaceContextBarErrorBoundary>
+      <Box
+        component="span"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="product-surface-context-bar-recovery-status"
+        sx={{
+          position: 'absolute',
+          width: 1,
+          height: 1,
+          p: 0,
+          m: -1,
+          overflow: 'hidden',
+          clip: 'rect(0 0 0 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {recoveryAnnouncement}
+      </Box>
+    </Box>
   );
 }

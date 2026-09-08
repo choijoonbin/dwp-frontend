@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-import { mockPersonalRoom } from './support/meeting-personal-room-fixtures';
+import { mockPersonalRoom, PERSONAL_ROOM_ALIAS } from './support/meeting-personal-room-fixtures';
+import { mockImplementationMeetingPreparation } from './support/meeting-implementation-regression-fixtures';
 import {
   mockApprovedAdmin,
   mockApprovedFollowUps,
@@ -10,6 +11,7 @@ import {
 } from './support/meeting-approved-frame-evidence-fixtures';
 import {
   MEETING_VISUAL_ID,
+  MEETING_VISUAL_SUMMARY,
   mockMeetingVisualHome,
   mockMeetingVisualHomeReports,
   mockMeetingVisualMine,
@@ -45,7 +47,9 @@ const cases = [
   screen: ApprovedRuntimeScreen;
 }[];
 
-test.describe.configure({ mode: 'serial' });
+// Each frame owns a fresh page and fixture. One failed frame must not suppress evidence for others.
+// These are implementation regressions; approval of the immutable Stitch source is separate.
+test.describe.configure({ mode: 'default' });
 
 async function ready(page: Page) {
   const main = page.locator('#dwp-main-content');
@@ -64,36 +68,42 @@ async function prepareApprovedState(page: Page, screen: ApprovedRuntimeScreen) {
     case 'U02':
       await mockMeetingVisualSession(page, { locale: 'ko', colorScheme: 'light' });
       await mockMeetingVisualMine(page);
+      await mockImplementationMeetingPreparation(page);
       await page.goto('/meetings/mine');
       break;
     case 'U05':
       await mockMeetingVisualSession(page, { locale: 'ko', colorScheme: 'light' });
       await mockMeetingVisualPrejoin(page);
+      await mockImplementationMeetingPreparation(page);
       await page.goto(`/meetings/room/${MEETING_VISUAL_ID}`);
       await page.getByRole('button', { name: '카메라와 마이크 점검', exact: true }).click();
       break;
     case 'U06':
-      await mockApprovedLiveRoom(page);
+      await mockApprovedLiveRoom(page, true);
       await page.goto(`/meetings/room/${MEETING_VISUAL_ID}`);
       await page.getByRole('button', { name: '카메라와 마이크 점검', exact: true }).click();
       await page.getByRole('button', { name: '회의 참여', exact: true }).click();
       break;
     case 'U07':
       await mockMeetingVisualSession(page, { locale: 'ko', colorScheme: 'light' });
-      await mockMeetingVisualPublishedRecap(page);
+      await mockMeetingVisualPublishedRecap(page, true);
       await page.goto('/meetings/history');
       break;
     case 'U08':
       await mockMeetingVisualSession(page, { locale: 'ko', colorScheme: 'light' });
-      await mockMeetingVisualPublishedRecap(page);
+      await mockMeetingVisualPublishedRecap(page, true);
       await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
       break;
     case 'U09':
-      await mockApprovedFollowUps(page);
+      await mockApprovedFollowUps(page, true);
+      // This fixture uses mockShellSession rather than the visual session's telemetry sink.
+      await page.route('**/api/platform/v1/observability/web-vitals', (route) =>
+        route.fulfill({ status: 202, body: '' })
+      );
       await page.goto('/meetings/follow-ups');
       break;
     case 'U10':
-      await mockApprovedTemplatesAndPreferences(page);
+      await mockApprovedTemplatesAndPreferences(page, true);
       await page.goto('/meetings/templates');
       break;
     case 'U11':
@@ -101,7 +111,7 @@ async function prepareApprovedState(page: Page, screen: ApprovedRuntimeScreen) {
       await page.goto('/meetings/mine?view=personal-room');
       break;
     case 'U12':
-      await mockApprovedTemplatesAndPreferences(page);
+      await mockApprovedTemplatesAndPreferences(page, true);
       await page.goto('/meetings/preferences');
       break;
     case 'U13':
@@ -124,7 +134,15 @@ async function expectApprovedStructure(page: Page, screen: ApprovedRuntimeScreen
       break;
     case 'U02':
       await expect(page.getByTestId('my-meetings-list')).toBeVisible();
-      await expect(page.getByTestId('my-meetings-inspector')).toBeVisible();
+      if (mobile) {
+        await expect(page.getByTestId('my-meetings-inspector')).toHaveCount(0);
+        await page.getByRole('button', { name: MEETING_VISUAL_SUMMARY.title, exact: true }).click();
+        const dialog = page.getByRole('dialog');
+        await expect(dialog.getByTestId('my-meetings-inspector')).toBeVisible();
+        await dialog.getByRole('button', { name: '닫기', exact: true }).first().click();
+        await expect(dialog).toHaveCount(0);
+        await expect(page.getByTestId('my-meetings-inspector')).toHaveCount(0);
+      } else await expect(page.getByTestId('my-meetings-inspector')).toBeVisible();
       break;
     case 'U05':
       await expect(page.locator('.dwp-meeting-prejoin__stage')).toBeVisible();
@@ -162,10 +180,23 @@ async function expectApprovedStructure(page: Page, screen: ApprovedRuntimeScreen
     case 'U08':
       await expect(page.getByTestId('meeting-recap-overview')).toBeVisible();
       await expect(page.getByTestId('meeting-recap-evidence-rail')).toBeVisible();
+      if (mobile) {
+        const analysis = page.getByTestId('meeting-recap-analysis-disclosure');
+        await expect(analysis).not.toHaveAttribute('open', '');
+        await analysis.locator('summary').click();
+        await expect(page.getByTestId('meeting-recap-analysis')).toBeVisible();
+        await analysis.locator('summary').click();
+        await expect(analysis).not.toHaveAttribute('open', '');
+      }
       break;
     case 'U09':
       await expect(page.getByTestId('meeting-follow-ups')).toBeVisible();
       await expect(page.locator('[data-testid^="follow-up-row-"]').first()).toBeVisible();
+      if (!mobile) {
+        await page.locator('[data-testid^="follow-up-row-"]').first().click();
+        await expect(page.getByTestId('meeting-follow-up-detail')).toBeVisible();
+        await expect(page.getByTestId('meeting-follow-up-source-evidence')).toBeVisible();
+      }
       break;
     case 'U10':
       await expect(page.getByTestId('meeting-templates')).toBeVisible();
@@ -182,14 +213,30 @@ async function expectApprovedStructure(page: Page, screen: ApprovedRuntimeScreen
     case 'U12':
       await expect(page.getByTestId('meeting-preferences-workspace')).toBeVisible();
       await expect(page.locator('#meeting-preferences-advanced')).toBeVisible();
+      if (mobile) {
+        await expect(page.getByTestId('meeting-mobile-navigation')).toHaveCount(0);
+        await expect(page.getByTestId('meeting-preferences-save-dock')).toBeVisible();
+      }
       break;
     case 'U13':
-      await expect(page.getByTestId('meeting-admin-impact-primary')).toBeVisible();
+      await expect(
+        page.getByTestId(mobile ? 'meeting-admin-mobile-signal' : 'meeting-admin-impact-primary')
+      ).toBeVisible();
       await expect(page.getByTestId('meeting-admin-service-readiness')).toBeVisible();
       break;
     case 'U14':
       await expect(page.getByRole('complementary')).toBeVisible();
       await expect(page.getByRole('region').first()).toBeVisible();
+      if (mobile) {
+        const boundaries = page.locator('details[aria-label="정책 제한 및 사용할 수 없는 제어"]');
+        await expect(boundaries).not.toHaveAttribute('open', '');
+        await boundaries.locator('summary').click();
+        await expect(
+          boundaries.getByRole('heading', { name: '하위 부서 정책 예외', exact: true })
+        ).toBeVisible();
+        await boundaries.locator('summary').click();
+        await expect(boundaries).not.toHaveAttribute('open', '');
+      }
       break;
   }
 }
@@ -266,6 +313,12 @@ async function expectMobileFirstFoldClearance(
         viewportHeight: window.innerHeight,
         position: getComputedStyle(fixedOverlay).position,
         contentPaddingBottom: Number.parseFloat(getComputedStyle(contentRoot).paddingBottom),
+        // PageCanvas can own the remaining bottom inset outside the content root.
+        contentTrailingInset: Math.max(
+          0,
+          Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) -
+            (contentRoot.getBoundingClientRect().bottom + window.scrollY)
+        ),
       };
     },
     {
@@ -280,7 +333,7 @@ async function expectMobileFirstFoldClearance(
     `${label}: fixed navigation must end at the real viewport bottom`
   ).toBeLessThanOrEqual(1);
   expect(
-    metrics?.contentPaddingBottom ?? 0,
+    (metrics?.contentPaddingBottom ?? 0) + (metrics?.contentTrailingInset ?? 0),
     `${label}: document content must clear fixed navigation plus breathing room`
   ).toBeGreaterThanOrEqual((overlayBox?.height ?? 0) + 23);
 }
@@ -330,6 +383,15 @@ async function prepareMobileCanonicalCapture(
   expect(await page.evaluate(() => window.innerHeight), `${label}: canonical document height`).toBe(
     targetHeight
   );
+  await test.info().attach('implementation-canonical-layout', {
+    body: JSON.stringify({ label, width: MOBILE_VIEWPORT.width, height: targetHeight }),
+    contentType: 'application/json',
+  });
+  await page.screenshot({
+    path: test.info().outputPath('implementation-review.png'),
+    animations: 'disabled',
+    scale: 'css',
+  });
   expect(targetHeight, `${label}: contracted canonical document height`).toBe(
     evidence.expectedRasterHeight
   );
@@ -366,7 +428,7 @@ async function prepareMobileCanonicalCapture(
 }
 
 for (const approvedCase of cases) {
-  test(`${approvedCase.screen} executes the approved semantic state at exact desktop/mobile width`, async ({
+  test(`${approvedCase.screen} executes the reviewed implementation state at exact desktop/mobile width`, async ({
     page,
   }, testInfo) => {
     const mobile = testInfo.project.name === 'mobile';
@@ -379,6 +441,10 @@ for (const approvedCase of cases) {
     page.on('pageerror', ({ message }) => diagnostics.push(`pageerror: ${message}`));
     page.on('console', (message) => {
       if (message.type() === 'error') diagnostics.push(`console: ${message.text()}`);
+    });
+    page.on('response', (response) => {
+      if (response.status() >= 500)
+        diagnostics.push(`http ${response.status()}: ${response.url()}`);
     });
 
     await prepareApprovedState(page, approvedCase.screen);
@@ -411,12 +477,22 @@ for (const approvedCase of cases) {
       }
     });
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    const invitation = page
+      .getByTestId('meeting-personal-room')
+      .getByText(PERSONAL_ROOM_ALIAS, { exact: false });
+    if (approvedCase.screen === 'U11') {
+      await expect(invitation).toHaveCount(1);
+      await expect(invitation).toContainText(new URL(page.url()).origin);
+    }
     await expect(page).toHaveScreenshot(approvedFrame.implementationGolden.screenshotName, {
       animations: 'disabled',
       caret: 'hide',
       fullPage: !mobile && approvedCase.screen !== 'U06',
       maxDiffPixelRatio: 0.002,
       timeout: 30_000,
+      // Runtime origin/port is not design evidence. The actual authorized URL is asserted above.
+      mask: approvedCase.screen === 'U11' ? [invitation] : [],
+      maskColor: '#EDF2FA',
     });
   });
 }

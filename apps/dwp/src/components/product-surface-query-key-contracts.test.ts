@@ -30,8 +30,9 @@ describe('Product Surface query cache discriminator contract', () => {
     expect(work).toContain("queryKey: ['services', 'catalog', 'view', 'discover']");
     expect(work).toContain("queryKey: ['services', 'requests', 'view', drafts ? 'drafts' : 'my']");
     expect(work).toContain(
-      "queryKey: ['services', 'request', requestId, 'view', draft ? 'draft' : 'absent']"
+      "const detailKey = [ 'services', 'request', requestId, 'view', draft ? 'draft' : 'absent', ...requestScope.cacheKey, ]"
     );
+    expect(work).toContain('queryKey: detailKey');
     expect(management).toContain(
       "queryKey: ['services', 'catalog', 'view', 'management', ...requestScope.cacheKey]"
     );

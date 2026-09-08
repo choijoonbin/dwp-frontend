@@ -130,6 +130,16 @@ describe('WorkTodayPlanPanel', () => {
     expect(second.dueAt).toBeNull();
   });
 
+  it('opens a selected work through the explicit action without changing the plan', async () => {
+    const onSelect = vi.fn();
+    const onDraftChange = vi.fn();
+    await render({ onSelect, onDraftChange });
+    await act(async () => button('workHub.todayPlan.openWork').click());
+    expect(onSelect).toHaveBeenCalledWith(first);
+    expect(onDraftChange).not.toHaveBeenCalled();
+    expect(first.lifecycle).toBe('OPEN');
+  });
+
   it('reuses the same idempotency key when saving an unchanged draft after failure', async () => {
     const onSave = vi.fn().mockRejectedValue(new Error('unknown outcome'));
     await render({ onSave });

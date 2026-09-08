@@ -12,6 +12,10 @@ import {
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { ActionButton } from '@dwp-frontend/design-system';
+import { ListTodo } from 'lucide-react';
 
 import { MeetingHomeHeader } from './meeting-home-header';
 import { MeetingHomeFocus } from './meeting-home-focus';
@@ -19,6 +23,7 @@ import { MeetingHomeTimeline } from './meeting-home-timeline';
 import { MeetingHomeResults } from './meeting-home-results';
 import { MeetingHomeResources } from './meeting-home-resources';
 import { MeetingHomeWorkQueue } from './meeting-home-work-queue';
+import { MeetingHomeCandidateQueue } from './meeting-home-candidate-queue';
 import { homeFocusMeeting, homeUnavailableReason } from './meeting-home-model';
 
 export function MeetingHome() {
@@ -156,8 +161,7 @@ function MeetingHomeContent({
         live={Boolean(data.activeMeeting)}
         onCodeChange={setJoinCode}
         onRefresh={() => {
-          void queryClient.invalidateQueries({ queryKey: ['meetings', 'home', 'results'] });
-          void query.refetch();
+          void queryClient.invalidateQueries({ queryKey: ['meetings', 'home'] });
         }}
         onSchedule={() => navigate('/meetings/mine?view=schedule')}
         onStart={() => instantMutation.mutate()}
@@ -184,7 +188,7 @@ function MeetingHomeContent({
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 2fr) minmax(280px, 1fr)' },
-          gap: 3,
+          gap: { xs: 2.5, lg: 3 },
           alignItems: 'start',
           mt: 3,
         }}
@@ -195,8 +199,43 @@ function MeetingHomeContent({
           disabled={!available}
         />
         <Box data-testid="meeting-home-queue" sx={{ minWidth: 0 }}>
-          <MeetingHomeResults recent={data.recent} section="queue" timeZone={displayTimeZone} />
-          <MeetingHomeWorkQueue scope={scope} actorId={actorId} timeZone={displayTimeZone} />
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1}
+            sx={{ mb: 0.5 }}
+          >
+            <Stack direction="row" alignItems="center" gap={0.75}>
+              <ListTodo size={17} aria-hidden="true" />
+              <Typography component="h2" variant="subtitle1" sx={{ fontWeight: 'fontWeightBold' }}>
+                {t('home.design.queueTitle')}
+              </Typography>
+            </Stack>
+            <ActionButton
+              intent="quiet"
+              size="small"
+              onClick={() => navigate('/meetings/follow-ups')}
+            >
+              {t('actions.viewAll')}
+            </ActionButton>
+          </Stack>
+          <Typography variant="caption" color="text.secondary" component="p" sx={{ mb: 1.5 }}>
+            {t('home.design.queueDescription')}
+          </Typography>
+          <MeetingHomeResults
+            embedded
+            recent={data.recent}
+            section="queue"
+            timeZone={displayTimeZone}
+          />
+          <MeetingHomeWorkQueue
+            embedded
+            scope={scope}
+            actorId={actorId}
+            timeZone={displayTimeZone}
+          />
+          <MeetingHomeCandidateQueue recent={data.recent} scope={scope} enabled={authenticated} />
         </Box>
       </Box>
       <Box

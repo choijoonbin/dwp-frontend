@@ -157,9 +157,6 @@
       "Alert": 2,
       "CircularProgress": 1
     },
-    "apps/dwp/src/features/activity/activity-home.tsx": {
-      "RawTypography": 1
-    },
     "apps/dwp/src/features/admin/access-manager.tsx": {
       "RawTypography": 7,
       "RawRadius": 2,
@@ -638,9 +635,6 @@
       "RawRadius": 1,
       "RawTypography": 1
     },
-    "apps/dwp/src/features/dwaion/dwaion-activity.tsx": {
-      "RawTypography": 1
-    },
     "apps/dwp/src/features/dwaion/dwaion-admin-actions.tsx": {
       "Alert": 4
     },
@@ -1004,16 +998,15 @@
       "RawRadius": 2
     },
     "apps/dwp/src/features/meetings/live-video-meeting-room.css": {
-      "HardcodedColor": 45,
-      "RawRadius": 8,
+      "HardcodedColor": 43,
       "RawMotion": 2,
+      "RawRadius": 3,
       "RawTypography": 9,
       "RawShadow": 2
     },
     "apps/dwp/src/features/meetings/live-video-meeting-room.tsx": {
       "HardcodedColor": 1,
-      "RawTypography": 2,
-      "Alert": 1
+      "RawTypography": 2
     },
     "apps/dwp/src/features/meetings/meeting-admin-intelligence.tsx": {
       "Alert": 2,
@@ -1021,8 +1014,7 @@
       "RawTypography": 10
     },
     "apps/dwp/src/features/meetings/meeting-admin.tsx": {
-      "Alert": 2,
-      "HardcodedColor": 8,
+      "Alert": 1,
       "RawTypography": 1
     },
     "apps/dwp/src/features/meetings/meeting-artifact-playback.tsx": {
@@ -1036,8 +1028,7 @@
       "RawMotion": 2
     },
     "apps/dwp/src/features/meetings/meeting-components.tsx": {
-      "RawTypography": 14,
-      "LinearProgress": 1
+      "RawTypography": 13
     },
     "apps/dwp/src/features/meetings/meeting-content-governance.tsx": {
       "HardcodedColor": 7,
@@ -1050,8 +1041,7 @@
       "Alert": 1
     },
     "apps/dwp/src/features/meetings/meeting-history.tsx": {
-      "Alert": 1,
-      "RawRadius": 2
+      "Alert": 1
     },
     "apps/dwp/src/features/meetings/meeting-home.tsx": {
       "Alert": 1
@@ -1077,16 +1067,8 @@
       "CircularProgress": 1,
       "Alert": 2
     },
-    "apps/dwp/src/features/meetings/meeting-prejoin.css": {
-      "RawTypography": 30,
-      "RawRadius": 1
-    },
-    "apps/dwp/src/features/meetings/meeting-prejoin.tsx": {
-      "Alert": 2
-    },
     "apps/dwp/src/features/meetings/meeting-recap-detail.tsx": {
-      "RawRadius": 3,
-      "Alert": 5
+      "Alert": 4
     },
     "apps/dwp/src/features/meetings/meeting-room-experience.tsx": {
       "RawRadius": 1,
@@ -1766,9 +1748,6 @@
       "Skeleton": 1,
       "RawTypography": 2
     },
-    "apps/dwp/src/features/work/access-review-work-item.tsx": {
-      "Alert": 2
-    },
     "apps/dwp/src/features/workforce/assignment-register.tsx": {
       "RawTypography": 2,
       "RawRadius": 1
@@ -1846,8 +1825,7 @@
       "RawRadius": 3
     },
     "apps/dwp/src/pages/activity.tsx": {
-      "LinearProgress": 1,
-      "RawTypography": 1
+      "LinearProgress": 1
     },
     "apps/dwp/src/pages/admin.tsx": {
       "RawRadius": 1

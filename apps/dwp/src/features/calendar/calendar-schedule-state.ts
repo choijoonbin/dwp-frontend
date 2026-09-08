@@ -4,6 +4,14 @@ export type CalendarScheduleView = 'day' | 'week' | 'month' | 'agenda';
 
 const SCHEDULE_VIEWS = new Set<CalendarScheduleView>(['day', 'week', 'month', 'agenda']);
 const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/u;
+const RETURN_TARGET_MAX_LENGTH = 2_048;
+
+function hasControlCharacter(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const code = character.charCodeAt(0);
+    return code <= 31 || code === 127;
+  });
+}
 
 export function isCalendarScheduleView(value: unknown): value is CalendarScheduleView {
   return typeof value === 'string' && SCHEDULE_VIEWS.has(value as CalendarScheduleView);
@@ -27,6 +35,31 @@ export function calendarScheduleDateValue(value: Date): string {
   const month = String(value.getMonth() + 1).padStart(2, '0');
   const day = String(value.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+export function calendarScheduleReturnTarget(value: unknown): string | null {
+  if (
+    typeof value !== 'string' ||
+    value.length === 0 ||
+    value.length > RETURN_TARGET_MAX_LENGTH ||
+    !value.startsWith('/') ||
+    value.startsWith('//') ||
+    hasControlCharacter(value)
+  ) {
+    return null;
+  }
+
+  try {
+    const resolved = new URL(value, 'https://calendar.internal');
+    const canonical = `${resolved.pathname}${resolved.search}${resolved.hash}`;
+    const workOwnedPath = resolved.pathname === '/work' || resolved.pathname.startsWith('/work/');
+
+    return resolved.origin === 'https://calendar.internal' && canonical === value && workOwnedPath
+      ? canonical
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 export function calendarScheduleCalendarIds(value: unknown): string[] | null {

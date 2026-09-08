@@ -26,12 +26,24 @@
     },
     "items": {
       "services": {
-        "home": { "label": "Service home" },
-        "discover": { "label": "Find services" },
-        "my": { "label": "Active requests" },
-        "drafts": { "label": "Drafts" },
-        "admin-catalog": { "label": "Service catalog" },
-        "admin-operations": { "label": "Request operations" }
+        "home": {
+          "label": "Service home"
+        },
+        "discover": {
+          "label": "Find services"
+        },
+        "my": {
+          "label": "Active requests"
+        },
+        "drafts": {
+          "label": "Drafts"
+        },
+        "admin-catalog": {
+          "label": "Service catalog"
+        },
+        "admin-operations": {
+          "label": "Request operations"
+        }
       }
     }
   },
@@ -187,5 +199,27 @@
     "INTERNAL": "internal",
     "CONFIDENTIAL": "confidential",
     "RESTRICTED": "restricted"
+  },
+  "informationResponse": {
+    "title": "Provide the requested information",
+    "description": "Review the request and complete the information needed by your service team.",
+    "nextStep": "After your response is accepted, the service team continues processing. Submitting this response does not resolve the whole request.",
+    "unavailable": "Response submission is not available with your current access. Your service request remains unchanged.",
+    "conflict": "This request changed. Your input is preserved. Review the latest request details before continuing.",
+    "denied": "The response was not accepted. Check your access and required fields, then review again. Your input is preserved.",
+    "unknown": "The response result could not be confirmed. Your input is locked to prevent a duplicate response. Check the result using the same submission.",
+    "success": "Your information was received. The service team will continue processing this request.",
+    "message": "Response to the service team",
+    "messageHelp": "{{count}} / 2,000 characters · Enter at least 10 characters.",
+    "fieldInvalid": "Complete this field using a valid value.",
+    "reviewLatest": "I reviewed the latest request; keep my input",
+    "checkResult": "Check submission result",
+    "review": "Review response",
+    "confirmTitle": "Submit this response?",
+    "confirmDescription": "The reviewed information will be sent to the service team. The latest request version and your submission access are checked before sending.",
+    "back": "Back to editing",
+    "submit": "Submit response",
+    "refreshFailed": "The latest request could not be loaded. Your input is preserved. Reload the request before reviewing its latest version.",
+    "refresh": "Reload latest request"
   }
 }

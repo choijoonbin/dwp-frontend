@@ -1492,11 +1492,8 @@ export interface components {
             auditStatus: string;
             /** Correlationid */
             correlationId?: string | null;
-            /**
-             * Dataprovenance
-             * @default LIVE
-             */
-            dataProvenance: string;
+            /** @default LIVE */
+            dataProvenance: components["schemas"]["RunDataProvenance"];
             /**
              * Eventkind
              * @default EXECUTION_SNAPSHOT
@@ -2326,6 +2323,7 @@ export interface components {
             entityType?: string | null;
             /** Route */
             route: string;
+            selectedWork?: components["schemas"]["AskSelectedWork"] | null;
             /** Surface */
             surface?: string | null;
         };
@@ -2394,6 +2392,7 @@ export interface components {
             requestId: string;
             /** Runid */
             runId: string;
+            selectedWork?: components["schemas"]["AskSelectedWork"] | null;
             /** Sourcecount */
             sourceCount: number;
             state: components["schemas"]["AskState"];
@@ -2401,6 +2400,23 @@ export interface components {
             statusCode: string;
             /** Usermessageid */
             userMessageId?: string | null;
+        };
+        /** AskSelectedWork */
+        AskSelectedWork: {
+            /** Expectedversion */
+            expectedVersion: number;
+            /** Obligationkey */
+            obligationKey?: string | null;
+            /**
+             * Sourcereference
+             * Format: uuid
+             */
+            sourceReference: string;
+            /**
+             * Sourcesystem
+             * @enum {string}
+             */
+            sourceSystem: "PERSONAL_TASK" | "SERVICE_REQUEST" | "APPROVAL_TASK" | "APPROVAL_REQUEST" | "WORKSPACE";
         };
         /**
          * AskState
@@ -2631,6 +2647,11 @@ export interface components {
         };
         /** ConversationMessage */
         ConversationMessage: {
+            /**
+             * Agentkey
+             * @default DWP_ASSISTANT
+             */
+            agentKey: string;
             /** Citations */
             citations?: components["schemas"]["AskCitation"][];
             /** Content */
@@ -2648,6 +2669,7 @@ export interface components {
             role: components["schemas"]["ConversationRole"];
             /** Runid */
             runId?: string | null;
+            selectedWork?: components["schemas"]["AskSelectedWork"] | null;
             /** Statuscode */
             statusCode?: string | null;
         };
@@ -4703,6 +4725,41 @@ export interface components {
             /** Versionnumber */
             versionNumber: number;
         };
+        /**
+         * RunAuditEvidenceStatus
+         * @enum {string}
+         */
+        RunAuditEvidenceStatus: "LINKED" | "PENDING" | "NOT_AVAILABLE";
+        /**
+         * RunDataProvenance
+         * @enum {string}
+         */
+        RunDataProvenance: "LIVE" | "SAMPLE";
+        /**
+         * RunLeaseStatus
+         * @enum {string}
+         */
+        RunLeaseStatus: "ACTIVE" | "EXPIRED" | "RELEASED";
+        /**
+         * RunMeasurementStatus
+         * @enum {string}
+         */
+        RunMeasurementStatus: "MEASURING" | "MEASURED" | "PARTIAL" | "NOT_AVAILABLE";
+        /**
+         * RunSourceHealthStatus
+         * @enum {string}
+         */
+        RunSourceHealthStatus: "SUCCESS" | "UNAVAILABLE" | "NOT_CONFIGURED";
+        /**
+         * RunStageKey
+         * @enum {string}
+         */
+        RunStageKey: "AUTHORIZING" | "RETRIEVING" | "REASONING" | "VERIFYING" | "PERSISTING" | "COMPLETED" | "FAILED";
+        /**
+         * RunStageState
+         * @enum {string}
+         */
+        RunStageState: "ACTIVE" | "COMPLETED" | "SKIPPED" | "FAILED";
         /** SafetyPolicy */
         SafetyPolicy: {
             /** Maxsourcescopes */
@@ -4905,6 +4962,15 @@ export interface components {
             /** Retentiondays */
             retentionDays: number;
         };
+        /** UserAgentRunAuditEvidence */
+        UserAgentRunAuditEvidence: {
+            /** Auditid */
+            auditId?: string | null;
+            /** Auditrecordid */
+            auditRecordId?: string | null;
+            /** @default NOT_AVAILABLE */
+            status: components["schemas"]["RunAuditEvidenceStatus"];
+        };
         /** UserAgentRunEnvelope */
         UserAgentRunEnvelope: {
             data: components["schemas"]["UserAgentRunSummary"];
@@ -4923,6 +4989,12 @@ export interface components {
              * @default true
              */
             success: boolean;
+        };
+        /** UserAgentRunLease */
+        UserAgentRunLease: {
+            /** Expiresat */
+            expiresAt?: string | null;
+            status: components["schemas"]["RunLeaseStatus"];
         };
         /** UserAgentRunListEnvelope */
         UserAgentRunListEnvelope: {
@@ -4944,13 +5016,54 @@ export interface components {
              */
             success: boolean;
         };
+        /** UserAgentRunSourceHealth */
+        UserAgentRunSourceHealth: {
+            /**
+             * Lastattemptat
+             * Format: date-time
+             */
+            lastAttemptAt: string;
+            /** Lastsuccessat */
+            lastSuccessAt?: string | null;
+            /** Latencyms */
+            latencyMs?: number | null;
+            sourceType: components["schemas"]["CitationSourceType"];
+            status: components["schemas"]["RunSourceHealthStatus"];
+        };
+        /** UserAgentRunStage */
+        UserAgentRunStage: {
+            /** Completedat */
+            completedAt?: string | null;
+            /** Durationms */
+            durationMs?: number | null;
+            key: components["schemas"]["RunStageKey"];
+            /** Sequence */
+            sequence: number;
+            /**
+             * Startedat
+             * Format: date-time
+             */
+            startedAt: string;
+            state: components["schemas"]["RunStageState"];
+        };
         /** UserAgentRunSummary */
         UserAgentRunSummary: {
+            /**
+             * Activitytitle
+             * @default DWAI·ON Agent execution
+             */
+            activityTitle: string;
             /** Agentkey */
             agentKey: string;
             /** Agentrevision */
             agentRevision: number;
             answerState?: components["schemas"]["AskState"] | null;
+            /**
+             * Attempt
+             * @default 1
+             */
+            attempt: number;
+            auditEvidence?: components["schemas"]["UserAgentRunAuditEvidence"];
             /** Completedat */
             completedAt?: string | null;
             /** Conversationid */
@@ -4960,9 +5073,17 @@ export interface components {
              * Format: date-time
              */
             createdAt: string;
+            currentStage?: components["schemas"]["RunStageKey"] | null;
+            /** @default LIVE */
+            dataProvenance: components["schemas"]["RunDataProvenance"];
             /** Latencyms */
             latencyMs: number;
+            lease?: components["schemas"]["UserAgentRunLease"];
+            /** @default NOT_AVAILABLE */
+            measurementStatus: components["schemas"]["RunMeasurementStatus"];
             policyOutcome: components["schemas"]["PolicyOutcome"];
+            /** Progresspercent */
+            progressPercent?: number | null;
             riskTier: components["schemas"]["RiskTier"];
             /**
              * Runid
@@ -4972,6 +5093,10 @@ export interface components {
             runState: components["schemas"]["AgentRunState"];
             /** Sourcecount */
             sourceCount: number;
+            /** Sourcehealth */
+            sourceHealth?: components["schemas"]["UserAgentRunSourceHealth"][];
+            /** Stages */
+            stages?: components["schemas"]["UserAgentRunStage"][];
             /** Statuscode */
             statusCode?: string | null;
         };
@@ -7907,7 +8032,9 @@ export interface operations {
     };
     get_conversation_v1_conversations__conversation_id__get: {
         parameters: {
-            query?: never;
+            query?: {
+                agentKey?: string | null;
+            };
             header: {
                 "X-DWP-User-ID": string;
                 "X-DWP-Tenant-ID": string;

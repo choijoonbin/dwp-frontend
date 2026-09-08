@@ -1,0 +1,129 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e19] [cursor=pointer]':
+                        - generic [ref=e20]: M
+                        - img [ref=e21]
+                    - generic "Open DWAI·ON" [ref=e24]:
+                        - button "Open DWAI·ON" [ref=e25] [cursor=pointer]
+        - main [ref=e28]:
+            - generic [ref=e29]:
+                - generic [ref=e30]:
+                    - generic [ref=e32]:
+                        - heading "Today plan" [level=1] [ref=e33]
+                        - generic [ref=e35]: 0 results
+                    - generic [ref=e36]:
+                        - status [ref=e37]:
+                            - generic [ref=e39]:
+                                - generic [ref=e40]: Snapshot verified
+                                - generic [ref=e41]: Last verified 9/7/26, 6:32 PM
+                            - generic "Try again" [ref=e42]:
+                                - button "Try again" [ref=e43] [cursor=pointer]:
+                                    - img [ref=e44]
+                        - button "Add personal task" [ref=e49] [cursor=pointer]:
+                            - img [ref=e51]
+                            - text: Add personal task
+                - generic [ref=e54]:
+                    - button "Back to work list" [ref=e55] [cursor=pointer]
+                    - generic [ref=e57]:
+                        - generic [ref=e58]:
+                            - generic [ref=e59]:
+                                - paragraph [ref=e60]: Order the work you will focus on for 2026-09-07.
+                                - text: 'Time zone: Asia/Seoul'
+                            - button "Save plan" [ref=e61] [cursor=pointer]:
+                                - img [ref=e63]
+                                - text: Save plan
+                        - generic [ref=e67]:
+                            - generic [ref=e69]:
+                                - text: Selected for today
+                                - heading "0" [level=4] [ref=e70]
+                            - generic [ref=e72]:
+                                - text: Tasks with a due date
+                                - heading "0" [level=4] [ref=e73]
+                            - generic [ref=e75]:
+                                - text: Work in progress
+                                - heading "0" [level=4] [ref=e76]
+                            - generic [ref=e78]:
+                                - text: Available candidates
+                                - heading "4" [level=4] [ref=e79]
+                        - generic [ref=e80]:
+                            - region "0 planned work items" [ref=e81]:
+                                - heading "0 planned work items" [level=3] [ref=e82]
+                                - generic [ref=e83]:
+                                    - img [ref=e85]
+                                    - heading "There is no planned work yet" [level=2] [ref=e88]
+                                    - paragraph [ref=e89]: Add work to focus on from the candidates below.
+                            - region "Work to add" [ref=e90]:
+                                - heading "Work to add" [level=3] [ref=e91]
+                                - group "Candidate scope" [ref=e92]:
+                                    - button "All" [pressed] [ref=e93] [cursor=pointer]
+                                    - button "With deadline" [ref=e94] [cursor=pointer]
+                                    - button "My action" [ref=e95] [cursor=pointer]
+                                - generic [ref=e96]:
+                                    - generic: Search plan candidates
+                                    - generic [ref=e97]:
+                                        - textbox "Search plan candidates" [ref=e98]
+                                        - group:
+                                            - generic: Search plan candidates
+                                - list [ref=e99]:
+                                    - listitem [ref=e100]:
+                                        - generic [ref=e101]:
+                                            - paragraph [ref=e102]: Review project data access
+                                            - generic [ref=e103]: Review pending · No due date · Approval
+                                        - button "Add" [ref=e104] [cursor=pointer]:
+                                            - img [ref=e106]
+                                            - text: Add
+                                    - listitem [ref=e107]:
+                                        - generic [ref=e108]:
+                                            - paragraph [ref=e109]: Provide the laptop delivery address
+                                            - generic [ref=e110]: Your response required · No due date · Service request
+                                        - button "Add" [ref=e111] [cursor=pointer]:
+                                            - img [ref=e113]
+                                            - text: Add
+                                    - listitem [ref=e114]:
+                                        - generic [ref=e115]:
+                                            - paragraph [ref=e116]: Prepare the customer handover notes
+                                            - generic [ref=e117]: Open · No due date · Personal task
+                                        - button "Add" [ref=e118] [cursor=pointer]:
+                                            - img [ref=e120]
+                                            - text: Add
+                                    - listitem [ref=e121]:
+                                        - generic [ref=e122]:
+                                            - paragraph [ref=e123]: Draft next week team checklist
+                                            - generic [ref=e124]: Open · No due date · Personal task
+                                        - button "Add" [ref=e125] [cursor=pointer]:
+                                            - img [ref=e127]
+                                            - text: Add
+                        - button "Save plan" [ref=e129] [cursor=pointer]:
+                            - img [ref=e131]
+                            - text: Save plan
+        - navigation "Work quick navigation" [ref=e135]:
+            - button "Inbox" [ref=e136] [cursor=pointer]:
+                - img [ref=e137]
+                - generic [ref=e140]: Inbox
+            - button "Today" [ref=e141] [cursor=pointer]:
+                - img [ref=e142]
+                - generic [ref=e147]: Today
+            - button "My actions" [ref=e148] [cursor=pointer]:
+                - img [ref=e149]
+                - generic [ref=e152]: My actions
+            - button "DWAI·ON" [ref=e153] [cursor=pointer]:
+                - img [ref=e154]
+                - generic [ref=e157]: DWAI·ON
+            - button "More" [ref=e158] [cursor=pointer]:
+                - img [ref=e159]
+                - generic [ref=e163]: More
+```

@@ -17,9 +17,34 @@ const inspector = (page: Page) => page.getByRole('article');
 const openWorkButton = (page: Page, title: string) =>
   page.getByRole('button', { name: `Open details for ${title}`, exact: true });
 
+/** Wait for the lazy Work page to mount before checking the interaction itself. */
+async function openWorkPage(page: Page, url: string) {
+  await page.goto(url);
+  await expect(page.getByRole('main').getByRole('heading').first()).toBeVisible({
+    timeout: 20_000,
+  });
+}
+
 async function showWorkList(page: Page) {
   const back = inspector(page).getByRole('button', { name: 'Back to work list', exact: true });
-  if (await back.isVisible()) await back.click();
+  const list = page.locator('ul[aria-label="Unified work list"]');
+  await expect.poll(async () => (await back.isVisible()) || (await list.isVisible())).toBe(true);
+  if (await back.isVisible()) {
+    await back.click({ timeout: 2_000 }).catch(async (error: unknown) => {
+      if (!(await list.isVisible())) throw error;
+    });
+  }
+  await expect(list).toBeVisible();
+}
+
+async function openSourceStatus(page: Page) {
+  const direct = page.getByRole('button', { name: 'Source status', exact: true });
+  if (await direct.isVisible()) {
+    await direct.click();
+    return;
+  }
+  await page.getByRole('button', { name: 'Open navigation', exact: true }).click();
+  await page.getByRole('button', { name: 'Source connections', exact: true }).click();
 }
 
 async function selectWork(page: Page, title: string) {
@@ -29,7 +54,10 @@ async function selectWork(page: Page, title: string) {
 }
 
 async function expectSelectedStatus(page: Page, status: string) {
-  await expect(inspector(page).getByText(status, { exact: true }).first()).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: status, exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
 }
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -63,29 +91,40 @@ async function capture(page: Page, testInfo: TestInfo, name: string, preserveFoc
   }
 }
 
-test('source-owned approval and service work require their source apps', async ({
+test('source-owned approval and service detail preserve source ownership', async ({
   page,
 }, testInfo) => {
   const runtime = await mockWorkHubFoundation(page);
-  await page.goto('/work/queue');
+  await openWorkPage(page, '/work/queue');
   for (const item of [
-    { title: fixture.approvalTitle, path: `/approvals/inbox?task=${fixture.approvalId}` },
-    { title: fixture.serviceTitle, path: `/services/requests/${fixture.serviceId}` },
+    {
+      title: fixture.approvalTitle,
+      path: `/approvals/inbox?task=${fixture.approvalId}`,
+      approval: true,
+    },
+    { title: fixture.serviceTitle, path: `/services/my/${fixture.serviceId}`, approval: false },
   ]) {
     await showWorkList(page);
     const checkbox = page.getByRole('checkbox', {
       name: `Select ${item.title} for batch processing`,
       exact: true,
     });
-    await expect(checkbox).toBeDisabled();
+    await expect(checkbox).toHaveCount(0);
     await selectWork(page, item.title);
     await expect(inspector(page)).toContainText(sourceNotice);
     await expect(inspector(page).getByRole('button', { name: 'Complete' })).toHaveCount(0);
     await expect(inspector(page).getByRole('button', { name: 'Start' })).toHaveCount(0);
+    const returnTo = new URL(page.url());
+    const expectedReturnTo = `${returnTo.pathname}${returnTo.search}${returnTo.hash}`;
     await inspector(page).getByRole('button', { name: 'Open in source', exact: true }).click();
-    await expect(page).toHaveURL(
-      new RegExp(item.path.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&') + '$')
-    );
+    await expect(page).toHaveURL((url) => {
+      const expected = new URL(item.path, url.origin);
+      if (url.pathname !== expected.pathname) return false;
+      return item.approval
+        ? url.searchParams.get('task') === fixture.approvalId &&
+            url.searchParams.get('returnTo') === expectedReturnTo
+        : `${url.pathname}${url.search}` === item.path;
+    });
     await page.goBack();
   }
   expect(runtime.forbiddenWorkspaceMutations).toEqual([]);
@@ -97,13 +136,13 @@ test('personal start and completion wait for source confirmation with versioned 
   page,
 }, testInfo) => {
   const runtime = await mockWorkHubFoundation(page);
-  await page.goto(personalTaskRoute());
+  await openWorkPage(page, personalTaskRoute());
   await expect(inspector(page)).toContainText(fixture.personalTitle);
   runtime.holdNextMutation();
-  await inspector(page).getByRole('button', { name: 'Start', exact: true }).click();
+  await inspector(page).getByRole('button', { name: 'In progress', exact: true }).click();
   await expect.poll(() => runtime.mutations.length).toBe(1);
   await expect(
-    inspector(page).getByRole('button', { name: 'Processing', exact: true })
+    inspector(page).getByRole('button', { name: 'In progress', exact: true })
   ).toBeDisabled();
   await expect(page.getByText('The source confirmed the change', { exact: true })).toHaveCount(0);
   expect(runtime.mutations[0]).toMatchObject({
@@ -113,7 +152,9 @@ test('personal start and completion wait for source confirmation with versioned 
   expect(runtime.mutations[0].idempotencyKey).toMatch(uuid);
   runtime.releaseMutation();
   await expectSelectedStatus(page, 'In progress');
-  await expect(inspector(page).getByRole('button', { name: 'Start', exact: true })).toHaveCount(0);
+  await expect(
+    inspector(page).getByRole('button', { name: 'In progress', exact: true })
+  ).toBeDisabled();
   await inspector(page).getByRole('button', { name: 'Complete', exact: true }).click();
   await expectSelectedStatus(page, 'Completed');
   expect(runtime.mutations[1]).toMatchObject({
@@ -133,7 +174,7 @@ test('partial source failure remains visible when the verified subset is empty',
   page,
 }, testInfo) => {
   await mockWorkHubFoundation(page, { personal: false, sourceOwned: false, failServices: true });
-  await page.goto('/work/queue');
+  await openWorkPage(page, '/work/queue');
   await expect(page.getByText(partialNotice, { exact: true })).toBeVisible();
   await expect(page.getByText('There is no verified work right now', { exact: true })).toHaveCount(
     0
@@ -146,7 +187,7 @@ test('an all-source outage cannot masquerade as an empty queue and retains recov
   page,
 }, testInfo) => {
   const runtime = await mockWorkHubFoundation(page, { failAllSources: true });
-  await page.goto('/work/queue');
+  await openWorkPage(page, '/work/queue');
 
   await expect.poll(() => runtime.failedSourceReads.length).toBeGreaterThanOrEqual(6);
   await expect(page.getByText('Work could not be loaded', { exact: true })).toBeVisible();
@@ -172,26 +213,30 @@ test('a background refresh outage keeps the verified scope visible as degraded',
   page,
 }, testInfo) => {
   const runtime = await mockWorkHubFoundation(page);
-  await page.goto(personalTaskRoute());
+  await openWorkPage(page, personalTaskRoute());
   await expect(
     inspector(page).getByRole('heading', { name: fixture.personalTitle, exact: true })
   ).toBeVisible();
 
   runtime.failFutureReads();
-  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  const retry = page.getByRole('button', { name: 'Try again', exact: true });
+  const returnedToList = !(await retry.isVisible());
+  if (returnedToList) await showWorkList(page);
+  await retry.click();
   await expect.poll(() => runtime.failedSourceReads.length).toBeGreaterThanOrEqual(6);
   await expect(
     page.getByRole('alert').getByText('Work sources unavailable', { exact: true })
   ).toBeVisible();
   await expect(page.getByText('Work could not be loaded', { exact: true })).toHaveCount(0);
-  await expect(
-    inspector(page).getByRole('heading', { name: fixture.personalTitle, exact: true })
-  ).toBeVisible();
-
-  await page.getByRole('button', { name: 'Source status', exact: true }).click();
+  await openSourceStatus(page);
   const sourceStatus = page.getByRole('dialog', { name: 'Work source status' });
   await expect(sourceStatus).toBeVisible();
   await expect(sourceStatus.getByText('Unavailable', { exact: true })).toHaveCount(6);
+  await sourceStatus.getByRole('button', { name: 'Close', exact: true }).click();
+  if (returnedToList) await selectWork(page, fixture.personalTitle);
+  await expect(
+    inspector(page).getByRole('heading', { name: fixture.personalTitle, exact: true })
+  ).toBeVisible();
   await capture(page, testInfo, 'background-refresh-degraded');
 });
 
@@ -199,33 +244,45 @@ test('canonical work links and personal task aliases resolve the requested item'
   page,
 }, testInfo) => {
   await mockWorkHubFoundation(page);
-  await page.goto(personalTaskRoute(fixture.secondaryPersonalId));
+  await openWorkPage(page, personalTaskRoute(fixture.secondaryPersonalId));
   await expect(
     inspector(page).getByRole('heading', { name: fixture.secondaryTitle, exact: true })
   ).toBeVisible();
   await expect(
     inspector(page).getByRole('heading', { name: fixture.personalTitle, exact: true })
   ).toHaveCount(0);
-  await page.goto(`/work/queue?personalTaskId=${fixture.personalId}`);
+  await openWorkPage(page, `/work/queue?personalTaskId=${fixture.personalId}`);
   await expect(
     inspector(page).getByRole('heading', { name: fixture.personalTitle, exact: true })
   ).toBeVisible();
   await capture(page, testInfo, 'canonical-personal-target');
 });
 
-test('returning from another app adopts the cached queue before a personal command', async ({
+test('returning from another app revalidates the queue before a personal command', async ({
   page,
 }, testInfo) => {
   const runtime = await mockWorkHubFoundation(page);
-  await page.goto('/work/queue');
+  await openWorkPage(page, '/work/queue');
   await selectWork(page, fixture.approvalTitle);
   const reads = runtime.personalReads;
+  const workUrl = new URL(page.url());
+  const returnTo = `${workUrl.pathname}${workUrl.search}${workUrl.hash}`;
   await inspector(page).getByRole('button', { name: 'Open in source', exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`/approvals/inbox\\?task=${fixture.approvalId}$`));
-  await page.goBack();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/approvals/inbox' &&
+      url.searchParams.get('task') === fixture.approvalId &&
+      url.searchParams.get('returnTo') === returnTo
+  );
+  await page.getByRole('button', { name: 'Return to work', exact: true }).click();
+  await expect(page).toHaveURL((url) => `${url.pathname}${url.search}${url.hash}` === returnTo);
+  await expect(
+    inspector(page).getByRole('heading', { name: fixture.approvalTitle, exact: true })
+  ).toBeVisible();
+  await expect(page.locator('[data-work-source-trigger]')).toBeFocused();
+  expect(runtime.personalReads).toBeGreaterThan(reads);
   await selectWork(page, fixture.personalTitle);
-  expect(runtime.personalReads).toBe(reads);
-  await inspector(page).getByRole('button', { name: 'Start', exact: true }).click();
+  await inspector(page).getByRole('button', { name: 'In progress', exact: true }).click();
   await expectSelectedStatus(page, 'In progress');
   expect(runtime.mutations).toHaveLength(1);
   await capture(page, testInfo, 'cached-return-personal-start');
@@ -233,7 +290,7 @@ test('returning from another app adopts the cached queue before a personal comma
 
 test('view-only access exposes no personal mutation action', async ({ page }) => {
   const runtime = await mockWorkHubFoundation(page, { canUpdate: false });
-  await page.goto(personalTaskRoute());
+  await openWorkPage(page, personalTaskRoute());
   await expect(inspector(page)).toContainText(fixture.personalTitle);
   await expect(inspector(page).getByRole('button', { name: 'Start', exact: true })).toHaveCount(0);
   await expect(inspector(page).getByRole('button', { name: 'Complete', exact: true })).toHaveCount(
@@ -253,7 +310,8 @@ test('atomic batch review shows targets and item-level confirmed receipts', asyn
     sourceOwned: false,
     nativeWorkspace: true,
   });
-  await page.goto('/work/queue');
+  await openWorkPage(page, '/work/queue');
+  await page.getByRole('button', { name: 'Select work', exact: true }).click();
   await page
     .getByRole('checkbox', {
       name: `Select ${fixture.workspaceTitle} for batch processing`,
@@ -265,23 +323,126 @@ test('atomic batch review shows targets and item-level confirmed receipts', asyn
   const review = page.getByRole('dialog', { name: 'Complete the selected work?' });
   await expect(review).toContainText(fixture.workspaceTitle);
   await expect(review).toContainText('1 to run');
-  await expect(review).toContainText('This batch runs in one source.');
+  await expect(review).toContainText('Workspace work follows its atomic batch policy.');
   await review.getByRole('button', { name: 'Complete selected', exact: true }).click();
 
-  const result = page.getByRole('dialog', { name: 'The batch change was confirmed' });
+  const result = page.getByRole('dialog', { name: 'Batch results' });
   await expect(result).toContainText(fixture.workspaceTitle);
-  await expect(result).toContainText('Change confirmed by the source');
+  await expect(result).toContainText('The source confirmed the update and new version.');
   expect(runtime.batchMutations).toHaveLength(1);
   await capture(page, testInfo, 'batch-confirmed-receipts');
 });
 
+test('batch receipts survive source-panel history and remain reachable from source status', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'The desktop source-panel history contract runs once.'
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockWorkHubFoundation(page, {
+    personal: false,
+    sourceOwned: false,
+    nativeWorkspace: true,
+  });
+  await openWorkPage(page, '/work/queue');
+  await page.getByRole('button', { name: 'Select work', exact: true }).click();
+  await page
+    .getByRole('checkbox', {
+      name: `Select ${fixture.workspaceTitle} for batch processing`,
+      exact: true,
+    })
+    .check();
+  await page.getByRole('button', { name: 'Complete selected', exact: true }).click();
+  const review = page.getByRole('dialog', { name: 'Complete the selected work?' });
+  await review.getByRole('button', { name: 'Complete selected', exact: true }).click();
+  const result = page.getByRole('dialog', { name: 'Batch results' });
+  await expect(result).toContainText('The source confirmed the update and new version.');
+  await result
+    .getByRole('button', { name: 'Close', exact: true })
+    .filter({ hasText: 'Close' })
+    .click();
+  const reopen = page.getByRole('button', { name: 'View latest batch results', exact: true });
+  await expect(reopen).toBeVisible();
+
+  const sourceNavigation = page.getByRole('button', {
+    name: 'Source connections',
+    exact: true,
+  });
+  await sourceNavigation.click();
+  await expect(page).toHaveURL((url) => url.searchParams.get('panel') === 'sources');
+  await expect(page.getByRole('dialog', { name: 'Source status' })).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL((url) => !url.searchParams.has('panel'));
+  await expect(page.getByRole('dialog', { name: 'Source status' })).toHaveCount(0);
+  await expect(reopen).toBeVisible();
+
+  await sourceNavigation.click();
+  const sourceStatus = page.getByRole('dialog', { name: 'Source status' });
+  await sourceStatus
+    .getByRole('button', { name: 'View latest batch results (1)', exact: true })
+    .click();
+  await expect(page).toHaveURL((url) => !url.searchParams.has('panel'));
+  await expect(page.getByRole('dialog', { name: 'Batch results' })).toContainText(
+    'The source confirmed the update and new version.'
+  );
+});
+
+test('the route-backed personal task composer closes on browser back', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The desktop URL history contract runs once.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockWorkHubFoundation(page);
+  await openWorkPage(page, '/work/queue?q=policy');
+  await page
+    .getByTestId('work-sidebar')
+    .getByRole('button', { name: 'Add personal task', exact: true })
+    .click();
+  await expect(page).toHaveURL(
+    (url) => url.searchParams.get('q') === 'policy' && url.searchParams.get('compose') === 'task'
+  );
+  await expect(page.getByRole('dialog', { name: 'Add a personal task' })).toBeVisible();
+
+  await page.goBack();
+
+  await expect(page).toHaveURL(
+    (url) => url.searchParams.get('q') === 'policy' && !url.searchParams.has('compose')
+  );
+  await expect(page.getByRole('dialog', { name: 'Add a personal task' })).toHaveCount(0);
+});
+
+test('batch selection is discarded when the work view changes', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The desktop navigation contract runs once.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockWorkHubFoundation(page, {
+    personal: false,
+    sourceOwned: false,
+    nativeWorkspace: true,
+  });
+  await openWorkPage(page, '/work/queue?select=1');
+  const checkbox = page.getByRole('checkbox', {
+    name: `Select ${fixture.workspaceTitle} for batch processing`,
+    exact: true,
+  });
+  await checkbox.check();
+
+  await page.getByTestId('work-navigation-item-completed').click();
+  await expect(page).toHaveURL(/\/work\/completed/u);
+  await page.getByTestId('work-navigation-item-queue').click();
+  await expect(page).toHaveURL(/\/work\/queue/u);
+  await expect(page).not.toHaveURL(/[?&]select=1(?:&|$)/u);
+  await expect(checkbox).toHaveCount(0);
+});
+
 test('retry after a lost response reuses the original command and receipt', async ({ page }) => {
   const runtime = await mockWorkHubFoundation(page, { loseFirstMutationResponse: true });
-  await page.goto(personalTaskRoute());
-  await inspector(page).getByRole('button', { name: 'Start', exact: true }).click();
+  await openWorkPage(page, personalTaskRoute());
+  await inspector(page).getByRole('button', { name: 'In progress', exact: true }).click();
   await expect(page.getByText('The result could not be confirmed', { exact: true })).toBeVisible();
   await expect(page.getByText('The source confirmed the change', { exact: true })).toHaveCount(0);
-  await inspector(page).getByRole('button', { name: 'Start', exact: true }).click();
+  await inspector(page).getByRole('button', { name: 'In progress', exact: true }).click();
   await expectSelectedStatus(page, 'In progress');
   expect(runtime.mutations).toHaveLength(2);
   expect(runtime.mutations[1]).toEqual(runtime.mutations[0]);
@@ -301,29 +462,30 @@ test('desktop legacy entries converge on the unified queue and retain compatibil
     '/work/retired-view?scope=WAITING&source=SERVICE_REQUEST',
   ]) {
     const expectedSearch = new URL(entry, 'http://dwp.test').search;
-    await page.goto(entry);
+    await openWorkPage(page, entry);
     await expect(page).toHaveURL(
       (url) => url.pathname === '/work/queue' && url.search === expectedSearch
     );
-    await expect(page.getByRole('heading', { name: 'Unified work queue', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Unified work inbox', level: 1 })).toBeVisible();
   }
 
   const navigation = page.getByRole('navigation', { name: 'Work navigation' });
-  await expect(navigation.getByRole('link')).toHaveCount(1);
-  await expect(
-    navigation.getByRole('link', { name: 'Unified work queue', exact: true })
-  ).toHaveAttribute('href', '/work/queue');
+  await expect(navigation.getByRole('link')).toHaveCount(6);
+  await expect(navigation.getByTestId('work-navigation-item-queue')).toHaveAttribute(
+    'href',
+    /\/work\/queue/
+  );
   await expect(navigation.getByRole('link', { name: 'Work home', exact: true })).toHaveCount(0);
   await capture(page, testInfo, 'unified-work-ia-desktop');
 });
 
-test('390px source-owned decision returns to the filtered list with focus and state intact', async ({
+test('390px source-owned handoff returns to the filtered list with focus and state intact', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'The 390px contract runs once in Chromium.');
   await page.setViewportSize({ width: 390, height: 844 });
-  await mockWorkHubFoundation(page);
-  await page.goto('/work/queue?scope=ALL&q=project');
+  const runtime = await mockWorkHubFoundation(page);
+  await openWorkPage(page, '/work/queue?scope=ALL&q=project');
 
   const list = page.locator('ul[aria-label="Unified work list"]');
   const opener = openWorkButton(page, fixture.approvalTitle);
@@ -350,6 +512,24 @@ test('390px source-owned decision returns to the filtered list with focus and st
     );
   });
 
+  const reads = runtime.personalReads;
+  const selectedUrl = new URL(page.url());
+  const returnTo = `${selectedUrl.pathname}${selectedUrl.search}${selectedUrl.hash}`;
+  await inspector(page).getByRole('button', { name: 'Open in source', exact: true }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === '/approvals/inbox' &&
+      url.searchParams.get('task') === fixture.approvalId &&
+      url.searchParams.get('returnTo') === returnTo
+  );
+  await page.getByRole('button', { name: 'Return to work', exact: true }).click();
+  await expect(page).toHaveURL((url) => `${url.pathname}${url.search}${url.hash}` === returnTo);
+  await expect(
+    inspector(page).getByRole('heading', { name: fixture.approvalTitle, exact: true })
+  ).toBeVisible();
+  await expect(page.locator('[data-work-source-trigger]')).toBeFocused();
+  expect(runtime.personalReads).toBeGreaterThan(reads);
+
   await inspector(page).getByRole('button', { name: 'Back to work list', exact: true }).click();
   await expect(list).toBeVisible();
   await expect(page).toHaveURL((url) => {
@@ -365,20 +545,20 @@ test('390px source-owned decision returns to the filtered list with focus and st
   await capture(page, testInfo, 'source-authority-390', true);
 });
 
-test('390px today plan returns focus to the control that opened it', async ({ page }, testInfo) => {
-  test.skip(
-    testInfo.project.name !== 'chromium',
-    'The 390px focus contract runs once in Chromium.'
-  );
+test('390px today plan has its own route and returns to the queue', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Run the narrow navigation contract once.');
   await page.setViewportSize({ width: 390, height: 844 });
   await mockWorkHubFoundation(page);
-  await page.goto('/work/queue');
-
-  const trigger = page.locator('button[data-work-plan-trigger]');
-  await trigger.click();
-  await expect(page.getByRole('heading', { name: "Today's execution plan" })).toBeVisible();
+  await openWorkPage(page, '/work/queue');
+  await page
+    .locator('[data-testid="work-mobile-bottom-navigation"]')
+    .getByRole('button', { name: 'Today', exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/work\/day-plan/);
+  await expect(page.getByTestId('work-today-plan-page')).toBeVisible();
   await page.getByRole('button', { name: 'Back to work list', exact: true }).click();
-  await expect(trigger).toBeFocused();
+  await expect(page).toHaveURL(/\/work\/queue/);
+  await expect(page.getByRole('list', { name: 'Unified work list' })).toBeVisible();
 });
 
 test('320px personal task capture stays operable when the input viewport contracts', async ({
@@ -390,12 +570,12 @@ test('320px personal task capture stays operable when the input viewport contrac
   );
   await page.setViewportSize({ width: 320, height: 568 });
   const runtime = await mockWorkHubFoundation(page);
-  await page.goto('/work/queue');
+  await openWorkPage(page, '/work/queue');
   await page.getByRole('button', { name: 'Add personal task', exact: true }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Add a personal task' });
   const title = '모바일에서 고객 인수인계 메모 정리';
-  const titleField = dialog.getByRole('textbox', { name: 'Title' });
+  const titleField = dialog.getByRole('textbox', { name: 'Title', exact: true });
   await expect(titleField).toBeFocused();
   await titleField.fill(title);
   await dialog
@@ -458,13 +638,13 @@ for (const layout of layouts) {
     });
     if ('forcedColors' in layout)
       await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
-    await page.goto(personalTaskRoute());
+    await openWorkPage(page, personalTaskRoute());
     if ('zoom' in layout)
       await page.evaluate((zoom) => {
         document.documentElement.style.zoom = String(zoom);
       }, layout.zoom);
     await expect(inspector(page).getByRole('heading', { name: title, exact: true })).toBeVisible();
-    const action = inspector(page).getByRole('button', { name: 'Start', exact: true });
+    const action = inspector(page).getByRole('button', { name: 'In progress', exact: true });
     await expect(action).toBeEnabled();
     await action.scrollIntoViewIfNeeded();
     await expect(action).toBeInViewport();
@@ -484,8 +664,8 @@ test('keyboard activation keeps visible focus and completes a personal start', a
 }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await mockWorkHubFoundation(page);
-  await page.goto(personalTaskRoute());
-  const action = inspector(page).getByRole('button', { name: 'Start', exact: true });
+  await openWorkPage(page, personalTaskRoute());
+  const action = inspector(page).getByRole('button', { name: 'In progress', exact: true });
   await expect(action).toBeEnabled();
   for (let index = 0; index < 80; index += 1) {
     await page.keyboard.press('Tab');

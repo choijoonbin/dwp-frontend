@@ -1,7 +1,13 @@
 import type { DwaionUserRun } from '@dwp-frontend/shared-utils';
 
 export const DWAION_ACTIVITY_WINDOW_LIMIT = 100;
-export const DWAION_ACTIVITY_FILTERS = ['ALL', 'RUNNING', 'COMPLETED', 'FAILED'] as const;
+export const DWAION_ACTIVITY_FILTERS = [
+  'ALL',
+  'RUNNING',
+  'COMPLETED',
+  'ATTENTION',
+  'FAILED',
+] as const;
 
 export type DwaionActivityFilter = (typeof DWAION_ACTIVITY_FILTERS)[number];
 
@@ -10,6 +16,7 @@ export type DwaionActivityWindowSummary = {
   running: number;
   completed: number;
   attention: number;
+  sample: number;
 };
 
 export function resolveDwaionActivityFilter(value: string | null): DwaionActivityFilter {
@@ -24,6 +31,7 @@ export function filterDwaionActivityWindow(
   filter: DwaionActivityFilter
 ): DwaionUserRun[] {
   if (filter === 'ALL') return [...runs];
+  if (filter === 'ATTENTION') return runs.filter(needsAttention);
   return runs.filter((run) => run.runState === filter);
 }
 
@@ -38,11 +46,13 @@ export function findExactDwaionRun(
 export function summarizeDwaionActivityWindow(
   runs: readonly DwaionUserRun[]
 ): DwaionActivityWindowSummary {
+  const operationalRuns = runs.filter((run) => run.dataProvenance !== 'SAMPLE');
   return {
-    total: runs.length,
-    running: runs.filter((run) => run.runState === 'RUNNING').length,
-    completed: runs.filter((run) => run.runState === 'COMPLETED').length,
-    attention: runs.filter(needsAttention).length,
+    total: operationalRuns.length,
+    running: operationalRuns.filter((run) => run.runState === 'RUNNING').length,
+    completed: operationalRuns.filter((run) => run.runState === 'COMPLETED').length,
+    attention: operationalRuns.filter(needsAttention).length,
+    sample: runs.length - operationalRuns.length,
   };
 }
 

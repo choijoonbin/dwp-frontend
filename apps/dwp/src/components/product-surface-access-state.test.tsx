@@ -39,4 +39,42 @@ describe('ProductSurfaceAccessState', () => {
     expect(markup).toContain('productSurface.actions.retry');
     expect(markup).toContain('productSurface.actions.return');
   });
+
+  it('uses one stable main and H1 for a top-level permission state', () => {
+    const markup = renderToStaticMarkup(
+      <ProductSurfaceAccessState
+        decision={{ state: 'surface-denied' }}
+        plane="management"
+        pageLevel
+      />
+    );
+
+    expect(markup.match(/<main\b/gu)).toHaveLength(1);
+    expect(markup).toContain('<main id="dwp-main-content"');
+    expect(markup.match(/<h1\b/gu)).toHaveLength(1);
+    expect(markup).not.toContain('<h2');
+    expect(markup).toContain('productSurface.access.surfaceDenied.management.title');
+  });
+
+  it('uses one stable main and H1 for a top-level authority error', () => {
+    const markup = renderToStaticMarkup(
+      <ProductSurfaceAccessState decision={{ state: 'authority-unavailable' }} pageLevel />
+    );
+
+    expect(markup.match(/<main\b/gu)).toHaveLength(1);
+    expect(markup).toContain('<main id="dwp-main-content"');
+    expect(markup.match(/<h1\b/gu)).toHaveLength(1);
+    expect(markup).not.toContain('<h2');
+    expect(markup).toContain('role="alert"');
+  });
+
+  it('keeps item-level access states as H2 sections without nesting a main landmark', () => {
+    const markup = renderToStaticMarkup(
+      <ProductSurfaceAccessState decision={{ state: 'route-denied' }} />
+    );
+
+    expect(markup).not.toContain('<main');
+    expect(markup).not.toContain('<h1');
+    expect(markup.match(/<h2\b/gu)).toHaveLength(1);
+  });
 });

@@ -1,0 +1,62 @@
+{
+  "ko": {
+    "designReview": {
+      "library": {
+        "navigationLabel": "회의 라이브러리 탐색",
+        "navigation": {
+          "ALL": "전체",
+          "PARTICIPATING": "내가 참여",
+          "SHARED": "공유받음",
+          "REVIEW": "검토 필요",
+          "FAVORITES": "즐겨찾기"
+        },
+        "projectionUnavailable": "공유·검토·즐겨찾기와 게시·보존 필터는 서버 연결을 준비 중입니다. 확인되지 않은 건수는 표시하지 않습니다.",
+        "membershipHint": "현재 페이지에서 내 참여 역할이 확인된 회의입니다. 실제 입장 여부를 의미하지 않습니다.",
+        "publicationLabel": "게시 상태",
+        "retentionLabel": "보관 만료 상태",
+        "projectionPending": "서버 연결 준비 중",
+        "advancedFilters": "역할 · 정렬"
+      },
+      "recap": {
+        "candidateUnavailable": "이 실행 항목에 연결된 유효한 후보를 확인하지 못했습니다.",
+        "candidateMetadataPending": "담당자·기한은 아직 확정되지 않았습니다.",
+        "candidateSourceVersion": "게시된 원본 버전 {{version}}의 후보",
+        "candidateLocked": "현재 회의 권한 검증을 연결하기 전에는 업무를 만들 수 없습니다.",
+        "candidateReferenceUnavailable": "연결된 후보를 현재 원본에서 확인할 수 없습니다. 다른 후보로 대체하지 않습니다.",
+        "showDetailedAnalysis": "상세 분석 펼치기",
+        "hideDetailedAnalysis": "상세 분석 접기",
+        "showEvidenceDetails": "전사 및 증거 상세 보기"
+      }
+    }
+  },
+  "en": {
+    "designReview": {
+      "library": {
+        "navigationLabel": "Meeting library navigation",
+        "navigation": {
+          "ALL": "All",
+          "PARTICIPATING": "I participate",
+          "SHARED": "Shared with me",
+          "REVIEW": "Needs review",
+          "FAVORITES": "Favorites"
+        },
+        "projectionUnavailable": "Sharing, review, favorites, publication and retention filters await server integration. Unverified counts are not shown.",
+        "membershipHint": "Meetings on this page with a confirmed participation role. This does not confirm actual attendance.",
+        "publicationLabel": "Publication status",
+        "retentionLabel": "Retention status",
+        "projectionPending": "Server integration pending",
+        "advancedFilters": "Role and order"
+      },
+      "recap": {
+        "candidateUnavailable": "No valid candidate is bound to this action item.",
+        "candidateMetadataPending": "The assignee and due date are not confirmed yet.",
+        "candidateSourceVersion": "Candidate from published source version {{version}}",
+        "candidateLocked": "Work creation stays locked until current Meeting authority verification is connected.",
+        "candidateReferenceUnavailable": "This candidate is not available in the current source. Another candidate is not substituted.",
+        "showDetailedAnalysis": "Show detailed analysis",
+        "hideDetailedAnalysis": "Hide detailed analysis",
+        "showEvidenceDetails": "Show transcript and evidence details"
+      }
+    }
+  }
+}

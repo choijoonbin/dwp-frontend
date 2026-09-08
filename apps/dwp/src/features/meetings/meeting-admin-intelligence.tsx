@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import {
   Bot,
   Captions,
@@ -20,7 +20,7 @@ import {
   XCircle,
   type LucideIcon,
 } from 'lucide-react';
-import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, PageCanvas, foundationTokens } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -43,66 +43,20 @@ import {
   type MeetingAdminReadinessSignal,
   type MeetingAdminReadinessState,
 } from './meeting-admin-model';
-import { MeetingPageHeading, MeetingSectionHeading } from './meeting-components';
+import { MeetingSectionHeading } from './meeting-components';
+import { MeetingAdminGovernanceWorkbench } from './meeting-admin-governance-workbench';
+import { AdminPageHeading, adminInset, adminPanel } from './meeting-admin-presentation';
 import {
   meetingInsetSurface,
   meetingSurface,
   type MeetingSurfaceTone,
 } from './meeting-visual-system';
 
-type IntelligenceLabel = {
-  label: string;
-  description: string;
-};
-
-type IntelligencePipelineKey =
-  'consent' | 'recording' | 'encryption' | 'transcript' | 'model' | 'publication' | 'deletion';
-
-export type MeetingAdminIntelligenceLabels = {
-  eyebrow: string;
-  title: string;
-  description: string;
-  accessBoundary: string;
-  runtimeEvidenceTitle: string;
-  runtimeEvidence: {
-    version: string;
-    recordingPolicy: string;
-    provider: string;
-    model: string;
-    region: string;
-  };
-  recordingPolicies: Record<'NEVER' | 'HOST_OPT_IN' | 'ADMIN_REQUIRED', string>;
-  unavailable: string;
-  readinessTitle: string;
-  readinessProgress: (ready: number, total: number) => string;
-  pipelineTitle: string;
-  pipelineDescription: string;
-  capabilitiesTitle: string;
-  capabilitiesDescription: string;
-  dependenciesTitle: string;
-  dependenciesDescription: string;
-  workflowTitle: string;
-  workflowDescription: string;
-  lifecycleTitle: string;
-  lifecycleDescription: string;
-  retentionTitle: string;
-  retentionDescription: string;
-  observedAt: (value: string) => string;
-  days: (value: number | null) => string;
-  states: Record<MeetingAdminReadinessState, string>;
-  reason: (value: string) => string;
-  pipeline: Record<IntelligencePipelineKey, IntelligenceLabel>;
-  capabilities: Record<MeetingAdminIntelligenceCapabilityKey, IntelligenceLabel>;
-  dependencies: Record<MeetingAdminIntelligenceDependencyKey, IntelligenceLabel>;
-  governance: Record<MeetingAdminIntelligenceGovernanceKey, IntelligenceLabel>;
-  retention: {
-    meeting: IntelligenceLabel;
-    artifact: IntelligenceLabel;
-    chat: IntelligenceLabel;
-    intelligence: IntelligenceLabel;
-    worker: IntelligenceLabel;
-  };
-};
+import type {
+  IntelligenceLabel,
+  MeetingAdminIntelligenceLabels,
+} from './meeting-admin-intelligence-labels';
+export type { MeetingAdminIntelligenceLabels } from './meeting-admin-intelligence-labels';
 
 export type MeetingAdminIntelligenceSourceFailure = {
   key: 'policy' | 'readiness';
@@ -115,6 +69,8 @@ export type MeetingAdminIntelligenceProps = {
   readiness: MeetingAdminIntelligenceReadiness;
   labels: MeetingAdminIntelligenceLabels;
   sourceFailures?: readonly MeetingAdminIntelligenceSourceFailure[];
+  onRefresh?: () => void;
+  recordRetentionControl?: ReactNode;
 };
 
 const CAPABILITY_ICONS: Record<MeetingAdminIntelligenceCapabilityKey, LucideIcon> = {
@@ -165,6 +121,8 @@ export function MeetingAdminIntelligence({
   readiness,
   labels,
   sourceFailures = [],
+  onRefresh,
+  recordRetentionControl,
 }: MeetingAdminIntelligenceProps) {
   const id = useId();
   const theme = useTheme();
@@ -176,7 +134,7 @@ export function MeetingAdminIntelligence({
 
   return (
     <PageCanvas mode="workspace" topInset="compact">
-      <MeetingPageHeading
+      <AdminPageHeading
         eyebrow={labels.eyebrow}
         title={labels.title}
         description={labels.description}
@@ -218,21 +176,19 @@ export function MeetingAdminIntelligence({
           </Alert>
         ))}
 
-        {!compact && <RuntimeEvidencePanel readiness={readiness} labels={labels} />}
-
         <Box
           component="section"
           aria-labelledby={`${id}-readiness`}
           sx={(theme) => ({
-            ...meetingSurface(theme, { tone: readinessTone(overallSignal.state) }),
+            ...adminPanel(theme),
+            bgcolor: { xs: foundationTokens.color.product.primary, md: 'background.paper' },
+            color: { xs: 'common.white', md: 'text.primary' },
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             alignItems: { xs: 'flex-start', sm: 'center' },
             justifyContent: 'space-between',
             gap: 2,
             p: { xs: 2, md: 2.5 },
-            borderLeft: 4,
-            borderLeftColor: STATE_PRESENTATION[overallSignal.state].tone,
           })}
         >
           <Box>
@@ -244,7 +200,10 @@ export function MeetingAdminIntelligence({
             >
               {labels.readinessTitle}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            <Typography
+              variant="body2"
+              sx={{ mt: 0.5, color: { xs: 'common.white', md: 'text.secondary' } }}
+            >
               {labels.readinessProgress(readySteps, pipeline.length)}
             </Typography>
           </Box>
@@ -259,8 +218,7 @@ export function MeetingAdminIntelligence({
           />
           <Box
             component="ol"
-            sx={(theme) => ({
-              ...meetingSurface(theme),
+            sx={{
               display: 'grid',
               gridTemplateColumns: {
                 xs: '1fr',
@@ -269,42 +227,37 @@ export function MeetingAdminIntelligence({
               },
               m: 0,
               p: 0,
+              gap: 1,
               listStyle: 'none',
-              overflow: 'hidden',
-            })}
+            }}
           >
             {pipeline.map(({ key, signal }, index) => (
               <Box
                 key={key}
                 component="li"
-                sx={{
+                sx={(theme) => ({
+                  ...adminPanel(theme),
+                  bgcolor: { xs: adminInset(theme).bgcolor, lg: 'background.paper' },
                   display: 'grid',
                   gridTemplateColumns: {
                     xs: '32px minmax(0, 1fr) auto',
-                    lg: 'minmax(0, 1fr) auto',
+                    lg: 'minmax(0, 1fr)',
                   },
                   columnGap: { xs: 1, lg: 0.5 },
                   alignItems: 'start',
                   minWidth: 0,
-                  p: { xs: 1.5, lg: 2 },
-                  borderTop: { xs: index ? 1 : 0, sm: index > 1 ? 1 : 0, lg: 0 },
-                  borderLeft: {
-                    xs: 0,
-                    sm: index % 2 ? 1 : 0,
-                    lg: index ? 1 : 0,
-                  },
-                  borderColor: 'divider',
-                }}
+                  p: { xs: 1.5, lg: 1.25 },
+                })}
               >
                 <Typography
                   variant="caption"
                   color="text.secondary"
                   fontWeight="fontWeightBold"
-                  sx={{ gridColumn: { lg: 1 } }}
+                  sx={{ gridColumn: { lg: 1 }, gridRow: 1 }}
                 >
                   {String(index + 1).padStart(2, '0')}
                 </Typography>
-                <Box sx={{ minWidth: 0, gridColumn: { xs: 2, lg: '1 / -1' } }}>
+                <Box sx={{ minWidth: 0, gridColumn: { xs: 2, lg: 1 }, gridRow: { lg: 2 } }}>
                   <Typography
                     component="h3"
                     variant="body2"
@@ -335,7 +288,15 @@ export function MeetingAdminIntelligence({
                     </Typography>
                   )}
                 </Box>
-                <Box sx={{ gridColumn: { xs: 3, lg: 2 }, gridRow: 1, justifySelf: 'end' }}>
+                <Box
+                  sx={{
+                    gridColumn: { xs: 3, lg: 1 },
+                    gridRow: { xs: 1, lg: 3 },
+                    justifySelf: { xs: 'end', lg: 'start' },
+                    mt: { lg: 1.5 },
+                    maxWidth: '100%',
+                  }}
+                >
                   <ReadinessChip signal={signal} labels={labels} />
                 </Box>
               </Box>
@@ -343,28 +304,35 @@ export function MeetingAdminIntelligence({
           </Box>
         </section>
 
-        {!compact && <IntelligenceDetailSections id={id} readiness={readiness} labels={labels} />}
+        <MeetingAdminGovernanceWorkbench
+          readiness={readiness}
+          labels={labels}
+          onRefresh={onRefresh}
+          recordRetentionControl={recordRetentionControl}
+        />
 
-        <section aria-labelledby={`${id}-lifecycle`}>
-          <MeetingSectionHeading
-            id={`${id}-lifecycle`}
-            title={labels.lifecycleTitle}
-            description={labels.lifecycleDescription}
-          />
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 7fr) minmax(300px, 5fr)' },
-              gap: 1.5,
-              alignItems: 'stretch',
-            }}
-          >
-            <RetentionPanel readiness={readiness} labels={labels} />
-            {!compact && <EvidenceControlList readiness={readiness} labels={labels} />}
-          </Box>
-        </section>
+        {!compact && (
+          <section aria-labelledby={`${id}-lifecycle`}>
+            <MeetingSectionHeading
+              id={`${id}-lifecycle`}
+              title={labels.lifecycleTitle}
+              description={labels.lifecycleDescription}
+            />
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 7fr) minmax(300px, 5fr)' },
+                gap: 1.5,
+                alignItems: 'stretch',
+              }}
+            >
+              <RetentionPanel readiness={readiness} labels={labels} />
+              {!compact && <EvidenceControlList readiness={readiness} labels={labels} />}
+            </Box>
+          </section>
+        )}
 
-        {compact && (
+        {
           <Box
             component="details"
             data-testid="meeting-intelligence-mobile-details"
@@ -395,6 +363,7 @@ export function MeetingAdminIntelligence({
               </Typography>
             </Box>
             <Stack gap={2} sx={{ p: 1.5 }}>
+              {compact && <RetentionPanel readiness={readiness} labels={labels} />}
               <RuntimeEvidencePanel readiness={readiness} labels={labels} />
               <IntelligenceDetailSections
                 id={`${id}-mobile`}
@@ -404,7 +373,7 @@ export function MeetingAdminIntelligence({
               <EvidenceControlList readiness={readiness} labels={labels} />
             </Stack>
           </Box>
-        )}
+        }
       </Stack>
     </PageCanvas>
   );

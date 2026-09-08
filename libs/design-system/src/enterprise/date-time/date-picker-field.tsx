@@ -19,6 +19,18 @@ import type { TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import type { TextFieldProps } from '@mui/material/TextField';
 import type { FieldFeedbackProps } from '../../components/forms';
 
+const pickerOpenButtonSlotProps = {
+  sx: {
+    '@media (max-width:599.95px), (pointer: coarse)': {
+      width: 44,
+      minWidth: 44,
+      height: 44,
+      minHeight: 44,
+      flex: '0 0 44px',
+    },
+  },
+} as const;
+
 type PickerFieldContract = FieldFeedbackProps & {
   label: string;
   required?: boolean;
@@ -70,6 +82,7 @@ export function DatePickerField({
         timezone={timeZone}
         format={locale === 'ko' ? 'YYYY. MM. DD.' : 'MM/DD/YYYY'}
         slotProps={{
+          openPickerButton: pickerOpenButtonSlotProps,
           textField: {
             fullWidth,
             size,
@@ -123,6 +136,7 @@ export function DateTimePickerField({
         timezone={timeZone}
         format={locale === 'ko' ? 'YYYY. MM. DD. HH:mm' : 'MM/DD/YYYY hh:mm A'}
         slotProps={{
+          openPickerButton: pickerOpenButtonSlotProps,
           textField: {
             fullWidth,
             size,
@@ -179,6 +193,7 @@ export function TimePickerField({
         timezone={timeZone}
         format={locale === 'ko' ? 'HH:mm' : 'hh:mm A'}
         slotProps={{
+          openPickerButton: pickerOpenButtonSlotProps,
           textField: {
             fullWidth,
             size,

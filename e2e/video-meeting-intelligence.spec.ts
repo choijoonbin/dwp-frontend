@@ -306,7 +306,12 @@ test('host retries one intelligence intent and stale review or publish cannot re
 
   await page.goto('/meetings/mine');
   await page.getByRole('tab', { name: /^Past /u }).click();
-  await page.getByRole('button', { name: 'Open meeting recap' }).click();
+  await page
+    .getByTestId('my-meetings-list')
+    .getByRole('article')
+    .filter({ has: page.getByRole('heading', { name: summary.title, exact: true }) })
+    .getByRole('button', { name: 'Open meeting recap', exact: true })
+    .click();
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
   await expect(page.getByRole('heading', { name: 'AI meeting intelligence' })).toBeVisible();
   await page.getByRole('button', { name: 'Generate draft' }).click();
@@ -378,7 +383,11 @@ test('host retries one intelligence intent and stale review or publish cannot re
 
   latestAccessRevoked = false;
   await page.getByRole('button', { name: 'Try again' }).click();
-  await expect(page.getByText('Published', { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByRole('region', { name: 'AI meeting intelligence' })
+      .getByText('Published', { exact: true })
+  ).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -578,7 +587,12 @@ test('draft host assigns an independent reviewer and revokes existing review aut
 
   await page.goto('/meetings/mine');
   await page.getByRole('tab', { name: /^Past /u }).click();
-  await page.getByRole('button', { name: 'Open meeting recap' }).click();
+  await page
+    .getByTestId('my-meetings-list')
+    .getByRole('article')
+    .filter({ has: page.getByRole('heading', { name: summary.title, exact: true }) })
+    .getByRole('button', { name: 'Open meeting recap', exact: true })
+    .click();
   await page.getByRole('tab', { name: 'Recording, transcript, and AI' }).click();
 
   const reviewerRegion = page.getByRole('region', {

@@ -287,7 +287,9 @@ function SingleScopeDisclosure({
           flex: mobileRail ? '1 1 auto' : undefined,
           minWidth: 0,
           maxWidth: mobileRail ? 'none' : { xs: 92, sm: 180 },
-          p: 0,
+          minHeight: mobileRail ? 44 : undefined,
+          px: mobileRail ? 0.5 : 0,
+          py: 0,
           overflow: 'hidden',
           border: 0,
           borderRadius: 0.5,
@@ -304,6 +306,10 @@ function SingleScopeDisclosure({
             outline: '2px solid',
             outlineColor: 'primary.main',
             outlineOffset: 2,
+          },
+          '@media (pointer: coarse)': {
+            minHeight: 44,
+            px: 0.5,
           },
           '@media (forced-colors: active)': {
             '&:focus-visible': { outlineColor: 'Highlight' },
@@ -377,6 +383,9 @@ export function ProductSurfaceContextBar({
       <Box
         data-testid="product-surface-context-bar"
         data-placement={mobileRail ? 'mobile-rail' : 'header'}
+        role="group"
+        aria-label={t('productSurface.contextBar.label')}
+        tabIndex={-1}
         sx={{
           display: mobileRail ? 'flex' : scopes.length <= 1 ? { xs: 'none', lg: 'flex' } : 'flex',
           alignItems: 'center',
@@ -387,6 +396,14 @@ export function ProductSurfaceContextBar({
           pl: mobileRail ? 0.5 : 1.5,
           borderLeft: 1,
           borderColor: 'divider',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: 2,
+          },
+          '@media (forced-colors: active)': {
+            '&:focus-visible': { outlineColor: 'Highlight' },
+          },
         }}
       >
         {scopes.length > 1 && runtime.onScopeChange ? (
@@ -413,6 +430,7 @@ export function ProductSurfaceContextBar({
                     outlineColor: 'primary.main',
                     outlineOffset: 2,
                   },
+                  '@media (pointer: coarse)': { minHeight: 44, height: 44 },
                 }}
               >
                 {scopes.map((scope) => (

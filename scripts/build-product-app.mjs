@@ -31,7 +31,42 @@ const result = spawnSync(vite, ['build', '--config', 'vite.product.config.ts'], 
   env: { ...process.env, DWP_PRODUCT_ID: productId },
   stdio: 'inherit',
 });
+const meetingBackgroundArtifact = path.join(
+  root,
+  'dist/apps',
+  productId,
+  'assets/meeting-background'
+);
+if (productId !== 'meetings') {
+  fs.rmSync(meetingBackgroundArtifact, { force: true, recursive: true });
+}
 if (result.status !== 0) process.exit(result.status ?? 1);
+
+if (productId === 'meetings') {
+  const requiredMeetingBackgroundArtifacts = [
+    'mediapipe-0.10.14/selfie-segmenter-landscape-v1.tflite',
+    'mediapipe-0.10.14/vision_wasm_nosimd_internal.js',
+    'mediapipe-0.10.14/vision_wasm_nosimd_internal.wasm',
+  ];
+  const missing = requiredMeetingBackgroundArtifacts.filter(
+    (relativePath) =>
+      !fs
+        .statSync(path.join(meetingBackgroundArtifact, relativePath), { throwIfNoEntry: false })
+        ?.isFile()
+  );
+  if (missing.length > 0) {
+    console.error(
+      `Meetings artifact is missing approved local background assets: ${missing.join(', ')}`
+    );
+    process.exit(1);
+  }
+} else {
+  if (fs.existsSync(meetingBackgroundArtifact)) {
+    console.error(`${productId} artifact must not contain the Meetings-only background runtime.`);
+    process.exit(1);
+  }
+}
+console.log(`PASS ${productId} product-owned public asset boundary.`);
 
 const budgetResult = spawnSync(
   process.execPath,

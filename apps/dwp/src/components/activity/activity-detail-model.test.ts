@@ -99,6 +99,39 @@ describe('activity event detail presentation', () => {
     });
   });
 
+  it.each([
+    ['PENDING', 'PENDING'],
+    ['LINKED', 'LINKED'],
+  ] as const)(
+    'preserves Agent audit state %s without claiming verification',
+    (status, presentation) => {
+      const model = activityEventDetailModel({
+        ...baseEvent,
+        actor: 'agent',
+        source: 'DWAI_ON',
+        eventKind: 'EXECUTION_SNAPSHOT',
+        auditStatus: status,
+        auditRecordId: 'aaaaaaaa-0000-5000-8000-000000000202',
+      });
+
+      expect(model.audit).toEqual({
+        presentation,
+        recordId: 'aaaaaaaa-0000-5000-8000-000000000202',
+      });
+      expect(model.audit.presentation).not.toBe('VERIFIED');
+    }
+  );
+
+  it('fails closed when an Agent audit state has no lookup reference', () => {
+    const model = activityEventDetailModel({
+      ...baseEvent,
+      auditStatus: 'PENDING',
+      auditRecordId: null,
+    });
+
+    expect(model.audit).toEqual({ presentation: 'NOT_LINKED', recordId: null });
+  });
+
   it('omits absent optional identifiers instead of inventing placeholders', () => {
     const model = activityEventDetailModel({
       ...baseEvent,

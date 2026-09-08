@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   ArrowUpRight,
-  CheckCircle2,
   FileCheck2,
   FilePlus2,
   PencilRuler,
@@ -16,7 +15,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { PageCanvas } from '@dwp-frontend/design-system/components/page-canvas/page-canvas';
 import { ProgressMeter } from '@dwp-frontend/design-system/components/progress-meter/progress-meter';
-import { OperationalKpiStrip } from '@dwp-frontend/design-system/enterprise/resource/operational-kpi-strip';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import {
@@ -48,6 +46,11 @@ import {
 } from '../../components/workspace-composer/workspace-composer-model';
 import { WorkspaceWidgetCanvas } from '../../components/workspace-composer/workspace-widget-canvas';
 import { WorkspaceWidgetGallery } from '../../components/workspace-composer/workspace-widget-gallery';
+import {
+  ApprovalExecutiveBriefing,
+  ApprovalQuickActions,
+  ApprovalRecentActivity,
+} from './approval-home-executive-widgets';
 import { APPROVAL_HOME_WIDGET_REGISTRY } from './approval-home-widget-registry';
 import {
   approvalHomeRiskColor,
@@ -55,7 +58,7 @@ import {
   approvalHomeRowLimit,
 } from './approval-home-model';
 import { approvalInsightFallback } from './approval-insight-copy';
-import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
+import { ApprovalSurface, PriorityChip, StatusChip } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
@@ -240,197 +243,8 @@ export function ApprovalHome() {
     height: HomeWidgetHeight
   ) => {
     const rowLimit = approvalHomeRowLimit(height);
-    if (key === 'decision-pulse') {
-      const leadTask = data.focusQueue[0];
-      const hasUrgentTask = data.focusQueue.some((task) => task.priority === 'URGENT');
-      return (
-        <Box
-          component="section"
-          aria-labelledby="approval-decision-pulse-title"
-          data-testid="approval-daily-briefing"
-          style={{ borderRadius: foundationTokens.radius.surface }}
-          sx={{
-            border: 1,
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-            overflow: 'hidden',
-          }}
-        >
-          <Box
-            sx={(theme) => ({
-              px: { xs: 1.75, md: 2.5 },
-              py: { xs: 1.75, md: 2.25 },
-              borderLeft: 4,
-              borderColor: 'primary.main',
-              bgcolor: alpha(
-                theme.palette.primary.main,
-                theme.palette.mode === 'dark' ? 0.04 : 0.035
-              ),
-            })}
-          >
-            <Stack
-              direction={{ xs: 'column', md: 'row' }}
-              alignItems={{ md: 'flex-start' }}
-              justifyContent="space-between"
-              gap={2}
-            >
-              <Box sx={{ minWidth: 0, maxWidth: 760 }}>
-                <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
-                  <Radar size={16} aria-hidden="true" />
-                  <Typography variant="overline" color="primary.main">
-                    {t('home.briefing.eyebrow')}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {formatDate(data.generatedAt, {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Typography>
-                </Stack>
-                <Typography
-                  id="approval-decision-pulse-title"
-                  component="h2"
-                  variant="h6"
-                  sx={{ mt: 0.5 }}
-                >
-                  {t('home.briefing.title')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  {t('home.briefing.description', {
-                    pending: data.metrics.pending,
-                    overdue: data.metrics.overdue,
-                    dueToday: data.metrics.dueToday,
-                  })}
-                </Typography>
-                {leadTask ? (
-                  <Box
-                    sx={{
-                      mt: 1.5,
-                      pl: 1.5,
-                      borderLeft: 2,
-                      borderColor:
-                        leadTask.riskScore >= 70
-                          ? approvalHomeRiskColor(leadTask.riskScore)
-                          : 'divider',
-                    }}
-                  >
-                    <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
-                      <PriorityChip priority={leadTask.priority} />
-                      <Typography variant="caption" color="text.secondary">
-                        {leadTask.requestNumber}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        color={approvalHomeRiskColor(leadTask.riskScore)}
-                        fontWeight="fontWeightBold"
-                      >
-                        {t('home.commandCenter.riskCompact', { score: leadTask.riskScore })}
-                      </Typography>
-                    </Stack>
-                    <Typography
-                      component="p"
-                      variant="subtitle2"
-                      sx={{ mt: 0.5, overflowWrap: 'anywhere' }}
-                    >
-                      {leadTask.title}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {leadTask.summary}
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Stack direction="row" gap={1} alignItems="center" sx={{ mt: 1.5 }}>
-                    <CheckCircle2 size={18} color={approvalTone.teal} aria-hidden="true" />
-                    <Typography variant="body2">{t('home.briefing.clear')}</Typography>
-                  </Stack>
-                )}
-              </Box>
-              {experience.canViewTasks && (
-                <Stack
-                  direction={{ xs: 'column', sm: 'row', md: 'column', xl: 'row' }}
-                  gap={1}
-                  sx={{ width: { xs: 1, md: 'auto' }, flex: '0 0 auto' }}
-                >
-                  {leadTask && (
-                    <ActionButton
-                      intent="primary"
-                      endIcon={<ArrowRight size={16} />}
-                      onClick={() =>
-                        navigate(`/approvals/inbox?task=${encodeURIComponent(leadTask.taskId)}`)
-                      }
-                    >
-                      {t('actions.reviewInbox')}
-                    </ActionButton>
-                  )}
-                  <ActionButton
-                    intent="secondary"
-                    startIcon={hasUrgentTask ? <ShieldAlert size={16} /> : <FileCheck2 size={16} />}
-                    onClick={() =>
-                      navigate(`/approvals/inbox?queue=${hasUrgentTask ? 'URGENT' : 'ALL'}`)
-                    }
-                  >
-                    {t(
-                      hasUrgentTask
-                        ? 'home.briefing.reviewUrgent'
-                        : 'navigation.items.approvals.inbox.label'
-                    )}
-                  </ActionButton>
-                </Stack>
-              )}
-            </Stack>
-          </Box>
-          <OperationalKpiStrip
-            ariaLabel={t('home.commandCenter.metricsLabel')}
-            sx={{ borderBottom: 0 }}
-            items={[
-              {
-                key: 'pending',
-                label: t('metrics.pending'),
-                value: data.metrics.pending,
-                detail: t('home.commandCenter.metricPendingDetail'),
-                tone: 'info',
-                onSelect: experience.canViewTasks
-                  ? () => navigate('/approvals/inbox?queue=ALL')
-                  : undefined,
-              },
-              {
-                key: 'due-today',
-                label: t('metrics.dueToday'),
-                value: data.metrics.dueToday,
-                detail: t('home.commandCenter.metricDueDetail'),
-                tone: data.metrics.dueToday > 0 ? 'warning' : 'neutral',
-                onSelect: experience.canViewTasks
-                  ? () => navigate('/approvals/inbox?queue=DUE_TODAY')
-                  : undefined,
-              },
-              {
-                key: 'in-flight',
-                label: t('metrics.inFlight'),
-                value: data.metrics.myRequestsInFlight,
-                detail: t('home.commandCenter.metricInFlightDetail'),
-                tone: 'neutral',
-                onSelect: experience.canViewRequests
-                  ? () => navigate('/approvals/requests/submitted')
-                  : undefined,
-              },
-              {
-                key: 'cycle-time',
-                label: t('metrics.averageCycle'),
-                value: t('metrics.hours', {
-                  value: formatNumber(data.metrics.averageCycleHours),
-                }),
-                detail: t('home.commandCenter.metricCycleDetail', {
-                  percent: formatNumber(data.metrics.slaCompliancePercent),
-                }),
-                tone: data.metrics.slaCompliancePercent >= 95 ? 'success' : 'warning',
-              },
-            ]}
-          />
-        </Box>
-      );
-    }
+    if (key === 'decision-pulse')
+      return <ApprovalExecutiveBriefing data={data} access={experience} />;
     if (key === 'focus-queue')
       return (
         <ApprovalSurface
@@ -541,6 +355,7 @@ export function ApprovalHome() {
           )}
         </ApprovalSurface>
       );
+    if (key === 'quick-actions') return <ApprovalQuickActions access={experience} />;
     if (key === 'flow') {
       const max = Math.max(1, ...data.flow.map((stage) => stage.count));
       return (
@@ -661,6 +476,14 @@ export function ApprovalHome() {
             })
           )}
         </ApprovalSurface>
+      );
+    if (key === 'recent-activity')
+      return (
+        <ApprovalRecentActivity
+          requests={data.recentRequests}
+          rowLimit={rowLimit}
+          canViewRequests={experience.canViewRequests}
+        />
       );
     return (
       <ApprovalSurface

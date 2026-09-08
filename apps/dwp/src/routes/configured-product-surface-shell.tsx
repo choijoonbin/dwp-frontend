@@ -80,7 +80,13 @@ export function ConfiguredProductSurfaceShell({
 
   if (presentation === 'legacy') return legacy;
   if (presentation === 'unavailable') {
-    return <ProductSurfaceAccessState decision={{ state: 'authority-unavailable' }} />;
+    return (
+      <ProductSurfaceAccessState
+        decision={{ state: 'authority-unavailable' }}
+        plane={surface.plane}
+        pageLevel
+      />
+    );
   }
   const layoutProps = {
     areaKey,

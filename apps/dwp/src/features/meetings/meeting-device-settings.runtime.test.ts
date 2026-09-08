@@ -4,6 +4,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MeetingDeviceSettings } from './meeting-device-settings';
 import { DEFAULT_MEETING_DEVICE_PREFERENCES } from './meeting-preferences-model';
+import { MeetingDeviceSettingsDiagnostics } from './meeting-device-settings-diagnostics';
+import * as Background from './meeting-background-processor';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 
@@ -81,5 +83,110 @@ describe('device settings browser-policy boundaries', () => {
     expect(start).toBeTruthy();
     await act(async () => start?.click());
     expect(container.textContent).toContain('preferences.devices.errors.unsupported');
+  });
+
+  it('reports idle local diagnostics without acquiring media and preserves unavailable design controls', async () => {
+    const getUserMedia = vi.fn();
+    const enumerateDevices = vi.fn();
+    const onDiagnostics = vi.fn();
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia, enumerateDevices, getSupportedConstraints: () => ({}) },
+    });
+    await act(async () =>
+      root.render(
+        createElement(MeetingDeviceSettings, {
+          value: DEFAULT_MEETING_DEVICE_PREFERENCES,
+          onChange: vi.fn(),
+          onDiagnostics,
+        })
+      )
+    );
+    expect(onDiagnostics).toHaveBeenLastCalledWith({
+      audio: 'idle',
+      video: 'idle',
+      failure: false,
+    });
+    expect(container.querySelector('[role="meter"]')?.getAttribute('aria-valuenow')).toBe('0');
+    expect(
+      container.querySelectorAll('[data-testid="meeting-background-options"] button')
+    ).toHaveLength(4);
+    for (const key of ['blur', 'office', 'image']) {
+      const option = container.querySelector<HTMLButtonElement>(
+        `button[aria-label="stitch.devices.${key}"]`
+      );
+      expect(option?.disabled).toBe(true);
+    }
+    expect(
+      container.querySelector<HTMLInputElement>('input[aria-label="stitch.devices.hd"]')?.disabled
+    ).toBe(true);
+    expect(getUserMedia).not.toHaveBeenCalled();
+    expect(enumerateDevices).not.toHaveBeenCalled();
+  });
+
+  it('never equates local media preview success with measured network quality', async () => {
+    await act(async () =>
+      root.render(
+        createElement(MeetingDeviceSettingsDiagnostics, {
+          value: { audio: 'active', video: 'active', failure: false },
+        })
+      )
+    );
+    expect(container.textContent).toContain('stitch.devices.localChecked');
+    expect(container.textContent?.match(/stitch.devices.unmeasured/g)).toHaveLength(2);
+    await act(async () =>
+      root.render(
+        createElement(MeetingDeviceSettingsDiagnostics, {
+          value: { audio: 'active', video: 'idle', failure: true },
+        })
+      )
+    );
+    expect(container.textContent).toContain('stitch.devices.checkFailed');
+    expect(container.textContent).not.toContain('stitch.devices.localChecked');
+  });
+
+  it('saves an explicit blur choice without turning on an idle camera and requires an explicit original choice', async () => {
+    vi.spyOn(Background, 'isMeetingBackgroundSupported').mockReturnValue(true);
+    const getUserMedia = vi.fn();
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia, enumerateDevices: vi.fn(), getSupportedConstraints: () => ({}) },
+    });
+    const onChange = vi.fn();
+    const render = (backgroundBlur: boolean) =>
+      act(async () =>
+        root.render(
+          createElement(MeetingDeviceSettings, {
+            value: { ...DEFAULT_MEETING_DEVICE_PREFERENCES, backgroundBlur },
+            onChange,
+          })
+        )
+      );
+    await render(false);
+    const blur = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="stitch.devices.blur"]'
+    )!;
+    expect(blur.disabled).toBe(false);
+    await act(async () => blur.click());
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      backgroundBlur: true,
+    });
+    expect(getUserMedia).not.toHaveBeenCalled();
+    await render(true);
+    expect(blur.getAttribute('aria-pressed')).toBe('true');
+    const original = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="stitch.devices.none"]'
+    )!;
+    await act(async () => original.click());
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      backgroundBlur: false,
+    });
+    expect(getUserMedia).not.toHaveBeenCalled();
+    expect(
+      container.querySelector<HTMLButtonElement>('button[aria-label="stitch.devices.office"]')!
+        .disabled
+    ).toBe(true);
   });
 });

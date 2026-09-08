@@ -1,108 +1,67 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ArrowRight,
-  CalendarClock,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
-  Clock3,
   DoorOpen,
   Hash,
+  Mail,
   Plus,
   Search,
-  ShieldCheck,
-  UsersRound,
+  Timer,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ActionButton,
+  ActionIconButton,
+  ContentDialog,
+  DatePickerField,
   ErrorState,
   FormField,
   GuidedEmptyState,
+  InlineFeedback,
   LoadingState,
   PageCanvas,
   SelectField,
+  useDateTimePolicy,
 } from '@dwp-frontend/design-system';
-import {
-  getVideoMeetings,
-  type VideoMeetingSummary,
-} from '@dwp-frontend/shared-utils/api/video-meeting-api';
-
+import { useAuth } from '@dwp-frontend/shared-utils';
+import { getVideoMeetings } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
-
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import { MeetingPageHeading } from './meeting-components';
+import { meetingInsetSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 import {
-  formatMeetingDateTime,
-  formatMeetingTime,
-  MeetingPageHeading,
-  MeetingStatusChip,
-} from './meeting-components';
-import { meetingPreparationPath } from './meeting-context-routing';
-import { homeAgendaItems } from './meeting-home-model';
-import { meetingListSurface, meetingSurface } from './meeting-visual-system';
-import { useAuth } from '@dwp-frontend/shared-utils';
-import { MeetingScheduleManagement } from './meeting-schedule-management';
+  filterMeetingPage,
+  meetingDateKey,
+  meetingPagination,
+  meetingTimeBucket,
+  MY_MEETINGS_PAGE_SIZE,
+  pendingMeetingInvitation,
+  validMeetingDate,
+  type MeetingRoleFilter,
+  type MeetingSeriesFilter,
+  type MeetingTimeFilter,
+} from './my-meetings-model';
+import { MyMeetingResponseActions, useMyMeetingsEvidence } from './my-meetings-evidence';
+import { MyMeetingCard } from './my-meetings-presentation';
+import { MyMeetingsInspector } from './my-meetings-inspector';
 
-type MeetingTimeFilter = 'UPCOMING' | 'LIVE' | 'PAST' | 'ALL';
-type MeetingRoleFilter = 'ALL' | 'HOST' | 'ATTENDEE';
-export const MY_MEETINGS_PAGE_SIZE = 10;
-
-export function meetingPagination(total: number, page: number, pageSize: number) {
-  const safePageSize = Math.max(1, pageSize);
-  const totalPages = Math.max(1, Math.ceil(Math.max(0, total) / safePageSize));
-  const boundedPage = Math.min(Math.max(0, page), totalPages - 1);
-  return {
-    page: boundedPage,
-    current: boundedPage + 1,
-    total: totalPages,
-    hasPrevious: boundedPage > 0,
-    hasNext: boundedPage + 1 < totalPages,
-  } as const;
-}
-
-function meetingTimeBucket(meeting: VideoMeetingSummary): Exclude<MeetingTimeFilter, 'ALL'> {
-  if (meeting.lifecycleState === 'LIVE') return 'LIVE';
-  if (meeting.lifecycleState === 'ENDED' || meeting.lifecycleState === 'CANCELLED') return 'PAST';
-  return 'UPCOMING';
-}
-
-export function filterMeetingPage(
-  meetings: VideoMeetingSummary[],
-  search: string,
-  time: MeetingTimeFilter,
-  role: MeetingRoleFilter
-): VideoMeetingSummary[] {
-  const query = search.trim().toLocaleLowerCase();
-  return meetings.filter((meeting) => {
-    if (time !== 'ALL' && meetingTimeBucket(meeting) !== time) return false;
-    if (role === 'HOST' && !meeting.canHost) return false;
-    if (role === 'ATTENDEE' && meeting.canHost) return false;
-    if (!query) return true;
-    return [meeting.title, meeting.organizerName, meeting.agenda ?? ''].some((value) =>
-      value.toLocaleLowerCase().includes(query)
-    );
-  });
-}
-
-function meetingDestination(meeting: VideoMeetingSummary): string | null {
-  if (meeting.lifecycleState === 'CANCELLED') return null;
-  if (meeting.lifecycleState === 'ENDED')
-    return `/meetings/history?meeting=${encodeURIComponent(meeting.meetingId)}`;
-  if (meeting.lifecycleState === 'SCHEDULED' || meeting.lifecycleState === 'DRAFT')
-    return meetingPreparationPath(meeting.meetingId);
-  return `/meetings/room/${encodeURIComponent(meeting.meetingId)}`;
-}
+export { filterMeetingPage, meetingPagination, MY_MEETINGS_PAGE_SIZE } from './my-meetings-model';
 
 export function MyMeetings() {
-  const { t, i18n } = useTranslation('meetings');
-  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const scope = JSON.stringify([
     isAuthenticated,
@@ -110,26 +69,72 @@ export function MyMeetings() {
     user?.tenantId,
     user?.userId,
   ]);
+  return (
+    <MyMeetingsContent key={scope} scope={scope} authenticated={isAuthenticated && Boolean(user)} />
+  );
+}
+
+function MyMeetingsContent({ scope, authenticated }: { scope: string; authenticated: boolean }) {
+  const { t, i18n } = useTranslation('meetings');
+  const { timeZone } = useDateTimePolicy();
+  const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(0);
-  const [timeFilter, setTimeFilter] = useState<MeetingTimeFilter>('UPCOMING');
-  const [roleFilter, setRoleFilter] = useState<MeetingRoleFilter>('ALL');
   const [search, setSearch] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [compact, setCompact] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(true);
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+  const wide = useMediaQuery(useTheme().breakpoints.up('lg'));
+  const time = params.get('time') ?? 'UPCOMING';
+  const timeFilter: MeetingTimeFilter = ['UPCOMING', 'LIVE', 'PAST', 'ALL', 'PENDING'].includes(
+    time
+  )
+    ? (time as MeetingTimeFilter)
+    : 'UPCOMING';
+  const role = params.get('role') ?? 'ALL';
+  const roleFilter: MeetingRoleFilter = ['ALL', 'HOST', 'ATTENDEE'].includes(role)
+    ? (role as MeetingRoleFilter)
+    : 'ALL';
+  const series = params.get('series') ?? 'ALL';
+  const seriesFilter: MeetingSeriesFilter = ['ALL', 'RECURRING', 'ONCE'].includes(series)
+    ? (series as MeetingSeriesFilter)
+    : 'ALL';
+  const date = validMeetingDate(params.get('date'));
+  const updateFilter = (key: string, value: string) =>
+    setParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        if (value) next.set(key, value);
+        else next.delete(key);
+        return next;
+      },
+      { replace: true }
+    );
   const query = useQuery({
     queryKey: ['meetings', 'mine', scope, page, MY_MEETINGS_PAGE_SIZE],
     queryFn: () => getVideoMeetings(page, MY_MEETINGS_PAGE_SIZE),
-    enabled: isAuthenticated && Boolean(user),
+    enabled: authenticated,
     staleTime: 30_000,
     retry: false,
     gcTime: 0,
     meta: { accessSensitive: true },
   });
-  const filtered = useMemo(
-    () => filterMeetingPage(query.data?.items ?? [], search, timeFilter, roleFilter),
-    [query.data?.items, roleFilter, search, timeFilter]
+  const items = authenticated && !query.isError ? (query.data?.items ?? []) : [];
+  const { evidence, refresh } = useMyMeetingsEvidence(items, scope);
+  const filtered = filterMeetingPage(
+    items,
+    search,
+    timeFilter,
+    roleFilter,
+    evidence,
+    date,
+    seriesFilter,
+    timeZone
   );
-  const selected = filtered.find((meeting) => meeting.meetingId === selectedId) ?? filtered[0];
-  const selectedAgenda = homeAgendaItems(selected?.agenda);
+  const selected =
+    filtered.find((meeting) => meeting.meetingId === params.get('meeting')) ?? filtered[0];
   const pagination = query.data
     ? meetingPagination(query.data.total, query.data.page, query.data.pageSize)
     : null;
@@ -137,497 +142,547 @@ export function MyMeetings() {
   useEffect(() => {
     if (canonicalPage !== undefined && canonicalPage !== page) setPage(canonicalPage);
   }, [canonicalPage, page]);
-  const timeCounts = useMemo(
-    () => ({
-      UPCOMING: (query.data?.items ?? []).filter(
-        (meeting) => meetingTimeBucket(meeting) === 'UPCOMING'
-      ).length,
-      LIVE: (query.data?.items ?? []).filter((meeting) => meetingTimeBucket(meeting) === 'LIVE')
-        .length,
-      PAST: (query.data?.items ?? []).filter((meeting) => meetingTimeBucket(meeting) === 'PAST')
-        .length,
-      ALL: query.data?.items.length ?? 0,
-    }),
-    [query.data?.items]
+  const timeCounts = {
+    UPCOMING: items.filter((meeting) => meetingTimeBucket(meeting) === 'UPCOMING').length,
+    LIVE: items.filter((meeting) => meetingTimeBucket(meeting) === 'LIVE').length,
+    PAST: items.filter((meeting) => meetingTimeBucket(meeting) === 'PAST').length,
+    PENDING: items.filter((meeting) =>
+      pendingMeetingInvitation(evidence[meeting.meetingId]?.preparation)
+    ).length,
+    ALL: items.length,
+  };
+  const pending = items.filter((meeting) =>
+    pendingMeetingInvitation(evidence[meeting.meetingId]?.preparation)
   );
-
+  const groups = [
+    ...new Set(filtered.map((meeting) => meetingDateKey(meeting.startsAt, timeZone))),
+  ];
+  const onChanged = async () => Promise.all([query.refetch({ throwOnError: true }), refresh()]);
+  const evidencePartial = Object.values(evidence).some(({ failed }) => failed);
+  const dateStep = (direction: number) => {
+    const anchor = date || meetingDateKey(new Date().toISOString(), timeZone);
+    const next = new Date(anchor + 'T12:00:00Z');
+    next.setUTCDate(next.getUTCDate() + direction);
+    updateFilter('date', next.toISOString().slice(0, 10));
+  };
   return (
-    <PageCanvas mode="workspace" topInset="compact">
-      <MeetingPageHeading
-        eyebrow={t('mine.eyebrow')}
-        title={t('mine.title')}
-        description={t('mine.description')}
-        density="compact"
-        actions={
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            <ActionButton
-              intent="quiet"
-              startIcon={<Hash size={17} aria-hidden="true" />}
-              onClick={() => navigate('/meetings/join')}
-            >
-              {t('home.join.action')}
-            </ActionButton>
-            <ActionButton
-              intent="secondary"
-              startIcon={<DoorOpen size={17} aria-hidden="true" />}
-              onClick={() => navigate('/meetings/mine?view=personal-room')}
-            >
-              {t('personalRoom.title')}
-            </ActionButton>
+    <Box
+      sx={{
+        '@media (forced-colors: active)': {
+          '&& button': {
+            color: 'ButtonText',
+            WebkitTextFillColor: 'ButtonText',
+            backgroundColor: 'ButtonFace',
+            borderColor: 'ButtonText',
+          },
+          '&& button:disabled': { color: 'GrayText', WebkitTextFillColor: 'GrayText' },
+          '& .MuiTypography-root, & .MuiFormLabel-root, & .MuiInputBase-input, & .MuiChip-label': {
+            color: 'CanvasText',
+            WebkitTextFillColor: 'CanvasText',
+          },
+        },
+      }}
+    >
+      <PageCanvas mode="workspace" topInset="compact">
+        {!wide ? (
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1.5}
+            sx={{ mb: 2.5 }}
+          >
+            <Typography component="h1" variant="h5" fontWeight="fontWeightBold">
+              {t('mine.title')}
+            </Typography>
             <ActionButton
               intent="primary"
-              startIcon={<Plus size={17} />}
+              startIcon={<Plus size={17} aria-hidden="true" />}
               onClick={() => navigate('/meetings/mine?view=schedule')}
             >
               {t('home.schedule.action')}
             </ActionButton>
           </Stack>
-        }
-      />
-
-      <Box
-        component="section"
-        aria-label={t('mine.filters.label')}
-        sx={{ mb: 2.5, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Tabs
-          value={timeFilter}
-          variant="scrollable"
-          allowScrollButtonsMobile
-          aria-label={t('mine.filters.timeLabel')}
-          onChange={(_, value: MeetingTimeFilter) => setTimeFilter(value)}
-          sx={{ minHeight: 44, '& .MuiTab-root': { minHeight: 44, px: { xs: 1.5, sm: 2 } } }}
-        >
-          {(['UPCOMING', 'LIVE', 'PAST', 'ALL'] as const).map((value) => (
-            <Tab
-              key={value}
-              value={value}
-              label={`${t(`mine.filters.time.${value}`)} ${timeCounts[value]}`}
-            />
-          ))}
-        </Tabs>
+        ) : (
+          <MeetingPageHeading
+            eyebrow={t('mine.eyebrow')}
+            title={t('mine.title')}
+            description={t('mine.description')}
+            density="compact"
+            actions={
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<Hash size={17} aria-hidden="true" />}
+                  onClick={() => navigate('/meetings/join')}
+                  sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
+                >
+                  {t('home.join.action')}
+                </ActionButton>
+                <ActionButton
+                  intent="secondary"
+                  startIcon={<DoorOpen size={17} aria-hidden="true" />}
+                  onClick={() => navigate('/meetings/mine?view=personal-room')}
+                  sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
+                >
+                  {t('personalRoom.title')}
+                </ActionButton>
+                <ActionButton
+                  intent="primary"
+                  startIcon={<Plus size={17} aria-hidden="true" />}
+                  onClick={() => navigate('/meetings/mine?view=schedule')}
+                >
+                  {t('home.schedule.action')}
+                </ActionButton>
+              </Stack>
+            }
+          />
+        )}
         <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) minmax(180px, .42fr)' },
-            gap: 1.5,
-            py: 2,
-          }}
+          component="section"
+          aria-label={t('mine.filters.label')}
+          sx={(theme) => ({
+            mb: 3,
+            p: { xs: 0, md: 1.5 },
+            bgcolor: { xs: 'transparent', md: 'background.paper' },
+            borderRadius: meetingShape.stage,
+            boxShadow: { xs: 'none', md: meetingSoftShadow(theme) },
+          })}
         >
-          <FormField
-            size="small"
-            label={t('mine.filters.search')}
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search size={17} aria-hidden="true" />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-          <SelectField
-            size="small"
-            label={t('mine.filters.roleLabel')}
-            value={roleFilter}
-            onValueChange={(value) => setRoleFilter(value as MeetingRoleFilter)}
-            options={(['ALL', 'HOST', 'ATTENDEE'] as const).map((value) => ({
-              value,
-              label: t(`mine.filters.role.${value}`),
-            }))}
-          />
-        </Box>
-      </Box>
-
-      {!isAuthenticated || query.isLoading ? (
-        <LoadingState label={t('mine.loading')} variant="skeleton" skeletonRows={6} />
-      ) : query.isError || !query.data ? (
-        <ErrorState
-          title={t('errors.loadTitle')}
-          description={t('errors.loadDescription')}
-          retryLabel={t('actions.retry')}
-          onRetry={() => query.refetch()}
-        />
-      ) : (
-        <>
-          <Stack direction="row" justifyContent="space-between" gap={2} sx={{ mb: 1.5 }}>
-            <Typography variant="body2" fontWeight="fontWeightBold">
-              {t('mine.filters.resultCount', { count: filtered.length })}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'right' }}>
-              {t('mine.filters.pageScope')}
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={1}
+            sx={(theme) => ({ ...meetingInsetSurface(theme), p: 0.5 })}
+          >
+            <Tabs
+              value={timeFilter}
+              variant="scrollable"
+              allowScrollButtonsMobile
+              aria-label={t('mine.filters.timeLabel')}
+              onChange={(_, value: MeetingTimeFilter) => updateFilter('time', value)}
+              sx={{
+                flex: 1,
+                minWidth: 0,
+                minHeight: 44,
+                '& .MuiTabs-indicator': { display: 'none' },
+                '& .MuiTab-root': {
+                  minHeight: 44,
+                  minWidth: { xs: 70, md: 112 },
+                  px: 1.25,
+                  borderRadius: meetingShape.control,
+                  '&.Mui-selected': { bgcolor: 'background.paper', fontWeight: 'fontWeightBold' },
+                },
+              }}
+            >
+              {(['UPCOMING', 'LIVE', 'PAST', 'PENDING'] as const).map((value) => (
+                <Tab
+                  key={value}
+                  value={value}
+                  label={
+                    t(
+                      value === 'PENDING' ? 'mine.design.pendingTab' : 'mine.filters.time.' + value
+                    ) +
+                    ' ' +
+                    timeCounts[value]
+                  }
+                />
+              ))}
+              {timeFilter === 'ALL' && (
+                <Tab value="ALL" label={t('mine.filters.time.ALL') + ' ' + timeCounts.ALL} />
+              )}
+            </Tabs>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ px: 1.5, display: { xs: 'none', lg: 'block' } }}
+            >
+              {timeZone}
             </Typography>
           </Stack>
           <Box
-            data-testid="my-meetings-workspace"
             sx={{
               display: 'grid',
-              gridTemplateAreas: { xs: '"inspector" "list"', lg: '"list inspector"' },
               gridTemplateColumns: {
-                xs: 'minmax(0, 1fr)',
-                lg: 'minmax(0, 2fr) minmax(280px, 1fr)',
+                xs: '1fr',
+                md: 'minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.6fr)',
               },
-              gap: 3,
-              alignItems: 'start',
+              gap: 1.5,
+              pt: 2,
             }}
           >
-            <Box
-              data-testid="my-meetings-list"
-              sx={(theme) => ({ ...meetingListSurface(theme), gridArea: 'list' })}
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={(theme) => ({ ...meetingInsetSurface(theme), px: 0.5 })}
             >
-              {filtered.length ? (
-                filtered.map((meeting) => {
-                  const isSelected = selected?.meetingId === meeting.meetingId;
-                  const agenda = homeAgendaItems(meeting.agenda);
-                  return (
-                    <ActionButton
-                      key={meeting.meetingId}
-                      intent="quiet"
-                      aria-pressed={isSelected}
-                      onClick={() => setSelectedId(meeting.meetingId)}
-                      sx={{
-                        display:
-                          isSelected && filtered.length > 1 ? { xs: 'none', lg: 'flex' } : 'flex',
-                        width: '100%',
-                        minHeight: isSelected ? 228 : 112,
-                        px: { xs: 1.5, sm: 2 },
-                        py: isSelected ? 2 : 1.5,
-                        borderRadius: 0,
-                        justifyContent: 'flex-start',
-                        textAlign: 'left',
-                        whiteSpace: 'normal',
-                        borderInlineStart: isSelected ? 4 : 3,
-                        borderInlineStartColor: isSelected ? 'primary.main' : 'transparent',
-                        ...(isSelected
-                          ? {
-                              bgcolor: 'action.selected',
-                            }
-                          : {}),
-                      }}
-                    >
-                      <Stack direction="row" gap={1.25} sx={{ width: '100%', minWidth: 0 }}>
-                        <Box sx={{ minWidth: 72 }}>
-                          <Typography
-                            variant={isSelected ? 'subtitle2' : 'body2'}
-                            fontWeight="fontWeightBold"
-                            color={isSelected ? 'primary.main' : 'text.primary'}
-                          >
-                            {formatMeetingTime(meeting.startsAt, i18n.language)}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {t('units.minutes', { count: meeting.durationMinutes })}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
-                            <Typography
-                              component="h2"
-                              variant={isSelected ? 'h6' : 'subtitle2'}
-                              fontWeight="fontWeightBold"
-                            >
-                              {meeting.title}
-                            </Typography>
-                            <MeetingStatusChip state={meeting.lifecycleState} />
-                          </Stack>
-                          {!isSelected && (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{
-                                mt: 0.5,
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                              }}
-                            >
-                              {meeting.agenda || t('room.agendaEmpty')}
-                            </Typography>
-                          )}
-                          <Stack
-                            direction="row"
-                            gap={1}
-                            alignItems="center"
-                            flexWrap="wrap"
-                            sx={{ mt: 0.75 }}
-                          >
-                            <Typography variant="caption" color="text.secondary">
-                              {meeting.organizerName}
-                            </Typography>
-                            <Stack direction="row" gap={0.5} alignItems="center">
-                              <UsersRound size={13} aria-hidden="true" />
-                              <Typography variant="caption" color="text.secondary">
-                                {t('units.participants', { count: meeting.attendeeCount })}
-                              </Typography>
-                            </Stack>
-                            <Stack direction="row" gap={0.5} alignItems="center">
-                              <ShieldCheck size={13} aria-hidden="true" />
-                              <Typography variant="caption" color="text.secondary">
-                                {t(`access.${meeting.accessScope}`)}
-                              </Typography>
-                            </Stack>
-                          </Stack>
-                          {isSelected && (
-                            <Box
-                              component="ol"
-                              aria-label={t('mine.inspector.agenda')}
-                              sx={{
-                                display: { xs: 'none', lg: 'grid' },
-                                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                                gap: 1,
-                                p: 0,
-                                mt: 1.5,
-                                mb: 0,
-                                listStyle: 'none',
-                              }}
-                            >
-                              {(agenda.length ? agenda : [t('room.agendaEmpty')]).map(
-                                (item, index) => (
-                                  <Box
-                                    component="li"
-                                    key={`${index}-${item}`}
-                                    sx={{
-                                      minWidth: 0,
-                                      p: 1,
-                                      border: 1,
-                                      borderColor: 'divider',
-                                      bgcolor: 'background.paper',
-                                    }}
-                                  >
-                                    <Typography
-                                      variant="caption"
-                                      color="primary.main"
-                                      fontWeight="fontWeightBold"
-                                    >
-                                      {String(index + 1).padStart(2, '0')}
-                                    </Typography>
-                                    <Typography
-                                      variant="body2"
-                                      sx={{ mt: 0.5, overflowWrap: 'anywhere' }}
-                                    >
-                                      {item}
-                                    </Typography>
-                                  </Box>
-                                )
-                              )}
-                            </Box>
-                          )}
-                        </Box>
-                      </Stack>
-                    </ActionButton>
-                  );
-                })
-              ) : query.data.items.length ? (
-                <GuidedEmptyState
-                  kind="no-results"
-                  size="compact"
-                  title={t('mine.filters.noMatches')}
-                  description={t('mine.filters.noMatchesDescription')}
+              <ActionIconButton label={t('mine.design.previousDate')} onClick={() => dateStep(-1)}>
+                <ChevronLeft size={16} />
+              </ActionIconButton>
+              {wide ? (
+                <DatePickerField
+                  size="small"
+                  label={t('mine.design.date')}
+                  value={date || null}
+                  onValueChange={(value) => updateFilter('date', value ?? '')}
+                  sx={{ minWidth: 0, flex: 1 }}
                 />
               ) : (
-                <GuidedEmptyState
-                  kind="empty"
-                  title={t('mine.empty')}
-                  description={t('mine.emptyDescription')}
-                />
+                <ActionButton
+                  intent="quiet"
+                  aria-haspopup="dialog"
+                  aria-label={t('mine.design.date')}
+                  onClick={() => setDatePickerOpen(true)}
+                  startIcon={<CalendarDays size={16} aria-hidden="true" />}
+                  sx={{ flex: 1, minWidth: 0, whiteSpace: 'normal', px: 0.5 }}
+                >
+                  {date
+                    ? formatDate(
+                        date + 'T12:00:00Z',
+                        { dateStyle: 'medium', timeZone: 'UTC' },
+                        resolveSupportedLocale(i18n.language)
+                      )
+                    : t('mine.filters.time.ALL')}
+                </ActionButton>
               )}
-            </Box>
-            <Box
-              component="aside"
-              aria-label={t('mine.inspector.label')}
-              data-testid="my-meetings-inspector"
-              sx={(theme) => ({
-                ...meetingSurface(theme, { elevated: false }),
-                gridArea: 'inspector',
-                p: { xs: 2, sm: 2.5 },
-                borderWidth: { xs: 2, lg: 1 },
-                borderColor: { xs: 'primary.main', lg: 'divider' },
-                position: { lg: 'sticky' },
-                top: { lg: 16 },
-              })}
+              <ActionIconButton label={t('mine.design.nextDate')} onClick={() => dateStep(1)}>
+                <ChevronRight size={16} />
+              </ActionIconButton>
+            </Stack>
+            <SelectField
+              sx={{ display: { xs: 'none', md: 'block' } }}
+              size="small"
+              label={t('mine.filters.roleLabel')}
+              value={roleFilter}
+              onValueChange={(value) => updateFilter('role', value)}
+              options={(['ALL', 'HOST', 'ATTENDEE'] as const).map((value) => ({
+                value,
+                label: t('mine.filters.role.' + value),
+              }))}
+            />
+            <SelectField
+              sx={{ display: { xs: advancedFilters ? 'block' : 'none', md: 'block' } }}
+              size="small"
+              label={t('mine.design.seriesFilter')}
+              value={seriesFilter}
+              onValueChange={(value) => updateFilter('series', value)}
+              options={(['ALL', 'RECURRING', 'ONCE'] as const).map((value) => ({
+                value,
+                label: t('mine.design.series.' + value),
+              }))}
+            />
+            <FormField
+              sx={{ display: { xs: advancedFilters ? 'block' : 'none', md: 'block' } }}
+              size="small"
+              label={t('mine.filters.search')}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search size={17} aria-hidden="true" />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Box>
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            gap={0.75}
+            sx={{ mt: 1.5, display: { xs: 'flex', md: 'none' } }}
+          >
+            {(['ALL', 'HOST', 'ATTENDEE'] as const).map((value) => (
+              <ActionButton
+                key={value}
+                size="small"
+                intent={roleFilter === value ? 'primary' : 'secondary'}
+                aria-pressed={roleFilter === value}
+                onClick={() => updateFilter('role', value)}
+                sx={{ borderRadius: meetingShape.group }}
+              >
+                {t('mine.filters.role.' + value)}
+              </ActionButton>
+            ))}
+            <ActionIconButton
+              label={t('mine.filters.label')}
+              aria-expanded={advancedFilters}
+              onClick={() => setAdvancedFilters(!advancedFilters)}
             >
-              {selected ? (
-                <Stack gap={2}>
-                  <Stack gap={0.75}>
-                    <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                      <MeetingStatusChip state={selected.lifecycleState} />
-                      <Chip
-                        size="small"
-                        variant="outlined"
+              <Search size={16} />
+            </ActionIconButton>
+          </Stack>
+          {date && (
+            <ActionButton intent="quiet" size="small" onClick={() => updateFilter('date', '')}>
+              {t('mine.design.allDates')}
+            </ActionButton>
+          )}
+        </Box>
+        {!authenticated || query.isLoading ? (
+          <LoadingState label={t('mine.loading')} variant="skeleton" skeletonRows={6} />
+        ) : query.isError || !query.data ? (
+          <ErrorState
+            title={t('errors.loadTitle')}
+            description={t('errors.loadDescription')}
+            retryLabel={t('actions.retry')}
+            onRetry={() => query.refetch()}
+          />
+        ) : (
+          <>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              gap={{ xs: 0.5, sm: 2 }}
+              sx={{ mb: 1.5 }}
+            >
+              <Typography variant="body2" fontWeight="fontWeightBold">
+                {t('mine.filters.resultCount', { count: filtered.length })}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ textAlign: { xs: 'left', sm: 'right' } }}
+              >
+                {t('mine.filters.pageScope')}
+              </Typography>
+            </Stack>
+            {evidencePartial && (
+              <InlineFeedback severity="warning" sx={{ mb: 2 }}>
+                {t('mine.design.partialEvidence')}
+              </InlineFeedback>
+            )}
+            <Box
+              data-testid="my-meetings-workspace"
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'minmax(0,1fr)',
+                  lg:
+                    inspectorOpen && selected ? 'minmax(0,2fr) minmax(280px,1fr)' : 'minmax(0,1fr)',
+                },
+                gap: 3,
+                alignItems: 'start',
+              }}
+            >
+              <Stack data-testid="my-meetings-list" gap={2} sx={{ minWidth: 0 }}>
+                {groups.map((group) => (
+                  <Stack key={group} gap={2}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap={1}
+                    >
+                      <Typography component="h2" variant="subtitle2">
+                        <CalendarDays size={16} aria-hidden="true" />{' '}
+                        {formatDate(
+                          group + 'T12:00:00Z',
+                          { dateStyle: 'full', timeZone: 'UTC' },
+                          resolveSupportedLocale(i18n.language)
+                        )}
+                      </Typography>
+                      <FormControlLabel
+                        sx={{ m: 0, display: { xs: 'none', lg: 'inline-flex' } }}
                         label={
-                          selected.canHost
-                            ? t('mine.filters.role.HOST')
-                            : t('mine.filters.role.ATTENDEE')
+                          <Typography variant="caption">{t('mine.design.compact')}</Typography>
+                        }
+                        control={
+                          <Switch
+                            size="small"
+                            checked={compact}
+                            onChange={(_, value) => setCompact(value)}
+                          />
                         }
                       />
                     </Stack>
-                    <Typography component="h2" variant="h6" fontWeight="fontWeightBold">
-                      {selected.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {formatMeetingDateTime(selected.startsAt, i18n.language)}
-                    </Typography>
+                    {filtered
+                      .filter((meeting) => meetingDateKey(meeting.startsAt, timeZone) === group)
+                      .map((meeting) => (
+                        <MyMeetingCard
+                          key={meeting.meetingId}
+                          meeting={meeting}
+                          evidence={evidence[meeting.meetingId]}
+                          selected={selected?.meetingId === meeting.meetingId}
+                          compact={compact}
+                          onSelect={() => {
+                            updateFilter('meeting', meeting.meetingId);
+                            setInspectorOpen(true);
+                            if (!wide) setMobileInspectorOpen(true);
+                          }}
+                        />
+                      ))}
                   </Stack>
-                  <Divider />
-                  <Stack gap={1.25}>
-                    <MeetingInspectorFact
-                      icon={Clock3}
-                      label={t('mine.inspector.duration')}
-                      value={t('units.minutes', { count: selected.durationMinutes })}
-                    />
-                    <MeetingInspectorFact
-                      icon={UsersRound}
-                      label={t('mine.inspector.organizer')}
-                      value={selected.organizerName}
-                    />
-                    <MeetingInspectorFact
-                      icon={UsersRound}
-                      label={t('mine.inspector.attendees')}
-                      value={t('units.participants', { count: selected.attendeeCount })}
-                    />
-                    <MeetingInspectorFact
-                      icon={ShieldCheck}
-                      label={t('mine.inspector.access')}
-                      value={t(`access.${selected.accessScope}`)}
-                    />
-                    <MeetingInspectorFact
-                      icon={CalendarClock}
-                      label={t('mine.inspector.code')}
-                      value={selected.meetingCode}
-                    />
-                  </Stack>
-                  <Divider />
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('mine.inspector.agenda')}
-                    </Typography>
-                    {selectedAgenda.length ? (
-                      <Stack
-                        component="ol"
-                        gap={0.75}
-                        sx={{ p: 0, mt: 1, mb: 0, listStyle: 'none' }}
-                      >
-                        {selectedAgenda.map((item, index) => (
-                          <Box
-                            component="li"
-                            key={`${index}-${item}`}
-                            sx={{
-                              display: 'grid',
-                              gridTemplateColumns: 'auto minmax(0, 1fr)',
-                              gap: 1,
-                              alignItems: 'start',
-                              p: 1,
-                              bgcolor: 'action.hover',
-                            }}
-                          >
-                            <Chip
-                              size="small"
-                              label={String(index + 1).padStart(2, '0')}
-                              sx={{ minWidth: 36 }}
-                            />
-                            <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-                              {item}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Stack>
-                    ) : (
-                      <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
-                        {t('room.agendaEmpty')}
-                      </Typography>
+                ))}
+                {!filtered.length && (
+                  <GuidedEmptyState
+                    kind={items.length ? 'no-results' : 'empty'}
+                    title={t(items.length ? 'mine.filters.noMatches' : 'mine.empty')}
+                    description={t(
+                      items.length ? 'mine.filters.noMatchesDescription' : 'mine.emptyDescription'
                     )}
+                  />
+                )}
+                {pending.length > 0 && (
+                  <Box
+                    component="section"
+                    aria-label={t('mine.design.pendingTab')}
+                    sx={(theme) => ({
+                      ...meetingInsetSurface(theme, 'warning'),
+                      p: 2,
+                      borderRadius: meetingShape.stage,
+                    })}
+                  >
+                    <Typography component="h2" variant="subtitle2" sx={{ mb: 1.5 }}>
+                      <Mail size={16} aria-hidden="true" />{' '}
+                      {t('mine.design.pendingCount', { count: pending.length })}
+                    </Typography>
+                    <Stack gap={2}>
+                      {pending.map((meeting) => (
+                        <Stack key={meeting.meetingId} gap={1}>
+                          <Typography variant="subtitle2">{meeting.title}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {meeting.organizerName}
+                          </Typography>
+                          <MyMeetingResponseActions
+                            key={
+                              meeting.meetingId +
+                              '-' +
+                              evidence[meeting.meetingId].preparation!.invitationRevision +
+                              '-' +
+                              evidence[meeting.meetingId].preparation!.myResponse!.version
+                            }
+                            meetingId={meeting.meetingId}
+                            preparation={evidence[meeting.meetingId].preparation!}
+                            onChanged={onChanged}
+                          />
+                        </Stack>
+                      ))}
+                    </Stack>
                   </Box>
-                  <MeetingScheduleManagement meeting={selected} onChanged={() => query.refetch()} />
-                  {meetingDestination(selected) && (
-                    <ActionButton
-                      intent="primary"
-                      endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                      onClick={() => navigate(meetingDestination(selected)!)}
-                      sx={{ width: '100%', minHeight: 44 }}
-                    >
-                      {selected.lifecycleState === 'ENDED'
-                        ? t('history.openRecap')
-                        : selected.lifecycleState === 'LIVE'
-                          ? t('actions.join')
-                          : t('home.focus.prepare')}
-                    </ActionButton>
-                  )}
+                )}
+              </Stack>
+              {selected && inspectorOpen && wide && (
+                <Stack
+                  gap={2}
+                  sx={{
+                    display: { xs: 'none', lg: 'flex' },
+                    minWidth: 0,
+                    position: 'sticky',
+                    top: 16,
+                  }}
+                >
+                  <MyMeetingsInspector
+                    key={selected.meetingId}
+                    meeting={selected}
+                    evidence={evidence[selected.meetingId]}
+                    scope={scope}
+                    onClose={() => setInspectorOpen(false)}
+                    onChanged={onChanged}
+                  />
+                  <Stack
+                    direction="row"
+                    gap={1.5}
+                    alignItems="center"
+                    sx={(theme) => ({
+                      bgcolor: 'background.paper',
+                      p: 2,
+                      borderRadius: meetingShape.card,
+                      boxShadow: meetingSoftShadow(theme),
+                    })}
+                  >
+                    <Timer size={24} aria-hidden="true" />
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2">{t('mine.design.loadedDuration')}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('mine.filters.pageScope')}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label={t('units.minutes', {
+                        count: filtered.reduce((sum, meeting) => sum + meeting.durationMinutes, 0),
+                      })}
+                    />
+                  </Stack>
                 </Stack>
-              ) : (
-                <GuidedEmptyState
-                  kind="empty"
-                  size="compact"
-                  title={t('mine.inspector.emptyTitle')}
-                  description={t('mine.inspector.emptyDescription')}
-                />
               )}
             </Box>
-          </Box>
-          {pagination && pagination.total > 1 && (
-            <Stack
-              direction="row"
-              justifyContent="flex-end"
-              alignItems="center"
-              gap={1}
-              sx={{ mt: 2 }}
+            {selected && !wide && mobileInspectorOpen && (
+              <ContentDialog
+                open
+                title={t('mine.inspector.label')}
+                closeLabel={t('actions.close')}
+                onClose={() => setMobileInspectorOpen(false)}
+                fullScreen
+              >
+                <MyMeetingsInspector
+                  key={selected.meetingId}
+                  meeting={selected}
+                  evidence={evidence[selected.meetingId]}
+                  scope={scope}
+                  onClose={() => setMobileInspectorOpen(false)}
+                  onChanged={onChanged}
+                />
+              </ContentDialog>
+            )}
+            {pagination && pagination.total > 1 && (
+              <Stack
+                direction="row"
+                justifyContent="flex-end"
+                alignItems="center"
+                gap={1}
+                sx={{ mt: 2 }}
+              >
+                <ActionIconButton
+                  label={t('mine.previous')}
+                  disabled={!pagination.hasPrevious}
+                  onClick={() => setPage(Math.max(0, pagination.page - 1))}
+                >
+                  <ChevronLeft size={17} />
+                </ActionIconButton>
+                <Typography
+                  data-testid="my-meetings-page-status"
+                  variant="caption"
+                  color="text.secondary"
+                >
+                  {t('mine.page', { current: pagination.current, total: pagination.total })}
+                </Typography>
+                <ActionIconButton
+                  label={t('mine.next')}
+                  disabled={!pagination.hasNext}
+                  onClick={() => setPage(pagination.page + 1)}
+                >
+                  <ChevronRight size={17} />
+                </ActionIconButton>
+              </Stack>
+            )}
+          </>
+        )}
+        <ContentDialog
+          open={datePickerOpen}
+          title={t('mine.design.date')}
+          closeLabel={t('actions.close')}
+          onClose={() => setDatePickerOpen(false)}
+        >
+          <Stack gap={2} sx={{ pt: 1 }}>
+            <DatePickerField
+              label={t('mine.design.date')}
+              value={date || null}
+              onValueChange={(value) => updateFilter('date', value ?? '')}
+            />
+            <ActionButton
+              intent="secondary"
+              onClick={() => {
+                updateFilter('date', '');
+                setDatePickerOpen(false);
+              }}
             >
-              <ActionButton
-                intent="quiet"
-                aria-label={t('mine.previous')}
-                disabled={!pagination.hasPrevious}
-                onClick={() => setPage(Math.max(0, pagination.page - 1))}
-              >
-                <ChevronLeft size={17} />
-              </ActionButton>
-              <Typography
-                data-testid="my-meetings-page-status"
-                variant="caption"
-                color="text.secondary"
-              >
-                {t('mine.page', {
-                  current: pagination.current,
-                  total: pagination.total,
-                })}
-              </Typography>
-              <ActionButton
-                intent="quiet"
-                aria-label={t('mine.next')}
-                disabled={!pagination.hasNext}
-                onClick={() => setPage(pagination.page + 1)}
-              >
-                <ChevronRight size={17} />
-              </ActionButton>
-            </Stack>
-          )}
-        </>
-      )}
-    </PageCanvas>
-  );
-}
-
-function MeetingInspectorFact({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Clock3;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Stack direction="row" gap={1} alignItems="flex-start">
-      <Icon size={16} aria-hidden="true" style={{ marginTop: 2, flex: '0 0 auto' }} />
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="caption" color="text.secondary" display="block">
-          {label}
-        </Typography>
-        <Typography variant="body2" fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
-          {value}
-        </Typography>
-      </Box>
-    </Stack>
+              {t('mine.design.allDates')}
+            </ActionButton>
+          </Stack>
+        </ContentDialog>
+      </PageCanvas>
+    </Box>
   );
 }

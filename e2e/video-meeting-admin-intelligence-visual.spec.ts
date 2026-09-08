@@ -108,6 +108,16 @@ test('blocked AI administration preserves the approved mobile hierarchy at 390px
   await expectNoHorizontalOverflow(page, 'admin BLOCKED 390 ko light');
   await expectNoBlockingA11y(page, 'admin BLOCKED 390 ko light');
   await expectCleanRuntime(page, 'admin BLOCKED 390 ko light');
+  // Retention and processing evidence are intentionally disclosed on demand in the mobile design.
+  const details = page.getByTestId('meeting-intelligence-mobile-details');
+  await expect(details).not.toHaveAttribute('open', '');
+  await details.locator('summary').click();
+  await expect(details.locator('section[aria-label]').first()).toBeVisible();
+  await expect(details.locator('section[aria-labelledby$="-dependencies"]')).toBeVisible();
+  await details.locator('summary').click();
+  await expect(details).not.toHaveAttribute('open', '');
+  // Disclosure interaction scrolls the page; compare document geometry from the same origin.
+  await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
   const approvedFrame = MEETING_APPROVED_FRAMES.find(({ id }) => id === 'U15-M');
   expect(approvedFrame, 'U15-M exact runtime contract').toBeDefined();
   if (!approvedFrame) return;
@@ -129,6 +139,16 @@ test('blocked AI administration preserves the approved mobile hierarchy at 390px
   const documentHeight = await page.evaluate(() =>
     Math.ceil(Math.max(document.documentElement.scrollHeight, document.body.scrollHeight))
   );
+  await testInfo.attach('implementation-canonical-layout', {
+    body: JSON.stringify({ label: 'U15 mobile', width: 390, height: documentHeight }),
+    contentType: 'application/json',
+  });
+  await page.screenshot({
+    path: testInfo.outputPath('implementation-review.png'),
+    fullPage: true,
+    animations: 'disabled',
+    scale: 'css',
+  });
   expect(documentHeight).toBe(approvedFrame.implementationGolden.expectedRasterHeight);
   const lastContent = page
     .locator(approvedFrame.implementationGolden.clearance.lastContentSelector)
@@ -136,7 +156,9 @@ test('blocked AI administration preserves the approved mobile hierarchy at 390px
   await expect(lastContent).toBeVisible();
   const lastContentBox = await lastContent.boundingBox();
   expect(lastContentBox).not.toBeNull();
-  const trailingGap = documentHeight - ((lastContentBox?.y ?? 0) + (lastContentBox?.height ?? 0));
+  const scrollY = await page.evaluate(() => window.scrollY);
+  const trailingGap =
+    documentHeight - ((lastContentBox?.y ?? 0) + scrollY + (lastContentBox?.height ?? 0));
   expect(trailingGap).toBeGreaterThanOrEqual(-1);
   expect(trailingGap).toBeLessThanOrEqual(
     approvedFrame.implementationGolden.clearance.maxTrailingGapPx

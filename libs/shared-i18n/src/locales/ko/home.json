@@ -127,7 +127,9 @@
         "paused": "일시 중지",
         "active": "활성",
         "redacted": "보호된 상태",
-        "unknown": "상태 확인 필요"
+        "unknown": "상태 확인 필요",
+        "not_started": "시작 전",
+        "planned": "오늘 계획"
       },
       "action": {
         "title": "우선 업무",
@@ -265,6 +267,10 @@
         "actionableDescription_other": "조치 가능한 알림 {{count}}건",
         "urgentDescription": "긴급 알림 {{count}}건",
         "urgentDescription_other": "긴급 알림 {{count}}건"
+      },
+      "personalPlan": {
+        "title": "오늘 계획",
+        "description": "오늘 선택한 {{count}}건의 업무를 확인하고 실행 순서를 조정하세요."
       }
     },
     "apps": {
@@ -444,7 +450,51 @@
       "conflicts": "충돌",
       "open": "{{signal}} 상세 열기",
       "openSummary": "{{signal}} {{value}}{{unit}}, {{comparison}}, 상세 열기",
-      "recentActivity": "최근 활동"
+      "recentActivity": "최근 활동",
+      "execution": {
+        "title": "실행 신호",
+        "scope": "나에게 허용된 연결 실행 원장",
+        "close": "실행 신호 닫기",
+        "snapshot": "현재 실행 스냅샷",
+        "definition": "각 실행의 최신 상태를 집계합니다. 확인 필요 수는 입력 필요와 정책 차단의 합계입니다.",
+        "attention": "Flow 확인 필요",
+        "distribution": "현재 실행 상태별 건수",
+        "total": "전체 실행",
+        "count": "{{count}}건",
+        "reviewTitle": "확인이 필요한 실행",
+        "viewHistory": "관련 이력 보기",
+        "openTimeline": "전체 활동 타임라인",
+        "historyNotice": "위 수치는 현재 실행 상태입니다. 관련 이력은 해당 상태가 기록된 과거 이벤트를 조회하므로 목록 건수와 다를 수 있습니다.",
+        "clearTitle": "현재 확인 필요 0건",
+        "clearDescription": "확인 가능한 실행 중 입력 대기나 정책 차단 상태가 없습니다. 전체 시스템의 정상 상태를 보증하는 수치는 아닙니다.",
+        "attentionTitle": "실행 상태를 확인하세요",
+        "unknownTitle": "상태 미확인 실행이 있습니다",
+        "staleTitle": "최신 상태를 다시 확인하세요",
+        "attentionDescription": "현재 원장의 상태와 기록 시점을 먼저 확인한 뒤, 관련 이력에서 원본 업무로 이동할 수 있습니다.",
+        "observed": "마지막 관측 · {{at}}",
+        "scopeTitle": "조회 범위와 데이터 근거",
+        "scopeDescription": "현재 사용자에게 허용된 연결 원장의 실행만 집계합니다. 알림 미확인 수나 과거 이벤트 건수와는 별개이며, 확인되지 않은 연동 시스템은 포함하지 않습니다.",
+        "coverage": "지원 대상 · {{types}}",
+        "noCoverage": "제공된 범위 없음",
+        "freshness": {
+          "refreshing": "새로 확인 중",
+          "stale": "이전 관측 데이터",
+          "current": "최근 관측 데이터"
+        },
+        "review": {
+          "needs-input": "입력·확인 요청의 맥락을 확인합니다.",
+          "policy-blocked": "차단 이유를 확인합니다. 이 화면에서 정책을 우회하거나 승인하지 않습니다."
+        },
+        "states": {
+          "running": "실행 중",
+          "needs-input": "입력 필요",
+          "policy-blocked": "정책 차단",
+          "completed": "완료",
+          "failed": "실패",
+          "cancelled": "취소",
+          "unknown": "상태 미확인"
+        }
+      }
     },
     "updates": {
       "title": "소식",
@@ -972,9 +1022,18 @@
       "emptySummary": "현재 우선 처리할 업무가 없습니다.",
       "loadError": "업무 인사이트를 불러오지 못했습니다. 다른 홈 영역은 계속 사용할 수 있습니다.",
       "signals": {
-        "deadline": { "label": "마감 임박", "detail": "조치가 필요한 업무" },
-        "focus": { "label": "집중 시간", "detail": "이번 주 누적 분" },
-        "meeting": { "label": "일정 응답", "detail": "응답이 필요한 초대" }
+        "deadline": {
+          "label": "마감 임박",
+          "detail": "조치가 필요한 업무"
+        },
+        "focus": {
+          "label": "집중 시간",
+          "detail": "이번 주 누적 분"
+        },
+        "meeting": {
+          "label": "일정 응답",
+          "detail": "응답이 필요한 초대"
+        }
       },
       "reviewPriority": "우선순위 검토",
       "askToday": "요청 계획 준비",

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ExternalLink, FilePlus2, ShieldCheck, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ChevronDown, ExternalLink, FilePlus2, ShieldCheck, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
@@ -9,7 +9,6 @@ import {
   FormField,
   InlineFeedback,
   SelectField,
-  foundationTokens,
 } from '@dwp-frontend/design-system';
 import type {
   RegisterVideoMeetingMaterialInput,
@@ -22,6 +21,14 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import { meetingShape } from './meeting-visual-system';
+import { MeetingPreparationDisclosure } from './meeting-preparation-disclosure';
+import {
+  preparationMaterialFormat,
+  usablePreparationMaterialTicket,
+} from './meeting-preparation-material-ticket';
 
 type Props = {
   preparation: VideoMeetingPreparation;
@@ -71,6 +78,8 @@ export function MeetingPreparationMaterials({
   onAccess,
 }: Props) {
   const { t, i18n } = useTranslation('meetings');
+  const theme = useTheme();
+  const compact = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<MaterialDraft>(emptyDraft);
   const [remove, setRemove] = useState<VideoMeetingPreparationMaterial | null>(null);
@@ -78,6 +87,20 @@ export function MeetingPreparationMaterials({
   const [invalid, setInvalid] = useState(false);
   const [accessError, setAccessError] = useState<string | null>(null);
   const [tickets, setTickets] = useState<Record<string, VideoMeetingMaterialAccessTicket>>({});
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    const expiry = Math.min(
+      ...Object.values(tickets)
+        .map((ticket) => Date.parse(ticket.expiresAt))
+        .filter((value) => value > Date.now())
+    );
+    if (!Number.isFinite(expiry)) return;
+    const timer = window.setTimeout(
+      () => setNow(Date.now()),
+      Math.min(2_147_483_647, Math.max(1, expiry - Date.now()))
+    );
+    return () => window.clearTimeout(timer);
+  }, [tickets, now]);
   const disabled = busy || localBusy;
   const patch = (value: Partial<MaterialDraft>) => {
     setDraft((current) => ({ ...current, ...value }));
@@ -130,7 +153,12 @@ export function MeetingPreparationMaterials({
     setLocalBusy(true);
     const ticket = await onAccess(material.materialId, material.version);
     setLocalBusy(false);
-    if (!ticket) {
+    if (!ticket || !usablePreparationMaterialTicket(ticket, preparation.meetingId, material)) {
+      setTickets((current) => {
+        const next = { ...current };
+        delete next[material.materialId];
+        return next;
+      });
       setAccessError(material.materialId);
       return;
     }
@@ -155,9 +183,11 @@ export function MeetingPreparationMaterials({
           </ActionButton>
         )}
       </Stack>
-      <InlineFeedback severity="info">
-        <Typography variant="body2">{t('preparation.materialVerificationNotice')}</Typography>
-      </InlineFeedback>
+      <MeetingPreparationDisclosure label={t('preparation.design.entrySafety')}>
+        <InlineFeedback severity="info">
+          <Typography variant="body2">{t('preparation.materialVerificationNotice')}</Typography>
+        </InlineFeedback>
+      </MeetingPreparationDisclosure>
       {conflict && (
         <InlineFeedback severity="warning">{t('preparation.materialConflict')}</InlineFeedback>
       )}
@@ -166,88 +196,218 @@ export function MeetingPreparationMaterials({
       )}
       {preparation.materials.length ? (
         <Stack component="ul" gap={1} sx={{ m: 0, p: 0, listStyle: 'none' }}>
-          {preparation.materials.map((material) => (
-            <Box
-              component="li"
-              key={material.materialId}
-              sx={{
-                p: 1.5,
-                bgcolor: 'action.hover',
-                borderRadius: foundationTokens.radius.control + 'px',
-              }}
-            >
-              <Stack direction="row" alignItems="start" justifyContent="space-between" gap={1}>
-                <Stack gap={0.5} sx={{ minWidth: 0 }}>
-                  <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
-                    {material.displayName}
-                  </Typography>
-                  <Stack direction="row" gap={0.75} flexWrap="wrap">
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      label={t(`preparation.materialClassifications.${material.classification}`)}
-                    />
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      label={t('preparation.materialPending')}
-                    />
-                  </Stack>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('preparation.materialSource', {
-                      provider: material.referenceProvider,
-                      version: material.sourceVersion || t('preparation.materialVersionUnknown'),
-                    })}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('preparation.materialRetention', {
-                      value: formatDate(
-                        material.retentionUntil,
-                        { dateStyle: 'medium' },
-                        resolveSupportedLocale(i18n.language)
-                      ),
-                    })}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" alignItems="center" gap={0.5} flexWrap="wrap">
-                  {tickets[material.materialId] ? (
-                    <ActionButton
-                      component="a"
-                      href={tickets[material.materialId].accessUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      intent="secondary"
-                      size="small"
-                      endIcon={<ExternalLink size={15} aria-hidden="true" />}
-                      sx={{ minHeight: 44 }}
+          {preparation.materials.map((material) => {
+            const candidate = tickets[material.materialId];
+            const ticket = usablePreparationMaterialTicket(
+              candidate,
+              preparation.meetingId,
+              material,
+              Math.max(now, Date.now())
+            )
+              ? candidate
+              : null;
+            return (
+              <Box
+                component="li"
+                key={material.materialId}
+                sx={{
+                  p: 1.5,
+                  bgcolor: 'background.paper',
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: meetingShape.inset,
+                }}
+              >
+                <Box
+                  component="details"
+                  open={!compact || undefined}
+                  data-testid="meeting-preparation-material-detail"
+                  sx={{
+                    '& > summary': {
+                      display: { xs: 'flex', md: 'none' },
+                      alignItems: 'center',
+                      gap: 1,
+                      minHeight: 44,
+                      cursor: 'pointer',
+                      listStyle: 'none',
+                      '&::-webkit-details-marker': { display: 'none' },
+                      '&:focus-visible': {
+                        outline: 2,
+                        outlineColor: 'primary.main',
+                        outlineOffset: 2,
+                      },
+                    },
+                  }}
+                >
+                  <Box component="summary">
+                    <Box
+                      component="span"
+                      aria-hidden="true"
+                      sx={{
+                        borderRadius: meetingShape.inset,
+                        bgcolor: 'action.hover',
+                        color: 'primary.main',
+                        p: 1,
+                        fontSize: 'caption.fontSize',
+                        fontWeight: 'fontWeightBold',
+                      }}
                     >
-                      {t('preparation.openMaterial')}
-                    </ActionButton>
-                  ) : (
-                    <ActionButton
-                      intent="quiet"
-                      size="small"
-                      startIcon={<ShieldCheck size={15} aria-hidden="true" />}
-                      disabled={disabled}
-                      onClick={() => void verifyAccess(material)}
-                      sx={{ minHeight: 44 }}
+                      {preparationMaterialFormat(material.contentType)}
+                    </Box>
+                    <Box component="span" sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography
+                        component="span"
+                        variant="subtitle2"
+                        display="block"
+                        sx={{ overflowWrap: 'anywhere' }}
+                      >
+                        {material.displayName}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                      >
+                        {t(`preparation.materialClassifications.${material.classification}`)} ·{' '}
+                        {t(
+                          ticket
+                            ? 'preparation.design.materialTicketReady'
+                            : 'preparation.materialPending'
+                        )}
+                      </Typography>
+                    </Box>
+                    <ChevronDown size={16} aria-hidden="true" />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'auto minmax(0, 1fr)',
+                      alignItems: 'start',
+                      gap: 1,
+                      mt: { xs: 1.5, md: 0 },
+                    }}
+                  >
+                    <Box
+                      aria-hidden="true"
+                      sx={{
+                        bgcolor: 'action.hover',
+                        color: 'primary.main',
+                        borderRadius: meetingShape.inset,
+                        p: 1,
+                        fontSize: 'caption.fontSize',
+                        fontWeight: 'fontWeightBold',
+                        display: { xs: 'none', md: 'block' },
+                      }}
                     >
-                      {t('preparation.verifyMaterialAccess')}
-                    </ActionButton>
-                  )}
-                  {preparation.canManageMaterials && (
-                    <ActionIconButton
-                      label={t('preparation.removeMaterial')}
-                      disabled={disabled}
-                      onClick={() => setRemove(material)}
+                      {preparationMaterialFormat(material.contentType)}
+                    </Box>
+                    <Stack gap={0.5} sx={{ minWidth: 0, gridColumn: { xs: '1 / -1', md: 'auto' } }}>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ overflowWrap: 'anywhere', display: { xs: 'none', md: 'block' } }}
+                      >
+                        {material.displayName}
+                      </Typography>
+                      <Stack
+                        direction="row"
+                        gap={0.75}
+                        flexWrap="wrap"
+                        sx={{ display: { xs: 'none', md: 'flex' } }}
+                      >
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label={t(
+                            `preparation.materialClassifications.${material.classification}`
+                          )}
+                        />
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label={t(
+                            ticket
+                              ? 'preparation.design.materialTicketReady'
+                              : 'preparation.materialPending'
+                          )}
+                        />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {t('preparation.materialSource', {
+                          provider: material.referenceProvider,
+                          version:
+                            material.sourceVersion || t('preparation.materialVersionUnknown'),
+                        })}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {t('preparation.materialRetention', {
+                          value: formatDate(
+                            material.retentionUntil,
+                            { dateStyle: 'medium' },
+                            resolveSupportedLocale(i18n.language)
+                          ),
+                        })}
+                      </Typography>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      gap={0.5}
+                      flexWrap="wrap"
+                      sx={{ gridColumn: { xs: '1 / -1', md: 2 } }}
                     >
-                      <Trash2 size={16} aria-hidden="true" />
-                    </ActionIconButton>
-                  )}
-                </Stack>
-              </Stack>
-            </Box>
-          ))}
+                      {ticket ? (
+                        <ActionButton
+                          component="a"
+                          href={ticket.accessUrl}
+                          onClick={(event) => {
+                            if (
+                              !usablePreparationMaterialTicket(
+                                ticket,
+                                preparation.meetingId,
+                                material
+                              )
+                            ) {
+                              event.preventDefault();
+                              setNow(Date.now());
+                            }
+                          }}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          intent="secondary"
+                          size="small"
+                          endIcon={<ExternalLink size={15} aria-hidden="true" />}
+                          sx={{ minHeight: 44 }}
+                        >
+                          {t('preparation.openMaterial')}
+                        </ActionButton>
+                      ) : (
+                        <ActionButton
+                          intent="quiet"
+                          size="small"
+                          startIcon={<ShieldCheck size={15} aria-hidden="true" />}
+                          disabled={disabled}
+                          onClick={() => void verifyAccess(material)}
+                          sx={{ minHeight: 44 }}
+                        >
+                          {t('preparation.verifyMaterialAccess')}
+                        </ActionButton>
+                      )}
+                      {preparation.canManageMaterials && (
+                        <ActionIconButton
+                          label={t('preparation.removeMaterial')}
+                          disabled={disabled}
+                          onClick={() => setRemove(material)}
+                        >
+                          <Trash2 size={16} aria-hidden="true" />
+                        </ActionIconButton>
+                      )}
+                    </Stack>
+                  </Box>
+                </Box>
+              </Box>
+            );
+          })}
         </Stack>
       ) : (
         <Typography variant="body2" color="text.secondary">

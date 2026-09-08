@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, ArrowRight, Bot, CheckCircle2, CircleAlert, ShieldX } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ActionButton,
   EmptyState,
@@ -11,24 +11,36 @@ import {
   OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
+  SectionHeader,
 } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 import { useActivityData } from './use-activity-data';
 import { activityRefreshState } from './activity-model';
+import { ActivitySourceStatus } from '../../components/activity/activity-source-status';
+import { ActivityConnectorStatus } from '../../components/activity/activity-connector-status';
 
 export function ActivityHome() {
   const { t } = useTranslation('work');
+  const navigate = useNavigate();
   const recentActivityRef = useRef<HTMLElement | null>(null);
   useShellAuxiliaryAvoidance({ boundaryRef: recentActivityRef });
-  const { feed: query, summary, now, refresh } = useActivityData({ limit: 6, includeUsage: false });
+  const {
+    feed: query,
+    summary,
+    sources,
+    now,
+    refresh,
+  } = useActivityData({
+    limit: 6,
+    includeUsage: false,
+  });
   const current = summary.isError ? undefined : summary.data;
   const metrics = {
     total: current?.total ?? '—',
@@ -96,12 +108,20 @@ export function ActivityHome() {
       <Box sx={{ mt: 3 }}>
         <OperationalKpiStrip
           ariaLabel={t('activityHome.summaryLabel')}
+          sx={{
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            '& > div:nth-of-type(2)': { bgcolor: 'var(--dwp-product-soft)' },
+          }}
           items={[
             {
               key: 'total',
               value: metrics.total,
               label: t('activityHome.metrics.total'),
               detail: t('activityHome.metrics.totalDetail'),
+              onSelect: () => navigate('/activity/timeline'),
             },
             {
               key: 'running',
@@ -109,6 +129,7 @@ export function ActivityHome() {
               label: t('activityHome.metrics.running'),
               detail: t('activityHome.metrics.runningDetail'),
               tone: 'info',
+              onSelect: () => navigate('/activity/timeline?state=running'),
             },
             {
               key: 'input',
@@ -116,6 +137,7 @@ export function ActivityHome() {
               label: t('activityHome.metrics.input'),
               detail: t('activityHome.metrics.inputDetail'),
               tone: 'warning',
+              onSelect: () => navigate('/activity/timeline?state=needs-input'),
             },
             {
               key: 'blocked',
@@ -123,6 +145,7 @@ export function ActivityHome() {
               label: t('activityHome.metrics.blocked'),
               detail: t('activityHome.metrics.blockedDetail'),
               tone: 'critical',
+              onSelect: () => navigate('/activity/timeline?state=policy-blocked'),
             },
           ]}
         />
@@ -131,20 +154,26 @@ export function ActivityHome() {
           {t(`activityFoundation.freshness.${activityRefreshState(summary, now)}`)}
         </Typography>
       </Box>
+      <ActivitySourceStatus sources={query.data.sourceStates} partial={query.data.partial} />
+      <ActivityConnectorStatus
+        report={sources.isError ? undefined : sources.data}
+        loading={sources.isLoading}
+        failed={sources.isError}
+      />
       <Box
         sx={{
           mt: 4,
           display: 'grid',
           gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1fr) 320px' },
-          borderBlock: 1,
-          borderColor: 'divider',
+          gap: 3,
+          alignItems: 'start',
         }}
       >
         <Box
           ref={recentActivityRef}
           component="section"
           aria-labelledby="activity-home-recent"
-          sx={{ py: 2.5, pr: { lg: 3 }, minWidth: 0 }}
+          sx={{ minWidth: 0 }}
         >
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -153,9 +182,11 @@ export function ActivityHome() {
             gap={1.5}
           >
             <Box>
-              <Typography id="activity-home-recent" component="h2" variant="h6">
-                {t('activityHome.recentTitle')}
-              </Typography>
+              <SectionHeader
+                id="activity-home-recent"
+                icon={Activity}
+                title={t('activityHome.recentTitle')}
+              />
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
                 {t('activityHome.recentDescription')}
               </Typography>
@@ -169,7 +200,7 @@ export function ActivityHome() {
               {t('activityHome.openTimeline')}
             </ActionButton>
           </Stack>
-          <Box sx={{ mt: 2, borderTop: 1, borderColor: 'divider' }}>
+          <Box sx={{ mt: 2 }}>
             {recent.length ? (
               recent.map((event, index) => {
                 const EventIcon =
@@ -181,8 +212,27 @@ export function ActivityHome() {
                         ? Bot
                         : Activity;
                 return (
-                  <Box key={event.id}>
-                    {index > 0 && <Divider />}
+                  <Box
+                    key={event.id}
+                    sx={{
+                      mt: index ? 1.25 : 0,
+                      px: 2,
+                      bgcolor: 'background.paper',
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                      borderLeft: 3,
+                      borderLeftColor:
+                        event.state === 'policy-blocked' || event.state === 'failed'
+                          ? 'error.main'
+                          : event.state === 'needs-input'
+                            ? 'warning.main'
+                            : event.state === 'completed'
+                              ? 'success.main'
+                              : 'primary.main',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
                     <Stack
                       data-shell-auxiliary-avoidance="inline-end"
                       direction={{ xs: 'column', sm: 'row' }}
@@ -191,25 +241,40 @@ export function ActivityHome() {
                       gap={1.5}
                       sx={{ py: 1.6 }}
                     >
-                      <Stack direction="row" spacing={1.25} alignItems="flex-start">
+                      <Stack
+                        direction="row"
+                        spacing={1.25}
+                        alignItems="flex-start"
+                        sx={{ minWidth: 0 }}
+                      >
                         <Box
                           aria-hidden="true"
                           sx={{
                             width: 34,
                             height: 34,
+                            flexShrink: 0,
                             display: 'grid',
                             placeItems: 'center',
                             bgcolor: 'var(--dwp-product-soft)',
                             color: 'var(--dwp-product-accent)',
-                            borderRadius: 'shape.borderRadius',
+                            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
                           }}
                         >
                           <EventIcon size={17} />
                         </Box>
                         <Box sx={{ minWidth: 0 }}>
-                          <Typography variant="body2" fontWeight={800}>
+                          <Typography variant="body2" fontWeight="fontWeightBold">
                             {event.title}
                           </Typography>
+                          {event.dataProvenance === 'SAMPLE' && (
+                            <Chip
+                              size="small"
+                              color="warning"
+                              variant="outlined"
+                              label={t('activityFoundation.sample.title')}
+                              sx={{ mt: 0.5, color: 'text.primary' }}
+                            />
+                          )}
                           <Typography
                             variant="caption"
                             color="text.secondary"
@@ -227,7 +292,12 @@ export function ActivityHome() {
                           label={t(`activityPage.states.${event.state}`)}
                         />
                         <Typography variant="caption" color="text.secondary">
-                          {formatDate(event.occurredAt, { hour: '2-digit', minute: '2-digit' })}
+                          {formatDate(event.occurredAt, {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </Typography>
                         <ActionButton
                           component={Link}
@@ -256,16 +326,19 @@ export function ActivityHome() {
           component="aside"
           aria-labelledby="activity-home-attention"
           sx={{
-            py: 2.5,
-            pl: { xs: 0, lg: 3 },
-            borderTop: { xs: 1, lg: 0 },
-            borderLeft: { xs: 0, lg: 1 },
+            p: 2.5,
+            minWidth: 0,
+            bgcolor: 'background.paper',
+            border: 1,
             borderColor: 'divider',
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
           }}
         >
-          <Typography id="activity-home-attention" component="h2" variant="h6">
-            {t('activityHome.attention.title')}
-          </Typography>
+          <SectionHeader
+            id="activity-home-attention"
+            icon={CircleAlert}
+            title={t('activityHome.attention.title')}
+          />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
             {t('activityHome.attention.description')}
           </Typography>
@@ -299,6 +372,13 @@ export function ActivityHome() {
             </Stack>
           ) : (
             <Stack spacing={1.25} sx={{ mt: 2.5 }}>
+              <Typography
+                variant="h3"
+                component="p"
+                sx={{ color: 'warning.dark', fontVariantNumeric: 'tabular-nums' }}
+              >
+                {current.needsInput + current.policyBlocked}
+              </Typography>
               <ActionButton
                 component={Link}
                 to="/activity/timeline?state=needs-input"

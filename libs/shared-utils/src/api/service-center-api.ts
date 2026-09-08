@@ -106,6 +106,13 @@ export type ServiceRequestDetail = {
   timeline: ServiceTimelineEvent[];
 };
 
+export type ServiceInformationResponseInput = {
+  values: Record<string, unknown>;
+  message: string;
+  version: number;
+  idempotencyKey: string;
+};
+
 export const SERVICES_MUTATION_API_CONTRACTS = [
   {
     apiFunction: 'createServiceRequest',
@@ -124,6 +131,12 @@ export const SERVICES_MUTATION_API_CONTRACTS = [
     routeContractKey: 'route.services.work.draft-submit.action',
     method: 'POST',
     path: '/api/platform/v1/services/requests/{requestId}/submit',
+  },
+  {
+    apiFunction: 'respondToServiceInformationRequest',
+    routeContractKey: 'route.services.work.request-information-response.action',
+    method: 'POST',
+    path: '/api/platform/v1/services/requests/{requestId}/information-response',
   },
   {
     apiFunction: 'cancelServiceRequest',
@@ -185,11 +198,12 @@ async function readServiceRequests(
 async function readServiceRequest(
   requestId: string,
   query: '' | '?view=draft',
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  contextScopeKey?: string
 ): Promise<ServiceRequestDetail> {
   const response = await axiosInstance.get<ApiResponse<ServiceRequestDetail>>(
     `/api/platform/v1/services/requests/${requestId}${query}`,
-    selectedScope(undefined, signal)
+    selectedScope(contextScopeKey, signal)
   );
   return response.data.data;
 }
@@ -261,16 +275,20 @@ export async function getHcmServiceRequests(
   return readServiceRequests('/api/platform/v1/services/requests?surface=hcm', signal);
 }
 
-export async function getMyServiceRequest(requestId: string): Promise<ServiceRequestDetail> {
-  return readServiceRequest(requestId, '');
+export async function getMyServiceRequest(
+  requestId: string,
+  contextScopeKey?: string
+): Promise<ServiceRequestDetail> {
+  return readServiceRequest(requestId, '', undefined, contextScopeKey);
 }
 
 /** Services Work active-request detail: the `view` discriminator must remain absent. */
 export async function getServiceMyRequest(
   requestId: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  contextScopeKey?: string
 ): Promise<ServiceRequestDetail> {
-  return readServiceRequest(requestId, '', signal);
+  return readServiceRequest(requestId, '', signal, contextScopeKey);
 }
 
 /** Services Work draft detail: registry-fixed `view=draft`. */
@@ -320,6 +338,23 @@ export async function submitServiceDraft(
   const response = await axiosInstance.post<ApiResponse<ServiceRequestDetail>, { version: number }>(
     `/api/platform/v1/services/requests/${requestId}/submit`,
     { version },
+    productSurfaceGovernedMutationConfig(authority)
+  );
+  return response.data.data;
+}
+
+/** Replaying the same command confirms the original response without submitting it twice. */
+export async function respondToServiceInformationRequest(
+  requestId: string,
+  input: ServiceInformationResponseInput,
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<ServiceRequestDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<ServiceRequestDetail>,
+    ServiceInformationResponseInput
+  >(
+    `/api/platform/v1/services/requests/${encodeURIComponent(requestId)}/information-response`,
+    input,
     productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;

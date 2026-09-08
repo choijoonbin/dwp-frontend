@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ChevronDown,
   CircleAlert,
   FileQuestion,
   MessageSquareText,
@@ -13,81 +11,29 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 
 import type { PublishedMeetingRecap } from './meeting-recap-intelligence-model';
-import { meetingSurface } from './meeting-visual-system';
+import { meetingShape, meetingSurface } from './meeting-visual-system';
 
 type ReadyMeetingRecap = Extract<PublishedMeetingRecap, { state: 'READY' }>;
 
 export function MeetingRecapAnalysis({ recap }: { recap: PublishedMeetingRecap }) {
   const { t } = useTranslation('meetings');
-  const theme = useTheme();
-  const compact = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
-  const [open, setOpen] = useState(false);
   if (recap.state !== 'READY') return null;
-  if (!compact) {
-    return (
-      <Box
-        component="section"
-        data-testid="meeting-recap-analysis"
-        sx={(currentTheme) => ({
-          ...meetingSurface(currentTheme, { elevated: false }),
-          gridArea: 'analysis',
-          minWidth: 0,
-          overflow: 'hidden',
-          borderTop: 0,
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
-        })}
-      >
-        <AnalysisContent recap={recap} />
-      </Box>
-    );
-  }
   return (
     <Box
-      component="details"
+      component="section"
       data-testid="meeting-recap-analysis"
-      open={open}
-      onToggle={(event) => setOpen(event.currentTarget.open)}
-      sx={(currentTheme) => ({
-        ...meetingSurface(currentTheme, { elevated: false }),
-        gridArea: 'analysis',
-        minWidth: 0,
-        overflow: 'hidden',
-        '&[open] > summary': { borderBottom: 1, borderColor: 'divider' },
-      })}
+      sx={(theme) => ({ ...meetingSurface(theme), minWidth: 0, overflow: 'hidden' })}
     >
-      <Box
-        component="summary"
-        data-testid="meeting-recap-analysis-toggle"
-        sx={{
-          minHeight: 52,
-          px: 2,
-          py: 1.5,
-          cursor: 'pointer',
-          listStyle: 'none',
-          '&::-webkit-details-marker': { display: 'none' },
-          '&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
-        }}
-      >
-        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography component="span" variant="subtitle2" fontWeight="fontWeightBold">
-              {t('history.recap.intelligence.analysisDetailsTitle')}
-            </Typography>
-            <Typography component="span" variant="caption" color="text.secondary" display="block">
-              {t('history.recap.intelligence.analysisDetailsDescription')}
-            </Typography>
-          </Box>
-          <ChevronDown
-            size={18}
-            aria-hidden="true"
-            style={{ flex: '0 0 auto', transform: open ? 'rotate(180deg)' : undefined }}
-          />
-        </Stack>
+      <Box sx={{ px: { xs: 2, sm: 2.5 }, pt: 2.5 }}>
+        <Typography component="h3" variant="h6" fontWeight="fontWeightBold">
+          {t('history.recap.intelligence.analysisDetailsTitle')}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {t('history.recap.intelligence.analysisDetailsDescription')}
+        </Typography>
       </Box>
       <AnalysisContent recap={recap} />
     </Box>
@@ -101,7 +47,7 @@ function AnalysisContent({ recap }: { recap: ReadyMeetingRecap }) {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.2fr) minmax(0, .8fr)' },
+          gridTemplateColumns: 'minmax(0, 1fr)',
           '& > section + section': {
             borderLeft: { xs: 0, xl: 1 },
             borderColor: 'divider',
@@ -145,7 +91,7 @@ function AnalysisContent({ recap }: { recap: ReadyMeetingRecap }) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', xl: '1fr 1fr' },
+            gridTemplateColumns: 'minmax(0, 1fr)',
             borderTop: 1,
             borderColor: 'divider',
             '& > section': { borderTop: 0 },
@@ -189,7 +135,18 @@ function OutcomeList({
   return (
     <Stack component="ul" gap={1.25} sx={{ m: 0, p: 0, listStyle: 'none' }}>
       {items.map((item, index) => (
-        <Stack component="li" key={`${item}-${index}`} direction="row" gap={1} alignItems="start">
+        <Stack
+          component="li"
+          key={`${item}-${index}`}
+          direction="row"
+          gap={1}
+          alignItems="start"
+          sx={(theme) => ({
+            p: 1.75,
+            borderRadius: meetingShape.inset,
+            bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.05),
+          })}
+        >
           <Icon size={16} aria-hidden="true" style={{ marginTop: 3, flex: '0 0 auto' }} />
           <Typography variant="body2" fontWeight="fontWeightMedium">
             {item}

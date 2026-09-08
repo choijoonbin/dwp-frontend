@@ -20,16 +20,18 @@ import {
   MEETING_HOME_WORK_PAGE_SIZE,
   projectMeetingHomeWorkQueue,
 } from './meeting-home-work-queue-model';
-import { meetingListSurface } from './meeting-visual-system';
+import { meetingHomeCard } from './meeting-home-presentation';
 
 export function MeetingHomeWorkQueue({
   scope,
   actorId,
   timeZone,
+  embedded = false,
 }: {
   scope: string;
   actorId: number;
   timeZone: string;
+  embedded?: boolean;
 }) {
   const { t, i18n } = useTranslation('meetings');
   const navigate = useNavigate();
@@ -37,16 +39,14 @@ export function MeetingHomeWorkQueue({
   const queryKey = useMemo(() => ['meetings', 'home', 'work-queue', scope] as const, [scope]);
   const query = useQuery({
     queryKey,
-    queryFn: async () =>
-      projectMeetingHomeWorkQueue(
-        await getWorkAssignments({
-          scope: 'ASSIGNED_TO_ME',
-          page: 0,
-          size: MEETING_HOME_WORK_PAGE_SIZE,
-        }),
-        actorId,
-        Date.now()
-      ),
+    queryFn: async ({ signal }) => {
+      const data = await getWorkAssignments(
+        { scope: 'ASSIGNED_TO_ME', page: 0, size: MEETING_HOME_WORK_PAGE_SIZE },
+        signal
+      );
+      if (signal.aborted) throw new DOMException('Request cancelled', 'AbortError');
+      return projectMeetingHomeWorkQueue(data, actorId, Date.now());
+    },
     enabled: actorId > 0,
     retry: false,
     staleTime: 30_000,
@@ -60,7 +60,7 @@ export function MeetingHomeWorkQueue({
     },
     [client, queryKey]
   );
-  const items = query.isError || query.isRefetchError ? [] : (query.data ?? []);
+  const items = query.isError || query.isRefetchError || query.isFetching ? [] : (query.data ?? []);
   const formatDue = (value: string) =>
     formatDate(
       value,
@@ -69,22 +69,35 @@ export function MeetingHomeWorkQueue({
     );
 
   return (
-    <Box component="section" aria-labelledby="meeting-home-work-title" sx={{ mt: 2 }}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-        <Stack direction="row" alignItems="center" gap={0.75}>
-          <ClipboardCheck size={17} aria-hidden="true" />
-          <Typography id="meeting-home-work-title" component="h3" variant="subtitle2">
-            {t('home.workQueue.title')}
-          </Typography>
+    <Box
+      component="section"
+      aria-labelledby={embedded ? undefined : 'meeting-home-work-title'}
+      aria-label={embedded ? t('home.workQueue.title') : undefined}
+      sx={{ mt: embedded ? 0 : 2 }}
+    >
+      {!embedded && (
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Stack direction="row" alignItems="center" gap={0.75}>
+            <ClipboardCheck size={17} aria-hidden="true" />
+            <Typography id="meeting-home-work-title" component="h3" variant="subtitle2">
+              {t('home.workQueue.title')}
+            </Typography>
+          </Stack>
+          <ActionButton
+            intent="quiet"
+            size="small"
+            onClick={() => navigate('/meetings/follow-ups')}
+          >
+            {t('home.workQueue.openAll')}
+          </ActionButton>
         </Stack>
-        <ActionButton intent="quiet" size="small" onClick={() => navigate('/meetings/follow-ups')}>
-          {t('home.workQueue.openAll')}
-        </ActionButton>
-      </Stack>
-      <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.5, mb: 1 }}>
-        {t('home.workQueue.description')}
-      </Typography>
-      {query.isLoading ? (
+      )}
+      {!embedded && (
+        <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.5, mb: 1 }}>
+          {t('home.workQueue.description')}
+        </Typography>
+      )}
+      {query.isLoading || query.isFetching ? (
         <LoadingState label={t('home.workQueue.loading')} size="compact" skeletonRows={2} />
       ) : query.isError || query.isRefetchError ? (
         <ErrorState
@@ -95,10 +108,14 @@ export function MeetingHomeWorkQueue({
           onRetry={() => query.refetch()}
         />
       ) : items.length ? (
-        <Box sx={(theme) => meetingListSurface(theme)} data-testid="meeting-home-work-items">
-          {items.map((item) => (
-            <Box component="article" key={item.assignmentId} sx={{ p: 1.5, minWidth: 0 }}>
-              <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
+        <Stack gap={1.25} data-testid="meeting-home-work-items">
+          {items.slice(0, embedded ? 2 : 6).map((item) => (
+            <Box
+              component="article"
+              key={item.assignmentId}
+              sx={(theme) => ({ ...meetingHomeCard(theme), p: { xs: 1.5, md: 2 }, minWidth: 0 })}
+            >
+              <Stack gap={0.75}>
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{ mb: 0.75 }}>
                     <Chip size="small" label={t(`followUps.workStates.${item.workState}`)} />
@@ -106,6 +123,7 @@ export function MeetingHomeWorkQueue({
                       <Chip
                         size="small"
                         color="error"
+                        variant="outlined"
                         icon={<CircleAlert size={13} aria-hidden="true" />}
                         label={t('home.workQueue.overdue')}
                       />
@@ -120,25 +138,37 @@ export function MeetingHomeWorkQueue({
                   >
                     {item.title}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                </Box>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+                  <Typography variant="caption" color="text.secondary" sx={{ minWidth: 0 }}>
                     {item.dueAt
                       ? t('home.workQueue.dueAt', { date: formatDue(item.dueAt) })
                       : t('followUps.noDue')}
                   </Typography>
-                </Box>
-                <ActionButton
-                  intent="quiet"
-                  size="small"
-                  aria-label={t('home.workQueue.openTask', { title: item.title })}
-                  onClick={() => navigate('/meetings/follow-ups')}
-                  sx={{ minWidth: 44, minHeight: 44 }}
-                >
-                  <ArrowRight size={16} aria-hidden="true" />
-                </ActionButton>
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    aria-label={t('home.workQueue.openTask', { title: item.title })}
+                    endIcon={<ArrowRight size={16} aria-hidden="true" />}
+                    onClick={() =>
+                      navigate(
+                        '/meetings/follow-ups?' +
+                          new URLSearchParams({ assignment: item.assignmentId })
+                      )
+                    }
+                    sx={{ minWidth: 44, minHeight: 44, flexShrink: 0 }}
+                  >
+                    {t('home.workQueue.checkTask')}
+                  </ActionButton>
+                </Stack>
               </Stack>
             </Box>
           ))}
-        </Box>
+        </Stack>
+      ) : embedded ? (
+        <Typography variant="caption" color="text.secondary">
+          {t('home.workQueue.emptyTitle')}
+        </Typography>
       ) : (
         <GuidedEmptyState
           kind="empty"

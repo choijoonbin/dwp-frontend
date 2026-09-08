@@ -392,6 +392,7 @@ describe('Flow Home model', () => {
           events: [],
           executionSummary: {
             ...overview.activity.data!.executionSummary!,
+            total: 3,
             needsInput: 2,
             policyBlocked: 1,
           },

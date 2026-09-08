@@ -618,7 +618,7 @@ function canonicalChecksum(value) {
     .digest('hex');
 }
 
-test('integrity mode accepts the attested v4 closure while latest v5 remains draft', () => {
+test('integrity mode accepts the attested closure while a newer registry remains draft', () => {
   const value = fixture();
   const result = run(value);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
@@ -671,13 +671,12 @@ test('keeps X-03 internal while the calculated five-vector matrix is partial', (
 
 test('release mode fails closed without converting pending approvals to completion', () => {
   const value = fixture();
+  const { version: latest } = value.authorization.latestAlias;
+  const { version: attested } = value.closure.generatedFrom.authorizationBundle;
   const result = run(value, ['--release']);
   assert.equal(result.status, 2);
-  assert.match(
-    result.stderr,
-    /AUTHORIZATION_CLOSURE_ATTESTATION: latest authorization registry v5/
-  );
-  assert.match(result.stderr, /does not match attested closure v4/);
+  assert.match(result.stderr, new RegExp(`latest authorization registry v${latest}`));
+  assert.match(result.stderr, new RegExp(`attested closure v${attested}`));
   assert.match(result.stderr, /G-02 BLOCKED_EXTERNAL/);
   assert.match(
     result.stderr,

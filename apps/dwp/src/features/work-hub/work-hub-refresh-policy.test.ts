@@ -38,4 +38,31 @@ describe('reconcileWorkHubRefresh', () => {
     expect(reconcileWorkHubRefresh(refreshed, previous)).toBe(refreshed);
     expect(reconcileWorkHubRefresh(refreshed, previous).items).toEqual([]);
   });
+  it.each([400, 404, 409, 422])(
+    'does not present an HTTP %s read failure as a transport-only outage',
+    (failureStatus) => {
+      const refreshed = hubSnapshot([]);
+      refreshed.completeness = 'UNAVAILABLE';
+      refreshed.sources = refreshed.sources.map((source) => ({
+        ...source,
+        state: 'UNAVAILABLE',
+        failureStatus,
+        items: [],
+      }));
+      expect(reconcileWorkHubRefresh(refreshed, previous).items).toEqual([]);
+    }
+  );
+  it('retains same-owner rows for a 503 response while keeping the outage explicit', () => {
+    const refreshed = hubSnapshot([]);
+    refreshed.completeness = 'UNAVAILABLE';
+    refreshed.sources = refreshed.sources.map((source) => ({
+      ...source,
+      state: 'UNAVAILABLE',
+      failureStatus: 503,
+      items: [],
+    }));
+    const result = reconcileWorkHubRefresh(refreshed, previous);
+    expect(result.items).toEqual(previous.items);
+    expect(result.completeness).toBe('UNAVAILABLE');
+  });
 });

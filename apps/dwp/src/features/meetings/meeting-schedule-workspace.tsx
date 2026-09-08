@@ -10,7 +10,6 @@ import {
   LoadingState,
   PageCanvas,
   SectionHeader,
-  foundationTokens,
   DwpDateTimeProvider,
   useDateTimePolicy,
   InlineFeedback,
@@ -38,9 +37,15 @@ import type { VideoMeetingTemplateScheduleDraft } from '@dwp-frontend/shared-uti
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { MeetingScheduleRecurrencePreview } from './meeting-schedule-recurrence-preview';
+import {
+  MeetingScheduleMobileSteps,
+  MeetingScheduleNextPreview,
+  MeetingScheduleCoverage,
+} from './meeting-schedule-mobile-steps';
 import { MeetingScheduleSections } from './meeting-schedule-fields';
+import { MeetingScheduleSourcePicker } from './meeting-schedule-source-picker';
+import { meetingInsetSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 import {
   emptyMeetingSchedule,
   meetingScheduleDraftAttempt,
@@ -66,7 +71,6 @@ type Props = {
   onCreated: (meetingId: string) => void;
   onCancel: () => void;
 };
-const steps = ['information', 'people', 'repeat', 'review'] as const;
 const authorizationError = (error: unknown) =>
   error instanceof HttpError && [401, 403].includes(error.status);
 export function MeetingScheduleWorkspace(props: Props) {
@@ -624,13 +628,18 @@ function MeetingScheduleWorkspaceContent({
     </ActionButton>
   );
   return (
-    <PageCanvas>
+    <PageCanvas mode="workspace" topInset="compact">
       <Box
         data-testid="meeting-schedule-workspace"
         sx={{
           minWidth: 0,
           pb: { xs: 24, md: 0 },
           '@media (forced-colors: active)': {
+            '& .MuiTypography-root, & .MuiFormLabel-root, & .MuiFormHelperText-root, & .MuiInputBase-input, & .MuiChip-label, & .MuiBox-root[aria-hidden="true"], & dt, & dd':
+              {
+                color: 'CanvasText',
+                WebkitTextFillColor: 'CanvasText',
+              },
             '&& button': {
               color: 'ButtonText',
               WebkitTextFillColor: 'ButtonText',
@@ -656,10 +665,29 @@ function MeetingScheduleWorkspaceContent({
             >
               {t('scheduleWorkspace.title')}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.5, display: { xs: 'none', md: 'block' } }}
+            >
               {t('scheduleWorkspace.description')}
             </Typography>
           </Box>
+          {!revoked &&
+            !draftLoading &&
+            !draftLoadError &&
+            !draftSlot?.discardOnly &&
+            !conflictSlot && (
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <MeetingScheduleSourcePicker
+                  kind="recent"
+                  draft={draft}
+                  busy={busy}
+                  update={update}
+                  onRevoke={revoke}
+                />
+              </Box>
+            )}
           <MeetingScheduleDraftHeaderAction
             disabled={saveDraftDisabled}
             hasStatus={draftStatus !== 'idle'}
@@ -687,30 +715,12 @@ function MeetingScheduleWorkspaceContent({
           />
         ) : (
           <>
-            <Box
-              component="nav"
-              aria-label={t('scheduleWorkspace.stepsLabel')}
-              sx={{
-                display: { xs: 'grid', md: 'none' },
-                gridTemplateColumns: 'repeat(4,minmax(0,1fr))',
-                gap: 0.5,
-                mb: 3,
-              }}
-            >
-              {steps.map((value, index) => (
-                <ActionButton
-                  key={value}
-                  size="small"
-                  intent={step === index ? 'primary' : 'secondary'}
-                  aria-current={step === index ? 'step' : undefined}
-                  disabled={busy || index > step + 1}
-                  onClick={() => goTo(index)}
-                  sx={{ minWidth: 0, px: 0.5, whiteSpace: 'normal', minHeight: 44 }}
-                >
-                  {index + 1}. {t('scheduleWorkspace.steps.' + value)}
-                </ActionButton>
-              ))}
-            </Box>
+            <MeetingScheduleMobileSteps
+              step={step}
+              busy={busy}
+              onStep={goTo}
+              templateApplied={Boolean(draft.sourceTemplateId)}
+            />
             {(validation || commandError) && (
               <InlineFeedback severity="error" sx={{ mb: 2, overflowWrap: 'anywhere' }}>
                 {validation
@@ -769,22 +779,24 @@ function MeetingScheduleWorkspaceContent({
                   searching={searching}
                   searchError={searchError}
                   capability={capability}
+                  onRevoke={revoke}
                 />
               </DwpDateTimeProvider>
               <Box
                 component="aside"
                 aria-label={t('scheduleWorkspace.preview')}
-                sx={{
+                sx={(theme) => ({
                   display: { xs: step === 3 ? 'block' : 'none', md: 'block' },
                   position: { md: 'sticky' },
                   top: 80,
                   bgcolor: 'background.paper',
                   border: 1,
                   borderColor: 'divider',
-                  borderRadius: foundationTokens.radius.surface + 'px',
+                  borderRadius: meetingShape.stage,
+                  boxShadow: meetingSoftShadow(theme),
                   p: 3,
                   minWidth: 0,
-                }}
+                })}
               >
                 <SectionHeader
                   icon={CalendarCheck}
@@ -799,8 +811,16 @@ function MeetingScheduleWorkspaceContent({
                     component="dl"
                     sx={{
                       m: 0,
-                      '& dt': { color: 'text.secondary', typography: 'caption', mt: 1.5 },
-                      '& dd': { m: 0, typography: 'body2', mt: 0.5, overflowWrap: 'anywhere' },
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(0,.8fr) minmax(0,1.2fr)',
+                      gap: 1.5,
+                      '& dt': { color: 'text.secondary', typography: 'caption' },
+                      '& dd': {
+                        m: 0,
+                        typography: 'body2',
+                        textAlign: 'right',
+                        overflowWrap: 'anywhere',
+                      },
                     }}
                   >
                     <dt>{t('schedule.startsAt')}</dt>
@@ -826,65 +846,29 @@ function MeetingScheduleWorkspaceContent({
                     </dd>
                   </Box>
                   {draft.recurrence.frequency !== 'NONE' && (
-                    <Box aria-live="polite">
-                      {previewing ? (
-                        <LoadingState label={t('scheduleWorkspace.previewingRecurrence')} />
-                      ) : previewError ? (
-                        <ErrorState
-                          title={t('scheduleWorkspace.recurrencePreviewError')}
-                          retryLabel={t('actions.retry')}
-                          onRetry={() => setPreviewRefresh((value) => value + 1)}
-                        />
-                      ) : seriesPreview ? (
-                        <Stack gap={1.5}>
-                          {seriesPreview.hasCalendarAdjustments && (
-                            <InlineFeedback severity="warning">
-                              {t('scheduleWorkspace.calendarAdjustments')}
-                            </InlineFeedback>
-                          )}
-                          <Stack
-                            component="ol"
-                            gap={1}
-                            sx={{ m: 0, pl: 2.5, maxHeight: 240, overflowY: 'auto' }}
-                          >
-                            {seriesPreview.occurrences.map((occurrence) => (
-                              <Typography
-                                component="li"
-                                variant="caption"
-                                key={occurrence.occurrenceIndex}
-                              >
-                                {formatDate(
-                                  occurrence.startsAt,
-                                  {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'short',
-                                    timeZone: draft.timeZone,
-                                  },
-                                  resolveSupportedLocale(i18n.language)
-                                )}
-                                {occurrence.adjustment !== 'NONE'
-                                  ? ` · ${t('scheduleWorkspace.adjustments.' + occurrence.adjustment)}`
-                                  : ''}
-                              </Typography>
-                            ))}
-                          </Stack>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={previewReviewed}
-                                onChange={(_, checked) => setPreviewReviewed(checked)}
-                              />
-                            }
-                            label={t('scheduleWorkspace.confirmRecurrencePreview')}
-                          />
-                        </Stack>
-                      ) : null}
-                    </Box>
+                    <MeetingScheduleRecurrencePreview
+                      previewing={previewing}
+                      failed={previewError}
+                      preview={seriesPreview}
+                      reviewed={previewReviewed}
+                      timeZone={draft.timeZone}
+                      onRetry={() => setPreviewRefresh((value) => value + 1)}
+                      onReviewed={setPreviewReviewed}
+                    />
                   )}
-                  <Typography variant="body2" color="text.secondary">
-                    {t('scheduleWorkspace.availabilityUnavailable')}
-                  </Typography>
-                  <Stack direction="row" gap={1}>
+                  <Box sx={(theme) => ({ ...meetingInsetSurface(theme), p: 1.5 })}>
+                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                      {t('scheduleWorkspace.design.availability')}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {t('scheduleWorkspace.availabilityUnavailable')}
+                    </Typography>
+                  </Box>
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    sx={(theme) => ({ ...meetingInsetSurface(theme, 'primary'), p: 1.5 })}
+                  >
                     <ShieldCheck size={18} aria-hidden="true" />
                     <Typography variant="caption" color="text.secondary">
                       {t('scheduleWorkspace.policyRecheck')}
@@ -911,6 +895,7 @@ function MeetingScheduleWorkspaceContent({
                   <Typography variant="caption" color="text.secondary">
                     {t('scheduleWorkspace.deliveryHint')}
                   </Typography>
+                  <MeetingScheduleCoverage draft={draft} />
                   <MeetingScheduleDesktopDraftActions
                     busy={busy}
                     disabled={saveDraftDisabled}
@@ -925,6 +910,9 @@ function MeetingScheduleWorkspaceContent({
                 </Stack>
               </Box>
             </Box>
+            {step === 0 && (
+              <MeetingScheduleNextPreview time={formattedStart} count={draft.participants.length} />
+            )}
             <MeetingScheduleMobileFooter
               step={step}
               busy={busy}

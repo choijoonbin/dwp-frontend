@@ -16,6 +16,7 @@ import {
 } from './work-hub-contracts';
 import { workHubSummary } from './work-hub-model';
 import { reconcileWorkHubRefresh } from './work-hub-refresh-policy';
+import { useWorkHubOperationOwner } from './use-work-hub-operation-owner';
 
 function queueItem(item: WorkHubItem, now: number): WorkspaceWorkItem {
   if (item.legacyItem) return item.legacyItem;
@@ -94,9 +95,12 @@ function queueSnapshot(
 
 /** Binds the canonical multi-source Work Hub owner to the responsive queue experience. */
 export function useWorkHubRuntime() {
+  const owner = useWorkHubOperationOwner();
+  const ownerRef = useRef(owner);
+  ownerRef.current = owner;
   const { permissions } = usePermissions();
   const approvals = isAppReadEntitled('APP.APPROVALS', permissions);
-  const services = isAppReadEntitled('APP.SERVICES', permissions);
+  const services = isAppReadEntitled('APP.EMPLOYEE_SERVICES', permissions);
   const canUseCalendar = isAppReadEntitled('APP.CALENDAR', permissions);
   const canUseAssist = isAppReadEntitled('APP.ASK', permissions);
   const updatePermissions = permissions.filter(
@@ -108,7 +112,7 @@ export function useWorkHubRuntime() {
   const canUpdatePersonal =
     updatePermissions.some((permission) => permission.effect === 'ALLOW') &&
     !updatePermissions.some((permission) => permission.effect === 'DENY');
-  const commandKeys = useRef(new Map<string, string>());
+  const commandKeys = useMemo(() => ({ owner, keys: new Map<string, string>() }), [owner]);
   const lastUsable = useRef<{
     owner: ReturnType<typeof createWorkHubController>;
     snapshot: WorkHubSnapshot;
@@ -125,21 +129,26 @@ export function useWorkHubRuntime() {
     [approvals, services]
   );
   const controller = useMemo(
-    () => createWorkHubController(sources, undefined, { canUpdatePersonal }),
-    [sources, canUpdatePersonal]
+    () => ({ owner, value: createWorkHubController(sources, undefined, { canUpdatePersonal }) }),
+    [sources, canUpdatePersonal, owner]
   );
+  const scopedController = controller.value;
   const query = useQuery({
-    queryKey: ['workspace', 'work-hub', sources, canUpdatePersonal],
-    queryFn: async () => {
-      const refreshed = await controller.refresh();
+    queryKey: ['workspace', 'work-hub', 'queue', owner, sources, canUpdatePersonal],
+    enabled: owner !== null,
+    queryFn: async ({ signal }) => {
+      signal.throwIfAborted();
+      const refreshed = await scopedController.refresh();
+      signal.throwIfAborted();
+      if (ownerRef.current !== owner) throw new DOMException('Work owner changed', 'AbortError');
       // An aggregate outage is still a useful, verified snapshot: callers need its
       // per-source receipts to explain the outage and offer scoped retries.
       const previous =
-        lastUsable.current?.owner === controller ? lastUsable.current.snapshot : null;
+        lastUsable.current?.owner === scopedController ? lastUsable.current.snapshot : null;
       const snapshot = reconcileWorkHubRefresh(refreshed, previous);
-      if (refreshed.completeness !== 'UNAVAILABLE') {
-        lastUsable.current = { owner: controller, snapshot: refreshed };
-      }
+      // A denial/missing-source response also replaces the retained snapshot. Otherwise a later
+      // 503 could resurrect rows that the preceding successful authorization check removed.
+      lastUsable.current = { owner: scopedController, snapshot };
       return queueSnapshot(snapshot);
     },
     staleTime: 30_000,
@@ -152,7 +161,7 @@ export function useWorkHubRuntime() {
     );
   return {
     query,
-    controller,
+    controller: scopedController,
     canUpdatePersonal,
     canUseCalendar,
     canUseAssist,
@@ -192,8 +201,10 @@ export function useWorkHubRuntime() {
     async changeStatus(item: WorkspaceWorkItem, target: 'IN_PROGRESS' | 'COMPLETED') {
       const work = canonical(item);
       if (!work) throw new HttpError('Work is unavailable', 404);
-      if (query.data) controller.adopt(query.data.snapshot);
-      controller.select(work.reference);
+      if (ownerRef.current !== owner || !owner)
+        throw new DOMException('Work owner changed', 'AbortError');
+      if (query.data) scopedController.adopt(query.data.snapshot);
+      scopedController.select(work.reference);
       const kind =
         work.reference.sourceSystem === 'PERSONAL_TASK'
           ? target === 'IN_PROGRESS'
@@ -203,20 +214,21 @@ export function useWorkHubRuntime() {
             ? 'WORKSPACE_START'
             : 'WORKSPACE_COMPLETE';
       const commandIdentity = `${work.key}:${work.version}:${kind}`;
-      const idempotencyKey = commandKeys.current.get(commandIdentity) ?? crypto.randomUUID();
-      commandKeys.current.set(commandIdentity, idempotencyKey);
-      const result = await controller.execute(
+      const idempotencyKey = commandKeys.keys.get(commandIdentity) ?? crypto.randomUUID();
+      commandKeys.keys.set(commandIdentity, idempotencyKey);
+      const result = await scopedController.execute(
         kind === 'PERSONAL_START' || kind === 'PERSONAL_COMPLETE'
           ? { kind, idempotencyKey }
           : { kind }
       );
+      if (ownerRef.current !== owner) throw new DOMException('Work owner changed', 'AbortError');
       if (result.state !== 'CONFIRMED')
         throw new HttpError(
           'Work transition was not confirmed',
           result.state === 'CONFLICT' ? 409 : result.state === 'FORBIDDEN' ? 403 : 503
         );
-      commandKeys.current.delete(commandIdentity);
-      const refreshed = controller
+      commandKeys.keys.delete(commandIdentity);
+      const refreshed = scopedController
         .state()
         .snapshot?.items.find((candidate) => candidate.key === work.key);
       // A failed follow-up read cannot turn an owner-confirmed command into a failed mutation.

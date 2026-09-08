@@ -21,6 +21,9 @@ describe('exact meeting source report binding', () => {
     expect(
       meetingRecapReference(`?meeting=${meetingId}&reportId=${reportId}&intent=review`)
     ).toEqual({ meetingId, reportId, intent: 'review' });
+    expect(
+      meetingRecapReference(`?meeting=${meetingId}&reportId=${reportId}&candidateId=${meetingId}`)
+    ).toEqual({ meetingId, reportId, candidateId: meetingId });
   });
   it.each([
     `?reportId=${reportId}`,
@@ -31,6 +34,11 @@ describe('exact meeting source report binding', () => {
     `?meeting=${meetingId}&intent=review`,
     `?meeting=${meetingId}&reportId=${reportId}&intent=review&intent=review`,
     `?meeting=${meetingId}&reportId=${reportId}&intent=publish`,
+    `?candidateId=${meetingId}`,
+    `?meeting=${meetingId}&candidateId=${meetingId}`,
+    `?meeting=${meetingId}&reportId=${reportId}&candidateId=../../private`,
+    `?meeting=${meetingId}&reportId=${reportId}&candidateId=${meetingId}&candidateId=${meetingId}`,
+    `?meeting=${meetingId}&reportId=${reportId}&candidateId=${meetingId}&intent=review`,
   ])('rejects malformed or ambiguous source %s', (value) =>
     expect(meetingRecapReference(value)).toBe('invalid')
   );

@@ -124,6 +124,38 @@ describe('Work assignment owner API contract', () => {
     ]);
   });
 
+  it('cancels the actual list transport without converting cancellation into an empty page', async () => {
+    const controller = new AbortController();
+    const fetchMock = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(init.signal?.reason), {
+            once: true,
+          });
+        })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const pending = getWorkAssignments(
+      { scope: 'ASSIGNED_BY_ME', page: 2, size: 25 },
+      controller.signal
+    );
+    const rejected = expect(pending).rejects.toMatchObject({
+      name: 'HttpTransportError',
+      reason: 'ABORT',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe(`${base}?scope=ASSIGNED_BY_ME&page=2&size=25`);
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({ method: 'GET', credentials: 'include' });
+    expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(false);
+    controller.abort('owner-changed');
+    await rejected;
+    expect(fetchMock.mock.calls[0][1]?.signal).toMatchObject({
+      aborted: true,
+      reason: 'owner-changed',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('preserves a historical receipt and the current authorized task when resolving a command', async () => {
     const fetchMock = stubResponse(result);
     const received = await getWorkAssignmentCommand(commandId);

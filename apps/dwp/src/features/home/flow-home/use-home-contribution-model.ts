@@ -1,7 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
+import { getPersonalDayPlan } from '@dwp-frontend/shared-utils/api/personal-work-api';
+import {
+  personalWorkContributionProvider,
+  personalDayPlanContributionProvider,
+} from './personal-work-contribution-provider';
+import { loadHomePersonalWorkTasks } from './home-personal-work-loader';
 import {
   getApprovalHome,
   getHrHome,
@@ -153,6 +159,52 @@ export function useHomeContributionModel({
   );
   const range = useMemo(() => workplaceRange(now), [now]);
   const dateKey = resolveZonedDateKey(now, timeZone);
+  const workEnabled = appEnabled(
+    identityReady,
+    homeAppReadAuthority('APP.WORK'),
+    contributionPermissions
+  );
+  const workScope = `${tenantId ?? ''}:${userId ?? ''}:${accessFingerprint}`;
+  const activeWorkScope = useRef(workScope);
+  activeWorkScope.current = workScope;
+  const assertCurrentWorkScope = (requestedScope: string, signal: AbortSignal) => {
+    signal.throwIfAborted();
+    if (activeWorkScope.current !== requestedScope) {
+      throw new DOMException('Home personal work scope changed', 'AbortError');
+    }
+  };
+  const personalWork = useQuery({
+    queryKey: ['workspace', 'work-hub', 'home-personal', tenantId, userId, accessFingerprint],
+    queryFn: async ({ signal }) => {
+      const requestedScope = workScope;
+      const data = await loadHomePersonalWorkTasks(signal);
+      assertCurrentWorkScope(requestedScope, signal);
+      return data;
+    },
+    enabled: workEnabled,
+    staleTime: HOME_APP_INSIGHT_STALE_MS,
+    gcTime: 0,
+    refetchInterval: HOME_APP_INSIGHT_STALE_MS,
+    refetchIntervalInBackground: false,
+    retry: homeQueryRetry,
+    meta: { accessSensitive: true },
+  });
+  const personalPlan = useQuery({
+    queryKey: ['workspace', 'work-hub', 'home-plan', tenantId, userId, accessFingerprint, dateKey],
+    queryFn: async ({ signal }) => {
+      const requestedScope = workScope;
+      const data = await getPersonalDayPlan(dateKey!, signal);
+      assertCurrentWorkScope(requestedScope, signal);
+      return data;
+    },
+    enabled: workEnabled && Boolean(dateKey),
+    staleTime: HOME_APP_INSIGHT_STALE_MS,
+    gcTime: 0,
+    refetchInterval: HOME_APP_INSIGHT_STALE_MS,
+    refetchIntervalInBackground: false,
+    retry: homeQueryRetry,
+    meta: { accessSensitive: true },
+  });
 
   const approvals = useQuery({
     queryKey: ['home-contributions', 'approvals', tenantId, userId, accessFingerprint],
@@ -217,6 +269,43 @@ export function useHomeContributionModel({
       return overviewLoading && !overviewFailed ? 'EMPTY' : 'UNAVAILABLE';
     };
     const results: HomeContributionProviderResult[] = [
+      resolveHomeContributionProvider(
+        personalWorkContributionProvider,
+        {
+          state: promoteHomeProviderPartialState(
+            homeProviderQueryState(workEnabled, {
+              data: personalWork.data,
+              loading: personalWork.isLoading,
+              failed: personalWork.isError,
+              error: personalWork.error,
+            }),
+            Boolean(personalWork.data?.hasMore)
+          ),
+          data: personalWork.data,
+          generatedAt: homeQuerySnapshotTimestamp(personalWork.dataUpdatedAt),
+          reason: personalWork.isLoading
+            ? 'LOADING'
+            : personalWork.data?.hasMore
+              ? 'MORE_RESULTS'
+              : undefined,
+        },
+        { ...context, snapshotAt: homeQuerySnapshotTimestamp(personalWork.dataUpdatedAt) }
+      ),
+      resolveHomeContributionProvider(
+        personalDayPlanContributionProvider,
+        {
+          state: homeProviderQueryState(workEnabled && Boolean(dateKey), {
+            data: personalPlan.data,
+            loading: personalPlan.isLoading,
+            failed: personalPlan.isError,
+            error: personalPlan.error,
+          }),
+          data: personalPlan.data,
+          generatedAt: homeQuerySnapshotTimestamp(personalPlan.dataUpdatedAt),
+          reason: personalPlan.isLoading ? 'LOADING' : undefined,
+        },
+        { ...context, snapshotAt: homeQuerySnapshotTimestamp(personalPlan.dataUpdatedAt) }
+      ),
       resolveHomeContributionProvider(
         workspaceWorkContributionProvider,
         {
@@ -379,6 +468,17 @@ export function useHomeContributionModel({
     ];
     return results;
   }, [
+    workEnabled,
+    personalWork.data,
+    personalWork.isLoading,
+    personalWork.isError,
+    personalWork.error,
+    personalWork.dataUpdatedAt,
+    personalPlan.data,
+    personalPlan.isLoading,
+    personalPlan.isError,
+    personalPlan.error,
+    personalPlan.dataUpdatedAt,
     approvals.data,
     approvals.isError,
     approvals.error,
@@ -436,6 +536,7 @@ export function useHomeContributionModel({
   );
 
   const enabledQueries = [
+    ...(workEnabled ? [personalWork, personalPlan] : []),
     ...(approvalsEnabled ? [approvals] : []),
     ...(hrEnabled ? [hr] : []),
     ...(servicesEnabled ? [services] : []),
@@ -457,6 +558,9 @@ export function useHomeContributionModel({
     partial,
     retry: async () => {
       await Promise.all([
+        ...(workEnabled
+          ? [personalWork.refetch(), ...(dateKey ? [personalPlan.refetch()] : [])]
+          : []),
         ...(approvalsEnabled ? [approvals.refetch()] : []),
         ...(hrEnabled ? [hr.refetch()] : []),
         ...(servicesEnabled ? [services.refetch()] : []),

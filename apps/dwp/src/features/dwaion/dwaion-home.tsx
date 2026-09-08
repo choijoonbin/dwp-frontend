@@ -150,10 +150,7 @@ export function DwaionHome() {
 
   return (
     <PageCanvas>
-      <Box
-        data-testid="dwaion-home"
-        sx={{ maxWidth: 1480, mx: 'auto', minWidth: 0, overflowWrap: 'anywhere' }}
-      >
+      <Box data-testid="dwaion-home" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
         <Stack
           component="header"
           direction={{ xs: 'column', md: 'row' }}

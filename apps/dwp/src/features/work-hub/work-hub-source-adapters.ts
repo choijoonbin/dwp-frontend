@@ -46,6 +46,7 @@ export function workspaceWorkToHub(item: WorkspaceWorkItem): WorkHubItem {
     reference,
     sourceId: 'workspace',
     title: item.title,
+    displayId: item.id,
     summary: item.summary ?? null,
     lifecycle:
       item.status === 'completed'
@@ -85,6 +86,7 @@ export function approvalTaskToHub(task: ApprovalTask, sourceId: WorkHubSourceId)
     },
     sourceId,
     title: task.title,
+    displayId: task.requestNumber,
     summary: task.summary,
     lifecycle: open
       ? task.status === 'CLAIMED'
@@ -105,15 +107,7 @@ export function approvalTaskToHub(task: ApprovalTask, sourceId: WorkHubSourceId)
     updatedAt: null,
     reason: null,
     dataClassification: task.dataClassification,
-    actions: [
-      { kind: 'OPEN_SOURCE', availability: 'AVAILABLE' },
-      ...(open
-        ? [
-            { kind: 'APPROVAL_CLAIM' as const, availability: 'DETAIL_REQUIRED' as const },
-            { kind: 'APPROVAL_DECIDE' as const, availability: 'DETAIL_REQUIRED' as const },
-          ]
-        : []),
-    ],
+    actions: [{ kind: 'OPEN_SOURCE', availability: 'AVAILABLE' }],
   });
 }
 
@@ -126,6 +120,7 @@ export function approvalRequestToHub(request: ApprovalRequest): WorkHubItem {
     },
     sourceId: 'approval-needs-info',
     title: request.title,
+    displayId: request.requestNumber,
     summary: request.latestInformationRequest ?? request.summary,
     lifecycle: request.status === 'NEEDS_INFO' ? 'OPEN' : 'WAITING',
     sourceStatus: request.status,
@@ -133,7 +128,7 @@ export function approvalRequestToHub(request: ApprovalRequest): WorkHubItem {
     priority: request.priority,
     dueAt: request.dueAt ?? null,
     waitingFor: request.status === 'NEEDS_INFO' ? 'ME' : 'OTHERS',
-    sourceRoute: `/approvals/requests/${encodeURIComponent(request.requestId)}`,
+    sourceRoute: `/approvals/requests/needs-info?request=${encodeURIComponent(request.requestId)}`,
     version: request.version,
     updatedAt: null,
     reason: request.latestInformationRequest ?? null,
@@ -149,21 +144,24 @@ export function serviceRequestToHub(request: ServiceRequestSummary): WorkHubItem
     reference: { sourceSystem: 'SERVICE_REQUEST', sourceReference: request.requestId },
     sourceId: 'services',
     title: request.summary || request.serviceNameKo,
+    displayId: request.requestNumber,
     summary: request.serviceNameEn,
     lifecycle:
       request.status === 'CANCELLED'
         ? 'CANCELLED'
         : terminal
           ? 'COMPLETED'
-          : myTurn
-            ? 'OPEN'
-            : 'WAITING',
+          : request.status === 'IN_PROGRESS'
+            ? 'IN_PROGRESS'
+            : myTurn
+              ? 'OPEN'
+              : 'WAITING',
     sourceStatus: request.status,
     originSystem: 'SERVICE_REQUEST',
     priority: request.priority,
     dueAt: request.slaDueAt ?? null,
     waitingFor: terminal ? 'NONE' : myTurn ? 'ME' : 'OTHERS',
-    sourceRoute: `/services/requests/${encodeURIComponent(request.requestId)}`,
+    sourceRoute: `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${encodeURIComponent(request.requestId)}`,
     version: request.version,
     updatedAt: request.updatedAt,
     reason: null,

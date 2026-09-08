@@ -113,6 +113,7 @@ export async function loadWorkHub(options: {
       } catch (error) {
         return {
           sourceId,
+          ...(error instanceof HttpError ? { failureStatus: error.status } : {}),
           state:
             error instanceof HttpError && (error.status === 401 || error.status === 403)
               ? 'FORBIDDEN'

@@ -84,6 +84,31 @@ describe('Workspace work policy', () => {
       workspaceWorkActivityRoute(item({ workItemId, sourceSystem: 'APPROVAL_TASK' }))
     ).toBeNull();
   });
+  it('accepts canonical PostgreSQL UUIDs without inventing RFC version or variant constraints', () => {
+    const postgresUuid = '10420000-0000-0000-0000-000000000001';
+    expect(workspaceWorkActivityRoute(item({ workItemId: postgresUuid }))).toBe(
+      `/activity/timeline?objectType=WORK_ITEM&objectId=${postgresUuid}`
+    );
+    expect(
+      workspaceWorkItemReference(
+        item({
+          type: 'Review',
+          sourceSystem: 'IDENTITY_GOVERNANCE',
+          sourceReference: postgresUuid.toUpperCase(),
+        })
+      )
+    ).toBe(postgresUuid.toUpperCase());
+  });
+  it.each([
+    '10420000-0000-0000-0000-00000000000',
+    '104200000000-0000-0000-000000000001',
+    '10420000-0000-0000-0000-00000000000g',
+    '10420000-0000-0000-0000-000000000001/extra',
+    ' 10420000-0000-0000-0000-000000000001',
+    '10420000-0000-0000-0000-000000000001\n',
+  ])('rejects a malformed or unsafe database UUID: %j', (workItemId) => {
+    expect(workspaceWorkActivityRoute(item({ workItemId }))).toBeNull();
+  });
   it('places invalid or absent deadlines after finite deadlines without mutating the list', () => {
     const items = [
       item({ id: 'none', workItemId: 'none' }),

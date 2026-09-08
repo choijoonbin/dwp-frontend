@@ -114,7 +114,12 @@ export default function ProductCanaryFirstAllowedIndexRuntime({
   }
   return (
     <Suspense fallback={<ProductSurfaceLoadingShell productId={productId} surfaceId={surfaceId} />}>
-      <ProductCanaryAccessState decision={decision} productId={productId} surfaceId={surfaceId} />
+      <ProductCanaryAccessState
+        decision={decision}
+        productId={productId}
+        surfaceId={surfaceId}
+        pageLevel
+      />
     </Suspense>
   );
 }

@@ -250,6 +250,7 @@
     "PERSONAL_PREFERENCE_EXCEPTION_REQUESTED": "Managed preference exception requested",
     "ROLE_ASSIGNMENT_DENIED": "Role assignment denied",
     "REQUEST_CANCELLED": "Request cancelled",
+    "REQUESTER_RESPONDED": "Service request information provided",
     "REQUEST_SUBMITTED": "Request submitted",
     "REQUEST_DRAFTED": "Approval draft created",
     "TASK_CLAIMED": "Approval task claimed",

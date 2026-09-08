@@ -157,13 +157,71 @@ describe('Home contribution provider route and date contracts', () => {
     expect(work?.deepLink).toBe('/work/queue?item=work-42');
   });
 
-  it('keeps awaiting-requester Services work non-actionable', () => {
+  it('routes a Services response obligation to its exact Work source reference', () => {
     const [service] = serviceContributionProvider.normalize([serviceRequest()], CONTEXT);
     expect(service).toMatchObject({
-      kind: 'REQUEST',
-      deepLink: '/services/my/needs-information',
+      kind: 'RESPONSE',
+      deepLink: '/work/queue?work=SERVICE_REQUEST%3Aneeds-information%3A',
       status: 'AWAITING_REQUESTER',
     });
+    const [escaped] = serviceContributionProvider.normalize(
+      [{ ...serviceRequest(), requestId: 'source/with?query#fragment' }],
+      CONTEXT
+    );
+    expect(new URL(escaped!.deepLink, 'https://dwp.example').searchParams.get('work')).toBe(
+      'SERVICE_REQUEST:source/with?query#fragment:'
+    );
+  });
+
+  it('keeps a single authorized Services destination and preserves partial source state', () => {
+    const result = resolveHomeContributionProvider(
+      serviceContributionProvider,
+      { state: 'PARTIAL', generatedAt: NOW, data: [serviceRequest()], reason: 'MORE_RESULTS' },
+      CONTEXT
+    );
+    const servicesView = allowResource('APP.EMPLOYEE_SERVICES');
+    const workView = allowResource('APP.WORK');
+    for (const permissions of [
+      [servicesView],
+      [servicesView, workView, { ...workView, effect: 'DENY' as const }],
+    ]) {
+      const model = buildHomeContributionModel([result], { now: NOW, permissions });
+      expect(model.buckets.response).toEqual([]);
+      expect(model.buckets.request).toHaveLength(1);
+      expect(model.buckets.request[0]?.route).toBe('/services/my/needs-information');
+      expect(model.providers[0]).toMatchObject({ state: 'PARTIAL', reason: 'MORE_RESULTS' });
+    }
+    const allowed = buildHomeContributionModel([result], {
+      now: NOW,
+      permissions: [servicesView, workView],
+    });
+    expect(allowed.buckets.request).toEqual([]);
+    expect(allowed.buckets.response).toHaveLength(1);
+    expect(allowed.buckets.response[0]?.route).toBe(
+      '/work/queue?work=SERVICE_REQUEST%3Aneeds-information%3A'
+    );
+    expect(allowed.providers[0]).toMatchObject({ state: 'PARTIAL', reason: 'MORE_RESULTS' });
+    expect(allowed.bucketStates.response).toBe('PARTIAL');
+
+    const denied = buildHomeContributionModel([result], {
+      now: NOW,
+      permissions: [servicesView, workView, { ...servicesView, effect: 'DENY' }],
+    });
+    expect(Object.values(denied.buckets).flat()).toEqual([]);
+  });
+
+  it('preserves ordinary request routes and excludes terminal Services requests', () => {
+    const data = serviceContributionProvider.normalize(
+      (['DRAFT', 'SUBMITTED', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'CANCELLED'] as const).map(
+        (status) => ({ ...serviceRequest(), requestId: status, status })
+      ),
+      CONTEXT
+    );
+    expect(data.map(({ kind, deepLink }) => ({ kind, deepLink }))).toEqual([
+      { kind: 'REQUEST', deepLink: '/services/drafts/DRAFT' },
+      { kind: 'REQUEST', deepLink: '/services/my/SUBMITTED' },
+      { kind: 'REQUEST', deepLink: '/services/my/IN_PROGRESS' },
+    ]);
   });
 
   it('routes current Calendar events through the schedule destination', () => {

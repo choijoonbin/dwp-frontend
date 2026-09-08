@@ -1,0 +1,291 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "본문으로 건너뛰기" [ref=e3]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - complementary [ref=e5]:
+            - generic [ref=e6]:
+                - generic [ref=e7]:
+                    - link "Digital Workplace 홈" [ref=e8]:
+                        - /url: /
+                        - generic [ref=e10]: DWP
+                        - generic [ref=e13]: Digital Workplace
+                    - generic "탐색 메뉴 접기" [ref=e14]:
+                        - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+                            - img [ref=e17]
+                            - img [ref=e20]
+                - separator [ref=e23]
+                - button "개인 할 일 추가" [ref=e25] [cursor=pointer]:
+                    - img [ref=e27]
+                    - text: 개인 할 일 추가
+                - navigation "업무 메뉴" [ref=e28]:
+                    - list [ref=e29]:
+                        - listitem [ref=e30]:
+                            - link "통합업무함 3" [ref=e31] [cursor=pointer]:
+                                - /url: /work/queue
+                                - img [ref=e32]
+                                - generic [ref=e35]: 통합업무함
+                                - generic:
+                                    - generic: '3'
+                        - listitem [ref=e36]:
+                            - link "내 조치 대기 3" [ref=e37] [cursor=pointer]:
+                                - /url: /work/action-required
+                                - img [ref=e38]
+                                - generic [ref=e41]: 내 조치 대기
+                                - generic:
+                                    - generic: '3'
+                        - listitem [ref=e42]:
+                            - link "오늘 계획 1" [ref=e43] [cursor=pointer]:
+                                - /url: /work/day-plan
+                                - img [ref=e44]
+                                - generic [ref=e49]: 오늘 계획
+                                - generic:
+                                    - generic: '1'
+                        - listitem [ref=e50]:
+                            - link "진행 중" [ref=e51] [cursor=pointer]:
+                                - /url: /work/in-progress
+                                - img [ref=e52]
+                                - generic [ref=e55]: 진행 중
+                        - listitem [ref=e56]:
+                            - link "응답 대기" [ref=e57] [cursor=pointer]:
+                                - /url: /work/awaiting-response
+                                - img [ref=e58]
+                                - generic [ref=e61]: 응답 대기
+                        - listitem [ref=e62]:
+                            - link "완료된 업무" [ref=e63] [cursor=pointer]:
+                                - /url: /work/completed
+                                - img [ref=e64]
+                                - generic [ref=e67]: 완료된 업무
+                - generic [ref=e68]:
+                    - button "연동 상태" [ref=e69] [cursor=pointer]:
+                        - generic [ref=e70]:
+                            - generic [ref=e71]: 연동 상태
+                            - generic [ref=e72]: 확인된 원천 6개
+                    - link "개인 홈으로 돌아가기" [ref=e73] [cursor=pointer]:
+                        - /url: /
+                        - img [ref=e75]
+                        - text: 개인 홈으로 돌아가기
+        - banner [ref=e78]:
+            - generic [ref=e79]:
+                - generic [ref=e80]:
+                    - img [ref=e82]
+                    - generic "업무" [ref=e86]
+                - generic "현재 워크스페이스" [ref=e88]:
+                    - generic [ref=e90]: D
+                    - generic [ref=e91]:
+                        - generic [ref=e92]: DWP Workspace
+                        - generic [ref=e93]: 현재 워크스페이스
+                - generic [ref=e94]:
+                    - button "DWP 검색" [ref=e96] [cursor=pointer]:
+                        - img [ref=e97]
+                    - 'button "계정: Mina Kim, Tenant administrator" [ref=e101] [cursor=pointer]':
+                        - generic [ref=e102]: M
+                        - generic [ref=e103]:
+                            - generic [ref=e104]: Mina Kim
+                            - generic [ref=e105]: Tenant administrator
+                        - img [ref=e106]
+        - main [ref=e108]:
+            - generic [ref=e109]:
+                - generic [ref=e110]:
+                    - generic [ref=e111]:
+                        - generic [ref=e112]:
+                            - heading "통합업무함" [level=1] [ref=e113]
+                            - generic [ref=e115]: 결과 3건
+                        - paragraph [ref=e116]: 여러 업무 원천의 내 책임을 한곳에서 확인하고, 올바른 소유 앱과 연결해 실행합니다.
+                    - generic [ref=e117]:
+                        - status [ref=e118]:
+                            - generic [ref=e120]:
+                                - generic [ref=e121]: 조회 상태 확인됨
+                                - generic [ref=e122]: 마지막 확인 2026. 9. 7. 오후 6:43
+                            - generic "다시 시도" [ref=e123]:
+                                - button "다시 시도" [ref=e124] [cursor=pointer]:
+                                    - img [ref=e125]
+                        - button "원천 상태" [ref=e130] [cursor=pointer]:
+                            - img [ref=e132]
+                            - text: 원천 상태
+                        - button "개인 할 일 추가" [ref=e137] [cursor=pointer]:
+                            - img [ref=e139]
+                            - text: 개인 할 일 추가
+                - region "통합 업무함 검색 및 필터" [ref=e141]:
+                    - generic [ref=e142]:
+                        - generic [ref=e143]:
+                            - generic [ref=e144]: 업무 검색
+                            - generic [ref=e145]:
+                                - img [ref=e147]
+                                - textbox "업무 검색" [ref=e150]:
+                                    - /placeholder: 제목 또는 업무 내용 검색
+                                - group:
+                                    - generic: 업무 검색
+                        - group "업무 보기" [ref=e151]:
+                            - button "전체 (3)" [pressed] [ref=e152] [cursor=pointer]
+                            - button "내 조치 (3)" [ref=e153] [cursor=pointer]
+                            - button "진행 중 (0)" [ref=e154] [cursor=pointer]
+                            - button "응답 대기 (0)" [ref=e155] [cursor=pointer]
+                            - button "완료 (0)" [ref=e156] [cursor=pointer]
+                        - button "오늘 계획 (1)" [ref=e157] [cursor=pointer]:
+                            - img [ref=e159]
+                            - text: 오늘 계획 (1)
+                        - button "필터·정렬" [ref=e161] [cursor=pointer]:
+                            - img [ref=e163]
+                            - text: 필터·정렬
+                - generic [ref=e164]:
+                    - generic [ref=e165]:
+                        - generic [ref=e166]:
+                            - heading "확인된 업무 3건" [level=6] [ref=e167]
+                            - button "업무 선택" [ref=e168] [cursor=pointer]
+                        - list "통합 업무 목록" [ref=e169]:
+                            - listitem [ref=e170]:
+                                - generic [ref=e171]:
+                                    - generic "오늘 계획에 추가" [ref=e173]:
+                                        - 'button "오늘 계획에 추가: 고객 지원 장비 구매 승인 · 1,850,000원" [ref=e174] [cursor=pointer]':
+                                            - img [ref=e175]
+                                    - button "고객 지원 장비 구매 승인 · 1,850,000원 상세 열기" [ref=e177] [cursor=pointer]:
+                                        - generic [ref=e179]:
+                                            - generic [ref=e180]: APR-031
+                                            - text: 고객 지원 장비 구매 승인 · 1,850,000원
+                                            - generic [ref=e181]:
+                                                - generic [ref=e182]: 전자결재 ·
+                                                - text: 내 조치 필요
+                                            - generic [ref=e183]:
+                                                - generic [ref=e185]: 검토 대기
+                                                - generic [ref=e186]: 기한 없음
+                                    - button "검토" [ref=e188] [cursor=pointer]:
+                                        - text: 검토
+                                        - img [ref=e190]
+                            - listitem [ref=e193]:
+                                - generic [ref=e194]:
+                                    - generic "오늘 계획에 추가" [ref=e196]:
+                                        - 'button "오늘 계획에 추가: 원격접속(VPN) 신청의 사용 사유 보완 요청" [ref=e197] [cursor=pointer]':
+                                            - img [ref=e198]
+                                    - button "원격접속(VPN) 신청의 사용 사유 보완 요청 상세 열기" [ref=e200] [cursor=pointer]:
+                                        - generic [ref=e202]:
+                                            - generic [ref=e203]: SR-088
+                                            - text: 원격접속(VPN) 신청의 사용 사유 보완 요청
+                                            - generic [ref=e204]:
+                                                - generic [ref=e205]: 서비스 요청 ·
+                                                - text: 내 조치 필요
+                                            - generic [ref=e206]:
+                                                - generic [ref=e208]: 내 응답 필요
+                                                - generic [ref=e209]: 기한 없음
+                                    - button "응답 작성" [ref=e211] [cursor=pointer]:
+                                        - text: 응답 작성
+                                        - img [ref=e213]
+                            - listitem [ref=e216]:
+                                - generic [ref=e217]:
+                                    - generic "오늘 계획에서 제거" [ref=e219]:
+                                        - 'button "오늘 계획에서 제거: 다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인" [pressed] [ref=e220] [cursor=pointer]':
+                                            - img [ref=e221]
+                                    - button "다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인 상세 열기" [ref=e223] [cursor=pointer]:
+                                        - generic [ref=e225]:
+                                            - generic [ref=e226]: b1111111
+                                            - text: 다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인
+                                            - generic [ref=e227]:
+                                                - generic [ref=e228]: 개인 할 일 ·
+                                                - text: 내 조치 필요오늘 계획
+                                            - generic [ref=e229]:
+                                                - generic [ref=e231]: 시작 전
+                                                - generic [ref=e232]: 기한 없음
+                                    - button "시작" [ref=e234] [cursor=pointer]
+                    - article "다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인" [ref=e236]:
+                        - generic [ref=e238]:
+                            - generic [ref=e239]:
+                                - generic [ref=e240]: b1111111개인 할 일
+                                - heading "다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인다른 기기에서 수정한 고객 안내 및 전체 준비 절차와 검토 대상 확인" [level=2] [ref=e241]
+                                - paragraph [ref=e242]: 2026. 9. 7. 오전 9:00 원천 상태 확인
+                            - generic [ref=e243]:
+                                - generic [ref=e245]: 시작 전
+                                - generic [ref=e247]: 기한 없음
+                        - generic [ref=e248]:
+                            - generic [ref=e249]:
+                                - generic [ref=e250]:
+                                    - term [ref=e251]: 우선순위
+                                    - definition [ref=e252]: 낮음
+                                - generic [ref=e253]:
+                                    - term [ref=e254]: 처리 기한
+                                    - definition [ref=e255]: 기한 없음
+                            - generic [ref=e257]:
+                                - generic [ref=e258]:
+                                    - group "개인 할 일 진행 상태" [ref=e259]:
+                                        - button "시작 전" [disabled] [pressed]
+                                        - button "진행 중" [ref=e260] [cursor=pointer]
+                                        - button "응답 대기" [ref=e261] [cursor=pointer]
+                                        - button "완료" [ref=e262] [cursor=pointer]
+                                    - generic [ref=e263]:
+                                        - generic [ref=e264]:
+                                            - generic [ref=e265]:
+                                                - heading "개인 할 일 내용" [level=3] [ref=e266]
+                                                - text: '마지막 수정: 2026. 9. 7. 오전 9:00'
+                                            - generic [ref=e267]:
+                                                - button "편집" [ref=e268] [cursor=pointer]:
+                                                    - img [ref=e270]
+                                                    - text: 편집
+                                                - button "할 일 삭제" [ref=e273] [cursor=pointer]:
+                                                    - img [ref=e275]
+                                                    - text: 할 일 삭제
+                                        - paragraph [ref=e278]: 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다. 고객 안내 대상과 필요한 검토 자료를 다른 담당자가 변경했습니다.
+                                    - region "연결된 원문" [ref=e279]:
+                                        - generic [ref=e280]:
+                                            - img [ref=e281]
+                                            - heading "연결된 원문" [level=3] [ref=e285]
+                                        - generic [ref=e286]:
+                                            - paragraph [ref=e287]: 연결된 원천 업무가 없습니다.
+                                            - button "원천 연결 편집" [ref=e288] [cursor=pointer]:
+                                                - img [ref=e290]
+                                                - text: 원천 연결 편집
+                                    - region "체크리스트" [ref=e293]:
+                                        - generic [ref=e294]:
+                                            - img [ref=e295]
+                                            - heading "체크리스트" [level=3] [ref=e299]
+                                        - generic [ref=e302]:
+                                            - generic [ref=e303]:
+                                                - generic [ref=e304]:
+                                                    - generic [ref=e305]: 저장된 체크리스트 1 / 1 완료
+                                                    - generic [ref=e306]: 100%
+                                                - progressbar "저장된 체크리스트 1 / 1 완료" [ref=e307]
+                                            - list [ref=e309]:
+                                                - listitem [ref=e310]:
+                                                    - generic [ref=e311]:
+                                                        - generic [ref=e312] [cursor=pointer]:
+                                                            - checkbox "새로 추가된 검토 절차 완료 상태 변경" [checked] [ref=e313]
+                                                            - img [ref=e314]
+                                                        - paragraph [ref=e316]: 새로 추가된 검토 절차
+                                            - generic [ref=e317]:
+                                                - generic [ref=e318]:
+                                                    - generic: 새 체크리스트 항목
+                                                    - generic [ref=e319]:
+                                                        - textbox "새 체크리스트 항목" [ref=e320]
+                                                        - group:
+                                                            - generic: 새 체크리스트 항목
+                                                - button "항목 추가" [disabled]:
+                                                    - generic:
+                                                        - img
+                                                    - text: 항목 추가
+                                    - group [ref=e321]:
+                                        - generic "변경 이력" [ref=e322] [cursor=pointer]:
+                                            - img [ref=e323]
+                                            - paragraph [ref=e328]: 변경 이력
+                                            - img [ref=e329]
+                                - region "연결된 수행 시간" [ref=e331]:
+                                    - generic [ref=e332]:
+                                        - generic [ref=e333]:
+                                            - img [ref=e334]
+                                            - heading "연결된 수행 시간" [level=3] [ref=e338]
+                                        - button "Calendar 열기" [ref=e339] [cursor=pointer]
+                                    - paragraph [ref=e341]: 이 업무에 연결된 수행 시간이 없습니다.
+                            - separator [ref=e342]
+                            - generic [ref=e343]:
+                                - button "완료" [ref=e344] [cursor=pointer]
+                                - button "보관" [ref=e345] [cursor=pointer]
+                                - button "오늘 계획에서 제거" [ref=e346] [cursor=pointer]
+                                - button "수행 시간 잡기" [ref=e347] [cursor=pointer]:
+                                    - img [ref=e349]
+                                    - text: 수행 시간 잡기
+                                - button "DWAI·ON에게 묻기" [ref=e353] [cursor=pointer]:
+                                    - img [ref=e355]
+                                    - text: DWAI·ON에게 묻기
+                            - generic [ref=e358]: 개인 할 일의 상태와 설명은 이 화면에서 직접 관리합니다.
+    - generic "DWAI·ON 열기" [ref=e360]:
+        - button "DWAI·ON 열기" [ref=e361] [cursor=pointer]
+```

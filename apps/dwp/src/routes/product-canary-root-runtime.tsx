@@ -21,7 +21,7 @@ const ProductCanaryAccessState = lazy(() =>
 function accessState(state: SurfaceDeniedState, productId: string) {
   return (
     <Suspense fallback={<ProductSurfaceLoadingShell productId={productId} />}>
-      <ProductCanaryAccessState decision={{ state }} productId={productId} />
+      <ProductCanaryAccessState decision={{ state }} productId={productId} pageLevel />
     </Suspense>
   );
 }

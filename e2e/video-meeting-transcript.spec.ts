@@ -130,6 +130,19 @@ test('authorized transcript stays explicit, searches in the body, and seeks gove
 
   await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
   await expect(page.getByText('Opening context.')).toHaveCount(0);
+  expect(transcriptBodies).toEqual([]);
+  const evidenceDetails = page.getByRole('button', {
+    name: 'Show transcript and evidence details',
+  });
+  await expect(evidenceDetails).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('button', { name: 'Check access and open transcript' })).toHaveCount(
+    0
+  );
+  await evidenceDetails.focus();
+  await page.keyboard.press('Enter');
+  await expect(evidenceDetails).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByText('Opening context.')).toHaveCount(0);
+  expect(transcriptBodies).toEqual([]);
   await page.getByRole('button', { name: 'Check access and open transcript' }).click();
   await expect(page.getByText('Opening context.')).toBeVisible();
 
@@ -162,4 +175,125 @@ test('authorized transcript stays explicit, searches in the body, and seeks gove
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     )
   ).toBeLessThanOrEqual(1);
+});
+
+for (const status of [403, 410]) {
+  test(`transcript HTTP ${status} removes already displayed raw content and search controls`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockTranscriptRecap(page, []);
+    let reads = 0;
+    await page.route(`**/artifacts/${TRANSCRIPT_ID}/transcript/query`, async (route) => {
+      reads += 1;
+      return route.fulfill({
+        status: reads === 1 ? 200 : status,
+        contentType: 'application/json',
+        headers: { 'Cache-Control': 'no-store' },
+        body:
+          reads === 1
+            ? success({
+                artifactId: TRANSCRIPT_ID,
+                artifactVersion: 7,
+                segments: [
+                  {
+                    segmentId: 'segment-1',
+                    startMillis: 5_000,
+                    endMillis: 9_000,
+                    text: 'Previously authorized transcript content.',
+                  },
+                ],
+                nextCursor: 25,
+                hasMore: true,
+                queryApplied: false,
+                retentionUntil: RETENTION,
+              })
+            : JSON.stringify({ status: 'ERROR', success: false, message: 'Source unavailable' }),
+      });
+    });
+    await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
+    const disclosure = page.getByRole('button', { name: 'Show transcript and evidence details' });
+    await disclosure.focus();
+    await page.keyboard.press('Enter');
+    await page.getByRole('button', { name: 'Check access and open transcript' }).click();
+    await expect(
+      page.getByText('Previously authorized transcript content.', { exact: true })
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Load next page' }).click();
+    await expect(
+      page.getByText('Previously authorized transcript content.', { exact: true })
+    ).toHaveCount(0);
+    await expect(
+      page.getByText('Transcript access changed or the retained source expired.', { exact: false })
+    ).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Search this transcript' })).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: 'Check access and open transcript' })
+    ).toHaveCount(0);
+    expect(reads).toBe(2);
+    const axe = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
+    expect(
+      axe.violations.filter((item) => ['critical', 'serious'].includes(item.impact ?? ''))
+    ).toEqual([]);
+  });
+}
+
+test('closing transcript details aborts the pending HTTP read and reopening requires new explicit access', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const bodies: unknown[] = [];
+  await mockTranscriptRecap(page, bodies);
+  let pending: Route | null = null;
+  let reads = 0;
+  await page.route(`**/artifacts/${TRANSCRIPT_ID}/transcript/query`, async (route) => {
+    reads += 1;
+    if (reads === 1) {
+      pending = route;
+      return;
+    }
+    return route.fallback();
+  });
+  await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
+  const disclosure = page.getByRole('button', { name: 'Show transcript and evidence details' });
+  await disclosure.focus();
+  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Check access and open transcript' }).click();
+  await expect.poll(() => pending !== null).toBe(true);
+  const cancelled = page.waitForEvent('requestfailed', {
+    predicate: (request) => request.url().includes(`/artifacts/${TRANSCRIPT_ID}/transcript/query`),
+  });
+  await disclosure.focus();
+  await page.keyboard.press('Enter');
+  await cancelled;
+  await expect(disclosure).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('meeting-transcript-viewer')).toHaveCount(0);
+  const stale = pending as unknown as Route;
+  await stale.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: success({
+      artifactId: TRANSCRIPT_ID,
+      artifactVersion: 7,
+      segments: [
+        { segmentId: 'late', startMillis: 0, endMillis: 1_000, text: 'Closed request content.' },
+      ],
+      nextCursor: null,
+      hasMore: false,
+      queryApplied: false,
+      retentionUntil: RETENTION,
+    }),
+  });
+  await disclosure.focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('button', { name: 'Check access and open transcript' })
+  ).toBeVisible();
+  await expect(page.getByText('Closed request content.', { exact: true })).toHaveCount(0);
+  expect(reads).toBe(1);
+  expect(bodies).toEqual([]);
+  await page.getByRole('button', { name: 'Check access and open transcript' }).click();
+  await expect(page.getByText('Opening context.', { exact: true })).toBeVisible();
+  expect(reads).toBe(2);
+  expect(bodies).toHaveLength(1);
 });

@@ -51,7 +51,8 @@ function accessState(
   decision: Exclude<SurfaceDecision, { state: 'allowed' }>,
   productId: string,
   surfaceId?: string,
-  routeId?: string
+  routeId?: string,
+  pageLevel = false
 ) {
   return (
     <Suspense fallback={null}>
@@ -60,6 +61,7 @@ function accessState(
         productId={productId}
         surfaceId={surfaceId}
         routeId={routeId}
+        pageLevel={pageLevel}
       />
     </Suspense>
   );
@@ -116,11 +118,13 @@ export function ProductCanarySurfaceBoundary({
   }
   const strategy = resolveProductCanaryBoundaryStrategy(authority, productId);
   if (strategy === 'fail-closed') {
-    return accessState({ state: 'authority-unavailable' }, productId, surfaceId);
+    return accessState({ state: 'authority-unavailable' }, productId, surfaceId, undefined, true);
   }
   if (strategy === 'legacy') return legacy;
   const decision = resolveCanarySurfaceDecision(authority, { productId, surfaceId });
-  if (decision.state !== 'allowed') return accessState(decision, productId, surfaceId);
+  if (decision.state !== 'allowed') {
+    return accessState(decision, productId, surfaceId, undefined, true);
+  }
   return (
     <Suspense fallback={null}>
       <ProductSurfaceTelemetryExposure

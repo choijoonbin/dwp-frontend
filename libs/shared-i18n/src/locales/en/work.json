@@ -41,32 +41,91 @@
     },
     "items": {
       "dwaion": {
-        "home": { "label": "DWAI·ON home" },
-        "new": { "label": "New conversation" },
-        "conversations": { "label": "My conversations" },
-        "activity": { "label": "AI run activity" },
-        "proposals": { "label": "AI proposals" },
-        "agents": { "label": "Specialized agents" },
-        "actions": { "label": "Work actions and connections" },
-        "routines": { "label": "My AI routines" },
-        "personal-controls": { "label": "Personal AI controls" },
-        "artifacts": { "label": "Artifact studio" },
-        "admin-overview": { "label": "Operations overview" },
-        "admin-agents": { "label": "Agent and publishing management" },
-        "admin-sources": { "label": "Data sources and connectors" },
-        "admin-actions": { "label": "Actions and execution access" },
-        "admin-safety": { "label": "Policy and safety controls" },
-        "admin-evaluation": { "label": "Response quality and evaluation" },
-        "admin-gates": { "label": "Operational readiness review" },
-        "admin-audit": { "label": "Data retention and audit" }
+        "home": {
+          "label": "DWAI·ON home"
+        },
+        "new": {
+          "label": "New conversation"
+        },
+        "conversations": {
+          "label": "My conversations"
+        },
+        "activity": {
+          "label": "AI run activity"
+        },
+        "proposals": {
+          "label": "AI proposals"
+        },
+        "agents": {
+          "label": "Specialized agents"
+        },
+        "actions": {
+          "label": "Work actions and connections"
+        },
+        "routines": {
+          "label": "My AI routines"
+        },
+        "personal-controls": {
+          "label": "Personal AI controls"
+        },
+        "artifacts": {
+          "label": "Artifact studio"
+        },
+        "admin-overview": {
+          "label": "Operations overview"
+        },
+        "admin-agents": {
+          "label": "Agent and publishing management"
+        },
+        "admin-sources": {
+          "label": "Data sources and connectors"
+        },
+        "admin-actions": {
+          "label": "Actions and execution access"
+        },
+        "admin-safety": {
+          "label": "Policy and safety controls"
+        },
+        "admin-evaluation": {
+          "label": "Response quality and evaluation"
+        },
+        "admin-gates": {
+          "label": "Operational readiness review"
+        },
+        "admin-audit": {
+          "label": "Data retention and audit"
+        }
       },
       "work": {
-        "home": { "label": "Work home" },
-        "queue": { "label": "Unified work queue" }
+        "home": {
+          "label": "Work home"
+        },
+        "queue": {
+          "label": "Unified inbox"
+        },
+        "action-required": {
+          "label": "Action required"
+        },
+        "day-plan": {
+          "label": "Today's plan"
+        },
+        "in-progress": {
+          "label": "In progress"
+        },
+        "awaiting-response": {
+          "label": "Awaiting response"
+        },
+        "completed": {
+          "label": "Completed work"
+        }
       },
       "activity": {
-        "home": { "label": "Activity home" },
-        "timeline": { "label": "Activity timeline" }
+        "home": {
+          "label": "Activity home"
+        },
+        "timeline": {
+          "label": "Activity timeline"
+        }
       }
     }
   },
@@ -237,6 +296,15 @@
     "deleting": "Deleting"
   },
   "dwaionActivity": {
+    "compactSummary": "{{total}} recent runs · {{attention}} need attention",
+    "mobileDescription": "Review run states and policy outcomes, then return to the conversation.",
+    "mobileWindowNotice": "Counts and filters use up to {{count}} recently retrieved runs.",
+    "mobileMetrics": {
+      "total": "All",
+      "running": "Running",
+      "completed": "Done",
+      "attention": "Review"
+    },
     "eyebrow": "Accountable AI",
     "title": "AI run activity",
     "description": "Review how your requests were handled within policy and evidence boundaries, then return to the related conversation.",
@@ -269,13 +337,20 @@
     "listLabel": "Recently retrieved AI runs",
     "filteredWindow": "{{visible}} of {{total}} retrieved runs · state filter applied in this browser",
     "filterLabel": "AI run state filter",
+    "accessTitle": "Run activity is not available",
+    "accessDescription": "Previous run details have been hidden because access could not be verified. Refresh or contact your administrator.",
     "filters": {
       "ALL": "All",
       "RUNNING": "In progress",
       "COMPLETED": "Completed",
+      "FAILED": "Failed",
+      "ATTENTION": "Needs attention"
+    },
+    "states": {
+      "RUNNING": "In progress",
+      "COMPLETED": "Completed",
       "FAILED": "Failed"
     },
-    "states": { "RUNNING": "In progress", "COMPLETED": "Completed", "FAILED": "Failed" },
     "answerStates": {
       "COMPLETED": "Answer completed",
       "ABSTAINED": "Answer withheld",
@@ -309,14 +384,18 @@
       "emptyTitle": "Select a run to inspect",
       "emptyDescription": "Select a run to see fields from the current response and common activity detail verified for your access.",
       "receiptTitle": "Recent run response",
-      "receiptDescription": "These values came from the run API. They are not a complete step history or verified audit evidence.",
+      "additionalMetadata": "Additional run metadata",
+      "receiptDescription": "The run API supplied this record within your current access. Nothing beyond the separately reported measurement and audit states is inferred.",
       "permissionLoading": "Checking detail access.",
       "permissionTitle": "Common activity detail is not available",
       "permissionDescription": "The AI run list and basic fields above remain available, but no common-detail request was sent because APP.ACTIVITY access is missing.",
+      "sampleCommonActivityTitle": "Verification run excluded from common activity totals",
+      "sampleCommonActivityDescription": "Development verification runs are excluded from operational totals and the common activity feed. The run ledger and measurements above are shown only for local feature verification.",
       "notRecorded": "Not recorded",
       "sourceCountValue": "{{count}}",
       "latencyValue": "{{count}} ms",
       "fields": {
+        "activityTitle": "Run title",
         "runId": "Run ID",
         "agent": "Agent · revision",
         "runState": "Run state",
@@ -328,6 +407,85 @@
         "createdAt": "Started",
         "completedAt": "Completed",
         "statusCode": "Status code"
+      }
+    },
+    "observability": {
+      "sample": {
+        "title": "Development verification data",
+        "description": "This local-only sample verifies the contract. It is not counted as a production connection or success.",
+        "summaryExcluded": "{{count}} runs are excluded from the operational metrics above and identified with badges in the list."
+      },
+      "measurement": {
+        "MEASURING": "Measuring",
+        "MEASURED": "Measured",
+        "PARTIAL": "Partially measured",
+        "NOT_AVAILABLE": "Measurement unavailable"
+      },
+      "currentStage": "Current stage · {{stage}}",
+      "attempt": "Attempt {{count}}",
+      "leaseExpires": "Lease expires {{at}}",
+      "progress": "Server-reported progress",
+      "progressValue": "{{count}}%",
+      "lease": {
+        "ACTIVE": "Lease active",
+        "EXPIRED": "Lease expired",
+        "RELEASED": "Lease released"
+      },
+      "stageKeys": {
+        "AUTHORIZING": "Authorizing",
+        "RETRIEVING": "Retrieving evidence",
+        "REASONING": "Reasoning",
+        "VERIFYING": "Verifying response",
+        "PERSISTING": "Persisting result",
+        "COMPLETED": "Completed",
+        "FAILED": "Failed"
+      },
+      "stageStates": {
+        "ACTIVE": "In progress",
+        "COMPLETED": "Completed",
+        "FAILED": "Failed",
+        "SKIPPED": "Skipped"
+      },
+      "stages": {
+        "title": "Run stages and processing time",
+        "unavailableTitle": "Stage measurements are unavailable",
+        "unavailableDescription": "The server did not provide stage measurements for this run. No stages are invented.",
+        "empty": "No run stages were recorded.",
+        "partial": "Only some stages were measured. Missing time must not be treated as 0 ms.",
+        "listLabel": "Server-recorded run stages",
+        "latencyTitle": "Stage processing-time distribution",
+        "latencyLabel": "Measured stage processing time totals {{count}} ms"
+      },
+      "sources": {
+        "title": "Run source status",
+        "empty": "This run did not attempt any source retrieval.",
+        "attempt": "Last attempt {{at}} · response {{latency}}",
+        "lastSuccess": "Last success {{at}}",
+        "noSuccess": "No successful retrieval time recorded"
+      },
+      "sourceStates": {
+        "SUCCESS": "Retrieved",
+        "UNAVAILABLE": "Unavailable",
+        "NOT_CONFIGURED": "Not configured"
+      },
+      "audit": {
+        "title": "Agent audit linkage",
+        "auditId": "Agent audit ID",
+        "recordId": "Platform audit record ID",
+        "states": {
+          "LINKED": {
+            "title": "Linked to a Platform audit record",
+            "description": "This is a reference-link state. Integrity verification and compliance are evaluated separately."
+          },
+          "PENDING": {
+            "title": "Audit linkage pending",
+            "description": "The audit record link is not final, so no verification result is inferred."
+          },
+          "NOT_AVAILABLE": {
+            "title": "Audit linkage unavailable",
+            "description": "The server did not provide a linked audit record."
+          }
+        }
       }
     }
   },
@@ -382,7 +540,11 @@
     "listTitle": "Proposals for you",
     "listDescription": "Review the reason and evidence, then decide the next step yourself.",
     "filterLabel": "AI proposal state filter",
-    "views": { "ACTIVE": "To review", "SNOOZED": "Snoozed", "HANDLED": "Handled" },
+    "views": {
+      "ACTIVE": "To review",
+      "SNOOZED": "Snoozed",
+      "HANDLED": "Handled"
+    },
     "kinds": {
       "WORK_SIGNAL": "Work signal",
       "RISK": "Risk",
@@ -390,7 +552,12 @@
       "APPROVAL": "Approval",
       "INSIGHT": "Insight"
     },
-    "priorities": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High", "URGENT": "Urgent" },
+    "priorities": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "URGENT": "Urgent"
+    },
     "states": {
       "PENDING": "Awaiting review",
       "SNOOZED": "Snoozed",
@@ -813,11 +980,26 @@
         "approve": "Independent approval"
       },
       "dialogs": {
-        "REVIEW": { "title": "Review go-live readiness", "submit": "" },
-        "CONFIGURE": { "title": "Set operational policy", "submit": "Save policy" },
-        "EVIDENCE": { "title": "Add operational evidence", "submit": "Add evidence" },
-        "VALIDATE": { "title": "Validate operational requirements", "submit": "Record validation" },
-        "DECIDE": { "title": "Approve go-live readiness", "submit": "Save approval decision" }
+        "REVIEW": {
+          "title": "Review go-live readiness",
+          "submit": ""
+        },
+        "CONFIGURE": {
+          "title": "Set operational policy",
+          "submit": "Save policy"
+        },
+        "EVIDENCE": {
+          "title": "Add operational evidence",
+          "submit": "Add evidence"
+        },
+        "VALIDATE": {
+          "title": "Validate operational requirements",
+          "submit": "Record validation"
+        },
+        "DECIDE": {
+          "title": "Approve go-live readiness",
+          "submit": "Save approval decision"
+        }
       },
       "review": {
         "close": "Close",
@@ -882,8 +1064,14 @@
         "decision": "Approval decision",
         "validDays": "Approval validity (days)"
       },
-      "validation": { "PASS": "Validation passed", "FAIL": "Validation failed" },
-      "decisions": { "APPROVE": "Approve", "REJECT": "Reject" },
+      "validation": {
+        "PASS": "Validation passed",
+        "FAIL": "Validation failed"
+      },
+      "decisions": {
+        "APPROVE": "Approve",
+        "REJECT": "Reject"
+      },
       "evidenceTypes": {
         "CONFIGURATION_REFERENCE": "Configuration reference",
         "TEST_RESULT": "Test result",
@@ -1060,8 +1248,16 @@
     }
   },
   "labels": {
-    "priority": { "high": "High", "medium": "Medium", "low": "Low" },
-    "actor": { "agent": "Agent", "person": "Person", "system": "System" },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "actor": {
+      "agent": "Agent",
+      "person": "Person",
+      "system": "System"
+    },
     "status": {
       "open": "Open",
       "cancelled": "Cancelled",
@@ -1152,7 +1348,8 @@
       "eyebrow": "Unified work execution",
       "title": "Unified work queue",
       "description": "Review responsibilities from your work sources in one place and continue in the correct owner app.",
-      "scope": "Current access scope"
+      "scope": "Current access scope",
+      "partialCount": "{{count}} confirmed items"
     },
     "responsibility": {
       "ME": "Your action",
@@ -1217,14 +1414,17 @@
       "label": "Unified work list",
       "heading": "{{count}} verified work items",
       "openItem": "Open details for {{title}}",
-      "selectItem": "Select {{title}} for batch processing"
+      "selectItem": "Select {{title}} for batch processing",
+      "review": "Review",
+      "respond": "Respond"
     },
     "scopes": {
       "ACTIONABLE": "Your action",
       "ALL": "All",
       "TODAY": "Today plan",
       "WAITING": "Waiting",
-      "COMPLETED": "Completed"
+      "COMPLETED": "Completed",
+      "IN_PROGRESS": "In progress"
     },
     "filters": {
       "label": "Unified queue search and filters",
@@ -1236,7 +1436,20 @@
       "allSources": "All sources",
       "allUrgencies": "All deadlines",
       "reset": "Reset filters",
-      "results": "{{count}} results"
+      "results": "{{count}} results",
+      "sort": "Sort",
+      "sortOptions": {
+        "urgency": "Urgency first",
+        "due": "Due date",
+        "updated": "Recently updated",
+        "title": "Title"
+      },
+      "density": "Density",
+      "densityOptions": {
+        "comfortable": "Comfortable",
+        "compact": "Compact"
+      },
+      "refine": "Filter and sort"
     },
     "actions": {
       "createTask": "Add personal task",
@@ -1277,18 +1490,99 @@
       "approval": {
         "title": "Approval decision context",
         "description": "Review the verified role and deadline here, then check the exact approval step in its source.",
-        "handoffNotice": "Review current evidence and route in Approvals before approving or rejecting."
+        "handoffNotice": "Review current evidence and route in Approvals before approving or rejecting.",
+        "document": "Approval document",
+        "assignment": "Why this approval is assigned to you",
+        "workflow": "Approval workflow progress",
+        "workflowEmpty": "No workflow stage evidence was provided. View the complete workflow in the source.",
+        "step": "Step {{count}}",
+        "currentStep": "Current approval stage",
+        "completedStep": "Recorded stage",
+        "evidence": "Request evidence and details",
+        "selfApprovalBlocked": "Self-approval restricted",
+        "decision": "Approval decision",
+        "decisionNotice": "Your current assignment and source permissions are verified before processing.",
+        "unavailable": "A direct decision is unavailable. Claim the task or check the current assignment in the source.",
+        "CLAIM": "Claim task",
+        "APPROVE": "Approve",
+        "REJECT": "Reject",
+        "REQUEST_INFO": "Request information",
+        "confirmTitle": "Review approval action",
+        "confirmDescription": "Check the target document and action. The assignment and document version are checked again before submission.",
+        "comment": "Review reason",
+        "commentHelp": "Enter at least 8 characters for rejection or 4 for an information request. The source approval policy may require more detail. {{count}} / 2,000 characters",
+        "effect": "This action is saved to the source approval. Approving this stage does not necessarily complete the entire workflow."
       },
       "service": {
         "title": "Your input and request progress",
         "description": "Keep your required input separate from the overall service request resolution.",
-        "handoffNotice": "Opening or returning from the source does not by itself mark input or resolution complete."
+        "handoffNotice": "Opening or returning from the source does not by itself mark input or resolution complete.",
+        "request": "Service request information",
+        "number": "Ticket number",
+        "name": "Requested service",
+        "assignedGroup": "Assigned department",
+        "due": "Service due date",
+        "requestedInformation": "Information requested",
+        "noInformationNote": "No information request note was provided. Review the history and original request.",
+        "originalRequest": "Original application and current values",
+        "assurance": "Application and review conditions",
+        "assuranceNotice": "The source service determines the application and review requirements. Device security checks and account provisioning results are not inferred here.",
+        "response": "Provide requested information",
+        "responseDescription": "Review the source form and requested information, then reply to the service team.",
+        "message": "Response and changes made",
+        "messageHelp": "Describe the requested information and changes in at least 10 characters. {{count}} / 2,000 characters",
+        "responseEffect": "Submitting a response returns the request to the service team for review. It does not complete the overall service request.",
+        "reviewResponse": "Review and submit response",
+        "noResponseRequired": "A response from you is not currently required. Check the latest status and history.",
+        "confirmTitle": "Review information response",
+        "confirmDescription": "Review the values and explanation. The current request state and version are checked again before submission.",
+        "submit": "Submit response",
+        "responseSaved": "Your response was saved and returned to the service team for review.",
+        "draftChanged": "The selected work or source version changed. Review the latest details before applying the AI draft.",
+        "draftApplied": "The AI draft was added to your response. Review it before submitting.",
+        "replaceDraftTitle": "Replace your response with the AI draft?",
+        "replaceDraftDescription": "The draft below replaces your current response. Other request form values are preserved.",
+        "replaceDraft": "Replace with draft",
+        "events": {
+          "REQUESTER_RESPONDED": "Information response submitted",
+          "INFORMATION_REQUESTED": "Service information requested",
+          "UPDATED": "Service request updated"
+        }
       },
       "workspace": {
         "title": "Work execution context",
         "description": "Review current responsibility and change only states supported on this surface.",
         "handoffNotice": "Source-owned work is confirmed only after a current owner response."
-      }
+      },
+      "empty": "The source has not provided detail fields.",
+      "notProvided": "Not provided by source",
+      "yes": "Yes",
+      "no": "No",
+      "accessRequired": "Source access could not be verified. Open the source app to check your access scope.",
+      "verifying": "Verifying source access",
+      "loading": "Loading source details",
+      "loadFailed": "Source details could not be loaded",
+      "readAgain": "Check your access and refresh the source. Unverified details are not displayed.",
+      "documentNumber": "Document number",
+      "requester": "Requester",
+      "organization": "Requesting department",
+      "submittedAt": "Requested at",
+      "workflow": "Approval workflow",
+      "attachments": "Supporting attachments",
+      "attachmentsNotice": "View attachments in the source app after it verifies your document access.",
+      "openEvidence": "View evidence in source",
+      "timeline": "Processing and change history",
+      "target": "Target",
+      "action": "Selected action",
+      "cancel": "Cancel",
+      "submitting": "Processing",
+      "tooLong": "Enter no more than 2,000 characters.",
+      "claimed": "The task was claimed. Review the latest document and decision permissions.",
+      "decisionSaved": "The approval decision was saved. Review the latest workflow stage and history.",
+      "conflict": "Another change was saved first. Your input is preserved. Compare it with the latest source before reviewing again.",
+      "authorityChanged": "Your assignment or access changed. Check the latest source for available actions.",
+      "outcomeUnknown": "The outcome could not be confirmed. Review the latest state and history before attempting another action.",
+      "validationFailed": "The source rejected the input; nothing was submitted. Your input is retained. Review the reason and required fields."
     },
     "partial": {
       "title": "Some work sources could not be verified",
@@ -1349,7 +1643,30 @@
       "results": {
         "confirmed": "Change confirmed by the source",
         "unknown": "Result needs verification"
-      }
+      },
+      "reportTitle": "Batch results",
+      "reportSummary": "Confirmed {{confirmed}} of {{total}} selected items. Review each result.",
+      "executionNotice": "Personal tasks execute individually. Workspace work follows its atomic batch policy. Approval, access review and service decisions require their detail screen.",
+      "retryUnconfirmed": "Recheck unconfirmed personal tasks",
+      "reopenReport": "View latest batch results",
+      "receiptStates": {
+        "CONFIRMED": "Confirmed",
+        "CONFLICT": "Version conflict",
+        "FORBIDDEN": "Restricted",
+        "UNKNOWN": "Unconfirmed",
+        "EXCLUDED": "Excluded"
+      },
+      "receiptHelp": {
+        "CONFIRMED": "The source confirmed the update and new version.",
+        "CONFLICT": "Another update was applied first. Review the latest item before selecting it again.",
+        "FORBIDDEN": "Your current access does not allow this action.",
+        "UNKNOWN": "The result is unconfirmed. Personal tasks can be rechecked with the same request.",
+        "EXCLUDED": "This transition is unavailable or requires review in the detail screen."
+      },
+      "selectMode": "Select work",
+      "cancelSelection": "Cancel selection",
+      "cancelledBeforeSend": "The session changed or this page closed before this item was sent. Select it again to start a new review.",
+      "cancelledUnknown": "The session changed or this page closed after this request was sent. Check the source status before creating a new request."
     },
     "taskForm": {
       "create": {
@@ -1361,6 +1678,12 @@
         "title": "Edit personal task",
         "description": "Update the current title, description, priority, and due date.",
         "submit": "Save changes"
+      },
+      "conflict": {
+        "notice": "This task changed elsewhere after you started editing. Compare the latest saved content with your draft, then choose how to continue. Saving is paused until you review the changes.",
+        "latest": "Latest saved task",
+        "useLatest": "Edit the latest content",
+        "keepDraft": "Reviewed: keep my draft"
       },
       "cancel": "Cancel",
       "submitting": "Saving",
@@ -1428,7 +1751,19 @@
       "saving": "Saving plan",
       "save": "Save plan",
       "savedTitle": "Today's plan was saved",
-      "savedDetail": "The order is stored independently from work state."
+      "savedDetail": "The order is stored independently from work state.",
+      "selectedMetric": "Selected for today",
+      "dueMetric": "Tasks with a due date",
+      "progressMetric": "Work in progress",
+      "candidateMetric": "Available candidates",
+      "candidateFilter": "Candidate scope",
+      "candidateScopes": {
+        "all": "All",
+        "due": "With deadline",
+        "actionable": "My action"
+      },
+      "openWork": "Open work",
+      "removeLabel": "Remove from plan"
     },
     "sourcesDialog": {
       "open": "Source status",
@@ -1449,7 +1784,10 @@
         "FORBIDDEN": "This source was not loaded with current access.",
         "UNAVAILABLE": "A source response could not be verified.",
         "NOT_REQUESTED": "This source is outside the app entitlement scope."
-      }
+      },
+      "readyCount": "{{count}} sources ready",
+      "attentionCount": "{{count}} sources need attention",
+      "itemCount": "{{count}} verified work items"
     },
     "schedule": {
       "title": "Schedule work time",
@@ -1475,7 +1813,11 @@
         "unconfirmed": "No response confirmed whether the event was created. Check the same request.",
         "rejected": "Calendar rejected the request. Review access and the time range.",
         "linkRemoved": "The work link was removed without changing the Calendar event."
-      }
+      },
+      "selectedWork": "Work to schedule",
+      "independenceNotice": "Focus time creates a personal calendar event. The source deadline and approval state remain independent. Review calendar conflicts and edit the event in Calendar.",
+      "titleLength": "{{count}} / 300 characters",
+      "privateScope": "Reserve a private focus block for yourself, without attendees or recurrence. Only the work reference is linked; its contents are not copied."
     },
     "scheduleLinks": {
       "title": "Scheduled work time",
@@ -1500,7 +1842,7 @@
       "verifiedAt": "Snapshot from {{date}}",
       "verificationRequired": "A current work check is required",
       "question": "Question",
-      "help": "{{count}} / 2,000 characters · Enter to send, Shift+Enter for a new line",
+      "help": "{{count}} / 2,000 characters · Ctrl/Cmd+Enter to send · Enter for a new line",
       "tooLong": "The question must be 2,000 characters or fewer.",
       "submit": "Ask in DWAI·ON",
       "submitting": "Sending",
@@ -1510,7 +1852,40 @@
         "risk": "Summarize deadline risk and the evidence I should verify.",
         "draft": "Prepare a draft for my review before I submit anything to the source.",
         "evidence": "Tell me what evidence is missing from the current context."
-      }
+      },
+      "panelTitle": "DWAI·ON work assistant",
+      "panelSubtitle": "Evidence and response drafts for the selected work",
+      "sourceExcerptNotice": "The source excerpt below is for on-screen review and is not sent with the AI request. The server rechecks the selected source evidence with your current permissions.",
+      "snapshotNotice": "Only your question and the selected work source ID and version are sent. The server rechecks source evidence with your current permissions and cites the answer.",
+      "reviewContext": "Review the source excerpt on screen",
+      "outcomes": {
+        "retryTitle": "The source could not be checked right now",
+        "retryDetail": "Your question is preserved. Try again or review the current state in the source.",
+        "restrictedTitle": "This work evidence cannot be used by AI",
+        "restrictedDetail": "The source evidence was withheld by its sensitivity or safety policy. Review it directly in the source.",
+        "unsupportedTitle": "This source does not yet support selected-work AI",
+        "unsupportedDetail": "Review it in the source, or select a supported personal task, service request, or approval.",
+        "changedTitle": "The work state changed",
+        "changedDetail": "The latest work was loaded. Review the current item before asking again."
+      },
+      "suggestions": "Suggested questions and writing help",
+      "reviewDraft": "Answer and draft under review",
+      "draftPreview": "Draft to insert in the work form",
+      "draftHelp": "Review before applying. 10–2,000 characters · {{count}} entered",
+      "draftTooLong": "The work form accepts up to 2,000 characters. Shorten this draft before applying.",
+      "citations": "Sources and supporting evidence",
+      "noAnswer": "An answer could not be produced with the current permissions and available evidence. Review the source or check the required connections in DWAI·ON.",
+      "reviewNotice": "AI answers are drafts for review. Check the evidence, then apply and submit the work form yourself.",
+      "copied": "Answer copied.",
+      "copyFailed": "Copy failed. Select the answer text and copy it manually.",
+      "applied": "The draft was sent to the work form. Review the content to apply.",
+      "applyDraft": "Apply draft to work form",
+      "copyAnswer": "Copy answer",
+      "askHere": "Ask about this work",
+      "continueConversation": "Continue in the full DWAI·ON workspace",
+      "actualSources": "{{count}} verified sources",
+      "actualRuntime": "{{tokens}} tokens · {{latency}}ms",
+      "noCitations": "No sources were supplied for this answer. Check the original work before using it."
     },
     "personal": {
       "loading": "Loading personal task details",
@@ -1533,7 +1908,118 @@
         "COMPLETED": "Completed",
         "REOPENED": "Reopened",
         "ARCHIVED": "Archived"
-      }
+      },
+      "deleted": "Personal task deleted.",
+      "checklistSaved": "Checklist saved.",
+      "statusSaved": "Task status updated.",
+      "conflict": "The task changed and has been refreshed. Review your retained changes, then try again.",
+      "accessChanged": "Your access to this task changed. Review the refreshed work list.",
+      "commandUnknown": "The result could not be confirmed. Check the latest status before retrying the same request.",
+      "statusProgress": "Personal task progress",
+      "openSource": "Open source work",
+      "editSources": "Edit source links",
+      "delete": "Delete task",
+      "deleteTitle": "Delete this personal task?",
+      "deleteDescription": "Remove “{{title}}” from the work inbox and today's plans. History is retained; linked source work and calendar events remain unchanged.",
+      "lastUpdated": "Last updated: {{date}}"
+    },
+    "viewTitles": {
+      "queue": "Unified work inbox",
+      "action-required": "Action required",
+      "day-plan": "Today plan",
+      "in-progress": "In progress",
+      "awaiting-response": "Awaiting response",
+      "completed": "Completed work"
+    },
+    "navigation": {
+      "createTask": "Add personal task",
+      "sourceStatus": "Source connections",
+      "sourcesReady": "{{count}} verified sources",
+      "sourcesLoading": "Checking source status",
+      "sourcesAttention": "{{count}} need attention",
+      "partialCount": "{{count}}+"
+    },
+    "mobileNavigation": {
+      "label": "Work quick navigation",
+      "queue": "Inbox",
+      "day-plan": "Today",
+      "action-required": "My actions",
+      "assist": "DWAI·ON",
+      "more": "More",
+      "moreTitle": "Browse work by status"
+    },
+    "accessEvidence": {
+      "grantedAt": "Access granted",
+      "lastSignIn": "Last sign-in",
+      "unavailable": "Unavailable",
+      "noSignIn": "No sign-in recorded",
+      "signInMeaning": "A sign-in record does not establish usage of this permission.",
+      "privileged": "Privilege level",
+      "privilegedYes": "Privileged access · review carefully",
+      "privilegedNo": "Standard access",
+      "remediationNotice": "Review decisions and access changes are separate source operations. Check remediation status after recording a revocation decision.",
+      "decisionSection": "Decision and rationale",
+      "chooseDecision": "Choose whether to retain or revoke access",
+      "reasonHelp": "10–1,000 characters · {{count}} / 1,000",
+      "draftPreserved": "Your rationale is preserved. Review the refreshed record before deciding again.",
+      "preview": "Review decision before submitting",
+      "remediation": {
+        "NOT_REQUIRED": "No access change required",
+        "PENDING": "Source access change pending",
+        "APPLIED": "Source access change applied",
+        "MANUAL_REQUIRED": "Manual action required in the source"
+      },
+      "contextTitle": "Campaign and access evidence",
+      "sourceEffect": "After saving a decision, check the source access update."
+    },
+    "statusLabels": {
+      "approvalPending": "Review pending",
+      "approvalClaimed": "Review in progress",
+      "approvalInfo": "Waiting for information",
+      "requestNeedsInfo": "Your information required",
+      "serviceDraft": "Draft",
+      "serviceSubmitted": "Submitted",
+      "serviceTriaged": "Assigned",
+      "serviceInProgress": "Service in progress",
+      "serviceAwaiting": "Your response required",
+      "serviceResolved": "Resolved",
+      "serviceClosed": "Closed",
+      "reviewPending": "Review pending",
+      "reviewInProgress": "Review in progress"
+    },
+    "checklist": {
+      "title": "Checklist",
+      "progress": "{{completed}} of {{total}} complete",
+      "toggle": "Toggle completion of {{title}}",
+      "itemTitle": "Checklist item {{index}}",
+      "up": "Move up",
+      "down": "Move down",
+      "remove": "Remove item",
+      "empty": "Break this task into smaller steps.",
+      "limit": "You can add up to 100 checklist items.",
+      "newTitle": "New checklist item",
+      "add": "Add item",
+      "invalid": "Enter 1–500 characters per item, with no more than 100 items.",
+      "saveFailed": "Your changes are retained. Review the latest task, then save again.",
+      "saving": "Saving checklist",
+      "save": "Save checklist",
+      "conflict": "The checklist changed after you started editing. Compare the latest saved checklist below with your draft, then choose how to continue.",
+      "latest": "Latest saved checklist",
+      "useLatest": "Use latest checklist",
+      "replaceLatest": "Reviewed: replace latest with my draft",
+      "savedProgress": "Saved checklist: {{completed}} / {{total}} complete",
+      "unsavedProgress": "Your changes are not saved yet. Progress reflects the saved checklist."
+    },
+    "taskSources": {
+      "title": "Linked source work",
+      "unavailableNotice": "Some source links cannot be verified. To edit links, explicitly choose to remove the unavailable links first. You can save other changes while keeping them.",
+      "clearUnavailable": "Remove unavailable links and edit source connections",
+      "remove": "Remove source link",
+      "empty": "No source work is linked.",
+      "limit": "You can link up to 10 source items.",
+      "help": "Link work you can currently access. The source app manages its status and permissions.",
+      "search": "Search work to link",
+      "refineSearch": "Refine your search to find more source items."
     }
   },
   "workPage": {
@@ -1568,14 +2054,23 @@
     "noDueDate": "No due date",
     "summaryLabel": "Work summary",
     "summary": {
-      "all": { "label": "All work", "detail": "{{count}} active sources" },
+      "all": {
+        "label": "All work",
+        "detail": "{{count}} active sources"
+      },
       "due": {
         "label": "Due soon",
         "detail": "Next deadline {{date}}",
         "clearDetail": "No urgent deadline"
       },
-      "progress": { "label": "In progress", "detail": "{{count}} active items" },
-      "waiting": { "label": "Waiting", "detail": "{{count}} items awaiting input" }
+      "progress": {
+        "label": "In progress",
+        "detail": "{{count}} active items"
+      },
+      "waiting": {
+        "label": "Waiting",
+        "detail": "{{count}} items awaiting input"
+      }
     },
     "filterLabel": "Work status",
     "searchLabel": "Search work",
@@ -1648,7 +2143,10 @@
       "subject": "Person",
       "role": "Access under review",
       "source": "Assignment source",
-      "sourceTypes": { "DIRECT": "Direct assignment", "GROUP": "Group-derived assignment" },
+      "sourceTypes": {
+        "DIRECT": "Direct assignment",
+        "GROUP": "Group-derived assignment"
+      },
       "recommendations": {
         "KEEP": "Evidence supports keeping this access",
         "REVIEW": "Review this access carefully",
@@ -1661,7 +2159,11 @@
         "INACTIVE_90_DAYS": "The account has been inactive for at least 90 days.",
         "EVIDENCE_UNAVAILABLE": "Required evidence could not be verified. Make a manual decision."
       },
-      "decisions": { "PENDING": "Decision pending", "APPROVE": "Kept", "REVOKE": "Revoked" },
+      "decisions": {
+        "PENDING": "Decision pending",
+        "APPROVE": "Retention decided",
+        "REVOKE": "Revocation decided"
+      },
       "keep": "Keep access",
       "revoke": "Revoke access",
       "keepTitle": "Keep this access?",
@@ -1973,10 +2475,18 @@
         "L3": "High risk · approval workflow required"
       },
       "items": {
-        "calendarEvent": { "title": "Draft calendar event" },
-        "mailDraft": { "title": "Draft email" },
-        "serviceRequest": { "title": "Prepare service request" },
-        "approvalRequest": { "title": "Prepare approval request" }
+        "calendarEvent": {
+          "title": "Draft calendar event"
+        },
+        "mailDraft": {
+          "title": "Draft email"
+        },
+        "serviceRequest": {
+          "title": "Prepare service request"
+        },
+        "approvalRequest": {
+          "title": "Prepare approval request"
+        }
       }
     },
     "actions": {
@@ -2023,6 +2533,46 @@
     }
   },
   "activityFoundation": {
+    "sample": {
+      "title": "Development verification data",
+      "description": "This local contract sample is excluded from operational totals."
+    },
+    "sources": {
+      "title": "Activity data sources",
+      "AVAILABLE": "Retrieved",
+      "FORBIDDEN": "Outside your access scope",
+      "UNAVAILABLE": "Unavailable",
+      "partial": "Some sources could not be retrieved. Only verified history is shown; missing history does not mean zero events."
+    },
+    "connectorStatus": {
+      "title": "Personal sync-ledger status",
+      "description": "States reported by the actual Mail and Calendar sync ledgers. This is not platform-wide availability or an SLA.",
+      "loading": "Checking sync-ledger status.",
+      "empty": "No personal sync ledger is visible in the current access scope. This does not mean every connection is healthy.",
+      "unavailableTitle": "Sync-ledger status is unavailable",
+      "unavailableDescription": "Unverified connections were not represented as healthy.",
+      "lastSuccess": "Last successful sync {{at}}",
+      "noSuccess": "No successful sync recorded",
+      "observedAt": "Ledger observed {{at}}",
+      "localFixture": "Development verification data",
+      "states": {
+        "READY": "Ready",
+        "SYNCING": "Syncing",
+        "STALE": "Stale",
+        "RESET_REQUIRED": "Reset required",
+        "AUTHENTICATION_REQUIRED": "Authentication required",
+        "SUSPENDED": "Suspended",
+        "NOT_CONNECTED": "Not connected",
+        "REAUTHORIZATION_REQUIRED": "Reauthorization required",
+        "REVOKED": "Access revoked",
+        "CONFIGURATION_REQUIRED": "Configuration required",
+        "DEGRADED": "Degraded",
+        "UNAVAILABLE": "Unavailable",
+        "BLOCKED": "Policy blocked",
+        "REVIEW_REQUIRED": "Policy review required",
+        "DRAFT": "Preparing"
+      }
+    },
     "freshness": {
       "live": "Polled every 60 seconds",
       "syncing": "Refreshing information",
@@ -2039,7 +2589,7 @@
     "executionSnapshot": "Current execution observed at {{at}} · not a complete history of past steps. An unknown state does not mean the run failed.",
     "executionIdentity": "Execution {{id}} · attempt {{attempt}} · ledger version {{version}}",
     "closeSelectedRun": "Close selected execution",
-    "auditUnlinked": "No verified audit link",
+    "auditUnlinked": "No audit reference link",
     "workStateAtEvent": "Work status at change: {{state}}",
     "workStatus": {
       "DUE_SOON": "Due soon",
@@ -2140,14 +2690,73 @@
           "title": "Audit reference linked · access restricted",
           "description": "The reference is linked, but this view does not grant permission to open audit evidence."
         },
+        "LINKED": {
+          "title": "Central audit reference published",
+          "description": "The audit publisher reports this reference linked. Integrity is shown only by a separately loaded checkpoint receipt."
+        },
+        "PENDING": {
+          "title": "Central audit collection pending",
+          "description": "A deterministic audit lookup reference exists, but central collection has not been acknowledged. This is not verified integrity."
+        },
         "LEGACY_UNLINKED": {
           "title": "Legacy record · no verified audit link",
           "description": "This source-bound legacy record has no verified audit record reference."
         },
         "NOT_LINKED": {
-          "title": "No verified audit link",
-          "description": "No actual audit record reference was provided. No audit result is inferred."
+          "title": "No audit reference link",
+          "description": "No actual audit record reference was provided. No integrity result is inferred."
         }
+      },
+      "integrity": {
+        "title": "Audit integrity evidence",
+        "loading": "Checking audit integrity evidence.",
+        "link": {
+          "LINKED": "Reference linked",
+          "NOT_LINKED": "Reference not linked"
+        },
+        "status": {
+          "VERIFIED": "Integrity verified",
+          "FAILED": "Integrity failed",
+          "UNAVAILABLE": "Unavailable",
+          "PENDING": "Checkpoint pending"
+        },
+        "restricted": "Evidence access restricted",
+        "result": {
+          "VERIFIED": {
+            "title": "Matches the reported daily checkpoint",
+            "description": "The current audit-record hash matches the server-reported daily checkpoint. This does not certify legal compliance."
+          },
+          "FAILED": {
+            "title": "Does not match the reported checkpoint",
+            "description": "Audit-record integrity verification failed. Do not execute source work until an audit owner investigates."
+          },
+          "UNAVAILABLE": {
+            "title": "The integrity result is unavailable",
+            "description": "Access or evidence state prevents verification. This must not be treated as healthy."
+          },
+          "PENDING": {
+            "title": "Waiting for the daily checkpoint",
+            "description": "The audit reference exists, but no daily checkpoint is available for comparison yet."
+          }
+        },
+        "errors": {
+          "RESTRICTED": {
+            "title": "Audit evidence is not accessible",
+            "description": "The current access scope cannot retrieve evidence, so no integrity result is shown."
+          },
+          "NOT_COLLECTED": {
+            "title": "No collected audit evidence was found",
+            "description": "Central audit evidence is not available for this event yet. It can be checked again later."
+          },
+          "UNAVAILABLE": {
+            "title": "Audit evidence could not be loaded",
+            "description": "No unverified integrity result was substituted."
+          }
+        },
+        "observedAt": "Evidence observed",
+        "verifiedAt": "Last integrity verification",
+        "recordHash": "Record hash · {{algorithm}}",
+        "scopeNotice": "Only reference linkage and reported daily-checkpoint integrity are shown. This is not an audit pass, compliance decision, or legal certification."
       }
     },
     "firstPage": "Latest page",
@@ -2165,6 +2774,10 @@
     }
   },
   "activityPage": {
+    "mobileDescription": "Review work changes and execution records.",
+    "mobileFilters": "Activity filters and saved views",
+    "showFilters": "Filters",
+    "hideFilters": "Hide filters",
     "header": {
       "eyebrow": "Workspace signal",
       "title": "Activity",
@@ -2184,9 +2797,18 @@
         "label": "Connected executions",
         "detail": "Events from {{count}} sources"
       },
-      "agent": { "label": "Currently running", "detail": "{{count}} currently running" },
-      "input": { "label": "Needs your input", "detail": "{{count}} awaiting review" },
-      "blocked": { "label": "Policy blocked", "detail": "{{count}} requiring investigation" }
+      "agent": {
+        "label": "Currently running",
+        "detail": "{{count}} currently running"
+      },
+      "input": {
+        "label": "Needs your input",
+        "detail": "{{count}} awaiting review"
+      },
+      "blocked": {
+        "label": "Policy blocked",
+        "detail": "{{count}} requiring investigation"
+      }
     },
     "actorFilter": "Activity actor",
     "stateFilter": "Activity state",
@@ -2289,7 +2911,11 @@
       "attention": "Needs attention",
       "configuration-required": "Admin connection required"
     },
-    "launchMode": { "Native": "Native", "SSO": "SSO", "Deep link": "Deep link" },
+    "launchMode": {
+      "Native": "Native",
+      "SSO": "SSO",
+      "Deep link": "Deep link"
+    },
     "launchOpened": "{{app}} launch preview opened.",
     "launchError": "The app could not be launched. Check its connection status.",
     "configurationRequired": "{{app}} can be used after an administrator connects SSO or a deep link.",
@@ -2381,7 +3007,10 @@
     "noApprovalRequired": "This plan can run without approval under the current policy.",
     "approvePlan": "Approve plan",
     "reject": "Reject",
-    "citationStates": { "restricted": "Restricted", "stale": "Refresh needed" },
+    "citationStates": {
+      "restricted": "Restricted",
+      "stale": "Refresh needed"
+    },
     "execution": {
       "auditId": "Audit ID: {{id}}",
       "retry": "Retry",
@@ -2431,13 +3060,22 @@
       }
     },
     "schedule": {
-      "ref-schedule-standup": { "title": "Product stand-up", "detail": "25 min / Teams" },
+      "ref-schedule-standup": {
+        "title": "Product stand-up",
+        "detail": "25 min / Teams"
+      },
       "ref-schedule-customer": {
         "title": "Customer discovery",
         "detail": "50 min / Meeting room 3"
       },
-      "ref-schedule-focus": { "title": "Focus time", "detail": "90 min" },
-      "ref-schedule-deadline": { "title": "Benefits enrollment closes", "detail": "People Service" }
+      "ref-schedule-focus": {
+        "title": "Focus time",
+        "detail": "90 min"
+      },
+      "ref-schedule-deadline": {
+        "title": "Benefits enrollment closes",
+        "detail": "People Service"
+      }
     },
     "work": {
       "WK-1042": {

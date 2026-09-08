@@ -64,7 +64,7 @@ test('an older source run resolves by ID even when the source list is empty', as
   await expect(page.getByText('Recent run response', { exact: true })).toBeVisible();
   await expect(detail.getByText('Selected older execution', { exact: true })).toBeVisible();
   await expect(detail).toContainText('not a history of every stage or retry');
-  await expect(detail).toContainText('No verified audit link');
+  await expect(detail).toContainText('No audit reference link');
   await expect(detail.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   const audit = await new AxeBuilder({ page }).include('main').analyze();
   expect(

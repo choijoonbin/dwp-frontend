@@ -75,6 +75,20 @@ describe('activity navigation and server-query model', () => {
     expect(selectedActivityEvent('specific-event', event)).toBe(event);
   });
 
+  it.each(['', 'dwaion:'])(
+    'accepts a case-equivalent UUID within the exact %s source namespace',
+    (prefix) => {
+      const uuid = 'aaaaaaaa-0000-4000-8000-000000000001';
+      const selected = { ...event, id: `${prefix}${uuid}` };
+      expect(selectedActivityEvent(`${prefix}${uuid.toUpperCase()}`, selected)).toBe(selected);
+      expect(
+        selectedActivityEvent(`${prefix}bbbbbbbb-0000-4000-8000-000000000001`, selected)
+      ).toBeUndefined();
+      expect(selectedActivityEvent(`DWAION:${uuid}`, selected)).toBeUndefined();
+      expect(selectedActivityEvent('SPECIFIC-EVENT', event)).toBeUndefined();
+    }
+  );
+
   it('separates tenant/user, page, filter, detail, and summary caches', () => {
     const base = activityQueryKeys.feed('tenant:user', { actor: 'person' });
     expect(base).not.toEqual(activityQueryKeys.feed('tenant:other', { actor: 'person' }));
@@ -160,5 +174,18 @@ describe('activity navigation and server-query model', () => {
     expect(
       validActivityTimeRange({ from: '2026-09-04T00:00:00Z', to: '2026-09-04T00:00:00Z' })
     ).toBe(false);
+  });
+
+  it.each([
+    ['2026-02-29T00:00:00Z', false],
+    ['2026-02-30T00:00:00Z', false],
+    ['2026-04-31T00:00:00+09:00', false],
+    ['2026-09-04T24:00:00Z', false],
+    ['2024-02-29T23:59:59Z', true],
+    ['2026-09-04T10:00+09:00', true],
+    ['2000-02-29T00:00:00.123456789Z', true],
+    ['1900-02-29T00:00:00Z', false],
+  ])('validates the actual calendar date and time %s as %s', (from, valid) => {
+    expect(validActivityTimeRange({ from })).toBe(valid);
   });
 });

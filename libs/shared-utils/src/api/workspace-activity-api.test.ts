@@ -4,6 +4,7 @@ import {
   getWorkspaceActivity,
   getWorkspaceActivityEvent,
   getWorkspaceActivityExecutionSummary,
+  normalizeWorkspaceActivityEvent,
   normalizeWorkspaceActivityFeed,
 } from './workspace-api';
 import type { RawWorkspaceActivityEvent } from './workspace-api';
@@ -85,7 +86,7 @@ describe('workspace activity API foundation', () => {
   it('defaults to safe usage exclusion while preserving the no-argument API', async () => {
     const get = vi
       .spyOn(axiosInstance, 'get')
-      .mockResolvedValue({ data: { data: { events: [], generatedAt: '' } } });
+      .mockResolvedValue({ data: { data: { events: [], generatedAt: '2026-09-04T09:00:00Z' } } });
     await getWorkspaceActivity();
     expect(get.mock.calls[0]?.[0]).toBe('/api/platform/v1/workspace/activity');
   });
@@ -95,6 +96,17 @@ describe('workspace activity API foundation', () => {
     const result = await getWorkspaceActivityEvent('event/old');
     expect(get.mock.calls[0]?.[0]).toBe('/api/platform/v1/workspace/activity/events/event%2Fold');
     expect(result.id).toBe('event-old');
+  });
+
+  it('validates a detail event without inventing a feed timestamp', () => {
+    expect(normalizeWorkspaceActivityEvent(event)).toMatchObject({
+      id: 'event-old',
+      actor: 'person',
+      state: 'completed',
+    });
+    expect(() => normalizeWorkspaceActivityEvent({ ...event, title: '' })).toThrow(
+      'Activity response is invalid.'
+    );
   });
 
   it('never converts event counts into the current execution summary', async () => {
@@ -118,8 +130,10 @@ describe('workspace activity API foundation', () => {
     'normalizes terminal/unverified state %s',
     (state) => {
       expect(
-        normalizeWorkspaceActivityFeed({ events: [{ ...event, state }], generatedAt: '' }).events[0]
-          ?.state
+        normalizeWorkspaceActivityFeed({
+          events: [{ ...event, state }],
+          generatedAt: '2026-09-04T09:00:00Z',
+        }).events[0]?.state
       ).toBe(state.toLowerCase());
     }
   );
@@ -127,9 +141,30 @@ describe('workspace activity API foundation', () => {
   it('does not invent source authorization or audit linkage for legacy payloads', () => {
     const result = normalizeWorkspaceActivityFeed({
       events: [{ ...event, sourceAccess: undefined, auditStatus: undefined }],
-      generatedAt: '',
+      generatedAt: '2026-09-04T09:00:00Z',
     });
     expect(result.events[0]?.sourceAccess).toBeUndefined();
     expect(result.events[0]?.auditStatus).toBeUndefined();
+  });
+
+  it.each([
+    { label: 'missing title', value: { ...event, title: '' } },
+    { label: 'unknown actor', value: { ...event, actor: 'ROBOT' } },
+    { label: 'out-of-range progress', value: { ...event, progress: 101 } },
+    { label: 'invented verified audit', value: { ...event, auditStatus: 'VERIFIED' } },
+    { label: 'unexpected sensitive field', value: { ...event, prompt: 'private question' } },
+  ])('rejects a malformed $label event before it reaches the UI', ({ value }) => {
+    expect(() =>
+      normalizeWorkspaceActivityFeed({
+        events: [value as RawWorkspaceActivityEvent],
+        generatedAt: '2026-09-04T09:00:00Z',
+      })
+    ).toThrow('Activity response is invalid.');
+  });
+
+  it('rejects a feed without an observable server timestamp', () => {
+    expect(() =>
+      normalizeWorkspaceActivityFeed({ events: [event], generatedAt: 'invalid' })
+    ).toThrow('Activity response is invalid.');
   });
 });

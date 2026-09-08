@@ -1,0 +1,154 @@
+.dwp-meeting-conference__waiting-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dwp-meeting-stage-waiting {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--dwp-meeting-stage-border);
+  border-radius: var(--dwp-meeting-shape-card);
+  color: var(--dwp-palette-common-white);
+  background: var(--dwp-meeting-stage-panel);
+}
+
+.dwp-meeting-stage-waiting__label,
+.dwp-meeting-stage-waiting__footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: var(--dwp-meeting-stage-muted);
+  font-size: var(--dwp-meeting-type-micro);
+}
+
+.dwp-meeting-stage-waiting__label {
+  background: var(--dwp-meeting-stage-header);
+}
+.dwp-meeting-stage-waiting__footer {
+  border-top: 1px solid var(--dwp-meeting-stage-border);
+}
+.dwp-meeting-stage-waiting__footer svg {
+  flex-shrink: 0;
+  color: var(--dwp-meeting-stage-positive);
+}
+.dwp-meeting-stage-waiting__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+}
+.dwp-meeting-stage-waiting__icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border: 1px solid var(--dwp-meeting-stage-border);
+  border-radius: var(--dwp-meeting-shape-spotlight);
+  color: var(--dwp-meeting-stage-accent);
+  background: var(--dwp-meeting-stage-selection);
+}
+.dwp-meeting-stage-waiting__content h2 {
+  margin: 16px 0 8px;
+  font-size: var(--dwp-meeting-type-title);
+}
+.dwp-meeting-stage-waiting__content p {
+  max-width: 360px;
+  margin: 0;
+  color: var(--dwp-meeting-stage-muted);
+  font-size: var(--dwp-meeting-type-body);
+  line-height: var(--dwp-meeting-line-body);
+}
+.dwp-meeting-live-summary {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .dwp-meeting-live-summary {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin: 0 12px 12px;
+    border: 1px solid var(--dwp-meeting-stage-border);
+    border-radius: var(--dwp-meeting-shape-stage);
+    color: var(--dwp-palette-common-white);
+    background: var(--dwp-meeting-stage-canvas);
+  }
+  .dwp-meeting-live-summary__icon {
+    color: var(--dwp-meeting-stage-accent);
+  }
+  .dwp-meeting-live-summary__text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    gap: 4px;
+  }
+  .dwp-meeting-live-summary__text strong {
+    font-size: var(--dwp-meeting-type-body);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dwp-meeting-live-summary__text span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--dwp-meeting-stage-muted);
+    font-size: var(--dwp-meeting-type-micro);
+  }
+  .dwp-meeting-live-summary button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--dwp-meeting-stage-accent);
+    border-radius: var(--dwp-meeting-shape-card);
+    color: var(--dwp-palette-common-white);
+    background: var(--dwp-palette-primary-main);
+    font: inherit;
+    font-size: var(--dwp-meeting-type-micro);
+    cursor: pointer;
+  }
+  .dwp-meeting-live-summary button:focus-visible {
+    outline: 3px solid var(--dwp-meeting-stage-accent);
+    outline-offset: 2px;
+  }
+  .dwp-meeting-stage-waiting__content {
+    padding: 14px;
+  }
+  .dwp-meeting-stage-waiting__content h2 {
+    font-size: var(--dwp-meeting-type-title);
+  }
+}
+
+@media (max-height: 599px) {
+  .dwp-meeting-live-summary {
+    display: none;
+  }
+  .dwp-meeting-stage-waiting__icon,
+  .dwp-meeting-stage-waiting__footer {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .dwp-meeting-stage-waiting,
+  .dwp-meeting-live-summary,
+  .dwp-meeting-live-summary button,
+  .dwp-meeting-stage-waiting__icon,
+  .dwp-meeting-stage-waiting__label,
+  .dwp-meeting-stage-waiting__footer {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+}

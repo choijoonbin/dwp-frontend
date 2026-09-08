@@ -20,6 +20,7 @@ export default [
       '**/test-results/**',
       '**/test-results-*/**',
       '**/artifacts/**',
+      'public/assets/meeting-background/mediapipe-0.10.14/vision_wasm_nosimd_internal.js',
     ],
   },
   eslint.configs.recommended,

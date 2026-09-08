@@ -376,6 +376,7 @@ function PreparationWorkspace({
                   invitationConflict={invitationConflict}
                   onReviewInvitation={() => setInvitationConflict(false)}
                   onRespond={respond}
+                  onEnter={onEnterMeeting}
                 />
               </Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>

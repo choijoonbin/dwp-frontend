@@ -1,5 +1,9 @@
 import { workspaceWorkItemRoute } from '@dwp-frontend/shared-utils/api/workspace-work-policy';
 import {
+  personalWorkContributionProvider,
+  personalDayPlanContributionProvider,
+} from './personal-work-contribution-provider';
+import {
   createHomeContributionProvider,
   type HomeContributionInput,
   type HomeContributionPriority,
@@ -156,12 +160,6 @@ function translateContribution(
   return context.translate(key, values);
 }
 
-function semanticKey(...values: (string | null | undefined)[]): string {
-  return values
-    .map((value) => value?.trim().toLocaleLowerCase('en-US').replace(/\s+/gu, ' ') ?? '')
-    .join('|');
-}
-
 export function canonicalHomeSourceNamespace(value: string): string {
   const normalized = value
     .trim()
@@ -182,6 +180,16 @@ export function canonicalHomeSourceNamespace(value: string): string {
   if (['WORKPLACE', 'DWPWORKPLACE'].includes(compact)) return 'WORKPLACE';
   if (['CALENDAR', 'DWPCALENDAR'].includes(compact)) return 'CALENDAR';
   return normalized || 'UNKNOWN';
+}
+
+export function homeContributionWorkIdentity(
+  sourceSystem: string,
+  sourceReference: string,
+  obligationKey?: string | null
+): string {
+  const identity = `${canonicalHomeSourceNamespace(sourceSystem)}:${sourceReference.trim()}`;
+  const obligation = obligationKey?.trim();
+  return obligation ? `${identity}:${obligation}` : identity;
 }
 
 function overdue(dueAt: string | null | undefined, now: string): boolean {
@@ -250,7 +258,11 @@ export const workspaceWorkContributionProvider = createHomeContributionProvider<
           description: item.reason ?? item.recommendedNext ?? item.summary,
           dueAt: item.dueAt,
           deepLink: workspaceWorkItemRoute(item),
-          dedupeKey: `${canonicalHomeSourceNamespace(item.sourceSystem)}:${item.sourceReference ?? item.id}`,
+          dedupeKey: homeContributionWorkIdentity(
+            item.sourceSystem,
+            item.sourceReference ?? item.id,
+            item.obligationKey
+          ),
           sourceReference: item.sourceReference ?? item.id,
           generatedAt: data.generatedAt,
           privacy: { classification: privacyClassification(item.dataClassification) },
@@ -471,32 +483,30 @@ export const approvalContributionProvider =
     authority: homeAppReadAuthority('APP.APPROVALS'),
     freshnessMs: HOME_SOURCE_FRESHNESS_MS,
     normalize({ home }, context) {
-      const taskSignatures = home.focusQueue.map((task) =>
-        semanticKey(task.title, task.stepName, task.dueAt?.slice(0, 10))
-      );
-      const taskSignatureCounts = taskSignatures.reduce<Map<string, number>>(
-        (counts, signature) => {
-          counts.set(signature, (counts.get(signature) ?? 0) + 1);
-          return counts;
-        },
-        new Map()
-      );
+      const requestTaskCounts = home.focusQueue.reduce<Map<string, number>>((counts, task) => {
+        counts.set(task.requestId, (counts.get(task.requestId) ?? 0) + 1);
+        return counts;
+      }, new Map());
       const tasks = home.focusQueue.flatMap<HomeContributionInput>((task) => {
-        const signature = semanticKey(task.title, task.stepName, task.dueAt?.slice(0, 10));
-        const count = taskSignatureCounts.get(signature) ?? 1;
+        const taskCountForRequest = requestTaskCounts.get(task.requestId) ?? 1;
+        // A single legacy workspace projection only knows the request id, so
+        // preserve that safe one-to-one dedupe. Once a request has multiple
+        // tasks, the request id becomes ambiguous and each task/step must keep
+        // its source-owned obligation identity.
+        const dedupeKey =
+          taskCountForRequest === 1
+            ? homeContributionWorkIdentity('DWP_APPROVAL', task.requestId)
+            : homeContributionWorkIdentity('APPROVAL_TASK', task.taskId, task.stepKey);
         const shared = {
           scope: 'ME' as const,
           priority: approvalPriority(task.priority, task.dueAt, context.now),
           status: overdue(task.dueAt, context.now) ? 'OVERDUE' : task.status,
           title: task.title,
           description: task.summary || task.stepName,
-          count,
+          count: 1,
           dueAt: task.dueAt,
-          deepLink:
-            count > 1
-              ? '/approvals/inbox'
-              : `/approvals/inbox?task=${encodeURIComponent(task.taskId)}`,
-          dedupeKey: count > 1 ? `APPROVAL-ACTION:${signature}` : `APPROVAL:${task.requestId}`,
+          deepLink: `/approvals/inbox?task=${encodeURIComponent(task.taskId)}`,
+          dedupeKey,
           sourceReference: task.taskId,
           generatedAt: home.generatedAt,
           privacy: { classification: privacyClassification(task.dataClassification) },
@@ -534,7 +544,11 @@ export const approvalContributionProvider =
             deepLink: needsInformation
               ? `/approvals/requests/needs-info?request=${encodeURIComponent(request.requestId)}`
               : `/approvals/requests/submitted?request=${encodeURIComponent(request.requestId)}`,
-            dedupeKey: `APPROVAL:${request.requestId}`,
+            dedupeKey: homeContributionWorkIdentity(
+              'APPROVAL_REQUEST',
+              request.requestId,
+              needsInformation ? 'REQUEST_INFORMATION' : undefined
+            ),
             sourceReference: request.requestId,
             generatedAt: home.generatedAt,
             privacy: { classification: privacyClassification(request.dataClassification) },
@@ -715,34 +729,50 @@ export const serviceContributionProvider = createHomeContributionProvider<
     appKey: 'APP.EMPLOYEE_SERVICES',
     appLabel: 'Services',
   },
-  supportedKinds: ['REQUEST'],
+  supportedKinds: ['RESPONSE', 'REQUEST'],
   authority: homeAppReadAuthority('APP.EMPLOYEE_SERVICES'),
   freshnessMs: HOME_SOURCE_FRESHNESS_MS,
   normalize(data, context) {
     return data
       .filter((request) => !['RESOLVED', 'CLOSED', 'CANCELLED'].includes(request.status))
-      .map<HomeContributionInput>((request) => ({
-        id: `service-request:${request.requestId}`,
-        // The current Services UI has no requester-response command. Keep the
-        // item visible as tracked work until that end-to-end capability exists.
-        kind: 'REQUEST',
-        scope: 'ME',
-        priority:
-          request.status === 'AWAITING_REQUESTER'
-            ? 'HIGH'
-            : servicePriority(request.priority, request.slaDueAt, context.now),
-        status: overdue(request.slaDueAt, context.now) ? 'OVERDUE' : request.status,
-        title: request.summary,
-        description: isKoreanLocale(context.locale) ? request.serviceNameKo : request.serviceNameEn,
-        dueAt: request.slaDueAt,
-        deepLink: `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${encodeURIComponent(
-          request.requestId
-        )}`,
-        dedupeKey: `SERVICE:${request.requestId}`,
-        sourceReference: request.requestId,
-        generatedAt: context.snapshotAt ?? '',
-        privacy: { classification: privacyClassification(request.dataClassification) },
-      }));
+      .flatMap<HomeContributionInput>((request) => {
+        const tracked: HomeContributionInput = {
+          id: `service-request:${request.requestId}`,
+          kind: 'REQUEST',
+          scope: 'ME',
+          priority:
+            request.status === 'AWAITING_REQUESTER'
+              ? 'HIGH'
+              : servicePriority(request.priority, request.slaDueAt, context.now),
+          status: overdue(request.slaDueAt, context.now) ? 'OVERDUE' : request.status,
+          title: request.summary,
+          description: isKoreanLocale(context.locale)
+            ? request.serviceNameKo
+            : request.serviceNameEn,
+          dueAt: request.slaDueAt,
+          deepLink: `/services/${request.status === 'DRAFT' ? 'drafts' : 'my'}/${encodeURIComponent(
+            request.requestId
+          )}`,
+          dedupeKey: `SERVICE:${request.requestId}`,
+          sourceReference: request.requestId,
+          generatedAt: context.snapshotAt ?? '',
+          privacy: { classification: privacyClassification(request.dataClassification) },
+        };
+        if (request.status !== 'AWAITING_REQUESTER') return [tracked];
+        // Home identifies the response obligation; Work rechecks the source's
+        // current permission, status and version before allowing submission.
+        // The existing authority-before-dedupe policy retains Services access
+        // when Work VIEW is absent and shows only one authorized destination.
+        return [
+          {
+            ...tracked,
+            kind: 'RESPONSE',
+            authority: homeAppReadAuthority('APP.WORK'),
+            deepLink: `/work/queue?work=${encodeURIComponent(`SERVICE_REQUEST:${request.requestId}:`)}`,
+          },
+          { ...tracked, id: `${tracked.id}:source` },
+        ];
+      });
   },
 });
 
@@ -877,6 +907,8 @@ export const notificationContributionProvider =
 
 export const HOME_CONTRIBUTION_PROVIDERS = [
   workspaceWorkContributionProvider,
+  personalWorkContributionProvider,
+  personalDayPlanContributionProvider,
   calendarContributionProvider,
   activityContributionProvider,
   approvalContributionProvider,

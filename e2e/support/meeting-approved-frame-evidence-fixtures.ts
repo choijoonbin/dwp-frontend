@@ -66,7 +66,7 @@ function dormantWebSocket() {
   });
 }
 
-export async function mockApprovedLiveRoom(page: Page) {
+export async function mockApprovedLiveRoom(page: Page, rich = false) {
   await page.addInitScript(dormantWebSocket);
   await mockMeetingVisualSession(page, { locale: 'ko', reducedMotion: true });
   await mockMeetingVisualPrejoin(page);
@@ -74,6 +74,7 @@ export async function mockApprovedLiveRoom(page: Page) {
   await page.route(`**/api/meetings/v1/meetings/${MEETING_VISUAL_ID}`, (route) =>
     response(route, {
       ...MEETING_VISUAL_SUMMARY,
+      ...(rich ? { title: '분기 제품 출시 의사결정 (Q3 Final Go/No-Go)' } : {}),
       lifecycleState: 'LIVE',
       startedAt: '2026-08-31T04:02:00Z',
       provider: 'LIVEKIT',
@@ -137,6 +138,28 @@ export async function mockApprovedLiveRoom(page: Page) {
           ownerDisplayName: '김민아',
           plannedMinutes: 15,
         },
+        ...(rich
+          ? [
+              {
+                itemId: '71000000-0000-4000-8000-000000000002',
+                position: 1,
+                title: '보안·성능 위험 최종 검토',
+                objective: '확장 전 검증 조건과 담당자를 확인합니다',
+                ownerUserId: 43,
+                ownerDisplayName: '박수석',
+                plannedMinutes: 15,
+              },
+              {
+                itemId: '71000000-0000-4000-8000-000000000003',
+                position: 2,
+                title: '배포 승인자 일정 확정 및 결재',
+                objective: '다음 단계와 출시 승인을 결정합니다',
+                ownerUserId: 42,
+                ownerDisplayName: '김민아',
+                plannedMinutes: 15,
+              },
+            ]
+          : []),
       ],
       materials: [],
       myResponse: null,
@@ -167,23 +190,84 @@ export async function mockApprovedLiveRoom(page: Page) {
         canVote: true,
         canModerate: true,
       },
-      timer: {
-        state: 'IDLE',
-        agendaItemId: null,
-        agendaItemTitle: null,
-        plannedSeconds: null,
-        elapsedSeconds: 0,
-        remainingSeconds: null,
-        runningSince: null,
-        version: 0,
-      },
-      questions: [],
-      polls: [],
+      timer: rich
+        ? {
+            state: 'RUNNING',
+            agendaItemId: '71000000-0000-4000-8000-000000000002',
+            agendaItemTitle: '보안·성능 위험 최종 검토',
+            plannedSeconds: 900,
+            elapsedSeconds: 540,
+            remainingSeconds: 360,
+            runningSince: '2026-08-31T04:11:00Z',
+            version: 1,
+          }
+        : {
+            state: 'IDLE',
+            agendaItemId: null,
+            agendaItemTitle: null,
+            plannedSeconds: null,
+            elapsedSeconds: 0,
+            remainingSeconds: null,
+            runningSince: null,
+            version: 0,
+          },
+      questions: rich
+        ? [
+            {
+              questionId: '75000000-0000-4000-8000-000000000001',
+              state: 'OPEN',
+              text: '이번 처리량 테스트에는 해외 리전 지연도 포함되었나요?',
+              authorDisplayName: '송예은',
+              answer: null,
+              upvoteCount: 5,
+              upvotedByMe: false,
+              mine: false,
+              canModerate: true,
+              version: 1,
+              sequence: 1,
+              createdAt: '2026-08-31T04:18:00Z',
+              answeredAt: null,
+            },
+          ]
+        : [],
+      polls: rich
+        ? [
+            {
+              pollId: '72000000-0000-4000-8000-000000000001',
+              state: 'OPEN',
+              question: 'Go/No-Go 최종 출시 승인',
+              anonymous: true,
+              options: [
+                {
+                  optionId: '73000000-0000-4000-8000-000000000001',
+                  position: 0,
+                  label: '출시 승인',
+                  voteCount: 5,
+                },
+                {
+                  optionId: '73000000-0000-4000-8000-000000000002',
+                  position: 1,
+                  label: '보완 후 검토',
+                  voteCount: 1,
+                },
+              ],
+              totalVotes: 6,
+              myOptionId: null,
+              myBallotVersion: 0,
+              canVote: true,
+              canModerate: true,
+              version: 1,
+              sequence: 2,
+              openedAt: '2026-08-31T04:18:00Z',
+              closedAt: null,
+            },
+          ]
+        : [],
     })
   );
 }
 
-export async function mockApprovedFollowUps(page: Page) {
+export async function mockApprovedFollowUps(page: Page, rich = false) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     userId: 42,
     locale: 'ko',
@@ -237,6 +321,57 @@ export async function mockApprovedFollowUps(page: Page) {
     acceptedAt: null,
     completedAt: null,
   };
+  const tasks = rich
+    ? [
+        task,
+        {
+          ...task,
+          assignmentId: '99000000-0000-4000-8000-000000000911',
+          title: '지역별 용량 검증 및 출시 위험 확인',
+          assignmentState: 'ACCEPTED',
+          workState: 'IN_PROGRESS',
+          acceptedAt: '2026-09-04T01:30:00Z',
+          capabilities: {
+            ...task.capabilities,
+            canAccept: false,
+            canDecline: false,
+            canComplete: true,
+            canWait: true,
+          },
+        },
+        {
+          ...task,
+          assignmentId: '99000000-0000-4000-8000-000000000912',
+          title: '보안 검토 결과를 회의에 공유',
+          priority: 'NORMAL',
+          assignmentState: 'ACCEPTED',
+          workState: 'WAITING',
+          acceptedAt: '2026-09-04T01:30:00Z',
+          capabilities: {
+            ...task.capabilities,
+            canAccept: false,
+            canDecline: false,
+            canStart: true,
+          },
+        },
+        {
+          ...task,
+          assignmentId: '99000000-0000-4000-8000-000000000913',
+          title: '제품 요구사항 최종 정리',
+          priority: 'NORMAL',
+          assignmentState: 'ACCEPTED',
+          workState: 'COMPLETED',
+          acceptedAt: '2026-09-04T01:30:00Z',
+          completedAt: '2026-09-04T02:00:00Z',
+          capabilities: {
+            ...task.capabilities,
+            canAccept: false,
+            canDecline: false,
+            canCancel: false,
+          },
+        },
+      ]
+    : [task];
   await page.route('**/api/meetings/v1/home*', (route) =>
     response(route, {
       serverNow: '2026-09-04T02:00:00Z',
@@ -251,15 +386,16 @@ export async function mockApprovedFollowUps(page: Page) {
   );
   await page.route('**/api/platform/v1/workspace/work-hub/assignments**', (route) => {
     const url = new URL(route.request().url());
-    if (route.request().method() === 'GET' && url.pathname.endsWith(`/${followUpId}`)) {
-      return response(route, task);
+    const detail = tasks.find((item) => url.pathname.endsWith(`/${item.assignmentId}`));
+    if (route.request().method() === 'GET' && detail) {
+      return response(route, detail);
     }
     if (route.request().method() === 'GET') {
       return response(route, {
-        items: [task],
+        items: tasks,
         page: 0,
         size: 20,
-        totalElements: 1,
+        totalElements: tasks.length,
         hasMore: false,
       });
     }
@@ -267,7 +403,7 @@ export async function mockApprovedFollowUps(page: Page) {
   });
 }
 
-export async function mockApprovedTemplatesAndPreferences(page: Page) {
+export async function mockApprovedTemplatesAndPreferences(page: Page, rich = false) {
   await mockMeetingVisualSession(page, { locale: 'ko', reducedMotion: true });
   const template = {
     templateId,
@@ -295,13 +431,49 @@ export async function mockApprovedTemplatesAndPreferences(page: Page) {
     version: 2,
     updatedAt: '2026-09-04T01:00:00Z',
   };
+  const templates = rich
+    ? [
+        template,
+        {
+          ...template,
+          templateId: '88000000-0000-4000-8000-000000000002',
+          scope: 'ORGANIZATION',
+          name: '주간 프로젝트 정기 회의',
+          purpose: '팀별 진행 상황과 위험을 공유하고 다음 주 실행 항목을 정리합니다.',
+          category: 'GENERAL',
+          canEdit: false,
+          favorite: false,
+        },
+        {
+          ...template,
+          templateId: '88000000-0000-4000-8000-000000000003',
+          name: '디자인 리뷰와 피드백',
+          purpose: '사용자 흐름과 디자인 시안을 검토하고 개선 방향에 합의합니다.',
+          category: 'REVIEW',
+          durationMinutes: 30,
+          favorite: false,
+        },
+        {
+          ...template,
+          templateId: '88000000-0000-4000-8000-000000000004',
+          name: '일대일 성장 대화',
+          purpose: '성과와 성장 목표를 확인하고 다음 실행을 함께 계획합니다.',
+          category: 'GENERAL',
+          durationMinutes: 30,
+          favorite: false,
+        },
+      ]
+    : [template];
   await page.route('**/api/meetings/v1/templates**', (route) => {
     const pathname = new URL(route.request().url()).pathname;
     return response(
       route,
-      pathname.endsWith('/' + templateId)
-        ? template
-        : { items: [template], total: 1, page: 0, pageSize: 30 }
+      templates.find((item) => pathname.endsWith('/' + item.templateId)) ?? {
+        items: templates,
+        total: templates.length,
+        page: 0,
+        pageSize: 30,
+      }
     );
   });
   await page.route('**/api/meetings/v1/preferences', (route) =>

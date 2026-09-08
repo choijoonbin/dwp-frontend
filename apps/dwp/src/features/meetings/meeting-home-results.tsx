@@ -8,7 +8,6 @@ import {
   ErrorState,
   GuidedEmptyState,
   LoadingState,
-  SectionHeader,
 } from '@dwp-frontend/design-system';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import {
@@ -30,16 +29,18 @@ import {
   meetingHomeResultUnexpired,
   type MeetingHomeResultsSection,
 } from './meeting-home-results-model';
-import { meetingListSurface } from './meeting-visual-system';
+import { meetingHomeCard, meetingHomeInset } from './meeting-home-presentation';
 
 export function MeetingHomeResults({
   recent,
   section,
   timeZone = resolveSystemTimeZone('UTC'),
+  embedded = false,
 }: {
   recent: VideoMeetingSummary[];
   section: MeetingHomeResultsSection;
   timeZone?: string;
+  embedded?: boolean;
 }) {
   const { t, i18n } = useTranslation('meetings');
   const auth = useAuth();
@@ -48,7 +49,21 @@ export function MeetingHomeResults({
   const meetingIds = candidates.map((meeting) => meeting.meetingId);
   const tenantId = String(auth.user?.tenantId ?? '');
   const actorId = String(auth.user?.userId ?? '');
-  const scope = JSON.stringify([tenantId, actorId, section, meetingIds]);
+  const enabled =
+    auth.isAuthenticated &&
+    auth.user?.identityPlane === 'TENANT' &&
+    Number.isSafeInteger(auth.user?.tenantId) &&
+    Number(tenantId) > 0 &&
+    Number.isSafeInteger(auth.user?.userId) &&
+    Number(actorId) > 0;
+  const scope = JSON.stringify([
+    auth.isAuthenticated,
+    auth.user?.identityPlane,
+    tenantId,
+    actorId,
+    section,
+    meetingIds,
+  ]);
   const loader = useMemo(() => createMeetingHomeResultsLoader(scope, section), [scope, section]);
   const [now, setNow] = useState(Date.now);
   const [suppressed, setSuppressed] = useState<{ scope: string; ids: string[] } | null>(null);
@@ -74,7 +89,7 @@ export function MeetingHomeResults({
       setSuppressed({ scope, ids: snapshot.failedMeetingIds });
       return snapshot;
     },
-    enabled: auth.isAuthenticated && Boolean(tenantId && actorId) && meetingIds.length > 0,
+    enabled: enabled && meetingIds.length > 0,
     staleTime: 30_000,
     refetchInterval: 60_000,
     gcTime: 0,
@@ -82,7 +97,7 @@ export function MeetingHomeResults({
     meta: { accessSensitive: true, tenantId, actorId },
   });
   const entries =
-    query.isError || query.isRefetchError
+    !enabled || query.isError || query.isRefetchError || query.isFetching
       ? []
       : (query.data?.entries ?? []).filter(
           (entry) =>
@@ -90,7 +105,7 @@ export function MeetingHomeResults({
             !(suppressed?.scope === scope && suppressed.ids.includes(entry.meetingId))
         );
   const partialError = query.isError || (query.data?.failedMeetingIds.length ?? 0) > 0;
-  const loading = meetingIds.length > 0 && query.isLoading;
+  const loading = meetingIds.length > 0 && (query.isLoading || query.isFetching);
   const titleId = `meeting-home-results-${section}-title`;
   const formatDate = (value: string) =>
     formatSharedDate(
@@ -108,37 +123,53 @@ export function MeetingHomeResults({
   return (
     <Box
       component="section"
-      aria-labelledby={titleId}
+      aria-labelledby={embedded ? undefined : titleId}
+      aria-label={embedded ? t(`home.results.${section}.title`) : undefined}
       data-testid={`meeting-home-results-${section}`}
       sx={{ minWidth: 0 }}
     >
-      <SectionHeader
-        density="compact"
-        glyph="plain"
-        id={titleId}
-        icon={section === 'queue' ? ListTodo : FileCheck2}
-        title={t(`home.results.${section}.title`)}
-        meta={
-          <Stack direction="row" alignItems="center" gap={0.5}>
-            <Chip
-              size="small"
-              color={section === 'queue' && entries.length ? 'primary' : 'default'}
-              label={t('home.results.count', { count: entries.length })}
-            />
+      {!embedded && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={1}
+          sx={{ mb: 1 }}
+        >
+          <Stack direction="row" alignItems="center" gap={0.75} sx={{ minWidth: 0 }}>
+            {section === 'queue' ? (
+              <ListTodo size={17} aria-hidden="true" />
+            ) : (
+              <FileCheck2 size={17} aria-hidden="true" />
+            )}
+            <Typography id={titleId} component="h2" variant="subtitle2">
+              {t(`home.results.${section}.title`)}
+            </Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" gap={0.5} sx={{ flexShrink: 0 }}>
+            {section === 'queue' && (
+              <Chip
+                size="small"
+                color={entries.length ? 'primary' : 'default'}
+                label={t('home.results.count', { count: entries.length })}
+              />
+            )}
             <ActionButton
               intent="quiet"
               size="small"
               onClick={() => navigate('/meetings/history')}
               sx={{ minHeight: 44 }}
             >
-              {t('home.results.openLibrary')}
+              {t('actions.viewAll')}
             </ActionButton>
           </Stack>
-        }
-      />
-      <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1, mb: 2 }}>
-        {t('home.results.scope', { count: candidates.length })}
-      </Typography>
+        </Stack>
+      )}
+      {!embedded && section !== 'recent' && (
+        <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1, mb: 2 }}>
+          {t('home.results.scope', { count: candidates.length })}
+        </Typography>
+      )}
       {loading ? (
         <LoadingState
           label={t('home.results.loading')}
@@ -149,14 +180,15 @@ export function MeetingHomeResults({
       ) : (
         <Stack spacing={1.5}>
           {entries.length > 0 && (
-            <Box sx={(theme) => meetingListSurface(theme)}>
-              {entries.map((entry) => (
+            <Stack gap={1.25}>
+              {entries.slice(0, section === 'recent' ? 1 : embedded ? 2 : 4).map((entry) => (
                 <Box
                   component="article"
                   key={entry.reportId}
                   data-testid={`meeting-home-result-${section}-${entry.meetingId}`}
                   sx={(theme) => ({
-                    p: { xs: 1.5, md: 2 },
+                    ...meetingHomeCard(theme),
+                    p: { xs: 1.25, md: 2 },
                     minWidth: 0,
                     ...(section === 'queue'
                       ? {
@@ -176,33 +208,49 @@ export function MeetingHomeResults({
                     gap={1}
                     flexWrap="wrap"
                   >
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={section === 'queue' ? 'primary' : 'success'}
-                      label={t(`home.results.${section}.badge`)}
-                    />
+                    {section === 'queue' ? (
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        color={section === 'queue' ? 'primary' : 'success'}
+                        label={t(`home.results.${section}.badge`)}
+                      />
+                    ) : (
+                      <Typography
+                        component="h3"
+                        variant="subtitle2"
+                        sx={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}
+                      >
+                        {candidates.find((meeting) => meeting.meetingId === entry.meetingId)?.title}
+                      </Typography>
+                    )}
+                    {section === 'queue' && (
+                      <Typography
+                        component="h3"
+                        variant="subtitle2"
+                        sx={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}
+                      >
+                        {candidates.find((meeting) => meeting.meetingId === entry.meetingId)?.title}
+                      </Typography>
+                    )}
                     {entry.publishedAt && Number.isFinite(Date.parse(entry.publishedAt)) && (
                       <Typography variant="caption" color="text.secondary">
                         {t('home.results.publishedAt', { date: formatDate(entry.publishedAt) })}
                       </Typography>
                     )}
                   </Stack>
-                  <Typography
-                    component="h3"
-                    variant="subtitle2"
-                    sx={{ mt: 1.5, overflowWrap: 'anywhere' }}
-                  >
-                    {candidates.find((meeting) => meeting.meetingId === entry.meetingId)?.title}
-                  </Typography>
                   {entry.summary ? (
                     <Typography
+                      component="blockquote"
                       variant="body2"
                       sx={(theme) => ({
+                        ...meetingHomeInset(theme),
+                        m: 0,
                         mt: 1,
-                        pl: 1.5,
-                        borderLeft: 2,
-                        borderColor: 'primary.main',
+                        p: { xs: 1, md: 1.5 },
+                        borderLeft: 3,
+                        borderLeftColor: 'primary.main',
+                        fontStyle: 'italic',
                         color: theme.palette.text.secondary,
                         overflowWrap: 'anywhere',
                         display: '-webkit-box',
@@ -211,10 +259,15 @@ export function MeetingHomeResults({
                         overflow: 'hidden',
                       })}
                     >
-                      {entry.summary}
+                      “{entry.summary}”
                     </Typography>
                   ) : (
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      component="p"
+                      sx={{ mt: 0.5, mb: 0 }}
+                    >
                       {t(`home.results.${section}.description`)}
                     </Typography>
                   )}
@@ -223,16 +276,31 @@ export function MeetingHomeResults({
                     alignItems="center"
                     justifyContent="space-between"
                     gap={1}
-                    flexWrap="wrap"
-                    sx={{ mt: 1.5 }}
+                    flexWrap="nowrap"
+                    sx={(theme) => ({
+                      ...(section === 'recent' ? meetingHomeInset(theme) : {}),
+                      mt: 0.75,
+                      p: section === 'recent' ? 0.75 : 0,
+                    })}
                   >
-                    <Typography variant="caption" color="text.secondary">
-                      {entry.legalHold
-                        ? t('home.results.legalHold')
-                        : t('home.results.retentionUntil', {
-                            date: formatDate(entry.retentionUntil),
-                          })}
-                    </Typography>
+                    <Stack gap={0.25} sx={{ minWidth: 0 }}>
+                      {section === 'recent' && (
+                        <Typography variant="caption" color="primary.main">
+                          {t('home.results.recent.badge')}
+                        </Typography>
+                      )}
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
+                      >
+                        {entry.legalHold
+                          ? t('home.results.legalHold')
+                          : t('home.results.retentionUntil', {
+                              date: formatDate(entry.retentionUntil),
+                            })}
+                      </Typography>
+                    </Stack>
                     <ActionButton
                       intent={section === 'queue' ? 'primary' : 'quiet'}
                       size="small"
@@ -244,14 +312,18 @@ export function MeetingHomeResults({
                             : `/meetings/history?meeting=${encodeURIComponent(entry.meetingId)}&reportId=${encodeURIComponent(entry.reportId)}`
                         )
                       }
-                      sx={{ minHeight: 44 }}
+                      sx={{
+                        minHeight: 44,
+                        flexShrink: 0,
+                        typography: { xs: 'caption', md: 'button' },
+                      }}
                     >
                       {t(`home.results.${section}.action`)}
                     </ActionButton>
                   </Stack>
                 </Box>
               ))}
-            </Box>
+            </Stack>
           )}
           {partialError && (
             <ErrorState
@@ -263,14 +335,20 @@ export function MeetingHomeResults({
               onRetry={() => query.refetch()}
             />
           )}
-          {!entries.length && !partialError && (
-            <GuidedEmptyState
-              kind="empty"
-              size="compact"
-              title={t(`home.results.${section}.emptyTitle`)}
-              description={t(`home.results.${section}.emptyDescription`)}
-            />
-          )}
+          {!entries.length &&
+            !partialError &&
+            (embedded ? (
+              <Typography variant="caption" color="text.secondary">
+                {t(`home.results.${section}.emptyTitle`)}
+              </Typography>
+            ) : (
+              <GuidedEmptyState
+                kind="empty"
+                size="compact"
+                title={t(`home.results.${section}.emptyTitle`)}
+                description={t(`home.results.${section}.emptyDescription`)}
+              />
+            ))}
         </Stack>
       )}
     </Box>

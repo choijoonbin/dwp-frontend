@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { CalendarPlus2, Hash, RefreshCw, Video } from 'lucide-react';
+import { CalendarDays, CalendarPlus2, Hash, RefreshCw, Video } from 'lucide-react';
 import { ActionButton, ActionIconButton, FormDialog, FormField } from '@dwp-frontend/design-system';
 import { normalizeVideoMeetingCode } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import Box from '@mui/material/Box';
@@ -9,6 +9,8 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { formatHomeJoinCode, homeMeetingDate } from './meeting-home-model';
+import { meetingHomeCard } from './meeting-home-presentation';
+import { meetingShape } from './meeting-visual-system';
 
 type Props = {
   timeZone: string;
@@ -52,11 +54,11 @@ export function MeetingHomeHeader(props: Props) {
       inputRef={dialog ? codeInput : undefined}
       inputProps={{ maxLength: 19, inputMode: 'text' }}
       onChange={(event) => props.onCodeChange(formatHomeJoinCode(event.target.value))}
-      sx={{ minWidth: 0, '& .MuiInputBase-root': { minHeight: 44 } }}
+      sx={{ minWidth: 0, '& .MuiInputBase-root': { minHeight: 36 }, '& input': { py: 0.75 } }}
     />
   );
   return (
-    <Box sx={{ mb: 2.5 }}>
+    <Box sx={{ mb: { xs: 2, md: 3 } }}>
       <Stack
         data-testid="meeting-home-context"
         direction="row"
@@ -64,10 +66,14 @@ export function MeetingHomeHeader(props: Props) {
         alignItems="center"
         justifyContent="space-between"
         gap={1}
-        sx={{ pb: 1.25, mb: 1.5, borderBottom: 1, borderColor: 'divider' }}
+        sx={(theme) => ({ ...meetingHomeCard(theme), px: 1.5, py: 0.5, mb: 2, minHeight: 42 })}
       >
-        <Typography variant="caption" color="text.secondary">
-          {homeMeetingDate(props.now, i18n.language, props.timeZone)} · {props.timeZone}
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: { xs: 'none', sm: 'block' } }}
+        >
+          {t('home.workspace.subtitle')}
         </Typography>
         <Stack direction="row" alignItems="center" gap={1}>
           <Typography variant="caption" color="text.secondary" role="status">
@@ -81,7 +87,7 @@ export function MeetingHomeHeader(props: Props) {
             label={t('actions.refresh')}
             onClick={props.onRefresh}
             loading={props.refreshing}
-            sx={{ minWidth: 44, minHeight: 44 }}
+            sx={{ minWidth: 36, minHeight: 36 }}
           >
             <RefreshCw size={16} aria-hidden="true" />
           </ActionIconButton>
@@ -89,11 +95,27 @@ export function MeetingHomeHeader(props: Props) {
       </Stack>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
         <Box sx={{ flex: '1 1 250px', minWidth: 0 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={0.75}
+            sx={{ mb: 0.25, display: { xs: 'none', sm: 'flex' }, color: 'text.secondary' }}
+          >
+            <CalendarDays size={13} aria-hidden="true" />
+            <Typography variant="caption">
+              {homeMeetingDate(props.now, i18n.language, props.timeZone)} · {props.timeZone}
+            </Typography>
+          </Stack>
           <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1}>
             <Typography
               variant="h5"
               component="h1"
-              sx={{ overflowWrap: 'anywhere', wordBreak: 'keep-all' }}
+              sx={{
+                fontSize: { xs: 'h6.fontSize', md: 'h3.fontSize' },
+                fontWeight: 'fontWeightBold',
+                overflowWrap: 'anywhere',
+                wordBreak: 'keep-all',
+              }}
             >
               {t('home.title')}
             </Typography>
@@ -101,6 +123,7 @@ export function MeetingHomeHeader(props: Props) {
               size="small"
               color={props.live ? 'success' : 'primary'}
               variant="outlined"
+              sx={{ borderRadius: meetingShape.spotlight }}
               label={
                 props.live
                   ? t('status.LIVE')
@@ -108,27 +131,23 @@ export function MeetingHomeHeader(props: Props) {
               }
             />
           </Stack>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ display: { xs: 'none', sm: 'block' }, mt: 0.5 }}
-          >
-            {t('home.workspace.subtitle')}
-          </Typography>
         </Box>
         <Box
           data-testid="meeting-home-actions"
           sx={(theme) => ({
             display: { xs: 'grid', md: 'flex' },
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 7rem), 1fr))',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
             flexWrap: 'wrap',
             alignItems: { xs: 'stretch', md: 'center' },
             gap: { xs: 0.75, md: 1 },
             width: { xs: '100%', md: 'auto' },
             minWidth: 0,
+            p: { xs: 0, md: 0.75 },
+            borderRadius: meetingShape.stage,
+            bgcolor: { xs: 'transparent', md: 'background.paper' },
             '& > button': {
               minWidth: 0,
-              px: { xs: 1, md: 2 },
+              px: { xs: 1, md: 1.5 },
               typography: { xs: 'caption', md: 'button' },
               fontWeight: theme.typography.button.fontWeight,
               whiteSpace: 'normal',
@@ -143,7 +162,7 @@ export function MeetingHomeHeader(props: Props) {
         >
           <Box
             component="form"
-            sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, width: 290 }}
+            sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, width: 220 }}
             onSubmit={(event) => {
               event.preventDefault();
               openJoin();

@@ -1,0 +1,293 @@
+{
+  "kind": "meeting-browser-gate-evidence",
+  "date": "2026-09-07",
+  "scope": "Eight owned Meeting E2E specifications; not full-product release approval",
+  "userDesignApproval": false,
+  "sourceAndPixelThresholdsChanged": false,
+  "finalReport": {
+    "file": "/tmp/meeting-resume-owned-final-r17.json",
+    "sha256": "36d73c7a56122fa5261f3164fc82ff36fdf923f473f3dbca5de9e020880db4a7",
+    "stats": {
+      "startTime": "2026-09-07T09:59:34.300Z",
+      "duration": 225814.494,
+      "expected": 145,
+      "skipped": 21,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "byFile": {
+    "video-meeting-desktop-density.spec.ts": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0
+    },
+    "video-meeting-document-capture.spec.ts": {
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0
+    },
+    "video-meeting-preparation.spec.ts": {
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0
+    },
+    "video-meeting-schedule-management.spec.ts": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0
+    },
+    "video-meeting-schedule.spec.ts": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0
+    },
+    "video-meeting-visual-quality.spec.ts": {
+      "passed": 21,
+      "failed": 0,
+      "skipped": 17,
+      "flaky": 0
+    },
+    "video-meeting-workspace-menus.spec.ts": {
+      "passed": 30,
+      "failed": 0,
+      "skipped": 4,
+      "flaky": 0
+    },
+    "video-meetings.spec.ts": {
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0
+    }
+  },
+  "skippedCases": [
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home EMPTY keeps real actions and honest empty work at 1440px Korean",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home SAMPLE presents contract-backed schedule and result links at 1280px English",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home SAMPLE preserves the approved full work hierarchy at 390px Korean",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home NEXT remains usable at 768px and 200 percent English text",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home LIVE preserves hierarchy and touch targets at 390px Korean dark mode",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home service blocker stays explicit at the 320px English forced-colors boundary",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "My meetings uses a bounded list and inspector at 1280px English",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "My meetings keeps the selected preparation and stable navigation at 390px Korean dark",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "prejoin keeps the private preview and security rail side by side at 1280px English",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "prejoin stacks preview before policy at 390px Korean dark mode",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "Meeting library uses a 7 to 5 result and evidence preview at 1280px English",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "Meeting library becomes a single actionable list at 390px Korean",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home revalidation failure removes stale meeting data and recovers the entered code",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "home uses authorized review tasks and published excerpts then redacts revoked reports",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "join focus form has visible keyboard focus and a 44px action at 390px Korean",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "published AI recap remains evidence-led at 1440px English dark mode",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-visual-quality.spec.ts",
+      "title": "published AI recap preserves the evidence rail and library navigation at 390px Korean",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-workspace-menus.spec.ts",
+      "title": "templates and preferences are responsive and accessible at 1440px",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-workspace-menus.spec.ts",
+      "title": "templates and preferences are responsive and accessible at 1280px",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-workspace-menus.spec.ts",
+      "title": "templates and preferences are responsive and accessible at 390px",
+      "project": "mobile",
+      "status": "skipped"
+    },
+    {
+      "file": "video-meeting-workspace-menus.spec.ts",
+      "title": "templates and preferences are responsive and accessible at 320px",
+      "project": "mobile",
+      "status": "skipped"
+    }
+  ],
+  "priorRuns": [
+    {
+      "file": "/tmp/meeting-resume-owned-r1.json",
+      "sha256": "023d540f8f43d8379d7c72f861bd683d7141ba8d6c146a28da09031234a8bca6",
+      "stats": {
+        "startTime": "2026-09-07T08:41:49.013Z",
+        "duration": 677605.0900000001,
+        "expected": 78,
+        "skipped": 21,
+        "unexpected": 37,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "/tmp/meeting-resume-owned-final-r7.json",
+      "sha256": "341aa4fa02ff62f1dbaa35b67d75c5c41cd53ae1a718b626efe2e51e3dfe3ca4",
+      "stats": {
+        "startTime": "2026-09-07T09:12:28.735Z",
+        "duration": 228073.095,
+        "expected": 120,
+        "skipped": 21,
+        "unexpected": 3,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "/tmp/meeting-resume-owned-final-r10.json",
+      "sha256": "fbf4b60539869d500db985d1065b4538059d1bcd02f15e873722831649de1661",
+      "stats": {
+        "startTime": "2026-09-07T09:24:29.224Z",
+        "duration": 222093.969,
+        "expected": 122,
+        "skipped": 21,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "/tmp/meeting-resume-owned-final-r14.json",
+      "sha256": "73a6a3759e606dc76eb83dad4f111cfed47bc8a45d2709c014852ea4a2286a2d",
+      "stats": {
+        "startTime": "2026-09-07T09:44:43.331Z",
+        "duration": 340686.107,
+        "expected": 138,
+        "skipped": 21,
+        "unexpected": 3,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "/tmp/meeting-final-corrections-r16.json",
+      "sha256": "d07c765928846ccb6ef60a6508be1789a1d678f4848dd545e474b33b55e15c43",
+      "stats": {
+        "startTime": "2026-09-07T09:57:47.569Z",
+        "duration": 27721.96,
+        "expected": 19,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "environment": {
+    "runtime": "Node 24",
+    "webServer": "canonical Yarn Playwright webServer",
+    "port": 4484,
+    "reusedExistingServer": false,
+    "workers": 2,
+    "projects": ["chromium", "mobile (WebKit iPhone 13)"],
+    "updateSnapshots": "none"
+  },
+  "command": "DWP_FRONTEND_DEV_PORT=4484 E2E_BASE_URL=http://127.0.0.1:4484 MEETING_STITCH_EXPORT_PATH='/Users/a10697/Downloads/stitch_enterprise_grid_calendar_application (10).zip' PLAYWRIGHT_OUTPUT_DIR=/tmp/meeting-resume-owned-final-r17 PLAYWRIGHT_JSON_OUTPUT_FILE=/tmp/meeting-resume-owned-final-r17.json corepack yarn playwright test e2e/video-meeting-desktop-density.spec.ts e2e/video-meeting-visual-quality.spec.ts e2e/video-meeting-preparation.spec.ts e2e/video-meeting-schedule-management.spec.ts e2e/video-meeting-schedule.spec.ts e2e/video-meeting-workspace-menus.spec.ts e2e/video-meetings.spec.ts e2e/video-meeting-document-capture.spec.ts --project=chromium --project=mobile --update-snapshots=none --workers=2 --reporter=json",
+  "additionalGates": {
+    "relatedUnits": {
+      "files": 7,
+      "passed": 87
+    },
+    "scopedEslint": "PASS",
+    "fullNonIncrementalTypecheck": "PASS",
+    "scopedPrettier": "PASS",
+    "i18n": "PASS",
+    "architecture": "PASS integrity; operational readiness remains BLOCKED 0/37",
+    "sourceSize": {
+      "productionFiles": 1799,
+      "generatedExcluded": 4
+    },
+    "maintenanceSize": {
+      "files": 255,
+      "legacyExceptions": 14
+    },
+    "reviewedImplementationImages": {
+      "count": 39,
+      "manifest": "24-reviewed-image-manifest-2026-09-07.json"
+    },
+    "sourceZipSha256": "0a2fc4d7881a01f9b3ba0e6f164f3b9f980f8aa8afc53c29ea53afecb5d22787"
+  }
+}

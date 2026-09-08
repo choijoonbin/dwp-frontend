@@ -52,6 +52,16 @@ if (!fs.existsSync(routeCompositionPath)) {
   failures.push('The generated Nginx route composition is missing.');
 } else {
   const routeComposition = fs.readFileSync(routeCompositionPath, 'utf8');
+  const encodedAssetPathBoundary = `# Fail closed before Nginx normalizes encoded separators or dot segments into another asset location.
+error_page 418 = @dwp_asset_not_found;
+if ($request_uri ~* "^/assets/dwp/[a-z][a-z0-9-]*/[^?]*(%2e|%2f|%5c)") {
+  return 418;
+}`;
+  if (!routeComposition.includes(encodedAssetPathBoundary)) {
+    failures.push(
+      'Encoded product-asset separators and dot segments must fail closed before URI normalization.'
+    );
+  }
   const secureAskRedirects = [
     `location = /ask {
   # Legacy question query strings are sensitive and must never enter edge logs.
@@ -71,6 +81,81 @@ if (!fs.existsSync(routeCompositionPath)) {
   const askBlocks = routeComposition.match(/location (?:=|\^~) \/ask\/? \{[\s\S]*?\n\}/g) ?? [];
   if (askBlocks.some((block) => /\$(?:args|request_uri)|\/dwaion\/new\?/.test(block))) {
     failures.push('Legacy /ask redirects must not preserve or reconstruct query arguments.');
+  }
+  const cacheHeaderLocations =
+    routeComposition.match(/location [^{]+ \{[\s\S]*?add_header Cache-Control[\s\S]*?\n\}/g) ?? [];
+  if (
+    cacheHeaderLocations.length === 0 ||
+    cacheHeaderLocations.some((block) => !block.includes('add_header_inherit merge;'))
+  ) {
+    failures.push(
+      'Nginx locations with cache headers must merge server-level browser security headers.'
+    );
+  }
+  for (const application of [...manifest.applications, manifest.shell]) {
+    const assetLocation = `location ^~ /assets/dwp/${application.id}/assets/ {\n  alias /srv/dwp/${application.id}/assets/;`;
+    if (!routeComposition.includes(assetLocation)) {
+      failures.push(
+        `${application.id} immutable assets must map only the emitted assets directory.`
+      );
+    }
+    const publicRootAssets = [
+      [`theme-bootstrap.js`, null],
+      [`site.webmanifest`, '  default_type application/manifest+json;\n'],
+    ];
+    for (const [assetName, contentType] of publicRootAssets) {
+      const rootAssetLocation = `location = /assets/dwp/${application.id}/${assetName} {\n  alias /srv/dwp/${application.id}/${assetName};\n${contentType ?? ''}  add_header Cache-Control "no-store" always;`;
+      if (!routeComposition.includes(rootAssetLocation)) {
+        failures.push(`${application.id} ${assetName} must be an exact no-store artifact mapping.`);
+      }
+    }
+    const closedProductAssetRoot = `location ^~ /assets/dwp/${application.id}/ {\n  add_header Cache-Control "no-store" always;\n  add_header_inherit merge;\n  return 404;\n}`;
+    if (!routeComposition.includes(closedProductAssetRoot)) {
+      failures.push(
+        `${application.id} artifact root, index, metadata, and unknown files must fail closed.`
+      );
+    }
+  }
+  const missingAssetBoundary = `location @dwp_asset_not_found {
+  default_type text/plain;
+  add_header Cache-Control "no-store" always;
+  add_header_inherit merge;
+  return 404 "Artifact asset not found\\n";
+}`;
+  if (routeComposition.split(missingAssetBoundary).length !== 2) {
+    failures.push('Missing product assets must use the shared no-store 404 boundary exactly once.');
+  }
+  const platformRootAssets = [
+    `location = /theme-bootstrap.js {
+  alias /srv/dwp/platform-shell/theme-bootstrap.js;
+  add_header Cache-Control "no-store" always;
+  add_header_inherit merge;
+}`,
+    `location = /site.webmanifest {
+  alias /srv/dwp/platform-shell/site.webmanifest;
+  default_type application/manifest+json;
+  add_header Cache-Control "no-store" always;
+  add_header_inherit merge;
+}`,
+  ];
+  if (platformRootAssets.some((block) => !routeComposition.includes(block))) {
+    failures.push(
+      'Platform-shell bootstrap and manifest assets must preserve CSP and disable caching.'
+    );
+  }
+  const unknownAssetBoundary = `location ^~ /assets/ {
+  add_header Cache-Control "no-store" always;
+  add_header_inherit merge;
+  return 404;
+}`;
+  if (
+    routeComposition.split(unknownAssetBoundary).length !== 2 ||
+    routeComposition.indexOf(unknownAssetBoundary) <
+      routeComposition.indexOf('location ^~ /assets/brand/')
+  ) {
+    failures.push(
+      'Unknown or unnamespaced assets must fail closed after the explicit product and brand locations.'
+    );
   }
 }
 

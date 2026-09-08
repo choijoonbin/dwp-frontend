@@ -1,4 +1,5 @@
 import { axiosInstance } from '../axios-instance';
+import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
 
@@ -80,7 +81,7 @@ export type WorkspaceActivityEvent = {
   workStatus?: string | null;
   correlationId?: string | null;
   auditRecordId?: string | null;
-  auditStatus?: 'VERIFIED' | 'LEGACY_UNLINKED' | 'NOT_LINKED';
+  auditStatus?: 'VERIFIED' | 'LINKED' | 'PENDING' | 'LEGACY_UNLINKED' | 'NOT_LINKED';
   auditAccess?: 'RESTRICTED';
   dataProvenance?: 'LIVE' | 'LEGACY' | 'SAMPLE' | 'QUARANTINED';
   sourceAccess?: 'AVAILABLE' | 'FORBIDDEN' | 'DELETED' | 'UNAVAILABLE';
@@ -269,6 +270,51 @@ const activityStateMap: Record<RawWorkspaceActivityEvent['state'], WorkspaceActi
   UNKNOWN: 'unknown',
 };
 
+const ACTIVITY_EVENT_KEYS = new Set([
+  'id',
+  'occurredAt',
+  'actor',
+  'actorName',
+  'state',
+  'title',
+  'summary',
+  'objectType',
+  'objectLabel',
+  'source',
+  'tool',
+  'auditId',
+  'progress',
+  'sourceRoute',
+  'eventKind',
+  'resumeCursor',
+  'sourceObservedAt',
+  'updatedAt',
+  'sourceEventId',
+  'objectId',
+  'executionId',
+  'executionVersion',
+  'attempt',
+  'workStatus',
+  'correlationId',
+  'auditRecordId',
+  'auditStatus',
+  'auditAccess',
+  'dataProvenance',
+  'sourceAccess',
+]);
+const ACTIVITY_AUDIT_STATUSES = new Set([
+  'VERIFIED',
+  'LINKED',
+  'PENDING',
+  'LEGACY_UNLINKED',
+  'NOT_LINKED',
+]);
+const ACTIVITY_LINKED_AUDIT_STATUSES = new Set(['VERIFIED', 'LINKED', 'PENDING']);
+const ACTIVITY_EVENT_KINDS = new Set(['CHANGE', 'EXECUTION', 'EXECUTION_SNAPSHOT', 'USAGE']);
+const ACTIVITY_PROVENANCE = new Set(['LIVE', 'LEGACY', 'SAMPLE', 'QUARANTINED']);
+const ACTIVITY_SOURCE_ACCESS = new Set(['AVAILABLE', 'FORBIDDEN', 'DELETED', 'UNAVAILABLE']);
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
+
 const launchModeMap: Record<RawWorkspaceApp['launchMode'], WorkspaceAppLaunchMode> = {
   NATIVE: 'Native',
   SSO: 'SSO',
@@ -291,7 +337,10 @@ function mapWorkItem(item: RawWorkspaceWorkItem): WorkspaceWorkItem {
   };
 }
 
-function mapActivityEvent(event: RawWorkspaceActivityEvent): WorkspaceActivityEvent {
+export function normalizeWorkspaceActivityEvent(
+  event: RawWorkspaceActivityEvent
+): WorkspaceActivityEvent {
+  if (!isValidRawActivityEvent(event)) throw invalidActivityResponse();
   return {
     ...event,
     actor: actorMap[event.actor],
@@ -337,12 +386,13 @@ export async function updateWorkspaceWorkStatus(
 
 export async function updateWorkspaceWorkStatuses(
   items: Array<Pick<WorkspaceWorkItem, 'workItemId' | 'version'>>,
-  status: 'IN_PROGRESS' | 'WAITING' | 'COMPLETED'
+  status: 'IN_PROGRESS' | 'WAITING' | 'COMPLETED',
+  signal?: AbortSignal
 ): Promise<WorkspaceWorkItem[]> {
   const response = await axiosInstance.patch<
     ApiResponse<RawWorkspaceWorkItem[]>,
     { items: Array<{ workItemId: string; version: number }>; status: string }
-  >('/api/platform/v1/workspace/work-items/batch/status', { items, status });
+  >('/api/platform/v1/workspace/work-items/batch/status', { items, status }, { signal });
   return response.data.data.map(mapWorkItem);
 }
 
@@ -384,7 +434,7 @@ export async function getWorkspaceActivityEvent(
     `/api/platform/v1/workspace/activity/events/${encodeURIComponent(eventId)}`,
     { timeoutMs: 8000, signal }
   );
-  return mapActivityEvent(response.data.data);
+  return normalizeWorkspaceActivityEvent(response.data.data);
 }
 
 export async function getWorkspaceActivityExecutionSummary(
@@ -400,7 +450,156 @@ export async function getWorkspaceActivityExecutionSummary(
 export function normalizeWorkspaceActivityFeed(
   feed: RawWorkspaceActivityFeed
 ): WorkspaceActivityFeed {
-  return { ...feed, events: feed.events.map(mapActivityEvent) };
+  if (!isRecord(feed) || !Array.isArray(feed.events) || !isDate(feed.generatedAt)) {
+    throw invalidActivityResponse();
+  }
+  if (
+    (feed.snapshotAt !== undefined && !isDate(feed.snapshotAt)) ||
+    (feed.startCursor !== undefined && !isNullableString(feed.startCursor)) ||
+    (feed.nextCursor !== undefined && !isNullableString(feed.nextCursor)) ||
+    (feed.hasMore !== undefined && typeof feed.hasMore !== 'boolean') ||
+    (feed.coverage !== undefined && !isActivityCoverage(feed.coverage))
+  ) {
+    throw invalidActivityResponse();
+  }
+  return { ...feed, events: feed.events.map(normalizeWorkspaceActivityEvent) };
+}
+
+function isValidRawActivityEvent(value: unknown): value is RawWorkspaceActivityEvent {
+  if (!isRecord(value) || !Object.keys(value).every((key) => ACTIVITY_EVENT_KEYS.has(key))) {
+    return false;
+  }
+  if (
+    !isPresentString(value.id) ||
+    !isDate(value.occurredAt) ||
+    !Object.hasOwn(actorMap, String(value.actor)) ||
+    !isPresentString(value.actorName) ||
+    !Object.hasOwn(activityStateMap, String(value.state)) ||
+    !isPresentString(value.title) ||
+    !isPresentString(value.objectType) ||
+    !isPresentString(value.objectLabel) ||
+    !isPresentString(value.source) ||
+    !isOptionalNullableString(value.summary) ||
+    !isOptionalNullableString(value.tool) ||
+    !isOptionalNullableString(value.auditId) ||
+    !isOptionalNullableInteger(value.progress, 0, 100) ||
+    !isOptionalNullableString(value.sourceRoute) ||
+    !isOptionalEnum(value.eventKind, ACTIVITY_EVENT_KINDS) ||
+    !isOptionalNullableString(value.resumeCursor) ||
+    !isOptionalNullableDate(value.sourceObservedAt) ||
+    !isOptionalNullableDate(value.updatedAt) ||
+    !isOptionalNullableString(value.sourceEventId) ||
+    !isOptionalNullableString(value.objectId) ||
+    !isOptionalNullableString(value.executionId) ||
+    !isOptionalNullableInteger(value.executionVersion, 0) ||
+    !isOptionalNullableInteger(value.attempt, 1) ||
+    !isOptionalNullableString(value.workStatus) ||
+    !isOptionalNullableString(value.correlationId) ||
+    !isOptionalNullableUuid(value.auditRecordId) ||
+    !isOptionalEnum(value.auditStatus, ACTIVITY_AUDIT_STATUSES) ||
+    !(value.auditAccess === undefined || value.auditAccess === 'RESTRICTED') ||
+    !isOptionalEnum(value.dataProvenance, ACTIVITY_PROVENANCE) ||
+    !isOptionalEnum(value.sourceAccess, ACTIVITY_SOURCE_ACCESS)
+  ) {
+    return false;
+  }
+
+  const hasAuditRecord = typeof value.auditRecordId === 'string';
+  if (
+    value.auditStatus !== undefined &&
+    ACTIVITY_LINKED_AUDIT_STATUSES.has(String(value.auditStatus)) !== hasAuditRecord
+  ) {
+    return false;
+  }
+  if (value.auditStatus === undefined && hasAuditRecord) return false;
+
+  if (value.source === 'DWAI_ON') {
+    return (
+      UUID_PATTERN.test(String(value.id)) &&
+      value.actor === 'AGENT' &&
+      value.objectType === 'AGENT_RUN' &&
+      value.eventKind === 'EXECUTION_SNAPSHOT' &&
+      value.dataProvenance === 'LIVE' &&
+      value.sourceAccess === 'AVAILABLE' &&
+      value.auditAccess === 'RESTRICTED' &&
+      typeof value.executionId === 'string' &&
+      UUID_PATTERN.test(value.executionId) &&
+      value.executionId.toLowerCase() === String(value.id).toLowerCase() &&
+      typeof value.objectId === 'string' &&
+      value.objectId.toLowerCase() === String(value.id).toLowerCase() &&
+      typeof value.sourceEventId === 'string' &&
+      value.sourceEventId.toLowerCase() === String(value.id).toLowerCase() &&
+      typeof value.executionVersion === 'number' &&
+      value.executionVersion >= 1 &&
+      typeof value.attempt === 'number' &&
+      value.attempt >= 1 &&
+      isDate(value.sourceObservedAt)
+    );
+  }
+  return true;
+}
+
+function isActivityCoverage(value: unknown): boolean {
+  if (!isRecord(value) || !Array.isArray(value.supportedObjectTypes)) return false;
+  return (
+    value.supportedObjectTypes.every(isPresentString) &&
+    (value.sourceScope === undefined || isPresentString(value.sourceScope)) &&
+    (value.semantics === undefined || isPresentString(value.semantics)) &&
+    (value.excludedProvenance === undefined ||
+      (Array.isArray(value.excludedProvenance) &&
+        value.excludedProvenance.every(isPresentString))) &&
+    (value.includesLegacy === undefined || typeof value.includesLegacy === 'boolean') &&
+    (value.includesUsage === undefined || typeof value.includesUsage === 'boolean')
+  );
+}
+
+function invalidActivityResponse(): HttpError {
+  return new HttpError('Activity response is invalid.', 502);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isPresentString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isNullableString(value: unknown): value is string | null {
+  return value === null || typeof value === 'string';
+}
+
+function isOptionalNullableString(value: unknown): boolean {
+  return value === undefined || isNullableString(value);
+}
+
+function isDate(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+}
+
+function isOptionalNullableDate(value: unknown): boolean {
+  return value === undefined || value === null || isDate(value);
+}
+
+function isOptionalNullableInteger(value: unknown, minimum: number, maximum?: number): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    (typeof value === 'number' &&
+      Number.isSafeInteger(value) &&
+      value >= minimum &&
+      (maximum === undefined || value <= maximum))
+  );
+}
+
+function isOptionalNullableUuid(value: unknown): boolean {
+  return (
+    value === undefined || value === null || (typeof value === 'string' && UUID_PATTERN.test(value))
+  );
+}
+
+function isOptionalEnum(value: unknown, allowed: ReadonlySet<string>): boolean {
+  return value === undefined || (typeof value === 'string' && allowed.has(value));
 }
 
 export async function getWorkspaceApps(): Promise<WorkspaceApp[]> {

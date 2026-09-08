@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, CircleAlert, LockKeyhole, MinusCircle } from 'lucide-react';
-import { FormDialog } from '@dwp-frontend/design-system';
+import { ActionButton, FormDialog } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -16,12 +16,16 @@ export function WorkHubSourceStatusDialog({
   onClose,
   onRetry,
   retrying,
+  onOpenBatchResults,
+  batchResultCount = 0,
 }: {
   open: boolean;
   sources: readonly WorkHubSourceSnapshot[];
   onClose: () => void;
   onRetry: () => void;
   retrying: boolean;
+  onOpenBatchResults?: () => void;
+  batchResultCount?: number;
 }) {
   const { t } = useTranslation(['work', 'common']);
   return (
@@ -36,8 +40,32 @@ export function WorkHubSourceStatusDialog({
       onClose={onClose}
       onSubmit={onRetry}
       mobileFullScreen
+      maxWidth="md"
     >
-      <Stack gap={1.25}>
+      <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 2 }}>
+        <Chip
+          color="success"
+          variant="outlined"
+          label={t('work:workHub.sourcesDialog.readyCount', {
+            count: sources.filter((source) => source.state === 'READY').length,
+          })}
+        />
+        <Chip
+          color="warning"
+          variant="outlined"
+          label={t('work:workHub.sourcesDialog.attentionCount', {
+            count: sources.filter((source) => ['UNAVAILABLE', 'FORBIDDEN'].includes(source.state))
+              .length,
+          })}
+        />
+      </Stack>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: 'minmax(0,1fr)', sm: 'repeat(2,minmax(0,1fr))' },
+          gap: 1.5,
+        }}
+      >
         {sources.map((source) => {
           const Icon =
             source.state === 'READY'
@@ -53,8 +81,9 @@ export function WorkHubSourceStatusDialog({
               sx={{
                 p: 2,
                 border: 1,
-                borderColor: 'divider',
-                borderRadius: 'shape.borderRadius',
+                borderColor: source.state === 'UNAVAILABLE' ? 'error.main' : 'divider',
+                bgcolor: source.state === 'UNAVAILABLE' ? 'action.hover' : 'background.paper',
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
               }}
             >
               <Stack direction="row" justifyContent="space-between" gap={2} alignItems="flex-start">
@@ -63,6 +92,11 @@ export function WorkHubSourceStatusDialog({
                   <Box sx={{ minWidth: 0 }}>
                     <Typography variant="subtitle2">
                       {t(`work:workHub.sourceIds.${source.sourceId}`)}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {source.state === 'READY'
+                        ? t('work:workHub.sourcesDialog.itemCount', { count: source.items.length })
+                        : t(`work:workHub.sourcesDialog.stateHelp.${source.state}`)}
                     </Typography>
                     <Typography
                       variant="caption"
@@ -105,7 +139,26 @@ export function WorkHubSourceStatusDialog({
             </Box>
           );
         })}
-      </Stack>
+      </Box>
+      {onOpenBatchResults && batchResultCount > 0 && (
+        <Box
+          sx={{
+            mt: 2,
+            p: 2,
+            bgcolor: 'action.hover',
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+          }}
+        >
+          <Typography variant="subtitle2">{t('work:workHub.batch.reportTitle')}</Typography>
+          <ActionButton
+            intent="secondary"
+            sx={{ mt: 1, '@media (max-width:599.95px)': { minHeight: 44 } }}
+            onClick={onOpenBatchResults}
+          >
+            {t('work:workHub.batch.reopenReport')} ({batchResultCount})
+          </ActionButton>
+        </Box>
+      )}
     </FormDialog>
   );
 }

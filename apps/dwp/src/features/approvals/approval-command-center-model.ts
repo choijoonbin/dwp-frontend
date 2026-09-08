@@ -38,12 +38,10 @@ export type ApprovalDecisionSignal = Readonly<{
   tone: 'critical' | 'warning' | 'info' | 'success';
 }>;
 
-export type ApprovalWorkflowEvidenceStep = Readonly<{
-  key: string;
-  name: string;
-  sequence: number;
-  state: 'COMPLETED' | 'CURRENT';
-}>;
+export {
+  buildApprovalWorkflowEvidence,
+  type ApprovalWorkflowEvidenceStep,
+} from '../../components/approval-workflow-evidence';
 
 const PRIORITY_ORDER: Record<ApprovalTask['priority'], number> = {
   URGENT: 0,
@@ -156,31 +154,6 @@ export function buildApprovalDecisionSignals(
   }
   if (signals.length === 0) signals.push({ key: 'STANDARD_REVIEW', tone: 'success' });
   return signals;
-}
-
-export function buildApprovalWorkflowEvidence(
-  detail: ApprovalTaskDetail
-): ApprovalWorkflowEvidenceStep[] {
-  const completed = new Map<number, ApprovalWorkflowEvidenceStep>();
-  detail.timeline.forEach((event) => {
-    if (!event.stepName || event.stepSequence == null) return;
-    if (event.stepSequence >= detail.task.stepSequence) return;
-    completed.set(event.stepSequence, {
-      key: `completed-${event.stepSequence}-${event.stepName}`,
-      name: event.stepName,
-      sequence: event.stepSequence,
-      state: 'COMPLETED',
-    });
-  });
-  return [
-    ...[...completed.values()].sort((left, right) => left.sequence - right.sequence),
-    {
-      key: `current-${detail.task.stepSequence}-${detail.task.stepKey}`,
-      name: detail.task.stepName,
-      sequence: detail.task.stepSequence,
-      state: 'CURRENT' as const,
-    },
-  ];
 }
 
 export function toggleApprovalBatchSelection(

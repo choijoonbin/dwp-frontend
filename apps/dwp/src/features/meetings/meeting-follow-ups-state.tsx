@@ -27,12 +27,14 @@ export function useFollowUpDetail({
   assignmentId,
   actorId,
   scopeKey,
+  collectionPending = false,
   onAccessDenied,
   onChanged,
 }: {
   assignmentId: string;
   actorId: number;
   scopeKey: string;
+  collectionPending?: boolean;
   onAccessDenied: () => void;
   onChanged: () => void;
 }) {
@@ -86,7 +88,8 @@ export function useFollowUpDetail({
   }, [query.error, onAccessDenied]);
 
   const run = async (issued: FollowUpAttempt, recover: boolean) => {
-    if (pending.current || query.isError || followUpAccessDenied(query.error)) return;
+    if (collectionPending || pending.current || query.isError || followUpAccessDenied(query.error))
+      return;
     pending.current = true;
     setBusy(true);
     const current = generation.current;
@@ -168,7 +171,15 @@ export function useFollowUpDetail({
   };
   const execute = (action: WorkAssignmentTransition, reasonCode?: string) => {
     const task = query.data;
-    if (!task || query.isError || conflict || uncertain || pending.current || attempt.current)
+    if (
+      collectionPending ||
+      !task ||
+      query.isError ||
+      conflict ||
+      uncertain ||
+      pending.current ||
+      attempt.current
+    )
       return;
     if (!availableFollowUpActions(task).includes(action)) return;
     if (

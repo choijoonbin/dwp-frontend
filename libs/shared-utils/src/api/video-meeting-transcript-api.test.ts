@@ -38,15 +38,21 @@ describe('video meeting transcript API', () => {
       },
     });
 
-    await queryVideoMeetingTranscript('meeting/1', artifact, { query: '결정 사항' });
+    const controller = new AbortController();
+    await queryVideoMeetingTranscript('meeting/1', artifact, {
+      query: '결정 사항',
+      signal: controller.signal,
+    });
 
     expect(axiosInstance.post).toHaveBeenCalledWith(
       expect.stringContaining(
         '/meeting%2F1/artifacts/00000000-0000-4000-8000-000000000001/transcript/query'
       ),
-      expect.objectContaining({ query: '결정 사항', cursor: 0, pageSize: 25 })
+      expect.objectContaining({ query: '결정 사항', cursor: 0, pageSize: 25 }),
+      { signal: controller.signal }
     );
     expect(vi.mocked(axiosInstance.post).mock.calls[0]?.[0]).not.toContain('결정');
+    expect(vi.mocked(axiosInstance.post).mock.calls[0]?.[1]).not.toHaveProperty('signal');
   });
 
   it('rejects stale or unbounded transcript payloads', () => {

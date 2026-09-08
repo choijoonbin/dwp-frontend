@@ -325,7 +325,9 @@ describe('meeting admin intelligence control center', () => {
     expect(markup).toContain('Retention execution worker');
     expect(markup).toContain('AI intelligence reports');
     expect(markup).toContain('MEETING_RECORD_RETENTION_WORKER_NOT_CONFIGURED');
-    expect(markup).not.toContain('<button');
+    const commands = markup.match(/<button\b[^>]*>/gu) ?? [];
+    expect(commands.length).toBeGreaterThan(0);
+    expect(commands.every((command) => /\bdisabled=""/u.test(command))).toBe(true);
     expect(markup).not.toContain('<input');
   });
 });

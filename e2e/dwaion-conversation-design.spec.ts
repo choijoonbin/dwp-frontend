@@ -50,7 +50,7 @@ async function fixture(
     route.fulfill({ json: { success: true, data: items } })
   );
   await page.route('**/api/agent/v1/conversations/*', async (route) => {
-    const id = route.request().url().split('/').at(-1);
+    const id = new URL(route.request().url()).pathname.split('/').at(-1);
     if (route.request().method() === 'DELETE') {
       deletes += 1;
       if (held)
@@ -263,7 +263,7 @@ test('conversation access failure never offers a follow-up against an unverified
   page,
 }) => {
   await fixture(page);
-  await page.route('**/api/agent/v1/conversations/brief', (route) =>
+  await page.route('**/api/agent/v1/conversations/brief?agentKey=DWP_ASSISTANT', (route) =>
     route.fulfill({ status: 403, json: { success: false } })
   );
   await page.goto('/dwaion/conversations/brief');

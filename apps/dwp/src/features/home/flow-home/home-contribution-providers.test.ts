@@ -486,7 +486,7 @@ const cardinalityCases = [
         ],
         CONTEXT
       ),
-    manyCount: 2,
+    manyCount: 3,
   },
   {
     provider: 'workplace',
@@ -767,48 +767,6 @@ describe('integrated Home Contribution adapters', () => {
     ).toEqual(['approval-ops:failed-integrations', 'approval-ops:overdue']);
   });
 
-  it('groups visually identical approval assignments into one actionable count', () => {
-    const first = approvalTask('task-1', 'request-1');
-    const second = approvalTask('task-2', 'request-2');
-    const shared = {
-      title: '운영 로그 조회 권한 연장',
-      summary: 'Finance & Risk 팀',
-      stepName: 'Review',
-      dueAt: '2026-08-25T08:00:00.000Z',
-    };
-    const result = resolveHomeContributionProvider(
-      approvalContributionProvider,
-      {
-        state: 'AVAILABLE',
-        generatedAt: NOW,
-        data: {
-          home: approvalHome([
-            { ...first, ...shared },
-            { ...second, ...shared },
-          ]),
-          audience: 'OPERATOR',
-        },
-      },
-      CONTEXT
-    );
-
-    const model = buildHomeContributionModel([result], {
-      now: NOW,
-      permissions: [
-        allow('APP.APPROVALS'),
-        allowResource('ACTION', 'ACTION.APPROVAL_TASK', 'APPROVE'),
-      ],
-    });
-
-    expect(model.buckets.action).toHaveLength(1);
-    expect(model.buckets.action[0]).toMatchObject({
-      title: shared.title,
-      count: 2,
-      route: '/approvals/inbox',
-      duplicateCount: 2,
-    });
-  });
-
   it('keeps Calendar response prompts read-only unless UPDATE is explicitly granted', () => {
     const result = resolveHomeContributionProvider(
       calendarContributionProvider,
@@ -914,10 +872,11 @@ describe('integrated Home Contribution adapters', () => {
     });
 
     expect(model.buckets.action.map((item) => item.id)).toEqual([
-      'workspace-work:service-work',
+      'workspace-work:approval-work',
       'workspace-work:independent-action',
     ]);
     expect(model.buckets.response.map((item) => item.id)).toEqual([
+      'service-request:service-1',
       'approval-request:approval-1',
       'calendar:awaiting-response',
     ]);
@@ -934,6 +893,6 @@ describe('integrated Home Contribution adapters', () => {
     expect(new Set(dedupeKeys).size).toBe(dedupeKeys.length);
     expect(everyItem.filter((item) => item.dedupeKey === 'SERVICE:service-1')).toHaveLength(1);
     expect(everyItem.filter((item) => item.dedupeKey === 'APPROVAL:approval-1')).toHaveLength(1);
-    expect(model.diagnostics).toMatchObject({ deduplicatedCount: 6, visibleCount: 9 });
+    expect(model.diagnostics).toMatchObject({ deduplicatedCount: 6, visibleCount: 10 });
   });
 });

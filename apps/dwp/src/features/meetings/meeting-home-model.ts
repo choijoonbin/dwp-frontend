@@ -35,18 +35,32 @@ export function homeFocusMeeting(
       ? activeMeeting
       : today.find((candidate) => candidate.lifecycleState === 'LIVE');
   if (active) return active;
-  if (nextMeeting?.startsAt && Number.isFinite(Date.parse(nextMeeting.startsAt))) {
+  if (
+    nextMeeting?.startsAt &&
+    nextMeeting.durationMinutes !== 0 &&
+    Number.isFinite(Date.parse(nextMeeting.startsAt))
+  ) {
     return nextMeeting;
   }
   return (
     today.find(
       (candidate) =>
+        candidate.durationMinutes !== 0 &&
         candidate.startsAt &&
         Number.isFinite(Date.parse(candidate.startsAt)) &&
         ['SCHEDULED', 'LOBBY'].includes(candidate.lifecycleState)
     ) ??
     nextMeeting ??
     null
+  );
+}
+
+export function homeMeetingTime(value: string, language: string, timeZone: string): string {
+  if (!Number.isFinite(Date.parse(value))) return '—';
+  return formatDate(
+    new Date(value),
+    { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone },
+    resolveSupportedLocale(language)
   );
 }
 export function homeMeetingMinutesUntil(meeting: VideoMeetingSummary, now: number): number | null {

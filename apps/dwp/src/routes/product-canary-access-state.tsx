@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FormDialog } from '@dwp-frontend/design-system/components/dialogs/form-dialog';
 import { FormField } from '@dwp-frontend/design-system/components/forms/form-field';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import MenuItem from '@mui/material/MenuItem';
 
@@ -180,14 +181,17 @@ export function ProductCanaryAccessState({
   productId,
   surfaceId,
   routeId,
+  pageLevel = false,
 }: {
   decision: Exclude<SurfaceDecision, { state: 'allowed' }>;
   productId: string;
   surfaceId?: string;
   routeId?: string;
+  pageLevel?: boolean;
 }) {
   const { t } = useTranslation('common');
   const authority = useProductSurfaceCanaryAuthority();
+  const auth = useAuth();
   const applicationRuntime = useProductApplicationRuntime();
   const telemetry = useProductSurfaceTelemetry();
   const navigate = useNavigate();
@@ -212,9 +216,9 @@ export function ProductCanaryAccessState({
     (candidate) => candidate.id === productId
   );
   const appResourceKey = manifest?.appKey;
-  const managementSurface = manifest?.surfaces.some(
-    (surface) => surface.id === surfaceId && surface.plane === 'management'
-  );
+  const surfacePlane = manifest?.surfaces.find((surface) => surface.id === surfaceId)?.plane;
+  const managementSurface = surfacePlane === 'management';
+  const focusIdentityKey = `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`;
   const reasonCode = decision.state.replaceAll('-', '_').toUpperCase() as Parameters<
     typeof productSurfaceTelemetryEvent.routeDenied
   >[0]['reasonCode'];
@@ -312,7 +316,13 @@ export function ProductCanaryAccessState({
 
   return (
     <>
-      <ProductSurfaceAccessState decision={decision} actions={actions} />
+      <ProductSurfaceAccessState
+        decision={decision}
+        actions={actions}
+        plane={surfacePlane}
+        focusIdentityKey={focusIdentityKey}
+        pageLevel={pageLevel}
+      />
       <FormDialog
         open={scopeOpen}
         title={t('productSurface.scopeChooser.title')}

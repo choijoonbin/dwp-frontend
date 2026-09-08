@@ -1,0 +1,117 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - complementary [ref=e5]:
+            - generic [ref=e6]:
+                - generic [ref=e7]:
+                    - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+                        - /url: /
+                        - generic [ref=e10]: DWP
+                        - generic [ref=e13]: Digital Workplace
+                    - generic "탐색 메뉴 접기" [ref=e14]:
+                        - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+                            - img [ref=e17]
+                            - img [ref=e20]
+                - separator [ref=e23]
+                - button "개인 할 일 추가" [ref=e25] [cursor=pointer]:
+                    - img [ref=e27]
+                    - text: 개인 할 일 추가
+                - navigation "업무 메뉴" [ref=e28]:
+                    - list [ref=e29]:
+                        - listitem [ref=e30]:
+                            - link "통합업무함" [ref=e31] [cursor=pointer]:
+                                - /url: /work/queue
+                                - img [ref=e32]
+                                - generic [ref=e35]: 통합업무함
+                        - listitem [ref=e36]:
+                            - link "내 조치 대기" [ref=e37] [cursor=pointer]:
+                                - /url: /work/action-required
+                                - img [ref=e38]
+                                - generic [ref=e41]: 내 조치 대기
+                        - listitem [ref=e42]:
+                            - link "오늘 계획" [ref=e43] [cursor=pointer]:
+                                - /url: /work/day-plan
+                                - img [ref=e44]
+                                - generic [ref=e49]: 오늘 계획
+                        - listitem [ref=e50]:
+                            - link "진행 중" [ref=e51] [cursor=pointer]:
+                                - /url: /work/in-progress
+                                - img [ref=e52]
+                                - generic [ref=e55]: 진행 중
+                        - listitem [ref=e56]:
+                            - link "응답 대기" [ref=e57] [cursor=pointer]:
+                                - /url: /work/awaiting-response
+                                - img [ref=e58]
+                                - generic [ref=e61]: 응답 대기
+                        - listitem [ref=e62]:
+                            - link "완료된 업무" [ref=e63] [cursor=pointer]:
+                                - /url: /work/completed
+                                - img [ref=e64]
+                                - generic [ref=e67]: 완료된 업무
+                - generic [ref=e68]:
+                    - button "연동 상태" [ref=e69] [cursor=pointer]:
+                        - generic [ref=e70]:
+                            - generic [ref=e71]: 연동 상태
+                            - generic [ref=e72]: 확인된 원천 0개
+                    - link "개인 홈으로 돌아가기" [ref=e73] [cursor=pointer]:
+                        - /url: /
+                        - img [ref=e75]
+                        - text: 개인 홈으로 돌아가기
+        - banner [ref=e78]:
+            - generic [ref=e79]:
+                - generic [ref=e80]:
+                    - img [ref=e82]
+                    - generic "업무" [ref=e86]
+                - generic "현재 워크스페이스" [ref=e88]:
+                    - generic [ref=e90]: D
+                    - generic [ref=e91]:
+                        - generic [ref=e92]: DWP Workspace
+                        - generic [ref=e93]: 현재 워크스페이스
+                - generic [ref=e94]:
+                    - button "DWP 검색" [ref=e96] [cursor=pointer]:
+                        - img [ref=e97]
+                        - paragraph [ref=e100]: DWP 검색
+                        - generic [ref=e101]: ⌘K
+                    - button "전체 화면" [ref=e103] [cursor=pointer]:
+                        - img [ref=e104]
+                    - 'button "계정: Mina Kim, Tenant administrator" [ref=e110] [cursor=pointer]':
+                        - generic [ref=e111]: M
+                        - generic [ref=e112]:
+                            - generic [ref=e113]: Mina Kim
+                            - generic [ref=e114]: Tenant administrator
+                        - img [ref=e115]
+        - main [ref=e117]:
+            - generic [ref=e118]:
+                - generic [ref=e119]:
+                    - generic [ref=e120]:
+                        - generic [ref=e121]:
+                            - heading "통합업무함" [level=1] [ref=e122]
+                            - generic [ref=e124]: 확인된 0건
+                        - paragraph [ref=e125]: 여러 업무 원천의 내 책임을 한곳에서 확인하고, 올바른 소유 앱과 연결해 실행합니다.
+                    - generic [ref=e126]:
+                        - status [ref=e127]:
+                            - generic [ref=e129]:
+                                - generic [ref=e130]: 업무 조회 중
+                                - generic [ref=e131]: 마지막 확인 시각 없음
+                            - generic "다시 시도" [ref=e132]:
+                                - button "다시 시도" [disabled]:
+                                    - generic:
+                                        - generic:
+                                            - progressbar "다시 시도":
+                                                - img
+                                    - img
+                        - button "원천 상태" [ref=e133] [cursor=pointer]:
+                            - img [ref=e135]
+                            - text: 원천 상태
+                        - button "개인 할 일 추가" [ref=e140] [cursor=pointer]:
+                            - img [ref=e142]
+                            - text: 개인 할 일 추가
+                - status "업무를 불러오는 중입니다" [ref=e143]:
+                    - heading "업무를 불러오는 중입니다" [level=6] [ref=e144]
+    - generic "DWAI·ON 열기" [ref=e151]:
+        - button "DWAI·ON 열기" [ref=e152] [cursor=pointer]
+```

@@ -1,0 +1,60 @@
+{
+  "en": {
+    "preparation": {
+      "design": {
+        "briefing": "Smart briefing",
+        "briefingEvidence": "A briefing will appear here only after the approved material sources and analysis consent are connected.",
+        "chatBoundary": "Pre-meeting questions need a meeting-bound conversation with current participant access. Room chat is available after joining.",
+        "deviceUnchecked": "Check before entry",
+        "materialTicketReady": "Temporary access verified"
+      }
+    },
+    "room": {
+      "preJoin": {
+        "design": {
+          "cameraOff": "Your camera is off",
+          "deviceDeck": "Audio and video device check",
+          "noiseEnabled": "Saved browser noise suppression: enabled",
+          "noiseDisabled": "Saved browser noise suppression: disabled",
+          "background": "Background and privacy",
+          "backgroundOriginal": "Original camera input",
+          "backgroundBlur": "Background blur",
+          "backgroundOffice": "Office background",
+          "joiningState": "My entry settings",
+          "entryBoundary": "Your current device choices apply on entry. Host approval and recording consent are checked separately.",
+          "deviceFailure": "A device that could not be checked remains off. Select a device and turn it on to retry, or join with it off.",
+          "agenda": "Meeting agenda at a glance"
+        }
+      }
+    }
+  },
+  "ko": {
+    "preparation": {
+      "design": {
+        "briefing": "스마트 브리핑",
+        "briefingEvidence": "승인된 사전 자료 출처와 분석 동의가 연결된 뒤에만 이 영역에 브리핑을 제공합니다.",
+        "chatBoundary": "사전 질문은 현재 참석자 권한이 적용되는 회의별 대화 연결이 필요합니다. 회의 중 채팅은 입장 후 이용할 수 있습니다.",
+        "deviceUnchecked": "입장 전 점검",
+        "materialTicketReady": "임시 열람 권한 확인"
+      }
+    },
+    "room": {
+      "preJoin": {
+        "design": {
+          "cameraOff": "카메라가 꺼져 있습니다",
+          "deviceDeck": "오디오 및 비디오 장치 점검",
+          "noiseEnabled": "저장된 브라우저 소음 억제: 사용",
+          "noiseDisabled": "저장된 브라우저 소음 억제: 사용 안 함",
+          "background": "배경 및 프라이버시",
+          "backgroundOriginal": "실제 카메라 입력",
+          "backgroundBlur": "배경 흐림",
+          "backgroundOffice": "오피스 배경",
+          "joiningState": "내 입장 기본 상태",
+          "entryBoundary": "현재 장치 선택을 입장에 적용합니다. 주최자 승인과 녹화 동의는 별도로 확인합니다.",
+          "deviceFailure": "점검하지 못한 장치는 꺼진 상태를 유지합니다. 장치를 선택하고 켜서 다시 점검하거나, 꺼진 상태로 참여할 수 있습니다.",
+          "agenda": "회의 의제 요약"
+        }
+      }
+    }
+  }
+}

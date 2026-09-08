@@ -171,6 +171,7 @@ export function GuidedEmptyState({
 
 export type ErrorStateProps = {
   title: string;
+  titleComponent?: 'h1' | 'h2';
   description?: string;
   retryLabel?: string;
   onRetry?: () => void;
@@ -187,6 +188,7 @@ export type LocalErrorStateProps = ErrorStateProps & {
 
 export function ErrorState({
   title,
+  titleComponent,
   description,
   retryLabel,
   onRetry,
@@ -198,6 +200,7 @@ export function ErrorState({
       role="alert"
       icon={<AlertCircle size={28} strokeWidth={1.7} />}
       title={title}
+      titleComponent={titleComponent}
       description={description}
       action={
         retryLabel && onRetry ? (
@@ -213,6 +216,7 @@ export function ErrorState({
 
 export function LocalErrorState({
   title,
+  titleComponent,
   description,
   retryLabel,
   onRetry,
@@ -228,6 +232,7 @@ export function LocalErrorState({
       role="alert"
       icon={<AlertCircle size={28} strokeWidth={1.7} />}
       title={title}
+      titleComponent={titleComponent}
       description={description}
       size={size}
       action={

@@ -18,8 +18,6 @@ export type WorkHubActionKind =
   | 'OPEN_SOURCE'
   | 'WORKSPACE_START'
   | 'WORKSPACE_COMPLETE'
-  | 'APPROVAL_CLAIM'
-  | 'APPROVAL_DECIDE'
   | 'ACCESS_REVIEW_DECIDE'
   | 'PERSONAL_START'
   | 'PERSONAL_WAIT'
@@ -32,6 +30,7 @@ export type WorkHubItem = {
   reference: WorkSourceReference;
   sourceId: WorkHubSourceId;
   title: string;
+  displayId?: string;
   summary: string | null;
   lifecycle: WorkHubLifecycle;
   sourceStatus: string;
@@ -50,6 +49,8 @@ export type WorkHubItem = {
 };
 
 export type WorkHubSourceSnapshot = {
+  /** Failed HTTP reads are distinct from a transport outage when retaining stale rows. */
+  failureStatus?: number;
   sourceId: WorkHubSourceId;
   state: 'READY' | 'FORBIDDEN' | 'UNAVAILABLE' | 'NOT_REQUESTED';
   items: WorkHubItem[];

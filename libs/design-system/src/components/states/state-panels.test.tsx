@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { GuidedEmptyState, LoadingState } from './state-panels';
+import { GuidedEmptyState, LoadingState, LocalErrorState } from './state-panels';
 
 describe('LoadingState accessibility contract', () => {
   it('keeps a custom loading silhouette inside a named status region', () => {
@@ -50,5 +50,21 @@ describe('GuidedEmptyState accessibility contract', () => {
 
     expect(markup).not.toContain('role="status"');
     expect(markup).toContain('No rows');
+  });
+});
+
+describe('LocalErrorState heading contract', () => {
+  it('keeps H2 as the default and allows an explicit page-level H1', () => {
+    const nestedMarkup = renderToStaticMarkup(
+      <LocalErrorState title="Unavailable" description="Try again later." />
+    );
+    const pageMarkup = renderToStaticMarkup(
+      <LocalErrorState title="Unavailable" titleComponent="h1" description="Try again later." />
+    );
+
+    expect(nestedMarkup).toContain('<h2');
+    expect(nestedMarkup).not.toContain('<h1');
+    expect(pageMarkup).toContain('<h1');
+    expect(pageMarkup).not.toContain('<h2');
   });
 });

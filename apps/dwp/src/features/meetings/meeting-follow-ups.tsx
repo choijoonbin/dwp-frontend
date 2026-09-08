@@ -1,4 +1,5 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, ArrowRight, CheckCheck, ClipboardList, RefreshCw } from 'lucide-react';
@@ -9,7 +10,6 @@ import {
   FormField,
   InlineFeedback,
   LoadingState,
-  OperationalKpiStrip,
   PageCanvas,
   SelectField,
   foundationTokens,
@@ -22,10 +22,11 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import Tabs, { type TabsProps } from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
+import { MeetingFollowUpsSummary } from './meeting-follow-ups-summary';
 import { MeetingFollowUpsDetail } from './meeting-follow-ups-detail';
 import {
   checkedFollowUpPage,
@@ -35,6 +36,34 @@ import {
 } from './meeting-follow-ups-model';
 import { followUpAccessDenied } from './meeting-follow-ups-state';
 import { MeetingFollowUpCandidates } from './meeting-follow-up-candidates';
+import { meetingShape } from './meeting-visual-system';
+import { meetingFollowUpsNavigation } from './meeting-follow-ups-navigation';
+
+function FollowUpTabs(props: TabsProps) {
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const scroller = root.current?.querySelector<HTMLElement>('.MuiTabs-scroller');
+    const selected = scroller?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+    if (!scroller || !selected) return;
+    const revealSelection = () => {
+      const viewport = scroller.getBoundingClientRect();
+      const tab = selected.getBoundingClientRect();
+      const delta =
+        tab.left < viewport.left
+          ? tab.left - viewport.left
+          : Math.max(0, tab.right - viewport.right);
+      // Only move this horizontal strip; preserve page position and keyboard focus.
+      if (delta) scroller.scrollBy({ left: delta, behavior: 'instant' });
+    };
+    revealSelection();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(revealSelection);
+    observer.observe(scroller);
+    observer.observe(selected);
+    return () => observer.disconnect();
+  }, [props.value]);
+  return <Tabs {...props} ref={root} />;
+}
 
 export function MeetingFollowUps() {
   const { user, isAuthenticated } = useAuth();
@@ -64,68 +93,81 @@ function FollowUpsWorkspace({
   authenticated: boolean;
 }) {
   const { t } = useTranslation('meetings');
-  const theme = useTheme();
-  const compactTabs = useMediaQuery(theme.breakpoints.down('sm'));
-  const [tab, setTab] = useState<FollowUpTab>('ASSIGNED_TO_ME');
+  const [params, setParams] = useSearchParams();
+  const navigation = meetingFollowUpsNavigation(params);
+  const [tab, setTab] = useState<FollowUpTab>(navigation.scope);
   const [page, setPage] = useState(0);
+  useEffect(() => {
+    setTab(navigation.scope);
+    setPage(0);
+  }, [navigation.scope]);
+  const tabControls = (
+    <FollowUpTabs
+      value={tab}
+      onChange={(_, value: FollowUpTab) => {
+        setPage(0);
+        setTab(value);
+        setParams({ scope: value }, { replace: true });
+      }}
+      variant="scrollable"
+      scrollButtons="auto"
+      allowScrollButtonsMobile
+      aria-label={t('followUps.scopeLabel')}
+      sx={{
+        bgcolor: 'action.hover',
+        borderRadius: meetingShape.control,
+        p: 0.5,
+        '& .MuiTabs-indicator': { display: 'none' },
+        '& .MuiTab-root.Mui-selected': { bgcolor: 'primary.main', color: 'primary.contrastText' },
+        mb: 2,
+        '& .MuiTabs-scrollButtons': { width: 40 },
+        '& .MuiTab-root': {
+          minHeight: 48,
+          minWidth: 'max-content',
+          borderRadius: meetingShape.inset,
+          px: { xs: 1.5, sm: 2 },
+          typography: { xs: 'caption', sm: 'button' },
+          whiteSpace: 'nowrap',
+        },
+      }}
+    >
+      {(['ASSIGNED_TO_ME', 'ASSIGNED_BY_ME', 'CANDIDATES'] as const).map((value) => (
+        <Tab
+          key={value}
+          id={'follow-up-tab-' + value}
+          aria-controls="follow-up-panel"
+          value={value}
+          label={t('followUps.tabs.' + value)}
+        />
+      ))}
+    </FollowUpTabs>
+  );
   return (
     <PageCanvas mode="workspace" topInset="compact">
-      <Stack gap={1} sx={{ mb: 3 }}>
+      <Stack gap={1} sx={{ mb: 2.5 }}>
+        <Typography variant="caption" color="primary.main" fontWeight="fontWeightBold">
+          {t('designReview.followUps.eyebrow')}
+        </Typography>
         <Stack direction="row" alignItems="center" gap={1}>
           <CheckCheck size={24} aria-hidden="true" />
           <Typography component="h1" variant="h3">
             {t('followUps.title')}
           </Typography>
         </Stack>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ display: { xs: tab === 'CANDIDATES' ? 'none' : 'block', sm: 'block' } }}
-        >
+        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 820 }}>
           {t('followUps.description')}
         </Typography>
       </Stack>
-      <Tabs
-        value={tab}
-        onChange={(_, value: FollowUpTab) => {
-          setPage(0);
-          setTab(value);
-        }}
-        variant={compactTabs ? 'fullWidth' : 'scrollable'}
-        scrollButtons={compactTabs ? false : 'auto'}
-        allowScrollButtonsMobile={!compactTabs}
-        aria-label={t('followUps.scopeLabel')}
-        sx={{
-          borderBottom: 1,
-          borderColor: 'divider',
-          mb: 2,
-          '& .MuiTabs-scrollButtons': { width: 40 },
-          '& .MuiTab-root': {
-            minHeight: 48,
-            minWidth: { xs: 0, sm: 'max-content' },
-            px: { xs: 0.5, sm: 2 },
-            typography: { xs: 'caption', sm: 'button' },
-            whiteSpace: { xs: 'normal', sm: 'nowrap' },
-          },
-        }}
-      >
-        {(['ASSIGNED_TO_ME', 'ASSIGNED_BY_ME', 'CANDIDATES'] as const).map((value) => (
-          <Tab
-            key={value}
-            id={'follow-up-tab-' + value}
-            aria-controls="follow-up-panel"
-            value={value}
-            label={t('followUps.tabs.' + value)}
-          />
-        ))}
-      </Tabs>
       <Box role="tabpanel" id="follow-up-panel" aria-labelledby={'follow-up-tab-' + tab}>
         {!authenticated ? (
           <InlineFeedback severity="warning" title={t('followUps.accessTitle')}>
             {t('followUps.accessHint')}
           </InlineFeedback>
         ) : tab === 'CANDIDATES' ? (
-          <MeetingFollowUpCandidates identity={identity} actorId={actorId} />
+          <>
+            {tabControls}
+            <MeetingFollowUpCandidates identity={identity} actorId={actorId} />
+          </>
         ) : (
           <FollowUpsPage
             key={JSON.stringify([identity, tab, page])}
@@ -134,6 +176,8 @@ function FollowUpsWorkspace({
             scope={tab}
             page={page}
             onPage={setPage}
+            tabControls={tabControls}
+            requestedAssignment={navigation.scope === tab ? navigation.assignment : null}
           />
         )}
       </Box>
@@ -147,12 +191,16 @@ function FollowUpsPage({
   scope,
   page,
   onPage,
+  tabControls,
+  requestedAssignment,
 }: {
   scopeKey: string;
   actorId: number;
   scope: WorkAssignmentScope;
   page: number;
   onPage: (page: number) => void;
+  tabControls: ReactNode;
+  requestedAssignment: string | null;
 }) {
   const { t, i18n } = useTranslation('meetings');
   const client = useQueryClient();
@@ -161,13 +209,14 @@ function FollowUpsPage({
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'ALL' | 'ACTIVE' | 'COMPLETED'>('ALL');
   const [selected, setSelected] = useState<string | null>(null);
+  const appliedNavigation = useRef<string | null>(null);
   const [revoked, setRevoked] = useState(false);
   const queryKey = ['meetings', 'follow-ups', scopeKey, 'list'] as const;
   const query = useQuery({
     queryKey,
-    queryFn: async () =>
+    queryFn: async ({ signal }) =>
       checkedFollowUpPage(
-        await getWorkAssignments({ scope, page, size: FOLLOW_UP_PAGE_SIZE }),
+        await getWorkAssignments({ scope, page, size: FOLLOW_UP_PAGE_SIZE }, signal),
         actorId,
         scope,
         page
@@ -178,6 +227,20 @@ function FollowUpsPage({
     gcTime: 0,
     meta: { accessSensitive: true },
   });
+  useEffect(() => {
+    if (
+      !query.isSuccess ||
+      query.isFetching ||
+      revoked ||
+      !requestedAssignment ||
+      appliedNavigation.current === requestedAssignment
+    )
+      return;
+    appliedNavigation.current = requestedAssignment;
+    // Only the current, authorized collection may nominate an inspector target.
+    if (query.data.items.some((item) => item.assignmentId === requestedAssignment))
+      setSelected(requestedAssignment);
+  }, [query.isSuccess, query.isFetching, query.data, revoked, requestedAssignment]);
   const revoke = useCallback(() => {
     setRevoked(true);
     setSelected(null);
@@ -202,24 +265,35 @@ function FollowUpsPage({
   };
   if (revoked || followUpAccessDenied(query.error))
     return (
-      <ErrorState
-        title={t('followUps.accessTitle')}
-        description={t('followUps.accessHint')}
-        retryLabel={t('actions.retry')}
-        onRetry={refresh}
-      />
+      <Stack gap={2}>
+        {tabControls}
+        <ErrorState
+          title={t('followUps.accessTitle')}
+          description={t('followUps.accessHint')}
+          retryLabel={t('actions.retry')}
+          onRetry={refresh}
+        />
+      </Stack>
     );
   if (query.isError)
     return (
-      <ErrorState
-        title={t('followUps.loadError')}
-        description={t('followUps.loadErrorHint')}
-        retryLabel={t('actions.retry')}
-        onRetry={refresh}
-      />
+      <Stack gap={2}>
+        {tabControls}
+        <ErrorState
+          title={t('followUps.loadError')}
+          description={t('followUps.loadErrorHint')}
+          retryLabel={t('actions.retry')}
+          onRetry={refresh}
+        />
+      </Stack>
     );
   if (!query.data)
-    return <LoadingState label={t('followUps.loading')} variant="skeleton" skeletonRows={5} />;
+    return (
+      <Stack gap={2}>
+        {tabControls}
+        <LoadingState label={t('followUps.loading')} variant="skeleton" skeletonRows={5} />
+      </Stack>
+    );
   const items = filterFollowUpPage(query.data.items, search, filter);
   const activeOnPage = query.data.items.filter(
     ({ workState }) => workState !== 'COMPLETED' && workState !== 'CANCELLED'
@@ -227,51 +301,29 @@ function FollowUpsPage({
   const urgentOnPage = query.data.items.filter(
     ({ priority }) => priority === 'HIGH' || priority === 'URGENT'
   ).length;
-  const detail = selected ? (
-    <MeetingFollowUpsDetail
-      key={selected}
-      assignmentId={selected}
-      actorId={actorId}
-      scopeKey={scopeKey}
-      onAccessDenied={revoke}
-      onChanged={changed}
-      onClose={() => setSelected(null)}
-    />
-  ) : null;
+  const detail =
+    selected && query.data.items.some((item) => item.assignmentId === selected) ? (
+      <MeetingFollowUpsDetail
+        key={selected}
+        assignmentId={selected}
+        actorId={actorId}
+        scopeKey={scopeKey}
+        collectionPending={query.isFetching}
+        onAccessDenied={revoke}
+        onChanged={changed}
+        onClose={() => setSelected(null)}
+      />
+    ) : null;
   return (
     <Stack gap={2} data-testid="meeting-follow-ups">
-      <OperationalKpiStrip
-        ariaLabel={t('followUps.summaryLabel')}
-        items={[
-          {
-            key: 'scope-total',
-            label: t('followUps.metrics.scopeTotal'),
-            value: query.data.totalElements,
-            detail: t('followUps.metrics.authoritativeScope'),
-          },
-          {
-            key: 'page-visible',
-            label: t('followUps.metrics.pageVisible'),
-            value: query.data.items.length,
-            detail: t('followUps.metrics.currentPage'),
-            tone: 'info',
-          },
-          {
-            key: 'page-active',
-            label: t('followUps.metrics.pageActive'),
-            value: activeOnPage,
-            detail: t('followUps.metrics.currentPage'),
-            tone: 'success',
-          },
-          {
-            key: 'page-urgent',
-            label: t('followUps.metrics.pageUrgent'),
-            value: urgentOnPage,
-            detail: t('followUps.metrics.currentPage'),
-            tone: urgentOnPage ? 'critical' : 'neutral',
-          },
-        ]}
+      <MeetingFollowUpsSummary
+        total={query.data.totalElements}
+        visible={query.data.items.length}
+        active={activeOnPage}
+        urgent={urgentOnPage}
       />
+      {tabControls}
+
       <Box
         sx={{
           display: 'grid',
@@ -281,6 +333,9 @@ function FollowUpsPage({
           },
           gap: 1.5,
           alignItems: 'center',
+          p: 2,
+          bgcolor: 'background.paper',
+          borderRadius: meetingShape.control,
         }}
       >
         <FormField
@@ -364,11 +419,18 @@ function FollowUpsPage({
                     p: 2,
                     textAlign: 'left',
                     justifyContent: 'flex-start',
-                    bgcolor:
-                      selected === task.assignmentId ? 'action.selected' : 'background.paper',
-                    border: 1,
+                    bgcolor: 'background.paper',
+                    border: selected === task.assignmentId ? 2 : 1,
                     borderColor: selected === task.assignmentId ? 'primary.main' : 'divider',
-                    borderRadius: foundationTokens.radius.surface + 'px',
+                    borderLeft: 4,
+                    borderLeftColor:
+                      task.priority === 'URGENT'
+                        ? 'error.main'
+                        : task.workState === 'COMPLETED'
+                          ? 'success.main'
+                          : 'primary.main',
+                    boxShadow: selected === task.assignmentId ? 2 : 1,
+                    borderRadius: meetingShape.card,
                     minWidth: 0,
                     overflowWrap: 'anywhere',
                   }}
@@ -393,12 +455,50 @@ function FollowUpsPage({
                         />
                       )}
                     </Stack>
-                    <Typography component="span" variant="subtitle1">
+                    <Typography
+                      component="span"
+                      variant="h6"
+                      fontWeight="fontWeightBold"
+                      sx={{ lineHeight: 'h6.lineHeight' }}
+                    >
                       {task.title}
                     </Typography>
-                    <Typography component="span" variant="body2" color="text.secondary">
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.secondary"
+                      sx={(currentTheme) => ({
+                        p: 1.5,
+                        bgcolor: alpha(currentTheme.palette.primary.main, 0.04),
+                        borderRadius: meetingShape.inset,
+                        lineHeight: 'body2.lineHeight',
+                      })}
+                    >
                       {task.description || t('followUps.noDescription')}
                     </Typography>
+                    <Stack component="span" direction="row" gap={0.75} alignItems="center">
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          display: 'grid',
+                          placeItems: 'center',
+                          bgcolor: 'primary.main',
+                          color: 'primary.contrastText',
+                          borderRadius: '50%',
+                          fontSize: 'caption.fontSize',
+                        }}
+                      >
+                        {task.assigneeUserId === actorId ? t('followUps.me') : '#'}
+                      </Box>
+                      <Typography component="span" variant="caption" color="text.secondary">
+                        {t('followUps.assignee')}:{' '}
+                        {task.assigneeUserId === actorId
+                          ? t('followUps.me')
+                          : t('followUps.userReference', { id: task.assigneeUserId })}
+                      </Typography>
+                    </Stack>
                     <Stack
                       component="span"
                       direction="row"
@@ -418,6 +518,29 @@ function FollowUpsPage({
                             )
                           : t('followUps.noDue')}
                       </Typography>
+                    </Stack>
+                    <Stack
+                      component="span"
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="flex-end"
+                      gap={0.75}
+                      sx={{ color: 'primary.main' }}
+                    >
+                      <Typography component="span" variant="caption" fontWeight="fontWeightBold">
+                        {t(
+                          selected === task.assignmentId
+                            ? 'followUps.closeDetail'
+                            : 'followUps.inspectEvidence'
+                        )}
+                      </Typography>
+                      <ArrowRight
+                        size={16}
+                        aria-hidden="true"
+                        style={{
+                          transform: selected === task.assignmentId ? 'rotate(90deg)' : undefined,
+                        }}
+                      />
                     </Stack>
                   </Stack>
                 </ActionButton>

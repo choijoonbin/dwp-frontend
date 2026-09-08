@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MeetingDeviceSession,
   meetingDeviceFailure,
@@ -6,6 +6,10 @@ import {
   type MeetingPreviewKind,
 } from './meeting-device-session';
 import type { MeetingDevicePreferences } from './meeting-preferences-model';
+import {
+  createMeetingBackgroundProcessor,
+  meetingBackgroundSupported,
+} from './meeting-background-processor';
 
 type PreviewState = 'idle' | 'requesting' | 'active';
 
@@ -33,6 +37,17 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
   const [speakerActive, setSpeakerActive] = useState(false);
   const [level, setLevel] = useState(0);
   const video = useRef<HTMLVideoElement>(null);
+  const background = useRef<ReturnType<typeof createMeetingBackgroundProcessor> | null>(null);
+  const [backgroundState, setBackgroundState] = useState<
+    'loading' | 'ready' | 'failed' | 'stopped'
+  >('stopped');
+  const releaseVideo = useCallback(() => {
+    // Clear immediately, including during an effect change before React renders the off state.
+    if (video.current) video.current.srcObject = null;
+    const processor = background.current;
+    background.current = null;
+    if (processor) void processor.destroy().catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     alive.current = !revocation?.aborted;
@@ -51,6 +66,7 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       attempts.current.video++;
       attempts.current.speaker++;
       attempts.current.inventory++;
+      releaseVideo();
       session.current?.dispose();
       session.current = null;
       speakerCleanup.current?.();
@@ -63,7 +79,7 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       revocation?.removeEventListener('abort', release);
       release();
     };
-  }, [revocation]);
+  }, [revocation, releaseVideo]);
 
   useEffect(() => {
     const element = video.current;
@@ -148,6 +164,10 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
         const ended = () => {
           if (!alive.current) return;
           attempts.current[kind]++;
+          if (kind === 'video') {
+            releaseVideo();
+            setBackgroundState('stopped');
+          }
           session.current?.stop(kind);
           setStates((current) => ({ ...current, [kind]: 'idle' }));
           setStreams((current) => ({ ...current, [kind]: undefined }));
@@ -159,15 +179,17 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       })
     );
     return () => cleanup.forEach((remove) => remove());
-  }, [streams]);
+  }, [streams, releaseVideo]);
 
   const stop = (kind: MeetingPreviewKind) => {
     attempts.current[kind]++;
+    if (kind === 'video') releaseVideo();
     session.current?.stop(kind);
     if (!alive.current) return;
     setStreams((current) => ({ ...current, [kind]: undefined }));
     setStates((current) => ({ ...current, [kind]: 'idle' }));
     if (kind === 'audio') setLevel(0);
+    else setBackgroundState('stopped');
   };
   const refresh = async () => {
     if (!alive.current) return;
@@ -191,20 +213,63 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
       return;
     }
     const attempt = ++attempts.current[kind];
+    if (kind === 'video') {
+      releaseVideo();
+      setBackgroundState('stopped');
+    }
+    setStreams((current) => ({ ...current, [kind]: undefined }));
     setError(null);
     setStates((current) => ({ ...current, [kind]: 'requesting' }));
     try {
+      if (kind === 'video' && preferences.backgroundBlur && !meetingBackgroundSupported()) {
+        session.current.stop('video');
+        setBackgroundState('failed');
+        throw new DOMException('Local background processing unsupported', 'NotSupportedError');
+      }
       const stream = await session.current.start(
         kind,
         kind === 'audio' ? preferences.microphoneId : preferences.cameraId,
         preferences.noiseSuppression
       );
       if (!alive.current || attempts.current[kind] !== attempt || !stream) return;
-      setStreams((current) => ({ ...current, [kind]: stream }));
+      let visibleStream = stream;
+      if (kind === 'video' && preferences.backgroundBlur) {
+        setBackgroundState('loading');
+        const processor = createMeetingBackgroundProcessor({
+          onStateChange: (event) => {
+            if (!alive.current || attempts.current.video !== attempt || event.state !== 'failed')
+              return;
+            attempts.current.video++;
+            releaseVideo();
+            session.current?.stop('video');
+            setStreams((current) => ({ ...current, video: undefined }));
+            setStates((current) => ({ ...current, video: 'idle' }));
+            setBackgroundState('failed');
+            setError(event.reason === 'UNSUPPORTED' ? 'unsupported' : 'unknown');
+          },
+        });
+        background.current = processor;
+        const input = stream.getVideoTracks()[0];
+        if (!input) throw new DOMException('Camera track missing', 'NotFoundError');
+        const output = await processor.start(input);
+        if (!alive.current || attempts.current.video !== attempt) {
+          output.stop();
+          await processor.destroy();
+          return;
+        }
+        visibleStream = new MediaStream([output]);
+        setBackgroundState('ready');
+      }
+      setStreams((current) => ({ ...current, [kind]: visibleStream }));
       setStates((current) => ({ ...current, [kind]: 'active' }));
       await refresh();
     } catch (failure) {
       if (!alive.current || attempts.current[kind] !== attempt) return;
+      if (kind === 'video') {
+        releaseVideo();
+        session.current?.stop('video');
+        if (preferences.backgroundBlur) setBackgroundState('failed');
+      }
       setError(meetingDeviceFailure(failure));
       setStates((current) => ({ ...current, [kind]: 'idle' }));
     }
@@ -296,6 +361,7 @@ export function useMeetingDevicePreview(revocation?: AbortSignal) {
     level,
     error,
     speakerActive,
+    backgroundState,
     start,
     stop,
     refresh,

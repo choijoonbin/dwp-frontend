@@ -1,0 +1,617 @@
+{
+  "projectUrl": "https://stitch.withgoogle.com/projects/13391261371843159731",
+  "recordedAt": "2026-09-07T03:05:34.680496+00:00",
+  "referenceFrameCount": 18,
+  "desktopFrameCount": 11,
+  "mobileFrameCount": 7,
+  "navigationMenuCount": 6,
+  "frames": [
+    {
+      "key": "01-D",
+      "title": "통합업무함",
+      "nodeId": "f2666a9b9262439cad5f2eb122cd7dff",
+      "design": {
+        "path": "../../design-reference/01-unified-queue/desktop/screen.png",
+        "sha256": "730a09e2fecba49e877e5a83e680faf474a7303f9f4831a4604eeba4322ca3a2",
+        "pixels": [
+          1600,
+          1280
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/01-D.png",
+        "sha256": "593f990c12f37eb7b811d06b672885ad8f197b9b52b4e2f56848b3b5497018e1",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/01-unified-queue.png"
+      },
+      "note": "6개 메뉴와 원천/책임/상태를 정렬하고 좁은 화면에서 상세 왕복을 제공합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "01-M",
+      "title": "통합업무함",
+      "nodeId": "063df120026a45ae936b6613f706d64b",
+      "design": {
+        "path": "../../design-reference/01-unified-queue/mobile/screen.png",
+        "sha256": "e0be9dba0b91a67b12c7658c722fd34bd0c302ec7fea53ff72479739843f8f25",
+        "pixels": [
+          482,
+          1600
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/01-M.png",
+        "sha256": "8481752c50df6eb62188eb8775c0a2b3f2aa6355589d1d3d6a9edf25dcf5af59",
+        "pixels": [
+          390,
+          844
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-stitch-design-sync-mo-a964c--source-status-11-inline-AI-chromium/01-unified-queue.png"
+      },
+      "note": "6개 메뉴와 원천/책임/상태를 정렬하고 좁은 화면에서 상세 왕복을 제공합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "02-D",
+      "title": "결재 업무 상세",
+      "nodeId": "e80ba5ed05ff4965bad14dadf5474890",
+      "design": {
+        "path": "../../design-reference/02-detail-approval/desktop/screen.png",
+        "sha256": "831769203dc176a0579384cba1e2eedbb46bebc2bf8f6a462adc4a8473d0731b",
+        "pixels": [
+          1396,
+          1600
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/02-D.png",
+        "sha256": "bc0b03c3edb9c7e8d5f1b07d5df65ff19f33edea916449b62e99f2235058cf9c",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-1440-ko.png"
+      },
+      "note": "원천 문서·결재선·양식과 실제 결정 API를 연결했습니다. 첨부 목록 자체는 원천 API 미제공입니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "02-M",
+      "title": "결재 업무 상세",
+      "nodeId": "22191fe61bef415dbe21969b6cefd185",
+      "design": {
+        "path": "../../design-reference/02-detail-approval/mobile/screen.png",
+        "sha256": "c8b16875b072d9318ab840fbd8a154553e750000ecc157e190acb312ff03dee2",
+        "pixels": [
+          454,
+          1600
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/02-M.png",
+        "sha256": "0f793d340758ea436a7cf8bdced8a2950f57c02fb669901f2a84cf8efaec6630",
+        "pixels": [
+          390,
+          844
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/02-390-ko.png"
+      },
+      "note": "원천 문서·결재선·양식과 실제 결정 API를 연결했습니다. 첨부 목록 자체는 원천 API 미제공입니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "03-D",
+      "title": "접근권한 검토",
+      "nodeId": "56760cf188524664980aecc5768f0dac",
+      "design": {
+        "path": "../../design-reference/03-detail-access-review/desktop/screen.png",
+        "sha256": "7745bd8db144a7fcd74321550a6591666a632ad654b95b9aa692604d3af7aa40",
+        "pixels": [
+          1234,
+          1600
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/03-D.png",
+        "sha256": "4970a235248514b6ea62887eb65a825bc9781651fb574b1b2c9c1a7163428c24",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-1440-ko.png"
+      },
+      "note": "유지/회수 결정과 실제 권한 반영을 구분합니다. 사유와 미리보기의 버전을 고정합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "03-M",
+      "title": "접근권한 검토",
+      "nodeId": "508b6f597f7340929ef9975e798d22e1",
+      "design": {
+        "path": "../../design-reference/03-detail-access-review/mobile/screen.png",
+        "sha256": "6a062b57393338f15d15cc961c8afa7f4ea9cfa08042f02de1732bedbedcdd4f",
+        "pixels": [
+          390,
+          1210
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/03-M.png",
+        "sha256": "10be1a23a20c781a301f77d8afb21fce52d6fea2c76c9e7bfa98c515e81cfbb1",
+        "pixels": [
+          390,
+          844
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/03-390-ko.png"
+      },
+      "note": "유지/회수 결정과 실제 권한 반영을 구분합니다. 사유와 미리보기의 버전을 고정합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "04-D",
+      "title": "서비스 보완 요청",
+      "nodeId": "cdc190616dcc475e95704abffd161cfb",
+      "design": {
+        "path": "../../design-reference/04-detail-service/desktop/screen.png",
+        "sha256": "e56135ae11597707c47069b32ace786923a3630f586d58916324e0f508bcf042",
+        "pixels": [
+          1440,
+          1234
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/04-D.png",
+        "sha256": "6581ce6b68bf6b74de14ce8a4e54eada93ec23533ae00d943ea7fd34c1fb03fe",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-1440-ko.png"
+      },
+      "note": "실제 보완 응답 API와 검증을 구현했습니다. tenant 1의 새 권한 번들 v6은 정식 활성화 대기입니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "04-M",
+      "title": "서비스 보완 요청",
+      "nodeId": "b1f433ceee9b4d1a9fb19a6d28851553",
+      "design": {
+        "path": "../../design-reference/04-detail-service/mobile/screen.png",
+        "sha256": "690d9b03c07d96695ba1b41b84d7110fdf0b9bda7670e03ae15648f52a89bce1",
+        "pixels": [
+          390,
+          1015
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/04-M.png",
+        "sha256": "e3bb065e0ff92e0f9648dbd9b1d03b064b91960382bb62c1d0fa8ba749185fd9",
+        "pixels": [
+          390,
+          844
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/04-390-ko.png"
+      },
+      "note": "실제 보완 응답 API와 검증을 구현했습니다. tenant 1의 새 권한 번들 v6은 정식 활성화 대기입니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "05-D",
+      "title": "개인 할 일",
+      "nodeId": "147c9f3bef474835b2607cb1eeaa955e",
+      "design": {
+        "path": "../../design-reference/05-detail-native-task/desktop/screen.png",
+        "sha256": "f18b7ce4313235e313aa0e5dea5b75137353e4122bfed055f1d74138dee9ac9d",
+        "pixels": [
+          1480,
+          1084
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/05-D.png",
+        "sha256": "6e3af32aff7893f824f87a59d028739fc6cb47117bef3656aeecb0c2d6288492",
+        "pixels": [
+          1440,
+          1574
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/05-personal-detail-1440.png"
+      },
+      "note": "체크리스트·복수 원천·상태·삭제를 연결했습니다. 동시 편집 시 최신 목록 비교와 명시적 재검토가 필요합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "05-M",
+      "title": "개인 할 일",
+      "nodeId": "d77b26f438c342e9bceacbcf9f675adf",
+      "design": {
+        "path": "../../design-reference/05-detail-native-task/mobile/screen.png",
+        "sha256": "9020f8218168cdfa97caf699224db7a5c4316706c9f33f899c7bc5bc26472369",
+        "pixels": [
+          390,
+          844
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/05-M.png",
+        "sha256": "4fa245e36e4151cc1de08c0ce8f61579e7d5bff7b6cf2abd690ae2c53e1c1776",
+        "pixels": [
+          390,
+          1776
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-personal-design-actio-03836-it-design-evidence-at-390px-chromium/05-personal-detail-390.png"
+      },
+      "note": "체크리스트·복수 원천·상태·삭제를 연결했습니다. 동시 편집 시 최신 목록 비교와 명시적 재검토가 필요합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "06-D",
+      "title": "개인 할 일 생성·편집",
+      "nodeId": "db0b89c861f14e3b916c9e084ed46fde",
+      "design": {
+        "path": "../../design-reference/06-task-create-capture-edit/desktop/screen.png",
+        "sha256": "5f53d2c841d86a1f546bf300a355f2a944155c753e01e85110267d029676d99f",
+        "pixels": [
+          1280,
+          1024
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/06-D.png",
+        "sha256": "b672e5ff0f8cf80f45e877108716b76e316b163305bef37c88c887004a7789d1",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-personal-design-actio-e8cf0-t-design-evidence-at-1440px-chromium/06-personal-edit-1440.png"
+      },
+      "note": "생성/편집과 기한·우선순위·체크리스트·원천 연결을 저장합니다. API가 제공하는 실제 선택 항목을 사용합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "07-D",
+      "title": "오늘 계획",
+      "nodeId": "1b1133dcf79043298a823eae2274e073",
+      "design": {
+        "path": "../../design-reference/07-today-plan/desktop/screen.png",
+        "sha256": "04e116eb3b74ca08ab27b2aefb1430e8e5cdbceb5d9f8b26ae35d2c7b42d2157",
+        "pixels": [
+          1280,
+          1024
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/07-D.png",
+        "sha256": "829e249e8b977b77b71e6ae236d85443579d0f4bbe8a050514bf35f030c538d8",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-plan-final-layout-20260907/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan.png"
+      },
+      "note": "실제 계획과 후보를 구분합니다. 시안의 예상 소요·성공 확률 예시는 계산 근거 없이 표시하지 않습니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "08-D",
+      "title": "수행 시간 연결",
+      "nodeId": "d6d32fb8b9c74cb38981680eaefdb1d0",
+      "design": {
+        "path": "../../design-reference/08-calendar-handoff/desktop/screen.png",
+        "sha256": "69ecdb1ce0fa521461e7a6ba3f9bb6d36f4962ae61f453631d40bce768b53718",
+        "pixels": [
+          1280,
+          1024
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/08-D.png",
+        "sha256": "50de6ea75e20c41892973520691201793dda05428cf60da1d14ee1ecc6e57caa",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/08-calendar-handoff.png"
+      },
+      "note": "Calendar event와 Work link를 구분해 저장하고 부분 성공을 복구합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "09-D",
+      "title": "원천 상태·일괄 결과",
+      "nodeId": "166e08cc9fb24866a88b1684346b53ba",
+      "design": {
+        "path": "../../design-reference/09-source-status-batch-results/desktop/screen.png",
+        "sha256": "5acf27f8e527542c3dac78faf485110cd48f99ede3c34f2a9fb94f61f60296c1",
+        "pixels": [
+          1280,
+          1024
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/09-D.png",
+        "sha256": "3bafdd1a79743e16302ac7e2169abc9a50dd47c480b75f6f586de30b48720d5b",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/09-source-status.png"
+      },
+      "note": "지원되는 항목의 결과를 개별 확인하며, 권한·충돌·결과 불명·미전송 제외를 구분합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "10-D",
+      "title": "Flow 업무 기여",
+      "nodeId": "dd34ee457b1e44cbb339c1a005886ef3",
+      "design": {
+        "path": "../../design-reference/10-flow-work-contribution/desktop/screen.png",
+        "sha256": "69ef3d254c2ce690a58e3ad5477a54dd47300f8ae36e8a02cb55426bb086d8e2",
+        "pixels": [
+          1280,
+          1030
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/10-D.png",
+        "sha256": "555819929e98e5f26b5d381acaf245e37ae332901356c2ef3605b11e73fb91a7",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-flow-service-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution.png"
+      },
+      "note": "개인 업무·계획 기여와 서비스 보완 대기의 정확한 Work 진입을 구현했습니다. Work 접근 권한이 없으면 Services 상세를 유지합니다. 전사 Flow 공통 외형은 원본 전체 대시보드와 차이가 있습니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "11-D",
+      "title": "선택 업무 AI",
+      "nodeId": "941feb59256e4dc79f0586cd40f80618",
+      "design": {
+        "path": "../../design-reference/11-selected-work-ai-assist/desktop/screen.png",
+        "sha256": "e33652354803909ed5d8e8a1e627e6674f5f0b803c2fcd646c49fef68edbd6a2",
+        "pixels": [
+          1280,
+          1024
+        ],
+        "provenance": "chrome-render-from-stitch-code"
+      },
+      "implementation": {
+        "path": "screens/11-D.png",
+        "sha256": "1063b60561db976c1e96158ca593e26bb960c27f3291d8806ff6cae662eda30c",
+        "pixels": [
+          1440,
+          1000
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/11-selected-work-ai-assist.png"
+      },
+      "note": "선택 업무의 검증된 맥락과 출처, SSE 답변, 편집·복사·명시적 적용을 제공합니다. 질문만으로 원천에 제출하지 않습니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "12-M1",
+      "title": "모바일 권한 결정",
+      "nodeId": "fcf4bcb954aa425e81cd611b24f410fb",
+      "design": {
+        "path": "../../design-reference/12-mobile-accessibility-journeys/m1-390/screen.png",
+        "sha256": "6fb09375a359a3837d43fa5e68d0bab37999e7694ff56820bfc3e6cf62b8b2b5",
+        "pixels": [
+          390,
+          1565
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/12-M1.png",
+        "sha256": "bc9411a25b9fe58f18074a235da0ea2242028735e2bad411c691b7cfbff47fab",
+        "pixels": [
+          390,
+          844
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-source-design-evidenc-9294a-gn-evidence-at-1440-and-390-chromium/M1-390-ko-decision-preview.png"
+      },
+      "note": "결정 사유를 확인하고 회수 결정을 기록합니다. 원천의 권한 반영 대기와 분리 표시합니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    },
+    {
+      "key": "12-M2",
+      "title": "모바일 작은 화면 입력",
+      "nodeId": "6953f797f9ef4baeb2967a1aef0a777d",
+      "design": {
+        "path": "../../design-reference/12-mobile-accessibility-journeys/m2-title-320-actual-390/screen.png",
+        "sha256": "b9d289c1b89d20d19fb7b33b090554a1bddc0f0b2ecef0c8f537af8516178b8d",
+        "pixels": [
+          390,
+          884
+        ],
+        "provenance": "stitch-zip"
+      },
+      "implementation": {
+        "path": "screens/12-M2.png",
+        "sha256": "3bff5d6d9da0d74e5a2003559a91914bda7ccee4bc2dcc90b30f675a6d5f1806",
+        "pixels": [
+          320,
+          1231
+        ],
+        "captureSource": "/tmp/work-release-verification-20260907/work-personal-design-actio-8c5aa-k-keyboard-capture-at-320px-chromium/personal-capture-320-keyboard-reflow.png"
+      },
+      "note": "원본은 390px이며 실행 증거는 320px/높이 축소입니다. OS 키보드 실기기 캡처가 아닌 뷰포트 회복 검증입니다.",
+      "data": "Fictional API fixtures rendered by the actual application. Not a live tenant acceptance result."
+    }
+  ],
+  "additionalEvidence": [
+    {
+      "key": "01-320",
+      "title": "통합업무함 320px",
+      "path": "screens/01-320.png",
+      "sha256": "7db65fc2dfd8675810301cf02936d2b7dafa521162b90f06f7d50eeaaca0d8c1",
+      "pixels": [
+        320,
+        740
+      ]
+    },
+    {
+      "key": "01-dark",
+      "title": "다크 모드",
+      "path": "screens/01-dark.png",
+      "sha256": "c9afe2ef87ecde94989dfbb6ffaf64d584129777377520d3eeed62dba8b35ac5",
+      "pixels": [
+        390,
+        844
+      ]
+    },
+    {
+      "key": "01-contrast",
+      "title": "강제 고대비",
+      "path": "screens/01-contrast.png",
+      "sha256": "65e5f3090bfd5bb8427fd5797965a85bc75105905ebf27e55c90cbf8d9d56783",
+      "pixels": [
+        390,
+        844
+      ]
+    },
+    {
+      "key": "05-200",
+      "title": "200% CSS 확대",
+      "path": "screens/05-200.png",
+      "sha256": "0bf4e99f7a8e70764ea1f59ee25c822bcfcc4739b327d791e0f6639e5ddf21e2",
+      "pixels": [
+        1280,
+        800
+      ]
+    },
+    {
+      "key": "09-batch",
+      "title": "일괄 실행 확인 결과",
+      "path": "screens/09-batch.png",
+      "sha256": "8c5bd3885359d589e5ea039fa42a83fec52005fbbdae3f621b53a93b4e116ec0",
+      "pixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "key": "12-M1-receipt",
+      "title": "모바일 권한 결정 결과",
+      "path": "screens/12-M1-receipt.png",
+      "sha256": "1a833cb0cb33682d39ec1d544acbc6c2fc98d023a0b9c440e1efb4f71a501e69",
+      "pixels": [
+        390,
+        844
+      ]
+    },
+    {
+      "key": "06-320",
+      "title": "개인 할 일 편집 320px",
+      "path": "screens/06-320.png",
+      "sha256": "20e7be3c73385ecdc5fa8de631b81a7dff1b46d3b286350cbf2575ee99ed07c2",
+      "pixels": [
+        320,
+        844
+      ]
+    },
+    {
+      "key": "11-320",
+      "title": "업무 AI 320px",
+      "path": "screens/11-320.png",
+      "sha256": "198c95de25f9884234857817cf4e480d40a05714c24e4de1a97cb0fc88d827fa",
+      "pixels": [
+        320,
+        740
+      ]
+    },
+    {
+      "key": "02-D-full",
+      "title": "결재 상세 전체",
+      "path": "screens/02-D-full.png",
+      "sha256": "b054d3fd62f9b0f741fb6eed9051252afc6e083965823e0f441b359a97073e89",
+      "pixels": [
+        1440,
+        1972
+      ]
+    },
+    {
+      "key": "03-D-full",
+      "title": "권한 검토 전체",
+      "path": "screens/03-D-full.png",
+      "sha256": "80c1e11d18c3f39b28ebd9cb7ce27f0a3e6d75edc2b026d18fbad43b9eac2b8a",
+      "pixels": [
+        1440,
+        1528
+      ]
+    },
+    {
+      "key": "04-D-full",
+      "title": "서비스 상세 전체",
+      "path": "screens/04-D-full.png",
+      "sha256": "3094f765f4b0bad5c66184076f892659dc3a5101aaabb14dcc4a5f57daae04cb",
+      "pixels": [
+        1440,
+        2375
+      ]
+    },
+    {
+      "key": "07-D-full",
+      "title": "오늘 계획 전체",
+      "path": "screens/07-D-full.png",
+      "sha256": "829e249e8b977b77b71e6ae236d85443579d0f4bbe8a050514bf35f030c538d8",
+      "pixels": [
+        1440,
+        1000
+      ],
+      "captureSource": "/tmp/work-plan-final-layout-20260907/work-stitch-design-sync-de-e44b0--source-status-11-inline-AI-chromium/07-today-plan-full.png"
+    },
+    {
+      "key": "11-D-full",
+      "title": "AI 상세 전체",
+      "path": "screens/11-D-full.png",
+      "sha256": "f9b801b0ada20314ebdfbebea5743ff12e21b9450dca9b91cc164c44aa94b0ac",
+      "pixels": [
+        1440,
+        2301
+      ]
+    },
+    {
+      "key": "10-D-full",
+      "title": "Flow 업무 요약 전체",
+      "path": "screens/10-D-full.png",
+      "sha256": "c21be37052d9f7940cc37f0b4770fdf41c051f843e574d337cfc7451ae082d27",
+      "pixels": [
+        1440,
+        1415
+      ],
+      "captureSource": "/tmp/work-flow-service-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-flow-work-contribution-full.png"
+    },
+    {
+      "key": "10-service-response",
+      "title": "Flow에서 서비스 보완 폼 진입",
+      "path": "screens/10-service-response.png",
+      "sha256": "c1b75da9821d4d1b93a9d65fd7eeea22030c99acf276348254042b1b554ecf64",
+      "pixels": [
+        1440,
+        1000
+      ],
+      "captureSource": "/tmp/work-flow-service-final/work-stitch-design-sync-10-bb1bf-with-canonical-return-links-chromium/10-service-response-entry.png"
+    }
+  ],
+  "acceptance": "Implementation and automated journey evidence with declared design differences; not zero-pixel-difference acceptance or live service activation.",
+  "finalizedAt": "2026-09-07T03:27:29.875953+00:00"
+}

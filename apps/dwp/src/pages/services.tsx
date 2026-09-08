@@ -27,12 +27,14 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import {
   ActionButton,
   ActionIconButton,
   ConfirmDialog,
   FormField,
   GuidedEmptyState,
+  InlineFeedback,
   PageCanvas,
 } from '@dwp-frontend/design-system';
 
@@ -60,12 +62,14 @@ import type {
 
 import { ServiceCatalogCard } from '../features/services/service-catalog-card';
 import { ServiceRequestDialog } from '../features/services/service-request-dialog';
+import { ServiceInformationResponse } from '../features/services/service-information-response';
 import {
   serviceRequestErrorText,
   serviceRequestFieldLabel,
   serviceRequestName,
 } from '../features/services/service-request-model';
 import { useProductActionMutation } from '../components/use-product-action-mutation';
+import { useProductSurfaceRequestScope } from '../components/use-product-surface-request-scope';
 
 const statusColors: Record<
   ServiceRequestStatus,
@@ -521,10 +525,26 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
   const cancelRequest = useProductActionMutation('route.services.work.request-cancel.action');
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [editing, setEditing] = useState(false);
+  const requestScope = useProductSurfaceRequestScope({
+    productKey: 'services',
+    surfaceKey: 'services.work',
+  });
+  const detailKey = [
+    'services',
+    'request',
+    requestId,
+    'view',
+    draft ? 'draft' : 'absent',
+    ...requestScope.cacheKey,
+  ];
   const detail = useQuery({
-    queryKey: ['services', 'request', requestId, 'view', draft ? 'draft' : 'absent'],
+    queryKey: detailKey,
     queryFn: ({ signal }) =>
-      draft ? getServiceDraftRequest(requestId, signal) : getServiceMyRequest(requestId, signal),
+      draft
+        ? getServiceDraftRequest(requestId, signal)
+        : getServiceMyRequest(requestId, signal, requestScope.contextScopeKey),
+    enabled: requestScope.ready,
+    meta: requestScope.queryMeta,
     retry: 1,
   });
   const mutation = useMutation({
@@ -558,6 +578,9 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
     onError: (error) => toast.error(serviceRequestErrorText(error, t('detail.actionError'))),
   });
   const data = detail.data;
+  const keepDraftOnRefreshError = Boolean(
+    data && (!(detail.error instanceof HttpError) || detail.error.status >= 500)
+  );
   const fieldByKey = new Map((data?.requestSchema.fields ?? []).map((field) => [field.key, field]));
   const backPath = data?.request.status === 'DRAFT' ? '/services/drafts' : '/services/my';
   const cancellable = data && ['DRAFT', 'SUBMITTED', 'TRIAGED'].includes(data.request.status);
@@ -574,7 +597,7 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
         >
           {t('detail.back')}
         </ActionButton>
-        {detail.isError ? (
+        {detail.isError && !keepDraftOnRefreshError ? (
           <Alert severity="error">
             {serviceRequestErrorText(detail.error, t('detail.loadError'))}
           </Alert>
@@ -582,6 +605,18 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
           <Skeleton variant="rounded" height={420} />
         ) : (
           <Stack gap={3}>
+            {detail.isError && (
+              <InlineFeedback severity="warning">
+                {t('informationResponse.refreshFailed')}
+                <ActionButton
+                  intent="quiet"
+                  disabled={detail.isFetching}
+                  onClick={() => void detail.refetch()}
+                >
+                  {t('informationResponse.refresh')}
+                </ActionButton>
+              </InlineFeedback>
+            )}
             <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" gap={2}>
               <Box>
                 <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
@@ -628,6 +663,15 @@ function RequestDetailView({ requestId, draft }: { requestId: string; draft: boo
                 )}
               </Stack>
             </Stack>
+            <ServiceInformationResponse
+              key={data.request.requestId}
+              detail={data}
+              onRefresh={() => void detail.refetch()}
+              onConfirmed={(receipt) => {
+                queryClient.setQueryData(detailKey, receipt);
+                void queryClient.invalidateQueries({ queryKey: ['services', 'requests'] });
+              }}
+            />
             <Box
               sx={{
                 display: 'grid',

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { getVideoMeetingPreferences } from '@dwp-frontend/shared-utils/api/video-meeting-preferences-api';
 import {
   formatDate,
   resolveSupportedLocale,
@@ -21,10 +22,12 @@ import {
 } from '@dwp-frontend/design-system';
 import {
   ChevronDown,
+  ChevronRight,
   DoorOpen,
   History,
   LockKeyhole,
   MicOff,
+  Moon,
   Radio,
   RefreshCw,
   Settings2,
@@ -34,19 +37,25 @@ import {
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import Switch from '@mui/material/Switch';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import { meetingSurface } from './meeting-visual-system';
+import { alpha, useTheme } from '@mui/material/styles';
+import { meetingSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 
 function Section({
   title,
   id,
   icon,
+  compactMobile = false,
+  action,
   children,
 }: {
   title: string;
   id: string;
   icon: typeof DoorOpen;
+  compactMobile?: boolean;
+  action?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -55,13 +64,23 @@ function Section({
       aria-labelledby={id}
       sx={(theme) => ({
         ...meetingSurface(theme),
+        borderRadius: meetingShape.group,
         minWidth: 0,
         p: { xs: 2, md: 3 },
-        boxShadow: theme.shadows[1],
+        boxShadow: (theme) => meetingSoftShadow(theme),
       })}
     >
-      <SectionHeader id={id} icon={icon} density="compact" glyph="plain" title={title} />
-      <Box sx={{ mt: 2 }}>{children}</Box>
+      <Box sx={{ display: compactMobile ? { xs: 'none', md: 'block' } : 'block' }}>
+        <SectionHeader
+          id={id}
+          icon={icon}
+          density="compact"
+          glyph="surface"
+          title={title}
+          meta={action}
+        />
+      </Box>
+      <Box sx={{ mt: compactMobile ? { xs: 0, md: 2 } : 2 }}>{children}</Box>
     </Box>
   );
 }
@@ -101,7 +120,7 @@ function PersonalRoomLayout({
       </Stack>
     </Box>
   ) : (
-    <Stack gap={3}>
+    <Stack gap={2}>
       {current}
       {policy}
       {rotate}
@@ -160,6 +179,7 @@ function PersonalRoomLayout({
 }
 
 export function MeetingPersonalRoomDetails({
+  scope,
   room,
   history,
   page,
@@ -168,8 +188,11 @@ export function MeetingPersonalRoomDetails({
   canUpdate,
   onRotate,
   onCheckDevices,
+  onOpenMeeting,
+  onViewAll,
   refreshedAt,
 }: {
+  scope: string;
   room: VideoMeetingPersonalRoom;
   history: UseQueryResult<VideoMeetingPersonalRoomSessionPage, Error>;
   page: number;
@@ -178,9 +201,19 @@ export function MeetingPersonalRoomDetails({
   canUpdate: boolean;
   onRotate: () => void;
   onCheckDevices: () => void;
+  onOpenMeeting: (meetingId: string) => void;
+  onViewAll: () => void;
   refreshedAt: number;
 }) {
   const { t, i18n } = useTranslation('meetings');
+  const preferences = useQuery({
+    queryKey: ['meetings', 'personal-room-preferences', scope],
+    queryFn: () => getVideoMeetingPreferences(),
+    retry: false,
+    gcTime: 0,
+    meta: { accessSensitive: true },
+  });
+  const savedPreferences = preferences.isError ? undefined : preferences.data;
   const [regional, setRegional] = useState(readRegionalPreference);
   useEffect(() => {
     const refresh = () => setRegional(readRegionalPreference());
@@ -204,61 +237,172 @@ export function MeetingPersonalRoomDetails({
       supplementalLabel={`${t('personalRoom.defaults.title')} · ${t('personalRoom.isolation.title')}`}
       policy={
         <Section title={t('personalRoom.policy.title')} id="personal-room-policy" icon={DoorOpen}>
-          <Stack gap={2.5}>
+          <Stack gap={1.25}>
             {['waiting', 'scope', 'external'].map((key) => (
-              <Stack key={key} direction="row" gap={1.5} alignItems="flex-start">
-                <LockKeyhole size={18} aria-hidden="true" style={{ flexShrink: 0 }} />
-                <Box sx={{ minWidth: 0 }}>
+              <Stack
+                key={key}
+                direction="row"
+                gap={1.25}
+                alignItems="flex-start"
+                sx={(theme) => ({
+                  p: 1.5,
+                  borderRadius: meetingShape.control,
+                  bgcolor: alpha(theme.palette.primary.main, 0.045),
+                })}
+              >
+                <LockKeyhole size={18} aria-hidden="true" style={{ flexShrink: 0, marginTop: 2 }} />
+                <Box sx={{ minWidth: 0, flex: 1 }}>
                   <Typography variant="subtitle2">
                     {t(`personalRoom.policy.${key}Title`)}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 0.5, display: { xs: 'none', md: 'block' } }}
+                  >
                     {t(`personalRoom.policy.${key}Description`)}
                   </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 0.5, display: { xs: 'block', md: 'none' } }}
+                  >
+                    {t(`stitch.personal.policyMobile.${key}`)}
+                  </Typography>
                 </Box>
+                {key === 'waiting' ? (
+                  <Switch
+                    checked
+                    disabled
+                    slotProps={{ input: { 'aria-label': t('personalRoom.policy.waitingTitle') } }}
+                    sx={{ mr: -1 }}
+                  />
+                ) : (
+                  <Chip
+                    size="small"
+                    label={t('stitch.personal.' + (key === 'scope' ? 'internalOnly' : 'blocked'))}
+                    color={key === 'scope' ? 'primary' : 'error'}
+                    sx={{ maxWidth: 88, mt: 0.25 }}
+                  />
+                )}
               </Stack>
             ))}
-            <InlineFeedback>{t('personalRoom.policy.fixedHint')}</InlineFeedback>
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <InlineFeedback>{t('personalRoom.policy.fixedHint')}</InlineFeedback>
+            </Box>
           </Stack>
         </Section>
       }
       current={
-        <Section title={t('personalRoom.current.title')} id="personal-room-current" icon={Radio}>
-          <Stack gap={1.5}>
-            <Typography variant="subtitle1">
-              {t(
-                room.currentMeetingId
-                  ? 'personalRoom.current.available'
-                  : 'personalRoom.current.none'
-              )}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+        <Section
+          title={t('personalRoom.current.title')}
+          id="personal-room-current"
+          icon={Radio}
+          compactMobile
+        >
+          <Stack
+            gap={1.25}
+            direction={{ xs: 'row', md: 'column' }}
+            alignItems="center"
+            sx={(theme) => ({
+              textAlign: { xs: 'left', md: 'center' },
+              py: { xs: 0, md: 3 },
+              px: { xs: 0, md: 2 },
+              borderRadius: meetingShape.card,
+              bgcolor: { xs: 'transparent', md: alpha(theme.palette.primary.main, 0.055) },
+            })}
+          >
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: meetingShape.group,
+                bgcolor: 'background.paper',
+                display: 'flex',
+                color: 'text.secondary',
+              }}
+            >
+              <Moon size={28} aria-hidden="true" />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle1" sx={{ typography: { xs: 'body2', md: 'subtitle1' } }}>
+                {t(
+                  room.currentMeetingId
+                    ? 'personalRoom.current.available'
+                    : 'personalRoom.current.none'
+                )}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: { xs: 'block', md: 'none' } }}
+              >
+                {t('stitch.personal.waitingMobile')}
+              </Typography>
+            </Box>
+            <Chip
+              size="small"
+              label={t('stitch.personal.waitingUnavailable')}
+              sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+            />
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ display: { xs: 'none', md: 'block' } }}
+            >
               {t(
                 room.currentMeetingId
                   ? 'personalRoom.current.continueHint'
                   : 'personalRoom.current.emptyHint'
               )}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: { xs: 'none', md: 'block' } }}
+            >
               {t('personalRoom.current.snapshot', { at: date(refreshedAt), timeZone })}
             </Typography>
           </Stack>
         </Section>
       }
       rotate={
-        <Section title={t('personalRoom.rotate.title')} id="personal-room-rotate" icon={RefreshCw}>
-          <Stack gap={2}>
-            <Typography variant="body2" color="text.secondary">
-              {t('personalRoom.rotate.description')}
-            </Typography>
-            <ActionButton
-              intent="secondary"
-              startIcon={<RefreshCw size={16} />}
-              disabled={busy || !canUpdate}
-              onClick={onRotate}
+        <Section
+          title={t('personalRoom.rotate.title')}
+          id="personal-room-rotate"
+          icon={RefreshCw}
+          compactMobile
+        >
+          <Stack gap={1.5}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              gap={1}
+              sx={(theme) => ({
+                p: { xs: 0, md: 1.5 },
+                borderRadius: meetingShape.control,
+                bgcolor: { xs: 'transparent', md: alpha(theme.palette.primary.main, 0.055) },
+              })}
             >
-              {t('personalRoom.rotate.action')}
-            </ActionButton>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ display: { xs: 'none', md: 'block' } }}
+              >
+                {t('personalRoom.rotate.description')}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ display: { xs: 'block', md: 'none' } }}>
+                {t('personalRoom.rotate.title')}
+              </Typography>
+              <ActionButton
+                intent="secondary"
+                startIcon={<RefreshCw size={16} />}
+                disabled={busy || !canUpdate}
+                onClick={onRotate}
+              >
+                {t('personalRoom.rotate.action')}
+              </ActionButton>
+            </Stack>
             <Typography variant="caption" color="text.secondary">
               {t('personalRoom.updatedAt', { at: date(room.updatedAt), timeZone })}
             </Typography>
@@ -273,12 +417,58 @@ export function MeetingPersonalRoomDetails({
           icon={Settings2}
         >
           <Stack gap={2}>
-            <Stack direction="row" gap={1} alignItems="center">
-              <MicOff size={18} aria-hidden="true" />
-              <VideoOff size={18} aria-hidden="true" />
-              <Typography variant="body2">{t('personalRoom.defaults.media')}</Typography>
-            </Stack>
-            <Typography variant="body2" color="text.secondary">
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0,1fr)', sm: 'repeat(2,minmax(0,1fr))' },
+                gap: 1,
+              }}
+            >
+              {(
+                [
+                  { key: 'microphoneOff', icon: MicOff },
+                  { key: 'cameraOff', icon: VideoOff },
+                ] as const
+              ).map(({ key, icon: Icon }) => (
+                <Stack
+                  key={key}
+                  direction="row"
+                  gap={1}
+                  alignItems="center"
+                  sx={(theme) => ({
+                    p: 1.5,
+                    borderRadius: meetingShape.control,
+                    bgcolor: alpha(theme.palette.primary.main, 0.045),
+                  })}
+                >
+                  <Icon size={18} aria-hidden="true" style={{ flexShrink: 0 }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body2">{t('preferences.join.' + key)}</Typography>
+                    {!savedPreferences && (
+                      <Typography variant="caption" color="text.secondary">
+                        {t('stitch.personal.preferenceUnavailable')}
+                      </Typography>
+                    )}
+                  </Box>
+                  {savedPreferences && (
+                    <Switch
+                      checked={savedPreferences[key]}
+                      disabled
+                      slotProps={{ input: { 'aria-label': t('preferences.join.' + key) } }}
+                    />
+                  )}
+                </Stack>
+              ))}
+            </Box>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={(theme) => ({
+                p: 1.5,
+                borderRadius: meetingShape.control,
+                bgcolor: alpha(theme.palette.primary.main, 0.045),
+              })}
+            >
               {t('personalRoom.defaults.consent')}
             </Typography>
             <ActionButton
@@ -293,7 +483,16 @@ export function MeetingPersonalRoomDetails({
         </Section>
       }
       history={
-        <Section title={t('personalRoom.history.title')} id="personal-room-history" icon={History}>
+        <Section
+          title={t('personalRoom.history.title')}
+          id="personal-room-history"
+          icon={History}
+          action={
+            <ActionButton intent="quiet" size="small" disabled={busy} onClick={onViewAll}>
+              {t('mine.title')} · {t('actions.viewAll')}
+            </ActionButton>
+          }
+        >
           {history.isPending ? (
             <LoadingState
               label={t('personalRoom.history.loading')}
@@ -316,12 +515,16 @@ export function MeetingPersonalRoomDetails({
               size="compact"
             />
           ) : (
-            <Stack component="ul" gap={0} sx={{ listStyle: 'none', m: 0, p: 0 }}>
+            <Stack component="ul" gap={1.25} sx={{ listStyle: 'none', m: 0, p: 0 }}>
               {history.data.items.map((session) => (
                 <Box
                   component="li"
                   key={session.meetingId}
-                  sx={{ py: 1.5, '& + &': { borderTop: 1, borderColor: 'divider' } }}
+                  sx={(theme) => ({
+                    p: 1.5,
+                    borderRadius: meetingShape.control,
+                    bgcolor: alpha(theme.palette.primary.main, 0.055),
+                  })}
                 >
                   <Stack direction="row" justifyContent="space-between" gap={1} flexWrap="wrap">
                     <Typography variant="caption" color="text.secondary">
@@ -334,14 +537,37 @@ export function MeetingPersonalRoomDetails({
                       {t(`personalRoom.history.states.${session.lifecycleState}`)}
                     </Typography>
                   </Stack>
-                  <Typography variant="subtitle2" sx={{ my: 0.75, overflowWrap: 'anywhere' }}>
-                    {session.title}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <ActionButton
+                    intent="quiet"
+                    endIcon={<ChevronRight size={17} aria-hidden="true" />}
+                    disabled={busy || history.isFetching}
+                    onClick={() => onOpenMeeting(session.meetingId)}
+                    sx={{
+                      px: 0,
+                      my: 0.75,
+                      width: '100%',
+                      justifyContent: 'space-between',
+                      textAlign: 'left',
+                      whiteSpace: 'normal',
+                    }}
+                  >
+                    <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
+                      {session.title}
+                    </Typography>
+                  </ActionButton>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: { xs: 'none', md: 'block' } }}
+                  >
                     {t('personalRoom.history.revision', { revision: session.invitationRevision })}
                   </Typography>
                   {session.endedAt && (
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: { xs: 'none', md: 'block' } }}
+                    >
                       {t('personalRoom.history.endedAt', { at: date(session.endedAt) })}
                     </Typography>
                   )}

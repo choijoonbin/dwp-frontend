@@ -17,7 +17,8 @@ export type VideoMeetingPreparationSource = {
 export type VideoMeetingInvitationResponse = {
   participantId: string;
   displayName: string;
-  response: 'PENDING' | 'ACCEPTED' | 'TENTATIVE' | 'DECLINED';
+  response:
+    'PENDING' | 'NEEDS_RESPONSE' | 'RECONFIRM_REQUIRED' | 'ACCEPTED' | 'TENTATIVE' | 'DECLINED';
   invitationRevision: number;
   respondedAt: string | null;
   version: number;
@@ -90,7 +91,14 @@ const sha256 = /^[0-9a-f]{64}$/u;
 const contentType = /^[a-z0-9][a-z0-9.+-]{0,63}\/[a-z0-9][a-z0-9.+-]{0,63}$/u;
 const opaqueReference = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,159}$/u;
 const sourceVersion = /^[A-Za-z0-9][A-Za-z0-9._-]{0,159}$/u;
-const invitationStates = new Set(['PENDING', 'ACCEPTED', 'TENTATIVE', 'DECLINED']);
+const invitationStates = new Set([
+  'PENDING',
+  'NEEDS_RESPONSE',
+  'RECONFIRM_REQUIRED',
+  'ACCEPTED',
+  'TENTATIVE',
+  'DECLINED',
+]);
 const referenceProviders = new Set(['DWP_FILES', 'SHAREPOINT', 'CONFLUENCE']);
 const classifications = new Set(['INTERNAL', 'CONFIDENTIAL', 'RESTRICTED']);
 
@@ -215,7 +223,16 @@ function parsedInvitation(value: unknown): VideoMeetingInvitationResponse {
     candidate.respondedAt === null
       ? null
       : timestamp(candidate.respondedAt, 'Invalid preparation invitation');
-  if ((candidate.response === 'PENDING') !== (respondedAt === null))
+  // V29 uses NEEDS_RESPONSE and RECONFIRM_REQUIRED; PENDING remains compatible
+  // with older consumers. The organizer is accepted by policy without a user
+  // response timestamp, including after a schedule revision.
+  const pending = ['PENDING', 'NEEDS_RESPONSE', 'RECONFIRM_REQUIRED'].includes(
+    String(candidate.response)
+  );
+  if (
+    (pending && respondedAt !== null) ||
+    (['TENTATIVE', 'DECLINED'].includes(String(candidate.response)) && respondedAt === null)
+  )
     throw new Error('Invalid preparation invitation');
   return {
     participantId: candidate.participantId,
@@ -310,9 +327,26 @@ function bound(result: unknown, meetingId: string): VideoMeetingPreparation {
     declined: version(counts.declined),
     pending: version(counts.pending),
   };
+  // The service exposes a SELF-only roster to participants, but aggregate response
+  // counts cover the meeting. Do not reject it or expand the private roster.
+  const visibleCounts = { accepted: 0, tentative: 0, declined: 0, pending: 0 };
+  for (const response of invitationResponses) {
+    const state = ['PENDING', 'NEEDS_RESPONSE', 'RECONFIRM_REQUIRED'].includes(response.response)
+      ? 'pending'
+      : (response.response.toLowerCase() as keyof typeof visibleCounts);
+    visibleCounts[state] += 1;
+  }
+  const completeRoster =
+    candidate.canEditAgenda ||
+    candidate.canManageMaterials ||
+    invitationResponses.some((response) => !response.mine);
   if (
-    Object.values(invitationCounts).reduce((sum, count) => sum + count, 0) !==
-    invitationResponses.length
+    (Object.keys(visibleCounts) as (keyof typeof visibleCounts)[]).some(
+      (state) => visibleCounts[state] > invitationCounts[state]
+    ) ||
+    (completeRoster &&
+      Object.values(invitationCounts).reduce((sum, count) => sum + count, 0) !==
+        invitationResponses.length)
   )
     throw new Error('Invalid preparation invitation counts');
   return {

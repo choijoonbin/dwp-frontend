@@ -1,8 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { executeWorkHubAction, workHubActionClients } from './work-hub-actions';
+import {
+  executeWorkHubAction,
+  openWorkHubSourceRoute,
+  workHubActionClients,
+} from './work-hub-actions';
 import { hubItem, KEY, personal, workspace } from './work-hub.test-support';
 import { workspaceWorkToHub } from './work-hub-source-adapters';
-import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils/api/approval-governed-mutation';
 
 describe('Work Hub owner commands', () => {
   it('cannot send generic completion to an external work projection', async () => {
@@ -18,58 +21,6 @@ describe('Work Hub owner commands', () => {
       )
     ).toEqual({ state: 'FORBIDDEN', retryable: false });
     expect(update).not.toHaveBeenCalled();
-  });
-  it('passes the exact governed approval authority to the source API', async () => {
-    const execution = { mode: 'legacy' } as unknown as ApprovalMutationExecution;
-    const detail = {
-      task: { taskId: 'a-1', stepKey: 'review', version: 2, status: 'PENDING' },
-      canDecide: true,
-      selfApprovalBlocked: false,
-    };
-    const decide = vi
-      .fn()
-      .mockResolvedValue({ ...detail, task: { ...detail.task, version: 3, status: 'APPROVED' } });
-    const item = hubItem({
-      reference: { sourceSystem: 'APPROVAL_TASK', sourceReference: 'a-1', obligationKey: 'review' },
-      actions: [{ kind: 'APPROVAL_DECIDE', availability: 'DETAIL_REQUIRED' }],
-    });
-    const result = await executeWorkHubAction(
-      item,
-      { kind: 'APPROVAL_DECIDE', decision: 'APPROVE', execution },
-      {
-        ...workHubActionClients,
-        getApprovalTask: vi.fn().mockResolvedValue(detail),
-        decideApprovalTask: decide,
-      }
-    );
-    expect(decide).toHaveBeenCalledWith(
-      'a-1',
-      { decision: 'APPROVE', comment: undefined, expectedVersion: 2 },
-      execution
-    );
-    expect(result).toMatchObject({
-      state: 'CONFIRMED',
-      outcome: 'DECISION_RECORDED',
-      sourceStatus: 'APPROVED',
-    });
-  });
-  it('blocks stale approval detail before issuing a command', async () => {
-    const decide = vi.fn();
-    const item = hubItem({
-      reference: { sourceSystem: 'APPROVAL_TASK', sourceReference: 'a-1', obligationKey: 'review' },
-      actions: [{ kind: 'APPROVAL_DECIDE', availability: 'DETAIL_REQUIRED' }],
-    });
-    const result = await executeWorkHubAction(
-      item,
-      { kind: 'APPROVAL_DECIDE', decision: 'APPROVE', execution: {} as ApprovalMutationExecution },
-      {
-        ...workHubActionClients,
-        getApprovalTask: vi.fn().mockResolvedValue({ task: { version: 3 } }),
-        decideApprovalTask: decide,
-      }
-    );
-    expect(result.state).toBe('CONFLICT');
-    expect(decide).not.toHaveBeenCalled();
   });
   it('replays a personal command with the original version and identity after uncertain transport', async () => {
     const transition = vi
@@ -93,5 +44,13 @@ describe('Work Hub owner commands', () => {
       route: '/services/requests/1',
       sourceChanged: false,
     });
+  });
+  it('hands source-owned work across the document boundary and rejects unsafe routes', () => {
+    const assign = vi.fn();
+    expect(openWorkHubSourceRoute('/approvals/inbox?task=a-1', assign)).toBe(true);
+    expect(assign).toHaveBeenCalledWith('/approvals/inbox?task=a-1');
+    expect(openWorkHubSourceRoute('//foreign.example/path', assign)).toBe(false);
+    expect(openWorkHubSourceRoute('/services/requests/1\nX-Injected: yes', assign)).toBe(false);
+    expect(assign).toHaveBeenCalledTimes(1);
   });
 });

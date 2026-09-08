@@ -1,0 +1,90 @@
+{
+  "ko": {
+    "designReview": {
+      "pipeline": {
+        "title": "회의록 근거 및 게시 흐름",
+        "recording": "녹화 수집",
+        "transcript": "타임코드 전사",
+        "analysis": "AI 분석",
+        "review": "검토 승인",
+        "published": "공식 게시",
+        "verified": "확인됨",
+        "unavailable": "확인 전"
+      },
+      "recap": {
+        "citationHint": "결정에 연결된 전사 시점을 선택해 원본 근거를 확인하세요.",
+        "manageFollowUps": "전체 관리",
+        "decisionNumber": "결정 {{index}}"
+      },
+      "library": {
+        "reset": "필터 초기화",
+        "period": "기간 범위",
+        "allPeriods": "전체 기간",
+        "recentDays": "최근 {{count}}일",
+        "organizer": "주최자",
+        "allOrganizers": "전체 주최자",
+        "order": "정렬",
+        "NEWEST": "최근 회의순",
+        "OLDEST": "오래된 회의순"
+      },
+      "followUps": {
+        "metrics": {
+          "scopeTotal": "전체",
+          "pageVisible": "현재 표시",
+          "pageActive": "진행",
+          "pageUrgent": "중요"
+        },
+        "eyebrow": "회의에서 결정한 일을 실제 업무로",
+        "sourceEvidence": "회의 결정 및 실행 근거",
+        "sourceEvidenceHint": "현재 접근 권한을 확인한 뒤 이 업무에 연결된 정확한 게시 버전의 실행 항목과 인용 시점을 불러옵니다.",
+        "sourceUnavailable": "연결된 게시 버전의 근거를 현재 확인할 수 없습니다. 업무 수행 권한은 별도로 유지됩니다.",
+        "loadEvidence": "근거 미리보기",
+        "sourceScope": "표시하는 내용은 게시된 AI 실행 항목입니다. 전사 원문은 연결된 회의 보고서에서 확인합니다."
+      }
+    }
+  },
+  "en": {
+    "designReview": {
+      "pipeline": {
+        "title": "Meeting evidence and publication flow",
+        "recording": "Recording",
+        "transcript": "Transcript",
+        "analysis": "AI analysis",
+        "review": "Review",
+        "published": "Published",
+        "verified": "Verified",
+        "unavailable": "Not verified"
+      },
+      "recap": {
+        "citationHint": "Select a cited timestamp to verify each decision against its source.",
+        "manageFollowUps": "Manage all",
+        "decisionNumber": "Decision {{index}}"
+      },
+      "library": {
+        "reset": "Reset filters",
+        "period": "Date range",
+        "allPeriods": "All dates",
+        "recentDays": "Last {{count}} days",
+        "organizer": "Organizer",
+        "allOrganizers": "All organizers",
+        "order": "Sort order",
+        "NEWEST": "Newest meetings",
+        "OLDEST": "Oldest meetings"
+      },
+      "followUps": {
+        "metrics": {
+          "scopeTotal": "Total",
+          "pageVisible": "Shown",
+          "pageActive": "Active",
+          "pageUrgent": "Priority"
+        },
+        "eyebrow": "From meeting decisions to work",
+        "sourceEvidence": "Meeting decision and action evidence",
+        "sourceEvidenceHint": "Verify current access to load the action and cited timestamps from the exact published version linked to this task.",
+        "sourceUnavailable": "Evidence from the linked published version is not currently available. Work permissions remain independent.",
+        "loadEvidence": "Preview evidence",
+        "sourceScope": "This is the published AI action item. Open its meeting report to inspect the original transcript."
+      }
+    }
+  }
+}

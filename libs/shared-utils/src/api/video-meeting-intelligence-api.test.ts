@@ -117,6 +117,31 @@ describe('video meeting intelligence API boundary', () => {
     await expect(getLatestVisibleVideoMeetingIntelligenceReport('meeting-1')).resolves.toBeNull();
   });
 
+  it.each([
+    ['latest visible', getLatestVisibleVideoMeetingIntelligenceReport],
+    ['latest published', getLatestPublishedVideoMeetingIntelligenceReport],
+  ])('cancels the %s transport when the viewer scope is discarded', async (_, read) => {
+    const controller = new AbortController();
+    let receivedSignal: AbortSignal | undefined;
+    const fetchMock = vi.fn((_: unknown, init: RequestInit) => {
+      receivedSignal = init.signal ?? undefined;
+      return new Promise<Response>((_resolve, reject) => {
+        receivedSignal?.addEventListener('abort', () =>
+          reject(new DOMException('Aborted', 'AbortError'))
+        );
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const pending = read('meeting-1', controller.signal);
+    await vi.waitFor(() => expect(receivedSignal).toBeDefined());
+    controller.abort();
+
+    await expect(pending).rejects.toBeDefined();
+    expect(receivedSignal?.aborted).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('loads the latest published recap through its dedicated projection route', async () => {
     const published = {
       ...report,

@@ -1,0 +1,7 @@
+apps/dwp/src/features/meetings/meeting-preparation-materials.tsx(150,16): error TS2345: Argument of type '(current: Record<string, VideoMeetingMaterialAccessTicket>) => { [x: string]: VideoMeetingMaterialAccessTicket | null; }' is not assignable to parameter of type 'SetStateAction<Record<string, VideoMeetingMaterialAccessTicket>>'.
+  Type '(current: Record<string, VideoMeetingMaterialAccessTicket>) => { [x: string]: VideoMeetingMaterialAccessTicket | null; }' is not assignable to type '(prevState: Record<string, VideoMeetingMaterialAccessTicket>) => Record<string, VideoMeetingMaterialAccessTicket>'.
+    Type '{ [x: string]: VideoMeetingMaterialAccessTicket | null; }' is not assignable to type 'Record<string, VideoMeetingMaterialAccessTicket>'.
+      'string' index signatures are incompatible.
+        Type 'VideoMeetingMaterialAccessTicket | null' is not assignable to type 'VideoMeetingMaterialAccessTicket'.
+          Type 'null' is not assignable to type 'VideoMeetingMaterialAccessTicket'.
+apps/dwp/src/features/meetings/my-meetings-presentation.tsx(4,39): error TS6133: 'Clock3' is declared but its value is never read.

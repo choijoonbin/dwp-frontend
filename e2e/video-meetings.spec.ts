@@ -5,9 +5,12 @@ import { mockShellSession } from './support/shell-session';
 import { expectMeetingAdminRuntimeEvidence } from './support/video-meeting-admin-intelligence-assertions';
 import {
   MEETING_MEMBER_PERMISSIONS,
-  openMeetingPolicyEditor,
+  openUnsupportedRecordingPolicyEditor,
 } from './support/video-meeting-admin-policy';
-import { expectMeetingRoomWorkspaceTools } from './support/video-meeting-room-assertions';
+import {
+  expectMeetingChatOverlayKeyboardBoundary,
+  expectMeetingRoomWorkspaceTools,
+} from './support/video-meeting-room-assertions';
 
 const meetingSummary = {
   meetingId: '81000000-0000-0000-0000-000000000001',
@@ -308,6 +311,7 @@ test('meeting home prioritizes the three actions and remains accessible on mobil
 test('host configures a governed content plan before joining and sees authoritative blockers', async ({
   page,
 }) => {
+  test.slow(); // Full prejoin, content-plan command and room keyboard journey in both engines.
   await mockMeetingMember(page);
   await keepMeetingTransportPending(page);
   const hostMeeting = {
@@ -417,7 +421,7 @@ test('host configures a governed content plan before joining and sees authoritat
 
   await page.goto(`/meetings/room/${meetingSummary.meetingId}`);
   await page.getByRole('button', { name: 'Check camera and microphone' }).click();
-  await expect(page.getByRole('heading', { name: 'Check camera and microphone' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: meetingSummary.title })).toBeVisible();
   await page.getByTestId('meeting-content-plan-disclosure').locator('summary').click();
   const save = page.getByRole('button', { name: 'Save content plan' });
   await expect(save).toBeDisabled();
@@ -489,17 +493,6 @@ test('host configures a governed content plan before joining and sees authoritat
   await chatTrigger.click();
   const collaborationClose = page.locator('.dwp-meeting-collaboration__icon-button');
   await expect(collaborationClose).toBeFocused();
-  await expect(page.locator('.dwp-meeting-conference__stage')).toHaveAttribute('inert', '');
-  await expect(page.locator('.dwp-video-meeting-room__header')).toHaveAttribute('inert', '');
-  await expect(page.locator('.dwp-video-meeting-room__header')).toHaveAttribute(
-    'aria-hidden',
-    'true'
-  );
-  await expect(page.locator('.dwp-video-meeting-room__interactions')).toHaveAttribute(
-    'aria-hidden',
-    'true'
-  );
-  await expect(page.locator('.dwp-video-meeting-room__interactions')).toHaveAttribute('inert', '');
   await expect
     .poll(() =>
       page.locator('.dwp-video-meeting-room').evaluate((element) => {
@@ -508,12 +501,7 @@ test('host configures a governed content plan before joining and sees authoritat
       })
     )
     .toBeLessThanOrEqual(1);
-  await collaborationClose.press('Shift+Tab');
-  await expect(page.getByRole('textbox', { name: 'Type a message' })).toBeFocused();
-  await page.getByRole('textbox', { name: 'Type a message' }).press('Tab');
-  await expect(collaborationClose).toBeFocused();
-  await collaborationClose.press('Escape');
-  await expect(chatTrigger).toBeFocused();
+  await expectMeetingChatOverlayKeyboardBoundary(page);
   await expect(page.locator('.dwp-video-meeting-room__interactions')).not.toHaveAttribute(
     'aria-hidden',
     'true'
@@ -992,7 +980,13 @@ test('ended meetings open the selected recap with actual evidence and honest art
   await page.getByRole('tab', { name: /^Past /u }).click();
   await expect(page.getByText('Cancelled planning session')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Prepare to join' })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Open meeting recap' }).click();
+  const endedRow = page
+    .getByTestId('my-meetings-list')
+    .getByRole('article')
+    .filter({
+      has: page.getByRole('heading', { name: endedMeeting.title, exact: true }),
+    });
+  await endedRow.getByRole('button', { name: 'Open meeting recap', exact: true }).click();
 
   await expect(page).toHaveURL(
     new RegExp(`/meetings/history\\?meeting=${endedMeeting.meetingId.replaceAll('-', '\\-')}`)
@@ -1073,20 +1067,15 @@ test('administrators see unsupported recording and persist supported governed po
   );
 
   await page.goto('/meetings/admin/policies');
-  const { recordingPolicy, participantChat, chatRetention } = await openMeetingPolicyEditor(page);
-  await expect(
-    page.getByText('LiveKit Egress is not configured. Recording cannot be enabled.')
-  ).toBeVisible();
-  await expect(recordingPolicy).toBeDisabled();
-  await participantChat.uncheck();
+  const chatRetention = await openUnsupportedRecordingPolicyEditor(page);
   await chatRetention.fill('120');
   await expect(
     page.getByText('Meeting chat retention cannot exceed meeting record retention.')
   ).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Save policy' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Save policy', exact: true })).toBeDisabled();
   await chatRetention.fill('60');
-  await page.getByRole('button', { name: 'Save policy' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Save policy' }).click();
+  await page.getByRole('button', { name: 'Save policy', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Save policy', exact: true }).click();
   await expect.poll(() => saved).not.toBeNull();
   expect(idempotencyKey).toMatch(/^[0-9a-f-]{36}$/u);
   expect(saved).toMatchObject({
@@ -1160,7 +1149,11 @@ test('administrators see unsupported recording and persist supported governed po
   );
   await page.goto('/meetings/admin/intelligence');
   await expect(page.getByRole('heading', { name: 'AI and data governance' })).toBeVisible();
-  await expect(page.getByText('never grants access to recordings')).toBeVisible();
+  await expect(
+    page
+      .getByRole('alert')
+      .filter({ hasText: 'This administration view exposes policy and dependency status only.' })
+  ).toBeVisible();
   await expectMeetingAdminRuntimeEvidence(page, 'managed-provider', 'enterprise-model');
   await expect(
     page.getByText('Meeting-record purge execution is not implemented or verified.')

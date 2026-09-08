@@ -11,7 +11,13 @@ export type ProductWorkLayoutProps = Omit<ProductAreaLayoutProps, 'manifest' | '
 
 export function ProductWorkLayout({ surface, ...layoutProps }: ProductWorkLayoutProps) {
   if (surface.decision.context.plane !== 'work') {
-    return <ProductSurfaceAccessState decision={{ state: 'authority-unavailable' }} />;
+    return (
+      <ProductSurfaceAccessState
+        decision={{ state: 'authority-unavailable' }}
+        plane="work"
+        pageLevel
+      />
+    );
   }
   return <ProductAreaLayout {...layoutProps} surface={surface} />;
 }

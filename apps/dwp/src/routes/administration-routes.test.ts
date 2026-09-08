@@ -19,6 +19,7 @@ const routeMocks = vi.hoisted(() => ({
   useAuth: vi.fn(),
   usePermissions: vi.fn(),
   useProviderSupportContext: vi.fn(),
+  useLocation: vi.fn(),
   useParams: vi.fn(),
   useSearchParams: vi.fn(),
 }));
@@ -38,6 +39,7 @@ vi.mock('@dwp-frontend/shared-utils/auth/provider-support-context', () => ({
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal<typeof ReactRouterDom>()),
   useParams: routeMocks.useParams,
+  useLocation: routeMocks.useLocation,
   useSearchParams: routeMocks.useSearchParams,
 }));
 
@@ -67,6 +69,11 @@ describe('administration identity-plane route boundary', () => {
     });
     routeMocks.usePermissions.mockReset();
     routeMocks.useProviderSupportContext.mockReset();
+    routeMocks.useLocation.mockReturnValue({
+      pathname: '/admin/spaces',
+      search: '?state=draft',
+      hash: '#catalog',
+    });
     routeMocks.useParams.mockReset();
     routeMocks.useSearchParams.mockReset();
   });
@@ -117,11 +124,23 @@ describe('administration identity-plane route boundary', () => {
     const result = SpacesAdminLegacyIndexRedirect();
 
     expect(isValidElement(result)).toBe(true);
-    if (!isValidElement<{ to: string; replace: boolean }>(result)) {
+    if (
+      !isValidElement<{
+        to: { pathname: string; search: string; hash: string };
+        replace: boolean;
+      }>(result)
+    ) {
       throw new Error('Expected a Spaces management redirect element.');
     }
     expect(result.type).toBe(Navigate);
-    expect(result.props).toMatchObject({ to: '/spaces/admin/templates', replace: true });
+    expect(result.props).toMatchObject({
+      to: {
+        pathname: '/spaces/admin/templates',
+        search: '?state=draft',
+        hash: '#catalog',
+      },
+      replace: true,
+    });
     expect(administrationRoute('admin/spaces').handle).toMatchObject({
       productSurfaceId: 'spaces.management',
       productPageLifecycle: 'DRAFT',

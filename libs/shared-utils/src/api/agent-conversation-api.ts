@@ -59,12 +59,26 @@ export async function getDwaionConversations(): Promise<DwaionConversationSummar
   return response.data.data;
 }
 
-export async function getDwaionConversation(conversationId: string): Promise<DwaionConversation> {
+export async function getDwaionConversation(
+  conversationId: string,
+  agentKey?: string
+): Promise<DwaionConversation> {
+  const search = agentKey ? `?${new URLSearchParams({ agentKey })}` : '';
   const response = await axiosInstance.get<ApiResponse<unknown>>(
-    `/api/agent/v1/conversations/${encodeURIComponent(conversationId)}`
+    `/api/agent/v1/conversations/${encodeURIComponent(conversationId)}${search}`
   );
   if (!isConversation(response.data.data)) {
     throw new HttpError('Conversation response is invalid.', 502, response.data);
+  }
+  if (
+    response.data.data.summary.conversationId !== conversationId ||
+    (agentKey &&
+      response.data.data.messages.some(
+        (message) =>
+          message.role === 'ASSISTANT' && (message.agentKey ?? 'DWP_ASSISTANT') !== agentKey
+      ))
+  ) {
+    throw new HttpError('Conversation scope does not match.', 409);
   }
   return response.data.data;
 }

@@ -4,6 +4,7 @@ import { LoadingState, PageCanvas } from '@dwp-frontend/design-system';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import { getVideoMeetingAdminPolicy } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import { getVideoMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
+import { MeetingRecordRetentionControl } from './meeting-record-retention-control';
 
 import {
   MeetingAdminIntelligence,
@@ -103,6 +104,7 @@ export function MeetingAdminIntelligencePage() {
 
   return (
     <MeetingAdminIntelligence
+      recordRetentionControl={<MeetingRecordRetentionControl />}
       readiness={
         readinessQuery.data
           ? projectMeetingAdminIntelligenceReadiness(readinessQuery.data)
@@ -110,6 +112,10 @@ export function MeetingAdminIntelligencePage() {
       }
       labels={labels(t)}
       sourceFailures={sourceFailures}
+      onRefresh={() => {
+        void readinessQuery.refetch();
+        void policyQuery.refetch();
+      }}
     />
   );
 }

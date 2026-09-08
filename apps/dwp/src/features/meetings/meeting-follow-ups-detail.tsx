@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { ArrowUpRight, CheckCheck, FileCheck2, RefreshCw, X } from 'lucide-react';
+import { CheckCheck, FileCheck2, RefreshCw, X } from 'lucide-react';
 import {
   ActionButton,
   ActionIconButton,
@@ -12,7 +11,6 @@ import {
   LoadingState,
   SectionHeader,
   SelectField,
-  foundationTokens,
 } from '@dwp-frontend/design-system';
 import type { WorkAssignmentTransition } from '@dwp-frontend/shared-utils/api/work-assignment-contracts';
 import Box from '@mui/material/Box';
@@ -25,11 +23,14 @@ import {
   FOLLOW_UP_REASON_CODES,
 } from './meeting-follow-ups-model';
 import { useFollowUpDetail } from './meeting-follow-ups-state';
+import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
+import { MeetingFollowUpEvidencePanel } from './meeting-follow-up-evidence-panel';
 
 type Props = {
   assignmentId: string;
   actorId: number;
   scopeKey: string;
+  collectionPending?: boolean;
   onAccessDenied: () => void;
   onChanged: () => void;
   onClose: () => void;
@@ -37,11 +38,10 @@ type Props = {
 
 export function MeetingFollowUpsDetail(props: Props) {
   const { t, i18n } = useTranslation('meetings');
-  const navigate = useNavigate();
   const state = useFollowUpDetail(props);
   const [confirm, setConfirm] = useState<WorkAssignmentTransition | null>(null);
   const [reason, setReason] = useState('');
-  const task = state.query.isError ? undefined : state.query.data;
+  const task = state.query.isError || props.collectionPending ? undefined : state.query.data;
   const sourcePath = task ? followUpSourcePath(task) : null;
   const reasonOptions =
     confirm === 'decline' || confirm === 'cancel' ? FOLLOW_UP_REASON_CODES[confirm] : [];
@@ -58,15 +58,12 @@ export function MeetingFollowUpsDetail(props: Props) {
       component="section"
       aria-labelledby="follow-up-detail-title"
       data-testid="meeting-follow-up-detail"
-      sx={{
-        bgcolor: 'background.paper',
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: foundationTokens.radius.surface + 'px',
+      sx={(theme) => ({
+        ...meetingSurface(theme, { elevated: true }),
         p: { xs: 2, lg: 3 },
         minWidth: 0,
         overflowWrap: 'anywhere',
-      }}
+      })}
     >
       <Stack
         direction="row"
@@ -82,7 +79,7 @@ export function MeetingFollowUpsDetail(props: Props) {
           <ActionIconButton
             label={t('followUps.refreshDetail')}
             loading={state.query.isFetching}
-            disabled={state.busy}
+            disabled={state.busy || props.collectionPending}
             onClick={() => void state.query.refetch()}
           >
             <RefreshCw size={16} aria-hidden="true" />
@@ -96,7 +93,9 @@ export function MeetingFollowUpsDetail(props: Props) {
           </ActionIconButton>
         </Stack>
       </Stack>
-      {state.query.isError ? (
+      {props.collectionPending ? (
+        <LoadingState label={t('followUps.loadingDetail')} variant="skeleton" skeletonRows={4} />
+      ) : state.query.isError ? (
         <ErrorState
           title={t('followUps.detailError')}
           description={t('followUps.detailErrorHint')}
@@ -148,7 +147,10 @@ export function MeetingFollowUpsDetail(props: Props) {
               ['due', displayDate(task.dueAt)],
               ['priority', t('followUps.priorities.' + task.priority)],
             ].map(([label, value]) => (
-              <Box key={label}>
+              <Box
+                key={label}
+                sx={(theme) => ({ ...meetingInsetSurface(theme, 'primary'), p: 1.5 })}
+              >
                 <Typography component="dt" variant="caption" color="text.secondary">
                   {t('followUps.' + label)}
                 </Typography>
@@ -158,7 +160,7 @@ export function MeetingFollowUpsDetail(props: Props) {
               </Box>
             ))}
           </Box>
-          <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
+          <Box sx={(theme) => ({ ...meetingInsetSurface(theme, 'primary'), p: 1.75 })}>
             <SectionHeader
               icon={FileCheck2}
               title={t('followUps.sourceTitle')}
@@ -168,18 +170,16 @@ export function MeetingFollowUpsDetail(props: Props) {
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               {t('followUps.sourceStates.' + task.source.availability)}
             </Typography>
-            {sourcePath && (
-              <ActionButton
-                intent="quiet"
-                endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                onClick={() => navigate(sourcePath)}
-                sx={{ mt: 1, minHeight: 44 }}
-              >
-                {t('followUps.openSource')}
-              </ActionButton>
+            {sourcePath && task.source.availability === 'AVAILABLE' && (
+              <MeetingFollowUpEvidencePanel
+                key={JSON.stringify([task.source.reference, task.source.sourceVersion])}
+                source={task.source.reference}
+                version={task.source.sourceVersion}
+                scope={props.scopeKey}
+              />
             )}
             <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
-              {t('followUps.sourceAclHint')}
+              {t('designReview.followUps.sourceScope')}
             </Typography>
           </Box>
           {state.conflict && (
@@ -285,7 +285,7 @@ export function MeetingFollowUpsDetail(props: Props) {
         intent={confirm === 'cancel' || confirm === 'decline' ? 'danger' : 'primary'}
         onClose={() => setConfirm(null)}
         onConfirm={() => {
-          if (!confirm || (reasonOptions.length && !reason)) return;
+          if (!confirm || props.collectionPending || (reasonOptions.length && !reason)) return;
           state.execute(confirm, reason || undefined);
           setConfirm(null);
         }}

@@ -94,32 +94,32 @@ for (const view of views) {
         (elements) => new Set(elements.map((element) => getComputedStyle(element).color)).size
       )
     ).toBe(1);
-    const measurements = await briefing.evaluate((element) => {
-      const metricStrip = element.querySelector('section')!;
-      return {
-        radius: getComputedStyle(element).borderTopLeftRadius,
-        divider: getComputedStyle(metricStrip).borderTopColor,
-        bottom: getComputedStyle(metricStrip).borderBottomWidth,
-        cells: Array.from(metricStrip.children).map((cell) => {
-          const style = getComputedStyle(cell);
-          return {
-            leftWidth: parseFloat(style.borderLeftWidth),
-            leftColor: style.borderLeftColor,
-            topWidth: parseFloat(style.borderTopWidth),
-            topColor: style.borderTopColor,
-          };
-        }),
-      };
-    });
+    const metricCards = page.getByTestId('approval-kpi-card');
+    await expect(metricCards).toHaveCount(4);
+    const measurements = await metricCards.evaluateAll((elements) =>
+      elements.map((element) => {
+        const style = getComputedStyle(element);
+        const bounds = element.getBoundingClientRect();
+        return {
+          radius: parseFloat(style.borderTopLeftRadius),
+          border: parseFloat(style.borderTopWidth),
+          background: style.backgroundColor,
+          x: bounds.x,
+          y: bounds.y,
+          width: bounds.width,
+        };
+      })
+    );
     await info.attach('publishing-measurements', {
       body: JSON.stringify(measurements, null, 2),
       contentType: 'application/json',
     });
-    expect(parseFloat(measurements.radius)).toBeLessThanOrEqual(8);
-    expect(measurements.bottom).toBe('0px');
-    for (const cell of measurements.cells) {
-      if (cell.leftWidth) expect.soft(cell.leftColor).toBe(measurements.divider);
-      if (cell.topWidth) expect.soft(cell.topColor).toBe(measurements.divider);
+    for (const card of measurements) {
+      expect.soft(card.radius).toBeGreaterThan(0);
+      expect.soft(card.radius).toBeLessThanOrEqual(8);
+      expect.soft(card.border).toBeGreaterThan(0);
+      expect.soft(card.background).not.toBe('rgba(0, 0, 0, 0)');
+      expect.soft(card.width).toBeGreaterThan(0);
     }
     if (view.dark) {
       const background = await page
@@ -263,7 +263,7 @@ test('long identifiers and 200 percent text fit locally and retain forced-color 
   await page.goto('/approvals/home');
   await expect(page.getByTestId('approval-daily-briefing')).toBeVisible();
   await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
-  const metrics = page.getByTestId('approval-daily-briefing').locator(':scope > section > div');
+  const metrics = page.getByTestId('approval-kpi-card');
   await expect(metrics).toHaveCount(4);
   await expect
     .poll(() =>

@@ -315,6 +315,16 @@ describe('meeting admin policy conflict and authority scope', () => {
     expect(recordingPolicySelect().getAttribute('aria-disabled')).not.toBe('true');
   });
 
+  it('reflects configured AI capability without inventing an editable enable policy', async () => {
+    runtime.getPolicy.mockResolvedValue(policy({ aiNotesConfigured: true }));
+    await render(createElement(MeetingAdminPolicies));
+    await policyLoaded();
+    expect(switchInput('admin.policy.aiNotes').checked).toBe(true);
+    expect(switchInput('admin.policy.aiNotes').disabled).toBe(true);
+    expect(container.textContent).not.toContain('admin.policy.aiNotesUnavailable');
+    expect(runtime.updatePolicy).not.toHaveBeenCalled();
+  });
+
   it('discards a preserved conflict patch without issuing another write', async () => {
     const latest = policy({ version: 5, waitingRoomRequired: false });
     runtime.getPolicy.mockReset().mockResolvedValueOnce(policy()).mockResolvedValueOnce(latest);

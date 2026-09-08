@@ -10,16 +10,13 @@ import {
   APPROVAL_WORKFLOW_DETAIL_FIXTURE,
   APPROVAL_WORKFLOW_FIXTURE,
 } from './support/product-area-fixtures';
+import { deferred } from './support/deferred';
+import {
+  failFirstProductSurfaceControlsChunk,
+  holdProductSurfaceControlsChunk,
+} from './support/product-surface-context-chunk';
 import { fulfillSuccess, mockShellSession } from './support/shell-session';
 import { NOTIFICATIONS_VIEW, expectApprovalsMobileHeader } from './support/ui-contracts';
-
-function deferred() {
-  let resolve!: () => void;
-  const promise = new Promise<void>((settled) => {
-    resolve = settled;
-  });
-  return { promise, resolve };
-}
 
 const APPROVAL_ADMIN_PERMISSIONS = [
   ['ADMIN.APPROVAL_OPERATIONS', 'VIEW'],
@@ -32,7 +29,17 @@ const APPROVAL_ADMIN_PERMISSIONS = [
   permissionCode,
   effect: 'ALLOW' as const,
 }));
+async function expectSnapshot(page: Page, name: string) {
+  await expect(page).toHaveScreenshot(name, {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: false,
+    maxDiffPixelRatio: 0.002,
+  });
+}
 
+const horizontalOverflow = (locator: Locator) =>
+  locator.evaluate((element) => element.scrollWidth - element.clientWidth);
 const APPROVAL_FIXTURE_MATRIX = [
   {
     testId: 'PS-A001',
@@ -219,17 +226,18 @@ for (const scenario of APPROVAL_FIXTURE_MATRIX) {
         'data-product-surface',
         scenario.allowed.startsWith('/approvals/admin') ? 'approvals.admin' : 'approvals.work'
       );
+      await expect(page.getByTestId('product-surface-access-state')).toHaveCount(0);
     }
     if (scenario.expiryWarning) {
-      await expect(page.getByRole('status')).toContainText(
-        '5분 이내에 관리 권한을 다시 확인합니다'
-      );
+      await expect(
+        page.getByRole('status').filter({ hasText: '5분 이내에 관리 권한을 다시 확인합니다' })
+      ).toBeVisible();
     }
     if (scenario.denied) {
       await navigatePilotRoute(page, scenario.denied);
       await expect(
         page.getByRole('heading', {
-          name: /현재 접근 범위 밖입니다|관리 영역이 할당되지 않았습니다/u,
+          name: /현재 접근 범위 밖입니다|업무 영역이 할당되지 않았습니다|관리 영역이 할당되지 않았습니다/u,
         })
       ).toBeVisible();
     }
@@ -468,12 +476,11 @@ test('Surface 전환은 1280·1440 desktop, 390·320 mobile, 200% text에서 항
       fullPage: true,
     });
   }
-
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/approvals/home');
   await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
-  await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).toBeVisible();
+  await expect(page.locator('#dwp-main-content h1').first()).toBeVisible();
   const textZoomManagementLink = page
     .getByTestId('approvals-mobile-surface-switcher')
     .getByTestId('product-surface-management-entry');
@@ -511,16 +518,10 @@ test('320px 관리 Context Rail은 단일 Scope와 읽기 전용·재확인 상�
     management: true,
     managementReadOnly: true,
   });
-
   await page.goto('/approvals/home');
   const workSurface = page.locator('#dwp-main-content');
-  await expect(workSurface.getByRole('heading', { name: '전자결재', level: 1 })).toBeVisible();
-  await expect(page).toHaveScreenshot('approvals-governed-work-both-320.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: false,
-    maxDiffPixelRatio: 0.002,
-  });
+  await expect(workSurface.getByRole('heading', { level: 1 }).first()).toBeVisible();
+  await expectSnapshot(page, 'approvals-governed-work-both-320.png');
   await page
     .getByTestId('approvals-mobile-surface-switcher')
     .getByTestId('product-surface-management-entry')
@@ -540,15 +541,8 @@ test('320px 관리 Context Rail은 단일 Scope와 읽기 전용·재확인 상�
     '읽기 전용'
   );
   await expect(contextRail.getByTestId('product-surface-revalidation-status')).toBeVisible();
-  expect(
-    await contextRail.evaluate((element) => element.scrollWidth - element.clientWidth)
-  ).toBeLessThanOrEqual(1);
-  await expect(page).toHaveScreenshot('approvals-governed-management-both-320.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: false,
-    maxDiffPixelRatio: 0.002,
-  });
+  expect(await horizontalOverflow(contextRail)).toBeLessThanOrEqual(1);
+  await expectSnapshot(page, 'approvals-governed-management-both-320.png');
   await page.emulateMedia({ forcedColors: 'active' });
   await page.getByRole('button', { name: '전자결재 메뉴 열기' }).click();
   const currentNavigation = page
@@ -604,9 +598,7 @@ for (const scenario of [
     await expect(expiry).toHaveAccessibleName(scenario.accessibleLabel);
     await expect(expiry).toHaveCSS('border-top-style', 'solid');
     await expect(expiry).toHaveCSS('border-top-width', '1px');
-    expect(
-      await rail.evaluate((element) => element.scrollWidth - element.clientWidth)
-    ).toBeLessThanOrEqual(1);
+    expect(await horizontalOverflow(rail)).toBeLessThanOrEqual(1);
     const accessibility = await new AxeBuilder({ page }).include('header').analyze();
     expect(
       accessibility.violations.filter(
@@ -655,12 +647,7 @@ test('1024px 관리 Context Rail은 읽기 전용·재확인 상태를 텍스트
   expect(Math.abs(mainPaddingTop - (headerBox?.height ?? 0))).toBeLessThanOrEqual(1);
   expect(railOverflow).toBeLessThanOrEqual(1);
   expect(pageOverflow).toBeLessThanOrEqual(1);
-  await expect(page).toHaveScreenshot('approvals-governed-management-read-only-1024.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: false,
-    maxDiffPixelRatio: 0.002,
-  });
+  await expectSnapshot(page, 'approvals-governed-management-read-only-1024.png');
 });
 
 for (const scenario of [
@@ -706,6 +693,10 @@ for (const scenario of [
       await expect(scope).toBeVisible();
       await expect(scope).toHaveAccessibleName(fullLabel);
       await expect(scope).toHaveCSS('text-overflow', 'ellipsis');
+      if (placement === 'mobile-rail') {
+        const bounds = await scope.boundingBox();
+        expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(44);
+      }
       if (expectClipped) {
         expect(await scope.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
           true
@@ -754,16 +745,10 @@ test('1280·1440px 관리 헤더는 권한 상태와 lazy 로딩 배치를 안�
     managementReadOnly: true,
   });
 
-  const chunkRequested = deferred();
-  const releaseChunk = deferred();
-  await page.route('**/src/components/product-surface-controls.tsx*', async (route) => {
-    chunkRequested.resolve();
-    await releaseChunk.promise;
-    await route.continue();
-  });
+  const chunk = await holdProductSurfaceControlsChunk(page);
 
   const navigation = page.goto('/approvals/admin/overview');
-  await chunkRequested.promise;
+  await chunk.requested.promise;
   const header = page.getByTestId('approvals-header');
   const loading = header.locator('[data-testid="product-surface-context-bar-loading"]:visible');
   await expect(loading).toBeVisible();
@@ -778,7 +763,7 @@ test('1280·1440px 관리 헤더는 권한 상태와 lazy 로딩 배치를 안�
   expect(applicationBefore).not.toBeNull();
   expect(actionsBefore).not.toBeNull();
 
-  releaseChunk.resolve();
+  chunk.release.resolve();
   await navigation;
   const contextBar = header.locator('[data-testid="product-surface-context-bar"]:visible');
   await expect(contextBar).toHaveAttribute('data-placement', 'header');
@@ -816,7 +801,7 @@ test('1280·1440px 관리 헤더는 권한 상태와 lazy 로딩 배치를 안�
   ).toEqual([]);
 });
 
-test('관리 Context 청크 1회 실패는 명시적 재로드로 같은 URL에서 안전하게 복구한다', async ({
+test('관리 Context 청크 1회 실패는 명시적 재시도로 같은 URL에서 안전하게 복구한다', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', '모바일 관리 Context 복구 전용 검증');
@@ -832,38 +817,36 @@ test('관리 Context 청크 1회 실패는 명시적 재로드로 같은 URL에�
     managementReadOnly: true,
   });
 
-  let chunkRequests = 0;
-  await page.route('**/src/components/product-surface-controls.tsx*', async (route) => {
-    chunkRequests += 1;
-    if (chunkRequests === 1) {
-      await route.abort('failed');
-      return;
-    }
-    await route.continue();
-  });
+  const chunkRequests = await failFirstProductSurfaceControlsChunk(page);
 
   await page.goto('/approvals/admin/overview?scope=scope%3Aapprovals%3Atenant');
   const recovery = page.locator('[data-testid="product-surface-context-bar-recovery"]:visible');
   await expect(recovery).toBeVisible();
   await expect(recovery.getByRole('alert')).toContainText('관리 컨텍스트를 불러오지 못했습니다.');
-  const reload = recovery.getByRole('button', { name: '페이지 새로고침' });
-  const reloadBounds = await reload.boundingBox();
-  expect(reloadBounds?.width ?? 0).toBeGreaterThanOrEqual(44);
-  expect(reloadBounds?.height ?? 0).toBeGreaterThanOrEqual(44);
-
-  await reload.click();
+  const retry = recovery.getByRole('button', { name: '다시 시도' });
+  const retryBounds = await retry.boundingBox();
+  expect(retryBounds?.width ?? 0).toBeGreaterThanOrEqual(44);
+  expect(retryBounds?.height ?? 0).toBeGreaterThanOrEqual(44);
+  await retry.focus();
+  await expect(retry).toBeFocused();
+  await retry.press('Enter');
   await expect(page).toHaveURL(
     (url) =>
       url.pathname === '/approvals/admin/overview' &&
       url.searchParams.get('scope') === 'scope:approvals:tenant'
   );
-  await expect(page.getByTestId('product-surface-context-bar-recovery')).toHaveCount(0);
+  await expect.poll(chunkRequests).toBeGreaterThanOrEqual(2);
   const contextRail = page.getByTestId('shell-mobile-context-rail');
-  await expect(contextRail.getByText(/범위: 전자결재 운영 범위/u)).toBeVisible();
-  expect(chunkRequests).toBeGreaterThanOrEqual(2);
-  expect(
-    await contextRail.evaluate((element) => element.scrollWidth - element.clientWidth)
-  ).toBeLessThanOrEqual(1);
+  const restoredContext = contextRail.getByTestId('product-surface-context-bar');
+  await expect(restoredContext.getByText(/범위: 전자결재 운영 범위/u)).toBeVisible();
+  await expect(restoredContext).toBeFocused();
+  await expect(
+    contextRail
+      .getByTestId('product-surface-context-bar-recovery-status')
+      .filter({ hasText: '제품 접근 컨텍스트를 복구했습니다.' })
+  ).toHaveText('제품 접근 컨텍스트를 복구했습니다.');
+  await expect(page.getByTestId('product-surface-context-bar-recovery')).toHaveCount(0);
+  expect(await horizontalOverflow(contextRail)).toBeLessThanOrEqual(1);
   const accessibility = await new AxeBuilder({ page }).include('header').analyze();
   expect(
     accessibility.violations.filter(
@@ -906,12 +889,7 @@ test('320px management-only read-only 관리 rail은 tenant·scope·상태를 �
   ]);
   expect(Math.abs(mainPaddingTop - (headerBox?.height ?? 0))).toBeLessThanOrEqual(1);
   expect(railOverflow).toBeLessThanOrEqual(1);
-  await expect(page).toHaveScreenshot('approvals-governed-management-only-read-only-320.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: false,
-    maxDiffPixelRatio: 0.002,
-  });
+  await expectSnapshot(page, 'approvals-governed-management-only-read-only-320.png');
 });
 
 test('mobile Surface Link는 route 전환 후 Document Title·H1 focus를 갱신하고 browser back focus를 덮어쓰지 않는다', async ({
@@ -940,7 +918,9 @@ test('mobile Surface Link는 route 전환 후 Document Title·H1 focus를 갱신
   await persistentLink.focus();
   await page.goBack();
   await expect(page).toHaveURL(/\/approvals\/home(?:\?.*)?$/u);
-  await expect(page.getByRole('heading', { name: '전자결재', level: 1 })).not.toBeFocused();
+  const workHeading = page.locator('#dwp-main-content').getByRole('heading', { level: 1 }).first();
+  await expect(workHeading).toBeVisible();
+  await expect(workHeading).not.toBeFocused();
 });
 
 test('관리 딥링크의 query/hash와 back/forward 및 새 탭 URL을 보존한다', async ({
@@ -1304,9 +1284,7 @@ test('surface UI flag off는 canonical URL과 기존 호환 shell을 유지한�
     await expect(rail.getByTestId('product-surface-compatibility-tenant')).toHaveText('SKAX');
     await expect(rail.getByTestId('product-surface-read-only-status')).toHaveCount(0);
     await expect(rail.getByTestId('product-surface-revalidation-status')).toHaveCount(0);
-    expect(
-      await rail.evaluate((element) => element.scrollWidth - element.clientWidth)
-    ).toBeLessThanOrEqual(1);
+    expect(await horizontalOverflow(rail)).toBeLessThanOrEqual(1);
 
     await page.goto('/approvals/admin/overview');
     await expect(

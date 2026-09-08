@@ -60,9 +60,8 @@ export function DwaionWorkspace() {
         : ['WORK_ITEM', 'MAIL', 'CALENDAR'],
     [approvalExpert]
   );
-  const initialConversationId = approvalExpert
-    ? null
-    : routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
+  const initialConversationId =
+    routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
   const [draft, setDraft] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [response, setResponse] = useState<AskDwpResponse | null>(null);
@@ -77,6 +76,7 @@ export function DwaionWorkspace() {
   const unmountAbortTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const consumedLaunchId = useRef<string | null>(null);
   const internalConversationNavigation = useRef<string | null>(null);
+  const activeAgentKey = useRef(agentKey);
   const firstName = auth.user?.displayName?.trim().split(/\s+/)[0];
   const workQueue = useQuery({
     queryKey: ['workspace', 'work-queue'],
@@ -86,13 +86,27 @@ export function DwaionWorkspace() {
     retry: 1,
   });
   const conversation = useQuery({
-    queryKey: ['dwaion', 'conversation', conversationId],
-    queryFn: () => getDwaionConversation(conversationId!),
+    queryKey: ['dwaion', 'conversation', conversationId, agentKey],
+    queryFn: () => getDwaionConversation(conversationId!, agentKey),
     enabled: Boolean(conversationId),
     staleTime: 10_000,
     retry: (failureCount, error) =>
-      !(error instanceof HttpError && error.status === 404) && failureCount < 1,
+      !(error instanceof HttpError && [403, 404, 409].includes(error.status)) && failureCount < 1,
   });
+  const selectedWork = conversation.isError
+    ? null
+    : conversation.data?.messages.filter((message) => message.role === 'ASSISTANT').at(-1)
+        ?.selectedWork;
+  const activeScopes = useMemo<AskCitationSourceType[]>(
+    () =>
+      selectedWork
+        ? selectedWork.sourceSystem === 'APPROVAL_TASK' ||
+          selectedWork.sourceSystem === 'APPROVAL_REQUEST'
+          ? [selectedWork.sourceSystem]
+          : ['WORK_ITEM']
+        : sourceScopes,
+    [selectedWork, sourceScopes]
+  );
   const workItems = useMemo(
     () => visibleWorkItems(workQueue.data?.items ?? []),
     [workQueue.data?.items]
@@ -102,6 +116,7 @@ export function DwaionWorkspace() {
     async (value: string) => {
       const normalized = value.trim();
       if (!normalized) return;
+      if (conversationId && (conversation.isError || !conversation.data)) return;
       setLaunchFailure(false);
 
       requestController.current?.abort('superseded');
@@ -122,27 +137,43 @@ export function DwaionWorkspace() {
             query: normalized,
             locale: i18n.resolvedLanguage || i18n.language || 'en',
             agentKey,
-            conversationId: approvalExpert
-              ? undefined
-              : verifiedConversationId(conversationId, conversation.data?.summary.conversationId),
-            sourceScopes,
-            pageContext: approvalExpert
+            conversationId: verifiedConversationId(
+              conversationId,
+              conversation.data?.summary.conversationId
+            ),
+            sourceScopes: activeScopes,
+            pageContext: selectedWork
               ? {
-                  route: '/approvals/home',
-                  appKey: 'APP.APPROVALS',
-                  surface: 'approval-expert',
+                  route: '/work/queue',
+                  appKey: 'APP.WORK',
+                  surface: 'selected-work-assist',
+                  entityType: selectedWork.sourceSystem,
+                  entityRef: selectedWork.sourceReference,
+                  selectedWork,
                 }
-              : {
-                  route: conversationId
-                    ? `/dwaion/conversations/${encodeURIComponent(conversationId)}`
-                    : '/dwaion/new',
-                  appKey: 'APP.ASK',
-                  surface: 'workspace',
-                },
+              : approvalExpert
+                ? {
+                    route: '/approvals/home',
+                    appKey: 'APP.APPROVALS',
+                    surface: 'approval-expert',
+                  }
+                : {
+                    route: conversationId
+                      ? `/dwaion/conversations/${encodeURIComponent(conversationId)}`
+                      : '/dwaion/new',
+                    appKey: 'APP.ASK',
+                    surface: 'workspace',
+                  },
           },
-          { signal: controller.signal, onProgress: setProgressStage }
+          {
+            signal: controller.signal,
+            onProgress: (stage) => {
+              if (!controller.signal.aborted && requestSequence.current === sequence)
+                setProgressStage(stage);
+            },
+          }
         );
-        if (requestSequence.current !== sequence) return;
+        if (controller.signal.aborted || requestSequence.current !== sequence) return;
         setResponse(result);
         if (result.conversationId) {
           internalConversationNavigation.current = result.conversationId;
@@ -165,14 +196,16 @@ export function DwaionWorkspace() {
     },
     [
       conversationId,
-      conversation.data?.summary.conversationId,
+      conversation.data,
+      conversation.isError,
       agentKey,
       approvalExpert,
       i18n.language,
       i18n.resolvedLanguage,
       navigate,
       queryClient,
-      sourceScopes,
+      activeScopes,
+      selectedWork,
     ]
   );
 
@@ -210,23 +243,10 @@ export function DwaionWorkspace() {
   }, [availableSourceScopes]);
 
   useEffect(() => {
-    if (
-      !conversationId ||
-      !(conversation.error instanceof HttpError) ||
-      conversation.error.status !== 404
-    ) {
-      return;
-    }
-    internalConversationNavigation.current = null;
-    setConversationId(null);
-    navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { replace: true });
-    queryClient.removeQueries({ queryKey: ['dwaion', 'conversation', conversationId] });
-  }, [agentKey, conversation.error, conversationId, navigate, queryClient]);
-
-  useEffect(() => {
-    const requestedConversationId = approvalExpert
-      ? null
-      : routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
+    const requestedConversationId =
+      routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
+    const agentChanged = activeAgentKey.current !== agentKey;
+    activeAgentKey.current = agentKey;
     const internalTarget = internalConversationNavigation.current;
     if (internalTarget && requestedConversationId === internalTarget) {
       internalConversationNavigation.current = null;
@@ -236,7 +256,7 @@ export function DwaionWorkspace() {
       return;
     }
     if (internalTarget && conversationId === internalTarget) return;
-    if (requestedConversationId === conversationId) return;
+    if (requestedConversationId === conversationId && !agentChanged) return;
 
     requestSequence.current += 1;
     requestController.current?.abort('browser-history-changed');
@@ -247,7 +267,7 @@ export function DwaionWorkspace() {
     setProgressStage(null);
     setDraft('');
     setState('idle');
-  }, [approvalExpert, conversationId, routeConversationId, searchParams]);
+  }, [agentKey, conversationId, routeConversationId, searchParams]);
 
   useEffect(() => {
     if (unmountAbortTimer.current !== null) {
@@ -295,6 +315,7 @@ export function DwaionWorkspace() {
   };
 
   const toggleSource = (source: AskCitationSourceType) => {
+    if (selectedWork) return;
     setSourceScopes((current) => {
       if (!current.includes(source)) return [...current, source];
       return current.length === 1 ? current : current.filter((item) => item !== source);
@@ -345,7 +366,7 @@ export function DwaionWorkspace() {
                 workError={workQueue.isError}
                 workItems={workQueue.isError ? [] : workItems}
                 onRetryWork={() => void workQueue.refetch()}
-                sourceScopes={sourceScopes}
+                sourceScopes={activeScopes}
                 availableSources={availableSourceScopes}
                 onQueryChange={setDraft}
                 onSubmit={() => runQuestion(draft)}
@@ -401,8 +422,8 @@ export function DwaionWorkspace() {
                     value={draft}
                     loading={state === 'loading'}
                     compact
-                    sourceScopes={sourceScopes}
-                    availableSources={availableSourceScopes}
+                    sourceScopes={activeScopes}
+                    availableSources={selectedWork ? activeScopes : availableSourceScopes}
                     onToggleSource={toggleSource}
                     onCancel={cancelRequest}
                     onChange={setDraft}
@@ -417,8 +438,8 @@ export function DwaionWorkspace() {
             <DwaionWorkspaceContext response={response} onOpenCitation={setSelectedCitation} />
           ) : (
             <DwaionStudioRail
-              selected={sourceScopes}
-              available={availableSourceScopes}
+              selected={activeScopes}
+              available={selectedWork ? activeScopes : availableSourceScopes}
               onToggle={toggleSource}
               summary={workQueue.data?.summary}
               loading={workQueue.isLoading}

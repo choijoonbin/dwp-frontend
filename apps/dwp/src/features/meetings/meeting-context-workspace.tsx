@@ -48,6 +48,7 @@ export function MeetingContextWorkspace() {
           key={scope}
           onBack={back}
           onEnterMeeting={enter}
+          onOpenMeeting={(id) => navigate(meetingPreparationPath(id))}
           onCheckDevices={() => navigate('/meetings/preferences')}
         />
       );

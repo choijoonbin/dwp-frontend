@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import { previewWorkplaceAction } from './agent-conversation-api';
+import { getDwaionConversation, previewWorkplaceAction } from './agent-conversation-api';
 import type { AgentActionHandoffOrigin } from './agent-plan-api';
 
 const origin: AgentActionHandoffOrigin = {
@@ -74,6 +74,29 @@ describe('Agent workplace action API', () => {
     vi.unstubAllGlobals();
   });
 
+  it('sends the conversation agent through the supported GET query contract', async () => {
+    const data = conversation('DWP_APPROVAL_EXPERT');
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, { data }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(
+      getDwaionConversation('saved-conversation', 'DWP_APPROVAL_EXPERT')
+    ).resolves.toEqual(data);
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/agent/v1/conversations/saved-conversation?agentKey=DWP_APPROVAL_EXPERT',
+      expect.anything()
+    );
+  });
+
+  it('rejects an otherwise valid response from a different conversation agent', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(200, { data: conversation('DWP_ASSISTANT') }))
+    );
+    await expect(
+      getDwaionConversation('saved-conversation', 'DWP_APPROVAL_EXPERT')
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
   it('binds the declared browser origin to the governed preview request and response', async () => {
     const fetchMock = vi
       .fn()
@@ -131,3 +154,27 @@ describe('Agent workplace action API', () => {
     ).rejects.toMatchObject({ status: 502 });
   });
 });
+
+function conversation(agentKey: string) {
+  return {
+    summary: {
+      conversationId: 'saved-conversation',
+      title: 'Review',
+      locale: 'en',
+      messageCount: 1,
+      createdAt: '2026-09-07T01:00:00Z',
+      updatedAt: '2026-09-07T01:00:00Z',
+      lastMessageAt: '2026-09-07T01:00:00Z',
+    },
+    messages: [
+      {
+        messageId: 'saved-answer',
+        role: 'ASSISTANT',
+        content: 'Verified metadata only.',
+        citations: [],
+        agentKey,
+        createdAt: '2026-09-07T01:00:00Z',
+      },
+    ],
+  };
+}

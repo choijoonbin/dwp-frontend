@@ -7,6 +7,8 @@ import {
   decideVideoMeetingLobbyRequest,
   endVideoMeeting,
   getVideoMeetingHome,
+  getVideoMeeting,
+  getVideoMeetingHistory,
   getVideoMeetingJoinRequest,
   getVideoMeetings,
   isTrustedVideoMeetingServerUrl,
@@ -128,6 +130,134 @@ function expectIdempotencyHeader(request: RequestInit, expected?: string) {
 }
 
 describe('video meeting API boundary', () => {
+  it('preserves the server attendee aggregate without reconstructing hidden profiles', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse({ ...detail, attendeeCount: 7 }))
+    );
+    const result = await getVideoMeeting('meeting-1');
+    expect(result.attendeeCount).toBe(7);
+    expect(result.participants).toEqual([participant]);
+  });
+
+  it.each([undefined, -1, 0, 1.5, '7'])(
+    'does not trust invalid attendee aggregate %s',
+    async (attendeeCount) => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({ ...detail, attendeeCount })));
+      const result = await getVideoMeeting('meeting-1');
+      expect(result.attendeeCount).toBe(1);
+      expect(result.participants).toEqual([participant]);
+    }
+  );
+
+  it('preserves history organizer and server role without inferring host authority from identity', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        items: [
+          {
+            meetingId: 'history-1',
+            title: 'Release decision',
+            organizerUserId: 42,
+            organizerName: 'Kim Mina',
+            participantRole: 'CO_HOST',
+            canHost: false,
+            endedAt: '2026-09-07T01:45:00Z',
+            actualDurationMinutes: 45,
+            participantPeak: 6,
+            recordingAvailable: false,
+            transcriptAvailable: false,
+          },
+        ],
+        total: 1,
+        page: 0,
+        pageSize: 30,
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await getVideoMeetingHistory();
+    expect(result.items[0]).toMatchObject({
+      organizerUserId: 42,
+      organizerName: 'Kim Mina',
+      myRole: 'CO_HOST',
+      canHost: false,
+      recordingAvailable: false,
+      transcriptAvailable: false,
+    });
+  });
+
+  it('keeps history safe when an older response lacks additive identity fields', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          items: [
+            {
+              meetingId: 'history-legacy',
+              title: 'Legacy',
+              endedAt: '2026-09-07T01:45:00Z',
+              actualDurationMinutes: 0,
+              participantPeak: 1,
+              recordingAvailable: false,
+              transcriptAvailable: false,
+            },
+          ],
+          total: 1,
+          page: 0,
+          pageSize: 30,
+        })
+      )
+    );
+    expect((await getVideoMeetingHistory()).items[0]).toMatchObject({
+      organizerName: '',
+      myRole: null,
+      canHost: false,
+    });
+  });
+
+  it('uses server favoriteOnly pagination without changing the legacy history route', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ items: [], page: 2, pageSize: 10, total: 47 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(getVideoMeetingHistory(2, 10, { favoriteOnly: true })).resolves.toEqual({
+      items: [],
+      page: 2,
+      pageSize: 10,
+      total: 47,
+    });
+    await getVideoMeetingHistory(2, 10);
+    await getVideoMeetingHistory(2, 10, { favoriteOnly: false });
+    expect(fetchMock.mock.calls.map(([path]) => path)).toEqual([
+      '/api/meetings/v1/history?page=2&pageSize=10&favoriteOnly=true',
+      '/api/meetings/v1/history?page=2&pageSize=10',
+      '/api/meetings/v1/history?page=2&pageSize=10',
+    ]);
+  });
+
+  it('cancels the current favorite-only history transport when its scope is aborted', async () => {
+    const caller = new AbortController();
+    let transportSignal: AbortSignal | null | undefined;
+    const fetchMock = vi.fn((_path: string, request: RequestInit) => {
+      transportSignal = request.signal;
+      return new Promise<Response>((_resolve, reject) => {
+        transportSignal?.addEventListener(
+          'abort',
+          () => reject(new DOMException('Cancelled', 'AbortError')),
+          { once: true }
+        );
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const pending = getVideoMeetingHistory(0, 30, { favoriteOnly: true, signal: caller.signal });
+    const rejected = expect(pending).rejects.toMatchObject({ reason: 'ABORT' });
+    await vi.waitFor(() => expect(transportSignal).toBeDefined());
+    caller.abort('page-changed');
+    await rejected;
+    expect(transportSignal?.aborted).toBe(true);
+    expect(transportSignal?.reason).toBe('page-changed');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();

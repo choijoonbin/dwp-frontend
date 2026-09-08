@@ -36,7 +36,6 @@ import {
   workHubSummary,
 } from './work-hub-model';
 import { hydrateWorkSource } from './work-hub-source-hydration';
-import { launchWorkHubAssist, prepareWorkHubAssist } from './work-hub-assist';
 import {
   executeWorkSchedule,
   loadWorkSchedules,
@@ -142,25 +141,6 @@ export function createWorkHubController(
       } finally {
         pending = false;
       }
-    },
-    prepareAssist() {
-      const item = snapshot?.items.find((candidate) => candidate.key === selectedKey);
-      if (!item || !snapshot) throw new Error('Select verified work first');
-      if (['LEGACY_PROJECTION', 'IDENTITY_GOVERNANCE'].includes(item.reference.sourceSystem))
-        throw new Error('Open the source work to verify its current context first');
-      return prepareWorkHubAssist(item, snapshot.receivedAt);
-    },
-    async launchAssist(request: {
-      question: string;
-      expectedKey: string;
-      expectedVersion: number;
-    }) {
-      await refresh();
-      const item = snapshot?.items.find((candidate) => candidate.key === selectedKey);
-      if (!item || !snapshot) throw new Error('The selected work is no longer available');
-      if (['LEGACY_PROJECTION', 'IDENTITY_GOVERNANCE'].includes(item.reference.sourceSystem))
-        throw new Error('Open the source work to verify its current context first');
-      return launchWorkHubAssist(item, request, snapshot.receivedAt);
     },
     view(params: URLSearchParams, now: number) {
       if (!snapshot) return null;

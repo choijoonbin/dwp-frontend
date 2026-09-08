@@ -1,0 +1,86 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "탐색 메뉴 열기" [ref=e7]:
+                    - button "탐색 메뉴 열기" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "업무" [ref=e16]
+                - generic [ref=e17]:
+                    - button "DWP 검색" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "계정: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "DWAI·ON 열기" [ref=e29]:
+                        - button "DWAI·ON 열기" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - generic [ref=e34]:
+                - generic [ref=e35]:
+                    - generic [ref=e37]:
+                        - heading "진행 중" [active] [level=1] [ref=e38]
+                        - generic [ref=e40]: 결과 0건
+                    - generic [ref=e41]:
+                        - status [ref=e42]:
+                            - generic [ref=e44]:
+                                - generic [ref=e45]: 조회 상태 확인됨
+                                - generic [ref=e46]: 마지막 확인 26. 9. 7. 오후 6:31
+                            - generic "다시 시도" [ref=e47]:
+                                - button "다시 시도" [ref=e48] [cursor=pointer]:
+                                    - img [ref=e49]
+                        - button "개인 할 일 추가" [ref=e54] [cursor=pointer]:
+                            - img [ref=e56]
+                            - text: 개인 할 일 추가
+                - region "통합 업무함 검색 및 필터" [ref=e58]:
+                    - generic [ref=e59]:
+                        - generic [ref=e60]:
+                            - generic [ref=e61]: 업무 검색
+                            - generic [ref=e62]:
+                                - img [ref=e64]
+                                - textbox "업무 검색" [ref=e67]:
+                                    - /placeholder: 제목 또는 업무 내용 검색
+                                - group:
+                                    - generic: 업무 검색
+                        - group "업무 보기" [ref=e68]:
+                            - button "전체 (4)" [ref=e69] [cursor=pointer]
+                            - button "내 조치 (4)" [ref=e70] [cursor=pointer]
+                            - button "진행 중 (0)" [pressed] [ref=e71] [cursor=pointer]
+                            - button "응답 대기 (0)" [ref=e72] [cursor=pointer]
+                            - button "완료 (0)" [ref=e73] [cursor=pointer]
+                        - button "오늘 계획 (0)" [ref=e74] [cursor=pointer]:
+                            - img [ref=e76]
+                            - text: 오늘 계획 (0)
+                        - button "필터·정렬" [ref=e78] [cursor=pointer]:
+                            - img [ref=e80]
+                            - text: 필터·정렬
+                - status [ref=e81]:
+                    - img [ref=e83]
+                    - heading "조건에 맞는 업무가 없습니다" [level=2] [ref=e88]
+                    - paragraph [ref=e89]: 검색어나 원천·기한 필터를 바꿔 다시 확인하세요.
+                    - generic [ref=e91]:
+                        - button "필터 초기화" [ref=e92] [cursor=pointer]
+                        - button "개인 할 일 추가" [ref=e93] [cursor=pointer]
+        - navigation "업무 빠른 탐색" [ref=e94]:
+            - button "통합업무함" [ref=e95] [cursor=pointer]:
+                - img [ref=e96]
+                - generic [ref=e99]: 통합업무함
+            - button "오늘 계획" [ref=e100] [cursor=pointer]:
+                - img [ref=e101]
+                - generic [ref=e106]: 오늘 계획
+            - button "내 조치" [ref=e107] [cursor=pointer]:
+                - img [ref=e108]
+                - generic [ref=e111]: 내 조치
+            - button "DWAI·ON" [ref=e112] [cursor=pointer]:
+                - img [ref=e113]
+                - generic [ref=e116]: DWAI·ON
+            - button "더보기" [ref=e117] [cursor=pointer]:
+                - img [ref=e118]
+                - generic [ref=e122]: 더보기
+```

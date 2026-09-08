@@ -56,6 +56,11 @@ describe('meeting home navigation and join code', () => {
 });
 
 describe('meeting home command focus', () => {
+  it('ignores a zero-duration instant lobby whose API fills startsAt with creation time', () => {
+    const lobby = meeting({ lifecycleState: 'LOBBY', durationMinutes: 0 });
+    const scheduled = meeting({ meetingId: 'scheduled', durationMinutes: 45 });
+    expect(homeFocusMeeting(null, lobby, [scheduled])).toBe(scheduled);
+  });
   it('keeps a genuinely live meeting ahead of scheduled work', () => {
     const live = meeting({ meetingId: 'live', lifecycleState: 'LIVE' });
     const scheduled = meeting({ meetingId: 'scheduled' });

@@ -244,9 +244,14 @@ test('meeting preparation is a separate context action and never a hidden join c
   await page.goto('/meetings/home');
   const focus = page.getByTestId('meeting-command-primary');
   await expect(
-    focus.getByRole('button', { name: en.home.focus.prepare, exact: true })
+    focus.getByRole('button', { name: en.home.design.enterAndCheck, exact: true })
   ).toBeVisible();
-  await focus.getByRole('button', { name: en.context.openPreparation, exact: true }).click();
+  await focus
+    .getByRole('button', {
+      name: en.home.design.materialCount.replace('{{count}}', '0'),
+      exact: true,
+    })
+    .click();
   await expect(page).toHaveURL(new RegExp(`view=preparation&meetingId=${MEETING_VISUAL_ID}$`));
   await expect(
     page.getByRole('heading', { name: MEETING_VISUAL_SUMMARY.title, exact: true, level: 1 })

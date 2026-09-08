@@ -16,7 +16,10 @@ vi.mock('@dwp-frontend/shared-utils/api/video-meeting-intelligence-api', () => (
 }));
 vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   ...(await importOriginal<typeof SharedUtils>()),
-  useAuth: () => ({ user: { tenantId: 1, userId: 7 }, isAuthenticated: true }),
+  useAuth: () => ({
+    user: { tenantId: 1, userId: 7, identityPlane: 'TENANT' },
+    isAuthenticated: true,
+  }),
 }));
 vi.mock('react-i18next', async (importOriginal) => ({
   ...(await importOriginal<typeof ReactI18next>()),
@@ -107,6 +110,7 @@ describe('meeting home results StrictMode runtime', () => {
     await waitForContent('A published recap, authorized after mount.');
     expect(container.textContent).not.toContain('home.results.errorTitle');
     expect(container.textContent).toContain('12:00 PM');
+    expect(container.textContent).toContain('home.results.recent.badge');
     expect(client.getQueryCache().getAll()[0].options.gcTime).toBe(0);
   });
 

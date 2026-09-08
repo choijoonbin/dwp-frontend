@@ -1925,6 +1925,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/meetings/v1/admin/record-retention/meetings/{meetingId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_read_1"];
+        put: operations["meeting_update_5"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/meetings/v1/admin/templates": {
         parameters: {
             query?: never;
@@ -1949,7 +1965,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["meeting_get_2"];
-        put: operations["meeting_update_2"];
+        put: operations["meeting_update_3"];
         post?: never;
         delete: operations["meeting_delete"];
         options?: never;
@@ -1981,6 +1997,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["meeting_history_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/history/bookmarks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["meeting_read_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2143,6 +2175,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["meeting_query"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meetings/v1/meetings/{meetingId}/bookmark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["meeting_update_2"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3213,7 +3261,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["meeting_get_3"];
-        put: operations["meeting_update_3"];
+        put: operations["meeting_update_4"];
         post?: never;
         delete: operations["meeting_delete_1"];
         options?: never;
@@ -3637,6 +3685,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/conversations/{conversationId}/messages/{messageId}/receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_receipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/conversations/{conversationId}/messages/{messageId}/saved": {
         parameters: {
             query?: never;
@@ -3679,6 +3743,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["messaging_markRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/read-receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_receipts"];
+        put?: never;
+        post: operations["messaging_observe"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3765,6 +3845,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/home/shared-assets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_recent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/people": {
         parameters: {
             query?: never;
@@ -3774,6 +3870,22 @@ export interface paths {
         };
         get: operations["messaging_people"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/privacy-preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_preference"];
+        put: operations["messaging_update"];
         post?: never;
         delete?: never;
         options?: never;
@@ -10310,6 +10422,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/services/requests/{requestId}/information-response": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_informationResponse"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/services/requests/{requestId}/submit": {
         parameters: {
             query?: never;
@@ -10534,6 +10662,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/workspace/activity/audit/evidence/{auditRecordId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_agentEvidence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/workspace/activity/events/{id}": {
         parameters: {
             query?: never;
@@ -10550,6 +10694,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/workspace/activity/events/{id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_evidence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/workspace/activity/executions/summary": {
         parameters: {
             query?: never;
@@ -10558,6 +10718,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["platform_summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/activity/sources/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_sources"];
         put?: never;
         post?: never;
         delete?: never;
@@ -11088,6 +11264,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_complete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workspace/work-hub/personal-tasks/{taskId}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_delete_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -16320,6 +16512,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        meeting_ApiResponseBookmarkPage: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_BookmarkPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseBookmarkState: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_BookmarkState"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         meeting_ApiResponseCancellationPreviewResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_CancellationPreviewResponse"];
@@ -16373,6 +16585,16 @@ export interface components {
         meeting_ApiResponseContentPlanResponse: {
             correlationId?: string;
             data?: components["schemas"]["meeting_ContentPlanResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        meeting_ApiResponseControlState: {
+            correlationId?: string;
+            data?: components["schemas"]["meeting_ControlState"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -16833,6 +17055,23 @@ export interface components {
             description?: string;
             retryable?: boolean;
         };
+        meeting_BookmarkInput: {
+            /** Format: int64 */
+            expectedVersion: number;
+            favorite: boolean;
+        };
+        meeting_BookmarkPage: {
+            items?: components["schemas"]["meeting_BookmarkState"][];
+        };
+        meeting_BookmarkState: {
+            favorite?: boolean;
+            /** Format: uuid */
+            meetingId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         meeting_CancelPreviewRequest: {
             /** Format: int64 */
             expectedSeriesVersion?: number;
@@ -16987,6 +17226,36 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version?: number;
+        };
+        meeting_ControlInput: {
+            /** Format: int64 */
+            expectedControlVersion: number;
+            /** Format: int64 */
+            expectedMeetingVersion: number;
+            /** Format: int64 */
+            expectedPolicyVersion: number;
+            hold: boolean;
+            purgeAuthorized: boolean;
+        };
+        meeting_ControlState: {
+            authorizationAuditPublished?: boolean;
+            /** Format: int64 */
+            controlVersion?: number;
+            hold?: boolean;
+            /** Format: uuid */
+            meetingId?: string;
+            /** Format: int64 */
+            meetingVersion?: number;
+            /** Format: int64 */
+            policyVersion?: number;
+            purgeAuthorized?: boolean;
+            /** Format: date-time */
+            purgedAt?: string;
+            reasons?: string[];
+            /** Format: date-time */
+            retentionUntil?: string;
+            state?: string;
+            workerEnabled?: boolean;
         };
         meeting_ConversationClimate: {
             citations?: components["schemas"]["meeting_Citation"][];
@@ -17162,12 +17431,17 @@ export interface components {
             actualDurationMinutes?: number;
             /** Format: int32 */
             averageQualityScore?: number;
+            canHost?: boolean;
             /** Format: date-time */
             endedAt?: string;
             /** Format: uuid */
             meetingId?: string;
+            organizerName?: string;
+            /** Format: int64 */
+            organizerUserId?: number;
             /** Format: int32 */
             participantPeak?: number;
+            participantRole?: string;
             recordingAvailable?: boolean;
             title?: string;
             transcriptAvailable?: boolean;
@@ -17319,6 +17593,8 @@ export interface components {
             aiNotesAvailable?: boolean;
             allowJoinBeforeHost?: boolean;
             artifacts?: components["schemas"]["meeting_ArtifactResponse"][];
+            /** Format: int32 */
+            attendeeCount?: number;
             canHost?: boolean;
             canModerate?: boolean;
             decisions?: components["schemas"]["meeting_JsonNode"];
@@ -18366,6 +18642,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseListReceiptSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ReceiptSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseMembershipMutationResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_MembershipMutationResponse"];
@@ -18396,9 +18682,39 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseObservationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ObservationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponsePrivacyPreference: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_PrivacyPreference"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseReadCursorResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_ReadCursorResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseReceiptSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ReceiptSummary"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -18439,6 +18755,16 @@ export interface components {
         messaging_ApiResponseSessionResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_SessionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseSharedAssetsResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_SharedAssetsResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -18800,6 +19126,12 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        messaging_ObservationResponse: {
+            observedMessageIds?: string[];
+        };
+        messaging_ObserveRequest: {
+            messageIds: string[];
+        };
         messaging_PersonSearchResult: {
             displayName?: string;
             emailAddress?: string;
@@ -18822,6 +19154,11 @@ export interface components {
             presenceState?: string;
             /** Format: int64 */
             userId?: number;
+        };
+        messaging_PrivacyPreference: {
+            readReceiptsEnabled?: boolean;
+            /** Format: int64 */
+            version?: number;
         };
         messaging_ReactionRequest: {
             emoji: string;
@@ -18853,6 +19190,26 @@ export interface components {
             endpoint?: string;
             mode?: string;
             state?: string;
+        };
+        messaging_ReceiptSummary: {
+            /** Format: uuid */
+            messageId?: string;
+            /** Format: int64 */
+            readCount?: number;
+            recipients?: components["schemas"]["messaging_Recipient"][];
+            /** Format: int64 */
+            unavailableCount?: number;
+            /** Format: int64 */
+            unreadCount?: number;
+        };
+        messaging_Recipient: {
+            displayName?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            /** @enum {string} */
+            status?: "READ" | "UNREAD" | "UNAVAILABLE";
+            /** Format: int64 */
+            userId?: number;
         };
         messaging_SavedItemPage: {
             items?: components["schemas"]["messaging_SavedItemSummary"][];
@@ -18910,6 +19267,31 @@ export interface components {
             startedBy?: number;
             /** Format: int64 */
             version?: number;
+        };
+        messaging_SharedAsset: {
+            /** Format: uuid */
+            attachmentId?: string;
+            contentType?: string;
+            /** Format: uuid */
+            conversationId?: string;
+            conversationName?: string;
+            id?: string;
+            /** @enum {string} */
+            kind?: "FILE" | "LINK";
+            /** Format: uuid */
+            messageId?: string;
+            senderName?: string;
+            /** Format: date-time */
+            sharedAt?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            title?: string;
+            url?: string;
+        };
+        messaging_SharedAssetsResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["messaging_SharedAsset"][];
         };
         messaging_SseEmitter: {
             /** Format: int64 */
@@ -18988,6 +19370,11 @@ export interface components {
             body: string;
             /** Format: int64 */
             version?: number;
+        };
+        messaging_UpdatePrivacyPreferenceRequest: {
+            readReceiptsEnabled: boolean;
+            /** Format: int64 */
+            version: number;
         };
         messaging_UploadSession: {
             attachment?: components["schemas"]["messaging_AttachmentSummary"];
@@ -22523,6 +22910,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseEvidence: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Evidence"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseExecutionSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_ExecutionSummary"];
@@ -23343,6 +23740,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponsePersonalWorkDeleteResult: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PersonalWorkDeleteResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponsePersonalWorkTask: {
             correlationId?: string;
             data?: components["schemas"]["platform_PersonalWorkTask"];
@@ -23656,6 +24063,16 @@ export interface components {
         platform_ApiResponseSiteCampusAssignment: {
             correlationId?: string;
             data?: components["schemas"]["platform_SiteCampusAssignment"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseSourceStatuses: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SourceStatuses"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -25594,6 +26011,22 @@ export interface components {
             /** @enum {string} */
             visibility?: "DEFAULT" | "PUBLIC" | "PRIVATE" | "CONFIDENTIAL";
         };
+        platform_Evidence: {
+            auditAccess?: string;
+            /** Format: uuid */
+            auditRecordId?: string;
+            /** Format: uuid */
+            eventId?: string;
+            hashAlgorithm?: string;
+            integrityScope?: string;
+            integrityStatus?: string;
+            linkStatus?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            recordHash?: string;
+            /** Format: date-time */
+            verifiedAt?: string;
+        };
         platform_ExecutionSummary: {
             /** Format: int64 */
             cancelled?: number;
@@ -26195,6 +26628,16 @@ export interface components {
             highestCriticality?: string;
             relationTypes?: string[];
         };
+        platform_InformationResponseRequest: {
+            /** Format: uuid */
+            idempotencyKey: string;
+            message: string;
+            values: {
+                [key: string]: unknown;
+            };
+            /** Format: int64 */
+            version: number;
+        };
         platform_IntegrityCheckpoint: {
             /** Format: date */
             checkpointDate?: string;
@@ -26580,13 +27023,21 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_PersonalWorkChecklistItem: {
+            completed?: boolean;
+            /** Format: uuid */
+            itemId: string;
+            title: string;
+        };
         platform_PersonalWorkCreateTaskRequest: {
+            checklist?: components["schemas"]["platform_PersonalWorkChecklistItem"][];
             description?: string;
             /** Format: date-time */
             dueAt?: string;
             /** @enum {string} */
             priority: "LOW" | "NORMAL" | "HIGH" | "URGENT";
             sourceReference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            sourceReferences?: components["schemas"]["platform_PersonalWorkSourceReference"][];
             title: string;
         };
         platform_PersonalWorkDayPlan: {
@@ -26603,6 +27054,14 @@ export interface components {
             position?: number;
             selectionReference?: components["schemas"]["platform_PersonalWorkSourceReference"];
             source?: components["schemas"]["platform_PersonalWorkSourceLink"];
+        };
+        platform_PersonalWorkDeleteResult: {
+            /** Format: date-time */
+            deletedAt?: string;
+            /** Format: uuid */
+            taskId?: string;
+            /** Format: int64 */
+            version?: number;
         };
         platform_PersonalWorkReplaceDayPlanRequest: {
             items: components["schemas"]["platform_PersonalWorkSourceReference"][];
@@ -26630,6 +27089,7 @@ export interface components {
             version: number;
         };
         platform_PersonalWorkTask: {
+            checklist?: components["schemas"]["platform_PersonalWorkChecklistItem"][];
             /** Format: date-time */
             completedAt?: string;
             /** Format: date-time */
@@ -26640,6 +27100,7 @@ export interface components {
             /** @enum {string} */
             priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
             source?: components["schemas"]["platform_PersonalWorkSourceLink"];
+            sources?: components["schemas"]["platform_PersonalWorkSourceLink"][];
             /** @enum {string} */
             status?: "OPEN" | "IN_PROGRESS" | "WAITING" | "COMPLETED" | "ARCHIVED";
             /** Format: uuid */
@@ -26684,6 +27145,7 @@ export interface components {
             totalElements?: number;
         };
         platform_PersonalWorkUpdateTaskRequest: {
+            checklist?: components["schemas"]["platform_PersonalWorkChecklistItem"][];
             clearSourceReference?: boolean;
             description?: string;
             /** Format: date-time */
@@ -26691,6 +27153,7 @@ export interface components {
             /** @enum {string} */
             priority: "LOW" | "NORMAL" | "HIGH" | "URGENT";
             sourceReference?: components["schemas"]["platform_PersonalWorkSourceReference"];
+            sourceReferences?: components["schemas"]["platform_PersonalWorkSourceReference"][];
             title: string;
             /** Format: int64 */
             version: number;
@@ -27806,6 +28269,24 @@ export interface components {
             until: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_SourceStatus: {
+            label?: string;
+            /** Format: date-time */
+            lastAttemptAt?: string;
+            /** Format: date-time */
+            lastSuccessAt?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            resourceKind?: string;
+            semantics?: string;
+            sourceId?: string;
+            status?: string;
+        };
+        platform_SourceStatuses: {
+            /** Format: date-time */
+            observedAt?: string;
+            sources?: components["schemas"]["platform_SourceStatus"][];
         };
         platform_Subject: {
             /** Format: uuid */
@@ -35369,6 +35850,56 @@ export interface operations {
             };
         };
     };
+    meeting_read_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseControlState"];
+                };
+            };
+        };
+    };
+    meeting_update_5: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_ControlInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseControlState"];
+                };
+            };
+        };
+    };
     meeting_list_1: {
         parameters: {
             query?: {
@@ -35445,7 +35976,7 @@ export interface operations {
             };
         };
     };
-    meeting_update_2: {
+    meeting_update_3: {
         parameters: {
             query?: never;
             header: {
@@ -35526,6 +36057,7 @@ export interface operations {
             query?: {
                 page?: number;
                 pageSize?: number;
+                favoriteOnly?: boolean;
             };
             header?: never;
             path?: never;
@@ -35540,6 +36072,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponsePageResponseHistoryItemResponse"];
+                };
+            };
+        };
+    };
+    meeting_read_2: {
+        parameters: {
+            query: {
+                /** @description 1 to 100 unique record IDs from the current page, in display order */
+                meetingIds: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseBookmarkPage"];
                 };
             };
         };
@@ -35821,6 +36376,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["meeting_ApiResponseQueryResponse"];
+                };
+            };
+        };
+    };
+    meeting_update_2: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                meetingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["meeting_BookmarkInput"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["meeting_ApiResponseBookmarkState"];
                 };
             };
         };
@@ -37869,7 +38453,7 @@ export interface operations {
             };
         };
     };
-    meeting_update_3: {
+    meeting_update_4: {
         parameters: {
             query?: never;
             header: {
@@ -38794,6 +39378,29 @@ export interface operations {
             };
         };
     };
+    messaging_receipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseReceiptSummary"];
+                };
+            };
+        };
+    };
     messaging_saveMessage: {
         parameters: {
             query?: never;
@@ -38887,6 +39494,56 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["messaging_ApiResponseReadCursorResponse"];
+                };
+            };
+        };
+    };
+    messaging_receipts: {
+        parameters: {
+            query: {
+                messageIds: string[];
+            };
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseListReceiptSummary"];
+                };
+            };
+        };
+    };
+    messaging_observe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_ObserveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseObservationResponse"];
                 };
             };
         };
@@ -39053,6 +39710,28 @@ export interface operations {
             };
         };
     };
+    messaging_recent: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseSharedAssetsResponse"];
+                };
+            };
+        };
+    };
     messaging_people: {
         parameters: {
             query?: {
@@ -39072,6 +39751,50 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["messaging_ApiResponseListPersonSummary"];
+                };
+            };
+        };
+    };
+    messaging_preference: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponsePrivacyPreference"];
+                };
+            };
+        };
+    };
+    messaging_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_UpdatePrivacyPreferenceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponsePrivacyPreference"];
                 };
             };
         };
@@ -52207,6 +52930,34 @@ export interface operations {
             };
         };
     };
+    platform_informationResponse: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_InformationResponseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRequestDetail"];
+                };
+            };
+        };
+    };
     platform_submit: {
         parameters: {
             query?: {
@@ -52636,6 +53387,28 @@ export interface operations {
             };
         };
     };
+    platform_agentEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                auditRecordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEvidence"];
+                };
+            };
+        };
+    };
     platform_detail_1: {
         parameters: {
             query?: never;
@@ -52660,6 +53433,28 @@ export interface operations {
             };
         };
     };
+    platform_evidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEvidence"];
+                };
+            };
+        };
+    };
     platform_summary: {
         parameters: {
             query?: never;
@@ -52676,6 +53471,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseExecutionSummary"];
+                };
+            };
+        };
+    };
+    platform_sources: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSourceStatuses"];
                 };
             };
         };
@@ -53715,6 +54530,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponsePersonalWorkTask"];
+                };
+            };
+        };
+    };
+    platform_delete_2: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PersonalWorkVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePersonalWorkDeleteResult"];
                 };
             };
         };

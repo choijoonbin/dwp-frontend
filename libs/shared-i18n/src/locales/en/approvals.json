@@ -154,6 +154,24 @@
       "empty": "There are no policy or SLA signals to review.",
       "open": "Review related work"
     },
+    "quickActions": {
+      "empty": "There are no approval actions available with your current access.",
+      "newRequest": {
+        "label": "New request",
+        "description": "Start from an approved form"
+      },
+      "inbox": { "label": "Open inbox", "description": "Review decisions and policy signals" },
+      "drafts": { "label": "Saved drafts", "description": "Continue requests already in progress" },
+      "delegations": {
+        "label": "Delegation",
+        "description": "Manage coverage and decision authority"
+      }
+    },
+    "activity": {
+      "empty": "There is no recent approval activity.",
+      "submittedAt": "Submitted {{date}}",
+      "completedAt": "Completed {{date}}"
+    },
     "widgets": {
       "decision-pulse": {
         "label": "Today's approval brief",
@@ -166,6 +184,7 @@
         "meta_one": "{{count}} priority review",
         "meta_other": "{{count}} priority reviews"
       },
+      "quick-actions": { "label": "Quick actions", "description": "Common approval tasks" },
       "flow": { "label": "Live approval flow", "description": "Volume and risk by stage" },
       "my-requests": {
         "label": "My request tracker",
@@ -174,6 +193,10 @@
       "insights": {
         "label": "Decision navigator",
         "description": "Policy and SLA signals to address"
+      },
+      "recent-activity": {
+        "label": "Recent approval activity",
+        "description": "Latest states in the canonical response"
       },
       "admin-health": {
         "label": "Approval operations health",
@@ -186,6 +209,9 @@
       "description": "Review, verify, and decide without leaving this workspace.",
       "metricsLabel": "Approval decision metrics",
       "metricPendingDetail": "Waiting for your review",
+      "metricPendingRiskDetail": "{{count}} overdue requests",
+      "metricPendingRiskDetail_one": "{{count}} overdue request",
+      "metricPendingRiskDetail_other": "{{count}} overdue requests",
       "metricDueDetail": "Due before day end",
       "metricOverdueDetail": "Needs immediate attention",
       "metricInFlightDetail": "Submitted by you and still in progress",

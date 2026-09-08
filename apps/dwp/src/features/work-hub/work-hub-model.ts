@@ -11,7 +11,7 @@ import {
 } from './work-hub-contracts';
 
 export type WorkHubFilters = {
-  scope: 'ALL' | 'ACTIONABLE' | 'WAITING' | 'COMPLETED' | 'TODAY';
+  scope: 'ALL' | 'ACTIONABLE' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETED' | 'TODAY';
   query: string;
   sourceSystem: string | null;
   urgency: WorkHubUrgency | null;
@@ -21,9 +21,11 @@ export function parseWorkHubFilters(params: URLSearchParams): WorkHubFilters {
   const scope = params.get('scope');
   const urgency = params.get('urgency');
   return {
-    scope: ['ALL', 'ACTIONABLE', 'WAITING', 'COMPLETED', 'TODAY'].includes(scope ?? '')
+    scope: ['ALL', 'ACTIONABLE', 'IN_PROGRESS', 'WAITING', 'COMPLETED', 'TODAY'].includes(
+      scope ?? ''
+    )
       ? (scope as WorkHubFilters['scope'])
-      : 'ACTIONABLE',
+      : 'ALL',
     query: params.get('q') ?? '',
     sourceSystem: params.get('source') || null,
     urgency: ['OVERDUE', 'DUE_SOON', 'SCHEDULED', 'NO_DUE_DATE'].includes(urgency ?? '')
@@ -57,6 +59,7 @@ export function selectWorkHubItems(
       )
         return false;
       if (filters.scope === 'COMPLETED' && item.lifecycle !== 'COMPLETED') return false;
+      if (filters.scope === 'IN_PROGRESS' && item.lifecycle !== 'IN_PROGRESS') return false;
       if (filters.scope === 'TODAY' && !todayKeys.has(item.key)) return false;
       if (filters.sourceSystem && item.reference.sourceSystem !== filters.sourceSystem)
         return false;

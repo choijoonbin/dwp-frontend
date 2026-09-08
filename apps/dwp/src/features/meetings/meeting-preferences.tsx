@@ -37,8 +37,12 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import { MeetingDeviceSettings } from './meeting-device-settings';
+import {
+  MeetingDeviceSettingsDiagnostics,
+  type MeetingDeviceDiagnosticSnapshot,
+} from './meeting-device-settings-diagnostics';
 import {
   createMeetingIntelligenceAuthorizationFence,
   MeetingIntelligenceAuthorizationSupersededError,
@@ -52,7 +56,7 @@ import {
   readMeetingDevicePreferences,
   writeMeetingDevicePreferences,
 } from './meeting-preferences-model';
-import { meetingSurface } from './meeting-visual-system';
+import { meetingSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 
 export function MeetingPreferences() {
   const { user, isAuthenticated } = useAuth();
@@ -185,6 +189,12 @@ function MeetingPreferencesEditor({
   const [notice, setNotice] = useState<'saved' | 'saveError' | 'localSaveError' | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [diagnostics, setDiagnostics] = useState<MeetingDeviceDiagnosticSnapshot>({
+    audio: 'idle',
+    video: 'idle',
+    failure: false,
+  });
+  const [activeSection, setActiveSection] = useState('audio');
   const mounted = useRef(false);
   const command = useRef<{ fingerprint: string; key: string } | null>(null);
   const accountDirty = meetingPreferencesChanged(values, meetingPreferenceValues(baseline));
@@ -252,6 +262,7 @@ function MeetingPreferencesEditor({
   ] as const;
   const advancedSections = new Set(['notifications', 'accessibility']);
   const revealSection = (id: (typeof sections)[number]['id']) => {
+    setActiveSection(id);
     const target = advancedSections.has(id)
       ? 'meeting-preferences-advanced'
       : `meeting-preferences-${id}`;
@@ -267,7 +278,12 @@ function MeetingPreferencesEditor({
           minWidth: 0,
           color: 'text.primary',
           overflowWrap: 'anywhere',
+          pb: { xs: 15, sm: 0 },
           '& .MuiButton-root': { maxWidth: '100%', minWidth: 0, whiteSpace: 'normal' },
+          '& .MuiOutlinedInput-root': {
+            borderRadius: meetingShape.control,
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.025),
+          },
           '@media (forced-colors: active)': {
             '&& .MuiTypography-root': {
               color: 'CanvasText',
@@ -289,23 +305,26 @@ function MeetingPreferencesEditor({
           size="small"
           startIcon={<ArrowLeft size={15} />}
           onClick={() => navigate('/meetings/mine')}
-          sx={{ mb: 1 }}
+          sx={{ mb: 1, display: { xs: 'none', md: 'inline-flex' } }}
         >
           {t('navigation.items.meetings.mine.label')}
         </ActionButton>
         <Stack
-          direction={{ xs: 'column', md: 'row' }}
+          direction="row"
           justifyContent="space-between"
-          alignItems={{ md: 'center' }}
-          flexWrap="wrap"
-          gap={2}
-          sx={{ mb: 3 }}
+          alignItems="center"
+          gap={1}
+          sx={{ mb: { xs: 2, md: 3 } }}
         >
-          <Box sx={{ minWidth: 0, flex: { xs: '0 1 auto', md: '1 1 240px' } }}>
-            <Typography variant="h5" component="h1">
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="h5" component="h1" sx={{ typography: { xs: 'h6', md: 'h5' } }}>
               {t('preferences.title')}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.75, display: { xs: 'none', md: 'block' } }}
+            >
               {t('preferences.description')}
             </Typography>
           </Box>
@@ -315,6 +334,7 @@ function MeetingPreferencesEditor({
               disabled={mutation.isPending}
               startIcon={<RotateCcw size={16} />}
               onClick={() => setResetOpen(true)}
+              sx={{ display: { xs: 'none', md: 'inline-flex' } }}
             >
               {t('preferences.reset')}
             </ActionButton>
@@ -323,12 +343,13 @@ function MeetingPreferencesEditor({
               disabled={!dirty}
               loading={mutation.isPending}
               startIcon={<Save size={16} />}
+              aria-label={t(compact ? 'stitch.devices.saveShort' : 'preferences.save')}
               onClick={() => {
                 setNotice(null);
                 mutation.mutate();
               }}
             >
-              {t('preferences.save')}
+              {t(compact ? 'stitch.devices.saveShort' : 'preferences.save')}
             </ActionButton>
           </Stack>
         </Stack>
@@ -341,8 +362,10 @@ function MeetingPreferencesEditor({
           sx={{
             display: 'grid',
             gridTemplateColumns: 'minmax(0,1fr)',
-            '@container (min-width: 900px)': { gridTemplateColumns: '176px minmax(0,1fr) 240px' },
-            gap: 3,
+            '@container (min-width: 850px)': {
+              gridTemplateColumns: 'minmax(0,8fr) minmax(260px,4fr)',
+            },
+            gap: { xs: 2, md: 3 },
             alignItems: 'start',
           }}
         >
@@ -350,12 +373,14 @@ function MeetingPreferencesEditor({
             component="nav"
             aria-label={t('preferences.sections')}
             sx={{
-              position: { lg: 'sticky' },
-              top: 16,
+              gridColumn: '1 / -1',
               display: 'flex',
               flexDirection: 'row',
-              flexWrap: 'wrap',
-              '@container (min-width: 900px)': { flexDirection: 'column', flexWrap: 'nowrap' },
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              bgcolor: 'action.hover',
+              p: 0.5,
+              borderRadius: meetingShape.control,
               gap: 0.5,
             }}
           >
@@ -366,12 +391,53 @@ function MeetingPreferencesEditor({
                 size="small"
                 startIcon={<section.icon size={16} />}
                 onClick={() => revealSection(section.id)}
-                sx={{ justifyContent: 'flex-start', minHeight: 44 }}
+                aria-current={activeSection === section.id ? 'location' : undefined}
+                sx={{
+                  justifyContent: 'center',
+                  flex: { xs: '0 0 auto', md: 1 },
+                  minHeight: 44,
+                  px: 1.25,
+                  whiteSpace: 'nowrap',
+                  bgcolor: activeSection === section.id ? 'background.paper' : 'transparent',
+                  color: activeSection === section.id ? 'primary.main' : 'text.secondary',
+                  borderRadius: meetingShape.inset,
+                }}
               >
                 {t(`preferences.${section.id}.title`)}
               </ActionButton>
             ))}
           </Box>
+          <Stack
+            direction="row"
+            alignItems="start"
+            gap={1.25}
+            data-testid="meeting-device-storage-banner"
+            sx={{
+              gridColumn: '1 / -1',
+              p: 2,
+              bgcolor: 'action.selected',
+              borderRadius: meetingShape.card,
+            }}
+          >
+            <LockKeyhole size={21} style={{ flexShrink: 0 }} />
+            <Box>
+              <Typography variant="subtitle2">{t('stitch.devices.storageTitle')}</Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: 0.5, display: { xs: 'none', md: 'block' } }}
+              >
+                {t('preferences.privacy.deviceHint')} {t('preferences.privacy.accountHint')}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 0.5, display: { xs: 'block', md: 'none' } }}
+              >
+                {t('stitch.devices.storageMobile')}
+              </Typography>
+            </Box>
+          </Stack>
           <Box
             component="fieldset"
             disabled={mutation.isPending}
@@ -386,6 +452,7 @@ function MeetingPreferencesEditor({
               value={devices}
               onChange={setDevices}
               revocation={authority.media.signal}
+              onDiagnostics={setDiagnostics}
             />
             <Box
               component="section"
@@ -393,6 +460,7 @@ function MeetingPreferencesEditor({
               aria-labelledby="meeting-preferences-join-heading"
               sx={(theme) => ({
                 ...meetingSurface(theme),
+                borderRadius: meetingShape.group,
                 p: { xs: 2, md: 3 },
                 mt: 2,
                 scrollMarginTop: 12,
@@ -401,7 +469,7 @@ function MeetingPreferencesEditor({
             >
               <SectionHeader
                 density="compact"
-                glyph="plain"
+                glyph="surface"
                 id="meeting-preferences-join-heading"
                 icon={Settings2}
                 title={t('preferences.join.title')}
@@ -415,10 +483,22 @@ function MeetingPreferencesEditor({
                 }
                 sx={{ mt: 2 }}
               />
-              <Stack gap={0.5} sx={{ mt: 1.5 }}>
+              <Stack gap={1} sx={{ mt: 1.5, mb: 1.5 }}>
                 {(['microphoneOff', 'cameraOff', 'prejoinEnabled'] as const).map((key) => (
                   <FormControlLabel
                     key={key}
+                    labelPlacement="start"
+                    sx={{
+                      m: 0,
+                      p: 1.5,
+                      justifyContent: 'space-between',
+                      bgcolor: 'action.hover',
+                      borderRadius: meetingShape.control,
+                      '& .MuiFormControlLabel-label': {
+                        fontSize: 'body2.fontSize',
+                        fontWeight: 'fontWeightMedium',
+                      },
+                    }}
                     control={
                       <Switch
                         checked={values[key]}
@@ -435,6 +515,9 @@ function MeetingPreferencesEditor({
                 {t('preferences.join.applyHint')}
               </Typography>
             </Box>
+            <Box sx={{ display: { xs: 'block', md: 'none' }, mt: 2 }}>
+              <MeetingDeviceSettingsDiagnostics value={diagnostics} />
+            </Box>
             <Box
               component="details"
               id="meeting-preferences-advanced"
@@ -444,6 +527,7 @@ function MeetingPreferencesEditor({
               }}
               sx={(theme) => ({
                 ...meetingSurface(theme),
+                borderRadius: meetingShape.group,
                 mt: 2,
                 p: { xs: 0, sm: 3 },
                 boxShadow: theme.shadows[1],
@@ -558,75 +642,121 @@ function MeetingPreferencesEditor({
               </Box>
             </Box>
           </Box>
-          <Box
-            component="aside"
-            aria-label={t('preferences.privacy.title')}
-            sx={(theme) => ({
-              ...meetingSurface(theme),
-              p: { xs: 0, sm: 2.5 },
-              boxShadow: theme.shadows[1],
-            })}
-          >
-            <Box component="details" open={!compact || undefined}>
-              <Stack
-                component="summary"
-                direction="row"
-                alignItems="center"
-                gap={1}
-                sx={(theme) => ({
-                  display: { xs: 'flex', sm: 'none' },
-                  minHeight: 52,
-                  px: 2,
-                  py: 1,
-                  cursor: 'pointer',
-                  listStyle: 'none',
-                  '&::-webkit-details-marker': { display: 'none' },
-                  '&:focus-visible': {
-                    outline: `3px solid ${theme.palette.primary.main}`,
-                    outlineOffset: -3,
-                  },
-                })}
-              >
-                <LockKeyhole size={18} aria-hidden="true" />
-                <Typography variant="subtitle2" sx={{ flex: 1 }}>
-                  {t('preferences.privacy.title')}
-                </Typography>
-                <Typography component="span" color="primary.main" aria-hidden="true">
-                  +
-                </Typography>
-              </Stack>
-              <Box sx={{ p: { xs: 2, sm: 0 } }}>
-                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                  <SectionHeader
-                    density="compact"
-                    glyph="plain"
-                    icon={LockKeyhole}
-                    title={t('preferences.privacy.title')}
-                  />
-                </Box>
-                <Stack gap={2} sx={{ mt: { xs: 0, sm: 2 } }}>
-                  {['device', 'account', 'consent'].map((key) => (
-                    <Box key={key}>
-                      <Typography variant="subtitle2">
-                        {t(`preferences.privacy.${key}Title`)}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        {t(`preferences.privacy.${key}Hint`)}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Stack>
-                <Stack direction="row" gap={0.75} alignItems="center" sx={{ mt: 2.5 }}>
-                  <Check size={16} />
-                  <Typography variant="caption">
-                    {t('preferences.version', { version: baseline.version })}
+          <Stack gap={2.5} component="aside" aria-label={t('preferences.privacy.title')}>
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <MeetingDeviceSettingsDiagnostics value={diagnostics} />
+            </Box>
+            <Box
+              sx={(theme) => ({
+                ...meetingSurface(theme),
+                borderRadius: meetingShape.group,
+                p: { xs: 0, sm: 2.5 },
+                boxShadow: theme.shadows[1],
+              })}
+            >
+              <Box component="details" open={!compact || undefined}>
+                <Stack
+                  component="summary"
+                  direction="row"
+                  alignItems="center"
+                  gap={1}
+                  sx={(theme) => ({
+                    display: { xs: 'flex', sm: 'none' },
+                    minHeight: 52,
+                    px: 2,
+                    py: 1,
+                    cursor: 'pointer',
+                    listStyle: 'none',
+                    '&::-webkit-details-marker': { display: 'none' },
+                    '&:focus-visible': {
+                      outline: `3px solid ${theme.palette.primary.main}`,
+                      outlineOffset: -3,
+                    },
+                  })}
+                >
+                  <LockKeyhole size={18} aria-hidden="true" />
+                  <Typography variant="subtitle2" sx={{ flex: 1 }}>
+                    {t('preferences.privacy.title')}
+                  </Typography>
+                  <Typography component="span" color="primary.main" aria-hidden="true">
+                    +
                   </Typography>
                 </Stack>
+                <Box sx={{ p: { xs: 2, sm: 0 } }}>
+                  <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                    <SectionHeader
+                      density="compact"
+                      glyph="plain"
+                      icon={LockKeyhole}
+                      title={t('preferences.privacy.title')}
+                    />
+                  </Box>
+                  <Stack gap={2} sx={{ mt: { xs: 0, sm: 2 } }}>
+                    {['device', 'account', 'consent'].map((key) => (
+                      <Box key={key}>
+                        <Typography variant="subtitle2">
+                          {t(`preferences.privacy.${key}Title`)}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                          {t(`preferences.privacy.${key}Hint`)}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                  <Stack direction="row" gap={0.75} alignItems="center" sx={{ mt: 2.5 }}>
+                    <Check size={16} />
+                    <Typography variant="caption">
+                      {t('preferences.version', { version: baseline.version })}
+                    </Typography>
+                  </Stack>
+                </Box>
               </Box>
             </Box>
-          </Box>
+          </Stack>
         </Box>
       </Box>
+      <Stack
+        data-testid="meeting-preferences-save-dock"
+        component="footer"
+        gap={0.5}
+        sx={{
+          display: { xs: 'flex', sm: 'none' },
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1200,
+          p: 2,
+          pb: 'max(12px, env(safe-area-inset-bottom))',
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+          borderTop: 1,
+          borderColor: 'divider',
+          boxShadow: (theme) => meetingSoftShadow(theme),
+        }}
+      >
+        <ActionButton
+          intent="primary"
+          disabled={!dirty}
+          loading={mutation.isPending}
+          startIcon={<Save size={17} />}
+          onClick={() => {
+            setNotice(null);
+            mutation.mutate();
+          }}
+          sx={{ minHeight: 44 }}
+        >
+          {t('preferences.save')}
+        </ActionButton>
+        <ActionButton
+          intent="quiet"
+          disabled={mutation.isPending}
+          onClick={() => setResetOpen(true)}
+          sx={{ minHeight: 44 }}
+        >
+          {t('preferences.reset')}
+        </ActionButton>
+      </Stack>
       <FormDialog
         open={resetOpen}
         title={t('preferences.reset')}

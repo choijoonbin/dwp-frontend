@@ -314,6 +314,7 @@ type WireMeetingSummary = {
 };
 
 type WireMeetingDetail = {
+  attendeeCount?: number;
   meetingId: string;
   title: string;
   description?: string | null;
@@ -391,6 +392,10 @@ type WireJoinCodeResolution = {
 type WireHistoryItem = {
   meetingId: string;
   title: string;
+  organizerUserId?: number;
+  organizerName?: string;
+  participantRole?: VideoMeetingRole;
+  canHost?: boolean;
   endedAt: string;
   actualDurationMinutes: number;
   participantPeak: number;
@@ -574,7 +579,11 @@ function normalizeDetail(detail: WireMeetingDetail): VideoMeetingSummary {
     lifecycleState: detail.lifecycleState,
     organizerUserId: detail.organizerUserId,
     organizerName: detail.organizerName,
-    attendeeCount: detail.participants.length,
+    attendeeCount:
+      Number.isSafeInteger(detail.attendeeCount) &&
+      detail.attendeeCount! >= detail.participants.length
+        ? detail.attendeeCount!
+        : detail.participants.length,
     myRole: detail.participantRole,
     canHost: detail.canHost,
     canModerate: detail.canModerate,
@@ -616,10 +625,11 @@ function normalizeHistory(item: WireHistoryItem): VideoMeetingHistoryItem {
     defaultMicrophoneEnabled: false,
     defaultCameraEnabled: false,
     lifecycleState: 'ENDED',
-    organizerName: '',
+    organizerUserId: item.organizerUserId,
+    organizerName: item.organizerName ?? '',
     attendeeCount: item.participantPeak,
-    myRole: null,
-    canHost: false,
+    myRole: item.participantRole ?? null,
+    canHost: item.canHost === true,
     canModerate: false,
     participants: [],
     decisions: [],
@@ -743,10 +753,12 @@ export async function getVideoMeetings(
 
 export async function getVideoMeetingHistory(
   page = 0,
-  pageSize = 30
+  pageSize = 30,
+  options: { favoriteOnly?: boolean; signal?: AbortSignal } = {}
 ): Promise<VideoMeetingPage<VideoMeetingHistoryItem>> {
   const response = await axiosInstance.get<ApiResponse<VideoMeetingPage<WireHistoryItem>>>(
-    `${VIDEO_MEETING_API_BASE}/history?page=${encodeURIComponent(String(page))}&pageSize=${encodeURIComponent(String(pageSize))}`
+    `${VIDEO_MEETING_API_BASE}/history?page=${encodeURIComponent(String(page))}&pageSize=${encodeURIComponent(String(pageSize))}${options.favoriteOnly ? '&favoriteOnly=true' : ''}`,
+    { signal: options.signal }
   );
   const result = response.data.data;
   return {

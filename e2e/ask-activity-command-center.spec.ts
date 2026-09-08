@@ -212,12 +212,23 @@ test('Activity exposes truthful operational counts and actionable state filters'
   });
   await page.goto('/activity/timeline');
 
-  const summary = page.getByRole('region', { name: 'Activity summary' });
+  const summary = page.locator('[aria-label="Activity summary"]');
+  await expect(summary).toBeAttached();
+  if (!(await summary.isVisible())) {
+    await page.locator('details').filter({ has: summary }).locator('summary').click();
+  }
   await expect(summary).toContainText('Connected executions');
   await expect(summary.getByText('Currently running').locator('..')).toContainText('0');
   await expect(summary.getByText('Policy blocked').locator('..')).toContainText('1');
 
-  // Current ledger counts are not controls for filtering historical event rows.
+  // Historical state filters preserve the current execution ledger's own counts.
+  const mobileFilters = page.getByRole('button', { name: 'Activity filters and saved views' });
+  if (
+    (await mobileFilters.isVisible()) &&
+    (await mobileFilters.getAttribute('aria-expanded')) === 'false'
+  ) {
+    await mobileFilters.click();
+  }
   await page.getByRole('combobox', { name: 'Activity state' }).click();
   await page.getByRole('option', { name: 'Policy blocked', exact: true }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'policy-blocked');

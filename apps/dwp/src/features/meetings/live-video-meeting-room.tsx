@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ConnectionQualityIndicator,
@@ -10,9 +10,12 @@ import {
 } from '@livekit/components-react';
 import type { DisconnectReason } from 'livekit-client';
 import { Radio, ShieldCheck, Square, UsersRound, X } from 'lucide-react';
-import { ActionButton, ActionIconButton, ConfirmDialog } from '@dwp-frontend/design-system';
-
-import Alert from '@mui/material/Alert';
+import {
+  ActionButton,
+  ActionIconButton,
+  ConfirmDialog,
+  InlineFeedback,
+} from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Drawer from '@mui/material/Drawer';
@@ -26,10 +29,12 @@ import type {
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 
 import { applyMeetingAudioOutput } from './meeting-audio-output';
+import { useMeetingBackgroundPublication } from './use-meeting-background-publication';
 import { MeetingLobbyPanel } from './meeting-lobby-panel';
 import { MeetingConference } from './meeting-conference';
 import { MeetingContentControl } from './meeting-content-governance';
 import { MeetingLiveFacilitationLauncher } from './meeting-live-facilitation';
+import { meetingLiveTheme } from './meeting-visual-system';
 import {
   authorizeReceivedMeetingReaction,
   type MeetingReactionInteraction,
@@ -37,6 +42,7 @@ import {
 
 import '@livekit/components-styles';
 import './live-video-meeting-room.css';
+import './meeting-room-stage-context.css';
 
 const INTERACTION_TOPIC = 'dwp.meetings.interaction.v1';
 const REACTIONS = [
@@ -59,6 +65,7 @@ export function LiveVideoMeetingRoom({
   choices,
   speakerDeviceId,
   noiseSuppression,
+  backgroundBlur,
   ending,
   operationError,
   onConnected,
@@ -72,6 +79,7 @@ export function LiveVideoMeetingRoom({
   choices: LocalUserChoices;
   speakerDeviceId: string;
   noiseSuppression: boolean;
+  backgroundBlur: boolean;
   ending: boolean;
   operationError?: string | null;
   onConnected: () => void;
@@ -85,20 +93,53 @@ export function LiveVideoMeetingRoom({
   const [permissionError, setPermissionError] = useState<string | null>(null);
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false);
   const handleOutputError = useCallback(() => setPermissionError(t('errors.mediaPermission')), [t]);
+  const background = useMeetingBackgroundPublication(backgroundBlur === true, authorizationScope);
+  const captureOptions = useMemo(
+    () => ({
+      deviceId: choices.videoDeviceId,
+      ...(background.processor ? { processor: background.processor } : {}),
+    }),
+    [choices.videoDeviceId, background.processor]
+  );
+  const roomOptions = useMemo(
+    () => ({ audioCaptureDefaults: { noiseSuppression }, videoCaptureDefaults: captureOptions }),
+    [noiseSuppression, captureOptions]
+  );
+  const backgroundFailed = backgroundBlur && background.state?.state === 'failed';
+
+  if (typeof backgroundBlur !== 'boolean') {
+    return (
+      <InlineFeedback severity="error">
+        {t('preferences.video.backgroundFailed')}
+        <ActionButton intent="secondary" onClick={() => onLeave()}>
+          {t('room.controls.leave')}
+        </ActionButton>
+      </InlineFeedback>
+    );
+  }
 
   return (
-    <Modal open hideBackdrop disableEscapeKeyDown aria-label={t('room.liveRegion')}>
-      <Box className="dwp-video-meeting-room" tabIndex={-1}>
+    <Modal
+      open
+      hideBackdrop
+      disableEscapeKeyDown
+      container={() => document.getElementById('dwp-main-content')}
+      className="dwp-video-meeting-room-frame"
+      aria-label={t('room.liveRegion')}
+      sx={{ position: { xs: 'fixed', md: 'relative' }, inset: { md: 'auto' } }}
+    >
+      <Box className="dwp-video-meeting-room" tabIndex={-1} sx={meetingLiveTheme}>
         <LiveKitRoom
+          key={authorizationScope}
           className="dwp-video-meeting-room__transport"
           data-lk-theme="default"
           token={credential.participantToken}
           serverUrl={credential.serverUrl}
           connect
           audio={choices.audioEnabled ? { deviceId: choices.audioDeviceId } : false}
-          video={choices.videoEnabled ? { deviceId: choices.videoDeviceId } : false}
+          video={choices.videoEnabled ? captureOptions : false}
           connectOptions={{ autoSubscribe: true }}
-          options={{ audioCaptureDefaults: { noiseSuppression } }}
+          options={roomOptions}
           onConnected={() => {
             setConnected(true);
             setConnectionError(null);
@@ -108,6 +149,7 @@ export function LiveVideoMeetingRoom({
           onError={() => setConnectionError(t('errors.connection'))}
           onMediaDeviceFailure={() => setPermissionError(t('errors.mediaPermission'))}
         >
+          <MeetingBackgroundFailureGuard failed={backgroundFailed} />
           <MeetingAudioOutputSelection
             deviceId={speakerDeviceId}
             onFallback={onSpeakerDeviceFallback}
@@ -117,7 +159,11 @@ export function LiveVideoMeetingRoom({
             meeting={meeting}
             connected={connected}
             ending={ending}
-            operationError={operationError ?? permissionError ?? connectionError}
+            operationError={
+              backgroundFailed
+                ? t('preferences.video.backgroundFailed')
+                : (operationError ?? permissionError ?? connectionError)
+            }
             permissions={credential.effectivePermissions}
             overlayPanelOpen={overlayPanelOpen}
             onEndForEveryone={onEndForEveryone}
@@ -136,6 +182,16 @@ export function LiveVideoMeetingRoom({
       </Box>
     </Modal>
   );
+}
+
+function MeetingBackgroundFailureGuard({ failed }: { failed: boolean }) {
+  const { localParticipant } = useLocalParticipant();
+  useEffect(() => {
+    if (!failed) return;
+    // The processor has already stopped input/output. Reflect that state in the server publication.
+    void localParticipant.setCameraEnabled(false).catch(() => undefined);
+  }, [failed, localParticipant]);
+  return null;
 }
 
 function MeetingAudioOutputSelection({
@@ -384,7 +440,7 @@ function MeetingRoomChrome({
           aria-hidden={overlayPanelOpen || undefined}
           inert={overlayPanelOpen || undefined}
         >
-          <Alert severity="warning">{operationError || reactionError}</Alert>
+          <InlineFeedback severity="warning">{operationError || reactionError}</InlineFeedback>
         </Box>
       )}
 

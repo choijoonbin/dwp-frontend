@@ -1,7 +1,106 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { mockShellSession } from './support/shell-session';
+import { withMeetingDocumentCapture } from './support/meeting-document-capture';
+import {
+  mockMeetingVisualSession,
+  mockMeetingVisualPublishedRecap,
+} from './support/video-meeting-visual-fixtures';
+import {
+  PERSONAL_ROOM,
+  PERSONAL_ROOM_PATH,
+  mockPersonalRoom,
+  readPersonalRoomBrowserEvidence,
+} from './support/meeting-personal-room-fixtures';
 import en from '../libs/shared-i18n/src/locales/en/meetings.json' with { type: 'json' };
+
+for (const width of [320, 390]) {
+  for (const locale of ['ko', 'en'] as const) {
+    test(`library favorite stays in its own touch column at ${width}px ${locale}`, async ({
+      page,
+    }, info) => {
+      await page.setViewportSize({ width, height: 844 });
+      await mockMeetingVisualSession(page, { locale, reducedMotion: true });
+      await mockMeetingVisualPublishedRecap(page);
+      await page.goto('/meetings/history');
+      const header = page.getByTestId('meeting-library-row-header').first();
+      const favorite = header.getByRole('button');
+      await expect(favorite).toBeEnabled();
+      const bounds = await header.evaluate((element) => {
+        const row = element.getBoundingClientRect();
+        const button = element.querySelector('button')!.getBoundingClientRect();
+        const metadata = element.firstElementChild!.getBoundingClientRect();
+        return {
+          top: button.top - row.top,
+          width: button.width,
+          height: button.height,
+          overlap: metadata.right - button.left,
+          right: button.right - row.right,
+        };
+      });
+      expect(bounds.top).toBeLessThanOrEqual(1);
+      expect(bounds.width).toBeGreaterThanOrEqual(44);
+      expect(bounds.height).toBeGreaterThanOrEqual(44);
+      expect(bounds.overlap).toBeLessThanOrEqual(0);
+      expect(bounds.right).toBeLessThanOrEqual(1);
+      const pressed = await favorite.getAttribute('aria-pressed');
+      await favorite.click();
+      await expect(favorite).toHaveAttribute('aria-pressed', pressed === 'true' ? 'false' : 'true');
+      await noOverflow(page);
+      await accessible(page);
+      await page.screenshot({ path: info.outputPath(`U07-header-${width}-${locale}.png`) });
+    });
+
+    test(`personal invitation action preserves whole words at ${width}px ${locale}`, async ({
+      page,
+    }, info) => {
+      await page.setViewportSize({ width, height: 844 });
+      const state = await mockPersonalRoom(page, { locale });
+      await page.goto(PERSONAL_ROOM_PATH);
+      await expect(
+        page.getByRole('heading', { level: 1, name: PERSONAL_ROOM.name, exact: true })
+      ).toBeVisible();
+      const label = locale === 'ko' ? '초대 문구 복사' : 'Copy invitation';
+      const copy = page.getByRole('button', { name: label, exact: true });
+      const geometry = await copy.evaluate((element) => {
+        const button = element.getBoundingClientRect();
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+        const words: { text: string; lines: number; escaped: boolean }[] = [];
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          for (const match of (node.textContent ?? '').matchAll(/\S+/gu)) {
+            const range = document.createRange();
+            range.setStart(node, match.index);
+            range.setEnd(node, match.index + match[0].length);
+            const rects = [...range.getClientRects()];
+            words.push({
+              text: match[0],
+              lines: rects.length,
+              escaped: rects.some((r) => r.left < button.left - 1 || r.right > button.right + 1),
+            });
+          }
+        }
+        return { width: button.width, height: button.height, words };
+      });
+      expect(geometry.width).toBeGreaterThanOrEqual(44);
+      expect(geometry.height).toBeGreaterThanOrEqual(44);
+      expect(geometry.words.map((word) => word.text)).toEqual(label.split(' '));
+      for (const word of geometry.words) {
+        expect(word.lines, word.text).toBe(1);
+        expect(word.escaped, word.text).toBe(false);
+      }
+      await copy.click();
+      const evidence = await readPersonalRoomBrowserEvidence(page);
+      expect(evidence.clipboard).toContain(PERSONAL_ROOM.name);
+      expect(evidence.clipboard).toContain(`revision=${PERSONAL_ROOM.invitationRevision}`);
+      expect(evidence.mediaCalls).toBe(0);
+      expect(state.commands).toEqual([]);
+      await noOverflow(page);
+      await accessible(page);
+      await page.screenshot({ path: info.outputPath(`U11-actions-${width}-${locale}.png`) });
+    });
+  }
+}
 
 const templateId = '88000000-0000-4000-8000-000000000001';
 const template = {
@@ -240,7 +339,12 @@ test('preferences persist only account values and revoke visible content after a
   expect(await page.evaluate(() => Reflect.get(window, '__meetingMediaCalls'))).toBe(0);
 });
 
-test('U10 and U12 retain the approved desktop and mobile hierarchy', async ({ page }, testInfo) => {
+// These reviewed implementation snapshots detect regressions, not 100% Stitch fidelity.
+// The supplied source archive and original-frame acceptance remain a separate human review.
+test('U10 and U12 retain reviewed source blocks and responsive product actions', async ({
+  page,
+}, testInfo) => {
+  test.slow(); // Two complete product journeys, each with independent visual evidence.
   const mobile = testInfo.project.name === 'mobile';
   await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1440, height: 960 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -248,37 +352,138 @@ test('U10 and U12 retain the approved desktop and mobile hierarchy', async ({ pa
 
   await page.goto('/meetings/templates');
   await expect(page.getByRole('heading', { name: en.templates.title, exact: true })).toBeVisible();
+  const catalog = page.getByTestId('template-catalog-card');
+  await expect(catalog).toContainText(template.name);
+  await expect(catalog).toContainText(en.templates.scopes.PERSONAL);
+  await expect(
+    page.getByText(en.stitch.templates.recommendationTitle, { exact: true })
+  ).toBeVisible();
   if (mobile) {
     const intro = page.getByTestId('template-mobile-intro');
     await expect(intro).toBeVisible();
-    const introStyle = await intro.evaluate((element) => ({
-      backgroundImage: getComputedStyle(element).backgroundImage,
-      boxShadow: getComputedStyle(element).boxShadow,
-      ornament: getComputedStyle(element, '::after').content,
-    }));
-    expect(introStyle).toEqual({ backgroundImage: 'none', boxShadow: 'none', ornament: 'none' });
+    await expect(intro).toContainText(en.stitch.templates.bannerTitle);
+    expect(await intro.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain(
+      'linear-gradient'
+    );
+    const preview = page.getByTestId('template-mobile-preview');
+    await expect(preview.locator('ol > li')).toHaveCount(template.agendaItems.length);
+    await expect(preview.getByTestId('template-usage-evidence')).toContainText(
+      en.stitch.templates.usageUnavailable
+    );
+    await expect(
+      preview.getByRole('button', { name: en.templates.apply, exact: true })
+    ).toBeVisible();
+    await expect(
+      preview.getByRole('button', { name: en.templates.fullPreview, exact: true })
+    ).toBeVisible();
+    const navigation = page.getByTestId('meeting-mobile-navigation');
+    await expect(navigation).toBeVisible();
+    await expect(navigation.getByRole('link')).toHaveCount(5);
+    await expect(navigation.getByTestId('meeting-mobile-navigation-templates')).toHaveAttribute(
+      'href',
+      '/meetings/templates'
+    );
+    await expect(navigation.getByTestId('meeting-mobile-navigation-templates')).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+  } else {
+    const preview = page.getByTestId('template-desktop-preview');
+    await expect(preview).toBeVisible();
+    await expect(preview.getByTestId('template-overview')).toContainText(
+      en.stitch.templates.invited
+    );
+    await expect(preview.getByTestId('template-governance')).toContainText(
+      en.stitch.templates.policyAtBooking
+    );
+    await expect(preview.locator('ol > li')).toHaveCount(template.agendaItems.length);
+    await expect(
+      page.getByRole('button', { name: en.stitch.templates.import, exact: true })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: en.stitch.templates.share, exact: true })
+    ).toBeVisible();
   }
   await noOverflow(page);
   await accessible(page);
-  await expect(page).toHaveScreenshot(
-    `meeting-u10-templates-${mobile ? 'mobile' : 'desktop'}.png`,
-    {
-      animations: 'disabled',
-      caret: 'hide',
-      fullPage: true,
-      maxDiffPixelRatio: 0.002,
-    }
+  await withMeetingDocumentCapture(page, () =>
+    expect
+      .soft(page)
+      .toHaveScreenshot(`meeting-u10-templates-${mobile ? 'mobile' : 'desktop'}.png`, {
+        animations: 'disabled',
+        caret: 'hide',
+        fullPage: true,
+        maxDiffPixelRatio: 0.002,
+      })
   );
 
   await page.goto('/meetings/preferences');
   await expect(
     page.getByRole('heading', { name: en.preferences.title, exact: true })
   ).toBeVisible();
+  await expect(page.getByTestId('meeting-device-storage-banner')).toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: en.preferences.sections }).getByRole('button')
+  ).toHaveCount(5);
+  await expect(page.getByRole('meter', { name: en.preferences.audio.level })).toHaveAttribute(
+    'aria-valuenow',
+    '0'
+  );
+  await expect(page.locator('#meeting-preferences-video video')).toHaveCount(1);
+  await expect(page.getByTestId('meeting-background-options').getByRole('button')).toHaveCount(4);
+  for (const key of ['office', 'image'] as const) {
+    await expect(
+      page.getByRole('button', { name: en.stitch.devices[key], exact: true })
+    ).toBeDisabled();
+  }
+  const blur = page.getByRole('button', { name: en.stitch.devices.blur, exact: true });
+  if (testInfo.project.name === 'chromium') {
+    await expect(blur).toBeEnabled();
+    await blur.click();
+    await expect(blur).toHaveAttribute('aria-pressed', 'true');
+    expect(await page.evaluate(() => Reflect.get(window, '__meetingMediaCalls'))).toBe(0);
+    await page.getByRole('button', { name: en.stitch.devices.none, exact: true }).click();
+    await expect(blur).toHaveAttribute('aria-pressed', 'false');
+  } else {
+    await expect(blur).toBeDisabled();
+  }
+  await expect(
+    page.getByRole('switch', { name: en.stitch.devices.hd, exact: true })
+  ).toBeDisabled();
+  const diagnostics = page.getByTestId('meeting-device-diagnostics').filter({ visible: true });
+  await expect(diagnostics).toContainText(en.stitch.devices.checkRequired);
+  await expect(diagnostics.getByText(en.stitch.devices.unmeasured, { exact: true })).toHaveCount(2);
+  expect(await page.evaluate(() => Reflect.get(window, '__meetingMediaCalls'))).toBe(0);
   if (mobile) {
     const advanced = page.locator('#meeting-preferences-advanced');
-    const privacy = page.locator('aside[aria-label="Preferences & data"] details');
-    await expect(advanced).not.toHaveAttribute('open', '');
-    await expect(privacy).not.toHaveAttribute('open', '');
+    const privacy = page
+      .getByRole('complementary', { name: en.preferences.privacy.title })
+      .locator('details');
+    const dock = page.getByTestId('meeting-preferences-save-dock');
+    await expect(dock).toBeVisible();
+    await expect(page.getByTestId('meeting-mobile-navigation')).toHaveCount(0);
+    await expect(
+      dock.getByRole('button', { name: en.preferences.save, exact: true })
+    ).toBeDisabled();
+    await expect(
+      dock.getByRole('button', { name: en.preferences.reset, exact: true })
+    ).toBeEnabled();
+    const dockPosition = await dock.evaluate((element) => ({
+      position: getComputedStyle(element).position,
+      bottom: element.getBoundingClientRect().bottom,
+      viewport: innerHeight,
+    }));
+    expect(dockPosition.position).toBe('fixed');
+    expect(Math.abs(dockPosition.bottom - dockPosition.viewport)).toBeLessThanOrEqual(1);
+    const sectionOrder = await page.evaluate(() =>
+      [
+        '#meeting-preferences-audio',
+        '#meeting-preferences-video',
+        '#meeting-preferences-join',
+        '[data-testid="meeting-device-diagnostics"]',
+      ].map((selector) => document.querySelector(selector)!.getBoundingClientRect().top)
+    );
+    expect(sectionOrder).toEqual([...sectionOrder].sort((a, b) => a - b));
     await page
       .getByRole('button', { name: en.preferences.notifications.title, exact: true })
       .click();
@@ -288,20 +493,36 @@ test('U10 and U12 retain the approved desktop and mobile hierarchy', async ({ pa
     ).toBeVisible();
     await advanced.locator('summary').click();
     await expect(advanced).not.toHaveAttribute('open', '');
-    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThan(2300);
+    if ((await privacy.getAttribute('open')) === null) await privacy.locator('summary').click();
+    await expect(
+      privacy.getByText(en.preferences.privacy.accountTitle, { exact: true })
+    ).toBeVisible();
+    await privacy.locator('summary').click();
+    await expect(privacy).not.toHaveAttribute('open', '');
+    await page.getByRole('button', { name: en.preferences.audio.title, exact: true }).click();
+    await expect(
+      page.getByRole('button', { name: en.preferences.audio.title, exact: true })
+    ).toHaveAttribute('aria-current', 'location');
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  } else {
+    const main = await page.locator('#meeting-preferences-audio').boundingBox();
+    const aside = await diagnostics.boundingBox();
+    expect(main!.x + main!.width).toBeLessThan(aside!.x);
+    expect(main!.width / aside!.width).toBeGreaterThan(1.8);
+    expect(main!.width / aside!.width).toBeLessThan(2.4);
   }
   await noOverflow(page);
   await accessible(page);
-  await expect(page).toHaveScreenshot(
-    `meeting-u12-preferences-${mobile ? 'mobile' : 'desktop'}.png`,
-    {
-      animations: 'disabled',
-      caret: 'hide',
-      fullPage: true,
-      maxDiffPixelRatio: 0.002,
-    }
+  await withMeetingDocumentCapture(page, () =>
+    expect
+      .soft(page)
+      .toHaveScreenshot(`meeting-u12-preferences-${mobile ? 'mobile' : 'desktop'}.png`, {
+        animations: 'disabled',
+        caret: 'hide',
+        fullPage: true,
+        maxDiffPixelRatio: 0.002,
+      })
   );
 });
 

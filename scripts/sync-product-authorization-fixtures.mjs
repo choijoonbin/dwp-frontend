@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,7 +24,7 @@ const EXPECTED_RESERVED_CONTRACTS = new Set([
   'hcm.reference.publish',
   'hcm.integration.rotate-secret',
 ]);
-const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4, 5];
+const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4, 5, 6];
 const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
   1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
   2: '5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c',
@@ -63,6 +62,7 @@ const EXPECTED_AUTHORIZATION_COUNTS = Object.freeze({
   3: authorizationCounts(62, 14, 8, 25, 129),
   4: authorizationCounts(71, 22, 16, 33, 155),
   5: authorizationCounts(72, 22, 16, 33, 160),
+  6: authorizationCounts(73, 22, 16, 33, 161),
 });
 const STEP_UP_HEADER_FIELDS = ['alg', 'kid', 'typ'];
 const STEP_UP_CLAIM_FIELDS = [

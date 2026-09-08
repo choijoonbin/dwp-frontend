@@ -3,6 +3,7 @@ import {
   DEFAULT_MEETING_DEVICE_PREFERENCES,
   DEFAULT_MEETING_PREFERENCE_VALUES,
   meetingDevicePreferenceKey,
+  meetingDevicePreferencesEqual,
   meetingPreferenceValues,
   meetingPreferencesChanged,
   meetingPreferenceScope,
@@ -15,6 +16,35 @@ import {
 } from './meeting-preferences-model';
 
 describe('meeting account and device preferences', () => {
+  it('keeps blur local and scoped, defaulting legacy or malformed opt-ins to off', () => {
+    const saved = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => saved.get(key) ?? null,
+      setItem: (key: string, value: string) => void saved.set(key, value),
+    };
+    writeMeetingDevicePreferences(storage, 'tenant-a:user-1', {
+      ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+      backgroundBlur: true,
+    });
+    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-1').backgroundBlur).toBe(true);
+    expect(readMeetingDevicePreferences(storage, 'tenant-a:user-2').backgroundBlur).toBe(false);
+    expect(
+      readMeetingDevicePreferences({ getItem: () => '{"backgroundBlur":"true"}' }, 'legacy')
+        .backgroundBlur
+    ).toBe(false);
+    expect(
+      meetingDevicePreferencesEqual(DEFAULT_MEETING_DEVICE_PREFERENCES, {
+        ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+        backgroundBlur: undefined,
+      })
+    ).toBe(true);
+    expect(
+      meetingDevicePreferencesEqual(DEFAULT_MEETING_DEVICE_PREFERENCES, {
+        ...DEFAULT_MEETING_DEVICE_PREFERENCES,
+        backgroundBlur: true,
+      })
+    ).toBe(false);
+  });
   it('defaults to silent local preview and keeps consent out of preference values', () => {
     expect(DEFAULT_MEETING_PREFERENCE_VALUES).toMatchObject({
       microphoneOff: true,
@@ -66,6 +96,7 @@ describe('meeting account and device preferences', () => {
       videoDeviceId: 'camera-local',
       speakerDeviceId: 'speaker-local',
       noiseSuppression: false,
+      backgroundBlur: false,
     });
     expect(
       meetingPreferenceScope({

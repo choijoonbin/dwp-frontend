@@ -13,13 +13,18 @@ import Stack from '@mui/material/Stack';
 
 import { meetingDeviceFailure, type MeetingDeviceFailure } from './meeting-device-session';
 import { useMeetingDevicePreview } from './use-meeting-device-preview';
+import { meetingInsetSurface } from './meeting-visual-system';
 
 export function MeetingPreJoinSpeaker({
   speakerDeviceId,
   onSpeakerDeviceChange,
+  compact = false,
+  disabled = false,
 }: {
   speakerDeviceId: string;
   onSpeakerDeviceChange: (speakerDeviceId: string) => void;
+  compact?: boolean;
+  disabled?: boolean;
 }) {
   const { t } = useTranslation('meetings');
   const preview = useMeetingDevicePreview();
@@ -78,6 +83,7 @@ export function MeetingPreJoinSpeaker({
       className="dwp-meeting-prejoin__speaker"
       data-testid="meeting-prejoin-speaker"
       aria-labelledby="meeting-prejoin-speaker-heading"
+      sx={compact ? (theme) => ({ ...meetingInsetSurface(theme), p: 1.5 }) : undefined}
     >
       <SectionHeader
         id="meeting-prejoin-speaker-heading"
@@ -87,12 +93,16 @@ export function MeetingPreJoinSpeaker({
         title={t('preferences.audio.speaker')}
         meta={t('preferences.audio.outputHint')}
       />
-      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} sx={{ mt: 1.5 }}>
+      <Stack
+        direction={compact ? 'column' : { xs: 'column', sm: 'row' }}
+        gap={1.25}
+        sx={{ mt: 1.5 }}
+      >
         <SelectField
           label={t('preferences.audio.speaker')}
           value={speakerDeviceId}
           options={options}
-          disabled={inventoryFailure === 'unsupported'}
+          disabled={disabled || inventoryFailure === 'unsupported'}
           onValueChange={(id) => {
             preview.stopSpeaker();
             onSpeakerDeviceChange(id);
@@ -101,6 +111,7 @@ export function MeetingPreJoinSpeaker({
         <ActionButton
           intent="secondary"
           loading={preview.speakerActive}
+          disabled={disabled}
           loadingLabel={t('preferences.devices.states.requesting')}
           onClick={() => void preview.testSpeaker(speakerDeviceId)}
           startIcon={<Volume2 size={16} aria-hidden="true" />}

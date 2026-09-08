@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, House, Library, ListTodo, SlidersHorizontal } from 'lucide-react';
+import { CalendarClock, House, LayoutTemplate, Library, ListTodo } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -12,30 +12,30 @@ const MOBILE_DESTINATIONS = [
   { view: 'mine', path: '/meetings/mine', icon: CalendarClock },
   { view: 'history', path: '/meetings/history', icon: Library },
   { view: 'follow-ups', path: '/meetings/follow-ups', icon: ListTodo },
-  { view: 'preferences', path: '/meetings/preferences', icon: SlidersHorizontal },
+  { view: 'templates', path: '/meetings/templates', icon: LayoutTemplate },
 ] as const satisfies ReadonlyArray<{
   view: MeetingsView;
   path: string;
   icon: typeof House;
 }>;
 
-type MobileDestination = (typeof MOBILE_DESTINATIONS)[number]['view'];
-
 const MOBILE_NAVIGATION_MIN_HEIGHT = 'max(64px, calc(2rem + 32px))';
 const MOBILE_NAVIGATION_CONTENT_CLEARANCE = `calc(${MOBILE_NAVIGATION_MIN_HEIGHT} + env(safe-area-inset-bottom) + 24px)`;
 
 export function meetingMobileNavigationVisible(view: MeetingsView, search: string): boolean {
+  if (view === 'preferences') return false;
+  if (view === 'templates') return true;
   if (!MOBILE_DESTINATIONS.some((item) => item.view === view)) return false;
   if (view !== 'mine') return true;
   const contextualView = new URLSearchParams(search).get('view');
-  return contextualView === null || contextualView === '';
+  return contextualView === null || contextualView === '' || contextualView === 'personal-room';
 }
 
 export function MeetingMobileNavigation({
   activeView,
   children,
 }: {
-  activeView: MobileDestination;
+  activeView: MeetingsView;
   children: ReactNode;
 }) {
   const { t } = useTranslation('meetings');

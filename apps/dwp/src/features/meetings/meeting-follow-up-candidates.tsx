@@ -27,6 +27,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { meetingInsetSurface, meetingSurface } from './meeting-visual-system';
+import { MeetingFollowUpEvidencePanel } from './meeting-follow-up-evidence-panel';
 
 import {
   checkedCandidateAssignment,
@@ -254,7 +256,7 @@ export function MeetingFollowUpCandidates({
           gap: 2,
         }}
       >
-        <Stack gap={1.5} sx={{ minWidth: 0, order: { xs: 2, lg: 1 } }}>
+        <Stack gap={1.5} sx={{ minWidth: 0, order: 1 }}>
           {query.data.length ? (
             query.data.map((candidate) => {
               const assignmentId = completed[candidate.source.candidateId];
@@ -262,21 +264,35 @@ export function MeetingFollowUpCandidates({
                 <Box
                   component="article"
                   key={candidate.source.candidateId}
-                  sx={{
+                  sx={(currentTheme) => ({
+                    ...meetingSurface(currentTheme),
                     p: 2,
-                    border: 1,
+                    borderLeft: 4,
+                    borderLeftColor: 'success.main',
                     borderColor:
-                      selectedId === candidate.source.candidateId ? 'primary.main' : 'divider',
-                    borderRadius: foundationTokens.radius.surface + 'px',
-                    bgcolor: 'background.paper',
-                  }}
+                      selectedId === candidate.source.candidateId ? 'primary.main' : undefined,
+                  })}
                 >
                   <Stack gap={1.5}>
                     <Box sx={{ minWidth: 0 }}>
-                      <Chip size="small" label={candidate.meetingTitle} />
+                      <Chip
+                        size="small"
+                        color="success"
+                        variant="outlined"
+                        icon={<Sparkles size={14} aria-hidden="true" />}
+                        label={t('followUps.tabs.CANDIDATES')}
+                      />
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 1 }}
+                      >
+                        {candidate.meetingTitle}
+                      </Typography>
                       <Typography
                         component="h3"
-                        variant="subtitle1"
+                        variant="h6"
+                        fontWeight="fontWeightBold"
                         sx={{ mt: 1, overflowWrap: 'anywhere' }}
                       >
                         {candidate.title}
@@ -349,7 +365,7 @@ export function MeetingFollowUpCandidates({
         <Stack
           component="aside"
           gap={1.5}
-          sx={{ minWidth: 0, order: { xs: 1, lg: 2 }, position: { lg: 'sticky' }, top: { lg: 24 } }}
+          sx={{ minWidth: 0, order: 2, position: { lg: 'sticky' }, top: { lg: 24 } }}
         >
           {!CURRENT_AUTHORITY_READY && (
             <InlineFeedback severity="info" title={t('followUps.candidates.promotionBlockedTitle')}>
@@ -360,7 +376,7 @@ export function MeetingFollowUpCandidates({
           )}
           {desktop &&
             (selectedCandidate ? (
-              <CandidateReview candidate={selectedCandidate} />
+              <CandidateReview candidate={selectedCandidate} scope={identity} />
             ) : (
               <Box
                 sx={{
@@ -420,7 +436,12 @@ export function MeetingFollowUpCandidates({
           contentSx={{ pt: 2 }}
         >
           {selectedCandidate && (
-            <CandidateReview candidate={selectedCandidate} embedded showHeading={false} />
+            <CandidateReview
+              candidate={selectedCandidate}
+              scope={identity}
+              embedded
+              showHeading={false}
+            />
           )}
         </ContentDialog>
       )}
@@ -430,10 +451,12 @@ export function MeetingFollowUpCandidates({
 
 function CandidateReview({
   candidate,
+  scope,
   embedded = false,
   showHeading = true,
 }: {
   candidate: MeetingFollowUpCandidate;
+  scope: string;
   embedded?: boolean;
   showHeading?: boolean;
 }) {
@@ -472,13 +495,12 @@ function CandidateReview({
             {candidate.title}
           </Typography>
         </Box>
-        <Box sx={{ pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
-          <Typography variant="subtitle2">{t('followUps.candidates.sourceReviewTitle')}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t('followUps.candidates.sourceReviewBlocked')}
-          </Typography>
-        </Box>
-        <Box sx={{ pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
+        <MeetingFollowUpEvidencePanel
+          source={candidate.source}
+          version={candidate.sourceVersion}
+          scope={scope}
+        />
+        <Box sx={(currentTheme) => ({ ...meetingInsetSurface(currentTheme, 'primary'), p: 1.5 })}>
           <Typography variant="subtitle2">{t('followUps.candidates.impactTitle')}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             {t('followUps.candidates.impactHint', { version: candidate.sourceVersion })}

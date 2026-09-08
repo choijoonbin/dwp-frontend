@@ -72,13 +72,6 @@
       "removalCondition": "Migrate each query boundary to shared loading and error contracts with reauthentication, keyboard, and mobile evidence."
     },
     {
-      "id": "DS-EX-FEATURE-ACTIVITY",
-      "pathPrefix": "apps/dwp/src/features/activity/",
-      "owner": "Workspace Experience",
-      "reason": "The activity timeline retains product-owned density and typography specifications while the shared timeline presentation contract is established.",
-      "removalCondition": "Remove after activity events use shared surface, typography, density, and responsive timeline tokens with desktop, mobile, keyboard, and partial-source coverage."
-    },
-    {
       "id": "DS-EX-FEATURE-APPROVALS",
       "pathPrefix": "apps/dwp/src/features/approvals/",
       "owner": "Approval Experience",
@@ -168,13 +161,6 @@
       "owner": "Space Experience",
       "reason": "Collaboration spaces retain contextual state primitives around membership and ownership operations.",
       "removalCondition": "Migrate after directory, membership, ownership recovery, request, partial-failure, and mobile journeys pass."
-    },
-    {
-      "id": "DS-EX-FEATURE-WORK",
-      "pathPrefix": "apps/dwp/src/features/work/",
-      "owner": "Work Management Experience",
-      "reason": "Cross-product work items retain source-specific status while common action contracts evolve.",
-      "removalCondition": "Migrate after source identity, action handoff, retry, permission, keyboard, and mobile journeys pass."
     },
     {
       "id": "DS-EX-FEATURE-WORKFORCE",

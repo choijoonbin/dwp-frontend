@@ -6,7 +6,15 @@ describe('approval Work home widgets', () => {
   it('contains only requester and approver content, never management health', () => {
     const keys = APPROVAL_HOME_WIDGET_REGISTRY.map((widget) => widget.key);
 
-    expect(keys).toEqual(['decision-pulse', 'focus-queue', 'insights', 'my-requests', 'flow']);
+    expect(keys).toEqual([
+      'decision-pulse',
+      'focus-queue',
+      'quick-actions',
+      'my-requests',
+      'insights',
+      'flow',
+      'recent-activity',
+    ]);
     expect(APPROVAL_HOME_WIDGET_REGISTRY.every((widget) => widget.audience !== 'operator')).toBe(
       true
     );

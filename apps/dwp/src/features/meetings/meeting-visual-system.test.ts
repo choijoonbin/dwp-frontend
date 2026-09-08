@@ -14,7 +14,9 @@ describe('meeting surface hierarchy', () => {
     expect(section.backgroundColor).toBe(light.palette.background.paper);
     expect(section.boxShadow).toBe('none');
     expect(section.borderTopWidth).toBe(1);
-    expect(inset.backgroundColor).toBe(alpha(light.palette.text.primary, 0.045));
+    expect(section.borderRadius).toBe('12px');
+    expect(inset.borderRadius).toBe('8px');
+    expect(inset.backgroundColor).toBe(alpha(light.palette.primary.main, 0.045));
     expect(inset).not.toHaveProperty('boxShadow');
   });
 
@@ -22,11 +24,11 @@ describe('meeting surface hierarchy', () => {
     const semantic = meetingSurface(light, { tone: 'primary' });
     const elevated = meetingSurface(light, { elevated: true });
 
-    expect(semantic.backgroundColor).toBe(alpha(light.palette.primary.main, 0.04));
-    expect(semantic.boxShadow).toBe(light.shadows[2]);
-    expect(semantic.borderTopWidth).toBe(2);
-    expect(elevated.backgroundColor).toBe(alpha(light.palette.text.primary, 0.04));
-    expect(elevated.boxShadow).toBe(light.shadows[2]);
+    expect(semantic.backgroundColor).toBe(alpha(light.palette.primary.main, 0.045));
+    expect(semantic.boxShadow).toBe('none');
+    expect(semantic.borderTopWidth).toBe(1);
+    expect(elevated.backgroundColor).toBe(light.palette.background.paper);
+    expect(elevated.boxShadow).toContain('0 4px 20px');
   });
 
   it('preserves dark, reduced-motion, and forced-colors behavior', () => {
@@ -37,7 +39,7 @@ describe('meeting surface hierarchy', () => {
     });
 
     expect(surface.backgroundColor).toBe(alpha(dark.palette.success.main, 0.1));
-    expect(surface.boxShadow).toBe(dark.shadows[2]);
+    expect(surface.boxShadow).toContain('0 4px 20px');
     expect(surface['@media (prefers-reduced-motion: reduce)']).toEqual({ transition: 'none' });
     expect(surface['@media (forced-colors: active)']).toMatchObject({
       background: 'Canvas',

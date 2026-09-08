@@ -20,10 +20,11 @@ test('U08 puts governed evidence before optional analysis on mobile and survives
   await page.goto(`/meetings/history?meeting=${MEETING_VISUAL_ID}`);
 
   const evidence = page.getByTestId('meeting-recap-evidence-rail');
-  const analysis = page.getByTestId('meeting-recap-analysis');
+  const analysis = page.getByTestId('meeting-recap-analysis-disclosure');
   const toggle = page.getByTestId('meeting-recap-analysis-toggle');
   await expect(evidence).toBeVisible();
   await expect(analysis).not.toHaveAttribute('open', '');
+  await expect(page.getByRole('heading', { name: '주요 주제' })).toBeHidden();
   const order = await Promise.all([
     evidence.evaluate((element) => element.getBoundingClientRect().top),
     analysis.evaluate((element) => element.getBoundingClientRect().top),

@@ -1,0 +1,7 @@
+PASS feature boundaries: product features do not import sibling feature implementations.
+PASS API boundaries: frontend runtime calls are centralized through Gateway /api/** clients.
+PASS route composition: 16 independently deployed applications.
+i18n validation passed: locale bundles and product source are consistent.
+Design-system adoption failed with 2 regression(s):
+- DS-EX-FEATURE-WORK: stale design-system exception rule owns no baseline file
+- 25 grandfathered JSX use(s) were removed; run `yarn design-system:baseline` to ratchet the allowance down

@@ -218,4 +218,56 @@ describe('WorkHubScheduleDialog', () => {
       [command, event],
     ]);
   });
+
+  it('keeps a late receipt with its original work while a different selection is open', async () => {
+    let resolve!: (result: WorkScheduleResult) => void;
+    const execute = vi.fn().mockImplementation(
+      () =>
+        new Promise<WorkScheduleResult>((done) => {
+          resolve = done;
+        })
+    );
+    const first = hubItem();
+    const second = hubItem({ key: 'second-work', title: 'A different work item' });
+    const prepare = vi.fn(() => command);
+    const renderSelection = async (item: WorkHubItem) => {
+      await act(async () =>
+        root.render(
+          <QueryClientProvider client={client}>
+            <WorkHubScheduleDialog
+              open
+              item={item}
+              onClose={vi.fn()}
+              onOpenCalendar={vi.fn()}
+              prepare={prepare}
+              execute={execute}
+            />
+          </QueryClientProvider>
+        )
+      );
+      await settle();
+    };
+    await renderSelection(first);
+    await act(async () => exactButton('work:workHub.schedule.create')!.click());
+    await renderSelection(second);
+    await act(async () =>
+      resolve({
+        state: 'LINK_PENDING',
+        command,
+        event,
+        sourceChanged: false,
+        reason: 'UNAVAILABLE',
+        retryable: true,
+      })
+    );
+    await settle();
+
+    expect(document.body.textContent).toContain(second.title);
+    expect(document.body.textContent).not.toContain('work:workHub.schedule.results.linkPending');
+    expect(exactButton('work:workHub.schedule.create')?.disabled).toBe(false);
+    await renderSelection(first);
+    expect(document.body.textContent).toContain('work:workHub.schedule.results.linkPending');
+    expect(exactButton('work:workHub.schedule.retryLink')).toBeDefined();
+    expect(prepare).toHaveBeenCalledOnce();
+  });
 });

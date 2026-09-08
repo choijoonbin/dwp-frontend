@@ -7,7 +7,7 @@
 - Roadmap: R1 Common Experience Foundation
 - Pilot: Approvals `W1a`, HCM `W1b`
 - Technical Canary: Communications·Services `W0.5`
-- 마감 재검증일: 2026-09-04 (초기 Pilot 설계: 2026-08-26)
+- 마감 재검증일: 2026-09-07 (초기 Pilot 설계: 2026-08-26)
 
 ## 산출물
 
@@ -27,6 +27,14 @@
 - [전체 메뉴 분류표](../../03-architecture/R1%20제품%20Surface%20전체%20메뉴%20분류표.md)
 
 ## 현재 마감 판정
+
+2026-09-07 최종 독립 재감사에서 동일 URL 권한 회수의 조건부 focus handoff, canonical plane별
+deny 문구, top-level 단일 main/H1와 nested H2, legacy product-admin query·hash/history replace,
+Approvals fixture의 실제 PAGE·메뉴·direct-route 계약을 추가로 고정했다. fresh Chromium·390px
+mobile에서 공통 focus·legacy 24/24, authorization contract 2/2, PS-A matrix 36/36이 통과했고,
+집중 Vitest 8 files/59 tests, Node.js 24.19.0 typecheck, 소유 ESLint·Prettier·source-size·i18n·
+display 검사가 통과했다. 자세한 최신 판정과 공유 트리의 외부 production-reachability 차단은
+[마감 기록](11-2026-09-04-closeout.md)의 `2026-09-07 최종 UX·권한 재감사 증분`을 따른다.
 
 앱 관리자 구현은 최신 재검증에서 집중 단위 8 files / 55 tests, Chromium·mobile 브라우저
 85건이 통과했고 의도된 조건부 시나리오 3건은 skip됐다. 전체 단위 검사는 426 files / 2,834

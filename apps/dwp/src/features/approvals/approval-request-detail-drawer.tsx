@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { MessageSquareReply, Undo2, X } from 'lucide-react';
+import { ArrowLeft, MessageSquareReply, Undo2, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { ActionButton, ActionIconButton, LoadingState } from '@dwp-frontend/design-system';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
@@ -25,6 +25,7 @@ type ApprovalRequestDetailDrawerProps = {
   requestId?: string;
   canUpdateRequests: boolean;
   onClose: () => void;
+  onReturnToWork?: () => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
 };
@@ -33,6 +34,7 @@ export function ApprovalRequestDetailDrawer({
   requestId,
   canUpdateRequests,
   onClose,
+  onReturnToWork,
   onRespond,
   onWithdraw,
 }: ApprovalRequestDetailDrawerProps) {
@@ -82,6 +84,16 @@ export function ApprovalRequestDetailDrawer({
                     {visibleDetail.request.requestNumber}
                   </Typography>
                 </Stack>
+                {onReturnToWork && (
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    startIcon={<ArrowLeft size={15} />}
+                    onClick={onReturnToWork}
+                  >
+                    {t('common:productSurface.actions.returnToWork')}
+                  </ActionButton>
+                )}
                 {canUpdateRequests && visibleDetail.request.status === 'NEEDS_INFO' && (
                   <ActionButton
                     intent="primary"

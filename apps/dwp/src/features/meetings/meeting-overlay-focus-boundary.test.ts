@@ -17,6 +17,57 @@ function overlay() {
 }
 
 describe('meeting overlay focus boundary', () => {
+  it('wraps to the selected roving tab and excludes disabled, hidden and inactive controls', () => {
+    const rail = document.createElement('div');
+    rail.dataset.meetingFocusOverlay = 'true';
+    rail.innerHTML = `
+      <button tabindex="-1">Inactive agenda</button>
+      <button tabindex="0" disabled>Disabled tab</button>
+      <button style="display:none">Hidden tab</button>
+      <button style="visibility:hidden">Invisible tab</button>
+      <button style="opacity:0">Transparent tab</button>
+      <button tabindex="0" aria-selected="true">Selected chat</button>
+    `;
+    const panel = overlay();
+    rail.append(panel);
+    document.body.append(rail);
+    const selected = rail.querySelector<HTMLElement>('[aria-selected="true"]')!;
+    const last = panel.querySelector<HTMLElement>('textarea')!;
+    last.focus();
+    expect(
+      containMeetingOverlayTab({ key: 'Tab', shiftKey: false, preventDefault: vi.fn() }, rail)
+    ).toBe(true);
+    expect(document.activeElement).toBe(selected);
+    expect(
+      containMeetingOverlayTab({ key: 'Tab', shiftKey: true, preventDefault: vi.fn() }, rail)
+    ).toBe(true);
+    expect(document.activeElement).toBe(last);
+    rail.remove();
+  });
+
+  it('includes the mobile rail tabs and never traps a desktop inline rail', () => {
+    const rail = document.createElement('div');
+    rail.dataset.meetingFocusOverlay = 'true';
+    const tab = document.createElement('button');
+    tab.textContent = 'Agenda';
+    rail.append(tab);
+    const panel = overlay();
+    rail.append(panel);
+    document.body.append(rail);
+    const last = panel.querySelector<HTMLElement>('textarea')!;
+    last.focus();
+    expect(
+      containMeetingOverlayTab({ key: 'Tab', shiftKey: false, preventDefault: vi.fn() }, panel)
+    ).toBe(true);
+    expect(document.activeElement).toBe(tab);
+    rail.dataset.meetingFocusOverlay = 'false';
+    last.focus();
+    expect(
+      containMeetingOverlayTab({ key: 'Tab', shiftKey: false, preventDefault: vi.fn() }, panel)
+    ).toBe(false);
+    rail.remove();
+  });
+
   it('wraps forward from the last enabled control to the first', () => {
     const container = overlay();
     const close = container.querySelector<HTMLElement>('button')!;

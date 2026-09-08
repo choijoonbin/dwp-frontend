@@ -9,6 +9,26 @@ import {
 
 const NOW = '2026-09-04T01:00:00Z';
 const RUN = 'aaaaaaaa-0000-4000-8000-000000000001';
+const workspaceEvent = {
+  id: RUN,
+  occurredAt: NOW,
+  actor: 'PERSON' as const,
+  actorName: 'Member',
+  state: 'COMPLETED' as const,
+  title: 'Work changed',
+  summary: 'A source-backed work change.',
+  objectType: 'WORK_ITEM',
+  objectLabel: 'Work 1',
+  objectId: 'work-1',
+  source: 'DWP_WORKSPACE',
+  sourceRoute: '/work?item=work-1',
+  eventKind: 'CHANGE' as const,
+  auditId: null,
+  auditRecordId: null,
+  auditStatus: 'NOT_LINKED' as const,
+  dataProvenance: 'LIVE' as const,
+  sourceAccess: 'AVAILABLE' as const,
+};
 function response(data: unknown, status = 200): Response {
   return { ok: status < 400, status, text: async () => JSON.stringify({ data }) } as Response;
 }
@@ -156,10 +176,22 @@ describe('activity federated API boundary', () => {
         actorName: 'DWAI·ON',
         state: 'UNKNOWN',
         title: 'Run',
+        summary: 'Privacy-minimized execution state.',
         objectType: 'AGENT_RUN',
         objectLabel: 'Run',
+        objectId: RUN,
         source: 'DWAI_ON',
+        sourceRoute: `/dwaion/activity?run=${RUN}`,
+        sourceEventId: RUN,
+        executionId: RUN,
+        executionVersion: 2,
+        attempt: 1,
+        progress: null,
+        sourceObservedAt: NOW,
         auditId: null,
+        auditRecordId: null,
+        auditStatus: 'NOT_LINKED',
+        auditAccess: 'RESTRICTED',
         eventKind: 'EXECUTION_SNAPSHOT',
         dataProvenance: 'LIVE',
         sourceAccess: 'AVAILABLE',
@@ -170,6 +202,71 @@ describe('activity federated API boundary', () => {
     expect(event.id).toBe(`dwaion:${RUN}`);
     expect(event.state).toBe('unknown');
     expect(String(fetch.mock.calls[0][0])).toContain(`/api/agent/v1/activity/events/${RUN}`);
+  });
+
+  it.each([
+    ['wrong actor', { actor: 'SYSTEM' }],
+    ['non-live provenance', { dataProvenance: 'SAMPLE' }],
+    ['unavailable source', { sourceAccess: 'UNAVAILABLE' }],
+    ['missing restricted audit boundary', { auditAccess: undefined }],
+    ['mismatched source event', { sourceEventId: 'different-run' }],
+  ])('rejects Agent detail with %s before rendering', async (_label, override) => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        response({
+          id: RUN,
+          occurredAt: NOW,
+          actor: 'AGENT',
+          actorName: 'DWAI·ON',
+          state: 'UNKNOWN',
+          title: 'Run',
+          summary: 'Privacy-minimized execution state.',
+          objectType: 'AGENT_RUN',
+          objectLabel: 'Run',
+          objectId: RUN,
+          source: 'DWAI_ON',
+          sourceRoute: `/dwaion/activity?run=${RUN}`,
+          sourceEventId: RUN,
+          executionId: RUN,
+          executionVersion: 2,
+          attempt: 1,
+          progress: null,
+          sourceObservedAt: NOW,
+          auditId: null,
+          auditRecordId: null,
+          auditStatus: 'NOT_LINKED',
+          auditAccess: 'RESTRICTED',
+          eventKind: 'EXECUTION_SNAPSHOT',
+          dataProvenance: 'LIVE',
+          sourceAccess: 'AVAILABLE',
+          ...override,
+        })
+      )
+    );
+    await expect(getActivityEvent(`dwaion:${RUN}`)).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('requires the Workspace source to return the exact requested event', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        response({
+          ...workspaceEvent,
+          id: 'different-event',
+        })
+      )
+    );
+    await expect(getActivityEvent('requested-event')).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('accepts a case-equivalent Workspace UUID without accepting a different event', async () => {
+    const fetch = vi.fn().mockResolvedValue(response(workspaceEvent));
+    vi.stubGlobal('fetch', fetch);
+    expect((await getActivityEvent(RUN.toUpperCase())).id).toBe(RUN);
+    await expect(getActivityEvent('bbbbbbbb-0000-4000-8000-000000000001')).rejects.toMatchObject({
+      status: 404,
+    });
   });
 
   it('rejects malformed source IDs without making requests', async () => {

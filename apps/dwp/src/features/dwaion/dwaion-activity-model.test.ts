@@ -16,6 +16,10 @@ const runs: DwaionUserRun[] = [
   run('10000000-0000-4000-8000-000000000002', 'COMPLETED', 'ALLOW', 'COMPLETED'),
   run('10000000-0000-4000-8000-000000000003', 'COMPLETED', 'DENY', 'ABSTAINED'),
   run('10000000-0000-4000-8000-000000000004', 'FAILED', 'HANDOFF', 'CONFIGURATION_REQUIRED'),
+  {
+    ...run('10000000-0000-0000-0000-000000000005', 'COMPLETED', 'ALLOW', 'COMPLETED'),
+    dataProvenance: 'SAMPLE',
+  },
 ];
 
 describe('DWAI activity recent-window model', () => {
@@ -25,16 +29,29 @@ describe('DWAI activity recent-window model', () => {
     expect(filterDwaionActivityWindow(runs, 'COMPLETED').map((item) => item.runId)).toEqual([
       runs[1]?.runId,
       runs[2]?.runId,
+      runs[4]?.runId,
     ]);
   });
 
-  it('summarizes only actual run, policy and answer fields without double counting attention', () => {
+  it('keeps local samples out of operational totals without hiding them from the recent list', () => {
     expect(summarizeDwaionActivityWindow(runs)).toEqual({
       total: 4,
       running: 1,
       completed: 2,
       attention: 2,
+      sample: 1,
     });
+    expect(filterDwaionActivityWindow(runs, 'ALL')).toContain(runs[4]);
+  });
+
+  it('drills the attention metric into the same evidence-based set of runs', () => {
+    expect(resolveDwaionActivityFilter('attention')).toBe('ATTENTION');
+    const attention = filterDwaionActivityWindow(runs, 'ATTENTION');
+    expect(attention.map((item) => item.runId)).toEqual([runs[2]?.runId, runs[3]?.runId]);
+    expect(attention).toHaveLength(summarizeDwaionActivityWindow(runs).attention);
+    expect(
+      updateDwaionActivityFilter(new URLSearchParams('run=exact'), 'ATTENTION').toString()
+    ).toBe('run=exact&state=ATTENTION');
   });
 
   it('never substitutes another recent row for an exact deep link', () => {

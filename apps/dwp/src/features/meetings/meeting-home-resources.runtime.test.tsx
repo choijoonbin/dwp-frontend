@@ -11,6 +11,7 @@ const runtime = vi.hoisted(() => ({
   authenticated: true,
   user: { userId: 7, tenantId: 1, identityPlane: 'TENANT' },
   read: vi.fn(),
+  personalRoom: vi.fn(),
   navigate: vi.fn(),
 }));
 vi.mock('@dwp-frontend/shared-utils', async (original) => ({
@@ -19,6 +20,9 @@ vi.mock('@dwp-frontend/shared-utils', async (original) => ({
 }));
 vi.mock('@dwp-frontend/shared-utils/api/video-meeting-templates-api', () => ({
   getVideoMeetingTemplates: runtime.read,
+}));
+vi.mock('@dwp-frontend/shared-utils/api/video-meeting-personal-room-api', () => ({
+  getVideoMeetingPersonalRoom: runtime.personalRoom,
 }));
 vi.mock('react-router-dom', () => ({ useNavigate: () => runtime.navigate }));
 vi.mock('react-i18next', () => ({
@@ -62,8 +66,8 @@ async function shown(text: string) {
   });
 }
 async function click(text: string) {
-  const button = [...mount.querySelectorAll('button')].find((item) =>
-    item.textContent?.startsWith(text)
+  const button = [...mount.querySelectorAll('button')].find(
+    (item) => item.textContent?.startsWith(text) || item.getAttribute('aria-label') === text
   );
   if (!button) throw new Error('Missing resource action ' + text);
   await act(async () => button.click());
@@ -80,6 +84,7 @@ describe('home resources use current authorized workspaces without creating anyt
     runtime.authenticated = true;
     runtime.user = { userId: 7, tenantId: 1, identityPlane: 'TENANT' };
     runtime.read.mockReset().mockResolvedValue(page);
+    runtime.personalRoom.mockReset().mockResolvedValue(null);
     runtime.navigate.mockReset();
     mount = document.createElement('div');
     document.body.append(mount);

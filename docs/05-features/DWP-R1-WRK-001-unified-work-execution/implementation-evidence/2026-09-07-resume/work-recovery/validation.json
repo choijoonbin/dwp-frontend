@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-07",
+  "scope": "Work data and error recovery only",
+  "unit": {
+    "passed": 30,
+    "failed": 0,
+    "log": "logs/unit.txt"
+  },
+  "browser": {
+    "passed": 11,
+    "failed": 0,
+    "project": "chromium",
+    "log": "logs/browser.txt"
+  },
+  "eslint": "PASS",
+  "typecheck": {
+    "status": "FAIL_OUTSIDE_WORK",
+    "workErrors": 0,
+    "errors": [
+      "apps/dwp/src/features/approvals/approval-home-executive-widgets.tsx(381,7): error TS2769: No overload matches this call.",
+      "apps/dwp/src/features/approvals/approval-home-executive-widgets.tsx(389,7): error TS2769: No overload matches this call."
+    ],
+    "log": "logs/typecheck.txt"
+  },
+  "ownerPageBoundary": "Root implemented WorkPage key from useWorkHubOperationOwner + pathname",
+  "apiMode": "controlled fixture; no live source mutation"
+}

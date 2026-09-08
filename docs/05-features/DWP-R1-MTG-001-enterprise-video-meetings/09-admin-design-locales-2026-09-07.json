@@ -1,0 +1,224 @@
+{
+  "ko": {
+    "admin": {
+      "design": {
+        "sourceConnection": "연결 필요 · 집계 원본이 아직 제공되지 않습니다.",
+        "approvalConnection": "연결 필요 · 권한, 영향도 검토 및 감사가 연결되어야 실행할 수 있습니다.",
+        "notMeasured": "측정 전",
+        "tenantScope": "현재 테넌트 · 회의 관리 범위",
+        "exportReport": "운영 보고서 내보내기",
+        "currentSnapshot": "현재 스냅샷",
+        "serviceSummary": "서비스 {{total}}개 중 {{ready}}개 준비 확인",
+        "serviceMatrixDescription": "4대 서비스의 연결 상태와 사용자 영향을 함께 확인합니다.",
+        "capabilityConfirmed": "제품 기능 사용 가능 · 미디어 품질 측정은 별도 확인이 필요합니다.",
+        "serviceMetrics": {
+          "media": "가용률 · p95 RTT",
+          "recording": "동시 녹화 슬롯",
+          "transcript": "STT 워커 · 처리 지연",
+          "aiNotes": "추론 대기열 · p95 지연"
+        },
+        "showAllServices": "전체 서비스 표시",
+        "attentionOnly": "확인 필요 서비스만",
+        "needsAttention": "확인 필요",
+        "metadataOnly": "원문을 노출하지 않는 운영 진단",
+        "latency": "레이턴시",
+        "packetLoss": "패킷 손실",
+        "jitter": "지터",
+        "telemetryConnection": "세션별 익명 텔레메트리 원본이 연결되면 진단 지표를 표시합니다.",
+        "recheckDiagnostics": "진단 상태 다시 조회",
+        "failover": "네트워크 엣지 페일오버",
+        "auditTicket": "운영 감사 티켓 발행",
+        "overridesTitle": "하위 부서 정책 예외",
+        "auditTitle": "정책 감사 추적",
+        "auditConnection": "감사 원장 조회 API 연결 후 변경 주체·시각·증적을 확인할 수 있습니다.",
+        "enforcementTitle": "정책 집행 경계",
+        "policyAuthority": "정책 동시성 및 변경 권한",
+        "policyAuthorityDescription": "관리 권한과 현재 버전을 확인한 뒤 변경 내용을 검토하여 저장합니다.",
+        "savePolicy": "정책 변경사항 검토 및 저장",
+        "policyControlConnection": "정책 조회·변경 계약 연결 필요 · 현재 화면에서 변경할 수 없습니다.",
+        "aiPolicyTitle": "AI 회의록 분석 데이터 거버넌스",
+        "templatePolicyTitle": "조직 공용 회의 템플릿 배포 권한",
+        "policyControls": {
+          "guestDomains": {
+            "label": "외부 게스트 도메인 허용 목록",
+            "description": "회의에 초대할 수 있는 외부 이메일 도메인과 예외 범위를 관리합니다. 허용 도메인은 정책 조회 연결 후 표시합니다."
+          },
+          "hostAbsenceTimeout": {
+            "label": "호스트 부재 시 자동 종료 제한",
+            "description": "호스트 또는 공동 호스트 부재가 지속되는 세션의 종료 기준입니다. 실제 적용 시간은 정책 원본 확인이 필요합니다."
+          },
+          "recordingConsent": {
+            "label": "참가자 녹화 동의 정책",
+            "description": "참가자 고지와 명시적 동의 요건을 관리합니다. 동의하지 않은 참가자에 대한 처리 정책은 별도 조회 계약이 필요합니다."
+          },
+          "recordingNotice": {
+            "label": "녹화 중 고지 및 워터마크",
+            "description": "녹화 상태 고지와 워터마크의 적용 범위를 관리합니다. 실제 녹화 설정을 확인하기 전에는 활성 여부를 추정하지 않습니다."
+          },
+          "reviewer": {
+            "label": "독립 검토자 승인 정책",
+            "description": "AI 회의록 검토와 명시적 게시 단계의 승인 요건을 관리합니다."
+          },
+          "masking": {
+            "label": "개인정보 마스킹 및 필터링",
+            "description": "모델에 전달되는 회의 데이터의 마스킹 수준과 예외를 관리합니다."
+          },
+          "modelRouting": {
+            "label": "승인 모델 및 처리 리전",
+            "description": "승인된 모델과 처리 위치의 정책을 AI 거버넌스와 연결합니다."
+          },
+          "templateApproval": {
+            "label": "조직 공용 템플릿 승인",
+            "description": "공용 템플릿 생성·수정·배포에 필요한 승인 범위를 관리합니다."
+          },
+          "departmentTemplates": {
+            "label": "부서별 템플릿 생성 및 복제",
+            "description": "조직 범위별 템플릿 소유권과 배포 권한을 관리합니다."
+          },
+          "legalHold": {
+            "label": "법적 보존 예외",
+            "description": "보존 대상과 만료·삭제 예외는 승인 및 감사가 연결된 경우에만 변경합니다."
+          }
+        },
+        "modelGovernanceTitle": "승인 AI 모델 및 추론 엔진",
+        "modelFacts": {
+          "training": "학습 사용 제한",
+          "memory": "추론 데이터 보관",
+          "attestation": "모델 운영 증적"
+        },
+        "modelAssuranceTitle": "데이터 비보관 및 학습 사용 제한 증적",
+        "integrityTitle": "암호화 파이프라인 무결성 지표",
+        "validationLatency": "검증 응답 시간",
+        "decryptAttempts": "비인가 복호화 시도",
+        "integrityConnection": "시계열 텔레메트리 연결 전입니다. 가용률과 추세를 산출하지 않습니다.",
+        "destructionTitle": "데이터 수명주기 및 파기 증적",
+        "pendingDeletion": "파기 예정",
+        "latestDeletionEvidence": "최근 파기 증적 원장",
+        "deletionLedgerConnection": "실제 삭제·키 폐기 원장 연결 후 증적과 처리 시각을 표시합니다.",
+        "legalHoldTitle": "법적 보존 대상 및 소멸 예외",
+        "contentBoundaryTitle": "운영자 원문 열람 제한",
+        "actionsTitle": "거버넌스 운영 조치",
+        "actionsDescription": "상태 조회와 승인·감사가 필요한 고위험 조치를 구분하여 제공합니다.",
+        "routineActions": "상태 조회 및 증적 확인",
+        "revalidateChain": "체인 준비 상태 다시 조회",
+        "exportEvidence": "거버넌스 감사 증적 내보내기",
+        "syncLegalHold": "법적 보존 목록 동기화",
+        "highRiskActions": "고위험 조치 · 승인 및 사유 필요",
+        "forceCryptoShred": "만료 키 즉시 파기",
+        "emergencyStop": "AI 파이프라인 긴급 차단",
+        "highRiskBoundary": "관리 권한, 영향도 미리보기, 승인, 감사 및 복구 계약이 연결되기 전에는 실행할 수 없습니다."
+      }
+    }
+  },
+  "en": {
+    "admin": {
+      "design": {
+        "sourceConnection": "Connection required · The source is not available yet.",
+        "approvalConnection": "Connection required · Authorization, impact review and audit must be connected before execution.",
+        "notMeasured": "Not measured",
+        "tenantScope": "Current tenant · Meeting administration",
+        "exportReport": "Export operations report",
+        "currentSnapshot": "Current snapshot",
+        "serviceSummary": "{{ready}} of {{total}} services confirmed ready",
+        "serviceMatrixDescription": "Inspect connectivity and user impact across the four core services.",
+        "capabilityConfirmed": "Product capability available · Media quality requires separate measurement.",
+        "serviceMetrics": {
+          "media": "Availability · p95 RTT",
+          "recording": "Concurrent recording slots",
+          "transcript": "STT workers · Processing latency",
+          "aiNotes": "Inference queue · p95 latency"
+        },
+        "showAllServices": "Show all services",
+        "attentionOnly": "Services needing attention",
+        "needsAttention": "Needs attention",
+        "metadataOnly": "Operations diagnostics without content access",
+        "latency": "Latency",
+        "packetLoss": "Packet loss",
+        "jitter": "Jitter",
+        "telemetryConnection": "Session diagnostics appear after the anonymized telemetry source is connected.",
+        "recheckDiagnostics": "Refresh diagnostic status",
+        "failover": "Network edge failover",
+        "auditTicket": "Create an operations audit ticket",
+        "overridesTitle": "Department policy exceptions",
+        "auditTitle": "Policy audit trail",
+        "auditConnection": "The audit ledger API must be connected to inspect actors, timestamps and evidence.",
+        "enforcementTitle": "Policy enforcement boundary",
+        "policyAuthority": "Policy concurrency and change authority",
+        "policyAuthorityDescription": "Review changes against your management permission and the current version before saving.",
+        "savePolicy": "Review and save policy changes",
+        "policyControlConnection": "Policy read/write integration required · This control cannot be changed here yet.",
+        "aiPolicyTitle": "AI meeting analysis data governance",
+        "templatePolicyTitle": "Organization meeting template distribution",
+        "policyControls": {
+          "guestDomains": {
+            "label": "External guest domain allowlist",
+            "description": "Manage allowed external email domains and scoped exceptions. Allowed domains appear after the policy source is connected."
+          },
+          "hostAbsenceTimeout": {
+            "label": "Host absence timeout",
+            "description": "The termination threshold for sessions without a host or co-host. The applied duration requires authoritative policy evidence."
+          },
+          "recordingConsent": {
+            "label": "Participant recording consent policy",
+            "description": "Manage participant notice and explicit consent requirements. Handling non-consenting participants requires a separate policy query contract."
+          },
+          "recordingNotice": {
+            "label": "Recording notice and watermark",
+            "description": "Manage the scope of recording notices and watermarks. Do not infer activation before the actual recording policy is available."
+          },
+          "reviewer": {
+            "label": "Independent reviewer approval policy",
+            "description": "Manage approval requirements for AI review and explicit publication."
+          },
+          "masking": {
+            "label": "Personal data masking and filtering",
+            "description": "Manage masking levels and exceptions for meeting data sent to models."
+          },
+          "modelRouting": {
+            "label": "Approved models and processing regions",
+            "description": "Connect approved model and processing location policies to AI governance."
+          },
+          "templateApproval": {
+            "label": "Organization template approval",
+            "description": "Manage approval scopes for creating, changing and publishing shared templates."
+          },
+          "departmentTemplates": {
+            "label": "Department template creation and duplication",
+            "description": "Manage template ownership and publishing authority per organization scope."
+          },
+          "legalHold": {
+            "label": "Legal hold exceptions",
+            "description": "Change hold targets and deletion exceptions only through approved and audited workflows."
+          }
+        },
+        "modelGovernanceTitle": "Approved AI models and inference engines",
+        "modelFacts": {
+          "training": "Training use restriction",
+          "memory": "Inference data retention",
+          "attestation": "Model operational evidence"
+        },
+        "modelAssuranceTitle": "Data retention and training restriction evidence",
+        "integrityTitle": "Encrypted pipeline integrity metrics",
+        "validationLatency": "Validation response time",
+        "decryptAttempts": "Unauthorized decryption attempts",
+        "integrityConnection": "Time-series telemetry is not connected. Availability and trends are not calculated.",
+        "destructionTitle": "Data lifecycle and deletion evidence",
+        "pendingDeletion": "Pending deletion",
+        "latestDeletionEvidence": "Latest deletion evidence ledger",
+        "deletionLedgerConnection": "Evidence and processing times appear after the deletion and key-destruction ledger is connected.",
+        "legalHoldTitle": "Legal hold targets and deletion exceptions",
+        "contentBoundaryTitle": "Operator content access boundary",
+        "actionsTitle": "Governance operational actions",
+        "actionsDescription": "Inspect readiness and review the requirements for approved, audited high-impact actions.",
+        "routineActions": "Status and evidence",
+        "revalidateChain": "Refresh chain readiness",
+        "exportEvidence": "Export governance audit evidence",
+        "syncLegalHold": "Synchronize legal hold targets",
+        "highRiskActions": "High-impact actions · Approval and reason required",
+        "forceCryptoShred": "Destroy expired keys",
+        "emergencyStop": "Stop AI pipeline",
+        "highRiskBoundary": "Execution requires management authority, impact preview, approval, audit and recovery integration."
+      }
+    }
+  }
+}

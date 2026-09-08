@@ -3,11 +3,9 @@ import { useTranslation } from 'react-i18next';
 import {
   Bot,
   CalendarClock,
-  CheckCircle2,
   ChevronLeft,
   FileClock,
   FileText,
-  ListChecks,
   LockKeyhole,
   Radio,
   RefreshCw,
@@ -32,8 +30,9 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import { MeetingRecapTabs } from './meeting-recap-tabs';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha } from '@mui/material/styles';
 
 import { formatMeetingDateTime } from './meeting-components';
@@ -46,11 +45,15 @@ import {
   derivePublishedMeetingRecap,
   type PublishedMeetingRecap,
 } from './meeting-recap-intelligence-model';
-import { meetingListSurface, meetingSurface } from './meeting-visual-system';
+import { meetingListSurface, meetingShape, meetingSurface } from './meeting-visual-system';
 import { formatMeetingArtifactBytes, meetingParticipantOrder } from './meeting-recap-presentation';
-import { MeetingRecapAnalysis, OutcomeEmpty, RecapSection } from './meeting-recap-analysis';
+import { MeetingRecapOutcome } from './meeting-recap-outcome';
+import { OutcomeEmpty } from './meeting-recap-analysis';
+import { MeetingRecapPipeline } from './meeting-recap-pipeline';
+import { MeetingRecapMobileHeader } from './meeting-recap-mobile-header';
+import type { VideoMeetingIntelligenceReport } from '@dwp-frontend/shared-utils/api/video-meeting-intelligence-api';
 
-type RecapTab = 'overview' | 'artifacts' | 'attendance';
+type RecapTab = 'overview' | 'artifacts' | 'follow-ups' | 'attendance';
 
 const ARTIFACT_TYPES: readonly VideoMeetingArtifactType[] = [
   'RECORDING',
@@ -92,6 +95,7 @@ export function MeetingRecapDetail({
   onClose: () => void;
 }) {
   const { t, i18n } = useTranslation('meetings');
+  const compact = useMediaQuery('(max-width: 599px)');
   const { user, isAuthenticated } = useAuth();
   const scope = JSON.stringify([
     isAuthenticated,
@@ -164,8 +168,6 @@ export function MeetingRecapDetail({
         onRetry={() => publishedRecapQuery.refetch()}
       />
     );
-  const outcomeCount = (items: string[]) =>
-    publishedRecapQuery.isLoading || publishedRecap.state === 'FAILED' ? '—' : String(items.length);
   const actualDurationMinutes = (() => {
     if (!meeting.startedAt || !meeting.endedAt) return meeting.durationMinutes;
     const elapsed = Date.parse(meeting.endedAt) - Date.parse(meeting.startedAt);
@@ -179,6 +181,22 @@ export function MeetingRecapDetail({
       participant.attendanceState === 'JOINED' ||
       participant.attendanceState === 'LEFT'
   ).length;
+  const pipeline = (
+    <MeetingRecapPipeline
+      embedded={compact}
+      recording={meeting.artifacts.some(
+        (artifact) =>
+          artifact.artifactType === 'RECORDING' && artifact.artifactState === 'AVAILABLE'
+      )}
+      transcript={meeting.artifacts.some(
+        (artifact) =>
+          artifact.artifactType === 'TRANSCRIPT' && artifact.artifactState === 'AVAILABLE'
+      )}
+      analysis={publishedRecap.state === 'READY'}
+      approved={publishedRecap.state === 'READY' && Boolean(publishedRecapQuery.data?.approvedAt)}
+      published={publishedRecap.state === 'READY'}
+    />
+  );
   return (
     <MeetingPlaybackSyncProvider>
       <Box component="article" aria-labelledby="meeting-recap-title" sx={{ minWidth: 0 }}>
@@ -187,126 +205,123 @@ export function MeetingRecapDetail({
             {t('context.sourceReportVersion', { id: reportId ?? reviewReportId })}
           </Typography>
         )}
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          justifyContent="space-between"
-          alignItems={{ xs: 'stretch', md: 'flex-start' }}
-          gap={2}
-          sx={(theme) => ({
-            ...meetingSurface(theme, { tone: 'primary' }),
-            p: { xs: 2, md: 3 },
-          })}
-        >
-          <Box sx={{ minWidth: 0 }}>
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<ChevronLeft size={16} aria-hidden="true" />}
-              onClick={onClose}
-            >
-              {t('history.recap.back')}
-            </ActionButton>
-            <Typography
-              id="meeting-recap-title"
-              component="h2"
-              variant="h5"
-              fontWeight="fontWeightBold"
-              sx={{ mt: 1.25 }}
-            >
-              {meeting.title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {t('history.recap.ended', {
-                time: formatMeetingDateTime(meeting.endedAt ?? meeting.endsAt, i18n.language),
+        {compact ? (
+          <MeetingRecapMobileHeader
+            title={meeting.title}
+            ended={t('history.recap.ended', {
+              time: formatMeetingDateTime(meeting.endedAt ?? meeting.endsAt, i18n.language),
+            })}
+            access={t(`access.${meeting.accessScope}`)}
+            evidence={t('history.recap.evidenceCount', {
+              count: meeting.artifacts.filter((artifact) => artifact.artifactState === 'AVAILABLE')
+                .length,
+            })}
+            duration={t('units.minutes', { count: actualDurationMinutes })}
+            participants={t('units.participants', { count: actualParticipantCount })}
+            refreshing={query.isFetching || publishedRecapQuery.isFetching}
+            onClose={onClose}
+            onRefresh={() => {
+              void Promise.all([query.refetch(), publishedRecapQuery.refetch()]);
+            }}
+            pipeline={pipeline}
+          />
+        ) : (
+          <>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'stretch', md: 'flex-start' }}
+              gap={2}
+              sx={(theme) => ({
+                ...meetingSurface(theme),
+                p: { xs: 2, md: 3 },
               })}
-            </Typography>
-          </Box>
-          <Stack direction="row" gap={0.75} flexWrap="wrap">
-            <ActionButton
-              intent="quiet"
-              size="small"
-              startIcon={<RefreshCw size={15} aria-hidden="true" />}
-              loading={query.isFetching || publishedRecapQuery.isFetching}
-              loadingLabel={t('history.recap.refreshing')}
-              onClick={() => {
-                void Promise.all([query.refetch(), publishedRecapQuery.refetch()]);
-              }}
             >
-              {t('actions.refresh')}
-            </ActionButton>
-            <Chip
-              size="small"
-              icon={<ShieldCheck size={14} />}
-              label={t(`access.${meeting.accessScope}`)}
-            />
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t('history.recap.evidenceCount', {
-                count: meeting.artifacts.filter(
-                  (artifact) => artifact.artifactState === 'AVAILABLE'
-                ).length,
-              })}
-            />
-          </Stack>
-        </Stack>
+              <Box sx={{ minWidth: 0 }}>
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  startIcon={<ChevronLeft size={16} aria-hidden="true" />}
+                  onClick={onClose}
+                  sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+                >
+                  {t('history.recap.back')}
+                </ActionButton>
+                <Typography
+                  id="meeting-recap-title"
+                  component="h1"
+                  variant="h5"
+                  fontWeight="fontWeightBold"
+                  sx={{
+                    mt: 1.25,
+                    fontSize: { xs: 'h4.fontSize', md: 'h3.fontSize' },
+                    lineHeight: 'h3.lineHeight',
+                  }}
+                >
+                  {meeting.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  {t('history.recap.ended', {
+                    time: formatMeetingDateTime(meeting.endedAt ?? meeting.endsAt, i18n.language),
+                  })}
+                </Typography>
+              </Box>
+              <Stack direction="row" gap={0.75} flexWrap="wrap">
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  startIcon={<RefreshCw size={15} aria-hidden="true" />}
+                  loading={query.isFetching || publishedRecapQuery.isFetching}
+                  loadingLabel={t('history.recap.refreshing')}
+                  onClick={() => {
+                    void Promise.all([query.refetch(), publishedRecapQuery.refetch()]);
+                  }}
+                >
+                  {t('actions.refresh')}
+                </ActionButton>
+                <Chip
+                  size="small"
+                  icon={<ShieldCheck size={14} />}
+                  label={t(`access.${meeting.accessScope}`)}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={t('history.recap.evidenceCount', {
+                    count: meeting.artifacts.filter(
+                      (artifact) => artifact.artifactState === 'AVAILABLE'
+                    ).length,
+                  })}
+                />
+              </Stack>
+            </Stack>
 
-        <Box
-          sx={(theme) => ({
-            ...meetingSurface(theme, { elevated: false }),
-            display: 'grid',
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-            mt: 2,
-            '& > *': {
-              p: 1.5,
-              minWidth: 0,
-              borderColor: 'divider',
-              borderRight: 1,
-              borderBottom: { xs: 1, lg: 0 },
-            },
-            '& > :nth-of-type(2n)': {
-              borderRight: { xs: 0, lg: 1 },
-            },
-            '& > :nth-of-type(n + 3)': {
-              borderBottom: { xs: 0, lg: 0 },
-            },
-            '& > :last-child': {
-              borderRight: 0,
-            },
-          })}
-        >
-          <RecapMetric
-            icon={CalendarClock}
-            label={t('history.recap.metrics.duration')}
-            value={t('units.minutes', { count: actualDurationMinutes })}
-          />
-          <RecapMetric
-            icon={UsersRound}
-            label={t('history.recap.metrics.participants')}
-            value={t('units.participants', { count: actualParticipantCount })}
-          />
-          <RecapMetric
-            icon={ListChecks}
-            label={t('history.recap.metrics.decisions')}
-            value={outcomeCount(publishedRecap.decisions)}
-          />
-          <RecapMetric
-            icon={CheckCircle2}
-            label={t('history.recap.metrics.actions')}
-            value={outcomeCount(publishedRecap.actionItems)}
-          />
-        </Box>
+            <Stack direction="row" gap={1.5} flexWrap="wrap" sx={{ my: 2 }}>
+              <RecapMetric
+                icon={CalendarClock}
+                label={t('history.recap.metrics.duration')}
+                value={t('units.minutes', { count: actualDurationMinutes })}
+              />
+              <RecapMetric
+                icon={UsersRound}
+                label={t('history.recap.metrics.participants')}
+                value={t('units.participants', { count: actualParticipantCount })}
+              />
+            </Stack>
+            {pipeline}
+          </>
+        )}
 
-        <Tabs
+        <MeetingRecapTabs
           value={tab}
           variant="scrollable"
           allowScrollButtonsMobile
           aria-label={t('history.recap.tabs.label')}
           sx={{
-            mt: 2.5,
+            mt: { xs: 1.5, sm: 2.5 },
             minHeight: 48,
             p: 0.5,
-            borderRadius: 2.5,
+            borderRadius: meetingShape.control,
             bgcolor: 'action.hover',
             '& .MuiTabs-flexContainer': {
               width: 'max-content',
@@ -319,25 +334,41 @@ export function MeetingRecapDetail({
               minHeight: 44,
               flex: '0 0 auto',
               px: { xs: 1, sm: 2 },
-              borderRadius: 2,
+              borderRadius: meetingShape.inset,
               whiteSpace: 'nowrap',
             },
-            '& .Mui-selected': { bgcolor: 'background.paper' },
+            '& .MuiTab-root.Mui-selected': {
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+            },
             '& .MuiTabs-indicator': { display: 'none' },
           }}
           onChange={(_, value: RecapTab) => setTab(value)}
         >
           <Tab value="overview" label={t('history.recap.tabs.overview')} />
           <Tab value="artifacts" label={t('history.recap.tabs.artifacts')} />
+          <Tab
+            value="follow-ups"
+            aria-controls={
+              (tab === 'overview' || tab === 'follow-ups') &&
+              !publishedRecapQuery.isLoading &&
+              publishedRecap.state !== 'FAILED'
+                ? 'meeting-recap-follow-ups'
+                : undefined
+            }
+            label={`${t('history.recap.tabs.followUps')}${publishedRecap.state === 'READY' ? ` (${publishedRecap.actionItems.length})` : ''}`}
+          />
           <Tab value="attendance" label={t('history.recap.tabs.attendance')} />
-        </Tabs>
+        </MeetingRecapTabs>
 
-        <Box sx={{ pt: 2.5 }}>
-          {tab === 'overview' && (
+        <Box sx={{ pt: { xs: 1.5, sm: 2.5 } }}>
+          {(tab === 'overview' || tab === 'follow-ups') && (
             <MeetingOutcome
               meeting={meeting}
               recap={publishedRecap}
+              report={publishedRecapQuery.data}
               loading={publishedRecapQuery.isLoading}
+              focusFollowUps={tab === 'follow-ups'}
               onRetry={() => {
                 void publishedRecapQuery.refetch();
               }}
@@ -379,12 +410,16 @@ export function MeetingRecapDetail({
 function MeetingOutcome({
   meeting,
   recap,
+  report,
   loading,
+  focusFollowUps,
   onRetry,
 }: {
   meeting: Awaited<ReturnType<typeof getVideoMeeting>>;
   recap: PublishedMeetingRecap;
+  report?: VideoMeetingIntelligenceReport | null;
   loading: boolean;
+  focusFollowUps: boolean;
   onRetry: () => void;
 }) {
   const { t } = useTranslation('meetings');
@@ -407,115 +442,21 @@ function MeetingOutcome({
       />
     );
   }
-  const available = recap.state === 'READY';
   return (
-    <Box
-      data-testid="meeting-recap-overview"
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0,1fr)', lg: 'minmax(0,7fr) minmax(320px,5fr)' },
-        gridTemplateAreas: {
-          xs: '"summary" "evidence" "analysis"',
-          lg: '"summary evidence" "analysis evidence"',
-        },
-        columnGap: 3,
-        rowGap: { xs: 2.5, lg: 0 },
-        alignItems: 'start',
-      }}
-    >
-      <Stack
-        gap={0}
-        sx={(theme) => ({
-          ...meetingSurface(theme, { elevated: false }),
-          gridArea: 'summary',
-          minWidth: 0,
-          overflow: 'hidden',
-          borderBottom: { lg: available ? 0 : undefined },
-          borderBottomLeftRadius: { lg: available ? 0 : undefined },
-          borderBottomRightRadius: { lg: available ? 0 : undefined },
-        })}
-      >
-        <Alert
-          severity={available ? 'success' : 'info'}
-          icon={<Bot size={19} />}
-          sx={{ border: 0, borderRadius: 0, borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Typography fontWeight="fontWeightBold">
-            {t(available ? 'history.recap.ai.readyTitle' : 'history.recap.ai.unavailableTitle')}
-          </Typography>
-          <Typography variant="body2">
-            {t(
-              available
-                ? 'history.recap.ai.readyDescription'
-                : 'history.recap.ai.unavailableDescription'
-            )}
-          </Typography>
-        </Alert>
-
-        {available && (
-          <RecapSection title={t('history.recap.intelligence.sections.executiveSummary')}>
-            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{recap.summary}</Typography>
-          </RecapSection>
-        )}
-
-        <RecapSection title={t('history.recap.agendaTitle')}>
-          <Typography color={meeting.agenda ? 'text.primary' : 'text.secondary'}>
-            {meeting.agenda || t('room.agendaEmpty')}
-          </Typography>
-        </RecapSection>
-
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', xl: '1fr 1fr' },
-            borderTop: 1,
-            borderColor: 'divider',
-            '& > section': { borderTop: 0 },
-            '& > section + section': {
-              borderTop: { xs: 1, xl: 0 },
-              borderLeft: { xs: 0, xl: 1 },
-              borderColor: 'divider',
-            },
-          }}
-        >
-          <RecapSection title={t('history.recap.decisionsTitle')}>
-            {recap.decisions.length ? (
-              <Stack component="ol" gap={1.25} sx={{ m: 0, pl: 2.5 }}>
-                {recap.decisions.map((decision, index) => (
-                  <Box component="li" key={`${decision}-${index}`}>
-                    <Typography fontWeight="fontWeightBold">{decision}</Typography>
-                  </Box>
-                ))}
-              </Stack>
-            ) : (
-              <OutcomeEmpty text={t('history.recap.decisionsEmpty')} />
-            )}
-          </RecapSection>
-
-          <RecapSection title={t('history.recap.actionsTitle')}>
-            {recap.actionItems.length ? (
-              <Stack component="ol" gap={1.25} sx={{ m: 0, pl: 2.5 }}>
-                {recap.actionItems.map((action, index) => (
-                  <Box component="li" key={`${action}-${index}`}>
-                    <Typography fontWeight="fontWeightBold">{action}</Typography>
-                  </Box>
-                ))}
-              </Stack>
-            ) : (
-              <OutcomeEmpty text={t('history.recap.actionsEmpty')} />
-            )}
-          </RecapSection>
-        </Box>
-      </Stack>
-      <Box sx={{ gridArea: 'evidence', minWidth: 0 }}>
+    <MeetingRecapOutcome
+      meetingId={meeting.meetingId}
+      recap={recap}
+      report={report}
+      agenda={meeting.agenda}
+      focusFollowUps={focusFollowUps}
+      evidence={
         <RecapEvidenceRail
           meetingId={meeting.meetingId}
           artifacts={meeting.artifacts}
           recap={recap}
         />
-      </Box>
-      {available && <MeetingRecapAnalysis recap={recap} />}
-    </Box>
+      }
+    />
   );
 }
 
@@ -529,6 +470,8 @@ function RecapEvidenceRail({
   recap: PublishedMeetingRecap;
 }) {
   const { t, i18n } = useTranslation('meetings');
+  const compact = useMediaQuery('(max-width: 599px)');
+  const [showTranscript, setShowTranscript] = useState(false);
   const byType = useMemo(
     () => new Map(artifacts.map((artifact) => [artifact.artifactType, artifact])),
     [artifacts]
@@ -549,7 +492,7 @@ function RecapEvidenceRail({
       })}
     >
       <Stack gap={2}>
-        <Box>
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <Typography
             id="meeting-recap-evidence-title"
             component="h2"
@@ -564,11 +507,11 @@ function RecapEvidenceRail({
         </Box>
         <Box
           sx={(theme) => ({
-            minHeight: 168,
+            minHeight: { xs: 64, sm: 168 },
             display: 'grid',
             placeItems: 'center',
             px: 2,
-            py: 3,
+            py: { xs: 1.25, sm: 3 },
             borderRadius: 'var(--dwp-shape-borderRadius)',
             backgroundColor: theme.palette.common.black,
             color: theme.palette.common.white,
@@ -587,7 +530,11 @@ function RecapEvidenceRail({
                 ? t('history.recap.evidenceRail.recordingReady')
                 : t('history.recap.evidenceRail.recordingUnavailable')}
             </Typography>
-            <Typography variant="caption" color="inherit">
+            <Typography
+              variant="caption"
+              color="inherit"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+            >
               {t('history.recap.evidenceRail.playbackHint')}
             </Typography>
           </Stack>
@@ -596,11 +543,22 @@ function RecapEvidenceRail({
         {transcript?.artifactState === 'AVAILABLE' && (
           <>
             <Divider />
-            <MeetingTranscriptViewer meetingId={meetingId} artifact={transcript} />
+            {compact && (
+              <ActionButton
+                intent="quiet"
+                aria-expanded={showTranscript}
+                onClick={() => setShowTranscript((value) => !value)}
+              >
+                {t('designReview.recap.showEvidenceDetails')}
+              </ActionButton>
+            )}
+            {(!compact || showTranscript) && (
+              <MeetingTranscriptViewer meetingId={meetingId} artifact={transcript} />
+            )}
           </>
         )}
         <Divider />
-        <Stack gap={1.25}>
+        <Stack gap={1.25} sx={{ display: { xs: 'none', sm: 'flex' } }}>
           <EvidenceStatusRow
             icon={Radio}
             label={t('history.recap.artifacts.types.RECORDING')}
@@ -627,7 +585,11 @@ function RecapEvidenceRail({
             </Typography>
           </Stack>
         )}
-        <Typography variant="caption" color="text.secondary">
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: { xs: 'none', sm: 'block' } }}
+        >
           {t('history.recap.evidenceRail.transcriptHint')}
         </Typography>
       </Stack>
@@ -721,7 +683,7 @@ function ArtifactCustody({
                     height: 38,
                     display: 'grid',
                     placeItems: 'center',
-                    borderRadius: 2,
+                    borderRadius: meetingShape.inset,
                     color: 'primary.main',
                     bgcolor: (theme) => alpha(theme.palette.primary.main, 0.09),
                   }}

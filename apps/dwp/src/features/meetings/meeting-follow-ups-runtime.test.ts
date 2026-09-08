@@ -25,6 +25,7 @@ const runtime = vi.hoisted(() => ({
   reassign: vi.fn(),
   home: vi.fn(),
   published: vi.fn(),
+  exactReport: vi.fn(),
 }));
 vi.mock('@dwp-frontend/shared-utils', async (original) => ({
   ...(await original<typeof Shared>()),
@@ -47,6 +48,7 @@ vi.mock('@dwp-frontend/shared-utils/api/video-meeting-api', async (original) => 
 vi.mock('@dwp-frontend/shared-utils/api/video-meeting-intelligence-api', async (original) => ({
   ...(await original<typeof IntelligenceApi>()),
   getLatestPublishedVideoMeetingIntelligenceReport: runtime.published,
+  getVideoMeetingIntelligenceReport: runtime.exactReport,
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
@@ -143,7 +145,7 @@ function applied(
     assignment: {
       ...task,
       assignmentId,
-      assignmentState: 'ACCEPTED',
+      assignmentState: 'ACCEPTED' as const,
       version: input.version + 1,
       capabilities: { ...task.capabilities, canAccept: false, canDecline: false, canStart: true },
     },
@@ -168,7 +170,7 @@ async function settle() {
     await new Promise((resolve) => setTimeout(resolve, 30));
   });
 }
-async function render() {
+async function render(initialEntry = '/') {
   client = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
@@ -183,7 +185,7 @@ async function render() {
         element: createElement('div', null, 'Exact report destination'),
       },
     ],
-    { initialEntries: ['/'] }
+    { initialEntries: [initialEntry] }
   );
   await act(async () =>
     root.render(
@@ -225,6 +227,7 @@ describe('meeting follow-up Work runtime', () => {
     runtime.receipt.mockRejectedValue(new HttpError('Not found', 404));
     runtime.bySource.mockRejectedValue(new HttpError('Not found', 404));
     runtime.home.mockResolvedValue({ recent: [] });
+    runtime.exactReport.mockRejectedValue(new HttpError('Source unavailable', 403));
   });
   afterEach(async () => {
     if (root) await act(async () => root.unmount());
@@ -234,11 +237,37 @@ describe('meeting follow-up Work runtime', () => {
   });
   it('loads only the explicitly scoped page without source fan-out', async () => {
     await render();
-    expect(runtime.list).toHaveBeenCalledWith({ scope: 'ASSIGNED_TO_ME', page: 0, size: 20 });
+    expect(runtime.list).toHaveBeenCalledWith(
+      { scope: 'ASSIGNED_TO_ME', page: 0, size: 20 },
+      expect.any(AbortSignal)
+    );
     expect(runtime.detail).not.toHaveBeenCalled();
     expect(mount.textContent).toContain('followUps.sourceStates.NOT_REQUESTED');
     expect(mount.textContent).not.toContain('followUps.openSource');
     expect(mount.textContent).toContain('followUps.pageOnlyHint');
+    const row = mount.querySelector(`[data-testid="follow-up-row-${id}"]`)!;
+    expect(row.textContent).toContain('followUps.inspectEvidence');
+    expect(row.querySelector('button')).toBeNull();
+  });
+  it('consumes a home task reference only after the authorized page contains that assignment', async () => {
+    await render('/?assignment=' + id);
+    expect(runtime.detail).toHaveBeenCalledExactlyOnceWith(id);
+    expect(button('followUps.actions.accept')).toBeTruthy();
+  });
+  it.each(['99000000-0000-4000-8000-000000000099', 'private task title', id + '&assignment=' + id])(
+    'does not issue an arbitrary detail read from an unbound URL: %s',
+    async (reference) => {
+      await render('/?assignment=' + reference);
+      expect(runtime.detail).not.toHaveBeenCalled();
+      expect(mount.textContent).not.toContain(reference);
+    }
+  );
+  it('opens the published candidate tab from the home queue without fetching assignments', async () => {
+    await render('/?scope=CANDIDATES');
+    expect(runtime.home).toHaveBeenCalledOnce();
+    expect(runtime.list).not.toHaveBeenCalled();
+    expect(runtime.detail).not.toHaveBeenCalled();
+    expect(runtime.create).not.toHaveBeenCalled();
   });
   it('opens only the selected canonical detail and keeps accept separate from start', async () => {
     await render();
@@ -263,6 +292,41 @@ describe('meeting follow-up Work runtime', () => {
     );
     expect(mount.textContent).toContain('followUps.commandConfirmed');
     expect(button('followUps.actions.start')).toBeTruthy();
+  });
+  it('keeps the receipt through a delayed collection recheck without exposing detail while pending', async () => {
+    await render();
+    await selectTask();
+    let finish!: (value: typeof page) => void;
+    runtime.list.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
+    const updated = applied(
+      id,
+      'accept',
+      { version: 3, assignmentRevision: 1 },
+      crypto.randomUUID()
+    ).assignment;
+    runtime.detail.mockResolvedValue(updated);
+    await accept();
+    expect(mount.textContent).not.toContain('followUps.commandConfirmed');
+    expect(mount.textContent).not.toContain('followUps.actions.start');
+    await act(async () => finish({ ...page, items: [updated] }));
+    await settle();
+    expect(mount.textContent).toContain('followUps.commandConfirmed');
+    expect(button('followUps.actions.start')).toBeTruthy();
+    expect(runtime.transition).toHaveBeenCalledTimes(1);
+  });
+  it('withdraws receipt and detail if the post-command collection recheck denies access', async () => {
+    await render();
+    await selectTask();
+    let reject!: (error: Error) => void;
+    runtime.list.mockImplementation(() => new Promise((_, fail) => (reject = fail)));
+    await accept();
+    expect(mount.textContent).not.toContain('followUps.commandConfirmed');
+    await act(async () => reject(new HttpError('Forbidden', 403)));
+    await settle();
+    expect(mount.textContent).toContain('followUps.accessTitle');
+    expect(mount.textContent).not.toContain(task.title);
+    expect(mount.textContent).not.toContain('followUps.commandConfirmed');
+    expect(mount.textContent).not.toContain('followUps.actions.start');
   });
   it('keeps source unavailable independent from authorized Work actions', async () => {
     runtime.detail.mockResolvedValue({
@@ -463,7 +527,10 @@ describe('meeting follow-up Work runtime', () => {
     await selectTask();
     runtime.list.mockResolvedValue({ ...page, items: [], totalElements: 0 });
     await click('followUps.tabs.ASSIGNED_BY_ME');
-    expect(runtime.list).toHaveBeenLastCalledWith({ scope: 'ASSIGNED_BY_ME', page: 0, size: 20 });
+    expect(runtime.list).toHaveBeenLastCalledWith(
+      { scope: 'ASSIGNED_BY_ME', page: 0, size: 20 },
+      expect.any(AbortSignal)
+    );
     expect(mount.textContent).not.toContain(task.title);
     expect(mount.querySelector('[data-testid="meeting-follow-up-detail"]')).toBeNull();
   });
@@ -487,10 +554,40 @@ describe('meeting follow-up Work runtime', () => {
     expect((createButton as HTMLButtonElement).disabled).toBe(true);
     await click('followUps.candidates.reviewCandidate');
     expect(document.body.textContent).toContain('followUps.candidates.reviewTitle');
-    expect(document.body.textContent).toContain('followUps.candidates.sourceReviewBlocked');
+    expect(document.body.textContent).toContain('designReview.followUps.sourceEvidenceHint');
     expect(document.body.textContent).toContain('followUps.candidates.impactHint');
     expect(runtime.create).not.toHaveBeenCalled();
     expect(runtime.bySource).not.toHaveBeenCalled();
+  });
+  it('loads only the exact selected source on explicit evidence review and removes it after denial', async () => {
+    enableCandidate();
+    const report = await runtime.published();
+    report.analysis.actionItems[0] = {
+      text: 'EXACT published action evidence',
+      citations: [{ segmentId: 'seg-7', startMillis: 12000, endMillis: 19000 }],
+    };
+    runtime.exactReport.mockResolvedValue(report);
+    await render();
+    await selectTask();
+    expect(runtime.exactReport).not.toHaveBeenCalled();
+    await click('designReview.followUps.loadEvidence');
+    expect(runtime.exactReport).toHaveBeenCalledWith(id, reportId);
+    expect(mount.textContent).toContain('EXACT published action evidence');
+    runtime.exactReport.mockRejectedValue(new HttpError('Source revoked', 403));
+    await click('designReview.followUps.loadEvidence');
+    expect(mount.textContent).not.toContain('EXACT published action evidence');
+    expect(mount.textContent).toContain('designReview.followUps.sourceUnavailable');
+    expect(button('followUps.actions.accept').disabled).toBe(false);
+  });
+  it('never substitutes a newer report version for the assignment evidence', async () => {
+    enableCandidate();
+    const report = await runtime.published();
+    runtime.exactReport.mockResolvedValue({ ...report, version: 9 });
+    await render();
+    await selectTask();
+    await click('designReview.followUps.loadEvidence');
+    expect(mount.textContent).toContain('designReview.followUps.sourceUnavailable');
+    expect(runtime.published).toHaveBeenCalledTimes(1);
   });
   it('passes pagination to the server and does not reuse a prior page detail', async () => {
     runtime.list.mockResolvedValueOnce({ ...page, totalElements: 21, hasMore: true });
@@ -498,7 +595,10 @@ describe('meeting follow-up Work runtime', () => {
     await selectTask();
     runtime.list.mockResolvedValue({ ...page, items: [], page: 1, totalElements: 21 });
     await click('followUps.next');
-    expect(runtime.list).toHaveBeenLastCalledWith({ scope: 'ASSIGNED_TO_ME', page: 1, size: 20 });
+    expect(runtime.list).toHaveBeenLastCalledWith(
+      { scope: 'ASSIGNED_TO_ME', page: 1, size: 20 },
+      expect.any(AbortSignal)
+    );
     expect(mount.querySelector('[data-testid="meeting-follow-up-detail"]')).toBeNull();
   });
   it('renders failures as failures instead of zero work', async () => {

@@ -78,11 +78,7 @@ export default function MeetingsPage() {
   return (
     <ProductAreaNavigationItemAccessGuard item={page}>
       {mobileNavigation ? (
-        <MeetingMobileNavigation
-          activeView={page.view as 'home' | 'mine' | 'history' | 'follow-ups' | 'preferences'}
-        >
-          {content}
-        </MeetingMobileNavigation>
+        <MeetingMobileNavigation activeView={page.view}>{content}</MeetingMobileNavigation>
       ) : (
         content
       )}

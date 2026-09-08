@@ -1,0 +1,115 @@
+{
+  "scope": "Work-owned personal task edit optimistic-conflict recovery (06 functional state)",
+  "notOriginalFrameCount": true,
+  "captureCount": 10,
+  "validation": {
+    "unit": {
+      "passed": 25,
+      "files": 2,
+      "log": "edit-conflict-unit.log"
+    },
+    "e2eMatrix": {
+      "passed": 9,
+      "failed": 1,
+      "log": "edit-conflict-e2e.log",
+      "remainingFailure": "WebKit 200% post-review title focused outside viewport"
+    },
+    "e2eFocusedRerun": {
+      "passed": 1,
+      "failed": 0,
+      "log": "edit-conflict-focus-after.log",
+      "resolvedFailure": "Post-review title focus now scrolls into viewport after layout commit"
+    },
+    "eslint": {
+      "status": "PASS",
+      "log": "edit-conflict-eslint.log"
+    }
+  },
+  "captures": [
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-01fc8-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "width": 1280,
+      "height": 900,
+      "sha256": "da7acfc43c026b526b6b53a472c626b130a0b79930ae6fa598d848ca8c5dedaa",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-01fc8-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "width": 3840,
+      "height": 2700,
+      "sha256": "984e19d58a12504e0b25436767f888bb1e777708efdaa7b54eade609964f14b5",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-0767a-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "width": 320,
+      "height": 740,
+      "sha256": "cab1c6f10c27380b2938659f012b984da00feccd56c2a6f7e4b51825473d7ad9",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-0767a-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "width": 960,
+      "height": 2220,
+      "sha256": "3b225ef338e21848ffdc6e19815dddaa189a00cea61ff6ef00875fb075c7ecfa",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-3db73-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "52a057ea7933df860eb738b0b1da628e03bc4d344ca83f1bbf9dfeb7b883144e",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-3db73-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "86b121ca57e0e7687847676d0e774fa3abe377420deda0bb636e86b146567a98",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-63d33-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "b8129e27d041b2e136c2b70fd38dc294813e7964b801865f0351d7bbf5e6c7a0",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-63d33-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "width": 4320,
+      "height": 3000,
+      "sha256": "b41cfa083ec963157ea368539cb215a2d66ff148e273ebe13a001fdaafc5eb64",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-captures/work-task-edit-conflict-ta-dd4a5-atest-content-before-saving-chromium/task-edit-conflict-review.png",
+      "width": 1280,
+      "height": 1000,
+      "sha256": "ed320f672e996988ac68a0892137be43c88656cb08114176595aae68c0228dfc",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    },
+    {
+      "path": "edit-conflict-focus-captures/work-task-edit-conflict-ta-dd4a5-atest-content-before-saving-mobile/task-edit-conflict-review.png",
+      "width": 3840,
+      "height": 3000,
+      "sha256": "be06d1c3aba126b047dd05d354001411c6ac8449aff6aa7ecd066702b4f06607",
+      "state": "409 conflict; latest server content review; save paused",
+      "source": "mocked personal-task API against current local application"
+    }
+  ],
+  "limitations": [
+    "API failure and versions are controlled E2E fixtures, not live tenant provider validation.",
+    "These are additional functional-state screenshots, not replacements for the 18 approved design originals.",
+    "A fresh all-ten run after the two-line focus fix was not performed; the failing WebKit 200% case was rerun successfully."
+  ]
+}

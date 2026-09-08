@@ -41,6 +41,9 @@ type HomePurposeWidgetProps = Readonly<{
   referenceLayout?: boolean;
   timeline?: boolean;
   roleSignals?: readonly FlowSignal[];
+  signalsFetching?: boolean;
+  signalsFailed?: boolean;
+  onRefreshSignals?: () => void;
   headerAccessory?: ReactNode;
   onRetry?: () => void;
 }>;
@@ -548,6 +551,9 @@ export function HomePurposeWidget({
   roleSignals = [],
   headerAccessory,
   onRetry,
+  signalsFetching,
+  signalsFailed,
+  onRefreshSignals,
 }: HomePurposeWidgetProps) {
   const { t } = useTranslation(['home', 'common']);
   const [overflowOpen, setOverflowOpen] = useState(false);
@@ -771,7 +777,13 @@ export function HomePurposeWidget({
             justifyContent: 'flex-end',
           }}
         >
-          <RolePulseInsight signals={roleSignals} density={contentPolicy.density} />
+          <RolePulseInsight
+            signals={roleSignals}
+            density={contentPolicy.density}
+            fetching={signalsFetching}
+            failed={signalsFailed}
+            onRefresh={onRefreshSignals}
+          />
         </Box>
       )}
 

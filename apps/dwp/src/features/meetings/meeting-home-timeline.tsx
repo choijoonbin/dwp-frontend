@@ -1,21 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, CalendarClock, ShieldCheck, UsersRound } from 'lucide-react';
-import {
-  ActionButton,
-  foundationTokens,
-  GuidedEmptyState,
-  SectionHeader,
-} from '@dwp-frontend/design-system';
+import { ActionButton, GuidedEmptyState, SectionHeader } from '@dwp-frontend/design-system';
 import type { VideoMeetingSummary } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import { homeMeetingDate, homeMeetingPath } from './meeting-home-model';
+import { homeMeetingTime, homeMeetingPath } from './meeting-home-model';
 import { meetingPreparationPath } from './meeting-context-routing';
-import { meetingListSurface } from './meeting-visual-system';
+import { meetingShape } from './meeting-visual-system';
+import { meetingHomeCard } from './meeting-home-presentation';
 
 export function MeetingHomeTimeline({
   meetings,
@@ -59,14 +55,13 @@ export function MeetingHomeTimeline({
           </Stack>
         }
       />
-      <Typography variant="caption" color="text.secondary">
-        {t('home.workspace.timelineScope')}
-      </Typography>
       <Box
         sx={(theme) => ({
-          ...meetingListSurface(theme),
+          ...meetingHomeCard(theme),
           mt: 1.5,
-          p: meetings.length === 0 ? 2 : { xs: 1, md: 1.25 },
+          p: meetings.length === 0 ? 2 : { xs: 0, md: 2 },
+          bgcolor: { xs: 'transparent', md: 'background.paper' },
+          border: { xs: 0, md: `1px solid ${alpha(theme.palette.primary.main, 0.13)}` },
           containerType: 'inline-size',
         })}
       >
@@ -84,10 +79,10 @@ export function MeetingHomeTimeline({
               p: 0,
               m: 0,
               listStyle: 'none',
-              gap: 1,
+              gap: 1.5,
             }}
           >
-            {meetings.map((meeting) => {
+            {meetings.slice(0, 3).map((meeting) => {
               const ended =
                 meeting.lifecycleState === 'ENDED' || meeting.lifecycleState === 'CANCELLED';
               const live = meeting.lifecycleState === 'LIVE';
@@ -99,20 +94,27 @@ export function MeetingHomeTimeline({
                   key={meeting.meetingId}
                   data-testid="meeting-home-timeline-row"
                   sx={(theme) => ({
-                    p: { xs: 1.5, md: 2 },
+                    p: { xs: 1.25, md: 1.5 },
                     display: 'grid',
                     gridTemplateColumns: {
                       xs: 'minmax(0, 1fr) auto',
-                      md: '110px minmax(0, 1fr) auto',
+                      md: '100px minmax(0, 1fr) auto',
                     },
                     gap: { xs: 0.75, md: 1.5 },
                     alignItems: 'center',
-                    bgcolor: live ? alpha(theme.palette.success.main, 0.045) : 'background.paper',
+                    bgcolor:
+                      live || meeting.canHost
+                        ? alpha(theme.palette.primary.main, 0.025)
+                        : 'background.paper',
                     border: 1,
-                    borderColor: 'divider',
+                    borderColor: alpha(theme.palette.primary.main, 0.14),
                     borderLeft: 3,
-                    borderLeftColor: live ? 'success.main' : 'primary.main',
-                    borderRadius: foundationTokens.radius.control + 'px',
+                    borderLeftColor: live
+                      ? 'success.main'
+                      : meeting.canHost
+                        ? 'primary.main'
+                        : alpha(theme.palette.text.secondary, 0.3),
+                    borderRadius: meetingShape.card,
                     '@media (forced-colors: active)': {
                       borderLeftColor: live || meeting.canHost ? 'CanvasText' : 'transparent',
                     },
@@ -132,11 +134,19 @@ export function MeetingHomeTimeline({
                       minWidth: 0,
                     }}
                   >
-                    <Typography variant="subtitle2" color={live ? 'success.main' : 'text.primary'}>
-                      {homeMeetingDate(meeting.startsAt, i18n.language, timeZone, true)} –{' '}
-                      {homeMeetingDate(meeting.endsAt, i18n.language, timeZone, true)}
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontWeight: 'fontWeightBold',
+                        fontVariantNumeric: 'tabular-nums',
+                        whiteSpace: 'nowrap',
+                      }}
+                      color={meeting.canHost ? 'primary.main' : 'text.primary'}
+                    >
+                      {homeMeetingTime(meeting.startsAt, i18n.language, timeZone)} –{' '}
+                      {homeMeetingTime(meeting.endsAt, i18n.language, timeZone)}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="text.secondary" component="p">
                       {t('units.minutes', { count: meeting.durationMinutes })}
                     </Typography>
                   </Box>
@@ -161,18 +171,18 @@ export function MeetingHomeTimeline({
                             : 'home.workspace.participantRole'
                         )}
                       />
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        color={live ? 'success' : 'default'}
-                        label={t(`status.${meeting.lifecycleState}`)}
-                      />
+                      {live && <Chip size="small" color="success" label={t('status.LIVE')} />}
                       <UsersRound size={13} aria-hidden="true" />
                       <Typography variant="caption" color="text.secondary">
                         {t('units.participants', { count: meeting.attendeeCount })}
                       </Typography>
                       {meeting.waitingRoomEnabled && (
-                        <Stack direction="row" alignItems="center" gap={0.4}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          gap={0.4}
+                          sx={{ display: { xs: 'none', md: 'flex' } }}
+                        >
                           <ShieldCheck size={13} aria-hidden="true" />
                           <Typography variant="caption" color="text.secondary">
                             {t('home.workspace.waitingRoom')}
@@ -181,47 +191,78 @@ export function MeetingHomeTimeline({
                       )}
                     </Stack>
                   </Box>
-                  <ActionButton
-                    data-testid="meeting-home-timeline-action"
-                    intent={live ? 'primary' : 'quiet'}
-                    disabled={disabled && !ended && !preparing}
-                    onClick={() =>
-                      navigate(
-                        preparing
-                          ? meetingPreparationPath(meeting.meetingId)
-                          : homeMeetingPath(meeting)
-                      )
-                    }
-                    sx={(theme) => ({
-                      minHeight: 44,
-                      minWidth: 0,
-                      maxWidth: { xs: '7rem', md: 'none' },
-                      px: { xs: 1, md: 2 },
-                      typography: { xs: 'caption', md: 'button' },
-                      fontWeight: theme.typography.button.fontWeight,
-                      whiteSpace: 'normal',
-                      overflowWrap: 'anywhere',
-                      justifySelf: 'end',
-                      '@container (max-width: 20rem)': {
-                        maxWidth: 'none',
-                        justifySelf: 'stretch',
-                      },
-                    })}
-                  >
-                    {ended
-                      ? t('home.workspace.viewRecord')
-                      : live
-                        ? t('actions.join')
-                        : preparing
-                          ? t('context.openPreparation')
-                          : t('home.focus.prepare')}
-                  </ActionButton>
+                  <Stack direction="row" gap={0.5} alignItems="center">
+                    {meeting.canHost && !ended && (
+                      <ActionButton
+                        intent="secondary"
+                        size="small"
+                        onClick={() => navigate(meetingPreparationPath(meeting.meetingId))}
+                        sx={{ minWidth: 0, px: 1 }}
+                      >
+                        {t('home.design.details')}
+                      </ActionButton>
+                    )}
+                    <ActionButton
+                      data-testid="meeting-home-timeline-action"
+                      intent={live || meeting.canHost ? 'primary' : 'quiet'}
+                      disabled={disabled && !ended && !preparing}
+                      onClick={() =>
+                        navigate(
+                          preparing && !meeting.canHost
+                            ? meetingPreparationPath(meeting.meetingId)
+                            : homeMeetingPath(meeting)
+                        )
+                      }
+                      sx={(theme) => ({
+                        minHeight: { xs: 44, md: 36 },
+                        minWidth: 0,
+                        maxWidth: { xs: '7rem', md: 'none' },
+                        px: { xs: 1, md: 2 },
+                        typography: { xs: 'caption', md: 'button' },
+                        fontWeight: theme.typography.button.fontWeight,
+                        whiteSpace: 'normal',
+                        overflowWrap: 'anywhere',
+                        justifySelf: 'end',
+                        '@container (max-width: 20rem)': {
+                          maxWidth: 'none',
+                          justifySelf: 'stretch',
+                        },
+                      })}
+                    >
+                      {ended
+                        ? t('home.workspace.viewRecord')
+                        : live || meeting.canHost
+                          ? t('actions.join')
+                          : preparing
+                            ? t('context.openPreparation')
+                            : t('home.focus.prepare')}
+                    </ActionButton>
+                  </Stack>
                 </Box>
               );
             })}
           </Stack>
         )}
       </Box>
+      {meetings.length > 0 && (
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={1}
+          sx={{ mt: 1 }}
+        >
+          <Typography variant="caption" color="text.secondary">
+            {t('home.workspace.timelineScope')}
+          </Typography>
+          {meetings.length > 3 && (
+            <ActionButton intent="quiet" size="small" onClick={() => navigate('/meetings/mine')}>
+              {t('home.design.allMeetings', { count: meetings.length })}
+            </ActionButton>
+          )}
+        </Stack>
+      )}
     </Box>
   );
 }

@@ -1,0 +1,31 @@
+
+Running 11 tests using 2 workers
+
+[1A[2K(node:54065) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:54066) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:54065) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/11] [chromium] › e2e/work-hub-foundation.spec.ts:124:1 › personal start and completion wait for source confirmation with versioned UUID commands
+[1A[2K(node:54066) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/11] [chromium] › e2e/work-hub-foundation.spec.ts:162:1 › partial source failure remains visible when the verified subset is empty
+[1A[2K[3/11] [chromium] › e2e/work-hub-foundation.spec.ts:175:1 › an all-source outage cannot masquerade as an empty queue and retains recovery controls
+[1A[2K[4/11] [chromium] › e2e/work-hub-foundation.spec.ts:201:1 › a background refresh outage keeps the verified scope visible as degraded
+[1A[2K[5/11] [chromium] › e2e/work-hub-foundation.spec.ts:250:1 › returning from another app revalidates the queue before a personal command
+[1A[2K[6/11] [chromium] › e2e/work-hub-foundation.spec.ts:268:1 › view-only access exposes no personal mutation action
+[1A[2K[7/11] [chromium] › e2e/work-hub-foundation.spec.ts:282:1 › atomic batch review shows targets and item-level confirmed receipts
+[1A[2K[8/11] [chromium] › e2e/work-hub-foundation.spec.ts:313:1 › batch selection is discarded when the work view changes
+[1A[2K[9/11] [chromium] › e2e/work-hub-foundation.spec.ts:336:1 › retry after a lost response reuses the original command and receipt
+[1A[2K[10/11] [chromium] › e2e/work-hub-foundation.spec.ts:443:1 › 320px personal task capture stays operable when the input viewport contracts
+[1A[2K[11/11] [chromium] › e2e/work-hub-foundation.spec.ts:541:1 › keyboard activation keeps visible focus and completes a personal start
+[1A[2K  11 passed (20.4s)

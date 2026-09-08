@@ -519,6 +519,10 @@ export async function mockApprovalProductSurfaceAuthority(
   if (options.work !== false) enabled.add('approvals.work');
   if (options.management !== false) enabled.add('approvals.admin');
   const deniedRouteKeys = new Set(options.deniedRouteKeys ?? []);
+  const workCapabilityKeys = new Set(options.workCapabilityKeys ?? WORK_CAPABILITIES);
+  const managementCapabilityKeys = new Set(
+    options.managementCapabilityKeys ?? MANAGEMENT_CAPABILITIES
+  );
   let revision = 1;
   const evaluations: Array<{
     surfaceId?: SurfaceId;
@@ -526,8 +530,15 @@ export async function mockApprovalProductSurfaceAuthority(
     contextScopeKey?: string;
   }> = [];
 
+  const currentOptions = (): ApprovalAuthorityOptions => ({
+    ...options,
+    workCapabilityKeys: [...workCapabilityKeys],
+    managementCapabilityKeys: [...managementCapabilityKeys],
+  });
   const contextFor = (surfaceId: SurfaceId) =>
-    surfaceId === 'approvals.work' ? workContext(options) : managementContext(options);
+    surfaceId === 'approvals.work'
+      ? workContext(currentOptions())
+      : managementContext(currentOptions());
   const contexts = () => [...enabled].map(contextFor);
   const decisionRevision = () => `e2e-approval-authority-${revision}`;
 
@@ -590,7 +601,7 @@ export async function mockApprovalProductSurfaceAuthority(
         decisionRevision: decisionRevision(),
       });
     }
-    if (!routeAllowed(surfaceId, routeContractKey, options)) {
+    if (!routeAllowed(surfaceId, routeContractKey, currentOptions())) {
       return success(route, {
         decision: 'ROUTE_DENIED',
         reasonCode: 'ROUTE_CAPABILITY_REQUIRED',
@@ -634,6 +645,12 @@ export async function mockApprovalProductSurfaceAuthority(
   return {
     revoke(surfaceId: SurfaceId) {
       enabled.delete(surfaceId);
+      revision += 1;
+    },
+    revokeCapability(surfaceId: SurfaceId, capabilityContractKey: string) {
+      const capabilities =
+        surfaceId === 'approvals.work' ? workCapabilityKeys : managementCapabilityKeys;
+      capabilities.delete(capabilityContractKey);
       revision += 1;
     },
     revision: () => decisionRevision(),

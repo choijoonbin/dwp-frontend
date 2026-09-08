@@ -40,4 +40,20 @@ describe('product surface access presentation', () => {
       'activate-access'
     );
   });
+
+  it('uses plane-specific surface denial copy and keeps an unknown plane neutral', () => {
+    expect(getProductSurfaceAccessPresentation('surface-denied', 'work')).toMatchObject({
+      titleKey: 'productSurface.access.surfaceDenied.work.title',
+      primaryAction: 'return',
+    });
+    expect(getProductSurfaceAccessPresentation('surface-denied', 'management')).toMatchObject({
+      titleKey: 'productSurface.access.surfaceDenied.management.title',
+      primaryAction: 'request-responsibility',
+      secondaryAction: 'return',
+    });
+    expect(getProductSurfaceAccessPresentation('surface-denied')).toMatchObject({
+      titleKey: 'productSurface.access.surfaceDenied.title',
+      primaryAction: 'return',
+    });
+  });
 });

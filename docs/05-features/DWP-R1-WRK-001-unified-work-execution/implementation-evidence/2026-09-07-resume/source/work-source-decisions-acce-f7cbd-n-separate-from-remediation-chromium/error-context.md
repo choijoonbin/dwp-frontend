@@ -1,0 +1,88 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - complementary [ref=e5]:
+            - generic [ref=e6]:
+                - generic [ref=e7]:
+                    - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+                        - /url: /
+                        - generic [ref=e10]: DWP
+                        - generic [ref=e13]: Digital Workplace
+                    - generic "Collapse navigation" [ref=e14]:
+                        - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+                            - img [ref=e17]
+                            - img [ref=e20]
+                - separator [ref=e23]
+                - button "Add personal task" [ref=e25] [cursor=pointer]:
+                    - img [ref=e27]
+                    - text: Add personal task
+                - navigation "Work navigation" [ref=e28]:
+                    - list [ref=e29]:
+                        - listitem [ref=e30]:
+                            - link "Unified inbox" [ref=e31] [cursor=pointer]:
+                                - /url: /work/queue
+                                - img [ref=e32]
+                                - generic [ref=e35]: Unified inbox
+                        - listitem [ref=e36]:
+                            - link "Action required" [ref=e37] [cursor=pointer]:
+                                - /url: /work/action-required
+                                - img [ref=e38]
+                                - generic [ref=e41]: Action required
+                        - listitem [ref=e42]:
+                            - link "Today's plan" [ref=e43] [cursor=pointer]:
+                                - /url: /work/day-plan
+                                - img [ref=e44]
+                                - generic [ref=e49]: Today's plan
+                        - listitem [ref=e50]:
+                            - link "In progress" [ref=e51] [cursor=pointer]:
+                                - /url: /work/in-progress
+                                - img [ref=e52]
+                                - generic [ref=e55]: In progress
+                        - listitem [ref=e56]:
+                            - link "Awaiting response" [ref=e57] [cursor=pointer]:
+                                - /url: /work/awaiting-response
+                                - img [ref=e58]
+                                - generic [ref=e61]: Awaiting response
+                        - listitem [ref=e62]:
+                            - link "Completed work" [ref=e63] [cursor=pointer]:
+                                - /url: /work/completed
+                                - img [ref=e64]
+                                - generic [ref=e67]: Completed work
+                - generic [ref=e68]:
+                    - button "Source connections" [ref=e69] [cursor=pointer]:
+                        - generic [ref=e70]:
+                            - generic [ref=e71]: Source connections
+                            - generic [ref=e72]: Checking source status
+                    - link "Back to personal home" [ref=e73] [cursor=pointer]:
+                        - /url: /
+                        - img [ref=e75]
+                        - text: Back to personal home
+        - banner [ref=e78]:
+            - generic [ref=e79]:
+                - generic [ref=e80]:
+                    - img [ref=e82]
+                    - generic "Work" [ref=e86]
+                - generic "Current workspace" [ref=e88]:
+                    - generic [ref=e90]: D
+                    - generic [ref=e91]:
+                        - generic [ref=e92]: DWP Workspace
+                        - generic [ref=e93]: Current workspace
+                - generic [ref=e94]:
+                    - button "Search DWP" [ref=e96] [cursor=pointer]:
+                        - img [ref=e97]
+                    - button "Enter full screen" [ref=e101] [cursor=pointer]:
+                        - img [ref=e102]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e108] [cursor=pointer]':
+                        - generic [ref=e109]: M
+                        - generic [ref=e110]:
+                            - generic [ref=e111]: Mina Kim
+                            - generic [ref=e112]: Tenant administrator
+                        - img [ref=e113]
+        - main [ref=e115]:
+            - progressbar "Loading page" [ref=e117]:
+                - img [ref=e118]
+```

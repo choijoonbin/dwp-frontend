@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 /Users/a10697/Work/DWP/dwp-frontend
+
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  13:33:12
+   Duration  1.24s (transform 63ms, setup 0ms, import 78ms, tests 16ms, environment 889ms)
+

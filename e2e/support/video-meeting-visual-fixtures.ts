@@ -1,4 +1,5 @@
 import { mockShellSession } from './shell-session';
+import { mockMeetingRecordBookmarks } from './video-meeting-record-bookmark-fixtures';
 
 import type { Page, Route } from '@playwright/test';
 
@@ -213,6 +214,47 @@ export async function mockMeetingVisualSession(
 }
 
 export async function mockMeetingVisualHome(page: Page, state: MeetingVisualHomeState) {
+  await page.route('**/api/meetings/v1/personal-room', (route) =>
+    route.request().method() === 'GET' ? fulfill(route, null) : route.fallback()
+  );
+  await page.route('**/api/meetings/v1/meetings/*/preparation', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    const meetingId = new URL(route.request().url()).pathname.split('/').at(-2);
+    return fulfill(route, {
+      meetingId,
+      meetingVersion: 7,
+      agendaVersion: 1,
+      materialsVersion: 0,
+      invitationRevision: 1,
+      agendaItems: MEETING_VISUAL_SUMMARY.agenda.split('\n').map((title, position) => ({
+        itemId: '88000000-0000-4000-8000-00000000000' + (position + 1),
+        title,
+        position,
+        objective: null,
+        ownerUserId: 42 + position,
+        ownerDisplayName: MEETING_VISUAL_SUMMARY.participants[position].displayName,
+        plannedMinutes: 15,
+      })),
+      materials: [],
+      myResponse: null,
+      invitationResponses: MEETING_VISUAL_SUMMARY.participants.map((person) => ({
+        participantId: person.participantId,
+        displayName: person.displayName,
+        response: 'NEEDS_RESPONSE',
+        invitationRevision: 1,
+        respondedAt: null,
+        version: 0,
+        mine: false,
+      })),
+      invitationCounts: { accepted: 0, tentative: 0, declined: 0, pending: 3 },
+      myPreparation: { agendaVersion: 1, version: 0, preparedAgendaItemIds: [], updatedAt: null },
+      canEditAgenda: true,
+      canManageMaterials: true,
+      canRespond: false,
+      canPrepare: true,
+      observedAt: MEETING_VISUAL_NOW.toISOString(),
+    });
+  });
   await page.route('**/api/platform/v1/workspace/work-hub/assignments**', (route) => {
     if (route.request().method() !== 'GET') return route.fallback();
     const query = new URL(route.request().url()).searchParams;
@@ -269,14 +311,28 @@ export async function mockMeetingVisualHome(page: Page, state: MeetingVisualHome
       state === 'EMPTY' || state === 'BLOCKED'
         ? []
         : [
-            { name: 'Weekly team meeting', durationMinutes: 50, scope: 'ORGANIZATION' },
-            { name: 'Decision review', durationMinutes: 45, scope: 'PERSONAL' },
-            { name: 'One-to-one check-in', durationMinutes: 30, scope: 'PERSONAL' },
+            {
+              name: 'Weekly team meeting',
+              durationMinutes: 50,
+              scope: 'ORGANIZATION',
+              category: 'GENERAL',
+            },
+            {
+              name: 'Decision review',
+              durationMinutes: 45,
+              scope: 'PERSONAL',
+              category: 'DECISION',
+            },
+            {
+              name: 'One-to-one check-in',
+              durationMinutes: 30,
+              scope: 'PERSONAL',
+              category: 'ONE_ON_ONE',
+            },
           ].map((item, index) => ({
             ...item,
             templateId: `89000000-0000-4000-8000-00000000000${index + 1}`,
             purpose: 'Prepare the agenda and record decisions.',
-            category: 'GENERAL',
             agendaItems: [],
             favorite: true,
             canEdit: item.scope === 'PERSONAL',
@@ -630,7 +686,7 @@ export async function mockMeetingVisualHomeReports(page: Page) {
   return { revoke: () => (revoked = true) };
 }
 
-export async function mockMeetingVisualPublishedRecap(page: Page) {
+export async function mockMeetingVisualPublishedRecap(page: Page, rich = false) {
   const participants = [
     {
       participantId: '82000000-0000-0000-0000-000000000301',
@@ -657,44 +713,65 @@ export async function mockMeetingVisualPublishedRecap(page: Page) {
       version: 3,
     },
   ];
-  await page.route('**/api/meetings/v1/history?*', (route) =>
-    fulfill(route, {
-      items: [
-        {
-          ...ENDED_MEETING,
-          endedAt: ENDED_MEETING.endedAt,
-          actualDurationMinutes: 42,
-          participantPeak: 6,
-          averageQualityScore: 96,
-          recordingAvailable: true,
-          transcriptAvailable: true,
-        },
-        {
-          meetingId: '81000000-0000-0000-0000-000000000306',
-          title: 'Platform design decisions',
-          endedAt: '2026-08-28T07:15:00Z',
-          actualDurationMinutes: 45,
-          participantPeak: 5,
-          averageQualityScore: 91,
-          recordingAvailable: false,
-          transcriptAvailable: true,
-        },
-        {
-          meetingId: '81000000-0000-0000-0000-000000000307',
-          title: 'Weekly one-to-one check-in',
-          endedAt: '2026-08-27T08:30:00Z',
-          actualDurationMinutes: 30,
-          participantPeak: 2,
-          averageQualityScore: null,
-          recordingAvailable: false,
-          transcriptAvailable: false,
-        },
-      ],
-      page: 0,
-      pageSize: 30,
-      total: 3,
-    })
-  );
+  const historyItems = [
+    {
+      ...ENDED_MEETING,
+      endedAt: ENDED_MEETING.endedAt,
+      ...(rich
+        ? {
+            organizerName: '김민아',
+            organizerUserId: 42,
+            title: '분기 제품 출시 의사결정',
+            participantRole: 'ORGANIZER',
+            canHost: true,
+          }
+        : {}),
+      actualDurationMinutes: 42,
+      participantPeak: 6,
+      averageQualityScore: 96,
+      recordingAvailable: true,
+      transcriptAvailable: true,
+    },
+    {
+      meetingId: '81000000-0000-0000-0000-000000000306',
+      title: 'Platform design decisions',
+      ...(rich
+        ? {
+            organizerName: '박수석',
+            organizerUserId: 43,
+            title: '플랫폼 디자인 시스템 싱크',
+            participantRole: 'ATTENDEE',
+            canHost: false,
+          }
+        : {}),
+      endedAt: '2026-08-28T07:15:00Z',
+      actualDurationMinutes: 45,
+      participantPeak: 5,
+      averageQualityScore: 91,
+      recordingAvailable: false,
+      transcriptAvailable: true,
+    },
+    {
+      meetingId: '81000000-0000-0000-0000-000000000307',
+      title: 'Weekly one-to-one check-in',
+      ...(rich
+        ? {
+            organizerName: '정서우',
+            organizerUserId: 44,
+            title: '일대일 성장 체크인',
+            participantRole: 'ATTENDEE',
+            canHost: false,
+          }
+        : {}),
+      endedAt: '2026-08-27T08:30:00Z',
+      actualDurationMinutes: 30,
+      participantPeak: 2,
+      averageQualityScore: null,
+      recordingAvailable: false,
+      transcriptAvailable: false,
+    },
+  ];
+  await mockMeetingRecordBookmarks(page, historyItems);
   await page.route(`**/api/meetings/v1/meetings/${MEETING_VISUAL_ID}`, (route) =>
     fulfill(route, {
       ...ENDED_MEETING,
@@ -731,7 +808,9 @@ export async function mockMeetingVisualPublishedRecap(page: Page) {
     })
   );
   await page.route(
-    `**/api/meetings/v1/meetings/${MEETING_VISUAL_ID}/intelligence/reports/latest-published`,
+    new RegExp(
+      `/api/meetings/v1/meetings/${MEETING_VISUAL_ID}/intelligence/reports/(?:latest-published|88000000-0000-0000-0000-000000000301)$`
+    ),
     (route) =>
       fulfill(route, {
         reportId: '88000000-0000-0000-0000-000000000301',
@@ -746,6 +825,13 @@ export async function mockMeetingVisualPublishedRecap(page: Page) {
         publishedAt: '2026-08-29T02:02:00Z',
         version: 2,
         canCurrentViewerReview: false,
+        followUpCandidates: rich
+          ? [0, 1].map((actionItemIndex) => ({
+              candidateId: `89000000-0000-4000-8000-00000000030${actionItemIndex + 1}`,
+              sourceVersion: 2,
+              actionItemIndex,
+            }))
+          : [],
         analysis: {
           executiveSummary: {
             text: 'The group approved a staged launch while keeping regional capacity as an explicit release gate.',
@@ -756,18 +842,46 @@ export async function mockMeetingVisualPublishedRecap(page: Page) {
               text: 'Staged launch readiness',
               citations: [{ segmentId: 'seg-12', startMillis: 92_000, endMillis: 118_000 }],
             },
+            ...(rich
+              ? [
+                  {
+                    text: '보안 검증과 지역별 확장 조건',
+                    citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }],
+                  },
+                ]
+              : []),
           ],
           decisions: [
             {
               text: 'Launch the internal pilot on Monday.',
               citations: [{ segmentId: 'seg-18', startMillis: 221_000, endMillis: 238_000 }],
             },
+            ...(rich
+              ? [
+                  {
+                    text: '보안 검토 결과를 확인한 뒤 외부 공개 범위를 단계적으로 확대합니다.',
+                    citations: [{ segmentId: 'seg-21', startMillis: 281_000, endMillis: 302_000 }],
+                  },
+                  {
+                    text: '지역별 용량 검증을 다음 출시 단계의 필수 조건으로 유지합니다.',
+                    citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }],
+                  },
+                ]
+              : []),
           ],
           actionItems: [
             {
               text: 'Verify regional capacity before external expansion.',
               citations: [{ segmentId: 'seg-21', startMillis: 281_000, endMillis: 302_000 }],
             },
+            ...(rich
+              ? [
+                  {
+                    text: '최종 출시 체크리스트와 담당자 인계 내용을 팀에 공유합니다.',
+                    citations: [{ segmentId: 'seg-24', startMillis: 340_000, endMillis: 354_000 }],
+                  },
+                ]
+              : []),
           ],
           openQuestions: [],
           risks: [

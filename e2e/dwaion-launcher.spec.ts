@@ -254,6 +254,44 @@ test('DWAI·ON full-screen panel reflows internally at 200% text', async ({ page
   await expect(panel.getByRole('button', { name: 'Close DWAI·ON' })).toBeVisible();
 });
 
+test('DWAI·ON docks above a CSS zoom reflow without covering Work mobile navigation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/work/queue');
+  await page.evaluate(() => {
+    document.documentElement.style.zoom = '2';
+  });
+
+  const launcher = page.getByTestId('dwaion-launcher');
+  const bottomNavigation = page.getByTestId('work-mobile-bottom-navigation');
+  const more = bottomNavigation.getByRole('button', { name: 'More', exact: true });
+  await expect(bottomNavigation).toBeVisible();
+  await expect(more).toBeVisible();
+  await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
+
+  const geometry = await Promise.all([launcher.boundingBox(), more.boundingBox()]);
+  const [launcherBounds, moreBounds] = geometry;
+  expect(launcherBounds).not.toBeNull();
+  expect(moreBounds).not.toBeNull();
+  const overlaps =
+    launcherBounds!.x < moreBounds!.x + moreBounds!.width &&
+    launcherBounds!.x + launcherBounds!.width > moreBounds!.x &&
+    launcherBounds!.y < moreBounds!.y + moreBounds!.height &&
+    launcherBounds!.y + launcherBounds!.height > moreBounds!.y;
+  expect(overlaps).toBe(false);
+
+  await more.focus();
+  await expect(more).toBeFocused();
+  await page.keyboard.press('Enter');
+  const dialog = page.getByRole('dialog', { name: 'Browse work by status', exact: true });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await more.click();
+  await expect(dialog).toBeVisible();
+});
+
 test('DWAI·ON reserves the shell edge without covering compact content or bottom actions', async ({
   page,
 }) => {

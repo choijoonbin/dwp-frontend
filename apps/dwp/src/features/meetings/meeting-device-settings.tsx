@@ -1,10 +1,21 @@
+import { foundationTokens } from '@dwp-frontend/design-system';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mic, RefreshCw, ShieldCheck, Video, VideoOff, Volume2 } from 'lucide-react';
+import {
+  Building2,
+  CircleOff,
+  ImagePlus,
+  Mic,
+  RefreshCw,
+  ShieldCheck,
+  Sparkles,
+  Video,
+  VideoOff,
+  Volume2,
+} from 'lucide-react';
 import {
   ActionButton,
-  foundationTokens,
   InlineFeedback,
-  ProgressMeter,
   SectionHeader,
   SelectField,
 } from '@dwp-frontend/design-system';
@@ -15,19 +26,39 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import type { MeetingDevicePreferences } from './meeting-preferences-model';
 import { useMeetingDevicePreview } from './use-meeting-device-preview';
-import { meetingSurface } from './meeting-visual-system';
+import { isMeetingBackgroundSupported } from './meeting-background-processor';
+import { meetingSurface, meetingShape } from './meeting-visual-system';
+import type { MeetingDeviceDiagnosticSnapshot } from './meeting-device-settings-diagnostics';
+import { alpha } from '@mui/material/styles';
 
 export function MeetingDeviceSettings({
   value,
   onChange,
   revocation,
+  onDiagnostics,
 }: {
   value: MeetingDevicePreferences;
   onChange: (value: MeetingDevicePreferences) => void;
   revocation?: AbortSignal;
+  onDiagnostics?: (value: MeetingDeviceDiagnosticSnapshot) => void;
 }) {
   const { t } = useTranslation('meetings');
   const preview = useMeetingDevicePreview(revocation);
+  const backgroundSupported = isMeetingBackgroundSupported();
+  const selectBackground = (backgroundBlur: boolean) => {
+    const wasPreviewing = preview.states.video !== 'idle';
+    preview.stop('video');
+    const next = { ...value, backgroundBlur };
+    onChange(next);
+    if (wasPreviewing) void preview.start('video', next);
+  };
+  useEffect(() => {
+    onDiagnostics?.({
+      audio: preview.states.audio,
+      video: preview.states.video,
+      failure: Boolean(preview.error),
+    });
+  }, [onDiagnostics, preview.states.audio, preview.states.video, preview.error]);
   const options = (kind: MediaDeviceKind) => {
     const selected =
       kind === 'audioinput'
@@ -65,7 +96,7 @@ export function MeetingDeviceSettings({
     /* Browser device policy can reject capability access. */
   }
   return (
-    <Stack gap={3}>
+    <Stack gap={{ xs: 2, md: 3 }}>
       {preview.error && (
         <InlineFeedback severity="warning">
           {t(`preferences.devices.errors.${preview.error}`)}
@@ -77,6 +108,7 @@ export function MeetingDeviceSettings({
         aria-labelledby="meeting-preferences-audio-heading"
         sx={(theme) => ({
           ...meetingSurface(theme),
+          borderRadius: meetingShape.group,
           p: { xs: 2, md: 3 },
           scrollMarginTop: 12,
           boxShadow: theme.shadows[1],
@@ -85,7 +117,7 @@ export function MeetingDeviceSettings({
         <SectionHeader
           id="meeting-preferences-audio-heading"
           density="compact"
-          glyph="plain"
+          glyph="surface"
           icon={Mic}
           title={t('preferences.audio.title')}
           meta={
@@ -108,17 +140,56 @@ export function MeetingDeviceSettings({
             supportingText={t('preferences.devices.permissionHint')}
           />
           <Box
-            sx={{
+            sx={(theme) => ({
               p: 2,
-              bgcolor: 'action.hover',
-              borderRadius: foundationTokens.radius.surface + 'px',
-            }}
+              bgcolor: alpha(theme.palette.primary.main, 0.04),
+              borderRadius: meetingShape.control,
+            })}
           >
-            <ProgressMeter
-              value={preview.level}
-              label={t('preferences.audio.level')}
-              valueLabel={t(`preferences.devices.states.${preview.states.audio}`)}
-            />
+            <Stack direction="row" justifyContent="space-between" gap={1}>
+              <Typography variant="caption" color="text.secondary">
+                {t('preferences.audio.level')}
+              </Typography>
+              <Typography variant="caption" color="primary.main">
+                {t(`preferences.devices.states.${preview.states.audio}`)}
+              </Typography>
+            </Stack>
+            <Box
+              role="meter"
+              aria-label={t('preferences.audio.level')}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={preview.level}
+              sx={{
+                display: 'flex',
+                gap: 0.4,
+                p: 0.3,
+                my: 1,
+                height: 14,
+                bgcolor: 'action.hover',
+                borderRadius: foundationTokens.radius.compact + 'px',
+              }}
+            >
+              {Array.from({ length: 16 }, (_, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    flex: 1,
+                    borderRadius: foundationTokens.radius.compact + 'px',
+                    bgcolor:
+                      index >= 14
+                        ? 'error.main'
+                        : index >= 12
+                          ? 'warning.main'
+                          : index >= 10
+                            ? 'primary.main'
+                            : 'success.main',
+                    opacity:
+                      preview.states.audio === 'active' && index < preview.level / 6.25 ? 1 : 0.16,
+                  }}
+                />
+              ))}
+            </Box>
             <ActionButton
               intent="secondary"
               size="small"
@@ -140,17 +211,14 @@ export function MeetingDeviceSettings({
               {t('preferences.audio.localOnly')}
             </Typography>
           </Box>
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            gap={1.5}
-            alignItems={{ sm: 'flex-start' }}
-          >
+          <Stack direction="row" gap={1.5} alignItems="center">
             <SelectField
               label={t('preferences.audio.speaker')}
               value={value.speakerId}
               options={options('audiooutput')}
               onValueChange={(id) => selectDevice('speakerId', id)}
               supportingText={t('preferences.audio.outputHint')}
+              sx={{ minWidth: 0, flex: 1 }}
             />
             <ActionButton
               intent="secondary"
@@ -163,6 +231,14 @@ export function MeetingDeviceSettings({
             </ActionButton>
           </Stack>
           <FormControlLabel
+            labelPlacement="start"
+            sx={(theme) => ({
+              m: 0,
+              p: 1.5,
+              justifyContent: 'space-between',
+              borderRadius: meetingShape.control,
+              bgcolor: alpha(theme.palette.primary.main, 0.045),
+            })}
             control={
               <Switch
                 checked={value.noiseSuppression}
@@ -185,6 +261,7 @@ export function MeetingDeviceSettings({
         aria-labelledby="meeting-preferences-video-heading"
         sx={(theme) => ({
           ...meetingSurface(theme),
+          borderRadius: meetingShape.group,
           p: { xs: 2, md: 3 },
           scrollMarginTop: 12,
           boxShadow: theme.shadows[1],
@@ -193,7 +270,7 @@ export function MeetingDeviceSettings({
         <SectionHeader
           id="meeting-preferences-video-heading"
           density="compact"
-          glyph="plain"
+          glyph="surface"
           icon={Video}
           title={t('preferences.video.title')}
         />
@@ -213,7 +290,7 @@ export function MeetingDeviceSettings({
               minHeight: 160,
               bgcolor: 'grey.900',
               color: 'common.white',
-              borderRadius: foundationTokens.radius.surface + 'px',
+              borderRadius: meetingShape.card,
               overflow: 'hidden',
               display: 'grid',
               placeItems: 'center',
@@ -273,9 +350,102 @@ export function MeetingDeviceSettings({
                 : 'preferences.devices.stop'
             )}
           </ActionButton>
-          <Typography variant="body2" color="text.secondary">
+          <Box data-testid="meeting-background-options">
+            <Typography variant="caption" color="text.secondary">
+              {t('stitch.devices.background')}
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4,minmax(0,1fr))',
+                gap: 0.75,
+                mt: 0.75,
+              }}
+            >
+              {[
+                { key: 'none', icon: CircleOff },
+                { key: 'blur', icon: Sparkles },
+                { key: 'office', icon: Building2 },
+                { key: 'image', icon: ImagePlus },
+              ].map(({ key, icon: Icon }) => (
+                <ActionButton
+                  key={key}
+                  intent={
+                    (value.backgroundBlur ? key === 'blur' : key === 'none') ? 'secondary' : 'quiet'
+                  }
+                  disabled={
+                    key === 'office' || key === 'image' || (key === 'blur' && !backgroundSupported)
+                  }
+                  aria-pressed={value.backgroundBlur ? key === 'blur' : key === 'none'}
+                  aria-label={t('stitch.devices.' + key)}
+                  onClick={() => {
+                    if (key === 'none' || key === 'blur') selectBackground(key === 'blur');
+                  }}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 0.75,
+                    py: 1.25,
+                    px: 0.5,
+                    fontSize: 'caption.fontSize',
+                    lineHeight: 'caption.lineHeight',
+                    borderRadius: meetingShape.control,
+                    border: 1,
+                    borderStyle: key === 'image' ? 'dashed' : 'solid',
+                    borderColor: (value.backgroundBlur ? key === 'blur' : key === 'none')
+                      ? 'primary.main'
+                      : 'divider',
+                    bgcolor: (value.backgroundBlur ? key === 'blur' : key === 'none')
+                      ? 'action.selected'
+                      : 'action.hover',
+                  }}
+                >
+                  <Icon size={19} />
+                  {t('stitch.devices.' + key)}
+                </ActionButton>
+              ))}
+            </Box>
+          </Box>
+          {preview.backgroundState === 'loading' && (
+            <Typography role="status" variant="caption">
+              {t('preferences.video.backgroundProcessing')}
+            </Typography>
+          )}
+          {preview.backgroundState === 'failed' && (
+            <InlineFeedback severity="warning">
+              {t('preferences.video.backgroundFailed')}
+            </InlineFeedback>
+          )}
+          {!backgroundSupported && (
+            <Typography variant="caption" color="text.secondary">
+              {t('preferences.video.backgroundUnsupported')}
+            </Typography>
+          )}
+          <Typography variant="caption" color="text.secondary">
             {t('preferences.video.backgroundHint')}
           </Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={1}
+            sx={(theme) => ({
+              p: 1.5,
+              borderRadius: meetingShape.control,
+              bgcolor: alpha(theme.palette.primary.main, 0.045),
+            })}
+          >
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="subtitle2">{t('stitch.devices.hd')}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('stitch.devices.hdHint')}
+              </Typography>
+            </Box>
+            <Switch
+              disabled
+              checked={false}
+              slotProps={{ input: { 'aria-label': t('stitch.devices.hd') } }}
+            />
+          </Stack>
         </Stack>
       </Box>
     </Stack>

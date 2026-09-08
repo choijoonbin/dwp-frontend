@@ -11,7 +11,13 @@ export type ProductManagementLayoutProps = Omit<ProductAreaLayoutProps, 'manifes
 
 export function ProductManagementLayout({ surface, ...layoutProps }: ProductManagementLayoutProps) {
   if (surface.decision.context.plane !== 'management') {
-    return <ProductSurfaceAccessState decision={{ state: 'authority-unavailable' }} />;
+    return (
+      <ProductSurfaceAccessState
+        decision={{ state: 'authority-unavailable' }}
+        plane="management"
+        pageLevel
+      />
+    );
   }
   return <ProductAreaLayout {...layoutProps} surface={surface} />;
 }

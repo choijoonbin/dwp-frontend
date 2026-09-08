@@ -1,0 +1,10 @@
+{
+  "ko": {
+    "workHub.checklist.savedProgress": "저장된 체크리스트 {{completed}} / {{total}} 완료",
+    "workHub.checklist.unsavedProgress": "변경사항이 아직 저장되지 않았습니다. 진행률은 저장된 체크리스트를 기준으로 표시합니다."
+  },
+  "en": {
+    "workHub.checklist.savedProgress": "Saved checklist: {{completed}} / {{total}} complete",
+    "workHub.checklist.unsavedProgress": "Your changes are not saved yet. Progress reflects the saved checklist."
+  }
+}

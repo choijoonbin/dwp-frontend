@@ -6,6 +6,12 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig, loadEnv } from 'vite';
 
 import {
+  securityHeaders,
+  trustedHttpOrigin,
+  trustedWebSocketOrigin,
+} from './scripts/frontend-security-headers.mjs';
+
+import {
   findForeignProductRouteContractKeys,
   projectProductAuthorizationRoutes,
 } from './apps/dwp/src/components/product-application-artifact-policy.ts';
@@ -433,6 +439,12 @@ const productIsolationPlugin = {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, workspaceRoot, '');
+  const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
+  const apiOrigin = trustedHttpOrigin(process.env.VITE_API_URL || env.VITE_API_URL || proxyTarget);
+  const liveKitUrl =
+    process.env.DWP_LIVEKIT_CLIENT_URL || env.VITE_LIVEKIT_URL || env.LIVEKIT_URL || '';
+  const developmentLiveKitOrigin = trustedWebSocketOrigin(liveKitUrl, true);
+  const productionLiveKitOrigin = trustedWebSocketOrigin(liveKitUrl);
   return {
     base: `/assets/dwp/${productId}/`,
     root: path.join(workspaceRoot, 'apps/product-runtime'),
@@ -459,13 +471,17 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       port: Number(env.DWP_PRODUCT_PORT || 4300),
+      headers: securityHeaders(true, apiOrigin, developmentLiveKitOrigin),
       fs: { allow: [workspaceRoot] },
       proxy: {
         '/api': {
-          target: env.VITE_API_PROXY_TARGET || 'http://localhost:8080',
+          target: proxyTarget,
           changeOrigin: true,
         },
       },
+    },
+    preview: {
+      headers: securityHeaders(false, apiOrigin, productionLiveKitOrigin),
     },
     build: {
       outDir: path.join(workspaceRoot, 'dist/apps', productId),

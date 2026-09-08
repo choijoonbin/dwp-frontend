@@ -8,18 +8,26 @@ export type MeetingRecapReference = {
   meetingId: string;
   reportId?: string;
   intent?: 'review';
+  candidateId?: string;
 };
 export function meetingRecapReference(search: string): MeetingRecapReference | 'invalid' | null {
   const params = new URLSearchParams(search);
   const meetingId = params.get('meeting');
   const reportId = params.get('reportId');
   const intent = params.get('intent');
-  if (meetingId === null && reportId === null && intent === null) return null;
+  const candidateId = params.get('candidateId');
+  if (meetingId === null && reportId === null && intent === null && candidateId === null)
+    return null;
   if (
     !meetingId ||
     !uuid.test(meetingId) ||
     params.getAll('meeting').length !== 1 ||
     (reportId !== null && (!uuid.test(reportId) || params.getAll('reportId').length !== 1)) ||
+    (candidateId !== null &&
+      (!uuid.test(candidateId) ||
+        params.getAll('candidateId').length !== 1 ||
+        reportId === null ||
+        intent !== null)) ||
     (intent !== null &&
       (intent !== 'review' || params.getAll('intent').length !== 1 || reportId === null))
   )
@@ -28,6 +36,7 @@ export function meetingRecapReference(search: string): MeetingRecapReference | '
     meetingId,
     ...(reportId ? { reportId } : {}),
     ...(intent === 'review' ? { intent } : {}),
+    ...(candidateId ? { candidateId } : {}),
   };
 }
 

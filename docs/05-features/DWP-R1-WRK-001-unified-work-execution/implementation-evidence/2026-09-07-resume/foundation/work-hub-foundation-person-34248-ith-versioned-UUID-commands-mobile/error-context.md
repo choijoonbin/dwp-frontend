@@ -1,0 +1,43 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "Skip to main content" [ref=e3]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "Open navigation" [ref=e7]:
+                    - button "Open navigation" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "Work" [ref=e16]
+                - generic [ref=e17]:
+                    - button "Search DWP" [ref=e19] [cursor=pointer]:
+                        - img [ref=e20]
+                    - 'button "Account: Mina Kim, Tenant administrator" [ref=e24] [cursor=pointer]':
+                        - generic [ref=e25]: M
+                        - img [ref=e26]
+                    - generic "Open DWAI·ON" [ref=e29]:
+                        - button "Open DWAI·ON" [ref=e30] [cursor=pointer]
+        - main [ref=e33]:
+            - progressbar "Loading page" [ref=e35]:
+                - img [ref=e36]
+        - navigation "Work quick navigation" [ref=e38]:
+            - button "Inbox" [ref=e39] [cursor=pointer]:
+                - img [ref=e40]
+                - generic [ref=e43]: Inbox
+            - button "Today" [ref=e44] [cursor=pointer]:
+                - img [ref=e45]
+                - generic [ref=e50]: Today
+            - button "My actions" [ref=e51] [cursor=pointer]:
+                - img [ref=e52]
+                - generic [ref=e55]: My actions
+            - button "DWAI·ON" [ref=e56] [cursor=pointer]:
+                - img [ref=e57]
+                - generic [ref=e60]: DWAI·ON
+            - button "More" [ref=e61] [cursor=pointer]:
+                - img [ref=e62]
+                - generic [ref=e66]: More
+```

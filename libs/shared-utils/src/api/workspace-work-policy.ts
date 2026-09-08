@@ -3,7 +3,9 @@ import type { WorkspaceWorkItem } from './workspace-api';
 export type WorkspaceWorkReference = Pick<WorkspaceWorkItem, 'id' | 'type' | 'sourceSystem'> &
   Partial<Pick<WorkspaceWorkItem, 'sourceReference'>>;
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+// PostgreSQL's uuid type accepts every canonical 8-4-4-4-12 hexadecimal value. Work item
+// identifiers are opaque database identities, so routing must not infer an RFC version or variant.
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 
 /** Opaque owner references must survive every Home, AI and queue entry point. */
 export function workspaceWorkItemReference(item: WorkspaceWorkReference): string | null {

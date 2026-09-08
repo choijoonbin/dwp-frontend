@@ -158,6 +158,12 @@ test('exact source identity remains selected across overview, artifacts, attenda
   }
   await page.getByRole('tab', { name: 'Recording, transcript, and AI', exact: true }).click();
   await noSubstitution(page);
+  const followUpsTab = page.getByRole('tab', { name: 'Follow-up work (0)', exact: true });
+  await followUpsTab.focus();
+  await page.keyboard.press('Enter');
+  await expect(followUpsTab).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('region', { name: 'Follow-up actions', exact: true })).toBeFocused();
+  await noSubstitution(page);
   await page.getByRole('tab', { name: 'Attendance evidence', exact: true }).click();
   await page.getByRole('tab', { name: 'Overview and outcomes', exact: true }).click();
   await page.getByRole('button', { name: 'Refresh', exact: true }).click();

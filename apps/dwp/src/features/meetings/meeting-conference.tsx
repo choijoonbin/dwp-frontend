@@ -42,7 +42,10 @@ import type { VideoMeetingEffectivePermissions } from '@dwp-frontend/shared-util
 import { MeetingCollaborationRuntime } from './meeting-collaboration-runtime';
 import { MeetingLeaveControl } from './meeting-leave-control';
 import { MeetingParticipantsPanel } from './meeting-participants-panel';
+import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
+import { MeetingRoomLiveSummary, MeetingStageWaiting } from './meeting-room-stage-context';
 import {
+  canOpenMeetingRoomPanel,
   MeetingRoomContextPanel,
   MeetingRoomRailNavigation,
   type MeetingRoomPanel,
@@ -90,7 +93,15 @@ export function MeetingConference({
   onOverlayPanelChange,
 }: MeetingConferenceProps) {
   const { t } = useTranslation('meetings');
-  const [sidePanel, setSidePanel] = useState<MeetingRoomPanel>(null);
+  const [requestedPanel, setSidePanel] = useState<MeetingRoomPanel>(null);
+  // Fence the render synchronously: revocation must not leave one stale participant frame.
+  const sidePanel = canOpenMeetingRoomPanel(requestedPanel, permissions) ? requestedPanel : null;
+  const selectPanel = (panel: Exclude<MeetingRoomPanel, null>) => {
+    if (canOpenMeetingRoomPanel(panel, permissions)) setSidePanel(panel);
+  };
+  useEffect(() => {
+    if (requestedPanel && !canOpenMeetingRoomPanel(requestedPanel, permissions)) setSidePanel(null);
+  }, [permissions, requestedPanel]);
   const overlayPanel = useMediaQuery('(max-width:899px)');
   const initialRailResolved = useRef(false);
   const liveKitRootRef = useRef<HTMLDivElement>(null);
@@ -168,6 +179,11 @@ export function MeetingConference({
   }, [layoutContext.pin, screenShareTracks, subscribedScreenShare]);
 
   const carouselTracks = tracks.filter((track) => !isSameTrack(track, focusTrack));
+  const waitingForMedia =
+    !focusTrack &&
+    !tracks.some(
+      (track) => isTrackReference(track) && track.publication.track && !track.publication.isMuted
+    );
   const closeSidePanel = () => {
     const closingPanel = sidePanel;
     setSidePanel(null);
@@ -186,7 +202,14 @@ export function MeetingConference({
             aria-hidden={overlayPanel && sidePanel !== null ? true : undefined}
             inert={overlayPanel && sidePanel !== null ? true : undefined}
           >
-            {!focusTrack ? (
+            {waitingForMedia ? (
+              <div className="dwp-meeting-conference__layout dwp-meeting-conference__waiting-layout">
+                <MeetingStageWaiting />
+                <CarouselLayout tracks={tracks}>
+                  <ParticipantTile />
+                </CarouselLayout>
+              </div>
+            ) : !focusTrack ? (
               <div className="lk-grid-layout-wrapper dwp-meeting-conference__layout">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile />
@@ -202,22 +225,25 @@ export function MeetingConference({
                 </FocusLayoutContainer>
               </div>
             )}
-            <MeetingControlBar
-              permissions={permissions}
-              sidePanel={sidePanel}
-              registerPanelTrigger={(panel, element) => {
-                panelTriggerRefs.current[panel] = element ?? undefined;
-              }}
-              onPanelToggle={(panel) =>
-                setSidePanel((current) => (current === panel ? null : panel))
-              }
-              onDeviceError={onDeviceError}
-              onLeaveError={onLeaveError}
+            <MeetingRoomLiveSummary
+              meetingId={meetingId}
+              enabled={overlayPanel}
+              onOpenAgenda={() => setSidePanel('agenda')}
             />
           </section>
           {sidePanel && (
-            <div className="dwp-meeting-room-rail">
-              <MeetingRoomRailNavigation activePanel={sidePanel} onSelect={setSidePanel} />
+            <div
+              className="dwp-meeting-room-rail"
+              data-meeting-focus-overlay={overlayPanel}
+              onKeyDownCapture={(event) => {
+                if (containMeetingOverlayTab(event, event.currentTarget)) event.stopPropagation();
+              }}
+            >
+              <MeetingRoomRailNavigation
+                activePanel={sidePanel}
+                permissions={permissions}
+                onSelect={selectPanel}
+              />
               {(sidePanel === 'agenda' || sidePanel === 'ai') && (
                 <MeetingRoomContextPanel
                   meetingId={meetingId}
@@ -234,7 +260,7 @@ export function MeetingConference({
                   canModerate={canModerate}
                   permissions={permissions}
                   onClose={closeSidePanel}
-                  onTabChange={setSidePanel}
+                  onTabChange={selectPanel}
                 />
               )}
               {sidePanel === 'participants' && (
@@ -242,6 +268,21 @@ export function MeetingConference({
               )}
             </div>
           )}
+        </div>
+        <div
+          aria-hidden={overlayPanel && sidePanel !== null ? true : undefined}
+          inert={overlayPanel && sidePanel !== null ? true : undefined}
+        >
+          <MeetingControlBar
+            permissions={permissions}
+            sidePanel={sidePanel}
+            registerPanelTrigger={(panel, element) => {
+              panelTriggerRefs.current[panel] = element ?? undefined;
+            }}
+            onPanelToggle={(panel) => setSidePanel((current) => (current === panel ? null : panel))}
+            onDeviceError={onDeviceError}
+            onLeaveError={onLeaveError}
+          />
         </div>
       </LayoutContextProvider>
       <RoomAudioRenderer />
@@ -326,10 +367,11 @@ function MeetingControlBar({
       aria-orientation="horizontal"
       aria-label={t('room.controls.label')}
     >
-      {canPublishMicrophone && (
+      {effectivePermissions.microphone && (
         <div className="dwp-meeting-control-bar__group">
           <button
             {...microphone.buttonProps}
+            disabled={microphone.buttonProps.disabled || !canPublishMicrophone}
             type="button"
             className={`${microphone.buttonProps.className ?? ''} dwp-meeting-control`}
             aria-label={microphoneLabel}
@@ -339,6 +381,7 @@ function MeetingControlBar({
             <span>{t('room.controls.microphone')}</span>
           </button>
           <MediaDeviceMenu
+            disabled={!canPublishMicrophone}
             kind="audioinput"
             className="dwp-meeting-device-menu"
             aria-label={t('room.controls.deviceMenu', {
@@ -356,10 +399,11 @@ function MeetingControlBar({
         </div>
       )}
 
-      {canPublishCamera && (
+      {effectivePermissions.camera && (
         <div className="dwp-meeting-control-bar__group">
           <button
             {...camera.buttonProps}
+            disabled={camera.buttonProps.disabled || !canPublishCamera}
             type="button"
             className={`${camera.buttonProps.className ?? ''} dwp-meeting-control`}
             aria-label={cameraLabel}
@@ -369,6 +413,7 @@ function MeetingControlBar({
             <span>{t('room.controls.camera')}</span>
           </button>
           <MediaDeviceMenu
+            disabled={!canPublishCamera}
             kind="videoinput"
             className="dwp-meeting-device-menu"
             aria-label={t('room.controls.deviceMenu', { device: t('room.controls.camera') })}
@@ -397,6 +442,7 @@ function MeetingControlBar({
 
       <button
         ref={(element) => registerPanelTrigger('agenda', element)}
+        data-control="agenda"
         type="button"
         className="dwp-meeting-control"
         aria-label={t(
@@ -415,6 +461,7 @@ function MeetingControlBar({
       {canChat && (
         <button
           ref={(element) => registerPanelTrigger('chat', element)}
+          data-control="chat"
           type="button"
           className="dwp-meeting-control"
           aria-label={t(
@@ -434,6 +481,7 @@ function MeetingControlBar({
       {effectivePermissions.handRaise && (
         <button
           ref={(element) => registerPanelTrigger('floor', element)}
+          data-control="floor"
           type="button"
           className="dwp-meeting-control"
           aria-label={t(
@@ -453,6 +501,7 @@ function MeetingControlBar({
       {effectivePermissions.participantList && (
         <button
           ref={(element) => registerPanelTrigger('participants', element)}
+          data-control="participants"
           type="button"
           className="dwp-meeting-control"
           aria-label={t(
@@ -477,6 +526,7 @@ function MeetingControlBar({
 
       <button
         ref={(element) => registerPanelTrigger('ai', element)}
+        data-control="ai"
         type="button"
         className="dwp-meeting-control"
         aria-label={t(sidePanel === 'ai' ? 'room.controls.aiClose' : 'room.controls.aiOpen')}

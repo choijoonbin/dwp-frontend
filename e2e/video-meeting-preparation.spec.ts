@@ -268,6 +268,10 @@ test('preparation RSVP uses current revision and exposes no unsupported success 
     expectedVersion: 0,
   });
   expect(state.keys[0]).toMatch(/^[0-9a-f-]{36}$/u);
+  const materialSafety = page.getByText('Files stay in their approved source.', { exact: false });
+  if (!(await materialSafety.isVisible())) {
+    await materialSafety.locator('xpath=ancestor::details').locator(':scope > summary').click();
+  }
   await expect(
     page.getByText('Files stay in their approved source.', {
       exact: false,
@@ -292,7 +296,7 @@ test('preparation RSVP uses current revision and exposes no unsupported success 
   ).toBeLessThanOrEqual(1);
 });
 
-test('private agenda checklist persists self-only state and collapses when complete', async ({
+test('private agenda checklist persists self-only state with compact optional guidance', async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({
@@ -303,7 +307,7 @@ test('private agenda checklist persists self-only state and collapses when compl
   const checklist = page
     .getByText('My preparation checklist', { exact: true })
     .locator('xpath=ancestor::details');
-  await expect(checklist).toHaveAttribute('open', '');
+  await expect(checklist).not.toHaveAttribute('open', '');
   const checkbox = page.getByRole('checkbox', {
     name: 'Mark “Review release risks” as prepared',
   });
@@ -382,7 +386,14 @@ test('host registers a governed opaque material reference without file contents 
   });
   expect(JSON.stringify(state.materialCalls[0])).not.toContain('token');
   expect(JSON.stringify(state.materialCalls[0])).not.toContain('contents');
-  await expect(page.getByText('Revalidate on open', { exact: true })).toBeVisible();
+  const materialDetail = page.getByTestId('meeting-preparation-material-detail');
+  await expect(materialDetail).toHaveCount(1);
+  if (!(await materialDetail.evaluate((element) => element.hasAttribute('open')))) {
+    await materialDetail.locator(':scope > summary').click();
+  }
+  await expect(
+    materialDetail.getByText('Revalidate on open', { exact: false }).filter({ visible: true })
+  ).toBeVisible();
   await expect(page.getByRole('link', { name: /Release evidence/u })).toHaveCount(0);
 });
 
@@ -402,6 +413,11 @@ test('participant receives a short-lived material link only after current access
     .fill('files/release-evidence');
   await dialog.getByRole('button', { name: 'Register reference', exact: true }).click();
 
+  const materialDetail = page.getByTestId('meeting-preparation-material-detail');
+  await expect(materialDetail).toHaveCount(1);
+  if (!(await materialDetail.evaluate((element) => element.hasAttribute('open')))) {
+    await materialDetail.locator(':scope > summary').click();
+  }
   await expect(page.getByRole('link', { name: 'Open material', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Verify access', exact: true }).click();
   await expect.poll(() => state.materialAccessCalls.length).toBe(1);
@@ -536,6 +552,30 @@ test('200 percent text keeps personal preparation operable without horizontal ov
   });
   await checkbox.focus();
   await expect(checkbox).toBeFocused();
+  const roster = page.getByTestId('meeting-preparation-roster');
+  await expect(async () => {
+    const people = await roster.locator(':scope > li').evaluateAll((elements) =>
+      elements.map((element) => {
+        const card = element.getBoundingClientRect();
+        return {
+          width: card.width,
+          rootFontSize: Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+          textInside: [...element.querySelectorAll('p, span')].every((text) => {
+            const bounds = text.getBoundingClientRect();
+            return bounds.left >= card.left - 1 && bounds.right <= card.right + 1;
+          }),
+        };
+      })
+    );
+    expect(people.length).toBeGreaterThan(0);
+    for (const person of people) {
+      expect(person.width).toBeGreaterThanOrEqual(person.rootFontSize * 4 - 1);
+      expect(
+        person.textInside,
+        'enlarged attendee identity and response stay inside the card'
+      ).toBe(true);
+    }
+  }).toPass({ timeout: 5_000 });
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
   ).toBeLessThanOrEqual(1);

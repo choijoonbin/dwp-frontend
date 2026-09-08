@@ -8,7 +8,7 @@ export type ActivityDetailField = {
 };
 
 export type ActivityAuditPresentation =
-  'VERIFIED' | 'VERIFIED_RESTRICTED' | 'LEGACY_UNLINKED' | 'NOT_LINKED';
+  'VERIFIED' | 'VERIFIED_RESTRICTED' | 'LINKED' | 'PENDING' | 'LEGACY_UNLINKED' | 'NOT_LINKED';
 
 export type ActivityEventDetailModel = {
   kind: ActivityDetailKind;
@@ -53,12 +53,17 @@ function fields(...values: Array<ActivityDetailField | null>): ActivityDetailFie
 
 export function activityEventDetailModel(event: WorkspaceActivityEvent): ActivityEventDetailModel {
   const kind: ActivityDetailKind = event.eventKind ?? 'EVENT';
-  const verifiedAuditRecord =
-    event.auditStatus === 'VERIFIED' ? presentString(event.auditRecordId) : null;
-  const auditPresentation: ActivityAuditPresentation = verifiedAuditRecord
-    ? event.auditAccess === 'RESTRICTED'
-      ? 'VERIFIED_RESTRICTED'
-      : 'VERIFIED'
+  const referencedAuditRecord = ['VERIFIED', 'LINKED', 'PENDING'].includes(event.auditStatus ?? '')
+    ? presentString(event.auditRecordId)
+    : null;
+  const auditPresentation: ActivityAuditPresentation = referencedAuditRecord
+    ? event.auditStatus === 'PENDING'
+      ? 'PENDING'
+      : event.auditStatus === 'LINKED'
+        ? 'LINKED'
+        : event.auditAccess === 'RESTRICTED'
+          ? 'VERIFIED_RESTRICTED'
+          : 'VERIFIED'
     : event.auditStatus === 'LEGACY_UNLINKED'
       ? 'LEGACY_UNLINKED'
       : 'NOT_LINKED';
@@ -96,7 +101,7 @@ export function activityEventDetailModel(event: WorkspaceActivityEvent): Activit
     ),
     audit: {
       presentation: auditPresentation,
-      recordId: verifiedAuditRecord,
+      recordId: referencedAuditRecord,
     },
     legacy: event.dataProvenance === 'LEGACY',
     canRefreshUnknownState: event.state === 'unknown',
@@ -122,5 +127,15 @@ export function selectedActivityEvent(
   requestedId: string,
   event: WorkspaceActivityEvent | undefined
 ): WorkspaceActivityEvent | undefined {
-  return requestedId && event?.id === requestedId ? event : undefined;
+  if (!requestedId || !event) return undefined;
+  // UUIDs are case-insensitive; keep opaque legacy IDs and the source namespace exact.
+  const uuidId = /^(?:dwaion:)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u;
+  const requestedUuid = requestedId.replace(/[A-F]/gu, (letter) => letter.toLowerCase());
+  return uuidId.test(requestedUuid)
+    ? event.id.replace(/[A-F]/gu, (letter) => letter.toLowerCase()) === requestedUuid
+      ? event
+      : undefined
+    : event.id === requestedId
+      ? event
+      : undefined;
 }

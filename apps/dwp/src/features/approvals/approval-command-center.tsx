@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCheck, ListChecks } from 'lucide-react';
+import { ArrowLeft, CheckCheck, ListChecks } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton, FormDialog, FormField, LoadingState } from '@dwp-frontend/design-system';
 import {
@@ -34,6 +34,7 @@ import {
 } from './use-approval-governed-mutation';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { useApprovalQueueClock } from './use-approval-queue-clock';
+import { approvalWorkReturnTarget } from './approval-return-target';
 
 import type { ApprovalBatchResult, ApprovalQueueFilter } from './approval-command-center-model';
 import type { ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
@@ -51,8 +52,10 @@ export function ApprovalCommandCenter() {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTaskId = searchParams.get('task') ?? undefined;
+  const returnTarget = approvalWorkReturnTarget(searchParams.get('returnTo'));
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'approvals',
     surfaceKey: 'approvals.work',
@@ -423,6 +426,16 @@ export function ApprovalCommandCenter() {
           </Box>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+          {returnTarget && (
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<ArrowLeft size={16} />}
+              onClick={() => navigate(returnTarget)}
+            >
+              {t('common:productSurface.actions.returnToWork')}
+            </ActionButton>
+          )}
           <Chip
             size="small"
             color={selectedBatchIds.length > 0 ? 'primary' : 'default'}

@@ -19,6 +19,14 @@ const SHELL_UTILITY_PERMISSIONS = [
   },
 ];
 
+async function expectMinimumTarget(locator: Locator, minimum = 44) {
+  await expect(locator).toBeVisible();
+  const bounds = await locator.boundingBox();
+  expect(bounds, 'interactive control must have measurable bounds').not.toBeNull();
+  expect(bounds!.width, 'interactive control width').toBeGreaterThanOrEqual(minimum);
+  expect(bounds!.height, 'interactive control height').toBeGreaterThanOrEqual(minimum);
+}
+
 async function expectHeaderContract(
   header: Locator,
   context: string,
@@ -216,6 +224,93 @@ test('provider shell keeps global scope separate from tenant workspace', async (
   }
 });
 
+test('compact shell keeps 44px global targets through 320px, reflow, and forced colors', async ({
+  page,
+}, testInfo) => {
+  await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
+  await mockSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: SHELL_UTILITY_PERMISSIONS,
+    appearance: {
+      mode: 'light',
+      density: 'standard',
+      highContrast: true,
+      reduceMotion: true,
+    },
+  });
+
+  if (testInfo.project.name === 'mobile') {
+    expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+  }
+
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/work');
+    await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
+
+    const header = page.getByTestId('work-header');
+    await expect(header).toBeVisible();
+    const controls = await header.locator('button:visible').all();
+    for (const control of controls) {
+      await expectMinimumTarget(control);
+    }
+
+    const search = header.getByRole('button', { name: 'Search DWP' });
+    await expectMinimumTarget(search);
+    await search.focus();
+    await expect(search).toBeFocused();
+    expect(await search.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+    await expect(search).toHaveCSS('outline-style', 'solid');
+
+    const targetBounds = (await Promise.all(controls.map((control) => control.boundingBox())))
+      .filter((bounds) => bounds !== null)
+      .sort((left, right) => left.x - right.x);
+    for (const [index, bounds] of targetBounds.entries()) {
+      const next = targetBounds[index + 1];
+      if (!next) continue;
+      expect(
+        bounds.x + bounds.width,
+        'adjacent header targets must not overlap'
+      ).toBeLessThanOrEqual(next.x);
+    }
+
+    expect(await header.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+      false
+    );
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+      )
+    ).toBe(false);
+  }
+});
+
+test('fine-pointer desktop retains the selected standard header density', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Desktop density is covered once.');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await mockSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: SHELL_UTILITY_PERMISSIONS,
+    appearance: {
+      mode: 'light',
+      density: 'standard',
+      highContrast: false,
+      reduceMotion: true,
+    },
+  });
+
+  await page.goto('/work');
+  const header = page.getByTestId('work-header');
+  const search = header.getByRole('button', { name: 'Search DWP' });
+  const notification = header.getByRole('button', { name: 'Notifications' });
+  await expect(search).toBeVisible();
+  await expect(notification).toBeVisible();
+  expect((await search.boundingBox())?.height).toBe(38);
+  expect((await notification.boundingBox())?.height).toBe(38);
+});
+
 test('global search lazy runtime keeps visible loading feedback and a close action', async ({
   page,
 }, testInfo) => {
@@ -293,7 +388,9 @@ test('notification lazy runtime keeps an accessible loading dialog and restores 
   await loadingDialog.getByRole('button', { name: 'Close notifications' }).click();
   await expect(loadingDialog).toBeHidden();
   releaseWorkItems?.();
-  await expect(page.getByText('Approve software access request')).toBeVisible();
+  await expect(
+    page.getByText('Approve software access request', { exact: true }).first()
+  ).toBeVisible();
   await expect(trigger).toBeFocused();
 
   releaseModule?.();

@@ -1,0 +1,153 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+    - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+        - /url: '#dwp-main-content'
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic "탐색 메뉴 열기" [ref=e7]:
+                    - button "탐색 메뉴 열기" [ref=e8] [cursor=pointer]:
+                        - img [ref=e9]
+                - generic [ref=e10]:
+                    - img [ref=e12]
+                    - generic "업무" [ref=e16]
+                - generic [ref=e17]:
+                    - generic [ref=e18]:
+                        - button "DWP 검색" [ref=e19] [cursor=pointer]:
+                            - img [ref=e20]
+                            - paragraph [ref=e23]: DWP 검색
+                            - generic [ref=e24]: ⌘K
+                        - button "DWP 검색" [ref=e25] [cursor=pointer]:
+                            - img [ref=e26]
+                    - 'button "계정: Mina Kim, Tenant administrator" [ref=e30] [cursor=pointer]':
+                        - generic [ref=e31]: M
+                        - img [ref=e32]
+        - main [ref=e34]:
+            - article "분기 고객 안내 초안 정리" [ref=e38]:
+                - generic [ref=e39]:
+                    - button "업무 목록으로" [ref=e40] [cursor=pointer]:
+                        - img [ref=e42]
+                        - text: 업무 목록으로
+                    - generic [ref=e44]:
+                        - generic [ref=e45]:
+                            - generic [ref=e46]: b1111111개인 할 일
+                            - heading "분기 고객 안내 초안 정리" [active] [level=2] [ref=e47]
+                            - paragraph [ref=e48]: 2026. 9. 4. 오전 9:00 원천 상태 확인
+                        - generic [ref=e49]:
+                            - generic [ref=e51]: 시작 전
+                            - generic [ref=e53]: 기한 없음
+                - generic [ref=e54]:
+                    - generic [ref=e55]:
+                        - generic [ref=e56]:
+                            - term [ref=e57]: 우선순위
+                            - definition [ref=e58]: 높음
+                        - generic [ref=e59]:
+                            - term [ref=e60]: 처리 기한
+                            - definition [ref=e61]: 기한 없음
+                    - generic [ref=e63]:
+                        - generic [ref=e64]:
+                            - group "개인 할 일 진행 상태" [ref=e65]:
+                                - button "시작 전" [disabled] [pressed]
+                                - button "진행 중" [ref=e66] [cursor=pointer]
+                                - button "응답 대기" [ref=e67] [cursor=pointer]
+                                - button "완료" [ref=e68] [cursor=pointer]
+                            - generic [ref=e69]:
+                                - generic [ref=e70]:
+                                    - generic [ref=e71]:
+                                        - heading "개인 할 일 내용" [level=3] [ref=e72]
+                                        - text: '마지막 수정: 2026. 9. 4. 오전 9:00'
+                                    - button "편집" [ref=e73] [cursor=pointer]:
+                                        - img [ref=e75]
+                                        - text: 편집
+                                - paragraph [ref=e78]: Summarize the three open customer questions before the handover.
+                            - region "연결된 원문" [ref=e79]:
+                                - generic [ref=e80]:
+                                    - img [ref=e81]
+                                    - heading "연결된 원문" [level=3] [ref=e85]
+                                - generic [ref=e86]:
+                                    - paragraph [ref=e87]: 연결된 원천 업무가 없습니다.
+                                    - button "원천 연결 편집" [ref=e88] [cursor=pointer]:
+                                        - img [ref=e90]
+                                        - text: 원천 연결 편집
+                            - region "체크리스트" [ref=e93]:
+                                - generic [ref=e94]:
+                                    - img [ref=e95]
+                                    - heading "체크리스트" [level=3] [ref=e99]
+                                - generic [ref=e102]:
+                                    - generic [ref=e103]:
+                                        - generic [ref=e104]:
+                                            - generic [ref=e105]: 1 / 2 완료
+                                            - generic [ref=e106]: 50%
+                                        - progressbar "1 / 2 완료" [ref=e107]
+                                    - list [ref=e109]:
+                                        - listitem [ref=e110]:
+                                            - generic [ref=e111]:
+                                                - generic [ref=e112] [cursor=pointer]:
+                                                    - checkbox "요청 자료와 원본 확인 완료 상태 변경" [checked] [ref=e113]
+                                                    - img [ref=e114]
+                                                - paragraph [ref=e116]: 요청 자료와 원본 확인
+                                        - listitem [ref=e117]:
+                                            - generic [ref=e118]:
+                                                - generic [ref=e119] [cursor=pointer]:
+                                                    - checkbox "초안 작성 및 검토 완료 상태 변경" [ref=e120]
+                                                    - img [ref=e121]
+                                                - paragraph [ref=e123]: 초안 작성 및 검토
+                                    - generic [ref=e124]:
+                                        - generic [ref=e125]:
+                                            - generic: 새 체크리스트 항목
+                                            - generic [ref=e126]:
+                                                - textbox "새 체크리스트 항목" [ref=e127]
+                                                - group:
+                                                    - generic: 새 체크리스트 항목
+                                        - button "항목 추가" [disabled]:
+                                            - generic:
+                                                - img
+                                            - text: 항목 추가
+                            - generic [ref=e128]:
+                                - generic [ref=e129]:
+                                    - img [ref=e130]
+                                    - heading "변경 이력" [level=3] [ref=e135]
+                                - paragraph [ref=e136]: 아직 기록된 변경이 없습니다.
+                            - button "할 일 삭제" [ref=e137] [cursor=pointer]:
+                                - img [ref=e139]
+                                - text: 할 일 삭제
+                        - region "연결된 수행 시간" [ref=e142]:
+                            - generic [ref=e143]:
+                                - generic [ref=e144]:
+                                    - img [ref=e145]
+                                    - heading "연결된 수행 시간" [level=3] [ref=e149]
+                                - button "Calendar 열기" [ref=e150] [cursor=pointer]
+                            - paragraph [ref=e152]: 이 업무에 연결된 수행 시간이 없습니다.
+                    - separator [ref=e153]
+                    - generic [ref=e154]:
+                        - button "완료" [ref=e155] [cursor=pointer]
+                        - button "보관" [ref=e156] [cursor=pointer]
+                        - button "오늘 계획에서 제거" [ref=e157] [cursor=pointer]
+                        - button "수행 시간 잡기" [ref=e158] [cursor=pointer]:
+                            - img [ref=e160]
+                            - text: 수행 시간 잡기
+                        - button "DWAI·ON에게 묻기" [ref=e164] [cursor=pointer]:
+                            - img [ref=e166]
+                            - text: DWAI·ON에게 묻기
+                    - generic [ref=e169]: 개인 할 일의 상태와 설명은 이 화면에서 직접 관리합니다.
+        - navigation "업무 빠른 탐색" [ref=e170]:
+            - button "통합업무함" [ref=e171] [cursor=pointer]:
+                - img [ref=e172]
+                - generic [ref=e175]: 통합업무함
+            - button "오늘 계획" [ref=e176] [cursor=pointer]:
+                - img [ref=e177]
+                - generic [ref=e182]: 오늘 계획
+            - button "내 조치" [ref=e183] [cursor=pointer]:
+                - img [ref=e184]
+                - generic [ref=e187]: 내 조치
+            - button "DWAI·ON" [ref=e188] [cursor=pointer]:
+                - img [ref=e189]
+                - generic [ref=e192]: DWAI·ON
+            - button "더보기" [ref=e193] [cursor=pointer]:
+                - img [ref=e194]
+                - generic [ref=e198]: 더보기
+    - generic "DWAI·ON 열기" [ref=e200]:
+        - button "DWAI·ON 열기" [ref=e201] [cursor=pointer]
+```

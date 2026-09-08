@@ -25,13 +25,8 @@ import { canAccessProductAreaNavigationItem } from '../layouts/product-area-perm
 import { createGlobalProductApplicationRuntime } from '../components/create-global-product-application-runtime';
 import { resolveProductLegacyRoute } from './product-route-contract-source';
 import {
-  ProductCanaryRouteBoundary,
-  ProductCanarySurfaceBoundary,
-} from './product-surface-canary-routes';
-import {
   authenticationFallback,
   ProductAnyRouteGuard,
-  ProductRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -121,18 +116,24 @@ export function TenantAdminSectionRedirect() {
 
 export function SpacesAdminLegacyIndexRedirect() {
   const { hasPermission, isLoaded } = usePermissions();
+  const location = useLocation();
   if (!isLoaded) return routeFallback;
   const destination = SPACE_ADMIN_NAVIGATION_CONTRACTS.find((item) =>
     canAccessProductAreaNavigationItem(item, hasPermission)
   )?.path;
-  return <Navigate to={destination ?? '/403'} replace />;
+  return (
+    <Navigate
+      to={
+        destination
+          ? { pathname: destination, search: location.search, hash: location.hash }
+          : '/403'
+      }
+      replace
+    />
+  );
 }
 
-function productAdminLegacyRedirect(
-  path: string,
-  resourceKey: string,
-  requiredAnySupportScopes: readonly string[] = []
-): RouteObject {
+function productAdminLegacyRedirect(path: string): RouteObject {
   const sourcePath = `/${path}`;
   const definitions = PRODUCT_LEGACY_ROUTE_SOURCE.filter(
     (candidate) => candidate.sourcePath === sourcePath
@@ -151,33 +152,7 @@ function productAdminLegacyRedirect(
   }
   const target = targets[0]!;
   const redirect = <ProductAdminLegacyDestination redirectId={definition.redirectId} />;
-  const legacy = (
-    <ProductRouteGuard
-      resourceKey={resourceKey}
-      requiredAnySupportScopes={requiredAnySupportScopes}
-    >
-      {redirect}
-    </ProductRouteGuard>
-  );
   const lifecycle = definition.targetLifecycle === 'DRAFT' ? 'DRAFT' : 'OFFICIAL';
-  const governedRedirect =
-    lifecycle === 'DRAFT' ? (
-      legacy
-    ) : (
-      <ProductCanarySurfaceBoundary
-        productId={target.productId}
-        surfaceId={target.surfaceId}
-        legacy={legacy}
-      >
-        <ProductCanaryRouteBoundary
-          productId={target.productId}
-          surfaceId={target.surfaceId}
-          routeContractKey={target.routeContractKey}
-        >
-          {redirect}
-        </ProductCanaryRouteBoundary>
-      </ProductCanarySurfaceBoundary>
-    );
   return {
     path,
     handle: {
@@ -186,7 +161,7 @@ function productAdminLegacyRedirect(
     },
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <WorkspaceRouteGuard>{governedRedirect}</WorkspaceRouteGuard>
+        <WorkspaceRouteGuard>{redirect}</WorkspaceRouteGuard>
       </AuthGuard>
     ),
   };
@@ -205,23 +180,20 @@ function ProductAdminLegacyDestination({ redirectId }: { redirectId: string }) {
 }
 
 const productAdminLegacyRoutes: RouteObject[] = [
-  productAdminLegacyRedirect('admin/experience/announcements', 'ADMIN.COMMUNICATIONS', [
-    'TENANT_CONFIGURATION_READ',
-    'TENANT_CONFIGURATION_WRITE',
-  ]),
-  productAdminLegacyRedirect('admin/services/service-catalog', 'ADMIN.SERVICE_CATALOG'),
-  productAdminLegacyRedirect('admin/services/service-operations', 'ADMIN.SERVICE_OPERATIONS'),
-  productAdminLegacyRedirect('admin/notifications/overview', 'ADMIN.NOTIFICATION_OPERATIONS'),
-  productAdminLegacyRedirect('admin/notifications/contracts', 'ADMIN.NOTIFICATION_CONTRACT'),
-  productAdminLegacyRedirect('admin/notifications/policies', 'ADMIN.NOTIFICATION_POLICY'),
-  productAdminLegacyRedirect('admin/notifications/operations', 'ADMIN.NOTIFICATION_OPERATIONS'),
-  productAdminLegacyRedirect('admin/spaces/overview', 'ADMIN.SPACE_GOVERNANCE'),
-  productAdminLegacyRedirect('admin/spaces/directory', 'ADMIN.SPACE_GOVERNANCE'),
-  productAdminLegacyRedirect('admin/spaces/requests', 'ADMIN.SPACE_GOVERNANCE'),
-  productAdminLegacyRedirect('admin/spaces/templates', 'ADMIN.SPACE_TEMPLATES'),
-  productAdminLegacyRedirect('admin/spaces/content-reviews', 'ADMIN.SPACE_COMPLIANCE'),
-  productAdminLegacyRedirect('admin/spaces/lifecycle', 'ADMIN.SPACE_ACCESS_REVIEW'),
-  productAdminLegacyRedirect('admin/spaces/operations', 'ADMIN.SPACE_GOVERNANCE'),
+  productAdminLegacyRedirect('admin/experience/announcements'),
+  productAdminLegacyRedirect('admin/services/service-catalog'),
+  productAdminLegacyRedirect('admin/services/service-operations'),
+  productAdminLegacyRedirect('admin/notifications/overview'),
+  productAdminLegacyRedirect('admin/notifications/contracts'),
+  productAdminLegacyRedirect('admin/notifications/policies'),
+  productAdminLegacyRedirect('admin/notifications/operations'),
+  productAdminLegacyRedirect('admin/spaces/overview'),
+  productAdminLegacyRedirect('admin/spaces/directory'),
+  productAdminLegacyRedirect('admin/spaces/requests'),
+  productAdminLegacyRedirect('admin/spaces/templates'),
+  productAdminLegacyRedirect('admin/spaces/content-reviews'),
+  productAdminLegacyRedirect('admin/spaces/lifecycle'),
+  productAdminLegacyRedirect('admin/spaces/operations'),
 ];
 
 export const administrationRoutes: RouteObject[] = [

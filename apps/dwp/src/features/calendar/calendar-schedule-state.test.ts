@@ -5,6 +5,7 @@ import {
   calendarScheduleCalendarIds,
   calendarScheduleDate,
   calendarScheduleDateValue,
+  calendarScheduleReturnTarget,
   calendarScheduleSavedConfiguration,
   calendarScheduleSearchParams,
   calendarScheduleStateFromSavedView,
@@ -35,17 +36,35 @@ describe('calendar schedule state', () => {
   });
 
   it('merges schedule state without dropping unrelated deep-link parameters', () => {
-    const next = calendarScheduleSearchParams(new URLSearchParams('event=e-1&create=focus'), {
-      view: 'month',
-      date: new Date(2026, 7, 27),
-      calendarIds: ['team', 'personal'],
-    });
+    const next = calendarScheduleSearchParams(
+      new URLSearchParams('event=e-1&create=focus&returnTo=%2Fwork%2Fqueue%3Fscope%3Dmine'),
+      {
+        view: 'month',
+        date: new Date(2026, 7, 27),
+        calendarIds: ['team', 'personal'],
+      }
+    );
 
     expect(next.get('event')).toBe('e-1');
     expect(next.get('create')).toBe('focus');
     expect(next.get('view')).toBe('month');
     expect(next.get('date')).toBe('2026-08-27');
     expect(next.get('calendars')).toBe('personal,team');
+    expect(next.get('returnTo')).toBe('/work/queue?scope=mine');
+  });
+
+  it('accepts only canonical internal Work return targets', () => {
+    expect(calendarScheduleReturnTarget('/work/queue?scope=mine#task-42')).toBe(
+      '/work/queue?scope=mine#task-42'
+    );
+    expect(calendarScheduleReturnTarget('/work')).toBe('/work');
+
+    expect(calendarScheduleReturnTarget('https://evil.test/work')).toBeNull();
+    expect(calendarScheduleReturnTarget('//evil.test/work')).toBeNull();
+    expect(calendarScheduleReturnTarget('/calendar/schedule')).toBeNull();
+    expect(calendarScheduleReturnTarget('/work/../admin')).toBeNull();
+    expect(calendarScheduleReturnTarget('/work\\queue')).toBeNull();
+    expect(calendarScheduleReturnTarget(`/work/${'a'.repeat(2_048)}`)).toBeNull();
   });
 
   it('preserves every opaque scope value during calendar-internal navigation', () => {

@@ -1,0 +1,10 @@
+{
+  "ko": {
+    "workHub.accessEvidence.contextTitle": "캠페인 및 권한 근거",
+    "workHub.accessEvidence.sourceEffect": "결정 저장 후 원천 권한 반영 상태를 확인하세요."
+  },
+  "en": {
+    "workHub.accessEvidence.contextTitle": "Campaign and access evidence",
+    "workHub.accessEvidence.sourceEffect": "After saving a decision, check the source access update."
+  }
+}

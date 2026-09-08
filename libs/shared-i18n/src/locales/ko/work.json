@@ -41,32 +41,91 @@
     },
     "items": {
       "dwaion": {
-        "home": { "label": "DWAI·ON 홈" },
-        "new": { "label": "새 대화" },
-        "conversations": { "label": "내 대화" },
-        "activity": { "label": "AI 실행 이력" },
-        "proposals": { "label": "AI 제안함" },
-        "agents": { "label": "전문 에이전트" },
-        "actions": { "label": "업무 실행 및 연결" },
-        "routines": { "label": "내 AI 루틴" },
-        "personal-controls": { "label": "개인 AI 제어" },
-        "artifacts": { "label": "결과물 스튜디오" },
-        "admin-overview": { "label": "운영 현황" },
-        "admin-agents": { "label": "에이전트 및 게시 관리" },
-        "admin-sources": { "label": "데이터 소스와 커넥터" },
-        "admin-actions": { "label": "액션과 실행 권한" },
-        "admin-safety": { "label": "정책 및 안전 제어" },
-        "admin-evaluation": { "label": "응답 품질과 평가" },
-        "admin-gates": { "label": "운영 전환 검증" },
-        "admin-audit": { "label": "데이터 보존과 감사" }
+        "home": {
+          "label": "DWAI·ON 홈"
+        },
+        "new": {
+          "label": "새 대화"
+        },
+        "conversations": {
+          "label": "내 대화"
+        },
+        "activity": {
+          "label": "AI 실행 이력"
+        },
+        "proposals": {
+          "label": "AI 제안함"
+        },
+        "agents": {
+          "label": "전문 에이전트"
+        },
+        "actions": {
+          "label": "업무 실행 및 연결"
+        },
+        "routines": {
+          "label": "내 AI 루틴"
+        },
+        "personal-controls": {
+          "label": "개인 AI 제어"
+        },
+        "artifacts": {
+          "label": "결과물 스튜디오"
+        },
+        "admin-overview": {
+          "label": "운영 현황"
+        },
+        "admin-agents": {
+          "label": "에이전트 및 게시 관리"
+        },
+        "admin-sources": {
+          "label": "데이터 소스와 커넥터"
+        },
+        "admin-actions": {
+          "label": "액션과 실행 권한"
+        },
+        "admin-safety": {
+          "label": "정책 및 안전 제어"
+        },
+        "admin-evaluation": {
+          "label": "응답 품질과 평가"
+        },
+        "admin-gates": {
+          "label": "운영 전환 검증"
+        },
+        "admin-audit": {
+          "label": "데이터 보존과 감사"
+        }
       },
       "work": {
-        "home": { "label": "업무 홈" },
-        "queue": { "label": "통합 업무함" }
+        "home": {
+          "label": "업무 홈"
+        },
+        "queue": {
+          "label": "통합업무함"
+        },
+        "action-required": {
+          "label": "내 조치 대기"
+        },
+        "day-plan": {
+          "label": "오늘 계획"
+        },
+        "in-progress": {
+          "label": "진행 중"
+        },
+        "awaiting-response": {
+          "label": "응답 대기"
+        },
+        "completed": {
+          "label": "완료된 업무"
+        }
       },
       "activity": {
-        "home": { "label": "활동 홈" },
-        "timeline": { "label": "활동 타임라인" }
+        "home": {
+          "label": "활동 홈"
+        },
+        "timeline": {
+          "label": "활동 타임라인"
+        }
       }
     }
   },
@@ -237,6 +296,15 @@
     "deleting": "삭제 중"
   },
   "dwaionActivity": {
+    "compactSummary": "최근 {{total}}건 · 확인 필요 {{attention}}건",
+    "mobileDescription": "실행 상태와 정책 결과를 확인하고 관련 대화로 돌아갑니다.",
+    "mobileWindowNotice": "최근 {{count}}건 내에서 집계하고 필터링합니다.",
+    "mobileMetrics": {
+      "total": "전체",
+      "running": "진행",
+      "completed": "완료",
+      "attention": "확인"
+    },
     "eyebrow": "책임 추적 가능한 AI",
     "title": "AI 실행 이력",
     "description": "내 요청이 어떤 정책과 근거 경계에서 처리됐는지 확인하고 관련 대화로 돌아갑니다.",
@@ -269,8 +337,20 @@
     "listLabel": "최근 조회된 AI 실행",
     "filteredWindow": "조회된 {{total}}건 중 {{visible}}건 · 브라우저에서 상태 필터 적용",
     "filterLabel": "AI 실행 상태 필터",
-    "filters": { "ALL": "전체", "RUNNING": "처리 중", "COMPLETED": "완료", "FAILED": "실패" },
-    "states": { "RUNNING": "처리 중", "COMPLETED": "완료", "FAILED": "실패" },
+    "filters": {
+      "ALL": "전체",
+      "RUNNING": "처리 중",
+      "COMPLETED": "완료",
+      "FAILED": "실패",
+      "ATTENTION": "확인 필요"
+    },
+    "accessTitle": "실행 활동을 볼 수 없습니다",
+    "accessDescription": "접근 권한을 확인할 수 없어 이전 실행 정보를 숨겼습니다. 새로고침하거나 관리자에게 문의하세요.",
+    "states": {
+      "RUNNING": "처리 중",
+      "COMPLETED": "완료",
+      "FAILED": "실패"
+    },
     "answerStates": {
       "COMPLETED": "응답 완료",
       "ABSTAINED": "응답 보류",
@@ -304,14 +384,18 @@
       "emptyTitle": "확인할 실행을 선택하세요",
       "emptyDescription": "목록의 실행을 선택하면 현재 응답 필드와 권한으로 확인된 공통 활동 상세가 표시됩니다.",
       "receiptTitle": "최근 실행 응답",
-      "receiptDescription": "실행 조회 API에서 받은 값입니다. 전체 단계 이력이나 감사 증적을 의미하지 않습니다.",
+      "additionalMetadata": "추가 실행 메타데이터",
+      "receiptDescription": "실행 조회 API가 현재 권한 범위에서 제공한 기록입니다. 별도 표시된 계측 및 감사 상태 밖의 정보는 추정하지 않습니다.",
       "permissionLoading": "상세 조회 권한을 확인하는 중입니다.",
       "permissionTitle": "공통 활동 상세에 접근할 수 없습니다",
       "permissionDescription": "AI 실행 목록과 위 기본 정보는 표시할 수 있지만 APP.ACTIVITY 권한이 없어 공통 상세 요청은 보내지 않았습니다.",
+      "sampleCommonActivityTitle": "공통 활동 집계에서 제외된 검증 실행",
+      "sampleCommonActivityDescription": "개발 검증 실행은 운영 활동 합계와 공통 활동 피드에 포함하지 않습니다. 위 실행 원장과 계측 정보는 로컬 기능 확인 용도로만 표시합니다.",
       "notRecorded": "기록되지 않음",
       "sourceCountValue": "{{count}}개",
       "latencyValue": "{{count}}ms",
       "fields": {
+        "activityTitle": "실행 제목",
         "runId": "실행 ID",
         "agent": "에이전트 · 리비전",
         "runState": "실행 상태",
@@ -324,6 +408,85 @@
         "completedAt": "완료 시각",
         "statusCode": "상태 코드"
       }
+    },
+    "observability": {
+      "sample": {
+        "title": "개발 검증 데이터",
+        "description": "로컬 환경에서 계약을 검증하기 위한 표본입니다. 실제 운영 연결이나 성공 실적으로 집계하지 않습니다.",
+        "summaryExcluded": "{{count}}건은 위 운영 수치에서 제외되며 목록에서 배지로 구분됩니다."
+      },
+      "measurement": {
+        "MEASURING": "계측 중",
+        "MEASURED": "계측 완료",
+        "PARTIAL": "부분 계측",
+        "NOT_AVAILABLE": "계측 정보 없음"
+      },
+      "currentStage": "현재 단계 · {{stage}}",
+      "attempt": "시도 {{count}}",
+      "leaseExpires": "lease 만료 시각 {{at}}",
+      "progress": "서버 보고 진행률",
+      "progressValue": "{{count}}%",
+      "lease": {
+        "ACTIVE": "lease 활성",
+        "EXPIRED": "lease 만료",
+        "RELEASED": "lease 해제"
+      },
+      "stageKeys": {
+        "AUTHORIZING": "권한 확인",
+        "RETRIEVING": "근거 조회",
+        "REASONING": "추론",
+        "VERIFYING": "응답 검증",
+        "PERSISTING": "결과 저장",
+        "COMPLETED": "완료",
+        "FAILED": "실패"
+      },
+      "stageStates": {
+        "ACTIVE": "진행 중",
+        "COMPLETED": "완료",
+        "FAILED": "실패",
+        "SKIPPED": "건너뜀"
+      },
+      "stages": {
+        "title": "실행 단계와 처리 시간",
+        "unavailableTitle": "단계 계측 정보가 없습니다",
+        "unavailableDescription": "서버가 이 실행의 단계별 계측을 제공하지 않았습니다. 단계를 임의로 구성하지 않습니다.",
+        "empty": "기록된 실행 단계가 없습니다.",
+        "partial": "일부 단계만 계측되었습니다. 누락된 시간을 0ms로 판단하지 마세요.",
+        "listLabel": "서버가 기록한 실행 단계",
+        "latencyTitle": "단계별 처리 시간 분포",
+        "latencyLabel": "계측된 단계 처리 시간 합계 {{count}}ms"
+      },
+      "sources": {
+        "title": "실행 소스 상태",
+        "empty": "이 실행에서 조회를 시도한 소스가 없습니다.",
+        "attempt": "마지막 시도 {{at}} · 응답 {{latency}}",
+        "lastSuccess": "마지막 성공 {{at}}",
+        "noSuccess": "기록된 성공 시각 없음"
+      },
+      "sourceStates": {
+        "SUCCESS": "조회 성공",
+        "UNAVAILABLE": "조회 불가",
+        "NOT_CONFIGURED": "미설정"
+      },
+      "audit": {
+        "title": "Agent 감사 연결",
+        "auditId": "Agent 감사 ID",
+        "recordId": "Platform 감사 기록 ID",
+        "states": {
+          "LINKED": {
+            "title": "Platform 감사 기록에 연결됨",
+            "description": "참조 연결 상태입니다. 무결성 검증 결과와 규정 준수 여부는 별도로 확인합니다."
+          },
+          "PENDING": {
+            "title": "감사 연결 처리 중",
+            "description": "감사 기록 연결이 아직 확정되지 않았으며 검증 결과를 추정하지 않습니다."
+          },
+          "NOT_AVAILABLE": {
+            "title": "감사 연결 정보 없음",
+            "description": "서버가 연결된 감사 기록을 제공하지 않았습니다."
+          }
+        }
+      }
     }
   },
   "dwaionProposals": {
@@ -331,7 +494,10 @@
     "title": "AI 제안함",
     "description": "업무 신호를 근거로 DWAI·ON이 먼저 제안한 다음 행동을 검토하고, 수락·미루기·해제를 결정합니다.",
     "policyBoundary": "현재 권한과 원본 시스템 정책 안에서만 제안",
-    "status": { "live": "제안 원장 연결됨", "degraded": "제안 원장 연결 확인 필요" },
+    "status": {
+      "live": "제안 원장 연결됨",
+      "degraded": "제안 원장 연결 확인 필요"
+    },
     "refresh": "AI 제안함 새로고침",
     "loading": "AI 제안함을 불러오는 중입니다.",
     "loadingMore": "제안을 더 불러오는 중",
@@ -374,7 +540,11 @@
     "listTitle": "나를 위한 제안",
     "listDescription": "제안의 이유와 근거를 확인한 뒤 다음 행동을 직접 결정합니다.",
     "filterLabel": "AI 제안 상태 필터",
-    "views": { "ACTIVE": "검토할 제안", "SNOOZED": "미룬 제안", "HANDLED": "처리됨" },
+    "views": {
+      "ACTIVE": "검토할 제안",
+      "SNOOZED": "미룬 제안",
+      "HANDLED": "처리됨"
+    },
     "kinds": {
       "WORK_SIGNAL": "업무 신호",
       "RISK": "위험",
@@ -382,7 +552,12 @@
       "APPROVAL": "결재",
       "INSIGHT": "인사이트"
     },
-    "priorities": { "LOW": "낮음", "MEDIUM": "보통", "HIGH": "높음", "URGENT": "긴급" },
+    "priorities": {
+      "LOW": "낮음",
+      "MEDIUM": "보통",
+      "HIGH": "높음",
+      "URGENT": "긴급"
+    },
     "states": {
       "PENDING": "검토 대기",
       "SNOOZED": "미룸",
@@ -805,11 +980,26 @@
         "approve": "독립 승인"
       },
       "dialogs": {
-        "REVIEW": { "title": "운영 전환 검토", "submit": "" },
-        "CONFIGURE": { "title": "운영 정책 설정", "submit": "정책 저장" },
-        "EVIDENCE": { "title": "운영 증빙 등록", "submit": "증빙 등록" },
-        "VALIDATE": { "title": "운영 요건 검증", "submit": "검증 기록" },
-        "DECIDE": { "title": "운영 전환 승인", "submit": "승인 결정 저장" }
+        "REVIEW": {
+          "title": "운영 전환 검토",
+          "submit": ""
+        },
+        "CONFIGURE": {
+          "title": "운영 정책 설정",
+          "submit": "정책 저장"
+        },
+        "EVIDENCE": {
+          "title": "운영 증빙 등록",
+          "submit": "증빙 등록"
+        },
+        "VALIDATE": {
+          "title": "운영 요건 검증",
+          "submit": "검증 기록"
+        },
+        "DECIDE": {
+          "title": "운영 전환 승인",
+          "submit": "승인 결정 저장"
+        }
       },
       "review": {
         "close": "닫기",
@@ -874,8 +1064,14 @@
         "decision": "승인 결정",
         "validDays": "승인 유효 기간(일)"
       },
-      "validation": { "PASS": "검증 통과", "FAIL": "검증 실패" },
-      "decisions": { "APPROVE": "승인", "REJECT": "반려" },
+      "validation": {
+        "PASS": "검증 통과",
+        "FAIL": "검증 실패"
+      },
+      "decisions": {
+        "APPROVE": "승인",
+        "REJECT": "반려"
+      },
       "evidenceTypes": {
         "CONFIGURATION_REFERENCE": "구성 참조",
         "TEST_RESULT": "테스트 결과",
@@ -1052,8 +1248,16 @@
     }
   },
   "labels": {
-    "priority": { "high": "높음", "medium": "보통", "low": "낮음" },
-    "actor": { "agent": "에이전트", "person": "사용자", "system": "시스템" },
+    "priority": {
+      "high": "높음",
+      "medium": "보통",
+      "low": "낮음"
+    },
+    "actor": {
+      "agent": "에이전트",
+      "person": "사용자",
+      "system": "시스템"
+    },
     "status": {
       "open": "시작 전",
       "cancelled": "취소",
@@ -1144,7 +1348,8 @@
       "eyebrow": "통합 업무 실행",
       "title": "통합업무함",
       "description": "여러 업무 원천의 내 책임을 한곳에서 확인하고, 올바른 소유 앱과 연결해 실행합니다.",
-      "scope": "현재 권한 범위"
+      "scope": "현재 권한 범위",
+      "partialCount": "확인된 {{count}}건"
     },
     "responsibility": {
       "ME": "내 조치 필요",
@@ -1209,14 +1414,17 @@
       "label": "통합 업무 목록",
       "heading": "확인된 업무 {{count}}건",
       "openItem": "{{title}} 상세 열기",
-      "selectItem": "{{title}} 일괄 처리 대상으로 선택"
+      "selectItem": "{{title}} 일괄 처리 대상으로 선택",
+      "review": "검토",
+      "respond": "응답 작성"
     },
     "scopes": {
       "ACTIONABLE": "내 조치",
       "ALL": "전체",
       "TODAY": "오늘 계획",
       "WAITING": "응답 대기",
-      "COMPLETED": "완료"
+      "COMPLETED": "완료",
+      "IN_PROGRESS": "진행 중"
     },
     "filters": {
       "label": "통합 업무함 검색 및 필터",
@@ -1228,7 +1436,20 @@
       "allSources": "모든 원천",
       "allUrgencies": "모든 기한",
       "reset": "필터 초기화",
-      "results": "결과 {{count}}건"
+      "results": "결과 {{count}}건",
+      "sort": "정렬",
+      "sortOptions": {
+        "urgency": "지연·임박 우선",
+        "due": "마감일 순",
+        "updated": "최근 변경 순",
+        "title": "업무명 순"
+      },
+      "density": "목록 밀도",
+      "densityOptions": {
+        "comfortable": "기본",
+        "compact": "촘촘하게"
+      },
+      "refine": "필터·정렬"
     },
     "actions": {
       "createTask": "개인 할 일 추가",
@@ -1269,18 +1490,99 @@
       "approval": {
         "title": "결정에 필요한 결재 맥락",
         "description": "현재 목록에서 확인된 역할과 기한을 검토하고 정확한 결재 단계는 원본에서 확인합니다.",
-        "handoffNotice": "승인·반려 전에는 전자결재 원본의 근거와 최신 결재선을 다시 확인합니다."
+        "handoffNotice": "승인·반려 전에는 전자결재 원본의 근거와 최신 결재선을 다시 확인합니다.",
+        "document": "전자결재 문서 정보",
+        "assignment": "담당 결재자 배정 사유",
+        "workflow": "결재선 진행 현황",
+        "workflowEmpty": "원천에서 확인한 결재 단계 이력이 없습니다. 원본에서 전체 결재선을 확인해 주세요.",
+        "step": "{{count}}단계",
+        "currentStep": "현재 결재 단계",
+        "completedStep": "진행 이력 확인됨",
+        "evidence": "품의 핵심 근거 및 내역",
+        "selfApprovalBlocked": "본인 결재 제한",
+        "decision": "결재 결정",
+        "decisionNotice": "최신 배정과 원천의 결정 권한을 확인한 뒤 처리합니다.",
+        "unavailable": "현재 직접 결정할 수 없습니다. 담당 가져오기 또는 원본의 최신 배정을 확인해 주세요.",
+        "CLAIM": "담당 가져오기",
+        "APPROVE": "승인",
+        "REJECT": "반려",
+        "REQUEST_INFO": "보완 요청",
+        "confirmTitle": "결재 조치 검토",
+        "confirmDescription": "대상 문서와 조치를 확인해 주세요. 제출 직전에 현재 배정과 문서 변경 여부를 다시 확인합니다.",
+        "comment": "검토 사유",
+        "commentHelp": "반려 사유는 8자 이상, 보완 요청은 4자 이상 입력해 주세요. 원천의 결재 정책에 따라 추가 사유가 필요할 수 있습니다. {{count}} / 2,000자",
+        "effect": "이 조치는 원천 결재에 저장됩니다. 현재 단계의 승인이 전체 결재의 최종 승인을 의미하지는 않습니다."
       },
       "service": {
         "title": "내 보완 의무와 요청 진행",
         "description": "내가 보완할 단계와 서비스 요청 전체의 해결 상태를 구분해 확인합니다.",
-        "handoffNotice": "원본으로 이동하거나 돌아온 사실만으로 보완 또는 해결 완료로 표시하지 않습니다."
+        "handoffNotice": "원본으로 이동하거나 돌아온 사실만으로 보완 또는 해결 완료로 표시하지 않습니다.",
+        "request": "서비스 요청 정보",
+        "number": "티켓 번호",
+        "name": "신청 서비스",
+        "assignedGroup": "처리 담당 부서",
+        "due": "처리 기한",
+        "requestedInformation": "보완 요청 사유",
+        "noInformationNote": "원천에서 제공한 보완 요청 메모가 없습니다. 처리 이력과 원본 요청을 확인해 주세요.",
+        "originalRequest": "최초 신청 내역 및 현재 요청 값",
+        "assurance": "신청 및 검토 조건",
+        "assuranceNotice": "신청 조건과 추가 검토는 담당 서비스의 기준을 따릅니다. 단말 보안 검사나 계정 발급 결과는 이 화면에서 추정하지 않습니다.",
+        "response": "보완 내용 작성",
+        "responseDescription": "원천 요청 양식과 보완 사유를 확인하고 담당 서비스에 응답합니다.",
+        "message": "보완 사유 및 변경 내용",
+        "messageHelp": "요청받은 내용과 변경 사항을 10자 이상 입력해 주세요. {{count}} / 2,000자",
+        "responseEffect": "보완 응답이 제출되면 서비스 담당자의 검토 단계로 돌아갑니다. 보완 응답 제출은 전체 서비스 요청의 완료가 아닙니다.",
+        "reviewResponse": "보완 내용 검토 및 제출",
+        "noResponseRequired": "현재 내 보완 응답이 필요한 단계가 아닙니다. 최신 진행 상태와 처리 이력을 확인해 주세요.",
+        "confirmTitle": "보완 응답 제출 전 확인",
+        "confirmDescription": "제출할 요청 값과 사유를 검토해 주세요. 제출 직전에 요청의 현재 상태와 버전을 다시 확인합니다.",
+        "submit": "보완 응답 제출",
+        "responseSaved": "보완 응답이 저장되었습니다. 서비스 담당자의 검토가 진행됩니다.",
+        "draftChanged": "선택 업무 또는 원천 버전이 변경되어 AI 초안을 적용하지 않았습니다. 최신 내용을 다시 확인해 주세요.",
+        "draftApplied": "AI 초안을 보완 사유에 넣었습니다. 내용을 직접 검토한 뒤 제출해 주세요.",
+        "replaceDraftTitle": "작성 중인 사유를 AI 초안으로 바꿀까요?",
+        "replaceDraftDescription": "현재 작성한 보완 사유가 아래 초안으로 대체됩니다. 신청 양식의 다른 값은 유지됩니다.",
+        "replaceDraft": "초안으로 대체",
+        "events": {
+          "REQUESTER_RESPONDED": "보완 답변 제출",
+          "INFORMATION_REQUESTED": "서비스 보완 요청",
+          "UPDATED": "서비스 요청 갱신"
+        }
       },
       "workspace": {
         "title": "업무 실행 맥락",
         "description": "현재 책임과 다음 행동을 확인한 뒤 이 화면에서 허용된 상태만 변경합니다.",
         "handoffNotice": "원천 소유 업무의 결과는 최신 원천 응답을 받은 뒤 확정합니다."
-      }
+      },
+      "empty": "원천에서 제공한 상세 항목이 없습니다.",
+      "notProvided": "원천 정보 없음",
+      "yes": "예",
+      "no": "아니요",
+      "accessRequired": "원천 상세에 접근할 권한을 확인하지 못했습니다. 원본 앱에서 접근 범위를 확인해 주세요.",
+      "verifying": "원천 접근 권한 확인 중",
+      "loading": "원천 상세를 불러오는 중",
+      "loadFailed": "원천 상세를 불러오지 못했습니다",
+      "readAgain": "접근 권한과 최신 상태를 다시 확인해 주세요. 확인되지 않은 상세는 표시하지 않습니다.",
+      "documentNumber": "문서번호",
+      "requester": "기안자",
+      "organization": "기안 부서",
+      "submittedAt": "요청 일시",
+      "workflow": "결재 규정",
+      "attachments": "첨부 증빙 문서",
+      "attachmentsNotice": "첨부 목록은 원본 화면에서 확인할 수 있습니다. 원본에서 접근 권한을 확인한 뒤 문서를 열어 주세요.",
+      "openEvidence": "원본에서 증빙 확인",
+      "timeline": "처리 이력 및 변경 기록",
+      "target": "처리 대상",
+      "action": "선택한 조치",
+      "cancel": "취소",
+      "submitting": "처리 중",
+      "tooLong": "2,000자 이내로 입력해 주세요.",
+      "claimed": "담당 업무로 가져왔습니다. 최신 결재 내용과 결정 권한을 확인해 주세요.",
+      "decisionSaved": "결재 결정이 저장되었습니다. 최신 결재 단계와 처리 이력을 확인할 수 있습니다.",
+      "conflict": "다른 변경이 먼저 반영되었습니다. 입력한 내용을 보존했습니다. 최신 원천 내용과 입력을 비교한 뒤 다시 검토해 주세요.",
+      "authorityChanged": "배정 또는 접근 권한이 변경되었습니다. 최신 원천에서 현재 가능한 조치를 다시 확인해 주세요.",
+      "outcomeUnknown": "처리 결과를 확정하지 못했습니다. 최신 상태와 이력을 확인한 뒤 필요한 경우 다시 검토해 주세요.",
+      "validationFailed": "원천의 입력 기준을 충족하지 않아 제출되지 않았습니다. 입력 내용을 보존했습니다. 사유와 필수 항목을 확인해 주세요."
     },
     "partial": {
       "title": "일부 원천을 확인하지 못했습니다",
@@ -1341,7 +1643,30 @@
       "results": {
         "confirmed": "원천에서 변경 확인",
         "unknown": "결과 확인 필요"
-      }
+      },
+      "reportTitle": "일괄 처리 결과",
+      "reportSummary": "선택한 {{total}}건 중 {{confirmed}}건의 처리가 확인되었습니다. 항목별 결과를 확인하세요.",
+      "executionNotice": "개인 할 일은 항목별로 처리하고, 워크스페이스 업무는 원천의 일괄 처리 정책을 따릅니다. 결재·권한 검토·서비스 결정은 각 상세에서 처리합니다.",
+      "retryUnconfirmed": "미확인 개인 할 일 재확인",
+      "reopenReport": "최근 일괄 처리 결과 보기",
+      "receiptStates": {
+        "CONFIRMED": "성공",
+        "CONFLICT": "버전 충돌",
+        "FORBIDDEN": "권한 제한",
+        "UNKNOWN": "응답 미확인",
+        "EXCLUDED": "정책 제외"
+      },
+      "receiptHelp": {
+        "CONFIRMED": "원천의 변경 응답과 새 버전을 확인했습니다.",
+        "CONFLICT": "다른 변경이 먼저 반영되었습니다. 최신 내용을 검토한 후 다시 선택하세요.",
+        "FORBIDDEN": "현재 권한으로 처리할 수 없습니다.",
+        "UNKNOWN": "처리 결과를 확인하지 못했습니다. 개인 할 일은 동일한 요청으로 재확인할 수 있습니다.",
+        "EXCLUDED": "해당 상태 변경을 지원하지 않거나 상세 검토가 필요한 업무입니다."
+      },
+      "selectMode": "업무 선택",
+      "cancelSelection": "선택 취소",
+      "cancelledBeforeSend": "로그인 상태가 바뀌거나 화면을 닫아 이 항목은 전송하지 않았습니다. 다시 선택하여 검토를 시작하세요.",
+      "cancelledUnknown": "요청 전송 후 로그인 상태가 바뀌거나 화면을 닫았습니다. 새 요청 전에 원천 처리 상태를 확인하세요."
     },
     "taskForm": {
       "create": {
@@ -1353,6 +1678,12 @@
         "title": "개인 할 일 편집",
         "description": "현재 버전의 제목, 설명, 우선순위와 기한을 변경합니다.",
         "submit": "변경 저장"
+      },
+      "conflict": {
+        "notice": "편집을 시작한 뒤 다른 곳에서 이 할 일이 변경되었습니다. 최신 내용을 초안과 비교한 후 계속할 방법을 선택하세요. 확인 전에는 저장되지 않습니다.",
+        "latest": "최신 저장 내용",
+        "useLatest": "최신 내용으로 편집하기",
+        "keepDraft": "변경 내용을 확인하고 내 초안 유지"
       },
       "cancel": "취소",
       "submitting": "저장 중",
@@ -1420,7 +1751,19 @@
       "saving": "계획 저장 중",
       "save": "계획 저장",
       "savedTitle": "오늘 계획을 저장했습니다",
-      "savedDetail": "정한 순서는 다른 업무 상태와 독립적으로 보관됩니다."
+      "savedDetail": "정한 순서는 다른 업무 상태와 독립적으로 보관됩니다.",
+      "selectedMetric": "오늘 선택한 업무",
+      "dueMetric": "마감이 있는 업무",
+      "progressMetric": "진행 중인 업무",
+      "candidateMetric": "계획 추가 후보",
+      "candidateFilter": "후보 업무 범위",
+      "candidateScopes": {
+        "all": "전체",
+        "due": "마감 있음",
+        "actionable": "내 조치"
+      },
+      "openWork": "업무 열기",
+      "removeLabel": "계획에서 빼기"
     },
     "sourcesDialog": {
       "open": "원천 상태",
@@ -1441,7 +1784,10 @@
         "FORBIDDEN": "현재 권한으로 조회하지 않았습니다.",
         "UNAVAILABLE": "원천 응답을 확인하지 못했습니다.",
         "NOT_REQUESTED": "앱 권한 범위에 포함되지 않았습니다."
-      }
+      },
+      "readyCount": "정상 원천 {{count}}개",
+      "attentionCount": "확인 필요 {{count}}개",
+      "itemCount": "현재 확인한 업무 {{count}}건"
     },
     "schedule": {
       "title": "수행 시간 잡기",
@@ -1467,7 +1813,11 @@
         "unconfirmed": "응답이 없어 일정 생성 여부를 확인할 수 없습니다. 같은 요청으로 결과를 확인하세요.",
         "rejected": "Calendar가 요청을 거절했습니다. 권한과 시간 범위를 확인하세요.",
         "linkRemoved": "업무 연결은 해제됐지만 Calendar 일정은 변경하지 않았습니다."
-      }
+      },
+      "selectedWork": "수행 시간을 예약할 업무",
+      "independenceNotice": "수행 시간은 개인 캘린더 일정으로 예약됩니다. 원천 업무의 마감·결재 상태는 변경되지 않으며 일정 충돌과 후속 편집은 캘린더에서 확인할 수 있습니다.",
+      "titleLength": "{{count}} / 300자",
+      "privateScope": "본인 전용 비공개 집중 시간으로 예약합니다. 참석자 초대·반복 일정 없이 업무 참조만 연결하며 업무 본문을 복사하지 않습니다."
     },
     "scheduleLinks": {
       "title": "연결된 수행 시간",
@@ -1492,7 +1842,7 @@
       "verifiedAt": "{{date}} 기준",
       "verificationRequired": "최신 업무 확인이 필요합니다",
       "question": "질문",
-      "help": "{{count}} / 2,000자 · Enter 전송, Shift+Enter 줄바꿈",
+      "help": "{{count}} / 2,000자 · Ctrl/Cmd+Enter 전송 · Enter 줄바꿈",
       "tooLong": "질문은 2,000자 이하여야 합니다.",
       "submit": "DWAI·ON에서 질문",
       "submitting": "전달 중",
@@ -1502,7 +1852,40 @@
         "risk": "이 업무의 기한 위험과 확인할 근거를 정리해 주세요.",
         "draft": "원본에 제출하기 전 검토할 초안을 작성해 주세요.",
         "evidence": "현재 정보에서 부족한 근거를 알려 주세요."
-      }
+      },
+      "panelTitle": "DWAI·ON 업무 비서",
+      "panelSubtitle": "선택 업무의 근거 분석과 응답 초안",
+      "sourceExcerptNotice": "아래 원본 요약은 화면에서 검토만 하며 AI 요청에 전송하지 않습니다. 서버가 현재 권한으로 선택 업무의 원천 근거를 다시 확인합니다.",
+      "snapshotNotice": "질문과 선택 업무의 원천 ID·버전만 전송합니다. 서버가 현재 권한으로 원천 근거를 다시 확인하고 답변에 출처를 표시합니다.",
+      "reviewContext": "화면에서 원본 요약 확인",
+      "outcomes": {
+        "retryTitle": "원천 확인을 잠시 완료하지 못했습니다",
+        "retryDetail": "질문은 그대로 유지했습니다. 다시 시도하거나 원본에서 현재 상태를 확인하세요.",
+        "restrictedTitle": "이 업무의 근거를 AI에서 사용할 수 없습니다",
+        "restrictedDetail": "민감도 또는 안전 정책에 따라 원천 근거를 전달하지 않았습니다. 원본에서 직접 확인하세요.",
+        "unsupportedTitle": "이 원천은 아직 선택 업무 AI를 지원하지 않습니다",
+        "unsupportedDetail": "원본에서 확인하거나 지원되는 개인 할 일·서비스·결재 업무를 선택하세요.",
+        "changedTitle": "업무 상태가 변경되었습니다",
+        "changedDetail": "최신 업무를 다시 불러왔습니다. 현재 항목을 확인한 뒤 질문하세요."
+      },
+      "suggestions": "추천 질문 및 작성 가이드",
+      "reviewDraft": "검토 중인 답변·초안",
+      "draftPreview": "업무 폼에 반영할 초안",
+      "draftHelp": "적용 전에 내용을 검토하세요. 10~2,000자 · 현재 {{count}}자",
+      "draftTooLong": "업무 폼에는 2,000자까지 반영할 수 있습니다. 초안을 줄여 주세요.",
+      "citations": "답변 출처 및 근거",
+      "noAnswer": "현재 권한과 확인된 근거로 답변을 생성하지 못했습니다. 원천 내용을 확인하거나 DWAI·ON에서 필요한 연결 상태를 확인하세요.",
+      "reviewNotice": "AI 답변은 검토용 초안입니다. 근거를 확인한 뒤 사용자가 업무 폼에 반영하고 제출합니다.",
+      "copied": "답변을 복사했습니다.",
+      "copyFailed": "복사하지 못했습니다. 답변 내용을 선택해 복사해 주세요.",
+      "applied": "초안을 업무 폼에 전달했습니다. 반영할 내용을 확인하세요.",
+      "applyDraft": "초안을 업무 폼에 적용",
+      "copyAnswer": "답변 복사",
+      "askHere": "선택 업무 질문하기",
+      "continueConversation": "DWAI·ON 전체 화면에서 이어서 대화하기",
+      "actualSources": "확인된 근거 {{count}}개",
+      "actualRuntime": "{{tokens}} 토큰 · {{latency}}ms",
+      "noCitations": "이 답변에 제공된 출처가 없습니다. 원본과 대조해 확인한 뒤 사용하세요."
     },
     "personal": {
       "loading": "개인 할 일 상세를 불러오는 중입니다",
@@ -1525,7 +1908,118 @@
         "COMPLETED": "완료",
         "REOPENED": "다시 열기",
         "ARCHIVED": "보관"
-      }
+      },
+      "deleted": "개인 할 일을 삭제했습니다.",
+      "checklistSaved": "체크리스트를 저장했습니다.",
+      "statusSaved": "업무 상태를 변경했습니다.",
+      "conflict": "업무가 변경되어 최신 내용을 불러왔습니다. 입력 내용을 확인한 후 다시 시도해 주세요.",
+      "accessChanged": "이 업무에 대한 접근 권한이 변경되었습니다. 최신 업무 목록을 확인해 주세요.",
+      "commandUnknown": "처리 결과를 확인하지 못했습니다. 최신 상태를 확인한 후 동일한 요청으로 다시 시도해 주세요.",
+      "statusProgress": "개인 할 일 진행 상태",
+      "openSource": "원천 업무 열기",
+      "editSources": "원천 연결 편집",
+      "delete": "할 일 삭제",
+      "deleteTitle": "개인 할 일을 삭제할까요?",
+      "deleteDescription": "‘{{title}}’을 업무함과 오늘 계획에서 제거합니다. 처리 이력은 보존되며, 연결된 원천 업무와 캘린더 일정은 변경하지 않습니다.",
+      "lastUpdated": "마지막 수정: {{date}}"
+    },
+    "viewTitles": {
+      "queue": "통합업무함",
+      "action-required": "내 조치 대기",
+      "day-plan": "오늘 계획",
+      "in-progress": "진행 중",
+      "awaiting-response": "응답 대기",
+      "completed": "완료된 업무"
+    },
+    "navigation": {
+      "createTask": "개인 할 일 추가",
+      "sourceStatus": "연동 상태",
+      "sourcesReady": "확인된 원천 {{count}}개",
+      "sourcesLoading": "원천 상태 확인 중",
+      "sourcesAttention": "{{count}}개 확인 필요",
+      "partialCount": "{{count}}+"
+    },
+    "mobileNavigation": {
+      "label": "업무 빠른 탐색",
+      "queue": "통합업무함",
+      "day-plan": "오늘 계획",
+      "action-required": "내 조치",
+      "assist": "DWAI·ON",
+      "more": "더보기",
+      "moreTitle": "업무 상태별 보기"
+    },
+    "accessEvidence": {
+      "grantedAt": "권한 부여 일시",
+      "lastSignIn": "최근 로그인",
+      "unavailable": "확인할 수 없음",
+      "noSignIn": "로그인 이력 없음",
+      "signInMeaning": "로그인 기록이며 해당 권한의 실제 사용 기록과는 별개입니다.",
+      "privileged": "권한 위험 구분",
+      "privilegedYes": "특권 권한 · 주의 필요",
+      "privilegedNo": "일반 권한",
+      "remediationNotice": "검토 결정과 실제 권한 반영은 원천 시스템에서 구분하여 처리합니다. 회수 결정을 저장한 후에도 반영 상태를 확인하세요.",
+      "decisionSection": "검토 결정 및 근거",
+      "chooseDecision": "권한 유지 또는 회수 선택",
+      "reasonHelp": "10~1,000자 · {{count}} / 1,000",
+      "draftPreserved": "입력한 사유는 보존했습니다. 최신 내용을 검토한 후 다시 결정해 주세요.",
+      "preview": "결정 제출 내용 확인",
+      "remediation": {
+        "NOT_REQUIRED": "별도 권한 반영 불필요",
+        "PENDING": "원천 권한 반영 대기",
+        "APPLIED": "원천 권한 반영 완료",
+        "MANUAL_REQUIRED": "원천에서 수동 조치 필요"
+      },
+      "contextTitle": "캠페인 및 권한 근거",
+      "sourceEffect": "결정 저장 후 원천 권한 반영 상태를 확인하세요."
+    },
+    "statusLabels": {
+      "approvalPending": "검토 대기",
+      "approvalClaimed": "검토 진행 중",
+      "approvalInfo": "보완 응답 대기",
+      "requestNeedsInfo": "내 보완 필요",
+      "serviceDraft": "작성 중",
+      "serviceSubmitted": "접수 대기",
+      "serviceTriaged": "담당 배정 완료",
+      "serviceInProgress": "처리 진행 중",
+      "serviceAwaiting": "내 응답 필요",
+      "serviceResolved": "해결 완료",
+      "serviceClosed": "요청 종료",
+      "reviewPending": "검토 대기",
+      "reviewInProgress": "검토 진행 중"
+    },
+    "checklist": {
+      "title": "체크리스트",
+      "progress": "{{completed}} / {{total}} 완료",
+      "toggle": "{{title}} 완료 상태 변경",
+      "itemTitle": "체크리스트 항목 {{index}}",
+      "up": "위로 이동",
+      "down": "아래로 이동",
+      "remove": "항목 제거",
+      "empty": "작업을 작은 단계로 나누어 기록해 보세요.",
+      "limit": "체크리스트는 최대 100개까지 추가할 수 있습니다.",
+      "newTitle": "새 체크리스트 항목",
+      "add": "항목 추가",
+      "invalid": "각 항목은 1~500자로 입력하고, 최대 100개까지 추가해 주세요.",
+      "saveFailed": "변경 내용을 보관했습니다. 최신 업무를 확인한 후 다시 저장해 주세요.",
+      "saving": "체크리스트 저장 중",
+      "save": "체크리스트 저장",
+      "conflict": "편집을 시작한 뒤 원천 체크리스트가 변경되었습니다. 아래 최신 내용과 현재 입력을 비교한 후 저장 기준을 선택해 주세요.",
+      "latest": "최신 저장된 체크리스트",
+      "useLatest": "최신 내용 사용",
+      "replaceLatest": "현재 입력으로 대체하도록 검토 완료",
+      "savedProgress": "저장된 체크리스트 {{completed}} / {{total}} 완료",
+      "unsavedProgress": "변경사항이 아직 저장되지 않았습니다. 진행률은 저장된 체크리스트를 기준으로 표시합니다."
+    },
+    "taskSources": {
+      "title": "연결된 원천 업무",
+      "unavailableNotice": "확인할 수 없는 원천 연결이 있습니다. 연결을 수정하려면 해당 연결을 제거할지 먼저 선택해 주세요. 다른 내용은 연결을 유지한 채 저장할 수 있습니다.",
+      "clearUnavailable": "확인할 수 없는 원천 연결을 제거하고 연결 수정",
+      "remove": "원천 연결 제거",
+      "empty": "연결된 원천 업무가 없습니다.",
+      "limit": "원천 업무는 최대 10개까지 연결할 수 있습니다.",
+      "help": "현재 열람 가능한 업무를 연결합니다. 원천의 상태와 권한은 해당 앱에서 관리합니다.",
+      "search": "연결할 업무 검색",
+      "refineSearch": "검색어를 더 입력하면 다른 원천 업무를 찾을 수 있습니다."
     }
   },
   "workPage": {
@@ -1560,14 +2054,23 @@
     "noDueDate": "마감 없음",
     "summaryLabel": "업무 요약",
     "summary": {
-      "all": { "label": "전체 업무", "detail": "활성 원천 {{count}}개" },
+      "all": {
+        "label": "전체 업무",
+        "detail": "활성 원천 {{count}}개"
+      },
       "due": {
         "label": "마감 임박",
         "detail": "다음 마감 {{date}}",
         "clearDetail": "임박한 마감 없음"
       },
-      "progress": { "label": "진행 중", "detail": "진행 중인 업무 {{count}}건" },
-      "waiting": { "label": "대기 중", "detail": "입력 대기 업무 {{count}}건" }
+      "progress": {
+        "label": "진행 중",
+        "detail": "진행 중인 업무 {{count}}건"
+      },
+      "waiting": {
+        "label": "대기 중",
+        "detail": "입력 대기 업무 {{count}}건"
+      }
     },
     "filterLabel": "업무 상태",
     "searchLabel": "업무 검색",
@@ -1640,7 +2143,10 @@
       "subject": "대상 구성원",
       "role": "검토 대상 접근 권한",
       "source": "할당 원천",
-      "sourceTypes": { "DIRECT": "직접 할당", "GROUP": "그룹을 통한 할당" },
+      "sourceTypes": {
+        "DIRECT": "직접 할당",
+        "GROUP": "그룹을 통한 할당"
+      },
       "recommendations": {
         "KEEP": "현재 증적은 접근 유지를 뒷받침합니다",
         "REVIEW": "이 접근 권한을 주의 깊게 검토하세요",
@@ -1653,7 +2159,11 @@
         "INACTIVE_90_DAYS": "계정이 90일 이상 비활성 상태입니다.",
         "EVIDENCE_UNAVAILABLE": "필수 증적을 확인하지 못했습니다. 수동으로 판단하세요."
       },
-      "decisions": { "PENDING": "결정 대기", "APPROVE": "유지", "REVOKE": "회수" },
+      "decisions": {
+        "PENDING": "결정 대기",
+        "APPROVE": "유지 결정",
+        "REVOKE": "회수 결정"
+      },
       "keep": "접근 유지",
       "revoke": "접근 회수",
       "keepTitle": "이 접근 권한을 유지할까요?",
@@ -1855,7 +2365,10 @@
     "retry": "다시 시도",
     "responseStatus": "DWAI·ON 요청 처리 상태",
     "status": {
-      "permission": { "label": "세션 권한 경계 적용", "detail": "인증된 워크스페이스 범위" },
+      "permission": {
+        "label": "세션 권한 경계 적용",
+        "detail": "인증된 워크스페이스 범위"
+      },
       "sources": {
         "label": "권한 범위 소스 {{count}}개",
         "detail": "생성 전 인용 집합 확정"
@@ -1962,10 +2475,18 @@
         "L3": "높은 위험 · 승인 절차 필요"
       },
       "items": {
-        "calendarEvent": { "title": "일정 초안 만들기" },
-        "mailDraft": { "title": "메일 초안 만들기" },
-        "serviceRequest": { "title": "서비스 요청 준비하기" },
-        "approvalRequest": { "title": "결재 요청 준비하기" }
+        "calendarEvent": {
+          "title": "일정 초안 만들기"
+        },
+        "mailDraft": {
+          "title": "메일 초안 만들기"
+        },
+        "serviceRequest": {
+          "title": "서비스 요청 준비하기"
+        },
+        "approvalRequest": {
+          "title": "결재 요청 준비하기"
+        }
       }
     },
     "actions": {
@@ -2012,6 +2533,46 @@
     }
   },
   "activityFoundation": {
+    "sample": {
+      "title": "개발 검증 데이터",
+      "description": "로컬 계약 검증용 표본이며 운영 집계에 포함되지 않습니다."
+    },
+    "sources": {
+      "title": "활동 조회 원천",
+      "AVAILABLE": "조회됨",
+      "FORBIDDEN": "권한 범위 밖",
+      "UNAVAILABLE": "조회 불가",
+      "partial": "일부 원천을 조회하지 못해 확인된 이력만 표시합니다. 누락된 이력을 0건으로 판단하지 마세요."
+    },
+    "connectorStatus": {
+      "title": "개인 연동 원장 상태",
+      "description": "메일과 캘린더의 실제 동기화 원장이 보고한 상태입니다. 전체 플랫폼 가용률이나 SLA가 아닙니다.",
+      "loading": "연동 원장 상태를 확인하는 중입니다.",
+      "empty": "현재 권한에서 확인되는 개인 연동 원장이 없습니다. 모든 연결이 정상이라는 의미가 아닙니다.",
+      "unavailableTitle": "연동 원장 상태를 확인할 수 없습니다",
+      "unavailableDescription": "확인되지 않은 연결을 정상으로 표시하지 않았습니다.",
+      "lastSuccess": "마지막 동기화 성공 {{at}}",
+      "noSuccess": "기록된 동기화 성공 없음",
+      "observedAt": "원장 관측 시각 {{at}}",
+      "localFixture": "개발 검증 데이터",
+      "states": {
+        "READY": "준비됨",
+        "SYNCING": "동기화 중",
+        "STALE": "최신성 지연",
+        "RESET_REQUIRED": "초기화 필요",
+        "AUTHENTICATION_REQUIRED": "인증 필요",
+        "SUSPENDED": "중지됨",
+        "NOT_CONNECTED": "연결되지 않음",
+        "REAUTHORIZATION_REQUIRED": "재승인 필요",
+        "REVOKED": "접근 회수됨",
+        "CONFIGURATION_REQUIRED": "설정 필요",
+        "DEGRADED": "성능 저하",
+        "UNAVAILABLE": "확인 불가",
+        "BLOCKED": "정책 차단",
+        "REVIEW_REQUIRED": "정책 검토 필요",
+        "DRAFT": "준비 중"
+      }
+    },
     "freshness": {
       "live": "60초 주기 조회",
       "syncing": "최신 정보 조회 중",
@@ -2028,7 +2589,7 @@
     "executionSnapshot": "{{at}} 관측한 현재 실행 상태 · 전체 과거 단계 이력이 아닙니다. 상태 확인 불가는 실행 실패를 뜻하지 않습니다.",
     "executionIdentity": "실행 {{id}} · 시도 {{attempt}} · 원장 버전 {{version}}",
     "closeSelectedRun": "선택 실행 닫기",
-    "auditUnlinked": "검증된 감사 연결 없음",
+    "auditUnlinked": "감사 참조 연결 없음",
     "workStateAtEvent": "변경 당시 업무 상태: {{state}}",
     "workStatus": {
       "DUE_SOON": "마감 임박",
@@ -2129,14 +2690,73 @@
           "title": "감사 참조 연결됨 · 열람 제한",
           "description": "참조 연결은 확인되었지만 이 화면이 감사 증적 열람 권한을 부여하지는 않습니다."
         },
+        "LINKED": {
+          "title": "중앙 감사 참조 게시됨",
+          "description": "감사 게시자가 참조 연결을 보고했습니다. 무결성은 별도로 조회한 체크포인트 증적에서만 확인합니다."
+        },
+        "PENDING": {
+          "title": "중앙 감사 수집 대기",
+          "description": "결정적 감사 조회 참조는 있지만 중앙 수집 확인은 아직 없습니다. 무결성이 확인된 상태가 아닙니다."
+        },
         "LEGACY_UNLINKED": {
           "title": "이전 기록 · 검증된 감사 연결 없음",
           "description": "원본과 결속된 이전 기록이지만 검증된 감사 기록 참조는 없습니다."
         },
         "NOT_LINKED": {
-          "title": "검증된 감사 연결 없음",
-          "description": "실제 감사 기록 참조가 제공되지 않았습니다. 감사 결과를 추정하지 않습니다."
+          "title": "감사 참조 연결 없음",
+          "description": "실제 감사 기록 참조가 제공되지 않았습니다. 무결성 결과를 추정하지 않습니다."
         }
+      },
+      "integrity": {
+        "title": "감사 무결성 확인",
+        "loading": "감사 무결성 증적을 확인하는 중입니다.",
+        "link": {
+          "LINKED": "참조 연결됨",
+          "NOT_LINKED": "참조 연결 없음"
+        },
+        "status": {
+          "VERIFIED": "무결성 확인됨",
+          "FAILED": "무결성 확인 실패",
+          "UNAVAILABLE": "확인 불가",
+          "PENDING": "체크포인트 대기"
+        },
+        "restricted": "증적 열람 제한",
+        "result": {
+          "VERIFIED": {
+            "title": "보고된 일일 체크포인트와 일치",
+            "description": "현재 감사 기록 해시가 서버가 보고한 일일 체크포인트와 일치합니다. 업무의 법적 적합성을 보증하지 않습니다."
+          },
+          "FAILED": {
+            "title": "보고된 체크포인트와 일치하지 않음",
+            "description": "감사 기록 무결성 확인이 실패했습니다. 원본 업무를 실행하지 말고 감사 담당자의 조사가 필요합니다."
+          },
+          "UNAVAILABLE": {
+            "title": "무결성 결과를 확인할 수 없음",
+            "description": "권한 또는 증적 상태 때문에 확인 결과가 제공되지 않았습니다. 정상으로 간주하지 않습니다."
+          },
+          "PENDING": {
+            "title": "일일 체크포인트 생성 대기",
+            "description": "감사 참조는 존재하지만 비교할 일일 체크포인트가 아직 보고되지 않았습니다."
+          }
+        },
+        "errors": {
+          "RESTRICTED": {
+            "title": "감사 증적에 접근할 수 없습니다",
+            "description": "현재 권한으로 증적을 조회할 수 없어 무결성 결과를 표시하지 않습니다."
+          },
+          "NOT_COLLECTED": {
+            "title": "수집된 감사 증적이 없습니다",
+            "description": "현재 사건에 대한 중앙 감사 증적을 찾지 못했습니다. 잠시 후 다시 조회할 수 있습니다."
+          },
+          "UNAVAILABLE": {
+            "title": "감사 증적 조회 실패",
+            "description": "확인되지 않은 무결성 결과를 대신 표시하지 않았습니다."
+          }
+        },
+        "observedAt": "증적 조회 시각",
+        "verifiedAt": "마지막 무결성 확인",
+        "recordHash": "기록 해시 · {{algorithm}}",
+        "scopeNotice": "참조 연결과 일일 체크포인트 무결성만 표시합니다. 감사 통과, 규정 준수 또는 법적 효력을 의미하지 않습니다."
       }
     },
     "firstPage": "최신 페이지",
@@ -2154,6 +2774,10 @@
     }
   },
   "activityPage": {
+    "mobileDescription": "업무 변경과 실행 기록을 확인합니다.",
+    "mobileFilters": "활동 필터 및 저장 보기",
+    "showFilters": "필터",
+    "hideFilters": "필터 접기",
     "header": {
       "eyebrow": "워크스페이스 신호",
       "title": "활동",
@@ -2169,10 +2793,22 @@
     "summaryLabel": "활동 요약",
     "compactSummary": "현재 실행 {{total}}건 · 확인 필요 {{attention}}건",
     "summary": {
-      "signals": { "label": "연결된 실행", "detail": "소스 {{count}}개의 이벤트" },
-      "agent": { "label": "현재 실행 중", "detail": "현재 실행 중 {{count}}건" },
-      "input": { "label": "확인 필요", "detail": "검토 대기 {{count}}건" },
-      "blocked": { "label": "정책 차단", "detail": "조사 필요 {{count}}건" }
+      "signals": {
+        "label": "연결된 실행",
+        "detail": "소스 {{count}}개의 이벤트"
+      },
+      "agent": {
+        "label": "현재 실행 중",
+        "detail": "현재 실행 중 {{count}}건"
+      },
+      "input": {
+        "label": "확인 필요",
+        "detail": "검토 대기 {{count}}건"
+      },
+      "blocked": {
+        "label": "정책 차단",
+        "detail": "조사 필요 {{count}}건"
+      }
     },
     "actorFilter": "활동 주체",
     "stateFilter": "활동 상태",
@@ -2186,7 +2822,12 @@
       "shared": "공유",
       "default": "기본"
     },
-    "filters": { "all": "전체 활동", "agent": "에이전트", "person": "사용자", "system": "시스템" },
+    "filters": {
+      "all": "전체 활동",
+      "agent": "에이전트",
+      "person": "사용자",
+      "system": "시스템"
+    },
     "visibleCount": "표시 중인 이벤트 {{count}}개",
     "filteredEmptyTitle": "필터와 일치하는 활동이 없습니다",
     "filteredEmptyDescription": "활동 주체, 상태 또는 검색 필터를 변경하거나 초기화하세요.",
@@ -2270,7 +2911,11 @@
       "attention": "확인 필요",
       "configuration-required": "관리자 연결 필요"
     },
-    "launchMode": { "Native": "네이티브", "SSO": "SSO", "Deep link": "딥 링크" },
+    "launchMode": {
+      "Native": "네이티브",
+      "SSO": "SSO",
+      "Deep link": "딥 링크"
+    },
     "launchOpened": "{{app}} 실행 미리보기를 열었습니다.",
     "launchError": "앱을 실행하지 못했습니다. 연결 상태를 확인하세요.",
     "configurationRequired": "{{app}}은(는) 관리자가 SSO 또는 딥 링크를 연결한 후 사용할 수 있습니다.",
@@ -2362,7 +3007,10 @@
     "noApprovalRequired": "현재 정책에서는 승인 없이 이 계획을 실행할 수 있습니다.",
     "approvePlan": "계획 승인",
     "reject": "거부",
-    "citationStates": { "restricted": "제한됨", "stale": "새로고침 필요" },
+    "citationStates": {
+      "restricted": "제한됨",
+      "stale": "새로고침 필요"
+    },
     "execution": {
       "auditId": "감사 ID: {{id}}",
       "retry": "다시 시도",
@@ -2412,10 +3060,22 @@
       }
     },
     "schedule": {
-      "ref-schedule-standup": { "title": "제품 스탠드업", "detail": "25분 / Teams" },
-      "ref-schedule-customer": { "title": "고객 디스커버리", "detail": "50분 / 회의실 3" },
-      "ref-schedule-focus": { "title": "집중 시간", "detail": "90분" },
-      "ref-schedule-deadline": { "title": "복리후생 등록 마감", "detail": "인사 서비스" }
+      "ref-schedule-standup": {
+        "title": "제품 스탠드업",
+        "detail": "25분 / Teams"
+      },
+      "ref-schedule-customer": {
+        "title": "고객 디스커버리",
+        "detail": "50분 / 회의실 3"
+      },
+      "ref-schedule-focus": {
+        "title": "집중 시간",
+        "detail": "90분"
+      },
+      "ref-schedule-deadline": {
+        "title": "복리후생 등록 마감",
+        "detail": "인사 서비스"
+      }
     },
     "work": {
       "WK-1042": {

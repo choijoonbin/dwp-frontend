@@ -1,3 +1,5 @@
+> **2026-09-07 적용 기준:** 이 문서의 원본·의뢰 자료는 보존합니다. 현재 구현과 수용 판정은 [6개 메뉴·18개 화면 정정 기록](../2026-09-07-design-remediation.md)을 따릅니다.
+
 # Stitch Work 01–12 design-reference
 
 기준일: 2026-09-04. 원본 프로젝트: https://stitch.withgoogle.com/projects/13391261371843159731

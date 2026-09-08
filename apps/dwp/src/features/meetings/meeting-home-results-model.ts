@@ -104,7 +104,7 @@ export function createMeetingHomeResultsLoader(
       const results = await Promise.allSettled(
         meetingIds.slice(0, 4).map(async (meetingId) => {
           try {
-            const report = await readReport(meetingId);
+            const report = await readReport(meetingId, signal);
             const projected = projectReport(meetingId, section, report, now());
             if (!projected) suppress(meetingId);
             return projected;

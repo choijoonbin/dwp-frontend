@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
+  ArrowLeft,
   Braces,
   Eye,
   FileCheck2,
@@ -63,6 +64,7 @@ import {
 } from './approval-request-form-context';
 import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
 import { ApprovalInformationResponseFields } from './approval-information-response-fields';
+import { approvalWorkReturnTarget } from './approval-return-target';
 import { useApprovalExperience } from './use-approval-experience';
 import {
   isProductSurfaceOperationCancelledError,
@@ -551,6 +553,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedId = searchParams.get('request');
+  const returnTarget = approvalWorkReturnTarget(searchParams.get('returnTo'));
   const openedRequestRef = useRef<string | undefined>(undefined);
   const { canUpdateRequests } = useApprovalExperience();
   const queryClient = useQueryClient();
@@ -734,7 +737,21 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
     <ApprovalSurface
       title={t(`requests.views.${view}.title`)}
       meta={t(`requests.views.${view}.meta`, { count: requests.data?.length ?? 0 })}
-      action={<Chip size="small" label={requests.data?.length ?? 0} />}
+      action={
+        <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+          {returnTarget && (
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<ArrowLeft size={16} />}
+              onClick={() => navigate(returnTarget)}
+            >
+              {t('common:productSurface.actions.returnToWork')}
+            </ActionButton>
+          )}
+          <Chip size="small" label={requests.data?.length ?? 0} />
+        </Stack>
+      }
     >
       <TableContainer sx={{ minHeight: 360 }}>
         <Table size="small">
@@ -966,6 +983,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
         requestId={detailId}
         canUpdateRequests={requestActionsReady}
         onClose={closeDetail}
+        onReturnToWork={returnTarget ? () => navigate(returnTarget) : undefined}
         onRespond={(request) => {
           closeDetail();
           setRequestAction({ kind: 'respond', request });

@@ -138,6 +138,10 @@ async function setup(page: Page) {
     return route.fallback();
   });
   await page.goto('/meetings/mine');
+  if ((page.viewportSize()?.width ?? 0) < 900) {
+    await page.getByRole('button', { name: meeting.title, exact: true }).click();
+    await expect(page.getByRole('dialog').getByTestId('my-meetings-inspector')).toBeVisible();
+  }
   await expect(page.getByTestId('meeting-schedule-management')).toBeVisible();
   return state;
 }

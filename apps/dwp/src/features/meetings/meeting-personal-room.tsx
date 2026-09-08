@@ -9,6 +9,7 @@ import {
   Link,
   Mail,
   Pencil,
+  QrCode,
   RefreshCw,
   Settings2,
   Video,
@@ -28,13 +29,17 @@ import {
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import { alpha } from '@mui/material/styles';
+import { QRCodeSVG } from 'qrcode.react';
 import { MeetingPersonalRoomDetails } from './meeting-personal-room-details';
 import { personalRoomInvitationUrl } from './meeting-personal-room-model';
 import { useMeetingPersonalRoomState } from './meeting-personal-room-state';
-import { meetingSurface } from './meeting-visual-system';
+import { meetingSurface, meetingShape, meetingSoftShadow } from './meeting-visual-system';
 
 export type MeetingPersonalRoomProps = {
   onEnterMeeting: (meetingId: string) => void;
+  onOpenMeeting: (meetingId: string) => void;
   onCheckDevices: () => void;
   onBack: () => void;
 };
@@ -90,6 +95,7 @@ function PersonalRoomContent({
   const [name, setName] = useState('');
   const [editing, setEditing] = useState(false);
   const [rotating, setRotating] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
   const current = state.room.data;
   const busy = state.busy !== null;
   const nameValid = Boolean(name.trim()) && name.length <= 160;
@@ -214,8 +220,13 @@ function PersonalRoomContent({
               component="section"
               aria-label={t('personalRoom.identity')}
               sx={(theme) => ({
-                ...meetingSurface(theme, { tone: 'primary', elevated: true }),
-                p: { xs: 2, md: 3 },
+                ...meetingSurface(theme),
+                bgcolor: { xs: 'transparent', md: 'background.paper' },
+                borderWidth: { xs: 0, md: 1 },
+                borderColor: alpha(theme.palette.primary.main, 0.12),
+                borderRadius: meetingShape.stage,
+                boxShadow: (theme) => ({ xs: 'none', md: meetingSoftShadow(theme) }),
+                p: { xs: 0, md: 3 },
                 mb: 3,
               })}
             >
@@ -226,28 +237,44 @@ function PersonalRoomContent({
                     xs: 'minmax(0,1fr)',
                     md: 'minmax(0,1fr) minmax(220px, 28%)',
                   },
-                  gap: 3,
+                  gap: { xs: 2, md: 3 },
                   alignItems: 'center',
                 }}
               >
-                <Box sx={{ minWidth: 0 }}>
+                <Box
+                  sx={(theme) => ({
+                    minWidth: 0,
+                    bgcolor: 'background.paper',
+                    p: { xs: 2, md: 0 },
+                    borderStyle: 'solid',
+                    borderWidth: { xs: 1, md: 0 },
+                    borderColor: alpha(theme.palette.primary.main, 0.12),
+                    borderRadius: meetingShape.stage,
+                  })}
+                >
                   <Stack direction="row" gap={1.5} alignItems="center">
                     <Box
                       aria-hidden="true"
                       sx={{
-                        p: 1.5,
-                        bgcolor: 'action.selected',
-                        color: 'primary.main',
-                        borderRadius: foundationTokens.radius.control + 'px',
+                        width: 52,
+                        height: 52,
+                        flexShrink: 0,
+                        display: 'grid',
+                        placeItems: 'center',
+                        bgcolor: 'primary.main',
+                        color: 'primary.contrastText',
+                        borderRadius: meetingShape.group,
+                        fontSize: 'h6.fontSize',
+                        fontWeight: 'fontWeightBold',
                       }}
                     >
-                      <DoorOpen size={24} />
+                      {current.name.trim().slice(0, 2)}
                     </Box>
                     <Box sx={{ minWidth: 0, flex: 1 }}>
                       <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
                         {current.name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="primary.main">
                         {t('personalRoom.version', {
                           version: current.version,
                           revision: current.invitationRevision,
@@ -265,18 +292,23 @@ function PersonalRoomContent({
                       <Pencil size={16} />
                     </ActionIconButton>
                   </Stack>
-                  <Typography variant="body2" color="text.secondary" sx={{ my: 1.5 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ my: 1.5, display: { xs: 'none', md: 'block' } }}
+                  >
                     {t('personalRoom.description')}
                   </Typography>
                   <Stack
                     direction="row"
                     gap={1}
                     alignItems="center"
-                    sx={{
+                    sx={(theme) => ({
                       p: 1.25,
-                      bgcolor: 'action.hover',
-                      borderRadius: foundationTokens.radius.control + 'px',
-                    }}
+                      mt: { xs: 2, md: 0 },
+                      bgcolor: alpha(theme.palette.primary.main, 0.055),
+                      borderRadius: meetingShape.control,
+                    })}
                   >
                     <Link size={16} aria-hidden="true" style={{ flexShrink: 0 }} />
                     <Typography
@@ -287,7 +319,24 @@ function PersonalRoomContent({
                       {invitation}
                     </Typography>
                   </Stack>
-                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    sx={{
+                      mt: 1,
+                      '& > button': {
+                        flex: { xs: 1, md: '0 1 auto' },
+                        minWidth: 0,
+                        px: { xs: 0.75, sm: 1.5 },
+                        typography: { xs: 'caption', sm: 'body2' },
+                        minHeight: 44,
+                        wordBreak: 'keep-all',
+                        whiteSpace: 'normal',
+                        bgcolor: 'action.hover',
+                        borderColor: 'transparent',
+                      },
+                    }}
+                  >
                     <ActionButton
                       intent="secondary"
                       size="small"
@@ -310,14 +359,31 @@ function PersonalRoomContent({
                     >
                       {t('personalRoom.copyInvitation')}
                     </ActionButton>
+                    <ActionButton
+                      intent="secondary"
+                      size="small"
+                      startIcon={<QrCode size={15} />}
+                      disabled={busy}
+                      onClick={() => setQrOpen(true)}
+                    >
+                      {t('stitch.personal.qr')}
+                    </ActionButton>
                   </Stack>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ display: 'block', mt: 1 }}
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    sx={(theme) => ({
+                      mt: 1.5,
+                      p: 1.25,
+                      bgcolor: alpha(theme.palette.primary.main, 0.045),
+                      borderRadius: meetingShape.control,
+                    })}
                   >
-                    {t('personalRoom.qrUnavailable')}
-                  </Typography>
+                    <DoorOpen size={18} style={{ flexShrink: 0 }} />
+                    <Typography variant="caption" color="text.secondary">
+                      {t('stitch.personal.invitationHint')}
+                    </Typography>
+                  </Stack>
                 </Box>
                 <Stack gap={1}>
                   <ActionButton
@@ -349,6 +415,7 @@ function PersonalRoomContent({
               </Box>
             </Box>
             <MeetingPersonalRoomDetails
+              scope={scope}
               room={current}
               history={state.history}
               page={state.page}
@@ -357,8 +424,49 @@ function PersonalRoomContent({
               canUpdate={canUpdate}
               onRotate={() => setRotating(true)}
               onCheckDevices={props.onCheckDevices}
+              onOpenMeeting={props.onOpenMeeting}
+              onViewAll={props.onBack}
               refreshedAt={state.room.dataUpdatedAt}
             />
+            <FormDialog
+              open={qrOpen}
+              title={t('stitch.personal.qrTitle')}
+              description={t('stitch.personal.qrHint')}
+              cancelLabel={t('actions.cancel')}
+              submitLabel={t('stitch.personal.qrClose')}
+              onClose={() => setQrOpen(false)}
+              onSubmit={() => setQrOpen(false)}
+              maxWidth="xs"
+            >
+              <Stack alignItems="center" gap={2} data-testid="personal-room-qr">
+                <Box
+                  sx={{
+                    p: 2,
+                    bgcolor: 'common.white',
+                    borderRadius: meetingShape.card,
+                    maxWidth: '100%',
+                  }}
+                >
+                  <QRCodeSVG
+                    value={invitation}
+                    size={224}
+                    marginSize={4}
+                    title={t('stitch.personal.qrTitle')}
+                    style={{ display: 'block', width: '100%', height: 'auto' }}
+                  />
+                </Box>
+                <Chip
+                  label={t('personalRoom.version', {
+                    version: current.version,
+                    revision: current.invitationRevision,
+                  })}
+                  size="small"
+                />
+                <Typography variant="caption" sx={{ overflowWrap: 'anywhere', width: '100%' }}>
+                  {invitation}
+                </Typography>
+              </Stack>
+            </FormDialog>
             <FormDialog
               open={editing}
               title={t('personalRoom.rename')}

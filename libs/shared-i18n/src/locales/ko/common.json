@@ -72,7 +72,10 @@
   },
   "productSurface": {
     "contextBar": {
+      "label": "제품 접근 컨텍스트",
       "loadError": "관리 컨텍스트를 불러오지 못했습니다.",
+      "recovered": "제품 접근 컨텍스트를 복구했습니다.",
+      "retry": "다시 시도",
       "reloadPage": "페이지 새로고침"
     },
     "notFound": {
@@ -136,8 +139,16 @@
         "description": "현재 계정에는 이 업무 영역에 필요한 앱 접근 권한이 없습니다."
       },
       "surfaceDenied": {
-        "title": "이 관리 영역이 할당되지 않았습니다",
-        "description": "제품 책임과 해당 관리 업무의 정확한 권한이 필요합니다."
+        "title": "이 제품 영역이 할당되지 않았습니다",
+        "description": "이 제품 영역에 필요한 정확한 접근 권한이 필요합니다.",
+        "work": {
+          "title": "이 업무 영역이 할당되지 않았습니다",
+          "description": "현재 계정에 이 제품의 업무 영역을 사용할 수 있는 접근 권한이 필요합니다."
+        },
+        "management": {
+          "title": "이 관리 영역이 할당되지 않았습니다",
+          "description": "제품 책임과 해당 관리 업무의 정확한 권한이 필요합니다."
+        }
       },
       "routeDenied": {
         "title": "이 페이지는 현재 접근 범위 밖입니다",

@@ -1,10 +1,4 @@
 import {
-  claimApprovalTask,
-  decideApprovalTask,
-  getApprovalTask,
-} from '@dwp-frontend/shared-utils/api/approval-api';
-import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils/api/approval-governed-mutation';
-import {
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
 } from '@dwp-frontend/shared-utils/api/access-review-work-api';
@@ -22,13 +16,6 @@ import type { WorkHubActionKind, WorkHubItem } from './work-hub-contracts';
 
 export type WorkHubCommand =
   | { kind: 'OPEN_SOURCE' | 'WORKSPACE_START' | 'WORKSPACE_COMPLETE' }
-  | { kind: 'APPROVAL_CLAIM'; execution: ApprovalMutationExecution }
-  | {
-      kind: 'APPROVAL_DECIDE';
-      decision: 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
-      comment?: string;
-      execution: ApprovalMutationExecution;
-    }
   | {
       kind: 'ACCESS_REVIEW_DECIDE';
       decision: 'APPROVE' | 'REVOKE';
@@ -59,9 +46,6 @@ export type WorkHubActionResult =
   | { state: 'CONFLICT' | 'FORBIDDEN' | 'UNAVAILABLE'; retryable: boolean };
 
 export const workHubActionClients = {
-  claimApprovalTask,
-  decideApprovalTask,
-  getApprovalTask,
   decideAccessReviewWork,
   getAccessReviewWorkDetail,
   transitionPersonalWorkTask,
@@ -75,6 +59,20 @@ function denied(): WorkHubActionResult {
 }
 function conflict(): WorkHubActionResult {
   return { state: 'CONFLICT', retryable: true };
+}
+
+/**
+ * Source apps may be independently deployed, so a source handoff must cross the document
+ * boundary instead of asking the current product Router to resolve a foreign route.
+ */
+export function openWorkHubSourceRoute(
+  route: string,
+  assign: (route: string) => void = (target) => window.location.assign(target)
+): boolean {
+  const target = workspaceWorkSourceRoute({ sourceRoute: route });
+  if (!target) return false;
+  assign(target);
+  return true;
 }
 
 /** Source-specific commands, refreshed versions and actual owner receipts; never optimistic completion. */
@@ -112,45 +110,6 @@ export async function executeWorkHubAction(
         sourceReference,
         version: result.version,
         sourceStatus: result.status,
-      };
-    }
-    if (command.kind === 'APPROVAL_CLAIM' || command.kind === 'APPROVAL_DECIDE') {
-      if (item.reference.sourceSystem !== 'APPROVAL_TASK') return denied();
-      const current = await clients.getApprovalTask(sourceReference);
-      if (current.task.version !== item.version) return conflict();
-      if (
-        current.task.taskId !== sourceReference ||
-        current.task.stepKey !== item.reference.obligationKey
-      )
-        return denied();
-      if (
-        command.kind === 'APPROVAL_CLAIM'
-          ? !current.canClaim
-          : !current.canDecide || current.selfApprovalBlocked
-      )
-        return denied();
-      const result =
-        command.kind === 'APPROVAL_CLAIM'
-          ? await clients.claimApprovalTask(
-              sourceReference,
-              current.task.version,
-              command.execution
-            )
-          : await clients.decideApprovalTask(
-              sourceReference,
-              {
-                decision: command.decision,
-                comment: command.comment,
-                expectedVersion: current.task.version,
-              },
-              command.execution
-            );
-      return {
-        state: 'CONFIRMED',
-        outcome: command.kind === 'APPROVAL_CLAIM' ? 'STATUS_CHANGED' : 'DECISION_RECORDED',
-        sourceReference,
-        version: result.task.version,
-        sourceStatus: result.task.status,
       };
     }
     if (command.kind === 'ACCESS_REVIEW_DECIDE') {

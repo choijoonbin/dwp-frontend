@@ -1,3 +1,5 @@
+> **과거 기록 · 2026-09-07 정정:** 아래의 단일 메뉴/디자인 완료 판정은 현재 기준이 아닙니다. 승인 시안의 6개 메뉴와 18개 화면을 반영한 [최신 구현·검증 기록](2026-09-07-design-remediation.md)을 사용하세요. 기존 내용은 당시 결정과 검증의 이력으로 보존합니다.
+
 # 통합업무함 디자인 구현 마감
 
 기준일: 2026-09-04
@@ -39,7 +41,7 @@ Stitch 01–12의 18개 화면은 목록–상세 관계, 정보 밀도, mobile 
 - 개인 비공개 focus event의 timezone·시작·종료를 검토하고 event 생성과 Work link 저장을 분리했다.
 - Work UPDATE와 Calendar VIEW 권한을 함께 확인한다. event 생성 뒤 link가 대기 중이면 receipt를 dialog 재개 뒤에도 보존해 link 단계만 다시 시도한다.
 - 계약 상한 안의 Calendar 조회, 연결 목록, event 상태, Calendar 이동, 확인 후 link 해제를 제공한다. link 해제는 event 취소가 아니다.
-- source-owned approval action은 현재 detail·권한·version을 재검증하고, Access Review와 Service는 기존 소유 앱 흐름으로 이어 준다.
+- 결재와 서비스 요청은 Work가 원천 명령을 복제하지 않고 소유 앱으로 문서 handoff한다. Work가 소유하는 Access Review만 현재 detail·권한·version을 재검증해 실행한다.
 - DWAI·ON에는 선택한 한 건의 허용된 최소 맥락과 사용자가 확인한 질문만 전달한다.
 - 지원되는 Workspace batch만 atomic preview 후 실행한다. 전체 요청이 확인되면 항목별 confirmed receipt를 표시하고, 응답이 불명확하면 어느 항목도 임의 성공·실패로 확정하지 않는다. filter 변경 시 선택을 비운다.
 

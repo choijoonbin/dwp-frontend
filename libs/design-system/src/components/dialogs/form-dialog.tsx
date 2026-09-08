@@ -55,7 +55,9 @@ export function FormDialog({
   const titleId = useId();
   const descriptionId = useId();
   const compact = useMediaQuery('(max-width:599.95px)', { noSsr: true });
+  const coarsePointer = useMediaQuery('(pointer: coarse)', { noSsr: true });
   const fullScreen = mobileFullScreen && compact;
+  const touchActionTarget = compact || coarsePointer ? { minHeight: 44, minWidth: 44 } : undefined;
   const dialogRootRef = useRef<HTMLDivElement | null>(null);
   const lastExternalFocusRef = useRef<HTMLElement | null>(null);
   const previousOpenRef = useRef(open);
@@ -152,7 +154,21 @@ export function FormDialog({
             justifyContent: secondaryActions ? 'space-between' : 'flex-end',
           }}
         >
-          {secondaryActions && <Box sx={{ width: { xs: 1, sm: 'auto' } }}>{secondaryActions}</Box>}
+          {secondaryActions && (
+            <Box
+              sx={{
+                width: { xs: 1, sm: 'auto' },
+                ...((compact || coarsePointer) && {
+                  '& :is(button, a[href], [role="button"])': {
+                    minWidth: 44,
+                    minHeight: 44,
+                  },
+                }),
+              }}
+            >
+              {secondaryActions}
+            </Box>
+          )}
           <Box
             sx={{
               width: { xs: 1, sm: 'auto' },
@@ -163,7 +179,7 @@ export function FormDialog({
             }}
           >
             {showCancel && (
-              <ActionButton intent="quiet" onClick={onClose} disabled={busy}>
+              <ActionButton intent="quiet" onClick={onClose} disabled={busy} sx={touchActionTarget}>
                 {cancelLabel}
               </ActionButton>
             )}
@@ -174,6 +190,7 @@ export function FormDialog({
                 loading={busy}
                 loadingLabel={submittingLabel}
                 disabled={submitDisabled}
+                sx={touchActionTarget}
               >
                 {submitLabel}
               </ActionButton>
